@@ -2220,14 +2220,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    return getIntTableValue(null, query);
 	}
 	
+	private Statement stmt = null;
+	private ResultSet rs = null;
+	
 	private int getIntTableValue(String CountSQLString,SelectQuery query ) throws SQLException {
 		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
+		
 		int recordCount = -1;
 		try {
 			conn = getConnection(this.getDatasource());
-			rs = prepareResultSet(conn,stmt,CountSQLString,query);
+			rs = prepareResultSet(conn,CountSQLString,query);
 			if (rs.next())
 				recordCount = rs.getInt(1);
 			rs.close();
@@ -3656,16 +3658,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			returningNumber = 0;
 
 		Connection conn = null;
-		Statement Stmt = null;
-		ResultSet RS = null;
+		
 		Vector vector = new Vector();
 		try {
 		    
 			conn = getConnection(getDatasource());
-			RS = prepareResultSet(conn,Stmt,sqlQuery,query);
+			rs = prepareResultSet(conn,sqlQuery,query);
 			int counter = 0;
 			boolean addEntity = false;
-			while (RS.next()) {
+			while (rs.next()) {
 				if (startingEntry <= counter) {
 					if (returningNumber > 0) {
 						if (counter < (returningNumber + startingEntry))
@@ -3677,7 +3678,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					}
 
 					if (addEntity) {
-						Object pk = this.getPrimaryKeyFromResultSet(RS);
+						Object pk = this.getPrimaryKeyFromResultSet(rs);
 						if (pk != null) {
 							//prefetchBeanFromResultSet(pk, RS);
 							vector.addElement(pk);
@@ -3686,13 +3687,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				}
 				counter++;
 			}
-			RS.close();
+			rs.close();
 		} catch (SQLException sqle) {
 			throw new IDOFinderException(sqle);
 		} finally {
-			if (Stmt != null) {
+			if (stmt != null) {
 				try {
-					Stmt.close();
+					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -3705,7 +3706,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	
-	private ResultSet prepareResultSet(Connection conn,Statement stmt, String sqlString, SelectQuery query) throws SQLException{
+	private ResultSet prepareResultSet(Connection conn, String sqlString, SelectQuery query) throws SQLException{
 	    ResultSet rs = null;
 	    if(query!=null){
 		    
