@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.120 2004/10/13 12:52:01 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.121 2004/10/13 16:31:35 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -574,30 +574,17 @@ public abstract class DatastoreInterface {
 			RS.next();
 			returnInt = RS.getInt(1);
 		}
-	    finally {
-	    	// do not hide an existing exception
-	    	try { 
-	    		if (RS != null) {
-	    			RS.close();
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		    // do not hide an existing exception
-		    try {
-		    	if (stmt != null)  {
-		    		stmt.close();
-					if (conn != null)
-						entity.freeConnection(conn);
-		    	}
-		    }
-	 	    catch (SQLException statementCloseEx) {
-		     	System.err.println("[DatastoreInterface] statement could not be closed");
-		     	statementCloseEx.printStackTrace(System.err);
-		    }
-	    }
+		finally {
+			if (RS != null) {
+				RS.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
 		return returnInt;
 	}
 
@@ -1100,7 +1087,6 @@ public abstract class DatastoreInterface {
 	public void deleteMetaData(GenericEntity entity, Connection conn) throws Exception {
 		Statement Stmt = null;
 		Statement stmt2 = null;
-		ResultSet RS = null;
 		try {
 			MetaData metadata = (MetaData) com.idega.data.GenericEntity.getStaticInstance(MetaData.class);
 			Stmt = conn.createStatement();
@@ -1131,7 +1117,7 @@ public abstract class DatastoreInterface {
 			statement.append(metadataname);
 			statement.append('.');
 			statement.append(metadataIdColumn);
-			RS = Stmt.executeQuery(statement.toString());
+			ResultSet RS = Stmt.executeQuery(statement.toString());
 			stmt2 = conn.createStatement();
 			StringBuffer statement2;
 			//delete thos id's
@@ -1145,6 +1131,7 @@ public abstract class DatastoreInterface {
 				statement2.append(RS.getString(1));
 				stmt2.executeUpdate(statement2.toString());
 			}
+			if (RS != null) RS.close();
 			//delete from the middle table
 			Stmt = conn.createStatement();
 			statement = new StringBuffer("");
@@ -1158,38 +1145,14 @@ public abstract class DatastoreInterface {
 			logSQL(sql);
 			Stmt.executeUpdate(sql);
 		}
-	    finally {
-	    	// do not hide an existing exception
-	    	try { 
-	    		if (RS != null) {
-	    			RS.close();
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		    // do not hide an existing exception
-		    try {
-		    	if (Stmt != null)  {
-		    		Stmt.close();
-		    	}
-		    }
-	 	    catch (SQLException statementCloseEx) {
-		     	System.err.println("[DatastoreInterface] statement could not be closed");
-		     	statementCloseEx.printStackTrace(System.err);
-		    }
-		    // do not hide an existing exception
-		    try {
-		    	if (stmt2 != null)  {
-		    		stmt2.close();
-		    	}
-		    }
-	 	    catch (SQLException statementCloseEx) {
-		     	System.err.println("[DatastoreInterface] statement could not be closed");
-		     	statementCloseEx.printStackTrace(System.err);
-		    }
-	    }
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (stmt2 != null) {
+				stmt2.close();
+			}
+		}
 	}
 
 	public void deleteMetaData(GenericEntity entity) throws Exception {
@@ -1635,13 +1598,12 @@ public abstract class DatastoreInterface {
 		//A connection friendler version and faster
 		String[] tablesTypes = { "TABLE", "VIEW"};
 		Connection conn = null;
-		ResultSet rs = null;
 		boolean tableExists = false;
-		DatabaseMetaData dbMetaData = null;
 		try {
 
 			conn = ConnectionBroker.getConnection(dataSourceName);
-			dbMetaData = conn.getMetaData();
+			DatabaseMetaData dbMetaData = conn.getMetaData();
+			ResultSet rs = null;
 
 			//Check for upper case
 			rs = dbMetaData.getTables(null, null, tableName.toUpperCase(), tablesTypes);
@@ -1649,79 +1611,40 @@ public abstract class DatastoreInterface {
 				//table exists
 				tableExists = true;
 			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			rs = null;
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+			rs.close();
+
 			//Check for lower case
-			if (!tableExists && dbMetaData != null) {
+			if (!tableExists) {
 				rs = dbMetaData.getTables(null, null, tableName.toLowerCase(), tablesTypes);
 				if (rs.next()) {
 					//table exists
 					tableExists = true;
 				}
+				rs.close();
 			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-		   	try { 
-		   		if (rs != null) {
-		   			rs.close();
-		   			rs = null;
-		      	}
-		   	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+
 			//Check without any case manipulating, this can be removed if we always
 			// force uppercase
-			if (!tableExists && dbMetaData != null) {
+			if (!tableExists) {
 
 				rs = dbMetaData.getTables(null, null, tableName, tablesTypes);
 				if (rs.next()) {
 					//table exists
 					tableExists = true;
 				}
+				rs.close();
 			}
+
 		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
+		catch (SQLException e) {
+			e.printStackTrace();
 		}
 		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			if (conn != null) {
-	    				ConnectionBroker.freeConnection(conn);
-	    			}
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
 		}
+
 		return tableExists;
 	}
 
@@ -1752,14 +1675,13 @@ public abstract class DatastoreInterface {
 
 		Connection conn = null;
 		ResultSet rs = null;
-		DatabaseMetaData metadata = null;
 		Vector v = new Vector();
 		try {
 			conn = ConnectionBroker.getConnection(dataSourceName);
 			//conn = entity.getConnection();
 
 			//String tableName = entity.getTableName();
-			metadata = conn.getMetaData();
+			DatabaseMetaData metadata = conn.getMetaData();
 
 			//		Check for upper case
 			rs = metadata.getColumns(null, null, tableName.toUpperCase(), "%");
@@ -1769,26 +1691,10 @@ public abstract class DatastoreInterface {
 				v.add(column);
 				//System.out.println("\t\t"+column);
 			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			rs = null;
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+			rs.close();
+
 			//		Check for lower case
-			if (v.isEmpty() && metadata != null) {
+			if (v.isEmpty()) {
 				rs = metadata.getColumns(null, null, tableName.toLowerCase(), "%");
 				//System.out.println("Table: "+tableName+" has the following
 				// columns:");
@@ -1797,28 +1703,12 @@ public abstract class DatastoreInterface {
 					v.add(column);
 					//System.out.println("\t\t"+column);
 				}
+				rs.close();
 			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			rs = null;
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+
 			//		Check without any case manipulating, this can be removed if we always
 			// force uppercase
-			if (v.isEmpty() && metadata != null) {
+			if (v.isEmpty()) {
 				rs = metadata.getColumns(null, null, tableName, "%");
 				//System.out.println("Table: "+tableName+" has the following
 				// columns:");
@@ -1827,6 +1717,7 @@ public abstract class DatastoreInterface {
 					v.add(column);
 					//System.out.println("\t\t"+column);
 				}
+				rs.close();
 			}
 
 		}
@@ -1834,15 +1725,6 @@ public abstract class DatastoreInterface {
 			e.printStackTrace();
 		}
 		finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			}
-			catch (SQLException ex) {
-				System.out.println("[DatastoreInterface] result set could not be closed");
-				ex.printStackTrace(System.err);
-			}
 			if (conn != null) {
 				ConnectionBroker.freeConnection(conn);
 			}
@@ -1867,81 +1749,41 @@ public abstract class DatastoreInterface {
 		Connection conn = null;
 		ResultSet rs = null;
 		HashMap hm = new HashMap();
-		DatabaseMetaData metadata = null;
 		try {
 			conn = ConnectionBroker.getConnection(dataSourceName);
 			//conn = entity.getConnection();
 
 			//String tableName = entity.getTableName();
-			metadata = conn.getMetaData();
+			DatabaseMetaData metadata = conn.getMetaData();
 
 			//			Check for upper case
 			rs = metadata.getIndexInfo(null, null, tableName.toUpperCase(), false, false);
 			//			  System.out.println("Table: "+tableName+" has the following columns indexed:");
 			handleIndexRS(rs, hm);
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			rs = null;
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+			rs.close();
+
 			//			Check for lower case
-			if (hm.isEmpty() && metadata != null) {
+			if (hm.isEmpty()) {
 				rs = metadata.getIndexInfo(null, null, tableName.toLowerCase(), false, false);
 				//			  System.out.println("Table: "+tableName+" has the following columns indexed:");
 				handleIndexRS(rs, hm);
+				rs.close();
 			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			// do not hide an existing exception
-	    	try { 
-	    		if (rs != null) {
-	    			rs.close();
-	    			rs = null;
-		      	}
-	    	}
-		    catch (SQLException resultCloseEx) {
-		    	System.err.println("[DatastoreInterface] result set could not be closed");
-		     	resultCloseEx.printStackTrace(System.err);
-		    }
-		}
-		try {
+
 			//			Check without any case manipulating, this can be removed if we always
 			// force uppercase
-			if (hm.isEmpty() && metadata != null) {
+			if (hm.isEmpty()) {
 				rs = metadata.getIndexInfo(null, null, tableName, false, false);
 				//			  System.out.println("Table: "+tableName+" has the following columns indexed:");
 				handleIndexRS(rs, hm);
+				rs.close();
 			}
+
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			}
-			catch (SQLException ex) {
-				System.out.println("[DatastoreInterface] result set could not be closed");
-				ex.printStackTrace(System.err);
-			}
 			if (conn != null) {
 				ConnectionBroker.freeConnection(conn);
 			}
