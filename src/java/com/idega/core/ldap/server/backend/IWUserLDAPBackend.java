@@ -55,8 +55,6 @@ LDAPReplicationConstants {
 	
 	private List exactIndexes = null;
 	
-	private  String baseDN = null;
-	
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
 	
 	private LDAPReplicationBusiness ldapReplicationBiz;
@@ -106,18 +104,10 @@ LDAPReplicationConstants {
 		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toUpperCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toUpperCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toUpperCase());
-		
-		
-		//exactIndexes.addElement( new DirectoryString( "seealso" ) );
-		try {
-			baseDN = getEmbeddedLDAPServerBusiness(IWMainApplication.getDefaultIWApplicationContext()).getBackendSettings().getProperty(
-					PROPS_BACKEND_ZERO_ROOT);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+//		exactIndexes.addElement( new DirectoryString( "seealso" ) );
 	}
-	
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -277,7 +267,7 @@ LDAPReplicationConstants {
 			Entry entry = new Entry(base);
 		
 			try {
-				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
+				if (base.getDirectoryString().equals(ldapUtil.getRootDNString()) && uniqueId == null) {
 					addTopGroupsToEntries(base, entries);
 				}
 				else {
@@ -361,7 +351,7 @@ LDAPReplicationConstants {
 				//FIXME this does something to the DN so it get rid of \\ and what nots...
 				Entry entry = new Entry(base);
 				
-				if (base.getDirectoryString().equals(baseDN) && uniqueId==null) {
+				if (base.getDirectoryString().equals(ldapUtil.getRootDNString()) && uniqueId==null) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
@@ -585,34 +575,15 @@ LDAPReplicationConstants {
 	}
 	
 	protected String getUserIdentifier(User user, DirectoryString base) {
-		//ADD THE UNIQUE ID?
-		String identifier = "cn=";
-		String fullName = user.getName();
-		String personalId = user.getPersonalID();
-		identifier = identifier + fullName + LDAP_USER_DIRECTORY_STRING_SEPARATOR + personalId + "," + base.getDirectoryString();
-		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
+		return ldapUtil.getUserIdentifier(user, base);
 	}
 	
 	protected String getGroupIdentifier(Group group, DirectoryString base) {
-		//ADD THE UNIQUE ID?
-		String identifier = "ou=";
-		String name = getGroupName(group);
-		identifier = identifier + name + "," + base.getDirectoryString();
-		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
+		return ldapUtil.getGroupIdentifier(group, base);
 	}
 	
 	protected String getGroupName(Group group) {
-		String name = group.getName();//add abbreviation?;
-		if (name == null && "".equals(name)) {
-			name = group.getShortName();
-			if (name == null && "".equals(name)) {
-				name = group.getAbbrevation();
-				if (name == null && "".equals(name)) {
-					name = group.getPrimaryKey().toString();
-				}
-			}
-		}
-		return name;
+		return ldapUtil.getGroupName(group);
 	}
 	
 	/**

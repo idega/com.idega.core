@@ -4,6 +4,7 @@
 package com.idega.core.ldap.util;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -11,8 +12,13 @@ import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import org.codehaus.plexus.ldapserver.server.util.DNUtility;
 import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
+import com.idega.core.ldap.replication.business.LDAPReplicationConstants;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
+import com.idega.core.ldap.server.business.EmbeddedLDAPServerConstants;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -21,7 +27,7 @@ import com.idega.util.text.TextSoap;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  *
  **/
-public class IWLDAPUtil implements IWLDAPConstants{
+public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,LDAPReplicationConstants{
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
 	private LDAPReplicationBusiness ldapReplicationBiz;
 	private static IWLDAPUtil instance;
@@ -308,20 +314,86 @@ public class IWLDAPUtil implements IWLDAPConstants{
 		return ldapReplicationBiz;
 	}
 	
-	public String getRootDNString(IWApplicationContext iwac){
-		EmbeddedLDAPServerBusiness biz = getEmbeddedLDAPServerBusiness(iwac);
+	public DirectoryString getRootDN(){
+		EmbeddedLDAPServerBusiness biz = getEmbeddedLDAPServerBusiness(IWMainApplication.getDefaultIWApplicationContext());
 		try {
 			DirectoryString dn = biz.getRootDN();
-			if(dn!=null){
-				return dn.toString();
-			}
+			return dn;
 		}
 		catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return null;
+	}
+
+	/**
+	 * Generated the RDN (directory string) from the groups name and its parents
+	 * @param group
+	 * @return
+	 */
+	public String getGeneratedRDNFromGroup(Group group) {
+		String rdn = new String(getRootDNString());
+		
+		if(group!=null){
+			Group parent = group;
+			Collection parents;
+			while( !(parents = parent.getParentGroups()).isEmpty() ){
+				parent = (Group) parents.iterator().next();
+				rdn = "ou="+getGroupName(parent)+","+rdn;
+			}
+		}
+		rdn = "ou="+getGroupName(group)+","+rdn;
+		return rdn;
+	}
+	
+	public String getUserIdentifier(User user, DirectoryString base) {
+		//ADD THE UNIQUE ID?
+		String identifier = "cn=";
+		String fullName = user.getName();
+		String personalId = user.getPersonalID();
+		identifier = identifier + fullName + LDAP_USER_DIRECTORY_STRING_SEPARATOR + personalId + "," + base.getDirectoryString();
+		return getEscapedLDAPString(identifier);
+	}
+	
+	public String getGroupIdentifier(Group group, DirectoryString base) {
+		//ADD THE UNIQUE ID?
+		String identifier = "ou=";
+		String name = getGroupName(group);
+		identifier = identifier + name + "," + base.getDirectoryString();
+		return getEscapedLDAPString(identifier);
+	}
+	
+	public String getGroupName(Group group) {
+		String name = group.getName();//add abbreviation?;
+		if (name == null && "".equals(name)) {
+			name = group.getShortName();
+			if (name == null && "".equals(name)) {
+				name = group.getAbbrevation();
+				if (name == null && "".equals(name)) {
+					name = group.getPrimaryKey().toString();
+				}
+			}
+		}
+		return name;
+	}
+	
+	/**
+	 * Gets the base rdn (directory string) from the ldap server settings
+	 */
+	public String getRootDNString() {
+		String baseDN="";
+		try {
+			DirectoryString dn = getRootDN();
+			if(dn!=null){
+				baseDN = toString();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return baseDN;
 	}
 	
 }
