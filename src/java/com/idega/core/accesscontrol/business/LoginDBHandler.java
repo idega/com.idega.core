@@ -647,26 +647,25 @@ public class LoginDBHandler {
   public static void deleteLogin(LoginTable login){
     if(login != null){
       try {
-        LoginInfo li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(login.getID());
-        try {
-          int id = ((Integer)li.getPrimaryKey()).intValue();
-          java.util.Collection recs = ((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).findAllLoginRecords(id);
-          Iterator iter = recs.iterator();
-          com.idega.core.accesscontrol.data.LoginRecordHome lr = ((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class));
-          while (iter.hasNext()) {
-            lr.remove(iter.next());
-          }
-        } catch (RemoteException ex) {
-          ex.printStackTrace();
-        } catch (RemoveException exc) {
-          exc.printStackTrace();
-        } catch (FinderException e){
-          e.printStackTrace();
-          // assume login record does not exist for this login
+        int id = ((Integer)login.getPrimaryKey()).intValue();
+        LoginRecordHome lr = ((LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class));
+        java.util.Collection recs = lr.findAllLoginRecords(id);
+        Iterator iter = recs.iterator();
+        while (iter.hasNext()) {
+          ((LoginRecord)iter.next()).remove();
         }
+      } catch (RemoteException ex) {
+        ex.printStackTrace();
+      } catch (RemoveException exc) {
+        exc.printStackTrace();
+      } catch (FinderException e){
+        e.printStackTrace();
+        // assume login record does not exist for this login
+      }
 
+      try {
+        LoginInfo li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(login.getID());
         li.remove();
-
       } catch (RemoteException e) {
         e.printStackTrace();
       } catch (SQLException sql){
