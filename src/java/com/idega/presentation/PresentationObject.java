@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.125 2005/01/11 16:31:58 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.126 2005/01/19 10:19:33 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -69,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/01/11 16:31:58 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/01/19 10:19:33 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.125 $
+ * @version $Revision: 1.126 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -358,6 +358,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setStyleClass(String styleName)
 	{
 		setMarkupAttribute("class", styleName);
+	}
+	
+	public String getStyleClass(String styleName){
+		return getMarkupAttribute("class");
 	}
 	/**
 	 * Sets or adds to the style tag of this object <br><br>Preserves
