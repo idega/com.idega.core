@@ -13,14 +13,12 @@ package com.idega.transaction;
 
 
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.0
-
-*UNDER CONSTRUCTION
-
-*/
+ * Title:        idegaWeb Implementation of the JTA (javax.transaction) API
+ * Description:
+ * Copyright:    Copyright (c) 2002
+ * Company:      idega
+ * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ */
 
 import com.idega.util.*;
 

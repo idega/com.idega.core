@@ -1376,15 +1376,35 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
             */
 	}
 
-
-  public void ejbLoad()throws EJBException{
+  public synchronized void ejbLoad()throws EJBException{
     try{
-      Object pk = this.getPrimaryKey();
-      if(pk instanceof Integer){
-        findByPrimaryKey(((Integer)pk).intValue());
+      if(this.getEntityState()!=STATE_IN_SYNCH_WITH_DATASTORE){
+        Object pk = this.getPrimaryKey();
+        if(pk instanceof Integer){
+            findByPrimaryKey(((Integer)pk).intValue());
+        }
+        setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
       }
     }
     catch(SQLException e){
+      throw new EJBException(e.getMessage());
+    }
+  }
+
+
+  /**
+   * To speed up loading when the ResultSet is already constructed
+   */
+  public synchronized void preEjbLoad(ResultSet rs)throws EJBException{
+    try{
+      Object pk = this.getPrimaryKey();
+      if(rs!=null){
+        this.loadFromResultSet(rs);
+        setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+      }
+
+    }
+    catch(Exception e){
       throw new EJBException(e.getMessage());
     }
   }
@@ -1410,11 +1430,48 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
       ResultSet RS = Stmt.executeQuery(buffer.toString());
 
-
       //ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
-    //eiki added null check
+      //eiki added null check
       if (( RS==null) || !RS.next())
 	throw new SQLException("Record with id="+id+" not found");
+
+      loadFromResultSet(RS);
+
+      if( RS != null ) RS.close();
+
+    }
+    finally{
+      if(Stmt != null){
+	Stmt.close();
+      }
+      if (conn != null){
+	freeConnection(getDatasource(),conn);
+      }
+    }
+    setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+  }
+
+  private Object getPrimaryKeyFromResultSet(ResultSet rs)throws SQLException{
+    Object theReturn = null;
+    if(this.getPrimaryKeyClass()==Integer.class){
+      theReturn =  new Integer(rs.getInt(this.getIDColumnName()));
+    }
+    if(this.getPrimaryKeyClass()==String.class){
+      theReturn = rs.getString(this.getIDColumnName());
+    }
+    else{
+      /**
+       * @todo implement
+       */
+    }
+    if(rs.wasNull()){
+      return null;
+    }
+    return theReturn;
+  }
+
+
+  private void loadFromResultSet(ResultSet RS){
 
       String[] columnNames = getColumnNames();
       for (int i = 0; i < columnNames.length; i++){
@@ -1448,22 +1505,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
       }
-
-      if( RS != null ) RS.close();
-
-    }
-    finally{
-      if(Stmt != null){
-	Stmt.close();
-      }
-      if (conn != null){
-	freeConnection(getDatasource(),conn);
-      }
-    }
-    setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
   }
-
-
 
   public String getNameOfMiddleTable(IDOLegacyEntity entity1,IDOLegacyEntity entity2){
       return EntityControl.getNameOfMiddleTable(entity1,entity2);
@@ -1708,72 +1750,107 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public IDOLegacyEntity[] findAssociated(IDOLegacyEntity otherEntity)throws SQLException{
 		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAssociatedOrdered(IDOLegacyEntity otherEntity,String column_name)throws SQLException{
 		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"' order by "+column_name+"");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAll()throws SQLException{
 		return findAll("select * from "+getEntityName());
 	}
 
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllOrdered(String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName, String condition)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" "+condition+" '"+toFind+"' order by "+orderByColumnName);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" "+condition1+" '"+toFind1+"' and "+columnName2+" "+condition2+" '"+toFind2+"' order by "+orderByColumnName);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnDescendingOrdered(String columnName, String toFind, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName+" desc");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumnDescendingOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName+" desc");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllDescendingOrdered(String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName+" desc");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumn(String columnName, String toFind, String condition)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" "+condition+" '"+toFind+"'");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1, char condition1, String columnName2, String toFind2, char condition2)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" "+String.valueOf(condition1)+" '"+toFind1+"' and "+columnName2+" "+String.valueOf(condition2)+" '"+toFind2+"'");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumn(String columnName, String toFind)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"'");
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumn(String columnName, int toFind)throws SQLException{
 		return findAllByColumn(columnName,Integer.toString(toFind));
 	}
-
+        /**
+         * @deprecated
+         */
   public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
 	}
 
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
-
+        /**
+         * @deprecated
+         */
   public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
 		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" like '"+columnValue+"'");
 	}
@@ -1849,12 +1926,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	    return recordCount;
 	}
 
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAll(String SQLString)throws SQLException{
 	  //System.out.println(SQLString);
 	  return findAll(SQLString,-1);
 	}
-
+        /**
+         * @deprecated
+         */
 	public IDOLegacyEntity[] findAll(String SQLString,int returningNumberOfRecords)throws SQLException{
 	  //System.err.println("com.idega.data.GenericEntity.findAll(\""+SQLString+"\");");
 	/*
@@ -2929,9 +3010,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
 			while (RS.next()){
-              int id = RS.getInt(getIDColumnName());
-              if(!RS.wasNull()){
-                vector.addElement(new Integer(id));
+              //int id = RS.getInt(getIDColumnName());
+              Object pk = this.getPrimaryKeyFromResultSet(RS);
+              if(pk!=null){
+                //Integer pk = new Integer(id);
+                prefetchBeanFromResultSet(pk,RS);
+                vector.addElement(pk);
               }
               //vector.addElement(RS.(getIDColumnName()));
 			}
@@ -3109,5 +3193,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         }
       }
       return false;
+    }
+
+    private void prefetchBeanFromResultSet(Object pk,ResultSet rs){
+      try{
+        IDOContainer.getInstance().findByPrimaryKey(this.getInterfaceClass(),pk,rs,(IDOHome)this.getEJBHome());
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+
+    /**
+     * Meant to be overrided in subclasses, returns default Integer.class
+     */
+    protected Class getPrimaryKeyClass(){
+      return Integer.class;
+    }
+
+    private String[] getPrimaryKeyColumns(){
+      String s = getIDColumnName();
+      String[] theReturn = {s};
+      return theReturn;
     }
 }

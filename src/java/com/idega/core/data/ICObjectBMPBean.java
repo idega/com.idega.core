@@ -351,9 +351,14 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
 
         public Class getObjectClass()throws ClassNotFoundException{
-
-          return Class.forName(getClassName());
-
+          String className = getClassName();
+          if(className!=null){
+            return Class.forName(className);
+          }
+          else{
+            //throw new ClassNotFoundException("Class NULL not found");
+            return null;
+          }
         }
 
 

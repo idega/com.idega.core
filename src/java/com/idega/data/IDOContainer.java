@@ -90,7 +90,7 @@ public class IDOContainer {
     }
     catch(Exception e){
       e.printStackTrace();
-      throw new CreateException(e.getMessage());
+      throw new IDOCreateException(e);
     }
   }
 
@@ -100,10 +100,18 @@ public class IDOContainer {
     return entity;
   }
 
+  /**
+   * To find the data by a primary key (cached if appropriate), usually called by HomeImpl classes
+   */
+  public IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk,IDOHome home)throws javax.ejb.FinderException{
+    return findByPrimaryKey(entityInterfaceClass,pk,null,home);
+  }
 
-
-  public IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
-    try{
+  /**
+   * Workaround to speed up finders where the ResultSet is already created
+   */
+  IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk,java.sql.ResultSet rs,IDOHome home)throws javax.ejb.FinderException{
+      try{
       IDOEntity entity=null;
       IDOBeanCache cache = null;
       if(beanCachingActive(entityInterfaceClass)){
@@ -116,10 +124,13 @@ public class IDOContainer {
          *@todo
          */
          ((IDOEntityBean)entity).ejbFindByPrimaryKey(pk);
+         if(rs!=null){
+          ((GenericEntity)entity).preEjbLoad(rs);
+         }
          ((IDOEntityBean)entity).ejbLoad();
       }
-
-      if(queryCachingActive(entityInterfaceClass)){
+      ((IDOEntityBean)entity).setEJBHome(home);
+      if(this.beanCachingActive(entityInterfaceClass)){
         cache.putCachedEntity(pk,entity);
       }
       return entity;

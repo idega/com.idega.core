@@ -123,10 +123,9 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
   protected String getCreateUniqueIDQuery(IDOLegacyEntity entity){
-
-    return "insert into "+getSequenceTableName(entity)+" values(null)";
-
+    return "insert into "+getSequenceTableName(entity)+"("+entity.getIDColumnName()+") values(null)";
   }
+
 
 
 

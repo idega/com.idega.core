@@ -50,8 +50,7 @@ public abstract class IDOFactory implements IDOHome{
   }
 
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
-      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk);
-      ((IDOEntityBean)theReturn).setEJBHome(this);
+      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk,this);
       return theReturn;
 
     /*if(pk instanceof Integer){
@@ -100,12 +99,18 @@ public abstract class IDOFactory implements IDOHome{
   /**
    * @todo: implement
    */
-  public EJBMetaData getEJBMetaData(){return null;}
+  public EJBMetaData getEJBMetaData(){
+      /**@todo: Implement this javax.ejb.EJBHome method*/
+    throw new java.lang.UnsupportedOperationException("Method getEJBMetaData() not yet implemented.");
+  }
 
   /**
    * @todo: implement
    */
-  public HomeHandle getHomeHandle(){return null;}
+  public HomeHandle getHomeHandle(){
+      /**@todo: Implement this javax.ejb.EJBHome method*/
+    throw new java.lang.UnsupportedOperationException("Method getHomeHandle() not yet implemented.");
+  }
 
   /**
    * @todo: implement

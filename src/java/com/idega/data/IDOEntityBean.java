@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 /**
  * Title:        idegaclasses
  * Description:
- * Copyright:    Copyright (c) 2001
+ * Copyright:    Copyright (c) 2001-2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 0.5 UNFINISHED - UNDER DEVELOPMENT

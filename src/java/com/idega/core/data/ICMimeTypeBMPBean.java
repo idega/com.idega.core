@@ -106,4 +106,8 @@ public class ICMimeTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
     super.update();
     IWMainApplication.getIWCacheManager().cacheEntity(IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())) ,getMimeType());
   }
+
+  protected Class getPrimaryKeyClass(){
+      return String.class;
+  }
 }

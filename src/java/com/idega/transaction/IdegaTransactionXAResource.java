@@ -10,25 +10,20 @@
 
 package com.idega.transaction;
 
-
-
-/**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.0
-
-*UNIMPLEMENTED
-
-*/
-
 import com.idega.util.*;
-
 import javax.transaction.*;
-
 import javax.transaction.xa.*;
 
 
+/**
+ * Title:        idegaWeb Implementation of the JTA (javax.transaction) API
+ * Description:  UNIMPLEMENTED CLASS
+ * Copyright:    Copyright (c) 2002
+ * Company:      idega
+ * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.0
+ *UNIMPLEMENTED CLASS
+*/
 
 public class IdegaTransactionXAResource implements XAResource{
 

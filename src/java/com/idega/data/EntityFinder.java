@@ -184,6 +184,7 @@ public class EntityFinder{
         }
       }
       catch(FinderException fe){
+        fe.printStackTrace();
         throw new SQLException("EntityFinder.findAll(): "+fe.getMessage());
       }
     }

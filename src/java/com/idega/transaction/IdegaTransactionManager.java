@@ -29,13 +29,20 @@ import javax.transaction.xa.*;
 import com.idega.data.*;
 
 
+/**
+ * Title:        idegaWeb Implementation of the JTA (javax.transaction) API
+ * Description:
+ * Copyright:    Copyright (c) 2002
+ * Company:      idega
+ * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ */
+
 
 public class IdegaTransactionManager implements javax.transaction.TransactionManager{
 
 
 
-  private static String transaction_attribute_name = "idega_transaction";
-
+  static String transaction_attribute_name = "idega_transaction";
   private static String transaction_syncronization_attribute_name = "idega_transaction_synchronization";
 
   private static int transaction_timeout = 1000;
@@ -86,42 +93,55 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
    */
 
- public void begin()throws NotSupportedException,
-
-                  SystemException{
-
+ public void begin()throws NotSupportedException,SystemException{
   boolean transactionAlreadyBegun=false;
-
+  Transaction trans=null;
   try{
-
-    Transaction trans = getTransaction();
-
+    trans = getTransaction();
     if(trans!=null){
-
       transactionAlreadyBegun=true;
-
     }
-
   }
-
   catch(Exception ex){
-
-
-
   }
-
-  if(transactionAlreadyBegun){
-
+  /*if(transactionAlreadyBegun){
       throw new NotSupportedException("Transaction already begun, nested transactions not currently supported");
-
+  }*/
+  if(trans==null){
+    trans = new IdegaTransaction(this.datasource);
   }
-
-  Transaction trans = new IdegaTransaction(this.datasource);
-
+  begin(trans);
   //trans.registerSynchronization(new IdegaTransactionSynchronization());
+  //ThreadContext.getInstance().setAttribute(Thread.currentThread(),transaction_attribute_name,trans);
+ }
 
-  ThreadContext.getInstance().setAttribute(Thread.currentThread(),transaction_attribute_name,trans);
+ public void begin(Transaction trans)throws NotSupportedException,SystemException{
+  /*boolean transactionAlreadyBegun=false;
+  boolean startingValidUnderTransaction=true;
+  Transaction trans2=null;
+  try{
+    trans2 = getTransaction();
+    if(trans2!=null){
+      transactionAlreadyBegun=true;
+    }
+  }
+  catch(Exception ex){
+  }*/
+  /*if(transactionAlreadyBegun){
+    if(trans2.equals(trans)){
+      ((IdegaTransaction)trans2).beginSubTransaction();
+    }
+    else{
+      throw new NotSupportedException("Nested transaction is invalid (does not equal to the supertransaction)");
+    }
+      //throw new NotSupportedException("Transaction already begun, nested transactions not currently supported");
+  }
+  else{
+    //Transaction trans = new IdegaTransaction(this.datasource);
+    //trans.registerSynchronization(new IdegaTransactionSynchronization());
 
+  }*/
+  ((UserTransaction)trans).begin();
  }
 
 
@@ -133,65 +153,38 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
    */
 
  public void commit()throws RollbackException,
-
                    HeuristicMixedException,
-
                    HeuristicRollbackException,
-
                    java.lang.SecurityException,
-
                    java.lang.IllegalStateException,
-
                    SystemException{
-
   Transaction transaction = getTransaction();
-
-  try{
-
-    transaction.commit();
-
-    endTransaction((IdegaTransaction)transaction);
-
-  }
-
-  catch(RollbackException e){
-
-    endTransaction((IdegaTransaction)transaction);
-
-    throw (RollbackException)e.fillInStackTrace();
-
-  }
-
+  transaction.commit();
  }
 
 
 
  public int getStatus() throws SystemException{
-
   return getTransaction().getStatus();
-
  }
 
 
 
  /**
 
-  * Returns the current Transaction, must be constructed with begin() first
-
+  * Returns the current Transaction,
+  * If no transaction has been begun, it creates a new (unassigned) Transaction object
   */
-
  public Transaction getTransaction() throws SystemException{
-
     Transaction trans = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),transaction_attribute_name);
-
     if(trans==null){
-
-      throw new SystemException("Transaction not set");
-
+      /**
+       * Changed -- The transactionManager now creates a new (empty) transaction
+       */
+      //throw new SystemException("Transaction not set");
+      trans =  new IdegaTransaction(this.datasource);
     }
-
     return trans;
-
   }
 
 
@@ -223,17 +216,10 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
    */
 
  public void rollback()throws java.lang.IllegalStateException,
-
                      java.lang.SecurityException,
-
                      SystemException{
-
   Transaction transaction = getTransaction();
-
   transaction.rollback();
-
-  endTransaction((IdegaTransaction)transaction);
-
  }
 
 
@@ -289,73 +275,37 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
  */
 
  public boolean hasCurrentThreadBoundTransaction(){
-
   /*try{
-
     Transaction trans = getTransaction();
-
   }
-
   catch(SystemException ex){
-
     return false;
-
   }
-
   return true;*/
-
   Transaction obj=null;
-
   try{
-
     obj = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),transaction_attribute_name);
-
     if(obj==null){
-
       return false;
-
     }
-
     else{
-
       return true;
-
     }
-
   }
-
   catch(Exception ex){
-
     return false;
-
   }
-
-
-
  }
 
 
-
-
-
   private void endTransaction(IdegaTransaction transaction){
-
       transaction.end();
-
-      ThreadContext.getInstance().removeAttribute(Thread.currentThread(),transaction_attribute_name);
-
   }
 
 
-
-
-
   public void setEntity(IDOLegacyEntity entity){
-
     this._entity=entity;
-
     this.datasource=entity.getDatasource();
-
   }
 
 }
