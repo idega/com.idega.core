@@ -4,8 +4,8 @@
 package com.idega.presentation.ui;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -45,8 +45,8 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		
 		addElementsToPrimary();
 		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'), -1);");
-		getSecondaryDropdown().addMenuElement(-1,"");
-		getSecondaryDropdown().setSelectedElement(-1);
+		//getSecondaryDropdown().addMenuElement(-1,"");
+		//getSecondaryDropdown().setSelectedElement(-1);
 
 		Table table = new Table();
 		table.setCellpadding(0);
@@ -118,10 +118,13 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		s.append("inputToChange.options.length = 0;").append("\n\n\t");
 		s.append("var array = dropdownValues[chosen];").append("\n\t");
 		s.append("for (var a=0; a < array.length; a++)").append("{\n\t\t");
-		s.append("inputToChange.options[inputToChange.options.length] = array[a];").append("\n\t\t");
-		s.append("var option = inputToChange.options[inputToChange.options.length - 1];").append("\n\t\t");
-		s.append("if (option == selected)").append("\n\t\t\t");
-		s.append("option.selected = 'true';").append("\n\t");
+		s.append("var index = inputToChange.options.length;").append("\n\t\t");
+		s.append("inputToChange.options[index] = array[a];").append("\n\t\t");
+		s.append("var option = inputToChange.options[index];").append("\n\t\t");
+		s.append("if (option.value == selected)").append("\n\t\t\t");
+		s.append("option.selected = true;").append("\n\t\t");
+		s.append("else").append("\n\t\t\t");
+		s.append("option.selected = false;").append("\n\t");
 		s.append("}").append("\n").append("}");
 
 		return s.toString();
@@ -131,14 +134,14 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		if (_primaryCollection == null)
 			_primaryCollection = new Vector();
 		if (_secondaryMap == null)
-			_secondaryMap = new HashMap();
+			_secondaryMap = new LinkedHashMap();
 		
 		_primaryCollection.add(new SelectOption(name, value));
 		_secondaryMap.put(value, values);
 	}
 	
 	public void addEmptyElement(String primaryDisplayString, String secondaryDisplayString) {
-		Map map = new HashMap();
+		Map map = new LinkedHashMap();
 		map.put("-1", secondaryDisplayString);
 		addMenuElement("-1", primaryDisplayString, map);
 	}
