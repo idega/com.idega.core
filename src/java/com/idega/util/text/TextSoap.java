@@ -322,6 +322,53 @@ public class TextSoap {
 		return returnString;
 	}
 
+	public static String findAndReplace(String text, String stringToFind, String[] stringsAfterFindString, String stringToReplaceIfNoneOfAfterStringsArePresent) {
+		StringBuffer buf = new StringBuffer("");
+		String returnString;
+		String replaceString;
+
+		if (stringToFind != null && !stringToFind.equals("")) {
+			int index = text.indexOf(stringToFind);
+			int index2 = 0;
+			int length = stringToFind.length();
+			while (index != -1) {
+				replaceString = stringToFind;
+				buf.append(text.substring(index2, index)); //paste from last index or beginning
+				index2 = index + length;
+				try {
+					boolean afterStringFound = false;
+					if(stringsAfterFindString!=null) {
+						for(int i=0; i<stringsAfterFindString.length && !afterStringFound; i++) {
+							String afterStr = stringsAfterFindString[i];
+							int length2 = afterStr.length();
+							if(text.substring(index2, index2 + length2).equals(afterStr)) {
+								afterStringFound = true;
+							}
+						}
+					}
+					if (!afterStringFound) {
+						replaceString = stringToReplaceIfNoneOfAfterStringsArePresent;
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				buf.append(replaceString);
+				index = text.indexOf(stringToFind, index2);
+				if (index == -1) { //paste the last remaining part
+					buf.append(text.substring(index2, text.length()));
+				}
+			}
+		}
+		returnString = buf.toString();
+		if (returnString.equals("")) {
+			returnString = text;
+		}
+		return returnString;
+	}
+	
+	
+	
 	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringToReplaceIfstringAfterFindStringMatches, String stringToReplace) {
 		// Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT

@@ -315,9 +315,10 @@ public class PageIncluder extends PresentationObject implements Index{
     String prefixHttp= tag+httpPrefix;
     String prefixHttps= tag+httpsPrefix;
 
-    html = TextSoap.findAndReplace(html,tag+"//",tag+BASEURL);// the // case
-    html = TextSoap.findAndReplace(html,tag+"/",tag+BASEURL);
-    html = TextSoap.findAndReplace(html,tag,"http",tag+RELATIVEURL);//does not work for other protocols :(
+    html = TextSoap.findAndReplace(html,tag+"//", tag+BASEURL);// the // case
+    html = TextSoap.findAndReplace(html,tag+"/", tag+BASEURL);
+    String[] unchangedUrlsPrefixes = new String[] {"http:", "ftp:", "mailto:"}; // prefixes of urls not to modify, add as needed
+    html = TextSoap.findAndReplace(html,tag, unchangedUrlsPrefixes,tag+RELATIVEURL);
 
     //System.out.println("tag+BASEURL"+tag+BASEURL);
     //System.out.println("tag+RELATIVEURL"+tag+RELATIVEURL);
