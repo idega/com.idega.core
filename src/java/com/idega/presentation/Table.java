@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.44 2003/08/07 19:00:33 laddi Exp $
+ * $Id: Table.java,v 1.45 2003/09/17 12:31:19 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -474,6 +474,38 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setCellpadding(int column, int row, String padding) {
 		setStyle(column, row, "padding", padding);
+	}
+	
+	public void setCellpaddingLeft(int column, int row, int padding) {
+		setCellpaddingLeft(column, row, String.valueOf(padding));
+	}
+	
+	public void setCellpaddingLeft(int column, int row, String padding) {
+		setStyle(column, row, "padding-left", padding);
+	}
+	
+	public void setCellpaddingRight(int column, int row, int padding) {
+		setCellpaddingRight(column, row, String.valueOf(padding));
+	}
+	
+	public void setCellpaddingRight(int column, int row, String padding) {
+		setStyle(column, row, "padding-right", padding);
+	}
+	
+	public void setCellpaddingTop(int column, int row, int padding) {
+		setCellpaddingTop(column, row, String.valueOf(padding));
+	}
+	
+	public void setCellpaddingTop(int column, int row, String padding) {
+		setStyle(column, row, "padding-top", padding);
+	}
+	
+	public void setCellpaddingBottom(int column, int row, int padding) {
+		setCellpaddingBottom(column, row, String.valueOf(padding));
+	}
+	
+	public void setCellpaddingBottom(int column, int row, String padding) {
+		setStyle(column, row, "padding-bottom", padding);
 	}
 	
 	public void setCellpaddingAndCellspacing(int i) {
