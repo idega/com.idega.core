@@ -26,6 +26,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	private Table baseTable;
 
 	private Vector columns;
+	private Vector leftJoins;
 	private Vector criteria;
 	private Vector order;
 	private Vector groupBy;
@@ -36,6 +37,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
 		columns = new Vector();
+		leftJoins = new Vector();
 		criteria = new Vector();
 		order = new Vector();
 		groupBy = new Vector();
@@ -274,7 +276,18 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 		// Determine all tables used in query
 		out.indent();
-		appendList(out, findAllUsedTables(), ",");
+		if(leftJoins.isEmpty()){
+			appendList(out,findAllUsedTables(), ",");
+		} else {
+			Vector v = new Vector();
+			v.addAll( findAllUsedTables());
+			for (Iterator iter = leftJoins.iterator(); iter.hasNext();) {
+				LeftJoin join = (LeftJoin) iter.next();
+				v.removeAll(join.getTables());
+				v.add(join);
+			}
+			appendList(out,v, ",");
+		}
 		out.unindent();
 
 		// Add criteria
@@ -417,6 +430,11 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 				obj.columns.setSize(this.columns.size());
 				Collections.copy(obj.columns,this.columns);
 			}
+			obj.leftJoins = new Vector();
+			if(this.leftJoins.size()>0){
+				obj.leftJoins.setSize(this.leftJoins.size());
+				Collections.copy(obj.leftJoins,this.leftJoins);
+			}
 			obj.criteria = new Vector();
 			if(this.criteria.size()>0){
 				obj.criteria.setSize(this.criteria.size());
@@ -457,4 +475,19 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
     public boolean isFlagged() {
         return this.flag;
     }
+
+	/**
+	 * @param resultTable
+	 * @param columnName
+	 * @param table
+	 * @param columnName2
+	 */
+	public void addLeftJoin(Table table1, String columnName1, Table table2, String columnName2) {
+		addLeftJoin(new LeftJoin(table1.getColumn(columnName1), table2.getColumn(columnName2)));
+	}
+
+
+	public void addLeftJoin(LeftJoin join) {
+		leftJoins.add(join);
+	}
 }

@@ -7,8 +7,8 @@ import com.idega.data.IDOEntityField;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOPrimaryKeyDefinition;
-import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.Output;
+import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.ToStringer;
 
 /**
@@ -19,6 +19,7 @@ public class Table implements Outputable {
 	private String name;
 
 	private String alias=null;
+	private Outputable query = null;
 	
 	private String primaryKeyColumnName;
 	private String[] primaryKeyColumnNames;
@@ -32,6 +33,12 @@ public class Table implements Outputable {
 
 	public Table(String name, String alias) {
 		this.name = name;
+		this.alias = alias;
+	}
+	
+	public Table(Outputable query, String alias){
+		this.query = query;
+		this.name = "("+query+")";
 		this.alias = alias;
 	}
 
