@@ -24,6 +24,7 @@ public class ConnectionPool
    private int timeOut;
    private LogWriter logWriter;
 
+
    //private long lastRefresh;
    private final long refreshIntervalMillis=1000000;
    private ConnectionRefresher refresher;
@@ -65,7 +66,7 @@ public class ConnectionPool
 
    protected synchronized void refresh(){
       int size = freeConnections.size();
-      int conns = this.checkedOut+this.freeConnections.size();
+      int conns = getCurrentConnectionCount();
       for(int i=0;i < conns;i++){
           try{
             Connection conn = getConnection();
@@ -236,6 +237,7 @@ public class ConnectionPool
       else if (maxConns == 0 || checkedOut < maxConns)
       {
          conn = newConnection();
+
       }
       return conn;
    }
@@ -288,8 +290,8 @@ public class ConnectionPool
 
    }
 
-//	debug
-//   private String getStats() {
+//  debug
+//  private String getStats() {
 public String getStats(){
       return "Total connections: " +
          (freeConnections.size() + checkedOut) +
@@ -323,9 +325,154 @@ public String getPassword(){
     }
  }
 
+ /**
+  * Trims the pool so that it has only size number of connections
+  */
+ public void trimTo(int size,int minSize,int maxSize){
+
+    setTimeOut(3*getTimeOut());
+
+    if(size>maxSize){
+      size=maxSize;
+    }
+    if(size<minSize){
+      size=minSize;
+    }
+
+    Vector connections = new Vector();
+    try{
+      int dummy=0;
+      while(this.maxConns>dummy){
+            connections.add(getConnection());
+            dummy++;
+            //System.out.println("dummy="+dummy+",maxConns="+this.maxConns);
+      }
+    }
+    catch(Exception ex){
+      System.out.println("Exception in"+this.getClass().getName());
+      ex.printStackTrace();
+    }
+
+    try{
+      this.checkedOut=size;
+      this.minConns=minSize;
+      this.maxConns=maxSize;
+
+      for (int i = 0; i < size; i++) {
+        Connection conn = (Connection)connections.get(0);
+        connections.remove(0);
+        connections.trimToSize();
+        this.freeConnection(conn);
+      }
+      Iterator iter = connections.iterator();
+      while (iter.hasNext()) {
+        Connection item = (Connection)iter.next();
+        item.close();
+        System.out.print("Closing database connection");
+      }
+
+    }
+    catch(Exception ex){
+      System.out.println("Exception in"+this.getClass().getName());
+      ex.printStackTrace();
+    }
+
+    setTimeOut((int)getTimeOut()/3);
+
+ }
+
+ /**
+  * Enlarges the pool so it has size number of connections
+  */
+ public void enlargeTo(int size,int minSize,int maxSize){
+
+      setTimeOut(getTimeOut()*3);
+
+
+    if(size>maxSize){
+      size=maxSize;
+    }
+    if(size<minSize){
+      size=minSize;
+    }
+
+    Vector connections = new Vector();
+
+    try{
+      int dummy=0;
+      while(this.maxConns>dummy){
+            connections.add(getConnection());
+            dummy++;
+      }
+    }
+    catch(Exception ex){
+      ex.printStackTrace();
+    }
+
+    int currentconns = connections.size();
+    if(currentconns<size){
+      int difference = size-currentconns;
+      for (int i = 0; i < difference; i++) {
+        try{
+          Connection conn = newConnection();
+          connections.add(conn);
+        }
+        catch(Exception ex){
+          ex.printStackTrace();
+        }
+
+      }
+    }
+
+    try{
+      this.minConns=minSize;
+      this.maxConns=maxSize;
+      this.checkedOut=size;
+      for (int i = 0; i < size; i++) {
+        Connection conn = (Connection)connections.get(0);
+        connections.remove(0);
+        connections.trimToSize();
+        this.freeConnection(conn);
+      }
+      Iterator iter = connections.iterator();
+      while (iter.hasNext()) {
+        Connection item = (Connection)iter.next();
+        item.close();
+        System.out.print("Closing database connection");
+      }
+
+    }
+    catch(Exception ex){
+        ex.printStackTrace();
+    }
+
+    setTimeOut((int)getTimeOut()/3);
+
+ }
 
  public DatastoreConnection getDatastoreConnection()throws SQLException{
     return (DatastoreConnection) getConnection();
+ }
+
+ public int getCurrentConnectionCount(){
+  //return this.currentConns;
+  return freeConnections.size() + checkedOut;
+ }
+
+ public int getMaximumConnectionCount(){
+  return this.maxConns;
+ }
+
+ public int getMinimumConnectionCount(){
+  return this.minConns;
+ }
+
+ public void setTimeOut(int timeout){
+  this.timeOut=timeout;
+ }
+
+ public int getTimeOut(){
+  return this.timeOut;
  }
 
 }

@@ -422,4 +422,86 @@ public class PoolManager
         return pool.recycleConnection(conn);
      }
 
+ /**
+  * Trims the pool so that it has only size connections
+  */
+ public void trimTo(String datasourceName, int size){
+           trimTo(datasourceName,size,size,size);
+ }
+
+ /**
+  * Trims the pool so that it has only size,minSize,maxSize connections
+  */
+ public void trimTo(String datasourceName, int size,int minSize,int maxSize){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           pool.trimTo(size,minSize,maxSize);
+      }
+ }
+
+ /**
+  * Enlarges the pool so it has size number of connections
+  */
+ public void enlargeTo(String datasourceName, int size){
+           this.enlargeTo(datasourceName,size,size,size);
+ }
+
+ /**
+  * Enlarges the pool so it has size number of connections
+  */
+ public void enlargeTo(String datasourceName, int size,int minSize,int maxSize){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           pool.enlargeTo(size,minSize,maxSize);
+      }
+ }
+
+  public int getCurrentConnectionCount(String datasourceName){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           return pool.getCurrentConnectionCount();
+      }
+      return 0;
+  }
+
+ public int getMaximumConnectionCount(String datasourceName){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           return pool.getMaximumConnectionCount();
+      }
+      return 0;
+  }
+
+ public int getMinimumConnectionCount(String datasourceName){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           return pool.getMinimumConnectionCount();
+      }
+      return 0;
+  }
+
+ public int getTimeOut(String datasourceName){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+           return pool.getTimeOut();
+      }
+      return 0;
+  }
+
+ public void setTimeOut(String datasourceName,int timeout){
+      ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+      if (pool != null)
+      {
+          pool.setTimeOut(timeout);
+      }
+
+  }
+
+
 }

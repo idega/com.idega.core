@@ -19,18 +19,29 @@ public class HashtableDoubleKeyed{
 
    private Hashtable table;
 
+   private HashtableMultivalued tableForKeys;
+
 
    public HashtableDoubleKeyed(){
       table = new Hashtable();
+      tableForKeys=new HashtableMultivalued();
    }
 
    public Object put(String key1,String key2,Object value){
+      tableForKeys.put(key1,value);
+      tableForKeys.put(key2,value);
       return table.put(StringHandler.concatAlphabetically(key1,key2),value);
    }
 
-
    public Object get(String key1,String key2){
       return table.get(StringHandler.concatAlphabetically(key1,key2));
+  }
+
+  /**
+   * Returns a list of objects put for this key
+   */
+  public List get(String key){
+      return tableForKeys.getList(key);
   }
 
 

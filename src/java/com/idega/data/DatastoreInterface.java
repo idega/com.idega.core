@@ -14,6 +14,11 @@ import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 import java.io.*;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import com.idega.transaction.IdegaTransactionManager;
+import javax.transaction.NotSupportedException;
+import com.idega.util.ThreadContext;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -22,6 +27,7 @@ import java.io.*;
 public abstract class DatastoreInterface{
 
   private static Hashtable interfacesHashtable;
+  private static String recordCreationKey="datastoreinterface_entity_record_creation";
 
   public static DatastoreInterface getInstance(String datastoreType){
     DatastoreInterface theReturn = null;
@@ -140,28 +146,118 @@ public abstract class DatastoreInterface{
   public abstract String getSQLType(String javaClassName,int maxlength);
 
 
-  public void createEntityRecord(GenericEntity entity)throws Exception{
-		Connection conn= null;
-		Statement Stmt= null;
-		try{
-			conn = entity.getConnection();
-			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate(getCreationStatement(entity));
+  public void createTable(GenericEntity entity)throws Exception{
+    //if(!doesTableExist(entity,entity.getTableName())){
+      executeUpdate(entity,getCreationStatement(entity));
+    //}
+  }
 
-		}
-                /*catch(SQLException ex){
-                  System.out.println("There was an error in DatastoreInterface.createEntityRecord(GenericEntity entity): "+ex.getMessage());
-                }*/
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				entity.freeConnection(conn);
-			}
-		}
-      createTrigger(entity);
-      createForeignKeys(entity);
+
+  public boolean doesTableExist(GenericEntity entity,String tableName){
+    boolean theReturner=true;
+    try{
+        executeQuery(entity,"select * from "+tableName);
+    }
+    catch(Exception se){
+      //String message = se.getMessage();
+      //if(message.toLowerCase().indexOf("table")!=-1){
+        theReturner=false;
+      //}
+      //else{
+      //  se.printStackTrace();
+      //}
+    }
+
+    return theReturner;
+  }
+
+  public void executeBeforeCreateEntityRecord(GenericEntity entity)throws Exception{
+  }
+
+  public void executeAfterCreateEntityRecord(GenericEntity entity)throws Exception{
+  }
+
+  public void createEntityRecord(GenericEntity entity)throws Exception{
+      System.out.println("Trying to create record for "+entity.getClass().getName()+" tablename: "+entity.getTableName());
+
+      if(!doesTableExist(entity,entity.getTableName())){
+
+          TransactionManager trans=null;
+          boolean canCommit=false;
+
+            trans = com.idega.transaction.IdegaTransactionManager.getInstance();
+            if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
+              executeBeforeCreateEntityRecord(entity);
+              trans.begin();
+              canCommit=true;
+            }
+            else{
+              canCommit=false;
+            }
+
+            try{
+                List alreadyInCreation=(List)ThreadContext.getInstance().getAttribute(recordCreationKey);
+                if(alreadyInCreation==null){
+                  alreadyInCreation=new Vector();
+                  ThreadContext.getInstance().setAttribute(recordCreationKey,alreadyInCreation);
+                }
+
+
+                if(alreadyInCreation.contains(entity.getClass().getName())){
+                  //try{
+                   if(!this.doesTableExist(entity,entity.getTableName())){
+                      createTable(entity);
+                      createTrigger(entity);
+                      createForeignKeys(entity);
+                      createMiddleTables(entity);
+                      entity.insertStartData();
+                  }
+                  //}
+                  //catch(Exception ex){
+
+                  //}
+                }
+                else{
+                  alreadyInCreation.add(entity.getClass().getName());
+                  createRefrencedTables(entity);
+                  if(!this.doesTableExist(entity,entity.getTableName())){
+                    createTable(entity);
+                    createTrigger(entity);
+                    createForeignKeys(entity);
+                    createMiddleTables(entity);
+                    entity.insertStartData();
+                  }
+                }
+
+
+
+
+            if(canCommit){
+              trans.commit();
+              ThreadContext.getInstance().removeAttribute(recordCreationKey);
+              executeAfterCreateEntityRecord(entity);
+              //ThreadContext.getInstance().releaseThread(Thread.currentThread());
+
+            }
+        }
+        catch(Exception ex){
+          if(canCommit){
+            trans.rollback();
+            //ThreadContext.getInstance().releaseThread(Thread.currentThread());
+            ThreadContext.getInstance().removeAttribute(recordCreationKey);
+
+            System.out.println();
+            System.err.println("Exception and rollback for: "+entity.getClass().getName());
+            System.out.println();
+            ex.printStackTrace();
+
+            executeAfterCreateEntityRecord(entity);
+          }
+          else{
+            throw (Exception)ex.fillInStackTrace();
+          }
+        }
+      }
   }
 
 
@@ -192,13 +288,15 @@ public abstract class DatastoreInterface{
                     if (entity.isPrimaryKey(names[i])){
                       returnString = 	returnString + " PRIMARY KEY";
                     }
-
+                    if (entity.getIfUnique(names[i])){
+                      returnString = 	returnString + " UNIQUE";
+                    }
                     if (i!=names.length-1){
                       returnString = returnString+",";
                     }
 		}
                 returnString = returnString +")";
-                System.out.println(returnString);
+                //System.out.println(returnString);
 		return returnString;
 }
 
@@ -225,12 +323,219 @@ public abstract class DatastoreInterface{
 		}
   }
 
+  public void createRefrencedTables(GenericEntity entity)throws Exception{
+      /*String[] names = entity.getColumnNames();
+      for (int i = 0; i < names.length; i++) {
+        String relationShipClass = entity.getRelationShipClassName(names[i]);
+        if (!relationShipClass.equals("")) {
+          try{
+            GenericEntity relationShipEntity = (GenericEntity)Class.forName(relationShipClass).newInstance();
+            createEntityRecord(relationShipEntity);
+          }
+          catch(Exception ex){
+            ex.printStackTrace();
+          }
+        }
+      }*/
+      List list = getRelatedEntityClasses(entity);
+      Iterator iter = list.iterator();
+      while (iter.hasNext()) {
+        String className = (String)iter.next();
+          //try{
+            GenericEntity relationShipEntity = (GenericEntity)Class.forName(className).newInstance();
+            createEntityRecord(relationShipEntity);
+          //}
+          //catch(Exception ex){
+          //  ex.printStackTrace();
+          //}
+      }
+  }
 
+  /**
+   * Gets the entities that are related by  one-to many and many-to-many relationships
+   * Returns a List of Strings
+   */
+  private List getRelatedEntityClasses(GenericEntity entity){
+      List returnNames = new Vector();
+      String[] names = entity.getColumnNames();
+      for (int i = 0; i < names.length; i++) {
+        String relationShipClass = entity.getRelationShipClassName(names[i]);
+        if (!relationShipClass.equals("")) {
+          try{
+            returnNames.add(relationShipClass);
+          }
+          catch(Exception ex){
+            ex.printStackTrace();
+          }
+        }
+      }
+      returnNames.addAll(getManyToManyRelatedEntityClasses(entity));
+      return returnNames;
 
-	public abstract void createTrigger(GenericEntity entity)throws Exception;
+  }
 
-	public abstract void createForeignKeys(GenericEntity entity)throws Exception;
+  /**
+   * Gets the entities that are related by many-to-many relationships
+   * Returns a List of Strings
+   */
+  private List getManyToManyRelatedEntityClasses(GenericEntity entity){
+      List list = new Vector();
+      List classList = EntityControl.getManyToManyRelationShipClasses(entity);
+      if(classList!=null){
+        Iterator iter = classList.iterator();
+        while (iter.hasNext()) {
+          Class item = (Class)iter.next();
+          String className = item.getName();
+          list.add(className);
+        }
+      }
+      return list;
+  }
 
+  public void createMiddleTables(GenericEntity entity)throws Exception{
+
+    List classList = EntityControl.getManyToManyRelationShipClasses(entity);
+    List tableList = EntityControl.getManyToManyRelationShipTables(entity);
+
+    /*
+    if(classList==null){
+      System.out.println("classList==null for "+entity.getClass().getName());
+    }
+    if(tableList==null){
+      System.out.println("tableList==null for "+entity.getClass().getName());
+    }*/
+
+    if(classList!=null && tableList!=null){
+      //System.out.println("inside 1 for "+entity.getClass().getName());
+      Iterator iter = classList.iterator();
+      Iterator iter2 = tableList.iterator();
+      while (iter.hasNext() && iter2.hasNext()) {
+        //System.out.println("inside 2 for "+entity.getClass().getName());
+        Class item = (Class)iter.next();
+        String tableName = (String)iter2.next();
+        GenericEntity relatingEntity = null;
+        try{
+        relatingEntity = (GenericEntity)item.newInstance();
+        }
+        catch(Exception ex){
+          System.err.println("Failed creating middle-table: "+tableName);
+          ex.printStackTrace();
+        }
+
+          if(!this.doesTableExist(entity,tableName)){
+            String creationStatement = "CREATE TABLE "+tableName+" ( "+entity.getIDColumnName() + " INTEGER NOT NULL,"+relatingEntity.getIDColumnName() + " INTEGER NOT NULL , PRIMARY KEY("+entity.getIDColumnName() + "," + relatingEntity.getIDColumnName() +") )";
+            executeUpdate(entity,creationStatement);
+            createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getTableName());
+            createForeignKey(entity,tableName,relatingEntity.getIDColumnName(),relatingEntity.getTableName());
+          }
+        //}
+        //catch(Exception ex){
+        //  System.err.println("Failed creating middle-table: "+tableName);
+        //  ex.printStackTrace();
+        //}
+      }
+    }
+
+  }
+
+  public abstract void createTrigger(GenericEntity entity)throws Exception;
+
+  //public abstract void createForeignKeys(GenericEntity entity)throws Exception;
+
+  public void createForeignKeys(GenericEntity entity) throws Exception {
+    /*Connection conn = null;
+    Statement Stmt = null;
+    try {
+      conn = entity.getConnection();
+      conn.commit();
+
+      String[] names = entity.getColumnNames();
+      for (int i = 0; i < names.length; i++) {
+        if (!entity.getRelationShipClassName(names[i]).equals("")) {
+          Stmt = conn.createStatement();
+          int n = Stmt.executeUpdate("ALTER TABLE " + entity.getTableName() + " ADD FOREIGN KEY (" + names[i] + ") REFERENCES " + ((GenericEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName() + " ");
+          if (Stmt != null) {
+            Stmt.close();
+          }
+        }
+      }
+    }
+    finally {
+      if (Stmt != null) {
+        Stmt.close();
+      }
+      if (conn != null) {
+        entity.freeConnection(conn);
+      }
+    }*/
+    String[] names = entity.getColumnNames();
+    for (int i = 0; i < names.length; i++) {
+        //try{
+          if (!entity.getRelationShipClassName(names[i]).equals("")) {
+            String table1=entity.getTableName();
+            String table2=((GenericEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName();
+            String columnName = names[i];
+            createForeignKey(entity,table1,columnName,table2);
+          }
+        //}
+        //catch(Exception ex){
+        //  ex.printStackTrace();
+        //}
+    }
+  }
+
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName)throws Exception{
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName;
+      executeUpdate(entity,SQLCommand);
+  }
+
+  protected Object executeQuery(GenericEntity entity,String SQLCommand)throws Exception{
+      Connection conn = null;
+      Statement Stmt = null;
+      Object theReturn = null;
+      try{
+        conn = entity.getConnection();
+
+        //conn.commit();
+        Stmt = conn.createStatement();
+        System.out.println(SQLCommand);
+        Stmt.executeQuery(SQLCommand);
+      }
+      finally {
+      if (Stmt != null) {
+        Stmt.close();
+      }
+      if (conn != null) {
+        entity.freeConnection(conn);
+      }
+      }
+      return theReturn;
+
+  }
+
+  protected int executeUpdate(GenericEntity entity,String SQLCommand)throws Exception{
+      Connection conn = null;
+      Statement Stmt = null;
+      int theReturn = 0;
+      try{
+        conn = entity.getConnection();
+
+        //conn.commit();
+        Stmt = conn.createStatement();
+        System.out.println(SQLCommand);
+        theReturn= Stmt.executeUpdate(SQLCommand);
+      }
+      finally {
+      if (Stmt != null) {
+        Stmt.close();
+      }
+      if (conn != null) {
+        entity.freeConnection(conn);
+      }
+      }
+      return theReturn;
+
+  }
 
 
 	/*public void populateBlob(BlobWrapper blob){
@@ -305,21 +610,21 @@ public abstract class DatastoreInterface{
 
   public void insert(GenericEntity entity)throws Exception{
 
-    this.executeBeforeInsert(entity);
+        this.executeBeforeInsert(entity);
 
-    Connection conn= null;
+                Connection conn= null;
 		//Statement Stmt= null;
 		PreparedStatement Stmt = null;
 		ResultSet RS = null;
 		try{
-			conn = entity.getConnection();
-      //Stmt = conn.createStatement();
-      //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
-      String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
-      //System.out.println(statement);
-      Stmt = conn.prepareStatement (statement);
-      setForPreparedStatement(Stmt,entity);
-      Stmt.execute();
+                  conn = entity.getConnection();
+                  //Stmt = conn.createStatement();
+                  //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
+                  String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+                  System.out.println(statement);
+                  Stmt = conn.prepareStatement (statement);
+                  setForPreparedStatement(Stmt,entity);
+                  Stmt.execute();
 		}
 		finally{
 			if (RS != null){
@@ -332,8 +637,8 @@ public abstract class DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
-    this.executeAfterInsert(entity);
-	}
+            this.executeAfterInsert(entity);
+        }
 
 	/**
 	**Creates a unique ID for the ID column
@@ -346,7 +651,7 @@ public abstract class DatastoreInterface{
 		try{
 
 			conn = entity.getConnection();
-			String datastoreType=DatastoreInterface.getDataStoreType(conn);
+			//String datastoreType=DatastoreInterface.getDataStoreType(conn);
 
 			/*if (datastoreType.equals("interbase")){
 				stmt = conn.createStatement();
@@ -505,6 +810,7 @@ public abstract class DatastoreInterface{
 		ResultSet RS = null;
 		try {
       String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+      System.out.println(statement);
       Stmt = conn.prepareStatement (statement);
       setForPreparedStatement(Stmt,entity);
       Stmt.execute();

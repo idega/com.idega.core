@@ -32,6 +32,8 @@ private int maxLength;
 private boolean nullable=true;
 private String attributeType;
 private boolean isPrimaryKey=false;
+private boolean isUnique=false;
+
 public static int TYPE_JAVA_LANG_INTEGER=1;
 public static int TYPE_JAVA_LANG_STRING=2;
 public static int TYPE_JAVA_LANG_BOOLEAN=3;
@@ -248,5 +250,13 @@ protected static int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
     public String getColumnName(){
     	return getName();
     }
+
+      public boolean getIfUnique(){
+          return this.isUnique;
+      }
+
+      public void setUnique(boolean ifUnique){
+        isUnique=ifUnique;
+      }
 
 }

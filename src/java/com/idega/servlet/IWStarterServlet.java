@@ -14,6 +14,7 @@ import javax.sql.*;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
+import com.idega.data.EntityControl;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -50,7 +51,7 @@ public class IWStarterServlet extends GenericServlet
                 String separator = FileUtil.getFileSeparator();
 		//String file = getServletContext().getRealPath("/")+separator+"db"+separator+"db.properties";
                     String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
-                System.out.println("DB : "+file);
+                System.out.println("Reading Databases from file: "+file);
                 PoolManager poolMgr;
 		//String file = "db/db.properties";
                 poolMgr = PoolManager.getInstance(file);
@@ -60,12 +61,20 @@ public class IWStarterServlet extends GenericServlet
         }
 
         public void endDatabasePool(){
+          System.out.println("Stopping Database Pool");
           PoolManager.getInstance().release();
         }
 
         public void startIdegaWebApplication(){
             IWMainApplication application = new IWMainApplication(this.getServletContext());
             startDatabasePool();
+            if(application.getSettings().getIfEntityAutoCreate()){
+              EntityControl.setAutoCreationOfEntities(true);
+              System.out.println("EntityAutoCreation Engine activated");
+            }
+            else{
+              System.out.println("EntityAutoCreation Engine not activated");
+            }
             executeServices(application);
         }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.16 2001/06/14 17:16:54 laddi Exp $
+ * $Id: GenericEntity.java,v 1.17 2001/06/18 15:49:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -38,6 +38,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		if (theAttributes == null) {
 			theAttributes=new Hashtable();
 		}
+                      firstLoadInMemoryCheck();
 		setDefaultValues();
 	}
 
@@ -47,6 +48,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		if (theAttributes == null) {
 			theAttributes=new Hashtable();
 		}
+                      firstLoadInMemoryCheck();
 		setDefaultValues();
 	}
 
@@ -57,6 +59,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			theAttributes=new Hashtable();
 		}
 		setColumn(getIDColumnName(),new Integer(id));
+                      firstLoadInMemoryCheck();
 		findByPrimaryKey(getID());
 	}
 
@@ -67,21 +70,44 @@ public abstract class GenericEntity implements java.io.Serializable {
 			theAttributes=new Hashtable();
 		}
 		setColumn(getIDColumnName(),new Integer(id));
+                      firstLoadInMemoryCheck();
 		findByPrimaryKey(getID());
 	}
 
-  private void firstLoadInMemory() {
-    //First store a static instance of this class
-    String className = this.getClass().getName();
-    try {
-      this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+
+  private void firstLoadInMemoryCheck() {
+    Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
+    if (theReturn == null) {
+      theReturn = new Vector();
+      theAttributes.put(this.getClass().getName(),theReturn);
+
+      //First store a static instance of this class
+      String className = this.getClass().getName();
+      try {
+        this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+      }
+      catch(Exception ex) {
+        ex.printStackTrace();
+      }
+      //call the initializeAttributes that stores information about columns and relationships
+      initializeAttributes();
+      setLobColumnName();
+      if(EntityControl.getIfEntityAutoCreate()){
+         try{
+          DatastoreInterface.getInstance(this).createEntityRecord(this);
+         }
+         catch(Exception ex){
+          ex.printStackTrace();
+         }
+      }
     }
-    catch(Exception ex) {
-      ex.printStackTrace();
-    }
-    //call the initializeAttributes that stores information about columns and relationships
-    initializeAttributes();
-    setLobColumnName();
+  }
+
+  /**
+   * Override this function to set staring Data into the record of the entity at creation time
+   */
+  public void insertStartData()throws Exception{
+
   }
 
 	protected String getTableName() {
@@ -99,11 +125,12 @@ public abstract class GenericEntity implements java.io.Serializable {
     //ties the attribute vector to the subclass of GenericEntity because
     //the theAttributes variable is static.
     Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
-    if (theReturn == null) {
+
+    /*if (theReturn == null) {
       theReturn = new Vector();
       theAttributes.put(this.getClass().getName(),theReturn);
       firstLoadInMemory();
-    }
+    }*/
 
     return theReturn;
   }
@@ -569,6 +596,14 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return getColumn(columnName).getIfNullable();
 	}
 
+          public boolean getIfUnique(String columnName){
+              return getColumn(columnName).getIfUnique();
+          }
+
+          public void setUnique(String columnName,boolean ifUnique){
+            getColumn(columnName).setUnique(ifUnique);
+          }
+
         public void setAsPrimaryKey(String columnName,boolean ifPrimaryKey){
           getColumn(columnName).setAsPrimaryKey(ifPrimaryKey);
         }
@@ -875,12 +910,15 @@ public abstract class GenericEntity implements java.io.Serializable {
         ex.printStackTrace();
         throw (SQLException)ex.fillInStackTrace();
       }
+      else{
+        ex.printStackTrace();
+      }
     }
   }
 
-	/**
-	*Inserts this entity as a record into the datastore
-	*/
+    /**
+    *Inserts this entity as a record into the datastore
+    */
   public void insert(Connection c)throws SQLException{
     try{
       DatastoreInterface.getInstance(c).insert(this,c);
@@ -1133,8 +1171,8 @@ public abstract class GenericEntity implements java.io.Serializable {
 			                }
                                       }
                                     catch(SQLException exep){
-                                         System.err.println("Exception in GenericEntity findByPrimaryKey, RS.getString() not found: "+exep.getMessage());
-                                          exep.printStackTrace(System.err);
+                                         System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
+                                          //exep.printStackTrace(System.err);
                                     }
                                   }
 

@@ -30,6 +30,9 @@ public class Group extends GenericEntity{
 		addAttribute(getGroupTypeColumnName(),"Hópgerð", true, true, "java.lang.String");
 		addAttribute(getGroupDescriptionColumnName(),"Lýsing", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(),"Auka upplýsingar", true, true, "java.lang.String");
+
+                      addManyToManyRelationShip("com.idega.data.genericentity.Member","group_member");
+
 	}
 
 	public String getEntityName(){

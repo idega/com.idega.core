@@ -101,6 +101,12 @@ public class OracleDatastoreInterface extends DatastoreInterface{
     else if (javaClassName.equals("java.sql.Time")){
       theReturn = "TIME";
     }
+    else if (javaClassName.equals("com.idega.util.Gender")) {
+      theReturn = "VARCHAR(1)";
+    }
+    else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+      theReturn = "BLOB";
+    }
     else{
       theReturn = "";
     }
@@ -195,7 +201,7 @@ public class OracleDatastoreInterface extends DatastoreInterface{
     }
 
 
-    public void createForeignKeys(GenericEntity entity)throws Exception{
+  /*  public void createForeignKeys(GenericEntity entity)throws Exception{
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
@@ -227,7 +233,7 @@ public class OracleDatastoreInterface extends DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
-  }
+  }*/
 
   protected void executeBeforeInsert(GenericEntity entity)throws Exception{
 				if ( entity.isNull(entity.getIDColumnName()) ){
@@ -244,7 +250,7 @@ public class OracleDatastoreInterface extends DatastoreInterface{
       Conn = entity.getConnection();
       if(Conn == null) return;
 
-      Conn.setAutoCommit(false);
+      //Conn.setAutoCommit(false);
       Statement stmt2 = Conn.createStatement();
 
       String cmd = "SELECT "+entity.getLobColumnName()+" FROM "+entity.getEntityName()+" WHERE "+entity.getIDColumnName()+" ='"+entity.getID()+"' FOR UPDATE ";
@@ -261,20 +267,22 @@ public class OracleDatastoreInterface extends DatastoreInterface{
       int length = -1;
 
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-      BufferedInputStream in = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
+      if(wrapper!=null){
+        BufferedInputStream in = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
 
-      while ((length = in.read(buffer)) != -1)
-          outstream.write(buffer, 0, length );
+        while ((length = in.read(buffer)) != -1)
+            outstream.write(buffer, 0, length );
 
+        in.close();
+      }
       outstream.flush();
       outstream.close();
-      in.close();
 
       stmt2.close();
       RS2.close();
 
-      Conn.commit();
-      Conn.setAutoCommit(true);
+      //Conn.commit();
+      //Conn.setAutoCommit(true);
 
     }
     catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}

@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.7 2001/05/18 15:20:00 palli Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.8 2001/06/18 15:49:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,12 +15,17 @@ import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 import java.io.BufferedInputStream;
+import com.idega.util.ThreadContext;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 public class InterbaseDatastoreInterface extends DatastoreInterface {
+
+  private static String infoKey="interbase_datastoreinterface_connection_info";
+
+
   public String getSQLType(String javaClassName,int maxlength) {
     String theReturn;
     if (javaClassName.equals("java.lang.Integer")) {
@@ -57,6 +62,12 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     }
     else if (javaClassName.equals("java.sql.Time")) {
       theReturn = "TIME";
+    }
+    else if (javaClassName.equals("com.idega.util.Gender")) {
+      theReturn = "VARCHAR(1)";
+    }
+    else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+      theReturn = "BLOB";
     }
     else {
       theReturn = "";
@@ -108,7 +119,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     }
   }
 
-  public void createForeignKeys(GenericEntity entity) throws Exception {
+ /* public void createForeignKeys(GenericEntity entity) throws Exception {
     Connection conn = null;
     Statement Stmt = null;
     try {
@@ -134,7 +145,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
         entity.freeConnection(conn);
       }
     }
-  }
+  }*/
 
   protected void deleteTrigger(GenericEntity entity) throws Exception {
     Connection conn = null;
@@ -231,17 +242,19 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
       if(Conn== null) return;
 
       statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = " + entity.getID();
-      Conn.setAutoCommit(false);
+
 
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-
-      BufferedInputStream bin = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
-      PreparedStatement PS = Conn.prepareStatement(statement);
-      PS.setBinaryStream(1, bin, bin.available() );
-      PS.execute();
-      PS.close();
-      Conn.commit();
-      Conn.setAutoCommit(true);
+      if(wrapper!=null){
+        //Conn.setAutoCommit(false);
+        BufferedInputStream bin = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
+        PreparedStatement PS = Conn.prepareStatement(statement);
+        PS.setBinaryStream(1, bin, bin.available() );
+        PS.execute();
+        PS.close();
+        //Conn.commit();
+        //Conn.setAutoCommit(true);
+      }
 
     }
     catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
@@ -263,5 +276,61 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
+  /**
+   * Interbase workaraound because only one connection can be to the database when altering tables
+   */
+  public void executeBeforeCreateEntityRecord(GenericEntity entity)throws Exception{
+      String datasource = entity.getDatasource();
+
+      InterbaseConnectionInfo info = new InterbaseConnectionInfo();
+
+      PoolManager pmgr = PoolManager.getInstance();
+      int size = pmgr.getCurrentConnectionCount(datasource);
+      int min = pmgr.getMinimumConnectionCount(datasource);
+      int max = pmgr.getMaximumConnectionCount(datasource);
+      pmgr.trimTo(datasource,1,1,1);
+
+      info.size=size;
+      info.min=min;
+      info.max=max;
+      info.datasource=datasource;
+      ThreadContext.getInstance().setAttribute(infoKey,info);
+
+      System.out.println();
+      System.out.println("ConnectionPool trimmed and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
+      System.out.println();
+
+  }
+
+  /**
+   * Interbase workaraound because only one connection can be to the database when altering tables
+   */
+  public void executeAfterCreateEntityRecord(GenericEntity entity)throws Exception{
+      String datasource = entity.getDatasource();
+      PoolManager pmgr = PoolManager.getInstance();
+
+      InterbaseConnectionInfo info = (InterbaseConnectionInfo)ThreadContext.getInstance().getAttribute(infoKey);
+
+      int size = info.size;
+      int min = info.min;
+      int max = info.max;
+      //pmgr.trimTo(datasource,1,1,1);
+
+      pmgr.enlargeTo(datasource,size,min,max);
+
+      System.out.println();
+      System.out.println("ConnectionPool enlarged and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
+      System.out.println();
+
+      ThreadContext.getInstance().removeAttribute(infoKey);
+
+  }
+
+  private class InterbaseConnectionInfo{
+    public String datasource;
+    public int size;
+    public int min;
+    public int max;
+  }
 
 }

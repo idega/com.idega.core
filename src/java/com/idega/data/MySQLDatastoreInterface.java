@@ -98,6 +98,12 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
       else if (javaClassName.equals("java.sql.Time")){
         theReturn = "TIME";
       }
+    else if (javaClassName.equals("com.idega.util.Gender")) {
+      theReturn = "VARCHAR(1)";
+    }
+    else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+      theReturn = "BLOB";
+    }
       else{
         theReturn = "";
       }

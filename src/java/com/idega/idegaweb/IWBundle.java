@@ -112,6 +112,7 @@ public class IWBundle{
       else{
         propertyList = new IWPropertyList(getPropertiesRealPath(),"bundle.pxml",false);
       }
+
    }
 
    protected String getRootRealPath(){

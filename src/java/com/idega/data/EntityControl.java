@@ -20,7 +20,9 @@ import com.idega.util.datastructures.*;
 */
 public  class EntityControl{
 
-    private static HashtableDoubleKeyed relationShips;
+    private static HashtableDoubleKeyed relationshipTables=new HashtableDoubleKeyed();
+    private static HashtableMultivalued  relationshipClasses = new HashtableMultivalued();
+    private static boolean autoCreate=false;
 
     // throw away!!
 	protected static String getInterbaseGeneratorName(GenericEntity entity){
@@ -364,17 +366,17 @@ public  class EntityControl{
         */
       public static void addManyToManyRelationShip(GenericEntity relatingEntity1,GenericEntity relatingEntity2,String relationShipTableName){
 	/*
-          if(relationShips==null){
-            relationShips=new Vector();
+          if(relationshipTables==null){
+            relationshipTables=new Vector();
           }
 
           EntityAttribute attribute = new EntityAttribute();
           attribute.setAttributeType("relationship");
           attribute.setName(relationShipTableName);
 
-          //relationShips
+          //relationshipTables
 	*/
-	addManyToManyRelationShip(relatingEntity1.getClass().getName(),relatingEntity2.getClass().getName(),relationShipTableName);
+	addManyToManyRelationShip(relatingEntity1.getClass(),relatingEntity2.getClass(),relationShipTableName);
 
       }
 
@@ -383,23 +385,52 @@ public  class EntityControl{
         */
       public static void addManyToManyRelationShip(String relatingEntityClassName1,String relatingEntityClassName2,String relationShipTableName){
 
-          if(relationShips==null){
-            relationShips=new HashtableDoubleKeyed();
-          }
-          relationShips.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
+        try{
+          addManyToManyRelationShip(Class.forName(relatingEntityClassName1),Class.forName(relatingEntityClassName2),relationShipTableName);
+        }
+        catch(Exception ex){
+        }
+
       }
 
+             /**
+        * Attention: Beta implementation
+        */
+      public static void addManyToManyRelationShip(Class relatingEntityClass1,Class relatingEntityClass2,String relationShipTableName){
+          //if(relationshipTables==null){
+          //  relationshipTables=new HashtableDoubleKeyed();
+          //}
+          String relatingEntityClassName1 = relatingEntityClass1.getName();
+          String relatingEntityClassName2 = relatingEntityClass2.getName();
+          relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
+          relationshipClasses.put(relatingEntityClass1,relatingEntityClass2);
+          relationshipClasses.put(relatingEntityClass2,relatingEntityClass1);
+      }
+
+      /**
+       * Returns a list of Class Objects
+       */
+      protected static List getManyToManyRelationShipClasses(GenericEntity entity){
+        return relationshipClasses.getList(entity.getClass());
+      }
+
+      /**
+       * Returns a list of String Objects
+       */
+      protected static List getManyToManyRelationShipTables(GenericEntity entity){
+        return relationshipTables.get(entity.getClass().getName());
+      }
 
       protected static String getManyToManyRelationShipName(GenericEntity entity1,GenericEntity entity2){
           return getManyToManyRelationShipName(entity1.getClass().getName(),entity2.getClass().getName());
       }
 
       protected static String getManyToManyRelationShipName(String relatingEntityClassName1,String relatingEntityClassName2){
-          if(relationShips==null){
-            relationShips=new HashtableDoubleKeyed();
+          if(relationshipTables==null){
+            relationshipTables=new HashtableDoubleKeyed();
             return null;
           }
-          return (String)relationShips.get(relatingEntityClassName1,relatingEntityClassName2);
+          return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
       }
 
 
@@ -427,7 +458,9 @@ public  class EntityControl{
               return tableToSelectFrom;
         }
 
-	protected static String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+
+
+        protected static String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
 
           String tableName = getManyToManyRelationShipName(entity1,entity2);
           if (tableName==null){
@@ -438,7 +471,7 @@ public  class EntityControl{
           else{
             return tableName;
           }
-	}
+        }
 
 
         /**
@@ -552,4 +585,12 @@ public  class EntityControl{
             return recordCount;
         }
 
+
+        public static void setAutoCreationOfEntities(boolean ifAutoCreate){
+            autoCreate=ifAutoCreate;
+        }
+
+        public static boolean getIfEntityAutoCreate(){
+          return autoCreate;
+        }
 }

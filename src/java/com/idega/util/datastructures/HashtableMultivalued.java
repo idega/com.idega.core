@@ -16,23 +16,25 @@ import java.util.*;
 */
 public class HashtableMultivalued extends Hashtable{
 
-   
+
    public Object put(Object key,Object value){
       List vector = getList(key);
       if(vector==null){
          vector = new Vector();
+         super.put(key,vector);
       }
       vector.add(value);
-      return null; 
+      return null;
    }
 
    public Object put(Object key,Collection coll){
-      List vector = getList(key);    
+      List vector = getList(key);
       if(vector==null){
          vector = new Vector();
+         super.put(key,vector);
       }
       vector.addAll(coll);
-      return null; 
+      return null;
    }
 
    /**
@@ -47,12 +49,12 @@ public class HashtableMultivalued extends Hashtable{
          return vector.get(0);
       }
    }
-   
+
    public Collection getCollection(Object key){
       return (Collection)super.get(key);
    }
 
-	public List getList(Object key){
+  public List getList(Object key){
       return (List)super.get(key);
    }
 }

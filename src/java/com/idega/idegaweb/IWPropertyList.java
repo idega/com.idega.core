@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.4 2001/05/23 11:12:27 eiki Exp $
+ * $Id: IWPropertyList.java,v 1.5 2001/06/18 15:49:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,14 +58,19 @@ public class IWPropertyList {
     File file=null;
     if(createFileAndFolder){
       try{
-        file = FileUtil.getFileAndCreateIfNotExists(path,fileNameWithoutFullPath);
-        FileOutputStream stream = new FileOutputStream(file);
-        char[] array = ((String)"<"+rootElementTag+"></"+rootElementTag+">").toCharArray();
-        for (int i = 0; i < array.length; i++) {
-          stream.write((int)array[i]);
+        file = new File(path,fileNameWithoutFullPath);
+        if(!file.exists()){
+          file = FileUtil.getFileAndCreateIfNotExists(path,fileNameWithoutFullPath);
+          FileOutputStream stream = new FileOutputStream(file);
+          char[] array = ((String)"<"+rootElementTag+"></"+rootElementTag+">").toCharArray();
+          for (int i = 0; i < array.length; i++) {
+            stream.write((int)array[i]);
+          }
+          stream.flush();
+          stream.close();
         }
-        stream.flush();
-        stream.close();
+
+
       }
       catch(IOException ex){
         ex.printStackTrace();
