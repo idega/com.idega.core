@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.63 2002/10/16 07:46:18 laddi Exp $
+ *  $Id: Page.java,v 1.64 2002/11/05 08:07:58 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -670,6 +670,14 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setOnUnLoad(String action) {
 		setAttributeMultivalued("onUnLoad", action);
+	}
+
+	/**
+	 * Sets an alert that is displayed on page unload,
+	 * @param alert	The alert to display.
+	 */
+	public void setAlertOnUnLoad(String alert) {
+		setOnUnLoad("alert('"+alert+"');");	
 	}
 
 	/**
