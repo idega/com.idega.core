@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.6 2003/05/21 17:02:51 laddi Exp $
+ * $Id: ExceptionWrapper.java,v 1.7 2003/12/06 20:03:45 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -57,10 +57,17 @@ public class ExceptionWrapper extends ExpandContainer {
 		setHeader(error);
 	}
 	
-	//TODO: Return the stack trace instead...
 	private String getStackTrace(Exception exception) {
 		exception.printStackTrace(System.err);
-		return exception.getMessage();
+		
+		StackTraceElement[] elements = exception.getStackTrace();
+		StringBuffer trace = new StringBuffer();
+		for (int i = 0; i < elements.length; i++) {
+			if (i > 0)
+				trace.append("\n        ");
+			trace.append(elements[i].toString());
+		}
+		return trace.toString();
 	}
 
   public void setException(Exception exception) {
