@@ -132,8 +132,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	}
 
-	//    public void setDefaultValues(){
-	//    }
+    public void setDefaultValues(){
+    		super.setDefaultValues();
+    		initializeColumnValue(getColumnNameDeleted(),Boolean.FALSE);
+    }
 	//
 	//    public void insertStartData(){
 	//
@@ -619,6 +621,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
   
   public void setDeleted(boolean isDeleted) {
+  	if(!isDeleted){
+  		removeFromColumn(getColumnNameDeletedBy());
+  		removeFromColumn(getColumnNameDeletedWhen());
+  	}else{
+  		removeFromColumn(_COLUMNNAME_PRIMARY_GROUP_ID);
+  	}
     setColumn(getColumnNameDeleted(), isDeleted);
   }
   
@@ -914,7 +922,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
 	public void removeGroup() throws javax.ejb.EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
 	/* public boolean equals(Group p0) throws java.rmi.RemoteException {
@@ -923,40 +930,35 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	   return this.getGeneralGroup().equals(p0);
 	 }*/
 	public void addGroup(Group p0,java.sql.Timestamp p1) throws EJBException{
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	public void addGroup(Group p0) throws EJBException{
-		/**@todo: Implement this com.idega.user.data.Group method*/
+		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
+	}
+	
+	public void addGroup(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}
 	public void addGroup(int p0) throws javax.ejb.EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	public List getChildGroups() throws javax.ejb.EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not supported");
 	}
 	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not supported.");
 	}
 	public void removeGroup(Group p0) throws EJBException {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
 	public String getGroupType() {
-		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
 		return "user_group_representative";
 	}
