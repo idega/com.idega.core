@@ -447,7 +447,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   }
 
 /**
- * Returns recursively down the group tree children of group whith id groupId with filtered out with specified groupTypes
+ * Returns recursively down the group tree children of group with id groupId
  * @param groupId an id of a Group to find parents for
  * @return Collection of Groups found recursively down the tree
  * @throws EJBException If an error occured
@@ -476,14 +476,15 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
 
 /**
- * Returns recursively down the group tree children of group aGroup with filtered out with specified groupTypes
+ * Returns recursively down the group tree children of group aGroup with filtered out with specified groupTypes.
+ * WHEN IT FINDS A GROUP THAT IS NOT OF A DESIRED GROUP TYPE IT STOPS FOR THAT GROUP. If you want to also recurse under those groups
+ * use the method Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted).
  * @param aGroup a Group to find children for
  * @param groupTypes the Groups a String array of group types to be filtered with
  * @param returnSpecifiedGroupTypes if true it returns the Collection with all the groups that are of the types specified in  groupTypes[], else it returns the opposite (all the groups that are not of any of the types specified by groupTypes[])
  * @return Collection of Groups found recursively down the tree
  * @throws EJBException If an error occured
  */
-//nothing recursive here!!
   public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
   //public Collection getGroupsContained(Group groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
   try{
