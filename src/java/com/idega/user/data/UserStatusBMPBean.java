@@ -129,6 +129,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		sql.append(IC_USER);
 		sql.append(" = ");
 		sql.append(id);
+		sql.append(" order by ");
+		sql.append(DATE_FROM);
 		
 		return super.idoFindIDsBySQL(sql.toString());
 	}
@@ -140,6 +142,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		sql.append(IC_GROUP);
 		sql.append(" = ");
 		sql.append(id);
+		sql.append(" order by ");
+		sql.append(DATE_FROM);
 		
 		return super.idoFindIDsBySQL(sql.toString());
 	}	
@@ -155,6 +159,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		sql.append(IC_GROUP);
 		sql.append(" = ");
 		sql.append(group_id);
+		sql.append(" order by ");
+		sql.append(DATE_FROM);
 		
 		return super.idoFindIDsBySQL(sql.toString());
 	}	
