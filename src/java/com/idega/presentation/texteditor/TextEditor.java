@@ -91,7 +91,7 @@ public class TextEditor extends PresentationObject {
         source.setLeftPosition(-500);
         source.setTopPosition(-500);
 
-        TextArea sourceView = new TextArea(inputName,text,65,18);
+        TextArea sourceView = new TextArea(inputName,TextSoap.findAndReplace(text, "<br/>","\r\n"),65,18);
         source.add(sourceView);
 
         String menu = "1";
@@ -125,7 +125,7 @@ public class TextEditor extends PresentationObject {
       }
       else{
        TextArea area = new TextArea(inputName,45,20);
-       text = TextSoap.findAndReplace(text, "<br>","\r\n");
+       text = TextSoap.findAndReplace(text, "<br/>","\r\n");
        area.setContent(text);
        area.print(iwc);
       }
