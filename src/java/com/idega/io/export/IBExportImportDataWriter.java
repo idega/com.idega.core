@@ -16,8 +16,8 @@ import java.util.zip.ZipOutputStream;
 import com.idega.builder.data.IBExportImportData;
 import com.idega.core.file.data.ICFile;
 import com.idega.io.ZipOutputStreamIgnoreClose;
-import com.idega.io.export.*;
 import com.idega.presentation.IWContext;
+import com.idega.util.StringHandler;
 import com.idega.util.xml.XMLData;
 import com.idega.xml.XMLElement;
 
@@ -145,8 +145,11 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
   }
 
   private String createZipElementName(String originalName, int entryNumber) {
+  	String originalNameWithoutExtension = StringHandler.cutExtension(originalName);
+  	String modifiedName = StringHandler.stripNonRomanCharacters(originalNameWithoutExtension);
+  	modifiedName = StringHandler.replaceNameKeepExtension(originalName, modifiedName);
   	StringBuffer buffer = new StringBuffer();
-  	buffer.append(entryNumber).append(ZIP_ELEMENT_DELIMITER).append(originalName);
+  	buffer.append(entryNumber).append(ZIP_ELEMENT_DELIMITER).append(modifiedName);
   	return buffer.toString();
   }
 
