@@ -353,7 +353,38 @@ public class MethodFinder
 		}
 		throw new NoSuchMethodException("Method " + name + "() not found in " + objectClass.getName());
 	}
-	
+
+
+	/**
+	* Gets only the method that is named "name" in class objectClass and takes in parameters of the types exactly found in parameterTypes
+	* @throws NoSuchMethodException if no mathing method is found.
+	**/
+	public Method getMethodWithNameAndParameters(Class objectClass, String name,Class[] parameterTypes) throws NoSuchMethodException
+	{
+		int numOfParameters = (parameterTypes!=null)? parameterTypes.length : 0;
+		Method[] allMethods = getMethodsWithName(objectClass,name,numOfParameters);
+		for (int i = 0; i < allMethods.length; i++)
+		{
+			Method methodToCheck = allMethods[i];
+			Class[] methodParameters = methodToCheck.getParameterTypes();
+			if (methodParameters.length == numOfParameters)
+			{
+				boolean check = true;
+				for (int j = 0; j < methodParameters.length; j++) {
+					Class methodParam = methodParameters[j];
+					Class parameter = parameterTypes[j];
+					if(!parameter.equals(methodParam)){
+						check=false;
+					}
+				}
+				if(check)
+					return methodToCheck;
+			}
+		}
+		throw new NoSuchMethodException("Method " + name + "() not found in " + objectClass.getName());
+	}
+
+
 	/**
 	* Gets all the methods that are named "name" in class objectClass
 	* @return An array with all mathing methods or an array with length 0 if no mathing methods are found.
