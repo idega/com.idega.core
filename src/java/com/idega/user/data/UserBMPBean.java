@@ -1236,6 +1236,35 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       .append(" IS NULL )");
   }
       
-   
+  /**
+   * Unsupported.
+   * 
+   */    
+  public void removeGroup(Group group, User currentUser)  {
+    throw new UnsupportedOperationException();
+  }
 
+  /**
+   * Unsupported.
+   * 
+   */      
+  public void removeGroup(int userId, User currentUser, boolean allEntries) {
+    throw new UnsupportedOperationException();
+  }
+  
+  /**
+   * Unsupported.
+   * 
+   */      
+  public void removeGroup(User currentUser)  {
+    throw new UnsupportedOperationException();
+  }
+  
+  /**
+   * Unsupported.
+   * 
+   */      
+  public void removeUser(User user, User currentUser) {
+    throw new UnsupportedOperationException();
+  }
 }

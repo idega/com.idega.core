@@ -3,10 +3,13 @@ import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.util.ListUtil;
 import com.idega.data.*;
+
 import javax.ejb.*;
+
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
+import com.idega.core.data.GenericGroup;
 import com.idega.core.data.ICNetwork;
 import com.idega.core.data.ICProtocol;
 import com.idega.core.data.Phone;
@@ -837,35 +840,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//            }
 	//          }
 	//        }
-	public void removeGroup(Group entityToRemoveFrom) throws EJBException, RemoteException {
-		int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
-		if ((groupId == -1) || (groupId == 0)) //removing all in middle table
-			this.removeGroup(groupId, true);
-		else // just removing this particular one
-			this.removeGroup(groupId, false);
-	}
-	public void removeGroup() throws EJBException {
-		this.removeGroup(-1, true);
-	}
-	public void removeGroup(int relatedGroupId, boolean AllEntries) throws EJBException {
-		try {
-			Collection rels = null;
-			if (AllEntries) {
-				rels = this.getGroupRelationHome().findGroupsRelationshipsUnder(this);
-			}
-			else {
-				rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relatedGroupId);
-			}
-			Iterator iter = rels.iterator();
-			while (iter.hasNext()) {
-				GroupRelation item = (GroupRelation) iter.next();
-				item.remove();
-			}
-		}
-		catch (Exception e) {
-			throw new EJBException(e.getMessage());
-		}
-	}
+
 	//        private void removeGroupLegacy(int groupId, boolean AllEntries)throws EJBException{
 	//          Connection conn= null;
 	//          Statement Stmt= null;
@@ -903,8 +878,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//  public void addUser(User user)throws RemoteException{
 	//    this.addGroup(user.getGroupID());
 	//  }
-	public void removeUser(User user) throws RemoteException {
-		this.removeGroup(user.getGroupID(), false);
+	public void removeUser(User user, User currentUser) throws RemoteException {
+    // former: user.getGroupId() but this method is deprecated therefore: user.getId()
+		this.removeGroup(user.getID(), currentUser, false);
 	}
 	//        public Group findGroup(String groupName) throws SQLException{
 	//
@@ -1009,18 +985,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return false;
 	}
-	protected int getGroupIDFromGroup(Group group) throws RemoteException {
-		Integer groupID = ((Integer) group.getPrimaryKey());
-		if (groupID != null)
-			return groupID.intValue();
-		else
-			return -1;
-	}
+
 	private GroupHome getGroupHome() {
 		return ((GroupHome) this.getEJBLocalHome());
-	}
-	private GroupRelationHome getGroupRelationHome() throws RemoteException {
-		return ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
 	}
 	private GroupDomainRelationHome getGroupDomainRelationHome() throws RemoteException {
 		return ((GroupDomainRelationHome) IDOLookup.getHome(GroupDomainRelation.class));
@@ -1237,6 +1204,45 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   
   public void addPhone(Phone phone) throws IDOAddRelationshipException {
     this.idoAddTo(phone);
-  }  
-  
+  }
+	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException, RemoteException {
+	  int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
+	  if ((groupId == -1) || (groupId == 0)) //removing all in middle table
+	    this.removeGroup(groupId, currentUser, true);
+	  else // just removing this particular one
+	    this.removeGroup(groupId, currentUser, false);
+	}
+	protected int getGroupIDFromGroup(Group group) throws RemoteException {
+	  Integer groupID = ((Integer) group.getPrimaryKey());
+	  if (groupID != null)
+	    return groupID.intValue();
+	  else
+	    return -1;
+	}
+	public void removeGroup(User currentUser) throws EJBException {
+		this.removeGroup(-1, currentUser, true);
+	}
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
+		try {
+			Collection rels = null;
+			if (AllEntries) {
+				rels = this.getGroupRelationHome().findGroupsRelationshipsUnder(this);
+			}
+			else {
+				rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relatedGroupId);
+			}
+			Iterator iter = rels.iterator();
+			while (iter.hasNext()) {
+				GroupRelation item = (GroupRelation) iter.next();
+				item.removeBy(currentUser); 
+			}
+		}
+		catch (Exception e) {
+			throw new EJBException(e.getMessage());
+		}
+	}
+	protected GroupRelationHome getGroupRelationHome() throws RemoteException {
+		return ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
+	}  
+
 } // Class Group
