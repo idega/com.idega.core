@@ -1097,7 +1097,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	IDOQuery query = idoQueryGetSelect();
 	   query
 	   	.appendWhere(getColumnNamePersonalID())
-	   	.appendLike()
+	   	.appendEqualSign()
 	   	.appendWithinSingleQuotes(personalId)
 		.appendAnd();
 	   appendIsNotDeleted(query);
@@ -2009,13 +2009,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
    * @param query
    */  
   private void appendIsNotDeleted(IDOQuery query) {
-    query      
-      .appendLeftParenthesis()
-      .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
-      .appendOr()
-      .append(getColumnNameDeleted())
-      .append(" IS NULL ")
-      .appendRightParenthesis();
+    query
+			.append(getColumnNameDeleted()).appendNOTEqual().append(GenericEntity.COLUMN_VALUE_TRUE);
+
+		/*
+		.appendLeftParenthesis()
+	  .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
+	  .appendOr()
+	  .append(getColumnNameDeleted())
+	  .append(" IS NULL ")
+	  .appendRightParenthesis();
+	  	*/
   }
   
   
