@@ -33,4 +33,8 @@ public class IWConstants{
 
   public final static String SERVLET_WINDOWOPENER_URL = IWMainApplication.windowOpenerURL;
 
+
+  public static final String MARKUP_LANGUAGE_HTML="HTML";
+  public static final String MARKUP_LANGUAGE_WML="WML";
+
 }

@@ -15,6 +15,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
 import com.idega.block.login.business.LoginBusiness;
@@ -50,9 +51,6 @@ private ServletContext servletContext;
 private boolean isCaching = false;
 private PrintWriter cacheWriter;
 
-
-public static final String HTML_MARKUP="HTML";
-public static final String WML_MARKUP="WML";
 
 public IWContext(HttpServletRequest Request,HttpServletResponse Response){
 	this.Request=Request;
@@ -171,31 +169,31 @@ private String getRightLanguage(HttpServletRequest Request,HttpServletResponse R
 
 		//Sets for WML browser
 		if(user_agent.indexOf("UPG1") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else if(user_agent.toLowerCase().indexOf("wap") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else if(user_agent.toLowerCase().indexOf("nokia") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else if(user_agent.toLowerCase().indexOf("ericsson") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else if(user_agent.toLowerCase().indexOf("symbian") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
                 else if(user_agent.toLowerCase().indexOf("wapman") != -1){
-			return this.WML_MARKUP;
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else
 		{
-		  return this.HTML_MARKUP;
+		  return IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 	}
 	else
 	{
-		return this.HTML_MARKUP;
+		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
 }
 
@@ -273,10 +271,10 @@ public void setResponse(HttpServletResponse Response){
 
 public void setLanguage(String language){
 	this.language = language;
-	if (language.equals(this.WML_MARKUP)){
+	if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)){
 		this.Response.setContentType("text/vnd.wap.wml");
 	}
-	if (language.equals(this.HTML_MARKUP)){
+	if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)){
 		this.Response.setContentType("text/html");
 	}
 
