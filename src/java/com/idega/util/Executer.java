@@ -1,4 +1,5 @@
 package com.idega.util;
+import com.idega.util.text.TextSoap;
 import java.io.*;
 import java.lang.Process;
 
@@ -62,6 +63,8 @@ public class Executer {
       String classPath = null;
       classPath = System.getProperty("tc_path_add");//tomcat 3.3
       if(classPath==null) classPath = System.getProperty("java.class.path");
+
+      if(classPath!=null ) classPath = TextSoap.findAndCut(classPath," ");//take away all spaces
 
       //put together the string
       StringBuffer exec = new StringBuffer();
