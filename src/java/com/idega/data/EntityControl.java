@@ -302,6 +302,25 @@ public  class EntityControl{
 		}
 	}
 
+	public static void deleteMultiple(GenericEntity entity, String columnName1,String stringColumnValue1, String columnName2,String stringColumnValue2)throws SQLException{
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = entity.getConnection();
+			Stmt = conn.createStatement();
+			Stmt.executeUpdate("delete from "+entity.getEntityName()+" where "+columnName1+"='"+stringColumnValue1+"' and "+columnName2+"='"+stringColumnValue2+"'");
+
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				entity.freeConnection(conn);
+			}
+		}
+	}
+
 	/**
 	*Deletes everything from the table of this entity - use with CAUTION :)
 	**/

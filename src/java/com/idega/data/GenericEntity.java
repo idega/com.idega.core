@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.72 2001/11/25 18:16:47 aron Exp $
+ * $Id: GenericEntity.java,v 1.73 2002/01/05 20:34:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1210,6 +1210,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	public void deleteMultiple(String columnName,String stringColumnValue)throws SQLException{
 		EntityControl.deleteMultiple(this,columnName,stringColumnValue);
+	}
+
+	public void deleteMultiple(String columnName1,String stringColumnValue1,String columnName2,String stringColumnValue2)throws SQLException{
+		EntityControl.deleteMultiple(this,columnName1,stringColumnValue1,columnName2,stringColumnValue2);
 	}
 
 	/**
