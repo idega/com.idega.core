@@ -8,8 +8,10 @@ import com.idega.block.media.business.MediaBusiness;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOStoreException;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
 import com.idega.xml.XMLOutput;
@@ -104,38 +106,103 @@ public class XMLData {
     this.document = document;
   }        
   
-  public ICFile store() throws IOException  {
-    // create or fetch existing file
+  public ICFile store() throws IOException {
+    // create or fetch existing ICFile
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
     xmlFile.setName(getName());
-    OutputStream output = xmlFile.getFileValueForWrite();
+    try {
+      xmlFile.store();
+    }
+    catch (IDOStoreException ex)  {
+      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      throw new IOException("xml file could not be stored");
+    }
+    if (xmlFileId < 0) {
+      xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
+      // the default name uses the id, therefore set again and store again
+      if (name == null) {
+        xmlFile.setName(getName());
+      }
+    }
+    MemoryFileBuffer buffer = new MemoryFileBuffer();
+    OutputStream outputStream = new MemoryOutputStream(buffer);
+    
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
     xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
     XMLDocument document = getDocument();
-    xmlOutput.output(document, output);
-    output.flush();
-    output.close();
     try {
+      xmlOutput.output(document, outputStream);
+    }
+    catch (IOException ex) {
+      System.err.println("[XMLData] problem writing to file. Message is: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      outputStream.close();
+      throw new IOException("xml file could not be stored");
+    }
+    outputStream.close();    
+    
+    InputStream inputStream = new MemoryInputStream(buffer);
+    xmlFile.setFileValue(inputStream);
+//    try {
+      //xmlFile.update();
       xmlFile.store();
-      if (xmlFileId < 0) {
-        xmlFileId = ((Integer) xmlFile.getPrimaryKey()).intValue();
-        // the default name uses the id, therefore set again and store again
-        if (name == null) {
-          xmlFile.setName(getName());
-          xmlFile.store();
-        }
-      }
-      return  xmlFile;
-    }
-    catch (Exception ex)  {
-      ex.printStackTrace();
-    }
-    return null;
+//    }
+//    catch (SQLException ex)  {
+//      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
+//      ex.printStackTrace(System.err);
+//      throw new IOException("xml file could not be stored");
+//    }
+    inputStream.close();
+    // reading finished
+    // delete file
+    return xmlFile;
   }  
+  
+  
+  
+  
+  
+  
+  
+  
+//  public ICFile storex() throws IOException  {
+//    // create or fetch existing file
+//    ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+//    xmlFile.setMimeType("text/xml");
+//    xmlFile.setName(getName());
+//    xmlFile.setFileValue()
+//    OutputStream output = xmlFile.getFileValueForWrite();
+//    XMLOutput xmlOutput = new XMLOutput("  ", true);
+//    xmlOutput.setLineSeparator(System.getProperty("line.separator"));
+//    xmlOutput.setTextNormalize(true);
+//    xmlOutput.setEncoding("iso-8859-1");
+//    // do not use document directly use accessor method
+//    XMLDocument document = getDocument();
+//    xmlOutput.output(document, output);
+//    output.flush();
+//    output.close();
+//    try {
+//      xmlFile.store();
+//      if (xmlFileId < 0) {
+//        xmlFileId = ((Integer) xmlFile.getPrimaryKey()).intValue();
+//        // the default name uses the id, therefore set again and store again
+//        if (name == null) {
+//          xmlFile.setName(getName());
+//          xmlFile.store();
+//        }
+//      }
+//      return  xmlFile;
+//    }
+//    catch (Exception ex)  {
+//      ex.printStackTrace();
+//    }
+//    return null;
+//  }  
   
 
   private void initialize(ICFile xmlFile) {
