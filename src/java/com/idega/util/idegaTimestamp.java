@@ -13,6 +13,7 @@ import java.util.*;
 import java.lang.*;
 import java.sql.*;
 import java.io.*;
+import com.idega.jmodule.object.ModuleInfo;
 import java.text.DateFormat;
 
 public class idegaTimestamp{
@@ -463,10 +464,39 @@ public class idegaTimestamp{
     Calendar.add(Calendar.MINUTE, num_of_minutes );
   }
 
+  public String getLocaleDate(ModuleInfo modinfo) {
+    Locale currentLocale = modinfo.getCurrentLocale();
+    return getLocaleDate(currentLocale);
+  }
+
+  public String getLocaleDate(Locale currentLocale) {
+    String returner = getENGDate();
+
+    if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
+        returner = getISLDate();
+    }else if (currentLocale.equals(Locale.ENGLISH)){
+        returner = getENGDate();
+    }else if (currentLocale.equals(Locale.UK)){
+        returner = getENGDate();
+    }else if (currentLocale.equals(Locale.US)){
+        returner = getENGDate();
+    }else {
+        returner = getENGDate();
+    }
+
+    return returner;
+  }
+
+  /**
+   * @Deprecated
+   */
   public String getISLDate(){
     return getDate() + "."+getNameOfMonth(getMonth())+"&nbsp;"+getYear();
   }
 
+  /**
+   * @Deprecated
+   */
   public String getENGDate(){
 
     String englishDate = getEnglishNameOfMonth(getMonth())+"&nbsp;"+getDate();
