@@ -45,6 +45,7 @@ import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
@@ -1096,22 +1097,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
-    
-	IDOQuery query = idoQueryGetSelect();
-	   query
-	   	.appendWhere(getColumnNamePersonalID())
-	   	.appendEqualSign()
-	   	.appendWithinSingleQuotes(personalId)
-		.appendAnd();
-	   appendIsNotDeleted(query);
-    
-	   Collection users = idoFindPKsByQuery(query);
-
-
-		if (!users.isEmpty())
-			return (Integer) users.iterator().next();
-		else
-			throw new FinderException("No user found");
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,getColumnNamePersonalID(),MatchCriteria.EQUALS,personalId));
+	    query.addCriteria(getNotDeletedCriteria());
+	    return (Integer)idoFindOnePKByQuery(query);
 	}
 
 	public Integer ejbFindByPartOfPersonalIDAndFirstName(String personalId, String first_name) throws FinderException {
