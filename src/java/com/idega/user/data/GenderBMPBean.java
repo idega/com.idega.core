@@ -1,6 +1,5 @@
 package com.idega.user.data;
 
-import java.rmi.RemoteException;
 import javax.ejb.FinderException;
 import java.util.Iterator;
 import java.util.Collection;
@@ -17,25 +16,17 @@ import java.sql.SQLException;
  * @version 1.0
  */
 
-public class GenderBMPBean extends com.idega.data.GenericEntity implements com.idega.user.data.Gender {
+public class GenderBMPBean extends com.idega.data.GenericEntity implements Gender{
 
   public static final String NAME_MALE="male";
   public static final String NAME_FEMALE="female";
-
-  public GenderBMPBean() {
-    super();
-  }
-
-  public GenderBMPBean(int id) throws SQLException {
-    super(id);
-  }
-
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getNameColumnName(),"Nafn",true,true,"java.lang.String");
     this.addAttribute(getDescriptionColumnName(),"Description",true,true,"java.lang.String",1000);
   }
+  
   public String getEntityName() {
     return "ic_gender";
   }
@@ -82,15 +73,15 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
   }
 
 
-  public Gender ejbHomeGetMaleGender() throws FinderException,RemoteException{
+  public Gender ejbHomeGetMaleGender() throws FinderException {
     return ((GenderHome)this.getEJBLocalHome()).findByGenderName(NAME_MALE);
   }
 
-  public Gender ejbHomeGetFemaleGender() throws FinderException,RemoteException{
+  public Gender ejbHomeGetFemaleGender() throws FinderException {
     return ((GenderHome)this.getEJBLocalHome()).findByGenderName(NAME_FEMALE);
   }
 
-  public Integer ejbFindByGenderName(String name) throws FinderException,RemoteException{
+  public Integer ejbFindByGenderName(String name) throws FinderException {
    Collection genders = super.idoFindAllIDsByColumnBySQL(getNameColumnName(),name);
    Iterator iter = genders.iterator();
    Integer gender = null;
