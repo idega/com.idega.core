@@ -144,10 +144,10 @@ private void getImage(IWContext iwc) throws SQLException{
     Cache cachedImage;
 
      if( usesOldImageTables ){
-      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.jmodule.image.data.ImageEntity",imageId,iwma);
+      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.jmodule.image.data.ImageEntity.class.getName(),imageId,iwma);
      }
      else{
-      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.block.image.data.ImageEntity",imageId,iwma);
+      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.block.image.data.ImageEntity.class.getName(),imageId,iwma);
      }
 
     if( cachedImage != null ){
