@@ -1611,6 +1611,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return findRelatedIDs(entity, "", "");
 	}
 	private String getFindRelatedSQLQuery(IDOEntity entity, String entityColumnName, String entityColumnValue) {
+		return getFindRelatedSQLQuery(entity,entityColumnName,entityColumnValue,null);
+	}
+	private String getFindRelatedSQLQuery(IDOEntity entity, String entityColumnName, String entityColumnValue,String orderByColumnName) {
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
 		String primaryValue = getPrimaryKeyValueSQLString(); //eiki added for string primary key support
 		String entityIDColumnName = null;
@@ -1657,6 +1660,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					buffer.append(" is null");
 				}
 			}
+		if (orderByColumnName != null){
+			if (!orderByColumnName.equals("")) {
+				buffer.append(" order by e.");
+				buffer.append(orderByColumnName);
+			}
+		}
 		String SQLString = buffer.toString();
 		return SQLString;
 	}
@@ -3305,7 +3314,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
-		return idoGetRelatedEntities(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
+		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
 		/*try {
 			//return EntityFinder.getInstance().findRelated((IDOLegacyEntity)this, returningEntityInterfaceClass);
 
@@ -3390,8 +3399,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected Collection idoGetRelatedEntities(IDOEntity returningEntity, String columnName, String entityColumnValue) throws IDOException {
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
-		return this.idoGetRelatedEntities(returningEntity, SQLString);
+		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
 	}
+	
+	/**
+	 * Returns a collection of returningEntity instances
+	 */
+	protected Collection idoGetRelatedEntitiesOrderedByColumn(Class returningEntityInterfaceClass, String columnName) throws IDOException {
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		String SQLString = this.getFindRelatedSQLQuery(returningEntity, null, null,columnName);
+		return this.idoGetRelatedEntitiesBySQL(returningEntityInterfaceClass, SQLString);
+	}
+	
 	/**
 	 * Returns a collection of returningEntity instances
 	 *
@@ -3402,7 +3421,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		debug(sqlQuery);
 
-		return idoGetRelatedEntities(returningEntity, sqlQuery);
+		return idoGetRelatedEntitiesBySQL(returningEntity, sqlQuery);
 	}
 
 	/**
@@ -3415,16 +3434,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		debug(sqlQuery);
 
-		return idoGetRelatedEntities(this, sqlQuery);
+		return idoGetRelatedEntitiesBySQL(this, sqlQuery);
 
 	}
 
+	protected Collection idoGetRelatedEntitiesBySQL(Class returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		return idoGetRelatedEntitiesBySQL(returningEntity,sqlQuery);
+	}
+	
 	/**
 	 * Returns a collection of returningEntity instances
 	 *
 	 * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
 	 */
-	private Collection idoGetRelatedEntities(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
+	private Collection idoGetRelatedEntitiesBySQL(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
 		Vector vector = new Vector();
 		Collection ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 		Iterator iter = ids.iterator();
