@@ -3014,7 +3014,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    private static IDOLegacyEntity instanciateEntity(Class entityInterfaceOrBeanClass){
     try{
       //return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
-      return instanciateEntity(entityInterfaceOrBeanClass);
+      return IDOLookup.instanciateEntity(entityInterfaceOrBeanClass);
     }
     catch(Exception e1){
       //Only for legacy beans;

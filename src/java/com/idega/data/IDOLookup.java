@@ -177,9 +177,12 @@ public class IDOLookup extends IBOLookup{
     return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
   }
 
-  static IDOLegacyEntity instanciateEntity(Class entityInterfaceClass){
+  static IDOLegacyEntity instanciateEntity(Class entityBeanOrInterfaceClass){
     try{
-      Class beanClass = getBeanClassFor(entityInterfaceClass);
+      Class beanClass = entityBeanOrInterfaceClass;
+      if(beanClass.isInterface()){
+        beanClass = getBeanClassFor(entityBeanOrInterfaceClass);
+      }
       return (IDOLegacyEntity)beanClass.newInstance();
     }
     catch(Exception e){
