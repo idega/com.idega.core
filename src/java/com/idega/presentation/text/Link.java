@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.2 2001/10/05 13:06:03 aron Exp $
+ * $Id: Link.java,v 1.3 2001/10/10 11:18:53 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -442,7 +442,7 @@ public class Link extends Text {
    *
    */
   public void setFontSize(String s) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setFontSize(s);
     }
   }
@@ -458,7 +458,7 @@ public class Link extends Text {
    *
    */
   public void setFontFace(String s) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setFontFace(s);
     }
   }
@@ -467,7 +467,7 @@ public class Link extends Text {
    *
    */
   public void setFontColor(String color) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setFontColor(color);
     }
   }
@@ -476,7 +476,7 @@ public class Link extends Text {
    *
    */
   public void setFontStyle(String style) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setFontStyle(style);
     }
   }
@@ -485,7 +485,7 @@ public class Link extends Text {
    *
    */
   public void setFontClass(String styleClass) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setFontClass(styleClass);
     }
   }
@@ -506,8 +506,8 @@ public class Link extends Text {
    *
    */
   public void addBreak() {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
-	    ((Text)_obj).addBreak();
+    if (isText()){
+      ((Text)_obj).addBreak();
     }
   }
 
@@ -515,8 +515,8 @@ public class Link extends Text {
    *
    */
   public void setTeleType() {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
-	    ((Text)_obj).setTeleType();
+    if (isText()){
+      ((Text)_obj).setTeleType();
     }
   }
 
@@ -524,8 +524,8 @@ public class Link extends Text {
    *
    */
   public void setBold() {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
-    	((Text)_obj).setBold();
+    if (isText()){
+      ((Text)_obj).setBold();
     }
   }
 
@@ -533,8 +533,8 @@ public class Link extends Text {
    *
    */
   public void setItalic() {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
-	    ((Text)_obj).setItalic();
+    if (isText()){
+      ((Text)_obj).setItalic();
     }
   }
 
@@ -542,8 +542,8 @@ public class Link extends Text {
    *
    */
   public void setUnderline() {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
-	    ((Text)_obj).setUnderline();
+    if (isText()){
+      ((Text)_obj).setUnderline();
     }
   }
 
@@ -551,7 +551,7 @@ public class Link extends Text {
    *
    */
   public void setText(String text) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).setText(text);
     }
   }
@@ -560,7 +560,7 @@ public class Link extends Text {
    *
    */
   public void addToText(String text) {
-    if (_objectType==(OBJECT_TYPE_TEXT)) {
+    if (isText()){
       ((Text)_obj).addToText(text);
     }
   }
@@ -1057,8 +1057,17 @@ public class Link extends Text {
   }
 
   public void setNoTextObject(boolean noText) {
-    if ( _objectType == this.OBJECT_TYPE_TEXT )
+    if (isText())
       hasClass = noText;
+  }
+
+  private boolean isText(){
+    if(_obj!=null){
+      if(_obj instanceof Text){
+        return true;
+      }
+    }
+    return false;
   }
 }
 
