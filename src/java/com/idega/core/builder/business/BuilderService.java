@@ -33,6 +33,13 @@ public interface BuilderService extends IBOService
 	 */	
 	public String getPageURI(int pageID)throws RemoteException;
 	/**
+	 * Gets the URI to a page on this webserver
+	 * @param pageID an id for a page to get the URI to
+	 * @return The string that is the URI to the requested page on this webserver
+	 * @throws RemoteException
+	 */	
+	public String getPageURI(String pageID)throws RemoteException;
+	/**
 	 * Gets the id of the Root page for the current application
 	 * @return the id of an IBPage
 	 * @throws RemoteException
@@ -58,6 +65,14 @@ public interface BuilderService extends IBOService
 	 * @throws RemoteException
 	 */	
 	public ICPage getCurrentPage(IWContext iwc)throws RemoteException;
+	/**
+	 * Gets URI for the current (last requested) page
+	 * @param iwc the IWContext of the request
+	 * @return the string for the URI
+	 * @throws RemoteException
+	 */	
+	public String getCurrentPageURI(IWContext iwc)throws RemoteException;
+
 	/**
 	 * Gets the Builder page tree starting from page with id startNodeId
 	 * @param startNodeId Id of the IBPage to start traversing down the tree
