@@ -6,6 +6,12 @@
 
 <web-app>
 
+    <!-- idegaWeb event listener that starts the application -->
+    <listener>
+        <listener-class>com.idega.idegaweb.IWApplicationStarter</listener-class>
+    </listener>
+
+
   <servlet>
     <servlet-name>Excel</servlet-name>
     <display-name>Excel</display-name>
