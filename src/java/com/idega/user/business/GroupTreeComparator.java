@@ -42,14 +42,14 @@ public class GroupTreeComparator implements Comparator {
 			} else if (groupType1 != null && groupType2 != null) { 
 				returner = collator.compare(groupType1, groupType2);
 				if (returner == 0) {
-					Integer groupIntValue1 = getIntegerFromBeginnigOfString(g1.getNodeName());
-					Integer groupIntValue2 = getIntegerFromBeginnigOfString(g2.getNodeName());
+					Long groupLongValue1 = getLongFromBeginnigOfString(g1.getNodeName());
+					Long groupLongValue2 = getLongFromBeginnigOfString(g2.getNodeName());
 		
-					if (groupIntValue1 != null && groupIntValue2 != null) {
-						if (groupIntValue1.intValue() == groupIntValue2.intValue()) {
+					if (groupLongValue1 != null && groupLongValue2 != null) {
+						if (groupLongValue1.longValue() == groupLongValue2.longValue()) {
 							returner = 0;
 						}
-						else if (groupIntValue1.intValue() < groupIntValue2.intValue()) {
+						else if (groupLongValue1.longValue() < groupLongValue2.longValue()) {
 							returner = -1;
 						}
 						else
@@ -69,7 +69,7 @@ public class GroupTreeComparator implements Comparator {
 		return returner;
 	}
 	  
-	  private Integer getIntegerFromBeginnigOfString(String original) {
+	  private Long getLongFromBeginnigOfString(String original) {
         if (original == null) return null;
 
         StringBuffer result = new StringBuffer();
@@ -83,7 +83,7 @@ public class GroupTreeComparator implements Comparator {
             }
         }
         if (result.length() > 0)
-        	return Integer.valueOf(result.toString());
+        	return Long.valueOf(result.toString());
 
         return null;
     }
