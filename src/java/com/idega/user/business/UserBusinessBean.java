@@ -1046,6 +1046,11 @@ public  Phone[] getUserPhones(int userId)throws RemoteException{
     if(displayname != null){
       userToUpdate.setDisplayName(displayname);
     }
+    else if(fullname != null && (userToUpdate.getDisplayName()==null || "".equals(userToUpdate.getDisplayName())) ){
+    	//set the display name as the full name
+    	  userToUpdate.setDisplayName(fullname);
+    }
+    
     if(description != null){
       userToUpdate.setDescription(description);
     }
