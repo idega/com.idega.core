@@ -16,6 +16,8 @@ import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
 import com.idega.data.EntityControl;
 
+import java.io.File;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
@@ -61,7 +63,34 @@ public class IWStarterServlet extends GenericServlet
           PoolManager.getInstance().release();
         }
 
+        /**
+         * Adds the .jar files in /WEB-INF/classes to the ClassPath
+         */
+        protected void addToClassPath(){
+          File webINF = new File(this.getServletContext().getRealPath("/WEB-INF/classes"));
+          File[] subfiles = webINF.listFiles();
+          for (int i = 0; i < subfiles.length; i++) {
+            if(subfiles[i].isFile()){
+              String jarEnding = ".jar";
+              String fileName = subfiles[i].getAbsolutePath();
+              if(fileName.endsWith(jarEnding)){
+                addToClassPath(fileName);
+              }
+            }
+          }
+
+        }
+
+        private static void addToClassPath(String path){
+            String classPathProperty = "java.class.path";
+            String classPath = System.getProperty(classPathProperty,".");
+            classPath += File.pathSeparator;
+            classPath += path;
+            System.setProperty(classPathProperty,classPath);
+        }
+
         public void startIdegaWebApplication(){
+            addToClassPath();
             IWMainApplication application = new IWMainApplication(this.getServletContext());
             if(application.getSettings().getIfEntityAutoCreate()){
               EntityControl.setAutoCreationOfEntities(true);
