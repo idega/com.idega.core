@@ -1,6 +1,7 @@
 package com.idega.servlet;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ public class IWEventHandler extends IWPresentationServlet {
   
 
 
-  public class EventViewer extends Page implements IWBrowseControl, StatefullPresentation {
+  public class EventViewer extends Page {
      private boolean initialized = false;
 
      private IWControlFramePresentationState _presentationState = null;
@@ -59,49 +60,26 @@ public class IWEventHandler extends IWPresentationServlet {
        return "com.idega.user";
      }
 
-     public ChangeListener getChangeControler(){
-       return (ChangeListener)this.getPresentationState(this.getIWUserContext());
-     }
-
-     public IWPresentationState getPresentationState(IWUserContext iwuc){
-       if(_presentationState == null){
-         try {
-           IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-           // construct compoundId for the control frame
-           String id = getIWContext().getParameter(IWPresentationEvent.EVENT_CONTROLLER);
-           if (id != null)
-            _presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(id,this.getPresentationStateClass());
-         }
-         catch (RemoteException re) {
-           throw new RuntimeException(re.getMessage());
-         }
-       }
-       return _presentationState;
-     }
-
-     public Class getPresentationStateClass(){
-       return IWControlFramePresentationState.class;
-     }
-
-
-
      public void main(IWContext iwc) throws Exception{
-
-       IWControlFramePresentationState state = (IWControlFramePresentationState)this.getPresentationState(iwc);
-       if(state != null){
-         Set onLoadSet = state.getOnLoadSet();
-         Iterator iter = onLoadSet.iterator();
-         while (iter.hasNext()) {
-           Object item = iter.next();
-           this.setOnLoad((String)item);
-         }
-         state.clearOnLoad();
-       }
-
-
-
-   }
-
+      IWStateMachine stateMachine;     
+      try {
+        stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwc,IWStateMachine.class);
+      }
+      catch (RemoteException re) {
+        throw new RuntimeException(re.getMessage());
+      }
+      Collection controllers = stateMachine.getAllControllers();
+      Iterator iterator = controllers.iterator();
+      while (iterator.hasNext())  {
+        IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
+        Set onLoadSet = state.getOnLoadSet();
+        Iterator iter = onLoadSet.iterator();
+        while (iter.hasNext()) {
+          String item = (String) iter.next();
+          this.setOnLoad(item);
+        }
+        state.clearOnLoad();
+      }
+    }
   }
-  
 }
