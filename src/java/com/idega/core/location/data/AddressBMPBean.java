@@ -2,14 +2,16 @@
 
 package com.idega.core.location.data;
 
-import java.sql.*;
-import java.util.Collection;
 import java.rmi.RemoteException;
-import com.idega.data.*;
-import com.idega.util.text.TextSoap;
+import java.sql.SQLException;
+import java.util.Collection;
 
-import javax.ejb.*;
+import javax.ejb.FinderException;
+
 import com.idega.core.user.data.User;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
+import com.idega.util.text.TextSoap;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
 	private static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
@@ -64,7 +66,19 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public String getName() {
-		return getStreetName() + " " + getStreetNumber();
+		String streetName = getStreetName();
+		String streetNumber = getStreetNumber();
+		
+		StringBuffer address = new StringBuffer("");
+		if (streetName != null) {
+			address.append(address);
+			if (streetNumber != null) {
+				address.append(" ");
+				address.append(streetNumber);
+			}
+		}
+		
+		return address.toString();
 	}
 
 	public String getStreetName() {
