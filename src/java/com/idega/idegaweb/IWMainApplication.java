@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.108 2004/12/03 04:55:41 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.109 2004/12/03 11:35:16 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 04:55:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 11:35:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.108 $
+ * @version $Revision: 1.109 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -463,10 +463,17 @@ public class IWMainApplication {//implements ServletContext{
             application.removeAttribute(ApplicationStorageParameterName);
             //Temp: removing all application attributes:
             Enumeration enumeration = application.getAttributeNames();
+            List attributes = new ArrayList();
             while (enumeration.hasMoreElements()) {
 				String applicationKey = (String) enumeration.nextElement();
+				//application.removeAttribute(applicationKey);
+				attributes.add(applicationKey);
+            }
+            for (Iterator iter = attributes.iterator(); iter.hasNext();) {
+				String applicationKey = (String) iter.next();
 				application.removeAttribute(applicationKey);
 			}
+            
             application=null;
             defaultIWMainApplication=null;
             alreadyUnLoaded = true;
