@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.127 2004/07/12 20:16:23 jonas Exp $
+ * $Id: Link.java,v 1.128 2004/08/09 15:07:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1874,6 +1874,11 @@ public class Link extends Text {
 	 */
 	public void setAsBackLink(int backUpHowManyPages) {
 		setOnClick("history.go(-" + backUpHowManyPages + ")");
+		setFinalUrl(HASH);
+	}
+	
+	public void setAsCloseLink() {
+		setOnClick("top.window.close()");
 		setFinalUrl(HASH);
 	}
 
