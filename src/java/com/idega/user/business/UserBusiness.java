@@ -57,6 +57,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public void updateUserPhone(int p0,int p1,java.lang.String p2)throws javax.ejb.EJBException, java.rmi.RemoteException;
  public com.idega.core.data.EmailHome getEmailHome() throws java.rmi.RemoteException;
  public com.idega.core.data.Address getUsersMainAddress(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.core.data.Address getUsersCoAddress(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.data.Email getUsersMainEmail(com.idega.user.data.User p0)throws com.idega.user.business.NoEmailFoundException, java.rmi.RemoteException;
  public com.idega.builder.data.IBPage getHomePageForUser(com.idega.user.data.User p0)throws javax.ejb.FinderException, java.rmi.RemoteException;
  public com.idega.core.data.Phone[] getUserPhones(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -101,6 +102,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,com.idega.util.IWTimestamp p7,java.lang.Integer p8)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,com.idega.util.IWTimestamp p7,java.lang.Integer p8,java.lang.String p9)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.data.Address updateUsersMainAddressOrCreateIfDoesNotExist(java.lang.Integer p0,java.lang.String p1,java.lang.Integer p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.String p6)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.core.data.Address updateUsersCoAddressOrCreateIfDoesNotExist(java.lang.Integer p0,java.lang.String p1,java.lang.Integer p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.String p6)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException; 
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
 
@@ -126,6 +128,7 @@ public interface UserBusiness extends com.idega.business.IBOService
 	 public Address getUserAddressByAddressType(int userID,AddressType type) throws EJBException,RemoteException;
 
   public Address getUsersMainAddress(int userID) throws EJBException,RemoteException;
+  public Address getUsersCoAddress(int userID) throws EJBException,RemoteException;
   public Collection getUsersMainAddresses(String[] userIDs) throws EJBException,RemoteException;
   public Collection getUsers(String[] userIDs) throws EJBException,RemoteException;
 	public  Phone[] getUserPhones(User user)throws RemoteException;

@@ -706,6 +706,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return getUsersMainAddress(((Integer)user.getPrimaryKey()).intValue());
   }
 
+  /**
+   * Gets the users co address and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getUsersCoAddress(User user) throws RemoteException{
+    return getUsersCoAddress(((Integer)user.getPrimaryKey()).intValue());
+  }
+
+  /**
+   * Gets the users co address and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getUsersCoAddress(int userId) throws RemoteException{
+    AddressType coAddressType = getAddressHome().getAddressType2();
+    return getUserAddressByAddressType(userId, coAddressType);
+  }
+
 
   /**
    * Gets the users and returns them.
@@ -744,7 +761,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws RemoteException
 	 */
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
-		Address address = null;
+    AddressType mainAddressType = getAddressHome().getAddressType1();
+    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, mainAddressType);
+  }
+    
+  /**
+   * Method updateUsersCoAddressOrCreateIfDoesNotExist. This method can both be used to update the user co address or to create one<br>
+   * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.
+   * @param userId
+   * @param streetNameAndNumber
+   * @param postalCodeId
+   * @param countryName
+   * @param city
+   * @param province
+   * @param poBox
+   * @return Address the address that was created or updated
+   * @throws CreateException
+   * @throws RemoteException
+   */
+  public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
+    AddressType mainAddressType = getAddressHome().getAddressType2();
+    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, mainAddressType);
+  }    
+    
+  private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, AddressType addressType) throws CreateException,RemoteException {  
+     Address address = null;
       if( streetNameAndNumber!=null && userId!=null ){
       	try{
       		AddressBusiness addressBiz = getAddressBusiness();
@@ -752,7 +793,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	        String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
 	        
 	        User user = getUser(userId);
-	        address = getUsersMainAddress(user);
+	        address = getUserAddressByAddressType(userId.intValue(), addressType);
 	        
 	        Country country = null;
 	        
@@ -769,10 +810,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	        boolean addAddress = false;/**@todo is this necessary?**/
 	
 	        if( address == null ){
-	          AddressHome addressHome = addressBiz.getAddressHome();
-	          address = addressHome.create();
-	          AddressType mainAddressType = addressHome.getAddressType1();
-	          address.setAddressType(mainAddressType);
+            AddressHome addressHome = addressBiz.getAddressHome();
+            address = addressHome.create();
+	          address.setAddressType(addressType);
 	          addAddress = true;
 	        }
 	
@@ -780,6 +820,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	        if( code!=null ) address.setPostalCode(code);
 	        if( province!=null ) address.setProvince(province);
 	        if( city!=null ) address.setCity(city);
+          if( poBox!=null)  address.setPOBox(poBox);
 	        
 	        address.setStreetName(streetName);
 	        if( streetNumber!=null ) address.setStreetNumber(streetNumber);
