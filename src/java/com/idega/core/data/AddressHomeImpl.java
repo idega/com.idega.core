@@ -79,4 +79,11 @@ public java.util.Collection findPrimaryUserAddresses(com.idega.data.IDOQuery que
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
+
+public java.util.Collection findUserAddressesByAddressType(int userID,AddressType type) throws javax.ejb.FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((AddressBMPBean)entity).ejbFindUserAddressesByAddressType(userID,type);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 }
