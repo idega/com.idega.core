@@ -196,6 +196,81 @@ public class GenericGroup extends GenericEntity{
 
         }
 
+
+        //??
+        public GenericGroup[] getAllGroupsContained()throws SQLException{
+          List vector = this.getListOfAllGroupsContained();
+          if(vector != null){
+            return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
+          }else{
+            return new GenericGroup[0];
+          }
+        }
+
+        public List getListOfAllGroupsContained()throws SQLException{
+          String tableToSelectFrom = "IC_GROUP_TREE";
+          StringBuffer buffer=new StringBuffer();
+          buffer.append("select * from ");
+          buffer.append(tableToSelectFrom);
+          buffer.append(" where ");
+          buffer.append("IC_GROUP_ID");
+          buffer.append("=");
+          buffer.append(this.getID());
+          String SQLString=buffer.toString();
+
+		Connection conn= null;
+		Statement Stmt= null;
+		Vector vector = new Vector();
+
+		try
+		{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			ResultSet RS = Stmt.executeQuery(SQLString);
+			while (RS.next()){
+
+				GenericEntity tempobj=null;
+				try{
+					tempobj = (GenericEntity)Class.forName(this.getClass().getName()).newInstance();
+					tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
+				}
+				catch(Exception ex){
+					System.err.println("There was an error in " + this.getClass().getName() +".getAllGroupsContainingThis(): "+ex.getMessage());
+
+				}
+
+				vector.addElement(tempobj);
+
+			}
+			RS.close();
+
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+		if (vector != null){
+			vector.trimToSize();
+                        return vector;
+			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
+		}
+		else{
+			return null;
+		}
+
+
+          //return (Group[])this.findReverseRelated(this);
+
+        }
+
+
+
+
         public GenericGroup[] getAllGroupsContainingUser(User user)throws SQLException{
           return (GenericGroup[])user.findRelated(this);
         }
@@ -292,6 +367,28 @@ public class GenericGroup extends GenericEntity{
             }
 
           }
+        }
+
+
+        public boolean equals(GenericEntity entity){
+          if(entity != null){
+            if(entity instanceof GenericGroup){
+              return this.equals((GenericGroup)entity);
+            } else {
+              return super.equals(entity);
+            }
+          }
+          return false;
+        }
+
+        public boolean equals(GenericGroup group){
+          if(group!=null){
+            if(group.getID()==this.getID()){
+              return true;
+            }
+            return false;
+          }
+          return false;
         }
 
 

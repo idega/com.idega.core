@@ -92,4 +92,25 @@ public class SimpleQuerier{
 	}
 
 
+
+
+        public static boolean execute(String sqlString)throws Exception{
+		Connection conn= null;
+		Statement Stmt= null;
+                boolean theReturn = false;
+		try{
+			conn = getConnection();
+			Stmt = conn.createStatement();
+                        theReturn = Stmt.execute(sqlString);
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(conn);
+			}
+		}
+                return theReturn;
+	}
 }

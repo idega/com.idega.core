@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Iterator;
 import java.util.Enumeration;
 import com.idega.jmodule.object.*;
 import com.idega.block.login.business.*;
@@ -13,6 +14,7 @@ import com.idega.data.EntityFinder;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.*;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
+import com.idega.data.SimpleQuerier;
 
 /**
  * @todo move com.idega.builder.business.IBJspHandler to com.idega.core.business.ICJspHandler
@@ -30,6 +32,33 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
 
 public class AccessControl{
 
+    private static PermissionGroup AdministratorPermissionGroup = null;
+
+    static{
+      try {
+        initAdministratorPermissionGroup();
+        if(AdministratorPermissionGroup == null){
+          PermissionGroup.getStaticPermissionGroupInstance().insertStartData();
+          initAdministratorPermissionGroup();
+        }
+      }
+      catch (Exception ex) {
+
+      }
+
+    }
+
+    private static void initAdministratorPermissionGroup() throws SQLException {
+      PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
+      List groups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
+      Iterator iter = groups.iterator();
+      while (iter.hasNext()) {
+        Object item = iter.next();
+        if(getAdministratorGroupName().equals (((GenericGroup)item).getName())){
+          AdministratorPermissionGroup = (PermissionGroup)item;
+        }
+      }
+    }
 
     public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
       try {
@@ -254,8 +283,7 @@ public class AccessControl{
       return hasPermission( getOwnerPemissionString(), obj, modinfo);
     }
 
-
-    public static ICObjectPermission[] getPermissionTypes(ModuleObject obj)throws SQLException{
+/*  public static ICObjectPermission[] getPermissionTypes(ModuleObject obj)throws SQLException{
       int arobjID = obj.getICObject().getID();
       List permissions =  EntityFinder.findAllByColumn(ICObjectPermission.getStaticInstance(), ICObjectPermission.getPermissionTypeColumnName(), arobjID);
       if (permissions != null){
@@ -264,7 +292,7 @@ public class AccessControl{
         return null;
       }
     }
-
+*/
 
 
     public void setPagePermission(ModuleInfo modinfo, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
@@ -336,7 +364,7 @@ public class AccessControl{
         permission.setContextValue(obj.getICObject().getBundleIdentifier());
         permission.setGroupID(new Integer(group.getID()));
         permission.setPermissionString(permissionType);
-//        permission.setPermissionStringValue();
+    //        permission.setPermissionStringValue();
         permission.setPermissionValue(permissionValue);
         permission.insert();
       } else{
@@ -346,11 +374,38 @@ public class AccessControl{
     }
 
 
+
     public void setObjectInstacePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+      setObjectInstacePermission(Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(modinfo).getID()),permissionType,permissionValue);
+    }
+
+    public static boolean removeICObjectInstancePermissionRecords(String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+      String sGroupList = "";
+      if (groupsToRemove != null && groupsToRemove.length > 0){
+        for(int g = 0; g < groupsToRemove.length; g++){
+          if(g>0){ sGroupList += ", "; }
+          sGroupList += groupsToRemove[g];
+        }
+      }
+      if(!sGroupList.equals("")){
+        ICPermission permission = ICPermission.getStaticInstance();
+        try {
+          return SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+        }
+        catch (Exception ex) {
+          return false;
+        }
+      } else {
+        return true;
+      }
+
+    }
+
+    public static void setObjectInstacePermission( String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
-        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + obj.getICInstance(modinfo).getID() + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId))[0];
       }
       catch (Exception ex) {
         permission = new ICPermission();
@@ -359,8 +414,8 @@ public class AccessControl{
 
       if(!update){
         permission.setContextType(AccessControl.getObjectInstanceIdString());
-        permission.setContextValue(Integer.toString(obj.getICObjectInstanceID(modinfo)));
-        permission.setGroupID(new Integer(group.getID()));
+        permission.setContextValue(ObjectInstanceId);
+        permission.setGroupID(new Integer(permissionGroupId));
         permission.setPermissionString(permissionType);
 //        permission.setPermissionStringValue();
         permission.setPermissionValue(permissionValue);
@@ -370,8 +425,6 @@ public class AccessControl{
         permission.update();
       }
     }
-
-
 
 
 
@@ -473,6 +526,75 @@ public class AccessControl{
         }
       }
     }
+
+
+
+    public static List getAllowedGroups(int ICObjectInstanceId, String permissionKey) throws SQLException {
+      List toReturn = new Vector(0);
+      ICPermission permission = ICPermission.getStaticInstance();
+      List permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICObjectInstanceId + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+      if (permissions != null){
+        Iterator iter = permissions.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          try {
+            toReturn.add(new PermissionGroup(((ICPermission)item).getGroupID()));
+          }
+          catch (SQLException ex) {
+            System.err.println("Accesscontrol.getAllowedGroups(): Group not created for id "+((ICPermission)item).getGroupID());
+          }
+
+        }
+        /*
+        for (int i = 0; i < permissions.length; i++) {
+          try {
+            toReturn.add(new PermissionGroup(permissions[i].getGroupID()));
+          }
+          catch (SQLException ex) {
+            System.err.println("Accesscontrol.getAllowedGroups(): Group not created for id "+permissions[i].getGroupID());
+          }
+        }
+        */
+      }
+      toReturn.remove(AdministratorPermissionGroup);
+      return toReturn;
+    }
+
+
+    public static List getAllPermissionGroups()throws SQLException {
+      PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
+      List pGroups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
+      pGroups.remove(AdministratorPermissionGroup);
+      return pGroups;
+    }
+
+
+
+    public static String[] getICObjectPermissionKeys(Class ICObject){
+      String[] keys = new String[3];
+
+      keys[0] = getViewPermissionString();
+      keys[1] = getEditPermissionString();
+      keys[2] = getDeletePermissionString();
+
+      return keys;
+
+      // return new String[0]; // not null
+    }
+
+
+    public static String[] getBundlePermissionKeys(Class ICObject){
+      String[] keys = new String[3];
+
+      keys[0] = getViewPermissionString();
+      keys[1] = getEditPermissionString();
+      keys[2] = getDeletePermissionString();
+
+      return keys;
+
+      // return new String[0]; // not null
+    }
+
 
 
 
