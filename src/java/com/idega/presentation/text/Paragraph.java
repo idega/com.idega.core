@@ -16,6 +16,10 @@ import com.idega.presentation.*;
 */
 public class Paragraph extends PresentationObjectContainer{
 
+  public static final String HORIZONTAL_ALIGN_LEFT = "left";
+  public static final String HORIZONTAL_ALIGN_RIGHT = "right";
+  public static final String HORIZONTAL_ALIGN_CENTER = "center";
+  public static final String HORIZONTAL_ALIGN_JUSTIFY = "justify";
 
 public Paragraph(){
 	super();

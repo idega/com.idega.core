@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.18 2002/03/09 19:22:00 eiki Exp $
+ * $Id: Table.java,v 1.19 2002/03/12 22:43:50 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -337,6 +337,17 @@ public class Table extends PresentationObjectContainer {
     setHeight(Integer.toString(height));
   }
 
+
+  public void setWidthAndHeight(String widthAndHeight){
+    setWidth(widthAndHeight);
+    setHeight(widthAndHeight);
+  }
+
+  public void setWidthAndHeightToHundredPercent(){
+    setWidth(HUNDRED_PERCENT);
+    setHeight(HUNDRED_PERCENT);
+  }
+
   public String getWidth(){
     return getAttribute("width");
   }
@@ -432,6 +443,11 @@ public class Table extends PresentationObjectContainer {
 
   public void setCellpadding(int i){
     setCellpadding(Integer.toString(i));
+  }
+
+  public void setCellpaddingAndCellspacing(int i){
+   setCellpadding(i);
+   setCellspacing(i);
   }
 
   public void setCellspacing(String s){
