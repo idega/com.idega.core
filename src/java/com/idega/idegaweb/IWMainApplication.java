@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.129 2005/01/20 00:14:33 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.130 2005/01/20 14:17:07 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/20 00:14:33 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/20 14:17:07 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.129 $
+ * @version $Revision: 1.130 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -1647,7 +1647,7 @@ public class IWMainApplication //{//implements ServletContext{
 				String separator = "_";
 				String[] parameters = componentType.split(separator);
 				String moduleId=parameters[1];
-				String icObjectId=parameters[2];
+				//String icObjectId=parameters[2];
 				String componentClass=parameters[3];
 
 				
