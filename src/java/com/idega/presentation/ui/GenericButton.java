@@ -41,6 +41,7 @@ public class GenericButton extends GenericInput {
 	private Class templatePageClass;
 	private String templateForObjectInstanciation;
 
+	private String _URL;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -109,6 +110,10 @@ public class GenericButton extends GenericInput {
 				buffer.append("location='"+getURIToClassToInstanciate(iwc)+"';").append("\n");
 				addFunction = true;
 			}
+			if(_URL != null){
+				buffer.append(Window.getWindowCallingScript(_URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480)).append("\n");
+				addFunction = true;
+			}
 
 			buffer.append("}");
 			if (addFunction) {
@@ -141,6 +146,9 @@ public class GenericButton extends GenericInput {
 				}
 				if (classToInstanciate != null) {
 					setOnClick("javascript:location='"+getURIToClassToInstanciate(iwc)+"';");
+				}
+				if (_URL != null) {
+					setOnClick("javascript:"+Window.getWindowCallingScript(_URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480));
 				}
 			}
 			
@@ -224,6 +232,10 @@ public class GenericButton extends GenericInput {
 	public void setParentPageToOpen(ICPage page) {
 		if (page != null && page.getID() != -1)
 			setParentPageToOpen(page.getID());
+	}
+	
+	public void setURLToOpen(String URL) {
+		_URL = URL;
 	}
 	
 	public void addParameter(String name, String value) {
