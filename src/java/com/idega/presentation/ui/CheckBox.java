@@ -63,15 +63,4 @@ public class CheckBox extends GenericInput {
 			}
 		}
 	}
-	
-	public synchronized Object clone() {
-		CheckBox obj = null;
-		try {
-			obj = (CheckBox) super.clone();
-		}
-		catch (Exception ex) {
-			ex.printStackTrace(System.err);
-		}
-		return obj;
-	}
 }

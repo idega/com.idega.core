@@ -8,13 +8,8 @@ import com.idega.presentation.PresentationObject;
 
 /**
  * @author laddi
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
-public class FieldSet extends InterfaceObjectContainer {
+public class FieldSet extends InterfaceObject {
 	
 	private Vector theElements;
 	private String _legend;
@@ -49,4 +44,10 @@ public class FieldSet extends InterfaceObjectContainer {
 		theElements.add(object);
 	}
 	
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
 }
