@@ -631,17 +631,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
   /**
-   *  Returns User from userid, null if not found
+   *  Returns User from userid, throws EJBException if not found
    */
   public  User getUser(int iUserId){
     try {
       return getUserHome().findByPrimaryKey(new Integer(iUserId));
     }
     catch (Exception ex) {
-
+      throw new EJBException("Error getting user for id: "+iUserId+" Message: "+ex.getMessage());
     }
-    return null;
+    //return null;
   }
+
 
 
 
