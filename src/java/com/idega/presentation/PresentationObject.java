@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.74 2003/11/21 19:01:10 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.75 2003/11/21 23:59:39 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -11,8 +11,6 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +54,6 @@ import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.ui.Form;
-import com.idega.util.database.ConnectionBroker;
 import com.idega.util.text.TextStyler;
 /**
  * The base class for objects that present themselves to a user on screen in
@@ -67,8 +64,8 @@ import com.idega.util.text.TextStyler;
  */
 public class PresentationObject 
 //implements Cloneable{
-extends javax.faces.component.UIComponentBase 
-implements Cloneable,javax.faces.component.UIComponent{
+extends UIComponentBase 
+implements Cloneable,UIComponent{
 	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	public final static String WIDTH = "width";
@@ -156,7 +153,7 @@ implements Cloneable,javax.faces.component.UIComponent{
 	public String getID()
 	{
 		String theReturn = getMarkupAttribute("id");
-		if (theReturn == null || this.emptyString.equals(theReturn))
+		if (theReturn == null || emptyString.equals(theReturn))
 		{
 			setID();
 			theReturn = getMarkupAttribute("id");
@@ -552,17 +549,6 @@ implements Cloneable,javax.faces.component.UIComponent{
 		return out;
 	}
 	/**
-	 * @return The default DatabaseConnection
-	 */
-	public Connection getConnection()
-	{
-		return ConnectionBroker.getConnection();
-	}
-	public void freeConnection(Connection conn)
-	{
-		ConnectionBroker.freeConnection(conn);
-	}
-	/**
 	 * @return The Class name of the Object
 	 */
 	public String getClassName()
@@ -839,7 +825,8 @@ implements Cloneable,javax.faces.component.UIComponent{
 	}
 	public void setICObjectInstance(ICObjectInstance instance)
 	{
-		setICObjectInstanceID(instance.getID());
+		int instanceId = ((Integer)(instance.getPrimaryKey())).intValue();
+		setICObjectInstanceID(instanceId);
 	}
 	public void setICObjectID(int id)
 	{
@@ -847,12 +834,13 @@ implements Cloneable,javax.faces.component.UIComponent{
 	}
 	public void setICObject(ICObject obj)
 	{
-		this.ic_object_id = obj.getID();
+		int objectId = ((Integer)(obj.getPrimaryKey())).intValue();		
+		this.ic_object_id = objectId;
 	}
 	/**
 	 * owerwrite in module
 	 */
-	public int getICObjectInstanceID(IWContext iwc) throws SQLException
+	public int getICObjectInstanceID(IWContext iwc) throws Exception
 	{
 		return getICObjectInstanceID();
 	}
@@ -860,11 +848,11 @@ implements Cloneable,javax.faces.component.UIComponent{
 	{
 		return this.ic_object_instance_id;
 	}
-	public ICObjectInstance getICObjectInstance(IWContext iwc) throws SQLException
+	public ICObjectInstance getICObjectInstance(IWContext iwc) throws Exception
 	{
 		return getICObjectInstance();
 	}
-	public ICObjectInstance getICObjectInstance() throws SQLException
+	public ICObjectInstance getICObjectInstance() throws Exception
 	{
 		if (getICObjectInstanceID() != 0)
 		{
@@ -878,7 +866,7 @@ implements Cloneable,javax.faces.component.UIComponent{
 			return null;
 		}
 	}
-	public int getICObjectID(IWContext iwc) throws SQLException
+	public int getICObjectID(IWContext iwc) throws Exception
 	{
 		return ic_object_id;
 		/*
@@ -1434,9 +1422,9 @@ implements Cloneable,javax.faces.component.UIComponent{
 			{
 				throw new RuntimeException(ex.getMessage());
 			}
-			catch (SQLException sql)
+			catch (Exception e2)
 			{
-				throw new RuntimeException(sql.getMessage());
+				throw new RuntimeException(e2.getMessage());
 			}
 		}
 	}
