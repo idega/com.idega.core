@@ -682,10 +682,10 @@ private void setPrefixes(IWContext iwc)throws Exception{
 		String regex = ":openwindow\\(\\\'\\/servlet\\/WindowOpener\\??[\\w+\\=\\-?.+\\"+symbol+"?]*\\\',";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(html);	
-		StringBuffer sbURL = new StringBuffer();
-		StringBuffer sbSymbol = new StringBuffer();
 		StringBuffer sb = new StringBuffer();
 		while(matcher.find()) {
+			StringBuffer sbURL = new StringBuffer();
+			StringBuffer sbSymbol = new StringBuffer();
 			String rURL = "\\(\\\'\\/servlet";
 			Pattern pURL = Pattern.compile(rURL);
 			Matcher mURL = pURL.matcher(matcher.group());
@@ -702,6 +702,7 @@ private void setPrefixes(IWContext iwc)throws Exception{
 			mSymbol.appendTail(sbSymbol);
 			
 			matcher.appendReplacement(sb,sbSymbol.toString());
+			
 		}
 		matcher.appendTail(sb);
 		return sb.toString();
