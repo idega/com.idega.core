@@ -112,8 +112,11 @@ public  class IWPresentationServlet extends IWCoreServlet{
                     {
                       if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
                       {
+                        ((ActiveEvent)obj).dispatch();
+                      /* Kommentað út þar til kerfið ræður við þræði
                         EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
                         q.postEvent((AWTEvent)obj);
+                      */
                       }
                     }
 
