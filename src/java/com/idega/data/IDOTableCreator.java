@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -714,7 +713,8 @@ public class IDOTableCreator{
   }
 
   protected void updateColumns(GenericEntity entity)throws Exception{
-    String[] columnArrayFromDB = getColumnArrayFromDataBase(entity);
+    
+  	String[] columnArrayFromDB = getColumnArrayFromDataBase(entity);
     String[] columnArrayFromEntity = entity.getColumnNames();
     for (int i = 0; i < columnArrayFromEntity.length; i++) {
       String column = columnArrayFromEntity[i];
@@ -731,20 +731,67 @@ public class IDOTableCreator{
       }
     }
   }
+  
+  private boolean compareIndexColumns(String[] arr1, String[] arr2) {
+  		if (arr1 != null && arr2 != null && arr1.length == arr2.length) {
+  			boolean returner = true;
+  			for (int i = 0; i < arr1.length && returner; i++) {
+  				returner = false;
+  				for (int j = 0; j < arr2.length && !returner; j++) {
+  					if (arr1[i].equals(arr2[j])) {
+  						returner = true;
+  					}
+  				}
+  				
+  				if (!returner) {
+  					return returner;
+  				}
+  			}
+  			return true;
+  		}
+  		return false;
+  }
 
   private void updateIndexes(GenericEntity entity) {
   		if (_dsi.useIndexes()) {
-			Collection indexesFromDB = _dsi.getTableIndexes(entity.getDatasource(), entity.getTableName());
+  			HashMap indexesFromDB = _dsi.getTableIndexes(entity.getDatasource(), entity.getTableName());
 	  		try {
 					HashMap map = entity.getEntityDefinition().getIndexes();
 					Set indexesFromEntity = map.keySet();
-					Vector temp = new Vector(indexesFromEntity);
+					Set setFromDB = indexesFromDB.keySet();
 					
-					if (indexesFromDB != null) {
-						indexesFromEntity.removeAll(indexesFromDB);
-						indexesFromDB.removeAll(temp);
+					
+					// Not handling keys that exist in DB
+					Iterator dbKeyIter = setFromDB.iterator();
+					String dbKey;
+					while (dbKeyIter.hasNext()) {
+						dbKey = (String) dbKeyIter.next();
+						if (map.containsKey(dbKey)) {
+							map.remove(dbKey);
+						}
 					}
-	
+
+					// Not handling columns that are already indexed
+					if (indexesFromDB != null && !indexesFromDB.isEmpty()) {
+						try {
+							Iterator dbValues = indexesFromDB.values().iterator();
+							Iterator entityKeys = indexesFromEntity.iterator();
+							String[] columns = null;
+							while (dbValues.hasNext()) {
+								columns = (String[]) dbValues.next();
+								while (entityKeys.hasNext()) {
+									String key = (String) entityKeys.next();
+									if (compareIndexColumns(columns, (String[]) map.get( key ))) {
+										map.remove(key);
+									}
+								}
+							}
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+						
 					// CREATING
 					Iterator iter = indexesFromEntity.iterator();
 					String indexName;
