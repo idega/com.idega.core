@@ -744,8 +744,19 @@ public class IWTimestamp implements Comparable {
 	 * @return String
 	 */
 	public String getLocaleDate(Locale locale, int format) {
-		DateFormat dateFormat = DateFormat.getDateInstance(format, locale);
-		return dateFormat.format(getTime());
+		return getLocaleDate(locale, format, format);
+	}
+
+	/**
+	 * Get a date string for the locale
+	 * @param locale				The locale to use to format the current date
+	 * @param dateFormat		The format of the date string
+	 * @param timeFormat		The format of the time string
+	 * @return String
+	 */
+	public String getLocaleDate(Locale locale, int dateFormat, int timeFormat) {
+		DateFormat format = DateFormat.getDateTimeInstance(dateFormat, timeFormat, locale);
+		return format.format(getTime());
 	}
 
 	/**
