@@ -116,6 +116,9 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public Iterator getChildrenIterator() {
+	    if (getChildren() == null) {
+	        return null;
+	    }
 	    return getChildren().iterator();
 	}
 	
