@@ -356,11 +356,33 @@ private String returnFullScreen() {
   else
     return "";
 }
-
+/**
+ * Gets the URL to a (popup) Window class of class windowClass
+ * @param windowClass the Class of the Window to instanciate
+ * @param iwc
+ * @return the URL (without http:// and hostname)
+ */
 public static String getWindowURL(Class windowClass,IWApplicationContext iwc){
-  //String url = IWMainApplication.windowOpenerURL;
   return iwc.getIWMainApplication().getWindowOpenerURI(windowClass);
 }
+
+/**
+ * Gets the URL to a (popup) Window class of class windowClass with added extra parameters to send to the window.
+ * @param windowClass the Class of the Window to instanciate
+ * @param iwc
+ * @param parameterName name of parameter to send
+ * @param parameterValue value of parameter to send
+ * @return the URL (without http:// and hostname)
+ */
+public static String getWindowURLWithParameter(Class windowClass,IWApplicationContext iwc,String parameterName,String parameterValue){
+    String url = getWindowURL(windowClass,iwc);
+    if(url.indexOf("?")==-1){
+        return url + "?"+parameterName+"="+parameterValue;
+    }
+    else{
+        return url + "&"+parameterName+"="+parameterValue;
+    }
+  }
 
 public static String getCallingScriptString(Class windowClass,IWApplicationContext iwac){
   return getCallingScriptString(windowClass,true,iwac);
