@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.42 2002/03/13 10:30:33 tryggvil Exp $
+ * $Id: Page.java,v 1.43 2002/03/13 16:33:50 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -164,13 +164,10 @@ public class Page extends PresentationObjectContainer {
   }
 
   private void setDefaultValues() {
-	  /*setStyleDefinition("A:link","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
-    setStyleDefinition("A:visited","color:"+_visitedColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
+    setStyleDefinition("A","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
     setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
-    setStyleDefinition("body","font-family: "+_pageStyleFont+"; font-size: "+_pageStyleFontSize+"; font-style: "+_pageStyleFontStyle+";");*/
-    //addScriptSource("/idegaweb/global.js");
+    setStyleDefinition("body","font-family:"+_pageStyleFont+";font-size:"+_pageStyleFontSize+";");
     getAssociatedScript().addFunction("windowopen",Window.windowScript());
-
   }
 
   public String getStyleDefinition() {

@@ -293,7 +293,7 @@ private void setDefaultAttributes(IWContext iwc){
       obj.underline = this.underline;
       obj.addHTMLFontTag = this.addHTMLFontTag;
       if(this.localizationMap!=null){
-        obj.localizationMap=(Map)((HashMap)this.localizationMap).clone();
+	obj.localizationMap=(Map)((HashMap)this.localizationMap).clone();
       }
     }
     catch(Exception ex) {
@@ -317,7 +317,7 @@ protected String getLocalizedText(IWContext iwc){
     else{
       String defLocalizedString = (String)this.getLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
       if(defLocalizedString!=null){
-        return defLocalizedString;
+	return defLocalizedString;
       }
     }
   }
@@ -326,7 +326,7 @@ protected String getLocalizedText(IWContext iwc){
 
 public void print(IWContext iwc)throws Exception{
 	initVariables(iwc);
-	setDefaultAttributes(iwc);
+	//setDefaultAttributes(iwc);
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 			//if (getInterfaceStyle().equals("something")){
