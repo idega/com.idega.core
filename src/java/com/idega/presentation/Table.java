@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.7 2001/11/09 12:44:48 eiki Exp $
+ * $Id: Table.java,v 1.8 2001/11/23 16:55:24 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,6 +43,21 @@ public class Table extends PresentationObjectContainer {
   private boolean cellsAreMerged;
 
   private static final String COLOR_ATTRIBUTE="bgcolor";
+
+
+  private boolean addLineTop = false;
+  private boolean addLinesBetween = false;
+  private boolean addLinesBottom = false;
+  private boolean addLineLeft = false;
+  private boolean addVerticalLinesBetween = false;
+  private boolean addLineRight = false;
+  private String lineColor = "#000000";
+  private String lineHeight = "1";
+  private String lineWidth = "1";
+  private int lineColspan = 0;
+  private int[] lineRows = new int[0];
+  private int[] lineCols = new int[0];
+
 
   /**
    * Constructor that defaults with 1 column and 1 row
@@ -225,17 +240,19 @@ public class Table extends PresentationObjectContainer {
 
   public void resize(int columns,int rows){
 
+    if(columns != cols || rows != this.rows){
+      int minCols = Math.min(columns,cols);
+      int minRows = Math.min(rows,this.rows);
+      PresentationObjectContainer theNewObjects[][];
+      theNewObjects = new PresentationObjectContainer[columns][rows];
 
-    PresentationObjectContainer theNewObjects[][];
-    theNewObjects = new PresentationObjectContainer[columns][rows];
-
-    for (int x=0;x<this.cols;x++){
-      System.arraycopy(theObjects[x],0,theNewObjects[x],0,this.rows);
+      for (int x=0;x<minCols;x++){
+        System.arraycopy(theObjects[x],0,theNewObjects[x],0,minRows);
+      }
+      theObjects=theNewObjects;
+      this.cols=columns;
+      this.rows=rows;
     }
-    theObjects=theNewObjects;
-    this.cols=columns;
-    this.rows=rows;
-
   }
 
   /**
@@ -797,14 +814,40 @@ public class Table extends PresentationObjectContainer {
         }
         else{
           //print(Text.getNonBrakingSpace().getText());
-          print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\"/>");
+          print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\" alt=\"\">");
         }
       }
 
     }
     else{
-      print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\"/>");
+      print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\" alt=\"\" >");
       //print(Text.getNonBrakingSpace().getText());
+    }
+  }
+
+  protected void printLine(IWContext iwc) throws Exception{
+    println("\n<tr>");
+//    for(int x=1;x<=cols;){
+      //println("\n<td "+"height="+this.lineHeight+" colspan="+cols+" "+COLOR_ATTRIBUTE+"="+this.lineColor+" >");
+      println("\n<td "+"height=\""+this.lineHeight+((lineColspan > 1)?("\" colspan=\""+lineColspan+"\" "):("\" "))+COLOR_ATTRIBUTE+"=\""+this.lineColor+"\" >");
+      //if(!iwc.isOpera()){
+        transparentcell._print(iwc);
+        println("</td>");
+      //} else {
+        //println("</td>");  // ?????
+      //}
+
+//    }
+    println("\n</tr>");
+  }
+
+  protected void printVerticalLine(IWContext iwc) throws Exception{
+    println("<td width=\""+this.lineWidth+"\" "+COLOR_ATTRIBUTE+"=\""+this.lineColor+"\" >");
+    if(!iwc.isOpera()){
+      transparentcell._print(iwc);
+      println("</td>");
+    } else {
+      //println("</td>");  // ?????
     }
   }
 
@@ -813,21 +856,40 @@ public class Table extends PresentationObjectContainer {
     this.transparentcell = getTransparentCell(iwc);
     //if( doPrint(iwc)){
       if (getLanguage().equals("HTML")){
-                    String theErrorMessage = getErrorMessage();
-                    if (theErrorMessage==null){
-
-        //if (getInterfaceStyle().equals("something")){
-        //}
-        //else{
-                                  StringBuffer printString = new StringBuffer();
-                                  printString.append("<table ");
-                                  printString.append(getAttributeString());
-                                  printString.append(" >");
+        String theErrorMessage = getErrorMessage();
+        if (theErrorMessage==null){
+          //if (getInterfaceStyle().equals("something")){
+          //}
+          //else{
+          StringBuffer printString = new StringBuffer();
+          printString.append("<table ");
+          printString.append(getAttributeString());
+          printString.append(" >");
           println(printString.toString());
           if( ! cellsAreMerged){
+            lineColspan = cols;
+            if(addVerticalLinesBetween){
+              lineColspan += (cols-1);
+            } else {
+              lineColspan += lineRows.length;
+            }
+            if(addLineLeft){
+              lineColspan++;
+            }
+            if(addLineRight){
+              lineColspan++;
+            }
+
+            if(addLineTop){
+              printLine(iwc);
+            }
             for(int y=1;y<=rows;){
               println("\n<tr>");
               for(int x=1;x<=cols;){
+
+                if(this.addLineLeft && x==1){
+                  printVerticalLine(iwc);
+                }
 
                 if(theObjects[x-1][y-1] != null){
                   if ( theObjects[x-1][y-1].getAttributeString().indexOf("align") == -1 ) {
@@ -856,14 +918,42 @@ public class Table extends PresentationObjectContainer {
                   printNbsp(iwc,x,y);
                 }
                 println("</td>");
-              x++;
+
+                if((addLineRight && x==cols) || (addVerticalLinesBetween && x!=cols)){
+                  printVerticalLine(iwc);
+                } else {
+                  for (int i = 0; i < lineCols.length; i++) {
+                    if(x == lineCols[i]){
+                      printVerticalLine(iwc);
+                      break;
+                    }
+                  }
+                }
+
+                x++;
               }
 
               println("\n</tr>");
+
+              if(this.addLinesBetween && y!=rows){
+                printLine(iwc);
+              } else {
+                for (int i = 0; i < lineRows.length; i++) {
+                  if(y == lineRows[i]){
+                    printLine(iwc);
+                    break;
+                  }
+                }
+              }
+
               y++;
             }
+
+            if(this.addLinesBottom){
+              printLine(iwc);
+            }
           }
-          else
+          else // if merged
           {
             for(int y=1;y<=rows;){
               println("\n<tr>");
@@ -1177,4 +1267,101 @@ public boolean isEmpty(int x, int y){
     PresentationObjectContainer cont = containerAt(xpos,ypos);
     return(cont.getLabel());
   }
+
+
+
+
+  public void setLinesBetween(boolean value){
+    addLinesBetween = value;
+  }
+
+  public void setTopLine(boolean value){
+    addLineTop = value;
+  }
+
+  public void setBottomLine(boolean value){
+    addLinesBottom = value;
+  }
+
+  public void setLineColor(String color){
+    lineColor = color;
+  }
+
+  public void setLineHeight(String height){
+    lineHeight = height;
+  }
+
+  public void setVerticatLinesBetween(boolean value){
+    addVerticalLinesBetween = value;
+  }
+
+  public void setRightLine(boolean value){
+    addLineRight = value;
+  }
+
+  public void setLeftLine(boolean value){
+    addLineLeft = value;
+  }
+
+  public void setLineWidth(String width){
+    lineWidth = width;
+  }
+
+  public void setLineFrame(boolean value){
+    this.setLeftLine(value);
+    this.setRightLine(value);
+    this.setTopLine(value);
+    this.setBottomLine(value);
+  }
+
+  /**
+   * @deprecated: only for builderuse until handler has been implemented
+   */
+  public void setLineAfterRow(int row, boolean value){
+    if(value){
+      setLineAfterRow(row);
+    } else {
+      for (int i = 0; i < lineRows.length; i++) {
+        if(lineRows[i] == row){
+          lineRows[i] = -1;  // should decrease array to
+        }
+      }
+    }
+  }
+
+  /**
+   * @deprecated: only for builderuse until handler has been implemented
+   */
+  public void setLineAfterColumn(int column, boolean value){
+    if(value){
+      setLineAfterColumn(column);
+    } else {
+      for (int i = 0; i < lineCols.length; i++) {
+        if(lineCols[i] == column){
+          lineCols[i] = -1;  // should decrease array to
+        }
+      }
+    }
+  }
+
+
+
+  public void setLineAfterRow(int row){
+    // increase length
+    int[] newLines = new int[lineRows.length+1];
+    System.arraycopy(lineRows,0,newLines,0,lineRows.length);
+    lineRows = newLines;
+    // done
+    lineRows[lineRows.length-1] = row;
+  }
+
+  public void setLineAfterColumn(int column){
+    // increase length
+    int[] newLines = new int[lineCols.length+1];
+    System.arraycopy(lineCols,0,newLines,0,lineCols.length);
+    lineCols = newLines;
+    // done
+    lineCols[lineCols.length-1] = column;
+  }
+
 }
