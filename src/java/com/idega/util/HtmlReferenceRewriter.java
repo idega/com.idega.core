@@ -225,7 +225,7 @@ public class HtmlReferenceRewriter {
 				read = sr.read(buf);
 			}
 			sr.close();
-			//out.close(); don't close the stream, that is done automatically when the page is stored
+			out.close();
 		}
 		catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
