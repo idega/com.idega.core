@@ -23,15 +23,15 @@ public abstract class InterfaceObject extends PresentationObject {
 	private boolean _changeValue = false;
 	private boolean _selectValues = false;
 	
-	public static final String ACTION_ON_BLUR = "onBlur";
-	public static final String ACTION_ON_CHANGE = "onChange";
-	public static final String ACTION_ON_CLICK = "onClick";
-	public static final String ACTION_ON_FOCUS = "onFocus";
-	public static final String ACTION_ON_KEY_PRESS = "onKeyPress";
-	public static final String ACTION_ON_KEY_DOWN = "onKeyDown";
-	public static final String ACTION_ON_KEY_UP = "onKeyUp";
-	public static final String ACTION_ON_SELECT = "onSelect";
-	public static final String ACTION_ON_SUBMIT = "onSubmit";
+	public static final String ACTION_ON_BLUR = "onblur";
+	public static final String ACTION_ON_CHANGE = "onchange";
+	public static final String ACTION_ON_CLICK = "onclick";
+	public static final String ACTION_ON_FOCUS = "onfocus";
+	public static final String ACTION_ON_KEY_PRESS = "onkeypress";
+	public static final String ACTION_ON_KEY_DOWN = "onkeydown";
+	public static final String ACTION_ON_KEY_UP = "onkeyup";
+	public static final String ACTION_ON_SELECT = "onselect";
+	public static final String ACTION_ON_SUBMIT = "onsubmit";
 
 
 	public InterfaceObject() {
@@ -521,7 +521,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setDisabled(boolean disabled) {
 		if (disabled)
-			setMarkupAttributeWithoutValue("disabled");
+			setMarkupAttribute("disabled", "disabled");
 		else
 			this.removeMarkupAttribute("disabled");
 	}

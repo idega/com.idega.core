@@ -37,7 +37,7 @@ public class SelectOption extends InterfaceObject {
 	 */
 	public void setSelected(boolean selected) {
 		if (selected)
-			setMarkupAttributeWithoutValue("selected");
+			setMarkupAttribute("selected", "selected");
 		else
 			this.removeMarkupAttribute("selected");
 	}

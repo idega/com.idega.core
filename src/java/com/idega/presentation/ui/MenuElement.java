@@ -1,5 +1,5 @@
 /*
- * $Id: MenuElement.java,v 1.7 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: MenuElement.java,v 1.8 2004/02/05 21:21:01 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -75,10 +75,10 @@ public class MenuElement extends InterfaceObject {
 			String disabledString = emptyString;
 			String selectedString = emptyString;
 			if (isSelected()) {
-				selectedString = "selected";
+				setMarkupAttribute("selected", "selected");
 			}
 			if (isDisabled()) {
-				disabledString = "disabled";
+				setMarkupAttribute("disabled", "disabled");
 			}
 			print("<option name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + disabledString + " " + selectedString + " >");
 			print(getName());
