@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.appserver.AppServer;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.exception.IWBundleDoesNotExist;
@@ -107,9 +108,11 @@ public class IWMainApplication {//implements ServletContext{
     public static boolean DEBUG_FLAG = false;
 	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
 	public static final String PROPERTY_JSF_RENDERING = "jsf_rendering";
+	private AppServer applicationServer;
 
-    public IWMainApplication(ServletContext application) {
+    public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
+        setApplicationServer(appserver);        
         application.setAttribute(ApplicationStorageParameterName, this);
         //set the default application instance to this
         if(defaultIWMainApplication==null){
@@ -124,7 +127,7 @@ public class IWMainApplication {//implements ServletContext{
     public String getVersion() {
         String theReturn = this.getSettings().getProperty("version");
         if (theReturn == null) {
-            theReturn = "1.3";
+            theReturn = "1.4.3";
         }
         return theReturn;
     }
@@ -144,10 +147,9 @@ public class IWMainApplication {//implements ServletContext{
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
         IWSystemProperties systemProperties = new IWSystemProperties(this);
         setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER, systemProperties);
+        log("Starting the idegaWeb Application Framework - Version "
+                + this.getVersion());        
         loadCryptoProperties();
-        System.out
-                .println("Starting the idegaWEB Application Framework - Version "
-                        + this.getVersion());
     }
 
     public void loadBundles() {
@@ -368,8 +370,7 @@ public class IWMainApplication {//implements ServletContext{
 
     public void unload() {
         if (!alreadyUnLoaded) {
-            System.out
-                    .println("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
+            log("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
             storeStatus();
             //IWCacheManager.deleteCachedBlobs(this);
             //      getImageFactory(true).deleteGeneratedImages(this);
@@ -659,7 +660,7 @@ public class IWMainApplication {//implements ServletContext{
         if (controler != null) {
             return controler;
         } else {
-            System.err.println("AccessController has not been started");
+            log("AccessController has not been started");
             return null;
         }
     }
@@ -1084,5 +1085,19 @@ public class IWMainApplication {//implements ServletContext{
     public static IWApplicationContext getDefaultIWApplicationContext(){
 		return getDefaultIWMainApplication().getIWApplicationContext();
 	}
+
+    /**
+     * @param appServer
+     */
+    public void setApplicationServer(AppServer appServer) {
+        this.applicationServer = appServer;
+    }
+    
+    /**
+     * @param appServer
+     */
+    public AppServer getApplicationServer(){
+        return this.applicationServer;
+    }
 
 }

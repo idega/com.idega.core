@@ -104,32 +104,14 @@ implements IWUserContext, IWApplicationContext {
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 	public static final String[] WML_USER_AGENTS = new String[] {"nokia", "ericsson", "wapman", "upg1", "symbian", "wap"}; // NB: must be lowercase
-	private boolean isRequestCharacterEncodingSet;
+	private boolean isRequestCharacterEncodingSet=false;
 
 	/**
 	 *Default constructor
 	 **/
 	public IWContext() {
 	}
-	/*public IWContext(HttpServletRequest request, HttpServletResponse response) {
-		this.setRequest(request);
-		this.setResponse(response);
-		setLanguage(getRightLanguage(request, response));
-		setAllDefault();
-	}
-	public IWContext(HttpServletRequest request, HttpServletResponse response, String language) {
-		this.setRequest(request);
-		this.setResponse(response);
-		setLanguage(language);
-		setAllDefault();
-	}
-	public IWContext(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		this.setRequest(request);
-		this.setResponse(response);
-		setLanguage(getRightLanguage(request, response));
-		setAllDefault();
-		//this.session=session;
-	}*/
+
 	private IWContext(FacesContext fc){
 		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse(),(ServletContext) fc.getExternalContext().getContext());
 		setRealFacesContext(fc);
@@ -146,8 +128,7 @@ implements IWUserContext, IWApplicationContext {
 		setServletContext(context);
 		setLanguage(getRightLanguage(request));
 		setAllDefault();
-//		TODO check if this is ok for multipart forms
-		if(!isRequestCharacterEncodingSet){
+		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
 				isRequestCharacterEncodingSet = true;
@@ -156,6 +137,13 @@ implements IWUserContext, IWApplicationContext {
 			}
 		}
 	}
+	
+	protected boolean getIfSetRequestCharacterEncoding(){
+	    //TODO: check if this is ok for multipart forms
+	    boolean returner = (!isRequestCharacterEncodingSet)&&this.getIWMainApplication().getApplicationServer().getSupportsSettingCharactersetInRequest();
+	    return returner;
+	}
+	
 	/**
 	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
 	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it constructs a new.

@@ -15,6 +15,8 @@ import javax.servlet.ServletContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.appserver.AppServer;
+import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.core.component.data.ICObjectType;
 import com.idega.core.component.data.ICObjectTypeHome;
@@ -34,9 +36,8 @@ import com.idega.util.database.PoolManager;
 
 
 /**
- * Title:        IWApplicationStarter
- * Description:  The class that starts up an initializes an idegaWeb Application
- * Copyright: Copyright (c) 2002 idega software
+ * This class is responsible for starting up and initializing an idegaWeb Application
+ * Copyright: Copyright (c) 2002-2004 idega software
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
 public class IWMainApplicationStarter {
@@ -45,27 +46,39 @@ public class IWMainApplicationStarter {
 	
 	
 	public IWMainApplicationStarter(ServletContext context){
-		IWMainApplication _iwma = new IWMainApplication(context);
+	    AppServer appServer = AppServerDetector.setAppServerForApplication(context);
+		IWMainApplication _iwma = new IWMainApplication(context,appServer);
+		_iwma.setApplicationServer(appServer);
 		iwma=_iwma;
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
-		sendStartMessage("Initializing IWMainApplicationStarter");
+		//sendStartMessage("Initializing IWMainApplicationStarter");
+		String serverInfo = context.getServerInfo();
+		String appServerName = appServer.getName();
+		String appServerVersion = appServer.getVersion();
+		if(appServer.isOfficiallySupported()){
+			if(appServerVersion!=null){
+			    sendStartMessage("Detecting Supported Application Server '"+appServerName+"' with version '"+appServerVersion+"'");
+			}
+			else{
+			    sendStartMessage("Detecting Supported Application Server '"+appServerName+"' with unknown version");
+			}
+		}
+		else{
+		    sendStartMessage("WARNING! This Application Server ("+serverInfo+") is not officially supported by idegaWeb");
+		}
 		startup();
-	}
-	
-	public IWMainApplicationStarter(IWMainApplication _iwma){
-		iwma=_iwma;
 	}
 	//debug
 	private static String propertiesfile;
 	//public PoolManager poolMgr;
 	public void startup() {
-		sendStartMessage("Initializing IdegaWebStarter");
+		sendStartMessage("Initializing IdegaWeb");
 		startIdegaWebApplication();
 	}
 
 	public void shutdown() {
 		//poolMgr.release();
-		sendShutdownMessage("Destroying IdegaWebStarter");
+		sendShutdownMessage("Stopping IdegaWeb");
 		endIdegaWebApplication();
 		//super.destroy();
 	}
