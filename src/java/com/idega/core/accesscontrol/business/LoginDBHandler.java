@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.54 2004/08/24 22:05:50 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.55 2004/09/14 06:25:49 aron Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -583,38 +583,8 @@ public class LoginDBHandler {
 		if (firstName == null) firstName = "";
 		if (middleName == null) middleName = "";
 		if (lastName == null) lastName = "";
-		String finalPossibility = StringHandler.getRandomString(8);
+		//String finalPossibility = StringHandler.getRandomString(8);
 		ArrayList userNameList = new ArrayList(200);
-		try {
-			userNameList.add(firstName + lastName.substring(0, 1));
-		}
-		catch (Exception e) {
-			userNameList.add(StringHandler.getRandomString(8));
-		}
-		try {
-			if (middleName != null) {
-				userNameList.add(firstName.substring(0, 1) + middleName.substring(0, 1) + lastName.substring(0, 1));
-			}
-			else {
-				userNameList.add(firstName + lastName.substring(0, 2));
-			}
-		}
-		catch (Exception e) {
-			userNameList.add(StringHandler.getRandomString(8));
-		}
-		try {
-			userNameList.add(firstName.substring(0, firstName.length() - 1) + lastName.substring(0, 1));
-		}
-		catch (Exception e) {
-			userNameList.add(StringHandler.getRandomString(8));
-		}
-		try {
-			userNameList.add(firstName.substring(0, firstName.length()) + lastName.substring(0, 3));
-		}
-		catch (Exception e) {
-			userNameList.add(StringHandler.getRandomString(8));
-		}
-		
 		try {
 			String usePidAsGenerated = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getProperty(LOGIN_USE_PID_AS_GENERATED,Boolean.toString(false));
 			if(Boolean.getBoolean(usePidAsGenerated)){
@@ -623,9 +593,40 @@ public class LoginDBHandler {
 		} catch (RuntimeException e1) {
 			e1.printStackTrace();
 		}
+		try {
+			userNameList.add(firstName + lastName.substring(0, 1));
+		}
+		catch (Exception e) {
+			//userNameList.add(StringHandler.getRandomString(8));
+		}
+		try {
+			if (!"".equals(middleName)) {
+				userNameList.add(firstName.substring(0, 1) + middleName.substring(0, 1) + lastName.substring(0, 1));
+			}
+			else {
+				userNameList.add(firstName + lastName.substring(0, 2));
+			}
+		}
+		catch (Exception e) {
+			//userNameList.add(StringHandler.getRandomString(8));
+		}
+		try {
+			userNameList.add(firstName.substring(0, firstName.length() - 1) + lastName.substring(0, 1));
+		}
+		catch (Exception e) {
+			//userNameList.add(StringHandler.getRandomString(8));
+		}
+		try {
+			userNameList.add(firstName.substring(0, firstName.length()) + lastName.substring(0, 3));
+		}
+		catch (Exception e) {
+			//userNameList.add(StringHandler.getRandomString(8));
+		}
+		
+		
 
 		userNameList.addAll(generatePossibleUserNames(firstName, middleName, lastName, 8,(Integer)user.getPrimaryKey()));
-		userNameList.add(finalPossibility);
+		//userNameList.add(finalPossibility);
 		return userNameList;
 	}
 
