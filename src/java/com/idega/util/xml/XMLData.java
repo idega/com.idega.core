@@ -407,7 +407,7 @@ public class XMLData implements Storable {
   	return reader.read(this, iwc);
   }
   
-  public void addFirst(XMLData data) {
+  public void add(XMLData data) {
   	XMLElement dataRootElement = data.getDocument().getRootElement();
   	dataRootElement = dataRootElement.detach();
   	getDocument().getRootElement().addContent(dataRootElement);  	
