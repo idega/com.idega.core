@@ -13,8 +13,10 @@ import com.idega.util.text.TextStyler;
 public class Layer extends PresentationObjectContainer {
 	
 	public static final String ABSOLUTE = "absolute";
+	public static final String FIXED = "fixed";
 	public static final String DEFAULT_UNIT = "px";
 	public static final String NOWRAP = "nowrap";
+	public static final String PADDING = "padding";
 	public static final String RELATIVE = "relative";
 
 	public static final String DIV = "div";
@@ -75,6 +77,10 @@ public class Layer extends PresentationObjectContainer {
 		setHeightStyle(Integer.toString(height));
 	}
 
+	public void setHeight(String height) {
+		setHeightStyle(height);
+	}
+
 	public void setLayerType(String layerType) {
 		this.layerType = layerType;
 	}
@@ -123,6 +129,14 @@ public class Layer extends PresentationObjectContainer {
 	public void setOverflow(String overflowType) {
 		setStyleAttribute(OVERFLOW, overflowType);
 	}
+	
+	public void setPadding(int padding, String unit) {
+		setStyleAttribute(PADDING, padding+unit);
+	}
+	
+	public void setPadding(int padding) {
+		setPadding(padding, DEFAULT_UNIT);
+	}
 
 	public void setPositionType(String absoluteOrRelative) {
 		setStyleAttribute(POSITION, absoluteOrRelative);
@@ -153,6 +167,10 @@ public class Layer extends PresentationObjectContainer {
 
 	public void setWidth(int width) {
 		setWidthStyle(Integer.toString(width));
+	}
+
+	public void setWidth(String width) {
+		setWidthStyle(width);
 	}
 
 	public void setZIndex(int index) {
