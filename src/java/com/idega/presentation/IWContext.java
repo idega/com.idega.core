@@ -845,7 +845,7 @@ private Map getWeakHashMap(){
 }
 
 public void setContentType(String contentType){
-  //getResponse().setContentType(contentType);
+  getResponse().setContentType(contentType);
 }
 
 void setCacheing(boolean ifCacheing){
