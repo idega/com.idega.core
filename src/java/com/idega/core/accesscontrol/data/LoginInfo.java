@@ -32,4 +32,5 @@ public interface LoginInfo extends com.idega.data.IDOEntity,com.idega.data.MetaD
  public void setPasswNeverExpires(java.lang.Boolean p0);
  public void setPasswordExpires(boolean p0);
  public void setPasswordExpires(java.lang.Boolean p0);
+ public void setID(int id);
 }

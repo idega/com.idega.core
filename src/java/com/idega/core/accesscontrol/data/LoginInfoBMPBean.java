@@ -260,5 +260,11 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   	setMetaData(META_DATA_FAILED_ATTEMPT_COUNT, Integer.toString(attempts));
   }
   /*  Setters end   */
+  
+  //FOR BACKWARDS COMPATABILITY - TEMPORARY SOLUTION
+  
+  public void setID(int id){
+  	super.setID(id);
+  }
 
 }// Class end
