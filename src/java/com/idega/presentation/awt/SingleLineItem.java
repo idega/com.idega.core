@@ -173,7 +173,7 @@ public class SingleLineItem extends Panel {
         }
       }
 
-
+      layout();
       repaint();
       parentContainer.layout();
       parentContainer.repaint();
