@@ -67,6 +67,7 @@ public class IWMainApplication{//implements ServletContext{
   //public static String DefaultPropertiesStorageParameterName="idegaweb_default_properties";
   private ServletContext application;
   private LogWriter lw;
+  private static IWCacheManager cacheManager;
 
 
   public IWMainApplication(ServletContext application){
@@ -96,6 +97,10 @@ public class IWMainApplication{//implements ServletContext{
     this.setPropertiesRealPath();
     IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
     setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
+    //attention this must be reviewed if we implement multi domains within one virtualmachine
+    cacheManager = IWCacheManager.getInstance(this);
+    //
+
     System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
 
@@ -546,4 +551,8 @@ public class IWMainApplication{//implements ServletContext{
     }
   }
 
+  // this is not multi domain safe
+  public static IWCacheManager getIWCacheManager(){
+    return cacheManager;
+  }
 }

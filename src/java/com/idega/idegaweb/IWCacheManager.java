@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import com.idega.util.caching.Cache;
 import com.idega.util.FileUtil;
 import com.idega.data.GenericEntity;
+import com.idega.util.StringHandler;
 
 
 public class IWCacheManager {
@@ -26,6 +27,8 @@ public class IWCacheManager {
   private Map objectsMap;
   private Map timesMap;
   private Map intervalsMap;
+  private Map entityMaps;
+  private Map entityMapsKeys;
 
   private IWCacheManager() {
   }
@@ -194,8 +197,114 @@ public class IWCacheManager {
     FileUtil.deleteAllFilesInDirectory( realPath+IW_ROOT_CACHE_DIRECTORY );
   }
 
-  // not done yet
-  private static void deleteCachedBlob(String pathAndFileName){
-     FileUtil.delete(pathAndFileName);
+
+  public void cacheTable(GenericEntity entity){
+    cacheTable(entity,entity.getIDColumnName());
   }
+
+  public void cacheTable(GenericEntity entity, String columnNameForKey){
+    cacheTable(entity,columnNameForKey,null);
+  }
+
+  public void cacheTable(GenericEntity entity, String columnNameForKey ,String columnNameForSecondKey){
+    if( entityMaps == null ){
+      entityMaps = new HashMap();
+      entityMapsKeys = new HashMap();
+    }
+    if( entityMaps.get(entity.getClass()) == null ){
+      Map entityMap = new HashMap();
+      Vector keys = new Vector();
+
+      GenericEntity[] e;
+      try {
+        e = entity.findAll();
+        if( (e!= null) && (e.length>0) ){
+          boolean hasTwoKeys = false;
+          //store key names for update, insert and delete
+          keys.addElement(columnNameForKey);
+          if( columnNameForSecondKey != null ){
+            keys.addElement(columnNameForSecondKey);
+            hasTwoKeys = true;
+          }
+          entityMapsKeys.put(entity.getClass(),keys);
+
+          //traverse through the table and make the entitymap and put it in the master map
+          for (int i = 0; i < e.length; i++) {
+            if(hasTwoKeys){
+              entityMap.put(StringHandler.concatAlphabetically(e[i].getStringColumnValue(columnNameForKey),e[i].getStringColumnValue(columnNameForSecondKey)),e[i]);
+            }
+            else{
+              entityMap.put(e[i].getStringColumnValue(columnNameForKey),e[i]);
+            }
+          }
+          entityMaps.put(entity.getClass(),entityMap);
+          //done!
+        }
+      }
+      catch (Exception ex) {
+        ex.printStackTrace(System.err);
+      }
+    }
+
+  }
+
+  public GenericEntity getFromCachedTable(Class entityClass, String value ){
+    GenericEntity entity = null;
+
+    if( entityMaps != null ){
+      Map entityMap = (Map)entityMaps.get(entityClass);
+      if( entityMap != null ){
+       entity = (GenericEntity) entityMap.get(value);
+      }
+    }
+
+    return entity;
+  }
+
+  public GenericEntity getFromCachedTable(Class entityClass, String value, String value2 ){
+    return getFromCachedTable(entityClass, StringHandler.concatAlphabetically(value,value2));
+  }
+
+  public Map getEntityMap(Class entityClass){
+    Map entityMap = null;
+    if( entityMaps != null ){
+      entityMap = (Map) entityMaps.get(entityClass);
+    }
+    return entityMap;
+  }
+
+  public Vector getEntityKeyVector(Class entityClass){
+    Vector entityKeys = null;
+    if( entityMapsKeys != null ){
+      entityKeys = (Vector) entityMapsKeys.get(entityClass);
+    }
+    return entityKeys;
+  }
+
+
+  public void updateCachedTable(GenericEntity entity){
+/*    Vector keys = getEntityKeyVector(entity.getClass());
+    if( keys!=null ){
+      int length = keys.size();
+      if(length==2){
+        //getFromCachedTable(entity.getClass(),entity.getStringColumnValue(entity.getIDColumnName()));
+         getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
+      }
+      else{
+         getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
+
+      }
+
+    }
+  */
+  }
+
+  public void deleteFromCachedTable(GenericEntity entity){
+
+  }
+
+  public void insertIntoCachedTable(GenericEntity entity){
+    updateCachedTable(entity);
+  }
+
 }
