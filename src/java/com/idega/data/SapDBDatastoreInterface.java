@@ -7,7 +7,10 @@
 package com.idega.data;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import com.idega.util.database.ConnectionBroker;
 /**
 *A class for database abstraction for the SapDB Database.
 * This is an implemention that ovverrides implementations from com.idega.data.DatastoreInterface 
@@ -521,4 +524,60 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		}
 		return theReturn;
 	}
+	
+	public HashMap getTableIndexes(String dataSourceName, String tableName) {
+		Connection conn = null;
+		ResultSet rs = null;
+		Statement Stmt = null;
+		HashMap hm = new HashMap();
+		try {
+			conn = ConnectionBroker.getConnection(dataSourceName);
+			Stmt = conn.createStatement();
+
+			rs = Stmt.executeQuery("select INDEXNAME as INDEX_NAME, COLUMNNAME as COLUMN_NAME from DOMAIN.INDEXCOLUMNS where TABLENAME = '"+tableName.toUpperCase()+"'");
+			//			Check for upper case
+			handleIndexRS(rs, hm);
+			rs.close();
+
+			//			Check for lower case
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select INDEXNAME as INDEX_NAME, COLUMNNAME as COLUMN_NAME from DOMAIN.INDEXCOLUMNS where TABLENAME = '"+tableName.toLowerCase()+"'");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+			//			Check without any case manipulating, this can be removed if we always
+			// force uppercase
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select INDEXNAME as INDEX_NAME, COLUMNNAME as COLUMN_NAME from DOMAIN.INDEXCOLUMNS where TABLENAME = '"+tableName+"'");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (Stmt != null) {
+					Stmt.close();
+				}
+			} catch (Exception e) {
+				logError("Failed to close ResultSet or Statement ("+e.getMessage()+")");
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+
+		return hm;
+		/*
+		 * if(v!=null && !v.isEmpty()) return (String[])v.toArray(new String[0]);
+		 * return null;
+		 */
+	}	
 }
