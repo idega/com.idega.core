@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import javax.ejb.*;
 
+import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
 
 public interface UserBusiness extends com.idega.business.IBOService
@@ -55,10 +56,16 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException,javax.ejb.CreateException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
 
+public Email getUserMainEmail(com.idega.user.data.User user)throws NoEmailFoundException,java.rmi.RemoteException;
  public Phone getUsersHomePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
  public Phone getUsersWorkPhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
  public Phone getUsersMobilePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
  public Phone getUsersFaxPhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
-
+/**
+ * @return Correct name of the group or user or null if there was an error getting the name.
+ * Gets the name of the group and explicitely checks if the "groupOrUser" and if it is a user it 
+ * returns the correct name of the user. Else it regularely returns the name of the group.
+ **/
+  public String getNameOfGroupOrUser(com.idega.user.data.Group groupOrUser) throws java.rmi.RemoteException;
 
 }

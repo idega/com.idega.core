@@ -901,4 +901,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		throw new NoPhoneFoundException(userString);
 	}
 
+
+/**
+ * @return Correct name of the group or user or null if there was an error getting the name.
+ * Gets the name of the group and explicitely checks if the "groupOrUser" and if it is a user it 
+ * returns the correct name of the user. Else it regularely returns the name of the group.
+ **/
+  public String getNameOfGroupOrUser(Group groupOrUser){
+  	try{
+  		String userGroupType=getUserHome().getGroupType();
+  		if(groupOrUser.getGroupType().equals(userGroupType)){
+  			int userID = ((Integer)groupOrUser.getPrimaryKey()).intValue();
+  			return getUser(userID).getName();
+  		}
+  		else{
+  			return groupOrUser.getName();	
+  		}
+  	}
+  	catch(Exception e){
+  		return "";
+  	}
+  }
+
+
 } // Class UserBusiness
