@@ -94,6 +94,9 @@ public class DownloadWriter implements MediaWritable {
 		}
 		else if (relPath != null && altFileName != null) {
 			try {
+				if(relPath.startsWith("/")){
+					relPath = relPath.substring(1);
+				}
 				url = new URL(iwc.getServerURL()+relPath);
 				setAsDownload(iwc, altFileName, -1);
 			}
