@@ -620,6 +620,10 @@ public class CategoryFinder {
 		throws FinderException, RemoteException {
 		return getCategoryHome().getOrderNumber(category, instance);
 	}
+	public int getCategoryOrderNumber(Category category, String instanceId)
+		throws FinderException, RemoteException {
+		return getCategoryHome().getOrderNumber(category, instanceId);
+	}
 	public boolean setOrderNumber(Category category, ICObjectInstance instance, int orderNumber)
 		throws IDOException, RemoteException {
 		return getCategoryHome().setOrderNumber(category, instance, orderNumber);

@@ -197,14 +197,22 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 		return EntityFinder.getInstance().findAll(ICCategory.class, sql.toString());
 	}
 	public int ejbHomeGetOrderNumber(Category category, ICObjectInstance instance) throws javax.ejb.FinderException {
+		return ejbHomeGetOrderNumber(category, Integer.toString(instance.getID()));
+	}
+	public int ejbHomeGetOrderNumber(Category category, String objectInstanceId) throws javax.ejb.FinderException {
 		try {
-			String[] res = SimpleQuerier.executeStringQuery("SELECT TREE_ORDER FROM " + EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class) + " WHERE " + IC_OBJECT_INSTANCE_COLUMN_NAME + " = " + instance.getID() + " AND " + IC_CATEGORY_COLUMN_NAME + " = " + category.getID());
+			String query = "SELECT TREE_ORDER FROM " + 
+			               EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class) + 
+                           " WHERE " + IC_OBJECT_INSTANCE_COLUMN_NAME + " = " + objectInstanceId +  
+                           " AND " + IC_CATEGORY_COLUMN_NAME + " = " + category.getID();
+            String[] res = SimpleQuerier.executeStringQuery(query);
 			if (res == null || res.length == 0 || res[0] == null) {
 				return 0;
 			}
 			return Integer.parseInt(res[0]);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new FinderException(e.getMessage());
 		}
 	}

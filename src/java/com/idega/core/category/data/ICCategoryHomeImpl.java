@@ -53,6 +53,13 @@ public int getOrderNumber(com.idega.core.category.data.Category p0,com.idega.cor
 	return theReturn;
 }
 
+public int getOrderNumber(com.idega.core.category.data.Category p0,String p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((ICCategoryBMPBean)entity).ejbHomeGetOrderNumber(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 public boolean setOrderNumber(com.idega.core.category.data.Category p0,com.idega.core.component.data.ICObjectInstance p1,int p2)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	boolean theReturn = ((ICCategoryBMPBean)entity).ejbHomeSetOrderNumber(p0,p1,p2);
