@@ -5,13 +5,16 @@ package com.idega.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICPage;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.datastructures.MultivaluedHashMap;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -19,7 +22,7 @@ import com.idega.util.text.TextSoap;
  */
 public class URLUtil {
 
-	private Map _parameters;
+	private MultivaluedHashMap _parameters;
 	private String _path;
 	private String _page;
 	private String _protocol;
@@ -31,14 +34,21 @@ public class URLUtil {
 	/**
 	 * 
 	 */
-	public URLUtil() {
-	}
-
-	/**
-	 * 
-	 */
 	public URLUtil(String URL) {
 		parseURL(URL);
+	}
+	
+	public URLUtil(IWApplicationContext iwac, ICPage page) {
+		this(iwac, ((Integer)page.getPrimaryKey()).intValue());
+	}
+	
+	public URLUtil(IWApplicationContext iwac, int pageID) {
+		try {
+			parseURL(BuilderServiceFactory.getBuilderService(iwac).getPageURI(pageID));
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public URLUtil(String URL, boolean convertSpecialCharacters) {
@@ -56,6 +66,7 @@ public class URLUtil {
 			parseQuery(url.getQuery());
 		}
 		catch (MalformedURLException mue) {
+			mue.printStackTrace();
 			if (URL.indexOf("?") != -1) {
 				setPath(URL.substring(0, URL.indexOf("?")));
 				if (URL.length() > URL.indexOf("?") + 1)
@@ -68,12 +79,18 @@ public class URLUtil {
 	}
 	
 	private void parseQuery(String query) {
-		StringTokenizer tokens = new StringTokenizer(query, "&");
-		while (tokens.hasMoreTokens()) {
-			String parameter = tokens.nextToken();
-			StringTokenizer token = new StringTokenizer(parameter, "=");
-			while (token.hasMoreTokens()) {
-				addParameter(token.nextToken(), token.nextToken());
+		if (query != null) {
+			StringTokenizer tokens = new StringTokenizer(query, "&");
+			while (tokens.hasMoreTokens()) {
+				String parameter = tokens.nextToken();
+				StringTokenizer token = new StringTokenizer(parameter, "=");
+				while (token.hasMoreTokens()) {
+					String name = token.nextToken();
+					if (token.hasMoreTokens()) {
+						String value = token.nextToken();
+						addParameter(name, value);
+					}
+				}
 			}
 		}
 	}
@@ -94,7 +111,6 @@ public class URLUtil {
 		}
 		returnString.append(getParameters());
 		
-		
 		return returnString.toString();
 	}
 	
@@ -106,14 +122,18 @@ public class URLUtil {
 			Iterator iter = _parameters.keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
-				String value = (String) _parameters.get(name);
-				if (name != null && value != null) {
-					if (index > 0)
-						parameters.append("&");
-					parameters.append(name);
-					parameters.append("=");
-					parameters.append(value);
-					index++;
+				Collection values = _parameters.getCollection(name);
+				if (name != null && values != null) {
+					Iterator iterator = values.iterator();
+					while (iterator.hasNext()) {
+						String value = (String) iterator.next();
+						if (index > 0)
+							parameters.append("&");
+						parameters.append(name);
+						parameters.append("=");
+						parameters.append(value);
+						index++;
+					}
 				}
 			}
 		}
@@ -141,7 +161,7 @@ public class URLUtil {
 
 	public void addParameter(String name, String value) {
 		if (_parameters == null)
-			_parameters = new HashMap();
+			_parameters = new MultivaluedHashMap();
 			
 		if (name != null && !name.equalsIgnoreCase("null"))
 			_parameters.put(name, value);
@@ -151,10 +171,46 @@ public class URLUtil {
 		addParameter(name, String.valueOf(value));
 	}
 	
+	public void removeParameter(String name) {
+		if (_parameters != null) {
+			_parameters.remove(name);
+		}
+	}
+	
+	public void removeParameterValue(String name, String value) {
+		if (_parameters != null) {
+			Collection values = _parameters.getCollection(name);
+			if (values != null) {
+				values.remove(value);
+			}
+		}
+	}
+	
+	public boolean containsParameter(String name) {
+		if (_parameters != null) {
+			return _parameters.containsKey(name);
+		}
+		return false;
+	}
+	
+	public boolean containtsParameterValue(String name, String value) {
+		if (_parameters != null) {
+			Collection values = _parameters.getCollection(name);
+			if (values != null) {
+				return values.contains(value);
+			}
+		}
+		return false;
+	}
+	
 	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			addParameter(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER, page.getID());
+			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getPrimaryKey().toString());
 		}
+	}
+
+	public void setPage(int pageID) {
+		addParameter(BuilderConstants.IB_PAGE_PARAMETER, pageID);
 	}
 
 	/**
