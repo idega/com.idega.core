@@ -35,6 +35,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	public static final String COMPONENT_TYPE_DATA = "iw.data";
 	public static final String COMPONENT_TYPE_HOME = "iw.home";
 	public static final String COMPONENT_TYPE_PROPERTYHANDLER = "iw.propertyhandler";
+	public static final String COMPONENT_TYPE_INPUTHANDLER = "iw.inputhandler";
 	private static final String object_type_column_name = "OBJECT_TYPE";
 	private static final String class_name_column_name = "CLASS_NAME";
 	private final static String BUNDLE_COLUMN_NAME = "BUNDLE";

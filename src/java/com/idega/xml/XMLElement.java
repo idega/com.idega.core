@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.7 2003/10/31 13:24:26 thomas Exp $
+ * $Id: XMLElement.java,v 1.8 2003/12/05 19:20:49 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -71,7 +71,7 @@ public class XMLElement {
 
   public boolean hasChildren() {
     if (_element != null)
-      return(_element.hasChildren());
+      return(! _element.getChildren().isEmpty());
 
     return(false);
   }
@@ -138,6 +138,16 @@ public class XMLElement {
       return(_element.getTextTrim());
       
     return(null);
+  }
+  
+  public String getTextTrim(String name) {
+  	XMLElement element  = this.getChild(name);
+  	return (element == null) ? null : element.getTextTrim();
+  }
+  
+  public String getText(String name) {
+  	XMLElement element = this.getChild(name);
+  	return (element == null) ? null : element.getText();
   }
 
   public String getText() {
