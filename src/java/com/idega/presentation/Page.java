@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.96 2004/02/06 09:33:45 laddi Exp $
+ *  $Id: Page.java,v 1.97 2004/02/06 09:47:53 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1235,7 +1235,7 @@ public class Page extends PresentationObjectContainer {
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"").append("\n");
 			buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.toString()+"\" lang=\""+locale.toString()+"\">");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
 		else if (markup.equals(XHTML1_1)) {
@@ -1243,7 +1243,7 @@ public class Page extends PresentationObjectContainer {
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
 			buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.toString()+"\">");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
 		return START_TAG;
