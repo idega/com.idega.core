@@ -24,6 +24,7 @@ public class CalendarParameters {
 	public static final String PARAMETER_DAY_VIEW = Integer.toString(DAY);
 	public static final String PARAMETER_MONTH_VIEW = Integer.toString(MONTH);
 	public static final String PARAMETER_YEAR_VIEW = Integer.toString(YEAR);
+	public static final String PARAMETER_CALENDAR_ID = PARAMETER_CALENDAR + "_ID";
 	public static final String PARAMETER_ENTRY_ID = PARAMETER_CALENDAR + "_entryID";
 	public static final String PARAMETER_TYPE_ID = PARAMETER_CALENDAR + "_typeID";
 	public static final String PARAMETER_FILE_ID = "ic_file_id";
