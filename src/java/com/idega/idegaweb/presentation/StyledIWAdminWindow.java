@@ -139,13 +139,16 @@ private Image helpImage = null;
 	}
 	
 	public void addTitle(String title) {
-		adminTitle = new Text(title+"&nbsp;&nbsp;");
-//		adminTitle.setBold();
-		adminTitle.setFontColor("#FFFFFF");
+	    if(headerTable!=null) {
+		    adminTitle = new Text(title+"&nbsp;&nbsp;");
+	//		adminTitle.setBold();
+			adminTitle.setFontColor("#FFFFFF");
+	
+			titleIsSet = true;
 
-		titleIsSet = true;
-
-		headerTable.add(adminTitle,2,1);
+		
+		    headerTable.add(adminTitle,2,1);
+		}
 	}
 
 	public void addTitle(String title,String style) {
