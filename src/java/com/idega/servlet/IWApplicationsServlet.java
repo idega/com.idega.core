@@ -1,6 +1,7 @@
 package com.idega.servlet;
 
 import com.idega.block.login.presentation.Login;
+import com.idega.core.localisation.presentation.LocalePresentationUtil;
 import com.idega.development.presentation.Localizer;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -152,7 +153,7 @@ private IWResourceBundle iwrb;
 
         Form myForm = new Form();
           myForm.setEventListener(com.idega.core.localisation.business.LocaleSwitcher.class.getName());
-        DropdownMenu dropdown = Localizer.getAvailableLocalesDropdown(iwc);
+        DropdownMenu dropdown = LocalePresentationUtil.getAvailableLocalesDropdown(iwc);
           dropdown.setStyleAttribute("font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
           myForm.add(dropdown);
           dropdownTable.add(myForm);
