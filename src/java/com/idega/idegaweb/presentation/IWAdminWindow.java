@@ -128,20 +128,20 @@ public static String HEADER_COLOR = "#0E2456";
 
     leftTable = new Table();
       leftTable.setCellpadding(_cellPadding);
-      leftTable.setAlignment("center");
       leftTable.setWidth("100%");
       if ( merged ) {
 	leftTable.setHeight("100%");
 	leftTable.setCellspacing(0);
 	leftTable.setVerticalAlignment(1,1,"top");
       }
+      adminTable.setAlignment(1,2,"center");
       adminTable.add(leftTable,1,2);
 
     rightTable = new Table();
       rightTable.setCellpadding(8);
-      rightTable.setAlignment("center");
       rightTable.setWidth("100%");
       if ( !merged ) {
+        adminTable.setAlignment(2,2,"center");
 	adminTable.add(rightTable,2,2);
       }
   }
