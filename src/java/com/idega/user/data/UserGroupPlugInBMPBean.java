@@ -1,13 +1,15 @@
 package com.idega.user.data;
 
-import com.idega.data.*;
-import com.idega.core.component.data.*;
-import com.idega.core.data.*;
-
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Locale;
-import javax.ejb.*;
+
+import javax.ejb.FinderException;
+
+import com.idega.core.component.data.ICObject;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDORelationshipException;
 
 /**
  * Title:        idegaWeb User Subsystem
