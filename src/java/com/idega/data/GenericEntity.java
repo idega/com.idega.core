@@ -1889,24 +1889,32 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	private String getFindRelatedSQLQuery(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue)
 	{
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
+		String primaryValue = getPrimaryKeyValueSQLString();//eiki added for string primary key support
+				
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("select e.* from ");
 		buffer.append(tableToSelectFrom + " middle, " + entity.getEntityName() + " e");
 		buffer.append(" where ");
 		buffer.append("middle." + this.getIDColumnName());
 		buffer.append("=");
-		buffer.append(this.getID());
+
+		buffer.append(primaryValue);
+		
 		buffer.append(" and ");
 		buffer.append("middle." + entity.getIDColumnName());
 		buffer.append("=");
 		buffer.append("e." + entity.getIDColumnName());
-		if (entity.getID() != -1)
-		{
+		
+		primaryValue = this.getPrimaryKeyValueSQLString(entity.getPrimaryKeyValue());
+		
+		if( !primaryValue.equals("-1") && !primaryValue.equals("'-1'") ){
 			buffer.append(" and ");
 			buffer.append("middle." + entity.getIDColumnName());
 			buffer.append("=");
-			buffer.append(entity.getID());
+			buffer.append(primaryValue);
 		}
+
+		
 		if (entityColumnName != null)
 			if (!entityColumnName.equals(""))
 			{
@@ -4673,5 +4681,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public EJBLocalHome getEJBLocalHome()
 	{
 		return (EJBLocalHome) this.getEJBHome();
+	}
+	
+	/**
+	 * Method getPrimaryKeyValueSQLString. Gets the primarykey for this record and returns it value to be added to an sql query.<br>
+	 * e.g. if the primary key of of the type String this method returns the value as = 'value' but if it is an integer as = value .
+	 * @return String
+	 */
+	public String getPrimaryKeyValueSQLString(){
+		return getPrimaryKeyValueSQLString(getPrimaryKeyValue());
+	}
+	
+	/**
+	 * Method getPrimaryKeyValueSQLString. Gets the primarykey for this record and returns it value to be added to an sql query.<br>
+	 * e.g. if the primary key of of the type String this method returns the value as = 'value' but if it is an integer as = value .
+	 * @return String
+	 */
+	public String getPrimaryKeyValueSQLString(Object primaryKeyValue){
+
+		if( primaryKeyValue instanceof String ){
+			return "'"+primaryKeyValue.toString()+"'";	
+		}
+		else return primaryKeyValue.toString();
+		
 	}
 }
