@@ -208,6 +208,14 @@
             <url>http://jakarta.apache.org/poi/</url>
             <properties/>
         </dependency>
+        <dependency>
+            <groupId>jug</groupId>
+            <artifactId>jug</artifactId>
+            <version>1.1</version>
+            <type>jar</type>
+            <url>http://www.doomdark.org/doomdark/proj/jug/</url>
+            <properties/>
+        </dependency>       
     </dependencies>
     <build>
         <nagEmailAddress>tryggvi@idega.com</nagEmailAddress>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <classpath>
-  <classpathentry kind="src" path="src/java">
+  <classpathentry excluding="" kind="src" path="src/java">
   </classpathentry>
-  <classpathentry kind="var" rootpath="JRE_SRCROOT" path="JRE_LIB" sourcepath="JRE_SRC">
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-b9-rc2.jar">
   </classpathentry>
@@ -36,6 +36,8 @@
   <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-1.8.0-dev-20020919.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
