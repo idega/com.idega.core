@@ -7,9 +7,11 @@ public class ICInformationFolderHomeImpl extends com.idega.data.IDOFactory imple
   return ICInformationFolder.class;
  }
 
+
  public ICInformationFolder create() throws javax.ejb.CreateException{
-  return (ICInformationFolder) super.idoCreate();
+  return (ICInformationFolder) super.createIDO();
  }
+
 
  public ICInformationFolder createLegacy(){
 	try{
@@ -21,13 +23,16 @@ public class ICInformationFolderHomeImpl extends com.idega.data.IDOFactory imple
 
  }
 
- public ICInformationFolder findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (ICInformationFolder) super.idoFindByPrimaryKey(id);
- }
 
  public ICInformationFolder findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (ICInformationFolder) super.idoFindByPrimaryKey(pk);
+  return (ICInformationFolder) super.findByPrimaryKeyIDO(pk);
  }
+
+
+ public ICInformationFolder findByPrimaryKey(int id) throws javax.ejb.FinderException{
+  return (ICInformationFolder) super.findByPrimaryKeyIDO(id);
+ }
+
 
  public ICInformationFolder findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
@@ -38,6 +43,13 @@ public class ICInformationFolderHomeImpl extends com.idega.data.IDOFactory imple
 	}
 
  }
+
+
+public void removeObjectInstanceRelation(com.idega.core.component.data.ICObjectInstance p0)throws com.idega.data.IDORemoveRelationshipException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	((ICInformationFolderBMPBean)entity).ejbHomeRemoveObjectInstanceRelation(p0);
+	this.idoCheckInPooledEntity(entity);
+}
 
 
 }

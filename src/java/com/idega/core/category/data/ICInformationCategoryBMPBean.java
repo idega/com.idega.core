@@ -16,6 +16,7 @@ import com.idega.data.EntityControl;
 import com.idega.data.EntityFinder;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.TreeableEntityBMPBean;
 import com.idega.util.IWTimestamp;
 
@@ -510,6 +511,10 @@ public class ICInformationCategoryBMPBean extends TreeableEntityBMPBean implemen
 	 */
 	private void appendIsNotDeleted(IDOQuery query) {
 		query.appendLeftParenthesis().appendEqualsQuoted(getColumnDeleted(), GenericEntity.COLUMN_VALUE_FALSE).appendOrIsNull(getColumnDeleted()).appendRightParenthesis();
+	}
+	
+	public void ejbHomeRemoveObjectInstanceRelation(ICObjectInstance instance) throws IDORemoveRelationshipException{
+		idoRemoveFrom(instance);
 	}
 
 }

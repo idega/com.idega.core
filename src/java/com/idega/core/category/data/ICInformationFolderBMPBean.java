@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import com.idega.core.component.data.*;
 import com.idega.core.localisation.data.*;
 import com.idega.core.user.data.User;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 
@@ -432,6 +433,10 @@ public class ICInformationFolderBMPBean extends com.idega.data.CacheableEntityBM
 	 */
 	public ICInformationFolder getEntity() {
 		return this;
+	}
+	
+	public void ejbHomeRemoveObjectInstanceRelation(ICObjectInstance instance) throws IDORemoveRelationshipException {
+		idoRemoveFrom(instance);
 	}
 
 }
