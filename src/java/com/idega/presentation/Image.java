@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.idega.block.image.presentation.ImageAttributeSetter;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.business.FileSystemConstants;
@@ -448,7 +449,28 @@ public class Image extends PresentationObject
 			attributeMap.remove(FileSystemConstants.ZOOMPAGE);
 			attributeMap.remove(FileSystemConstants.ZOOMWIDTH);
 			attributeMap.remove(FileSystemConstants.ZOOMHEIGHT);
+		}		
+		// backwards compatability (because of a silly little bug
+		else if (attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE) && attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE))
+		{
+			zoomImageID =
+				attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE) ? (String) attributeMap.get(ImageAttributeSetter.ZOOMIMAGE) : null;
+			zoomPageID =
+				attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE) ? (String) attributeMap.get(ImageAttributeSetter.ZOOMPAGE) : null;
+			zoomImageWidth =
+				attributeMap.containsKey(ImageAttributeSetter.ZOOMWIDTH)
+					? (String) attributeMap.get(ImageAttributeSetter.ZOOMWIDTH)
+					: "400";
+			zoomImageHeight =
+				attributeMap.containsKey(ImageAttributeSetter.ZOOMHEIGHT)
+					? (String) attributeMap.get(ImageAttributeSetter.ZOOMHEIGHT)
+					: "400";
+			attributeMap.remove(ImageAttributeSetter.ZOOMIMAGE);
+			attributeMap.remove(ImageAttributeSetter.ZOOMPAGE);
+			attributeMap.remove(ImageAttributeSetter.ZOOMWIDTH);
+			attributeMap.remove(ImageAttributeSetter.ZOOMHEIGHT);
 		}
+
 		super.addMarkupAttributes(attributeMap);
 	}
 	public void setAssociatedScript(Script myScript)
