@@ -1,71 +1,57 @@
 package com.idega.util;
 
-import java.util.*;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author <br><a href="mailto:aron@idega.is">Aron Birkir</a><br>
+ * Copyright: Copyright (c) 2002-2004 idega Software
+ * @author <br>
+ *         <a href="mailto:aron@idega.is">Aron Birkir </a> <br>
  * @version 1.0
  */
 
 public class Age {
 
-  private GregorianCalendar startDate;
+	private GregorianCalendar startDate;
 
-
-  public Age(Date startdate) {
-    this.startDate = new GregorianCalendar();
-    startDate.setTime(startdate);
-  }
-
-  public Age(long date){
-    this.startDate = new GregorianCalendar();
-    this.startDate.setTime(new Date(date));
-  }
-
-  public int getYears(){
-    GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.YEAR)- startDate.get(startDate.YEAR);
-  }
-
-	public int getMonths(){
-		GregorianCalendar now = new GregorianCalendar();
-		return now.get(now.MONTH)- startDate.get(startDate.MONTH);
+	public Age(Date startdate) {
+		this.startDate = new GregorianCalendar();
+		startDate.setTime(startdate);
 	}
 
-  public int getDays(){
-    GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.DATE)- startDate.get(startDate.DATE);
-  }
+	public Age(long date) {
+		this.startDate = new GregorianCalendar();
+		this.startDate.setTime(new Date(date));
+	}
 
-  public long getMinutes(){
-    GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.MINUTE)- startDate.get(startDate.MINUTE);
-  }
+	/**
+	 * Gets the exact age calculated from birth day.
+	 * @return
+	 */
+	public int getYears() {
+		GregorianCalendar now = new GregorianCalendar();
+		int yearAge = now.get(now.YEAR) - startDate.get(startDate.YEAR);
+		if (now.get(now.MONTH) < startDate.get(startDate.MONTH)) {
+			yearAge--;
+		} else if (now.get(now.MONTH) == startDate.get(startDate.MONTH)) {
+			if (now.get(now.DAY_OF_MONTH) < startDate
+					.get(startDate.DAY_OF_MONTH)) {
+				yearAge--;
+			}
+		}
+		return yearAge;
+	}
 
-  public long getSeconds(){
-    GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.SECOND)- startDate.get(startDate.SECOND);
-  }
+	public Date getStartDate() {
+		return this.startDate.getTime();
+	}
 
-  public long getMilliSeconds(){
-    GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.MILLISECOND)- startDate.get(startDate.MILLISECOND);
-  }
+	public boolean isOlder(Age age) {
+		boolean isOlder = false;
 
-  public Date getStartDate(){
-    return this.startDate.getTime();
-  }
-  
-  public boolean isOlder(Age age) {
-  	boolean isOlder = false;
+		if (getStartDate().before(age.getStartDate()))
+			isOlder = true;
 
-  	if (getStartDate().before(age.getStartDate()))
-  		isOlder = true;
-  	
-  	return isOlder;
-  }
+		return isOlder;
+	}
 }
