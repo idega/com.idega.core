@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.48 2002/03/02 17:50:34 eiki Exp $
+ * $Id: Link.java,v 1.49 2002/03/10 19:57:18 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -56,16 +56,16 @@ public class Link extends Text{
   private String _objectType;
 
   private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
-  private static final String HASH = "#";
-  private static final String JAVASCRIPT = "javascript:";
-  private static final String TARGET_ATTRIBUTE = "target";
-  private static final String HREF_ATTRIBUTE = "href";
+  public static final String HASH = "#";
+  public static final String JAVASCRIPT = "javascript:";
+  public static final String TARGET_ATTRIBUTE = "target";
+  public static final String HREF_ATTRIBUTE = "href";
 
 
   //private static final String OBJECT_TYPE_WINDOW = "Window";
-  private static final String OBJECT_TYPE_MODULEOBJECT="PresentationObject";
-  private static final String OBJECT_TYPE_TEXT = "Text";
-  private static final String OBJECT_TYPE_IMAGE = "Image";
+  protected static final String OBJECT_TYPE_MODULEOBJECT="PresentationObject";
+  protected static final String OBJECT_TYPE_TEXT = "Text";
+  protected static final String OBJECT_TYPE_IMAGE = "Image";
 
   public static final String TARGET_NEW_WINDOW = "_new";
   public static final String TARGET_SELF_WINDOW = "_self";

@@ -15,47 +15,8 @@ import java.io.IOException;
 
 public class Anchor extends Link {
 
-  public Anchor() {
+  public Anchor(String anchorName) {
     super("");
+    setAttribute("name",anchorName);
   }
-
-  public Anchor(String text, String anchorname) {
-    this(new Text(text),anchorname);
-  }
-
-   public Anchor(int text, int anchorname) {
-    this(Integer.toString(text),Integer.toString(anchorname));
-  }
-
-  public Anchor(Text text, String anchorname) {
-    super(text,anchorname);
-  }
-
-  public void setURL(String url){
-	setAttribute("name",url);
-  }
-
-  public void print(IWContext iwc)throws Exception{
-    initVariables(iwc);
-    PresentationObject obj = super.getObject();
-    if (getLanguage().equals("HTML")){
-      print("<a "+getAttributeString()+" >");
-      if ( obj!=null) obj.print(iwc);
-      print("</a>");
-    }
-  }
-
-  public synchronized Object clone() {
-    Anchor obj = null;
-    try {
-      obj = (Anchor)super.clone();
-    }
-    catch(Exception ex) {
-      ex.printStackTrace(System.err);
-    }
-
-    return obj;
-  }
-
-
 }
