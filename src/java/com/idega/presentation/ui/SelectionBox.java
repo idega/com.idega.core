@@ -3,10 +3,12 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 package com.idega.presentation.ui;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -20,6 +22,9 @@ import com.idega.util.text.TextSoap;
 */
 public class SelectionBox extends InterfaceObject
 {
+	private final static String untitled = "untitled";
+
+
 	private Vector theElements;
 	private boolean keepStatus;
 	private String multipleString;
@@ -73,29 +78,16 @@ public class SelectionBox extends InterfaceObject
 			}
 		}
 	}
-	public SelectionBox(List entityList)
+	public SelectionBox(Collection entityList)
 	{
 		super();
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
 		setAttribute("CLASS", "select");
 		multipleString = "multiple";
-		if (entityList != null)
-		{
-			int length = entityList.size();
-			if (length > 0)
-			{
-				IDOLegacyEntity entity = (IDOLegacyEntity) entityList.get(0);
-				setName(entity.getEntityName());
-				addMenuElements(entityList);
-			} else
-			{
-				setName("untitled");
-			}
-		} else
-		{
-			setName("untitled");
-		}
+		
+		setName(untitled);
+		addMenuElements(entityList);
 	}
 	public void setTextHeading(String textHeading)
 	{
@@ -147,48 +139,50 @@ public class SelectionBox extends InterfaceObject
 	 * getName() to get string to display.
 	
 	 */
-	public void addMenuElements(List entityList)
-	{
-		if (entityList != null)
-		{
-			int length = entityList.size();
-			IDOLegacyEntity entity;
-			for (int i = 0; i < length; i++)
-			{
-				entity = (IDOLegacyEntity) entityList.get(i);
-				//if(entity[i].getID() != -1 && entity[i].getName() != null){
-				addMenuElement(entity.getID(), entity.getName());
-				//}
+	//public void addMenuElements(List entityList)
+	public void addMenuElements(Collection entityList) {
+		if (entityList != null) {
+			IDOEntity entity = null;
+			Iterator iter = entityList.iterator();
+			while (iter.hasNext()) {
+				entity = (IDOEntity) iter.next();
+				
+				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
 			}
+			if (getName().equals(untitled) && entity != null)
+				setName(entity.getEntityDefinition().getUniqueEntityName());
 		}
-	}
+	}	
+
 	/**
-	
 	 * Add menu elements from an List of IDOLegacyEntity Objects and column name to
-	
 	 * get the display string from.
-	
 	 */
 	public void addMenuElements(List entityList, String columnToView)
 	{
-		if (entityList != null)
-		{
-			int length = entityList.size();
-			IDOLegacyEntity entity;
+		if (entityList != null) {
+			IDOEntity entity = null;
+			Iterator iter = entityList.iterator();
 			Object object;
-			for (int i = 0; i < length; i++)
-			{
-				entity = (IDOLegacyEntity) entityList.get(i);
-				object = entity.getColumnValue(columnToView);
+			while (iter.hasNext()) {
+				entity = (IDOEntity) iter.next();
+				if (columnToView != null && entity instanceof IDOLegacyEntity) {
+					object = ((IDOLegacyEntity) entity).getColumnValue(columnToView);
+				} else {
+					object = entity.toString();
+				}
 				if (object instanceof String)
 				{
-					addMenuElement(entity.getID(), (String) object);
+					addMenuElement(entity.getPrimaryKey().toString(), (String) object);
 				} else
 				{
-					addMenuElement(entity.getID(), object.toString());
-				}
+					addMenuElement(entity.getPrimaryKey().toString(), object.toString());
+				}				
 			}
-		}
+			
+			if (getName().equals(untitled) && entity != null)
+				setName(entity.getEntityDefinition().getUniqueEntityName());
+		}		
 	}
 	/**
 	
