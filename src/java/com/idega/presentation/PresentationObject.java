@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.97 2004/06/26 16:00:32 palli Exp $
+ * $Id: PresentationObject.java,v 1.98 2004/07/01 04:38:53 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -536,9 +536,7 @@ implements Cloneable, PresentationObjectType
 	{
 		//this.out = iwc.getWriter();
 		//_print(iwc);
-		this.encodeBegin(iwc);
-		this.encodeChildren(iwc);
-		this.encodeEnd(iwc);
+	    renderChild(iwc,this);
 	}
 	public void _print(IWContext iwc) throws Exception
 	{
