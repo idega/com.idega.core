@@ -15,10 +15,9 @@ import com.idega.presentation.*;
 *@version 1.2
 
 */
-public class InterfaceObject extends PresentationObject {
+public abstract class InterfaceObject extends PresentationObject {
 
 	protected boolean keepStatus;
-	private String precedingText;
 
 	public InterfaceObject() {
 		super();
@@ -26,6 +25,10 @@ public class InterfaceObject extends PresentationObject {
 		keepStatus = false;
 	}
 
+	/**
+	 * Returns true if the interface object is enclosed by a form object.
+	 * @return boolean
+	 */
 	protected boolean isEnclosedByForm() {
 		PresentationObject obj = getParentObject();
 		while (obj != null) {
@@ -49,151 +52,194 @@ public class InterfaceObject extends PresentationObject {
 		}
 	}
 
-	public void setOnFocus(String s) {
-		setOnAction("onFocus", s);
+	/**
+	 * Sets the action to perform when the interface object is on focus.
+	 * @param action	The action to perform.
+	 */
+	public void setOnFocus(String action) {
+		setOnAction("onFocus", action);
 	}
 
-	public void setOnBlur(String s) {
-		setOnAction("onBlur", s);
+	/**
+	 * Sets the action to perform when the interface object is set out of focus.
+	 * @param action	The action to perform.
+	 */
+	public void setOnBlur(String action) {
+		setOnAction("onBlur", action);
 	}
 
-	public void setOnSelect(String s) {
-		setOnAction("onSelect", s);
+	/**
+	 * Sets the action to perform when the interface object is selected.
+	 * @param action	The action to perform.
+	 */
+	public void setOnSelect(String action) {
+		setOnAction("onSelect", action);
 	}
 
-	public void setOnChange(String s) {
-		setOnAction("onChange", s);
+	/**
+	 * Sets the action to perform when the interface object is changed.
+	 * @param action	The action to perform.
+	 */
+	public void setOnChange(String action) {
+		setOnAction("onChange", action);
 	}
 
-	public void setOnClick(String s) {
-		setOnAction("onClick", s);
+	/**
+	 * Sets the action to perform when the interface object is on clicked.
+	 * @param action	The action to perform.
+	 */
+	public void setOnClick(String action) {
+		setOnAction("onClick", action);
 	}
 
-	public void setOnKeyDown(String s) {
-		setOnAction("onKeyDown", s);
+	/**
+	 * Sets the action to perform when a key is pressed down in the interface object.
+	 * @param action	The action to perform.
+	 */
+	public void setOnKeyDown(String action) {
+		setOnAction("onKeyDown", action);
 	}
 
-	public void setOnKeyUp(String s) {
-		setOnAction("onKeyUp", s);
+	/**
+	 * Sets the action to perform when a key is released in the interface object.
+	 * @param action	The action to perform.
+	 */
+	public void setOnKeyUp(String action) {
+		setOnAction("onKeyUp", action);
 	}
 
+	/**
+	 * Returns the action to perform when the interface object is in focus.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnFocus() {
 		return getAttribute("onFocus");
 	}
 
+	/**
+	 * Returns the action to perform when the interface object is set out of focus.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnBlur() {
 		return getAttribute("onBlur");
 	}
 
+	/**
+	 * Returns the action to perform when the interface object is in selected.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnSelect() {
 		return getAttribute("onSelect");
 	}
 
+	/**
+	 * Returns the action to perform when the interface object is in changed.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnChange() {
 		return getAttribute("onChange");
 	}
 
+	/**
+	 * Returns the action to perform when the interface object is in clicked.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnClick() {
 		return getAttribute("onClick");
 	}
 
+	/**
+	 * Returns the action to perform when a key is pressed down in the interface object.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnKeyDown() {
 		return getAttribute("onKeyDown");
 	}
 
+	/**
+	 * Returns the action to perform when a key is released in the interface object.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnKeyUp() {
 		return getAttribute("onKeyUp");
 	}
 
-	public void setValue(String s) {
-		setAttribute("value", s);
+	/**
+	 * Sets the value of the interface object.
+	 * @param value	The value to set.
+	 */
+	public void setValue(String value) {
+		setAttribute("value", value);
 	}
 
-	public void setValue(int i) {
-		setAttribute("value", Integer.toString(i));
+	/**
+	 * Sets the value of the interface object.
+	 * @param value	The value to set.
+	 */
+	public void setValue(int value) {
+		setValue(Integer.toString(value));
 	}
 
-	public void setContent(String s) {
-		setValue(s);
+	/**
+	 * Sets the content (value) of the interface object.
+	 * @param value	The content to set.
+	 */
+	public void setContent(String content) {
+		setValue(content);
 	}
 
+	/**
+	 * Returns the value set for the interface object.
+	 * @return String	The value set.
+	 */
 	public String getValue() {
 		return getAttribute("value");
 	}
 
+	/**
+	 * Returns the content (value) set for the interface object.
+	 * @return String	The content set.
+	 */
 	public String getContent() {
 		return getValue();
 	}
 
-	public void setPrecedingText(String theText) {
-		precedingText = theText;
+	/**
+	 * Sets the action to perform when the parent form is submitted.
+	 * @param action	The action to perform.
+	 */
+	public void setOnSubmit(String action) {
+		setOnAction("onSubmit", action);
 	}
 
-	public String getPrecedingText() {
-		return precedingText;
-	}
-
-	public void setOnSubmit(String OnSubmitString) {
-		setOnAction("OnSubmit", OnSubmitString);
-	}
-
+	/**
+	 * Returns the action to perform when the parent form is submitted.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
 	public String getOnSubmit() {
-		return getAttribute("OnSubmit");
+		return getAttribute("onSubmit");
 	}
 
-	public Form getParentForm() {
-		Form returnForm = null;
-		PresentationObject obj = getParentObject();
-		while (obj != null) {
-			if (obj instanceof Form) {
-				returnForm = (Form) obj;
-			}
-			obj = obj.getParentObject();
-		}
-		return returnForm;
-	}
-
-	public String getActionString(IWContext iwc) throws IOException {
-		// eiki jan 2001
-		StringBuffer ActionString = new StringBuffer();
-		if (getLanguage().equals("HTML")) {
-			if (getOnFocus() != null) {
-				ActionString.append(" ONFOCUS=\"");
-				ActionString.append(getOnFocus());
-				ActionString.append("\" ");
-			}
-			if (getOnBlur() != null)	{
-				ActionString.append(" ONBLUR=\"");
-				ActionString.append(getOnBlur());
-				ActionString.append("\" ");
-			}
-			if (getOnSelect() != null) {
-				ActionString.append(" ONSELECT=\"");
-				ActionString.append(getOnSelect());
-				ActionString.append("\" ");
-			}
-			if (getOnChange() != null) {
-				ActionString.append(" ONCHANGE=\"");
-				ActionString.append(getOnChange());
-				ActionString.append("\" ");
-			}
-			if (getOnClick() != null) {
-				ActionString.append(" ONCLICK=\"");
-				ActionString.append(getOnClick());
-				ActionString.append("\" ");
-			}
-		}
-		return ActionString.toString();
-	}
-	
+	/**
+	 * Sets the given interface object to be disabled when this object is clicked on.
+	 * @param objectToEnable	The interface object to disable.
+	 */
 	public void setToDisableOnClick(InterfaceObject objectToDisable) {
 		this.setOnClick("this.form." + objectToDisable.getName() + ".disabled = true");
 	}
 	
+	/**
+	 * Sets the given interface object to be enabled when this object is clicked on.
+	 * @param objectToEnable	The interface object to enable.
+	 */
 	public void setToEnableOnClick(InterfaceObject objectToEnable) {
 		this.setOnClick("this.form." + objectToEnable.getName() + ".disabled = false");
 	}
 	
+	/**
+	 * Sets whether the interface object is disabled or not.
+	 * @param disabled	The status to set.
+	 */
 	public void setDisabled(boolean disabled) {
 		if (disabled)
 			setAttribute("disabled");
@@ -201,17 +247,25 @@ public class InterfaceObject extends PresentationObject {
 			this.removeAttribute("disabled");
 	}
 	
+	/**
+	 * Sets the description for the interface object.
+	 * @param description	The description to set.
+	 */
 	public void setDescription(String description) {
-		setAttribute("alt","description");
+		setAttribute("alt",description);
 	}
 	
-	public void handleKeepStatus(IWContext iwc) {
-		if (statusKeptOnAction()) {
-			if (iwc.getParameter(this.getName()) != null) {
-				//does nothing
-			}
-		}
+	/**
+	 * Returns the description set to the interface object.
+	 * @return String	The description set, null otherwise.
+	 */
+	public String getDescription() {
+		if ( isAttributeSet("alt") )
+			return getAttribute("alt");	
+		return null;
 	}
+	
+	public abstract void handleKeepStatus(IWContext iwc);
 	
 	public boolean statusKeptOnAction() {
 		return keepStatus;
@@ -231,7 +285,6 @@ public class InterfaceObject extends PresentationObject {
 		try {
 			obj = (InterfaceObject) super.clone();
 			obj.keepStatus = this.keepStatus;
-			obj.precedingText = this.precedingText;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
@@ -241,6 +294,7 @@ public class InterfaceObject extends PresentationObject {
 	
 	/**
 	 * Sets the width of the interface object with a style tag.
+	 * @param width	The width to set.
 	 */
 	public void setWidth(String width) {
 		setWidthStyle(width);	
@@ -248,6 +302,7 @@ public class InterfaceObject extends PresentationObject {
 	
 	/**
 	 * Sets the height of the interface object with a style tag.
+	 * @param height	The height to set.
 	 */
 	public void setHeight(String height) {
 		setHeightStyle(height);	
