@@ -170,16 +170,26 @@ public class IWStyleManager {
 			Iterator iter = getStyleMap().keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
-				String style = getStyle(name);
-				int length = name.length() + style.length() + 2;
-				String writeString = name + "{" + style + "}";
 				if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
-					writeString = "." + writeString; 
-					length++;
+					name = "." + name;
 				}
-
-				writer.write(writeString, 0, length);
+				String style = getStyle(name);
+				String writeString = name + " {";
+				writer.write(writeString, 0, writeString.length());
 				writer.newLine();
+				
+				StringTokenizer tokens = new StringTokenizer(style, ";");
+				while (tokens.hasMoreTokens()) {
+					writeString = "\t" + tokens.nextToken() + ";";
+					writer.write(writeString, 0, writeString.length());
+					writer.newLine();
+				}
+				writeString = "}";
+				writer.write(writeString, 0, writeString.length());
+				writer.newLine();
+				if (iter.hasNext()) {
+					writer.newLine();
+				}
 			}
 			writer.flush();
 			writer.close();
