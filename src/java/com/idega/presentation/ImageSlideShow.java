@@ -13,6 +13,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWBundle;
+import com.idega.block.media.business.MediaBusiness;
 
 public class ImageSlideShow extends Block {
 
@@ -33,8 +34,6 @@ private boolean useJavascript = true;
 private boolean showButtons = true;
 private PresentationObject leftObject,rightObject;
 
-
-
   public void main(IWContext iwc) {
     IWBundle iwb = getBundle(iwc);
     if(leftObject==null)
@@ -53,13 +52,14 @@ private PresentationObject leftObject,rightObject;
 
     }
     else if(listOfFiles !=null){
-      fileFolder = (ICFile)listOfFiles.remove(0);
+      fileFolder = (ICFile)listOfFiles.get(0);
     }
 
     if(fileFolder !=null){
     Table T = new Table(2,2);
     String name = "";
     Vector urls = new Vector();
+    ICFile fileImage = null;
     int buttonRow = 2;
     int imageRow = 1;
     if((buttonAlign & TOP)!=0){
@@ -69,16 +69,20 @@ private PresentationObject leftObject,rightObject;
 
     // iterator init
     Iterator iter = null;
-    if ( fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null ) {
+    int size = 1;
+    int folderSize = fileFolder.getChildCount();
+    if (  fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null ) {
       iter = fileFolder.getChildren();
+      size += folderSize;
     }
     else if(listOfFiles!=null){
       iter = listOfFiles.iterator();
+      size = listOfFiles.size();
     }
 
     // iterator work
-    if(iter !=null && iter.hasNext()){
-      ICFile fileImage;
+
+
       Image image = new Image();
       name = fileFolder.getName();
       if(name.indexOf(".")> 0)
@@ -86,24 +90,34 @@ private PresentationObject leftObject,rightObject;
       name = "p"+name;
 
       try{
-      fileImage = (ICFile)iter.next();
-      image = new Image(fileImage.getID());
-      if ( image != null ) {
-        if ( width > 0 )
-          image.setWidth(width);
-        if ( height > 0 )
-          image.setHeight(height);
-        if ( alt != null )
-          image.setAlt(alt);
+      if(!MediaBusiness.isFolder(fileFolder))
+        fileImage = fileFolder;
+      else if(iter !=null && iter.hasNext()){
+        fileImage = (ICFile)iter.next();
       }
-      urls.add(image.getServletURL(fileFolder.getID()));
-      image.setName(name);
-      T.add(image,1,imageRow);
+
+      if(fileImage !=null){
+
+        image = new Image(fileImage.getID());
+        if ( image != null ) {
+          if ( width > 0 )
+            image.setWidth(width);
+          if ( height > 0 )
+            image.setHeight(height);
+          if ( alt != null )
+            image.setAlt(alt);
+        }
+        urls.add(image.getServletURL(fileImage.getID()));
+        image.setName(name);
+        T.add(image,1,imageRow);
+        }
       }
       catch(SQLException sql){
 
       }
 
+
+    if(iter !=null && iter.hasNext()){
       while (iter.hasNext()) {
         fileImage = (ICFile)iter.next();
         try{
@@ -120,7 +134,7 @@ private PresentationObject leftObject,rightObject;
 
         if(getParentPage()!=null)
           getParentPage().getAssociatedScript().addFunction("slide"+name,getSlideScript(name,urls));
-        if(showButtons){
+        if(showButtons && size >1){
           T.add(getLeftLink(name),1,buttonRow);
           T.add(getRightLink(name),2,buttonRow);
           if((buttonAlign & INNER) != 0){
