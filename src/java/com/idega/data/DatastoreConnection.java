@@ -1024,7 +1024,7 @@ public class DatastoreConnection implements Connection{
 /** @todo implement this. required for jdk1.4
 
  *  Comment in for JDK 1.4 compile compatability!!!  */
-/*    public java.sql.Statement createStatement(int iOne, int iTwo, int iThree){return null;}
+  public java.sql.Statement createStatement(int iOne, int iTwo, int iThree){return null;}
 
 
     public void setHoldability(int h){}
@@ -1047,6 +1047,6 @@ public class DatastoreConnection implements Connection{
 
     public java.sql.PreparedStatement prepareStatement(String sql, int[] one){return null;}
 
-    public java.sql.PreparedStatement prepareStatement(String sql, String[] one){return null;}*/
+    public java.sql.PreparedStatement prepareStatement(String sql, String[] one){return null;}
 }
 
