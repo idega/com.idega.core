@@ -3,6 +3,7 @@ package com.idega.core.builder.data;
 import java.util.List;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.ImplementorPlaceholder;
 
 
 /**
@@ -14,7 +15,7 @@ import com.idega.presentation.PresentationObject;
  * @version 1.0
  * Created on Jun 21, 2004
  */
-public interface ICDynamicPageTrigger extends Cloneable {
+public interface ICDynamicPageTrigger extends Cloneable, ImplementorPlaceholder {
 	
 	void setRootPage(String rootPageId);
 	
