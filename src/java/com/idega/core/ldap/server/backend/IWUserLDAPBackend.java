@@ -206,7 +206,7 @@ LDAPReplicationConstants {
 				Iterator filters = filter.substrings.substrings.iterator();
 				while(filters.hasNext()){
 					SubstringFilterSeqOfChoice choice = (SubstringFilterSeqOfChoice) filters.next();
-					String type = new String(filter.substrings.type);
+					String type = new DirectoryString(filter.substrings.type).toString();
 					if(exactIndexes.contains(type)){
 						byte[] bytes = choice.initial;
 						if(bytes==null){
@@ -215,8 +215,9 @@ LDAPReplicationConstants {
 								bytes = choice.final1;
 							}
 						}
+						//this also converts the string to utf so we actually find something
+						String searchWord = new DirectoryString(bytes).toString();
 						
-						String searchWord = new String(bytes);
 						System.out.println("type: " + type + " searchword:" + searchWord);
 						try {
 							doSubStringSearch(base,entries,alreadyLoaded, type, searchWord);
