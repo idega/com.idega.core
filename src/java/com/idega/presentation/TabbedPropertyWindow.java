@@ -66,7 +66,7 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
       }
     }
     // do not close the window if the apply button was clicked
-    if (panel.clickedOk() || panel.clickedCancel()) {
+    if (panel.clickedCancel()) {
         panel.dispose(iwc);
         close();
     }
