@@ -37,4 +37,8 @@ public class IWConstants{
   public static final String MARKUP_LANGUAGE_HTML="HTML";
   public static final String MARKUP_LANGUAGE_WML="WML";
 
+  public static final String BUILDER_FONT_STYLE_LARGE = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#000000;";
+  public static final String BUILDER_FONT_STYLE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000000;";
+  public static final String BUILDER_FONT_STYLE_TITLE = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
+
 }
