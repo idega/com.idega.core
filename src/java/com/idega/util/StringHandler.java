@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 public class StringHandler {
 
   public static String alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  public static final String EMPTY_STRING = "";
 
   public StringHandler() {
   }

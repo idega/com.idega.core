@@ -13,6 +13,8 @@ import com.idega.block.text.presentation.TextReader;
 import com.idega.block.login.presentation.Login;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -21,7 +23,13 @@ import com.idega.idegaweb.IWMainApplication;
 */
 public class ICObject extends GenericEntity{
 
+        public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
+        public static final String COMPONENT_TYPE_BLOCK = "iw.block";
+        public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
+        public static final String COMPONENT_TYPE_APPLICATION_COMPONENT = "iw.application.component";
+
         private static final String object_type_column_name = "object_type";
+        private static final String class_name_column_name = "class_name";
         private final static String BUNDLE_COLUMN_NAME="bundle";
 
 	public ICObject(){
@@ -38,7 +46,7 @@ public class ICObject extends GenericEntity{
 
 		addAttribute(getIDColumnName());
 		addAttribute("object_name","Name",true,true,"java.lang.String");
-		addAttribute("class_name","Class Name",true,true,"java.lang.String");
+		addAttribute(getClassNameColumnName(),"Class Name",true,true,"java.lang.String");
                 addAttribute(getObjectTypeColumnName(),"Class Name",true,true,"java.lang.String",1000);
                 addAttribute(getBundleColumnName(),"Bundle",true,true,"java.lang.String",1000);
 		//addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
@@ -46,14 +54,52 @@ public class ICObject extends GenericEntity{
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 		addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer");
 		//addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
-	}
+
+        }
 
         public static String getObjectTypeColumnName(){
           return object_type_column_name;
         }
 
+        public static String getClassNameColumnName(){
+          return class_name_column_name;
+        }
+
+        private static List componentList;
+
+        public static List getAvailableComponentTypes(){
+          if(componentList==null){
+            componentList = new Vector();
+            componentList.add(ICObject.COMPONENT_TYPE_ELEMENT);
+            componentList.add(ICObject.COMPONENT_TYPE_BLOCK);
+            componentList.add(ICObject.COMPONENT_TYPE_APPLICATION);
+            componentList.add(ICObject.COMPONENT_TYPE_APPLICATION_COMPONENT);
+
+          }
+          return componentList;
+        }
+
+        public static ICObject getICObject(String className){
+          try{
+            List l = EntityFinder.findAllByColumn(getStaticInstance(ICObject.class),getClassNameColumnName(),className);
+            return (ICObject)l.get(0);
+          }
+          catch(Exception e){
+            return null;
+          }
+        }
+
+        public static void removeICObject(String className){
+          try{
+            ICObject instance = (ICObject)GenericEntity.getStaticInstance(ICObject.class);
+            instance.deleteMultiple(getClassNameColumnName(),className);
+          }
+          catch(Exception e){
+          }
+        }
+
         public void insertStartData()throws Exception{
-          ICObject obj = new ICObject();
+          /*ICObject obj = new ICObject();
           obj.setName("Table");
           obj.setObjectClass(Table.class);
           obj.setObjectType("iw.element");
@@ -81,7 +127,7 @@ public class ICObject extends GenericEntity{
           obj.setName("LoginModule");
           obj.setObjectClass(Login.class);
           obj.setObjectType("iw.block");
-          obj.insert();
+          obj.insert();*/
 
         }
 
@@ -103,16 +149,13 @@ public class ICObject extends GenericEntity{
                 setColumn("object_name",object_name);
         }
 
-        public static String getClassNameColumnName(){
-          return "class_name";
-        }
 
 	public String getClassName(){
-		return getStringColumnValue("class_name");
+		return getStringColumnValue(getClassNameColumnName());
 	}
 
         public void setClassName(String className){
-            setColumn("class_name",className);
+            setColumn(getClassNameColumnName(),className);
         }
 
         public Class getObjectClass()throws ClassNotFoundException{
