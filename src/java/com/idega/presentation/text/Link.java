@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.41 2002/01/15 16:08:30 gummi Exp $
+ * $Id: Link.java,v 1.42 2002/01/16 21:24:14 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -754,6 +754,10 @@ public class Link extends Text {
       setText(new Text(text));
       this.text = text;
     }
+  }
+
+  public String getText(){
+    return this.text;
   }
 
     /**

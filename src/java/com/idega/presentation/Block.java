@@ -53,12 +53,12 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   }
 
   public boolean deleteBlock(int ICObjectInstanceId){
-    System.err.print("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
+    System.err.println("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
     return true;
   }
 
   public boolean copyBlock(int newInstanceID){
-    System.err.print("method copyBlock(int newInstanceID) not implemented in class "+this.getClass().getName());
+    System.err.println("method copyBlock(int newInstanceID) not implemented in class "+this.getClass().getName());
     return true;
   }
 
