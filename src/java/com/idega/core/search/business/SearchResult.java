@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResult.java,v 1.5 2005/01/19 01:48:30 eiki Exp $
+ * $Id: SearchResult.java,v 1.6 2005/01/20 14:16:08 laddi Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,7 +10,6 @@
 package com.idega.core.search.business;
 
 import java.util.Map;
-import javax.faces.component.UIComponent;
 
 
 /**
@@ -18,10 +17,10 @@ import javax.faces.component.UIComponent;
  * An instance of this class corresponds to a "search result" i.e. each row of a search result.
  * </p>
  * 
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/01/20 14:16:08 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface SearchResult {
 	
