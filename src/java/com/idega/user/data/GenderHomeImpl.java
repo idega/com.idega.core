@@ -1,6 +1,6 @@
 /*
- * $Id: GenderHomeImpl.java,v 1.3 2005/01/13 14:46:37 laddi Exp $
- * Created on 10.1.2005
+ * $Id: GenderHomeImpl.java,v 1.4 2005/01/23 14:52:26 laddi Exp $
+ * Created on 16.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.data.*;
 
 
 /**
- * Last modified: $Date: 2005/01/13 14:46:37 $ by $Author: laddi $
+ * Last modified: $Date: 2005/01/23 14:52:26 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class GenderHomeImpl extends IDOFactory implements GenderHome {
 

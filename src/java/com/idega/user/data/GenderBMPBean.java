@@ -47,6 +47,14 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements Gende
     }
 
   }
+  
+  public boolean isFemaleGender() {
+  		return getName().equals(NAME_FEMALE);
+  }
+
+  public boolean isMaleGender() {
+		return getName().equals(NAME_MALE);
+}
 
   public static String getNameColumnName(){
     return "name";
