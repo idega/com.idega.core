@@ -14,7 +14,7 @@ public class InputContainer extends InterfaceObject {
 	private PresentationObject inputObj;
 	private Text text;
 	private Table table;
-	private int cellWith=-1;
+	private int cellWidth=-1;
 	
 	public InputContainer(){
 	}
@@ -49,7 +49,9 @@ public class InputContainer extends InterfaceObject {
 	 */
 	public void _main(IWContext iwc) throws Exception{
 		initTable();
+		super._main(iwc);
 		table._main(iwc);
+		//this.main(iwc);
 	}
 	
 	/**
@@ -63,9 +65,9 @@ public class InputContainer extends InterfaceObject {
 		
 		//add(t);
 		
-		if(cellWith!=-1){
-			getTable().setWidth(1,cellWith);
-			getTable().setWidth(2,cellWith);
+		if(cellWidth!=-1){
+			getTable().setWidth(1,cellWidth);
+			getTable().setWidth(2,cellWidth);
 		}
 		getTable().add(text,1,1);
 		getTable().add(inputObj,2,1);
@@ -89,8 +91,8 @@ public class InputContainer extends InterfaceObject {
 	/**
 	 * @param i
 	 */
-	public void setCellWith(int i) {
-		cellWith = i;
+	public void setCellWidth(int i) {
+		cellWidth = i;
 	}
 
 	/**
@@ -116,8 +118,8 @@ public class InputContainer extends InterfaceObject {
 	}
 
 
-	public void print(IWContext iwc) throws Exception{
-		this.table.print(iwc);
+	public void _print(IWContext iwc) throws Exception{
+		this.table._print(iwc);
 	}
 
 	/* (non-Javadoc)
