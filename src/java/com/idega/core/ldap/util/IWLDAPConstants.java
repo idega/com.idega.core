@@ -3,6 +3,7 @@
  */
 package com.idega.core.ldap.util;
 
+
 /**
  * Contains a list of supported LDAP attributes and schemas by the IdegaWeb implementation.
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
@@ -47,9 +48,34 @@ public interface IWLDAPConstants {
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_GENDER = "gender";
 	
 	/**
-	 * User id
+	 * Primary key
+	 */
+	public static final String LDAP_ATTRIBUTE_IDEGAWEB_PRIMARY_KEY= "idegawebPrimaryKey";
+	
+	/**
+	 * User login name
 	 */
 	public static final String LDAP_ATTRIBUTE_UID= "uid";
+	/**
+	 * User password. The value must be prefixed with LDAP_USER_PASSWORD_PREFIX( that is the string {md5} ) or similar<br>
+	userPassword values MUST be represented by following syntax: 
+        passwordvalue          = schemeprefix encryptedpassword
+        schemeprefix           = "{" scheme "}"
+        scheme                 = "crypt" / "md5" / "sha" / altscheme
+        altscheme              = "x-" keystring
+        encryptedpassword      = encrypted password
+
+ The encrypted password contains of a plaintext key hashed using the algorithm scheme. 
+ userPassword values which do not adhere to this syntax MUST NOT be used for authentication. The DUA MUST iterate through the values of the attribute until a value matching the above syntax is found. Only if encryptedpassword is an empty string does the user have no password. DUAs are not required to consider encryption schemes which the client will not recognize; in most cases, it may be sufficient to consider only "crypt". 
+ Below is an example of a userPassword attribute: 
+ 	userPassword: {crypt}X5/DBrWPOQQaI
+	 */
+	public static final String LDAP_ATTRIBUTE_USER_PASSWORD= "userPassword";
+	
+	/**
+	 * @see LDAP_ATTRIBUTE_USER_PASSWORD
+	 */
+	public static final String LDAP_USER_PASSWORD_PREFIX = "{md5}";
 	
 	/**
 	 * Used to separate the users name and his personal id in a dn
