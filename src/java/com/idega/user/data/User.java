@@ -2,6 +2,10 @@ package com.idega.user.data;
 
 import javax.ejb.*;
 
+import com.idega.core.data.Address;
+import com.idega.core.data.Email;
+import com.idega.core.data.Phone;
+
 public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User
 {
  public void setPrimaryGroupID(java.lang.Integer p0);
@@ -71,6 +75,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setHomePage(com.idega.builder.data.IBPage p0);
  public java.util.List getChildGroups()throws javax.ejb.EJBException;
  public void removeAllAddresses()throws com.idega.data.IDORemoveRelationshipException;
+ public void removeAddress(Address address)throws com.idega.data.IDORemoveRelationshipException;
  public void addPhone(com.idega.core.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
  public void initializeAttributes();
  public boolean getGroupTypeVisibility();
@@ -80,7 +85,9 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setMiddleName(java.lang.String p0);
  public java.lang.String getNameLastFirst(boolean p0);
  public void removeAllEmails()throws com.idega.data.IDORemoveRelationshipException;
+ public void removeEmail(Email email) throws com.idega.data.IDORemoveRelationshipException;
  public void removeAllPhones()throws com.idega.data.IDORemoveRelationshipException;
+ public void removePhone(Phone phone)throws com.idega.data.IDORemoveRelationshipException;
  public void setPrimaryGroup(com.idega.user.data.Group p0);
  public java.lang.String getGroupTypeValue();
  public java.lang.String getIDColumnName();

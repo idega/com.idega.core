@@ -450,12 +450,24 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		super.idoRemoveFrom(Address.class);
 	}
 
+	public void removeAddress(Address address) throws IDORemoveRelationshipException {
+		super.idoRemoveFrom(address);	
+	}
+
 	public void removeAllEmails() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Email.class);
+	}
+	
+	public void removeEmail(Email email) throws IDORemoveRelationshipException {
+		super.idoRemoveFrom(email);	
 	}
 
 	public void removeAllPhones() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Phone.class);
+	}
+
+	public void removePhone(Phone phone) throws IDORemoveRelationshipException {
+		super.idoRemoveFrom(phone);	
 	}
 
 	public Collection getAddresses() {
