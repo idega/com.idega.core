@@ -711,9 +711,13 @@ public class IWMainApplication{//implements ServletContext{
     // crypto code fort this class has not been created
     else{
       int iCrypto = calculate(classObject.getName());
-      while(! cryptoProperties.contains(String.valueOf(iCrypto))){
-      	iCrypto++;
-      }
+      crypto = Integer.toString(iCrypto);
+      
+      	while(cryptoProperties.contains(String.valueOf(iCrypto))){
+      		//System.err.println("inside loop");
+      		iCrypto++;
+      	}
+      
       crypto = Integer.toString(iCrypto);
       cryptoCodes.put(classObject.getName(),crypto);
       cryptoProperties.put(crypto,classObject.getName());
@@ -723,6 +727,7 @@ public class IWMainApplication{//implements ServletContext{
 	else
 	return classObject.getName();
   }
+  
 
   public static String getHashCodedClassName(String crypto){
     if(cryptoProperties!=null && crypto!=null && cryptoProperties.containsKey(crypto))
