@@ -1,15 +1,14 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.idegaweb.IWLocation;
-import com.idega.presentation.Frame;
-import com.idega.presentation.PresentationObject;
-import com.idega.user.presentation.BasicUserOverviewPS;
-import com.idega.event.IWPresentationState;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.idega.event.IWPresentationState;
 import com.idega.event.IWPresentationStateImpl;
+import com.idega.presentation.Frame;
 
 /**
  * <p>Title: idegaWeb</p>

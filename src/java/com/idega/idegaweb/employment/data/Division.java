@@ -1,6 +1,5 @@
 package com.idega.idegaweb.employment.data;
 
-import javax.ejb.*;
 
 public interface Division extends com.idega.data.IDOLegacyEntity
 {

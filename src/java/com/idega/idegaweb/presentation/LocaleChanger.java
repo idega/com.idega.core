@@ -1,24 +1,18 @@
 package com.idega.idegaweb.presentation;
 
 //import com.idega.presentation.ui.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
-
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.ui.DropdownMenu;
-import java.util.Locale;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.HashMap;
-import com.idega.util.LocaleUtil;
-import com.idega.core.localisation.business.ICLocaleBusiness;
 
 
 /**

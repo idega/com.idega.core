@@ -1,19 +1,13 @@
 package com.idega.idegaweb;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import java.util.List;
 import java.util.Locale;
-import com.idega.core.user.data.User;
+
 import com.idega.core.accesscontrol.business.AccessController;
-
-
+import com.idega.core.data.ICObject;
+import com.idega.core.user.data.User;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserProperties;
-
-import java.util.List;
-import com.idega.core.data.ICObject;
 
 /**
  * Title:        idegaclasses

@@ -5,18 +5,6 @@
 
 package com.idega.idegaweb;
 
-import com.idega.block.media.business.MediaBundleStarter;
-import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.exception.IWBundleDoesNotExist;
-import com.idega.graphics.generator.ImageFactory;
-import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
-import com.idega.util.Executer;
-import com.idega.util.FileUtil;
-import com.idega.util.LocaleUtil;
-import com.idega.util.LogWriter;
-import com.idega.util.text.TextSoap;
-import com.idega.presentation.IWContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,7 +19,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+
 import javax.servlet.ServletContext;
+
+import com.idega.block.media.business.MediaBundleStarter;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.graphics.generator.ImageFactory;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.util.Executer;
+import com.idega.util.FileUtil;
+import com.idega.util.LocaleUtil;
+import com.idega.util.LogWriter;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

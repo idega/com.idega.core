@@ -5,15 +5,14 @@
 
 */
 package com.idega.idegaweb;
-import java.util.Locale;
-import java.io.File;
-import com.idega.util.FileUtil;
-import java.util.List;
-import com.idega.util.LocaleUtil;
-import com.idega.data.EntityControl;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
+
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.data.EntityControl;
+import com.idega.util.LocaleUtil;
 /**
 
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

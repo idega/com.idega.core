@@ -1,9 +1,5 @@
 package com.idega.idegaweb;
 
-import com.idega.presentation.ui.DropdownMenu;
-import com.idega.util.FileUtil;
-import com.idega.util.text.TextSoap;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import com.idega.util.FileUtil;
+import com.idega.util.text.TextSoap;
 
 /**
  * <p>Title: IdegaWeb Style Manager</p>

@@ -1,13 +1,16 @@
 package com.idega.idegaweb.presentation;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.idega.presentation.Block;
-import java.sql.*;
-import java.io.StringWriter;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.util.database.ConnectionBroker;
 import com.idega.util.SendMail;
+import com.idega.util.database.ConnectionBroker;
 
 /**
  * Title:

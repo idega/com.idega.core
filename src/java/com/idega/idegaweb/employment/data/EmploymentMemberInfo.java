@@ -1,6 +1,5 @@
 package com.idega.idegaweb.employment.data;
 
-import javax.ejb.*;
 
 public interface EmploymentMemberInfo extends com.idega.data.IDOLegacyEntity
 {

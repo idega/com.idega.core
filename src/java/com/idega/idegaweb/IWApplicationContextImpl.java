@@ -1,7 +1,5 @@
 package com.idega.idegaweb;
 
-import java.rmi.RemoteException;
-
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBDomainHome;
 import com.idega.data.IDOLookup;

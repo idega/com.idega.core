@@ -12,13 +12,14 @@ package com.idega.idegaweb;
 
 
 
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.Image;
-
-import java.io.*;
-
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Properties;
 
 
 

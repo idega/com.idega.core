@@ -1,10 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.event.IWActionListener;
-import com.idega.core.ICTreeNode;
 import com.idega.event.IWPresentationEvent;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.AbstractTreeViewer;
 
 /**

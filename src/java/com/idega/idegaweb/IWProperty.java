@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.8 2002/04/06 19:07:44 tryggvil Exp $
+ * $Id: IWProperty.java,v 1.9 2003/04/03 09:53:23 laddi Exp $
 
  *
 
@@ -20,31 +20,7 @@ package com.idega.idegaweb;
 
 
 
-import java.util.List;
-
-import java.util.Iterator;
-
-
-
-/*import org.jdom.Document;
-
-import org.jdom.Element;
-
-import org.jdom.JDOMException;
-
-import org.jdom.input.SAXBuilder;
-
-import org.jdom.output.XMLOutputter;*/
-
-import com.idega.xml.XMLDocument;
-
 import com.idega.xml.XMLElement;
-
-import com.idega.xml.XMLException;
-
-import com.idega.xml.XMLParser;
-
-import com.idega.xml.XMLOutput;
 
 
 

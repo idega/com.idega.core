@@ -1,10 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
 import com.idega.presentation.ui.TreeViewerPS;
-import com.idega.event.IWPresentationStateImpl;
-import java.util.Iterator;
-import java.util.List;
-import com.idega.event.IWPresentationState;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -8,17 +8,21 @@ package com.idega.idegaweb;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-import com.idega.util.text.TextSoap;
-import java.net.URLEncoder;
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.*;
-import java.io.PrintWriter;
-import com.idega.util.caching.Cache;
-import com.idega.util.FileUtil;
-import com.idega.data.IDOLegacyEntity;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import com.idega.data.CacheableEntity;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.caching.Cache;
+import com.idega.util.text.TextSoap;
 
 
 public class IWCacheManager {

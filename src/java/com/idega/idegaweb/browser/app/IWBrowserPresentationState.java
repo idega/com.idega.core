@@ -1,9 +1,10 @@
 package com.idega.idegaweb.browser.app;
 
-import com.idega.event.*;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationStateImpl;
 import com.idega.idegaweb.IWException;
-import com.idega.presentation.IWContext;
-import com.idega.idegaweb.browser.event.*;
+import com.idega.idegaweb.browser.event.IWBrowseEvent;
 
 /**
  * <p>Title: idegaWeb</p>

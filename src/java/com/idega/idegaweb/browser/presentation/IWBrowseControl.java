@@ -1,6 +1,5 @@
 package com.idega.idegaweb.browser.presentation;
 import javax.swing.event.ChangeListener;
-import com.idega.presentation.IWContext;
 
 /**
  * <p>Title: idegaWeb</p>

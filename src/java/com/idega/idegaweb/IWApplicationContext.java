@@ -1,9 +1,5 @@
 package com.idega.idegaweb;
 
-import javax.servlet.ServletContext;
-
-import java.rmi.RemoteException;
-
 import com.idega.builder.data.IBDomain;
 
 /**

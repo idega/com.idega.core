@@ -6,13 +6,10 @@ package com.idega.idegaweb.employment.data;
 
 //import java.util.*;
 
-import java.sql.*;
-
-import com.idega.data.*;
-
-import com.idega.data.genericentity.*;
+import java.sql.SQLException;
 
 import com.idega.core.user.data.User;
+import com.idega.data.genericentity.Member;
 
 
 
