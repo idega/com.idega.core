@@ -181,9 +181,11 @@ public class IWMainApplicationStarter {
 	 * 
 	 */
 	private void startLogManager() {
-		File propertiesDir = new File(this.iwma.getPropertiesRealPath());
+		String propertiesRealPath = this.iwma.getPropertiesRealPath();
+		File propertiesDir = new File(propertiesRealPath);
 		File propertiesFile = new File(propertiesDir,"logging.properties");
-		if(propertiesFile.exists()){
+		boolean propertiesFileExists = propertiesFile.exists();
+		if(propertiesFileExists){
 			try {
 				LogManager.getLogManager().readConfiguration(new FileInputStream(propertiesFile));
 			}

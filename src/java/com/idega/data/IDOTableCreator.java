@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.transaction.TransactionManager;
 
@@ -17,6 +19,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
+import com.idega.util.logging.LoggingHelper;
 
 
 /**
@@ -156,8 +159,7 @@ public class IDOTableCreator{
     	doTableCheckDatastoreInterface(entity,tableName);
         //doTableCheckDatabaseMetadata(entity,tableName);
         long end = System.currentTimeMillis();
-		if(this.isDebugActive())
-        	System.err.println("[idoTableCreator] doesTableExist() check took "+((end-start))+" milliseconds"+"  ("+tableName+")");
+		debug("doesTableExist() check took "+((end-start))+" milliseconds"+"  ("+tableName+")");
       
     }
     catch(Exception se){
@@ -234,7 +236,7 @@ public class IDOTableCreator{
   public void createEntityRecord(GenericEntity entity)throws Exception{
     if(!doesTableExist(entity,entity.getTableName())){
 		//if(this.isDebugActive())
-   	 		System.out.println("[idoTableCreator]  Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+    	debug("Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit=false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
@@ -284,8 +286,7 @@ public class IDOTableCreator{
       }
     }
     else{
-    	if(this.isDebugActive())
-      		System.out.println("[idoTableCreator]  Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+    	debug("Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit = false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
@@ -580,7 +581,12 @@ public class IDOTableCreator{
             //String columnInTableToReference=entityToReference.getIDColumnName();
             //String columnName = names[i];
 			String columnName = fields[i].getSQLFieldName();
-            createForeignKey((GenericEntity)entity,entityToReference,columnName);
+			try{
+				createForeignKey((GenericEntity)entity,entityToReference,columnName);
+			}
+			catch(Exception e){
+				logError("Error Creating foreign key for entity "+entity.getEntityDefinition().getSQLTableName()+" and field "+columnName+". Error message was : "+e.getMessage());
+			}
             //createForeignKey(entity,table1,columnName,tableToReference,columnInTableToReference);
           }
         //}
@@ -720,11 +726,147 @@ public class IDOTableCreator{
     }
   }
   
-  protected boolean isDebugActive()
-  {
-	 return IWMainApplicationSettings.isDebugActive();
+  //STANDARD LOGGING METHODS:
+  
+  /**
+   * Logs out to the default log level (which is by default INFO)
+   * @param msg The message to log out
+   */
+  protected void log(String msg) {
+  	//System.out.println(string);
+  	getLogger().log(getDefaultLogLevel(),msg);
   }
 
+  /**
+   * Logs out to the error log level (which is by default WARNING) to the default Logger
+   * @param e The Exception to log out
+   */
+  protected void log(Exception e) {
+  	LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
+  }
+  
+  /**
+   * Logs out to the specified log level to the default Logger
+   * @param level The log level
+   * @param msg The message to log out
+   */
+  protected void log(Level level,String msg) {
+  	//System.out.println(msg);
+  	getLogger().log(level,msg);
+  }
+  
+  /**
+   * Logs out to the error log level (which is by default WARNING) to the default Logger
+   * @param msg The message to log out
+   */
+  protected void logError(String msg) {
+  	//System.err.println(msg);
+  	getLogger().log(getErrorLogLevel(),msg);
+  }
+
+  /**
+   * Logs out to the debug log level (which is by default FINER) to the default Logger
+   * @param msg The message to log out
+   */
+  protected void logDebug(String msg) {
+  	//System.err.println(msg);
+  	getLogger().log(getDebugLogLevel(),msg);
+  }
+  
+  /**
+   * Logs out to the SEVERE log level to the default Logger
+   * @param msg The message to log out
+   */
+  protected void logSevere(String msg) {
+  	//System.err.println(msg);
+  	getLogger().log(Level.SEVERE,msg);
+  }	
+  
+  
+  /**
+   * Logs out to the WARNING log level to the default Logger
+   * @param msg The message to log out
+   */
+  protected void logWarning(String msg) {
+  	//System.err.println(msg);
+  	getLogger().log(Level.WARNING,msg);
+  }
+  
+  /**
+   * Logs out to the CONFIG log level to the default Logger
+   * @param msg The message to log out
+   */
+  protected void logConfig(String msg) {
+  	//System.err.println(msg);
+  	getLogger().log(Level.CONFIG,msg);
+  }	
+  
+  /**
+   * Logs out to the debug log level to the default Logger
+   * @param msg The message to log out
+   */
+  protected void debug(String msg) {
+  	String logMsg = "[idoTableCreator] : "+msg;
+  	logDebug(logMsg);
+  }	
+  
+  /**
+   * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
+   * This behaviour can be overridden in subclasses.
+   * @return the default Logger
+   */
+  protected Logger getLogger(){
+  	return Logger.getLogger(this.getClass().getName());
+  }
+  
+  /**
+   * Gets the log level which messages are sent to when no log level is given.
+   * @return the Level
+   */
+  protected Level getDefaultLogLevel(){
+  	return Level.INFO;
+  }
+  /**
+   * Gets the log level which debug messages are sent to.
+   * @return the Level
+   */
+  protected Level getDebugLogLevel(){
+  	return Level.FINER;
+  }
+  /**
+   * Gets the log level which error messages are sent to.
+   * @return the Level
+   */
+  protected Level getErrorLogLevel(){
+  	return Level.WARNING;
+  }
+  
+  //ENTITY SPECIFIC LOG MEHTODS:
+  
+  ///**
+  // * This method outputs the outputString to System.out if the Application property
+  // * "debug" is set to "TRUE"
+  // */
+  //public void debug(String outputString) {
+  //	if (isDebugActive()) {
+  //		//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+  //	}
+  //}
+  /**
+   * This method logs the sqlCommand if the Log Level is low enough 
+   */
+  public void logSQL(String sqlCommand) {
+  	log(Level.FINEST,sqlCommand);
+  	//if (isDebugActive()) {
+  	//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+  	//}
+  }
+  
+  protected boolean isDebugActive() {
+  	return IWMainApplicationSettings.isDebugActive();
+  }
+  //END STANDARD LOGGING METHODS
+  
 
 
 }

@@ -19,6 +19,10 @@ import java.sql.Statement;
  */
 public class MSSQLServerDatastoreInterface extends DatastoreInterface
 {
+	public MSSQLServerDatastoreInterface(){
+		super.useTransactionsInEntityCreation=false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#getSQLType(java.lang.String, int)
 	 */
@@ -41,7 +45,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			}
 			else
 			{
-				theReturn = "CLOB";
+				theReturn = "NTEXT";
 			}
 		}
 		else if (javaClassName.equals("java.lang.Boolean"))
@@ -197,7 +201,9 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			statement.append(")");
 			//if (isDebugActive())
 			//	debug(statement.toString());
-			Stmt = conn.prepareStatement(statement.toString());
+			String sql = statement.toString();
+			logSQL(sql);
+			Stmt = conn.prepareStatement(sql);
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
 			Stmt.close();
@@ -225,20 +231,20 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	{
 		try
 		{
-			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
-			//{
-			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
-			if (!pkIsNull)
+			if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
 			{
-				String tableName = entity.getTableName();
-				Statement stmt2 = conn.createStatement();
-				String sql = "set IDENTITY_INSERT " + tableName + " on";
-				stmt2.executeUpdate(sql);
-				//debug(sql);
-				stmt2.close();
-				return true;
+				boolean pkIsNull = entity.isNull(entity.getIDColumnName());
+				if (!pkIsNull)
+				{
+					String tableName = entity.getTableName();
+					Statement stmt2 = conn.createStatement();
+					String sql = "set IDENTITY_INSERT " + tableName + " on";
+					stmt2.executeUpdate(sql);
+					//debug(sql);
+					stmt2.close();
+					return true;
+				}
 			}
-			//}
 		}
 		catch (Exception e)
 		{

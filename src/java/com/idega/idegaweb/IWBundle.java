@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.68 2003/10/31 00:53:46 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.69 2003/12/01 04:59:34 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -36,6 +38,7 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.logging.LoggingHelper;
 import com.idega.util.refactor.RefactorClassRegistry;
 import com.idega.xml.XMLElement;
 /**
@@ -167,7 +170,7 @@ public class IWBundle implements java.lang.Comparable
 		}
 		catch (FinderException e)
 		{
-			logMessage("No bundle components found for " + getBundleIdentifier());
+			debug("No bundle components found for " + getBundleIdentifier());
 		}
 		catch (Exception e)
 		{
@@ -193,9 +196,7 @@ public class IWBundle implements java.lang.Comparable
 				}
 				catch (ClassNotFoundException e)
 				{
-					//e.printStackTrace();
-					System.out.println(
-						"Warning: Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found");
+					logError("Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found");
 				}
 			}
 		}
@@ -223,7 +224,7 @@ public class IWBundle implements java.lang.Comparable
 				}
 				catch (ClassNotFoundException e)
 				{
-					logMessage("Class not found for Block: " + ico.getName());
+					debug("Class not found for Block: " + ico.getName());
 					//e.printStackTrace();
 				}
 				catch (InstantiationException e)
@@ -291,7 +292,13 @@ public class IWBundle implements java.lang.Comparable
 			String className = (String) iter.next();
 			String componentName = getComponentName(className);
 			String componentType = this.getComponentType(className);
-			addComponentToDatabase(className, componentType, componentName);
+			if(className!=null && componentName != null && componentType!=null){
+				addComponentToDatabase(className, componentType, componentName);
+			}
+			else{
+				logError("Error registering component className="+className+",componentName="+componentName+",componentType="+componentType+" in bundle="+this.getBundleIdentifier());
+			}
+			
 		}
 	}
 	protected String getRootRealPath()
@@ -524,10 +531,9 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public synchronized void storeState()
 	{
-		if (isDebugActive())
-		{
-			debug("Storing State");
-		}
+
+		debug("Storing State");
+
 		propertyList.store();
 		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
 		if(storeResourcesOnStore){
@@ -971,6 +977,9 @@ public class IWBundle implements java.lang.Comparable
 			catch (ClassNotFoundException e2)
 			{
 			}
+			catch (NullPointerException e3)
+			{
+			}
 			throw e;
 		}
 	}
@@ -1205,17 +1214,122 @@ public class IWBundle implements java.lang.Comparable
 	{
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
-	protected void debug(String message)
-	{
-		if (isDebugActive())
-			System.out.println("[IWBundle] : " + getBundleIdentifier() + " : " + message);
+
+	
+	//STANDARD LOGGING METHODS:
+	
+	/**
+	 * Logs out to the default log level (which is by default INFO)
+	 * @param msg The message to log out
+	 */
+	protected void log(String msg) {
+		//System.out.println(string);
+		getLogger().log(getDefaultLogLevel(),msg);
 	}
-	protected boolean isDebugActive()
-	{
-		return getApplication().isDebugActive();
+
+	/**
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param e The Exception to log out
+	 */
+	protected void log(Exception e) {
+		LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
 	}
-	protected void logMessage(String message)
-	{
-		debug(message);
+	
+	/**
+	 * Logs out to the specified log level to the default Logger
+	 * @param level The log level
+	 * @param msg The message to log out
+	 */
+	protected void log(Level level,String msg) {
+		//System.out.println(msg);
+		getLogger().log(level,msg);
 	}
+	
+	/**
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logError(String msg) {
+		//System.err.println(msg);
+		getLogger().log(getErrorLogLevel(),msg);
+	}
+
+	/**
+	 * Logs out to the debug log level (which is by default FINER) to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logDebug(String msg) {
+		//System.err.println(msg);
+		getLogger().log(getDebugLogLevel(),msg);
+	}
+	
+	/**
+	 * Logs out to the SEVERE log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logSevere(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.SEVERE,msg);
+	}	
+	
+	
+	/**
+	 * Logs out to the WARNING log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logWarning(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.WARNING,msg);
+	}
+	
+	/**
+	 * Logs out to the CONFIG log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logConfig(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.CONFIG,msg);
+	}	
+	
+	/**
+	 * Logs out to the debug log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void debug(String msg) {
+		String logMsg = "[IWBundle] : "+getBundleIdentifier()+" : "+msg;
+		logDebug(logMsg);
+	}	
+	
+	/**
+	 * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
+	 * This behaviour can be overridden in subclasses.
+	 * @return the default Logger
+	 */
+	protected Logger getLogger(){
+		return Logger.getLogger(this.getClass().getName());
+	}
+	
+	/**
+	 * Gets the log level which messages are sent to when no log level is given.
+	 * @return the Level
+	 */
+	protected Level getDefaultLogLevel(){
+		return Level.INFO;
+	}
+	/**
+	 * Gets the log level which debug messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getDebugLogLevel(){
+		return Level.FINER;
+	}
+	/**
+	 * Gets the log level which error messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getErrorLogLevel(){
+		return Level.WARNING;
+	}
+	
+	//ENTITY SPECIFIC LOG MEHTODS:	
 }

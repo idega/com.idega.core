@@ -39,8 +39,8 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	private boolean executeCVSUpdate(String directory){
 		try
 		{
-			String[] args={"-P","-A","-d"};
-			int exit = executeCVSCommand("update",args,directory);
+			String command = "update -P -A -d";
+			int exit = executeCVSCommand(command,directory);
 			if(exit==0){
 				return true;
 			}
@@ -56,7 +56,27 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		}
 	}
 	
-	private int executeCVSCommand(String command,String[] envp,String directory) throws IOException{
+	public boolean executeCVSCommit(String directory,String file,String comment){
+		try
+		{
+			String command = "commit "+file+" -m "+comment;
+			int exit = executeCVSCommand(command,directory);
+			if(exit==0){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		catch (IOException e)
+		{
+			log("Error executing commit to file:"+file+" in directory: "+directory);
+			log(e);
+			return false;
+		}
+	}
+	
+	private int executeCVSCommand(String command,String directory) throws IOException{
 		//if(envp==null || envp.length==0){
 			String[] envp2 = {"CVS_RSH=ssh"};
 		//}

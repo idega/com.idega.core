@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.84 2003/11/07 15:28:51 joakim Exp $
+ * $Id: DatastoreInterface.java,v 1.85 2003/12/01 04:59:33 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,10 +22,13 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.Gender;
 import com.idega.util.database.ConnectionBroker;
+import com.idega.util.logging.LoggingHelper;
 /**
  * A class to serve as an abstraction of the underlying datastore
  *
@@ -277,8 +280,7 @@ public abstract class DatastoreInterface {
 			conn = entity.getConnection();
 			//conn.commit();
 			Stmt = conn.createStatement();
-			if(isDebugActive())
-				System.out.println(SQLCommand);
+			log(SQLCommand);
 			theReturn = Stmt.executeUpdate(SQLCommand);
 		} finally {
 			if (Stmt != null) {
@@ -461,7 +463,9 @@ public abstract class DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			stmt = conn.createStatement();
-			RS = stmt.executeQuery(getCreateUniqueIDQuery(entity));
+			String sql = getCreateUniqueIDQuery(entity);
+			logSQL(sql);
+			RS = stmt.executeQuery(sql);
 			RS.next();
 			returnInt = RS.getInt(1);
 		} finally {
@@ -754,8 +758,7 @@ public abstract class DatastoreInterface {
 			statement.append(getAllColumnsAndQuestionMarks(entity));
 			appendPrimaryKeyWhereClause(entity, statement);
 			String sql = statement.toString();
-			if (isDebugActive())
-				debug(sql);
+			logSQL(sql);
 			Stmt = conn.prepareStatement(sql);
 			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
 			Stmt.execute();
@@ -784,9 +787,9 @@ public abstract class DatastoreInterface {
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
-			//if (isDebugActive())
-				debug(statement.toString());
-			Stmt = conn.prepareStatement(statement.toString());
+			String sql = statement.toString();
+			logSQL(sql);
+			Stmt = conn.prepareStatement(sql);
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
 			Stmt.close();
@@ -831,7 +834,9 @@ public abstract class DatastoreInterface {
 			statement.append("delete from  ");
 			statement.append(entity.getTableName());
 			appendPrimaryKeyWhereClause(entity, statement);
-			Stmt.executeUpdate(statement.toString());
+			String sql = statement.toString();
+			logSQL(sql);
+			Stmt.executeUpdate(sql);
 			if (entity.hasMetaDataRelationship()) {
 				deleteMetaData(entity, conn);
 			}
@@ -902,7 +907,9 @@ public abstract class DatastoreInterface {
 			statement.append(entity.getIDColumnName());
 			statement.append('=');
 			statement.append(entity.getID());
-			Stmt.executeUpdate(statement.toString());
+			String sql = statement.toString();
+			logSQL(sql);
+			Stmt.executeUpdate(sql);
 		} finally {
 			if (Stmt != null) {
 				Stmt.close();
@@ -1123,24 +1130,7 @@ public abstract class DatastoreInterface {
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
 	}
-	/**
-	 * This method outputs the outputString to System.out if the Application property
-	 * "debug" is set to "TRUE"
-	 */
-	protected static void debug(String outputString, GenericEntity entity) {
-		if (IWMainApplicationSettings.isDebugActive()) {
-			System.out.println("[DEBUG] \"" + outputString + "\" : " + entity.getEntityName());
-		}
-	}
-	/**
-	 * This method outputs the outputString to System.out if the Application property
-	 * "debug" is set to "TRUE"
-	 */
-	protected static void debug(String outputString) {
-		if (IWMainApplicationSettings.isDebugActive()) {
-			System.out.println("[DEBUG] \"" + outputString + "\" : DatastoreInterface");
-		}
-	}
+
 	public void setDatabaseMetaData(DatabaseMetaData meta) {
 		_databaseMetaData = meta;
 	}
@@ -1286,9 +1276,6 @@ public abstract class DatastoreInterface {
 		}*/
 	}
 
-	protected boolean isDebugActive() {
-		return IWMainApplicationSettings.isDebugActive();
-	}
 
 	/**
 	 * Queries given datasource for table existance
@@ -1360,4 +1347,167 @@ public abstract class DatastoreInterface {
 	  public String[] getTableColumnNames(String dataSourceName,String tableName){
 	  	return getColumnArrayFromMetaData(dataSourceName,tableName);
 	  }
+	  
+	  
+	  //STANDARD LOGGING METHODS:
+	  
+	  /**
+	   * Logs out to the default log level (which is by default INFO)
+	   * @param msg The message to log out
+	   */
+	  protected void log(String msg) {
+	  	//System.out.println(string);
+	  	getLogger().log(getDefaultLogLevel(),msg);
+	  }
+
+	  /**
+	   * Logs out to the error log level (which is by default WARNING) to the default Logger
+	   * @param e The Exception to log out
+	   */
+	  protected void log(Exception e) {
+	  	LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
+	  }
+	  
+	  /**
+	   * Logs out to the specified log level to the default Logger
+	   * @param level The log level
+	   * @param msg The message to log out
+	   */
+	  protected void log(Level level,String msg) {
+	  	//System.out.println(msg);
+	  	getLogger().log(level,msg);
+	  }
+	  
+	  /**
+	   * Logs out to the error log level (which is by default WARNING) to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void logError(String msg) {
+	  	//System.err.println(msg);
+	  	getLogger().log(getErrorLogLevel(),msg);
+	  }
+
+	  /**
+	   * Logs out to the debug log level (which is by default FINER) to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void logDebug(String msg) {
+	  	//System.err.println(msg);
+	  	getLogger().log(getDebugLogLevel(),msg);
+	  }
+	  
+	  /**
+	   * Logs out to the SEVERE log level to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void logSevere(String msg) {
+	  	//System.err.println(msg);
+	  	getLogger().log(Level.SEVERE,msg);
+	  }	
+	  
+	  
+	  /**
+	   * Logs out to the WARNING log level to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void logWarning(String msg) {
+	  	//System.err.println(msg);
+	  	getLogger().log(Level.WARNING,msg);
+	  }
+	  
+	  /**
+	   * Logs out to the CONFIG log level to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void logConfig(String msg) {
+	  	//System.err.println(msg);
+	  	getLogger().log(Level.CONFIG,msg);
+	  }	
+	  
+	  /**
+	   * Logs out to the debug log level to the default Logger
+	   * @param msg The message to log out
+	   */
+	  protected void debug(String msg) {
+	  	logDebug(msg);
+	  }	
+	  
+	  /**
+	   * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
+	   * This behaviour can be overridden in subclasses.
+	   * @return the default Logger
+	   */
+	  protected Logger getLogger(){
+	  	return Logger.getLogger(this.getClass().getName());
+	  }
+	  
+	  /**
+	   * Gets the log level which messages are sent to when no log level is given.
+	   * @return the Level
+	   */
+	  protected Level getDefaultLogLevel(){
+	  	return Level.INFO;
+	  }
+	  /**
+	   * Gets the log level which debug messages are sent to.
+	   * @return the Level
+	   */
+	  protected Level getDebugLogLevel(){
+	  	return Level.FINER;
+	  }
+	  /**
+	   * Gets the log level which error messages are sent to.
+	   * @return the Level
+	   */
+	  protected Level getErrorLogLevel(){
+	  	return Level.WARNING;
+	  }
+	  
+	  //ENTITY SPECIFIC LOG MEHTODS:
+	  
+	  ///**
+	  // * This method outputs the outputString to System.out if the Application property
+	  // * "debug" is set to "TRUE"
+	  // */
+	  //public void debug(String outputString) {
+	  //	if (isDebugActive()) {
+	  //		//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+	  //	}
+	  //}
+	  /**
+	   * This method logs the sqlCommand if the Log Level is low enough 
+	   */
+	  public void logSQL(String sqlCommand) {
+	  	log(Level.FINEST,sqlCommand);
+	  	//if (isDebugActive()) {
+	  	//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+	  	//}
+	  }
+	  
+	  protected boolean isDebugActive() {
+	  	return IWMainApplicationSettings.isDebugActive();
+	  }
+	  //END STANDARD LOGGING METHODS
+	  
+	  /**
+	   * This method outputs the outputString to System.out if the Application property
+	   * "debug" is set to "TRUE"
+	   */
+	  protected void debug(String outputString, GenericEntity entity) {
+	  	/*if (IWMainApplicationSettings.isDebugActive()) {
+	  		System.out.println("[DEBUG] \"" + outputString + "\" : " + entity.getEntityName());
+	  	}*/
+	  	String finalString = outputString + "\" : " + entity.getEntityName();
+	  	debug(finalString);
+	  }
+	  /**
+	   * This method outputs the outputString to System.out if the Application property
+	   * "debug" is set to "TRUE"
+	   */
+	  /*protected static void debug(String outputString) {
+	  	if (IWMainApplicationSettings.isDebugActive()) {
+	  		System.out.println("[DEBUG] \"" + outputString + "\" : DatastoreInterface");
+	  	}
+	  }*/
+	  
 }

@@ -3261,9 +3261,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
-		if (this.isDebugActive()) {
+		//if (this.isDebugActive()) {
 			logSQL(sqlQuery);
-		}
+		//}
 
 		if (startingEntry < 0)
 			startingEntry = 0;
@@ -3293,7 +3293,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					if (addEntity) {
 						Object pk = this.getPrimaryKeyFromResultSet(RS);
 						if (pk != null) {
-							prefetchBeanFromResultSet(pk, RS);
+							//prefetchBeanFromResultSet(pk, RS);
 							vector.addElement(pk);
 						}
 					}
