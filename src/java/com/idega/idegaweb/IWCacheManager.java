@@ -47,7 +47,7 @@ public class IWCacheManager {
     }
     else{
       long currentTime = System.currentTimeMillis();
-      long invalidation = this.getTimeOfInvalidation(key);
+      long invalidation = getTimeOfInvalidation(key);
        //System.out.println("Current     : "+currentTime);
        //System.out.println("Invalidation: "+invalidation);
 
