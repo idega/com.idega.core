@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.69 2003/12/01 04:59:34 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.70 2003/12/05 21:11:47 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -73,7 +73,7 @@ public class IWBundle implements java.lang.Comparable
 	private boolean autoCreate = false;
 	//private Map handlers;
 	private Map localeRealPathsLookup;
-	private SortedMap localizableStringsMap;
+	//private SortedMap localizableStringsMap;
 	private Properties localizableStringsProperties;
 	private File localizableStringsFile;
 	private IWPropertyList propertyList;
@@ -402,7 +402,8 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public String[] getLocalizableStrings()
 	{
-		return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
+		//return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
+		return (String[]) getLocalizableStringsProperties().keySet().toArray(new String[0]);
 	}
 	public boolean removeLocalizableString(String key)
 	{
@@ -412,18 +413,22 @@ public class IWBundle implements java.lang.Comparable
 			IWResourceBundle item = (IWResourceBundle) iter.next();
 			item.removeString(key);
 		}
-		return this.localizableStringsMap.remove(key) != null ? true : false;
+		return getLocalizableStringsProperties().remove(key) != null ? true : false;
 	}
 	protected Properties getLocalizableStringsProperties()
 	{
 		initializePropertiesStrings();
 		return localizableStringsProperties;
 	}
-	protected Map getLocalizableStringsMap()
+	public String getLocalizableStringDefaultValue(String key)
+	{
+		return getLocalizableStringsProperties().getProperty(key);
+	}
+	/*protected Map getLocalizableStringsMap()
 	{
 		initializePropertiesStrings();
 		return localizableStringsMap;
-	}
+	}*/
 	private void initializePropertiesStrings()
 	{
 		if (localizableStringsProperties == null)
@@ -432,7 +437,7 @@ public class IWBundle implements java.lang.Comparable
 			try
 			{
 				localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
-				localizableStringsMap = new TreeMap(localizableStringsProperties);
+				//localizableStringsMap = new TreeMap(localizableStringsProperties);
 			}
 			catch (IOException ex)
 			{
@@ -561,7 +566,7 @@ public class IWBundle implements java.lang.Comparable
 	synchronized boolean storeLocalizableStrings(){
 		try
 		{
-			getLocalizableStringsProperties().clear();
+			/*getLocalizableStringsProperties().clear();
 			Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
 			while (keyIter.hasNext())
 			{
@@ -574,7 +579,7 @@ public class IWBundle implements java.lang.Comparable
 						getLocalizableStringsProperties().put(key, value);
 					}
 				}
-			}
+			}*/
 			getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()), null);
 		}
 		catch (IOException ex)
@@ -1203,12 +1208,12 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public void addLocalizableString(String key, String value)
 	{
-		getLocalizableStringsMap().put(key, value);
-		storeState();
+		getLocalizableStringsProperties().put(key, value);
+		storeLocalizableStrings();
 	}
 	public boolean containsLocalizedString(String key)
 	{
-		return (getLocalizableStringsMap().containsKey(key));
+		return (getLocalizableStringsProperties().containsKey(key));
 	}
 	private ICObjectHome getICObjectHome() throws IDOLookupException
 	{

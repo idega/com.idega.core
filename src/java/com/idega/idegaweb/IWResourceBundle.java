@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.28 2003/10/31 00:53:46 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.29 2003/12/05 21:11:47 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -27,6 +27,7 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 
 /**
  * Title:        idega Framework
@@ -173,9 +174,9 @@ public class IWResourceBundle extends ResourceBundle {
 			return super.getString(key);
 		}
 		catch (MissingResourceException e) {
-			if (getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive()) {
-				setLocalizedString(key, "");
-			}
+			//if (getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive()) {
+			//	setLocalizedString(key, "");
+			//}
 			return null;
 		}
 	}
@@ -185,11 +186,12 @@ public class IWResourceBundle extends ResourceBundle {
 	*/
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String returnString = getLocalizedString(key);
-		if ( (returnString == null) || "".equals(returnString) ) {
+		if ( (returnString == null) || StringHandler.EMPTY_STRING.equals(returnString) ) {
 			if (getIWBundleParent().getApplication().getSettings().isAutoCreateStringsActive()) {
-				if (getIWBundleParent().getApplication().getSettings().isDebugActive())
-					System.out.println("Storing localized string: " + key);
-				setLocalizedString(key, returnValueIfNotFound);
+				//if (getIWBundleParent().getApplication().getSettings().isDebugActive())
+				//	System.out.println("Storing localized string: " + key);
+				//setLocalizedString(key, returnValueIfNotFound);
+				this.checkBundleLocalizedString(key,returnValueIfNotFound);
 			}
 			return returnValueIfNotFound;
 		}
