@@ -114,7 +114,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public java.sql.Timestamp getDeletedWhen();
  public void setDeletedWhen(java.sql.Timestamp p0);
  public void delete(int p0)throws java.sql.SQLException;
-
+ public boolean equals(com.idega.data.IDOEntity entity);
  public com.idega.core.localisation.data.ICLanguage getNativeLanguage();
  public void setNativeLanguage(int ICLanguageID);
  public void setNativeLanguage(com.idega.core.localisation.data.ICLanguage language);
