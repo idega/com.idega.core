@@ -78,8 +78,7 @@ public class SelectOption extends InterfaceObject {
 			getParentSelect().addSelectScript(true);
 		}
 		if (fileID != -1) {
-			String URI = getICFileSystem(iwc).getFileURI(fileID);
-			String URL = Window.getCallingScript(URI);
+			String URL = getICFileSystem(iwc).getFileURI(fileID);
 			String arguments = Window.getWindowArgumentCallingScript(false, false, false, false, false, true, true, true, false, 640, 480, null, null);
 			setValue(URL + "$" + arguments + "$" + "_blank");
 		}
