@@ -11,7 +11,7 @@ import com.idega.presentation.text.Text;
  */
 public class CollectionNavigator extends Block {
 
-	private final String PARAMETER_CURRENT_PAGE = "cn_current_page";
+	private static final String PARAMETER_CURRENT_PAGE = "cn_current_page";
 	
 	private int _currentPage = 0;
 	private int _maxPage = 0;
@@ -19,11 +19,15 @@ public class CollectionNavigator extends Block {
 	private int _size = 0;
 	private int _numberOfEntriesPerPage = 0;
 	
+	private int _padding = 0;
+	
 	private IWResourceBundle _iwrb;
 
 	private String _linkStyle;
 	private String _textStyle;
 	private String _width = Table.HUNDRED_PERCENT;
+	
+	private Class _eventListener;
 
 	/**
 	 * 
@@ -50,7 +54,7 @@ public class CollectionNavigator extends Block {
 	
 	private void drawNavigator() {
 		Table navigationTable = new Table(3, 1);
-		navigationTable.setCellpadding(0);
+		navigationTable.setCellpadding(_padding);
 		navigationTable.setCellspacing(0);
 		navigationTable.setWidth(_width);
 		navigationTable.setWidth(1, "33%");
@@ -97,6 +101,8 @@ public class CollectionNavigator extends Block {
 		if (_linkStyle != null) {
 			link.setStyleClass(_linkStyle);
 		}
+		if (_eventListener != null)
+			link.setEventListener(_eventListener);
 		return link;
 	}
 	
@@ -112,7 +118,14 @@ public class CollectionNavigator extends Block {
 	private void initialize(IWContext iwc) {
 		_iwrb = getResourceBundle(iwc);
 		_maxPage = (int) Math.ceil(_size / _numberOfEntriesPerPage);
+		if (_currentPage > _maxPage)
+			_currentPage = 0;
 		_start = _currentPage * _numberOfEntriesPerPage;
+		
+	}
+	
+	public void setEventListener(Class eventListener) {
+		_eventListener = eventListener;
 	}
 
 	/**
@@ -170,4 +183,19 @@ public class CollectionNavigator extends Block {
 	public void setWidth(int width) {
 		setWidth(String.valueOf(width));
 	}
+	/**
+	 * @return String
+	 */
+	public static String getParameterName() {
+		return PARAMETER_CURRENT_PAGE;
+	}
+
+	/**
+	 * Sets the padding.
+	 * @param padding The padding to set
+	 */
+	public void setPadding(int padding) {
+		_padding = padding;
+	}
+
 }
