@@ -139,6 +139,7 @@ public class SingleLineItem extends Container {
       gbc.gridx = nextXpos;
       gbc.gridheight = component.getSize().height;
       gbc.gridwidth = component.getSize().width;
+      component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
 
       return component;
