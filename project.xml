@@ -1,8 +1,7 @@
 <project>
     <extend>../com.idega.core.bundle/base-project.xml</extend>
     <name>idegaWeb JavaServer Faces</name>
-    <groupId>com.idega.faces</groupId>
-    <artifactId>com.idega.webface</artifactId>
+    <artifactId>com.idega.faces</artifactId>
     <currentVersion>1.0</currentVersion>
     <inceptionYear>2003</inceptionYear>
     <shortDescription>idegaWeb Faces is JavaServer Faces implementation</shortDescription>
