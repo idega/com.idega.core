@@ -218,18 +218,19 @@ public class IBOLookup
 	protected Class getFactoryClassFor(Class entityInterfaceClass) throws Exception
 	{
 		try{
-			//First try to suffix the FACTORY_SUFFIX to the interface class name
-			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
-			String homeClassName = baseClassName + FACTORY_SUFFIX;
-			return Class.forName(homeClassName);
-		}
-		catch(ClassNotFoundException cnfe){
-			//If that doesn't work then try to suffix the FACTORY_SUFFIX to the bean implementation class name - the bean suffix
+			//First try to suffix the FACTORY_SUFFIX to the bean implementation class name - the bean suffix
 			String beanClassName = getBeanClassForNonStatic(entityInterfaceClass).getName();
 			String baseClassName = beanClassName.substring(0,beanClassName.indexOf(getBeanSuffix()));
 			String homeClassName = baseClassName + FACTORY_SUFFIX;
 			return Class.forName(homeClassName);
 		}
+		catch(ClassNotFoundException cnfe){
+			//If that doesn't work then try to suffix the FACTORY_SUFFIX to the interface class name
+			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
+			String homeClassName = baseClassName + FACTORY_SUFFIX;
+			return Class.forName(homeClassName);
+		}
+
 	}
 	private String getSessionKeyForObject(Class interfaceClass)
 	{
