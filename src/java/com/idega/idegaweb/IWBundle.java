@@ -92,6 +92,10 @@ public class IWBundle{
    }
     */
 
+    public void reloadBundle(){
+      loadBundle();
+    }
+
    private void loadBundle(){
       setResourcesVirtualPath(getRootVirtualPath()+"/"+"resources");
 

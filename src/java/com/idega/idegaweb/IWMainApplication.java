@@ -13,7 +13,9 @@ import com.idega.util.*;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 import com.idega.util.Executer;
+import com.idega.jmodule.object.Page;
 import com.idega.util.caching.BlobCacher;
+
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -25,7 +27,9 @@ public class IWMainApplication{//implements ServletContext{
   public static String IdegaEventListenerClassParameter="idegaweb_event_classname";
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
   public static String windowOpenerURL="/servlet/WindowOpener";
-  public static String windowOpenerParameter="idegaweb_window_for_page";
+  //public static String windowOpenerParameter="idegaweb_window_for_page";
+  public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
+
   public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
