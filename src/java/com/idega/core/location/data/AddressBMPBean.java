@@ -12,6 +12,16 @@ import javax.ejb.*;
 import com.idega.core.user.data.User;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
+	private static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
+	private static final String ENTITY_NAME = "IC_ADDRESS";
+	private static final String STREET_NAME = "STREET_NAME";
+	private static final String STREET_NUMBER = "STREET_NUMBER";
+	private static final String CITY = "CITY";
+	private static final String PROVINCE = "PROVINCE";
+	private static final String P_O_BOX = "P_O_BOX";
+	private static final String POSTAL_CODE_ID = "POSTAL_CODE_ID";
+	private static final String IC_ADDRESS_TYPE_ID = "IC_ADDRESS_TYPE_ID";
+	private static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
@@ -27,27 +37,27 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(getColumnNameAddressTypeId(), "Address type", AddressType.class);
-		addAttribute("street_name", "Street Name", true, true, String.class, 150);
-		addAttribute("street_number", "Street number", true, true, String.class, 30);
-		addAttribute("city", "City", true, true, String.class, 50);
-		addAttribute("province", "Province", true, true, String.class, 50);
-		addAttribute("p_o_box", "PostBox", true, true, String.class, 50);
-		addManyToOneRelationship("postal_code_id", "PostalCode", PostalCode.class);
-		addManyToOneRelationship("ic_country_id", "Country", Country.class);
+		addAttribute(STREET_NAME, "Street Name", true, true, String.class, 150);
+		addAttribute(STREET_NUMBER, "Street number", true, true, String.class, 30);
+		addAttribute(CITY, "City", true, true, String.class, 50);
+		addAttribute(PROVINCE, "Province", true, true, String.class, 50);
+		addAttribute(P_O_BOX, "PostBox", true, true, String.class, 50);
+		addManyToOneRelationship(POSTAL_CODE_ID, "PostalCode", PostalCode.class);
+		addManyToOneRelationship(IC_COUNTRY_ID, "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
 		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
 	}
 
 	public static String getColumnNameAddressTypeId() {
-		return "ic_address_type_id";
+		return IC_ADDRESS_TYPE_ID;
 	}
 
 	public static String getColumnNameCommuneID() {
-		return "ic_commune_id";
+		return COLUMN_IC_COMMUNE_ID;
 	}
 	
 	public String getEntityName() {
-		return "ic_address";
+		return ENTITY_NAME;
 	}
 
 	public void setDefaulValues() {
@@ -58,95 +68,95 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public String getStreetName() {
-		return (String) getColumnValue("street_name");
+		return (String) getColumnValue(STREET_NAME);
 	}
 
 	/**
 	 * All names are stored in uppercase, uses String.toUpperCase();
 	 */
 	public void setStreetName(String street_name) {
-		setColumn("street_name", street_name.toUpperCase());
+		setColumn(STREET_NAME, street_name.toUpperCase());
 	}
 
 	public String getStreetNumber() {
-		return getStringColumnValue("street_number");
+		return getStringColumnValue(STREET_NUMBER);
 	}
 
 	public void setStreetNumber(String street_number) {
-		setColumn("street_number", street_number);
+		setColumn(STREET_NUMBER, street_number);
 	}
 
 	public void setStreetNumber(int street_number) {
-		setColumn("street_number", street_number);
+		setColumn(STREET_NUMBER, street_number);
 	}
 
 	public String getCity() {
-		return (String) getColumnValue("city");
+		return (String) getColumnValue(CITY);
 	}
 
 	public void setCity(String city) {
-		setColumn("city", city);
+		setColumn(CITY, city);
 	}
 
 	public String getProvince() {
-		return (String) getColumnValue("province");
+		return (String) getColumnValue(PROVINCE);
 	}
 
 	public void setProvince(String province) {
-		setColumn("province", province);
+		setColumn(PROVINCE, province);
 	}
 
 	public String getPOBox() {
-		return (String) getColumnValue("p_o_box");
+		return (String) getColumnValue(P_O_BOX);
 	}
 
 	public void setPOBox(String p_o_box) {
-		setColumn("p_o_box", p_o_box);
+		setColumn(P_O_BOX, p_o_box);
 	}
 
 	public PostalCode getPostalCode() {
-		return (PostalCode) getColumnValue("postal_code_id");
+		return (PostalCode) getColumnValue(POSTAL_CODE_ID);
 	}
 
 	public int getPostalCodeID() {
-		return getIntColumnValue("postal_code_id");
+		return getIntColumnValue(POSTAL_CODE_ID);
 	}
 
 	public void setPostalCode(PostalCode postalCode) {
-		setColumn("postal_code_id", postalCode);
+		setColumn(POSTAL_CODE_ID, postalCode);
 	}
 	public void setPostalCodeID(int postal_code_id) {
-		setColumn("postal_code_id", postal_code_id);
+		setColumn(POSTAL_CODE_ID, postal_code_id);
 	}
 
 	public AddressType getAddressType() {
-		return (AddressType) getColumnValue("ic_address_type_id");
+		return (AddressType) getColumnValue(IC_ADDRESS_TYPE_ID);
 	}
 
 	public void setAddressTypeID(int address_type_id) {
-		setColumn("ic_address_type_id", address_type_id);
+		setColumn(IC_ADDRESS_TYPE_ID, address_type_id);
 	}
 
 	public void setAddressType(AddressType type) {
-		setColumn("ic_address_type_id", type);
+		setColumn(IC_ADDRESS_TYPE_ID, type);
 	}
 	public int getAddressTypeID() {
-		return getIntColumnValue("ic_address_type_id");
+		return getIntColumnValue(IC_ADDRESS_TYPE_ID);
 	}
 
 	public Country getCountry() {
-		return (Country) getColumnValue("ic_country_id");
+		return (Country) getColumnValue(IC_COUNTRY_ID);
 	}
 
 	public int getCountryId() {
-		return getIntColumnValue("ic_country_id");
+		return getIntColumnValue(IC_COUNTRY_ID);
 	}
 
 	public void setCountry(Country country) {
-		setColumn("ic_country_id", country);
+		setColumn(IC_COUNTRY_ID, country);
 	}
 	public void setCountryId(int country_id) {
-		setColumn("ic_country_id", country_id);
+		setColumn(IC_COUNTRY_ID, country_id);
 	}
 	
 	public int getCommuneID() {

@@ -28,6 +28,7 @@ import com.idega.util.ListUtil;
  */
 public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.GenericGroup
 {
+	private static final String ENTITY_NAME = "IC_GROUP";
 	public GenericGroupBMPBean()
 	{
 		super();
@@ -49,7 +50,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	public String getEntityName()
 	{
-		return "ic_group";
+		return ENTITY_NAME;
 	}
 	public void setDefaultValues()
 	{
@@ -62,28 +63,28 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	 */
 	public String getGroupTypeValue()
 	{
-		return "general";
+		return "GENERAL";
 	}
 	/*  ColumNames begin   */
 	public static String getColumnNameGroupID()
 	{
-		return "ic_group_id";
+		return "IC_GROUP_ID";
 	}
 	public static String getNameColumnName()
 	{
-		return "name";
+		return "NAME";
 	}
 	public static String getGroupTypeColumnName()
 	{
-		return "group_type";
+		return "GROUP_TYPE";
 	}
 	public static String getGroupDescriptionColumnName()
 	{
-		return "description";
+		return "DESCRIPTION";
 	}
 	public static String getExtraInfoColumnName()
 	{
-		return "extra_info";
+		return "EXTRA_INFO";
 	}
 	/*  ColumNames end   */
 	/*  functions begin   */
