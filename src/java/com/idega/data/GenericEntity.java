@@ -3394,7 +3394,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			return super.equals(obj);
 		}
 	}
+
 	public boolean equals(IDOLegacyEntity entity)
+	{
+		return equals((IDOEntity)entity);
+	}
+
+	public boolean equals(IDOEntity entity)
 	{
 		if (entity != null)
 		{
