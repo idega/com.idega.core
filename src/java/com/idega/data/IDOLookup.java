@@ -189,8 +189,8 @@ public class IDOLookup extends IBOLookup{
   }
 
 
-  public IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass) throws IDOLookupException{
-    return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
+  public static IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass) throws IDOLookupException{
+    return GenericEntity.getStaticInstanceIDO(entityInterfaceClass).getEntityDefinition();
   }
 
   /**
