@@ -1,5 +1,5 @@
 /*
- * $Id: Stripper.java,v 1.1 2001/05/02 17:45:06 eiki Exp $
+ * $Id: Stripper.java,v 1.2 2001/09/28 13:25:00 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,7 +26,7 @@ public class Stripper {
   }
 
   public static void main(String[] args) {
-    Stripper stripper1 = new Stripper();
+    //Stripper stripper1 = new Stripper();
 
     if (args.length != 2) {
       System.err.println("Auli. Þú átt að hafa tvo parametra með þessu, innskrá og útskrá");
@@ -57,11 +57,13 @@ public class Stripper {
 
     try {
       String input = in.readLine();
-
+      int count = 0;
       while (input != null) {
         int index = input.indexOf("\\CVS\\");
-        if (index > -1)
+        if (index > -1){
           System.out.println("Skipping : " + input);
+          count++;
+        }
         else {
           out.write(input);
           out.newLine();
@@ -69,6 +71,7 @@ public class Stripper {
 
         input = in.readLine();
       }
+      System.out.println("Skipped : " + count);
     }
     catch (java.io.IOException e) {
       System.err.println("Error reading or writing file : " + e.toString());
