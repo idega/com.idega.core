@@ -76,7 +76,7 @@ public class IWCacheManager {
     getIntervalsMap().put(key,new Long(cacheInterval));
   }
 
-  public synchronized Object getObject(String key){
+  public Object getObject(String key){
     return getObjectsMap().get(key);
   }
 
@@ -117,21 +117,21 @@ public class IWCacheManager {
 
   private Map getTimesMap(){
     if(timesMap==null){
-      timesMap = new Hashtable();
+      timesMap = new HashMap();
     }
     return timesMap;
   }
 
   private Map getObjectsMap(){
     if(objectsMap==null){
-      objectsMap = new Hashtable();
+      objectsMap = new java.util.HashMap();
     }
     return objectsMap;
   }
 
   private Map getIntervalsMap(){
     if(intervalsMap==null){
-      intervalsMap = new Hashtable();
+      intervalsMap = new HashMap();
     }
     return intervalsMap;
   }
