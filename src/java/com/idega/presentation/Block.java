@@ -38,6 +38,18 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     return IW_CORE_BUNDLE_IDENTIFIER;
   }
 
+  public String getLocalizedNameKey(){
+    return "block";
+  }
+
+  public String getLocalizedNameValue(){
+    return "Block";
+  }
+
+  public String getLocalizedName(IWContext iwc){
+    return getLocalizedString(getLocalizedNameKey(),getLocalizedNameValue(),iwc);
+  }
+
   public boolean deleteBlock(int ICObjectInstanceId){
     System.err.print("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
     return true;

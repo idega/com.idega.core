@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.14 2001/12/14 11:23:34 gummi Exp $
+ * $Id: PresentationObject.java,v 1.15 2001/12/19 13:15:43 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -917,6 +917,14 @@ public class PresentationObject extends Object implements Cloneable {
     IWResourceBundle bundle = getResourceBundle(iwc);
     if(bundle!=null){
       return bundle.getLocalizedString(key);
+    }
+    return null;
+  }
+
+  public String getLocalizedString(String key,String defaultValue,IWContext iwc){
+    IWResourceBundle bundle = getResourceBundle(iwc);
+    if(bundle!=null){
+      return bundle.getLocalizedString(key,defaultValue);
     }
     return null;
   }
