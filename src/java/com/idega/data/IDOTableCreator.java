@@ -779,6 +779,7 @@ public class IDOTableCreator{
 							String[] columns = null;
 							while (dbValues.hasNext()) {
 								columns = (String[]) dbValues.next();
+								entityKeys = indexesFromEntity.iterator();
 								while (entityKeys.hasNext()) {
 									String key = (String) entityKeys.next();
 									if (compareIndexColumns(columns, (String[]) map.get( key ))) {

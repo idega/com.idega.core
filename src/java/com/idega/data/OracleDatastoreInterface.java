@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -332,4 +333,62 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				return false;
 			}
 	}
+
+	public HashMap getTableIndexes(String dataSourceName, String tableName) {
+		Connection conn = null;
+		ResultSet rs = null;
+		Statement Stmt = null;
+		HashMap hm = new HashMap();
+		try {
+			conn = ConnectionBroker.getConnection(dataSourceName);
+			Stmt = conn.createStatement();
+
+			rs = Stmt.executeQuery("select * from user_ind_columns where TABLE_NAME = '"+tableName.toUpperCase()+"'");
+			//			Check for upper case
+			handleIndexRS(rs, hm);
+			rs.close();
+
+			//			Check for lower case
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select * from user_ind_columns where TABLE_NAME = '"+tableName.toLowerCase()+"'");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+			//			Check without any case manipulating, this can be removed if we always
+			// force uppercase
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select * from user_ind_columns where TABLE_NAME = '"+tableName+"'");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (Stmt != null) {
+					Stmt.close();
+				}
+			} catch (Exception e) {
+				logError("Failed to close ResultSet or Statement ("+e.getMessage()+")");
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+
+		return hm;
+		/*
+		 * if(v!=null && !v.isEmpty()) return (String[])v.toArray(new String[0]);
+		 * return null;
+		 */
+	}
+
+
 }

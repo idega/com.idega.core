@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.99 2004/05/22 15:29:04 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.100 2004/05/22 16:46:44 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1584,7 +1584,7 @@ public abstract class DatastoreInterface {
 		return getColumnArrayFromMetaData(dataSourceName, tableName);
 	}
 
-	private HashMap getIndexArrayFromMetaData(String dataSourceName, String tableName) {
+	private HashMap getIndexHashMapFromMetaData(String dataSourceName, String tableName) {
 		Connection conn = null;
 		ResultSet rs = null;
 		HashMap hm = new HashMap();
@@ -1635,7 +1635,7 @@ public abstract class DatastoreInterface {
 		 */
 	}
 
-	private void handleIndexRS(ResultSet rs, HashMap hm) throws SQLException {
+	protected void handleIndexRS(ResultSet rs, HashMap hm) throws SQLException {
 		String prevIndexName = null;
 		Vector cols = null;
 		while (rs.next()) {
@@ -1649,13 +1649,12 @@ public abstract class DatastoreInterface {
 				cols.add(column);
 			} else {
 				prevIndexName = index;
-				if (cols != null) {
-					hm.put(index, (String[]) cols.toArray(new String[]{}));
-				} 
 				cols = new Vector();
 				cols.add(column);
 			}
+			hm.put(index, (String[]) cols.toArray(new String[]{}));
 		}
+		
 	}
 
 	/**
@@ -1664,7 +1663,7 @@ public abstract class DatastoreInterface {
 	 * @return Hashmap where Key is String and Value is String[]
 	 */
 	public HashMap getTableIndexes(String dataSourceName, String tableName) {
-		return getIndexArrayFromMetaData(dataSourceName, tableName);
+		return getIndexHashMapFromMetaData(dataSourceName, tableName);
 	}
 
 	//STANDARD LOGGING METHODS:
