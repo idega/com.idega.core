@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.4 2001/10/16 17:25:01 gummi Exp $
+ * $Id: PresentationObject.java,v 1.5 2001/10/17 11:47:11 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -169,9 +169,47 @@ public class PresentationObject extends Object implements Cloneable {
     setAttribute(attributeName,slash);
   }
 
+  /** Copies all of the attribute mappings from the specified map to attributes.
+   *  These mappings will replace attibutes that this map had for any of the
+   *  keys currently in the specified map.
+   */
+  public void setAttributes(Map attributeMap){
+    if (this.attributes == null) {
+      this.attributes = new Hashtable();
+    }
+    attributes.putAll(attributeMap);
+  }
+
+  /**
+   *
+   */
+  public static Map getAttributeMap(String attributeString){
+    Hashtable map = new Hashtable();
+    if(attributeString !=  null && attributeString.length() > 1){
+      StringTokenizer tokens = new StringTokenizer(attributeString),tok;
+      while(tokens.hasMoreTokens()){
+        String s = tokens.nextToken();//.replace('"',' ');
+        tok = new StringTokenizer(s,"=\"");
+        if(tok.countTokens() == 2){
+          map.put(tok.nextToken(),tok.nextToken());
+        }
+      }
+    }
+    return map;
+  }
+
   public String getAttribute(String attributeName) {
     if (this.attributes != null){
       return (String)this.attributes.get((Object)attributeName);
+    }
+    else {
+      return null;
+    }
+  }
+
+  public static String getAttribute(String attributeName,Map map){
+     if (map != null){
+      return (String)map.get((Object)attributeName);
     }
     else {
       return null;
@@ -191,7 +229,33 @@ public class PresentationObject extends Object implements Cloneable {
     return this.attributes;
   }
 
+  public static String getAttributeString(Map map){
+    StringBuffer returnString = new StringBuffer();
+    String Attribute ="";
+    String attributeValue = "";
+    Map.Entry mapEntry;
+
+    if (map != null) {
+      Iterator i = map.entrySet().iterator();
+      while (i.hasNext()) {
+        mapEntry = (Map.Entry) i.next();
+        Attribute = (String) mapEntry.getKey();
+        returnString.append(" ");
+        returnString.append(Attribute);
+        attributeValue = (String) mapEntry.getValue();
+        if(!attributeValue.equals(slash)){
+          returnString.append("=\"");
+          returnString.append(attributeValue);
+          returnString.append("\"");
+        }
+        returnString.append("");
+      }
+    }
+    return returnString.toString();
+  }
+
   public String getAttributeString() {
+/*
     StringBuffer returnString = new StringBuffer();
     String Attribute ="";
 
@@ -212,6 +276,8 @@ public class PresentationObject extends Object implements Cloneable {
     }
 
     return returnString.toString();
+*/
+    return getAttributeString(this.attributes);
   }
 
   /**
@@ -328,7 +394,7 @@ public class PresentationObject extends Object implements Cloneable {
    */
   public String encodeSpecialRequestString(String RequestType,String RequestName, IWContext iwc) {
     String theOutput = "";
-    theOutput = iwc.getRequest().getRequestURI();
+    theOutput = iwc.getRequestURI();
     theOutput = theOutput + "?idegaspecialrequesttype=" + RequestType + "&idegaspecialrequestname=" + RequestName;
     return theOutput;
   }
