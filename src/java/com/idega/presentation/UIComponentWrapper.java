@@ -1,5 +1,5 @@
 /*
- * $Id: UIComponentWrapper.java,v 1.1 2005/01/10 16:57:08 gummi Exp $
+ * $Id: UIComponentWrapper.java,v 1.2 2005/01/14 12:07:27 joakim Exp $
  * Created on 9.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.StateHolder;
 import javax.faces.component.UIComponent;
@@ -48,10 +48,10 @@ import javax.faces.validator.Validator;
  * childrens of this class when the faces servlet restores the component tree. (The same probably goes for 
  * facets but has not been tested)
  * 
- *  Last modified: $Date: 2005/01/10 16:57:08 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/01/14 12:07:27 $ by $Author: joakim $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class UIComponentWrapper extends UIComponent implements EditableValueHolder {
 
@@ -321,7 +321,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 * @see java.util.Map#keySet()
 		 */
 		public Set keySet() {
-			TreeSet set = new TreeSet();
+			HashSet set = new HashSet();
 			set.addAll(wrapperMap.keySet());
 			set.addAll(getComponentMap().keySet());
 			return set;
@@ -341,7 +341,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 * @see java.util.Map#entrySet()
 		 */
 		public Set entrySet() {
-			TreeSet set = new TreeSet();
+			HashSet set = new HashSet();
 			set.addAll(wrapperMap.entrySet());
 			set.addAll(getComponentMap().entrySet());
 			return set;
