@@ -10,6 +10,8 @@ import java.sql.*;
 import java.util.Collection;
 import javax.ejb.*;
 import java.rmi.RemoteException;
+import java.util.Iterator;
+import com.idega.core.ICTreeNode;
 
 /**
  * Title:        User
@@ -19,7 +21,7 @@ import java.rmi.RemoteException;
  * @version 1.0
  */
 
-public class UserBMPBean extends com.idega.data.GenericEntity implements User {
+public class UserBMPBean extends com.idega.data.GenericEntity implements User, Group {
 
     private static String sClassName = User.class.getName();
 
@@ -84,17 +86,17 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
 
     /*  ColumNames begin   */
 
-    public static String getColumnNameUserID(){return "ic_user_id";}
-    public static String getColumnNameFirstName(){return "first_name";}
-    public static String getColumnNameMiddleName(){return "middle_name";}
-    public static String getColumnNameLastName(){return "last_name";}
-    public static String getColumnNameDisplayName(){return "display_name";}
-    public static String getColumnNameDescription(){return "description";}
-    public static String getColumnNameDateOfBirth(){return "date_of_birth";}
-    public static String getColumnNameGender(){return "ic_gender_id";}
-    public static String getColumnNameSystemImage(){return "system_image_id";}
-    public static final String _COLUMNNAME_USER_GROUP_ID = "user_representative";
-    public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "primary_group";
+    public static String getColumnNameUserID(){return "IC_USER_ID";}
+    public static String getColumnNameFirstName(){return "FIRST_NAME";}
+    public static String getColumnNameMiddleName(){return "MIDDLE_NAME";}
+    public static String getColumnNameLastName(){return "LAST_NAME";}
+    public static String getColumnNameDisplayName(){return "DISPLAY_NAME";}
+    public static String getColumnNameDescription(){return "DESCRIPTION";}
+    public static String getColumnNameDateOfBirth(){return "DATE_OF_BIRTH";}
+    public static String getColumnNameGender(){return "IC_GENDER_ID";}
+    public static String getColumnNameSystemImage(){return "SYSTEM_IMAGE_ID";}
+    public static final String _COLUMNNAME_USER_GROUP_ID = "USER_REPRESENTATIVE";
+    public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "PRIMARY_GROUP";
     public static String getColumnNamePersonalID(){return "PERSONAL_ID";}
     /*  ColumNames end   */
 
@@ -337,6 +339,159 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
     }
 
+
+
+
+
+  public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
+  }
+  public void removeUser(User p0) throws java.rmi.RemoteException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method removeUser() not yet implemented.");
+  }
+  public void setGroupType(String p0) throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
+  }
+  public String getGroupTypeValue() throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
+  }
+  public void setExtraInfo(String p0) throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
+  }
+  public void removeGroup() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
+  }
+  public boolean equals(Group p0) throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
+  }
+  public void addGroup(Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+  }
+  public List getGroupsContained(String[] p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not yet implemented.");
+  }
+  public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
+  }
+  public void addGroup(int p0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+  }
+  public List getListOfAllGroupsContained() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not yet implemented.");
+  }
+  public Collection getAllGroupsContainingUser(User p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not yet implemented.");
+  }
+  public void removeGroup(Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
+  }
+  public String getGroupType() throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
+  }
+  public List getListOfAllGroupsContainingThis() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
+  }
+  public String getExtraInfo() throws java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method getExtraInfo() not yet implemented.");
+  }
+  public void addUser(User p0) throws java.rmi.RemoteException, java.rmi.RemoteException {
+    /**@todo: Implement this com.idega.user.data.Group method*/
+    throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
+  }
+
+  public Iterator getChildren() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getChildren() not yet implemented.");
+  }
+  public boolean getAllowsChildren() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getAllowsChildren() not yet implemented.");
+  }
+  public ICTreeNode getChildAtIndex(int childIndex) {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getChildAtIndex() not yet implemented.");
+  }
+  public int getChildCount() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getChildCount() not yet implemented.");
+  }
+  public int getIndex(ICTreeNode node) {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getIndex() not yet implemented.");
+  }
+  public ICTreeNode getParentNode() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getParentNode() not yet implemented.");
+  }
+  public boolean isLeaf() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method isLeaf() not yet implemented.");
+  }
+  public String getNodeName() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getNodeName() not yet implemented.");
+  }
+  public int getNodeID() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getNodeID() not yet implemented.");
+  }
+  public int getSiblingCount() {
+    /**@todo: Implement this com.idega.core.ICTreeNode method*/
+    throw new java.lang.UnsupportedOperationException("Method getSiblingCount() not yet implemented.");
+  }
+
+
+  public void addRelation(Group groupToAdd,String relationType)throws CreateException,RemoteException{
+    this.getUserGroup().addRelation(groupToAdd,relationType);
+  }
+  public void addRelation(Group groupToAdd,GroupRelationType relationType)throws CreateException,RemoteException{
+    this.getUserGroup().addRelation(groupToAdd,relationType);
+  }
+  public void addRelation(int relatedGroupId,GroupRelationType relationType)throws CreateException,RemoteException{
+    this.getUserGroup().addRelation(relatedGroupId,relationType);
+  }
+  public void addRelation(int relatedGroupId,String relationType)throws CreateException,RemoteException{
+    this.getUserGroup().addRelation(relatedGroupId,relationType);
+  }
+  public void removeRelation(Group relatedGroup,String relationType)throws RemoveException,RemoteException{
+    this.getUserGroup().removeRelation(relatedGroup,relationType);
+  }
+  public void removeRelation(int relatedGroupId,String relationType)throws RemoveException,RemoteException{
+    this.getUserGroup().removeRelation(relatedGroupId,relationType);
+  }
+
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this User
+   */
+  public java.util.Collection getRelatedBy(GroupRelationType relationType)throws FinderException,RemoteException{
+    return this.getUserGroup().getRelatedBy(relationType);
+  }
+
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this User
+   */
+  public java.util.Collection getRelatedBy(String relationType)throws FinderException,RemoteException{
+    return this.getUserGroup().getRelatedBy(relationType);
+  }
+
+
     public Integer ejbFindUserFromEmail(String emailAddress)throws FinderException,RemoteException{
       StringBuffer sql = new StringBuffer("select iu.* ");
       sql.append("from ic_email ie,ic_user_email iue,ic_user iu ");
@@ -350,6 +505,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       else
         throw new FinderException("No user found");
     }
+
 
     public Integer ejbFindByPersonalID(String personalId)throws FinderException,RemoteException{
       Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(),personalId);

@@ -13,13 +13,6 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
  }
 
 
-public java.util.Collection findAllUsersOrderedByFirstName()throws java.rmi.RemoteException,javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsersOrderedByFirstName();
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
 public java.util.Collection findAllUsers()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsers();
@@ -40,6 +33,14 @@ public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
+
+public java.util.Collection findAllUsersOrderedByFirstName()throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsersOrderedByFirstName();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 
 public User findUserFromEmail(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

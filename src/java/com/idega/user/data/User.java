@@ -2,7 +2,7 @@ package com.idega.user.data;
 
 import javax.ejb.*;
 
-public interface User extends com.idega.data.IDOEntity
+public interface User extends Group//com.idega.data.IDOEntity
 {
  public java.lang.String getDisplayName() throws java.rmi.RemoteException;
  public void setDateOfBirth(java.sql.Date p0) throws java.rmi.RemoteException;

@@ -7,17 +7,16 @@ public class GroupEventHomeImpl extends com.idega.data.IDOFactory implements Gro
   return GroupEvent.class;
  }
 
+
  public GroupEvent create() throws javax.ejb.CreateException{
-  return (GroupEvent) super.idoCreate();
+  return (GroupEvent) super.createIDO();
  }
 
- public GroupEvent findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (GroupEvent) super.idoFindByPrimaryKey(id);
- }
 
  public GroupEvent findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (GroupEvent) super.idoFindByPrimaryKey(pk);
+  return (GroupEvent) super.findByPrimaryKeyIDO(pk);
  }
+
 
 
 }

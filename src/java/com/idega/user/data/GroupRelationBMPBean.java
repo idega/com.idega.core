@@ -1,8 +1,10 @@
 package com.idega.user.data;
 
 import com.idega.data.*;
+import com.idega.util.idegaTimestamp;
 
-import java.util.Date;
+//import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.rmi.RemoteException;
 import javax.ejb.*;
@@ -18,6 +20,7 @@ import javax.ejb.*;
 
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation{
 
+
   private static String TABLE_NAME="IC_GROUP_RELATION";
   private static String GROUP_ID_COLUMN="IC_GROUP_ID";
   private static String RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
@@ -26,6 +29,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   private static String INITIATION_DATE_COLUMN="INITIATION_DATE";
   private static String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
 
+  private final static String STATUS_ACTIVE="ST_ACTIVE";
+  private final static String STATUS_PASSIVE="ST_PASSIVE";
 
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
@@ -33,13 +38,18 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addManyToOneRelationship(GROUP_ID_COLUMN,"Type",Group.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
     this.addManyToOneRelationship(RELATIONSHIP_TYPE_COLUMN,"Type",GroupRelationType.class);
-    this.addAttribute(STATUS_COLUMN,"Status",String.class);
-    this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Date.class);
-    this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Date.class);
+    this.addAttribute(STATUS_COLUMN,"Status",String.class,10);
+    this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
+    this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
 
   }
   public String getEntityName() {
     return TABLE_NAME;
+  }
+
+  public void setDefaultValues(){
+    this.setInitiationDate(idegaTimestamp.getTimestampRightNow());
+    this.setStatus(STATUS_ACTIVE);
   }
 
   public void setGroup(Group group){
@@ -74,8 +84,65 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.setColumn(RELATIONSHIP_TYPE_COLUMN,type);
   }
 
+  public void setRelationshipType(String groupRelationType){
+    this.setColumn(RELATIONSHIP_TYPE_COLUMN,groupRelationType);
+  }
+
   public GroupRelationType getRelationship(){
     return (GroupRelationType)getColumnValue(RELATIONSHIP_TYPE_COLUMN);
+  }
+
+  public String getRelationshipType(){
+    return getStringColumnValue(RELATIONSHIP_TYPE_COLUMN);
+  }
+
+
+  public void setStatus(String status){
+    setColumn(this.STATUS_COLUMN,status);
+  }
+
+  public String getStatus(){
+    return getStringColumnValue(this.STATUS_COLUMN);
+  }
+
+  public boolean isActive(){
+    String status = this.getStatus();
+    if(status != null && status.equals(STATUS_ACTIVE)){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isPassive(){
+    String status = this.getStatus();
+    if(status != null && status.equals(STATUS_PASSIVE)){
+      return true;
+    }
+    return false;
+  }
+
+  public void setActive(){
+    this.setStatus(STATUS_ACTIVE);
+  }
+
+  public void setPassive(){
+    this.setStatus(STATUS_PASSIVE);
+  }
+
+  public void setInitiationDate(Timestamp stamp){
+    this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
+  }
+
+  public Timestamp getInitiationDate(){
+    return (Timestamp)getColumnValue(this.INITIATION_DATE_COLUMN);
+  }
+
+  public void setTerminationDate(Timestamp stamp){
+    this.setColumn(this.TERMINATION_DATE_COLUMN,stamp);
+  }
+
+  public Timestamp getTerminationDate(){
+    return (Timestamp)getColumnValue(this.TERMINATION_DATE_COLUMN);
   }
 
   /**Finders begin**/
@@ -96,14 +163,56 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return this.idoFindAllIDsByColumnOrderedBySQL(this.GROUP_ID_COLUMN,groupID);
   }
 
+  /**
+   * Finds all active relationships specified only in one direction with groupID as specified
+   */
   public Collection ejbFindGroupsRelationshipsContaining(int groupID)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,groupID);
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relationType as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException,RemoteException{
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+
+  /**
+   * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID as specified
+   */
   public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID)throws FinderException,RemoteException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID);
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+
+  /**
+   * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID and relationshipType as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relatedGroupID as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID)throws FinderException,RemoteException{
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**Finders end**/
 
+  /**
+   * Overriding the remove function
+   */
+  public void remove()throws RemoveException{
+    this.setPassive();
+    this.setTerminationDate(idegaTimestamp.getTimestampRightNow());
+    store();
+  }
 }

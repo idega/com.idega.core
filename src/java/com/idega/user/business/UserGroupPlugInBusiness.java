@@ -7,6 +7,7 @@ import com.idega.business.IBOService;
 
 import java.rmi.RemoteException;
 import javax.ejb.*;
+import java.util.Collection;
 
 /**
  * Title:        idegaWeb User Subsystem
@@ -25,7 +26,18 @@ public interface UserGroupPlugInBusiness extends IBOService {
     public void beforeGroupRemove(Group group)throws RemoveException,RemoteException;
     public void afterGroupCreate(Group group)throws CreateException,RemoteException;
 
-
     public Class getPresentationObjectClass()throws RemoteException;
-    public UserGroupPlugInPresentable instantiatePresentation(Group group)throws RemoteException;
+    //public UserGroupPlugInPresentable instantiatePresentation(Group group)throws RemoteException;
+    public UserGroupPlugInPresentable instantiateEditor(Group group)throws RemoteException;
+    public UserGroupPlugInPresentable instantiateViewer(Group group)throws RemoteException;
+
+    /**
+     * Returns a Collection of ListViewerField Objects
+     */
+    public Collection getListViewerFields()throws RemoteException;
+
+    /**
+     * Returns a Collection of Group Objects
+     */
+    public Collection findGroupsByFields(Collection listViewerFields,Collection finderOperators,Collection listViewerFieldValues)throws RemoteException;
 }

@@ -4,6 +4,7 @@ import com.idega.data.*;
 import com.idega.core.data.*;
 
 import java.util.Collection;
+import java.util.Locale;
 import javax.ejb.*;
 
 /**
@@ -45,5 +46,21 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
     return ejbFindAllPlugIns();
   }
 
+  public void setDescription(String description){
+    setColumn("plug_in_desc",description);
+  }
+
+
+  public String getDescription(){
+    return super.getStringColumnValue("plug_in_desc");
+  }
+
+  public String getDefaultDisplayName(){
+    return getDescription();
+  }
+
+  public String getLocalizedDisplayName(Locale locale){
+    return getDescription();
+  }
 
 }

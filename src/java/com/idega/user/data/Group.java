@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import javax.ejb.*;
+import java.rmi.RemoteException;
 
 public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode
 {
@@ -38,4 +39,22 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  //public com.idega.core.ICTreeNode getParentNode() throws java.rmi.RemoteException;
  //public java.lang.String getNodeName() throws java.rmi.RemoteException;
  public void addUser(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
-}
+
+  public void addRelation(Group groupToAdd,String relationType)throws CreateException,RemoteException;
+  public void addRelation(Group groupToAdd,GroupRelationType relationType)throws CreateException,RemoteException;
+  public void addRelation(int relatedGroupId,GroupRelationType relationType)throws CreateException,RemoteException;
+  public void addRelation(int relatedGroupId,String relationType)throws CreateException,RemoteException;
+  public void removeRelation(Group relatedGroup,String relationType)throws RemoveException,RemoteException;
+  public void removeRelation(int relatedGroupId,String relationType)throws RemoveException,RemoteException;
+
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this Group
+   */
+  public java.util.Collection getRelatedBy(GroupRelationType relationType)throws FinderException,RemoteException;
+
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this Group
+   */
+  public java.util.Collection getRelatedBy(String relationType)throws FinderException,RemoteException;
+
+ }

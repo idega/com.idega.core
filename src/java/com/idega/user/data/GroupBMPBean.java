@@ -41,6 +41,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     public static final int GROUP_ID_EVERYONE = -7913;
     public static final int GROUP_ID_USERS = - 1906;
 
+    private static final String RELATION_TYPE_GROUP_CHILD="GROUP_CHILD";
+
 
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
@@ -458,6 +460,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
         }
 
 
+
         public void addGroup(int groupId)throws EJBException{
           try{
             GroupRelation rel = this.getGroupRelationHome().create();
@@ -468,6 +471,77 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
           catch(Exception e){
             throw new EJBException(e.getMessage());
           }
+        }
+
+        public void addRelation(Group groupToAdd,String relationType)throws CreateException,RemoteException{
+          this.addRelation(this.getGroupIDFromGroup(groupToAdd),relationType);
+        }
+
+        public void addRelation(Group groupToAdd,GroupRelationType relationType)throws CreateException,RemoteException{
+          this.addRelation(this.getGroupIDFromGroup(groupToAdd),relationType);
+        }
+
+        public void addRelation(int relatedGroupId,GroupRelationType relationType)throws CreateException,RemoteException{
+          this.addRelation(relatedGroupId,relationType.getType());
+        }
+
+        public void addRelation(int relatedGroupId,String relationType)throws CreateException,RemoteException{
+          //try{
+            GroupRelation rel = this.getGroupRelationHome().create();
+            rel.setGroup(this);
+            rel.setRelatedGroup(relatedGroupId);
+            rel.setRelationshipType(relationType);
+            rel.store();
+          //}
+          //catch(Exception e){
+          //  throw new EJBException(e.getMessage());
+          //}
+        }
+
+        public void removeRelation(Group relatedGroup,String relationType)throws RemoveException,RemoteException{
+          int groupId = this.getGroupIDFromGroup(relatedGroup);
+          this.removeRelation(groupId,relationType);
+        }
+
+        public void removeRelation(int relatedGroupId,String relationType)throws RemoveException,RemoteException{
+          GroupRelation rel = null;
+          try{
+            //Group group = this.getGroupHome().findByPrimaryKey(relatedGroupId);
+            Collection rels;
+            rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(),relatedGroupId,relationType);
+            Iterator iter = rels.iterator();
+            while (iter.hasNext()) {
+              rel = (GroupRelation)iter.next();
+              rel.remove();
+            }
+          }
+          catch(FinderException e){
+            throw new RemoveException(e.getMessage());
+          }
+        }
+
+        /**
+         * Returns a collection of Group objects that are related by the relation type relationType with this Group
+         */
+        public Collection getRelatedBy(GroupRelationType relationType)throws FinderException,RemoteException{
+          return getRelatedBy(relationType.getType());
+        }
+
+        /**
+         * Returns a collection of Group objects that are related by the relation type relationType with this Group
+         */
+        public Collection getRelatedBy(String relationType)throws FinderException,RemoteException{
+          GroupRelation rel = null;
+            Collection theReturn = new Vector();
+            Collection rels = null;
+            rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(),relationType);
+            Iterator iter = rels.iterator();
+            while (iter.hasNext()) {
+              rel = (GroupRelation)iter.next();
+              Group g = rel.getRelatedGroup();
+              theReturn.add(g);
+            }
+            return theReturn;
         }
 
         private void addGroupLegacy(int groupId)throws EJBException{
@@ -611,7 +685,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 //            }
             String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes,true);
 
-            return super.idoFindIDsBySQL("select * from "+getEntityName()+" where "+getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?" in (":" not in (")+typeList+") order by "+getNameColumnName());
+            return super.idoFindPKsBySQL("select * from "+getEntityName()+" where "+getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?" in (":" not in (")+typeList+") order by "+getNameColumnName());
           }
           return super.idoFindAllIDsOrderedBySQL(getNameColumnName());
         }
@@ -749,7 +823,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     sGroupList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupIDs);
     if(!sGroupList.equals("")){
       String sql = "SELECT * FROM " + getTableName() + " WHERE " + getIDColumnName() + " in (" + sGroupList + ")";
-      toReturn = super.idoFindIDsBySQL(sql);
+      toReturn = super.idoFindPKsBySQL(sql);
     }
     return toReturn;
   }
