@@ -2296,7 +2296,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public IDOLegacyEntity getStaticInstance(){
+	public IDOLegacyEntity getIDOEntityStaticInstance(){
 	  return getStaticInstance(this.getClass().getName());
 	}
 
@@ -2310,7 +2310,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
         private void setLobColumnName(String lobColumnName){
-          ((GenericEntity)this.getStaticInstance())._lobColumnName=lobColumnName;
+          ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName=lobColumnName;
         }
 
 	private void setLobColumnName(){
@@ -2325,7 +2325,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public String getLobColumnName(){
-	  return  ((GenericEntity)this.getStaticInstance())._lobColumnName;
+	  return  ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
 	}
 
 	public static GenericEntity getStaticInstance(String entityClassName){
@@ -2755,7 +2755,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    }
 
    public String getCachedColumnNamesList(){
-    return ((GenericEntity)getStaticInstance())._cachedColumnNameList;
+    return ((GenericEntity)getIDOEntityStaticInstance())._cachedColumnNameList;
    }
 
 }
