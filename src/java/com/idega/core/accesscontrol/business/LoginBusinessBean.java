@@ -737,10 +737,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return loginContext;
 	}
 	
+	/**
+	 * Creates a wrapper object around the users login name and password in clear text (no decoding)
+	 * @param user
+	 * @return
+	 */
 	public static LoginContext getLoginContext(User user) {
 		LoginTable login = LoginDBHandler.getUserLogin(user.getID());
 		if(login!=null){
-			LoginContext loginContext = new LoginContext(user, login.getUserLogin(), login.getUserPassword());
+			LoginContext loginContext = new LoginContext(user, login.getUserLogin(), login.getUserPasswordInClearText());
 			return loginContext;
 		}
 		else{
