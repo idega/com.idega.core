@@ -7,13 +7,13 @@ import java.util.*;
 /**
  * Title:        idegaclasses
  * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
+ * Copyright:    Copyright (c) 2001-2002
+ *  Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
+ * @version 1.0
  */
 
-public abstract class IDOFactory implements IDOHome{
+public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 
   protected IDOFactory(){
   }

@@ -1,8 +1,9 @@
 package com.idega.business;
 
-import javax.ejb.*;
-import java.rmi.RemoteException;
-import java.util.*;
+import javax.ejb.EJBMetaData;
+import javax.ejb.Handle;
+import javax.ejb.HomeHandle;
+import java.io.Serializable;
 
 /**
  * Title:        idega Business Objects
@@ -11,7 +12,7 @@ import java.util.*;
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
-public abstract class IBOHomeImpl implements IBOHome{
+public abstract class IBOHomeImpl implements IBOHome,Serializable{
 
   protected IBOHomeImpl(){
   }
