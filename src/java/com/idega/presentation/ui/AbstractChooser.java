@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.5 2002/01/04 19:36:12 eiki Exp $
+ * $Id: AbstractChooser.java,v 1.6 2002/01/10 19:40:12 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -33,6 +33,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   public String chooserParameter = VALUE_PARAMETER;
   public String displayInputName = DISPLAYSTRING_PARAMETER;
   private boolean _addForm = true;
+  private boolean  _addTextInput = true;
   private Form _form = null;
   private Image _buttonImage = null;
   private String _style;
@@ -172,7 +173,14 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       table.add(link,2,1);
     }
 
-    table.add(input,1,1);
+    if( _addTextInput ){
+      table.add(input,1,1);
+    }else {
+      HiddenInput hInput = new HiddenInput(displayInputName);
+      table.add(hInput,1,1);
+    }
+
+
     table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,input.getName()));
     return(table);
   }
@@ -228,6 +236,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     }
 
     return link;
+  }
+
+  public void addTextInput(boolean addTextInput){
+    this._addTextInput = addTextInput;
   }
 
 }

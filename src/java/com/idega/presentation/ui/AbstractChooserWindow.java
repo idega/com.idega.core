@@ -18,7 +18,7 @@ import com.idega.idegaweb.presentation.IWAdminWindow;
 
 public abstract class AbstractChooserWindow extends IWAdminWindow {
 
-  String chooserSelectionParameter;
+  String chooserSelectionParameter=AbstractChooser.VALUE_PARAMETER_NAME;
   public static String SELECT_FUNCTION_NAME = "chooserSelect";
 
 
@@ -46,6 +46,16 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
     String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
 
     String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
+
+    HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
+    HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
+    HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
+    HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
+
+    add(hPrefix);
+    add(hSuffix);
+    add(hDisplayString);
+    add(hValueString);
 
     //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
     if( isInAFrame ){
