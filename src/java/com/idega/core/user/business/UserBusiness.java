@@ -335,41 +335,58 @@ public class UserBusiness {
   public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws SQLException {
     User userToUpdate = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(user_id);
 
-    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group);
+    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group,null);
 
   }
+
+	public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String personalID ) throws SQLException {
+		User userToUpdate = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(user_id);
+
+		this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group,personalID);
+
+	}
+
 
   public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws SQLException {
-
-    if(firstname != null){
-      userToUpdate.setFirstName(firstname);
-    }
-    if(middlename != null){
-      userToUpdate.setMiddleName(middlename);
-    }
-    if(lastname != null){
-      userToUpdate.setLastName(lastname);
-    }
-    if(displayname != null){
-      userToUpdate.setDisplayName(displayname);
-    }
-    if(description != null){
-      userToUpdate.setDescription(description);
-    }
-    if(gender != null){
-      userToUpdate.setGender(gender);
-    }
-    if(date_of_birth != null){
-      userToUpdate.setDateOfBirth(date_of_birth.getSQLDate());
-    }
-
-    if(primary_group != null){
-      userToUpdate.setPrimaryGroupID(primary_group);
-    }
-
-    userToUpdate.update();
+		this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group, null);
 
   }
+
+	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String personalID ) throws SQLException {
+
+		if(firstname != null){
+			userToUpdate.setFirstName(firstname);
+		}
+		if(middlename != null){
+			userToUpdate.setMiddleName(middlename);
+		}
+		if(lastname != null){
+			userToUpdate.setLastName(lastname);
+		}
+		if(displayname != null){
+			userToUpdate.setDisplayName(displayname);
+		}
+		if(description != null){
+			userToUpdate.setDescription(description);
+		}
+		if(gender != null){
+			userToUpdate.setGender(gender);
+		}
+		if(date_of_birth != null){
+			userToUpdate.setDateOfBirth(date_of_birth.getSQLDate());
+		}
+
+		if(primary_group != null){
+			userToUpdate.setPrimaryGroupID(primary_group);
+		}
+		
+		if (personalID != null)
+			userToUpdate.setPersonalID(personalID);
+
+		userToUpdate.update();
+
+	}
+
 
   public static List listOfUserEmails(int iUserId){
     StringBuffer sql = new StringBuffer("select ie.* ");

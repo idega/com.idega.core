@@ -36,6 +36,7 @@ public class GeneralUserInfoTab extends UserTab{
   private TextArea descriptionField;
   private DateInput dateOfBirthField;
   private DropdownMenu genderField;
+  private TextInput ssnField;
 
   private String firstNameFieldName;
   private String middleNameFieldName;
@@ -44,7 +45,7 @@ public class GeneralUserInfoTab extends UserTab{
   private String descriptionFieldName;
   private String dateOfBirthFieldName;
   private String genderFieldName;
-
+	private String ssnFieldName;
 
 
   private Text firstNameText;
@@ -54,6 +55,7 @@ public class GeneralUserInfoTab extends UserTab{
   private Text descriptionText;
   private Text dateOfBirthText;
   private Text genderText;
+  private Text ssnText;
 
   public GeneralUserInfoTab() {
     super();
@@ -75,15 +77,7 @@ public class GeneralUserInfoTab extends UserTab{
     descriptionFieldName = "UMdesc";
     dateOfBirthFieldName = "UMdateofbirth";
     genderFieldName = "UMgender";
-/*
-    firstNameFieldName += this.getID();
-    middleNameFieldName += this.getID();
-    lastNameFieldName += this.getID();
-    displayNameFieldName += this.getID();
-    descriptionFieldName += this.getID();
-    dateOfBirthFieldName += this.getID();
-    genderFieldName += this.getID();
-*/
+    ssnFieldName = "UMssn";
   }
 
   public void initializeFieldValues(){
@@ -94,6 +88,7 @@ public class GeneralUserInfoTab extends UserTab{
     fieldValues.put(this.descriptionFieldName,"");
     fieldValues.put(this.dateOfBirthFieldName,"");
     fieldValues.put(this.genderFieldName,"");
+    fieldValues.put(this.ssnFieldName,"");
 
     this.updateFieldsDisplayStatus();
   }
@@ -108,6 +103,8 @@ public class GeneralUserInfoTab extends UserTab{
     displayNameField.setContent((String)fieldValues.get(this.displayNameFieldName));
 
     descriptionField.setContent((String)fieldValues.get(this.descriptionFieldName));
+    
+		ssnField.setContent((String)fieldValues.get(this.ssnFieldName));
 
     StringTokenizer date = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
 //    StringTokenizer date2 = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
@@ -125,8 +122,7 @@ public class GeneralUserInfoTab extends UserTab{
       dateOfBirthField.setDay(date.nextToken());
     }
 
-    genderField.setSelectedElement((String)fieldValues.get(this.genderFieldName));
-
+    genderField.setSelectedElement((String)fieldValues.get(this.genderFieldName));    
   }
 
 
@@ -143,6 +139,10 @@ public class GeneralUserInfoTab extends UserTab{
     displayNameField = new TextInput(displayNameFieldName);
     displayNameField.setLength(12);
     displayNameField.setMaxlength(20);
+    
+    ssnField = new TextInput(ssnFieldName);
+    ssnField.setLength(10);
+    ssnField.setMaxlength(20);
 
     descriptionField = new TextArea(descriptionFieldName);
     descriptionField.setHeight(7);
@@ -194,6 +194,9 @@ public class GeneralUserInfoTab extends UserTab{
 
     genderText = getTextObject();
     genderText.setText("Gender");
+    
+    ssnText = getTextObject();
+    ssnText.setText("Personal ID : ");
 
   }
 
@@ -224,12 +227,15 @@ public class GeneralUserInfoTab extends UserTab{
     //First Part ends
 
     //Second Part (Date of birth)
-    Table dateofbirthTable = new Table(2,1);
+    Table dateofbirthTable = new Table(2,2);
     dateofbirthTable.setCellpadding(0);
     dateofbirthTable.setCellspacing(0);
     dateofbirthTable.setHeight(1,columnHeight);
+		dateofbirthTable.setHeight(2,columnHeight);
     dateofbirthTable.add(dateOfBirthText,1,1);
     dateofbirthTable.add(this.dateOfBirthField,2,1);
+    dateofbirthTable.add(ssnText,1,2);
+    dateofbirthTable.add(this.ssnField,2,2);
     this.add(dateofbirthTable,1,2);
     //Second Part Ends
 
@@ -256,6 +262,7 @@ public class GeneralUserInfoTab extends UserTab{
       String desc = iwc.getParameter(this.descriptionFieldName);
       String dateofbirth = iwc.getParameter(this.dateOfBirthFieldName);
       String gender = iwc.getParameter(this.genderFieldName);
+      String ssn = iwc.getParameter(this.ssnFieldName);
 
       if(fname != null){
         fieldValues.put(this.firstNameFieldName,fname);
@@ -278,6 +285,10 @@ public class GeneralUserInfoTab extends UserTab{
       if(gender != null){
         fieldValues.put(this.genderFieldName,gender);
       }
+      
+      if (ssn != null) {	
+				fieldValues.put(this.ssnFieldName,ssn);
+      }
 
       this.updateFieldsDisplayStatus();
 
@@ -298,7 +309,8 @@ public class GeneralUserInfoTab extends UserTab{
         business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
-                            gen,dateOfBirthTS,null);
+                            gen,dateOfBirthTS,null,(String)fieldValues.get(this.ssnFieldName));
+                      
       }
     }catch(Exception e){
       //return false;
@@ -321,6 +333,7 @@ public class GeneralUserInfoTab extends UserTab{
       fieldValues.put(this.descriptionFieldName,(user.getDescription() != null) ? user.getDescription():"" );
       fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
       fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
+			fieldValues.put(this.ssnFieldName,(user.getPersonalID() != null) ? user.getPersonalID():"" );
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){

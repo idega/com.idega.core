@@ -30,4 +30,6 @@ public interface User extends com.idega.data.IDOLegacyEntity
  public void setGender(java.lang.Integer p0);
  public void setPrimaryGroupID(int p0);
  public int getPrimaryGroupID();
+ public java.lang.String getPersonalID();
+ public void setPersonalID(java.lang.String p0);
 }
