@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.1 2001/10/05 07:59:19 tryggvil Exp $
+ * $Id: AbstractChooser.java,v 1.2 2001/10/15 17:36:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -85,7 +85,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   /**
    *
    */
-  public void main(IWContext iwc){
+  public void _main(IWContext iwc)throws Exception{
+    super._main(iwc);
     IWBundle bundle = getBundle(iwc);
     if(_addForm){
       _form = new Form();
