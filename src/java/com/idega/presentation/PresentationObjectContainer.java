@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.38 2004/12/12 23:30:21 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.39 2004/12/20 01:14:02 eiki Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -25,10 +25,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/12 23:30:21 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/20 01:14:02 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -262,6 +262,18 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 			//if (!isEmpty())
 			//{
+			
+			if(USE_JSF_RENDERING){
+				Iterator iter = getFacetsAndChildren();
+				while(iter.hasNext()){
+					UIComponent child = (UIComponent)iter.next();
+					if(child instanceof PresentationObject){
+						PresentationObject po = (PresentationObject)child;
+						po._main(iwc);
+					}
+				}
+			}
+			else{
 				int numberOfObjects = numberOfObjects();
 				for (int index = 0; index < numberOfObjects; index++)
 				{
@@ -285,6 +297,7 @@ public class PresentationObjectContainer extends PresentationObject
 					catch(ClassCastException cce){}
 				}
 			//}
+			}
 		}
 		goneThroughMain = true;
 	}
