@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.54 2001/10/17 11:55:28 aron Exp $
+ * $Id: GenericEntity.java,v 1.55 2001/10/20 10:02:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1512,6 +1512,10 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName);
 	}
 
+	public GenericEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName, String condition)throws SQLException{
+		return findAll("select * from "+getEntityName()+" where "+columnName+" "+condition+" '"+toFind+"' order by "+orderByColumnName);
+	}
+
 	public GenericEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
@@ -1621,6 +1625,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
         public GenericEntity[] findAll(String SQLString)throws SQLException{
+          System.out.println(SQLString);
           return findAll(SQLString,-1);
         }
 
