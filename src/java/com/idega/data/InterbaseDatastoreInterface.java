@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.11 2001/08/27 12:51:05 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.12 2001/08/28 08:58:48 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -39,7 +39,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
       if (maxlength < 0) {
         theReturn = "VARCHAR(255)";
       }
-      else if (maxlength < 30000) {
+      else if (maxlength <= 30000) {
         theReturn = "VARCHAR("+maxlength+")";
       }
       else {
@@ -232,11 +232,11 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 
   protected void executeBeforeInsert(GenericEntity entity)throws Exception{
     if ( entity.isNull(entity.getIDColumnName()) ){
-            entity.setID(createUniqueID(entity));
+      entity.setID(createUniqueID(entity));
     }
   }
 
-
+/*
   protected void insertBlob(GenericEntity entity)throws Exception{
     String statement ;
     Connection Conn = null;
@@ -274,7 +274,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     }
 
   }
-
+*/
 
 	private static String getInterbaseGeneratorName(GenericEntity entity){
 		String entityName = entity.getTableName();
