@@ -167,7 +167,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
      *
      **/
-    protected class CSSMenu extends PresentationObjectContainer{
+    public class CSSMenu extends PresentationObjectContainer{
      
 		private static final String UL_END_TAG = "</ul>";
 		private static final String UL_START_TAG = "<ul>";
