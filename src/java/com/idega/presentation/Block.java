@@ -61,6 +61,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public String getBundleIdentifier() {
 		return IW_CORE_BUNDLE_IDENTIFIER;
 	}
+	
 
 	/**
 	 * Override to add styles (names) to stylesheet.  Add name (String) as key and style (String) as value.
@@ -259,7 +260,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		PrintWriter writer = new BlockCacheWriter(servletWriter, buffer);
 		iwc.setCacheWriter(writer);
 	}
-
+	
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
 		iwc.setCacheing(false);
 		IWCacheManager.getInstance(iwc.getIWMainApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, cacheInterval);
@@ -297,7 +298,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 			}
 		}
 
-		if (this.isCacheable()) {
+		if (isCacheable(iwc)) {
 			setCacheKey(iwc);
 			if (isCacheValid(iwc)) {
 			}
@@ -316,7 +317,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * The default implementation for the print function for Blocks. This implementation is final and therefore can not be overrided.
 	 */
 	public final void print(IWContext iwc) throws Exception {
-		if (this.isCacheable()) {
+		if (isCacheable(iwc)) {
 			if (isCacheValid(iwc)) {
 				StringBuffer buffer = (StringBuffer) IWCacheManager.getInstance(iwc.getIWMainApplication()).getObject(getDerivedCacheKey());
 				iwc.getWriter().print(buffer.toString());
@@ -450,7 +451,13 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return (instanceID + locale + edit + isSecure+addPerm);
 	}
 
-	protected boolean isCacheable() {
+	/**
+	 * Override this method if you want to prevent some states from being cached.
+	 * This method is called is before getCacheState()
+	 * @param iwc
+	 * @return
+	 */
+	protected boolean isCacheable(IWContext iwc) {
 		return this.cacheable;
 	}
 
