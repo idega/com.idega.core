@@ -307,6 +307,23 @@ public class StringHandler {
   }
   	
   
+  /** Marks all occurences of the specified pattern in the specified string with the
+   * specified replace in a map, ignores case. The caller can modify the specified string later by using the
+   * keys of the map (they corrrespond to the index in the string sarting at zero).
+   * This method is useful when more than one key has to be replaced and some keys 
+   * appear in the replace strings.
+   * Example: getReplaceMapIgnoreCase("A cat is not a caterpillar", "cat", "rat") returns 
+   * a map with the following entries:
+   * ( 2,"ra")
+   * ( 3, null)
+   * (16, "ra")
+   * (17, null)
+   * getReplaceMapIgnoreCase("A cat is not a caterpillar", "r", "ur") returns the following map
+   * (20, "ur")
+   * (26, "ur")
+   * By adding the maps and replacing the characters according to the keys the result is:  
+   * "A rat is not a rateurpillaur"
+   */
 	public static Map getReplaceMapIgnoreCase(String str, String pattern, String replace)  {
 		Map indexMap = new HashMap();
 		int s = 0;
@@ -319,7 +336,7 @@ public class StringHandler {
 	    	int i = e;
 	    	i++;
 	    	while (i < e + length) {
-	    		indexMap.put(new Integer(i++),"");
+	    		indexMap.put(new Integer(i++),null);
 			}
 	      	s = i;
 		}
@@ -330,7 +347,7 @@ public class StringHandler {
   
   /** Replaces all occurences of the specified pattern in the specified string with the
    * specified replace, ignores case.
-   * Example: replace("A cat is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
+   * Example: replaceIgnoreCase("A CAT is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
    * @param str
    * @param pattern
    * @param replace
