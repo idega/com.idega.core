@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.9 2004/03/12 18:43:45 thomas Exp $
+ * $Id: XMLElement.java,v 1.10 2004/03/24 18:45:01 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -113,6 +113,14 @@ public class XMLElement {
 
     return(null);
   }
+  
+  public String getAttributeValue(String name) {
+  	XMLAttribute attribute = getAttribute(name);
+  	if (attribute == null) {
+  		return null;
+  	}
+  	return attribute.getValue();
+  }
 
   public XMLAttribute getAttribute(String name) {
     if (_element != null) {
@@ -204,6 +212,12 @@ public class XMLElement {
   		_element.addContent(data.getContentData());
   		
   	return this;
+  }
+  
+  public XMLElement addContent(String name, String value) {
+  	XMLElement element = new XMLElement(name);
+  	element.addContent(value);
+  	return this.addContent(element);
   }
   
   /**
