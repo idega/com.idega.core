@@ -20,7 +20,11 @@ public abstract class UserTab extends Table implements Collectable{
 
   private int userId = -1;
 
-  protected String columnHeight = "37";
+  protected String rowHeight = "37";
+  /**
+   * @deprecated replaced by rowHeight
+   */
+  protected String columnHeight = rowHeight;//"37";
   protected int fontSize = 2;
 
   protected Text proxyText;
@@ -33,6 +37,7 @@ public abstract class UserTab extends Table implements Collectable{
   public UserTab() {
     super();
     business = new UserBusiness();
+    fieldValues = new Hashtable();
     init();
     this.setCellpadding(0);
     this.setCellspacing(0);

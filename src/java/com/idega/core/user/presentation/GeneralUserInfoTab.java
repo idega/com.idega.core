@@ -87,7 +87,6 @@ public class GeneralUserInfoTab extends UserTab{
   }
 
   public void initializeFieldValues(){
-    fieldValues = new Hashtable();
     fieldValues.put(this.firstNameFieldName,"");
     fieldValues.put(this.middleNameFieldName,"");
     fieldValues.put(this.lastNameFieldName,"");

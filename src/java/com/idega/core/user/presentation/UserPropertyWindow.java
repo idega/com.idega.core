@@ -32,6 +32,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
     panel.addTab(genTab, 0, modinfo);
     panel.addTab(new AddressInfoTab(), 1, modinfo);
     panel.addTab(new UserGroupList(),2,modinfo);
+    panel.addTab(new UserLoginTab(),3,modinfo);
 
 
   }
