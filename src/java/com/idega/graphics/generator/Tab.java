@@ -30,7 +30,8 @@ public class Tab extends Button {
   public static  String BUTTON_OVER = "_TAB_OVER";
   public static  String BUTTON_DOWN = "_TAB_DOWN";
   protected boolean drawBorder = false;
-
+  protected int width = 54;
+  protected int height = 20;
 
   public Tab() {
     super();
@@ -38,6 +39,7 @@ public class Tab extends Button {
 
   public Tab(String text) {
     super(text);
+    super.height = this.height;
   }
 
   public Tab(String text, Font font) {
@@ -57,7 +59,7 @@ public class Tab extends Button {
   }
 
   public static void main(String[] args) {
-    Tab test = new Tab("Tester",Color.orange);
+    Tab test = new Tab("Tester");
     //Button test = new Button("Tester",30,40,Color.orange);
 
     //test.setHighlightColor(Color.blue.brighter());
@@ -67,14 +69,48 @@ public class Tab extends Button {
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
 
-    if(effect==BUTTON_DOWN) g.setColor(underColor);
-    else g.setColor(overColor);
 
-    g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
+    g.setColor(overColor);// delete this when transparencies are supported
+    g.fillRect(0,0,width,height);
 
-    if(effect==BUTTON_OVER) g.setColor(this.highlightColor);
+    if(effect==BUTTON_OVER) {
+      g.setColor(highlightColor);
+    }
+    else if( effect==BUTTON_DOWN ){
+      g.setColor(highlightColor);
+    }
     else g.setColor(fillColor);
-    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
+    g.fillRect(1,0,width-doubleBorder,height-doubleBorder);
+
+    g.setColor(overColor);
+    g.drawLine(0,0,0,height-doubleBorder-2);
+    g.drawLine(1,height-doubleBorder-1,2,height-doubleBorder-1);
+
+    g.setColor(underColor);
+    g.drawLine(2,height-doubleBorder-1,width-doubleBorder-1,height-doubleBorder-1);
+    g.drawLine(width-2,height-doubleBorder-2,width-2,0);
+
+    g.setColor(borderColor);
+    g.drawLine(2,height-doubleBorder,width-doubleBorder-1,height-doubleBorder);
+    g.drawLine(width-1,height-doubleBorder-2,width-1,0);
+    g.drawLine(width-2,height-doubleBorder-1,width-2,height-doubleBorder-1);
+
+    if( effect==BUTTON_DOWN ){
+      //textYPos++;
+      g.setColor(fontColor);
+    }
+    else if( effect==BUTTON_OVER ){
+      g.setColor(Color.blue);
+    }
+    else  g.setColor(fontColor);
+
+    g.drawString(text,textXPos,textYPos-3);
+
+
+   // g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
+   //g.fillRect(0,0,width,height);
+
+/*
 
     if(effect==BUTTON_DOWN) g.setColor(overColor);
     else g.setColor(underColor);
@@ -84,7 +120,7 @@ public class Tab extends Button {
 
     if( effect==BUTTON_DOWN ) textYPos++;
     g.setColor(fontColor);
-    g.drawString(text,textXPos,textYPos);
+    g.drawString(text,textXPos,textYPos);*/
 
     encode(image,filename,effect);
 

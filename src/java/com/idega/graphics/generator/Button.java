@@ -260,6 +260,7 @@ public class Button {
       GIFEncoder encode = new GIFEncoder(image);
 
       StringBuffer name = new StringBuffer();
+      name.append(this.hashCode());
       name.append(width);
       name.append("x");
       name.append(height);
