@@ -1,6 +1,7 @@
 package com.idega.idegaweb;
 
 
+import java.beans.Introspector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -567,14 +568,15 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// therefore stop first and then end database pool
 		endDatabasePool();
 		sendShutdownMessage("Completed");
-		LogFactory.releaseAll();
-		System.out.println("[IWMainApplicationStarter] LogFactory release");
+		Introspector.flushCaches();
 		LogFactory factory = LogFactory.getFactory();
 		if (factory != null) {
+			String message = factory.toString();
 			factory.release();
-			System.out.println("[IWMainApplicationStarter] Factory release");
+			System.out.println("[IWMainApplicationStarter] Following log factory was released: " + message);
 		}
 	}
+	
 	public void sendStartMessage(String message) {
 		System.out.println("[idegaWeb] : startup : " + message);
 	}
