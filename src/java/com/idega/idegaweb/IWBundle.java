@@ -24,6 +24,7 @@ import com.idega.core.data.ICObject;
 public class IWBundle implements java.lang.Comparable{
 
   private static final String slash = "/";
+  private static final String shared = "shared";
 
   private String identifier;
   private String rootVirtualPath;
@@ -532,6 +533,10 @@ public class IWBundle implements java.lang.Comparable{
 
     public Image getImage(String urlInBundle, String name, int width, int height){
       return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
+    }
+
+    public Image getSharedImage(String urlInBundle, String name){
+      return new Image(getResourcesURL()+slash+shared+slash+urlInBundle,name);
     }
 
     public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){

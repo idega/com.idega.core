@@ -10,12 +10,13 @@ import java.util.*;
 import java.io.*;
 import com.idega.jmodule.login.business.*;
 import com.idega.idegaweb.IWCacheManager;
+import com.idega.block.IWBlock;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.3
 */
-public class Block extends PresentationObjectContainer{
+public class Block extends PresentationObjectContainer implements IWBlock{
 
   private static Map permissionKeyMap = new Hashtable();
   private String cacheKey = null;
@@ -31,6 +32,15 @@ public class Block extends PresentationObjectContainer{
 
   public Block(){
 
+  }
+
+  public String getBundleIdentifier(){
+    return IW_CORE_BUNDLE_IDENTIFIER;
+  }
+
+  public boolean deleteBlock(int ICObjectInstanceId){
+    System.err.print("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
+    return true;
   }
 
   public boolean isAdministrator(IWContext iwc)throws Exception{
