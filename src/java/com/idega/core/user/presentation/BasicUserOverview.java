@@ -7,6 +7,7 @@ import com.idega.jmodule.object.textObject.Link;
 import com.idega.jmodule.object.textObject.Text;
 import com.idega.jmodule.object.Page;
 import com.idega.core.user.data.User;
+import com.idega.core.user.business.UserBusiness;
 import com.idega.data.EntityFinder;
 import java.util.List;
 import com.idega.core.user.presentation.UserPropertyWindow;
@@ -22,6 +23,7 @@ import com.idega.core.user.presentation.UserPropertyWindow;
 
 public class BasicUserOverview extends Page {
 
+  private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
 
   public BasicUserOverview(ModuleInfo modinfo) throws Exception {
     //this.empty();
@@ -48,6 +50,11 @@ public class BasicUserOverview extends Page {
           aLink.setWindowToOpen(UserPropertyWindow.class);
           aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
           userTable.add(aLink,2,i+1);
+
+          Link delLink = new Link(new Text("Delete"));
+          delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
+          userTable.add(delLink,3,i+1);
+
         }
       }
     }
@@ -59,6 +66,13 @@ public class BasicUserOverview extends Page {
 
 
   public void main(ModuleInfo modinfo) throws Exception {
+
+    String userDelId = modinfo.getParameter(PARAMETER_DELETE_USER);
+
+    if(userDelId != null){
+      UserBusiness.deleteUser(Integer.parseInt(userDelId));
+    }
+
     this.empty();
     this.add(this.getUsers(modinfo));
     this.getParentPage().setAllMargins(0);
