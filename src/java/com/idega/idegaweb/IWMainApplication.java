@@ -493,10 +493,10 @@ public class IWMainApplication {//implements ServletContext{
                     && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
                 File properties = new File(bundles[i], "properties");
                 File propertiesFile = new File(properties,
-                        IWBundle.propertyFileName);
+                        DefaultIWBundle.propertyFileName);
                 IWPropertyList list = new IWPropertyList(propertiesFile);
                 String bundleIdentifier = list
-                        .getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
                 if (bundleIdentifier != null) {
                     String bundleDir = BUNDLES_STANDARD_DIRECTORY
                             + File.separator + bundles[i].getName();
@@ -522,11 +522,11 @@ public class IWMainApplication {//implements ServletContext{
                 if (bundles[i].isDirectory()) {
                     File properties = new File(bundles[i], "properties");
                     File propertiesFile = new File(properties,
-                            IWBundle.propertyFileName);
+                            DefaultIWBundle.propertyFileName);
                     try {
                         IWPropertyList list = new IWPropertyList(propertiesFile);
                         if (list.getProperty(
-                                IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY)
+                        		DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY)
                                 .equalsIgnoreCase(bundleIdentifier)) {
                             tryString = BUNDLES_STANDARD_DIRECTORY
                                     + File.separator + bundles[i].getName();
@@ -561,7 +561,7 @@ public class IWMainApplication {//implements ServletContext{
         		}
         		if(!throwException){
 	            sendStartupMessage("Loading bundle " + bundleIdentifier);
-	            bundle = new IWBundle(getBundleRealPath(bundleIdentifier),
+	            bundle = new DefaultIWBundle(getBundleRealPath(bundleIdentifier),
 	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
 	                    this, autoCreate);
 	            loadedBundles.put(bundleIdentifier, bundle);

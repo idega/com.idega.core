@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.32 2004/07/01 01:52:39 eiki Exp $
+ * $Id: IWResourceBundle.java,v 1.33 2004/07/28 23:32:16 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -321,7 +321,13 @@ public class IWResourceBundle extends ResourceBundle {
 		IWBundle bundle = getIWBundleParent();
 		if (!bundle.containsLocalizedString(key)) {
 			bundle.addLocalizableString(key, value);
-			bundle.storeLocalizableStrings();
+			try{
+				((DefaultIWBundle)bundle).storeLocalizableStrings();
+			}
+			catch(ClassCastException ce){
+				System.err.println("Cant store LocalizableStrings becauase bundle "+bundle.getBundleIdentifier()+" is not subclass of DefaultIWBundle");
+				ce.printStackTrace();
+			}
 			return true;
 		}
 		return false;
