@@ -256,6 +256,33 @@ public class StringHandler {
     return true;
   }
   
+  /** Returns the specified filename without extension but
+   * not if the fileName starts with a dot character.
+   * Example:
+   * cutExtension("tomcat.gif") returns "tomcat";
+   * cutExtension("tomcat") returns "tomcat";
+   * cutExtension(".systemFile") returns ".systemFile";
+   * @param fileName
+   * @return name without extension
+   */
+  public static String cutExtension(String fileName) {
+  	int index = fileName.lastIndexOf(".");
+  	if (index <= 0) {
+  		return fileName;
+  	}
+  	return fileName.substring(0, index);
+  }
+  
+  public static String replaceNameKeepExtension(String oldFileNameWithExtension, String newFileNameWithoutExtension) {
+  	int index = oldFileNameWithExtension.lastIndexOf(".");
+  	if (index <= 0) {
+  		return newFileNameWithoutExtension;
+  	}
+  	String extension = oldFileNameWithExtension.substring(index);
+  	return StringHandler.concat(newFileNameWithoutExtension, extension);
+  }
+  	
+  
   /** Replaces all occurences of the specified pattern in the specified string with the
    * specified replace, ignores case.
    * Example: replace("A cat is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
