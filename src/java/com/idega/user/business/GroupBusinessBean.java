@@ -2310,7 +2310,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 					
 					if(!possibleGroups.isEmpty()){
 						List dnParts = util.getListOfStringsFromDirectoryString(dn);
-						String rootDN = IWLDAPUtil.getInstance().getRootDNString(this.getIWApplicationContext());
+						String rootDN = IWLDAPUtil.getInstance().getRootDNString();
 						boolean isTheWinner = false;
 						//this used to be return (Group) possibleWinners.next() if the size of the collection was 1 but I think that not enough checking
 						Iterator possibleWinners = possibleGroups.iterator();
@@ -2441,10 +2441,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/24 13:11:43 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/11/25 18:30:21 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.87 $
+	 * @version $Revision: 1.88 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
