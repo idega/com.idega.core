@@ -223,5 +223,20 @@ public class ICObjectBusiness {
     }
   }
 
+  /**
+   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   */
+  public  ICObjectInstance createICObjectInstance(){
+    return new ICObjectInstance();
+  }
+
+
+  /**
+   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   */
+  public  ICObject createICObject(){
+    return new ICObject();
+  }
+
 
 } // Class
