@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.4 2001/10/22 10:16:30 palli Exp $
+ * $Id: PresentationObjectContainer.java,v 1.5 2001/10/29 17:26:31 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -522,6 +522,7 @@ public class PresentationObjectContainer extends PresentationObject {
     if(theObjects==null){
      theObjects = new Vector();
     }
+    o.setParentObject(this);
     return theObjects.set(index,o);
   }
 
