@@ -56,9 +56,9 @@ public class Button {
   private int textXPos = 5;
   private int textYPos = 10;
 
-  private String buttonUpURL;
-  private String buttonDownURL;
-  private String buttonOverURL;
+  private String buttonUpName;
+  private String buttonDownName;
+  private String buttonOverName;
 
   private String text;
 
@@ -121,16 +121,16 @@ public class Button {
     underColor = color;
   }
 
-  public String getButtonUpURL(){
-    return buttonUpURL;
+  public String getButtonUpName(){
+    return buttonUpName;
   }
 
-  public String getButtonOverURL(){
-    return buttonOverURL;
+  public String getButtonOverName(){
+    return buttonOverName;
   }
 
-  public String getButtonDownURL(){
-    return buttonDownURL;
+  public String getButtonDownName(){
+    return buttonDownName;
   }
 
 /*
@@ -227,15 +227,17 @@ public class Button {
       name.append(effect);
       name.append(".gif");
 
+      String sName = name.toString();
+
       filename+=name.toString();
 
       if( effect == BUTTON_UP ){
-        buttonUpURL = filename;
+        buttonUpName = sName;
       }
       else if( effect == BUTTON_UP ){
-        buttonDownURL = filename;
+        buttonDownName = sName;
       }
-      else buttonOverURL = filename;
+      else buttonOverName = sName;
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 
