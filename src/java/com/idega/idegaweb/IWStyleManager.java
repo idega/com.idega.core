@@ -38,7 +38,7 @@ public class IWStyleManager {
 	public IWMainApplication application;
 	public static Map map;
 	public static File file;
-	public static final String[] defaultStyles = { "A", "A:hover", "body", "table", "form" };
+	public static final String[] defaultStyles = { "A", "A:hover", "body", "table", "form", "img" };
 
 	/**
 	 * A method to get an instance of this class.
@@ -73,23 +73,32 @@ public class IWStyleManager {
 				}
 	
 				if (vector != null) {
-					if (vector.size() == 0) {
-						addDefaultValues();
-					}
-					else {
-						getStylesFromFile(vector);
-					}
+					getStylesFromFile(vector);
+					addDefaultValues();
 				}
 			}
 		}
 	}
 
 	private void addDefaultValues() {
-		setStyle(defaultStyles[0], IWConstants.LINK_STYLE);
-		setStyle(defaultStyles[1], IWConstants.LINK_HOVER_STYLE);
-		setStyle(defaultStyles[2], IWConstants.BODY_STYLE);
-		setStyle(defaultStyles[3], IWConstants.BODY_STYLE);
-		setStyle(defaultStyles[4], IWConstants.FORM_STYLE);
+		if (!isStyleSet(defaultStyles[0])) {
+			setStyle(defaultStyles[0], IWConstants.LINK_STYLE);
+		}
+		if (!isStyleSet(defaultStyles[1])) {
+			setStyle(defaultStyles[1], IWConstants.LINK_HOVER_STYLE);
+		}
+		if (!isStyleSet(defaultStyles[2])) {
+			setStyle(defaultStyles[2], IWConstants.BODY_STYLE);
+		}
+		if (!isStyleSet(defaultStyles[3])) {
+			setStyle(defaultStyles[3], IWConstants.BODY_STYLE);
+		}
+		if (!isStyleSet(defaultStyles[4])) {
+			setStyle(defaultStyles[4], IWConstants.FORM_STYLE);
+		}
+		if (!isStyleSet(defaultStyles[5])) {
+			setStyle(defaultStyles[5], IWConstants.IMAGE_STYLE);
+		}
 		writeStyleSheet();
 	}
 
