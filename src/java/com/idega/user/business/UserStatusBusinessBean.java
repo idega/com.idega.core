@@ -150,7 +150,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 			e.printStackTrace();
 		}
 		catch (FinderException e) {
-			
+			e.printStackTrace();
 		}
 	
 		return null;
