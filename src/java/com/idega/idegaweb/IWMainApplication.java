@@ -252,7 +252,15 @@ public class IWMainApplication {//implements ServletContext{
     public Object getAttribute(String parameterName) {
         return application.getAttribute(parameterName);
     }
-
+    
+    public Object getAttribute(String parameterName, Object defaultObjectToReturnIfValueIsNull){
+    		Object value = getAttribute(parameterName);
+    		if(value==null){
+    			value = defaultObjectToReturnIfValueIsNull;
+    		}
+    		return value;
+    }
+    
     public Enumeration getAttributeNames() {
         return application.getAttributeNames();
     }

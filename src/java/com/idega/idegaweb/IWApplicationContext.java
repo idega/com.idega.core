@@ -18,6 +18,7 @@ public interface IWApplicationContext extends java.io.Serializable{
   public IWSystemProperties getSystemProperties();
   public void setApplicationAttribute(String attributeName,Object attributeValue);
   public Object getApplicationAttribute(String attributeName);
+  public Object getApplicationAttribute(String attributeName,Object defaultObjectToReturnIfValueIsNull);
   public void removeApplicationAttribute(String attributeName);
   /**
    * Gets the Domain which this idegaWeb Application is running under

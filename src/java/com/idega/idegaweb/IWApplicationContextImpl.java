@@ -60,6 +60,13 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	public Object getApplicationAttribute(String attributeName) {
 		return iwma.getAttribute(attributeName);
 	}
+	
+	/**
+	 * @see com.idega.idegaweb.IWApplicationContext#getApplicationAttribute(String,Object)
+	 */
+	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
+		return iwma.getAttribute(attributeName,defaultObjectToReturnIfValueIsNull);
+	}
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#removeApplicationAttribute(String)
