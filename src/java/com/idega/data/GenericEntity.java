@@ -2988,6 +2988,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		addMetaData(metaDataKey, metaDataValue, null);
 	}
 
+	public void renameMetaData(String oldKeyName, String newKeyName) {
+		if (_theMetaDataAttributes == null) {
+			getMetaData();
+		}
+		if (oldKeyName != null && newKeyName != null && !oldKeyName.equals("") && !newKeyName.equals("") && !oldKeyName.equals(newKeyName)) {
+			Integer pk = (Integer) _theMetaDataIds.get(oldKeyName);
+			if (pk != null) {
+				try {
+					MetaData md = ((MetaDataHome) IDOLookup.getHome(MetaData.class)).findByPrimaryKey(pk);
+					md.setName(newKeyName);
+					md.store();
+					getMetaData(); // Reloading metadata cache
+				}
+				catch (IDOLookupException e) {
+					e.printStackTrace();
+				}
+				catch (FinderException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public void addMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null

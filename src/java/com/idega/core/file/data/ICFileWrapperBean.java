@@ -425,4 +425,8 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	public boolean isEmpty() {
 		return ((ICFile)this.getMainEntity()).isEmpty();
 	}
+	
+	public void renameMetaData(String oldKeyName, String newKeyName) {
+		((ICFile) this.getMainEntity()).renameMetaData(oldKeyName, newKeyName);
+	}
 }
