@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.15 2003/05/01 23:39:49 thomas Exp $
+ * $Id: AbstractChooser.java,v 1.16 2003/08/18 16:25:45 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -201,31 +201,33 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       table.add(link,2,1);
     }
 
-    if( _addTextInput ){
-      table.add(object,1,1);
-    }else {
-      HiddenInput hInput = new HiddenInput(displayInputName);
-      table.add(hInput,1,1);
-    }
-
-
+    table.add(object,1,1);
     table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,"151324213"));
     return(table);
   }
 
   public PresentationObject getPresentationObject(IWContext iwc) {
-    TextInput input = new TextInput(displayInputName);
-    input.setDisabled(disabled);
-
-    if (_style != null) {
-      input.setAttribute("style",_style);
+    if (_addTextInput) {
+	    TextInput input = new TextInput(displayInputName);
+	    input.setDisabled(disabled);
+	
+	    if (_style != null) {
+	      input.setAttribute("style",_style);
+	    }
+	
+	    if(_stringDisplay != null){
+	      input.setValue(_stringDisplay);
+	    }
+	
+	    return input;
     }
-
-    if(_stringDisplay != null){
-      input.setValue(_stringDisplay);
+    else {
+    	HiddenInput input = new HiddenInput(displayInputName);
+			if(_stringDisplay != null){
+				input.setValue(_stringDisplay);
+			}
+			return input;
     }
-
-    return input;
   }
 
   /*
