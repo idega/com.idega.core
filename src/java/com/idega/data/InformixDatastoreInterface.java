@@ -4,21 +4,18 @@
 */
 package com.idega.data;
 
-import com.idega.util.database.ConnectionBroker;
-import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.Clob;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import com.informix.jdbc.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.idega.util.database.ConnectionBroker;
+import com.informix.jdbc.IfxPreparedStatement;
 /**
 *A class for database abstraction for the Informix Database.
 * This is an implemention that ovverrides implementations from com.idega.data.DatastoreInterface 
