@@ -51,7 +51,18 @@ public class GenericSelect extends InterfaceObject {
 	 * Must add to a form before this function is used!!!!
 	 */
 	public void setToSubmit() {
-		setAttribute("onChange", "this.form.submit()");
+		setToSubmit(true);
+	}
+
+	/**
+	 * Sets the select to submit automatically.
+	 * Must add to a form before this function is used!!!!
+	 */
+	public void setToSubmit(boolean setToSubmit) {
+		if (setToSubmit)
+			setAttribute("onChange", "this.form.submit()");
+		else
+			removeAttribute("onChange");
 	}
 
 	/**
