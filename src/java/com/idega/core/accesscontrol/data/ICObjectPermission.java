@@ -2,6 +2,7 @@ package com.idega.core.accesscontrol.data;
 
 import com.idega.data.*;
 import java.sql.*;
+import com.idega.core.data.ICObject;
 
  /**
  * Title:        AccessControl
@@ -14,7 +15,7 @@ import java.sql.*;
 
 public class ICObjectPermission extends GenericEntity {
 
-  private static String sClassName = "com.idega.core.accesscontrol.data.ICObjectPermission";
+  private static String sClassName = ICObjectPermission.class.getName();
 
   public ICObjectPermission() {
     super();
@@ -26,7 +27,7 @@ public class ICObjectPermission extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute(getArObjectIDColumnName(),"Object",true,true,"java.lang.Integer","many-to-one","com.idega.builder.data.ICObject");
+    addAttribute(getArObjectIDColumnName(),"Object",true,true,Integer.class,"many-to-one",ICObject.class);
     addAttribute(getPermissionTypeColumnName(),"Permission Type",true,true,"java.lang.String");
     addAttribute(getDescripionColumnName(),"Description",true,true,"java.lang.String");
 
@@ -77,7 +78,7 @@ public class ICObjectPermission extends GenericEntity {
 
 
   public static ICObjectPermission getStaticInstance(){
-    return (ICObjectPermission)getStaticInstance(sClassName);
+    return (ICObjectPermission)getStaticInstance(ICObjectPermission.class);
   }
 
 

@@ -25,7 +25,6 @@ public class Address extends GenericEntity{
                 addAttribute("p_o_box","Pósthólf",true, true, String.class);
 		addAttribute("postal_code_id", "Póstnúmer", true, true, Integer.class, "many-to-one",PostalCode.class);
 		addAttribute("ic_country_id", "Land id", true, true,Integer.class, "many-to-one",Country.class);
-	        this.addManyToManyRelationShip(AddressType.class,"ic_address_address_type");
         }
 
 	public String getEntityName(){

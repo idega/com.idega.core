@@ -24,13 +24,13 @@ public class PostalCode extends GenericEntity{
 	}
 
         public void insertStartData()throws Exception{
-            java.util.List countries = EntityFinder.findAllByColumn(Country.getStaticInstance(),"ISO_Abbreviation","IS");
+/*            java.util.List countries = EntityFinder.findAllByColumn(Country.getStaticInstance(),"ISO_Abbreviation","IS");
             if (countries != null) {
                 Country country = (Country) countries.get(0);
                 PostalCode pCode;
 
                 pCode = new PostalCode();
-                  pCode.setPostalCode("100");
+                  pCode.setPostalCode("101");
                   pCode.setName("Reykjavik");
                   pCode.setCountryID(country.getID());
                   pCode.insert();
@@ -45,6 +45,7 @@ public class PostalCode extends GenericEntity{
                   pCode.setCountryID(country.getID());
                   pCode.insert();
             }
+            */
         }
 
 	public String getEntityName(){

@@ -1,7 +1,7 @@
 package com.idega.core.data;
 
-import java.sql.*;
 import com.idega.data.GenericEntity;
+import java.sql.SQLException;
 
 /**
  * Title:        IW Core
@@ -15,17 +15,18 @@ import com.idega.data.GenericEntity;
 public class Country extends GenericEntity{
 
   public Country(){
-          super();
+    super();
   }
 
   public Country(int id)throws SQLException{
-          super(id);
+    super(id);
   }
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
     this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
+    this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammstöfun",true,true,String.class,10);
   }
 
   public String getEntityName() {
@@ -34,6 +35,7 @@ public class Country extends GenericEntity{
 
   public static String getColumnNameName(){return "country_name";}
   public static String getColumnNameDescription(){return "country_description";}
+  public static String getColumnNameIsoAbbreviation(){return "iso_abbreviation";}
 
 
   public String getName(){
@@ -44,20 +46,28 @@ public class Country extends GenericEntity{
     return this.getStringColumnValue(getColumnNameDescription());
   }
 
-
-
-  public void setName(String typeName){
-    this.setColumn(getColumnNameName(),typeName);
+ public String getIsoAbbreviation(){
+    return this.getStringColumnValue(getColumnNameIsoAbbreviation());
   }
 
-  public void setDescription(String typeDescription){
-    this.setColumn(getColumnNameDescription(),typeDescription);
+
+
+  public void setName(String Name){
+    this.setColumn(getColumnNameName(),Name);
+  }
+
+  public void setDescription(String Description){
+    this.setColumn(getColumnNameDescription(),Description);
+  }
+
+
+  public void setIsoAbbreviation(String IsoAbbreviation){
+    this.setColumn(getColumnNameIsoAbbreviation(),IsoAbbreviation);
   }
 
 
   public static Country getStaticInstance(){
     return(Country)getStaticInstance(Country.class);
   }
-
 
 }

@@ -30,7 +30,7 @@ public class LoginInfo extends GenericEntity {
 
 
   public void initializeAttributes() {
-    addAttribute(getIDColumnName(),"Notandi",true,true,"java.lang.Integer","one-to-one",LoginTable.getStaticInstance().className);
+    addAttribute(getIDColumnName(),"Notandi",true,true,Integer.class,"one-to-one",LoginTable.class);
     addAttribute(getAccountEnabledColumnName(),"Aðgangur virkur",true,true,Boolean.class);
     addAttribute(getModifiedColumnName(),"Síðast breytt",true,true,java.sql.Date.class);
     addAttribute(getDaysOfValityColumnName(),"Dagar í gildi",true,true,Integer.class);

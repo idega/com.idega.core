@@ -25,38 +25,42 @@ public class Phone extends GenericEntity{
 
     public void initializeAttributes(){
       addAttribute(getIDColumnName());
-      addAttribute("phone_number","Númer",true,true,"java.lang.String");
-      addAttribute("ic_country_code_id","Landsnúmer",true,true,"java.lang.Integer");
-      addAttribute("ic_area_code_id","Svæðisnúmer",true,true,"java.lang.Integer");
-      addAttribute("phone_attribute","Tegund",true,true,"java.lang.String");
-      addAttribute("phone_attribute_value","Gildi",true,true,"java.lang.String");
-      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
+      addAttribute(getColumnNamePhoneNumber(),"Númer",true,true,"java.lang.String");
+//      addAttribute(getColumnNameCountryCodeId(),"Landsnúmer",true,true,Integer.class,"many-to-one",CountryCode.class);
+      addAttribute(getColumnNameAreaCodeId(),"Svæðisnúmer",true,true,Integer.class,"many-to-one",AreaCode.class);
+      addAttribute(getColumnNamePhoneTypeId(),"Tegund",true,true,Integer.class,"many-to-one",PhoneType.class);
+//      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
     }
 
     public String getEntityName(){
       return "ic_phone";
     }
 
+    public static String getColumnNamePhoneNumber(){return"phone_number";}
+//    public static String getColumnNameCountryCodeId(){return"ic_country_code_id";}
+    public static String getColumnNameAreaCodeId(){return"ic_area_code_id";}
+    public static String getColumnNamePhoneTypeId(){return"ic_phone_type_id";}
+
     public void setDefaultValues() {
-      setColumn("ic_country_code_id",-1);
-      setColumn("ic_area_code_id",-1);
+//      setColumn(getColumnNameCountryCodeId(),-1);
+//      setColumn(getColumnNameAreaCodeId(),-1);
     }
 
     public String getNumber(){
-      return (String)getColumnValue("phone_number");
+      return (String)getColumnValue(getColumnNamePhoneNumber());
     }
 
     public void setNumber(String number){
-      setColumn("phone_number", number);
+      setColumn(getColumnNamePhoneNumber(), number);
     }
 
 
-    public String getPhoneType(){
-      return (String) getColumnValue("phone_type");
+    public int getPhoneTypeId(){
+      return getIntColumnValue(getColumnNamePhoneTypeId());
     }
 
-    public void setPhoneType(String phone_type){
-      setColumn("phone_type", phone_type);
+    public void setPhoneTypeId(String phone_type_id){
+      setColumn(getColumnNamePhoneTypeId(), phone_type_id);
     }
 
 }

@@ -28,9 +28,9 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
 	public void initializeAttributes(){
           addAttribute(this.getIDColumnName());
-          addAttribute(User.getUserIDColumnName(),"Notandi",true,true,"java.lang.Integer","many-to-one","com.idega.core.user.data.User");
-          addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,"java.lang.String");
-          addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,"java.lang.String");
+          addAttribute(User.getUserIDColumnName(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
+          addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,20);
+          addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
 	}
 
 	public String getEntityName(){

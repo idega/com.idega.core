@@ -34,7 +34,7 @@ public class ICPermission extends GenericEntity {
     addAttribute(getPermissionStringColumnName(),"Permission string",true,true,"java.lang.String");
     addAttribute(getPermissionStringValueColumnName(),"Permission string value",true,true,"java.lang.String");
     addAttribute(getPermissionValueColumnName(),"Permission value",true,true,"java.lang.Boolean");
-    addAttribute(getGroupIDColumnName(),"GroupID",true,true,"java.lang.Integer");
+    addAttribute(getGroupIDColumnName(),"GroupID",true,true,Integer.class,"many-to-one",PermissionGroup.class);
 
   }
   public String getEntityName() {
