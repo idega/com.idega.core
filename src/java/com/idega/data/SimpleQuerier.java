@@ -118,6 +118,10 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
+    
+    public static int executeIntQuery(String sqlQuery) throws Exception{
+    	return executeIntQuery(sqlQuery,getConnection());
+    }
     /**
      * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()
      */
