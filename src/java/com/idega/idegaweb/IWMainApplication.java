@@ -573,13 +573,27 @@ public class IWMainApplication {//implements ServletContext{
         return bundle;
     }
 
+    
     /**
      * Regsters and loads a IWBundle with the abstact pathname relative to
      * /idegaweb on the WebServer and the identifier specified by
      * bundleIdentifier autoCr
      */
-    public boolean registerBundle(String bundleIdentifier, String bundlesPath) {
-        return registerBundle(bundleIdentifier, bundlesPath, false);
+    public boolean registerBundle(String bundleIdentifier, boolean autoCreate) {
+		String bundleDir = bundleIdentifier + ".bundle";
+		if (bundleDir.indexOf(BUNDLES_STANDARD_DIRECTORY) == -1) {
+			bundleDir = IWMainApplication.BUNDLES_STANDARD_DIRECTORY + File.separator + bundleDir;
+		}
+        return registerBundle(bundleIdentifier, bundleDir, false);
+    }    
+    
+    /**
+     * Regsters and loads a IWBundle with the abstact pathname relative to
+     * /idegaweb on the WebServer and the identifier specified by
+     * bundleIdentifier autoCr
+     */
+    public boolean registerBundle(String bundleIdentifier, String bundlePath) {
+        return registerBundle(bundleIdentifier, bundlePath, false);
     }
 
     /**
@@ -589,9 +603,9 @@ public class IWMainApplication {//implements ServletContext{
      * <br>
      * Does automatically create the bundle on disk if autoCreate==true;
      */
-    public boolean registerBundle(String bundleIdentifier, String bundlesPath,
+    public boolean registerBundle(String bundleIdentifier, String bundlePath,
             boolean autoCreate) {
-        getBundlesFile().setProperty(bundleIdentifier, bundlesPath);
+        getBundlesFile().setProperty(bundleIdentifier, bundlePath);
         getBundle(bundleIdentifier, autoCreate);
         return true;
     }
