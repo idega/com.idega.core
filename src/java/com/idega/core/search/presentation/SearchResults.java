@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.6 2005/01/25 17:42:16 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.7 2005/03/20 11:22:37 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,6 +12,7 @@ package com.idega.core.search.presentation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchPlugin;
@@ -30,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/01/25 17:42:16 $ by $Author: eiki $
+ * Last modified: $Date: 2005/03/20 11:22:37 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -40,12 +41,9 @@ import com.idega.presentation.text.Text;
  * Do not change core_iw.css, rather add your own custom stylesheet after the iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SearchResults extends Block {
-
-
-	public static final String DEFAULT_SEARCH_PARAMETER_NAME = Searcher.DEFAULT_SEARCH_PARAMETER_NAME;
 	
 	public static final String DEFAULT_STYLE_CLASS = "iw_search_results";
 	public static final String DEFAULT_ROW_EVEN_STYLE_CLASS = "iw_search_results_row_even";
@@ -60,22 +58,17 @@ public class SearchResults extends Block {
 	private String abstractTextStyleClass = DEFAULT_ABSTRACT_TEXT_STYLE_CLASS;
 	private String extraInformationTextStyleClass = DEFAULT_EXTRA_INFO_TEXT_STYLE_CLASS;
 
-
 	private String searchNameStyleClass = DEFAULT_SEARCH_NAME_STYLE_CLASS;
-	
 	private String styleClass = DEFAULT_STYLE_CLASS;
-
 	private String iconStyleClass = DEFAULT_ICON_STYLE_CLASS;
 	private String rowEvenStyleClass = DEFAULT_ROW_EVEN_STYLE_CLASS;
-
 	private String rowOddStyleClass = DEFAULT_ROW_ODD_STYLE_CLASS;
 
-	private String searchParameterName = DEFAULT_SEARCH_PARAMETER_NAME;
+	private String searchParameterName = Searcher.DEFAULT_SEARCH_PARAMETER_NAME;
+	private String advancedSearchParameterName = Searcher.DEFAULT_ADVANCED_SEARCH_PARAMETER_NAME;
 	
 	//todo create handler
 	private String searchPluginsToUse;
-	
-
 
 	public SearchResults() {
 		super();
@@ -84,7 +77,7 @@ public class SearchResults extends Block {
 	/**
 	 * @return Returns the searchParameterName.
 	 */
-	public String getSearchParameterName() {
+	public String getSimpleSearchParameterName() {
 		return searchParameterName;
 	}
 
@@ -92,8 +85,23 @@ public class SearchResults extends Block {
 	 * @param searchParameterName
 	 *            The searchParameterName to set.
 	 */
-	public void setSearchParameterName(String searchParameterName) {
+	public void setSimpleSearchParameterName(String searchParameterName) {
 		this.searchParameterName = searchParameterName;
+	}
+	
+	
+	/**
+	 * @return Returns the advancedSearchParameterName.
+	 */
+	public String getAdvancedSearchParameterName() {
+		return advancedSearchParameterName;
+	}
+
+	/**
+	 * @param searchParameterName The advancedSearchParameterName to set.
+	 */
+	public void setAdvancedSearchParameterName(String advancedSearchParameterName) {
+		this.advancedSearchParameterName = advancedSearchParameterName;
 	}
 
 	/**
@@ -150,7 +158,7 @@ public class SearchResults extends Block {
 		super.main(iwc);
 		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
 		
-		if (iwc.isParameterSet(getSearchParameterName())) {
+		if (iwc.isParameterSet(getSimpleSearchParameterName()) || iwc.isParameterSet(getAdvancedSearchParameterName())) {
 			CSSSpacer spacer = new CSSSpacer();
 			
 			Layer container = new Layer();
@@ -175,36 +183,33 @@ public class SearchResults extends Block {
 			Text extraInfoTextProtoType = new Text();
 			extraInfoTextProtoType.setStyleClass(getExtraInformationTextStyleClass());
 			//////
+			//If the query is advanced then the query object is created later
 			boolean isAdvancedSearch = false;
 			SearchQuery query;
 			if (iwc.isParameterSet(Searcher.DEFAULT_ADVANCED_SEARCH_PARAMETER_NAME)) {
-				//TODO advanced search
-				//container.add("Advanced search");
-				String queryString = iwc.getParameter(getSearchParameterName());
-				Map queryMap = new HashMap();
-				queryMap.put(getSearchParameterName(), queryString);
-				query = new AdvancedSearchQuery();
 				isAdvancedSearch = true;
+				query = new AdvancedSearchQuery();	
 			}
 			else {
-				String queryString = iwc.getParameter(getSearchParameterName());
+				String queryString = iwc.getParameter(getSimpleSearchParameterName());
 				Map queryMap = new HashMap();
-				queryMap.put(getSearchParameterName(), queryString);
+				queryMap.put(getSimpleSearchParameterName(), queryString);
 				query = new SimpleSearchQuery(queryMap);
-				//container.add("Simple search");
-				//container.addBreak();
 			}
+			///
+			
 			
 			boolean noResult = true;
 			Collection plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(iwc.getIWMainApplication());
 			if (!plugins.isEmpty()) {
 				Iterator iter = plugins.iterator();
 				while (iter.hasNext()) {
+					
+					SearchPlugin searchPlugin = (SearchPlugin) iter.next();
 					//odd or even row
 					Layer rowContainer;
 					
-					
-					SearchPlugin searchPlugin = (SearchPlugin) iter.next();
+
 //					todo get from handler
 					if(getSearchPluginsToUse()!=null){
 						String searchClass = searchPlugin.getClass().getName();
@@ -216,6 +221,11 @@ public class SearchResults extends Block {
 					//
 					
 					if( (isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch()) || (!isAdvancedSearch && searchPlugin.getSupportsSimpleSearch()) ){
+						
+
+						if(isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch()){
+							fillAdvancedSearch(iwc, query, searchPlugin);
+						}
 						
 						Search search = searchPlugin.createSearch(query);
 						Collection results = search.getSearchResults();
@@ -300,6 +310,27 @@ public class SearchResults extends Block {
 			}
 			add(container);
 		}
+	}
+
+	/**
+	 * @param iwc
+	 * @param query
+	 * @param searchPlugin
+	 */
+	protected void fillAdvancedSearch(IWContext iwc, SearchQuery query, SearchPlugin searchPlugin) {
+		String queryString = iwc.getParameter(getSimpleSearchParameterName());
+		Map queryMap = new HashMap();
+		queryMap.put(getSimpleSearchParameterName(), queryString);
+		List params = searchPlugin.getAdvancedSearchSupportedParameters();
+		if(params!=null && !params.isEmpty()){
+			Iterator iterator = params.iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				String value = iwc.getParameter(key);
+				queryMap.put(key,value);
+			}
+		}
+		query.setSearchParameters(queryMap);
 	}
 	
 	/**

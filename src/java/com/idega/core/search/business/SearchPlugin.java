@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPlugin.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
+ * $Id: SearchPlugin.java,v 1.2 2005/03/20 11:22:37 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,7 +15,7 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/03/20 11:22:37 $ by $Author: eiki $
  * 
  * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
  * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
@@ -26,7 +26,7 @@ import com.idega.idegaweb.IWMainApplication;
  * in the package com.idega.search.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface SearchPlugin {
 	
@@ -44,7 +44,9 @@ public interface SearchPlugin {
 	public void destroy(IWMainApplication iwma);
 	
 	/**
-	 * Creates a new search for a user with the key=value parameters in the Map.
+	 * Creates a new search for a user with the key=value parameters in the SearchQuery object.<br>
+	 * The SearchQuery object is typically of either the type SimpleSearchQuery or AdvancedSearchQuery.<br>
+	 * AdvancedSearchQuery will be filled with parameters from the plugins getAdvancedSearchSupportedParameters().
 	 * @param searchParameters
 	 * @return a Search object that you use to get some results from
 	 */

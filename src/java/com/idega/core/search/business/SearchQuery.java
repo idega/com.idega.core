@@ -1,5 +1,5 @@
 /*
- * $Id: SearchQuery.java,v 1.1 2005/01/18 12:43:12 tryggvil Exp $
+ * $Id: SearchQuery.java,v 1.2 2005/03/20 11:22:37 eiki Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,14 +14,15 @@ import java.util.Map;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/18 12:43:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/20 11:22:37 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface SearchQuery {
 
 	public boolean isSimpleQuery();
 	public boolean isAdvancedQuery();
 	public Map getSearchParameters();
+	public void setSearchParameters(Map searchParameters);
 }
