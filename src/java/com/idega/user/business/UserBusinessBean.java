@@ -1190,6 +1190,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws EJBException If an error occurs casting
 	 */
 	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException{
+		/**
+		 *@todo: Possible backwards compatability bug here.
+		 * Look into this (If no user_representative field set for the User)
+		 **/
 		try{
 			boolean mayReturnWholeCollection=true;
 			for (Iterator iter = userGroupCollection.iterator(); iter.hasNext();) {
