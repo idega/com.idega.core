@@ -9,9 +9,7 @@
 package com.idega.user.data;
 
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import com.idega.data.IDOFactory;
 
 /**
@@ -44,6 +42,14 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids = ((UserStatusBMPBean) entity)
                 .ejbFindAllByUserId(id);
+        this.idoCheckInPooledEntity(entity);
+        return this.getEntityCollectionForPrimaryKeys(ids);
+    }
+	
+    public Collection findAllByStatusId(int id) throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids = ((UserStatusBMPBean) entity)
+                .ejbFindAllByStatusId(id);
         this.idoCheckInPooledEntity(entity);
         return this.getEntityCollectionForPrimaryKeys(ids);
     }

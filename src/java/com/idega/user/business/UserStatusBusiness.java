@@ -9,6 +9,7 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.ejb.CreateException;
@@ -96,5 +97,9 @@ public interface UserStatusBusiness {
             throws RemoteException, java.rmi.RemoteException;
     
     public Status getStatusByStatusId(int statusId) throws RemoteException;
+
+	public Collection getAllUserStatuses(int userId) throws RemoteException;
+	
+	public Collection getAllUsersWithStatus(int statusId);
 
 }

@@ -10,14 +10,14 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-
+import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOStoreException;
 import com.idega.user.data.Status;
@@ -25,12 +25,11 @@ import com.idega.user.data.StatusHome;
 import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 
 /**
- * @author palli
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * @author palli,eiki
+ *Used to manipulate a users status.
  */
 public class UserStatusBusinessBean extends IBOServiceBean implements UserStatusBusiness {
 	
@@ -98,6 +97,17 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 			
 			return -1;
 		}
+	}
+	
+	public Collection getAllUserStatuses(int userId) throws RemoteException {
+		try {
+			return getUserStatusHome().findAllByUserId(userId);
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		return ListUtil.getEmptyList();
 	}
 	
 	public UserStatusHome getUserStatusHome() throws RemoteException{
@@ -204,5 +214,27 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		
 	}
 	
+	public Collection getAllUsersWithStatus(int statusId){
+		try {
+			Collection userStatuses = getUserStatusHome().findAllByStatusId(statusId);
+			List users = new ArrayList();
+			Iterator iter = userStatuses.iterator();
+			while (iter.hasNext()) {
+				UserStatus userStatus = (UserStatus) iter.next();
+				users.add(userStatus.getUser());
+			}
+			
+			return users;
+		}
+		catch (FinderException e) {
+		//nothing found...just return an empty list
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		return ListUtil.getEmptyList();
+	}
+
 	
 }

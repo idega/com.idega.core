@@ -10,9 +10,7 @@ package com.idega.user.data;
 
 import java.sql.Timestamp;
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import com.idega.data.GenericEntity;
 
 /**
@@ -154,6 +152,19 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		sql.append(DATE_FROM);
 		
 		return super.idoFindIDsBySQL(sql.toString());
+	}
+	
+	public Collection ejbFindAllByStatusId(int id) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(ENTITY_NAME);
+		sql.append(" where ");
+		sql.append(STATUS_ID);
+		sql.append(" = ");
+		sql.append(id);
+		sql.append(" order by ");
+		sql.append(DATE_FROM);
+		
+		return super.idoFindPKsBySQL(sql.toString());
 	}
 	
 	public Collection ejbFindAllByGroupId(int id) throws FinderException {

@@ -9,9 +9,7 @@
 package com.idega.user.data;
 
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import com.idega.data.IDOHome;
 
 /**
@@ -35,6 +33,11 @@ public interface UserStatusHome extends IDOHome {
      * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllByUserId
      */
     public Collection findAllByUserId(int id) throws FinderException;
+	
+    /**
+     * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllByStatusId
+     */
+    public Collection findAllByStatusId(int id) throws FinderException;
 
     /**
      * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllByGroupId
