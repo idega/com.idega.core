@@ -35,7 +35,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
 
 
     public String getEntityName(){
-            return "ic_user";
+	    return "ic_user";
     }
 
     public void initializeAttributes(){
@@ -169,17 +169,49 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
 	  }
 
 	  if(middleName == null){
-	  	middleName="";
+		middleName="";
 	  }else{
 	    middleName = " "+middleName;
 	  }
 
 	  if(lastName == null){
-	  	lastName="";
+		lastName="";
 	  }else{
-  		lastName = " " + lastName;
-  	  }
+		lastName = " " + lastName;
+	  }
       return firstName + middleName + lastName;
+    }
+
+    public String getNameLastFirst(){
+      return getNameLastFirst(false);
+    }
+
+    public String getNameLastFirst(boolean commaSeperated){
+	  String firstName=this.getFirstName();
+	  String middleName=this.getMiddleName();
+	  String lastName = this.getLastName();
+
+	  if(lastName == null){
+	    lastName="";
+	  }
+	  else {
+	    if ( commaSeperated )
+	      lastName += ",";
+	  }
+
+	  if(firstName == null){
+		firstName="";
+	  }else{
+		firstName = " " + firstName;
+	  }
+
+	  if(middleName == null){
+		middleName="";
+	  }else{
+	    middleName = " "+middleName;
+	  }
+
+      return lastName + firstName + middleName;
     }
 
     /*  Getters end   */
@@ -193,10 +225,10 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
 
     public void setFirstName(String fName) {
       if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
-        fName = "Invalid firstname";
+	fName = "Invalid firstname";
       }
       if(com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(this.getFirstName())){ // if not Administrator
-        setColumn(getColumnNameFirstName(),fName);
+	setColumn(getColumnNameFirstName(),fName);
       }
 
     }
@@ -264,7 +296,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     }
 
     public void removeAllEmails()throws IDORemoveRelationshipException{
-        super.idoRemoveFrom(Email.class);
+	super.idoRemoveFrom(Email.class);
     }
 
     public void removeAllPhones()throws IDORemoveRelationshipException{
@@ -276,18 +308,18 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
        return super.idoGetRelatedEntities(Address.class);
       }
       catch(Exception e){
-        e.printStackTrace();
-        throw new RuntimeException("Error in getAddresses() : "+e.getMessage());
+	e.printStackTrace();
+	throw new RuntimeException("Error in getAddresses() : "+e.getMessage());
       }
     }
 
     public Collection getEmails() {
       try{
-        return super.idoGetRelatedEntities(Email.class);
+	return super.idoGetRelatedEntities(Email.class);
       }
       catch(Exception e){
-        e.printStackTrace();
-        throw new RuntimeException("Error in getEmails() : "+e.getMessage());
+	e.printStackTrace();
+	throw new RuntimeException("Error in getEmails() : "+e.getMessage());
       }
     }
 
@@ -296,8 +328,8 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
        return super.idoGetRelatedEntities(Phone.class);
       }
       catch(Exception e){
-        e.printStackTrace();
-        throw new RuntimeException("Error in getPhones() : "+e.getMessage());
+	e.printStackTrace();
+	throw new RuntimeException("Error in getPhones() : "+e.getMessage());
       }
     }
 
@@ -501,18 +533,18 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       sql.append(emailAddress);
       Collection coll =  super.idoFindIDsBySQL(sql.toString());
       if(!coll.isEmpty())
-        return (Integer)coll.iterator().next();
+	return (Integer)coll.iterator().next();
       else
-        throw new FinderException("No user found");
+	throw new FinderException("No user found");
     }
 
 
     public Integer ejbFindByPersonalID(String personalId)throws FinderException,RemoteException{
       Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(),personalId);
       if(!users.isEmpty())
-        return (Integer)users.iterator().next();
+	return (Integer)users.iterator().next();
       else
-        throw new FinderException("No user found");
+	throw new FinderException("No user found");
     }
 
     /*  Finders end   */
