@@ -156,7 +156,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness{
 	 * @param user
 	 */
 	public void removeUniqueIdIfPresent(Group group) {
-		if (group.getUniqueId() == null) {
+		if (group.getUniqueId() != null) {
 			group.setUniqueId(null);
 			group.store();
 		}
