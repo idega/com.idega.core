@@ -1043,7 +1043,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//try {
 			IDOQuery query = idoQueryGetSelect();
 			query
-        .appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID)
+        .appendWhereEquals(getColumnNameUserID(),userRepGroupID)
         .appendAnd();
       appendIsNotDeleted(query);
      
