@@ -21,6 +21,7 @@ public class Strong  extends PresentationObjectContainer{
 	 */
 	public Strong() {
 		super();
+		setTransient(false);
 		// TODO Auto-generated constructor stub
 	}
 	
