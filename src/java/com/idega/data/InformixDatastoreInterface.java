@@ -113,11 +113,8 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "DATETIME YEAR TO FRACTION";
 
     }
-
-    else if (javaClassName.equals("java.sql.Date")){
-
+    else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
       theReturn = "DATE";
-
     }
 
     else if (javaClassName.equals("java.sql.Blob")){

@@ -100,7 +100,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 
     }
 
-    else if (javaClassName.equals("java.sql.Date")){
+    else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
 
       theReturn = "DATE";
 

@@ -1,6 +1,6 @@
 /*
 
- * $Id: InterbaseDatastoreInterface.java,v 1.19 2002/04/06 19:07:44 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.20 2002/05/05 15:28:12 tryggvil Exp $
 
  *
 
@@ -114,7 +114,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 
     }
 
-    else if (javaClassName.equals("java.sql.Date")) {
+    else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
 
       theReturn = "DATE";
 
