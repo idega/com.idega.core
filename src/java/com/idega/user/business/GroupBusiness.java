@@ -141,5 +141,5 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   
   public Collection getAllAllowedGroupTypesForChildren(Group group, com.idega.idegaweb.IWUserContext iwc);
   
-  public com.idega.presentation.text.Text getNameOfGroupWithParentName(Group group);
+  public String getNameOfGroupWithParentName(Group group);
 }

@@ -1396,17 +1396,18 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     } 
   }
  
-  public Text getNameOfGroupWithParentName(Group group) {
+  public String getNameOfGroupWithParentName(Group group) {
     StringBuffer buffer = new StringBuffer();    
     Collection parents = getParentGroups(group);
     try {
+			buffer.append(group.getName()).append(" ");
       if(parents!=null && !parents.isEmpty()) {
         Iterator par = parents.iterator();
         Group parent = (Group) par.next();
         buffer.append("(").append(parent.getName()).append(") ");
       }
-      buffer.append(group.getName());
-      return new Text(buffer.toString());
+      
+      return buffer.toString();
     }
     catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
