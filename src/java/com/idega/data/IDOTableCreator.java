@@ -364,6 +364,7 @@ public class IDOTableCreator{
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
       updateColumns(entity);
       updateIndexes(entity);
+      updateTriggers(entity);
       createMiddleTables(entity);
       this.endEntityCreationTransaction(entity,canCommit,true);
     }//End if(!doesTableExist())
@@ -816,6 +817,15 @@ public class IDOTableCreator{
   		}
   		return false;
   }
+
+  private void updateTriggers(GenericEntity entity) {
+		try {
+		_dsi.updateTriggers(entity, true);
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+	}
+}
 
   private void updateIndexes(GenericEntity entity) {
   		if (_dsi.useIndexes()) {

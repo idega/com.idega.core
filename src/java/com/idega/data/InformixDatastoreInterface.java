@@ -82,7 +82,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		}
 		return theReturn;
 	}
-	public String getIDColumnType() {
+	public String getIDColumnType(GenericEntity entity) {
 		return "SERIAL";
 	}
 	/**

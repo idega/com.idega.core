@@ -323,9 +323,59 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
     }
 
-
-
-
+/* Not Tested
+  	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
+  		Connection conn = null;
+  		Statement Stmt = null;
+  		ResultSet rs = null;
+  		ResultSet rs2 = null;
+  		boolean returner = false;
+  		try {
+  			conn = entity.getConnection();
+  			Stmt = conn.createStatement();
+  			boolean tableExists = false;
+  			String seqSQL = "select * from "+getSequenceTableName(entity);
+  			try {
+  				rs = Stmt.executeQuery(seqSQL);
+  				tableExists = true;
+  			} catch (Exception e) {
+  				log("Error finding sequence table");
+  			}
+  			if (rs != null && rs.next()) {
+  				returner = true;
+  			}
+  			else if (createIfNot) {
+  				String maxSQL = "select max ("+entity.getIDColumnName()+" as MAX from "+entity.getEntityName();
+  				if (!tableExists) {
+					createSequenceTable(entity);
+  				}
+  				int valueToSet = 1;
+  				rs2 = Stmt.executeQuery(maxSQL);
+  				if (rs2 != null && rs2.next()) {
+  					valueToSet = Integer.parseInt(rs2.getString("MAX"));
+  					Stmt.executeUpdate("update "+getSequenceTableName(entity)+" set "+entity.getIDColumnName()+" = "+valueToSet);
+  				}
+  				
+  				returner = true;
+  			}
+  		}
+  		finally {
+  			if (Stmt != null) {
+  				Stmt.close();
+  			}
+  			if (rs != null) {
+  				rs.close();
+  			}
+  			if (rs2 != null) {
+  				rs2.close();
+  			}
+  			if (conn != null) {
+  				entity.freeConnection(conn);
+  			}
+  		}
+  		return returner;
+  	}
+*/
 
   public void createSequenceTable(GenericEntity entity)throws Exception{
     Connection conn = null;
@@ -673,7 +723,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  public String getIDColumnType(){
+  public String getIDColumnType(GenericEntity entity){
 
     return "INTEGER AUTO_INCREMENT";
 

@@ -140,9 +140,13 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	{
 		return true;
 	}
-	public String getIDColumnType()
+	public String getIDColumnType(GenericEntity entity)
 	{
-		return "INTEGER IDENTITY";
+		if (entity.getIfAutoIncrement()) {
+			return "INTEGER IDENTITY";
+		} else {
+			return "INTEGER";
+		}
 	}
 	/*protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception
 	{
@@ -194,7 +198,12 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		try
 		{
 			boolean entityInsertModeIsOn = false;
-			entityInsertModeIsOn = turnOnIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
+			if (entity.getIfAutoIncrement()) {
+				entityInsertModeIsOn = turnOnIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
+			}
+			else {
+				entityInsertModeIsOn = true;
+			}
 			StringBuffer statement = new StringBuffer("");
 			statement.append("insert into ");
 			statement.append(entity.getTableName());
@@ -211,11 +220,14 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
 			Stmt.close();
-			if (updateNumberGeneratedValueAfterInsert())
-			{
-				updateNumberGeneratedValue(entity, conn);
+			
+			if (entity.getIfAutoIncrement()) {
+				if (updateNumberGeneratedValueAfterInsert())
+				{
+					updateNumberGeneratedValue(entity, conn);
+				}
+				turnOffIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
 			}
-			turnOffIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
 		}
 		finally
 		{

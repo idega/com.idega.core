@@ -81,6 +81,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private boolean _metaDataHasChanged = false;
 	public String _lobColumnName;
 	private boolean insertStartData = true;
+	private boolean _hasAutoIncrementColumn = true;
 	protected static String COLUMN_VALUE_TRUE = "Y";
 	protected static String COLUMN_VALUE_FALSE = "N";
 
@@ -4490,6 +4491,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void addIndex(String name, String[] fields) {
 		getGenericEntityDefinition().addIndex(name, fields);
 	}
+	
+	public void hasAutoIncrement(boolean autoIncrement) {
+		this._hasAutoIncrementColumn = autoIncrement;
+	}
+	
+	public boolean getIfAutoIncrement() {
+		return _hasAutoIncrementColumn;
+	}
+	
 	//ENTITY SPECIFIC LOG MEHTODS:
 	
 	///**

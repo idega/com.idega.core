@@ -113,7 +113,51 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
-
+	
+	/* Not Tested
+	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
+		Connection conn = null;
+		Statement Stmt = null;
+		ResultSet rs = null;
+		ResultSet rs2 = null;
+		boolean returner = false;
+		try {
+			conn = entity.getConnection();
+			Stmt = conn.createStatement();
+			String seqSQL = "select LAST_NUMBER from user_sequences where SEQUENCE_NAME like '" + entity.getTableName() + "'";
+			rs = Stmt.executeQuery(seqSQL);
+			if (rs != null && rs.next()) {
+				returner = true;
+			}
+			if (!returner && createIfNot) {
+				String maxSQL = "select max ("+entity.getIDColumnName()+" as MAX from "+entity.getEntityName();
+				int valueToSet = 1;
+				rs2 = Stmt.executeQuery(maxSQL);
+				if (rs2 != null && rs2.next()) {
+					valueToSet = Integer.parseInt(rs2.getString("MAX"));
+				}
+				
+				createSequence(entity, valueToSet);
+				returner = true;
+			}
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			if (rs2 != null) {
+				rs2.close();
+			}
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+		return returner;
+	}*/
+	
 	public void createSequence(GenericEntity entity) throws Exception {
 		createSequence(entity, 1);
 	}

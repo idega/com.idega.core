@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.104 2004/07/14 01:11:13 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.105 2004/07/14 11:28:38 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -261,7 +261,7 @@ public abstract class DatastoreInterface {
 
 	public abstract String getSQLType(String javaClassName, int maxlength);
 
-	public String getIDColumnType() {
+	public String getIDColumnType(GenericEntity entity) {
 		return "INTEGER";
 	}
 
@@ -1533,6 +1533,10 @@ public abstract class DatastoreInterface {
 		return false;
 	}
 	
+	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
+		return true;
+	}
+	
 	private String[] getColumnArrayFromMetaData(String dataSourceName,String tableName){
 
 		Connection conn = null;
@@ -1938,7 +1942,7 @@ public abstract class DatastoreInterface {
 	    String type;
 	    
 	    if(isPrimaryKey && !isCompositePK &&entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
-	      type = getIDColumnType();
+	      type = getIDColumnType(entity);
 	    }
 	    else{
 	      type = getSQLType(entity.getStorageClassName(columnName),entity.getMaxLength(columnName));

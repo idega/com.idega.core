@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.31 2004/03/12 12:29:44 gimmi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.32 2004/07/14 11:28:38 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -95,6 +95,11 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 		return theReturn;
 	}
+	
+	private String getTriggerName(GenericEntity entity) {
+		return entity.getTableName()+"_trig";
+	}
+	
 	public void createTrigger(GenericEntity entity) throws Exception
 	{
 		createGenerator(entity);
@@ -106,8 +111,8 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			Stmt = conn.createStatement();
 			String s =
 				"CREATE TRIGGER "
-					+ entity.getTableName()
-					+ "_trig for "
+					+ getTriggerName(entity)
+					+" for "
 					+ entity.getTableName()
 					+ " ACTIVE BEFORE INSERT POSITION 0 AS BEGIN IF (NEW."
 					+ entity.getIDColumnName()
@@ -155,6 +160,71 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			}
 		}
 	}
+	
+	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
+		Connection conn = null;
+		Statement Stmt = null;
+		ResultSet rs = null;
+		ResultSet rs2 = null;
+		boolean returner = false;
+		try {
+			conn = entity.getConnection();
+			Stmt = conn.createStatement();
+			boolean triggerExists = false;
+			boolean generatorExists = false;
+			String trigSQL = "select * from RDB$TRIGGERS where RDB$TRIGGER_NAME = '"+getTriggerName(entity)+"'";
+			try {
+				Stmt.executeQuery(trigSQL);
+				triggerExists = true;
+			} catch (Exception e) {
+				log("Error finding trigger table");
+			}
+			String genSQL = "select * from RDB$GENERATORS where RDB$GENERATOR_NAME = '"+getInterbaseGeneratorName(entity)+"'";
+			try {
+				Stmt.executeQuery(genSQL);
+				generatorExists = true;
+			} catch (Exception e) {
+				log("Error finding generator table");
+			}
+			
+			
+			if (generatorExists && triggerExists) {
+				returner = true; 
+			}
+			else if (createIfNot) {
+				String maxSQL = "select max ("+entity.getIDColumnName()+" as MAX from "+entity.getEntityName();
+				
+				if (!generatorExists && !triggerExists) {
+					createTrigger(entity);
+				}
+				int valueToSet = 1;
+				rs2 = Stmt.executeQuery(maxSQL);
+				if (rs2 != null && rs2.next()) {
+					valueToSet = Integer.parseInt(rs2.getString("MAX"));
+					System.out.println("SET GENERATOR "+getInterbaseGeneratorName(entity)+" TO "+valueToSet);
+					Stmt.executeUpdate("SET GENERATOR "+getInterbaseGeneratorName(entity)+" TO "+valueToSet);
+				}
+				
+				returner = true;
+			}
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			if (rs2 != null) {
+				rs2.close();
+			}
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+		return returner;
+	}
+
 	/* public void createForeignKeys(IDOLegacyEntity entity) throws Exception {
 	   Connection conn = null;
 	   Statement Stmt = null;
