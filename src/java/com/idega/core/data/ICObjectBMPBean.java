@@ -13,8 +13,11 @@ package com.idega.core.data;
 //import java.util.*;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+
+import javax.ejb.FinderException;
 
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWBundle;
@@ -46,6 +49,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
         public static final String COMPONENT_TYPE_APPLICATION_COMPONENT = "iw.application.component";
 
         public static final String COMPONENT_TYPE_DATA = "iw.data";
+        
+		public static final String COMPONENT_TYPE_HOME = "iw.home";
 
         public static final String COMPONENT_TYPE_PROPERTYHANDLER = "iw.propertyhandler";
 
@@ -103,15 +108,15 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
 
 
-                //addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
+                //addAttribute("settings_url","Sl?? stillingas??u",true,true,"java.lang.String");
 
-		//addAttribute("class_value","Klasi sjálfur",true,true,"java.sql.Blob");
+		//addAttribute("class_value","Klasi sj?lfur",true,true,"java.sql.Blob");
 
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 
-		//addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
+		//addAttribute("image_id","MyndN?mer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
 
 
 
@@ -170,6 +175,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
             componentList.add(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_APPLICATION_COMPONENT);
 
             componentList.add(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_DATA);
+            
+			componentList.add(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_HOME);
 
             componentList.add(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_PROPERTYHANDLER);
 
@@ -424,6 +431,14 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
           return BUNDLE_COLUMN_NAME;
 
+        }
+        
+        public Collection ejbFindAllByObjectType(String type)throws FinderException{
+        	return super.idoFindPKsByQuery( super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(),type));
+        }
+        
+        public Object ejbFindByClassName(String className) throws FinderException{
+        	return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(),className));
         }
 
 
