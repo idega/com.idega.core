@@ -78,7 +78,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 
 	public void generateUUIDsForAllGroups() throws FinderException, IDOLookupException {
 		int counter = 0;
-		int reportAfter = 100;
+		int reportAfter = 500;
 		Timer timer = new Timer();
 		timer.start();
 		Collection groups = ((GroupHome) IDOLookup.getHome(Group.class)).findAll();
@@ -104,7 +104,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 
 	public void generateUUIDsForAllUsers() throws FinderException, IDOLookupException {
 		int counter = 0;
-		int reportAfter = 100;
+		int reportAfter = 500;
 		Timer timer = new Timer();
 		timer.start();
 		Collection users = ((UserHome) IDOLookup.getHome(User.class)).findAllUsers();

@@ -341,8 +341,10 @@ public class TimerManager {
     * be fired.
     */
   public synchronized void removeAllTimers() {
-    waiter.stop();
-    waiter = null;
+  	if(waiter!=null){
+	    waiter.stop();
+	    waiter = null;
+  	}
     queue.clear();
   }
 
