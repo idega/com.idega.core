@@ -444,10 +444,13 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    		Iterator iter = listOfPrimaryKeys.iterator();
 		    		for (int i = firstIndex; iter.hasNext();i++) {
 					Object pk = (Object) iter.next();
-					_entities.set(i,mapOfEntities.get(pk));
+					Object entity = mapOfEntities.get(pk);
+					_entities.set(i,entity);
 //					_tracker.setAsLoaded(firstIndex+i);
-					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
-						no++;
+					if(entity == null) {
+						System.out.println("An entity was not found, id=" + pk);
+					} else if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
+						no++;;
 						logError("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
 						logError("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
 					} 
