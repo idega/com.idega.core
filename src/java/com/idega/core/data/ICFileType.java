@@ -97,6 +97,10 @@ public class ICFileType extends CacheableEntity {
     setFileTypeHandlerId(handler.getID());
   }
 
+  public int getFileTypeHandlerID(){
+    return getIntColumnValue(getColumnNameFileTypeHandler());
+  }
+
   public void insertStartData() {
     try {
       ICFileType type;
@@ -163,5 +167,6 @@ public class ICFileType extends CacheableEntity {
   public String getCacheKey(){
     return getColumnNameUniqueName();
   }
+
 
 }

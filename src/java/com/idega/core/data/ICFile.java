@@ -99,8 +99,8 @@ public class ICFile extends TreeableEntity {
     return (Timestamp) getColumnValue(getColumnNameModificationDate());
   }
 
-  public Long getFileSize(){
-    return (Long) getColumnValue(getColumnNameFileSize());
+  public Integer getFileSize(){
+    return (Integer) getColumnValue(getColumnNameFileSize());
   }
 
   public void setLanguage(int language){
