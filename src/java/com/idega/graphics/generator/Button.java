@@ -15,6 +15,7 @@ import java.awt.FontMetrics;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import com.idega.util.FileUtil;
+import com.idega.util.IWColor;
 
 /**
  * Title:
@@ -96,12 +97,21 @@ public class Button {
     highlightColor = fillColor.brighter();
   }
 
-  public static void main(String[] args) {
-    Button test = new Button("Tester",Color.orange);
-    //Button test = new Button("Tester",30,40,Color.orange);
 
-    //test.setHighlightColor(Color.blue.brighter());
-    test.generate();
+  /**
+   * This method allows direct generating of buttons through a command line or cgi script<br/>
+   * the allowed parameters in correct order are<br/>
+   * 1:textonbutton 2:fillcolor 3:highlightcolor 4:width 5:height
+   */
+  public static void main(String[] args) {
+
+    Button button = new Button();
+    button.text = args[0];
+    button.fillColor = IWColor.getAWTColorFromHex(args[1]);
+    button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
+    button.width = Integer.parseInt(args[3]);
+    button.height = Integer.parseInt(args[4]);
+    button.generate();
     System.exit(0);
   }
 
@@ -261,7 +271,7 @@ public class Button {
       GIFEncoder encode = new GIFEncoder(image);
 
       StringBuffer name = new StringBuffer();
-      name.append(hashCode());
+      name.append(text);
       name.append(width);
       name.append("x");
       name.append(height);

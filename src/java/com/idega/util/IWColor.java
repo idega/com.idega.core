@@ -16,7 +16,7 @@ import java.io.*;
 
 public class IWColor{
 
-    private Color awtColor;
+    protected Color awtColor;
 
 
     public IWColor(Color color){
@@ -198,11 +198,32 @@ public class IWColor{
     return colorString;
   }
 
+ public static IWColor getIWColorFromHex(String hex) {
+    hex = com.idega.util.text.TextSoap.findAndCut(hex,"#");
+    IWColor color = null;
+    int red = getIntFromHex(hex.substring(0,2));
+    int green = getIntFromHex(hex.substring(2,4));
+    int blue = getIntFromHex(hex.substring(4,6));
+    color = new IWColor(red,green,blue);
+    return color;
+  }
+
+  public static Color getAWTColorFromHex(String hex) throws NumberFormatException {
+    IWColor color = getIWColorFromHex(hex);
+    return color.awtColor;
+  }
+
+  public static int getIntFromHex(String hex){
+   return Integer.parseInt(hex,16);
+  }
+
 
 
   public static String getHexColorString(Color color){
     return getHexColorString(color.getRed(),color.getGreen(),color.getBlue());
   }
+
+
 
 
 }
