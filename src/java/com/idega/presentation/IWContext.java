@@ -39,6 +39,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
+import com.idega.user.Converter;
 import com.idega.user.business.UserProperties;
 import com.idega.util.datastructures.HashtableMultivalued;
 /**
@@ -74,6 +75,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	private PrintWriter cacheWriter;
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
+	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 	/**
 	 *Default constructor
 	 **/
@@ -657,6 +659,10 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public void setCacheWriter(PrintWriter writer) {
 		this.cacheWriter = writer;
 	}
+	
+	/**
+   	* @deprecated Replaced with getCurrentUser()
+   	**/
 	public User getUser() {
 		return (LoginBusiness.getUser(this));
 	}
@@ -891,6 +897,25 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
     }
 
     return null;
+  }
+
+
+  /**
+   * Gets the current user associated with this context
+   * <br>This method is meant to replace getUser()
+   * @return The current user if there is one associated with the current context. If there is none the method returns null.
+   **/
+  public com.idega.user.data.User getCurrentUser(){
+		com.idega.core.user.data.User user = getUser();
+		if(user!=null){
+			com.idega.user.data.User newUser = (com.idega.user.data.User) getSessionAttribute(IWC_SESSION_ATTR_NEW_USER_KEY);
+			if(newUser==null){
+				newUser = Converter.convertToNewUser(user);
+				setSessionAttribute(IWC_SESSION_ATTR_NEW_USER_KEY,newUser);
+			}
+			return newUser;
+		}
+		return null;	
   }
 
 }

@@ -32,11 +32,19 @@ public interface IWUserContext extends java.io.Serializable{
   public void removeSessionAttribute(String attributeName);
   public Locale getCurrentLocale();
   public void setCurrentLocale(Locale locale);
+  /**
+   * @deprecated Replaced with getCurrentUser()
+   **/
   public User getUser();
   public AccessController getAccessController();
   public IWApplicationContext getApplicationContext();
   public UserProperties getUserProperties();
-
+  /**
+   * Gets the current user associated with this context
+   * <br>This method is meant to replace getUser()
+   * @return The current user if there is one associated with the current context. If there is none the method returns null.
+   **/
+  public com.idega.user.data.User getCurrentUser();
 
 
 
