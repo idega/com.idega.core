@@ -17,7 +17,7 @@ import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
 import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
-import com.idega.core.accesscontrol.business.AccessControler;
+import com.idega.core.accesscontrol.business.AccessController;
 
 
 /**
@@ -728,8 +728,8 @@ public void setCacheWriter(PrintWriter writer){
     return -1;
   }
 
-  public AccessControler getAccessControler(){
-    return ((AccessControler)this.getApplication().getAccessControler());
+  public AccessController getAccessController(){
+    return ((AccessController)this.getApplication().getAccessController());
   }
 
 }

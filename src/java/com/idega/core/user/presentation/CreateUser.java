@@ -167,7 +167,7 @@ public class CreateUser extends Window {
         /**
          * @todo filter standardGroups
          */
-        //groups.removeAll(AccessControler.getStandardGroups());
+        //groups.removeAll(AccessController.getStandardGroups());
         Iterator iter = groups.iterator();
         while (iter.hasNext()) {
           GenericGroup item = (GenericGroup)iter.next();

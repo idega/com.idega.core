@@ -45,7 +45,7 @@ public class BasicUserOverview extends Page {
   public Table getUsers(IWContext iwc) throws Exception{
     List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
     Table userTable = null;
-    List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessControler().getPermissionGroupAdministrator());
+    List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 
     if(users != null){
       if(adminUsers == null){

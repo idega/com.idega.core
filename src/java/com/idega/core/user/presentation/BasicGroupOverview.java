@@ -52,8 +52,8 @@ public class BasicGroupOverview extends Page {
 
     Table groupTable = null;
     if(groups != null){
-      List notDelet = (List)((Vector)iwc.getAccessControler().getStandardGroups()).clone();
-      notDelet.add(iwc.getAccessControler().getPermissionGroupAdministrator());
+      List notDelet = (List)((Vector)iwc.getAccessController().getStandardGroups()).clone();
+      notDelet.add(iwc.getAccessController().getPermissionGroupAdministrator());
       groupTable = new Table(3,(groups.size()>8)?groups.size():8);
       groupTable.setCellspacing(0);
       groupTable.setHorizontalZebraColored("D8D4CD","C3BEB5");

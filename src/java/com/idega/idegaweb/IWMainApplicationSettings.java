@@ -14,7 +14,7 @@ import com.idega.util.LocaleUtil;
 import com.idega.data.EntityControl;
 import java.util.Iterator;
 import java.util.Vector;
-import com.idega.core.accesscontrol.business.AccessControler;
+import com.idega.core.accesscontrol.business.AccessController;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -89,8 +89,8 @@ public class IWMainApplicationSettings extends IWPropertyList{
       return locale;
     }
 
-    public AccessControler getDefaultAccessControler(){
-      return(AccessControler) new com.idega.core.accesscontrol.business.AccessControl();
+    public AccessController getDefaultAccessController(){
+      return(AccessController) new com.idega.core.accesscontrol.business.AccessControl();
     }
 
     /**

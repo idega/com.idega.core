@@ -49,7 +49,7 @@ public class UserGroupBusiness {
   public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws SQLException {
     List result = GenericGroup.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
-      result.removeAll(iwc.getAccessControler().getStandardGroups());
+      result.removeAll(iwc.getAccessController().getStandardGroups());
     }
     return result;
   }

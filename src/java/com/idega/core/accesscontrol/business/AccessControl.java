@@ -32,7 +32,7 @@ import com.idega.core.user.data.UserGroupRepresentative;
  * @version 1.0
  */
 
-public class AccessControl extends IWServiceImpl implements AccessControler {
+public class AccessControl extends IWServiceImpl implements AccessController {
 /**
  * @todo change next 4 variables to applicationAddesses
  */

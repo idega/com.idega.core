@@ -99,7 +99,7 @@ private IWResourceBundle iwrb;
 
       boolean isAdministrator = false;
       try{
-        isAdministrator = iwc.getAccessControler().isAdmin(iwc);
+        isAdministrator = iwc.getAccessController().isAdmin(iwc);
       }
       catch(Exception e){
         isAdministrator = false;

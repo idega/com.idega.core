@@ -16,7 +16,7 @@ import com.idega.util.Executer;
 import com.idega.presentation.Page;
 import com.idega.util.caching.BlobCacher;
 import com.idega.exception.IWBundleDoesNotExist;
-import com.idega.core.accesscontrol.business.AccessControler;
+import com.idega.core.accesscontrol.business.AccessController;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -503,23 +503,23 @@ public class IWMainApplication{//implements ServletContext{
     }
   }
 
-  public void startAccessControler(){
-    this.setAccessControler(this.getSettings().getDefaultAccessControler());
-    System.out.println("Starting service "+this.getAccessControler().getServiceName());
-    this.getAccessControler().startService(this);
+  public void startAccessController(){
+    this.setAccessController(this.getSettings().getDefaultAccessController());
+    System.out.println("Starting service "+this.getAccessController().getServiceName());
+    this.getAccessController().startService(this);
   }
 
-  public AccessControler getAccessControler(){
-    AccessControler controler = (AccessControler)this.getAttribute(_ADDRESS_ACCESSCONTROLER);
+  public AccessController getAccessController(){
+    AccessController controler = (AccessController)this.getAttribute(_ADDRESS_ACCESSCONTROLER);
     if(controler != null){
       return controler;
     } else {
-      System.err.println("AccessControler has not been started");
+      System.err.println("AccessController has not been started");
       return null;
     }
   }
 
-  private void setAccessControler(AccessControler controler){
+  private void setAccessController(AccessController controler){
     this.setAttribute(_ADDRESS_ACCESSCONTROLER, controler);
   }
 

@@ -114,7 +114,7 @@ public class IWStarterServlet extends GenericServlet
             startDatabasePool();
             application.loadBundles();
 
-            application.startAccessControler();
+            application.startAccessController();
 
             executeServices(application);
             sendStartMessage("Completed");
