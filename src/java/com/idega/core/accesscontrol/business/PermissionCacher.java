@@ -37,8 +37,22 @@ public class PermissionCacher {
 
 
 
-  public static boolean anyInstancePerissionsDefined( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
+  public static boolean anyInstancePerissionsDefinedForObject( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
     String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE};
+    return anyPermissionsDefined(obj,iwc,permissionKey,maps);
+  }
+
+  public static boolean anyPerissionsDefinedForObject( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT};
+    return anyPermissionsDefined(obj,iwc,permissionKey,maps);
+  }
+
+  public static boolean anyPerissionsDefinedForPage( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
+    return anyPerissionsDefinedForObject(obj,iwc,permissionKey);
+  }
+
+  public static boolean anyInstancePerissionsDefinedForPage( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE};
     return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
@@ -53,8 +67,8 @@ public class PermissionCacher {
         identifier = Integer.toString(obj.getICObjectInstanceID(iwc));
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
           identifier = Integer.toString(obj.getICObjectID(iwc));
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
-          identifier = obj.getBundleIdentifier();
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
+          identifier = Integer.toString(((Page)obj).getPageID());
       }
 
       if(identifier != null){
@@ -129,21 +143,21 @@ public class PermissionCacher {
         permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 
-      Boolean trueOrNull = null;
+      Boolean falseOrNull = null;
       if (permissions != null){
         Iterator iter = permissions.iterator();
         while (iter.hasNext()) {
           Boolean item = (Boolean)iter.next();
           if (item != null){
-            if (item.equals(Boolean.TRUE)){
-              trueOrNull = Boolean.TRUE;
+            if (item.equals(Boolean.FALSE)){
+              falseOrNull = Boolean.FALSE;
             }else{
-              return Boolean.FALSE;
+              return Boolean.TRUE;
             }
           }
         }
       }
-      return trueOrNull; //rather be falseOrNull
+      return falseOrNull; //rather be falseOrNull
     } else {
       return null;
     }
@@ -167,24 +181,24 @@ public class PermissionCacher {
 
       if(permissions == null){
         updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
-        permissions = permissionMap.get(Integer.toString(obj.getID()),permissionKey,groups);
+        permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 
-      Boolean trueOrNull = null;
+      Boolean falseOrNull = null;
       if (permissions != null){
         Iterator iter = permissions.iterator();
         while (iter.hasNext()) {
           Boolean item = (Boolean)iter.next();
           if (item != null){
-            if (item.equals(Boolean.TRUE)){
-              trueOrNull = Boolean.TRUE;
+            if (item.equals(Boolean.FALSE)){
+              falseOrNull = Boolean.FALSE;
             }else{
-              return Boolean.FALSE;
+              return Boolean.TRUE;
             }
           }
         }
       }
-      return trueOrNull;
+      return falseOrNull;
     } else {
       return null;
     }
@@ -283,6 +297,7 @@ public class PermissionCacher {
       case AccessControl._CATEGORY_OBJECT_INSTANCE :
         updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,identifier,permissionKey,iwc);
         break;
+      case AccessControl._CATEGORY_PAGE :
       case AccessControl._CATEGORY_OBJECT :
         updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,identifier,permissionKey,iwc);
         break;
@@ -291,9 +306,6 @@ public class PermissionCacher {
         break;
       case AccessControl._CATEGORY_PAGE_INSTANCE :
         updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,identifier,permissionKey,iwc);
-        break;
-      case AccessControl._CATEGORY_PAGE :
-        //
         break;
       case AccessControl._CATEGORY_JSP_PAGE :
         updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,identifier,permissionKey,iwc);

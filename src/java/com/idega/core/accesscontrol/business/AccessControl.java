@@ -175,19 +175,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
-/*
-    // Default permission: view == true if not Page, else false
-    // If no permission set, view = true for all objects other than Page objects
-    if( _PERMISSIONKEY_VIEW.equals(permissionType) && obj != null && !(obj instanceof Page && ((Page)obj).getPageID() != _notBuilderPageID) ){
-      // if some view permission for object, bundle, ... are set
-      // then do nothing
-      // else true
-      // => view hashtable for obj, ...  has object
-      if(!PermissionCacher.somePermissionSet( obj, iwc, permissionType)){
-        return true;
-      }
-    }
-*/
+
     if (isAdmin(iwc)){
       return true;
     }
@@ -243,19 +231,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
-/*
-    // Default permission: view == true if not Page, else false
-    // If no permission set, view = true for all objects other than Page objects
-    if( _PERMISSIONKEY_VIEW.equals(permissionType) && obj != null && !(obj instanceof Page && ((Page)obj).getPageID() != _notBuilderPageID) ){
-      // if some view permission for object, bundle, ... are set
-      // then do nothing
-      // else true
-      // => view hashtable for obj, ...  has object
-      if(!PermissionCacher.somePermissionSet( obj, iwc, permissionType)){
-        return true;
-      }
-    }
-*/
+
     ICPermission permission = ICPermission.getStaticInstance();
     ICPermission[] Permissions = null;
     List groups = null;
@@ -331,10 +307,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
 
           // Global - (Page)
-          /**
-           * @todo setja stopp ef einhver réttindi hafa verið sett á síðu instance
-           */
-          //if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
+          if(!PermissionCacher.anyInstancePerissionsDefinedForPage(obj,iwc,permissionType)){
             ICObject page = getStaticPageICObject();
             if(page != null){
               for (int i = 0; i < arrayLength; i++) {
@@ -344,8 +317,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
                 }
               }
             }
-          //}
+          }
           // Global - (Page)
+
 
           return myPermission;
         }else{
@@ -358,10 +332,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
 
           //instance
-
+/*
+          //page permission inheritance
+          if(obj.allowPagePermissionInheritance()){
+            Page p = obj.getParentPage();
+            if(p != null && p.getPageID() != _notBuilderPageID ){
+              myPermission = checkForPermission(permissionGroupLists,p,permissionType,iwc);
+              if(myPermission != null){
+                return myPermission;
+              }
+            }
+          }
+          //page permission inheritance
+*/
           // Global - (object)
-          //if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
-          if(!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType)){
+          if(!PermissionCacher.anyInstancePerissionsDefinedForObject(obj,iwc,permissionType)){
             for (int i = 0; i < arrayLength; i++) {
               myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionType,permissionGroupLists[i]);
               if(myPermission != null){
@@ -371,16 +356,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
           // Global - (object)
 
-
-  /*
-          // Bundle
-          for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForBundle(obj,iwc,permissionType,permissionGroupLists[i]);
-            if(myPermission != null){
-              return myPermission;
-            }
-          }// Bundle
-  */
           return myPermission;
         }
       }
@@ -1060,10 +1035,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   public String[] getPagePermissionKeys(){
-    String[] keys = new String[1];
+    String[] keys = new String[2];
 
     keys[0] = _PERMISSIONKEY_VIEW;
-    //keys[1] = _PERMISSIONKEY_EDIT;
+    keys[1] = _PERMISSIONKEY_EDIT;
     //keys[2] = _PERMISSIONKEY_DELETE;
 
     return keys;
