@@ -1604,7 +1604,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									parents.put(primaryKey,parentMap);
 									groupMap.put(primaryKey,permissionGroup);
 									//if it's an alias we don't need the original group and make a list of those groups to filter out later
-									if(permissionGroup.getAliasID()!=-1){
+									if(permissionGroup.isAlias()){
 										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
 										aliasMap.put(originalGroupID,primaryKey);
 									}
