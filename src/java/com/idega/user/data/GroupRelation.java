@@ -8,6 +8,12 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public static final String FIELD_GROUP = "IC_GROUP_ID";
  public static final String FIELD_RELATED_GROUP = "RELATED_IC_GROUP_ID";
  public static final String FIELD_STATUS = "GROUP_RELATION_STATUS";
+ public final static String STATUS_ACTIVE="ST_ACTIVE";
+ public final static String STATUS_PASSIVE="ST_PASSIVE";
+ public final static String STATUS_PASSIVE_PENDING="PASS_PEND";
+ public final static String STATUS_ACTIVE_PENDING="ACT_PEND";
+
+
 	
  public com.idega.user.data.Group getGroup();
  public java.sql.Timestamp getInitiationDate();

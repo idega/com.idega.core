@@ -853,4 +853,9 @@ public class IDOQuery {
 		this.append(IS_NULL);
 		return this;
 	}
+	
+	public IDOQuery appendIsNull() {
+		this.append(IS_NULL);
+		return this;
+	}
 }
