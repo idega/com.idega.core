@@ -27,6 +27,7 @@ import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 import com.idega.block.staff.business.StaffBusiness;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.business.AddressBusiness;
 
 import com.idega.data.*;
 
@@ -581,7 +582,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * @depricated Use getUsersMainAddress(user) instead.
    */
   public Address getUserAddress1(int userId) throws EJBException,RemoteException{
-    AddressType addressType1 = this.getAddressHome().getAddressType1();
     User user = this.getUser(userId);
     if( user!=null ){
       return this.getUsersMainAddress(user);
@@ -608,61 +608,81 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 
-
-  public void updateUserAddress1(int userId, String streetName, String streetNumber, String city, Integer postalCodeId, String province, Integer countryId, String pobox ) throws CreateException,RemoteException {
-    Address addr = this.getUserAddress1(userId);
-    boolean insert = false;
-    if(addr == null){
-      //addr = ((com.idega.core.data.AddressHome)com.idega.data.IDOLookup.getHomeLegacy(Address.class)).createLegacy();
-      addr = getAddressHome().create();
-      addr.setAddressType(getAddressHome().getAddressType1());
-      insert = true;
-    }
-
-
-    if( city != null){
-      addr.setCity(city);
-    }
-
-    if( countryId != null){
-      addr.setCountryId(countryId.intValue());
-    }
-
-    if( pobox != null){
-      addr.setPOBox(pobox);
-    }
-
-    if( postalCodeId != null){
-      addr.setPostalCodeID(postalCodeId.intValue());
-    }
-
-    if( province != null){
-      addr.setProvince(province);
-    }
-
-    if( streetName != null){
-      addr.setStreetName(streetName);
-    }
-
-    if( streetNumber != null){
-      addr.setStreetNumber(streetNumber);
-    }
-
-
-    addr.store();
-    if(insert){
-      //(((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId)).addTo(addr);
-      try{
-        this.getUser(userId).addAddress(addr);
+	/**
+	 * Method updateUsersMainAddressOrCreateIfDoesNotExist. This method can both be used to update the user main address or to create one<br>
+	 * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.
+	 * @param userId
+	 * @param streetNameAndNumber
+	 * @param postalCodeId
+	 * @param countryName
+	 * @param city
+	 * @param province
+	 * @param poBox
+	 * @return Address the address that was created or updated
+	 * @throws CreateException
+	 * @throws RemoteException
+	 */
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
+		Address address = null;
+      if( streetNameAndNumber!=null && userId!=null ){
+      	try{
+      		AddressBusiness addressBiz = getAddressBusiness();
+	        String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
+	        String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
+	        
+	        User user = getUser(userId);
+	        address = getUsersMainAddress(user);
+	        
+	        Country country = null;
+	        
+	        if( countryName!=null ){
+	        	country = ((CountryHome)getIDOHome(Country.class)).findByCountryName(countryName);
+	        }
+	        
+	        PostalCode code = null;
+	        if( postalCodeId!=null){
+	        	code = ((PostalCodeHome)getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+	        }
+	                
+	        
+	        boolean addAddress = false;/**@todo is this necessary?**/
+	
+	        if( address == null ){
+	          AddressHome addressHome = addressBiz.getAddressHome();
+	          address = addressHome.create();
+	          AddressType mainAddressType = addressHome.getAddressType1();
+	          address.setAddressType(mainAddressType);
+	          addAddress = true;
+	        }
+	
+	        if( country!=null ) address.setCountry(country);
+	        if( code!=null ) address.setPostalCode(code);
+	        if( province!=null ) address.setProvince(province);
+	        if( city!=null ) address.setCity(city);
+	        
+	        address.setStreetName(streetName);
+	        if( streetNumber!=null ) address.setStreetNumber(streetNumber);
+	
+	        address.store();
+	
+	        if(addAddress){
+	          user.addAddress(address);
+	        }
+      	}
+      	catch(Exception e){
+      		e.printStackTrace();
+      		System.err.println("Failed to update or create address for userid : "+userId.toString());	
+      	}
+      	  
       }
-      catch(Exception e){
-        throw new RemoteException(e.getMessage());
-      }
-    }
-  }
+        else throw new CreateException("No streetname or userId is null!");
+        
+        return address;
+	}
 
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
-    User userToUpdate = this.getUser(user_id);
+
+  public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+    User userToUpdate = this.getUser(userId);
     this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group);
   }
 
@@ -795,16 +815,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    *  Returns User from userid, throws EJBException if not found
    */
   public  User getUser(int iUserId){
+    return getUser(new Integer(iUserId));
+  }
+
+  /**
+   *  Returns User from userid, throws EJBException if not found
+   */
+  public  User getUser(Integer iUserId){
     try {
-      return getUserHome().findByPrimaryKey(new Integer(iUserId));
+      return getUserHome().findByPrimaryKey(iUserId);
     }
     catch (Exception ex) {
-      throw new EJBException("Error getting user for id: "+iUserId+" Message: "+ex.getMessage());
+      throw new EJBException("Error getting user for id: "+iUserId.toString()+" Message: "+ex.getMessage());
     }
     //return null;
   }
-
-
 
 
   public  Collection getUsersInNoGroup() throws SQLException  {
@@ -1072,6 +1097,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	
 	protected IBPageHome getIBPageHome()throws java.rmi.RemoteException{
 		return (IBPageHome)com.idega.data.IDOLookup.getHome(IBPage.class);	
+	}
+	
+	public AddressBusiness getAddressBusiness() throws RemoteException{
+		return (AddressBusiness) getServiceInstance(AddressBusiness.class);
 	}
 
 } // Class UserBusiness
