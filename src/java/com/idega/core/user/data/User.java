@@ -35,14 +35,14 @@ public class User extends GenericEntity {
     public void initializeAttributes(){
       addAttribute(getIDColumnName());
 
-      addAttribute(getFirstNameColumnName(),"Fornafn",true,true,"java.lang.String");
-      addAttribute(getMiddleNameColumnName(),"Miðnafn",true,true,"java.lang.String");
-      addAttribute(getLastNameColumnName(),"Eftirnafn",true,true,"java.lang.String");
-      addAttribute(getDisplayNameColumnName(),"Kenninafn",true,true,"java.lang.String");
-      addAttribute(getDescriptionColumnName(),"Lýsing",true,true,"java.lang.String");
-      addAttribute(getDateOfBirthColumnName(),"Fæðingardagur",true,true,"java.sql.Date");
-      addAttribute(getGenderColumnName(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
-      addAttribute(getSystemImageColumnName(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
+      addAttribute(getColumnNameFirstName(),"Fornafn",true,true,"java.lang.String");
+      addAttribute(getColumnNameMiddleName(),"Miðnafn",true,true,"java.lang.String");
+      addAttribute(getColumnNameLastName(),"Eftirnafn",true,true,"java.lang.String");
+      addAttribute(getColumnNameDisplayName(),"Kenninafn",true,true,"java.lang.String");
+      addAttribute(getColumnNameDescription(),"Lýsing",true,true,"java.lang.String");
+      addAttribute(getColumnNameDateOfBirth(),"Fæðingardagur",true,true,"java.sql.Date");
+      addAttribute(getColumnNameGender(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
+      addAttribute(getColumnNameSystemImage(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
@@ -59,7 +59,7 @@ public class User extends GenericEntity {
     }
 
     public String getIDColumnName(){
-      return getUserIDColumnName();
+      return getColumnNameUserID();
     }
 
     public static User getStaticInstance(){
@@ -75,41 +75,15 @@ public class User extends GenericEntity {
 
     /*  ColumNames begin   */
 
-    public static String getUserIDColumnName(){
-      return "ic_user_id";
-    }
-
-    public static String getFirstNameColumnName(){
-      return "first_name";
-    }
-
-    public static String getMiddleNameColumnName(){
-      return "middle_name";
-    }
-
-    public static String getLastNameColumnName(){
-      return "last_name";
-    }
-
-    public static String getDisplayNameColumnName(){
-      return "display_name";
-    }
-
-    public static String getDescriptionColumnName(){
-      return "description";
-    }
-
-    public static String getDateOfBirthColumnName(){
-      return "date_of_birth";
-    }
-
-    public static String getGenderColumnName(){
-      return "ic_gender_id";
-    }
-
-    public static String getSystemImageColumnName(){
-      return "system_image_id";
-    }
+    public static String getColumnNameUserID(){return "ic_user_id";}
+    public static String getColumnNameFirstName(){return "first_name";}
+    public static String getColumnNameMiddleName(){return "middle_name";}
+    public static String getColumnNameLastName(){return "last_name";}
+    public static String getColumnNameDisplayName(){return "display_name";}
+    public static String getColumnNameDescription(){return "description";}
+    public static String getColumnNameDateOfBirth(){return "date_of_birth";}
+    public static String getColumnNameGender(){return "ic_gender_id";}
+    public static String getColumnNameSystemImage(){return "system_image_id";}
 
     /*  ColumNames end   */
 
@@ -117,35 +91,35 @@ public class User extends GenericEntity {
     /*  Getters begin   */
 
     public String getFirstName() {
-      return (String) getColumnValue(getFirstNameColumnName());
+      return (String) getColumnValue(getColumnNameFirstName());
     }
 
     public String getMiddleName() {
-      return (String) getColumnValue(getMiddleNameColumnName());
+      return (String) getColumnValue(getColumnNameMiddleName());
     }
 
     public String getLastName() {
-      return (String) getColumnValue(getLastNameColumnName());
+      return (String) getColumnValue(getColumnNameLastName());
     }
 
     public String getDisplayName() {
-      return (String) getColumnValue(getLastNameColumnName());
+      return (String) getColumnValue(getColumnNameDisplayName());
     }
 
     public String getDescription() {
-      return (String) getColumnValue(getLastNameColumnName());
+      return (String) getColumnValue(getColumnNameDescription());
     }
 
     public Date getDateOfBirth(){
-      return (Date) getColumnValue(getDateOfBirthColumnName());
+      return (Date) getColumnValue(getColumnNameDateOfBirth());
     }
 
     public int getGenderID(){
-      return getIntColumnValue(getGenderColumnName());
+      return getIntColumnValue(getColumnNameGender());
     }
 
     public int getSystemImageID(){
-      return getIntColumnValue(getSystemImageColumnName());
+      return getIntColumnValue(getColumnNameSystemImage());
     }
 
     public String getName(){
@@ -177,43 +151,43 @@ public class User extends GenericEntity {
     /*  Setters begin   */
 
     public void setFirstName(String fName) {
-      setColumn(getFirstNameColumnName(),fName);
+      setColumn(getColumnNameFirstName(),fName);
     }
 
     public void setMiddleName(String mName) {
-      setColumn(getMiddleNameColumnName(),mName);
+      setColumn(getColumnNameMiddleName(),mName);
     }
 
     public void setLastName(String lName) {
-      setColumn(getLastNameColumnName(),lName);
+      setColumn(getColumnNameLastName(),lName);
     }
 
     public void setDisplayName(String dName) {
-      setColumn(getLastNameColumnName(),dName);
+      setColumn(getColumnNameDisplayName(),dName);
     }
 
     public void setDescription(String description) {
-      setColumn(getLastNameColumnName(),description);
+      setColumn(getColumnNameDescription(),description);
     }
 
     public void setDateOfBirth(Date dateOfBirth){
-      setColumn(getDateOfBirthColumnName(),dateOfBirth);
+      setColumn(getColumnNameDateOfBirth(),dateOfBirth);
     }
 
     public void setGender(Integer gender){
-      setColumn(getGenderColumnName(),gender);
+      setColumn(getColumnNameGender(),gender);
     }
 
     public void setGender(int gender){
-      setColumn(getGenderColumnName(),gender);
+      setColumn(getColumnNameGender(),gender);
     }
 
     public void setSystemImageID(Integer fileID){
-      setColumn(getSystemImageColumnName(),fileID);
+      setColumn(getColumnNameSystemImage(),fileID);
     }
 
     public void setSystemImageID(int fileID){
-      setColumn(getSystemImageColumnName(),fileID);
+      setColumn(getColumnNameSystemImage(),fileID);
     }
 
     /*  Setters end   */
