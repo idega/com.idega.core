@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.7 2003/02/06 17:08:08 laddi Exp $
+ * $Id: RadioButton.java,v 1.8 2003/11/05 21:01:13 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,9 @@ import com.idega.presentation.IWContext;
  * @version 1.2
  */
 public class RadioButton extends GenericInput {
+
+	private boolean _mustBeSelected = false;
+	private String _errorMessage;
 
 	/**
 	 * Constructs a new <code>RadioButton</code> with the name "untitled" and the value
@@ -70,6 +73,32 @@ public class RadioButton extends GenericInput {
 		return false;
 	}
 
+	public void main(IWContext iwc) {
+		if (isEnclosedByForm()) {
+			if (_mustBeSelected) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("function isSelected(inputs,message) {").append("\n\t");
+				buffer.append("if (inputs.length > 1) {").append("\n\t\t");
+				buffer.append("for(var i=0;i<inputs.length;i++) {").append("\n\t\t\t");
+				buffer.append("if (inputs[i].selected == true)").append("\n\t\t\t\t");
+				buffer.append("return true;").append("\n\t\t");
+				buffer.append("}").append("\n\t");
+				buffer.append("}").append("\n\t");
+				buffer.append("else {").append("\n\t\t");
+				buffer.append("if (inputs.selected == true)").append("\n\t\t\t");
+				buffer.append("return true;").append("\n\t");
+				buffer.append("}").append("\n\t");
+				buffer.append("alert(message);").append("\n");
+				buffer.append("return false;").append("\n}");
+				this.setOnSubmitFunction("isSelected", buffer.toString(), _errorMessage);
+			}
+		}
+	}
+	public void setMustBeChecked(String errorMessage) {
+		_mustBeSelected = true;
+		_errorMessage = errorMessage;
+	}
+	
 	public void handleKeepStatus(IWContext iwc) {
 		String[] parameters = iwc.getParameterValues(getName());
 		if (parameters != null) {
