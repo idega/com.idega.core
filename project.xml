@@ -23,6 +23,9 @@
   <mailingLists>
     <mailingList>
       <name>${pom.name} Dev List</name>
+      <subscribe>idegaweb-dev-request@darwin.idega.is</subscribe>
+      <unsubscribe>idegaweb-dev-request@darwin.idega.is</unsubscribe>
+      <archive>http://darwin.idega.is/pipermail/idegaweb-dev/</archive>
     </mailingList>
     <mailingList>
       <name>${pom.name} User List</name>
