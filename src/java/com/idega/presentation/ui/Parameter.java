@@ -1,15 +1,26 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
+ * $Id: Parameter.java,v 1.10 2005/03/08 20:39:42 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
 import com.idega.presentation.IWContext;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * This class is used to render out an (invisible hidden input) to add a parameter to a Form.
+ * This parameter has a name/value that has only a meaning inside a Form and is submitted with the form in a POST or GET.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 20:39:42 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.10 $
+ */
 public class Parameter extends GenericInput {
 
 	/**

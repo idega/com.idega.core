@@ -1,8 +1,11 @@
 /*
+ * $Id: Image.java,v 1.3 2005/03/02 09:18:49 laddi Exp $
  * Created on 10.11.2003
  *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Copyright (C) 2003-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.presentation.ui;
 
@@ -10,9 +13,15 @@ import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 
-
 /**
- * @author laddi
+ * <p>
+ * This class renders out a &lt;legend&gt; element used in forms and in conjunction with the FieldSet component/tag.
+ * </p>
+ *  Last modified: $Date: 2005/03/02 09:18:49 $ by $Author: laddi $
+ * 
+ * @author <a href="mailto:laddi@idega.com">Laddi</a>
+ * @version $Revision: 1.3 $
+ * @see FieldSet
  */
 public class Legend extends PresentationObject {
 	
