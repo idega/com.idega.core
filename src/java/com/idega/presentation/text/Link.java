@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.70 2002/04/10 09:58:30 laddi Exp $
+ * $Id: Link.java,v 1.71 2002/05/05 20:16:05 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -445,7 +445,7 @@ public class Link extends Text{
   /**
    *
    */
-  public void setURL(String url) {
+  public void setURL(String url, boolean maintainAllGlobalParameters, boolean maintainBuilderParameters) {
     StringTokenizer urlplusprm = new StringTokenizer(url,"?");
     String newUrl = urlplusprm.nextToken();
     if(urlplusprm.hasMoreTokens()){
@@ -463,8 +463,12 @@ public class Link extends Text{
       }
     }
     setAttribute(HREF_ATTRIBUTE,newUrl);
-    this._maintainAllGlobalParameters = false;
-    this._maintainBuilderParameters = false;
+    this._maintainAllGlobalParameters = maintainAllGlobalParameters;
+    this._maintainBuilderParameters = maintainBuilderParameters;
+  }
+
+  public void setURL(String url) {
+    setURL(url,false,false);
   }
 
   /**
@@ -1257,6 +1261,11 @@ public class Link extends Text{
   public void setToMaintainBuilderParameters(boolean value){
     _maintainBuilderParameters = value;
   }
+
+//  public static String getIWLinkURL(IWContext iwc, String URL){
+//    Link srcLink = new Link();
+//    return srcLink.getParameterString(iwc, URL);
+//  }
 
   /**
    *
