@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.132 2005/01/28 11:05:36 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.133 2005/02/01 17:30:38 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -51,16 +51,26 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.search.business.SearchPluginManager;
+import com.idega.core.uri.URIManager;
 import com.idega.core.view.ViewManager;
+import com.idega.data.DatastoreInterface;
+import com.idega.data.EntityFinder;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOUtil;
+import com.idega.event.IWEventProcessor;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
 import com.idega.util.Executer;
@@ -78,10 +88,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/28 11:05:36 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/01 17:30:38 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.132 $
+ * @version $Revision: 1.133 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -549,7 +559,10 @@ public class IWMainApplication //{//implements ServletContext{
             }
             cacheManager=null;
             windowClassesStaticInstances=null;
+            
             shutdownApplicationServices();
+            SingletonRepository.stop();
+            
             application.removeAttribute(APPLICATION_BEAN_ID);
 
             removeAllApplicationAttributes();
@@ -576,24 +589,16 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public void shutdownApplicationServices(){
-    	ICLocaleBusiness.unload();
-    	ImageFactory.unload();
-    		try {
-			BuilderServiceFactory.getBuilderService(this.getIWApplicationContext()).unload();
-		}
-		catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ThreadContext.getInstance().unload();
-		IDOContainer.unload();
+    	// very special singletons
 		IDOLookup.unload();
 		IBOLookup.unload();
-		ViewManager.unload();
+		ThreadContext.unload();
+    	// mutable classes
+    	ICLocaleBusiness.unload();
 		SQLSchemaAdapter.unload();
 		IWWelcomeFilter.unload();
 		BaseFilter.unload();
-    		
+		DatastoreInterface.unload();
     }
     
     public void storeStatus() {
@@ -960,7 +965,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public ImageFactory getImageFactory() {
-        return ImageFactory.getStaticInstance(this);
+        return ImageFactory.getInstance(this);
     }
 
     public IWBundle getCoreBundle() {

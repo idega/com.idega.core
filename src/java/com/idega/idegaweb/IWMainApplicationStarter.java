@@ -31,6 +31,7 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
@@ -236,15 +237,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			e.printStackTrace(System.err);
 		}
 		
+		// reset singletons
+		iwma.shutdownApplicationServices();
+		// enable singletons
+		SingletonRepository.start();
+		
 		//IWMainApplication application = new IWMainApplication(this.getServletContext());
+		
 		IWMainApplication application = iwma;
 		setApplicationVariables(application);
 		application.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		
 		this.startDatabasePool();
 		this.startLogManager();
-		IWStyleManager iwStyleManager = new IWStyleManager(application);
-		iwStyleManager.getStyleSheet();
+		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
+		iwStyleManager.getStyleSheet(application);
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
 		if(!application.isInDatabaseLessMode()){
@@ -543,7 +550,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
 		//IWMainApplication application = iwma;
 		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
-		IWStyleManager iwStyleManager = new IWStyleManager(iwma);
+		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
 		iwma.unload();
