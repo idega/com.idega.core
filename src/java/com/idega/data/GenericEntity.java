@@ -4559,6 +4559,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	
 	/**
+	 * Finds one entity that has this column value
+	 */
+	protected Object idoFindOnePKByColumnBySQL(String columnName, String toFind) throws FinderException
+	{
+		return idoFindOnePKBySQL("select * from " + getTableName() + " where " + columnName + " like '" + toFind + "'");
+	}
+	
+	/**
 	 * Finds all entities by a metadata key or metadata key and value
 	 * @param key, the metadata name cannot be null
 	 * @param value, the metadata value can be null
