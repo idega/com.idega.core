@@ -465,8 +465,8 @@ public  class EntityControl{
         }
 
 
-
-        protected static String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+        //Changed by laddi, why protected?????
+        public static String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
 
           String tableName = getManyToManyRelationShipName(entity1,entity2);
           if (tableName==null){
