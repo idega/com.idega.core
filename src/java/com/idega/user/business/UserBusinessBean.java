@@ -135,10 +135,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       return createUser(firstname,middlename,lastname,displayname,null,description,gender,date_of_birth,primary_group);
   }
 
-  public User createUser(String firstname, String middlename, String lastname, String displayname, String personalID, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+  public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
     try{
       User userToAdd = getUserHome().create();
-      if(firstname != null){
+
+       /**
+       * @todo Using setFullName in stead
+       * is this ok and should it be done also in updateUser (I don´t think so)?
+       * @modified by Eirikur Hrafnsson
+       */
+
+      StringBuffer fullName = new StringBuffer();
+
+      firstName = (firstName==null) ? "" : firstName;
+      middleName = (middleName==null) ? "" : middleName;
+      lastName = (lastName==null) ? "" : lastName;
+
+      fullName.append(firstName).append("").append(middleName).append("").append(lastName);
+
+      userToAdd.setFullName(fullName.toString());
+
+      /*if(firstname != null){
         userToAdd.setFirstName(firstname);
       }
       if(middlename != null){
@@ -146,7 +163,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
       if(lastname != null){
         userToAdd.setLastName(lastname);
-      }
+      }*/
+
+
       if(displayname != null){
         userToAdd.setDisplayName(displayname);
       }
