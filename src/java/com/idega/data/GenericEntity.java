@@ -2220,28 +2220,31 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    return getIntTableValue(null, query);
 	}
 	
-	private Statement stmt = null;
-	private ResultSet rs = null;
-	
 	private int getIntTableValue(String CountSQLString,SelectQuery query ) throws SQLException {
 		Connection conn = null;
-		
+		//Statement stmt = null;
+		//ResultSet rs = null;
+		ResultHelper rsh = null;
 		int recordCount = -1;
 		try {
 			conn = getConnection(this.getDatasource());
-			rs = prepareResultSet(conn,CountSQLString,query);
-			if (rs.next())
-				recordCount = rs.getInt(1);
-			rs.close();
+			rsh = prepareResultSet(conn,CountSQLString,query);
+			if (rsh.rs.next())
+				recordCount = rsh.rs.getInt(1);
+			//rs.close();
 			//System.out.println(SQLString+"\n");
 		} catch (SQLException e) {
 			throw new SQLException("There was an error in com.idega.data.GenericEntity.getNumberOfRecords \n" + e.getMessage());
 		} catch (Exception e) {
 			System.err.println("There was an error in com.idega.data.GenericEntity.getNumberOfRecords " + e.getMessage());
 		} finally {
+		    if(rsh!=null){
+		        rsh.close();
+		    }
+		    /*
 			if (stmt != null) {
 				stmt.close();
-			}
+			}*/
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
 			}
@@ -3655,7 +3658,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    return idoFindPKsBySQLIgnoringCache(sqlQuery,returningNumber,startingEntry,null);
 	}
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry,SelectQuery query) throws FinderException {
-		//if (this.isDebugActive()) {
+		
+	    //if (this.isDebugActive()) {
 			logSQL(sqlQuery);
 		//}
 
@@ -3665,15 +3669,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			returningNumber = 0;
 
 		Connection conn = null;
+		//ResultSet rs = null;
+		ResultHelper rsh = null;
 		
 		Vector vector = new Vector();
 		try {
 		    
 			conn = getConnection(getDatasource());
-			rs = prepareResultSet(conn,sqlQuery,query);
+			rsh = prepareResultSet(conn,sqlQuery,query);
 			int counter = 0;
 			boolean addEntity = false;
-			while (rs.next()) {
+			while (rsh.rs.next()) {
 				if (startingEntry <= counter) {
 					if (returningNumber > 0) {
 						if (counter < (returningNumber + startingEntry))
@@ -3685,7 +3691,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					}
 
 					if (addEntity) {
-						Object pk = this.getPrimaryKeyFromResultSet(rs);
+						Object pk = this.getPrimaryKeyFromResultSet(rsh.rs);
 						if (pk != null) {
 							//prefetchBeanFromResultSet(pk, RS);
 							vector.addElement(pk);
@@ -3694,17 +3700,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				}
 				counter++;
 			}
-			rs.close();
+			
 		} catch (SQLException sqle) {
 			throw new IDOFinderException(sqle);
 		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		    if(rsh!=null)
+		        rsh.close();
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
 			}
@@ -3712,29 +3713,50 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return vector;
 	}
 	
-	
-	private ResultSet prepareResultSet(Connection conn, String sqlString, SelectQuery query) throws SQLException{
+	private class ResultHelper{
 	    ResultSet rs = null;
+	    Statement stmt = null;
+	    
+	    void close(){
+	        if(rs!=null)
+                try {
+                    rs.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+	        if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+	    }
+	}
+	
+	
+	private ResultHelper prepareResultSet(Connection conn, String sqlString, SelectQuery query) throws SQLException{
+	    ResultHelper rsh = new ResultHelper();
 	    if(query!=null){
 		    
-		    DatastoreInterface dsi = DatastoreInterface.getInstance(conn);
+		    DatastoreInterface dsi = DatastoreInterface.getDatastoreInterfaceByDatasource(getDatasource());
 			List values = query.getValues();
 			if(values!=null && dsi.isUsingPreparedStatements() ){
-			    stmt = conn.prepareStatement(query.toString(true));
-		    		dsi.insertIntoPreparedStatement(values,(PreparedStatement)stmt,1);
-		    		rs = ((PreparedStatement) stmt).executeQuery();
+			    rsh.stmt = conn.prepareStatement(query.toString(true));
+		    		dsi.insertIntoPreparedStatement(values,(PreparedStatement)rsh.stmt,1);
+		    		rsh.rs = ((PreparedStatement) rsh.stmt).executeQuery();
 			}
 			else{
-			    stmt = conn.createStatement();
-			    rs = stmt.executeQuery(query.toString());
+			    rsh.stmt = conn.createStatement();
+			    rsh.rs = rsh.stmt.executeQuery(query.toString());
 			}
 	    		
 		}
 		else if(sqlString!=null){
-		    stmt = conn.createStatement();
-		    rs = stmt.executeQuery(sqlString);
+		    rsh.stmt = conn.createStatement();
+		    rsh.rs = rsh.stmt.executeQuery(sqlString);
 		}
-		return rs;
+		return rsh;
 	}
 	
 	/**
