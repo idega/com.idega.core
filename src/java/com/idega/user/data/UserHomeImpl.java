@@ -38,9 +38,9 @@ public User findUserByUniqueId(String uniqueIdString) throws FinderException {
 }
 
 
-	public User findByFirstSixLettersOfPersonalIDAndFirstName(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException{
+	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(java.lang.String p0,java.lang.String p1, java.lang.String p2)throws javax.ejb.FinderException{
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Object pk = ((UserBMPBean)entity).ejbFindByFirstSixLettersOfPersonalIDAndFirstName(p0,p1);
+		Object pk = ((UserBMPBean)entity).ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(p0,p1,p2);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}

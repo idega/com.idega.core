@@ -1337,8 +1337,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns User from personal id returns null if not found
 	 */
-	public User findByFirstSixLettersOfPersonalIDAndFirstName(String personalID, String first_name) throws FinderException {
-		return getUserHome().findByFirstSixLettersOfPersonalIDAndFirstName(personalID, first_name);
+	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalID, String first_name, String last_name) throws FinderException {
+		return getUserHome().findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(personalID, first_name, last_name);
 	}
 
 	public Collection getUsersInNoGroup() throws SQLException {

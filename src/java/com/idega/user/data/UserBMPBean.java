@@ -1094,7 +1094,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    return (Integer)idoFindOnePKByQuery(query);
 	}
 
-	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstName(String personalId, String first_name) throws FinderException {
+	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
     
     if (personalId.length() < 6)
 	    throw new FinderException("PersonalID shorter than 6 letters");
@@ -1104,8 +1104,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			.appendLike()
 			.appendWithinSingleQuotes(personalId.substring(0,6)+"%")
 		.appendAnd().append(getColumnNameFirstName())
-		.appendLike()
+		.appendEqualSign()
 		.appendWithinSingleQuotes(first_name)
+		.appendAnd().append(getColumnNameLastName())
+		.appendEqualSign()
+		.appendWithinSingleQuotes(last_name)
 		.appendAnd();
 		appendIsNotDeleted(query);
     
