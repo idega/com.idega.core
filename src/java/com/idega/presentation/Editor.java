@@ -175,10 +175,9 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
     O.setAttribute("style",this.styleAttribute);
   }
   public void main(IWContext iwc){
-    try{
-    isAdmin = com.idega.jmodule.login.business.AccessControl.isAdmin(iwc);
-    }
-    catch(SQLException sql){ isAdmin = false;}
+
+    isAdmin = iwc.hasEditPermission(this);
+    isAdmin = false;
     control(iwc);
   }
 }// class TariffKeyEditor

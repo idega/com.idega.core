@@ -5,10 +5,10 @@
 
 package com.idega.servlet;
 
-import com.idega.jmodule.*;
-import com.idega.presentation.*;
-import com.idega.presentation.ui.*;
-import com.idega.idegaweb.*;
+import com.idega.presentation.jsp.JSPModule;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.idegaweb.IWMainApplication;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

@@ -38,7 +38,7 @@ private String align;
 
 private int imageId = -1;
 private ImageEntity image;
-private com.idega.jmodule.image.data.ImageEntity image2;
+//private com.idega.jmodule.image.data.ImageEntity image2;
 
 private int maxImageWidth = 140;
 
@@ -144,22 +144,27 @@ private void getImage(IWContext iwc) throws SQLException{
 
     if( cachedImage != null ){
       //debug
+      /*
       if( usesOldImageTables ){
         image2 = (com.idega.jmodule.image.data.ImageEntity) cachedImage.getEntity();
       }
-      else{
+      else
+      */{
         image = (ImageEntity) cachedImage.getEntity();
       }
+
       setURL(cachedImage.getVirtualPathToFile());
     }
   }
 
   //if(image==null){//if something went wrong or we are not using caching
-  if( (image==null) && (image2==null) ){//if something went wrong or we are not using caching
+  if( (image==null) ){//&& (image2==null) ){//if something went wrong or we are not using caching
+    /*
     if( usesOldImageTables ){
       image2 = new com.idega.jmodule.image.data.ImageEntity(imageId);
     }
-    else{
+    else
+    */{
       image = new ImageEntity(imageId);
     }
 
@@ -358,14 +363,14 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
   /**@todo : remove temporary backward compatability when no longer needed
    *
    */
-    if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
+    if( ((image!=null) && (image.getID()!=-1)) ){//(|| ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
 
       String texti = null;
       String link = null;
       String name = null;
       String width = null;
       String height = null;
-
+/*
       if( usesOldImageTables ){
         texti = image2.getText();
         link = image2.getLink();
@@ -373,7 +378,8 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
         width = image2.getWidth();
         height = image2.getHeight();
       }
-      else{
+      else
+      */{
         //texti = image.getDescription();
         //link = image.getLink();
         name = image.getName();

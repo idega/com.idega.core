@@ -54,7 +54,7 @@ public class Member extends GenericEntity implements Comparable{
 	public void setDefaultValues(){
 		setColumn("image_id",1);
 	}
-
+/*
         public com.idega.jmodule.login.data.LoginType[] getLoginType() {
           com.idega.jmodule.login.data.LoginType[] log_type = null;
 
@@ -66,7 +66,7 @@ public class Member extends GenericEntity implements Comparable{
           return log_type;
 
         }
-
+*/
 
 	public int getImageId(){
 		return getIntColumnValue("image_id");

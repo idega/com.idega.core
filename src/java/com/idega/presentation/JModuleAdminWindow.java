@@ -56,7 +56,7 @@ public String MenuAlignment = "&nbsp;&nbsp;&nbsp;&nbsp;";
   }*/
 
   public boolean isAdministrator(IWContext iwc)throws Exception{
-    return AccessControl.isAdmin(iwc);
+    return iwc.hasEditPermission(this);
   }
 
   /**

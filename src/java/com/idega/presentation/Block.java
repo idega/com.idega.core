@@ -8,7 +8,9 @@ package com.idega.presentation;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
-import com.idega.jmodule.login.business.*;
+//import com.idega.jmodule.login.business.*;
+//import com.idega.block.login.business.LoginBusiness;
+//import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.block.IWBlock;
 
@@ -54,7 +56,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     System.err.print("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
     return true;
   }
-
+/*
   public boolean isAdministrator(IWContext iwc)throws Exception{
     if(usingNewAcessControlSystem){
       return iwc.hasEditPermission(this);
@@ -63,7 +65,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       return AccessControl.isAdmin(iwc);
     }
   }
-
+*/
   /**
    * <H2>Unimplemented</H2>
    */
@@ -219,10 +221,11 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   }
 
   private void setCacheKey(IWContext iwc){
-    boolean loggedon = LoginBusiness.isLoggedOn(iwc);
-    if(loggedon){
-      String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
-      String parametervalue = null;
+    //boolean loggedon = LoginBusiness.isLoggedOn(iwc);
+    //if(loggedon){
+      //String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
+      String parametervalue = String.valueOf(getParentObjectInstanceID());
+      /*
       if(parameter.equals(AccessControl.CLUB_ADMIN_GROUP)){
         parametervalue = (String)iwc.getSessionAttribute(parameter);
       }
@@ -234,6 +237,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       }
       cacheKey = cacheKey+concatter+parameter+concatter+parametervalue;
     }
+    */
     this.cacheKey += iwc.getCurrentLocale().toString();
   }
 
