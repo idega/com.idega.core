@@ -21,6 +21,8 @@ public class GenericButton extends GenericInput {
 	private Image defaultImage;
 	private final String buttonImageStyle = "cursor:hand;";
 	private Class _windowClassToOpen;
+	private String _parameterName;
+	private String _parameterValue;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -51,7 +53,10 @@ public class GenericButton extends GenericInput {
 				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
 			}
 			if (_windowClassToOpen != null) {
-				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, iwc));
+				String URL = Window.getWindowURL(_windowClassToOpen, iwc);
+				if (_parameterName != null)
+					URL = URL + "&" + _parameterName + "=" + _parameterValue;
+				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 			}
 
 			if (defaultImage == null) {
@@ -91,13 +96,14 @@ public class GenericButton extends GenericInput {
 		}
 	}
 
-	public synchronized Object clone() {
+	public Object clone() {
 		GenericButton obj = (GenericButton) super.clone();
 		if (this.defaultImage != null) {
 			obj.defaultImage = (Image) this.defaultImage.clone();
 		}
 		return obj;
 	}
+	
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
@@ -107,5 +113,10 @@ public class GenericButton extends GenericInput {
 	
 	public void setWindowToOpen(Class windowClassToOpen) {
 		_windowClassToOpen = windowClassToOpen;
+	}
+	
+	public void addParameterToWindow(String name, String value) {
+		_parameterName = name;
+		_parameterValue = value;
 	}
 }
