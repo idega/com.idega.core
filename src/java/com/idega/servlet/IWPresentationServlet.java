@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.11 2001/07/04 18:12:16 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.12 2001/07/16 13:25:07 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -351,7 +351,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
   public String getLocalizedString(String key,ModuleInfo modinfo){
     IWResourceBundle bundle = getResourceBundle(modinfo);
     if(bundle!=null){
-      return bundle.getStringChecked(key);
+      return bundle.getLocalizedString(key);
     }
     return null;
   }
