@@ -12,7 +12,6 @@ import java.util.logging.LogManager;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
-import com.idega.builder.IWBundleStarter;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.data.EntityControl;

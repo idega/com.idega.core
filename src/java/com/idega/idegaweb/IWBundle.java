@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.78 2004/06/11 16:46:23 thomas Exp $
+ * $Id: IWBundle.java,v 1.79 2004/06/14 13:52:49 palli Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -38,7 +38,6 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
-import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.refactor.RefactorClassRegistry;
 import com.idega.xml.XMLElement;
