@@ -3,12 +3,21 @@
 
 package com.idega.util;
 
-import com.sun.image.codec.jpeg.*;
-import java.awt.*;
-import java.io.*;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryOutputStream;
-import java.awt.image.BufferedImage;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public  class Thumbnail
 {
@@ -19,6 +28,7 @@ public  class Thumbnail
     public static void main(String args[])
         throws Exception
     {
+        long start = System.currentTimeMillis();
         if (args.length < 5)
         {
             System.err.println("Usage: java Thumbnail INFILE OUTFILE WIDTH HEIGHT QUALITY");
@@ -30,6 +40,8 @@ public  class Thumbnail
         int thumbHeight = Integer.parseInt(args[3]);
         int quality = Integer.parseInt(args[4]);
         createThumbnail(fileName, thumbName, thumbWidth, thumbHeight, quality);
+        long end = System.currentTimeMillis();
+        System.out.println("scaling took "+((end-start)/1000)+" seconds");
         System.exit(0);
     }
 
