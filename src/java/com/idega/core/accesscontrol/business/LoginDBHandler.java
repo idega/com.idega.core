@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.52 2004/06/15 20:07:50 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.53 2004/07/16 08:42:43 aron Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -644,6 +644,7 @@ public class LoginDBHandler {
 		//int laststep = namelength-first.length();
 		String startletters = new String("ZWYX");
 		int startlettercount = startletters.length();
+		int number = 1;
 		java.util.ArrayList list = new java.util.ArrayList(196);
 		Random random = new Random();
 		boolean breakit = false;
@@ -692,7 +693,10 @@ public class LoginDBHandler {
 					count1 = first.length();
 					//laststep = namelength-first.length();
 				}
-
+				else if(alfa.length>=6 && number++ < 99){
+					array[row] = (alfabet.substring(0,6)+number).toCharArray();
+				
+				}
 				else if (startlettercount > 0) {
 
 					alfa = (startletters.charAt(startletters.length() - startlettercount) + alfabet).toCharArray();
