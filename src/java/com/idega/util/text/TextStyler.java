@@ -22,33 +22,32 @@ private String[] _styles = StyleConstants.ALL_STYLES;
 
 public TextStyler() {
   setDefaultValues();
-  setMapStyles();
 }
 
 public TextStyler(String styleString) {
   this();
   _styleString = styleString;
-  setMapStyles();
+  parseStyleString(styleString);
 }
 
   public String getStyleString() {
     Iterator iter = _styleMap.keySet().iterator();
     String attribute;
     String value;
-    String styleString = "";
+    StringBuffer styleString = new StringBuffer();
     while (iter.hasNext()) {
       attribute = (String) iter.next();
       value = (String) _styleMap.get(attribute);
       if ( value != null ) {
-        styleString += attribute + StyleConstants.DELIMITER_COLON + value + StyleConstants.DELIMITER_SEMICOLON;
+        styleString.append(attribute).append(StyleConstants.DELIMITER_COLON).append(value).append(StyleConstants.DELIMITER_SEMICOLON);
       }
     }
-    return styleString;
+    return styleString.toString();
   }
 
-  private void setMapStyles() {
-    if ( _styleString != null ) {
-      StringTokenizer tokens = new StringTokenizer(_styleString,";");
+  public void parseStyleString(String styleString) {
+    if ( styleString != null ) {
+      StringTokenizer tokens = new StringTokenizer(styleString,";");
       int a = -1;
       String attribute;
       String value;
