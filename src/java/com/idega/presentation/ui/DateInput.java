@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.44 2004/03/17 10:22:48 laddi Exp $
+ * $Id: DateInput.java,v 1.45 2004/03/18 15:31:03 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -770,6 +770,9 @@ public class DateInput extends InterfaceObject implements InputHandler{
 
 	public PresentationObject getHandlerObject(String name,	String stringValue, IWContext iwc) {
 		this.setName(name);
+		IWTimestamp to = IWTimestamp.RightNow();
+		this.setYearRange(1980,to.getYear());
+		this.setDate(to.getDate());			
 		return this;
 	}
 
@@ -781,7 +784,9 @@ public class DateInput extends InterfaceObject implements InputHandler{
 			}
 			else {
 				SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
-				return formatter.parse(dateString);
+				Date date = formatter.parse(dateString);
+				java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+				return sqlDate;
 			}		
 		}
 		else
