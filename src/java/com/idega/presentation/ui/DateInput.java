@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.38 2004/02/26 09:09:53 laddi Exp $
+ * $Id: DateInput.java,v 1.39 2004/03/05 17:06:42 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -8,10 +8,12 @@
  */
 package com.idega.presentation.ui;
 
+import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 
 import com.idega.util.IWTimestamp;
@@ -28,7 +30,7 @@ import java.util.Locale;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class DateInput extends InterfaceObject {
+public class DateInput extends InterfaceObject implements InputHandler{
   private Script _script;
   private DropdownMenu _theDay;
   private DropdownMenu _theMonth;
@@ -753,5 +755,38 @@ public class DateInput extends InterfaceObject {
 	 */
 	public boolean isContainer() {
 		return false;
+	}
+
+	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+		
+		if (value != null) {
+			return value.toString();
+		}
+		else {
+			return null;
+		}
+	}
+
+	public PresentationObject getHandlerObject(String name,	String stringValue, IWContext iwc) {
+		this.setName(name);
+		return this;
+	}
+
+	public Object getResultingObject(String[] value, IWContext iwc)	throws Exception {
+		if (value != null && value.length > 0) {
+			String dateString = value[0];
+			if (" ".equals(dateString)) {
+				return null;
+			}
+			else {
+				Date date = new Date();
+				date.setYear(Integer.parseInt(dateString.substring(2,4))+100);
+				date.setMonth(Integer.parseInt(dateString.substring(5,7))-1);
+				date.setDate(Integer.parseInt(dateString.substring(8,10)));
+				return date;
+			}		
+		}
+		else
+			return null;
 	}
 }
