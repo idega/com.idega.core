@@ -2179,7 +2179,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     groupIdUsersId.put(groupId, userIds);
   }
   
-  private boolean isMemberOfGroup(int parentGroupToTest, User user)  {
+  public boolean isMemberOfGroup(int parentGroupToTest, User user)  {
     // first check the primary group
     /* Eiki and jonas, commented out because we could not add users from old user system to the same group as
      their former primary group. We need this method to return false because they don't have a record in 

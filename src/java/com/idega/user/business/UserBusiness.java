@@ -198,6 +198,7 @@ public interface UserBusiness extends com.idega.business.IBOService
    */
   public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc);
 
+  public boolean isMemberOfGroup(int parentGroupToTest, User user) throws RemoteException;
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
 
 	/**
