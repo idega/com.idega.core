@@ -166,6 +166,7 @@ public interface UserBusiness extends com.idega.business.IBOService
 
 	
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException;
+	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user) throws RemoteException;
 
   public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException;
   public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException;

@@ -1529,9 +1529,58 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return null;
 	}
-			
-
-
+	
+	/**
+	 * Checks if a group is under a user's top group node. This can be used to check if the user is allowed to view the group.
+	 * @param iwc IWUserContext
+	 * @param group The group to check
+	 * @param user The user to check the group for
+	 * @return returns true if any of <code>user</code>s top group nodes is an ancestor of <code>group</code>, false otherwise.
+	 */
+	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user) throws RemoteException {
+		Collection topGroupNodes = null;
+		try {
+			topGroupNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("checking group " + group.getName() + " for top group ancestor for user " + user.getName());
+		if(topGroupNodes == null || topGroupNodes.isEmpty()) {
+			return false;
+		} else {
+			return isGroupUnderUsersTopGroupNode(iwc, group, user, topGroupNodes);
+		}
+	}
+	
+	/**
+	 * Helper method for {@link #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)}.
+	 * @see #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)
+	 */
+	private boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
+		boolean found = false; // whether ancestry with a top group node is found or not
+		while(!found && group!=null) {
+			if(topGroupNodes.contains(group)) {
+				found = true;
+				System.out.println("found top group ancestor, " + group.getName());
+				break;
+			}
+			Iterator parents = group.getParentGroups().iterator();
+			while(parents.hasNext() && !found) {
+				Group parent = (Group) parents.next();
+				try {
+					found = isGroupUnderUsersTopGroupNode(iwc, parent, user);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				if(found) {
+					break;
+				}
+			}
+		}
+		
+		return found;
+	}
 	
 	/**
 	 * Returns a collection of Groups that are this users top nodes. The nodes that he has either view or owner permissions to<br>
