@@ -34,6 +34,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           addAttribute(getNewUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
           //deprecated column
           addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
+          addAttribute(getLastChangedColumnName(),"Síðast breytt",true,true,Timestamp.class);
 
 	}
 
@@ -55,6 +56,10 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
         public static String getNewUserPasswordColumnName(){
           return _COLUMN_PASSWORD;
+        }
+
+        public static String getLastChangedColumnName() {
+          return("last_changed");
         }
 
         public static String getUserPasswordColumnName(){
@@ -232,4 +237,11 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           return User.getColumnNameUserID();
         }
 
+  public void setLastChanged(Timestamp when) {
+    setColumn(getLastChangedColumnName(),when);
+  }
+
+  public Timestamp getLastChanged() {
+    return((Timestamp)getColumnValue(getLastChangedColumnName()));
+  }
 }

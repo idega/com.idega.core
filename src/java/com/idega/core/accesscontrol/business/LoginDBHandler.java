@@ -94,6 +94,7 @@ public class LoginDBHandler {
       }
     }
 
+    loginTable.setLastChanged(idegaTimestamp.getTimestampRightNow());
 
     try {
       if(update){
