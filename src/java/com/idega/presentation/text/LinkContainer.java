@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.20 2004/07/02 02:27:49 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.21 2004/11/01 18:43:29 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -502,7 +502,9 @@ public class LinkContainer extends PresentationObjectContainer {
 				}
 			}
 
-			print("<a " + getMarkupAttributesString() + " >");
+			if (!iwc.isInEditMode()) {
+				print("<a " + getMarkupAttributesString() + " >");
+			}
 
 			List theObjects = this.getChildren();
 			if (theObjects != null) {
@@ -513,7 +515,9 @@ public class LinkContainer extends PresentationObjectContainer {
 				}
 			}
 
-			print("</a>");
+			if (!iwc.isInEditMode()) {
+				print("</a>");
+			}
 		}
 		else
 			if (getMarkupLanguage().equals("WML")) {
