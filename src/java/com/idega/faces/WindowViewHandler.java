@@ -142,10 +142,15 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 		//else{
 			String[] urlArray= StringHandler.breakDownURL(viewId);
 			if(urlArray.length<1){
-				encryptedClassName = "6975";
+				//encryptedClassName = "6975";
+				Class defaultClass = Class.forName("com.idega.workspace.WorkspaceLoginPage");
+				encryptedClassName = IWMainApplication.getEncryptedClassName(defaultClass);
 			}
-			else{
+			else if(urlArray.length==1){
 				encryptedClassName = urlArray[0];
+			}
+			else if(urlArray.length==2){
+				encryptedClassName = urlArray[1];
 			}
 			
 			//String encryptedClassName=urlArray[1];
