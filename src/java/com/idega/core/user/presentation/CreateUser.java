@@ -13,6 +13,8 @@ import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.util.idegaTimestamp;
+import com.idega.transaction.IdegaTransactionManager;
+import javax.transaction.TransactionManager;
 
 import java.sql.SQLException;
 
@@ -293,24 +295,22 @@ public class CreateUser extends Window {
       throw new Exception("password and confirmed password not the same");
     }
 
-
-    newUser = business.insertUser( modinfo.getParameter(firstNameFieldParameterName),
+    TransactionManager transaction = IdegaTransactionManager.getInstance();
+    try{
+      transaction.begin();
+      newUser = business.insertUser( modinfo.getParameter(firstNameFieldParameterName),
                                    modinfo.getParameter(middleNameFieldParameterName),
                                    modinfo.getParameter(lastNameFieldParameterName),
                                    null,null,null,null);
 
-    try{
+
       LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,idegaTimestamp.RightNow(),
                                  5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage);
+
+      transaction.commit();
     }catch(Exception e){
-      try {
-        newUser.delete();
-        throw new Exception(e.getMessage()+" : User entry was removed");
-      }
-      catch (SQLException ex) {
-          ex.printStackTrace();
-          throw new Exception(e.getMessage()+"Transaction faild: User entry failed to remove");
-      }
+      transaction.rollback();
+      throw new Exception(e.getMessage()+" : User entry was removed");
     }
 
   }

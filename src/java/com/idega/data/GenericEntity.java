@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.33 2001/08/08 12:46:20 palli Exp $
+ * $Id: GenericEntity.java,v 1.34 2001/08/13 12:14:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1298,8 +1298,7 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 
-
-	public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{
+        public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{
 		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
                 StringBuffer buffer=new StringBuffer();
                 buffer.append("select * from ");
@@ -1603,6 +1602,32 @@ public abstract class GenericEntity implements java.io.Serializable {
 		}
 
 	}
+
+
+        /**
+        * Attention: Beta implementation
+        */
+	public void addTo(Class entityToAddTo, int id)throws SQLException{
+
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable((GenericEntity)GenericEntity.getStaticInstance(entityToAddTo),this)+"("+getIDColumnName()+","+((GenericEntity)GenericEntity.getStaticInstance(entityToAddTo)).getIDColumnName()+") values("+getID()+","+id+")");
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+	}
+
+
 
 
 
