@@ -56,7 +56,7 @@ public class NavigationPulldownMenu extends Block {
 				nodeVector.add(node);
 				withRootAsHome = false;
 			}
-			Iterator iter = node.getChildren();
+			Iterator iter = node.getChildrenIterator();
 			while (iter.hasNext())
 				nodeVector.add((ICTreeNode) iter.next());
 			if (withRootAsHome && !left)
@@ -107,7 +107,7 @@ public class NavigationPulldownMenu extends Block {
 		layer.setID("menu" + String.valueOf(node.getNodeID()));
 		layer.setMarkupAttribute("class", "menu");
 		table.add(layer);
-		Iterator iterator = node.getChildren();
+		Iterator iterator = node.getChildrenIterator();
 		while (iterator.hasNext()) {
 			ICTreeNode n = (ICTreeNode) iterator.next();
 			Layer subLayer = new Layer(Layer.DIV);

@@ -497,8 +497,8 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	 * ICTreeNode implementation begins
 	 */
 
-	public Iterator getChildren() {
-		return this.getGeneralGroup().getChildren();
+	public Iterator getChildrenIterator() {
+		return this.getGeneralGroup().getChildrenIterator();
 	}
 
 	public boolean getAllowsChildren() {

@@ -1389,7 +1389,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return !relations.isEmpty();
 	}
 
-	public Iterator getChildren() {
+	public Iterator getChildrenIterator() {
 		/**
 		 * @todo: Change implementation this first part may not be needed. (Eiki,gummi)
 		 *

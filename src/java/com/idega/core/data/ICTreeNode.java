@@ -18,7 +18,7 @@ public interface ICTreeNode {
 	/**
 	 * Returns the children of the reciever as an Enumeration.
 	 */
-	public Iterator getChildren();
+	public Iterator getChildrenIterator();
 	/**
 	 *  Returns true if the receiver allows children.
 	 */

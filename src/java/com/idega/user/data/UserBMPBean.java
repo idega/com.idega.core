@@ -998,7 +998,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    return false;
 	}
 	
-	public Iterator getChildren() {
+	public Iterator getChildrenIterator() {
 		return ListUtil.getEmptyList().iterator();
 	}
 	public boolean getAllowsChildren() {

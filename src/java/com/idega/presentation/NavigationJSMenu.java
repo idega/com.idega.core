@@ -73,7 +73,7 @@ public class NavigationJSMenu extends Block {
 			}
 			catch(NotLoggedOnException nle){}
 			ICTreeNode node = bservice.getPageTree(rootNode,userId);
-			Iterator iterator = node.getChildren();
+			Iterator iterator = node.getChildrenIterator();
 			row = 0;
 			int parentRow = -1;
 			while (iterator.hasNext()) {
@@ -119,7 +119,7 @@ public class NavigationJSMenu extends Block {
 	
 			buffer.append("new Array(");
 			
-			Iterator iterator = parent.getChildren();
+			Iterator iterator = parent.getChildrenIterator();
 			while (iterator.hasNext()) {
 				ICTreeNode grandChild = (ICTreeNode) iterator.next();
 				buffer.append("'").append(grandChild.getNodeName(iwc.getCurrentLocale())).append("',");
@@ -131,7 +131,7 @@ public class NavigationJSMenu extends Block {
 			}
 			buffer.append(");").append("\n");
 	
-			Iterator iterator2 = parent.getChildren();
+			Iterator iterator2 = parent.getChildrenIterator();
 			while (iterator2.hasNext()) {
 				addRow(iwc, (row - 1), subSubRow, (ICTreeNode) iterator2.next(), buffer);
 				subSubRow++;

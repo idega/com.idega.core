@@ -67,9 +67,9 @@ public class ImageSlideShow extends Block
 			Iterator iter = null;
 			int size = 1;
 			int folderSize = fileFolder.getChildCount();
-			if (fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null)
+			if (fileFolder.getChildCount() > 0 && fileFolder.getChildrenIterator() != null)
 			{
-				iter = fileFolder.getChildren();
+				iter = fileFolder.getChildrenIterator();
 				size += folderSize;
 			}
 			else if (listOfFiles != null)

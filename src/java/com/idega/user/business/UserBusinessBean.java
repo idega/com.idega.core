@@ -2166,7 +2166,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         // if the type equals to the specified type iterate over the children
         if (parentGroupType != null && (parentGroupType.equals(group.getGroupType())))  {
           //Iterator childIterator = groupBiz.getChildGroups(group).iterator();
-          Iterator childIterator = group.getChildren();
+          Iterator childIterator = group.getChildrenIterator();
           while (childIterator.hasNext()) {
             Group childGroup = (Group) childIterator.next();
             String childGroupId = childGroup.getPrimaryKey().toString();

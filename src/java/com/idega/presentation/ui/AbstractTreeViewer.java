@@ -188,7 +188,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 		
 		if (defaultRoot.getChildCount() > 0) {
-			drawTree(defaultRoot.getChildren(), null, iwc);
+			drawTree(defaultRoot.getChildrenIterator(), null, iwc);
 		}
 		
 		if (lightRowStyle != null && darkRowStyle != null) {
@@ -481,7 +481,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				frameTable.add(treeColumns, 1, rowIndex);
 
 				if (hasChild && isOpen) {
-					drawTree(item.getChildren(), newCollectedIcons, iwc);
+					drawTree(item.getChildrenIterator(), newCollectedIcons, iwc);
 				}
 			}
 		}
@@ -508,7 +508,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	}
 
 	public void setInitOpenLevel() {
-		Iterator iter = this.defaultRoot.getChildren();
+		Iterator iter = this.defaultRoot.getChildrenIterator();
 		if (defaultOpenLevel > 0) {
 			setInitOpenLevel(iter, 1);
 		}
@@ -523,7 +523,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 					openNodes.add(item);
 				}
 				if (level < defaultOpenLevel) {
-					setInitOpenLevel(node.getChildren(), level + 1);
+					setInitOpenLevel(node.getChildrenIterator(), level + 1);
 				}
 			}
 		}
@@ -853,7 +853,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		/**
 		 * Returns the children of the reciever as an Enumeration.
 		 */
-		public Iterator getChildren() {
+		public Iterator getChildrenIterator() {
 			if (childrens != null) {
 				return childrens.iterator();
 			} else {

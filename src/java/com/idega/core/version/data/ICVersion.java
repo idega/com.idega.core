@@ -10,7 +10,7 @@ public interface ICVersion extends com.idega.data.IDOEntity,com.idega.core.data.
 	 * 
 	 * @uml.property name="children"
 	 */
-	public java.util.Iterator getChildren();
+	public java.util.Iterator getChildrenIterator();
 
 	/**
 	 * 

@@ -56,7 +56,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setFullName(java.lang.String p0);
  public void removeEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDORemoveRelationshipException;
  public java.util.List getListOfAllGroupsContaining(int p0)throws javax.ejb.EJBException;
- public java.util.Iterator getChildren();
+ public java.util.Iterator getChildrenIterator();
  public java.util.Collection getAddresses();
  public boolean isUser();
  public java.lang.String getGroupType();

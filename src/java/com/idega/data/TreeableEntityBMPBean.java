@@ -64,7 +64,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * Returns the children of the reciever as an Iterator. Returns null if no children found
 	 */
-	public Iterator getChildren() {
+	public Iterator getChildrenIterator() {
 		return getChildren(null);
 	}
 

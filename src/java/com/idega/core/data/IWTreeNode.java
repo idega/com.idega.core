@@ -75,9 +75,9 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		this.childs.add(new IWTreeNode(name,id));
 	}
 	/**
-	 * @see com.idega.core.ICTreeNode#getChildren()
+	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
-	public Iterator getChildren() {
+	public Iterator getChildrenIterator() {
 		return this.childs.iterator();
 	}
 	/**

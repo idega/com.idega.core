@@ -351,7 +351,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		if (file != null)
 			file.removeChild(this);
 
-		Iterator iter = getChildren();
+		Iterator iter = getChildrenIterator();
 		if (iter != null) {
 			while (iter.hasNext()) {
 				ICFile item = (ICFile)iter.next();
@@ -392,7 +392,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		if (file != null)
 			file.removeChild(this);
 
-		Iterator iter = getChildren();
+		Iterator iter = getChildrenIterator();
 		if (iter != null) {
 			while (iter.hasNext()) {
 				ICFile item = (ICFile)iter.next();

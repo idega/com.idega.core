@@ -31,7 +31,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public java.util.List getChildGroups()throws javax.ejb.EJBException;
  public java.util.Collection getChildGroups(Group p0)throws javax.ejb.EJBException;
  public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
- public java.util.Iterator getChildren();
+ public java.util.Iterator getChildrenIterator();
  public java.sql.Timestamp getCreated();
  public java.lang.String getDescription();
  public java.util.Collection getEmails();

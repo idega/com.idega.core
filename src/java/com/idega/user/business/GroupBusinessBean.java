@@ -1341,7 +1341,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
   private void addGroupTypeChildren(List list, GroupType groupType)  {
-    Iterator iterator = groupType.getChildren();
+    Iterator iterator = groupType.getChildrenIterator();
     while (iterator != null && iterator.hasNext())  {
       GroupType child = (GroupType) iterator.next();
       if(!list.contains(child)){
