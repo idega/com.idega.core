@@ -95,7 +95,6 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4,com.idega.util.IWTimestamp p5,com.idega.user.data.Group p6)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,com.idega.user.data.Group p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getAllUsersOrderedByFirstName()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Collection getUsersWithContract()throws FinderException,RemoteException;
  public com.idega.user.data.GroupHome getGroupHome() throws java.rmi.RemoteException;
 
  public java.util.Collection getNonParentGroups(int p0) throws java.rmi.RemoteException;
