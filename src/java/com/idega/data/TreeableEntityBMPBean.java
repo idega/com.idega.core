@@ -66,11 +66,12 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			String idColumnName = this.getIDColumnName();
 			String childIDColumnName = EntityControl.getTreeRelationShipChildColumnName(this);
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("select " + thisTable + ".* from " + thisTable + "," + treeTable + " where " + thisTable + "." + idColumnName + "=" + treeTable + "." + childIDColumnName + " and " + treeTable + "." + idColumnName + "='" + this.getPrimaryKey().toString() + "'");
+			//buffer.append("select " + thisTable + ".* from " + thisTable + "," + treeTable + " where " + thisTable + "." + idColumnName + "=" + treeTable + "." + childIDColumnName + " and " + treeTable + "." + idColumnName + "='" + this.getPrimaryKey().toString() + "'");
+			buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString());
 			if (orderBy != null && !orderBy.equals("")) {
-				buffer.append(" order by " + thisTable + "." + orderBy);
+				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
-
+			//System.out.println(buffer.toString());
 			List list = EntityFinder.findAll(this, buffer.toString());
 			if (list != null) {
 				if (_sortLeafs) {
@@ -130,7 +131,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public ICTreeNode getParentNode() {
 		try {
-			int parent_id = EntityControl.returnSingleSQLQuery(this, "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey().toString() + "'");
+			int parent_id = EntityControl.returnSingleSQLQuery(this, "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "=" + this.getPrimaryKey().toString() + "");
 			if (parent_id != -1) {
 				GenericEntity entity = (GenericEntity)this.getClass().newInstance();
 				entity.findByPrimaryKey(parent_id);
