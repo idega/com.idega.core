@@ -6,6 +6,7 @@ import com.idega.core.business.ICTreeNodeLeafComparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Title:        idegaclasses
@@ -36,9 +37,19 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	public int getNodeID() {
 		return getID();
 	}
-
+	
+	/**
+	 * Default implementation just calls getName()
+	 */
 	public String getNodeName() {
 		return getName();
+	}
+	
+	/**
+	 * Default implementation just calls getNodeName()
+	 */
+	public String getNodeName(Locale locale) {
+		return getNodeName();
 	}
 
 	/**

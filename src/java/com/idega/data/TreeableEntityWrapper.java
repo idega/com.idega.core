@@ -8,6 +8,7 @@ package com.idega.data;
 
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.ejb.FinderException;
 
@@ -108,6 +109,14 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 	public String getNodeName() {
 		return ((TreeableEntity)this.getMainEntity()).getNodeName();
 	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getNodeName()
+	 */
+	public String getNodeName(Locale locale) {
+		return ((TreeableEntity)this.getMainEntity()).getNodeName(locale);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#getParentEntity()

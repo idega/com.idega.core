@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.FinderException;
 
@@ -343,6 +344,13 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	 */
 	public String getNodeName() {
 		return this.getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getNodeName(Locale locale)
+	 */
+	public String getNodeName(Locale locale) {
+		return this.getNodeName();
 	}
 
 	/* (non-Javadoc)

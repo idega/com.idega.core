@@ -1,6 +1,7 @@
 package com.idega.core;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Locale;
 /**
  * 
  * <p>Company: idegaweb </p>
@@ -173,6 +174,14 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 */
 	public void setNodePath(String string) {
 		path = string;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getNodeName(java.util.Locale)
+	 */
+	public String getNodeName(Locale locale)
+	{
+		return getNodeName();
 	}
 
 }
