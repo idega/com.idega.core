@@ -64,6 +64,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
+	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+	private static final int PREFETCH_SIZE = 100;
 	
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
@@ -1996,6 +1998,45 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
   
+  public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException {
+      Table userTable = new Table(TABLE_NAME, "u");
+	  Table userStatusTable = new Table(UserStatusBMPBean.ENTITY_NAME, "us");
+	  Table statusTable = new Table(StatusBMPBean.ENTITY_NAME, "s");
+	  
+	  Table groupRelationSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
+	  SelectQuery subQuery = new SelectQuery(groupRelationSubTable);
+	  subQuery.addColumn(new Column(groupRelationSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN));
+	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE));
+	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
+	  subQuery.addCriteria(new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groups));
+	  
+	  SelectQuery query = new SelectQuery(userTable);
+	  query.addColumn(new WildCardColumn(userTable));
+	  query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), subQuery));
+	  if (userStatuses != null && !userStatuses.isEmpty()) {
+	      query.addJoin(userTable, getColumnNameUserID(), userStatusTable,UserStatusBMPBean.IC_USER);
+	      query.addJoin(userStatusTable, UserStatusBMPBean.STATUS_ID, statusTable, StatusBMPBean.ENTITY_NAME+"_id");
+		  query.addCriteria(new MatchCriteria(userStatusTable,UserStatusBMPBean.DATE_TO,MatchCriteria.IS,MatchCriteria.NULL));
+		  query.addCriteria(new InCriteria(userStatusTable, UserStatusBMPBean.IC_GROUP, groups));
+		  if (userStatuses.size() == 1){
+	          query.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
+	      } else {
+	          query.addCriteria(new InCriteria(statusTable,StatusBMPBean.STATUS_LOC_KEY, userStatuses));
+	      }  
+	  }
+	  if (yearOfBirthFrom != null) {
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.GREATEREQUAL, yearOfBirthFrom));
+	  }
+	  if (yearOfBirthTo != null) {
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL, yearOfBirthTo));
+	  }
+	  if (gender != null) {
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameGender(),MatchCriteria.EQUALS, gender));
+	  }
+//	  query.addOrder(groupTable, getColumnNameUserID(), true);
+	  return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
+//	  return idoFindPKsBySQL(query.toString());
+  }
   
   
   /**

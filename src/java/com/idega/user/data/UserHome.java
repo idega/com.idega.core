@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -40,5 +41,6 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date firstBirthDateInPeriode, java.sql.Date lastBirthDateInPeriode, Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;
  public java.util.Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;
  public User findUserByUniqueId(String uniqueIdString) throws FinderException;
+ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException;
 	
 }

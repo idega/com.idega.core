@@ -242,6 +242,12 @@ public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup,
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(groups, userStatuses, yearOfBirthFrom, yearOfBirthTo, gender);
+	this.idoCheckInPooledEntity(entity);
 
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
 }
