@@ -11,6 +11,7 @@ import java.io.File;
 import com.idega.util.FileUtil;
 import java.util.List;
 import com.idega.util.LocaleUtil;
+import com.idega.data.EntityControl;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -108,6 +109,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
     public void setEntityAutoCreation(boolean ifAutoCreate){
       this.setProperty("entity-auto-create",ifAutoCreate);
+      EntityControl.setAutoCreationOfEntities(ifAutoCreate);
     }
 
     public boolean getIfEntityAutoCreate(){
