@@ -4,6 +4,7 @@
 */
 package com.idega.presentation.ui;
 
+import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 
 /**
@@ -15,6 +16,22 @@ public class CheckBox extends GenericInput {
 	private boolean _mustBeChecked = false;
 	private String _errorMessage;
 
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[3];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(_mustBeChecked);
+		values[2] = _errorMessage;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_mustBeChecked = ((Boolean) values[1]).booleanValue();
+		_errorMessage = (String)values[2];
+	}		
+	
+	
 	/**
 	 * Constructs a new <code>CheckBox</code> with name set as "untitled" and value as
 	 * "unspecified".
