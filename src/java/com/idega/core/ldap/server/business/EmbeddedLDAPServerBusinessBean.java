@@ -11,9 +11,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
 import org.codehaus.plexus.ldapserver.server.EmbeddedLDAPServer;
-
+import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOServiceBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.FileUtil;
@@ -177,5 +176,16 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 			value = defaultValue;
 		}
 		return value;
+	}
+	
+	
+	public DirectoryString getRootDN(){
+		try {
+			return new DirectoryString(getBackendSettings().getProperty(EmbeddedLDAPServerConstants.PROPS_BACKEND_ZERO_ROOT));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
