@@ -79,6 +79,8 @@ public abstract class TabbedPropertyWindow extends Window {
     }
   }
 
+
+
   public abstract String getSessionAddressString();
 
   public abstract void initializePanel( IWContext iwc, TabbedPropertyPanel panel);
