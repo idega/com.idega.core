@@ -1675,6 +1675,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						//get all (recursively) parents for permission
 						Iterator permissions = allViewAndOwnerPermissions.iterator();
 						Map cachedParents = new HashMap();
+						Map cachedGroups = new HashMap();
 						while (permissions.hasNext()) {
 							ICPermission perm = (ICPermission) permissions.next();
 							try {
@@ -1690,8 +1691,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								
 								if( !groupMap.containsKey(primaryKey) ){
 									Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
-									
-Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, groupMap);
+									if( !cachedGroups.containsKey(primaryKey) )
+										cachedGroups.put(primaryKey,permissionGroup);	
+									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
 									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
 									parents.put(primaryKey,parentMap);
 									groupMap.put(primaryKey,permissionGroup);
