@@ -2435,7 +2435,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return (PermissionGroupHome) IDOLookup.getHome(PermissionGroup.class);
 	}
 
-	private static ICPermissionHome getPermissionHome() throws RemoteException {
+	public static ICPermissionHome getPermissionHome() throws RemoteException {
 		return (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
 	}
 
@@ -2857,6 +2857,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol = new Vector(); //empty
 		}
 		return returnCol;
+	}
+	
+	public static ICPermission getICPermissionForGroupAndPermissionKeyContextTypeAndContextValue(Group group, String key, String contextType, String contextValue) throws RemoteException, FinderException {
+	    ICPermission perm = getPermissionHome().findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue(group,key,contextType,contextValue);
+	    
+	    return perm;
+	}
+	
+	public static ICPermission getGroupICPermissionForGroupAndPermissionKeyAndContextValue(Group group, String key, String contextValue) throws RemoteException, FinderException {
+	    return getICPermissionForGroupAndPermissionKeyContextTypeAndContextValue(group,key,AccessController.CATEGORY_STRING_GROUP_ID,contextValue);
 	}
 
 	public boolean hasRole(String roleKey, IWUserContext iwuc) {

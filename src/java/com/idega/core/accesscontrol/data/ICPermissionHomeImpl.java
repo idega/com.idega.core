@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.user.data.Group;
+
 
 public class ICPermissionHomeImpl extends com.idega.data.IDOFactory implements ICPermissionHome
 {
@@ -83,6 +85,21 @@ public java.util.Collection findAllPermissionsByPermissionGroupsCollectionAndPer
 	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,permissionString,contextType);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public Collection findAllGroupPermissionsToInheritByGroupCollection(Collection groups) throws FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllGroupPermissionsToInheritByGroupCollection(groups);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+    
+public ICPermission findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue(Group group,String permissionString, String contextType, String contextValue) throws FinderException{
+	
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((ICPermissionBMPBean)entity).ejbFindPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue(group,permissionString,contextType,contextValue);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
 }
 
  public ICPermission findByPrimaryKey(Object pk) throws javax.ejb.FinderException{

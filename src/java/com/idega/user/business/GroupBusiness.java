@@ -426,7 +426,7 @@ public interface GroupBusiness extends com.idega.business.IBOService {
      * @param groupToGetInheritanceFrom
      * @param groupToInheritPermissions
      */
-    public void applyPermissionInheritanceFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions);
+    public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions);
 
     /**
      * This method should only be called once for a newly created group if it was done in code. This method is
@@ -447,5 +447,14 @@ public interface GroupBusiness extends com.idega.business.IBOService {
    * @return
    * @throws RemoteException
    */
+    
+    /**
+     * Applies permissions that have been marked to be inherited to this group from its parents
+   * @param iwuc
+   * @param newlyCreatedGroup
+   * @throws RemoteException
+   */
+  public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException;
+  
   public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 }

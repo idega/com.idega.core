@@ -1673,7 +1673,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
    * @param groupToGetInheritanceFrom
    * @param groupToInheritPermissions
    */
-  public void applyPermissionInheritanceFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions) {
+  public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions) {
 
       if (groupToGetInheritanceFrom != null) {
           //is controller
@@ -1714,15 +1714,55 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       //owners should get the permission to give permission for this group
       applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(iwuc, newlyCreatedGroup);
 
-      //check if to inherit permissions from parent or its permission
+      //check if to parent group is a permissions controlling group or has a reference to a permission controlling group
       Collection parentGroups = newlyCreatedGroup.getParentGroups();
       
       if(parentGroups!=null && !parentGroups.isEmpty()) {
-          applyPermissionInheritanceFromGroupToGroup((Group)parentGroups.iterator().next(), newlyCreatedGroup);
+          applyPermissionControllingFromGroupToGroup((Group)parentGroups.iterator().next(), newlyCreatedGroup);
       }
+      
+      //apply permissions that have been marked to be inherited to this group from its parents
+      applyInheritedPermissionsToGroup(iwuc, newlyCreatedGroup);
+      
   }
   
   /**
+   * Applies permissions that have been marked to be inherited to this group from its parents
+ * @param iwuc
+ * @param newlyCreatedGroup
+ * @throws RemoteException
+ */
+public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException {
+    //sloppy access to icpermission, frickin sue me! don't have the time. note to self: get slave to refactor
+      AccessController access = iwuc.getAccessController();
+      
+      Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
+      if(recursiveParents!=null && !recursiveParents.isEmpty()) {
+        try {
+            Collection permissions = AccessControl.getPermissionHome().findAllGroupPermissionsToInheritByGroupCollection(recursiveParents);
+            Iterator iter = permissions.iterator();
+            while (iter.hasNext()) {
+                ICPermission perm = (ICPermission) iter.next();
+                
+                try {
+                    access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc, Integer.toString(perm.getGroupID()), newlyCreatedGroup.getPrimaryKey().toString(), perm.getPermissionString(), Boolean.TRUE);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                
+                
+            }
+        
+        
+        } catch (FinderException e) {
+            e.printStackTrace();//no parents, might happen not really an error
+        }
+      
+      
+      }
+}
+
+/**
    * Returns a collection (list) of User objects that have owner permission to this group 
  * @param group to get owners for
  * @return

@@ -1588,6 +1588,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							try {
 								String groupId = perm.getContextValue();
 								
+								//we don't want to use this permission if is a negative permission (a NOT permission)
+								if(!perm.getPermissionValue()) {
+								   
+								    continue;
+								}
+								
 								Integer primaryKey = new Integer(groupId);
 								
 								if( !groupMap.containsKey(primaryKey) ){

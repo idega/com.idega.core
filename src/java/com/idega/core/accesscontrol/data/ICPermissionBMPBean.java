@@ -24,20 +24,21 @@ import com.idega.util.IWTimestamp;
 public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.ICPermission {
 
 	private static final String ENTITY_NAME = "IC_PERMISSION";
-	private static final String CONTEXT_TYPE_COLUMN = "PERMISSION_CONTEXT_TYPE"; //just backward compatability, use permission type
-	private static final String CONTEXT_VALUE_COLUMN = "PERMISSION_CONTEXT_VALUE";
-	private static final String PERMISSION_STRING_COLUMN = "PERMISSION_STRING";
-	private static final String PERMISSION_VALUE_COLUMN = "PERMISSION_VALUE";
-	private static final String GROUP_ID_COLUMN = "GROUP_ID";
+	private static final String CONTEXT_TYPE_COLUMN = "PERMISSION_CONTEXT_TYPE"; //group permissions, ibobject etc.
+	private static final String CONTEXT_VALUE_COLUMN = "PERMISSION_CONTEXT_VALUE";//group id, object id etc. the permission key referes to.
+	private static final String PERMISSION_STRING_COLUMN = "PERMISSION_STRING";//view,edit,delete etc. permission keys.
+	private static final String PERMISSION_VALUE_COLUMN = "PERMISSION_VALUE";//True or false value for the permission
+	private static final String GROUP_ID_COLUMN = "GROUP_ID";//the group that owns/has this permission
 	
-	private static final String INITIATION_DATE_COLUMN="INITIATION_DATE";
-	private static final String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
-	private static final String SET_PASSIVE_BY_COLUMN="SET_PASSIVE_BY";
-	private static final String STATUS_COLUMN="STATUS";
+	private static final String INITIATION_DATE_COLUMN="INITIATION_DATE";//creation date
+	private static final String TERMINATION_DATE_COLUMN="TERMINATION_DATE";//end date
+	private static final String SET_PASSIVE_BY_COLUMN="SET_PASSIVE_BY";//who ended it
+	private static final String STATUS_COLUMN="STATUS";//is the permission active or inactive (kept for historical purposes)
+
+	private final static String INHERIT_TO_CHILDREN_COLUMN="INHERIT";//when creating new groups under the "context_value" (a groups primary key) should this permission be inherited?
 	
 	private final static String STATUS_ACTIVE="ST_ACTIVE";
 	private final static String STATUS_PASSIVE="ST_PASSIVE";
-	
 	
 	
 	public ICPermissionBMPBean() {
@@ -54,13 +55,18 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		addAttribute(getPermissionValueColumnName(), "Permission value", true, true, "java.lang.Boolean");
 		addAttribute(getGroupIDColumnName(), "GroupID", true, true, Integer.class, "many-to-one", PermissionGroup.class);
 		
+		addAttribute(getInheritToChildrenColumnName(), "Inherit to children", true, true, "java.lang.Boolean");
 		addAttribute(STATUS_COLUMN,"Status",String.class,10);
 		addAttribute(INITIATION_DATE_COLUMN,"Initiation Date",Timestamp.class);
 	 	addAttribute(TERMINATION_DATE_COLUMN,"Termination Date",Timestamp.class);
 	 	addAttribute(SET_PASSIVE_BY_COLUMN, "Passivated by", true, true, Integer.class, MANY_TO_ONE, User.class);
  	
 	}
-	public String getEntityName() {
+	
+    private String getInheritToChildrenColumnName() {
+        return INHERIT_TO_CHILDREN_COLUMN;
+    }
+    public String getEntityName() {
 		return ENTITY_NAME;
 	}
 	
@@ -127,9 +133,21 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	public void setPassive(){
 		this.setStatus(STATUS_PASSIVE);
 	}
+	
+	public void setToInheritToChildren(){
+		this.setColumn(INHERIT_TO_CHILDREN_COLUMN,true);
+	}
+
+	public void setToNOTInheritToChildren(){
+	    this.setColumn(INHERIT_TO_CHILDREN_COLUMN,false);
+	}
 
 	public void setInitiationDate(Timestamp stamp){
 		this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
+	}
+	
+	public boolean doesInheritToChildren() {
+	    return getBooleanColumnValue(INHERIT_TO_CHILDREN_COLUMN,false);
 	}
 
 	public Timestamp getInitiationDate(){
@@ -258,6 +276,51 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		.appendOrderBy(getContextValueColumnName());
 		
 		return super.idoFindPKsByQuery(sql);
+	}
+	
+	
+	/**
+	 * Finds all permission marked for inheritance. The collection is filled with groups that someone HAS permission too.
+	 * This method is mainly used to get those permission to find out which groups own those permissions.
+	 * @param groups A collection of groups that will be used as ContextValues
+	 * @return Collection of ICPermissions
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllGroupPermissionsToInheritByGroupCollection(Collection groups) throws FinderException{
+		IDOQuery sql = idoQuery();
+		IDOUtil util = IDOUtil.getInstance();
+		sql.appendSelectAllFrom(this).appendWhere()
+		.append(getContextValueColumnName())
+		.appendIn(util.convertListToCommaseparatedString(groups,true))
+		.appendAnd().appendEqualsQuoted(getPermissionValueColumnName(),"Y")
+		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),"ic_group_id")
+		.appendAnd().appendEqualsQuoted(getInheritToChildrenColumnName(),"Y")
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
+		
+		return super.idoFindPKsByQuery(sql);
+	}
+	
+	
+	/**
+	 * Finds a single permissions of a certain type (group or something else),key and group
+	 * 
+	 * @param group The group that ownes the records
+	 * @param permissionString A certain type of permission such as "owner"
+	 * @param contextType What type of object the permission is for, such as ic_group_id
+	 * @param contextValue for groups this would be the group id of the group the permission refers to
+	 * 
+	 * @return primary key of the ICPermission found
+	 * @throws FinderException
+	 */
+	public Integer ejbFindPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue(Group group,String permissionString, String contextType, String contextValue) throws FinderException{
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this).appendWhereEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
+		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
+		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
+		
+		return (Integer)super.idoFindOnePKByQuery(sql);
 	}
 
 	public void removeBy(User currentUser){
