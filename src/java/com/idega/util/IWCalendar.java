@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import com.ibm.icu.util.CalendarAstronomer;
+import com.ibm.icu.impl.CalendarAstronomer;
 import com.ibm.icu.util.Holiday;
 
 /**
@@ -489,7 +489,7 @@ public class IWCalendar {
 	 * 										for the given date.
 	 */
 	public boolean isHoliday(Locale locale, int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day + 1);
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
 
 		Holiday[] holidays = Holiday.getHolidays(locale);
 
@@ -535,7 +535,7 @@ public class IWCalendar {
 	 * 										given Locale.
 	 */
 	public Holiday getHoliday(Locale locale, int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day + 1);
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
 
 		Holiday[] holidays = Holiday.getHolidays(locale);
 
@@ -583,7 +583,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
 		if (moonCalendar.getMoonPhase() == FULL_MOON)
 			return true;
 		return false;
@@ -624,7 +624,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
 		return new Date(moonCalendar.getMoonTime(FULL_MOON, true));
 	}
 
@@ -670,7 +670,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
 		return moonCalendar.getMoonPhase();
 	}
 
@@ -710,7 +710,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
 		return new Time(moonCalendar.getMoonRiseSet(rise));
 	}
 
@@ -748,9 +748,9 @@ public class IWCalendar {
 	 */
 	public Time getSunRiseSet(Locale locale, boolean rise, int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
-		calendar.set(year, month - 1, day);
+		calendar.set(year, month - 1, day, 12, 0);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
 		return new Time(moonCalendar.getSunRiseSet(rise));
 	}
 
