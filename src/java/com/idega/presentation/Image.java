@@ -478,17 +478,11 @@ public void limitImageWidth( boolean limitImageWidth ){
   this.limitImageWidth=limitImageWidth;
 }
 
-/**@todo : replace this with a implementation of the new filesystem
- * IMPORTANT! for this to work you must have an application property called
- * IW_USES_OLD_MEDIA_TABLES   (set to anything)
- * also see getImage() in this class
- *
- */
   public String getMediaServletString(){
     StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(this.getImageID());
     URIBuffer.append("image?");
-    URIBuffer.append("image_id");
+    URIBuffer.append("media_id");
     URIBuffer.append("=");
     URIBuffer.append(this.getImageID());
     return URIBuffer.toString();
@@ -498,7 +492,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(imageId);
     URIBuffer.append("image?");
-    URIBuffer.append("image_id");
+    URIBuffer.append("media_id");
     URIBuffer.append("=");
     URIBuffer.append(imageId);
     return URIBuffer.toString();
