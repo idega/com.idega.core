@@ -1,5 +1,5 @@
 /*
- * $Id: IWPhaseListener.java,v 1.2 2004/12/07 15:09:55 tryggvil Exp $
+ * $Id: IWPhaseListener.java,v 1.3 2004/12/23 21:31:25 tryggvil Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,14 +30,14 @@ public class IWPhaseListener implements PhaseListener{
 	 * @see javax.faces.event.PhaseListener#afterPhase(javax.faces.event.PhaseEvent)
 	 */
 	public void afterPhase(PhaseEvent arg0) {
-		callMain(arg0.getFacesContext(),arg0.getFacesContext().getViewRoot());
+		callMainOnRoot(arg0.getFacesContext(),arg0.getFacesContext().getViewRoot());
 	}
 	
-	protected void callMain(FacesContext context,UIViewRoot root){
+	protected void callMainOnRoot(FacesContext context,UIViewRoot root){
 		log.fine("IWPhaseListener.callMain");
 		IWContext iwc = IWContext.getIWContext(context);
 		//recurseMain(iwc,root);
-		call_Main(iwc,root);
+		callMain(iwc,root);
 	}
 	
 	/*
@@ -66,24 +66,34 @@ public class IWPhaseListener implements PhaseListener{
 	 * @param iwc
 	 * @param comp
 	 */
-	protected void call_Main(IWContext iwc,UIComponent comp){
+	protected void callMain(IWContext iwc,UIComponent comp){
 		if(comp!=null){
 			if(comp instanceof PresentationObject){
 				PresentationObject po = (PresentationObject)comp;
 				try {
-					po._main(iwc);
+					//po._main(iwc);
+					po.callMain(iwc);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				findNextInstanceOfNotPresentationObject(iwc,po);
+				//Disabled because in change of callMain() method, that doesn't recurse self down the tree:
+				//findNextInstanceOfNotPresentationObject(iwc,po);
+				for (Iterator iter = po.getFacetsAndChildren(); iter.hasNext();) {
+					UIComponent child = (UIComponent) iter.next();
+					callMain(iwc,child);
+				}
 			}
 			else{
 				//List children = comp.getChildren();
 				//for (Iterator iter = children.iterator(); iter.hasNext();) {
-				for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
-					UIComponent child = (UIComponent) iter.next();
-					call_Main(iwc,child);
+				try{
+					for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
+						UIComponent child = (UIComponent) iter.next();
+						callMain(iwc,child);
+					}
+				}
+				catch(Exception e){
+					e.printStackTrace();
 				}
 			}
 		}
@@ -110,9 +120,14 @@ public class IWPhaseListener implements PhaseListener{
 			else{
 				//List children = comp.getChildren();
 				//for (Iterator iter = children.iterator(); iter.hasNext();) {
-				for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
-					UIComponent child = (UIComponent) iter.next();
-					call_Main(iwc,child);
+				try{
+					for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
+						UIComponent child = (UIComponent) iter.next();
+						callMain(iwc,child);
+					}
+				}
+				catch(Exception e){
+					e.printStackTrace();
 				}
 			}
 		}
