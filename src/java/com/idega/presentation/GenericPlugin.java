@@ -187,7 +187,6 @@ public void print(IWContext iwc)throws IOException{
     if( (file!=null) && (file.getID()!=-1) ){
       StringBuffer url = new StringBuffer();
       url.append(IWMainApplication.MEDIA_SERVLET_URL);
-      url.append('/');
       url.append(file.getID());
       url.append("media");
       url.append('?');
