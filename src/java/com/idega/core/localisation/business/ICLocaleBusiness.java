@@ -204,6 +204,16 @@ public class ICLocaleBusiness {
 
     reloadStamp = IWTimestamp.RightNow();
   }
+  
+  public static void unload(){
+  	allIcLocales=null;
+  	LocaleHashById=null;
+  	LocaleHashByString=null;
+  	 LocaleHashInUseById=null;
+  	 LocaleHashInUseByString=null;
+  	 notUsedIcLocales=null;
+  	 usedIcLocales=null;
+  }
 
   public static IWTimestamp getReloadStamp(){
     if(reloadStamp == null)
