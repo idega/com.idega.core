@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.6 2001/10/19 00:48:55 laddi Exp $
+ * $Id: TreeViewer.java,v 1.7 2001/10/30 17:41:40 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Image;
 import com.idega.core.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
+import com.idega.builder.business.BuilderLogic;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -114,33 +115,35 @@ public class TreeViewer extends PresentationObjectContainer {
       return _mainTable;
   }
 
-
-  public void main(IWContext iwc){
-      IWBundle bundle = getBundle(iwc);
-      Table tab = getTable();
-      add(tab);
-      List startNodes = this.getRootNodeList();
-      Iterator iter = startNodes.iterator();
-      while (iter.hasNext()) {
-        if(this.hasOneRoot())this._nestLevelAtOpen=1;
-
-        ICTreeNode startNode = (ICTreeNode)iter.next();
-        //ICTreeNode startNode = getStartNode();
-        int[] parentArray = {};
-        addNode(iwc,tab,1,1,startNode,parentArray,'F',0,bundle);
+  /**
+   *
+   */
+  public void main(IWContext iwc) {
+    IWBundle bundle = getBundle(iwc);
+    Table tab = getTable();
+    add(tab);
+    List startNodes = this.getRootNodeList();
+    Iterator iter = startNodes.iterator();
+    while (iter.hasNext()) {
+      if (hasOneRoot()) {
+        _nestLevelAtOpen = 1;
       }
 
-
+      ICTreeNode startNode = (ICTreeNode)iter.next();
+      //ICTreeNode startNode = getStartNode();
+      int[] parentArray = {};
+      addNode(iwc,tab,1,1,startNode,parentArray,'F',0,bundle);
+    }
   }
-  /**@todo : find a better and faster way to store the Parent id's and use them to
-   * keep the tree open
-   *
+
+  /**
+   * @todo : find a better and faster way to store the Parent id's and use them to keep the tree open
    */
   private ICTreeNode getParent(ICTreeNode node){
    return node.getParentNode();
   }
 
-  private PresentationObject getNodeText(ICTreeNode node,boolean nodeIsOpen,IWBundle bundle){
+  private PresentationObject getNodeText(ICTreeNode node,boolean nodeIsOpen,IWBundle bundle, boolean isCurrent){
     Link proto = (Link)getLinkPrototype().clone();
     String nodeName = node.getNodeName();
     String name = "";
@@ -150,6 +153,8 @@ public class TreeViewer extends PresentationObjectContainer {
       name += token.nextToken() + com.idega.presentation.text.Text.NON_BREAKING_SPACE;
 
     proto.setText(name);
+    if (isCurrent)
+      proto.setBold();
 
     ICTreeNode parentNode = getParent(node);//change this method to optimize this procedure
 
@@ -289,6 +294,9 @@ public class TreeViewer extends PresentationObjectContainer {
     int newparentarray[] = new int[parentarray.length+1];
     System.arraycopy(parentarray,0,newparentarray,0,parentarray.length);
     newparentarray[parentarray.length] = node.getNodeID();
+    boolean current = false;
+/*    if (BuilderLogic.getInstance().getCurrentIBPage(iwc).equals(Integer.toString(node.getNodeID())))
+      current = true;*/
 
     _tableRows = ypos;
 
@@ -296,14 +304,13 @@ public class TreeViewer extends PresentationObjectContainer {
       _tableColumns = xpos + 2;
       getTable().resize(_tableColumns,_tableRows);
     }
-
     table.add(getNodeIcon(node,nodeIsOpen,bundle),xpos+1,ypos);
     if (table.isEmpty(1,ypos)) {
       table.add("",1,ypos);
     }
 
     table.setAlignment(xpos+1,ypos,"left");
-    table.add(getNodeText(node,nodeIsOpen,bundle),xpos+2,ypos);
+    table.add(getNodeText(node,nodeIsOpen,bundle,current),xpos+2,ypos);
     table.setAlignment(xpos+2,ypos,"left");
     table.mergeCells(xpos+2,_tableRows,_tableColumns,_tableRows);
 

@@ -472,6 +472,7 @@ public  class EntityControl{
                 conn = entity.getConnection(entity.getDatasource());
                 stmt = conn.createStatement();
                 rs = stmt.executeQuery(SQLString);
+
                 if(rs.next())
                     recordCount = rs.getInt(1);
                 if ( rs != null )
