@@ -1,17 +1,26 @@
 package com.idega.presentation.ui;
 
-import com.idega.presentation.event.ResetPresentationEvent;
-import java.util.*;
-import com.idega.presentation.event.TreeViewerEvent;
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import javax.ejb.RemoveException;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationStateImpl;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
-import com.idega.event.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.event.ResetPresentationEvent;
+import com.idega.presentation.event.TreeViewerEvent;
+import com.idega.user.business.UserBusiness;
 
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -101,6 +110,20 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
       if (lastOpenedOrClosedNode == null) { 
       	lastOpenedOrClosedNode = ((TreeViewerEvent)e).getCloseNodeAction();
       }
+      IWContext iwc = ((TreeViewerEvent)e).getIWContext();
+      String refresh = ((TreeViewerEvent)e).getIWContext().getParameter("ic_ref_tn");
+      if(refresh != null) {
+      		try {
+  					getUserBusiness(iwc).removeStoredTopGroupNodes(iwc.getCurrentUser());
+  					changed = true;
+  				}
+  				catch (RemoteException e1) {
+  					e1.printStackTrace();
+  				}
+  				catch (RemoveException e1) {
+  					e1.printStackTrace();
+  				}
+      }
 
       if(changed){
         this.fireStateChanged();
@@ -120,5 +143,17 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 
 
   }
+  
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		UserBusiness userBiz = null;
+		try {
+			userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		}
+		catch (java.rmi.RemoteException rme) {
+			throw new RuntimeException(rme.getMessage());
+		}
+		return userBiz;
+	}
+
 
 }

@@ -98,6 +98,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	private boolean _showSuperRootNode = false;
 	private String _superRootNodeName = "Root";
 	private Image _superRootNodeIcon = null;
+	private Link _refreshTopNodes = null;
 	private boolean _showTreeIcons = true;
 	private boolean _showTreeIcons_changed = false;
 	private boolean _showHeaderRow = false;
@@ -205,7 +206,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		if (_showSuperRootNode) {
 			drawSuperRoot(iwc);
 		}
-		
 		if (defaultRoot.getChildCount() > 0) {
 			drawTree(defaultRoot.getChildrenIterator(), null, iwc);
 		}
@@ -228,9 +228,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	}
 
 	private void drawSuperRoot(IWContext iwc) {
-		Table nodeTable = new Table(3, 1);
+		Table nodeTable = new Table(5, 1);
 		nodeTable.setCellpadding(0);
 		nodeTable.setCellspacing(0);
+		nodeTable.setWidth(Table.HUNDRED_PERCENT);
 
 		nodeTable.setWidth(1, "16");
 		nodeTable.setWidth(2, "3");
@@ -238,8 +239,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		if (_superRootNodeIcon != null) {
 			nodeTable.add(_superRootNodeIcon, 1, 1);
 		}
-
 		nodeTable.add(new Text(_superRootNodeName), 3, 1);
+		
+		if(_refreshTopNodes != null) {
+			setEventModelToLink(_refreshTopNodes);
+			nodeTable.setAlignment(5, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+			nodeTable.add(_refreshTopNodes, 5, 1);
+		}
 
 		frameTable.add(nodeTable, 1, this.getRowIndex());
 		
@@ -655,6 +661,14 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public void setSuperRootNodeIcon(Image image) {
 		_superRootNodeIcon = image;
 	}
+	
+	public void setRefreshLink(Link refreshTN) {
+		_refreshTopNodes = refreshTN;
+	}
+	
+	public Link getRefreshLink() {
+		return _refreshTopNodes;
+	}
 
 	public void setRootNode(ICTreeNode root) {
 		defaultRoot.clear();
@@ -756,6 +770,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 			event.setToOpenNode(node);
 		}
 
+		l.addEventModel(event);
+		return l;
+	}
+	
+	public Link setEventModelToLink(Link l) {
+		TreeViewerEvent event = (TreeViewerEvent) getOpenCloseEventModel().clone();
+		event.setToTreeStateChanged(l);
 		l.addEventModel(event);
 		return l;
 	}

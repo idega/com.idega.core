@@ -4,6 +4,7 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.NoSuchEventException;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.Parameter;
 
 
@@ -12,7 +13,7 @@ import com.idega.presentation.ui.Parameter;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -22,10 +23,12 @@ public class TreeViewerEvent extends IWPresentationEvent {
 
   protected String _toOpen = null;
   protected String _toClose = null;
+  protected String _refreshTN = null;
 
   private static final String PRM_OPEN_TREENODES = "ic_opn_trnds";
   private static final String PRM_TREENODE_TO_CLOSE = "ic_cls_trnd";
   private static final String PRM_TREE_CHANGED = "ic_tw_ch";
+  private static final String PRM_REFRESH_TN = "ic_ref_tn";
 
   private static Parameter prmTreeStateChanged;
 
@@ -58,6 +61,14 @@ public class TreeViewerEvent extends IWPresentationEvent {
       this.addParameter(prmTreeStateChanged);
     }
   }
+  
+  public void setToTreeStateChanged(Link l) {
+  		l.addParameter(PRM_REFRESH_TN,"refresh");
+  		if(!this.containsParameter(prmTreeStateChanged)) {
+  			this.addParameter(prmTreeStateChanged);
+  			l.addParameter(prmTreeStateChanged);
+  		}
+  }
 
   public String getOpenNodeAction(){
     return _toOpen;
@@ -65,6 +76,10 @@ public class TreeViewerEvent extends IWPresentationEvent {
 
   public String getCloseNodeAction(){
     return _toClose;
+  }
+  
+  public String getRefreshTNAction() {
+  		return _refreshTN;
   }
 
 //  public void setOpenNodes(List openNodes){
@@ -93,7 +108,7 @@ public class TreeViewerEvent extends IWPresentationEvent {
 //    maintainOpenAndClosedNodes();
 
 
-    if(iwc.getParameter(PRM_TREE_CHANGED) != null){
+    if(iwc.getParameter(PRM_TREE_CHANGED) != null || iwc.getParameter(PRM_REFRESH_TN) != null){
       _toOpen = iwc.getParameter(PRM_OPEN_TREENODES);
       _toClose = iwc.getParameter(PRM_TREENODE_TO_CLOSE);
     } else {
