@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.29 2001/10/29 16:33:18 palli Exp $
+ * $Id: DatastoreInterface.java,v 1.30 2001/10/31 12:06:45 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -316,6 +316,7 @@ public abstract class DatastoreInterface{
               executeAfterCreateEntityRecord(entity);
             }
             else{
+              ex.printStackTrace(System.err);
               throw (Exception)ex.fillInStackTrace();
             }
           }
