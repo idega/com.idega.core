@@ -1,5 +1,5 @@
 /*
- * $Id: IWJAASAutenticationRequestWrapper.java,v 1.1 2004/12/13 11:53:38 gummi Exp $
+ * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.1 2004/12/14 21:09:44 gummi Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,21 +23,20 @@ import com.idega.presentation.IWContext;
  * like user is logged on JAAS if he is logged on IdegaWeb.  If the user is logged on 
  * JAAS then the methods use the super implementation.
  * 
- *  Last modified: $Date: 2004/12/13 11:53:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2004/12/14 21:09:44 $ by $Author: gummi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
  * @version $Revision: 1.1 $
  */
-public class IWJAASAutenticationRequestWrapper extends HttpServletRequestWrapper {
+public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrapper {
 
 	private Set userRoles = null;
 	private Principal userPrincipal = null;
 	/**
 	 * @param arg0
 	 */
-	public IWJAASAutenticationRequestWrapper(IWContext iwc) {
+	public IWJAASAuthenticationRequestWrapper(IWContext iwc) {
 		super(iwc.getRequest());
-		iwc = new IWContext(iwc.getRequest(),iwc.getResponse(),iwc.getSession().getServletContext());
 		
 		Principal user = super.getUserPrincipal();
 		if( user == null && iwc.isLoggedOn()){
