@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.3 2005/02/28 17:26:06 gummi Exp $
+ * $Id: ViewNode.java,v 1.4 2005/03/06 00:14:27 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,16 +25,29 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.
  * 
- *  Last modified: $Date: 2005/02/28 17:26:06 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/03/06 00:14:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ViewNode {
 	
 	//ViewNode tree strucuture
+	/**
+	 * Gets the ViewId of this node.<br>
+	 * This node must return an id that is unique within this node's parent.
+	 */
 	public String getViewId();
+	/**
+	 * Adds a child under this node.
+	 * @param node
+	 */
 	public void addChildViewNode(ViewNode node);
+	/**
+	 * Gets the children of this Node.<br>
+	 * This should be a Collection of ViewNode instances.
+	 * @return
+	 */
 	public Collection getChildren();
 	/**
 	 * Returns the primary URI up the tree hierarchy and includes the webapplications context path if any.
@@ -67,6 +80,11 @@ public interface ViewNode {
 	 * @return
 	 */
 	public boolean isComponentBased();
+	/**
+	 * Gets the URI to the resource that this node is a virtual node for, this is only applicable if the node is ResourceBased.
+	 * @see ViewNode.isResourceBased() 
+	 * @return the URI
+	 */
 	public String getResourceURI();
 	//public Class getComponentClass();
 	/**
@@ -76,6 +94,10 @@ public interface ViewNode {
 	
 	
 	//Accesscontrol properties
+	/**
+	 * Method that returns a collection of roles needed to access this ViewNode.<br>
+	 * This should be a collection of Strings.
+	 */
 	public Collection getAuthorizedRoles();
 	
 	//UI properties
