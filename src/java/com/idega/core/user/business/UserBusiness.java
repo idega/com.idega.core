@@ -369,10 +369,14 @@ public class UserBusiness {
       eEmail.insert();
       eEmail.getID();
 
+      User U = getUser(iUserId);
+      eEmail.addTo(User.class,iUserId);
+      /*
       conn = com.idega.util.database.ConnectionBroker.getConnection();
       Stmt = conn.createStatement();
+      String table
       Stmt.executeUpdate("insert into IC_USER_EMAIL (IC_USER_ID, IC_EMAIL_ADDRESS) values("+String.valueOf(iUserId)+","+String.valueOf(eEmail.getID())+")");
-
+      */
     }
     catch (SQLException ex) {
       ex.printStackTrace();

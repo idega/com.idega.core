@@ -1,10 +1,10 @@
 package com.idega.core.data;
 
 import java.sql.*;
-import com.idega.data.CacheableEntity;
+import com.idega.data.TreeableEntity;
 
 
-public class ICCategory extends CacheableEntity{
+public class ICCategory extends TreeableEntity{
 
   public ICCategory(){
     super();
