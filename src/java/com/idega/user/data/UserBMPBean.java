@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import java.util.*;
 import com.idega.data.*;
 import javax.ejb.*;
 import com.idega.core.ICTreeNode;
@@ -9,9 +10,6 @@ import com.idega.core.data.Phone;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -251,6 +249,33 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
     public void setLastName(String lName) {
       setColumn(getColumnNameLastName(),lName);
+    }
+
+    /**
+     * Divides the name string into first(1),middle(1-*) and lastname(1). <br>
+     * and uses setFirstName(),setMiddleName() and setLastName().
+     */
+    public void setFullName(String name) {
+      if( name.length() > 0 ){
+        StringTokenizer token = new StringTokenizer(name);
+        int countWithoutLast = token.countTokens()-1;
+
+
+        setFirstName(((String)token.nextElement()));
+
+        if( countWithoutLast >= 2 ){
+          StringBuffer middleName = new StringBuffer();
+
+          for(int i = 0; i < countWithoutLast; i++) {
+            middleName.append((String) token.nextElement());
+          }
+
+          setMiddleName(middleName.toString());
+        }
+
+        if( countWithoutLast >= 1) setLastName((String)token.nextElement());
+
+      }
     }
 
     public void setDisplayName(String dName) {
