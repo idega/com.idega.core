@@ -49,6 +49,8 @@ public class PageIncluder extends PresentationObject implements Index{
   private boolean forceFrame = false;
 
   private boolean changeURL = false;
+  private final String symbol = "$$";
+
 
   public PageIncluder(){
     super();
@@ -107,13 +109,13 @@ public class PageIncluder extends PresentationObject implements Index{
       //unecessary I think...(eiki)
       if (_sendToPageIfSet == null){
 	iwc.forwardToIBPage(fromPage,_sendToPage);
-        debug("PAGEINCLUDER FORWARDING");
+	debug("PAGEINCLUDER FORWARDING");
       }
       //thinking...
       else {
 	if (iwc.isParameterSet(_sendToPageIfSet)){
 	  iwc.forwardToIBPage(fromPage,_sendToPage);
-        debug("PAGEINCLUDER FORWARDING2");
+	debug("PAGEINCLUDER FORWARDING2");
 	}
       }
     }
@@ -134,48 +136,47 @@ public class PageIncluder extends PresentationObject implements Index{
 	String query = null;
 
 	if (forceFrame ) {
-	  String currentPage = getCurrentIBPageIDToURLString(iwc);
+
 	  StringBuffer buf = new StringBuffer();
 	  buf.append(iwc.getRequestURI());
 	  buf.append('?');
-	  buf.append(currentPage);
-	  buf.append('&');
 
+	  if( _sendToPage!=null ){
+	    buf.append(getSendToPageURLString());
+	    buf.append('&');
 
-          if( _sendToPage!=null ){
-            if (_sendURLTo != null){
-              buf.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
-              buf.append('&');
+	    if (_sendURLTo != null){
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(_sendURLTo);
 	      buf.append('=');
-            }
-            else{
-              buf.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
-              buf.append('&');
-              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	    }
+	    else{
+	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(instanceId);
 	      buf.append('=');
 	    }
-          }
-          else{
-            if (_sendURLTo != null){
+	  }
+	  else{
+	    buf.append(getCurrentIBPageIDToURLString(iwc));
+	    buf.append('&');
+
+	    if (_sendURLTo != null){
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(_sendURLTo);
 	      buf.append('=');
-            }
-            else{
-              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-              buf.append(instanceId);
-              buf.append('=');
-            }
+	    }
+	    else{
+	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	      buf.append(instanceId);
+	      buf.append('=');
+	    }
 	  }
 
-          pageIncluderPrefix = buf.toString();
-          System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+	  pageIncluderPrefix = buf.toString();
+	  System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
       }
       else {
-        pageIncluderPrefix ="";
+	pageIncluderPrefix ="";
       }
 
 	//after clicking a link and submitting a form
@@ -187,17 +188,8 @@ public class PageIncluder extends PresentationObject implements Index{
 	  while (enum.hasMoreElements()) {
 	    String param = (String) enum.nextElement();
 	    //debug(param+" : "+iwc.getParameter(param));
-	    if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
-	     URL = decodeQueryString(iwc.getParameter(param));
-	     //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
-	     location.append(URL);
-	    }
-	    else if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
+	    if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
 	      URL = decodeQueryString(iwc.getParameter(param));
-	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
-	      //if (_sendURLTo != null)
-	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
-	      //System.out.println("THE URL: "+URL);
 	      location.append(URL);
 	    }
 	    else{
@@ -265,9 +257,11 @@ public class PageIncluder extends PresentationObject implements Index{
 	//System.out.println("Location url is: "+loc+" and index is: "+index);
 
 
-	out = FileUtil.getStringFromURL(loc);
 
-	if(loc!=null){
+
+	if(loc!=null && !loc.equals("") ){
+	  out = FileUtil.getStringFromURL(loc);
+
 	  URL url = new URL(loc);
 	  BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
 	  if(loc.lastIndexOf("/")==6) loc+="/";
@@ -350,6 +344,11 @@ public class PageIncluder extends PresentationObject implements Index{
     return bill.IB_PAGE_PARAMETER+"="+bill.getCurrentIBPageID(iwc);
   }
 
+  protected String getSendToPageURLString(){
+    BuilderLogic bill = BuilderLogic.getInstance();
+    return bill.IB_PAGE_PARAMETER+"="+_sendToPage.getID();
+  }
+
   protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){
     html = changeURLToAbsoluteValue(tag.toLowerCase(),html);
     html = changeURLToAbsoluteValue(tag.toUpperCase(),html);
@@ -363,68 +362,72 @@ public class PageIncluder extends PresentationObject implements Index{
     return html;
   }
 
+  private String symbolReplace(String html, String tag){
+    return TextSoap.findAndReplace(html,symbol+tag,"&"+tag);
+  }
 
   protected String encodeQueryStrings(String html){
-    html = TextSoap.findAndReplace(html,"&","##");
+    html = TextSoap.findAndReplace(html,"&",symbol);
     //fixing this should be done with a HTMLEditor object OR
     //make a single general expression fix
-    html = TextSoap.findAndReplace(html,"##eth;","&eth;");
-    html = TextSoap.findAndReplace(html,"##ETH;","&ETH;");
-    html = TextSoap.findAndReplace(html,"##thorn;","&thorn;");
-    html = TextSoap.findAndReplace(html,"##THORN;","&THORN;");
-    html = TextSoap.findAndReplace(html,"##aelig;","&aelig;");
-    html = TextSoap.findAndReplace(html,"##AElig;","&AElig;");
-    html = TextSoap.findAndReplace(html,"##ouml;","&ouml;");
-    html = TextSoap.findAndReplace(html,"##Ouml;","&Ouml;");
-    html = TextSoap.findAndReplace(html,"##auml;","&auml;");
-    html = TextSoap.findAndReplace(html,"##Auml;","&Auml;");
-    html = TextSoap.findAndReplace(html,"##euml;","&euml;");
-    html = TextSoap.findAndReplace(html,"##Euml;","&Euml;");
-    html = TextSoap.findAndReplace(html,"##uuml;","&uuml;");
-    html = TextSoap.findAndReplace(html,"##Uuml;","&Uuml;");
+    html = symbolReplace(html,"eth;");
+    html = symbolReplace(html,"ETH;");
+    html = symbolReplace(html,"thorn;");
+    html = symbolReplace(html,"THORN;");
+    html = symbolReplace(html,"aelig;");
+    html = symbolReplace(html,"AElig;");
+    html = symbolReplace(html,"ouml;");
+    html = symbolReplace(html,"Ouml;");
+    html = symbolReplace(html,"auml;");
+    html = symbolReplace(html,"Auml;");
+    html = symbolReplace(html,"euml;");
+    html = symbolReplace(html,"Euml;");
+    html = symbolReplace(html,"uuml;");
+    html = symbolReplace(html,"Uuml;");
 
-    html = TextSoap.findAndReplace(html,"##nbsp;","&nbsp;");
-    html = TextSoap.findAndReplace(html,"##amp;","&amp;");
-    html = TextSoap.findAndReplace(html,"##quot;","&quot;");
-    html = TextSoap.findAndReplace(html,"##middot","&middot");
-    html = TextSoap.findAndReplace(html,"##raquo;","&raquo;");
-    html = TextSoap.findAndReplace(html,"###149;","&#149;");
-    html = TextSoap.findAndReplace(html,"###039;","&#039;");
-    html = TextSoap.findAndReplace(html,"###169;","&#169;");
-    html = TextSoap.findAndReplace(html,"##gt;","&gt;");
-    html = TextSoap.findAndReplace(html,"##pound;","&pound;");
-    html = TextSoap.findAndReplace(html,"##yen;","&yen;");
-    html = TextSoap.findAndReplace(html,"##copy;","&copy;");
-    html = TextSoap.findAndReplace(html,"##reg;","&reg;");
-    html = TextSoap.findAndReplace(html,"##szlig;","&szlig;");
-    html = TextSoap.findAndReplace(html,"##cedil;","&#cedil;");
-    html = TextSoap.findAndReplace(html,"##ccedil;","&ccedil;");
-    html = TextSoap.findAndReplace(html,"##Ccedil;","&Ccedil;");
-    html = TextSoap.findAndReplace(html,"##oslash;","&oslash;");
-    html = TextSoap.findAndReplace(html,"##Oslash;","&Oslash;");
+    html = symbolReplace(html,"nbsp;");
+    html = symbolReplace(html,"amp;");
+    html = symbolReplace(html,"quot;");
+    html = symbolReplace(html,"middot");
+    html = symbolReplace(html,"raquo;");
+    html = symbolReplace(html,"#149;");
+    html = symbolReplace(html,"#039;");
+    html = symbolReplace(html,"#169;");
+    html = symbolReplace(html,"#8211;");
+    html = symbolReplace(html,"gt;");
+    html = symbolReplace(html,"pound;");
+    html = symbolReplace(html,"yen;");
+    html = symbolReplace(html,"copy;");
+    html = symbolReplace(html,"reg;");
+    html = symbolReplace(html,"szlig;");
+    html = symbolReplace(html,"#cedil;");
+    html = symbolReplace(html,"ccedil;");
+    html = symbolReplace(html,"Ccedil;");
+    html = symbolReplace(html,"oslash;");
+    html = symbolReplace(html,"Oslash;");
 
     html = TextSoap.findAndReplace(html," ## "," & ");
 
 //islenskir broddstafir
-    html = TextSoap.findAndReplace(html,"##aacute;","&aacute;");
-    html = TextSoap.findAndReplace(html,"##Aacute;","&Aacute;");
-    html = TextSoap.findAndReplace(html,"##eacute;","&eacute;");
-    html = TextSoap.findAndReplace(html,"##Eacute;","&Eacute;");
-    html = TextSoap.findAndReplace(html,"##iacute;","&iacute;");
-    html = TextSoap.findAndReplace(html,"##Iacute;","&Iacute;");
-    html = TextSoap.findAndReplace(html,"##uacute;","&uacute;");
-    html = TextSoap.findAndReplace(html,"##Uacute;","&Uacute;");
-    html = TextSoap.findAndReplace(html,"##oacute;","&oacute;");
-    html = TextSoap.findAndReplace(html,"##Oacute;","&Oacute;");
-    html = TextSoap.findAndReplace(html,"##yacute;","&yacute;");
-    html = TextSoap.findAndReplace(html,"##Yacute;","&Yacute;");
+    html = symbolReplace(html,"aacute;");
+    html = symbolReplace(html,"Aacute;");
+    html = symbolReplace(html,"eacute;");
+    html = symbolReplace(html,"Eacute;");
+    html = symbolReplace(html,"iacute;");
+    html = symbolReplace(html,"Iacute;");
+    html = symbolReplace(html,"uacute;");
+    html = symbolReplace(html,"Uacute;");
+    html = symbolReplace(html,"oacute;");
+    html = symbolReplace(html,"Oacute;");
+    html = symbolReplace(html,"yacute;");
+    html = symbolReplace(html,"Yacute;");
 
   //  html = TextSoap.findAndReplace(html,"##iacute;","&iacute;");
   return html;
   }
 
   protected String decodeQueryString(String query){
-   return TextSoap.findAndReplace(query,"##","&");
+   return TextSoap.findAndReplace(query,symbol,"&");
   }
 
   protected String copyJavaScript(String html,IWContext iwc){
