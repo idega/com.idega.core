@@ -7,6 +7,7 @@
 package com.idega.util.logging;
 
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -64,5 +65,51 @@ public class LoggingHelper {
 		String str = buf.toString();
 		logger.log(level,str);
 	}
+
+	public static void getLoggerInfo() {
+	    // Get the Log Manager
+	    LogManager manager = LogManager.getLogManager();
+	    // Get all defined loggers
+	    java.util.Enumeration names = manager.getLoggerNames();
+	    
+	    System.out.println("***Begin Logger Information");
+	    // For each logger: show name, level, handlers etc. 
+	    while (names.hasMoreElements()) {
+	      String loggername = (String)names.nextElement();
+	      java.util.logging.Logger logger = manager.getLogger(loggername);
+	      System.out.println("-----------------------");
+	      System.out.println("Logger name: >" + logger.getName() + "<");
+	      System.out.println("Logger level: " + logger.getLevel());
+	      
+	      // See if a filter is defined
+	      if (logger.getFilter() != null) 
+	        System.out.println("Using a filter");
+	      else 
+	        System.out.println("No filter used");
+	      
+	      // For each handler: show formatter, level, etc. 
+	      java.util.logging.Handler[] h = logger.getHandlers();
+	      if (h.length == 0) System.out.println("No handlers defined");
+	      for (int i = 0; i < h.length; i++) {
+	        if (i == 0) System.out.println("Handlers:");
+	        java.util.logging.Formatter f = h[i].getFormatter();
+	        System.out.println(h[i].getClass().getName());
+	        System.out.println("  using formatter: " + f.getClass().getName());
+	        System.out.println("  using level: " + h[i].getLevel());
+	        if (h[i].getFilter() != null) 
+	          System.out.println("  using a filter");
+	        else 
+	          System.out.println("  no filter");
+	      }
+	
+	      // See if a parent exists 
+	      java.util.logging.Logger parent = logger.getParent();
+	      if (parent != null) 
+	        System.out.println("Parent: >" + parent.getName() + "<");
+	      else 
+	        System.out.println("No parent");
+	    }
+	    System.out.println("*** End Logger Information");
+	  }
 	
 }
