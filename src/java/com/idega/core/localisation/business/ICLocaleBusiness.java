@@ -12,6 +12,7 @@ import com.idega.core.localisation.data.ICLocaleHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.repository.data.MutableClass;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -23,7 +24,7 @@ import com.idega.util.IWTimestamp;
  * @version 1.1
  */
 
-public class ICLocaleBusiness {
+public class ICLocaleBusiness  implements MutableClass {
   private static Hashtable LocaleHashByString = null, LocaleHashById = null;
   private static Hashtable LocaleHashInUseByString = null, LocaleHashInUseById = null;
   private static List allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
