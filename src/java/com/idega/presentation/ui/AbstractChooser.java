@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.19 2004/01/02 14:03:52 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.20 2004/01/06 10:43:52 palli Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -48,6 +48,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	protected boolean disabled = true;
 	private IWBundle _bundle;
 	private IWResourceBundle _iwrb;
+	private int _inputLength = -1;
 
 	/**
 	 * @param aDisabled -
@@ -57,6 +58,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		disabled = aDisabled;
 	}
 
+	public void setInputLength(int length) {
+		_inputLength = length;
+	}
+	
 	/**
 	 *
 	 */
@@ -208,6 +213,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		if (_addTextInput) {
 			TextInput input = new TextInput(displayInputName);
 			input.setDisabled(disabled);
+			if (_inputLength > 0)
+				input.setLength(_inputLength);
 
 			if (_style != null) {
 				input.setMarkupAttribute("style", _style);
