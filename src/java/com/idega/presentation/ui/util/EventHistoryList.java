@@ -45,6 +45,8 @@ public class EventHistoryList extends Block{
             Table eventTable = new Table();
             eventTable.setCellspacing(1);
             eventTable.setCellpadding(2);
+            eventTable.setBorder(0);
+            eventTable.setWidth(Table.HUNDRED_PERCENT);
             eventTable.setNoWrap();
             String dateFormatString = iwb.getProperty("EventHistoryList.date_format_string","");
             String timeFormatString = iwb.getProperty("EventHistoryList.time_format_string","");
