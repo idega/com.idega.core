@@ -111,15 +111,17 @@ public class Form extends InterfaceObjectContainer {
 	}
 
 	private void setOnAction(String actionType, String action) {
-		String attributeName = actionType;
+		/*String attributeName = actionType;
 		String previousAttribute = getAttribute(attributeName);
 		if (previousAttribute == null) {
 			setAttribute(attributeName, action);
 
 		}
 		else {
-			setAttribute(attributeName, previousAttribute + ";" + action);
-		}
+			if (getAttribute(attributeName).indexOf(action) != -1)
+				setAttribute(attributeName, previousAttribute + ";" + action);
+		}*/
+		setAttributeMultivalued(actionType, action);
 	}
 
 	public void setAction(String actionURL) {
