@@ -58,6 +58,27 @@ public class ListUtil {
     }
     return theReturn;
   }
+  
+  /**
+   * Return a list of the strings or a null if the string array is empty
+   * @param stringArray
+   * @return
+   */
+  public static List convertStringArrayToList(String[] stringArray){
+  	
+  	if(stringArray!=null && stringArray.length>0){
+  		List returnList = new ArrayList();
+  		
+  		for (int i = 0; i < stringArray.length; i++) {
+				String string = stringArray[i];
+				returnList.add(0,string);
+			}
+  		
+  		return returnList;
+  	}
+  	else return null;
+		
+  }
 
   private static class EmptyList extends ArrayList{
 
