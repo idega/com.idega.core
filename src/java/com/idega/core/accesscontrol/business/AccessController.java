@@ -18,16 +18,18 @@ import java.util.List;
 
 public interface AccessController extends com.idega.idegaweb.IWService{
 
-  public static final String _STRING_OBJECT_INSTATNCE_ID = "ic_object_instance_id";
-  public static final String _STRING_OBJECT_ID = "ic_object_id";
-  public static final String _STRING_BUNDLE_IDENTIFIER = "iw_bundle_identifier";
-  public static final String _STRING_PAGE_ID = "page_id";
-  public static final String _STRING_PAGE = "page";
-  public static final String _STRING_JSP_PAGE = "jsp_page";
-  public static final String _PERMISSIONSTRING_VIEW = "view";
-  public static final String _PERMISSIONSTRING_EDIT = "edit";
-  public static final String _PERMISSIONSTRING_ADMIN = "admin";
-  public static final String _PERMISSIONSTRING_OWNER = "owner";
+
+  public static final String _CATEYGORYSTRING_OBJECT_INSTATNCE_ID = "ic_object_instance_id";
+  public static final String _CATEYGORYSTRING_OBJECT_ID = "ic_object_id";
+  public static final String _CATEYGORYSTRING_BUNDLE_IDENTIFIER = "iw_bundle_identifier";
+  public static final String _CATEYGORYSTRING_PAGE_ID = "page_id";
+  public static final String _CATEYGORYSTRING_PAGE = "page";
+  public static final String _CATEYGORYSTRING_JSP_PAGE = "jsp_page";
+
+  public static final String _PERMISSIONKEY_VIEW = "view";
+  public static final String _PERMISSIONKEY_EDIT = "edit";
+  public static final String _PERMISSIONKEY_ADMIN = "admin";
+  public static final String _PERMISSIONKEY_OWNER = "owner";
 
   public static final int _CATEGORY_OBJECT_INSTANCE = 0;
   public static final int _CATEGORY_OBJECT = 1;

@@ -1,7 +1,7 @@
 package com.idega.idegaweb.template;
 
 import com.idega.jmodule.forum.presentation.GrayForums;
-import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 import com.idega.jmodule.login.*;
@@ -25,7 +25,7 @@ public class AccessControlTestTemplate extends TemplatePage {
   }
 
   public void main(IWContext iwc) throws Exception {
-    if(iwc.getAccessController().hasPermission(AccessControl.getViewPermissionString(),myForums,iwc)){
+    if(iwc.getAccessController().hasPermission(AccessController._PERMISSIONKEY_VIEW,myForums,iwc)){
       this.add(myForums);
     }else{
       this.add(new Text("ekki leyfi!"));
