@@ -469,9 +469,9 @@ public class Image extends PresentationObject
 		}
 		sPrint.append("\" ");
 		removeMarkupAttribute("alt");
-		sPrint.append("name=\"");
+		/*sPrint.append("name=\"");
 		sPrint.append(getName());
-		sPrint.append("\"");
+		sPrint.append("\"");*/
 		if (iwc != null)
 		{
 			BuilderService bs = getBuilderService(iwc);
@@ -566,7 +566,6 @@ public class Image extends PresentationObject
 				if ((texti != null) && (!"".equalsIgnoreCase(texti)))
 				{
 					Table imageTable = new Table(1, 2);
-					imageTable.setAlignment("center");
 					imageTable.setAlignment(1, 1, "center");
 					imageTable.setAlignment(1, 2, "left");
 					imageTable.setVerticalAlignment("top");
