@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -29,6 +31,7 @@ public class SQLDataDumper {
 	public final static int TYPE_CSV = 1;
 	public final static int TYPE_SQL_INSERT = 2;
 	public final static int TYPE_DELIMITED = 3;
+	public final static int TYPE_SQL_UPDATE = 4;
 	public SQLDataDumper() {
 	}
 	public void setDumpFolder(String url) {
@@ -92,6 +95,9 @@ public class SQLDataDumper {
 				break;
 			case TYPE_DELIMITED :
 				writeDelimited(rs, writer);
+				break;
+			case TYPE_SQL_UPDATE:
+				writeSQLUpdates(rs,writer);
 				break;
 			default :
 			writeCSV(rs, writer);
@@ -196,5 +202,61 @@ public class SQLDataDumper {
 			line.append(")");
 			writer.println(line.toString());
 		}
+	}
+	/**
+	 * Writes a rowset as insert statements 
+	 * @param rs
+	 * @param writer
+	 * @throws SQLException
+	 */
+	private void writeSQLUpdates(ResultSet rs, PrintWriter writer) throws SQLException {
+		ResultSetMetaData meta = rs.getMetaData();
+		int columns = meta.getColumnCount() + 1;
+		StringBuffer insertInto = new StringBuffer("UPDATE ");
+		insertInto.append(meta.getTableName(1));
+		insertInto.append(" SET ");
+		
+		StringBuffer line;
+		String item,first_column, firstValue = null;
+		while (rs.next()) {				
+			line = new StringBuffer(insertInto.toString());
+			for (int i = 1; i < columns; i++) {
+				item = rs.getString(i);
+				if (i != 1)
+					line.append(", ");
+				else
+					firstValue = item;
+				
+				line.append(meta.getColumnName(i)).append(" = ");
+				if(item!=null){
+					String className = meta.getColumnClassName(i);
+					line.append(getStringPresentation(className,item));
+				}
+				else{
+					line.append(item);
+				}
+			}
+			if(firstValue!=null)
+				line.append(" WHERE ").append(meta.getColumnName(1)).append( " = ").append(firstValue);
+			firstValue =null;
+			writer.println(line.toString());
+		}
+	}
+	
+	private String getStringPresentation(String className,String value){
+		StringBuffer line = new StringBuffer(value);
+		if(value!=null){
+		if(className.equalsIgnoreCase(Integer.class.getName()))
+			return line.toString();
+		else if(className.equalsIgnoreCase(Long.class.getName()))
+			return line.toString();
+		else if(className.equalsIgnoreCase(BigDecimal.class.getName()))
+			return line.toString();
+		else if(className.equalsIgnoreCase(BigInteger.class.getName()))
+			return line.toString();
+		else
+			line.insert(0,"'").append("'");
+		}
+		return line.toString();
 	}
 }
