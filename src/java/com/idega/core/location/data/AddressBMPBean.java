@@ -1,4 +1,4 @@
-//idega 2000 - eiki
+// idega 2000 - eiki
 
 package com.idega.core.location.data;
 
@@ -14,6 +14,7 @@ import com.idega.data.IDOQuery;
 import com.idega.util.text.TextSoap;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
+
 	private static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
 	private static final String ENTITY_NAME = "IC_ADDRESS";
 	private static final String STREET_NAME = "STREET_NAME";
@@ -57,7 +58,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public static String getColumnNameCommuneID() {
 		return COLUMN_IC_COMMUNE_ID;
 	}
-	
+
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
@@ -68,7 +69,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public String getName() {
 		String streetName = getStreetName();
 		String streetNumber = getStreetNumber();
-		
+
 		StringBuffer address = new StringBuffer("");
 		if (streetName != null) {
 			address.append(address);
@@ -77,7 +78,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 				address.append(streetNumber);
 			}
 		}
-		
+
 		return address.toString();
 	}
 
@@ -139,6 +140,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void setPostalCode(PostalCode postalCode) {
 		setColumn(POSTAL_CODE_ID, postalCode);
 	}
+
 	public void setPostalCodeID(int postal_code_id) {
 		setColumn(POSTAL_CODE_ID, postal_code_id);
 	}
@@ -154,6 +156,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void setAddressType(AddressType type) {
 		setColumn(IC_ADDRESS_TYPE_ID, type);
 	}
+
 	public int getAddressTypeID() {
 		return getIntColumnValue(IC_ADDRESS_TYPE_ID);
 	}
@@ -169,26 +172,27 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void setCountry(Country country) {
 		setColumn(IC_COUNTRY_ID, country);
 	}
+
 	public void setCountryId(int country_id) {
 		setColumn(IC_COUNTRY_ID, country_id);
 	}
-	
+
 	public int getCommuneID() {
 		return getIntColumnValue(getColumnNameCommuneID());
 	}
-	
+
 	public void setCommuneID(int communeId) {
 		setColumn(getColumnNameCommuneID(), communeId);
 	}
-	
+
 	public void setCommune(Commune commune) {
 		setColumn(getColumnNameCommuneID(), commune);
-	}	
-	
+	}
+
 	public Object getCommune() {
 		return getColumn(getColumnNameCommuneID());
 	}
-	
+
 	public AddressTypeHome getAddressTypeHome() throws RemoteException {
 		if (addressTypeHome == null) {
 			addressTypeHome = (AddressTypeHome) IDOLookup.getHome(AddressType.class);
@@ -221,11 +225,12 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		}
 		return type2;
 	}
-	
+
 	/**
-	* Gets the street name together with the street number
-	* @return Returns the combined address string with capitalization.
-	*/
+	 * Gets the street name together with the street number
+	 * 
+	 * @return Returns the combined address string with capitalization.
+	 */
 	public String getStreetAddress() {
 		StringBuffer addr = new StringBuffer();
 		String street = getStreetName();
@@ -238,8 +243,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	/**
-	* Gets the postal code together with its name
-	*/
+	 * Gets the postal code together with its name
+	 */
 	public String getPostalAddress() {
 		try {
 			return getPostalCode().getPostalAddress();
@@ -249,8 +254,6 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		}
 		return "";
 	}
-	
-	
 
 	public Integer ejbFindPrimaryUserAddress(int userID) throws FinderException {
 		IDOQuery query = idoQuery();
@@ -261,12 +264,12 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
 	}
-	
-	public Integer ejbFindUserAddressByAddressType(int userID,AddressType type) throws FinderException {
+
+	public Integer ejbFindUserAddressByAddressType(int userID, AddressType type) throws FinderException {
 		IDOQuery query = idoQuery();
 		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
 		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
-		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(( (Integer) type.getPrimaryKey()).intValue());
+		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(((Integer) type.getPrimaryKey()).intValue());
 
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
 	}
@@ -290,34 +293,35 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 		return super.idoFindPKsBySQL(sqlquery.toString());
 	}
-	
-	public Collection ejbFindUserAddressesByAddressType(int userID,AddressType type) throws FinderException {
-    IDOQuery query = idoQuery();
-    query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
-    query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
-    query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(( (Integer) type.getPrimaryKey()).intValue());
+
+	public Collection ejbFindUserAddressesByAddressType(int userID, AddressType type) throws FinderException {
+		IDOQuery query = idoQuery();
+		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
+		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
+		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(((Integer) type.getPrimaryKey()).intValue());
 
 		return super.idoFindPKsBySQL(query.toString());
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.core.location.data.Address#isSame(com.idega.core.location.data.Address)
 	 */
 	public boolean isEqualTo(Address address) {
-		if(address!=null){
-			String streetName = getStreetName() == null ? "" : getStreetName();
-			String streetNumber = getStreetNumber() == null ? "" : getStreetNumber();
-			
-			if((getPostalCode() == null && address.getPostalCode() == null) ||
-					(getPostalCode().isEqualTo(address.getPostalCode()))){
-				return (streetName.equalsIgnoreCase(address.getStreetName())
-						&& streetNumber.equalsIgnoreCase(address.getStreetNumber())
-						&& getPostalCode().isEqualTo(address.getPostalCode())
-						&& getCountryId() == address.getCountryId());
+		boolean returner = false;
+		if (address != null) {
+			returner = getStreetAddress().equalsIgnoreCase(address.getStreetAddress());
+			if (returner) {
+				if (getPostalCode() != null && address.getPostalCode() != null) {
+					returner = getPostalCode().isEqualTo(address.getPostalCode());
+				}
+			}
+			if (returner) {
+				returner =  getCountryId() == address.getCountryId();
 			}
 		}
-		return false;
+		return returner;
 	}
 
 }
