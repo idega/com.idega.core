@@ -18,6 +18,8 @@ import com.idega.presentation.*;
 public abstract class InterfaceObject extends PresentationObject {
 
 	protected boolean keepStatus;
+	private boolean _checkObject = false;
+	private boolean _disableObject = false;
 
 	public InterfaceObject() {
 		super();
@@ -221,19 +223,44 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 
 	/**
-	 * Sets the given interface object to be disabled when this object is clicked on.
-	 * @param objectToEnable	The interface object to disable.
+	 * Sets the interface object(s) with the given name to be checked/unchecked when this
+	 * object is clicked on.
+	 * @param objectName	The name of the interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
 	 */
-	public void setToDisableOnClick(InterfaceObject objectToDisable) {
-		this.setOnClick("this.form." + objectToDisable.getName() + ".disabled = true");
+	public void setToCheckOnClick(String objectName, boolean check) {
+		_checkObject = true;
+		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+Boolean.toString(check)+"')");
+	}
+	
+	/**
+	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * clicked on.
+	 * @param objectToCheck	The interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
+	 */
+	public void setToCheckOnClick(InterfaceObject objectToCheck, boolean check) {
+		setToCheckOnClick(objectToCheck.getName(),check);
+	}
+	
+	/**
+	 * Sets the interface object(s) with the given name to be enabled when this object is 
+	 * clicked on.
+	 * @param objectToEnable	The name of the interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnClick(String objectName,boolean disable) {
+		_disableObject = true;
+		setOnClick("disableObject(findObj('" + objectName + "'),'"+Boolean.toString(disable)+"')");
 	}
 	
 	/**
 	 * Sets the given interface object to be enabled when this object is clicked on.
 	 * @param objectToEnable	The interface object to enable.
+	 * @param enable	Set to true to disable, false will enable.
 	 */
-	public void setToEnableOnClick(InterfaceObject objectToEnable) {
-		this.setOnClick("this.form." + objectToEnable.getName() + ".disabled = false");
+	public void setToDisableOnClick(InterfaceObject objectToEnable,boolean disable) {
+		setToDisableOnClick(objectToEnable.getName(),disable);
 	}
 	
 	/**
@@ -292,6 +319,24 @@ public abstract class InterfaceObject extends PresentationObject {
 		return obj;
 	}
 	
+	public void _main(IWContext iwc) throws Exception {
+		if (isEnclosedByForm()) {
+			if (_checkObject) {
+				getScript().addFunction("checkObject", "function checkObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].checked=eval(value);\n	}");
+			}
+			if (_disableObject) {
+				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].disabled=eval(value);\n	}");
+			}
+		}
+	}
+
+	protected Script getScript() {
+		if (getParentForm().getAssociatedFormScript() == null) {
+			getParentForm().setAssociatedFormScript(new Script());
+		}
+		return getParentForm().getAssociatedFormScript();
+	}
+
 	/**
 	 * Sets the width of the interface object with a style tag.
 	 * @param width	The width to set.
