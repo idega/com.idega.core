@@ -37,8 +37,7 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 	}
 	
 	public IBExportImportDataWriter(Storable storable, IWApplicationContext iwac) {
-		this(iwac);
-		setSource(storable);
+		super(storable,iwac);
 	}
 
 	public String createContainer() throws IOException {
@@ -67,7 +66,8 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
  	}
 	
 	public OutputStream writeData(OutputStream destination) throws IOException {
-		ZipOutputStream zipOutputStream = new ZipOutputStream(destination);
+		// use this stream because some writers call close and we don't want to close the zip output stream
+		ZipOutputStreamIgnoreClose zipOutputStream = new ZipOutputStreamIgnoreClose(destination);
 		IBExportImportData metadata = (IBExportImportData) storable;
 		List data = metadata.getData();
 		List alreadyStoredElements = new ArrayList(data.size());
@@ -92,8 +92,12 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 	 			ZipEntry zipEntry = new ZipEntry(zipElementName);
 	 			metadata.modifyElementSetNameSetOriginalName(entryNumber++, zipElementName, originalName, mimeType);
 	 			zipOutputStream.putNextEntry(zipEntry);
-	 			currentWriter.writeData(zipOutputStream);
-	 			zipOutputStream.closeEntry();
+	 			try {
+	 				currentWriter.writeData(zipOutputStream);
+	 			}
+	 			finally {
+	 				closeEntry(zipOutputStream);
+	 			}
  			}
  		}
  		// add metadata itself to the zip file
@@ -102,9 +106,14 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 		String originalName = currentWriter.getName();
 		ZipEntry zipEntry = new ZipEntry(originalName);
 		zipOutputStream.putNextEntry(zipEntry);
-		currentWriter.writeData(zipOutputStream);
-		zipOutputStream.closeEntry();
-		return zipOutputStream;
+		try {
+			currentWriter.writeData(zipOutputStream);
+		}
+		finally {
+			closeEntry(zipOutputStream);
+			closeStream(zipOutputStream);
+		}
+		return destination;
 	}
 	
   public String getName() {
@@ -133,11 +142,27 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
   	return buffer.toString();
   }
 
-	
-     
+  protected void closeEntry(ZipOutputStream output) {
+  	try {
+  		if (output != null) {
+  			output.closeEntry();
+  		}
+  	}
+  	// do not hide an existing exception
+  	catch (IOException io) {
+  	}
+  }
+  
+  protected void closeStream(ZipOutputStreamIgnoreClose output) {
+  	try {
+  		if (output != null) {
+  			output.closeStream();
+  		}
+  	}
+  	// do not hide an existing exception
+  	catch (IOException io) {
+  	}
+  }
 
- 	}
- 		
-	
-	
+}
 
