@@ -330,7 +330,7 @@ public String getPassword(){
   */
  public void trimTo(int size,int minSize,int maxSize){
 
-    setTimeOut(3*getTimeOut());
+    //setTimeOut(3*getTimeOut());
 
     if(size>maxSize){
       size=maxSize;
@@ -345,7 +345,7 @@ public String getPassword(){
       while(this.maxConns>dummy){
             connections.add(getConnection());
             dummy++;
-            //System.out.println("dummy="+dummy+",maxConns="+this.maxConns);
+            System.out.println("ConnectionPool.trimTo() : Getting Connection nr "+dummy+", maxConns="+this.maxConns);
       }
     }
     catch(Exception ex){
@@ -377,7 +377,7 @@ public String getPassword(){
       ex.printStackTrace();
     }
 
-    setTimeOut((int)getTimeOut()/3);
+    //setTimeOut((int)getTimeOut()/3);
 
  }
 
