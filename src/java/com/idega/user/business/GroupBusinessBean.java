@@ -57,7 +57,7 @@ import com.idega.util.ListUtil;
   * <p>Description: </p>
   * <p>Copyright: Copyright (c) 2002</p>
   * <p>Company: idega Software</p>
-  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+  * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
   * @version 1.2
   */
 
@@ -364,11 +364,13 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	  Iterator iter = groups.iterator();
 	  while (iter.hasNext()) {
 	    Group item = (Group)iter.next();
-	    key = item.getPrimaryKey().toString();
-	    if(!GroupsContained.containsKey(key)){
-	      GroupsContained.put(key,item);
-	      putGroupsContaining( item, GroupsContained );
-	    }
+	    if(item!=null){
+	    	key = item.getPrimaryKey().toString();
+	   		if(!GroupsContained.containsKey(key)){
+	      		GroupsContained.put(key,item);
+	      		putGroupsContaining( item, GroupsContained );
+	    	}
+	   	}
 	  }
 	
 	  List specifiedGroups = new ArrayList();
