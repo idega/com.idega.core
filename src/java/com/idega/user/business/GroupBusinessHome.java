@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusinessHome.java,v 1.7 2004/11/16 12:36:21 laddi Exp $
- * Created on 16.11.2004
+ * $Id: GroupBusinessHome.java,v 1.8 2004/11/16 14:53:32 eiki Exp $
+ * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -9,20 +9,17 @@
  */
 package com.idega.user.business;
 
-
-
-
 import com.idega.business.IBOHome;
 
 
 /**
- * Last modified: 16.11.2004 13:37:13 by laddi
  * 
- * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.7 $
+ *  Last modified: $Date: 2004/11/16 14:53:32 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.8 $
  */
 public interface GroupBusinessHome extends IBOHome {
 
 	public GroupBusiness create() throws javax.ejb.CreateException, java.rmi.RemoteException;
-
 }

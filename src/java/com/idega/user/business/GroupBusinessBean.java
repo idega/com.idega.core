@@ -973,6 +973,25 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		}
 	}
 	
+	/**
+	 * Gets a collection of groups of the supplied group type and which names start with the supplied name string ('name%')
+	 * @param type the group
+	 * @param name
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Collection getGroupsByGroupTypeAndFirstPartOfName(String groupType, String groupNameStartsWith)throws RemoteException{
+		try {
+			if(!groupNameStartsWith.endsWith("%")){
+				groupNameStartsWith = groupNameStartsWith + "%";
+			}
+			return this.getGroupHome().findGroupsByGroupTypeAndLikeName(groupType,groupNameStartsWith);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
+	}
+	
 	public Collection getGroupsByAbbreviation(String abbreviation)throws RemoteException{
 		try {
 			return this.getGroupHome().findGroupsByAbbreviation(abbreviation);
@@ -2409,10 +2428,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/16 12:36:21 $ by $Author: laddi $
+	 *  Last modified: $Date: 2004/11/16 14:53:32 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.83 $
+	 * @version $Revision: 1.84 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
