@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.36 2001/08/23 13:57:35 gummi Exp $
+ * $Id: GenericEntity.java,v 1.37 2001/08/23 19:40:24 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2028,15 +2028,6 @@ public abstract class GenericEntity implements java.io.Serializable {
     return (String) theMetaDataAttributes.get(metaDataKey);
   }
 
-  private void insertAndUpdateAndRemoveMetaData(){
-  /*
-    insert: smida metadata og inserta með entitybulkupdater + addTo í milli töflu
-    update: update table metadata með bulk...
-    delete: delete from ic_metadata where ( select ic_metadata_id from ...middletable..)
-    remove: delete from where id..and metada_name = sdf
-  */
-  }
-
   public void setMetaData(String metaDataKey, String metaDataValue){
     if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
 
@@ -2053,7 +2044,6 @@ public abstract class GenericEntity implements java.io.Serializable {
   }
 
   public void removeMetaData(String metaDataKey){
-
-    //deleteMetaDataAttributes.
+   // deleteMetaDataAttributes.put(metaDataKey,(String) theMetaDataIds.get(metaDataKey))
   }
 }

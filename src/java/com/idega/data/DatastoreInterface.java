@@ -763,9 +763,16 @@ public abstract class DatastoreInterface{
 
   protected void executeAfterInsert(GenericEntity entity)throws Exception{
     if( entity.hasLobColumn() ) insertBlob(entity);
+
+    if( entity.hasMetaDataRelationship() ) crunchMetaData(entity);
+  }
+
+  protected void crunchMetaData(GenericEntity entity)throws Exception{
+
   }
 
   protected void insertBlob(GenericEntity entity)throws Exception{
+    //implemented implentations of datastoreinterface
   }
 
 
