@@ -1310,13 +1310,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			{}
 			if (ex instanceof SQLException)
 			{
-				ex.printStackTrace();
+				//ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 			else
 			{
 				//ex.printStackTrace();
-				throw new SQLException(ex.getMessage());
+				throw new SQLException("Exception rethrown: "+ex.getClass().getName()+" - "+ex.getMessage());
 			}
 		}
 	}
@@ -3773,6 +3773,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	public javax.ejb.EJBHome getEJBHome()
 	{
+		if(_ejbHome==null){
+			try{
+			_ejbHome = IDOLookup.getHome(this.getClass());
+			}
+			catch(Exception e){
+				throw new EJBException("Lookup for home for: "+this.getClass().getName()+" failed. Errormessage was: "+e.getMessage());
+			}
+		}
 		return _ejbHome;
 	}
 	/**
@@ -3840,6 +3848,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			_columns.clear();
 		}
+		_dataStoreType=null;
+		_dataSource=DEFAULT_DATASOURCE;
+		_state = STATE_NEW;
+		_updatedColumns=null;
+		_primaryKey=null;
+		_theMetaDataAttributes=null;
+		_insertMetaDataVector=null;
+		_updateMetaDataVector=null;
+		_deleteMetaDataVector=null;
+		_theMetaDataIds=null;
+		//_hasMetaDataRelationship = false;
+		_metaDataHasChanged = false;
+		
 	}
 	public void ejbRemove() throws javax.ejb.RemoveException
 	{
@@ -3865,6 +3886,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return getPrimaryKey();
 	}
+	/**
+	 * Default create method for IDO
+	 **/
+	public Object ejbCreateIDO() throws CreateException
+	{
+		return ejbCreate();
+	}
+	/**
+	 * Default create method for IDO
+	 **/
+	public IDOEntity ejbHomeCreateIDO() throws CreateException
+	{
+		throw new UnsupportedOperationException("Not implemented");
+		//return ejbCreate();
+	}
+	/**
+	 * Default postcreate method for IDO
+	 **/
+	public void ejbPostCreateIDO()
+	{
+		//does nothing
+	}
+
 	public void ejbPostCreate()
 	{}
 	/*public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
@@ -3876,6 +3920,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		this.setPrimaryKey(pk);
 		return getPrimaryKey();
 	}
+	
+	/**
+	 * Default findByPrimaryKey method for IDO
+	 **/
+	public Object ejbFindByPrimaryKeyIDO(Object pk) throws FinderException
+	{
+		return ejbFindByPrimaryKeyIDO(pk);
+	}
+	
+	
 	void flagColumnUpdate(String columnName)
 	{
 		if (this._updatedColumns == null)

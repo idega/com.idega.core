@@ -64,7 +64,7 @@ public  class EntityControl{
 
     private static HashtableMultivalued  relationshipClasses = new HashtableMultivalued();
 
-    private static boolean autoCreate=false;
+    private static boolean autoCreate=true;//false;
 
 
 
