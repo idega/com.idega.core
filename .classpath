@@ -45,7 +45,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.3.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/java-ldapserver-0.4.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
