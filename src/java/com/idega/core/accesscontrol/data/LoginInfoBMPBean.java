@@ -51,6 +51,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
     addAttribute(getChangeNextTimeColumnName(),"Breyta n�st",true,true,Boolean.class);
     addAttribute(getEncryptionTypeColumnName(),"K��unara�fer�",true,true,String.class,30);
     addMetaDataRelationship();
+    setAsPrimaryKey(getIDColumnName(), true);
   }
 
   public void setDefaultValues(){
