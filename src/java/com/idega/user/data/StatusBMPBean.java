@@ -54,4 +54,10 @@ public class StatusBMPBean extends GenericEntity implements Status {
 	public Collection ejbFindAll() throws FinderException {
 		return super.idoFindAllIDsBySQL();
 	}
+	
+	public Object ejbFindByStatusKey(String key) throws FinderException {
+		return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhereEqualsQuoted(STATUS_LOC_KEY,key));
+	}
+	
+	
 }

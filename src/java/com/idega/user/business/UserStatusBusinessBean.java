@@ -8,10 +8,20 @@
  */
 package com.idega.user.business;
 
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
 import com.idega.business.IBOServiceBean;
+import com.idega.data.IDOStoreException;
+import com.idega.user.data.Status;
+import com.idega.user.data.StatusHome;
 import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 import com.idega.util.IWTimestamp;
@@ -23,13 +33,16 @@ import com.idega.util.IWTimestamp;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UserStatusBusinessBean extends IBOServiceBean implements UserStatusBusiness {
+	
+	public final static String status_deceased = "deceased"; 
+	
 	public boolean removeUserFromGroup(int user_id, int group_id) {
 		return setUserGroupStatus(user_id,group_id,-1);
 	}
 	
 	public boolean setUserGroupStatus(int user_id, int group_id, int status_id) {
 		try {
-			Collection obj = ((UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class)).findAllByUserIdAndGroupId(user_id,group_id);
+			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(user_id,group_id);
 			
 			IWTimestamp now = new IWTimestamp();
 			if (obj != null) {
@@ -44,7 +57,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 			}
 			
 			if (status_id > 0) {
-				UserStatus uStatus = ((UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class)).create();
+				UserStatus uStatus = getUserStatusHome().create();
 				uStatus.setUserId(user_id);
 				uStatus.setGroupId(group_id);
 				uStatus.setDateFrom(now.getTimestamp());
@@ -64,7 +77,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public int getUserGroupStatus(int user_id, int group_id) {
 		try {
-			Collection obj = ((UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class)).findAllByUserIdAndGroupId(user_id,group_id);
+			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(user_id,group_id);
 			int ret = -1;
 
 			if (obj != null && obj.size() > 0) {
@@ -79,5 +92,95 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 			
 			return -1;
 		}
-	}	
+	}
+	
+	public UserStatusHome getUserStatusHome() throws RemoteException{
+		return (UserStatusHome) getIDOHome(UserStatus.class);
+	}
+	
+	public String getDeceasedStatusKey(){
+		return status_deceased;
+	}
+	
+	public StatusHome getStatusHome() throws RemoteException{
+		return (StatusHome) getIDOHome(Status.class);
+	}
+	
+	public Status getDeceasedStatus() throws RemoteException,FinderException{
+		return getStatusHome().findByStatusKey(status_deceased);
+	}
+	
+	public Status createDeceasedStatus() throws RemoteException,CreateException{
+		Status status = getStatusHome().create();
+		status.setStatusKey(status_deceased);
+		status.store();
+		return status;
+	}
+	
+	public Status getDeceasedStatusCreateIfNone() throws RemoteException,FinderException,CreateException{
+		Status status = getDeceasedStatus();
+		if(status!=null)
+			return status;
+		else{
+			status = createDeceasedStatus();
+			return status;
+		}
+	}
+	
+	public UserStatus getDeceasedUserStatus(Integer userID) throws RemoteException{
+		try {
+			Status deceasedStatus = getDeceasedStatusCreateIfNone();
+			Collection coll = getUserStatusHome().findAllByUserIDAndStatusID(userID,(Integer) deceasedStatus.getPrimaryKey());
+			if(coll !=null && !coll.isEmpty())
+				return (UserStatus) coll.iterator().next();
+		}
+		catch (EJBException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		return null;
+	}
+	
+	public void setUserAsDeceased(Integer userID,Date deceasedDate) throws RemoteException{
+		try {
+			Status deceasedStatus = getDeceasedStatusCreateIfNone();
+			UserStatus dUserStatus = getDeceasedUserStatus(userID);
+			if(dUserStatus !=null){
+				dUserStatus = getUserStatusHome().create();
+				dUserStatus.setUserId(userID.intValue());
+				//dUserStatus.setGroupId(group_id);
+				dUserStatus.setDateFrom(new Timestamp(deceasedDate.getTime()));
+				dUserStatus.setStatusId(((Integer)deceasedStatus.getPrimaryKey()).intValue());
+				dUserStatus.store();
+			}
+		}
+		catch (IDOStoreException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+	
+		catch (EJBException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
+		}
+		
+	}
+	
+	
 }

@@ -41,6 +41,13 @@ public java.util.Collection findAllByUserIdAndGroupId(int p0,int p1)throws javax
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findAllByUserIDAndStatusID(Integer userID,Integer statusID)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserStatusBMPBean)entity).ejbFindAllByUserIDAndStatusID(userID,statusID);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public UserStatus findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (UserStatus) super.findByPrimaryKeyIDO(pk);
  }

@@ -164,4 +164,21 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		
 		return super.idoFindIDsBySQL(sql.toString());
 	}	
+	
+	public Collection ejbFindAllByUserIDAndStatusID(Integer userID, Integer statusID) throws FinderException {
+			StringBuffer sql = new StringBuffer("select * from ");
+			sql.append(ENTITY_NAME);
+			sql.append(" where ");
+			sql.append(IC_USER);
+			sql.append(" = ");
+			sql.append(userID);
+			sql.append(" and ");
+			sql.append(STATUS_ID);
+			sql.append(" = ");
+			sql.append(statusID);
+			sql.append(" order by ");
+			sql.append(DATE_FROM);
+		
+			return super.idoFindIDsBySQL(sql.toString());
+		}	
 }

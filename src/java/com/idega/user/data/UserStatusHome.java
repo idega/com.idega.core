@@ -9,5 +9,6 @@ public interface UserStatusHome extends com.idega.data.IDOHome
  public java.util.Collection findAllByGroupId(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findAllByUserId(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findAllByUserIdAndGroupId(int p0,int p1)throws javax.ejb.FinderException;
+ public java.util.Collection findAllByUserIDAndStatusID(Integer userID,Integer statusID)throws javax.ejb.FinderException;
 
 }
