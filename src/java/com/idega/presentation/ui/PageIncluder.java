@@ -425,7 +425,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected String encodeQueryStrings(String html){
-    html = TextSoap.findAndReplace(html,"&",symbol);
+    html = TextSoap.findAndReplace(html,"&","&",symbol);
     //fixing this should be done with a HTMLEditor object OR
     //make a single general expression fix
     html = symbolReplace(html,"eth;");
