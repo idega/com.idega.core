@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleStarter.java,v 1.3 2005/03/03 04:16:21 tryggvil Exp $
+ * $Id: IWBundleStarter.java,v 1.4 2005/03/06 12:26:17 tryggvil Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWBundleStartable;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/03 04:16:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/06 12:26:17 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWBundleStarter implements IWBundleStartable {
 
@@ -49,7 +49,7 @@ public class IWBundleStarter implements IWBundleStartable {
 	
 		//add the window node under workspace:
 		DefaultViewNode windowViewNode2 = new WindowViewNode("window",viewManager.getWorkspaceRoot());
-		windowViewNode2.setRendered(false);
+		windowViewNode2.setVisibleInMenus(false);
 	}
 
 	/* (non-Javadoc)
