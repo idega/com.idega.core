@@ -21,6 +21,8 @@ import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
+import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
 import com.idega.util.datastructures.NestedSetsContainer;
 
@@ -514,4 +516,24 @@ public interface GroupBusiness extends com.idega.business.IBOService {
 		public void refreshGroupTreeSnapShotInANewThread();
 		public void refreshGroupTreeSnapShot() throws EJBException;
 		public boolean userGroupTreeImageProcedureTopNodeSearch();
+
+/**
+ * Creates a visible group type from the supplied group type string if it does not already exist,
+ * if it exists it will update the group types visibilty to true.
+ * @param groupType
+ * @return a GroupType bean
+ * @throws RemoteException
+ */
+public GroupType createVisibleGroupType(String groupType) throws RemoteException;
+
+/**
+ * Creates a group type that has the visibility supplied if the type does not already exist.
+ * If it exist this method will update its visibility.
+ * @param groupType
+ * @param visible
+ * @return a GroupType bean
+ * @throws RemoteException
+ */
+public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException;
+
 }

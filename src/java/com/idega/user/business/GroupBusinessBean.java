@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -953,6 +952,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     return this.getGroupHome().findByPrimaryKey(new Integer(id));
   }
   
+  //TODO this should return a collection!!
 	public Group getGroupByGroupName(String name)throws FinderException,RemoteException{
 		return this.getGroupHome().findByName(name);
 	}
@@ -1022,6 +1022,9 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		if(type==null){
 			type = getGroupTypeHome().getGeneralGroupTypeString();
 		}
+		//needs to be done, otherwise the create group will fail or at least the group is not displayed in the userapp
+		createVisibleGroupType(type);
+		
 		String uniqueID =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
 		//String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL,attributes);
 		//String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
@@ -1040,16 +1043,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  	}
 	  	
 	  	if(group==null && distinguishedName!=null){
-	  		try {
-				group = getGroupByDirectoryString(ldapUtil.convertDNToDirectoryString(distinguishedName));
-			}
-			catch (FinderException e) {
-				System.out.println("GroupBusiness: Group not found by directorystring: "+distinguishedName);
-			}
+			group = getGroupByDirectoryString(ldapUtil.convertDNToDirectoryString(distinguishedName));
 	  	}
 	  	
 	  	if(group==null){
+	  		System.out.println("GroupBusiness: Group not found by directoryString. Creating a new group...");
 	  		group = createGroup(name,description,type,homePageID,homeFolderID,aliasID,createUnderRootDomainGroup,parentGroup);
+	  		if(uniqueID!=null){
+	  			group.setUniqueId(uniqueID);
+	  			group.store();
+	  		}
 	  	}
 	  	else{
 	  		//TODO update the group
@@ -1060,7 +1063,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  			group.setUniqueId(uniqueID);
 	  		}
 	  		
-	  		//update emails,addresses,phone and email
+	  		//todoupdate emails,addresses,phone and email
 	  		group.store();
 	  	}
 	  	
@@ -1094,10 +1097,18 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 					String key = ldapUtil.getAttributeKeyWithMetaDataNamePrefix(att);
 					
 					if(key.indexOf("binary")<0){
-						String value = att.get().toString();
-						if(value.length()<=2000){
-							group.setMetaData(key,value);
+						
+						String value;
+						try {
+							value = att.get().toString();
+							if(value.length()<=2000){
+								group.setMetaData(key,value);
+							}
 						}
+						catch (Exception e) {
+							System.out.println("[GroupBusiness] atttribute has no value");
+						}
+						
 					}
 				}
 			}
@@ -1210,6 +1221,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		newGroup = getGroupHome().create();
 		newGroup.setName(name);
 		newGroup.setDescription(description);
+		
 		newGroup.setGroupType(type);
 		if ( homePageID != -1 ) {
 			newGroup.setHomePageID(homePageID);
@@ -1232,7 +1244,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 			addGroupUnderDomainRoot(this.getIWApplicationContext().getDomain(),newGroup);
 		}
 		else{
-			addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+			addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,null);
 		}
 		if(parentGroup!=null){
 			parentGroup.addGroup(newGroup);
@@ -1758,6 +1770,45 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     }
   } 
   
+  /**
+   * Creates a visible group type from the supplied group type string if it does not already exist,
+   * if it exists it will update the group types visibilty to true.
+   * @param groupType
+   * @return a GroupType bean
+   * @throws RemoteException
+   */
+  public GroupType createVisibleGroupType(String groupType) throws RemoteException{
+  	return createGroupTypeOrUpdate(groupType,true);
+  }
+  /**
+   * Creates a group type that has the visibility supplied if the type does not already exist.
+   * If it exist this method will update its visibility.
+   * @param groupType
+   * @param visible
+   * @return a GroupType bean
+   * @throws RemoteException
+   */
+  public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException{
+  	GroupTypeHome home = getGroupTypeHome();
+  	 try {
+        GroupType type = getGroupTypeHome().findByPrimaryKey(groupType);
+        type.setVisibility(visible);
+        return type;
+      }
+      catch (FinderException findEx)  {
+        try {
+	        GroupType type = getGroupTypeHome().create();
+	        type.setType(groupType);
+	        type.setVisibility(visible);
+	        type.store();
+	        return type;
+        }
+        catch (CreateException createEx)  {
+          throw new RuntimeException(createEx.getMessage());
+        }
+      }
+  }
+  
   private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {  
     try {
       GroupType type = home.findByPrimaryKey(home.getAliasGroupTypeString());
@@ -1765,9 +1816,11 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     }
     catch (FinderException findEx)  {
       try {
-      GroupType type = home.create();
-      type.setGroupTypeAsAliasGroup();
-      return type;
+	      GroupType type = home.create();
+	      type.setGroupTypeAsAliasGroup();
+	      type.setVisibility(true);
+	      type.store();
+	      return type;
       }
       catch (CreateException createEx)  {
         throw new RuntimeException(createEx.getMessage());
@@ -1783,9 +1836,11 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     }
     catch (FinderException findEx)  {
       try {
-      GroupType type = home.create();
-      type.setGroupTypeAsGeneralGroup();
-      return type;
+	      GroupType type = home.create();
+	      type.setGroupTypeAsGeneralGroup();
+	      type.setVisibility(true);
+	      type.store();
+	      return type;
       }
       catch (CreateException createEx)  {
         throw new RuntimeException(createEx.getMessage());
@@ -2050,7 +2105,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	 * @param dn
 	 * @return a Group data bean
 	 */
-	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException, FinderException {
+	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException {
 		//TODO use one of the DN helper classes to do this cleaner
 		String identifier = dn.getDirectoryString();
 		Group group = null;
@@ -2059,49 +2114,53 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 		Collection groups = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
 
 		if(!groups.isEmpty() && groups.size()==1){
-			return (Group)groups.iterator().next();
+			//we found it!
+			group = (Group)groups.iterator().next();
 		}
 		else{
-			StringTokenizer tokenizer = new StringTokenizer(identifier,",");
-			Vector parts = new Vector();
-			
-			while (tokenizer.hasMoreTokens()) {
-				String dnPart = tokenizer.nextToken();
-				parts.add(dnPart);
-			}
-			int size = parts.size();
-			
-			//temp variable to get to the group we want
-			Group parentGroup = null;
-			
-			//TODO EIKI find the parentGroup and then check in next round if it is a parent of the group...more accurate
-			//this only ends with the last group it finds!!
-			for (int i = size-1; i >= 0; i-- ) {
-				String part = (String)parts.get(i);
-				if(!part.startsWith(LDAP_ATTRIBUTE_DOMAIN+"=")) {
-					if(part.startsWith(LDAP_ATTRIBUTE_ORGANIZATION+"=")) {
-						int index = part.indexOf("=");
-						String groupName = part.substring(index+1,part.length());
-						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
-					}
-					else if(part.startsWith(LDAP_ATTRIBUTE_ORGANIZATION_UNIT+"=")) {
-						int index = part.indexOf("=");
-						String groupName = part.substring(index+1,part.length());
-						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
-					}
-					else if(part.startsWith(LDAP_ATTRIBUTE_LOCATION+"=")) {
-						int index = part.indexOf("=");
-						String groupName = part.substring(index+1,part.length());
-						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
+			//LAST CHECK! 
+			//Warning this is potentially inaccurate and slow.
+			//1. We start with shrinking the DN to the groups parent DN
+			//2. Then we look for that group by its metadata
+			//3.	if we don't find it we return null because the groups parent does not exist in the database
+			//	if we do find the parent we get its children and see if we find a group with the name we are looking for
+			//4.We double check if the groups we find already have a DN meta data.
+			//	if all of them do then we cannot say that they are the correct one and return null
+			//	if exactly one does then we return that one
+			//	else if more than one have no DN and have the same name we return null because we cannot deside.
+			IWLDAPUtil util = IWLDAPUtil.getInstance();
+			int firstComma = identifier.indexOf(",");
+			int startOfGroupName = identifier.indexOf("=");
+			String groupName = identifier.substring(startOfGroupName+1,firstComma);
+			if(firstComma>0){
+				//1.
+				String parentDN = identifier.substring(firstComma+1,identifier.length());
+				List candidates = new Vector();
+				//2.
+				Collection potentialParent = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,parentDN);
+				if(!potentialParent.isEmpty() && potentialParent.size()==1){
+					//we found it!
+					Group parent = (Group)potentialParent.iterator().next();
+					//3.
+					List children = parent.getChildGroups();
+					if(children!=null && !children.isEmpty()){
+						Iterator iter = children.iterator();
+						while (iter.hasNext()) {
+							Group child = (Group) iter.next();
+							String dnFromMetaData = util.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING);
+							//4.
+							if(groupName.equals(child.getName()) && child.getMetaData(dnFromMetaData)==null){
+								candidates.add(child);
+							}
+						}
+						
+						if(!candidates.isEmpty() && candidates.size()==1){
+							group = (Group)candidates.iterator().next();
+						}
 					}
 				}
-				
 			}
-			
-			if(parentGroup!=null){
-				group = parentGroup;
-			}
-		}		
+		}	
 		
 		return group;
 	}
@@ -2173,10 +2232,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/08 01:47:25 $ by $Author: gummi $
+	 *  Last modified: $Date: 2004/09/16 17:41:40 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.71 $
+	 * @version $Revision: 1.72 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
