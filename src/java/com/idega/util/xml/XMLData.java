@@ -3,7 +3,6 @@ package com.idega.util.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-//import java.sql.SQLException;
 
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.core.data.ICFile;
@@ -11,8 +10,6 @@ import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
-import com.idega.io.MemoryOutputStream;
-
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
 import com.idega.xml.XMLOutput;
