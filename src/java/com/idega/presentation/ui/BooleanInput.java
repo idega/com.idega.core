@@ -52,4 +52,13 @@ public class BooleanInput extends DropdownMenu {
 	public void displaySelectOption() {
 		this._showSelectOption = true;
 	}
+	
+	public static boolean getBooleanReturnValue(String value) {
+		if (value.equalsIgnoreCase("Y")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
