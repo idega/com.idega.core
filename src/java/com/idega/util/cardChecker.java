@@ -1,132 +1,54 @@
 package com.idega.util;
 
-
-
-
-
-
-
 /** Creditcardnumber checker
-
 *	Visa <br>
-
 *	MasterCard <br>
-
 *	American Express <br>
-
 *	Diner's Club <br>
-
 *	Carte Blanche <br>
-
 *	Discover <br>
-
 *	en Route <br>
-
 *	JCB <br>
-
-
-
 *
-
 **/
 
+public class cardChecker {
 
+	public static boolean isValid(String cardnumber) throws NumberFormatException {
+		if ((cardnumber == null) || (cardnumber.length() != 16))
+			return false;
 
-public class cardChecker{
+		int sum = 0;
+		int multiplier = 1;
+		int length = cardnumber.length();
 
+		String digit;
+		int numberProduct;
 
+		for (int i = 0; i < length; i++) {
+			digit = cardnumber.substring(length - i - 1, length - i);
+			
+			try {
+				numberProduct = Integer.parseInt(digit, 10) * multiplier;
+			}
+			catch (NumberFormatException nfe) {
+				return false;
+			}
+			
+			if (numberProduct >= 10)
+				sum += (numberProduct % 10) + 1;
+			else
+				sum += numberProduct;
+			
+			if (multiplier == 1)
+				multiplier++;
+			else
+				multiplier--;
+		}
 
-public boolean isValid(String cardnum) throws NumberFormatException{
-
-
-
-//try{
-
-
-
-	//throws a numberformatexception if not a number
-
-	long cardnumberint = Long.parseLong(cardnum);
-
-	
-
-
-
-
-
-  if ((cardnum == null) || (cardnum.length() !=16))
-
-    return false;
-
-
-
-  int sum = 0; 
-
-  int mul = 1; 
-
-  int l= cardnum.length();
-
-  String digit;
-
-  int tproduct;
-
-  
-
-  for (int i = 0; i < l; i++) {
-
-    digit = cardnum.substring(l-i-1,l-i);
-
-    tproduct = Integer.parseInt(digit ,10)*mul;
-
-    if (tproduct >= 10)
-
-      sum += (tproduct % 10) + 1;
-
-    else
-
-      sum += tproduct;
-
-    if (mul == 1)
-
-      mul++;
-
-    else
-
-      mul--;
-
-  }
-
-
-
-  if ((sum % 10) == 0)
-
-    return  true;
-
-  else
-
-     return false;
-
-/*}
-
-
-
-
-
-catch (NumberFormatException e){
-
-System.out.print("Numberformatexception i cardChecker");
-
-	return "false ’ numerf.";
-
+		if ((sum % 10) == 0)
+			return true;
+		else
+			return false;
+	}
 }
-
-*/
-
-
-
-}
-
-
-
-}
-
