@@ -13,6 +13,9 @@ import com.idega.data.IDOLegacyEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * Title:        IW Core
@@ -23,15 +26,16 @@ import com.idega.presentation.PresentationObject;
  * @version 1.0
  */
 
-public class ICObjectBusiness {
+public class ICObjectBusiness implements Singleton {
 
 
-  private static ICObjectBusiness instance;
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new ICObjectBusiness();}};
 
   private  Map icoInstanceMap;
   private  Map icObjectMap;
 
   private ICObjectBusiness(){
+  	// empty
   }
 
   private  Map getIcoInstanceMap(){
@@ -52,14 +56,10 @@ public class ICObjectBusiness {
    * Returns an instance of this business object
    */
   public static ICObjectBusiness getInstance(){
-    if(instance==null){
-      instance = new ICObjectBusiness();
-    }
-    return instance;
+  	return (ICObjectBusiness) SingletonRepository.getRepository().getInstance(ICObjectBusiness.class, instantiator);
   }
-
-
-  /**
+  
+ /**
    * Returns the Class associated with the ICObjectInstance
    */
   public Class getICObjectClassForInstance(int ICObjectInstanceId) {
