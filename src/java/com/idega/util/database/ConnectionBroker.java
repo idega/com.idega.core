@@ -30,7 +30,7 @@ public class ConnectionBroker{
                     conn = ((IdegaTransaction)tm.getTransaction()).getConnection();
                   }
                   catch(Exception ex){
-
+                    ex.printStackTrace(System.err);
                   }
                 }
                 else{
