@@ -1569,6 +1569,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if(topGroupNodes == null || topGroupNodes.isEmpty()) {
 			return false;
 		} else {
+			//System.out.println("Checking if group " + group.getName() + " is under a top group (" + topGroupNodes.size() + ") for user " + user.getName());
 			return isGroupUnderUsersTopGroupNode(iwc, group, user, topGroupNodes);
 		}
 	}
@@ -1580,24 +1581,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
 		boolean found = false; // whether ancestry with a top group node is found or not
 		if(group!=null && topGroupNodes.contains(group)) {
+			//System.out.println("found top group ancestor " + group.getName());
 			found = true;
 		} else {
-			while(!found) {
-				Iterator parents = group.getParentGroups().iterator();
-				while(parents.hasNext() && !found) {
-					Group parent = (Group) parents.next();
-					try {
-						found = isGroupUnderUsersTopGroupNode(iwc, parent, user, topGroupNodes);
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-					if(found) {
-						break;
-					}
+			Iterator parents = group.getParentGroups().iterator();
+			while(parents.hasNext() && !found) {
+				Group parent = (Group) parents.next();
+				//System.out.println("checking group for top group in ancestors " + parent.getName());
+				try {
+					found = isGroupUnderUsersTopGroupNode(iwc, parent, user, topGroupNodes);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				if(found) {
+					break;
 				}
 			}
 		}
-		
 		return found;
 	}
 	
