@@ -77,49 +77,142 @@ public class IDOEntityList implements List {
     return new IDOEntityIterator(_factory, _PKs.listIterator(index));
   }
 
-
   public boolean contains(Object o) {
-    throw new UnsupportedOperationException("Method contains(Object o) not yet implemented.");
-  }
-  public Object[] toArray() {
-    throw new UnsupportedOperationException("Method toArray() not yet implemented.");
-  }
-  public Object[] toArray(Object[] a) {
-    throw new UnsupportedOperationException("Method toArray(Object[] a) not yet implemented.");
-  }
-  public boolean add(Object o) {
-    throw new UnsupportedOperationException("Method add(Object o) not yet implemented.");
-  }
-  public boolean remove(Object o) {
-  	return _PKs.remove(o);
-//    throw new UnsupportedOperationException("Method remove(Object o) not yet implemented.");
-  }
-  public boolean containsAll(Collection c) {
-    throw new UnsupportedOperationException("Method containsAll(Collection c) not yet implemented.");
-  }
-  public boolean addAll(Collection c) {
-    throw new UnsupportedOperationException("Method addAll(Collection c) not yet implemented.");
-  }
-  public boolean addAll(int index, Collection c) {
-    throw new UnsupportedOperationException("Method addAll(int index, Collection c) not yet implemented.");
-  }
-  public boolean removeAll(Collection c) {
-    throw new UnsupportedOperationException("Method removeAll(Collection c) not yet implemented.");
-  }
-  public boolean retainAll(Collection c) {
-    throw new UnsupportedOperationException("Method retainAll(Collection c) not yet implemented.");
-  }
-  public Object set(int index, Object element) {
-    throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
-  }
-  public void add(int index, Object element) {
-    throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
-  }
- public int indexOf(Object o) {
-    throw new java.lang.UnsupportedOperationException("Method indexOf() not yet implemented.");
-  }
-  public int lastIndexOf(Object o) {
-    throw new java.lang.UnsupportedOperationException("Method lastIndexOf() not yet implemented.");
+  	if (o instanceof IDOEntity)
+  		return _PKs.contains(((IDOEntity)o).getPrimaryKey());
+  	else
+  		return _PKs.contains(o);
   }
 
+  public Object[] toArray() {
+  	try {
+  		IDOEntity[] entities = new IDOEntity[size()];
+	  	int i = 0;
+	  	for (Iterator iter = _PKs.iterator(); iter.hasNext(); ) {
+				Object pk = (Object) iter.next();
+				entities[i++] = _factory.idoFindByPrimaryKey(pk);
+	  	}
+	  	return entities;
+		}
+  	catch (FinderException ex) {
+  		throw new EJBException(ex);
+  	}
+  }
+  
+  public Object[] toArray(Object[] a) {
+  	try {
+  		int i = 0;
+  		for (Iterator iter = _PKs.iterator(); iter.hasNext(); ) {
+  			Object pk = (Object) iter.next();
+  			a[i++] = _factory.idoFindByPrimaryKey(pk);
+  		}
+  		return a;
+  	}
+  	catch (FinderException ex) {
+  		throw new EJBException(ex);
+  	}
+  }
+  
+  public boolean add(Object o) {
+  	if (o instanceof IDOEntity)
+  		return _PKs.add(((IDOEntity)o).getPrimaryKey());
+  	return false;
+  }
+
+  public boolean remove(Object o) {
+  	if (o instanceof IDOEntity)
+  		return _PKs.remove(((IDOEntity)o).getPrimaryKey());
+  	else
+  		return _PKs.remove(o);
+  }
+
+  public boolean containsAll(Collection c) {
+  	Iterator iter = c.iterator();
+		while (iter.hasNext()) {
+			Object element = (Object) iter.next();
+			if (!contains(element))
+				return false;
+		}
+		return true;
+  }
+
+  public boolean addAll(Collection c) {
+  	boolean changed = false;
+  	Iterator iter = c.iterator();
+  	while (iter.hasNext()) {
+  		Object element = (Object) iter.next();
+			add(element);
+			changed = true;
+  	}
+  	return changed;
+  }
+
+  public boolean addAll(int index, Collection c) {
+  	boolean changed = false;
+  	Iterator iter = c.iterator();
+  	while (iter.hasNext()) {
+  		Object element = (Object) iter.next();
+  		add(index, element);
+  		changed = true;
+  	}
+  	return changed;
+  }
+  
+  public boolean removeAll(Collection c) {
+  	boolean changed = false;
+  	Iterator iter = c.iterator();
+  	while (iter.hasNext()) {
+  		Object element = (Object) iter.next();
+  		if (contains(element)) {
+	  		remove(element);
+	  		changed = true;
+  		}
+  	}
+  	return changed;
+  }
+  
+  public boolean retainAll(Collection c) {
+  	List PKs = new ArrayList(_PKs);
+  	int size = PKs.size();
+  	
+  	Iterator iter = c.iterator();
+		while (iter.hasNext()) {
+			Object element = iter.next();
+			if (element instanceof IDOEntity)
+				PKs.remove(((IDOEntity)element).getPrimaryKey());
+			else
+				PKs.remove(element);
+		}
+		_PKs.removeAll(PKs);
+		
+		return size == _PKs.size();
+  }
+  
+  public Object set(int index, Object element) {
+  	if (element instanceof IDOEntity)
+  		return _PKs.set(index, ((IDOEntity)element).getPrimaryKey());
+  	else
+  		return _PKs.set(index, element);
+  }
+
+  public void add(int index, Object element) {
+  	if (element instanceof IDOEntity)
+  		_PKs.add(index, ((IDOEntity)element).getPrimaryKey());
+  	else
+  		_PKs.add(index, element);
+  }
+
+  public int indexOf(Object o) {
+	 	if (o instanceof IDOEntity)
+	 		return _PKs.indexOf(((IDOEntity)o).getPrimaryKey());
+	 	else
+	 		return _PKs.indexOf(o);
+  }
+
+  public int lastIndexOf(Object o) {
+  	if (o instanceof IDOEntity)
+  		return _PKs.lastIndexOf(((IDOEntity)o).getPrimaryKey());
+  	else
+  		return _PKs.lastIndexOf(o);
+  }
 }
