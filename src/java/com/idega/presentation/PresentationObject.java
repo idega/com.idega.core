@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.70 2003/08/06 09:41:16 laddi Exp $
+ * $Id: PresentationObject.java,v 1.71 2003/09/17 09:06:42 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -259,6 +259,11 @@ public class PresentationObject extends Object implements Cloneable {
   public void setAttribute(String attributeName,boolean attributeValue) {
     setAttribute( attributeName, String.valueOf(attributeValue) );
   }
+
+	public void setAttribute(String attributeName,int attributeValue) {
+		setAttribute( attributeName, Integer.toString(attributeValue) );
+	}
+
 
   public void setAttributeMultivalued(String attributeName,String attributeValue){
     String previousAttribute = getAttribute(attributeName);
