@@ -2634,7 +2634,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			String metadataIdColumn = metadata.getIDColumnName();
 			String tableToSelectFrom = getNameOfMiddleTable(metadata, this);
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value,metadata_type from ");
+			buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value,meta_data_type from ");
 			buffer.append(tableToSelectFrom);
 			buffer.append(",ic_metadata where ");
 			buffer.append(tableToSelectFrom);
@@ -2656,8 +2656,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			while (RS.next()) {
 				_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
 				_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
-				if (RS.getString("metadata_type") != null)
-					_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("metadata_type"));
+				if (RS.getString("meta_data_type") != null)
+					_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
 			}
 			RS.close();
 		} catch (SQLException ex) {
