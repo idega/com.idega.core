@@ -414,7 +414,9 @@ public class IWBundle implements java.lang.Comparable {
 
     public IWPropertyList getUserProperties(IWUserContext iwuc) {
     	UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
-    	return properties.getProperties(this.getBundleName());
+    	if ( properties != null )
+	    	return properties.getProperties(this.getBundleName());
+	    return null;
     }
     
     public IWResourceBundle getResourceBundle(IWContext iwc){
