@@ -77,7 +77,7 @@ public class TextEditor extends PresentationObject {
 
     if (getLanguage().equals("HTML")){
 
-      if( iwc.isIE() && (!iwc.isMacOS()) ){//and is windows
+      if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
 
         /*
         var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
@@ -117,7 +117,7 @@ public class TextEditor extends PresentationObject {
 
       }
       else{
-       TextArea area = new TextArea(inputName,65,18);
+       TextArea area = new TextArea(inputName,45,20);
        area.setContent(text);
        area.print(iwc);
       }
