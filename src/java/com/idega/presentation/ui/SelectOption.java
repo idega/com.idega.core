@@ -14,6 +14,7 @@ public class SelectOption extends InterfaceObject {
 	private Class windowClass;
 	private Map parameterMap;
 	private String target;
+	private int fileID = -1;
 
 	public SelectOption() {
 		this("untitled");
@@ -76,6 +77,12 @@ public class SelectOption extends InterfaceObject {
 			
 			getParentSelect().addSelectScript(true);
 		}
+		if (fileID != -1) {
+			String URI = getICFileSystem(iwc).getFileURI(fileID);
+			String URL = Window.getCallingScript(URI);
+			String arguments = Window.getWindowArgumentCallingScript(false, false, false, false, false, true, true, true, false, 640, 480, null, null);
+			setValue(URL + "$" + arguments + "$" + "_blank");
+		}
 	}
 	
 	protected GenericSelect getParentSelect() {
@@ -109,6 +116,10 @@ public class SelectOption extends InterfaceObject {
 		this.windowClass = windowClass;
 		this.parameterMap = parameterMap;
 		this.target = target;
+	}
+	
+	public void setFileToOpenOnSelect(int fileID) {
+		this.fileID = fileID;
 	}
 
 	/**
