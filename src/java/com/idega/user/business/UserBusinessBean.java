@@ -1488,39 +1488,38 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					Map parents = new HashMap();
 					Map groupMap = new HashMap();
 					IDOUtil idoUtil = IDOUtil.getInstance();
+					GroupBusiness groupBiz = getGroupBusiness();
 					
 					Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
 					Collection ownedPermissions = null;
-					List allViewAndOwnerPermissions = new Vector();//could be arraylist?
+					Collection allViewAndOwnerPermissions = new Vector();
 					
 					//get all view permissions for direct parent and put in a list
-					Iterator groups = directlyRelatedParents.iterator();
-					Group group = null;
-					while (groups.hasNext()) {
-						group = (Group) groups.next();
-						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
-						allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
-						allViewAndOwnerPermissions.addAll(viewPermissions);
-					}
-					
+					Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);				
+					allViewAndOwnerPermissions.addAll(viewPermissions);
+										
 					ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
-					allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
+					//allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
 					allViewAndOwnerPermissions.addAll(ownedPermissions);
 					
+					System.out.println("TOP NODES done fetching all permissions: "+ IWTimestamp.RightNow().toString());
+					
 					//get all (recursively) parents for permission
-					GroupBusiness groupBiz = getGroupBusiness();
 					Iterator permissions = allViewAndOwnerPermissions.iterator();
 					while (permissions.hasNext()) {
 						ICPermission perm = (ICPermission) permissions.next();
 						try {
 							String groupId = perm.getContextValue();
-							Group permissionGroup = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
-							Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup);
-							Object primaryKey = permissionGroup.getPrimaryKey();
-	
-							Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
-							parents.put(primaryKey,parentMap);
-							groupMap.put(primaryKey,permissionGroup);
+							
+							Integer primaryKey = new Integer(groupId);
+							
+							if( !groupMap.containsKey(primaryKey) ){
+								Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
+								Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup);
+								Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
+								parents.put(primaryKey,parentMap);
+								groupMap.put(primaryKey,permissionGroup);
+							}
 					
 						}
 						catch (NumberFormatException e1) {
@@ -1567,7 +1566,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			
 			}
 			
-			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES,topNodes);
+			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
 		}
 		
 		return 	topNodes;
