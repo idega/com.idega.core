@@ -2,7 +2,6 @@
 /*
 *Copyright 2000 idega.is All Rights Reserved.
 */
-
 package com.idega.presentation.ui;
 
 import java.io.*;
@@ -16,17 +15,27 @@ import com.idega.presentation.*;
 */
 public class PasswordInput extends TextInput{
 
+	/**
+	 * Constructs a new <code>PasswordInput</code> with the name "untitled".
+	 */
   public PasswordInput(){
 	  this("untitled");
   }
 
+	/**
+	 * Constructs a new <code>PasswordInput</code> with the given name.
+	 */
   public PasswordInput(String name){
 	  super(name);
-	  super.setAsPasswordInput(true);
+		setInputType(INPUT_TYPE_PASSWORD);
   }
 
+	/**
+	 * Constructs a new <code>PasswordInput</code> with the given name and sets the given
+	 * content.
+	 */
   public PasswordInput(String name,String content){
 	  super(name,content);
-	  super.setAsPasswordInput(true);
+		setInputType(INPUT_TYPE_PASSWORD);
   }
 }
