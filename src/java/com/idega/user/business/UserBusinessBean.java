@@ -1653,7 +1653,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						List additionalGroups = new ArrayList();
 						while (iterating.hasNext()) {
 							Group parent = (Group) iterating.next();
-							if(parent.getPermissionControllingGroupID()>0){
+							if(parent!=null && parent.getPermissionControllingGroupID()>0){
 								additionalGroups.add(parent.getPermissionControllingGroup());
 							}
 							
