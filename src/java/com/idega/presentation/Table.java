@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.3 2001/10/18 11:32:14 palli Exp $
+ * $Id: Table.java,v 1.4 2001/10/24 18:13:12 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -797,13 +797,13 @@ public class Table extends PresentationObjectContainer {
         }
         else{
           //print(Text.getNonBrakingSpace().getText());
-          print("<font size=\"1\">&nbsp;</font>");
+          print("<img src=\"\" width=1 height=1>");
         }
       }
 
     }
     else{
-      print("<font size=\"1\">&nbsp;</font>");
+      print("<img src=\"\" width=1 height=1>");
       //print(Text.getNonBrakingSpace().getText());
     }
   }
