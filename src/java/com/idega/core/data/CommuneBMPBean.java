@@ -7,9 +7,10 @@ import java.sql.*;
 import com.idega.data.*;
 
 
-public class CommuneBMPBean extends GenericEntity {//implements Commune {
+public class CommuneBMPBean extends GenericEntity implements Commune {
 
-
+	private static String COLUMN_COMMUNE_NAME = "commune_name";
+	private static String COLUMN_COMMUNE_CODE = "commune_code";
 
   public CommuneBMPBean(){
     super();
@@ -21,11 +22,10 @@ public class CommuneBMPBean extends GenericEntity {//implements Commune {
 
   public void initializeAttributes(){
     addAttribute(getIDColumnName());
-    addAttribute(getColumnNameCommuneName(), "Commune", true, true, String.class,50);
+    addAttribute(COLUMN_COMMUNE_NAME, "Commune", true, true, String.class,50);
+    addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 20);
     addManyToOneRelationship("ic_province_id", "Province", Province.class);
   }
-
-  public String getColumnNameCommuneName(){ return "commune_name"; }
 
   public String getEntityName(){
     return "ic_commune";
@@ -35,12 +35,20 @@ public class CommuneBMPBean extends GenericEntity {//implements Commune {
    * All names are stored in uppercase, uses String.toUpperCase();
    */
   public void setCommuneName(String name){
-    setColumn(getColumnNameCommuneName(), name.toUpperCase());
+    setColumn(COLUMN_COMMUNE_NAME, name.toUpperCase());
   }
 
   public String getCommuneName(){
-    return getStringColumnValue(getColumnNameCommuneName());
+    return getStringColumnValue(COLUMN_COMMUNE_NAME);
   }
+
+	public void setCommuneCode(String code) {
+		setColumn(COLUMN_COMMUNE_CODE, code);
+	}
+	
+	public String getCommuneCode() {
+		return getStringColumnValue(COLUMN_COMMUNE_CODE);
+	}
 
   public void setProvince(Province province){
     setColumn("ic_province_id",province);
@@ -59,7 +67,7 @@ public class CommuneBMPBean extends GenericEntity {//implements Commune {
   }
 
   public Integer ejbFindByCommuneNameAndProvinceId(String name,int provinceId)throws FinderException,RemoteException{
-    Collection communes = idoFindAllIDsByColumnsBySQL(getColumnNameCommuneName(),name, "ic_province_id", Integer.toString(provinceId));
+    Collection communes = idoFindAllIDsByColumnsBySQL(COLUMN_COMMUNE_NAME,name, "ic_province_id", Integer.toString(provinceId));
     if(!communes.isEmpty()){
       return (Integer)communes.iterator().next();
     }
