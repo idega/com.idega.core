@@ -900,6 +900,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return true;
 	}
 	
+	public boolean isAlias() {
+	    return false;
+	}
+	
 	public Iterator getChildren() {
 		return ListUtil.getEmptyList().iterator();
 	}
