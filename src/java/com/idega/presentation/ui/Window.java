@@ -10,11 +10,15 @@
 */
 package com.idega.presentation.ui;
 
-import com.idega.presentation.*;
-import com.idega.idegaweb.*;
-
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
+import com.sun.rsasign.t;
 
 /**
  * Class to create pop-up windows and Windows to open with various settings
@@ -79,6 +83,8 @@ public Window(String name,int width,int height){
     this.setName(name);
     this.setWidth(width);
     this.setHeight(height);
+		this.setOnLoad("this.getFocus()");
+	
 }
 
 public Window(String name,String url){
@@ -126,6 +132,7 @@ private void setSettings(){
 	setStatus(false);
 	setTitlebar(false);
 	setResizable(false);
+	this.setOnLoad("this.getFocus()");
 }
 
 public void setToolbar(boolean ifToolbar){
