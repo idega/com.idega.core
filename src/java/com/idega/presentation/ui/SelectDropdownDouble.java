@@ -29,6 +29,10 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	private Map _secondaryMap;
 	
 	private int _spaceBetween = 3;
+	private SelectDropdownDouble _objectToDisable;
+	private String _disableValue;
+	
+	private boolean _disabled = false;
 	
 	public SelectDropdownDouble() {
 	}
@@ -46,8 +50,13 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		
 		addElementsToPrimary();
 		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'), -1);");
-		//getSecondaryDropdown().addMenuElement(-1,"");
-		//getSecondaryDropdown().setSelectedElement(-1);
+		if (_objectToDisable != null) {
+			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getPrimaryName(), _disableValue);
+			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getSecondaryName(), _disableValue);
+		}
+		
+		getPrimaryDropdown().setDisabled(_disabled);
+		getSecondaryDropdown().setDisabled(_disabled);
 
 		Table table = new Table();
 		table.setCellpadding(0);
@@ -62,7 +71,6 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 
 		//add the script
 		Script script = getParentPage().getAssociatedScript();
-		script.addFunction("arrayVariables", getArrayVariables());
 		script.addFunction("setDropdownOptions", getSelectorScript());
 		
 		if (_secondarySelected == null)
@@ -87,9 +95,10 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		}
 	}
 
-	private String getArrayVariables() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("var dropdownValues = new Array();").append("\n");
+	private String getSelectorScript() {
+		StringBuffer s = new StringBuffer();
+		s.append("function setDropdownOptions(input, inputToChange, selected) {").append("\n\t");
+		s.append("var dropdownValues = new Array();").append("\n\t");
 		
 		int column = 0;
 		if (_secondaryMap != null) {
@@ -98,23 +107,17 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 				column = 0;
 				String key = (String) iter.next();
 				Map map = (Map) _secondaryMap.get(key);
-				buffer.append("\n").append("dropdownValues[\""+key+"\"] = new Array();").append("\n");
+				s.append("\n\t").append("dropdownValues[\""+key+"\"] = new Array();").append("\n\t");
 				
 				Iterator iterator = map.keySet().iterator();
 				while (iterator.hasNext()) {
 					String element = (String) iterator.next();
 					String value = (String) map.get(element);
-					buffer.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+element+"');").append("\n");
+					s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+element+"');").append("\n\t");
 				}
 			}
 		}
-		
-		return buffer.toString();
-	}
-	
-	private String getSelectorScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("function setDropdownOptions(input, inputToChange, selected) {").append("\n\t");
+		s.append("\n\t");
 		s.append("var chosen = input.options[input.selectedIndex].value;").append("\n\t");
 		s.append("inputToChange.options.length = 0;").append("\n\n\t");
 		s.append("var array = dropdownValues[chosen];").append("\n\t");
@@ -197,5 +200,14 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	public void setSelectedValues(String primaryValue, String secondaryValue) {
 		_primarySelected = primaryValue;
 		_secondarySelected = secondaryValue;
+	}
+	
+	public void setToEnableWhenNotSelected(SelectDropdownDouble doubleDropdown, String disableValue) {
+		_objectToDisable = doubleDropdown;
+		_disableValue = disableValue;
+	}
+	
+	public void setDisabled(boolean disabled) {
+		_disabled = disabled;
 	}
 }
