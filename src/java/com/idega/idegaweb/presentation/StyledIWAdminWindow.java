@@ -14,11 +14,11 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.util.ICUserConstants;
 
 public class StyledIWAdminWindow extends Window {
 
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; 
-public static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 
 public static final String MAIN_STYLECLASS = "main";
 
@@ -207,7 +207,7 @@ private Image helpImage = null;
 		iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 	 	Help help = new Help();
 	 	helpImage = iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
- 	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+ 	  help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
 	  return help;
@@ -222,7 +222,7 @@ private Image helpImage = null;
 		else {
 			helpImage = iwb.getImage("help_lightgray.gif");
 		}
-		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(helpTextKey);
 		help.setImage(helpImage);
 		return help;

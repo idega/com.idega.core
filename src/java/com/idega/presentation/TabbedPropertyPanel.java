@@ -32,7 +32,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     
 //  private SubmitButton apply;
     
-//  private final static String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 //  private final static String HELP_TEXT_KEY = "tabbed_property_panel";
 //  
     
