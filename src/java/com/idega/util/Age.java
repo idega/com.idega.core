@@ -54,4 +54,11 @@ public class Age {
 
 		return isOlder;
 	}
+	
+	/* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return String.valueOf(getYears());
+    }
 }
