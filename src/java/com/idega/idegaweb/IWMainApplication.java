@@ -45,6 +45,7 @@ public class IWMainApplication{//implements ServletContext{
   private String propertiesRealPath;
 
   public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
+  public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
 
 
   private static String SETTINGS_STORAGE_PARAMETER="idegaweb_main_application_settings";
@@ -69,7 +70,7 @@ public class IWMainApplication{//implements ServletContext{
   public String getVersion(){
     String theReturn = this.getSettings().getProperty("version");
     if(theReturn == null){
-      theReturn = "1.0";
+      theReturn = "1.3";
     }
     return theReturn;
   }
@@ -327,7 +328,7 @@ public class IWMainApplication{//implements ServletContext{
   private void setPropertiesRealPath(){
     this.propertiesRealPath=this.getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+"properties";
     //debug
-    System.out.println("setPropertiesRealPath : "+propertiesRealPath);
+    //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
   }
 
   public String getRealPath(String p0){
@@ -347,7 +348,7 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public String getApplicationSpecialVirtualPath(){
-   return "idegaweb";
+   return IDEGAWEB_SPECIAL_DIRECTORY;
   }
 
   private String getBundleVirtualPath(String bundleIdentifier){
@@ -369,7 +370,7 @@ public class IWMainApplication{//implements ServletContext{
       else sBundle = TextSoap.findAndReplace(sBundle,"/","\\");//windows
     }
     //debug
-    System.out.println("IWMainApplication : sBundle = "+sBundle);
+    //System.out.println("IWMainApplication : sBundle = "+sBundle);
 
     return getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+sBundle;
   }

@@ -105,16 +105,16 @@ public class IWBundle{
    private void loadBundle(){
       setResourcesVirtualPath(getRootVirtualPath()+"/"+"resources");
 
-      System.out.println("getResourcesVirtualPath() : "+ getResourcesVirtualPath() );
+      //System.out.println("getResourcesVirtualPath() : "+ getResourcesVirtualPath() );
 
       setResourcesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"resources");
 
-        System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
+        //System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
 
 
       setPropertiesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"properties");
 
-        System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
+        //System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
 
       setClassesRealPath();
       if(autoCreate){
@@ -331,7 +331,7 @@ public class IWBundle{
         item.storeState();
       }
       try{
-      System.out.println(localizableStringsFile);
+        //System.out.println("localizableStringsFile:"+localizableStringsFile);
 
         getLocalizableStringsProperties().clear();
         getLocalizableStringsProperties().putAll(localizableStringsMap);

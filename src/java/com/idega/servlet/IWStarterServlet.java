@@ -49,15 +49,11 @@ public class IWStarterServlet extends GenericServlet
 
         public void startDatabasePool(){
                 String separator = FileUtil.getFileSeparator();
-		//String file = getServletContext().getRealPath("/")+separator+"db"+separator+"db.properties";
-                    String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
+                String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
                 System.out.println("Reading Databases from file: "+file);
                 PoolManager poolMgr;
-		//String file = "db/db.properties";
                 poolMgr = PoolManager.getInstance(file);
-    		//getServletContext().setAttribute("poolmanager",poolMgr);
   		System.out.println("Starting pool");
-  		System.out.println(file);
         }
 
         public void endDatabasePool(){
