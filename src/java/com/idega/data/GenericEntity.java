@@ -3451,10 +3451,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * You must call addUniqueIDColumn() in your IDO's initializeAttributes method to enable this behavior.
 	 */
 	protected void generateAndSetUniqueIDForIDO() {
-		IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
-		String uniqueId = uidGenerator.generateId();
-		
-		setUniqueId(uniqueId);
+		if(getUniqueId()==null){
+			IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
+			String uniqueId = uidGenerator.generateId();
+			
+			setUniqueId(uniqueId);
+		}
 	}
 	
 	/**
