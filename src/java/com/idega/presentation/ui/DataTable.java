@@ -23,6 +23,8 @@ public class DataTable extends PresentationObjectContainer {
   private int iBorder = 1;
   private boolean infoTitles = true;
   private boolean titlesVertical =true;
+  private boolean use_top = true;
+  private boolean use_bottom = true;
   private String sHeight = "";
   private String sWidth = "";
   private String buttonAlign  = "right";
@@ -32,11 +34,12 @@ public class DataTable extends PresentationObjectContainer {
   private int _columns = -1;
   private boolean _addBottom = true;
 
-  private String DARKBLUE = "#27334B";
-  private String DARKGREY = "#D7DADF";
-  private String LIGHTGREY = "#F4F4F4";
-  private String DARKRED =  "#932A2D";
-  private String WHITE ="#FFFFFF";
+  private String TOP_COLOR = "#27334B";
+  private String HEADING_COLOR = "#D7DADF";
+  private String ZEBRA_DARK_COLOR = "#F4F4F4";
+  private String BOTTOM_COLOR =  "#932A2D";
+  private String ZEBRA_LIGHT_COLOR ="#FFFFFF";
+  private String TITLE_FONT_COLOR = "#FFFFFF";
 
   public DataTable(){
     contentTable = new Table();
@@ -53,27 +56,31 @@ public class DataTable extends PresentationObjectContainer {
     contentTable.setHeight(this.sHeight);
     contentTable.setCellpadding(3);
     contentTable.setCellspacing(1);
-    if ( _columns != -1 ) contentTable.setColumns(_columns);
-    if ( _rows != -1 ) contentTable.setRows(_rows);
-    contentTable.setHorizontalZebraColored(WHITE,LIGHTGREY);
+    if ( _columns != -1 )
+      contentTable.setColumns(_columns);
+    if ( _rows != -1 )
+      contentTable.setRows(_rows);
+    contentTable.setHorizontalZebraColored(ZEBRA_LIGHT_COLOR,ZEBRA_DARK_COLOR);
 
     if(infoTitles){
       if(titlesVertical)
-        contentTable.setColumnColor(1,DARKGREY);
+        contentTable.setColumnColor(1,HEADING_COLOR);
       else
-        contentTable.setRowColor(2,DARKGREY);
+        contentTable.setRowColor(2,HEADING_COLOR);
     }
 
     int lastrow = contentTable.getRows();
     int lastcol = contentTable.getColumns();
-    contentTable.mergeCells(1,1,contentTable.getColumns(),1);
-    contentTable.setColor(1,1,DARKBLUE);
+    if(use_top){
+      contentTable.mergeCells(1,1,contentTable.getColumns(),1);
+      contentTable.setColor(1,1,TOP_COLOR);
+    }
 
     if ( _addBottom ) {
       lastrow++;
       contentTable.mergeCells(1,lastrow,lastcol,lastrow);
       contentTable.add(image,1,lastrow);
-      contentTable.setColor(1,lastrow,DARKRED);
+      contentTable.setColor(1,lastrow,BOTTOM_COLOR);
     }
 
     if(buttons!=null){
@@ -105,11 +112,12 @@ public class DataTable extends PresentationObjectContainer {
   }
   public void addTitle(String title){
     Text T = new Text(title,true,false,false);
-    T.setFontColor(WHITE);
+    T.setFontColor(TITLE_FONT_COLOR);
     addTitle(T);
+    use_top = true;
   }
   public void add(PresentationObject objectToAdd,int col,int row){
-    contentTable.add(objectToAdd,col,++row);
+    contentTable.add(objectToAdd,col,use_top?++row:row);
   }
   public void addButton(PresentationObject objectToAdd){
     if(buttons ==null)
@@ -138,20 +146,21 @@ public class DataTable extends PresentationObjectContainer {
     _columns = columns;
   }
   public void setHeaderColor(String color){
-    DARKBLUE=color;
+    TOP_COLOR=color;
   }
   public void setTitleColor(String color){
-    DARKGREY=color;
+    HEADING_COLOR=color;
   }
   public void setZebraColors(String color1,String color2){
-    WHITE=color1;
-    LIGHTGREY=color2;
+    ZEBRA_LIGHT_COLOR=color1;
+    ZEBRA_DARK_COLOR=color2;
   }
   public void setBottomColor(String color){
-    DARKRED=color;
+    BOTTOM_COLOR=color;
   }
   public void addBottom(boolean addBottom){
     _addBottom = addBottom;
+    use_bottom = addBottom;
   }
 
   public Table getContentTable(){
