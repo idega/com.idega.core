@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.65 2003/04/10 14:57:15 joakim Exp $
+ * $Id: DatastoreInterface.java,v 1.66 2003/05/02 06:43:39 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -515,6 +515,7 @@ public abstract class DatastoreInterface {
 			}
 			//else       System.out.println("delete is null");
 			updater.execute();
+			
 			entity.metaDataHasChanged(false); //so we don't do anything next time
 		}
 	}
