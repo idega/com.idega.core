@@ -30,7 +30,6 @@ import com.idega.data.IDOContainer;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
