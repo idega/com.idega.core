@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.115 2004/07/02 02:27:49 tryggvil Exp $
+ *  $Id: Page.java,v 1.116 2004/07/07 23:14:43 gummi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -61,6 +61,8 @@ public class Page extends PresentationObjectContainer {
 	private Script _theAssociatedScript;
 	private Script _theSourceScript;
 	private boolean _zeroWait = false;
+	private int _redirectSecondInterval = -1;
+	private String _redirectURL = null;
 	private String _redirectInfo;
 	private boolean _doReload = false;
 	private String _linkColor = "#000000";
@@ -896,6 +898,8 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setToRedirect(String URL, int secondInterval) {
 		_redirectInfo = "" + secondInterval + " ;URL=" + URL;
+		_redirectSecondInterval = secondInterval;
+		_redirectURL = URL;
 	}
 
 	/**
@@ -1262,7 +1266,16 @@ public class Page extends PresentationObjectContainer {
 			println("<?xml version=\"1.0\"?>");
 			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
 			println("<wml>");
-			println("<card title=\"" + getLocalizedTitle(iwc) + "\" id=\"card1\">");
+			print("<card title=\"" + getLocalizedTitle(iwc) + "\"");
+			if(_redirectSecondInterval>-1){
+				print(" ontimer=\""+_redirectURL+"\"");
+				println(" id=\"card1\">");
+				println("<timer value=\""+_redirectSecondInterval*10+"\"/>");
+			}else{
+				println(" id=\"card1\">");
+			}
+			
+			
 
 			//Catch all exceptions that are thrown in print functions of objects stored inside
 			try {
