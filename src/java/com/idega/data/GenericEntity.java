@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.46 2001/09/26 01:21:22 eiki Exp $
+ * $Id: GenericEntity.java,v 1.47 2001/09/28 15:14:06 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1225,7 +1225,11 @@ public abstract class GenericEntity implements java.io.Serializable {
 
                 if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
 			//if (RS.getInt(columnName) != -1){
-				setColumn(columnName.toLowerCase(),new Integer(RS.getInt(columnName)));
+                        int theInt = RS.getInt(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName.toLowerCase(),new Integer(theInt));
+                        }
 			//}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
@@ -1246,15 +1250,19 @@ public abstract class GenericEntity implements java.io.Serializable {
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
-			//if (RS.getFloat(columnName) != 0){
-				setColumn(columnName.toLowerCase(),new Float(RS.getFloat(columnName)));
-			//}
+                        float theFloat = RS.getFloat(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName.toLowerCase(),new Float(theFloat));
+                        }
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
+                        double theDouble = RS.getFloat(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName.toLowerCase(),new Double(theDouble));
+                        }
 			double doble = RS.getDouble(columnName);
-                        //if (doble != 0){
-				setColumn(columnName.toLowerCase(),new Double(doble));
-			//}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
 			if (RS.getTimestamp(columnName) != null){

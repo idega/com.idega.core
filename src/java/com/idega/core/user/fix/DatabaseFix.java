@@ -42,8 +42,6 @@ public class DatabaseFix {
             group.setName(item.getName());
             group.insert();
 
-            System.err.println("item : "+item.getID()+", group = "+group.getID());
-
             item.setGroupID(group.getID());
             item.update();
 
@@ -51,7 +49,7 @@ public class DatabaseFix {
 
             if(groups != null){
               Iterator iter2 = groups.iterator();
-              while (iter.hasNext()) {
+              while (iter2.hasNext()) {
                 GenericGroup item2 = (GenericGroup)iter2.next();
                 item2.addUser(item);
               }
@@ -62,6 +60,7 @@ public class DatabaseFix {
           }
         } catch (Exception ex) {
           System.err.println(" - failed");
+          ex.printStackTrace();
         }
       }
       System.err.println("done");

@@ -48,9 +48,10 @@ public class User extends GenericEntity {
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
-      //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
       this.setNullable(getColumnNameSystemImage(),true);
       this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
+      //temp
+      this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
     }
 
     public void setDefaultValues(){
