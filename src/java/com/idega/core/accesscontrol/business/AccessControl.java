@@ -32,21 +32,26 @@ public class AccessControl{
 
 
     public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
-      Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), modinfo);
-      if(ob != null){
-        return ((Boolean)ob).booleanValue();
-      }else{
-        PermissionGroup[] groups = LoginBusiness.getPermissionGroups(modinfo);
-        if (groups != null){
-          for(int i = 0; i < groups.length ; i++){
-            if (getAdministratorGroupName().equals(groups[i].getName()))
-              LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,modinfo);
-              return true;
+      try {
+        Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), modinfo);
+        if(ob != null){
+          return ((Boolean)ob).booleanValue();
+        }else{
+          PermissionGroup[] groups = LoginBusiness.getPermissionGroups(modinfo);
+          if (groups != null){
+            for(int i = 0; i < groups.length ; i++){
+              if (getAdministratorGroupName().equals(groups[i].getName()))
+                LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,modinfo);
+                return true;
+            }
           }
         }
+        LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,modinfo);
+        return false;
       }
-      LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,modinfo);
-      return false;
+      catch (NotLoggedOnException ex) {
+        return false;
+      }
     }
 
 
