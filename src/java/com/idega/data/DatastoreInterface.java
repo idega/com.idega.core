@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.64 2003/04/03 20:12:44 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.65 2003/04/10 14:57:15 joakim Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -566,8 +566,12 @@ public abstract class DatastoreInterface {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			if (PS != null)
-				PS.close();
+			if (PS != null){
+				try{
+					PS.close();
+				}
+				catch(SQLException sqle){}
+			}
 			if (Conn != null)
 				entity.freeConnection(Conn);
 			if (instream != null)
@@ -736,7 +740,11 @@ public abstract class DatastoreInterface {
 			Stmt.execute();
 		} finally {
 			if (Stmt != null) {
-				Stmt.close();
+				try{
+					Stmt.close();
+				}
+				catch(SQLException sqle){
+				}
 			}
 		}
 		executeAfterUpdate(entity);
@@ -771,7 +779,11 @@ public abstract class DatastoreInterface {
 				RS.close();
 			}
 			if (Stmt != null) {
-				Stmt.close();
+				try{
+					Stmt.close();
+				}
+				catch(SQLException e){
+				}
 			}
 		}
 		executeAfterInsert(entity);
@@ -802,7 +814,11 @@ public abstract class DatastoreInterface {
 			}
 		} finally {
 			if (Stmt != null) {
-				Stmt.close();
+				try{
+					Stmt.close();
+				}
+				catch(SQLException sqle){
+				}
 			}
 			if (conn != null) {
 				entity.freeConnection(conn);
@@ -831,7 +847,11 @@ public abstract class DatastoreInterface {
 			}
 		} finally {
 			if (Stmt != null) {
-				Stmt.close();
+				try{
+					Stmt.close();
+				}
+				catch(SQLException sqle){
+				}
 			}
 		}
 		executeAfterInsert(entity);
