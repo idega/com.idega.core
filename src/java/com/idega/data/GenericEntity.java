@@ -4541,6 +4541,65 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " like '" + toFind + "'");
 	}
+	
+	/**
+	 * Finds all entities by a metadata key or metadata key and value
+	 * @param key, the metadata name cannot be null
+	 * @param value, the metadata value can be null
+	 * @return all collection of primary keys of the current genericentity
+	 * @throws FinderException
+	 */
+	protected Collection idoFindPKsByMetaData(String key, String value) throws FinderException{
+		MetaData metadata = (MetaData) getStaticInstance(MetaData.class);
+		final String middleTableName = getNameOfMiddleTable(metadata, this);
+		final String tableToSelectFrom = getEntityName();
+		final String metadataIdColumnName = metadata.getIDColumnName();
+		final String primaryColumnName = getIDColumnName();
+		final String keyColumn = ((MetaDataBMPBean)metadata).COLUMN_META_KEY;
+		final String valueColumn = ((MetaDataBMPBean)metadata).COLUMN_META_VALUE;
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select ")
+		.append(tableToSelectFrom)
+		.append(".* from ")
+		.append(tableToSelectFrom).append(" entity ,")
+		.append(middleTableName).append(" middle ,")
+		.append(metadata.getEntityName()).append(" meta ")
+		.append(" where ")
+		.append("entity.")
+		.append(primaryColumnName)
+		.append("=")
+		.append(getPrimaryKeyValueSQLString())
+		.append(" and ")
+		.append("entity.")
+		.append(primaryColumnName)
+		.append("=")
+		.append(metadata.getEntityName())
+		.append(".")
+		.append(primaryColumnName)
+		.append(" and ")
+		.append("middle.")
+		.append(metadataIdColumnName)
+		.append("=")
+		.append("meta")
+		.append(".")
+		.append(metadataIdColumnName)
+		.append(" and ")
+		.append("meta.")
+		.append(keyColumn)
+		.append("=")
+		.append("'").append(key);
+		if( value!=null ){
+			sql.append(" and ")
+			.append("meta.")
+			.append(valueColumn)
+			.append("=")
+			.append(value);
+		}
+		
+		return idoFindPKsBySQL(sql.toString());
+
+	}
 
         /**
         * Finds by two columns
