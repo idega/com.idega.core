@@ -14,7 +14,6 @@ import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWEventListener;
 import com.idega.core.accesscontrol.data.LoginInfo;
