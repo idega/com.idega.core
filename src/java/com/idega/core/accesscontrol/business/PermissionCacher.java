@@ -126,7 +126,7 @@ public class PermissionCacher {
 
       if(permissions == null){
         updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
-        permissions = permissionMap.get(Integer.toString(obj.getICObjectInstanceID(iwc)),permissionKey,groups);
+        permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 
       Boolean trueOrNull = null;
@@ -143,7 +143,7 @@ public class PermissionCacher {
           }
         }
       }
-      return trueOrNull;
+      return trueOrNull; //rather be falseOrNull
     } else {
       return null;
     }
