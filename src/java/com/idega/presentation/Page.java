@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.76 2003/04/30 03:57:37 eiki Exp $
+ *  $Id: Page.java,v 1.77 2003/05/27 20:35:18 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,6 +22,7 @@ import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWFrameBusiness;
 import com.idega.core.data.ICFile;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
@@ -1030,7 +1031,7 @@ public class Page extends PresentationObjectContainer {
 
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
-		if (getLanguage().equals("HTML")) {
+		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (!isInsideOtherPage) {
 				println(getStartTag());
 				if (_zeroWait) {
@@ -1107,7 +1108,7 @@ public class Page extends PresentationObjectContainer {
 				println(getEndTag());
 			}
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
 			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
 			println("<wml>");
@@ -1128,6 +1129,19 @@ public class Page extends PresentationObjectContainer {
 
 			println("</card>");
 			println("</wml>");
+		}
+		else if(getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
+			println("<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>");
+			//println("<!DOCTYPE ITEXT SYSTEM \"http://www.lowagie.com/iText/itext.dtd\">");
+			println("<itext producer=\"Idega Software, http://www.idega.com\">");
+			try {
+				super.print(iwc);
+			}
+			catch (Exception ex) {
+				println("<paragraph leading=\"18.0\" font=\"unknown\" align=\"Default\">An error occurred</paragraph>");
+			}
+			println("</itext>");
+
 		}
 	}
 

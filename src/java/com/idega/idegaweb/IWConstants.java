@@ -63,6 +63,7 @@ public class IWConstants{
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";
 
   public static final String MARKUP_LANGUAGE_HTML="HTML";
+	public static final String MARKUP_LANGUAGE_PDF_XML="PDF_XML";
   public static final String MARKUP_LANGUAGE_WML="WML";
 
   public static final String BUILDER_FONT_STYLE_LARGE = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#000000;";

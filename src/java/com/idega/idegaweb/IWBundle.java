@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.57 2003/05/03 02:19:48 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.58 2003/05/27 20:33:39 eiki Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -536,7 +536,24 @@ public class IWBundle implements java.lang.Comparable {
 	public Image getImage(String urlInBundle) {
 		return new Image(getResourcesURL() + slash + urlInBundle);
 	}
-
+	
+	public String getVirtualPathWithFileNameString(String filename) {
+		return getResourcesURL() + slash + filename;
+	}
+	
+	public String getVirtualPath(){
+		return getResourcesURL();
+	}
+	
+	public String getRealPathWithFileNameString(String filename) {
+		return getResourcesRealPath() + FileUtil.getFileSeparator() + filename;
+	}
+	
+	public String getRealPath(){
+		return getResourcesRealPath();
+	}
+	
+	
 	public Image getImage(String urlInBundle, int width, int height) {
 		return getImage(urlInBundle, "", width, height);
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.37 2003/05/26 11:10:20 gummi Exp $
+ * $Id: Table.java,v 1.38 2003/05/27 20:35:18 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,10 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
 import com.idega.util.text.TextStyler;
+import com.inet.pool.i;
 
 /**
  * A class to use for presentation of 2 dimensional (grid) layout.
@@ -30,6 +32,23 @@ import com.idega.util.text.TextStyler;
  */
 public class Table extends PresentationObjectContainer {
 
+	protected static final String HTML_TABLE_TAG_START = "<table ";
+	protected static final String HTML_TABLE_TAG_END = "</table>";
+	protected static final String HTML_CELL_TAG_START = "<td ";
+	protected static final String HTML_CELL_TAG_END = "</td>";
+	protected static final String HTML_TR_START = "<tr>";
+	protected static final String HTML_TR_END = "</tr>";
+	
+	protected static final String PDF_XML_TABLE_TAG_START = "<table ";
+	protected static final String PDF_XML_TABLE_TAG_END = "</table>";
+	protected static final String PDF_XML_CELL_TAG_START = "<cell ";
+	protected static final String PDF_XML_CELL_TAG_END = "</cell>";
+	protected static final String PDF_XML_TR_START = "<row>";
+	protected static final String PDF_XML_TR_END = "</row>";
+
+	protected static final String LINE_BREAK = "\n";
+	protected static final String TAG_END = ">";
+	
 	protected static Image transparentcell;
 	protected static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	protected PresentationObjectContainer theObjects[][];
@@ -56,12 +75,11 @@ public class Table extends PresentationObjectContainer {
 	protected int lineColspan = 0;
 	protected int[] lineRows = new int[0];
 	protected int[] lineCols = new int[0];
+	protected String markupLanguage = null;
 	
 	protected String _width = "0";
 	protected String _height = "0";
 
-	protected static final String HTML_TR_START = "\n<tr>";
-	protected static final String HTML_TR_END = "\n</tr>";
 
 	public static final String HUNDRED_PERCENT = "100%";
 	public static final String VERTICAL_ALIGN_TOP = "top";
@@ -955,38 +973,42 @@ public class Table extends PresentationObjectContainer {
 					
 					
 					//print(Text.getNonBrakingSpace().getText());
-					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(iWidth-2*iPadding))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(iHeight-2*iPadding))+"\" alt=\"\">");
+					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(iWidth-2*iPadding))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(iHeight-2*iPadding))+"\" alt=\"\" />");
 				}
 			}
 		}
 		else {
-			print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" >");
+			print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" />");
 			//print(Text.getNonBrakingSpace().getText());
 		}
 	}
 
 	protected void printLine(IWContext iwc) throws Exception {
 		//println("\n<tr>");
+		print(LINE_BREAK);
 		println(this.getRowStartTag(iwc));
 		//    for(int x=1;x<=cols;){
 		//println("\n<td "+"height="+this.lineHeight+" colspan="+cols+" "+COLOR_ATTRIBUTE+"="+this.lineColor+" >");
-		print("\n<td " + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
+		print(LINE_BREAK);
+		print(getCellStartTag(iwc) + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
 		//if(!iwc.isOpera()){
 		transparentcell._print(iwc);
-		print("</td>");
+		print(getCellEndTag(iwc));
 		//} else {
 		//println("</td>");  // ?????
 		//}
 		//    }
 		//println("</tr>");
+		print(LINE_BREAK);
 		println(this.getRowEndTag(iwc));
 	}
 
 	protected void printVerticalLine(IWContext iwc) throws Exception {
-		println("<td width=\"" + this.lineWidth + "\" " + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
+		print(LINE_BREAK);
+		println(getCellStartTag(iwc)+" width=\"" + this.lineWidth + "\" " + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" "+TAG_END);
 		if (!iwc.isOpera()) {
 			transparentcell._print(iwc);
-			println("</td>");
+			println(getCellEndTag(iwc));
 		}
 		else {
 			//println("</td>");  // ?????
@@ -996,16 +1018,18 @@ public class Table extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 		this.transparentcell = getTransparentCell(iwc);
 		//if( doPrint(iwc)){
-		if (getLanguage().equals("HTML")) {
+		markupLanguage = iwc.getLanguage();
+		if ( IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage) ||  IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage) ) {
 			String theErrorMessage = getErrorMessage();
 			if (theErrorMessage == null) {
 				//if (getInterfaceStyle().equals("something")){
 				//}
 				//else{
 				StringBuffer printString = new StringBuffer();
-				printString.append("<table ");
+				printString.append(getTableStartTag(iwc));
 				printString.append(getAttributeString());
-				printString.append(" >");
+				printString.append(" ");
+				printString.append(TAG_END);
 				println(printString.toString());
 				if (!cellsAreMerged) {
 					lineColspan = cols;
@@ -1026,6 +1050,7 @@ public class Table extends PresentationObjectContainer {
 					}
 					for (int y = 1; y <= rows;) {
 						//println("\n<tr>");
+						print(LINE_BREAK);
 						println(this.getRowStartTag(iwc));
 						for (int x = 1; x <= cols;) {
 							if (this.addLineLeft && x == 1) {
@@ -1044,18 +1069,20 @@ public class Table extends PresentationObjectContainer {
 								else {
 									printString.delete(0, printString.length());
 								}
-								printString.append("\n<td ");
+								print(LINE_BREAK);
+								printString.append(getCellStartTag(iwc,x,y));
 								printString.append(theObjects[x - 1][y - 1].getAttributeString());
-								printString.append(" >");
+								printString.append(TAG_END);
 								println(printString.toString());
 								theObjects[x - 1][y - 1]._print(iwc);
 								printNbsp(iwc, x, y);
 							}
 							else {
-								println("\n<td>");
+								print(LINE_BREAK);
+								println(getCellStartTag(iwc,x,y)+TAG_END);
 								printNbsp(iwc, x, y);
 							}
-							print("</td>");
+							print(getCellEndTag(iwc,x,y));
 							if ((addLineRight && x == cols) || (addVerticalLinesBetween && x != cols)) {
 								printVerticalLine(iwc);
 							}
@@ -1070,6 +1097,7 @@ public class Table extends PresentationObjectContainer {
 							x++;
 						}
 						//println("\n</tr>");
+						print(LINE_BREAK);
 						println(this.getRowEndTag(iwc));
 						if (this.addLinesBetween && y != rows) {
 							printLine(iwc);
@@ -1092,6 +1120,7 @@ public class Table extends PresentationObjectContainer {
 					{
 					for (int y = 1; y <= rows;) {
 						//println("\n<tr>");
+						print(LINE_BREAK);
 						println(this.getRowStartTag(iwc));
 						for (int x = 1; x <= cols;) {
 							if (isInMergedCell(x, y)) {
@@ -1105,17 +1134,19 @@ public class Table extends PresentationObjectContainer {
 									else {
 										printString.delete(0, printString.length());
 									}
-									printString.append("\n<td ");
+									print(LINE_BREAK);
+									printString.append(getCellStartTag(iwc,x,y));
 									printString.append(theObjects[x - 1][y - 1].getAttributeString());
 									printString.append(" colspan=\"");
 									printString.append(getWidthOfMergedCell(x, y));
 									printString.append("\" rowspan=\"");
 									printString.append(getHeightOfMergedCell(x, y));
-									printString.append("\" >");
+									printString.append("\" ");
+									printString.append(TAG_END);
 									println(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
-									println("</td>");
+									println(getCellEndTag(iwc,x,y));
 								}
 							}
 							else {
@@ -1126,27 +1157,32 @@ public class Table extends PresentationObjectContainer {
 									else {
 										printString.delete(0, printString.length());
 									}
-									printString.append("\n<td ");
+									print(LINE_BREAK);
+									printString.append(getCellStartTag(iwc,x,y));
 									printString.append(theObjects[x - 1][y - 1].getAttributeString());
-									printString.append(" >");
+									printString.append(" ");
+									printString.append(TAG_END);
 									println(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
 								}
 								else {
-									println("\n<td>");
+									print(LINE_BREAK);
+									println(getCellStartTag(iwc,x,y)+TAG_END);
 									printNbsp(iwc, x, y);
 								}
-								println("</td>");
+								println(getCellEndTag(iwc,x,y));
 							}
 							x++;
 						}
+						print(LINE_BREAK);
 						println(this.getRowEndTag(iwc));
 						// println("\n</tr>");
 						y++;
 					}
 				}
-				println("\n</table>");
+				print(LINE_BREAK);
+				println(getTableEndTag(iwc));
 				//}
 			}
 			else {
@@ -1156,7 +1192,7 @@ public class Table extends PresentationObjectContainer {
 				println("</pre>");
 			}
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (IWConstants.MARKUP_LANGUAGE_WML.equals(markupLanguage) ){
 			for (int y = 1; y <= rows;) {
 				for (int x = 1; x <= cols;) {
 					if (theObjects[x - 1][y - 1] != null) {
@@ -1180,6 +1216,91 @@ public class Table extends PresentationObjectContainer {
 		}
 		//}//end doPrint(iwc)
 	}
+
+	protected String getTableEndTag(IWContext iwc) {
+		return HTML_TABLE_TAG_END;
+	}
+
+	protected String getTableStartTag(IWContext iwc) {
+		return HTML_TABLE_TAG_START;
+	}
+
+	protected String getCellEndTag(IWContext iwc) {
+		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		
+		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
+			return HTML_CELL_TAG_END;
+		}
+		else if(IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage)){
+			return PDF_XML_CELL_TAG_END;
+		}
+		else{//default value (backward compatabilty safety if language is null)
+			return HTML_CELL_TAG_END;
+		}
+		
+	}
+
+
+	protected String getCellEndTag(IWContext iwc, int column, int row) {
+		return getCellEndTag(iwc);
+	}
+	
+	protected String getCellStartTag(IWContext iwc) {
+		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		
+		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
+			return HTML_CELL_TAG_START;
+		}
+		else if(IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage)){
+			return PDF_XML_CELL_TAG_START;
+		}
+		else{
+			return HTML_CELL_TAG_START;
+		}
+		
+	}
+
+	protected String getCellStartTag(IWContext iwc, int column, int row) {
+		return getCellStartTag(iwc);
+	}
+	
+	protected String getRowStartTag(IWContext iwc, int numberOfRow) {
+		return getRowStartTag(iwc);
+	}
+
+	protected  String getRowEndTag(IWContext iwc, int numberOfRow) {
+		return getRowEndTag(iwc);
+	}
+
+	protected  String getRowStartTag(IWContext iwc) {
+		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		
+		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
+			return HTML_TR_START;
+		}
+		else if(IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage)){
+			return PDF_XML_TR_START;
+		}
+		else{
+			return HTML_TR_START;
+		}
+	}
+
+	protected  String getRowEndTag(IWContext iwc) {
+		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		
+		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
+			return HTML_TR_END;
+		}
+		else if(IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage)){
+			return PDF_XML_TR_END;
+		}
+		else{
+			return HTML_TR_END;
+		}
+	}
+	
+	
 
 	public int numberOfObjects() {
 		if (theObjects != null) {
@@ -1503,19 +1624,5 @@ public class Table extends PresentationObjectContainer {
 		lineCols[lineCols.length - 1] = column;
 	}
 
-	protected String getRowStartTag(IWContext iwc, int numberOfRow) {
-		return getRowStartTag(iwc);
-	}
 
-	protected String getRowEndTag(IWContext iwc, int numberOfRow) {
-		return getRowEndTag(iwc);
-	}
-
-	protected String getRowStartTag(IWContext iwc) {
-		return HTML_TR_START;
-	}
-
-	protected String getRowEndTag(IWContext iwc) {
-		return HTML_TR_END;
-	}
 }

@@ -16,11 +16,13 @@ import com.idega.block.media.business.MediaBusiness;
 import com.idega.block.media.servlet.MediaServlet;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.util.caching.Cache;
+import com.idega.util.text.TextSoap;
 
 
 /**
@@ -243,12 +245,12 @@ private void getImage(IWContext iwc) throws SQLException{
   }
 
 
-public void setBorder(String s){
-	setAttribute("border",s);
+public void setBorder(String size){
+	setAttribute("border",size);
 }
 
-public void setBorderColor(String color)  {
-  setStyleAttribute("border-color:"+color);
+public void setBorderColor(String color){
+	setStyleAttribute("border-color:"+color);
 }
 
 public void setBorder(int i){
@@ -486,7 +488,7 @@ private String getHTMLString(IWContext iwc) {
   if ( align != null ) {
     sPrint.append(" align=\""+align+"\" ");
   }
-  sPrint.append(" >");
+  sPrint.append(" />");
   return sPrint.toString();
 }
 
@@ -730,18 +732,28 @@ public void limitImageWidth( boolean limitImageWidth ){
       setImageLinkZoomView();
     }
 
-    if (getLanguage().equals("HTML")){
+    if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)){
       //added by eiki
 
       //Change the imageId so that it is localized
       imageId = this.getImageID(iwc);
       if( imageId == -1 ){//from an url
-	  print(getHTMLString(iwc));
+	  		print(getHTMLString(iwc));
       }
       else{//from the database
-	getHTMLImage(iwc);
+				getHTMLImage(iwc);
       }
     }
+    else if(getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
+    	setURL(iwc.getServerURL()+getMediaURL(iwc));
+    	String markup = getHTMLString(iwc);
+			markup = TextSoap.findAndReplace(markup,"img","image");
+			markup = TextSoap.findAndReplace(markup,"src","url");
+			markup = TextSoap.findAndReplace(markup,"width","plainwidth");
+			markup = TextSoap.findAndReplace(markup,"height","plainheight");
+			print(markup);
+    }
+    
   }
 
 }

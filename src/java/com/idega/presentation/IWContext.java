@@ -306,11 +306,14 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	}
 	public void setLanguage(String language) {
 		this.language = language;
-		if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)) {
-			setContentType("text/vnd.wap.wml");
-		}
 		if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			setContentType("text/html");
+		}
+		else if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+			setContentType("text/vnd.wap.wml");
+		}
+		else if (language.equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)) {
+			setContentType("application/pdf");
 		}
 	}
 	public void setSpokenLanguage(String spokenLanguage) {
@@ -585,6 +588,11 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public String getServerName() {
 		return getRequest().getServerName();
 	}
+	
+	public String getProtocol(){
+		return getRequest().getProtocol();
+	}
+	
 	public int getServerPort() {
 		return getRequest().getServerPort();
 	}
@@ -592,10 +600,21 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		if (this.isCacheing() && cacheWriter!=null) {
 			return cacheWriter;
 		} else {
-			if( writer == null ) writer = getResponse().getWriter();
+			if( writer == null ){
+				writer = getResponse().getWriter(); 
+			}
+			
 			return writer;
 		}
 		
+	}
+	
+	public boolean isWriterNull(){
+		return (writer==null);
+	}
+	
+	public void setWriter(PrintWriter writer){
+		this.writer = writer;
 	}
 	public void sendRedirect(String URL) {
 		try {
@@ -656,6 +675,47 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return map;
 	}
+	
+	/**
+	 * Only handles http and https, use getServerURLWithoutProtocol() for other stuff.
+	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
+	 */
+	public String getServerURL(){
+		StringBuffer buf = new StringBuffer();
+		if(isSecure()){
+				buf.append("https://");
+		}
+		else{
+			buf.append("http://");
+		}
+
+		buf.append(getServerName());
+		if( getServerPort()!=80 ){
+			buf.append(":").append(getServerPort());
+		}
+		
+		buf.append("/");
+		
+		return buf.toString();
+	}
+	
+	/**
+	 * 
+	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
+	 */
+	public String getServerURLWithoutProtocol(){
+		StringBuffer buf = new StringBuffer();
+
+		buf.append(getServerName());
+		if( getServerPort()!=80 ){
+			buf.append(":").append(getServerPort());
+		}
+		
+		buf.append("/");
+		
+		return buf.toString();
+	}
+	
 	public void setContentType(String contentType) {
 		getResponse().setContentType(contentType);
 	}
@@ -917,4 +977,8 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		return null;
   }
 
+	public boolean isSecure(){
+		return getRequest().isSecure();
+	}
+	
 }

@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 
@@ -329,7 +330,7 @@ public String getLocalizedText(IWContext iwc){
 public void print(IWContext iwc)throws Exception{
 	//setDefaultAttributes(iwc);
 	//if ( doPrint(iwc) ){
-		if (getLanguage().equals("HTML")){
+		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)){
 		  boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 		  if(alignSet){
 		    print("<div align=\""+getHorizontalAlignment()+"\">");
@@ -362,7 +363,15 @@ public void print(IWContext iwc)throws Exception{
 
 			//}
 		}
-		else if (getLanguage().equals("WML")){
+		else if(getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML) ){
+			String attributes = getAttributeString();
+			
+			
+			print("<paragraph "+attributes+">");
+			print(getLocalizedText(iwc));
+			print("</paragraph>");
+		}
+		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)){
 			/*if (isEnclosedByParagraph()){
 				println(text);
 			}
