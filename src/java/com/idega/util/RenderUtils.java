@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.2 2004/11/14 23:31:11 tryggvil Exp $
+ * $Id: RenderUtils.java,v 1.3 2004/11/14 23:31:31 tryggvil Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,16 +13,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:31:11 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/14 23:31:31 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RenderUtils {
 	
