@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.8 2003/11/05 21:01:13 laddi Exp $
+ * $Id: RadioButton.java,v 1.9 2003/11/05 21:03:40 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -94,7 +94,7 @@ public class RadioButton extends GenericInput {
 			}
 		}
 	}
-	public void setMustBeChecked(String errorMessage) {
+	public void setMustBeSelected(String errorMessage) {
 		_mustBeSelected = true;
 		_errorMessage = errorMessage;
 	}
