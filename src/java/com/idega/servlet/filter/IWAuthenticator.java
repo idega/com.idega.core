@@ -7,6 +7,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -66,6 +67,23 @@ public class IWAuthenticator implements Filter {
 		//FacesContext fc = FacesContext.getCurrentInstance();
 		//IWContext iwc = IWContext.getIWContext(fc);
 		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+		
+		Enumeration headerNames = request.getHeaderNames();
+		System.out.println("------------HEADER BEGINS-------------");
+		while (headerNames.hasMoreElements()) {
+		String headerName = (String) headerNames.nextElement();
+		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
+		}
+		System.out.println("------------HEADER ENDS-------------");
+		
+//		Enumeration parameterNames = request.getParameterNames();
+//		System.out.println("------------PARAMETERS BEGINS-------------");
+//		while (parameterNames.hasMoreElements()) {
+//		String parameterName = (String) parameterNames.nextElement();
+//		System.out.println("\t["+parameterNames+"]: "+request.getParameter(parameterName));
+//		}
+//		System.out.println("------------PARAMETERS ENDS-------------");
+		
 		
 		if(useBasicAuthenticationMethod(iwc)){
 			if(!iwc.isLoggedOn()){
