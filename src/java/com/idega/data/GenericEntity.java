@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.8 2001/05/17 17:59:19 palli Exp $
+ * $Id: GenericEntity.java,v 1.9 2001/05/17 22:04:12 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -842,7 +842,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	/**
 	*Inserts this entity as a record into the datastore
 	*/
-  public void insert(GenericEntity entity)throws SQLException{
+  public void insert()throws SQLException{
     try{
       DatastoreInterface.getInstance(this).insert(this);
     }
@@ -861,7 +861,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	/**
 	*Updates the entity in the datastore
 	*/
-  public void update(GenericEntity entity)throws SQLException{
+  public void update()throws SQLException{
       try{
         DatastoreInterface.getInstance(this).update(this);
       }
