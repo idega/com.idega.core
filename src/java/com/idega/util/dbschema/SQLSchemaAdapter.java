@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.3 2004/12/02 21:33:06 tryggvil Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.4 2005/01/24 18:26:50 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -35,16 +35,17 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/12/02 21:33:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/24 18:26:50 $ by $Author: thomas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class SQLSchemaAdapter {
 
-	private static Hashtable interfacesHashtable;
-	private static Map interfacesByDatasourcesMap;
-	public static boolean usePreparedStatement = true;
+	private static final boolean DEFAULT_VALUE_USE_PREPARED_STATEMENT = true;
+	private static Hashtable interfacesHashtable = null;
+	private static Map interfacesByDatasourcesMap = null;
+	public static boolean usePreparedStatement = DEFAULT_VALUE_USE_PREPARED_STATEMENT;
 	
 	protected boolean useTransactionsInSchemaCreation = true;
 	private boolean useIndexes = true;
@@ -65,6 +66,14 @@ public abstract class SQLSchemaAdapter {
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
 
+	
+	public static void unload()	{
+		interfacesHashtable = null;
+		interfacesByDatasourcesMap = null;
+		usePreparedStatement = DEFAULT_VALUE_USE_PREPARED_STATEMENT;
+	}
+	
+	
 	public static SQLSchemaAdapter getInstance(String datastoreType) {
 		SQLSchemaAdapter theReturn = null;
 		
@@ -74,46 +83,47 @@ public abstract class SQLSchemaAdapter {
 		}
 		theReturn = (SQLSchemaAdapter) interfacesHashtable.get(datastoreType);
 		if (theReturn == null) {
+				
+			if (datastoreType.equals("oracle")) {
+				className = OracleSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("interbase")) {
+				className = InterbaseSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("mysql")) {
+				className = MySQLSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("sapdb")) {
+				className = SapDBSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("mssqlserver")) {
+				className = MSSQLServerSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("db2")) {
+				className = DB2SchemaAdapter.class;
+			}
+			else if (datastoreType.equals("informix")) {
+				className = InformixSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("hsql")) {
+				className = HSQLSchemaAdapter.class;
+			}
+			else if (datastoreType.equals("mckoi")) {
+				className = McKoiSchemaAdapter.class;
+			}
+			else {
+				//className = "unimplemented DatastoreInterface";
+				throw new NoSchemaAdapter();
+			}
 			
-		if (datastoreType.equals("oracle")) {
-			className = OracleSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("interbase")) {
-			className = InterbaseSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("mysql")) {
-			className = MySQLSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("sapdb")) {
-			className = SapDBSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("mssqlserver")) {
-			className = MSSQLServerSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("db2")) {
-			className = DB2SchemaAdapter.class;
-		}
-		else if (datastoreType.equals("informix")) {
-			className = InformixSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("hsql")) {
-			className = HSQLSchemaAdapter.class;
-		}
-		else if (datastoreType.equals("mckoi")) {
-			className = McKoiSchemaAdapter.class;
-		}
-		else {
-			//className = "unimplemented DatastoreInterface";
-			throw new NoSchemaAdapter();
-		}}
-		
-		try {
-			theReturn = (SQLSchemaAdapter) className.newInstance();
-			theReturn.dataStoreType = datastoreType;
-			interfacesHashtable.put(datastoreType, theReturn);
-		}
-		catch (Exception ex) {
-			System.err.println("There was an error in com.idega.data.DatastoreInterface.getInstance(String className): " + ex.getMessage());
+			try {
+				theReturn = (SQLSchemaAdapter) className.newInstance();
+				theReturn.dataStoreType = datastoreType;
+				interfacesHashtable.put(datastoreType, theReturn);
+			}
+			catch (Exception ex) {
+				System.err.println("There was an error in com.idega.data.DatastoreInterface.getInstance(String className): " + ex.getMessage());
+			}
 		}
 	
 		return theReturn;
