@@ -632,7 +632,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
       if(this.getICObjectInstanceID() != 0){
         _eventModel.setSource(this.getICObjectInstanceID());
       } else {
-        _eventModel.setSource(this.getLocation());
+        //_eventModel.setSource(this.getLocation());
+        _eventModel.setSource(this);
       }
     }
     return _eventModel;
