@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.4 2001/11/23 18:22:56 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.5 2002/01/04 19:36:12 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -40,6 +40,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private String _stringDisplay;
   private String _attributeValue;
   private String _attributeName;
+  private Link link = null;
 
   /**
    *
@@ -84,6 +85,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
   public void setValue(String stringValue){
     setChooserValue(stringValue,stringValue);
+  }
+
+
+  public String getChooserValue(){
+   return _stringValue;
   }
 
   /**
@@ -151,15 +157,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       _form.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
     }
     else {
-      Link link;
-      if (_buttonImage == null)
-        link = new Link("Choose");
-      else
-        link = new Link(_buttonImage);
+      getLink();
 
       link.setWindowToOpen(getChooserWindowClass());
       link.addParameter(CHOOSER_SELECTION_PARAMETER,getChooserParameter());
-      //debug skiiiiiiiiiiiiiiiiiiiitamix getParentForm ekki að virka??
+
       link.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+getParentFormString(this));
       link.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
       link.addParameter(DISPLAYSTRING_PARAMETER_NAME,input.getName());
@@ -210,4 +212,22 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     _attributeName = attributeName;
     _attributeValue = attributeValue;
   }
+
+  public void addParameterToChooserLink(String param, String value){
+    getLink().addParameter(param,value);
+  }
+
+  private Link getLink(){
+    if( link==null ){
+      if (_buttonImage == null){
+        link = new Link("Choose");
+      }
+      else{
+        link = new Link(_buttonImage);
+      }
+    }
+
+    return link;
+  }
+
 }
