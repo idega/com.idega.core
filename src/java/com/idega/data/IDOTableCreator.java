@@ -761,7 +761,7 @@ public class IDOTableCreator{
 					Set setFromDB = indexesFromDB.keySet();
 					
 					
-					// Not handling keys that exist in DB
+					// Removing keys from map that exist in DB
 					Iterator dbKeyIter = setFromDB.iterator();
 					String dbKey;
 					while (dbKeyIter.hasNext()) {
@@ -771,15 +771,16 @@ public class IDOTableCreator{
 						}
 					}
 
-					// Not handling columns that are already indexed
+					// Removing columns from map that are already indexed
 					if (indexesFromDB != null && !indexesFromDB.isEmpty()) {
 						try {
+							HashMap tempMap = new HashMap(map);
 							Iterator dbValues = indexesFromDB.values().iterator();
-							Iterator entityKeys = indexesFromEntity.iterator();
+							Iterator entityKeys;// = tempMap.keySet().iterator();
 							String[] columns = null;
 							while (dbValues.hasNext()) {
 								columns = (String[]) dbValues.next();
-								entityKeys = indexesFromEntity.iterator();
+								entityKeys = tempMap.keySet().iterator();
 								while (entityKeys.hasNext()) {
 									String key = (String) entityKeys.next();
 									if (compareIndexColumns(columns, (String[]) map.get( key ))) {
