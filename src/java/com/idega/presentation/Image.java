@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.78 2005/03/08 17:23:05 tryggvil Exp $
+ * $Id: Image.java,v 1.79 2005/03/08 17:23:51 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -32,17 +32,12 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/03/08 17:23:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 17:23:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.78 $
+ * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
+ * @version $Revision: 1.79 $
  */
-
-/**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.5
-*@modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
-*/
 public class Image extends PresentationObject
 {
 	//static variables:
