@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.91 2004/02/28 19:11:34 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.92 2004/02/28 19:42:25 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1366,7 +1366,9 @@ public abstract class DatastoreInterface {
 		  //conn = entity.getConnection();
 		  
 		  //String tableName = entity.getTableName();
-		  java.sql.DatabaseMetaData metadata = conn.getMetaData();
+		  DatabaseMetaData metadata = conn.getMetaData();
+		  
+//		Check for upper case
 		  rs = metadata.getColumns(null,null,tableName.toUpperCase(),"%");
 		  //System.out.println("Table: "+tableName+" has the following columns:");
 		  while (rs.next()) {
@@ -1375,8 +1377,22 @@ public abstract class DatastoreInterface {
 			//System.out.println("\t\t"+column);
 		  }
 		  rs.close();
+		  
+//		Check for lower case
 		  if(v.isEmpty()){
 			rs = metadata.getColumns(null,null,tableName.toLowerCase(),"%");
+			//System.out.println("Table: "+tableName+" has the following columns:");
+			while (rs.next()) {
+			  String column = rs.getString("COLUMN_NAME");
+			  v.add(column);
+			  //System.out.println("\t\t"+column);
+			}
+			rs.close();
+		  }
+		  
+//		Check without any case manipulating, this can be removed if we always force uppercase		
+		  if(v.isEmpty()){
+			rs = metadata.getColumns(null,null,tableName,"%");
 			//System.out.println("Table: "+tableName+" has the following columns:");
 			while (rs.next()) {
 			  String column = rs.getString("COLUMN_NAME");
