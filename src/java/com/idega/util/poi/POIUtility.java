@@ -26,6 +26,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.util.text.TextSoap;
 
 /**
  * Title:		POIUtility
@@ -50,13 +51,7 @@ public class POIUtility {
 		int cols = table.getColumns();
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = null;
-		if (sheetName.length() > 31) {
-	        sheet = wb.createSheet(sheetName.substring(0,31));
-		} 
-	    else {
-	        sheet = wb.createSheet(sheetName);
-	    }
+		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
 
 		Text obj;
 		String text;

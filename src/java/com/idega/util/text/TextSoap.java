@@ -1015,5 +1015,19 @@ public class TextSoap {
 		}
 		return sb.toString();
 	}
+	
+	public static String encodeToValidExcelSheetName(String sheetName) {
+		String encodedString = new String(sheetName);
+		encodedString = findAndReplace(encodedString, "\\", " ");
+		encodedString = findAndReplace(encodedString, "/", " ");
+		encodedString = findAndReplace(encodedString, "*", " ");
+		encodedString = findAndReplace(encodedString, "?", " ");
+		encodedString = findAndReplace(encodedString, "[", " ");
+		encodedString = findAndReplace(encodedString, "]", " ");
+		if (encodedString.length() > 31) {
+		    encodedString = encodedString.substring(0,31);
+		}
+		return encodedString;
+	}
 }
 // class TestSoap
