@@ -68,7 +68,7 @@ public String getScriptCode(IWContext iwc){
 		String functionName = (String) function;
 		String functionCode = (String) scriptCode.get(function);
 
-		returnString.append("\n\n" + functionCode);
+		returnString.append(functionCode + "\n");
 	}
 
 	return returnString.toString();
@@ -142,10 +142,11 @@ public String getVariables(){
 			String variableValue = (String) getVariable(variableName);
 
 			if ( variableValue != null )
-			      returnString.append("var " + variableName + " = " + variableValue + ";\n\n");
+			      returnString.append("var " + variableName + " = " + variableValue + ";\n");
 			else
-			      returnString.append("var " + variableName + ";\n\n");
+			      returnString.append("var " + variableName + ";\n");
 		}
+		returnString.append("\n");
 	}
 
 	return returnString.toString();
@@ -171,8 +172,9 @@ public String getMethods(){
 			String methodName = (String) function;
 			String methodValue = (String) getMethod(methodName);
 
-			returnString.append(methodName + " = " + methodValue + ";\n\n");
+			returnString.append("" + methodName + " = " + methodValue + ";\n");
 		}
+		returnString.append("\n");
 	}
 
 	return returnString.toString();
@@ -210,12 +212,12 @@ public void print(IWContext iwc)throws Exception{
 				println("<script "+getAttributeString()+" >");
 				println("<!--//");
 				if (! isAttributeSet("src")){
-					println(getVariables());
-					println(getMethods());
-	  println(getScriptCode(iwc));
+					print(getVariables());
+					print(getMethods());
+	  				print(getScriptCode(iwc));
 				}
 				println("//-->");
-				println("\n</script>");
+				println("</script>\n");
 				//flush();
 			//}
       }

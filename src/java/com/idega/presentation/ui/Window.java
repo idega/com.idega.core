@@ -406,24 +406,24 @@ public static String getWindowCallingScript(String url,String name,boolean tool,
 
 public static String windowScript(){
   StringBuffer js = new StringBuffer();
-  js.append("function openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height) {  \n");
-  js.append("\n  // usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height) \n");
+  js.append("\tfunction openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height) {  \n");
+  js.append("\t\t// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height) \n");
 
-	js.append("var option = \"toolbar=\" + ToolBar \n");
-	js.append("+ \",location=\" + Location  \n");
-	js.append("+ \",directories=\" + Directories  \n");
-	js.append("+ \",status=\" + Status  \n");
-	js.append("+ \",menubar=\" + Menubar  \n");
-	js.append("+ \",titlebar=\" + Titlebar  \n");
-	js.append("+ \",scrollbars=\" + Scrollbars  \n");
-	js.append("+ \",resizable=\"  + Resizable  \n");
+	js.append("\t\tvar option = \"toolbar=\" + ToolBar ");
+	js.append("+ \",location=\" + Location  ");
+	js.append("+ \",directories=\" + Directories  ");
+	js.append("+ \",status=\" + Status  ");
+	js.append("+ \",menubar=\" + Menubar  ");
+	js.append("+ \",titlebar=\" + Titlebar  ");
+	js.append("+ \",scrollbars=\" + Scrollbars  ");
+	js.append("+ \",resizable=\"  + Resizable  ");
   //js.append("+ \",fullscreen=\"  + FullScreen  \n");
-	js.append("+ \",width=\" + Width  \n");
+	js.append("+ \",width=\" + Width  ");
 	js.append("+ \",height=\" + Height; \n");
 
-	js.append("var new_win = window.open(Address, Name, option );\n");
+	js.append("\t\tvar new_win = window.open(Address, Name, option );\n");
   //js.append("new_win.document.write(option)");
-  js.append("\n}\n");
+  js.append("\t}");
   return js.toString();
 }
 
