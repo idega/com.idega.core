@@ -41,6 +41,7 @@ import com.idega.util.FileUtil;
  */
 public class FileManager extends Block {
 	
+	private boolean relativePath = false;
 	private String folder = null;
 	private String topLevelFolder = "/";
 	private String[] skipFiles = null;
@@ -55,6 +56,7 @@ public class FileManager extends Block {
 	private IWResourceBundle iwrb = null;
 	private String currentFolder =null,currentFile =null;
 	private java.util.List maintainParameterNames =null;
+	private boolean filesDeletable = true;
 	private FileIconSupplier iconSupplier =null;
 	private static final String PRM_FOLDER = "iw_b_r_m_dir";
 	private static final String PRM_SUB_FOLDER ="iw_b_r_m_sdir";
@@ -70,42 +72,58 @@ public class FileManager extends Block {
 		iwrb =getResourceBundle(iwc);
 		if(iwc.isLoggedOn()){
 			iconSupplier =FileIconSupplier.getInstance(iwc);
-		currentFolder = folder;
-		if(iwc.isParameterSet(PRM_FOLDER))
-			currentFolder = iwc.getParameter(PRM_FOLDER);
-		if(iwc.isParameterSet(PRM_FILE))
-			currentFile = iwc.getParameter(PRM_FILE);
-		if(iwc.isParameterSet(PRM_SUB_FOLDER))
-			currentFolder = folder+iwc.getParameter(PRM_SUB_FOLDER);
-		
-		if(iwc.isMultipartFormData()){
-			if(processUpload(iwc))
-				presentateFileView(iwc);
-			else
-				presentateUploadView(iwc);
-		}
-		else if(iwc.isParameterSet(PRM_VIEW_FILE)){
-			presentateSelectedFile(iwc);
-		}
-		else if(iwc.isParameterSet("folder_name")){
-			if(processFolderCreation(iwc))
-				presentateFileView(iwc);
-			else
+//			currentFolder = folder;
+			if(null==currentFolder){
+				if(null!=folder){
+					if(relativePath == true){
+						String appURI = iwc.getIWMainApplication().getApplicationRealPath();
+						currentFolder = appURI+folder;
+						System.out.println("Path is relative to: "+appURI);
+						relativePath = false;
+					}else{
+						System.out.println("Path is absolute");
+						currentFolder = folder;
+					}
+				}
+			}else{
+				currentFolder = topLevelFolder;
+			}
+			if(iwc.isParameterSet(PRM_FOLDER))
+				currentFolder = iwc.getParameter(PRM_FOLDER);
+			if(iwc.isParameterSet(PRM_FILE))
+				currentFile = iwc.getParameter(PRM_FILE);
+			if(iwc.isParameterSet(PRM_SUB_FOLDER))
+				currentFolder = folder+iwc.getParameter(PRM_SUB_FOLDER);
+			
+			System.out.println("path:"+currentFolder);
+			
+			if(iwc.isMultipartFormData()){
+				if(processUpload(iwc))
+					presentateFileView(iwc);
+				else
+					presentateUploadView(iwc);
+			}
+			else if(iwc.isParameterSet(PRM_VIEW_FILE)){
+				presentateSelectedFile(iwc);
+			}
+			else if(iwc.isParameterSet("folder_name")){
+				if(processFolderCreation(iwc))
+					presentateFileView(iwc);
+				else
+					presentateCreateNewFolderView(iwc);
+			}
+			else if(iwc.isParameterSet(PRM_CREATE_FOLDER)){
 				presentateCreateNewFolderView(iwc);
-		}
-		else if(iwc.isParameterSet(PRM_CREATE_FOLDER)){
-			presentateCreateNewFolderView(iwc);
-		}
-		else if(iwc.isParameterSet(PRM_UPLOAD_FILE)){
-			presentateUploadView(iwc);
-		}
-		else if(iwc.isParameterSet(PRM_DELFILE)){
-			processFileRemoval(iwc);
-			presentateFileView(iwc);
-		}
-		
-		else
-			presentateFileView(iwc);
+			}
+			else if(iwc.isParameterSet(PRM_UPLOAD_FILE)){
+				presentateUploadView(iwc);
+			}
+			else if(iwc.isParameterSet(PRM_DELFILE)){
+				processFileRemoval(iwc);
+				presentateFileView(iwc);
+			}
+			else
+				presentateFileView(iwc);
 		}
 		else{
 			add(iwrb.getLocalizedString("user_not_logged_on","No user is logged on"));
@@ -170,6 +188,11 @@ public class FileManager extends Block {
 		String appURI = iwc.getIWMainApplication().getApplicationRealPath();
 		//String appURI =iwc.getApplication().getApplicationContextURI();
 		//int index = currentFile.indexOf(appURI);
+		System.out.println("curr file "+currentFile);
+		System.out.println("appURI "+appURI);
+		System.out.println("context "+context);
+		System.out.println("server "+server);
+
 		String url = currentFile.substring(appURI.length());
 		if(context.endsWith("/"))
 			url = context+url;
@@ -177,8 +200,11 @@ public class FileManager extends Block {
 			url =context+"/"+url;
 			//url ="/"+url;
 		url = server+url;
+		System.out.println("url "+url);
+
 		IFrame frame =new IFrame("fileview",600,600);
 		frame.setSrc(url);
+//		frame.setSrc(currentFile);
 		frame.setAsTransparent(true);
 		frame.setBorder(0);
 		table.add(frame,1,3);
@@ -186,6 +212,10 @@ public class FileManager extends Block {
 		add(table);
 	}
 	
+	/**
+	 * Creates a list of all files and folders in the current folder 
+	 * @param iwc
+	 */
 	private void presentateFileView(IWContext iwc) {
 		Table fileTable = new Table();
 		int row = 1;
@@ -193,6 +223,7 @@ public class FileManager extends Block {
 		fileTable.add(getHeaderText(iwrb.getLocalizedString("size","Size")), 2, row);
 		fileTable.add(getHeaderText(iwrb.getLocalizedString("date","Date")), 3, row);
 		row++;
+		System.out.println("Path in present file "+currentFolder);
 		File dir = new File(currentFolder);
 		Table table = new Table();
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -222,7 +253,9 @@ public class FileManager extends Block {
 			fileTable.setColor(1, row, fileBackgroundColor);
 			fileTable.setColor(2, row, fileBackgroundColor);
 			fileTable.setColor(3, row, fileBackgroundColor);
-			fileTable.setColor(4, row, fileBackgroundColor);
+			if(filesDeletable){
+				fileTable.setColor(4, row, fileBackgroundColor);
+			}
 			row++;
 		}
 		
@@ -242,12 +275,16 @@ public class FileManager extends Block {
 					bytes = " kB";
 				}
 				fileTable.add(getText(String.valueOf(length) + bytes), 2, row);
-				fileTable.add(getDeleteFileLink(file, iwc), 4, row);
+				if(filesDeletable){
+					fileTable.add(getDeleteFileLink(file, iwc), 4, row);
+				}
 			}
 			fileTable.setColor(1, row, fileBackgroundColor);
 			fileTable.setColor(2, row, fileBackgroundColor);
 			fileTable.setColor(3, row, fileBackgroundColor);
-			fileTable.setColor(4, row, fileBackgroundColor);
+			if(filesDeletable){
+				fileTable.setColor(4, row, fileBackgroundColor);
+			}
 			fileTable.add(getText(df.format(new java.util.Date(file.lastModified()))), 3, row);
 			row++;
 		}
@@ -256,9 +293,13 @@ public class FileManager extends Block {
 		fileTable.setWidth(1, "50%");
 		fileTable.setWidth(2, "1%");
 		fileTable.setWidth(3, "1%");
-		fileTable.setWidth(4, "1%");
+		if(filesDeletable){
+			fileTable.setWidth(4, "1%");
+		}
 		fileTable.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
-		fileTable.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
+		if(filesDeletable){
+			fileTable.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
+		}
 		fileTable.setRowColor(1, "black");
 		fileTable.setCellspacing(2);
 		fileTable.setNoWrap();
@@ -528,9 +569,25 @@ public class FileManager extends Block {
 	 * @param folder The folder to set.
 	 */
 	public void setStartingFolderRealPath(String folder) {
+		relativePath = false;
 		this.folder = folder;
+		System.out.println("Path set to "+folder);
 	}
 
+	/**
+	 * @param folder The folder to set.
+	 */
+	public void setStartingFolderRelativePath(String folder) {
+		relativePath = true;
+		this.folder = folder;
+		System.out.println("Path set to "+folder);
+	}
+
+	public void setFilesDeletable(boolean deletable){
+		filesDeletable = deletable;
+	}
+
+	
 	/**
 	 * @param headerBackgroundColor The headerBackgroundColor to set.
 	 */
