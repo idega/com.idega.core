@@ -59,8 +59,7 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 			}
 		}
 		if( country!=null ){
-			//TODO add code so id = -1 is submitted and "no postaldcode" is saved over existing postalcode 
-		    addMenuElement("","");
+			//TODO add code so id = -1 is submitted and "empty postaldcode" is saved over existing postalcode 
 			if(showCountry){
 				addMenuElement(-1,country.getName());
 			}
