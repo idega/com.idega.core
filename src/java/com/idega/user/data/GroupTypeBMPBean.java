@@ -24,6 +24,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   private static String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
 
   private static final String TYPE_GENERAL_GROUP = "general";
+  private static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
   private static final String TYPE_PERMISSION_GROUP = "permission";
 
   public void initializeAttributes() {
@@ -58,6 +59,21 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 
       GroupType type = home.create();
       type.setType(TYPE_PERMISSION_GROUP);
+      type.setDescription("");
+      type.store();
+    }
+    catch (RemoteException ex) {
+      throw new EJBException(ex);
+    }
+    catch (CreateException ex) {
+      ex.printStackTrace();
+    }
+
+    try {
+      GroupTypeHome home = (GroupTypeHome)IDOLookup.getHome(GroupType.class);
+
+      GroupType type = home.create();
+      type.setType(TYPE_USER_REPRESENTATIVE);
       type.setDescription("");
       type.store();
     }
