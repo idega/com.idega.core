@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -43,8 +42,6 @@ import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.presentation.IWContext;
-import com.idega.user.business.GroupTreeComparator;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -563,7 +560,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		try {
 		    theReturn.addAll(ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false)));   
-			Collections.sort(theReturn, new GroupTreeComparator(IWContext.getInstance().getCurrentLocale()) );
 		    return theReturn;
 		}
 		catch (FinderException e) {
