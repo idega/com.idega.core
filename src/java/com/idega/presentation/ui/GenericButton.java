@@ -10,6 +10,7 @@ import java.util.*;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.presentation.*;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -118,6 +119,10 @@ public class GenericButton extends GenericInput {
 		parameterMap.put(name, value);
 	}
 	
+	public void addParameterToWindow(String name, int value) {
+		addParameterToWindow(name, String.valueOf(value));
+	}
+	
 	private String getParameters() {
 		StringBuffer returnString = new StringBuffer();
 		if (parameterMap != null) {
@@ -133,6 +138,6 @@ public class GenericButton extends GenericInput {
 				}
 			}
 		}
-		return returnString.toString();
+		return TextSoap.convertSpecialCharacters(returnString.toString());
 	}
 }
