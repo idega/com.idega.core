@@ -1,8 +1,12 @@
-// idega 2000 - Tryggvi Larusson
 /*
- * Copyright 2000 idega.is All Rights Reserved.
+ * $Id: Form.java,v 1.81 2005/03/08 13:50:27 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
-
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
@@ -12,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -29,75 +31,55 @@ import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
 
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
- * @version 1.2
+ * <p>
+ * This is the default implementation of a Form element in idegaWeb.<br>
+ * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
+ * are recommended to use instead of this class in pure JSF applications.<br>
+ * </p>
+ *  Last modified: $Date: 2005/03/08 13:50:27 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.81 $
  */
 public class Form
 // TODO: Move to extend UIForm
 		// extends UIForm{
 		extends InterfaceObject {
 
+	//static constants:
 	public static final String ACTION_ON_BLUR = "onblur";
-
 	public static final String ACTION_ON_CHANGE = "onchange";
-
 	public static final String ACTION_ON_CLICK = "onclick";
-
 	public static final String ACTION_ON_FOCUS = "onfocus";
-
 	public static final String ACTION_ON_KEY_PRESS = "onkeypress";
-
 	public static final String ACTION_ON_KEY_DOWN = "onkeydown";
-
 	public static final String ACTION_ON_KEY_UP = "onkeyup";
-
 	public static final String ACTION_ON_SELECT = "onselect";
-
 	public static final String ACTION_ON_SUBMIT = "onsubmit";
-
 	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
-
-	private Window window;
-
-	private Vector maintainedParameters;
-
-	private boolean maintainAllParameters;
-
-	private PresentationObject submitToObject;
-
-	// private Parameter controlParameter;
-	private Map controlParameters;
-
-	private Class windowClass;
-
-	private int icObjectInstanceIDForWindow = -1;
-
-	private Class classToInstanciateAndSubmitTo;
-
-	private int _submitToPage = -1;
-
-	private Script associatedScript = null;
-
-	private boolean sendToHTTPS = false;
-
-	private static String FORM_EVENT_PARAMETER = "idega_special_form_event";
-
-	private static String HTTP = "http";
-
-	private static String HTTPS = "https";
-
 	private static String COLONSLASHSLASH = "://";
-
 	private static String SLASH = "/";
 
+	//instance variables:
+	private Window window;
+	private List maintainedParameters;
+	private boolean maintainAllParameters;
+	private PresentationObject submitToObject;
+	// private Parameter controlParameter;
+	private Map controlParameters;
+	private Class windowClass;
+	private int icObjectInstanceIDForWindow = -1;
+	private Class classToInstanciateAndSubmitTo;
+	private int _submitToPage = -1;
+	private Script associatedScript = null;
+	private boolean sendToHTTPS = false;
+	private static String FORM_EVENT_PARAMETER = "idega_special_form_event";
+	private static String HTTP = "http";
+	private static String HTTPS = "https";
 	private boolean _disableObject;
-
 	private Map _objectsToDisable;
-
 	private boolean _disableOnSubmit;
-
 	private boolean showLoadingLayerOnSubmit = true;
-
 	private boolean printLoadingLayer = false;
 
 	/**
@@ -227,11 +209,8 @@ public class Form
 	}
 
 	public InterfaceObject[] findAllInterfaceObjects() {
-
-		List vector = new Vector();
-
+		List vector = new ArrayList();
 		vector = findAllfindAllInterfaceObjectsHelper(vector, this);
-
 		return (InterfaceObject[]) vector.toArray(new InterfaceObject[1]);
 
 	}
@@ -408,9 +387,9 @@ public class Form
 	 */
 	public void maintainParameter(String parameterName) {
 		if (maintainedParameters == null) {
-			maintainedParameters = new Vector();
+			maintainedParameters = new ArrayList();
 		}
-		maintainedParameters.addElement(parameterName);
+		maintainedParameters.add(parameterName);
 	}
 
 	/**
@@ -420,7 +399,7 @@ public class Form
 	public void maintainParameters(List params) {
 		if (params != null) {
 			if (maintainedParameters == null) {
-				maintainedParameters = new Vector();
+				maintainedParameters = new ArrayList();
 			}
 			maintainedParameters.addAll(params);
 		}
@@ -554,16 +533,14 @@ public class Form
 			// }
 		}
 		else if (maintainedParameters != null) {
-			for (Enumeration e = maintainedParameters.elements(); e.hasMoreElements();) {
-
-				String tempParameter = (String) e.nextElement();
-
+			//for (Enumeration e = maintainedParameters.elements(); e.hasMoreElements();) {
+			for (Iterator iter = maintainedParameters.iterator(); iter.hasNext();) {
+				String tempParameter = (String) iter.next();
 				if (iwc.getParameter(tempParameter) != null) {
 					String[] strings = iwc.getParameterValues(tempParameter);
 					for (int i = 0; i < strings.length; i++) {
 						add(new Parameter(tempParameter, strings[i]));
 					}
-
 					// this.add(new
 					// Parameter(tempParameter,iwc.getParameter(tempParameter)));
 				}
@@ -704,7 +681,7 @@ public class Form
 			}
 
 			if (maintainedParameters != null) {
-				obj.maintainedParameters = (Vector) this.maintainedParameters.clone();
+				obj.maintainedParameters = (List) ((ArrayList)this.maintainedParameters).clone();
 			}
 
 			// if(controlParameter != null){
