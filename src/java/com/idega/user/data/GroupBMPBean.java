@@ -48,18 +48,19 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
 	public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
 
-	static final String COLUMN_GROUP_ID = "ic_group_id";
-	static final String COLUMN_NAME = "name";
-	static final String COLUMN_GROUP_TYPE = "group_type";
-	static final String COLUMN_DESCRIPTION = "description";
-	static final String COLUMN_EXTRA_INFO = "extra_info";
-	static final String COLUMN_CREATED = "created";
-	static final String COLUMN_HOME_PAGE_ID = "home_page_id";
-	static final String COLUMN_ALIAS_TO_GROUP = "alias_id";
-	static final String COLUMN_SHORT_NAME = "short_name";
-	static final String COLUMN_ABBREVATION = "abbr";
+	private static final String ENTITY_NAME = "IC_GROUP";
+	static final String COLUMN_GROUP_ID = "IC_GROUP_ID";
+	static final String COLUMN_NAME = "NAME";
+	static final String COLUMN_GROUP_TYPE = "GROUP_TYPE";
+	static final String COLUMN_DESCRIPTION = "DESCRIPTION";
+	static final String COLUMN_EXTRA_INFO = "EXTRA_INFO";
+	static final String COLUMN_CREATED = "CREATED";
+	static final String COLUMN_HOME_PAGE_ID = "HOME_PAGE_ID";
+	static final String COLUMN_ALIAS_TO_GROUP = "ALIAS_ID";
+	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
+	static final String COLUMN_ABBREVATION = "ABBR";
   
-  static final String META_DATA_HOME_PAGE = "homepage";
+  static final String META_DATA_HOME_PAGE = "HOMEPAGE";
 
 	private static List userGroupTypeSingletonList;
 
@@ -89,7 +90,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 	public final String getEntityName() {
-		return "ic_group";
+		return ENTITY_NAME;
 	}
 	//        public String getNameOfMiddleTable(IDOLegacyEntity entity1,IDOLegacyEntity entity2){
 	//            return "ic_group_user";
