@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.6 2005/03/01 11:37:02 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.7 2005/03/03 06:24:48 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/03/01 11:37:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/03 06:24:48 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -43,6 +43,7 @@ public class DefaultViewNode implements ViewNode {
 	private static String SLASH="/";
 	private static String NODE_SEPARATOR=SLASH;
 	private boolean isRendered = true;
+	private String name;
 	
 	
 	/**
@@ -406,6 +407,10 @@ public class DefaultViewNode implements ViewNode {
 		}
 		return roles;
 	}
+	
+	public void setAuthorizedRoles(Collection coll){
+		this.roles=coll;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getIcon()
@@ -425,7 +430,16 @@ public class DefaultViewNode implements ViewNode {
 	 * @see com.idega.faces.view.ViewNode#getName()
 	 */
 	public String getName() {
-		return StringHandler.firstCharacterToUpperCase(getViewId());
+		if(this.name==null){
+			return StringHandler.firstCharacterToUpperCase(getViewId());
+		}
+		else{
+			return name;
+		}
+	}
+	
+	public void setName(String name){
+		this.name=name;
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.7 2005/02/01 17:48:08 thomas Exp $
+ * $Id: ViewManager.java,v 1.8 2005/03/03 06:24:48 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,12 +9,18 @@
  */
 package com.idega.core.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
+import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.user.data.User;
 import com.idega.util.FacesUtil;
 
 
@@ -22,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/02/01 17:48:08 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/03/03 06:24:48 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ViewManager implements Singleton {
 	
@@ -65,8 +71,12 @@ public class ViewManager implements Singleton {
 		
 		
 		try {
+
 			Class applicationClass = Class.forName("com.idega.builder.app.IBApplication");
 			FramedWindowClassViewNode builderNode = new FramedWindowClassViewNode("builder",getWorkspaceRoot());
+			Collection roles = new ArrayList();
+			roles.add(StandardRoles.ROLE_KEY_BUILDER);
+			builderNode.setAuthorizedRoles(roles);
 			builderNode.setWindowClass(applicationClass);
 			builderNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
@@ -78,6 +88,9 @@ public class ViewManager implements Singleton {
 		try {
 			Class applicationClass = Class.forName("com.idega.user.app.UserApplication");
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
+			Collection roles = new ArrayList();
+			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
+			userNode.setAuthorizedRoles(roles);
 			userNode.setWindowClass(applicationClass);
 			userNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
@@ -89,6 +102,9 @@ public class ViewManager implements Singleton {
 		try {
 			Class applicationClass = Class.forName("com.idega.development.presentation.IWDeveloper");
 			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
+			Collection roles = new ArrayList();
+			roles.add(StandardRoles.ROLE_KEY_DEVELOPER);
+			developerNode.setAuthorizedRoles(roles);
 			developerNode.setWindowClass(applicationClass);
 			developerNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
@@ -117,6 +133,7 @@ public class ViewManager implements Singleton {
 		*/
 		
 		DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
+		myPageNode.setName("My Page");
 		//TODO: Change this
 		myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
 		
@@ -201,5 +218,31 @@ public class ViewManager implements Singleton {
 		return this.getViewNodeForUrl(url);
 	}
 	
+	
+	protected IWMainApplication getIWMainApplication(){
+		return iwma;
+	}
+	
+	/**
+	 * Checks if the user has access to a node. This uses the role system.
+	 * @param node
+	 * @param user
+	 * @return
+	 */
+	public boolean hasUserAcess(ViewNode node,IWContext userContext){
+		Collection roles = node.getAuthorizedRoles();
+		if(roles!=null){
+			if(roles.size()>0){
+				for (Iterator iter = roles.iterator(); iter.hasNext();) {
+					String roleKey = (String) iter.next();
+					if(getIWMainApplication().getAccessController().hasRole(roleKey,userContext)){
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		return true;
+	}
 	
 }
