@@ -374,7 +374,8 @@ public class StringHandler {
 			Iterator wordIterator = orderedWords.iterator();
 			while (wordIterator.hasNext() && (! wordIsRecognized) ) {
 				String tempWord = (String) wordIterator.next();
-				if (wordIsRecognized = stringWithoutWhiteSpace.startsWith(tempWord, index)) {
+				if (stringWithoutWhiteSpace.startsWith(tempWord, index)) {
+					wordIsRecognized = true;
 					result.add(tempWord);
 					index += tempWord.length();
 				}
