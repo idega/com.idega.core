@@ -15,6 +15,7 @@ public class SelectOptionGroup extends InterfaceObject {
 		super();
 		setMarkupAttribute("label", name);
 		setDisabled(false);
+		setTransient(false);
 	}
 	
 	public void print(IWContext iwc) throws Exception {

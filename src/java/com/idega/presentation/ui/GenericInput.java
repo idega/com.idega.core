@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -27,8 +28,21 @@ public abstract class GenericInput extends InterfaceObject {
 	
 	private String inputType = INPUT_TYPE_TEXT;
 
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[2];
+		values[0] = super.saveState(ctx);
+		values[1] = inputType;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		inputType = ((String) values[1]);
+	}	
+	
 	public GenericInput() {
 		super();
+		setTransient(false);
 	}
 
 	public String getInputType() {
