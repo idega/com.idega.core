@@ -13,8 +13,9 @@ import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.transaction.TransactionManager;
-import com.idega.core.builder.data.ICDomain;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
@@ -330,7 +331,7 @@ public class IDOTableCreator{
       	this.endEntityCreationTransaction(entity,canCommit,true);
 
       	try {
-      		boolean notUseTransactions = !_dsi.useTransactionsInEntityCreation;
+      		//boolean notUseTransactions = !_dsi.useTransactionsInEntityCreation;
       		boolean entitiesInList = !_entityWithStartData.isEmpty();
       		
       		if (entitiesInList) {
