@@ -38,10 +38,18 @@ public class ICCategoryBMPBean
 		addAttribute(getColumnType(), "Type", true, true, String.class);
 		addAttribute(getColumnCreated(), "Created", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnValid(), "Valid", true, true, Boolean.class);
-		addAttribute(getColumnTreeOrder(), "Tree order", Integer.class);
 		addManyToManyRelationShip(com.idega.core.data.ICObjectInstance.class);
 	}
 	public void insertStartData() {
+		String table =
+			com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
+		String sql = "ALTER TABLE " + table.toUpperCase() + " ADD " + TREE_ORDER_COLUMN_NAME + " INTEGER";
+		System.out.println(sql);
+		try {
+			idoExecuteTableUpdate(sql);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	public static String getEntityTableName() {
 		return "IC_CATEGORY";
@@ -54,9 +62,6 @@ public class ICCategoryBMPBean
 	}
 	public static String getColumnParentId() {
 		return "IC_PARENT_ID";
-	}
-	public static String getColumnTreeOrder() {
-		return TREE_ORDER_COLUMN_NAME;
 	}
 	public static String getColumnName() {
 		return "NAME";
@@ -144,8 +149,7 @@ public class ICCategoryBMPBean
 		sql.append(" where mt.").append(IC_OBJECT_INSTANCE_COLUMN_NAME).append(" = ").append(obj.getID());
 		sql.append(" and mt.").append(IC_CATEGORY_COLUMN_NAME).append(" = c.").append(IC_CATEGORY_COLUMN_NAME);
 		if (order) {
-			sql.append(" order by mt.").append(TREE_ORDER_COLUMN_NAME);
-			//.append(" desc");
+			sql.append(" order by mt.").append(TREE_ORDER_COLUMN_NAME); //.append(" desc");
 		}
 		return EntityFinder.getInstance().findAll(ICCategory.class, sql.toString());
 	}
