@@ -42,6 +42,7 @@ public class EventTimer implements Runnable{
 
 
   private boolean runThread = false;
+  private boolean isRunning = false;
 
   public EventTimer() {
   }
@@ -60,6 +61,7 @@ public class EventTimer implements Runnable{
   }
 
   public void run(){
+  	isRunning = true;
     while (runThread) {
       try {
       	if (intervalToSleepOnStart!=0) {
@@ -74,6 +76,8 @@ public class EventTimer implements Runnable{
 	        e.printStackTrace(System.out);
       }
     }
+    
+    isRunning = false;
   }
 
 
@@ -93,7 +97,11 @@ public class EventTimer implements Runnable{
       t = new Thread(this,"com.idega.util.EventTimer thread");
       t.setPriority(t.MIN_PRIORITY);
       t.start();
-    }
+    }else{
+		if(!isRunning){
+			t.run();
+		}
+	}
   }
 
   public void stop(){
