@@ -256,12 +256,16 @@ public class GenericSelect extends InterfaceObject {
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
 	public void print(IWContext iwc) throws Exception {
+		String val = null;
 		if (!iwc.isInEditMode()) {
 			Iterator iter = getChildren().iterator();
 			while (iter.hasNext()) {
 				SelectOption option = (SelectOption) iter.next();
 				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
 				option.setSelected(setSelected);
+				if(setSelected){
+					val = option.getValueAsString();
+				}
 			}
 		}
 
@@ -271,7 +275,11 @@ public class GenericSelect extends InterfaceObject {
 			print("</select>");
 		}
 		else if (getMarkupLanguage().equals("WML")) {
-			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
+			print("<select name=\"" + getName() + "\" ");
+			if(val!=null){
+				print(" value=\"" + val + "\" ");
+			}
+			println(getMarkupAttributesString() + " >");
 			super.print(iwc);
 			println("</select>");
 		}
