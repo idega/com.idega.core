@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.123 2004/12/02 21:27:17 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.124 2004/12/06 16:56:23 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -45,8 +45,6 @@ import com.idega.util.logging.LoggingHelper;
  */
 public abstract class DatastoreInterface {
 
-	private static Hashtable interfacesHashtable;
-	private static Map interfacesByDatasourcesMap;
 	public static boolean usePreparedStatement = true;
 	final static int STATEMENT_INSERT = 1;
 	final static int STATEMENT_UPDATE = 2;
@@ -70,9 +68,9 @@ public abstract class DatastoreInterface {
 	public static DatastoreInterface getInstance(String datastoreType) {
 		DatastoreInterface theReturn = null;
 		String className;
-		if (interfacesHashtable == null) {
-			interfacesHashtable = new Hashtable();
-		}
+		//if (interfacesHashtable == null) {
+		//	interfacesHashtable = new Hashtable();
+		//}
 		if (datastoreType.equals("oracle")) {
 			className = "com.idega.data.OracleDatastoreInterface";
 		}
@@ -104,11 +102,11 @@ public abstract class DatastoreInterface {
 			//className = "unimplemented DatastoreInterface";
 			throw new IDONoDatastoreError();
 		}
-		theReturn = (DatastoreInterface) interfacesHashtable.get(className);
+		theReturn = (DatastoreInterface) getDatastoreInterfaceManager().getInterfacesMap().get(className);
 		if (theReturn == null) {
 			try {
 				theReturn = (DatastoreInterface) Class.forName(className).newInstance();
-				interfacesHashtable.put(className, theReturn);
+				getDatastoreInterfaceManager().getInterfacesMap().put(className, theReturn);
 			}
 			catch (Exception ex) {
 				System.err.println("There was an error in com.idega.data.DatastoreInterface.getInstance(String className): " + ex.getMessage());
@@ -1422,10 +1420,11 @@ public abstract class DatastoreInterface {
 	}
 
 	private static Map getInterfacesByDatasourcesMap() {
-		if (interfacesByDatasourcesMap == null) {
+		/*if (interfacesByDatasourcesMap == null) {
 			interfacesByDatasourcesMap = new HashMap();
 		}
-		return interfacesByDatasourcesMap;
+		return interfacesByDatasourcesMap;*/
+		return getDatastoreInterfaceManager().getInterfacesByDatasourcesMap();
 	}
 
 	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException {
@@ -2268,6 +2267,14 @@ public abstract class DatastoreInterface {
 	
 	public boolean isUsingPreparedStatements(){
 	    return usePreparedStatement;
+	}
+	
+	protected static IDOContainer getIDOContainer(){
+		return IDOContainer.getInstance();
+	}
+	
+	protected static DatastoreInterfaceManager getDatastoreInterfaceManager(){
+		return getIDOContainer().getDatastoreInterfaceManager();
 	}
 	
 }

@@ -329,4 +329,21 @@ public class IDOContainer {
   	return relationshipTables;
   }
   
+  private DatastoreInterfaceManager datastoreInterfaceManager;
+  
+/**
+ * @return Returns the datastoreInterfaceManager.
+ */
+public DatastoreInterfaceManager getDatastoreInterfaceManager() {
+	if(datastoreInterfaceManager==null){
+		datastoreInterfaceManager = new DatastoreInterfaceManager();
+	}
+	return datastoreInterfaceManager;
+}
+/**
+ * @param datastoreInterfaceManager The datastoreInterfaceManager to set.
+ */
+public void setDatastoreInterfaceManager(DatastoreInterfaceManager datastoreInterfaceManager) {
+	this.datastoreInterfaceManager = datastoreInterfaceManager;
+}
 }
