@@ -10,6 +10,9 @@ package com.idega.idegaweb;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * This class manages resources such as stylesheets that are supposed to be
@@ -18,9 +21,9 @@ import java.util.List;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil </a>
  * @version 1.0
  */
-public class GlobalIncludeManager {
+public class GlobalIncludeManager implements Singleton {
 	
-	private static final String IW_GLOBAL_INCLUDE_MANAGER_KEY = "iw_globalincludemanager";
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() {return new GlobalIncludeManager();}};
 
 	private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
 	private String coreIWStyleSheetURL = "/idegaweb/bundles/com.idega.core.bundle/resources/style/iw_core.css";
@@ -30,8 +33,8 @@ public class GlobalIncludeManager {
 	private List styleSheets;
 
 
-	private GlobalIncludeManager(IWMainApplication iwma) {
-		this.iwma = iwma;
+	private GlobalIncludeManager() {
+		this.iwma =  IWMainApplication.getDefaultIWMainApplication();
 		addStyleSheet(coreIWStyleSheetURL);
 		addStyleSheet(standardIWStyleSheetURL);
 	}
@@ -41,15 +44,8 @@ public class GlobalIncludeManager {
 	 * @return
 	 */
 	public static GlobalIncludeManager getInstance() {
-		IWMainApplication idegaWebMainApplication = IWMainApplication.getDefaultIWMainApplication();
-	    GlobalIncludeManager globalIncludeManager = (GlobalIncludeManager) idegaWebMainApplication.getAttribute(IW_GLOBAL_INCLUDE_MANAGER_KEY);
-	    if(globalIncludeManager==null){
-	      globalIncludeManager = new GlobalIncludeManager(idegaWebMainApplication);
-	      idegaWebMainApplication.setAttribute(IW_GLOBAL_INCLUDE_MANAGER_KEY, globalIncludeManager);
-	    }
-	    return globalIncludeManager;
+		return (GlobalIncludeManager) SingletonRepository.getRepository().getInstance(GlobalIncludeManager.class, instantiator);
 	  }
-
 	
 	public List getStyleSheets(){
 		if(styleSheets==null){

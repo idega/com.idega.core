@@ -13,18 +13,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-public class IDOUtil {
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
+public class IDOUtil implements Singleton {
 	private static final String COMMA_AND_SPACE = ", ";
 	private static final String SINGLE_QUOTE = "'";
-	private static IDOUtil instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IDOUtil();}};
+	
 	private IDOUtil() {
+		// empty
 	}
+	
 	public static IDOUtil getInstance() {
-		if (instance == null) {
-			instance = new IDOUtil();
-		}
-		return instance;
+		return (IDOUtil) SingletonRepository.getRepository().getInstance(IDOUtil.class, instantiator);
 	}
+	
 	/**
 	 * @param list A list of IDOEntity objects
 	 *

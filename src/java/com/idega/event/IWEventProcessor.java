@@ -29,6 +29,9 @@ import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FileUploadUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
@@ -44,14 +47,14 @@ import com.oreilly.servlet.multipart.Part;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.0
  */
-public class IWEventProcessor {
+public class IWEventProcessor implements Singleton {
 	
 	
 	private final static String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private final static String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	private static Logger log = Logger.getLogger(IWEventProcessor.class.toString());
 	
-	private static IWEventProcessor instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWEventProcessor();}};
 	
 	private IWEventProcessor() {
 		// default constructor
@@ -62,12 +65,9 @@ public class IWEventProcessor {
 	 * @uml.property name="instance"
 	 */
 	public static IWEventProcessor getInstance() {
-		if (instance == null) {
-			instance = new IWEventProcessor();
-		}
-		return instance;
+		return (IWEventProcessor) SingletonRepository.getRepository().getInstance(IWEventProcessor.class, instantiator);
 	}
-
+	
 	public void processAllEvents(IWContext iwc) {
 		try {
 			processBusinessEvent(iwc);

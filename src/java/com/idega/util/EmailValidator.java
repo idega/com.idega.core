@@ -1,5 +1,5 @@
 /*
- * $Id: EmailValidator.java,v 1.1 2005/01/05 14:04:42 laddi Exp $
+ * $Id: EmailValidator.java,v 1.2 2005/02/01 17:56:37 thomas Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,16 +11,20 @@ package com.idega.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
- * Last modified: $Date: 2005/01/05 14:04:42 $ by $Author: laddi $
+ * Last modified: $Date: 2005/02/01 17:56:37 $ by $Author: thomas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class EmailValidator {
+public class EmailValidator implements Singleton {
 
-	private static EmailValidator _instance = null;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new EmailValidator();}};
+	
 	
 	/**
 	 * A method to get an instance of this class.
@@ -28,10 +32,7 @@ public class EmailValidator {
 	 * @return An instance of the EmailValidator class.
 	 */
 	public static EmailValidator getInstance() {
-		if (_instance == null)
-			_instance = new EmailValidator();
-
-		return _instance;
+		return (EmailValidator) SingletonRepository.getRepository().getInstance(EmailValidator.class, instantiator);
 	}
 
 	/**

@@ -15,6 +15,9 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Map;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.ListUtil;
 import javax.ejb.FinderException;
 
@@ -25,22 +28,29 @@ import javax.ejb.FinderException;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class EntityFinder {
+public class EntityFinder implements Singleton {
 
-	private static EntityFinder instance;
+	private static Instantiator instantiator = new Instantiator() { 
+		
+		public Object getInstance() { 
+			return new EntityFinder();
+		}
+		
+		public void unload() {
+			debug = DEBUG_DEFAULT_VALUE;
+		}
+	};
 
 	//The constructor should only be accessible to this class
 	private EntityFinder() {
 	}
 
 	public static EntityFinder getInstance() {
-		if (instance == null) {
-			instance = new EntityFinder();
-		}
-		return instance;
+		return (EntityFinder) SingletonRepository.getRepository().getInstance(EntityFinder.class, instantiator);
 	}
-
-	public static boolean debug = false;
+	
+	private static final boolean DEBUG_DEFAULT_VALUE = false;
+	public static boolean debug = DEBUG_DEFAULT_VALUE;
 
 	/**
 	 * Returns null if there was no match

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.124 2004/12/06 16:56:23 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.125 2005/02/01 17:45:28 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.transaction.TransactionManager;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.MutableClass;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.Gender;
 import com.idega.util.IWTimestamp;
@@ -43,9 +44,10 @@ import com.idega.util.logging.LoggingHelper;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.3
  */
-public abstract class DatastoreInterface {
+public abstract class DatastoreInterface implements MutableClass {
 
-	public static boolean usePreparedStatement = true;
+	private static final boolean DEFAULT_USE_PREPARED_STATEMENT = true; 
+	public static boolean usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
 	final static int STATEMENT_INSERT = 1;
 	final static int STATEMENT_UPDATE = 2;
 	protected boolean useTransactionsInEntityCreation = true;
@@ -64,6 +66,10 @@ public abstract class DatastoreInterface {
 	public final static String DBTYPE_MSSQLSERVER = "mssqlserver";
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
+	
+	public static void unload()	{
+		usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
+	}
 
 	public static DatastoreInterface getInstance(String datastoreType) {
 		DatastoreInterface theReturn = null;

@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 
@@ -23,21 +26,16 @@ import com.idega.util.text.TextSoap;
  * @version 1.1
  */
 
-public class IWStyleManager {
+public class IWStyleManager implements Singleton {
 
-	private static IWStyleManager _instance = null;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWStyleManager();}};
 	
-	public IWStyleManager(IWMainApplication application) {
-		this.application = application;
+	private IWStyleManager() {
+		// empty
 	}
 	
-	public IWStyleManager() {
-		this(null);
-	}
-	
-	public IWMainApplication application;
-	public static Map map;
-	public static File file;
+	private Map map;
+	private File file;
 	public static final String[] defaultStyles = { "A", "A:hover", "body", "table", "form", "img" };
 
 	/**
@@ -46,13 +44,10 @@ public class IWStyleManager {
 	 * @return An instance of the IWStyleManager class.
 	 */	
 	public static IWStyleManager getInstance() {
-		if (_instance == null)
-			_instance = new IWStyleManager();
-			
-		return _instance;
+		return (IWStyleManager) SingletonRepository.getRepository().getInstance(IWStyleManager.class, instantiator);
 	}
 
-	public void getStyleSheet() {
+	public void getStyleSheet(IWMainApplication application) {
 		if ( application != null ) {
 			String URL = application.getApplicationRealPath() + FileUtil.getFileSeparator() + "idegaweb" + FileUtil.getFileSeparator() + "style" + FileUtil.getFileSeparator() + "style.css";
 			String lines = null;

@@ -1,4 +1,9 @@
 package com.idega.util;
+
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
+
 /**
  * Title:        Validator
  * Description:	 A class to handle basic data validation.
@@ -7,21 +12,19 @@ package com.idega.util;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class Validator
+public class Validator implements Singleton
 {
-	private static Validator validator;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new Validator();}};
 	/**
 	 * Constructor for Validator.
 	 */
 	private Validator()
 	{
+		// empty
 	}
 	
 	public static Validator getInstance(){
-		if(validator==null){
-			validator = new Validator();	
-		}
-		return validator;		
+		return (Validator) SingletonRepository.getRepository().getInstance(Validator.class, instantiator);
 	}
 	
 	/**

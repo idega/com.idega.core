@@ -6,6 +6,10 @@
  */
 package com.idega.core.idgenerator.business;
 
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
+
 /**
  * The default UUID Generator.<br>
  * Generates unique id string 36 characters long (128bit).<br>
@@ -15,16 +19,18 @@ package com.idega.core.idgenerator.business;
  * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482 <br>
  * @author tryggvil
  */
-public class UUIDGenerator implements IdGenerator{
+public class UUIDGenerator implements IdGenerator, Singleton {
 
-	private static org.doomdark.uuid.UUIDGenerator uidGenerator = org.doomdark.uuid.UUIDGenerator.getInstance();
-	private static UUIDGenerator instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new UUIDGenerator();}};
+	
+	private org.doomdark.uuid.UUIDGenerator uidGenerator = org.doomdark.uuid.UUIDGenerator.getInstance();
+
 	
 	/**
 	 * This constructor should not be used by others
 	 */
 	private UUIDGenerator(){
-		
+		// empty
 	}
 	/**
 	 * Generates unique id string 36 characters long (128bit).<br>
@@ -44,11 +50,8 @@ public class UUIDGenerator implements IdGenerator{
 		return generateUUID();
 	}	
 	
-	static UUIDGenerator getInstance(){
-		if(instance==null){
-			instance = new UUIDGenerator();
-		}
-		return instance;
+	public static UUIDGenerator getInstance() {
+		return (UUIDGenerator) SingletonRepository.getRepository().getInstance(UUIDGenerator.class, instantiator);
 	}
-		
+	
 }

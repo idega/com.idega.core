@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPluginManager.java,v 1.1 2005/01/19 01:48:30 eiki Exp $ Created on Jan 18,
+ * $Id: SearchPluginManager.java,v 1.2 2005/02/01 17:44:39 thomas Exp $ Created on Jan 18,
  * 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,17 +20,20 @@ import com.idega.core.component.data.ICObjectHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * 
- * Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ * Last modified: $Date: 2005/02/01 17:44:39 $ by $Author: thomas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class SearchPluginManager {
+public class SearchPluginManager implements Singleton {
 
-	protected static SearchPluginManager manager;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new SearchPluginManager();}};
 
 	protected Map searchPlugins;
 
@@ -43,12 +46,9 @@ public class SearchPluginManager {
 	}
 
 	public static SearchPluginManager getInstance() {
-		if (manager == null) {
-			manager = new SearchPluginManager();
-		}
-		return manager;
+		return (SearchPluginManager) SingletonRepository.getRepository().getInstance(SearchPluginManager.class,instantiator);
 	}
-
+	
 	public Collection getAllSearchPluginsInitialized(IWMainApplication iwma) {
 		try {
 			ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);

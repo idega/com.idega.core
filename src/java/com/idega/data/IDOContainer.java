@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Vector;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 
 /**
@@ -18,10 +21,10 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
  * @version 1.0
  */
 
-public class IDOContainer {
+public class IDOContainer implements Singleton {
 
   //Static variables:
-  private static IDOContainer instance;
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance() {return new IDOContainer();}};
   
   //Instance variables:
   private boolean beanCachingActive=false;
@@ -36,29 +39,13 @@ public class IDOContainer {
   private HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
   
   private IDOContainer() {
+  	// unload
   }
 
   public static IDOContainer getInstance(){
-    if(instance==null){
-      instance = new IDOContainer();
-    }
-    return instance;
+  	return (IDOContainer) SingletonRepository.getRepository().getInstance(IDOContainer.class, instantiator);
   }
   
-  /**
-   * Unloads the previously loaded instance and all its resources
-   */
-  public static void unload(){
-  	
-  	IDOContainer privateInstance = instance;
-  	instance=null;
-  	privateInstance.beanCacheMap=null;
-  	privateInstance.beanCacheMap=null;
-  	privateInstance.isBeanCacheActive=null;
-  	privateInstance.entityAttributes=null;
-  	privateInstance.entityStaticInstances=null;
-  }
-
   protected Map getBeanMap(){
     if(emptyBeanInstances==null){
       emptyBeanInstances = new HashMap();

@@ -15,17 +15,15 @@ import com.idega.util.datastructures.HashMatrix;
  * @version 1.0
  * Created on Jun 14, 2004
  */
-public class ImplementorRepository {
+public class ImplementorRepository implements Singleton {
+	
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new ImplementorRepository();}};
 	
 	private static final String GENERAL = "general";
-	private static ImplementorRepository instance = null;
 	
 	static public ImplementorRepository getInstance() {
-		if (instance == null) {
-			instance = new ImplementorRepository();
-		}
-		return instance;
-	}
+		return (ImplementorRepository) SingletonRepository.getRepository().getInstance(ImplementorRepository.class, instantiator);
+	  }
 	
 	private HashMatrix interfaceCallerImplementor = null;
 	

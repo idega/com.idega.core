@@ -22,11 +22,19 @@ import java.util.Locale;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.Image;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
 
-public class ImageFactory {
-	private static ImageFactory factory;
+public class ImageFactory implements Singleton {
+	
+	private static Instantiator instantiator = new Instantiator() { 
+		public Object getInstance(Object parameter) { 
+			return new ImageFactory((IWMainApplication) parameter); 
+		}
+	};
 	
 	private static final String BUTTON_SUFFIX = "_button";
 	private static final String TAB_SUFFIX = "_tab";
@@ -47,43 +55,31 @@ public class ImageFactory {
 	private Font fontbase;
 
 
-	/**
-	 * Unloads or shutdowns the factory
-	 *
-	 */
-	public static void unload(){
-		factory=null;
+	public static ImageFactory getInstance(IWMainApplication iwma) {
+		return (ImageFactory) SingletonRepository.getRepository().getInstance(ImageFactory.class, instantiator, iwma);
 	}
 	
 	
-	ImageFactory() {
-		// empty
+	private ImageFactory(IWMainApplication iwma) {
+		initialize(iwma);
 	}
 
-	public static ImageFactory getStaticInstance(IWMainApplication iwma) {
-		if (factory == null) {
-			factory = new ImageFactory();
-			factory.coreBundle = iwma.getCoreBundle();
-			factory.images = new HashMap();
-			//if (!shutdown) {
-				String folderPath = factory.coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
-				try {
-					//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
-					File file = new File(folderPath + iwma.CORE_DEFAULT_FONT);
-					FileInputStream fis = new FileInputStream(file);
+	private void initialize(IWMainApplication iwma) {
+		coreBundle = iwma.getCoreBundle();
+		images = new HashMap();
+		//if (!shutdown) {
+		String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
+		try {
+			//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
+			File file = new File(folderPath + iwma.CORE_DEFAULT_FONT);
+			FileInputStream fis = new FileInputStream(file);
 
-					factory.fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
-					factory.defaultFont = factory.fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
-
-				}
-				catch (Exception ex) {
-					System.err.println("ImageFactory : default font is missing using default java font instead");
-				}
-			//}
-
+			fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
+			defaultFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 		}
-
-		return factory;
+		catch (Exception ex) {
+			System.err.println("ImageFactory : default font is missing using default java font instead");
+		}
 	}
 
 
@@ -218,7 +214,8 @@ public class ImageFactory {
 			}
 		}
 		
-		if(factory!=null){
+		ImageFactory factory = (ImageFactory) SingletonRepository.getRepository().getExistingInstanceOrNull(ImageFactory.class);
+		if (factory != null) {
 			factory.images = new HashMap();
 		}
 	}

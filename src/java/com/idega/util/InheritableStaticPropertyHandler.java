@@ -12,6 +12,9 @@ package com.idega.util;
 
 //import java.util.Map;
 
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.datastructures.InheritablePropertyStorer;
 
 
@@ -28,13 +31,13 @@ import com.idega.util.datastructures.InheritablePropertyStorer;
 
 */
 
-public class InheritableStaticPropertyHandler
+public class InheritableStaticPropertyHandler implements Singleton
 
 {
 
 
 
-  private static InheritableStaticPropertyHandler instance;
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new InheritableStaticPropertyHandler();}};
 
 
 
@@ -47,15 +50,7 @@ public class InheritableStaticPropertyHandler
 
 
    public static InheritableStaticPropertyHandler getInstance(){
-
-    if(instance==null){
-
-      instance = new InheritableStaticPropertyHandler();
-
-    }
-
-    return instance;
-
+   		return (InheritableStaticPropertyHandler) SingletonRepository.getRepository().getInstance(InheritableStaticPropertyHandler.class, instantiator);
    }
 
 

@@ -17,6 +17,9 @@ import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerConstants;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.text.TextSoap;
@@ -27,10 +30,10 @@ import com.idega.util.text.TextSoap;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  *
  **/
-public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,LDAPReplicationConstants{
+public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,LDAPReplicationConstants, Singleton{
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
 	private LDAPReplicationBusiness ldapReplicationBiz;
-	private static IWLDAPUtil instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWLDAPUtil(); }};
 
 	/**
 	 * 
@@ -40,11 +43,7 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 	}
 	
 	public static IWLDAPUtil getInstance(){
-		if(instance==null){
-			instance = new IWLDAPUtil();
-		}
-		
-		return instance;
+		return (IWLDAPUtil) SingletonRepository.getRepository().getInstance(IWLDAPUtil.class, instantiator);
 	}
 	
 	/**

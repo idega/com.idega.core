@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.6 2005/01/27 10:30:05 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.7 2005/02/01 17:48:08 thomas Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,6 +12,9 @@ package com.idega.core.view;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FacesUtil;
 
 
@@ -19,36 +22,37 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/01/27 10:30:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/01 17:48:08 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public class ViewManager {
+public class ViewManager implements Singleton {
 	
-	private static ViewManager instance;
+	private static Instantiator instantiator = new Instantiator() 
+		{ 
+			public Object getInstance(Object parameter) {
+				IWMainApplication iwma = null;
+				if (parameter instanceof FacesContext) {
+					iwma = IWMainApplication.getIWMainApplication((FacesContext) parameter);
+				}
+				else {
+					iwma = (IWMainApplication) parameter;
+				}
+				return new ViewManager(iwma);
+			}
+		};
 	
 	private ViewNode rootNode;
 	private ViewNode workspaceNode;
 	private IWMainApplication iwma;
 	
 	public static ViewManager getInstance(IWMainApplication iwma){
-		if(instance==null){
-			instance = new ViewManager(iwma);
-		}
-		return instance;
+		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, iwma);
 	}
 	
 	public static ViewManager getInstance(FacesContext context){
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
-		return getInstance(iwma);
-	}
-	
-	/**
-	 * Unload the previously loaded instance and all its resources.
-	 */
-	public static void unload(){
-		instance=null;
+		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, context);
 	}
 	
 	private ViewManager(IWMainApplication iwma){

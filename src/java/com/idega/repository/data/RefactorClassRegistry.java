@@ -13,9 +13,15 @@ import com.idega.util.StringHandler;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class RefactorClassRegistry
-{	
-	private static RefactorClassRegistry instance;
+public class RefactorClassRegistry implements Singleton {	
+	
+	private static Instantiator instantiator = new Instantiator() 
+		{ 
+			public Object getInstance() { 
+				return new RefactorClassRegistry(); 
+			}
+		};
+	
 	
 	//This constructor should not be called
 	private RefactorClassRegistry(){
@@ -24,10 +30,7 @@ public class RefactorClassRegistry
 
 	
 	public static RefactorClassRegistry getInstance(){
-		if(instance==null){
-			instance = new RefactorClassRegistry();
-		}
-		return instance;
+		return (RefactorClassRegistry) SingletonRepository.getRepository().getInstance(RefactorClassRegistry.class, instantiator);      
 	}
 		
 	private Map refactoredClassNamesMap;

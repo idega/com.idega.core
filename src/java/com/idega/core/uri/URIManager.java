@@ -1,5 +1,5 @@
 /*
- * $Id: URIManager.java,v 1.1 2005/01/18 17:11:31 tryggvil Exp $
+ * $Id: URIManager.java,v 1.2 2005/02/01 17:44:49 thomas Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,29 +12,30 @@ package com.idega.core.uri;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/01/18 17:11:31 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/01 17:44:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class URIManager {
+public class URIManager implements Singleton {
 	
 	//static variables:
-	private static URIManager instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new URIManager();}};
 	
 	//instance variables:
 	private URIHandler defaultHandler;
 	
 	public static URIManager getInstance(){
-		if(instance==null){
-			instance=new URIManager();
-		}
-		return instance;
+		return (URIManager) SingletonRepository.getRepository().getInstance(URIHandler.class, instantiator);
 	}
+	
 	private URIManager(){}
 	
 	private Map handlerMap;
