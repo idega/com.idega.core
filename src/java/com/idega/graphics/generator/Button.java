@@ -109,7 +109,7 @@ public class Button {
   /**
    * This method allows direct generating of buttons through a command line or cgi script<br/>
    * the allowed parameters in correct order are<br/>
-   * 1:inputfile 2:fillcolor 3:highlightcolor 4:width 5:height 6:pathtofontfile
+   * 1:inputfile 2:fillcolor 3:highlightcolor 4:width 5:height 6:pathtofontfile 7:fontsize
    */
   public static void main(String[] args) {
     try{
@@ -120,7 +120,7 @@ public class Button {
       File file = new File(args[5]);
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
-      button.setFont(font.deriveFont(12f));
+      button.setFont(font.deriveFont(Integer.parseInt(args[6])));
       button.onlyCreateUpState(true);
 
       Iterator iter = tokenizers.iterator();
