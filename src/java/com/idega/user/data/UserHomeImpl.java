@@ -1,5 +1,10 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 {
@@ -65,6 +70,13 @@ public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0
 public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public Collection findUsersBySearchCondition(String condition, Collection validUserPks) throws FinderException, RemoteException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, validUserPks);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

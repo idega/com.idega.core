@@ -1,5 +1,10 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public interface UserHome extends com.idega.data.IDOHome
 {
@@ -13,6 +18,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
  public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
+ public Collection findUsersBySearchCondition(String condition, Collection validUserPks) throws FinderException, RemoteException;
  public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
  public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException;

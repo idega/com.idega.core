@@ -897,6 +897,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public Collection ejbFindUsersBySearchCondition(String condition) throws FinderException, RemoteException {
+		return ejbFindUsersBySearchCondition(condition, null);
+	}
+	
+	public Collection ejbFindUsersBySearchCondition(String condition, Collection validUserPks) throws FinderException, RemoteException {
 		if (condition == null || condition.equals("")) {
 			return ejbFindAllUsers();	
 		}else {
@@ -909,6 +913,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
 			.appendOr()
 			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'");
+			
+			if ( validUserPks != null && validUserPks.size() > 0 ) {
+				Iterator iter = validUserPks.iterator();
+				query.appendAnd().append(getIDColumnName()).append(" IN (");
+				while (iter.hasNext()) {
+					query.append(iter.next());
+					if (iter.hasNext()) {
+						query.append(",");	
+					}
+				}	
+				query.append(")");	
+			}
 			
 			return this.idoFindIDsBySQL(query.toString());
 		}
