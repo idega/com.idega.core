@@ -1,5 +1,6 @@
 <project>
     <extend>base-project.xml</extend>
+    <!--- all jars are included in the core bundle, these jars are a subset of the jars of the core bundle -->
     <dependencies>
             <dependency>
             <groupId>servletapi</groupId>
@@ -31,15 +32,7 @@
             <version>spec1_0_1</version>
             <type>jar</type>
             <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
-            <properties/>
-        </dependency>
-        <dependency>
-            <groupId>jimi</groupId>
-            <artifactId>jimi</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <url>http://java.sun.com/products/jimi/</url>
-            <properties/>
+        <properties/>
         </dependency>
         <dependency>
             <groupId>jai</groupId>
@@ -95,9 +88,7 @@
 	      <version>1.0</version>
 	      <type>jar</type>
 	      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
-	      <properties>
-	      	<idegaweb.bundle.include>true</idegaweb.bundle.include>
-	      </properties>
+	      <properties />
 	    </dependency>
     </dependencies>
 </project>
