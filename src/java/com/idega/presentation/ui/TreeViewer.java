@@ -26,11 +26,8 @@ public class TreeViewer extends AbstractTreeViewer {
 
   private static final String TREEVIEW_PREFIX = "treeviewer/";
 
-
-
-
   Image folderAndFileIcons[] = null;
-  String folderAndFileIconNames[]={"treeviewer_folder_closed.gif","treeviewer_folder_open.gif","treeviewer_file.gif"};
+  String folderAndFileIconNames[]={"treeviewer_node_closed.gif","treeviewer_node_open.gif","treeviewer_leaf.gif"};
 
   private static final int FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED = 0;
   private static final int FOLDERANDFILE_ICONINDEX_FOLDER_OPEN = 1;
@@ -223,10 +220,10 @@ public class TreeViewer extends AbstractTreeViewer {
   private Link getLinkPrototype(){
     if(_linkPrototype==null){
       _linkPrototype=new Link();
+    }
 
-      if(nodeNameTarget != null){
-        _linkPrototype.setTarget(nodeNameTarget);
-      }
+    if(nodeNameTarget != null){
+      _linkPrototype.setTarget(nodeNameTarget);
     }
 
     if(_linkStyle != null){
