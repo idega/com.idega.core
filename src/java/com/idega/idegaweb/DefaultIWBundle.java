@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.4 2004/07/30 12:23:03 thomas Exp $
+ * $Id: DefaultIWBundle.java,v 1.5 2004/08/13 17:33:38 eiki Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -178,7 +178,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			log(e);
 		}
-		runStartClass();
+		
 	}
 	private void createDataRecords() throws Exception
 	{
@@ -240,7 +240,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 		}
 	}
-	private void runStartClass()
+	/**
+	 *	call the default bundle starter first (IWBundleStarter) because this starter might register some classes that are used by the other starters.
+	 */
+	public void runBundleStarters()
 	{
 		// starting of default bundle starter
 		// call the default start first because this starter might register some classes that are used by 

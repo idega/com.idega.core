@@ -251,4 +251,6 @@ public interface IWBundle {
 	public abstract boolean containsLocalizedString(String key);
 
 	public abstract String toString();
+	
+	public void runBundleStarters();
 }

@@ -565,6 +565,8 @@ public class IWMainApplication {//implements ServletContext{
 	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
 	                    this, autoCreate);
 	            loadedBundles.put(bundleIdentifier, bundle);
+	            //must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
+	            bundle.runBundleStarters();
         		}
         		else{
         			throw new IWBundleDoesNotExist(bundleIdentifier);
