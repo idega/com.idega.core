@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.69 2002/12/20 15:38:35 palli Exp $
+ *  $Id: Page.java,v 1.70 2003/01/03 09:35:49 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -845,11 +845,15 @@ public class Page extends PresentationObjectContainer {
 			else {
 				if (!NULL_CLONE_PAGE_INITIALIZED) {
 
-					Text pageNotFound = new Text("No permission", true, false, false);
-					pageNotFound.setFontSize(4);
-					NULL_CLONE_PAGE.add(pageNotFound);
-
 					IWContext iwc = IWContext.getInstance();
+					//Text pageNotFound = new Text("No permission", true, false, false);
+					//pageNotFound.setFontSize(4);
+					//NULL_CLONE_PAGE.add(pageNotFound);
+					
+					Image noPermissionImage = getBundle(iwc).getImage("shared/stopalert.gif");
+					NULL_CLONE_PAGE.add(noPermissionImage);
+
+					
 					if (iwc != null) {
 						int pageId = 1;
 						String page = null;
