@@ -8,6 +8,7 @@ package com.idega.util.text;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
 public class TextStyler {
@@ -70,7 +71,7 @@ public class TextStyler {
 	}
 
 	private void setDefaultValues() {
-		if (_styleMap == null) _styleMap = new HashMap();
+		if (_styleMap == null) _styleMap = new LinkedHashMap();
 
 		if (_styles != null) {
 			for (int a = 0; a < _styles.length; a++) {
