@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.46 2002/02/18 16:25:49 laddi Exp $
+ * $Id: Link.java,v 1.47 2002/02/19 13:06:18 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
  *@version 1.2
  *@modified by  <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public class Link extends Text {
+public class Link extends Text{
 
   private PresentationObject _obj;
   private Window _myWindow = null;
@@ -142,10 +142,8 @@ public class Link extends Text {
    */
   public Link(Text text) {
     //text.setFontColor("");
-    this.text = text.getText();
-    _obj = (PresentationObject)text;
-    _obj.setParentObject(this);
-    _objectType = OBJECT_TYPE_TEXT;
+    this.setText(text);
+
   }
 
   /**
@@ -309,8 +307,12 @@ public class Link extends Text {
    *
    */
   public void setPresentationObject(PresentationObject object) {
+
     if(object instanceof Image){
       setImage((Image)object);
+    }
+    else if(object instanceof Text){
+      setText((Text)object);
     }
     else if(object instanceof Window){
       setWindow((Window)object);
@@ -361,30 +363,25 @@ public class Link extends Text {
       }else if(_onClickImageId > 0){
 	image.setOnClickImage(new Image(_onClickImageId));
       }
-      image.setParentObject(this);
-      _obj = image;
+      setImage(image);
     }
 
 
     if( isImageButton ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-	_obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text);
+        setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text));
       }
       else{
-	_obj = iwc.getApplication().getCoreBundle().getImageButton(text);
+        setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(text));
       }
-      _obj.setParentObject(this);
-      _objectType = OBJECT_TYPE_MODULEOBJECT;
     }
     else if( isImageTab ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-	_obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip);
+        setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip));
       }
       else{
-	_obj = iwc.getApplication().getCoreBundle().getImageTab(text,flip);
+        setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(text,flip));
       }
-      _obj.setParentObject(this);
-      _objectType = OBJECT_TYPE_MODULEOBJECT;
     }
 
     if (_obj != null) {
@@ -769,8 +766,10 @@ public class Link extends Text {
    *
    */
   public void setText(Text text) {
-    this._objectType=this.OBJECT_TYPE_TEXT;
-    _obj=text;
+    this.text = text.getText();
+    _obj = (PresentationObject)text;
+    _obj.setParentObject(this);
+    _objectType = OBJECT_TYPE_TEXT;
   }
 
 
@@ -1403,7 +1402,7 @@ public class Link extends Text {
     boolean addParameters = true;
     String oldURL = getURL(iwc);
     /**
-     * @todo: Temporary solution, if the user is not logged on then do not add a session id to the link
+     * @todo: Is this the right solution? - If the user is not logged on then do not add a session id to the link
      */
     if(!com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)){
       setSessionId(false);
