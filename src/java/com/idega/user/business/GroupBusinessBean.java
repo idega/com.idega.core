@@ -323,9 +323,16 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * Returns recursively up the group tree parents of group aGroup * @param aGroup The Group to be found parents recursively for. * @return Collection of Groups found recursively up the tree
  * @throws EJBException If an error occured */
 	public  Collection getParentGroupsRecursive(Group aGroup) throws EJBException {
-
-		return getParentGroupsRecursive(aGroup,getUserRepresentativeGroupTypeStringArray(),false);
-  }
+  		return getParentGroupsRecursive(aGroup, null, null);
+	}
+	
+	/**
+	 * Optimized version of getParentGroupsRecursive(Group) by Sigtryggur 22.06.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 */
+	public  Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups  ) throws EJBException {
+		return getParentGroupsRecursive(aGroup,getUserRepresentativeGroupTypeStringArray(),false, cachedParents, cachedGroups);
+	}
 
 	public String[] getUserRepresentativeGroupTypeStringArray(){
 		if(userRepresentativeType == null){
@@ -340,9 +347,17 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 /**
  * Returns recursively up the group tree parents of group aGroup with filtered out with specified groupTypes * @param aGroup a Group to find parents for * @param groupTypes the Groups a String array of group types to be filtered with * @param returnSpecifiedGroupTypes if true it returns the Collection with all the groups that are of the types specified in  groupTypes[], else it returns the opposite (all the groups that are not of any of the types specified by groupTypes[]) * @return Collection of Groups found recursively up the tree * @throws EJBException If an error occured */
   public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
+  	return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
+  }
+
+/**
+ * Optimized version of getParentGroupsRecursive(Group,String[],boolean) by Sigtryggur 22.06.2004
+ * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+ */
+  public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException{  	
   //public  Collection getGroupsContaining(Group groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException,RemoteException{
 
-	Collection groups = aGroup.getParentGroups();
+	Collection groups = aGroup.getParentGroups(cachedParents, cachedGroups);
 	
 	if (groups != null && groups.size() > 0){
 	  Map GroupsContained = new Hashtable();
@@ -355,7 +370,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	    	key = item.getPrimaryKey().toString();
 	   		if(!GroupsContained.containsKey(key)){
 	      		GroupsContained.put(key,item);
-	      		putGroupsContaining( item, GroupsContained,groupTypes, returnSpecifiedGroupTypes );
+	      		putGroupsContaining( item, GroupsContained,groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups );
 	    	}
 	   	}
 	  }
@@ -402,7 +417,19 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   }
 
   private  void putGroupsContaining(Group group, Map GroupsContained , String[] groupTypes, boolean returnGroupTypes ) {
-  	Collection pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
+  	putGroupsContaining(group, GroupsContained, groupTypes, returnGroupTypes, null, null);
+  }
+  
+/**
+ * Optimized version of putGroupsContaining(Group, Map, String[], boolean) by Sigtryggur 22.06.2004
+ * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+ */
+  private  void putGroupsContaining(Group group, Map GroupsContained , String[] groupTypes, boolean returnGroupTypes, Map cachedParents, Map cachedGroups ) {
+  	Collection pGroups = null;
+  	if (cachedParents == null)
+  		pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
+  	else 
+  		pGroups = group.getParentGroups(cachedParents, cachedGroups);
 		if (pGroups != null ){
 		  String key = "";
 		  Iterator iter = pGroups.iterator();
@@ -413,7 +440,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 		      
 		      if(!GroupsContained.containsKey(key)){
 		        GroupsContained.put(key,item);
-		        putGroupsContaining(item, GroupsContained,groupTypes,returnGroupTypes);
+		        putGroupsContaining(item, GroupsContained,groupTypes,returnGroupTypes, cachedParents, cachedGroups);
 		      }
 		    }
 		  }

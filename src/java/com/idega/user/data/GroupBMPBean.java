@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -337,14 +338,45 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()
 	 */
 	public List getParentGroups() throws EJBException {
+  		return getParentGroups(null, null);
+	}
+
+	/**
+	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 */
+	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
 		List theReturn = new ArrayList();
 		try {
-			Collection relations = getChildGroupRelationships();
+			Collection relations = null;
+			if (cachedParents!=null) {
+				if (cachedParents.containsKey(this.getPrimaryKey()))
+					relations = (Collection)cachedParents.get(this.getPrimaryKey());
+				else
+				{	
+					relations = getChildGroupRelationships();
+					cachedParents.put(this.getPrimaryKey(), relations);
+				}
+			}
+			else 
+				relations = getChildGroupRelationships();
 			Iterator iter = relations.iterator();
 			while (iter.hasNext()) {
 				GroupRelation item = (GroupRelation)iter.next();
 				//Group parent = item.getRelatedGroup();
-				Group parent = item.getGroup();
+				
+				Group parent = null;
+				if (cachedGroups!=null) {
+					if (cachedGroups.containsKey(new Integer(item.getGroupID())))
+						parent = (Group) cachedGroups.get(new Integer(item.getGroupID()));
+					else {	
+						parent = item.getGroup();
+						cachedGroups.put(new Integer(item.getGroupID()), parent);
+					}
+				}
+				else 
+					parent = item.getGroup();
+				
 				if (!theReturn.contains(parent)) {
 					theReturn.add(parent);
 				}

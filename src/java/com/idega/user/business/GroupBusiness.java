@@ -39,6 +39,11 @@ public interface GroupBusiness extends com.idega.business.IBOService {
             java.rmi.RemoteException, java.rmi.RemoteException;
 
     public java.util.Collection getParentGroupsRecursive(
+    		com.idega.user.data.Group p0,java.util.Map p1,java.util.Map p2) throws javax.ejb.EJBException,
+			java.rmi.RemoteException, java.rmi.RemoteException;
+
+
+    public java.util.Collection getParentGroupsRecursive(
             com.idega.user.data.Group p0, java.lang.String[] p1, boolean p2)
             throws javax.ejb.EJBException, java.rmi.RemoteException,
             java.rmi.RemoteException;

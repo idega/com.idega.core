@@ -46,6 +46,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public java.lang.String getNodeName();
  public java.lang.String getNodeName(java.util.Locale p0);
  public java.util.List getParentGroups()throws javax.ejb.EJBException;
+ public java.util.List getParentGroups(java.util.Map p0,java.util.Map p1)throws javax.ejb.EJBException;
  public com.idega.core.data.ICTreeNode getParentNode();
  public java.util.Collection getPhones();
  public java.util.Collection getRelatedBy(com.idega.user.data.GroupRelationType p0)throws javax.ejb.FinderException;

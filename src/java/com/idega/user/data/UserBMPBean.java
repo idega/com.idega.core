@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -940,7 +941,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	/**
 	 * Gets a list of all the groups that this "group" is directly member of.	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()	 */
-	public List getParentGroups()  {
+	public List getParentGroups() throws EJBException {
+		return getParentGroups(null, null);
+	}
+	
+	/**
+	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 * This has not yet been implemented in this class. Only in GroupBMPBean
+	 * This was added to this method to conform to the Group interface
+	 */
+	public List getParentGroups(Map p0, Map p1)  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
 		try{

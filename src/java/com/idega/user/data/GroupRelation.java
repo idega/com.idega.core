@@ -18,6 +18,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
 
 	
  public com.idega.user.data.Group getGroup();
+ public int getGroupID();
  public java.sql.Timestamp getInitiationDate();
  public Timestamp getInitiationModificationDate();
  public int getPassiveBy();
