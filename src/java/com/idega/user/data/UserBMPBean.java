@@ -896,6 +896,25 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		this.setID(icGroupId);
 	}
 
+	public Collection ejbFindUsersBySearchCondition(String condition) throws FinderException, RemoteException {
+		if (condition == null || condition.equals("")) {
+			return ejbFindAllUsers();	
+		}else {
+			IDOQuery query = new IDOQuery();
+			query.appendSelectAllFrom(this).appendWhere()
+			.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%'")
+			.appendOr()
+			.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%'")
+			.appendOr()
+			.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
+			.appendOr()
+			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'");
+			
+			return this.idoFindIDsBySQL(query.toString());
+		}
+	}
+
+
 	public int ejbHomeGetUserCount() throws IDOException {
 		//    String sqlQuery = "select count(*) from "+ this.getEntityName();
 		return super.idoGetNumberOfRecords();
