@@ -4067,7 +4067,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (value != null) {
 			sql.append(" and ").append("meta.").append(valueColumn).append("=").append("'").append(value).append("'");
 		}
-
+//TODO use selectquery
 		return idoFindPKsBySQL(sql.toString());
 
 	}
