@@ -302,15 +302,5 @@
       </properties>
     </dependency>
   </dependencies>
-  <build>
-    <nagEmailAddress>tryggvi@idega.com</nagEmailAddress>
-    <sourceDirectory>src/java</sourceDirectory>
-    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-      </includes>
-    </unitTest>
-  </build>
   <properties/>
 </project>

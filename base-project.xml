@@ -18,9 +18,47 @@
   <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
   <siteAddress>developer.idega.com</siteAddress>
   <siteDirectory>/var/www/webs/developer.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
-  <build>
-    <nagEmailAddress>tryggvi@idega.is</nagEmailAddress>
-  </build>
+
+    <build>
+		<nagEmailAddress>tryggvi@idega.com</nagEmailAddress>
+        <sourceDirectory>src/java</sourceDirectory>
+        <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
+	    <resources>
+	      <resource>
+	       <directory>${basedir}/resources</directory>
+	       <targetPath>resources</targetPath>
+	        <includes>
+	          <include>**/**</include>
+	        </includes>
+	      </resource>
+	      <resource>
+	       <directory>${basedir}/properties</directory>
+	       <targetPath>properties</targetPath>
+	        <includes>
+	          <include>**/**</include>
+	        </includes>
+	      </resource>
+	      <resource>
+	       <directory>${basedir}/WEB-INF</directory>
+	       <targetPath>WEB-INF</targetPath>
+	        <includes>
+	          <include>**/**</include>
+	        </includes>
+	      </resource>
+	      <resource>
+	       <directory>${basedir}/jsp</directory>
+	       <targetPath>jsp</targetPath>
+	        <includes>
+	          <include>**/**</include>
+	        </includes>
+	      </resource>
+	    </resources>
+    </build>
   <reports>
     <report>maven-tasklist-plugin</report>
     <report>maven-changelog-plugin</report>
