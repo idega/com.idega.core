@@ -803,6 +803,25 @@ public class IDOQuery {
 		this.append(columnValue);
 		return this;
 	}
+	
+	public IDOQuery appendAndEqualsTrue(String columnName) {
+		appendAnd();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(true);
+		return this;
+	}	
+	
+	/** Handles all values different from true ('Y') as false. 
+	 */
+
+	public IDOQuery appendAndNotEqualsTrue(String columnName) {
+		appendAnd();
+		append(columnName);
+		this.appendNOTEqual();
+		this.append(true);
+		return this;
+	}		
 
 	public IDOQuery appendAndEquals(String columnName, Object columnValue) {
 		appendAnd();
