@@ -1,5 +1,9 @@
 package com.idega.core.data;
 
+import com.idega.data.IDOLookup;
+import java.util.Collection;
+import java.rmi.RemoteException;
+import javax.ejb.FinderException;
 import com.idega.data.IDOLegacyEntity;
 import java.sql.SQLException;
 import java.util.Locale;
@@ -46,11 +50,11 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
     Locale l = null;
     String lang = Locale.ENGLISH.getISO3Language();
     for (int i = 0; i < JavaLocales.length; i++) {
-      country = ((com.idega.core.data.CountryHome)com.idega.data.IDOLookup.getHomeLegacy(Country.class)).createLegacy();
+      country = (Country) IDOLookup.create(Country.class);
       l = new Locale(lang,JavaLocales[i]);
       country.setName(l.getDisplayCountry(locale));
       country.setIsoAbbreviation(JavaLocales[i]);
-      country.insert();
+      country.store();
     }
   }
 
@@ -85,6 +89,14 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
 
   public static Country getStaticInstance(){
     return(Country)getStaticInstance(Country.class);
+  }
+
+ public Integer ejbFindByIsoAbbreviation(String abbreviation)throws FinderException,RemoteException{
+    Collection countries = idoFindAllIDsByColumnBySQL(getColumnNameIsoAbbreviation(),abbreviation);
+    if(!countries.isEmpty()){
+      return (Integer)countries.iterator().next();
+    }
+    else throw new FinderException("Country was not found");
   }
 
 }

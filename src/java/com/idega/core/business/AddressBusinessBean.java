@@ -1,5 +1,6 @@
 package com.idega.core.business;
 
+import java.util.StringTokenizer;
 import javax.ejb.FinderException;
 import javax.ejb.CreateException;
 import com.idega.data.IDOQuery;
@@ -35,7 +36,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
     PostalCodeHome home = (PostalCodeHome)this.getIDOHome(PostalCode.class);
 
     try{
-      code = home.findByPostalCodeAndCountryId(postCode,((Integer)country.getPrimaryKeyValue()).intValue() );
+      code = home.findByPostalCodeAndCountryId(postCode,((Integer)country.getPrimaryKey()).intValue() );
     }
     catch(FinderException ex){
       code = home.create();
@@ -49,7 +50,42 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
   }
 
 
-  //public Address createAddress(String
+  public String getStreetNameFromAddressString(String addressString){
+    StringTokenizer tokens = new StringTokenizer(addressString);
+    StringBuffer buf = new StringBuffer();
 
+    while( tokens.hasMoreElements() ){
+      String item = (String) tokens.nextElement();
+      try{
+        Integer.parseInt(item);
+      }
+      catch(Exception e ){
+        buf.append(item);
+        buf.append(' ');//behind last one also :(
+      }
+    }
+
+    return buf.toString();
+
+  }
+
+  public String getStreetNumberFromAddressString(String addressString){
+    StringTokenizer tokens = new StringTokenizer(addressString);
+    StringBuffer buf = new StringBuffer();
+
+    while( tokens.hasMoreElements() ){
+      String item = (String) tokens.nextElement();
+      try{
+        Integer.parseInt(item);
+        buf.append(item);
+        buf.append(' ');//behind last one also :(
+      }
+      catch(Exception e ){
+      }
+    }
+
+    return buf.toString();
+
+  }
 
 } // Class AddressBusinessBean

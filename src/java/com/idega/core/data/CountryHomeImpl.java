@@ -7,37 +7,23 @@ public class CountryHomeImpl extends com.idega.data.IDOFactory implements Countr
   return Country.class;
  }
 
+
  public Country create() throws javax.ejb.CreateException{
-  return (Country) super.idoCreate();
+  return (Country) super.createIDO();
  }
 
- public Country createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
 
- }
-
- public Country findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (Country) super.idoFindByPrimaryKey(id);
- }
+public Country findByIsoAbbreviation(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((CountryBMPBean)entity).ejbFindByIsoAbbreviation(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
 
  public Country findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (Country) super.idoFindByPrimaryKey(pk);
+  return (Country) super.findByPrimaryKeyIDO(pk);
  }
 
- public Country findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
-
- }
 
 
 }
