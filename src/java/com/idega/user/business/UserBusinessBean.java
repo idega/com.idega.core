@@ -60,7 +60,13 @@ import java.rmi.RemoteException;
 
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness{
 
+  // remove use of "null" when metadata can be removed
+  private static final String NULL = "null";
+  
+  private static final String JOB_META_DATA_KEY = "job";
+
 	private static final String SESSION_KEY_TOP_NODES =  "top_nodes_for_user";
+
   private GroupHome groupHome;
   private UserHome userHome;
   private UserGroupRepresentativeHome userRepHome;
@@ -642,6 +648,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
 
   }
+
+  public void updateUserJob(int userId, String job) {
+    if (job == null || job.length() == 0)
+      job = NULL;
+    User user = getUser(userId);
+    user.setMetaData(JOB_META_DATA_KEY, job);
+    user.store();
+  }
+    
+  public String getUserJob(User user)  {
+    String job = (String) user.getMetaData(JOB_META_DATA_KEY);
+    if (job == null || NULL.equals(job))
+      return "";
+    else
+      return job;
+  }  
 
   /**
    * @deprecated user getUsersMainAddress instead.
