@@ -66,7 +66,9 @@ public class TextFormat{
     TextTemplates = new Text[3];
     TextTemplates[0] = new Text();
     TextTemplates[1] = new Text();
+    TextTemplates[1].setBold(true);
     TextTemplates[2] = new Text();
+    TextTemplates[2].setBold(true);
   }
 
   private void store(){
