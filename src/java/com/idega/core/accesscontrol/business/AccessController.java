@@ -123,6 +123,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public boolean hasViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
   
   public boolean hasRole(String roleKey, IWUserContext iwuc);
+  public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
   public boolean isRoleMaster(IWUserContext iwuc);
   public void addGroupAsRoleMaster(Group group, IWUserContext iwuc);
   public void addRoleToGroup(String roleKey, Group group, IWUserContext iwuc);

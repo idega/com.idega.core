@@ -2815,6 +2815,34 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return false;
 		}
 	}
+	
+	/**
+	 * Check if the supplied group has this role
+	 * @param roleKey
+	 * @param group
+	 * @param iwuc
+	 * @return
+	 */
+	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc){
+		
+		List[] usersGroupsToCheckAgainstPermissions = new List[1];
+		usersGroupsToCheckAgainstPermissions[0] = new ArrayList(1);
+		usersGroupsToCheckAgainstPermissions[0].add(group.getPrimaryKey().toString());
+		
+		Boolean myPermission;
+		try {
+			myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, RoleHelperObject.getStaticInstance(), roleKey, iwuc);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		if(myPermission!=null){
+			return myPermission.booleanValue();
+		}
+		else return false;
+	}
 
 	/**
 	 * Checks with ICRole if this roleKey exists if not it creates it so we can get it in the roles window
