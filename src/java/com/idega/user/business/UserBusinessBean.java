@@ -1735,7 +1735,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       else {
         message = isUserSuitedForGroup(user, targetGroup);
       }
-      // if there is not any problem the message is null
+      // if there aren't any problems the message is null
       if (message == null)  {
         message = moveUserWithoutTest(user, parentGroup, targetGroup, currentUser);
       }
@@ -1922,16 +1922,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return "source and target are the same";
       }
     }
+    // note: if the primary group id is equal to minus one the user does not belong to a group
     int primaryGroupId = user.getPrimaryGroupID();
     // Transaction starts
     javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
     try {
       transactionManager.begin();
-      // check if the primaryGroup is the parentGroup
+      // check if the primaryGroup is the parentGroup or if the user does not belong to a group at all
       boolean targetIsSetAsPrimaryGroup = false;
-      if (parentGroup != null && (targetIsSetAsPrimaryGroup = (parentGroupId == primaryGroupId)))  {
+      if ((parentGroup != null && (parentGroupId == primaryGroupId)) ||
+          (primaryGroupId == -1))  {
         user.setPrimaryGroup(targetGroup);
         user.store();
+        targetIsSetAsPrimaryGroup = true;
       }
       // remove user from parent group
       // IMPORTANT
