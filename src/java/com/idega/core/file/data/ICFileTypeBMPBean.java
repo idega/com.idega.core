@@ -23,6 +23,11 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   public static String IC_FILE_TYPE_VECTOR_GRAPHICS = "ic_vector";
   public static String IC_FILE_TYPE_VIDEO = "ic_video";
   public static String IC_FILE_TYPE_SYSTEM = "ic_system";//idegaWeb database file system (type)
+  private static final String ENTITY_NAME = "IC_FILE_TYPE";
+  private static final String COLUMN_IC_FILE_TYPE_HANDLER_ID = "IC_FILE_TYPE_HANDLER_ID";
+  private static final String COLUMN_TYPE_DESCRIPTION = "TYPE_DESCRIPTION";
+  private static final String COLUMN_TYPE_DISPLAY_NAME = "TYPE_DISPLAY_NAME";
+  private static final String COLUMN_UNIQUE_NAME = "UNIQUE_NAME";
 
 
   public ICFileTypeBMPBean() {
@@ -42,13 +47,13 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   }
 
   public String getEntityName() {
-    return("ic_file_type");
+    return(ENTITY_NAME);
   }
 
-  public static String getColumnNameDisplayName(){return "type_display_name";}
-  public static String getColumnNameUniqueName() {return "unique_name";}
-  public static String getColumnNameDescription(){return "type_description";}
-  public static String getColumnNameFileTypeHandler(){return "ic_file_type_handler_id";}
+  public static String getColumnNameDisplayName(){return COLUMN_TYPE_DISPLAY_NAME;}
+  public static String getColumnNameUniqueName() {return COLUMN_UNIQUE_NAME;}
+  public static String getColumnNameDescription(){return COLUMN_TYPE_DESCRIPTION;}
+  public static String getColumnNameFileTypeHandler(){return COLUMN_IC_FILE_TYPE_HANDLER_ID;}
 
 
   public String getName(){
