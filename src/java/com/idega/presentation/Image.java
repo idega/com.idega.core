@@ -5,6 +5,8 @@
 package com.idega.presentation;
 
 //import java.io.*;
+import com.idega.block.media.business.MediaConstants;
+import com.idega.block.image.presentation.ImageAttributeSetter;
 import com.idega.block.media.business.MediaBusiness;
 import java.util.*;
 import java.sql.*;
@@ -50,6 +52,11 @@ private boolean linkOnImage = true;
 private boolean useCaching = true;
 
 private String align;
+private Link zoomLink;
+private String zoomImageID;
+private String zoomPageID;
+private String zoomImageWidth;
+private String zoomImageHeight;
 
 private int imageId = -1;
 private ImageEntity image;
@@ -60,7 +67,6 @@ private int maxImageWidth = 140;
 
 private boolean usesOldImageTables = false;
 private static String idName = MediaServlet.PARAMETER_NAME;
-
 
 
 public Image(){
@@ -384,8 +390,23 @@ public void setOverImage(Image image){
 
 
 public String getOverImageURL(){
-	return this.overImageUrl;
+  return this.overImageUrl;
+}
 
+public void setAttributes(Map attributeMap){
+  System.out.println("Setting image attributes");
+  if ( attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE) && attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE) ) {
+    zoomImageID = attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE)?(String)attributeMap.get(ImageAttributeSetter.ZOOMIMAGE):null;
+    zoomPageID = attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE)?(String)attributeMap.get(ImageAttributeSetter.ZOOMPAGE):null;
+    zoomImageWidth = attributeMap.containsKey(ImageAttributeSetter.ZOOMWIDTH)?(String)attributeMap.get(ImageAttributeSetter.ZOOMWIDTH):"400";
+    zoomImageHeight = attributeMap.containsKey(ImageAttributeSetter.ZOOMHEIGHT)?(String)attributeMap.get(ImageAttributeSetter.ZOOMHEIGHT):"400";
+
+    attributeMap.remove(ImageAttributeSetter.ZOOMIMAGE);
+    attributeMap.remove(ImageAttributeSetter.ZOOMPAGE);
+    attributeMap.remove(ImageAttributeSetter.ZOOMWIDTH);
+    attributeMap.remove(ImageAttributeSetter.ZOOMHEIGHT);
+  }
+  super.setAttributes(attributeMap);
 }
 
 public void setAssociatedScript(Script myScript){
@@ -402,6 +423,10 @@ public Script getAssociatedScript(){
 
 public void setImageLinkZoomView(){
   this.zoomView = true;
+}
+
+public void setImageZoomLink(Link link){
+  this.zoomLink = link;
 }
 
 public void setNoImageLink(){
@@ -525,9 +550,16 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 
 	  //should we add the image with a link? or just the image
 	  if( zoomView ){
-	    Link imageLink = new Link(getHTMLString());
-	    imageLink.addParameter("image_id",imageId);
-	    imageTable.add(imageLink, 1, 1);
+	    if ( zoomLink != null ) {
+	      System.out.println("Setting zoom view");
+	      zoomLink.setText(getHTMLString());
+	      imageTable.add(zoomLink,1,1);
+	    }
+	    else {
+	      Link imageLink = new Link(getHTMLString());
+	      imageLink.addParameter("image_id",imageId);
+	      imageTable.add(imageLink, 1, 1);
+	    }
 	  }
 	  else if( (!zoomView) && (linkOnImage) ) {
 	    Link imageLink = new Link(getHTMLString(), link);
@@ -540,9 +572,16 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 	else{//or no link
 
 	  if( zoomView ){
-	    Link imageLink = new Link(getHTMLString());
-	    imageLink.addParameter("image_id",imageId);
-	    imageTable.add(imageLink, 1, 1);
+	    if ( zoomLink != null ) {
+	      System.out.println("Setting zoom view");
+	      zoomLink.setText(getHTMLString());
+	      imageTable.add(zoomLink,1,1);
+	    }
+	    else {
+	      Link imageLink = new Link(getHTMLString());
+	      imageLink.addParameter("image_id",imageId);
+	      imageTable.add(imageLink, 1, 1);
+	    }
 	  }
 	  else imageTable.add(getHTMLString(),1,1);
 
@@ -553,9 +592,16 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
       }
       else  {
 	if(zoomView){
-	  Link imageLink = new Link(getHTMLString());
-	  imageLink.addParameter("image_id",imageId);
-	  imageLink.print(iwc);
+	  if ( zoomLink != null ) {
+	    System.out.println("Setting zoom view");
+	    zoomLink.setText(getHTMLString());
+	    zoomLink.print(iwc);
+	  }
+	  else {
+	    Link imageLink = new Link(getHTMLString());
+	    imageLink.addParameter("image_id",imageId);
+	    imageLink.print(iwc);
+	  }
 	}
 	else print(getHTMLString());
       }
@@ -630,6 +676,10 @@ public void limitImageWidth( boolean limitImageWidth ){
   }
 
   public void main(IWContext iwc) {
+    if ( iwc.isParameterSet(idName) ) {
+      this.imageId = Integer.parseInt(iwc.getParameter(idName));
+    }
+
     if( this.overImageUrl != null ){
       Page parent = getParentPage();
       if( parent!=null ){
@@ -647,6 +697,17 @@ public void limitImageWidth( boolean limitImageWidth ){
 
   public void print(IWContext iwc)throws Exception{
     initVariables(iwc);
+
+    if ( zoomImageID != null ) {
+      Link link = new Link();
+	link.addParameter(idName,zoomImageID);
+	link.setPage(Integer.parseInt(zoomPageID));
+	link.setURL("/index.jsp");
+	link.setWindowToOpenScript(Window.getWindowCallingScript(link.getURL(iwc),"",false,false,false,false,false,false,false,true,false,Integer.parseInt(zoomImageWidth),Integer.parseInt(zoomImageHeight)));
+      setImageZoomLink(link);
+      setImageLinkZoomView();
+    }
+
     if (getLanguage().equals("HTML")){
       //added by eiki
 
