@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.9 2002/02/19 13:13:11 tryggvil Exp $
+ * $Id: DateInput.java,v 1.10 2002/02/19 13:35:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -469,8 +469,44 @@ private void setSetValues(){
     this._theMonth.setSelectedElement(_setMonth);
   }
   if(_setDay!=null){
-    this._theDay.setSelectedElement(_setDay);
+    if(_isShowDay){
+      this._theDay.setSelectedElement(_setDay);
+    }
   }
+    if(this._showYear){
+      if(_fromYear < _toYear){
+        for (int i=_fromYear;i<=_toYear;i++){
+          _theYear.addMenuElement(Integer.toString(i));
+        }
+      }else{
+        for (int i=_fromYear;i>=_toYear;i--){
+          _theYear.addMenuElement(Integer.toString(i));
+        }
+      }
+    }
+
+    if (_selectedYear!=-1){
+      if(this._showYear){
+        _theYear.setSelectedElement(Integer.toString(_selectedYear));
+      }
+      else{
+        _theYearHidden.setValue(_selectedYear);
+      }
+    }
+    else{
+      if(this._showYear){
+      }
+      else{
+        _theYearHidden.setValue(_fromYear);
+      }
+    }
+
+    if (_setCheck == true){
+        String year = getCurrentYear();
+        String month = _theMonth.getSelectedElementValue();
+        String day = getCurrentDay();
+        _theWholeDate.setValue(year+"-"+month+"-"+day);
+    }
 }
 
 public void main(IWContext iwc)throws Exception{
@@ -600,40 +636,6 @@ public void main(IWContext iwc)throws Exception{
   }
 
   public void print(IWContext iwc)throws Exception{
-    if(this._showYear){
-      if(_fromYear < _toYear){
-        for (int i=_fromYear;i<=_toYear;i++){
-          _theYear.addMenuElement(Integer.toString(i));
-        }
-      }else{
-        for (int i=_fromYear;i>=_toYear;i--){
-          _theYear.addMenuElement(Integer.toString(i));
-        }
-      }
-    }
-
-    if (_selectedYear!=-1){
-      if(this._showYear){
-        _theYear.setSelectedElement(Integer.toString(_selectedYear));
-      }
-      else{
-        _theYearHidden.setValue(_selectedYear);
-      }
-    }
-    else{
-      if(this._showYear){
-      }
-      else{
-        _theYearHidden.setValue(_fromYear);
-      }
-    }
-
-    if (_setCheck == true){
-        String year = getCurrentYear();
-        String month = _theMonth.getSelectedElementValue();
-        String day = getCurrentDay();
-        _theWholeDate.setValue(year+"-"+month+"-"+day);
-    }
     super.print(iwc);
   }
 
