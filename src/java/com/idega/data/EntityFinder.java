@@ -144,6 +144,10 @@ public class EntityFinder{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
 
+	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName, int toFind, String orderByColumnName)throws SQLException{
+		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" = "+toFind+" order by "+orderByColumnName);
+	}
+
  	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 	}
