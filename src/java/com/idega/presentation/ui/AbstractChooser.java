@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.18 2004/01/02 13:58:28 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.19 2004/01/02 14:03:52 laddi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -286,4 +286,16 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		this._addTextInput = addTextInput;
 	}
 
+	/**
+	 * @return Returns the bundle.
+	 */
+	protected IWBundle getBundle() {
+		return this._bundle;
+	}
+	/**
+	 * @return Returns the resource bundle.
+	 */
+	protected IWResourceBundle getResourceBundle() {
+		return this._iwrb;
+	}
 }
