@@ -426,6 +426,10 @@ public class idegaTimestamp{
     return Calendar.get(Calendar.DAY_OF_WEEK);
   }
 
+  public int getWeekOfYear() {
+    return Calendar.get(Calendar.WEEK_OF_YEAR);
+  }
+
   public void setYear( int year ){
     Calendar = new GregorianCalendar( year, getMonth(), getDate(), getHour(), getMinute(), getSecond());
   }
