@@ -430,6 +430,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = TextSoap.findAndReplace(html,"##copy;","&copy;");
     html = TextSoap.findAndReplace(html,"##reg;","&reg;");
     html = TextSoap.findAndReplace(html,"##szlig;","&szlig;");
+    html = TextSoap.findAndReplace(html,"##cedil;","&#cedil;");
     html = TextSoap.findAndReplace(html,"##ccedil;","&ccedil;");
     html = TextSoap.findAndReplace(html,"##Ccedil;","&Ccedil;");
     html = TextSoap.findAndReplace(html,"##oslash;","&oslash;");
