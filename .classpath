@@ -27,7 +27,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-components-1.0.7.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-9.2.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-10.1.0.2.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
   </classpathentry>
