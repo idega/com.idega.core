@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -22,7 +23,7 @@ public class SmallCalendar extends Block {
 
 	private IWTimestamp today;
 	private IWTimestamp stamp;
-	private IWCalendar cal = new IWCalendar();
+	private IWCalendar cal;
 	private ICPage _page;
 	private Image iNextImage;
 	private Image iPreviousImage;
@@ -81,7 +82,7 @@ public class SmallCalendar extends Block {
 	public Table T;
 	
 	private int iCellpadding = 2;
-
+	
 	public SmallCalendar() {
 		initialize();
 	}
@@ -99,6 +100,8 @@ public class SmallCalendar extends Block {
 	}
 	
 	public void main(IWContext iwc) {
+		cal = new IWCalendar(iwc.getCurrentLocale());
+		
 		if (stamp == null) {
 			String day = iwc.getParameter(CalendarParameters.PARAMETER_DAY);
 			String month = iwc.getParameter(CalendarParameters.PARAMETER_MONTH);
@@ -199,15 +202,17 @@ public class SmallCalendar extends Block {
 
 		Text t;
 		if (this.showNameOfDays) {
-			int weekdays = (LINE_VIEW ? daycount + daynr : 8);
-			int weekday = 1;
-			for (int a = 1; a < weekdays; a++) {
-				weekday = a % 7;
-				if (weekday == 0)
-					weekday = 7;
-				t = getHeaderText(cal.getDayName(weekday, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
+			int weekday = cal.getCalendar().getFirstDayOfWeek();
+			int weekdays = (LINE_VIEW ? daycount + daynr : weekday + 7);
+			int a = 1;
+			int b = weekday;
+			while(b < weekdays) {
+				if (weekday > 7)
+					weekday = weekday - 7;
+				t = getHeaderText(cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
 				T.setAlignment(a, 1, "center");
-				T.add(t, a, 1);
+				T.add(t, a++, 1);
+				b++;
 			}
 			if (dayCellStyle != null) {
 				T.setRowStyleClass(1, dayCellStyle);
@@ -253,6 +258,8 @@ public class SmallCalendar extends Block {
 		SimpleDateFormat dateValueFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		while (n <= daycount) {
+			xpos = getXYPos(year, month, n)[0];
+			ypos = getXYPos(year, month, n)[1];
 			t = new Text(String.valueOf(n));
 			dayColor = textColor;
 			String styleClass = getDayStyleClass(getDateString(year, month, n));
@@ -713,22 +720,20 @@ public class SmallCalendar extends Block {
 	}
 
 	private int[] getXYPos(int year, int month, int day) {
-		int startingX = 1;
 		int startingY = 1;
 		if (showNameOfDays) {
 			++startingY;
 		}
 
-		int daynr = cal.getDayOfWeek(year, month, 1);
-
-		int x = ((daynr - 1) + day) % 7;
-		int y = (((daynr - 1) + day) / 7) + 1;
+		int daynr = cal.getDayOfWeek(year, month, 1) - cal.getCalendar().getFirstDayOfWeek();
+		
+		int x = (daynr + day) % 7;
+		int y = ((daynr + day) / 7) + 1;
 		if (x == 0) {
 			x = 7;
 			--y;
 		}
 
-		x += (startingX - 1);
 		y += (startingY - 1);
 
 		int[] returner = { x, y };
