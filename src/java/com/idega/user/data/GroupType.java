@@ -17,4 +17,6 @@ public interface GroupType extends com.idega.data.IDOEntity
  public java.lang.String getGeneralGroupTypeString() throws java.rmi.RemoteException;
  public java.lang.String getType() throws java.rmi.RemoteException;
  public java.lang.String getPermissionGroupTypeString() throws java.rmi.RemoteException;
+ public void setDefaultGroupName(String name);
+ public String getDefaultGroupName();
 }

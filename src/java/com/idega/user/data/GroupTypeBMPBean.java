@@ -1,27 +1,36 @@
 package com.idega.user.data;
 
-import java.util.Collection;
-import com.idega.core.data.ICObject;
-import com.idega.builder.data.IBDomain;
-import javax.ejb.*;
 import java.rmi.RemoteException;
-import com.idega.data.*;
+import java.util.Collection;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
+import com.idega.data.TreeableEntity;
+import com.idega.data.TreeableEntityBMPBean;
 
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,Eirikur
+ * Hrafnsson
  * @version 1.0
  */
 
-public class GroupTypeBMPBean extends GenericEntity implements GroupType{
+public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType,TreeableEntity {
 
   private static String TABLE_NAME="IC_GROUP_TYPE";
   private static String TYPE_COLUMN="GROUP_TYPE";
   private static String DESCRIPTION_COLUMN="DESCRIPTION";
+	private static String DEFAULT_GROUP_NAME_COLUMN="DEFAULT_GROUP_NAME";//could also be used as a localization key
+	
   private static String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
   private static String COLUMN_IS_VISIBLE = "IS_VISIBLE";
 
@@ -35,6 +44,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 //    this.setUnique(getIDColumnName(),true);
     this.setAsPrimaryKey(getIDColumnName(),true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
+		this.addAttribute(DEFAULT_GROUP_NAME_COLUMN,"Default generated group name",String.class);
 //    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500); this is handled with plugins
  //   this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);
     this.addAttribute(COLUMN_IS_VISIBLE,"is Visible",Boolean.class);
@@ -118,6 +128,14 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   public String getDescription(){
     return getStringColumnValue(DESCRIPTION_COLUMN);
   }
+  
+	public void setDefaultGroupName(String name){
+		setColumn(DEFAULT_GROUP_NAME_COLUMN,name);
+	}
+
+	public String getDefaultGroupName(){
+		return getStringColumnValue(DEFAULT_GROUP_NAME_COLUMN);
+	}
 
   public String getIDColumnName(){
     return TYPE_COLUMN;
