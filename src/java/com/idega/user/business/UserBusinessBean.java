@@ -390,7 +390,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   public  Phone[] getUserPhones(int userId)throws RemoteException{
     try {
       Collection phones = this.getUser(userId).getPhones();
-      return (Phone[])phones.toArray();
+//	  if(phones != null){
+        return (Phone[])phones.toArray(new Phone[phones.size()]);
+//	  }
       //return (Phone[]) ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
     }
     catch (EJBException ex) {
