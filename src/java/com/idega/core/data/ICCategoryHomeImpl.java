@@ -13,35 +13,15 @@ public class ICCategoryHomeImpl extends com.idega.data.IDOFactory implements ICC
  }
 
 
- public ICCategory createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
-
- }
-
+public java.util.Collection findRootsByType(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICCategoryBMPBean)entity).ejbFindRootsByType(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public ICCategory findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (ICCategory) super.findByPrimaryKeyIDO(pk);
- }
-
-
- public ICCategory findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (ICCategory) super.findByPrimaryKeyIDO(id);
- }
-
-
- public ICCategory findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
-
  }
 
 

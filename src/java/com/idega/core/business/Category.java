@@ -22,7 +22,7 @@ package com.idega.core.business;
 
 
 
-public interface Category {
+public interface Category extends com.idega.core.ICTreeNode{
 
 
 

@@ -2,7 +2,7 @@ package com.idega.core.data;
 
 import javax.ejb.*;
 
-public interface ICCategory extends com.idega.data.IDOLegacyEntity,com.idega.core.business.Category
+public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core.business.Category
 {
  public void setValid(boolean p0);
  public boolean getValid();

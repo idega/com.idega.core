@@ -4,6 +4,8 @@ package com.idega.core.business;
 
 import com.idega.data.IDOLookup;
 import com.idega.core.data.*;
+
+import java.rmi.RemoteException;
 import java.sql.*;
 
 
@@ -19,8 +21,11 @@ import java.util.Vector;
 
 import java.util.Iterator;
 
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
-import com.idega.core.business.ICObjectBusiness;
+
 
 
 
@@ -152,7 +157,7 @@ public class CategoryBusiness{
 
         }
 
-        catch(SQLException sql){
+        catch(Exception sql){
 
 
 
@@ -172,7 +177,7 @@ public class CategoryBusiness{
 
 
 
-  public void deleteCategory(int iCategoryId) throws SQLException{
+  public void deleteCategory(int iCategoryId) throws Exception{
 
     deleteCategory(iCategoryId ,CategoryFinder.getInstance().getObjectInstanceIdFromCategoryId(iCategoryId));
 
@@ -180,20 +185,30 @@ public class CategoryBusiness{
 
 
 
-  public void deleteCategory(int iCategoryId ,int iObjectInstanceId) throws SQLException {
+  public void deleteCategory(int iCategoryId ,int iObjectInstanceId) throws RemoteException {
 
+	try{
     ICCategory nc = (ICCategory) CategoryFinder.getInstance().getCategory( iCategoryId );
 
     if(iObjectInstanceId > 0  ){
 
       ICObjectInstance obj = ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
-      nc.removeFrom(obj);
-
+     	nc.removeFrom(obj);
     }
-
-    nc.delete();
-
-
+     ICCategory parent = (ICCategory) nc.getParentEntity();
+      if(parent!=null){
+      	parent.removeChild(nc);
+      	
+      }
+      
+    nc.remove();
+	}
+	catch(RemoveException e){
+		throw new RemoteException(e.getMessage());
+	}
+	catch(SQLException sql){
+		throw new RemoteException(sql.getMessage());
+	}
 
   }
 
@@ -211,7 +226,7 @@ public class CategoryBusiness{
 
       int treeOrder[] = new int[CategoryIds.length];
       for (int i = 0; i < CategoryIds.length; i++) {
-        category = catHome.findByPrimaryKeyLegacy(CategoryIds[i]);
+        category = catHome.findByPrimaryKey(new Integer(CategoryIds[i]));
         treeOrder[i] = catHome.getOrderNumber(category, instance);
 //        tree_order = 1;//catObjInstHome.getOrderNumber(category, instance);
       }
@@ -219,7 +234,7 @@ public class CategoryBusiness{
       instance.removeFrom(ICCategory.class);
 //      com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom((ICCategory) category);
       for (int i = 0; i < CategoryIds.length; i++) {
-        category = catHome.findByPrimaryKeyLegacy(CategoryIds[i]);
+        category = catHome.findByPrimaryKey(new Integer(CategoryIds[i]));
         //com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom(ICCategory.class, CategoryIds[i]);
         //com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom((ICCategory) category);
         instance.addTo(ICCategory.class,CategoryIds[i]);
@@ -237,29 +252,35 @@ public class CategoryBusiness{
 
   }
 
-  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type,boolean allowMultible){
+  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type,boolean allowMultible)throws RemoteException{
     return saveCategory(iCategoryId, sName, sDesc, 0,iObjectInstanceId, type, allowMultible);
   }
-  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int orderNumber, int iObjectInstanceId,String type,boolean allowMultible){
+  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int orderNumber, int iObjectInstanceId,String type,boolean allowMultible) throws RemoteException{
 
-    ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHomeLegacy(ICCategory.class);
-    ICCategory Cat = catHome.createLegacy();
-    if(iCategoryId > 0)
-
-      Cat = CategoryFinder.getInstance().getCategory(iCategoryId);
-
-    Cat.setName(sName);
-
-    Cat.setDescription(sDesc);
-
-    Cat.setType(type);
-
-
-    if (orderNumber == 0) {
-      return saveCategory(Cat,iObjectInstanceId,allowMultible);
-    }else {
-      return saveCategory(Cat,iObjectInstanceId,orderNumber, allowMultible);
-    }
+	try{
+	    ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHomeLegacy(ICCategory.class);
+	    ICCategory Cat = catHome.create();
+	    if(iCategoryId > 0)
+	
+	      Cat = CategoryFinder.getInstance().getCategory(iCategoryId);
+	
+	    Cat.setName(sName);
+	
+	    Cat.setDescription(sDesc);
+	
+	    Cat.setType(type);
+		
+		
+	
+	
+	    if (orderNumber == 0) {
+	      return saveCategory(Cat,iObjectInstanceId,allowMultible);
+	    }else {
+	      return saveCategory(Cat,iObjectInstanceId,orderNumber, allowMultible);
+	    }
+	}catch(CreateException crex){
+		throw new RemoteException(crex.getMessage());
+	}
 
   }
 
@@ -271,7 +292,7 @@ public class CategoryBusiness{
 
     try {
       ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHome(ICCategory.class);
-      ICCategory cat = catHome.findByPrimaryKey(id);
+      ICCategory cat = catHome.findByPrimaryKey(new Integer(id));
       cat.setName(name);
       cat.setDescription(info);
       cat.update();
@@ -300,7 +321,7 @@ public class CategoryBusiness{
 
 
 
-  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type){
+  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type)throws RemoteException{
 
     return saveCategory(iCategoryId,sName,sDesc,iObjectInstanceId,type,false);
 
@@ -384,12 +405,31 @@ public class CategoryBusiness{
 
 
 
-  public int createCategory(int iObjectInstanceId,String type){
+  public int createCategory(int iObjectInstanceId,String type)throws RemoteException{
 
     return saveCategory(-1,"Category - "+iObjectInstanceId,"Category - "+iObjectInstanceId,iObjectInstanceId ,type,false).getID();
 
   }
-
+  
+  public void saveCategoryToParent(int category , int parent) throws RemoteException{
+  	
+  		try{
+  		ICCategory cat = getCategoryHome().findByPrimaryKey(new Integer(category));
+  		ICCategory par = getCategoryHome().findByPrimaryKey(new Integer(parent));
+  		par.addChild(cat);
+  		}
+  		catch(FinderException fex){
+  			throw new RemoteException(fex.getMessage());
+  		}
+  		catch(SQLException sql){
+  			throw new RemoteException(sql.getMessage());
+  		}
+  	
+  }
+  	
+   public ICCategoryHome getCategoryHome() throws RemoteException {
+   		return(ICCategoryHome )IDOLookup.getHome(ICCategory.class);
+   }
 
 
 }

@@ -1,5 +1,6 @@
 package com.idega.core.data;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ejb.FinderException;
@@ -197,5 +198,17 @@ public class ICCategoryBMPBean
 				+ " = "
 				+ category.getID());
 		//    }
+	}
+	
+	public Collection ejbFindRootsByType(String type)throws FinderException{
+		StringBuffer sql = new StringBuffer("select * from " );
+		sql.append(getEntityTableName());
+	
+		sql.append(" where ").append(getColumnType()).append("= '").append(type).append("' ");
+		sql.append(" and ").append(getIDColumnName()).append(" not in (");
+		sql.append(" select ").append("child_").append(getIDColumnName());
+		sql.append(" from ").append(getEntityTableName()).append("_tree )");
+		//System.err.println(sql.toString());
+		return super.idoFindPKsBySQL(sql.toString());
 	}
 }
