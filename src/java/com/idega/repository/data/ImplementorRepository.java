@@ -88,7 +88,7 @@ public class ImplementorRepository {
 	
 	public Class getAnyClassImpl(Class interfaceClass, Class callerClass) {
 		List validClasses = getValidImplementorClasses(interfaceClass, callerClass);
-		if (validClasses.isEmpty()) {
+		if (validClasses == null || validClasses.isEmpty()) {
 			return null;
 		}
 		return (Class) validClasses.get(0);
