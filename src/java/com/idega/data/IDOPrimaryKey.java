@@ -5,13 +5,15 @@
 
 package com.idega.data;
 
+import java.io.Serializable;
+
 /**
  *
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 0.9
 * Unimplemented Class
 */
-public interface IDOPrimaryKey{
+public interface IDOPrimaryKey extends Serializable {
 
 	public IDOPrimaryKey getInstance();
 	public Object getPrimaryKeyValue(String columnName);
