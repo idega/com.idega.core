@@ -180,7 +180,7 @@ public void setFullScreen(boolean ifFullScreen){
       ret = url;
     }
 
-System.out.println("ret1 = " + ret);
+//System.out.println("ret1 = " + ret);
 
     com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
 
@@ -189,7 +189,7 @@ System.out.println("ret1 = " + ret);
 	ret = d.getURL() + ret;
       }
     }
-System.out.println("ret2 = " + ret);
+//System.out.println("ret2 = " + ret);
 
     return ret;
   }
