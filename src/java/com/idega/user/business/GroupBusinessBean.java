@@ -1708,8 +1708,8 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       //set user as owner of group
       applyUserAsGroupsOwner(iwuc, newlyCreatedGroup, user);
 
-      //give the current users primary group all permission except for owner
-      applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(iwuc, newlyCreatedGroup);
+      //give the users primary group all permission except for owner
+      applyAllGroupPermissionsForGroupToUsersPrimaryGroup(iwuc, newlyCreatedGroup, user);
 
       //owners should get the permission to give permission for this group
       applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(iwuc, newlyCreatedGroup);
