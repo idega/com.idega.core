@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.3 2001/10/22 10:07:37 palli Exp $
+ * $Id: PresentationObjectContainer.java,v 1.4 2001/10/22 10:16:30 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -291,7 +291,6 @@ public class PresentationObjectContainer extends PresentationObject {
    *
    */
   public PresentationObject getContainedLabeledObject(String label) {
-    System.out.println("Trying to find object labeled " + label);
     List list = getAllContainingObjects();
     if (list != null) {
       Iterator iter = list.iterator();
