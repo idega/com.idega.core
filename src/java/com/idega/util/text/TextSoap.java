@@ -1777,7 +1777,44 @@ public static String findAndReplaceOnPrefixCondition(String text, String stringT
     return returnString;
   }
 
+/**
+ * @return the index of the first number or if no number found it returns -1
+ */
+  public static int getIndexOfFirstNumberInString(String text){
+    int length = text.length();
+    int lowestIndex = length;
+    int tempIndex = -1;
+
+    tempIndex = text.indexOf('0');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('1');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('2');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('3');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('4');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('5');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('6');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('7');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('8');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+    tempIndex = text.indexOf('9');
+    lowestIndex = ( (tempIndex!=-1) && (tempIndex < lowestIndex) ) ? tempIndex : lowestIndex;
+
+    lowestIndex = (lowestIndex==length) ? -1 : lowestIndex;
+
+    return lowestIndex;
+  }
+
 }
+
+
+
 
 // class TestSoap
 

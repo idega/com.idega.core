@@ -1,5 +1,6 @@
 package com.idega.core.business;
 
+import com.idega.util.text.TextSoap;
 import java.util.StringTokenizer;
 import javax.ejb.FinderException;
 import javax.ejb.CreateException;
@@ -22,7 +23,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
   public AddressBusinessBean() {
   }
 
-
+  /**
+   * @return The AddressBeans' home
+   */
   public AddressHome getAddressHome() throws RemoteException{
     return (AddressHome)this.getIDOHome(Address.class);
   }
@@ -30,6 +33,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
   /**
    * Finds and updates or Creates a new postal code
+   * @return A new or updates PostalCode
    */
   public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name, Country country) throws CreateException,RemoteException{
     PostalCode code;
@@ -50,42 +54,34 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
   }
 
 
+  /**
+   * Gets the streetname from a string with the format.<br>
+   * "Streetname Number ..." e.g. "My Street 24 982 NY" would return "My Street".<br>
+   * not very flexibel but handles "my street 24, 982 NY" the same way.
+   * @return Finds the first number in the string and return a sbustring to that point or the whole string if no number is present
+   */
   public String getStreetNameFromAddressString(String addressString){
-    StringTokenizer tokens = new StringTokenizer(addressString);
-    StringBuffer buf = new StringBuffer();
-
-    while( tokens.hasMoreElements() ){
-      String item = (String) tokens.nextElement();
-      try{
-        Integer.parseInt(item);
-        return buf.toString();
-      }
-      catch(NumberFormatException e ){
-        buf.append(item);
-        buf.append(' ');//behind last one also :(
-      }
+   int index = TextSoap.getIndexOfFirstNumberInString(addressString);
+    if( index!=-1 ){
+      return addressString;
     }
-
-    return buf.toString();
-
+    else{
+      return addressString.substring(0,index);
+    }
   }
 
+  /**
+   * Gets the streetnumber from a string with the format.<br>
+   * "Streetname Number ..." e.g. "My Street 24" would return "24".<br>
+   * @return Finds the first number in the string and returns a substring from that point or null if no number found
+   */
   public String getStreetNumberFromAddressString(String addressString){
-    StringTokenizer tokens = new StringTokenizer(addressString);
-
-    while( tokens.hasMoreElements() ){
-      String item = (String) tokens.nextElement();
-      try{
-        Integer.parseInt(item);
-        return addressString.substring(addressString.indexOf(item),addressString.length());
-      }
-      catch(NumberFormatException e ){
-        //skip the first strings
-      }
-
+    int index = TextSoap.getIndexOfFirstNumberInString(addressString);
+    if( index!=-1 ){
+      return addressString.substring(index,addressString.length());
     }
-
     return null;
   }
+
 
 } // Class AddressBusinessBean

@@ -2,11 +2,11 @@ package com.idega.user.data;
 
 import javax.ejb.*;
 
-public interface Gender extends com.idega.data.IDOLegacyEntity
+public interface Gender extends com.idega.data.IDOEntity
 {
- public java.lang.String getDescription();
- public java.lang.String getName();
- public com.idega.user.data.Gender getStaticInstance();
- public void setDescription(java.lang.String p0);
- public void setName(java.lang.String p0);
+ public java.lang.String getName() throws java.rmi.RemoteException;
+ public void initializeAttributes() throws java.rmi.RemoteException;
+ public void setName(java.lang.String p0) throws java.rmi.RemoteException;
+ public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
+ public java.lang.String getDescription() throws java.rmi.RemoteException;
 }

@@ -1,5 +1,9 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
+import javax.ejb.FinderException;
+import java.util.Iterator;
+import java.util.Collection;
 import com.idega.data.*;
 import java.sql.SQLException;
 
@@ -37,13 +41,19 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
   }
 
   public void insertStartData() throws SQLException {
-    Gender male = ((com.idega.user.data.GenderHome)com.idega.data.IDOLookup.getHomeLegacy(Gender.class)).createLegacy();
-    male.setName(NAME_MALE);
-    male.insert();
 
-    Gender female = ((com.idega.user.data.GenderHome)com.idega.data.IDOLookup.getHomeLegacy(Gender.class)).createLegacy();
-    female.setName(NAME_FEMALE);
-    female.insert();
+    try{
+      Gender male = ((GenderHome)IDOLookup.getHome(Gender.class)).create();
+      male.setName(NAME_MALE);
+      male.store();
+
+      Gender female = ((GenderHome)IDOLookup.getHome(Gender.class)).create();
+      female.setName(NAME_FEMALE);
+      female.store();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
 
   }
 
@@ -71,7 +81,31 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
     return this.getStringColumnValue(getDescriptionColumnName());
   }
 
-  public Gender getStaticInstance(){
-    return (Gender)this.getStaticInstance(Gender.class);
+
+  public Gender ejbHomeGetMaleGender() throws FinderException,RemoteException{
+    return ((GenderHome)this.getEJBHome()).findByGenderName(NAME_MALE);
+  }
+
+  public Gender ejbHomeGetFemaleGender() throws FinderException,RemoteException{
+    return ((GenderHome)this.getEJBHome()).findByGenderName(NAME_FEMALE);
+  }
+
+  public Integer ejbFindByGenderName(String name) throws FinderException,RemoteException{
+   Collection genders = super.idoFindAllIDsByColumnBySQL(getNameColumnName(),name);
+   Iterator iter = genders.iterator();
+   Integer gender = null;
+    if( iter.hasNext() ) {
+       gender = (Integer) iter.next();
+    }
+    else{
+     throw new FinderException("Gender named : "+name+" not found");
+    }
+
+    return gender;
+  }
+
+
+  public Collection ejbFindAllGenders()throws FinderException{
+    return super.idoFindAllIDsBySQL();
   }
 }

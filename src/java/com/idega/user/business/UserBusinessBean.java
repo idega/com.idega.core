@@ -239,17 +239,30 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * Creates a user with a firstname,middlename, lastname, where middlename can be null
    */
   public User createUser(String firstname, String middlename, String lastname) throws CreateException,RemoteException{
-    return this.createUser(firstname,middlename,lastname,null);
+    return createUser(firstname,middlename,lastname,null);
   }
 
   /**
    * Creates a new user with a firstname,middlename, lastname and personalID where middlename and personalID can be null
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID) throws CreateException,RemoteException{
-      User newUser;
-      newUser = createUser(firstname,middlename,lastname,null,personalID,null,null,null,null);
-      return newUser;
+      return createUser(firstname,middlename,lastname,null,personalID,null,null,null,null);
   }
+
+  /**
+   * Creates a new user with a firstname,middlename, lastname ,personalID and gender where middlename and personalID can be null
+   */
+  public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender) throws CreateException,RemoteException{
+      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKeyValue(),null,null);
+  }
+
+  /**
+   * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
+   */
+  public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, idegaTimestamp dateOfBirth) throws CreateException,RemoteException{
+      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKeyValue(),dateOfBirth,null);
+  }
+
 
   public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
       UserTransaction transaction = this.getSessionContext().getUserTransaction();
