@@ -86,6 +86,31 @@ public class ImplementorRepository {
 		}
 	}
 	
+	public List  newInstances(Class interfaceClass, Class callerClass) {
+		List implementors = getValidImplementorClasses(interfaceClass, callerClass);
+		List instances = null;
+		if (implementors == null) {
+			// return empty list
+			return new ArrayList(0);
+		}
+		instances = new ArrayList(implementors.size());
+		Iterator iterator = implementors.iterator();
+		while (iterator.hasNext()) {
+			Class aClass = (Class) iterator.next();
+			try {
+				Object object = aClass.newInstance();
+				instances.add(object);
+			}
+			catch (InstantiationException e) {
+				// ignore
+			}
+			catch (IllegalAccessException e) {
+				// ignore
+			}
+		}
+		return instances;
+	}
+	
 	public Class getAnyClassImpl(Class interfaceClass, Class callerClass) {
 		List validClasses = getValidImplementorClasses(interfaceClass, callerClass);
 		if (validClasses == null || validClasses.isEmpty()) {
