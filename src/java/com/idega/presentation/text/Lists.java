@@ -92,9 +92,18 @@ private Image bullet;
 	  if ( item instanceof Lists )
 	    item.print(iwc);
 	  else {
-	    print("<li>");
+	    if ( compact ) {
+	      StringBuffer buffer = new StringBuffer();
+	      buffer.append("<LI");
+	      if ( getAttribute("style") != null )
+		buffer.append(" style=\""+getAttribute("style")+"\"");
+	      buffer.append(">");
+	      print(buffer.toString());
+	    }
+	    else
+	      print("<LI>");
 	    item.print(iwc);
-	    println("</li>");
+	    println("</LI>");
 	  }
 	}
       }
