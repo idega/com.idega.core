@@ -25,6 +25,8 @@ public class StatusBar extends Block {
   private static String input = "input";
   private String inputname = name+input;
   private String message = "";
+  private int length = 40;
+  private String style = "";
   AbstractList interfaceObjects;
 
   public StatusBar(String name) {
@@ -41,9 +43,19 @@ public class StatusBar extends Block {
     this.message = msg;
   }
 
+  public void setSize(int length){
+    this.length = length;
+  }
+
+  public void setStyle(String style){
+    this.style = style;
+  }
+
   public void main(IWContext iwc){
     TextInput input = new TextInput(inputname,message);
+    input.setSize(length);
     input.setDisabled(true);
+    input.setAttribute("style",this.style);
     Form statusForm = new Form();
     statusForm.setName(name);
     statusForm.add(input);
