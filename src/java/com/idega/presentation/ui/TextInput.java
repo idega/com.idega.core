@@ -17,6 +17,7 @@ public class TextInput extends GenericInput {
 
 	private boolean isSetAsIntegers;
 	private boolean isSetAsPosNegIntegers;
+	private boolean isSetAsPosIntegers;
 	private boolean isSetAsFloat;
 	private boolean isSetAsDouble;
 	private boolean isSetAsAlphabetical;
@@ -31,6 +32,7 @@ public class TextInput extends GenericInput {
 	private String alphabetErrorMessage;
 	private String emailErrorMessage;
 	private String notEmptyErrorMessage;
+	private String posIntegersErrorMessage;
 	private String icelandicSSNumberErrorMessage;
 	private String notCreditCardErrorMessage;
 	private String minimumLengthErrorMessage;
@@ -192,6 +194,16 @@ public class TextInput extends GenericInput {
 	}
 	
 	/**
+	 * Sets the text input so that it must contain a positive integer, displays an alert with the 
+	 * given error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsPositiveIntegers(String errorMessage) {
+		isSetAsPosIntegers = true;
+		posIntegersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
+
+	/**
 	 * Sets the text input so that it must contain a positive or negative integer or zero, displays an alert with the 
 	 * given error message if the "error" occurs.  Uses Javascript.
 	 * @param errorMessage	The error message to display.
@@ -316,6 +328,9 @@ public class TextInput extends GenericInput {
 
 		if (isSetAsIntegers)
 			setOnSubmitFunction("warnIfNotIntegers", "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", integersErrorMessage);
+
+		if (isSetAsPosIntegers)
+			setOnSubmitFunction("warnIfNotPosIntegers", "function warnIfNotPosIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '1'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", posIntegersErrorMessage);
 
 		if (isSetAsPosNegIntegers)
 			setOnSubmitFunction("warnIfNotPosNegIntegers", "function warnIfNotPosNegIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	        if (i==0){\n            if (inputbox.value.charAt(0) == '-'){\n                continue;\n            }\n        }\n        if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", integersErrorMessage);
