@@ -398,6 +398,16 @@ public class IWCalendar {
 	}
 
 	/**
+	 * Returns the default date as a localized date string with the specified locale.
+	 * Uses the default format (LONG).
+	 * @param locale		The locale to use.
+	 * @return String
+	 */
+	public String getLocaleDate(Locale locale) {
+		return getLocaleDate(locale, DateFormat.LONG, getYear(), getMonth(), getDay());
+	}
+
+	/**
 	 * Returns the default date as a localized date string with the default locale and
 	 * specified format.
 	 * @param format		The format to use (SHORT/MEDIUM/LONG/FULL).
@@ -405,6 +415,17 @@ public class IWCalendar {
 	 */
 	public String getLocaleDate(int format) {
 		return getLocaleDate(_locale, format, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns the default date as a localized date string with the specified locale and
+	 * format.
+	 * @param locale		The locale to use.
+	 * @param format		The format to use (SHORT/MEDIUM/LONG/FULL).
+	 * @return String
+	 */
+	public String getLocaleDate(Locale locale, int format) {
+		return getLocaleDate(locale, format, getYear(), getMonth(), getDay());
 	}
 
 	/**
