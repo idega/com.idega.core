@@ -17,12 +17,14 @@ import com.idega.util.LocaleUtil;
 
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 
-*@version 0.8 - Under development
+*@version 1.0 - Under development
 
 */
 public class IWMainApplicationSettings extends IWPropertyList {
 	public static final String CHARACTER_ENCODING = "character_encoding";
 	public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
+	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+	
 	private static String IW_SERVICE_CLASS_NAME = "iw_service_class_name";
 	private static String DEFAULT_TEMPLATE_NAME = "defaulttemplatename";
 	private static String DEFAULT_TEMPLATE_CLASS = "defaulttemplateclass";
