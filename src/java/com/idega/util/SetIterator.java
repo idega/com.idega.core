@@ -108,8 +108,18 @@ public class SetIterator implements ListIterator  {
     return indexOfCurrentElement;
   }
   
+  //first index is not necessarily zero
+  public int currentIndexRelativeToZero() {
+    return calculateIndexRelativeToZero(currentIndex());
+  }
+  
   public int currentFirstIndexSet() {
     return ( firstIndexOfCurrentSet < firstIndex) ? firstIndex : firstIndexOfCurrentSet;
+  }
+  
+  // first index is not necessarily zero
+  public int currentFirstIndexSetRelativeToZero() {
+    return calculateIndexRelativeToZero(currentFirstIndexSet());
   }
   
   public int currentLastIndexSet()  {
@@ -134,22 +144,41 @@ public class SetIterator implements ListIterator  {
   public int getQuantity()  {
     return quantity;
   }
-    
+
+  public void previousSet() {
+    goToSetRelativeToCurrentSet(-1);
+  }    
     
   public void nextSet() {
-    if (! hasNextSet())   
+    goToSetRelativeToCurrentSet(1);
+  }
+  
+  public void goToSetRelativeToCurrentSet(int steps) {
+    int newFirstIndexOfSet = firstIndexOfCurrentSet + (steps * increment);
+    if (newFirstIndexOfSet > lastIndex || newFirstIndexOfSet < firstIndex)  
       throw new NoSuchElementException("There is not such a subset");
-    firstIndexOfCurrentSet += increment;
+    firstIndexOfCurrentSet = newFirstIndexOfSet;
     currentSet();
+  }
+  
+  public int getNegativeNumberOfPreviousSetsRelativeToCurrentSet()  {
+    int position = firstIndexOfCurrentSet - firstIndex + 1;
+    int division =  (position / increment);
+    int mod = position % increment;
+    if (mod == 0)
+      division -= 1;
+    return -division; 
+  }
+  
+  public int getPositiveNumberOfNextSetsRelativeToCurrentSet()  {
+    int position = lastIndex - firstIndexOfCurrentSet + 1;
+    int division =  (position / increment);
+    int mod = position % increment;
+    if (mod == 0)
+      division -= 1;
+    return division; 
+  }
     
-  }
-        
-  public void previousSet() {
-    if (! hasPreviousSet())
-      throw new NoSuchElementException("There is not such a subset");  
-    firstIndexOfCurrentSet -= increment;    
-    currentSet();
-  }
 
   public void currentSet()  {
     indexOfCurrentElement = (firstIndexOfCurrentSet < firstIndex) ? 
@@ -355,4 +384,8 @@ public class SetIterator implements ListIterator  {
     currentSet();
     return;  
   }
+  
+  private int calculateIndexRelativeToZero(int index) {
+    return index - firstIndex;
+  } 
 }
