@@ -208,7 +208,31 @@ public class FileUtil {
   	}
   	return false;
   }
+
   
+  /** Deletes all files and folders in the specified folder that are older than the
+   * specified time in milliseconds. Only the time of the files and folders in the specified folder
+   * are checked not the time of files or folders that belong to subfolders. 
+   * !! Be careful !!
+   * @param folderPath
+   * @param timeInMillis
+   * @author thomas
+   */
+  public static void deleteAllFilesAndFolderInFolderOlderThan(String folderPath, long timeInMillis) {
+    File[] files = FileUtil.getAllFilesInDirectory(folderPath);
+    
+    if(files!=null){
+    	long currentTime = System.currentTimeMillis();
+  	    for (int i = 0; i < files.length; i++) {
+  	    	File file = files[i];
+  	    	long modifiedFile = file.lastModified();
+  	    	if (currentTime - modifiedFile > timeInMillis)	{
+  	    		FileUtil.deleteFileAndChildren(file);
+  	    	}
+  	    }
+    	}
+    }  
+    
   
   /** 
    * Deletes file and children.
