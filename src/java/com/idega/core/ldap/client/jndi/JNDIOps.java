@@ -854,7 +854,9 @@ public class JNDIOps
      public synchronized Attributes read(String dn, String[] returnAttributes)
         throws NamingException
      {
-         return ctx.getAttributes(dn, returnAttributes);
+     	
+     	Name name = getNameFromDNString(dn);
+         return ctx.getAttributes(name, returnAttributes);
      }
 
      /**
@@ -1062,22 +1064,22 @@ public class JNDIOps
      private NamingEnumeration rawOneLevelSearch(String searchbase, String filter, int limit,
                  int timeout, String[] returnAttributes ) throws NamingException
      {
-         /* specify search constraints to search one level */
-         SearchControls constraints = new SearchControls();
+         
+         Name name = getNameFromDNString(searchbase);
 
-         constraints.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-         constraints.setCountLimit(limit);
-         constraints.setTimeLimit(timeout);
-
-         constraints.setReturningAttributes(returnAttributes);
-
-         NamingEnumeration results = ctx.search(searchbase, filter, null);
-
-         return results;
+         return rawOneLevelSearch(name,filter,limit,timeout,returnAttributes);
 
      }
 
-     /**
+     private Name getNameFromDNString(String searchbase) throws NamingException {
+		// Get the parser for this namespace
+ 	    NameParser ldapParser = ctx.getNameParser("");
+ 	    // Parse name
+ 	    Name compound = ldapParser.parse(searchbase);
+		return compound;
+	}
+
+	/**
       *   Performs a directory sub tree search (i.e. of the next level and all subsequent levels below),
       *   returning just dns);
       *
