@@ -624,7 +624,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   public void updateUserMobilePhone(User user, String phoneNumber) throws EJBException {
-		updateUserPhone(user, PhoneBMPBean.getHomeNumberID(), phoneNumber);
+		updateUserPhone(user, PhoneBMPBean.getMobileNumberID(), phoneNumber);
   }
 
   public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws EJBException {
