@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.107 2004/11/15 09:03:40 aron Exp $
+ * $Id: IWContext.java,v 1.108 2004/11/18 10:38:29 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/11/15 09:03:40 $ by $Author: aron $
+ * Last modified: $Date: 2004/11/18 10:38:29 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.107 $
+ * @version $Revision: 1.108 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -854,8 +854,14 @@ implements IWUserContext, IWApplicationContext {
 	}
 	public ICDomain getDomain() {
 	    ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
-	    if(domain!=null && domain.getServerName()!=null)
-	        domain.setServerName(getServerURL());
+	    //if(domain!=null &&  domain.getServerName()!=null)
+	    if(domain!=null){
+	    		String setServerName = domain.getServerName();
+	    		if(setServerName==null){
+	    			String newServerURL = getServerURL();
+	    			domain.setServerName(newServerURL);
+	    		}
+	    }
 		return domain;
 	}
 	
