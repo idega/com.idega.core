@@ -13,6 +13,9 @@ import java.util.Vector;
 
 import javax.transaction.TransactionManager;
 
+
+import com.idega.idegaweb.IWMainApplicationSettings;
+
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
 
@@ -150,10 +153,13 @@ public class IDOTableCreator{
     	/**
     	 * @todo: Change to doTableCheckDatabaseMetadata()
     	 **/
-    	doTableCheckSelectStar(entity,tableName);
+    	//doTableCheckSelectStar(entity,tableName);
+    	doTableCheckDatastoreInterface(entity,tableName);
         //doTableCheckDatabaseMetadata(entity,tableName);
         long end = System.currentTimeMillis();
-        System.err.println("[idoTableCreator] doesTableExist() check took "+((end-start))+" milliseconds"+"  ("+tableName+")");
+		if(this.isDebugActive())
+        	System.err.println("[idoTableCreator] doesTableExist() check took "+((end-start))+" milliseconds"+"  ("+tableName+")");
+      
     }
     catch(Exception se){
       //String message = se.getMessage();
@@ -172,6 +178,11 @@ public class IDOTableCreator{
   private void doTableCheckSelectStar(IDOLegacyEntity entity,String tableName)throws Exception{
     	String checkQuery = "select * from "+tableName;
         executeQuery(entity,checkQuery);  	
+  }
+  
+  private void doTableCheckDatastoreInterface(IDOLegacyEntity entity,String tableName)throws Exception{
+	  if(!_dsi.doesTableExist(entity,tableName))
+	  	throw new Exception("Table "+tableName+"does not exists");
   }
 
 
@@ -223,7 +234,8 @@ public class IDOTableCreator{
    */
   public void createEntityRecord(IDOLegacyEntity entity)throws Exception{
     if(!doesTableExist(entity,entity.getTableName())){
-    System.out.println("[idoTableCreator]  Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+		//if(this.isDebugActive())
+   	 		System.out.println("[idoTableCreator]  Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit=false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
@@ -256,10 +268,12 @@ public class IDOTableCreator{
         this.endEntityCreationTransaction(entity,canCommit,true);
       }
       catch(Exception ex){
-        System.err.println("===");
-        System.err.println("Exception and rollback for: "+entity.getClass().getName());
-        System.err.println("\tMessage: "+ex.getMessage());
-        System.err.println("===");
+		//if(this.isDebugActive()){
+        	System.err.println("===");
+        	System.err.println("Exception and rollback for: "+entity.getClass().getName());
+        	System.err.println("\tMessage: "+ex.getMessage());
+        	System.err.println("===");
+		//}
         //ex.printStackTrace();
         /**@todo fix this Tryggvi so that we can use it!**/
         this.endEntityCreationTransaction(entity,canCommit,false);
@@ -269,7 +283,8 @@ public class IDOTableCreator{
       }
     }
     else{
-      System.out.println("[idoTableCreator]  Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+    	if(this.isDebugActive())
+      		System.out.println("[idoTableCreator]  Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit = false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
@@ -730,6 +745,11 @@ public class IDOTableCreator{
       System.err.println("---");
       return " INTEGER NOT NULL";
     }
+  }
+  
+  protected boolean isDebugActive()
+  {
+	 return IWMainApplicationSettings.isDebugActive();
   }
 
 

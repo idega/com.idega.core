@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.23 2003/04/03 20:12:44 laddi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.24 2003/05/23 10:48:27 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -387,4 +387,24 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean doesTableExist(IDOLegacyEntity entity, String tableName){
+	    try{
+	 
+	    	StringBuffer query = new StringBuffer("SELECT COUNT(RDB$RELATION_NAME) ");
+	    	query.append("	FROM RDB$RELATIONS where RDB$RELATION_NAME = '");
+	    	query.append(tableName.toUpperCase());
+			query.append("'");
+			//System.err.println(query.toString());
+			int count = entity.getNumberOfRecords(query.toString());
+			//System.err.println("count was "+count);
+			return count >0;
+	    }
+	    catch(Exception e){
+	    	//e.printStackTrace();
+	    	return false;
+	    }
+			
+	}
+	
 }
