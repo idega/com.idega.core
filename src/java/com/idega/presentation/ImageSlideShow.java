@@ -46,7 +46,7 @@ public class ImageSlideShow extends Block
 			{
 			}
 		}
-		else if (listOfFiles != null)
+		else if (listOfFiles != null && !listOfFiles.isEmpty())
 		{
 			fileFolder = (ICFile) listOfFiles.get(0);
 		}
