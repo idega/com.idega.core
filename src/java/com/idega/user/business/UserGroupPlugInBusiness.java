@@ -39,6 +39,8 @@ public interface UserGroupPlugInBusiness extends IBOService {
     
     public List getUserPropertiesTabs(User user) throws RemoteException;
     public List getGroupPropertiesTabs(Group group) throws RemoteException;
+    public List getMainToolbarElements() throws RemoteException;
+    public List getGroupToolbarElements(Group group) throws RemoteException;
 
     /**
      * Returns a Collection of ListViewerField Objects
