@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * Title:
@@ -24,13 +25,14 @@ public class ICLocalePresentation {
 
   public static  DropdownMenu getLocaleDropdownStringKeyed(String name){
     DropdownMenu drp = new DropdownMenu(name);
-    Hashtable H = ICLocaleBusiness.getLocaleHashByString();
+    java.util.Map H = ICLocaleBusiness.mapOfLocalesInUseByString();
     if(H!= null){
       ICLocale ICL;
-      Enumeration E = H.keys();
-      while(E.hasMoreElements()){
-        String key = (String) E.nextElement();
-        ICL = (ICLocale) H.get(key);
+      java.util.Iterator I = H.entrySet().iterator();
+      while(I.hasNext()){
+        Map.Entry me = (Map.Entry)I.next();
+        String key = (String) me.getKey();
+        ICL = (ICLocale) me.getValue();
         String locale = ICLocaleBusiness.getLocaleFromLocaleString(ICL.getLocale()).getDisplayLanguage();
         drp.addMenuElement(key,locale);
       }
@@ -40,13 +42,15 @@ public class ICLocalePresentation {
 
   public static  DropdownMenu getLocaleDropdownIdKeyed(String name){
     DropdownMenu drp = new DropdownMenu(name);
-    Hashtable H = ICLocaleBusiness.getLocaleHashById();
+    java.util.Map H = ICLocaleBusiness.mapOfLocalesInUseById();
     if(H!= null){
       ICLocale ICL;
-      Enumeration E = H.keys();
-      while(E.hasMoreElements()){
-        Integer key = (Integer) E.nextElement();
-        ICL = (ICLocale) H.get(key);
+      java.util.Iterator I = H.entrySet().iterator();
+      while(I.hasNext()){
+        Map.Entry me = (Map.Entry)I.next();
+        //System.err.println(me.getKey().toString());
+        Integer key = (Integer) me.getKey();
+        ICL = (ICLocale) me.getValue();
         String locale = ICLocaleBusiness.getLocaleFromLocaleString(ICL.getLocale()).getDisplayLanguage();
         drp.addMenuElement(key.toString(),locale);
       }

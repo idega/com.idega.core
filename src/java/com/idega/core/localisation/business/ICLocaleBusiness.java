@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 public class ICLocaleBusiness {
   private static Hashtable LocaleHashByString = null, LocaleHashById = null;
+  private static Hashtable LocaleHashInUseByString = null, LocaleHashInUseById = null;
   private static idegaTimestamp reloadStamp = null;
 
   public static List listLocaleCreateIsEn(){
@@ -116,26 +117,30 @@ public class ICLocaleBusiness {
       int len = L.size();
       LocaleHashById = new Hashtable(len);
       LocaleHashByString  = new Hashtable(len);
+      LocaleHashInUseByString = new Hashtable();
+      LocaleHashInUseById = new Hashtable();
       for (int i = 0; i < len; i++) {
         ICLocale ICL = (ICLocale) L.get(i);
         LocaleHashById.put(new Integer(ICL.getID()),ICL);
         LocaleHashByString.put(ICL.getLocale(),ICL);
+        if(ICL.getInUse()){
+          LocaleHashInUseById.put(new Integer(ICL.getID()),ICL);
+          LocaleHashInUseByString.put(ICL.getLocale(),ICL);
+        }
       }
     }
   }
 
+  public static Map mapOfLocalesInUseById(){
+    if(LocaleHashInUseById == null)
+      reload();
+    return LocaleHashInUseById;
+  }
+
   public static Map mapOfLocalesInUseByString(){
-    List listOfLocalesInUse = listOfLocalesInUse();
-    if(listOfLocalesInUse != null){
-      Hashtable H = new Hashtable();
-      Iterator I = listOfLocalesInUse.iterator();
-      while(I.hasNext()){
-        ICLocale locale = (ICLocale) I.next();
-        H.put(locale.getLocale(),locale);
-      }
-      return H;
-    }
-    return null;
+   if(LocaleHashInUseByString == null)
+      reload();
+    return LocaleHashInUseByString;
   }
 
   public static void reload(){
