@@ -33,10 +33,6 @@ public BackButton(Image defaultImage){
 	super();
 	setAttribute("OnClick","history.go("+this.howFarBackOrForward+")");
 	this.defaultImage= defaultImage;
-        String URL = defaultImage.getURL();
-        if ( URL == null )
-          URL = defaultImage.getMediaServletString();
-	setAttribute("src",URL);
 }
 
 public void setHistoryMove(String howFarBackOrForward){
@@ -54,6 +50,10 @@ public void setHistoryMove(int howFarBackOrForward){
 public void print(IWContext iwc) throws IOException{
 	initVariables(iwc);
         StringBuffer printString = new StringBuffer();
+
+         if( defaultImage!= null ) {
+          setAttribute("src",defaultImage.getMediaURL(iwc));
+        }
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 //eiki jan 2001 StringBuffer wizard

@@ -33,10 +33,6 @@ public CloseButton(String displayString){
 public CloseButton(Image defaultImage){
 	super();
 	this.defaultImage = defaultImage;
-        String URL = defaultImage.getURL();
-        if ( URL == null )
-          URL = defaultImage.getMediaServletString();
-	setAttribute("src",URL);
 	setAttribute("OnClick","top.window.close()");
 }
 
@@ -51,6 +47,9 @@ public synchronized Object clone(){
 public void print(IWContext iwc) throws IOException{
 	initVariables(iwc);
         StringBuffer printString = new StringBuffer();
+         if( defaultImage!= null ) {
+          setAttribute("src",defaultImage.getMediaURL(iwc));
+        }
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 			if (getInterfaceStyle().equals("default")){

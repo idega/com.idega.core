@@ -1,5 +1,6 @@
 package com.idega.presentation;
 
+import com.idega.block.media.business.MediaBusiness;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,6 +15,7 @@ private Map params;
 private String classId;
 private String codeBase;
 private String pluginspace;
+private ICFile file = null;
 
 public GenericPlugin(){
   super();
@@ -178,23 +180,14 @@ public void print(IWContext iwc)throws IOException{
   }
 }
 
-/**
- * TODO CHANGE TO CACHED FILE!!!
- */
-
 
   public void setFile(ICFile file) {
-    if( (file!=null) && (file.getID()!=-1) ){
-      StringBuffer url = new StringBuffer();
-      url.append(IWMainApplication.MEDIA_SERVLET_URL);
-      url.append(file.getID());
-      url.append(file.getName());
-      url.append('?');
-      url.append(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME);
-      url.append('=');
-      url.append(file.getID());
-      setURL(url.toString());
-    }
+    this.file = file;
+  }
+
+  public void main(IWContext iwc) throws Exception  {
+    /** could do this in print also**/
+    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
   }
 
   public synchronized Object clone() {
@@ -205,6 +198,7 @@ public void print(IWContext iwc)throws IOException{
     obj.classId = this.classId;
     obj.codeBase = this.codeBase;
     obj.pluginspace = this.pluginspace;
+    obj.file = this.file;
    }
    catch(Exception ex) {
     ex.printStackTrace(System.err);

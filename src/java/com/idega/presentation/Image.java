@@ -5,6 +5,7 @@
 package com.idega.presentation;
 
 //import java.io.*;
+import com.idega.block.media.business.MediaBusiness;
 import java.util.*;
 import java.sql.*;
 import com.idega.idegaweb.IWMainApplication;
@@ -334,7 +335,7 @@ public String getWidth(){
 }
 
 public String getURL(){
-	return this.getAttribute("src");
+  return this.getAttribute("src");
 }
 
 /**
@@ -375,7 +376,7 @@ public void setOverImageURL(String overImageURL){
 }
 
 public void setOverImage(Image image){
-  this.overImageUrl =image.getMediaServletString();
+  this.overImageUrl =image.getMediaURL();
   setOnMouseOut("swapImgRestore()");
   setOnMouseOver("swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
@@ -578,48 +579,22 @@ public void limitImageWidth( boolean limitImageWidth ){
 
   /*
   * this uses an undocumented access method to the IWContext which is fetched from the current thread
-  * it could brake!
+  * it could brake! Use getMediaURL(IWContext) if possible.
+  * @todo implement in the main method if possible
   */
-  public String getMediaServletString(){/*
-    StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
-    URIBuffer.append(this.getImageID());
-    URIBuffer.append("image?");
-    URIBuffer.append(idName);
-    URIBuffer.append("=");
-    URIBuffer.append(this.getImageID());
-    return URIBuffer.toString();*/
-    try{
-      this.getImage(IWContext.getInstance());
-      return this.getURL();
-    }
-    catch(SQLException ex){
-      ex.printStackTrace(System.err);
-      return null;
-    }
+  public String getMediaURL(){
+    if( imageId!=-1) return MediaBusiness.getMediaURL(imageId,IWContext.getInstance().getApplication());
+    else return getURL();
   }
 
-  /*
-  * this uses an undocumented access method to the IWContext which is fetched from the current thread
-  * it could brake!
-  */
-  public static String getServletURL(int imageId){
-    /*StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
-    URIBuffer.append(imageId);
-    URIBuffer.append("image?");
-    URIBuffer.append(idName);
-    URIBuffer.append("=");
-    URIBuffer.append(imageId);
-    return URIBuffer.toString();
-  */
-   try{
-      Image img = new Image(imageId);
-      img.getImage(IWContext.getInstance());
-      return img.getURL();
-    }
-    catch(SQLException ex){
-      ex.printStackTrace(System.err);
-      return null;
-    }
+  /**
+   * Use this method for getting an images (stored in the database) url
+   * @param iwc The IWContext
+   * @return
+   */
+  public String getMediaURL(IWContext iwc){
+    if( imageId!=-1) return MediaBusiness.getMediaURL(imageId,iwc.getApplication());
+    else return getURL();
   }
 
   /**

@@ -187,8 +187,9 @@ private void printButton(IWContext iwc) throws IOException{
 	else{
 		setAttribute("border","0");
                 String URL = defaultImage.getURL();
-                if ( URL == null )
-                  URL = defaultImage.getMediaServletString();
+                if ( URL == null ){
+                  URL = defaultImage.getMediaURL(iwc);
+                }
 		print("<input type=\"image\" src=\""+URL+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
 	}
 }

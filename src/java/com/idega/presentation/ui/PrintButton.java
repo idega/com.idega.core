@@ -15,7 +15,7 @@ import com.idega.presentation.*;
 */
 public class PrintButton extends GenericButton{
 
-private Image defaultImage;
+private Image defaultImage = null;
 
 public PrintButton(){
 	this("Print");
@@ -29,20 +29,18 @@ public PrintButton(String displayString){
 }
 
 public PrintButton(Image defaultImage){
-	super();
-	setAttribute("OnClick","javascript:window.print();");
-	this.defaultImage= defaultImage;
-        String URL = defaultImage.getURL();
-        if ( URL == null )
-          URL = defaultImage.getMediaServletString();
-	setAttribute("src",URL);
-	setAttribute("src",URL);
+  super();
+  setAttribute("OnClick","javascript:window.print();");
+  this.defaultImage= defaultImage;
 }
 
 
 public void print(IWContext iwc) throws IOException{
 	initVariables(iwc);
         StringBuffer printString = new StringBuffer();
+        if( defaultImage!= null ) {
+          setAttribute("src",defaultImage.getMediaURL(iwc));
+        }
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 //eiki jan 2001 StringBuffer wizard

@@ -105,7 +105,7 @@ private PresentationObject leftObject,rightObject;
           if ( alt != null )
             image.setAlt(alt);
         }
-        urls.add(image.getServletURL(fileImage.getID()));
+        urls.add(MediaBusiness.getMediaURL(fileImage.getID(),iwc.getApplication()));
         image.setName(name);
         T.add(image,1,imageRow);
         }
@@ -119,7 +119,7 @@ private PresentationObject leftObject,rightObject;
       while (iter.hasNext()) {
         fileImage = (ICFile)iter.next();
         try{
-          String url = image.getServletURL(fileImage.getID());
+          String url = MediaBusiness.getMediaURL(fileImage.getID(),iwc.getApplication());
           if(!urls.contains(url))
             urls.add(url);
         }

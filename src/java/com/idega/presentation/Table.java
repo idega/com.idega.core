@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.19 2002/03/12 22:43:50 eiki Exp $
+ * $Id: Table.java,v 1.20 2002/03/15 20:06:43 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -208,17 +208,10 @@ public class Table extends PresentationObjectContainer {
 /**@todo : replace this with a implementation in print
  * IMPORTANT! for this to work you must have an application property called
  * IW_USES_OLD_MEDIA_TABLES   (set to anything)
- *
+ * @todo implement in main or print with getMediaURL(IWContext)
  */
   protected String getImageUrl(Image image){
-
-    if(image.getURL()!=null ){
-      return image.getURL();
-    }
-    else{
-      return image.getMediaServletString();
-    }
-
+    return image.getMediaURL();
   }
 
   public void setBackgroundImageURL(String backgroundImageURL){

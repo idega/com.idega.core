@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.47 2002/03/15 15:15:29 laddi Exp $
+ *  $Id: Page.java,v 1.48 2002/03/15 20:06:43 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.core.data.ICFile;
 import com.idega.presentation.text.Text;
@@ -65,6 +66,8 @@ public class Page extends PresentationObjectContainer {
 
   private static Page NULL_CLONE_PAGE = new Page();
   private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
+
+  private ICFile styleFile = null;
 
   static {
     Text pageNotFound = new Text("No permission", true, false, false);
@@ -566,7 +569,7 @@ public class Page extends PresentationObjectContainer {
     if (image.getURL() != null) {
       return image.getURL();
     } else {
-      return image.getMediaServletString();
+      return image.getMediaURL();
     }
 
   }
@@ -789,6 +792,7 @@ public class Page extends PresentationObjectContainer {
       obj._styleSheetURL = _styleSheetURL;
       obj._addStyleSheet = _addStyleSheet;
       obj._ibPageID = _ibPageID;
+      obj.styleFile = styleFile;
 
     } catch (Exception ex) {
       ex.printStackTrace(System.err);
@@ -837,6 +841,12 @@ public class Page extends PresentationObjectContainer {
 	iwc.getSession().setAttribute("idega_special_reload", "true");
       }
     }
+
+    /* get the files cached url */
+    if( styleFile!=null ){
+      setStyleSheetURL(MediaBusiness.getMediaURL(styleFile.getID(),iwc.getApplication()));
+    }
+
   }
 
   /*
@@ -1148,11 +1158,11 @@ public class Page extends PresentationObjectContainer {
 
   /**
    *  method for adding a style sheet file
-   *
+   *  the url generating is done in the main method
    *@param  file  The new styleSheet value
    */
   public void setStyleSheet(ICFile file) {
-    setStyleSheetURL(com.idega.block.media.business.MediaBusiness.getMediaURL(file));
+    this.styleFile = file;
   }
 
   /**
