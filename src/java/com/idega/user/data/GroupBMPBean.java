@@ -494,7 +494,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		List theReturn = new ArrayList();
 
 		try {
-			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false));
+			Collection relatedGroupIDsColl = ejbFindRelatedGroupIds(this);
+			if (relatedGroupIDsColl.size()==0)
+				return theReturn;
+			String commaDelimitedRelatedGroupIds = IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(relatedGroupIDsColl);
+			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false, commaDelimitedRelatedGroupIds));
 		}
 		catch (FinderException e) {
 			e.printStackTrace();
@@ -503,6 +507,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 
+	public Collection ejbFindRelatedGroupIds(Group containingGroup) throws FinderException {
+		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+		IDOQuery query = idoQuery();
+		query.append(findGroupRelationsSQL);
+		return idoFindPKsBySQL(query.toString());
+	}
 	/**
 	 * Gets the children of the containingGroup
 	 * @param containingGroup
@@ -512,8 +522,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws FinderException
 	 */
 	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+		return ejbFindGroupsContained(containingGroup,groupTypes, returnTypes, null); 
+	}
 
-		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes, String commaDelimitedGroupIDS) throws FinderException {
+		String findGroupRelationsSQL =null;
+		if (commaDelimitedGroupIDS==null)
+			findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
 
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(getEntityName());
@@ -534,9 +549,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.appendWhere();
 		}
 		query.append(this.COLUMN_GROUP_ID);
+		if (commaDelimitedGroupIDS != null)
+			query.appendIn(commaDelimitedGroupIDS);
+		else
 		query.appendIn(findGroupRelationsSQL);
 		query.appendOrderBy(this.COLUMN_NAME);
-
 		return idoFindPKsBySQL(query.toString());
 
 	}
