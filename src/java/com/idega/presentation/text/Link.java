@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.6 2001/10/21 21:00:01 eiki Exp $
+ * $Id: Link.java,v 1.7 2001/10/24 13:22:38 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -876,11 +876,30 @@ public class Link extends Text {
     _parameterString = null;
   }
 
+
+  public String getWindowToOpenCallingScript(IWContext iwc){
+    try {
+      this._main(iwc);
+    }
+    catch (Exception ex) {
+
+    }
+    if (_objectType==(OBJECT_TYPE_WINDOW)) {
+      if (_windowClass == null) {
+        return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
+      }
+      else {
+        return Window.getCallingScriptString(_windowClass,getURL()+getParameterString(iwc,getURL()),true);
+      }
+    }
+    return "";
+  }
+
   /**
    *
    */
   public void print(IWContext iwc) throws Exception {
-	  initVariables(iwc);
+    initVariables(iwc);
     boolean addParameters = true;
     String oldURL = getURL();
 

@@ -9,11 +9,13 @@ import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.core.user.presentation.UserPropertyWindow;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.util.idegaTimestamp;
@@ -152,8 +154,10 @@ public class CreateUser extends Window {
     mustChangePasswordField = new CheckBox(mustChangePasswordFieldParameterName);
     cannotChangePasswordField = new CheckBox(cannotChangePasswordFieldParameterName);
     passwordNeverExpiresField = new CheckBox(passwordNeverExpiresFieldParameterName);
+    passwordNeverExpiresField.setChecked(true);
     disableAccountField = new CheckBox(disableAccountFieldParameterName);
     goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
+    goToPropertiesField.setChecked(true);
 
     primaryGroupField  = new DropdownMenu(this.primaryGroupFieldParameterName);
     //primaryGroupField.addMenuElement("","aðalhópur");
@@ -370,6 +374,13 @@ public class CreateUser extends Window {
     }catch(Exception e){
       transaction.rollback();
       throw new Exception(e.getMessage()+" : User entry was removed");
+    }
+
+    if(iwc.getParameter(goToPropertiesFieldParameterName) != null){
+      Link gotoLink = new Link();
+      gotoLink.setWindowToOpen(UserPropertyWindow.class);
+      gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getID());
+      this.setWindowToOpenOnLoad(gotoLink,iwc);
     }
 
   }

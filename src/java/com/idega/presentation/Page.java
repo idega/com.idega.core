@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.6 2001/10/18 23:00:02 laddi Exp $
+ * $Id: Page.java,v 1.7 2001/10/24 13:22:38 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,6 +10,8 @@
 package com.idega.presentation;
 
 import com.idega.presentation.text.Text;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.Window;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import java.util.Enumeration;
@@ -327,14 +329,14 @@ public class Page extends PresentationObjectContainer {
    *
    */
   public void setOnLoad(String action) {
-    setAttribute("onLoad",action);
+    setAttributeMultivalued("onLoad",action);
   }
 
   /**
    *
    */
   public void setOnUnLoad(String action) {
-    setAttribute("onUnLoad",action);
+    setAttributeMultivalued("onUnLoad",action);
   }
 
   /**
@@ -863,4 +865,9 @@ public class Page extends PresentationObjectContainer {
   public boolean getIsExtendingTemplate() {
     return(_isExtendingTemplate);
   }
+
+  public void setWindowToOpenOnLoad(Link link,IWContext iwc){
+    this.setOnLoad(link.getWindowToOpenCallingScript(iwc));
+  }
+
 }

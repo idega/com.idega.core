@@ -54,10 +54,11 @@ public class BasicGroupOverview extends Page {
     if(groups != null){
       List notDelet = (List)((Vector)iwc.getAccessController().getStandardGroups()).clone();
       notDelet.add(iwc.getAccessController().getPermissionGroupAdministrator());
-      groupTable = new Table(3,(groups.size()>8)?groups.size():8);
+      groupTable = new Table(3,(groups.size()>10)?groups.size():10);
       groupTable.setCellspacing(0);
       groupTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
       groupTable.setWidth("100%");
+      groupTable.setHeight("100%");
       for (int i = 0; i < groups.size(); i++) {
         GenericGroup tempGroup = (GenericGroup)groups.get(i);
         if(tempGroup != null){
