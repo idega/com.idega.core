@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.reflect.FieldAccessor;
 
 /**
@@ -2656,6 +2659,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	public Collection getAllRolesForGroupCollection(Collection groups) {
 	    Collection returnCol = new Vector(); //empty
+	    if(groups == null || groups.isEmpty()){
+	    		return ListUtil.getEmptyList();
+	    }
 	    try {
 	        Collection permissions=
 	            getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
@@ -2683,6 +2689,26 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    }
 
 		return returnCol;	
+	}
+	
+	public Set getAllRolesForCurrentUser(IWUserContext iwc) {
+		try {
+			Collection c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null,iwc));
+			if(c!=null){
+				Set s = new HashSet();
+				for (Iterator iter = c.iterator(); iter.hasNext();) {
+					ICPermission p = (ICPermission) iter.next();
+					if(p.isActive()){		//if(p.getPermissionValue()){  // always true for this roles 
+						s.add(p.getPermissionString());
+					}
+				}
+				return s;
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return Collections.EMPTY_SET;
 	}
 	
 	/**
