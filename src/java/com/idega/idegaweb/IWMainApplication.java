@@ -72,6 +72,7 @@ public class IWMainApplication{//implements ServletContext{
   private ServletContext application;
   private LogWriter lw;
   private static IWCacheManager cacheManager;
+  private static boolean alreadyUnLoaded = false;//for restartApplication
 
 
   public IWMainApplication(ServletContext application){
@@ -327,11 +328,14 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public void unload(){
-    System.out.println("idegaWeb : shutdown : Storing application state and deleting cached/generated content");
-    storeStatus();
-    storeCryptoProperties();
-    IWCacheManager.deleteCachedBlobs(this);
-    getImageFactory().deleteGeneratedImages(this);
+    if( !alreadyUnLoaded ){
+      System.out.println("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
+      storeStatus();
+      storeCryptoProperties();
+      IWCacheManager.deleteCachedBlobs(this);
+      getImageFactory().deleteGeneratedImages(this);
+      alreadyUnLoaded = true;
+    }
   }
 
 
@@ -501,27 +505,45 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   /**
-   * Only works when running on Tomcat (3.2)
+   * Only works when running on Tomcat
    */
   public boolean restartApplication(){
-    String prePath = System.getProperty("tomcat.home");
-    try{
-      if(System.getProperty("os.name").toLowerCase().indexOf("win")==-1){
-	//Runtime.getRuntime().exec(prePath+"/bin/restart");
-	String[] array = {prePath+"/bin/restart"};
+    unload();
+
+    String prePath = System.getProperty("user.dir");//return /tomcat/bin
+    //String classPath = System.getProperty("java.class.path");
+    //System.getProperty(user.name) = eiki cool!
+    System.out.println("IWMainApplication: restarting application server at : " +prePath);
+
+    try{//windows
+      if(System.getProperty("os.name").toLowerCase().indexOf("win")!=-1){
+	String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat"};
+        Executer.executeInAnotherVM(array);
+      }
+      else{//unix
+	String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh"};
 	Executer.executeInAnotherVM(array);
       }
-      else{
-	//Runtime.getRuntime().exec(prePath+"\\bin\\restart.bat");
-	String[] array = {prePath+"\\bin\\restart.bat"};
-	Executer.executeInAnotherVM(array);
-      }
+
       return true;
     }
     catch(Exception ex){
       ex.printStackTrace();
       return false;
     }
+  /*
+      Properties prop = System.getProperties();
+
+      // Collection by Traverse wizard 2.02:
+      Iterator property =    prop.keySet().iterator();
+      String x;
+      while (property.hasNext()) {
+       x= (String)property.next();
+       System.out.println("System.getProperty("+x+") = "+prop.getProperty(x));
+
+         //with x
+       } //end v
+*/
   }
 
   public void startAccessController(){

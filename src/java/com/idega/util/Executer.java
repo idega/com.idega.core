@@ -1,37 +1,97 @@
 package com.idega.util;
+import java.io.*;
+import java.lang.Process;
 
 /**
- * Title:        idega default
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ *  Title: idega default Description: Copyright: Copyright (c) 2001 Company:
+ *  idega
+ *
+ *@author     <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ *@created    12. mars 2002
+ *@version    1.0
  */
 
 public class Executer {
 
-  public Executer() {
+  /**
+   *  Constructor for the Executer object
+   */
+  public Executer() { }
+
+
+  /**
+   *  The main program for the Executer class
+   *
+   *@param  args  The command line arguments
+   */
+  public static void main(String[] args) {
+    try {
+      if (args != null) {
+        Runtime runner = Runtime.getRuntime();
+        for (int i = 0; i < args.length; i++) {
+          System.out.println(args[i]);
+          Process p = runner.exec(args[i]);
+          p.waitFor();
+        }
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace(System.err);
+      System.out.println(ex.getMessage());
+    }
   }
 
-  public static void main(String[] args){
-    try{
-      String command=args[0];
-      Runtime.getRuntime().exec(command);
-    }
-    catch(Exception ex){
-      ex.printStackTrace();
-    }
-  }
 
+  /**
+   *  Description of the Method
+   * only works in tomcat at the moment
+   *@param  args  Description of the Parameter
+   */
+  public static void executeInAnotherVM(String[] args) {
+    try {
+      String javaHome = System.getProperty("sun.boot.library.path");
+      //jdk/jre/bin
+      String tomcatClasspath = System.getProperty("tc_path_add");
+      //tomcat classpath
+      StringBuffer exec = new StringBuffer();
+      exec.append(javaHome);
+      exec.append(FileUtil.getFileSeparator());
+      exec.append("java -cp ");
+      exec.append(tomcatClasspath);
+      exec.append(" com.idega.util.Executer ");
 
-  public static void executeInAnotherVM(String[] args){
-    try{
-      Runtime.getRuntime().exec("java com.idega.util.Executer",args);
+      if (args != null) {
+        for (int i = 0; i < args.length; i++) {
+          exec.append(args[i]);
+          exec.append(" ");
+        }
+
+        System.out.println("EXECUTING : " + exec);
+
+        Runtime runner = Runtime.getRuntime();
+        Process p = Runtime.getRuntime().exec(exec.toString());
+
+        StringBuffer sbOut = new StringBuffer(1000);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while (true) {
+          String s = br.readLine();
+          if (s == null) {
+            break;
+          }
+          System.out.println(s);
+        }
+        br.close();
+        p.waitFor();
+        System.out.println(sbOut.toString());
+        System.out.println("Exit status: " + p.exitValue());
+      }
+    } catch (IOException ex) {
+      System.err.println("Executer: IOException");
+      ex.printStackTrace(System.out);
+    } catch (InterruptedException ex) {
+      System.err.println("Executer: InterruptedException");
+      ex.printStackTrace(System.out);
     }
-    catch(Exception ex){
-      ex.printStackTrace();
-    }
+
 
   }
 
