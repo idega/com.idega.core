@@ -4,7 +4,6 @@
 */
 package com.idega.presentation.ui;
 
-import com.idega.presentation.IWContext;
 
 
 
@@ -37,15 +36,5 @@ public class PasswordInput extends TextInput{
 	  super(name,content);
 		setInputType(INPUT_TYPE_PASSWORD);
   }
-  
-	public void printWML(IWContext main) {
-		String[] definedAttributes = getDefinedWmlAttributes();
-		print("<input type=\"password\" name=\"" + getName() + "\" ");
-		for (int i = 0; i < definedAttributes.length; i++) {
-			if( isMarkupAttributeSet(definedAttributes[i])) {
-				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
-			}
-		} 		
-		print("/>");
-	}
+
 }

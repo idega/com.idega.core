@@ -55,7 +55,7 @@ public abstract class GenericInput extends InterfaceObject {
 	 * @return
 	 */
 	public boolean normalPrintSequence() {
-		return false;
+		return true;
 	}
 
 	public String[] getDefinedWmlAttributes() {
