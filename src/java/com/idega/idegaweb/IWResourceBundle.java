@@ -47,18 +47,18 @@ public class IWResourceBundle extends ResourceBundle {
      * @param locale Locale to create from
      */
     public IWResourceBundle (IWBundle parent,File file,Locale locale) throws IOException {
-        setIWBundleParent(parent);
-        setLocale(locale);
-        this.file = file;
+	setIWBundleParent(parent);
+	setLocale(locale);
+	this.file = file;
 
-        try{
-        //lookup.load(new FileInputStream(file));
-        properties.load(new FileInputStream(file));
-        lookup = new TreeMap(properties);
-        setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");        }
-        catch(FileNotFoundException e){
-          e.printStackTrace(System.err);
-        }
+	try{
+	//lookup.load(new FileInputStream(file));
+	properties.load(new FileInputStream(file));
+	lookup = new TreeMap(properties);
+	setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");        }
+	catch(FileNotFoundException e){
+	  e.printStackTrace(System.err);
+	}
     }
 
     /**
@@ -66,17 +66,17 @@ public class IWResourceBundle extends ResourceBundle {
      */
     public Object handleGetObject(String key) {
       if(lookup!=null){
-        Object obj = lookup.get(key);
-        return obj; // once serialization is in place, you can do non-strings
+	Object obj = lookup.get(key);
+	return obj; // once serialization is in place, you can do non-strings
       }
       else{
-        IWBundle parent = getIWBundleParent();
-        if(parent!=null){
-          throw new IWBundleDoesNotExist(parent.getBundleIdentifier());
-        }
-        else{
-          throw new IWBundleDoesNotExist();
-        }
+	IWBundle parent = getIWBundleParent();
+	if(parent!=null){
+	  throw new IWBundleDoesNotExist(parent.getBundleIdentifier());
+	}
+	else{
+	  throw new IWBundleDoesNotExist();
+	}
       }
     }
 
@@ -84,46 +84,46 @@ public class IWResourceBundle extends ResourceBundle {
      * Implementation of ResourceBundle.getKeys.
      */
     public Enumeration getKeys() {
-        Enumeration result = null;
-        if (parent != null) {
-            //final Enumeration myKeys = lookup.keys();
-            Iterator iter = lookup.keySet().iterator();
-            final Enumeration myKeys = new EnumerationIteratorWrapper(iter);
-            final Enumeration parentKeys = parent.getKeys();
+	Enumeration result = null;
+	if (parent != null) {
+	    //final Enumeration myKeys = lookup.keys();
+	    Iterator iter = lookup.keySet().iterator();
+	    final Enumeration myKeys = new EnumerationIteratorWrapper(iter);
+	    final Enumeration parentKeys = parent.getKeys();
 
-            result = new Enumeration() {
-                public boolean hasMoreElements() {
-                    if (temp == null)
-                        nextElement();
-                    return temp != null;
-                }
+	    result = new Enumeration() {
+		public boolean hasMoreElements() {
+		    if (temp == null)
+			nextElement();
+		    return temp != null;
+		}
 
-                public Object nextElement() {
-                    Object returnVal = temp;
-                    if (myKeys.hasMoreElements())
-                        temp = myKeys.nextElement();
-                    else {
-                        temp = null;
-                        while (temp == null && parentKeys.hasMoreElements()) {
-                            temp = parentKeys.nextElement();
-                            if (lookup.containsKey(temp))
-                                temp = null;
-                        }
-                    }
-                    return returnVal;
-                }
+		public Object nextElement() {
+		    Object returnVal = temp;
+		    if (myKeys.hasMoreElements())
+			temp = myKeys.nextElement();
+		    else {
+			temp = null;
+			while (temp == null && parentKeys.hasMoreElements()) {
+			    temp = parentKeys.nextElement();
+			    if (lookup.containsKey(temp))
+				temp = null;
+			}
+		    }
+		    return returnVal;
+		}
 
-                Object temp = null;
-            };
-        }
-        else{
-          //result = lookup.keys();
-          Iterator iter = lookup.keySet().iterator();
-          result = new EnumerationIteratorWrapper(iter);
-        }
+		Object temp = null;
+	    };
+	}
+	else{
+	  //result = lookup.keys();
+	  Iterator iter = lookup.keySet().iterator();
+	  result = new EnumerationIteratorWrapper(iter);
+	}
 
 
-        return result;
+	return result;
 
     }
 
@@ -137,16 +137,16 @@ public class IWResourceBundle extends ResourceBundle {
 
     public void storeState() {
       try {
-        properties.clear();
-        properties.putAll(lookup);
-        properties.store(new FileOutputStream(file),null);
-        //lookup.store(new FileOutputStream(file),null);
+	properties.clear();
+	properties.putAll(lookup);
+	properties.store(new FileOutputStream(file),null);
+	//lookup.store(new FileOutputStream(file),null);
       }
       catch(FileNotFoundException e){
-          e.printStackTrace();
+	  e.printStackTrace();
       }
       catch(IOException ex){
-        ex.printStackTrace();
+	ex.printStackTrace();
       }
     }
 
@@ -156,16 +156,19 @@ public class IWResourceBundle extends ResourceBundle {
     public String getLocalizedString(String key){
 
       try{
-        return super.getString(key);
+	return super.getString(key);
       }
       catch(MissingResourceException e){
-        return null;
+	return null;
       }
     }
 
     public String getLocalizedString(String key, String returnValueIfNull){
       String returnString = getLocalizedString(key);
-      if (returnString == null) return returnValueIfNull;
+      if (returnString == null) {
+	setLocalizedString(key,returnValueIfNull);
+	return returnValueIfNull;
+      }
       else return returnString;
     }
 
@@ -175,11 +178,11 @@ public class IWResourceBundle extends ResourceBundle {
     public Image getLocalizedImageButton(String key){
 
       try{
-        String text = getLocalizedString(key);
-        return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
+	String text = getLocalizedString(key);
+	return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
       }
       catch(MissingResourceException e){
-        return null;
+	return null;
       }
     }
 
@@ -189,17 +192,17 @@ public class IWResourceBundle extends ResourceBundle {
       return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
     }
 
-        /**
+	/**
     * Uses getLocalizedString but returns null if resource is not found
     */
     public Image getLocalizedImageTab(String key, boolean flip){
 
       try{
-        String text = getLocalizedString(key);
-        return this.iwBundleParent.getApplication().getImageFactory().createTab(text,iwBundleParent,getLocale(),flip);
+	String text = getLocalizedString(key);
+	return this.iwBundleParent.getApplication().getImageFactory().createTab(text,iwBundleParent,getLocale(),flip);
       }
       catch(MissingResourceException e){
-        return null;
+	return null;
       }
     }
 
@@ -222,7 +225,7 @@ public class IWResourceBundle extends ResourceBundle {
       lookup.put(key,value);
       String string = (String)this.iwBundleParent.getLocalizableStringsMap().get(key);
       if(string==null){
-        this.iwBundleParent.getLocalizableStringsMap().put(key,value);
+	this.iwBundleParent.getLocalizableStringsMap().put(key,value);
       }
     }
 
@@ -256,8 +259,8 @@ public class IWResourceBundle extends ResourceBundle {
 
     public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){
       Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
-        returnImage.setWidth(width);
-        returnImage.setHeight(height);
+	returnImage.setWidth(width);
+	returnImage.setHeight(height);
       return returnImage;
     }
 
@@ -282,15 +285,15 @@ public class IWResourceBundle extends ResourceBundle {
       private Iterator iterator;
 
       public EnumerationIteratorWrapper(Iterator iter){
-        this.iterator = iter;
+	this.iterator = iter;
       }
 
       public boolean hasMoreElements(){
-        return iterator.hasNext();
+	return iterator.hasNext();
       }
 
       public Object nextElement(){
-        return iterator.next();
+	return iterator.next();
       }
     }
 

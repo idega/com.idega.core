@@ -75,7 +75,7 @@ public class IWBundle implements java.lang.Comparable {
 
 
    protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
-        this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
+	this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
    }
 
    protected IWBundle(String rootRealPath,String rootVirtualPath,String bundleIdentifier,IWMainApplication superApplication){
@@ -105,8 +105,8 @@ public class IWBundle implements java.lang.Comparable {
       Class componentClass = component.getClass();
       IWBundle instance = (IWBundle) instances.get(componentClass);
       if (instance==null){
-        instance = new IWBundle(component,iwc);
-        instances.put(componentClass,instance);
+	instance = new IWBundle(component,iwc);
+	instances.put(componentClass,instance);
       }
       return instance;
    }
@@ -125,20 +125,20 @@ public class IWBundle implements java.lang.Comparable {
 
       setResourcesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"resources");
 
-        //System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
+	//System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
 
 
       setPropertiesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"properties");
 
-        //System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
+	//System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
 
       setClassesRealPath();
       if(autoCreate){
-        this.initializeStructure();
-        propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,true);
+	this.initializeStructure();
+	propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,true);
       }
       else{
-        propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
+	propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
       }
 
       String SystemClassPath = System.getProperty("java.class.path");
@@ -147,10 +147,10 @@ public class IWBundle implements java.lang.Comparable {
 
       installComponents();
       try{
-        createDataRecords();
+	createDataRecords();
       }
       catch(Exception e){
-        e.printStackTrace();
+	e.printStackTrace();
       }
 
       runStartClass();
@@ -160,17 +160,17 @@ public class IWBundle implements java.lang.Comparable {
    private void createDataRecords()throws Exception{
       List entities = com.idega.data.EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_DATA,ICObject.getBundleColumnName(),this.getBundleIdentifier());
       if(entities!=null){
-        Iterator iter = entities.iterator();
-        while (iter.hasNext()) {
-          ICObject ico = (ICObject)iter.next();
-          try{
-            Class c = ico.getObjectClass();
-            c.newInstance();
-          }
-          catch(Exception e){
-            e.printStackTrace();
-          }
-        }
+	Iterator iter = entities.iterator();
+	while (iter.hasNext()) {
+	  ICObject ico = (ICObject)iter.next();
+	  try{
+	    Class c = ico.getObjectClass();
+	    c.newInstance();
+	  }
+	  catch(Exception e){
+	    e.printStackTrace();
+	  }
+	}
       }
    }
 
@@ -178,13 +178,13 @@ public class IWBundle implements java.lang.Comparable {
    private void runStartClass(){
       String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
       if(starterClassName!=null){
-        try{
-          IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
-          starter.start(this);
-        }
-        catch(Exception e){
-          e.printStackTrace();
-        }
+	try{
+	  IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
+	  starter.start(this);
+	}
+	catch(Exception e){
+	  e.printStackTrace();
+	}
       }
    }
 
@@ -193,26 +193,26 @@ public class IWBundle implements java.lang.Comparable {
       List list = this.getComponentKeys();
       Iterator iter = list.iterator();
       while (iter.hasNext()) {
-        String className = (String)iter.next();
-        String componentName = getComponentName(className);
-        String componentType = this.getComponentType(className);
+	String className = (String)iter.next();
+	String componentName = getComponentName(className);
+	String componentType = this.getComponentType(className);
 
-        addComponentToDatabase(className,componentType,componentName);
+	addComponentToDatabase(className,componentType,componentName);
       /*  ICObject ico = ICObject.getICObject(className);
-        if(ico==null){
-          try{
-            ico = new ICObject();
-            ico.setObjectClass(Class.forName(className));
-            ico.setName(componentName);
-            ico.setObjectType();
-            ico.setBundle(this);
-            ico.insert();
-          }
-          catch(Exception e){
-            e.printStackTrace();
-          }
-        }
-        */
+	if(ico==null){
+	  try{
+	    ico = new ICObject();
+	    ico.setObjectClass(Class.forName(className));
+	    ico.setName(componentName);
+	    ico.setObjectType();
+	    ico.setBundle(this);
+	    ico.insert();
+	  }
+	  catch(Exception e){
+	    e.printStackTrace();
+	  }
+	}
+	*/
       }
 
     }
@@ -239,6 +239,10 @@ public class IWBundle implements java.lang.Comparable {
       else return prop;
     }
 
+    public void removeProperty(String propertyName) {
+      propertyList.removeProperty(propertyName);
+    }
+
     public void setProperty(String propertyName,String propertyValue){
       propertyList.setProperty(propertyName,propertyValue);
     }
@@ -259,11 +263,11 @@ public class IWBundle implements java.lang.Comparable {
       propertyList.removeProperty(propertyName);
     }
     private void setResourcesRealPath(String path){
-        resourcesRealPath=path;
+	resourcesRealPath=path;
     }
 
     private void setResourcesVirtualPath(String path){
-        resourcesVirtualPath=path;
+	resourcesVirtualPath=path;
     }
 
     private void setPropertiesRealPath(String path){
@@ -271,15 +275,15 @@ public class IWBundle implements java.lang.Comparable {
     }
 
     private void setRootRealPath(String path){
-        rootRealPath=path;
+	rootRealPath=path;
     }
 
     public void setRootVirtualPath(String path){
-        rootVirtualPath=path;
+	rootVirtualPath=path;
     }
 
     public Image getLocalizedImage(String name,Locale locale){
-        return getResourceBundle(locale).getImage(name);
+	return getResourceBundle(locale).getImage(name);
     }
 
     /**
@@ -298,7 +302,7 @@ public class IWBundle implements java.lang.Comparable {
     //}
 
     protected String getClassesRealPath(){
-        return classesRealPath;
+	return classesRealPath;
     }
 
     private void setClassesRealPath(){
@@ -318,8 +322,8 @@ public class IWBundle implements java.lang.Comparable {
     public boolean removeLocalizableString(String key){
       Enumeration enum = this.resourceBundles.elements();
       while (enum.hasMoreElements()) {
-        IWResourceBundle item = (IWResourceBundle)enum.nextElement();
-        item.removeString(key);
+	IWResourceBundle item = (IWResourceBundle)enum.nextElement();
+	item.removeString(key);
       }
       return this.localizableStringsMap.remove(key)!=null?true:false;
     }
@@ -336,27 +340,27 @@ public class IWBundle implements java.lang.Comparable {
 
     private void initializePropertiesStrings(){
       if(localizableStringsProperties==null){
-        localizableStringsProperties = new Properties();
-        try{
-          localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
-          localizableStringsMap = new TreeMap(localizableStringsProperties);
-        }
-        catch(IOException ex){
-          ex.printStackTrace();
-        }
+	localizableStringsProperties = new Properties();
+	try{
+	  localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
+	  localizableStringsMap = new TreeMap(localizableStringsProperties);
+	}
+	catch(IOException ex){
+	  ex.printStackTrace();
+	}
        }
     }
 
     private File getLocalizableStringsFile(){
-        if(localizableStringsFile==null){
-          try{
-            localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(),"Localizable.strings");
-          }
-          catch(IOException ex){
-            ex.printStackTrace();
-          }
-        }
-        return localizableStringsFile;
+	if(localizableStringsFile==null){
+	  try{
+	    localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(),"Localizable.strings");
+	  }
+	  catch(IOException ex){
+	    ex.printStackTrace();
+	  }
+	}
+	return localizableStringsFile;
     }
 
     public IWResourceBundle getResourceBundle(IWContext iwc){
@@ -364,31 +368,31 @@ public class IWBundle implements java.lang.Comparable {
     }
 
     public IWResourceBundle getResourceBundle(Locale locale){
-        IWResourceBundle theReturn = (IWResourceBundle)resourceBundles.get(locale);
-        try{
-          if(theReturn == null){
-            File file;
-            if(autoCreate){
-              file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale),"Localized.strings");
-            }
-            else{
-              file = new File(getResourcesRealPath(locale)+FileUtil.getFileSeparator()+"Localized.strings");
-            }
-            theReturn = new IWResourceBundle(this,file,locale);
-            resourceBundles.put(locale,theReturn);
-          }
-        }
-        catch(Exception ex){
-          ex.printStackTrace();
-        }
-        return theReturn;
+	IWResourceBundle theReturn = (IWResourceBundle)resourceBundles.get(locale);
+	try{
+	  if(theReturn == null){
+	    File file;
+	    if(autoCreate){
+	      file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale),"Localized.strings");
+	    }
+	    else{
+	      file = new File(getResourcesRealPath(locale)+FileUtil.getFileSeparator()+"Localized.strings");
+	    }
+	    theReturn = new IWResourceBundle(this,file,locale);
+	    resourceBundles.put(locale,theReturn);
+	  }
+	}
+	catch(Exception ex){
+	  ex.printStackTrace();
+	}
+	return theReturn;
     }
 
     /*protected IWLocalizedStringHandler getIWLocalizedStringHandler(Locale locale){
       IWLocalizedStringHandler handler = (IWLocalizedStringHandler) handlers.get(locale);
       if (handler==null){
-        handler = new IWLocalizedStringHandler(this,getResourcesRealPath()+File.pathSeparator+"Localized.strings",locale);
-        handlers.put(locale,handler);
+	handler = new IWLocalizedStringHandler(this,getResourcesRealPath()+File.pathSeparator+"Localized.strings",locale);
+	handlers.put(locale,handler);
       }
       return handler;
     }*/
@@ -397,7 +401,7 @@ public class IWBundle implements java.lang.Comparable {
     public String getVersion(){
       String theReturn =  getProperty("version");
       if(theReturn == null){
-        theReturn = "1";
+	theReturn = "1";
       }
       return theReturn;
     }
@@ -405,7 +409,7 @@ public class IWBundle implements java.lang.Comparable {
     public String getBundleType(){
       String theReturn =  getProperty("bundletype");
       if(theReturn == null){
-        theReturn = "bundle";
+	theReturn = "bundle";
       }
       return theReturn;
     }
@@ -418,18 +422,18 @@ public class IWBundle implements java.lang.Comparable {
       propertyList.store();
       Enumeration enum = this.resourceBundles.elements();
       while (enum.hasMoreElements()) {
-        IWResourceBundle item = (IWResourceBundle)enum.nextElement();
-        item.storeState();
+	IWResourceBundle item = (IWResourceBundle)enum.nextElement();
+	item.storeState();
       }
       try{
-        //System.out.println("localizableStringsFile:"+localizableStringsFile);
+	//System.out.println("localizableStringsFile:"+localizableStringsFile);
 
-        getLocalizableStringsProperties().clear();
-        getLocalizableStringsProperties().putAll(localizableStringsMap);
-        getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
+	getLocalizableStringsProperties().clear();
+	getLocalizableStringsProperties().putAll(localizableStringsMap);
+	getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
       }
       catch(IOException ex){
-        ex.printStackTrace();
+	ex.printStackTrace();
       }
     }
 
@@ -438,8 +442,8 @@ public class IWBundle implements java.lang.Comparable {
     //}
 
     public String getResourcesRealPath(){
-          return resourcesRealPath;
-         //return resourcesPath+"/"+iwc.getCurrentLocale().toString();
+	  return resourcesRealPath;
+	 //return resourcesPath+"/"+iwc.getCurrentLocale().toString();
     }
 
     public String getResourcesURL(Locale locale){
@@ -452,22 +456,22 @@ public class IWBundle implements java.lang.Comparable {
 
     public String getResourcesVirtualPath(Locale locale){
     //private String getLocaleDirectory(Locale locale){
-        //return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-        return this.getResourceBundle(locale).getResourcesURL();
+	//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
+	return this.getResourceBundle(locale).getResourcesURL();
     }
 
     public String getResourcesVirtualPath(){
     //private String getLocaleDirectory(Locale locale){
-        //return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-        return resourcesVirtualPath;
+	//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
+	return resourcesVirtualPath;
     }
 
 
     public String getResourcesRealPath(Locale locale){
       String path = (String)localeRealPaths.get(locale);
       if (path==null){
-        path = getResourcesRealPath()+FileUtil.getFileSeparator()+locale.toString()+".locale";
-        localeRealPaths.put(locale,path);
+	path = getResourcesRealPath()+FileUtil.getFileSeparator()+locale.toString()+".locale";
+	localeRealPaths.put(locale,path);
       }
       return path;
     }
@@ -505,8 +509,8 @@ public class IWBundle implements java.lang.Comparable {
       String isLocalePath = getResourcesRealPath(icelandic);
       dirs[4]=isLocalePath;
       for (int i = 0; i < dirs.length; i++) {
-        File file = new File(dirs[i]);
-        file.mkdirs();
+	File file = new File(dirs[i]);
+	file.mkdirs();
       }
     }
 
@@ -548,8 +552,8 @@ public class IWBundle implements java.lang.Comparable {
 
     public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){
       Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
-        returnImage.setWidth(width);
-        returnImage.setHeight(height);
+	returnImage.setWidth(width);
+	returnImage.setHeight(height);
       return returnImage;
     }
 
@@ -579,11 +583,11 @@ public class IWBundle implements java.lang.Comparable {
      */
     public ICObject[] getICObjects(){
       try{
-        List l = getICObjectsList();
-        return (ICObject[]) l.toArray(new ICObject[0]);
+	List l = getICObjectsList();
+	return (ICObject[]) l.toArray(new ICObject[0]);
       }
       catch(Exception e){
-        return null;
+	return null;
       }
     }
 
@@ -594,9 +598,9 @@ public class IWBundle implements java.lang.Comparable {
      * Returns null if there is an exception
      */
     public List getICObjectsList(String componentType)throws IDOFinderException{
-        List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
-        //return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
-        return l;
+	List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+	//return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+	return l;
     }
 
 
@@ -607,12 +611,12 @@ public class IWBundle implements java.lang.Comparable {
      */
     public ICObject[] getICObjects(String componentType){
       try{
-        //return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
-        List l = getICObjectsList(componentType);
-        return (ICObject[]) l.toArray(new ICObject[0]);
+	//return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+	List l = getICObjectsList(componentType);
+	return (ICObject[]) l.toArray(new ICObject[0]);
       }
       catch(Exception e){
-        return null;
+	return null;
       }
     }
 
@@ -629,7 +633,7 @@ public class IWBundle implements java.lang.Comparable {
     public IWPropertyList getComponentList(){
       IWPropertyList list = getPropertyList().getPropertyList(COMPONENTLIST_KEY);
       if(list==null){
-          list = getPropertyList().getNewPropertyList(COMPONENTLIST_KEY);
+	  list = getPropertyList().getNewPropertyList(COMPONENTLIST_KEY);
       }
       return list;
     }
@@ -649,46 +653,46 @@ public class IWBundle implements java.lang.Comparable {
 
 
     private void addComponentToDatabase(String className,String componentType,String componentName){
-        ICObject ico = ICObject.getICObject(className);
-        if(ico==null){
-          try{
-            ico = new ICObject();
-            ico.setObjectClass(Class.forName(className));
-            ico.setName(componentName);
-            ico.setObjectType(componentType);
-            ico.setBundle(this);
-            ico.insert();
-            if(componentType.equals(ICObject.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
-              com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
-            }
-          }
-          catch(Exception e){
-            e.printStackTrace();
-          }
-        }
+	ICObject ico = ICObject.getICObject(className);
+	if(ico==null){
+	  try{
+	    ico = new ICObject();
+	    ico.setObjectClass(Class.forName(className));
+	    ico.setName(componentName);
+	    ico.setObjectType(componentType);
+	    ico.setBundle(this);
+	    ico.insert();
+	    if(componentType.equals(ICObject.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
+	      com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
+	    }
+	  }
+	  catch(Exception e){
+	    e.printStackTrace();
+	  }
+	}
     }
 
     public void setComponentProperty(String className,String propertyName,String propertyValue){
       IWProperty prop = getComponentList().getIWProperty(className);
       if(prop!=null){
-        setComponentProperty(prop,propertyName,propertyValue);
+	setComponentProperty(prop,propertyName,propertyValue);
       }
     }
 
     public void setComponentProperty(IWProperty component,String propertyName,String propertyValue){
       IWPropertyList list = component.getPropertyList();
       if(list==null){
-        list = component.getNewPropertyList();
+	list = component.getNewPropertyList();
       }
       list.setProperty(propertyName,propertyValue);
     }
 
     public String getComponentProperty(String className,String property){
       try{
-        return getComponentList().getIWProperty(className).getPropertyList().getProperty(property);
+	return getComponentList().getIWProperty(className).getPropertyList().getProperty(property);
       }
       catch(NullPointerException e){
-        return null;
+	return null;
       }
     }
 
@@ -757,11 +761,11 @@ public class IWBundle implements java.lang.Comparable {
     }
 
     public void addLocalizableString(String key, String value) {
-      localizableStringsMap.put(key,value);
+      getLocalizableStringsMap().put(key,value);
       storeState();
     }
 
     public boolean containsLocalizedString(String key) {
-      return(localizableStringsMap.containsKey(key));
+      return(getLocalizableStringsMap().containsKey(key));
     }
 }
