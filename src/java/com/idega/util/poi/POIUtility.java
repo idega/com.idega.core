@@ -65,8 +65,8 @@ public class POIUtility {
 				obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
 				if (obj != null) {
 					text = obj.toString();
-					sp.matcher(text).replaceAll(" ");
-					br.matcher(text).replaceAll("\n");
+					text = sp.matcher(text).replaceAll(" ");
+					text = br.matcher(text).replaceAll("\n");
 					row.createCell((short)(y-1)).setCellValue(text);
 				}
 			}
@@ -99,7 +99,7 @@ public class POIUtility {
 			icFile.setMimeType("application/vnd.ms-excel");
 			icFile.setName(fileName);
 			icFile.store();
-			
+
 			return icFile;
 		} catch (FileNotFoundException e) {
 		} catch (IDOLookupException e) {
