@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.113 2004/12/17 18:04:51 gummi Exp $
+ * $Id: IWContext.java,v 1.114 2004/12/29 02:35:49 eiki Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -73,10 +73,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/17 18:04:51 $ by $Author: gummi $
+ * Last modified: $Date: 2004/12/29 02:35:49 $ by $Author: eiki $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.113 $
+ * @version $Revision: 1.114 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -221,7 +221,7 @@ implements IWUserContext, IWApplicationContext {
 			isDav = true;
 		} else if (getUserAgent().indexOf("dav") != -1) {
 			isDav = true;
-		} if (getUserAgent().indexOf("Dav") != -1) {
+		} else if (getUserAgent().indexOf("Dav") != -1) {
 			isDav = true;
 		}
 		
