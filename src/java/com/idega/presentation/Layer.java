@@ -4,6 +4,7 @@
  */
 package com.idega.presentation;
 
+import javax.faces.context.FacesContext;
 import com.idega.util.text.TextStyler;
 
 /**
@@ -43,6 +44,7 @@ public class Layer extends PresentationObjectContainer {
 	public Layer(String layerType) {
 		super();
 		this.layerType = layerType;
+		setTransient(false);
 	}
 
 	private boolean isPositionSet() {
@@ -180,4 +182,21 @@ public class Layer extends PresentationObjectContainer {
 	public void setZIndex(String index) {
 		setStyleAttribute(ZINDEX, index);
 	}
+	
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.layerType = (String)values[1];
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[2];
+		values[0] = super.saveState(context);
+		values[1] = layerType;
+		return values;
+	}
+	
+	
 }
