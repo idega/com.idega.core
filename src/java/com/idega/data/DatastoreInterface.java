@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.110 2004/09/09 08:47:54 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.111 2004/09/09 09:17:34 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1047,16 +1047,21 @@ public abstract class DatastoreInterface {
 
 	public void delete(GenericEntity entity, Connection conn) throws Exception {
 		//executeBeforeInsert(entity);
-		Statement Stmt = null;
+		PreparedStatement Stmt = null;
 		try {
-			Stmt = conn.createStatement();
+		    //Stmt = conn.createStatement();
 			StringBuffer statement = new StringBuffer("");
 			statement.append("delete from  ");
 			statement.append(entity.getTableName());
-			appendPrimaryKeyWhereClause(entity, statement);
+			IDOEntityField[] fields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
+			appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
+			//appendPrimaryKeyWhereClause(entity, statement);
 			String sql = statement.toString();
 			logSQL(sql);
-			Stmt.executeUpdate(sql);
+			Stmt = conn.prepareStatement(sql);
+			setForPreparedStatementPrimaryKeyQuestionValues(entity,fields,Stmt,1);
+			//Stmt.executeUpdate(sql);
+			Stmt.executeUpdate();
 			if (entity.hasMetaDataRelationship()) {
 				deleteMetaData(entity, conn);
 			}
