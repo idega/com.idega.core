@@ -66,7 +66,7 @@ public class Member extends GenericEntity implements Comparable{
           return log_type;
 
         }
-*/
+   */
 
 	public int getImageId(){
 		return getIntColumnValue("image_id");

@@ -56,16 +56,17 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     System.err.print("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
     return true;
   }
-/*
+
   public boolean isAdministrator(IWContext iwc)throws Exception{
     if(usingNewAcessControlSystem){
       return iwc.hasEditPermission(this);
     }
     else{
-      return AccessControl.isAdmin(iwc);
+      return false;
+      //return AccessControl.isAdmin(iwc);
     }
   }
-*/
+
   /**
    * <H2>Unimplemented</H2>
    */
