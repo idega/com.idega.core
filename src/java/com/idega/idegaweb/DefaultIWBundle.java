@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.1 2004/07/28 23:32:16 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.2 2004/07/29 01:10:24 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ import com.idega.util.SortedProperties;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.xml.XMLElement;
 /**
- * A class to serve as a wrapper for an idegaWeb Bundle.
+ * The Default implementation if the IWBundle class to serve as a wrapper for an idegaWeb Bundle.
  * <br>
  * <br>
  * An idegaWeb Bundle is a wrapper for contained components and their properties and resources.
@@ -118,7 +118,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (RuntimeException e)
 		{
-			e.printStackTrace();
+		    log(e);
 		}
 		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
@@ -168,7 +168,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (IDOLookupException e)
 		{
-			e.printStackTrace();
+			log(e);
 		}
 		catch (FinderException e)
 		{
@@ -176,7 +176,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			log(e);
 		}
 		runStartClass();
 	}
@@ -227,16 +227,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 				catch (ClassNotFoundException e)
 				{
-					debug("Class not found for Block: " + ico.getName());
-					//e.printStackTrace();
+					getLogger().info("Class not found for Block: " + ico.getName());
 				}
 				catch (InstantiationException e)
 				{
-					e.printStackTrace();
+					log(e);
 				}
 				catch (IllegalAccessException e)
 				{
-					e.printStackTrace();
+					log(e);
 				}
 			}
 		}
@@ -254,7 +253,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				log(e);
 			}
 		}
 		// starting of default bundle starter
@@ -374,7 +373,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
 				if (getApplication().getSettings().isDebugActive())
-					System.out.println("Storing property: " + propertyName);
+					log("Storing property: " + propertyName);
 				setProperty(propertyName, returnValueIfNull);
 			}
 			return returnValueIfNull;
@@ -394,7 +393,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
 				if (getApplication().getSettings().isDebugActive())
-					System.out.println("Storing property: " + propertyName);
+					log("Storing property: " + propertyName);
 				setBooleanProperty(propertyName, returnValueIfNull);
 			}
 			return returnValueIfNull;
@@ -518,7 +517,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (IOException ex)
 			{
-				ex.printStackTrace();
+				log(ex);
 			}
 		}
 	}
@@ -532,7 +531,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (IOException ex)
 			{
-				ex.printStackTrace();
+				log(ex);
 			}
 		}
 		return localizableStringsFile;
@@ -573,7 +572,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			log(ex);
 		}
 		return theReturn;
 	}
@@ -663,7 +662,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			log(ex);
 			return false;
 		}
 		return true;
@@ -947,13 +946,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					}
 					catch (Exception e)
 					{
-						e.printStackTrace();
+						log(e);
 					}
 					changeComponentInBundleRegistry(className, newRefactoredClassName);
 					if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier()))
 					{
-						System.out.println(
-							"[IWBundle] : Updating bundle registry for component: "
+						log(
+							"[DefaultIWBundle] : Updating bundle registry for component: "
 								+ ico.getClassName()
 								+ " from "
 								+ ico.getBundleIdentifier()
@@ -1009,9 +1008,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					}
 					catch (ClassNotFoundException e)
 					{
-						//e.printStackTrace();
-						System.out.println(
-							"[IWBundle] : Warning : Loading bundle: "
+						logWarning(
+							"[IWBundle] : Loading bundle: "
 								+ this.getBundleIdentifier()
 								+ " : Class "
 								+ e.getMessage()
@@ -1019,27 +1017,26 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					}
 					catch (InstantiationException e)
 					{
-						e.printStackTrace();
+						log(e);
 					}
 					catch (IllegalAccessException e)
 					{
-						e.printStackTrace();
+						log(e);
 					}
 					catch (RegisterException e)
 					{
-						e.printStackTrace();
+						log(e);
 					}
 					catch (Exception e)
 					{
-						e.printStackTrace();
+						log(e);
 					}
 				}
 			}
 		}
 		catch (IDOLookupException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			log(e1);
 		}
 	}
 	/**
@@ -1175,12 +1172,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			newPL.store();
 			IWProperty prop = cl.getNewProperty();
 			prop.setName(className);
-			prop.getNewPropertyList().setProperty(this.COMPONENT_PROPERTY_FILE, fileName);
+			prop.getNewPropertyList().setProperty(COMPONENT_PROPERTY_FILE, fileName);
 			propertyList.store();
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			log(e);
 		}
 	}
 	private Map getComponentPropertiesListMap()
@@ -1326,7 +1323,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param msg The message to log out
 	 */
 	protected void log(String msg) {
-		//System.out.println(string);
 		getLogger().log(getDefaultLogLevel(),msg);
 	}
 
@@ -1344,7 +1340,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param msg The message to log out
 	 */
 	protected void log(Level level,String msg) {
-		//System.out.println(msg);
 		getLogger().log(level,msg);
 	}
 	
