@@ -114,7 +114,18 @@ public class DownloadLink extends Link {
     		addParameter(DownloadWriter.PRM_RELATIVE_FILE_PATH,relativeFilePath);
     }
     
+    public void setAlternativeFileName(String name){
+		addParameter(DownloadWriter.PRM_FILE_NAME,name);
+    }
+    
     public void setAbsoluteFilePath(String absoluteFilePath){
 		addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absoluteFilePath);
-}
+    }
+    
+
+    public void print(IWContext iwc) throws Exception{
+    	//because of jsf problems
+    		main(iwc);
+    		super.print(iwc);
+    }
 }
