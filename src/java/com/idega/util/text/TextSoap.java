@@ -553,6 +553,10 @@ public class TextSoap {
     return inString;
 
   }
+  
+  public static String removeLineBreaks(String stringToFormat) {
+  	return findAndReplace(stringToFormat,"\n","");
+  }
 
 
 
