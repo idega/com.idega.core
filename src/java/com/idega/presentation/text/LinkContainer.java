@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.3 2002/03/22 16:07:58 laddi Exp $
+ * $Id: LinkContainer.java,v 1.4 2002/04/03 10:41:41 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -309,7 +309,6 @@ public class LinkContainer extends PresentationObjectContainer {
     }
   }
 
-
   /**
    *
    */
@@ -450,26 +449,31 @@ public class LinkContainer extends PresentationObjectContainer {
       setFinalUrl(oldURL);
     }
 
+    if (isLinkOpeningOnSamePage()) {
+      addTheMaintainedParameters(iwc);
+    }
+
     if (oldURL.equals(HASH)) {
       addParameters = false;
     }
 
-    if ( _file != null ) {
-      setFinalUrl(MediaBusiness.getMediaURL(_file,iwc.getApplication()));
-    }
-
     if (getLanguage().equals("HTML")) {
       if(openInNewWindow){
-        String URL = getURL();
-        if ( getPage() != 0 ) URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
-        if ( _windowName == null ) _windowName = "Popup";
-        if ( _windowWidth == null ) _windowWidth = "400";
-        if ( _windowHeight == null ) _windowHeight = "400";
+	String URL = getURL();
+	if ( getPage() != 0 ) URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
+	if ( _windowName == null ) _windowName = "Popup";
+	if ( _windowWidth == null ) _windowWidth = "400";
+	if ( _windowHeight == null ) _windowHeight = "400";
 
-        setFinalUrl("javascript:"+Window.getWindowCallingScript(URL+getParameterString(iwc,URL),_windowName,_toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
+	setFinalUrl("javascript:"+Window.getWindowCallingScript(URL+getParameterString(iwc,URL),_windowName,_toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
       }
       else {
-        setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	if ( _file != null ) {
+	  setFinalUrl(MediaBusiness.getMediaURL(_file,iwc.getApplication()));
+	}
+	else {
+	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	}
       }
 
       print("<a "+getAttributeString()+" >");
