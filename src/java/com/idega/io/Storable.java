@@ -19,4 +19,6 @@ public interface Storable {
 	
 	public Object write(ObjectWriter writer) throws RemoteException;
 	
+	public Object read(ObjectReader reader) throws RemoteException;
+	
 }
