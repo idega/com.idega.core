@@ -34,28 +34,36 @@ public class GroupTreeComparator implements Comparator {
 		IWContext iwc = IWContext.getInstance();
 		String groupType1 = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_locale).getLocalizedString(g1.getGroupType());
 		String groupType2 = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_locale).getLocalizedString(g2.getGroupType());
-
-		returner = collator.compare(groupType1, groupType2);
-		if (returner == 0) {
-			Integer groupIntValue1 = getIntegerFromBeginnigOfString(g1.getName());
-			Integer groupIntValue2 = getIntegerFromBeginnigOfString(g2.getName());
-
-			if (groupIntValue1 != null && groupIntValue2 != null) {
-				if (groupIntValue1.intValue() == groupIntValue2.intValue()) {
-					returner = 0;
+		
+		if (groupType1 != null && groupType2 == null) {
+		    returner = -1;
+		} else if (groupType1 == null && groupType2 != null) {
+		    returner = 1;
+		} else if (groupType1 != null && groupType2 != null) { 
+			returner = collator.compare(groupType1, groupType2);
+			if (returner == 0) {
+				Integer groupIntValue1 = getIntegerFromBeginnigOfString(g1.getName());
+				Integer groupIntValue2 = getIntegerFromBeginnigOfString(g2.getName());
+	
+				if (groupIntValue1 != null && groupIntValue2 != null) {
+					if (groupIntValue1.intValue() == groupIntValue2.intValue()) {
+						returner = 0;
+					}
+					else if (groupIntValue1.intValue() < groupIntValue2.intValue()) {
+						returner = -1;
+					}
+					else
+						returner = 1;
+					
+					if (returner == 0)
+						returner = collator.compare(g1.getName(), g2.getName());
 				}
-				else if (groupIntValue1.intValue() < groupIntValue2.intValue()) {
-					returner = -1;
-				}
-				else
-					returner = 1;
-				
-				if (returner == 0)
+				else {
 					returner = collator.compare(g1.getName(), g2.getName());
+				}
 			}
-			else {
-				returner = collator.compare(g1.getName(), g2.getName());
-			}
+		} else {
+			returner = collator.compare(g1.getName(), g2.getName());
 		}
 		return returner;
 	}
