@@ -16,6 +16,7 @@ import java.awt.BasicStroke;
 import java.text.DecimalFormat;
 import java.awt.Font;
 import java.util.*;
+import com.idega.util.FileUtil;
 
 /**
  * Title:
@@ -152,7 +153,7 @@ public class Button {
     g.setBackground(borderColor);
 
     try {
-      Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream("c:\\test\\Spliffy  Normal.ttf"));
+      Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+"fonts"+FileUtil.getFileSeparator()+"Spliffy.ttf"));
 
       Font font2 = font.deriveFont(Font.PLAIN,10.f);
 
