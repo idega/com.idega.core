@@ -97,12 +97,12 @@ public class FrameTable extends Window{
       // super.add() but does not set Location = this.location;
       try {
         if (theObjects == null) {
-          this.theObjects = new Vector();
+          this.theObjects = new ArrayList();
         }
         if (obj != null) {
           obj.setParentObject(this);
           //modObject.setLocation(this.getLocation());
-          this.theObjects.addElement(obj);
+          this.theObjects.add(obj);
         }
       }
       catch(Exception ex) {
@@ -112,12 +112,12 @@ public class FrameTable extends Window{
       // super.add() but does not set Location = this.location;
       try {
         if (theObjects == null) {
-          this.theObjects = new Vector();
+          this.theObjects = new ArrayList();
         }
         if (obj != null) {
           obj.setParentObject(this);
           //modObject.setLocation(this.getLocation());
-          this.theObjects.addElement(obj);
+          this.theObjects.add(obj);
         }
       }
       catch(Exception ex) {
@@ -130,7 +130,7 @@ public class FrameTable extends Window{
   public void add(int index, PresentationObject obj){
     if(!(obj instanceof Frame)){
       Frame frame = new Frame();
-
+ 
       IWLocation location = new IWPresentationLocation();
       location.isInFrameSet(true);
       location.setApplicationClass(this.getClass());
@@ -142,7 +142,7 @@ public class FrameTable extends Window{
       // super.add() but does not set Location = this.location;
       try {
         if (theObjects == null) {
-          this.theObjects = new Vector();
+          this.theObjects = new ArrayList();
         }
         if (obj != null) {
           obj.setParentObject(this);
@@ -157,7 +157,7 @@ public class FrameTable extends Window{
       // super.add() but does not set Location = this.location;
       try {
         if (theObjects == null) {
-          this.theObjects = new Vector();
+          this.theObjects = new ArrayList();
         }
         if (obj != null) {
           obj.setParentObject(this);
@@ -185,21 +185,21 @@ public class FrameTable extends Window{
 
       // super.addAtBeginning() but does not set Location = this.location;
       if (theObjects == null) {
-        theObjects = new Vector();
+        theObjects = new ArrayList();
       }
       obj.setParentObject(this);
       obj.setLocation(this.getLocation());
-      theObjects.insertElementAt(obj,0);
+      theObjects.add(0,obj);
 
     }else{
 
       // super.addAtBeginning() but does not set Location = this.location;
       if (theObjects == null) {
-        theObjects = new Vector();
+        theObjects = new ArrayList();
       }
       obj.setParentObject(this);
       obj.setLocation(this.getLocation());
-      theObjects.insertElementAt(obj,0);
+      theObjects.add(0,obj);
 
     }
   }
@@ -339,7 +339,7 @@ public class FrameTable extends Window{
 
     public List getAllContainedFrames(){
       List l = this.getAllContainingObjects();
-      List toReturn = new Vector();
+      List toReturn = new ArrayList();
       if(l != null){
         Iterator iter = l.iterator();
         while (iter.hasNext()) {

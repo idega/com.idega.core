@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.18 2002/08/18 17:26:54 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.19 2002/09/26 20:46:51 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,7 +23,7 @@ import com.idega.idegaweb.IWUserContext;
  * @version 1.3
  */
 public class PresentationObjectContainer extends PresentationObject {
-  protected Vector theObjects;
+  protected List theObjects;
   protected List allObjects = null;
   protected boolean goneThroughMain = false;
   protected boolean _locked = true;
@@ -38,7 +38,7 @@ public class PresentationObjectContainer extends PresentationObject {
   protected void add(int index,PresentationObject modObject) {
     try {
       if (theObjects == null) {
-	this.theObjects = new Vector();
+	this.theObjects = new ArrayList();
       }
       if (modObject != null) {
 	modObject.setParentObject(this);
@@ -57,12 +57,12 @@ public class PresentationObjectContainer extends PresentationObject {
   public void add(PresentationObject modObject) {
     try {
       if (theObjects == null) {
-	this.theObjects = new Vector();
+	this.theObjects = new ArrayList();
       }
       if (modObject != null) {
 	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-	this.theObjects.addElement(modObject);
+	this.theObjects.add(modObject);
       }
     }
     catch(Exception ex) {
@@ -81,11 +81,11 @@ public class PresentationObjectContainer extends PresentationObject {
 
   public void addAtBeginning(PresentationObject modObject) {
     if (theObjects == null) {
-      theObjects = new Vector();
+      theObjects = new ArrayList();
     }
     modObject.setParentObject(this);
 //    modObject.setLocation(this.getLocation());
-    theObjects.insertElementAt(modObject,0);
+    theObjects.add(0,modObject);
   }
 
   /**
@@ -150,7 +150,7 @@ public class PresentationObjectContainer extends PresentationObject {
     if(allObjects == null){
       List toReturn = null;
       if(theObjects != null){
-	toReturn = new Vector();
+	toReturn = new ArrayList();
 	toReturn.containsAll(theObjects);
 	Iterator iter = theObjects.iterator();
 	while (iter.hasNext()) {
@@ -226,11 +226,11 @@ public class PresentationObjectContainer extends PresentationObject {
   */
   public void empty() {
     if (theObjects != null) {
-      theObjects.removeAllElements();
+      theObjects.removeAll(theObjects);
     }
   }
 
-  protected void setObjects(Vector objects) {
+  protected void setObjects(ArrayList objects) {
     this.theObjects = objects;
   }
 
@@ -424,7 +424,7 @@ public class PresentationObjectContainer extends PresentationObject {
 
   public PresentationObject objectAt(int index) {
     if (theObjects != null) {
-      return (PresentationObject)theObjects.elementAt(index);
+      return (PresentationObject)theObjects.get(index);
     }
     else {
       return null;
@@ -444,12 +444,12 @@ public class PresentationObjectContainer extends PresentationObject {
   public void insertAt(PresentationObject modObject, int index) {
     try {
       if (theObjects == null) {
-	this.theObjects = new Vector();
+	this.theObjects = new ArrayList();
       }
       if (modObject != null) {
 	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-	theObjects.insertElementAt(modObject,index);
+	theObjects.add(index,modObject);
       }
     }
     catch(Exception ex) {
@@ -463,7 +463,7 @@ public class PresentationObjectContainer extends PresentationObject {
 /*  public void setAt(PresentationObject modObject, int index) {
     try {
       if (theObjects == null) {
-	this.theObjects = new Vector();
+	this.theObjects = new ArrayList();
       }
       if (modObject != null) {
 <<<<<<< PresentationObjectContainer.java
@@ -501,7 +501,7 @@ public class PresentationObjectContainer extends PresentationObject {
   }
 
 
-public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
+public Object _clone(IWUserContext iwc, boolean askForPermission){
     if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
 	return this.clone(iwc,askForPermission);
@@ -513,11 +513,11 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
     }
   }
 
-  public synchronized Object clone() {
+  public Object clone() {
     return this.clone(null,false);
   }
 
- public synchronized Object clone(IWUserContext iwc, boolean askForPermission) {
+ public Object clone(IWUserContext iwc, boolean askForPermission) {
     PresentationObjectContainer obj = null;
     try {
       obj = (PresentationObjectContainer)super.clone();
@@ -525,7 +525,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
       //if(!(this instanceof Table)){
 	if (this.theObjects != null) {
 	    //obj.setObjects((Vector)this.theObjects.clone());
-	    obj.theObjects=(Vector)this.theObjects.clone();
+	    obj.theObjects=(List)((ArrayList)this.theObjects).clone();
 	    ListIterator iter = obj.theObjects.listIterator();
 	    while (iter.hasNext()) {
 	      int index = iter.nextIndex();
@@ -542,7 +542,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
       }
     }
     catch(Exception ex) {
-      obj.theObjects = new Vector();
+      obj.theObjects = new ArrayList();
       ex.printStackTrace(System.err);
     }
     return obj;
@@ -566,7 +566,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
    */
   public Object set(int index,PresentationObject o){
     if(theObjects==null){
-     theObjects = new Vector();
+     theObjects = new ArrayList();
     }
     o.setParentObject(this);
 //    o.setLocation(this.getLocation());
