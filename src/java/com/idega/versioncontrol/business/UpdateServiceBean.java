@@ -36,7 +36,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	}
 	
 	public boolean updateBundleToMostRecentVersion(IWBundle bundle,boolean overWriteLocalChanges){
-		String realBundleDir = bundle.getRealPath();
+		String realBundleDir = bundle.getBundleBaseRealPath();
 		bundle.storeState();
 		if(executeCVSUpdate(realBundleDir,overWriteLocalChanges)){
 			bundle.reloadBundle();
