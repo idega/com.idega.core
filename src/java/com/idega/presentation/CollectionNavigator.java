@@ -31,6 +31,7 @@ public class CollectionNavigator extends Block {
 	private String _width = Table.HUNDRED_PERCENT;
 	
 	private Class _eventListener;
+	private boolean useShortText = false;
 
 	/**
 	 * 
@@ -68,7 +69,13 @@ public class CollectionNavigator extends Block {
 
 		Text prev = getText(localize("previous", "Previous"));
 		Text next = getText(localize("next", "Next"));
-		Text info = getText(localize("page", "Page") + " " + (_currentPage + 1) + " " + localize("of", "of") + " " + (_maxPage + 1));
+		Text info = null;
+		if (useShortText) {
+			info = getText((_currentPage + 1) + "/" + (_maxPage + 1));
+		}
+		else {
+			info = getText(localize("page", "Page") + " " + (_currentPage + 1) + " " + localize("of", "of") + " " + (_maxPage + 1));
+		}
 		if (_currentPage > 0) {
 			Link lPrev = getLink(localize("previous", "Previous"));
 			lPrev.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(_currentPage - 1));
@@ -210,4 +217,10 @@ public class CollectionNavigator extends Block {
 		this.maintainedPrms.add(prm);
 	}
 
+	/**
+	 * @param useShortText The useShortText to set.
+	 */
+	public void setUseShortText(boolean useShortText) {
+		this.useShortText = useShortText;
+	}
 }
