@@ -21,6 +21,8 @@ import java.awt.Font;
 import java.util.Locale;
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Iterator;
 
 public class ImageFactory {
   private static IWMainApplication iwma;
@@ -127,10 +129,6 @@ public class ImageFactory {
     tab.flip(flip);
     tab.generate(filePath);
 
-    System.out.println(" up "+fileVirtualPath+tab.getUpName());
-    System.out.println(" over "+fileVirtualPath+tab.getOverName());
-    System.out.println(" down "+fileVirtualPath+tab.getDownName());
-
     image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+tab.getUpName(),fileVirtualPath+tab.getOverName(),fileVirtualPath+tab.getDownName());
     image.setWidth(tab.getWidth());
     image.setHeight(tab.getHeight());
@@ -143,5 +141,35 @@ public class ImageFactory {
     }
     return image;
   }
+
+  /** delete all generated images in bundles and the (webroot)/iw_generated folder*/
+  public static void deleteGeneratedImages(IWMainApplication iwma){
+    FileUtil.deleteAllFilesInDirectory(iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
+
+    List bundles = iwma.getRegisteredBundles();
+    List locales = iwma.getAvailableLocales();
+
+    Iterator iter = bundles.iterator();
+
+    while (iter.hasNext()) {
+      IWBundle bundle = (IWBundle ) iter.next();
+      String resourcePath = bundle.getResourcesRealPath();
+      FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
+
+
+      System.out.println(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
+
+      Iterator iter2 = locales.iterator();
+      while (iter2.hasNext()) {
+        Locale item = (Locale)iter2.next();
+        resourcePath = bundle.getResourcesRealPath(item);
+        FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
+
+       System.out.println(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
+
+      }
+    }
+  }
+
 
 }

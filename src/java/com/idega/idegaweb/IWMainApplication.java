@@ -318,6 +318,7 @@ public class IWMainApplication{//implements ServletContext{
   public void unload(){
     storeStatus();
     IWCacheManager.deleteCachedBlobs(this);
+    getImageFactory().deleteGeneratedImages(this);
   }
 
 
