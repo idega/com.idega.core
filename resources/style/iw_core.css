@@ -1,7 +1,7 @@
 /*** idegaWeb Core CSS classes ***/
 
 
-/** Searcher and SearchResults classes **/
+/** BEGIN: Searcher and SearchResults classes **/
 
 .iw_search_results{
 	font-family: Arial, Helvetica, sans-serif;
@@ -62,3 +62,20 @@
 	margin-bottom:2px;
  	display:block;
 }
+
+.iw_searcher{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+.iw_searcher_input{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+.iw_searcher_button{	
+        font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+/** END: Searcher and SearchResults classes **/
