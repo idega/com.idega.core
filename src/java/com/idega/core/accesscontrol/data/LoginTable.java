@@ -33,7 +33,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
           addAttribute(getNewUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
           //deprecated column
-          //addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
+          addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
 
 	}
 
