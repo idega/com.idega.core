@@ -54,7 +54,7 @@ public class ConnectionRefresher implements Runnable
 	
 	public synchronized void runRefresh()
 	{
-			refresher.interrupt();
+			//refresher.interrupt();
 			try
 			{
 				//refresher.sleep(this.refreshIntervalMillis + Math.round((this.refreshIntervalMillis / 2) * Math.random()));
