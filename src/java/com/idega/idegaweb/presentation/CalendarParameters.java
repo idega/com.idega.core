@@ -15,6 +15,7 @@ public class CalendarParameters {
 	public static final int MONTH = 2;
 	public static final int YEAR = 3;
 	public static final int AHEAD_VIEW = 4;
+	public static final int WEEK = 5;
 	public static final String PARAMETER_CALENDAR = "IWCalendar";
 	public static final String PARAMETER_DAY = PARAMETER_CALENDAR + "_day";
 	public static final String PARAMETER_MONTH = PARAMETER_CALENDAR + "_month";
