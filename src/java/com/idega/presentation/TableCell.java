@@ -23,7 +23,7 @@ public class TableCell extends PresentationObjectContainer {
 	
 	//TODO: A lot of the rendering logic should be moved to this class from the Table class
 	
-	protected TableCell() {
+	public TableCell() {
 		super();
 		this.setTransient(false);
 	}
