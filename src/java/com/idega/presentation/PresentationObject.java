@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.61 2002/11/04 15:53:45 laddi Exp $
+ * $Id: PresentationObject.java,v 1.62 2003/02/10 15:32:19 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,6 +92,15 @@ public class PresentationObject extends Object implements Cloneable {
   private IWLocation _location = new IWPresentationLocation();
 
   private GenericState defaultState = null;
+  
+  // constant for compoundId 
+  public static String COMPOUNDID_COMPONENT_DELIMITER = "/";
+  // constant for compoundId
+  public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
+  // artificial prefix compound_id
+  private String artificialCompoundId = null;
+  // former compound id (necessary to watch changes of the compoundId)
+  private String formerCompoundId = null;
 
   /**
    * Default constructor
@@ -1320,12 +1329,34 @@ public class PresentationObject extends Object implements Cloneable {
       }
       catch (RemoteException ex) {
 	throw new RuntimeException(ex.getMessage());
-      }
+			}
       catch (SQLException sql) {
 	throw new RuntimeException(sql.getMessage());
-      }
+			}
 
-    }
+		}
+	}	
+	
+	
+	
+
+/** This method is similar to the method getEventListenerList but uses the
+ * compoundId as key instead of the location object to fetch the listener list 
+ * @param iwuc
+ * @return EventListenerList
+ */
+  public EventListenerList getEventListener(IWUserContext iwuc){
+    if(_listenerList != null){
+      return _listenerList;
+    } else {
+      try {
+        IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
+        return machine.getListenersForCompoundId(getCompoundId()); 
+      }
+      catch (RemoteException ex) {
+  throw new RuntimeException(ex.getMessage()); 
+      }
+	  }
   }
 
   public void addIWActionListener(IWActionListener l){
@@ -1352,9 +1383,41 @@ public class PresentationObject extends Object implements Cloneable {
 
   }
 
+  /** This method is similar to the method addIWActionListener but uses the
+   * method getEventListener() instead of getEventListenerList()
+   * @param l
+   */  
+  public void addActionListener(IWActionListener l){
+
+    Object[] list = getEventListener(this.getIWUserContext()).getListenerList();
+
+    boolean hasBeenAdded = false;
+    // Is l on the list?
+    for (int i = list.length-2; i>=0; i-=2) {
+  if ((list[i]==IWActionListener.class) && (list[i+1].equals(l) == true)) {
+      hasBeenAdded = true;
+      break;
+  }
+    }
+    if(!hasBeenAdded){
+      getEventListener(this.getIWUserContext()).add(IWActionListener.class,l);
+    }
+
+  }
+
+
   public void removeIWActionListener(IWActionListener l){
     getEventListenerList(this.getIWUserContext()).remove(IWActionListener.class,l);
   }
+  
+  /** This method is similar to the method addIWActionListener but uses the
+   * method getListener() instead of getEventListenerList()
+   * 
+   */
+  public void removeActionListener(IWActionListener l){
+    getEventListener(this.getIWUserContext()).remove(IWActionListener.class,l);
+  }  
+  
 
 
   public void debugEventListanerList(IWContext iwc){
@@ -1401,5 +1464,110 @@ public class PresentationObject extends Object implements Cloneable {
 			this.setStyleAttribute("height:" + height);
 		}
 	}
+  
+  
+  /**
+   * @see javax.faces.component.UIComponent#getComponentId()
+   * @return String
+   */
+  public String getComponentId() {
+    String id = IWMainApplication.getEncryptedClassName(this.getClass());
+    
+    if (artificialCompoundId != null)
+      return id;
+    
+    PresentationObject mother = getParentObject();
+    // keep in mind that a parent object is not necessarily a container.
+    // Therefore check if a cast is possible. 
+    if (mother != null && (PresentationObjectContainer.class).isAssignableFrom(mother.getClass())) {
+      StringBuffer buffer = new StringBuffer(id);
+      List list = ((PresentationObjectContainer)mother).getAllContainingObjects();
+      int myIndex = list.indexOf(this);
+      // add underscore 
+      buffer.append(PresentationObject.COMPOUNDID_CHILD_NUMBER_DELIMITER);
+      buffer.append(myIndex);
+      return buffer.toString();
+    }
+    else  {
+      return id;
+    }
+  }
+  
+  /**
+   * @see javax.faces.component.UIComponent#getComponentId()
+   * 
+   * Create a path (e.g. "/1234/123/123") that corresponds to the path of the
+   * parent - child relation using the encrypted class name.
+   * 
+   * @return String
+   */
+  private String calculateCompoundId() {
+    StringBuffer buffer = new StringBuffer();
+    // if artificial compound id is set use this one
+    if (artificialCompoundId != null) {
+      buffer.
+        append(artificialCompoundId).
+        append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER).
+        append(getComponentId());
+      return buffer.toString();
+    }
+    // first fetch my component id
+    buffer.append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
+    buffer.append(getComponentId());
+    // now add the compound id of my mother at the beginning
+    PresentationObject mother = getParentObject();
+    if (mother != null)
+      buffer.insert(0, mother.calculateCompoundId());
+    return buffer.toString();  
+  }
 
+  /**
+   * something has changed, therefore change ALSO the value of the presentation
+   * state object
+    if formerCompoundId equals null the compoundId has never been fetched and
+    therefore the
+     presentation state object was not set yet (if so everything is fine).
+   	usually you should first set the artificialCompoundId (if necessary)
+		 and then call the getPresentationState method.
+     The part of this method that calls the state mashine is only for old code!
+
+   * @param artificialCompoundId
+   * @param iwuc
+   */
+
+  public void setArtificialCompoundId(String artificialCompoundId, IWUserContext iwuc) {
+    this.artificialCompoundId = artificialCompoundId;
+    
+    // something has changed, therefore change also the value of the presentation state object
+    // if formerCompoundId equals null the compoundId has never been fetched and therefore the
+    // presentation state object was not set yet (if so everything is fine).
+    // Usually you should first set the artificialCompoundId (if necessary) 
+    // and then call the getPresentationState() method. 
+    // The part of this method that calls the state mashine is only for old code!     
+    if (formerCompoundId != null && this instanceof StatefullPresentation)  {
+      try {
+        Class stateClass = ((StatefullPresentation)this).getPresentationStateClass();
+        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+        IWPresentationState state =
+          stateMachine.getStateFor(formerCompoundId,stateClass);
+        // update compoundId 
+        state.setArtificialCompoundId(artificialCompoundId);
+      }
+      catch (RemoteException re) {
+        throw new RuntimeException(re.getMessage());
+      }
+      
+    }
+  }
+
+  
+  public String getCompoundId()  {
+    // wrap the private method to do something...
+    // at the moment there is nothing to do.
+    String calculatedCompoundId = calculateCompoundId();
+    // Do not forget: set former compound id to the new one 
+    formerCompoundId = calculatedCompoundId;
+    return calculatedCompoundId;  
+  }
+  
 }
