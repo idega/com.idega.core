@@ -4628,6 +4628,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		try
 		{
+			if (isDebugActive())
+				debug(sql);
 			return this.getNumberOfRecords(sql);
 		}
 		catch (SQLException e)
