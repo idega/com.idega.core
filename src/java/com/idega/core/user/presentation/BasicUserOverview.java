@@ -59,12 +59,19 @@ public class BasicUserOverview extends Page {
         User tempUser = (User)users.get(i);
         if(tempUser != null){
 
-          Link aLink = new Link(new Text(tempUser.getName()));
-          aLink.setWindowToOpen(UserPropertyWindow.class);
-          aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
-          userTable.add(aLink,2,i+1);
+          boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
 
-          if(!adminUsers.contains(tempUser)){
+          if(userIsSuperAdmin){
+            Text aText = new Text(tempUser.getName());
+            userTable.add(aText,2,i+1);
+          }else {
+            Link aLink = new Link(new Text(tempUser.getName()));
+            aLink.setWindowToOpen(UserPropertyWindow.class);
+            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            userTable.add(aLink,2,i+1);
+          }
+
+          if(!adminUsers.contains(tempUser) && !userIsSuperAdmin){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindow.class);
             delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());

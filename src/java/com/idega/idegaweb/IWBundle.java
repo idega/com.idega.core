@@ -475,6 +475,13 @@ public class IWBundle implements java.lang.Comparable{
       return identifier;
     }
 
+    /**
+     * temp implementation
+     */
+    public String getBundleName(){
+      return this.getBundleIdentifier();
+    }
+
 
     public Image getImage(String urlInBundle){
       return new Image(getResourcesURL()+slash+urlInBundle);

@@ -268,11 +268,18 @@ public class LoginDBHandler {
 
   }
 
+  /**
+   * @deprecated use getUserLogin
+   */
   public static LoginTable findUserLogin(int iUserId){
+    return getUserLogin(iUserId);
+  }
+
+  public static LoginTable getUserLogin(int userId){
     LoginTable LT = null;
     try {
-      LoginTable l = new LoginTable();
-      List list = EntityFinder.findAllByColumn(l,l.getUserIDColumnName(),iUserId);
+      LoginTable l = LoginTable.getStaticInstance();
+      List list = EntityFinder.findAllByColumn(l,l.getUserIDColumnName(),userId);
       if(list != null){
         LT = (LoginTable) list.get(0);
       }
@@ -282,6 +289,17 @@ public class LoginDBHandler {
       LT = null;
     }
     return LT;
+  }
+
+  public static LoginInfo getLoginInfo(int loginTableId){
+    LoginInfo li = null;
+    try {
+      li = new LoginInfo(loginTableId);
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+    return li;
   }
 
   public static void deleteUserLogin(int userId)throws SQLException {

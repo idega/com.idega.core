@@ -81,7 +81,7 @@ public class IWControlCenter extends PresentationObjectContainer {
         try{
           PresentationObject pObj = (PresentationObject)Class.forName(item.getClassName()).newInstance();
           pObj.setICObject(item);
-          if(iwc.hasEditPermission( pObj )){
+          if(iwc.hasViewPermission( pObj )){
             anyApp = true;
             Class c = null;
             try{

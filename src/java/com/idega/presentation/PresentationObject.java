@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.6 2001/10/17 12:54:09 gummi Exp $
+ * $Id: PresentationObject.java,v 1.7 2001/10/22 14:22:00 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -432,6 +432,11 @@ public class PresentationObject extends Object implements Cloneable {
       }
       obj = obj.getParentObject();
     }
+
+    if((returnPage == null) && (this instanceof Page)){
+      return (Page)this;
+    }
+
     return returnPage;
   }
 

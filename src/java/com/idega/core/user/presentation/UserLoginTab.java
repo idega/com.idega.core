@@ -6,6 +6,9 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginInfo;
 
 
 /**
@@ -37,15 +40,15 @@ public class UserLoginTab extends UserTab {
   private CheckBox passwordNeverExpiresField;
   private CheckBox disableAccountField;
 
-  public static String userLoginFieldParameterName = "login";
+  public static String _PARAM_USER_LOGIN = "login";
 
-  public static String passwordFieldParameterName = "password";
-  public static String confirmPasswordFieldParameterName = "confirmPassword";
+  public static String _PARAM_PASSWORD = "password";
+  public static String _PARAM_CONFIRM_PASSWORD = "confirmPassword";
 
-  public static String mustChangePasswordFieldParameterName = "mustChange";
-  public static String cannotChangePasswordFieldParameterName = "cannotChange";
-  public static String passwordNeverExpiresFieldParameterName = "neverExpires";
-  public static String disableAccountFieldParameterName = "disableAccount";
+  public static String _PARAM_MUST_CHANGE_PASSWORD = "mustChange";
+  public static String _PARAM_CANNOT_CHANGE_PASSWORD = "cannotChange";
+  public static String _PARAM_PASSWORD_NEVER_EXPIRES = "neverExpires";
+  public static String _PARAM_DISABLE_ACCOUNT = "disableAccount";
 
 
   public UserLoginTab() {
@@ -53,26 +56,53 @@ public class UserLoginTab extends UserTab {
     super.setName("Login");
   }
   public void initFieldContents() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
-  }
-  public void updateFieldsDisplayStatus() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
-  }
-  public void initializeFields() {
-    userLoginField = new TextInput(userLoginFieldParameterName);
-    userLoginField.setLength(14);
-    userLoginField.setDisabled(true);
-    userLoginField.setContent("userlogin");
+    try {
+      LoginTable lTable = LoginDBHandler.getUserLogin(this.getUserId());
+      LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
 
-    passwordField = new PasswordInput(passwordFieldParameterName);
+      fieldValues.put(_PARAM_USER_LOGIN,lTable.getUserLogin());
+
+      fieldValues.put(_PARAM_MUST_CHANGE_PASSWORD,new Boolean(lInfo.getChangeNextTime()));
+      fieldValues.put(_PARAM_CANNOT_CHANGE_PASSWORD,new Boolean(lInfo.getAllowedToChange()));
+      fieldValues.put(_PARAM_PASSWORD_NEVER_EXPIRES,new Boolean(lInfo.getPasswordExpires()));
+      fieldValues.put(_PARAM_DISABLE_ACCOUNT,new Boolean(!lInfo.getAccountEnabled()));
+
+      this.updateFieldsDisplayStatus();
+    }
+    catch (Exception ex) {
+      System.err.println("UserLoginTab: error in initFieldContents() for user: "+this.getUserId());
+    }
+  }
+
+
+  public void updateFieldsDisplayStatus() {
+    userLoginField.setContent((String)fieldValues.get(_PARAM_USER_LOGIN));
+
+    passwordField.setContent((String)fieldValues.get(_PARAM_PASSWORD));
+    confirmPasswordField.setContent((String)fieldValues.get(_PARAM_PASSWORD));
+
+
+    mustChangePasswordField.setChecked(((Boolean)fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD)).booleanValue());
+    cannotChangePasswordField.setChecked(((Boolean)fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue());
+    passwordNeverExpiresField.setChecked(((Boolean)fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES)).booleanValue());
+    disableAccountField.setChecked(((Boolean)fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue());
+  }
+
+  public void initializeFields() {
+    userLoginField = new TextInput(_PARAM_USER_LOGIN);
+    userLoginField.setLength(14);
+    //userLoginField.setDisabled(true);
+    //userLoginField.setContent("userlogin");
+
+    passwordField = new PasswordInput(_PARAM_PASSWORD);
     passwordField.setLength(14);
-    confirmPasswordField = new PasswordInput(confirmPasswordFieldParameterName);
+    confirmPasswordField = new PasswordInput(_PARAM_CONFIRM_PASSWORD);
     confirmPasswordField.setLength(14);
 
-    mustChangePasswordField = new CheckBox(mustChangePasswordFieldParameterName);
-    cannotChangePasswordField = new CheckBox(cannotChangePasswordFieldParameterName);
-    passwordNeverExpiresField = new CheckBox(passwordNeverExpiresFieldParameterName);
-    disableAccountField = new CheckBox(disableAccountFieldParameterName);
+    mustChangePasswordField = new CheckBox(_PARAM_MUST_CHANGE_PASSWORD);
+    cannotChangePasswordField = new CheckBox(_PARAM_CANNOT_CHANGE_PASSWORD);
+    passwordNeverExpiresField = new CheckBox(_PARAM_PASSWORD_NEVER_EXPIRES);
+    disableAccountField = new CheckBox(_PARAM_DISABLE_ACCOUNT);
 
   }
   public void initializeTexts() {
@@ -139,19 +169,57 @@ public class UserLoginTab extends UserTab {
 
   }
   public boolean collect(IWContext iwc) {
-    return true;
+    if(iwc != null){
+
+      String login = iwc.getParameter(this._PARAM_USER_LOGIN);
+      String passw = iwc.getParameter(this._PARAM_PASSWORD);
+      String confirmedpassw = iwc.getParameter(this._PARAM_CONFIRM_PASSWORD);
+
+      String mustChangePassw = iwc.getParameter(this._PARAM_MUST_CHANGE_PASSWORD);
+      String cannotChangePassw = iwc.getParameter(this._PARAM_CANNOT_CHANGE_PASSWORD);
+      String passwExpires = iwc.getParameter(this._PARAM_PASSWORD_NEVER_EXPIRES);
+      String accountDisabled = iwc.getParameter(this._PARAM_DISABLE_ACCOUNT);
+
+
+      if(login != null){
+        fieldValues.put(this._PARAM_USER_LOGIN,login);
+      }
+
+      if(passw != null && confirmedpassw != null && passw.equals(confirmedpassw)){
+        fieldValues.put(this._PARAM_PASSWORD,passw);
+      }
+
+
+      if(mustChangePassw != null){
+        fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
+      }
+      if(cannotChangePassw != null){
+        fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
+      }
+      if(passwExpires != null){
+        fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.TRUE);
+      }
+      if(accountDisabled != null){
+        fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.TRUE);
+      }
+
+      this.updateFieldsDisplayStatus();
+
+      return true;
+    }
+    return false;
   }
   public void initializeFieldNames() {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }
   public void initializeFieldValues() {
-    fieldValues.put(this.userLoginFieldParameterName,"");
-    fieldValues.put(this.passwordFieldParameterName,"");
-    fieldValues.put(this.confirmPasswordFieldParameterName,"");
-    fieldValues.put(this.mustChangePasswordFieldParameterName,"");
-    fieldValues.put(this.cannotChangePasswordFieldParameterName,"");
-    fieldValues.put(this.passwordNeverExpiresFieldParameterName,"");
-    fieldValues.put(this.disableAccountFieldParameterName,"");
+    fieldValues.put(this._PARAM_USER_LOGIN,"");
+    fieldValues.put(this._PARAM_PASSWORD,"");
+    fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
+    fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
+    fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+    fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
+    fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
 
     this.updateFieldsDisplayStatus();
   }

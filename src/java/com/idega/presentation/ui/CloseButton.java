@@ -27,14 +27,22 @@ public CloseButton(String displayString){
 	setName("");
 	setValue(displayString);
 
-	setAttribute("OnClick","window.close()");
+	setAttribute("OnClick","top.window.close()");
 }
 
 public CloseButton(Image defaultImage){
 	super();
 	this.defaultImage = defaultImage;
 	setAttribute("src",defaultImage.getURL());
-	setAttribute("OnClick","window.close()");
+	setAttribute("OnClick","top.window.close()");
+}
+
+public synchronized Object clone(){
+  CloseButton obj = (CloseButton)super.clone();
+  if(this.defaultImage != null){
+    obj.defaultImage = (Image)this.defaultImage.clone();
+  }
+  return obj;
 }
 
 public void print(IWContext iwc) throws IOException{

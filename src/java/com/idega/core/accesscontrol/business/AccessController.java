@@ -25,6 +25,9 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final String _CATEYGORYSTRING_PAGE = "page";
   public static final String _CATEYGORYSTRING_JSP_PAGE = "jsp_page";
 
+  public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
+  public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
+
   public static final String _PERMISSIONKEY_VIEW = "view";
   public static final String _PERMISSIONKEY_EDIT = "edit";
   public static final String _PERMISSIONKEY_ADMIN = "admin";
@@ -63,6 +66,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
   public String[] getICObjectPermissionKeys(Class ICObject);
   public String[] getBundlePermissionKeys(Class ICObject);
+  public String[] getBundlePermissionKeys(String BundleIdentifier);
   public String[] getPagePermissionKeys();
 
 /*
