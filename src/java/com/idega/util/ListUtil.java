@@ -1,6 +1,7 @@
 package com.idega.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 //import java.util.Iterator;
 import java.util.Collection;
@@ -79,6 +80,30 @@ public class ListUtil {
   	else return null;
 		
   }
+  
+	/**
+	 * @param list A list of Strings
+	 *
+	 * @returns a String with comma separated values
+	 */
+	public static String convertListOfStringsToCommaseparatedString(List list) {
+		StringBuffer sList = new StringBuffer();
+		if (list != null && !list.isEmpty()) {
+			Iterator iter = list.iterator();
+			for (int g = 0; iter.hasNext(); g++) {
+				String item = (String) iter.next();
+				if (g > 0) {
+					sList.append(",");
+				}
+				
+				if(item!=null) {
+					sList.append(item);
+				}
+				
+			}
+		}
+		return sList.toString();
+	}
 
   private static class EmptyList extends ArrayList{
 
