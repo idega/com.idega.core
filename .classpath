@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry sourcepath="JRE_SRC" kind="var" path="JRE_LIB"/>
-	<classpathentry kind="output" path="classes"/>
+  <classpathentry kind="src" path="src/java">
+  </classpathentry>
+  <classpathentry kind="var" rootpath="JRE_SRCROOT" path="JRE_LIB" sourcepath="JRE_SRC">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-b9-rc2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jimi/jars/jimi-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jaf/jars/jaf-1.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/cos/jars/cos-05Nov2002.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-2.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jsf/jars/jsf-ea1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-9.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
 </classpath>
