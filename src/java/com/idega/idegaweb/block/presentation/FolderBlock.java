@@ -25,6 +25,7 @@ import com.idega.presentation.text.Link;
  */
 public class FolderBlock extends Block {
 
+	private boolean _useLocalizedFolders = true;
 	private InformationFolder _workingFolder = null;
 	private InformationFolder[] _viewFolders = null;
 	private InformationCategory[] _categoriesForInstance = null;
@@ -36,6 +37,11 @@ public class FolderBlock extends Block {
 	 */
 	public FolderBlock() {
 	}
+	
+	public void useLocalizedFolders(boolean use){
+		_useLocalizedFolders = use;
+	}
+	
 
 	/**
 	 *  Gets the workingFolderId attribute of the FolderBlock object
@@ -135,7 +141,12 @@ public class FolderBlock extends Block {
 			}
 			InformationFolder folder = business.getInstanceWorkeFolder(getICObjectInstanceID(), getICObjectID(), localeId, _autocreate);
 			if (folder != null) {
-				setFolder(folder);
+				if(_useLocalizedFolders){
+					setFolder(folder);
+				} else {
+					setFolder(folder.getParent());
+				}
+				
 			}
 			List infoCategories = business.getInstanceCategories(getICObjectInstanceID());
 			if (infoCategories != null && infoCategories.size() > 0) {
