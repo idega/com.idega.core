@@ -225,5 +225,10 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
      * @todo: implement
      */
   }
+  
+	public Object decode(String pkString){
+		IDOEntity theReturn = this.idoCheckOutPooledEntity();
+		return theReturn.decode(pkString);	
+	}
 
 }

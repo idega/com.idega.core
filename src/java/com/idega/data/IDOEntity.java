@@ -27,4 +27,5 @@ public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
   
   public IDOEntityDefinition getEntityDefinition();
   //public IDOEntityDefinition getEntityDefinition() throws RemoteException;
+  public Object decode(String pkString);
 }

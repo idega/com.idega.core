@@ -420,5 +420,14 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		((IDOEntityBean)this.getTranslationEntity()).setDatasource(dataSource);
 		((IDOEntityBean)this.getVersionInProgress()).setDatasource(dataSource);
 	}
+	
+	/**
+	* Decodes a String into a primaryKey Object.
+	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
+	*  @see com.idega.data.GenericEntity#toString()
+	**/
+	public Object decode(String pkString){
+		return Integer.decode(pkString);
+	}
 
 }

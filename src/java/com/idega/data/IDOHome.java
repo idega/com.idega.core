@@ -24,5 +24,5 @@ public interface IDOHome extends EJBLocalHome{//EJBHome {
   //public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
   
   /*public List findAll() throws RemoteException, FinderException;*/
-
+  public Object decode(String pkString);
 }

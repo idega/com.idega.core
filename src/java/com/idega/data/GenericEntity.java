@@ -238,6 +238,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @see java.lang.Object#toString()
 	 * @see com.idega.data.GenericEntity#getName()
+	 * @see com.idega.data.GenericEntity#decode(String pkString)
 	 */
 	public String toString() {
 //		Object pk = this.getPrimaryKey();
@@ -247,6 +248,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 //			return "null";
 		return this.getName();
 	}
+	
+	/**
+	* Decodes a String into a primaryKey Object.
+	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
+	*  @see com.idega.data.GenericEntity#toString()
+	**/
+	public Object decode(String pkString){
+		return Integer.decode(pkString);
+	}
+	
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
