@@ -11,12 +11,17 @@ import java.text.Collator;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.file.data.ICFile;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.data.IDOQuery;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -254,24 +259,44 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	}
 	public Collection ejbFindAllByObjectType(String type) throws FinderException
 	{
-		return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
+		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,this.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    return idoFindPKsByQuery(query);
 	}
 	public Collection ejbFindAllByObjectTypeAndBundle(String type, String bundle) throws FinderException
 	{
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,this.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    query.addCriteria(new MatchCriteria(table,this.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+	    
+	    /*
 		IDOQuery query =
-			super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type).appendAndEqualsQuoted(
-				this.getBundleColumnName(),
-				bundle);
+			super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type)
+			.appendAndEqualsQuoted(this.getBundleColumnName(),bundle);
+		*/
 		//System.out.println(query.toString());
 		return super.idoFindPKsByQuery(query);
 	}
-	public Collection ejbFindAllByBundle(String bundle) throws FinderException
-	{
-		return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getBundleColumnName(), bundle));
+	public Collection ejbFindAllByBundle(String bundle) throws FinderException{
+		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getBundleColumnName(), bundle));
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,this.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+	    return idoFindPKsByQuery(query);
 	}
-	public Object ejbFindByClassName(String className) throws FinderException
-	{
-		return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(), className));
+	public Object ejbFindByClassName(String className) throws FinderException{
+		//return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(), className));
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,this.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
+	    return idoFindOnePKByQuery(query);
 	}
 	public Collection ejbFindAllBlocksByBundle(String bundle) throws FinderException
 	{
