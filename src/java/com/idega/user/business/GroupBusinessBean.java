@@ -418,11 +418,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
       Iterator iter = groups.iterator();
       while (iter.hasNext()) {
         Group item = (Group)iter.next();
-        key = item.getPrimaryKey().toString();
-        if(!GroupsContained.containsKey(key)){
-          GroupsContained.put(key,item);
-          putGroupsContained( item, GroupsContained );
-        }
+				if (item != null) {
+	        key = item.getPrimaryKey().toString();
+	        if(!GroupsContained.containsKey(key)){
+	          GroupsContained.put(key,item);
+	          putGroupsContained( item, GroupsContained );
+	        }
+				}
       }
 
       List specifiedGroups = new Vector();
