@@ -706,6 +706,11 @@ implements IWUserContext, IWApplicationContext {
 	public Object getApplicationAttribute(String attributeName) {
 		return getIWMainApplication().getAttribute(attributeName);
 	}
+	
+	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
+		return getIWMainApplication().getAttribute(attributeName,defaultObjectToReturnIfValueIsNull);
+	}
+	
 	public void removeApplicationAttribute(String attributeName) {
 		getIWMainApplication().removeAttribute(attributeName);
 	}
