@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.logging.LoggingHelper;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
@@ -137,7 +138,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
   	//STANDARD LOGGING METHODS:
   	
 	/**
-	 * @param string
+	 * Logs out to the default log level (which is by default INFO)
+	 * @param msg The message to log out
 	 */
 	protected void log(String msg) {
 		//System.out.println(string);
@@ -145,23 +147,17 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}
 
 	/**
-	 * @param string
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param e The Exception to log out
 	 */
 	protected void log(Exception e) {
-		//e.printStackTrace();
-		StackTraceElement[] ste = e.getStackTrace();
-		StringBuffer buf = new StringBuffer(e.getClass().getName());
-		buf.append(" : ");
-		if(ste.length>0){
-			buf.append(ste[0].getMethodName());
-			buf.append(":");
-			buf.append(ste[0].getLineNumber());
-		}
-		logError(buf.toString());
+		LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
 	}
 	
 	/**
-	 * @param string
+	 * Logs out to the specified log level to the default Logger
+	 * @param level The log level
+	 * @param msg The message to log out
 	 */
 	protected void log(Level level,String msg) {
 		//System.out.println(msg);
@@ -169,23 +165,26 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}
 	
 	/**
-	 * @param string
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void logError(String msg) {
 		//System.err.println(msg);
-		getLogger().log(Level.SEVERE,msg);
+		getLogger().log(getErrorLogLevel(),msg);
 	}
 
 	/**
-	 * @param string
+	 * Logs out to the debug log level (which is by default FINER) to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void logDebug(String msg) {
 		//System.err.println(msg);
-		getLogger().log(Level.FINER,msg);
+		getLogger().log(getDebugLogLevel(),msg);
 	}
 	
 	/**
-	 * @param string
+	 * Logs out to the SEVERE log level to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void logSevere(String msg) {
 		//System.err.println(msg);
@@ -194,7 +193,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	
 	
 	/**
-	 * @param string
+	 * Logs out to the WARNING log level to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void logWarning(String msg) {
 		//System.err.println(msg);
@@ -202,7 +202,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}
 	
 	/**
-	 * @param string
+	 * Logs out to the CONFIG log level to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void logConfig(String msg) {
 		//System.err.println(msg);
@@ -210,18 +211,42 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}	
 	
 	/**
-	 * @param string
+	 * Logs out to the debug log level to the default Logger
+	 * @param msg The message to log out
 	 */
 	protected void debug(String msg) {
 		logDebug(msg);
 	}	
 	
+	/**
+	 * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	 * This behaviour can be overridden in subclasses.
+	 * @return the default Logger
+	 */
 	protected Logger getLogger(){
 		return Logger.getLogger(this.getClass().getName());
 	}
 	
+	/**
+	 * Gets the log level which messages are sent to when no log level is given.
+	 * @return the Level
+	 */
 	protected Level getDefaultLogLevel(){
 		return Level.INFO;
+	}
+	/**
+	 * Gets the log level which debug messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getDebugLogLevel(){
+		return Level.FINER;
+	}
+	/**
+	 * Gets the log level which error messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getErrorLogLevel(){
+		return Level.WARNING;
 	}
 
   	//END STANDARD LOGGING METHODS

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.75 2003/11/21 23:59:39 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.76 2003/11/22 01:56:27 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -16,6 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.servlet.http.HttpServletRequest;
@@ -48,12 +51,12 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.ui.Form;
+import com.idega.util.logging.LoggingHelper;
 import com.idega.util.text.TextStyler;
 /**
  * The base class for objects that present themselves to a user on screen in
@@ -1240,17 +1243,7 @@ implements Cloneable,UIComponent{
 		}
 		System.err.println();
 	}
-	/**
-	 * This method outputs the outputString to System.out if the Application
-	 * property "debug" is set to "TRUE"
-	 */
-	public void debug(String outputString)
-	{
-		if (IWMainApplicationSettings.isDebugActive())
-		{
-			System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getClassName());
-		}
-	}
+
 	public String getBuilderName(IWUserContext iwuc)
 	{
 		//return
@@ -1711,4 +1704,141 @@ implements Cloneable,UIComponent{
 	public UIComponent getParent(){
 		return (UIComponent)this.getParentObject();
 	}
+	
+	/*
+	 * END JSF METHODS
+	 */
+	 
+	 
+	 //STANDARD LOGGING METHODS:
+  	
+	 /**
+	  * Logs out to the default log level (which is by default INFO)
+	  * @param msg The message to log out
+	  */
+	 protected void log(String msg) {
+		 //System.out.println(string);
+		 getLogger().log(getDefaultLogLevel(),msg);
+	 }
+
+	 /**
+	  * Logs out to the error log level (which is by default WARNING) to the default Logger
+	  * @param e The Exception to log out
+	  */
+	 protected void log(Exception e) {
+		 LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
+	 }
+	
+	 /**
+	  * Logs out to the specified log level to the default Logger
+	  * @param level The log level
+	  * @param msg The message to log out
+	  */
+	 protected void log(Level level,String msg) {
+		 //System.out.println(msg);
+		 getLogger().log(level,msg);
+	 }
+	
+	 /**
+	  * Logs out to the error log level (which is by default WARNING) to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void logError(String msg) {
+		 //System.err.println(msg);
+		 getLogger().log(getErrorLogLevel(),msg);
+	 }
+
+	 /**
+	  * Logs out to the debug log level (which is by default FINER) to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void logDebug(String msg) {
+		 //System.err.println(msg);
+		 getLogger().log(getDebugLogLevel(),msg);
+	 }
+	
+	 /**
+	  * Logs out to the SEVERE log level to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void logSevere(String msg) {
+		 //System.err.println(msg);
+		 getLogger().log(Level.SEVERE,msg);
+	 }	
+	
+	
+	 /**
+	  * Logs out to the WARNING log level to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void logWarning(String msg) {
+		 //System.err.println(msg);
+		 getLogger().log(Level.WARNING,msg);
+	 }
+	
+	 /**
+	  * Logs out to the CONFIG log level to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void logConfig(String msg) {
+		 //System.err.println(msg);
+		 getLogger().log(Level.CONFIG,msg);
+	 }	
+	
+	 /**
+	  * Logs out to the debug log level to the default Logger
+	  * @param msg The message to log out
+	  */
+	 protected void debug(String msg) {
+		 logDebug(msg);
+	 }	
+	
+	 /**
+	  * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	  * This behaviour can be overridden in subclasses.
+	  * @return the default Logger
+	  */
+	 protected Logger getLogger(){
+		 return Logger.getLogger(this.getClass().getName());
+	 }
+	
+	 /**
+	  * Gets the log level which messages are sent to when no log level is given.
+	  * @return the Level
+	  */
+	 protected Level getDefaultLogLevel(){
+		 return Level.INFO;
+	 }
+	 /**
+	  * Gets the log level which debug messages are sent to.
+	  * @return the Level
+	  */
+	 protected Level getDebugLogLevel(){
+		 return Level.FINER;
+	 }
+	 /**
+	  * Gets the log level which error messages are sent to.
+	  * @return the Level
+	  */
+	 protected Level getErrorLogLevel(){
+		 return Level.WARNING;
+	 }
+
+	///**
+	// * This method outputs the outputString to System.out if the Application
+	//  * property "debug" is set to "TRUE"
+	// */
+	//public void debug(String outputString)
+	//{
+	//	 if (IWMainApplicationSettings.isDebugActive())
+	//	 {
+	//		 System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getClassName());
+	//	 }
+	// }
+
+
+
+	 //END STANDARD LOGGING METHODS
+	 
+	 
 }

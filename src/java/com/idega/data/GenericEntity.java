@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -35,6 +37,7 @@ import javax.ejb.RemoveException;
 
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
+import com.idega.util.logging.LoggingHelper;
 
 /**
  * A class to serve as a base implementation for objects mapped to persistent data in the IDO Framework.
@@ -1465,7 +1468,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			dsi.appendPrimaryKeyWhereClause(this,buffer);
 			
 			String sql = buffer.toString();
-			debug(sql);
+			logSQL(sql);
 			ResultSet RS = Stmt.executeQuery(sql);
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
@@ -2201,8 +2204,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String sql = "insert into " + middleTableName + "(" + getIDColumnName() + "," + entityToAddToColumName + ") values(" + getPrimaryKeyValueSQLString() + "," + getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue()) + ")";
-			if (isDebugActive())
-				System.out.println(sql);
+			logSQL(sql);
 			Stmt.executeUpdate(sql);
 		} finally {
 			if (Stmt != null) {
@@ -2223,6 +2225,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String sql = "delete from " + getNameOfMiddleTable(entityToDelete, this) + " where " + entityToDeleteColumName + " = " + getKeyValueSQLString(entityToDelete.getPrimaryKeyValue());
+			logSQL(sql);
 			Stmt.executeUpdate(sql);
 		} finally {
 			if (Stmt != null) {
@@ -2377,7 +2380,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				throw new SQLException("RemoteException in removeFrom, message: " + rme.getMessage());
 			}*/
 			//  System.out.println("GENERIC ENTITY: "+ qry);
-
+			logSQL(qry);
 			Stmt.executeUpdate(qry);
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
@@ -2453,6 +2456,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString() + " AND " + entityToRemoveFrom.getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue());
 
 			//  System.out.println("GENERIC ENTITY: "+ qry);
+			logSQL(qry);
 			Stmt.executeUpdate(qry);
 		} finally {
 			if (Stmt != null) {
@@ -2470,11 +2474,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			String id = getPrimaryKeyValueSQLString();
 			int count = 0;
 			for (int i = 0; i < entityToRemoveFrom.length; i++) {
-				count += Stmt.executeUpdate("delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id);
-				if (!isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()))) //removing all in middle table
-					count += Stmt.executeUpdate("delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id);
-				else // just removing this particular one
-					count += Stmt.executeUpdate("delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id + " AND " + entityToRemoveFrom[i].getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()));
+				String sql1 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id;
+				logSQL(sql1);
+				count += Stmt.executeUpdate(sql1);
+				if (!isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()))){
+					//removing all in middle table
+					String sql2 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id;
+					logSQL(sql2);
+					count += Stmt.executeUpdate(sql2);
+				}
+				else{
+					// just removing this particular one
+					String sql2 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id + " AND " + entityToRemoveFrom[i].getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue());
+					logSQL(sql2);
+					count += Stmt.executeUpdate(sql2);
+				}
 			}
 		} finally {
 			if (Stmt != null) {
@@ -2491,7 +2505,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			Stmt.executeUpdate("delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + entityToRemoveFrom.getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()));
+			String sql = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + entityToRemoveFrom.getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue());
+			logSQL(sql);
+			Stmt.executeUpdate(sql);
 		} finally {
 			if (Stmt != null) {
 				Stmt.close();
@@ -2768,7 +2784,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			buffer.append(".");
 			buffer.append(metadataIdColumn);
 			String query = buffer.toString();
-			this.debug("[MetadataQuery]: "+query);
+			this.logSQL("[MetadataQuery]: "+query);
 			ResultSet RS = Stmt.executeQuery(query);
 			while (RS.next()) {
 				if(RS.getString("metadata_value")!=null) {
@@ -3132,18 +3148,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public boolean columnsHaveChanged() {
 		return (_updatedColumns != null);
 	}
-	/**
-	 * This method outputs the outputString to System.out if the Application property
-	 * "debug" is set to "TRUE"
-	 */
-	public void debug(String outputString) {
-		if (isDebugActive()) {
-			System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
-		}
-	}
-	protected boolean isDebugActive() {
-		return IWMainApplicationSettings.isDebugActive();
-	}
 	public void setToInsertStartData(boolean ifTrue) {
 		this.insertStartData = ifTrue;
 	}
@@ -3212,7 +3216,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		} else {
 			if (this.isDebugActive()) {
-				this.debug("Cache hit for SQL query: " + sqlQuery);
+				logSQL("Cache hit for SQL query: " + sqlQuery);
 			}
 		}
 		return pkColl;
@@ -3227,8 +3231,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, String countQuery) throws FinderException, IDOException {
 		if (this.isDebugActive()) {
-			this.debug("Going to Datastore for SQL query: " + sqlQuery);
-			this.debug("Going to Datastore for SQL countQuery: " + countQuery);
+			logSQL(sqlQuery);
+			logSQL("countQuery: " + countQuery);
 
 		}
 		int length = idoGetNumberOfRecords(countQuery);
@@ -3254,7 +3258,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
 		if (this.isDebugActive()) {
-			this.debug("Going to Datastore for SQL query: " + sqlQuery);
+			logSQL(sqlQuery);
 		}
 
 		if (startingEntry < 0)
@@ -3422,7 +3426,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoGetRelatedEntities(IDOEntity returningEntity) throws IDORelationshipException {
 		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
 
-		debug(sqlQuery);
+		logSQL(sqlQuery);
 
 		return idoGetRelatedEntitiesBySQL(returningEntity, sqlQuery);
 	}
@@ -3435,7 +3439,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoGetReverseRelatedEntities(IDOEntity relatedEntity) throws IDORelationshipException {
 		String sqlQuery = this.getFindReverseRelatedSQLQuery(relatedEntity, "", "");
 
-		debug(sqlQuery);
+		logSQL(sqlQuery);
 
 		return idoGetRelatedEntitiesBySQL(this, sqlQuery);
 
@@ -3490,7 +3494,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			debug(sqlQuery);
+			logSQL(sqlQuery);
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
 			while (RS.next()) {
 				Object pk = ((GenericEntity)returningEntity).getPrimaryKeyFromResultSet(RS);
@@ -3560,7 +3564,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		} else {
 			if (this.isDebugActive()) {
-				this.debug("Cache hit for SQL query: " + sqlQuery);
+				logSQL("Cache hit for SQL query: " + sqlQuery);
 			}
 		}
 		return pkColl;
@@ -3771,7 +3775,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected int idoGetNumberOfRecords(String sql) throws IDOException {
 		try {
 			if (isDebugActive())
-				debug(sql);
+				logSQL(sql);
 			return this.getNumberOfRecords(sql);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
@@ -4080,4 +4084,148 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		buffer.append(getPrimaryKey().hashCode());
 		return buffer.toString().hashCode();
 	}
+	
+	
+
+	
+	//STANDARD LOGGING METHODS:
+  	
+	/**
+	 * Logs out to the default log level (which is by default INFO)
+	 * @param msg The message to log out
+	 */
+	protected void log(String msg) {
+		//System.out.println(string);
+		getLogger().log(getDefaultLogLevel(),msg);
+	}
+
+	/**
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param e The Exception to log out
+	 */
+	protected void log(Exception e) {
+		LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
+	}
+	
+	/**
+	 * Logs out to the specified log level to the default Logger
+	 * @param level The log level
+	 * @param msg The message to log out
+	 */
+	protected void log(Level level,String msg) {
+		//System.out.println(msg);
+		getLogger().log(level,msg);
+	}
+	
+	/**
+	 * Logs out to the error log level (which is by default WARNING) to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logError(String msg) {
+		//System.err.println(msg);
+		getLogger().log(getErrorLogLevel(),msg);
+	}
+
+	/**
+	 * Logs out to the debug log level (which is by default FINER) to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logDebug(String msg) {
+		//System.err.println(msg);
+		getLogger().log(getDebugLogLevel(),msg);
+	}
+	
+	/**
+	 * Logs out to the SEVERE log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logSevere(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.SEVERE,msg);
+	}	
+	
+	
+	/**
+	 * Logs out to the WARNING log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logWarning(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.WARNING,msg);
+	}
+	
+	/**
+	 * Logs out to the CONFIG log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void logConfig(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.CONFIG,msg);
+	}	
+	
+	/**
+	 * Logs out to the debug log level to the default Logger
+	 * @param msg The message to log out
+	 */
+	protected void debug(String msg) {
+		logDebug(msg);
+	}	
+	
+	/**
+	 * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	 * This behaviour can be overridden in subclasses.
+	 * @return the default Logger
+	 */
+	protected Logger getLogger(){
+		return Logger.getLogger(this.getClass().getName());
+	}
+	
+	/**
+	 * Gets the log level which messages are sent to when no log level is given.
+	 * @return the Level
+	 */
+	protected Level getDefaultLogLevel(){
+		return Level.INFO;
+	}
+	/**
+	 * Gets the log level which debug messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getDebugLogLevel(){
+		return Level.FINER;
+	}
+	/**
+	 * Gets the log level which error messages are sent to.
+	 * @return the Level
+	 */
+	protected Level getErrorLogLevel(){
+		return Level.WARNING;
+	}
+	
+	//ENTITY SPECIFIC LOG MEHTODS:
+	
+	///**
+	// * This method outputs the outputString to System.out if the Application property
+	// * "debug" is set to "TRUE"
+	// */
+	//public void debug(String outputString) {
+	//	if (isDebugActive()) {
+	//		//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+	//	}
+	//}
+	/**
+	 * This method logs the sqlCommand if the Log Level is low enough 
+	 */
+	public void logSQL(String sqlCommand) {
+		log(Level.FINEST,sqlCommand);
+		//if (isDebugActive()) {
+			//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
+		//}
+	}
+	
+	protected boolean isDebugActive() {
+		return IWMainApplicationSettings.isDebugActive();
+	}
+	//END STANDARD LOGGING METHODS
+
 }
