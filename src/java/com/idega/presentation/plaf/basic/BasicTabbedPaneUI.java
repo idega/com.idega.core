@@ -9,8 +9,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.plaf.GenericTabbedPaneUI;
-import com.idega.presentation.plaf.GenericTabbedPaneUI.GenericTabPagePresentation;
-import com.idega.presentation.plaf.GenericTabbedPaneUI.GenericTabPresentation;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
@@ -324,8 +322,8 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 						}
 					}
 					dark = color.darker();
-					IWColor darker = dark.darker();
-					IWColor darkest = darker.darker();
+					//IWColor darker = dark.darker();
+					//IWColor darkest = darker.darker();
 					IWColor bright = color.brighter();
 
 					tabColor = isSelected() ? dark : bright;
