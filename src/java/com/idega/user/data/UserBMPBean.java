@@ -1177,21 +1177,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
 		IDOQuery query = idoQuery();
 				
-		IWTimestamp fromAgeStamp = IWTimestamp.RightNow();
-		IWTimestamp toAgeStamp = IWTimestamp.RightNow();
+		IWTimestamp youngerAgeStamp = IWTimestamp.RightNow();
+		IWTimestamp olderAgeStamp = IWTimestamp.RightNow();
 		
-		fromAgeStamp.addYears(-startAge);
-		fromAgeStamp.setMonth(1);
-		fromAgeStamp.setDay(1);
+		youngerAgeStamp.addYears(-startAge);
+		youngerAgeStamp.setMonth(12);
+		youngerAgeStamp.setDay(31);
 		
-		toAgeStamp.addYears(-endAge);
-		toAgeStamp.setMonth(12);
-		toAgeStamp.setDay(31);
+		olderAgeStamp.addYears(-endAge);
+		olderAgeStamp.setMonth(1);
+		olderAgeStamp.setDay(1);
 		
 		
-		query.append(getColumnNameDateOfBirth()).appendGreaterThanOrEqualsSign().append("'").append(toAgeStamp.toString()).append("' ");
+		query.append(getColumnNameDateOfBirth()).appendGreaterThanOrEqualsSign().append("'").append(olderAgeStamp.toString()).append("' ");
 		query.appendAnd()
-		.append(getColumnNameDateOfBirth()).appendLessThanOrEqualsSign().append("'").append(fromAgeStamp.toString()).append("' ");
+		.append(getColumnNameDateOfBirth()).appendLessThanOrEqualsSign().append("'").append(youngerAgeStamp.toString()).append("' ");
 		
 		return query.toString();
 	}
