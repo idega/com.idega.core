@@ -332,6 +332,10 @@ public void setSessionAttribute(String attributeName,Object attribute){
 	getSession().setAttribute(attributeName,attribute);
 }
 
+public String getSessionId(){
+  return getSession().getId();
+}
+
 
 /**
  * @deprecated Replaced with removeSessionAttribute()
