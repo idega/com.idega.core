@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.31 2003/03/20 14:20:43 laddi Exp $
+ * $Id: Table.java,v 1.32 2003/03/21 12:19:00 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Enumeration;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
+import com.idega.util.text.StyleConstants;
+import com.idega.util.text.TextStyler;
 import com.idega.idegaweb.IWMainApplication;
 import java.util.Iterator;
 import com.idega.idegaweb.IWUserContext;
@@ -924,10 +926,17 @@ public class Table extends PresentationObjectContainer {
 				String width = "1";
 				String height = "1";
 				
-				if (theObjects[xpos - 1][ypos - 1].isAttributeSet("width"))
-					width = theObjects[xpos - 1][ypos - 1].getAttribute("width");
-				if (theObjects[xpos - 1][ypos - 1].isAttributeSet("height"))
-					height = theObjects[xpos - 1][ypos - 1].getAttribute("height");
+				TextStyler styler = new TextStyler(theObjects[xpos - 1][ypos - 1].getStyleAttribute());
+				if (styler.isStyleSet("width")) {
+					width = styler.getStyleValue("width");
+					if (width.indexOf("px") != -1)
+						width = width.substring(0,width.indexOf("px"));
+				}
+				if (styler.isStyleSet("height")) {
+					height = styler.getStyleValue("height");
+					if (height.indexOf("px") != -1)
+					height = height.substring(0,height.indexOf("px"));
+				}
 				
 				if (false) {
 					//not implemented
