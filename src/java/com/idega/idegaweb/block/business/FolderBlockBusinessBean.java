@@ -19,7 +19,6 @@ import com.idega.core.category.data.ICInformationCategoryTranslation;
 import com.idega.core.category.data.ICInformationCategoryTranslationHome;
 import com.idega.core.category.data.ICInformationFolder;
 import com.idega.core.category.data.ICInformationFolderHome;
-import com.idega.core.category.data.InformationFolder;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;

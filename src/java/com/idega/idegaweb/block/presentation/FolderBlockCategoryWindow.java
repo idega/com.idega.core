@@ -16,7 +16,6 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.block.business.FolderBlockBusiness;
-import com.idega.idegaweb.block.business.FolderBlockBusinessBean;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;

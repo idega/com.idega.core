@@ -1,7 +1,6 @@
 package com.idega.idegaweb.block.presentation;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import com.idega.core.category.data.InformationFolder;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.idegaweb.block.business.FolderBlockBusiness;
-import com.idega.idegaweb.block.business.FolderBlockBusinessBean;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
