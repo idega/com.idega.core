@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.130 2005/01/20 14:17:07 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.131 2005/01/24 18:27:18 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
-
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -47,7 +46,6 @@ import javax.faces.el.VariableResolver;
 import javax.faces.event.ActionListener;
 import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
@@ -63,10 +61,13 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.servlet.filter.BaseFilter;
+import com.idega.servlet.filter.IWWelcomeFilter;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
 import com.idega.util.LogWriter;
 import com.idega.util.ThreadContext;
+import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
 import com.idega.util.text.TextSoap;
@@ -77,10 +78,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/20 14:17:07 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/01/24 18:27:18 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.130 $
+ * @version $Revision: 1.131 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -588,6 +589,9 @@ public class IWMainApplication //{//implements ServletContext{
     		IDOContainer.unload();
     		IDOLookup.unload();
     		IBOLookup.unload();
+    		SQLSchemaAdapter.unload();
+    		IWWelcomeFilter.unload();
+    		BaseFilter.unload();
     		
     }
     
