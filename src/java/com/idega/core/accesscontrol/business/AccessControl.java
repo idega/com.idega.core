@@ -1,3 +1,12 @@
+/*
+ * $Id: AccessControl.java,v 1.97 2005/03/05 17:45:02 tryggvil Exp $
+ * Created in 2001
+ *
+ * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.accesscontrol.business;
 
 import java.rmi.RemoteException;
@@ -36,6 +45,7 @@ import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
@@ -50,12 +60,18 @@ import com.idega.util.ListUtil;
 import com.idega.util.reflect.FieldAccessor;
 
 /**
- * Title: AccessControl Description: Copyright: Copyright (c) 2001 Idega Software All Rights Reserved Company: Idega Software
+ * <p>
+ * This is the standard implementation of the AccessController interface and the standard class for handling 
+ * access control information (with ICPermission) in idegaWeb.
+ * </p>
  * 
- * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, Eirikur Hrafnsson
- * @version 1.0
+ * Last modified: $Date: 2005/03/05 17:45:02 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
+ *         Eirikur Hrafnsson, Tryggvi Larusson
+ * 
+ * @version $Revision: 1.97 $
  */
-
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * @todo change next 4 variables to applicationAddesses
@@ -72,12 +88,31 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private static final int _GROUP_ID_USERS = com.idega.user.data.GroupBMPBean.GROUP_ID_USERS;
 
 	private static final int _notBuilderPageID = 0;
+	private PermissionCacher permissionCacher;
+	
 
 	//temp
 	private static ICObject staticPageICObject = null;
 	private static ICObject staticFileICObject = null;
 	private ArrayList rolesList;
 
+	
+	private PermissionCacher getPermissionCacher(){
+		if(permissionCacher==null){
+			permissionCacher=new PermissionCacher();
+		}
+		return permissionCacher;
+	
+	}
+	
+	//This method has to exist static because of many callers are static
+	private static PermissionCacher getPermissionCacherStatic(){
+		
+		AccessController instance = IWMainApplication.getDefaultIWMainApplication().getAccessController();
+		return ((AccessControl)instance).getPermissionCacher();
+		
+	}
+	
 	private void initAdministratorPermissionGroup() throws Exception {
 		PermissionGroup permission = getPermissionGroupHome().create();
 		permission.setName(AccessControl.getAdministratorGroupName());
@@ -377,7 +412,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//PageInstance
 					if (category == AccessController.CATEGORY_PAGE_INSTANCE && !identifier.equals(Integer.toString(_notBuilderPageID))) {
 						for (int i = 0; i < arrayLength; i++) {
-							myPermission = PermissionCacher.hasPermissionForPage(identifier, iwc, permissionKey, permissionGroupLists[i]);
+							myPermission = getPermissionCacherStatic().hasPermissionForPage(identifier, iwc, permissionKey, permissionGroupLists[i]);
 							if (myPermission != null) {
 								return myPermission;
 							}
@@ -385,11 +420,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 						if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
 							// Global - (Page)
-							if (!PermissionCacher.anyInstancePermissionsDefinedForPage(identifier, iwc, permissionKey)) {
+							if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(identifier, iwc, permissionKey)) {
 								ICObject page = getStaticPageICObject();
 								if (page != null) {
 									for (int i = 0; i < arrayLength; i++) {
-										myPermission = PermissionCacher.hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
+										myPermission = getPermissionCacherStatic().hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
 										if (myPermission != null) {
 											return myPermission;
 										}
@@ -404,7 +439,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					else {
 						//instance
 						for (int i = 0; i < arrayLength; i++) {
-							myPermission = PermissionCacher.hasPermissionForObjectInstance(identifier, iwc, permissionKey, permissionGroupLists[i]);
+							myPermission = getPermissionCacherStatic().hasPermissionForObjectInstance(identifier, iwc, permissionKey, permissionGroupLists[i]);
 							if (myPermission != null) {
 								return myPermission;
 							}
@@ -413,9 +448,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 						if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
 							// Global - (object)
-							if (!PermissionCacher.anyInstancePermissionsDefinedForObject(identifier, iwc, permissionKey)) {
+							if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject(identifier, iwc, permissionKey)) {
 								for (int i = 0; i < arrayLength; i++) {
-									myPermission = PermissionCacher.hasPermissionForObject(identifier, iwc, permissionKey, permissionGroupLists[i]);
+									myPermission = getPermissionCacherStatic().hasPermissionForObject(identifier, iwc, permissionKey, permissionGroupLists[i]);
 									if (myPermission != null) {
 										return myPermission;
 									}
@@ -428,7 +463,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					}
 				case AccessController.CATEGORY_JSP_PAGE :
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForJSPPage(identifier, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForJSPPage(identifier, iwc, permissionKey, permissionGroupLists[i]);
 						if (myPermission != null) {
 							return myPermission;
 						}
@@ -437,7 +472,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					return myPermission;
 				case AccessController.CATEGORY_FILE_ID :
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForFile(identifier, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForFile(identifier, iwc, permissionKey, permissionGroupLists[i]);
 						if (myPermission != null) {
 							return myPermission;
 						}
@@ -445,11 +480,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 					if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
 						// Global - (File)
-						if (!PermissionCacher.anyInstancePermissionsDefinedForFile(identifier, iwc, permissionKey)) {
+						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForFile(identifier, iwc, permissionKey)) {
 							ICObject file = getStaticFileICObject();
 							if (file != null) {
 								for (int i = 0; i < arrayLength; i++) {
-									myPermission = PermissionCacher.hasPermission(file, iwc, permissionKey, permissionGroupLists[i]);
+									myPermission = getPermissionCacherStatic().hasPermission(file, iwc, permissionKey, permissionGroupLists[i]);
 									if (myPermission != null) {
 										return myPermission;
 									}
@@ -463,7 +498,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 				case AccessController.CATEGORY_GROUP_ID :
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForGroup(identifier, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForGroup(identifier, iwc, permissionKey, permissionGroupLists[i]);
 						if (myPermission != null) {
 							return myPermission;
 						}
@@ -672,7 +707,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			//JSP PAGE
 			if (obj == null) {
 				for (int i = 0; i < arrayLength; i++) {
-					myPermission = PermissionCacher.hasPermissionForJSPPage(iwc, permissionKey, permissionGroupLists[i]);
+					myPermission = getPermissionCacherStatic().hasPermissionForJSPPage(iwc, permissionKey, permissionGroupLists[i]);
 					if (Boolean.TRUE.equals(myPermission)) {
 						return myPermission;
 					}
@@ -692,7 +727,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					}
 					
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
@@ -701,13 +736,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 
 						// Global - (Page)
-						boolean noPermissionsSet = !PermissionCacher.anyInstancePermissionsDefinedForPage(obj, iwc, permissionKey);
-						//if (!PermissionCacher.anyInstancePermissionsDefinedForPage(pPage, iwc, permissionKey)) {
+						boolean noPermissionsSet = !getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(obj, iwc, permissionKey);
+						//if (!getPermissionCacher().anyInstancePermissionsDefinedForPage(pPage, iwc, permissionKey)) {
 						if(noPermissionsSet){
 							ICObject page = getStaticPageICObject();
 							if (page != null) {
 								for (int i = 0; i < arrayLength; i++) {
-									myPermission = PermissionCacher.hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
+									myPermission = getPermissionCacherStatic().hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
 
 									if (Boolean.TRUE.equals(myPermission)) {
 										return myPermission;
@@ -727,7 +762,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 					for (int i = 0; i < arrayLength; i++) {
 
-						myPermission = PermissionCacher.hasPermissionForGroup((Group) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForGroup((Group) obj, iwc, permissionKey, permissionGroupLists[i]);
 
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
@@ -737,7 +772,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				}
 				else if(obj instanceof RoleHelperObject){
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForRole( ((RoleHelperObject) obj).toString(), iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForRole( ((RoleHelperObject) obj).toString(), iwc, permissionKey, permissionGroupLists[i]);
 						
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
@@ -759,7 +794,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//Object instance
 					myPermission=Boolean.FALSE; //TODO: should be set to null and the haspermissionForObjectInstance should return null if there is no permission set and then later return false if still null, because permission could be stored as false permission
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
@@ -806,10 +841,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 						// Global - (object)
-						if (!PermissionCacher.anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey)) {
+						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey)) {
 							for (int i = 0; i < arrayLength; i++) {
 								myPermission =
-									PermissionCacher.hasPermissionForObject((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
+									getPermissionCacherStatic().hasPermissionForObject((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
 								if (Boolean.TRUE.equals(myPermission)) {
 									return myPermission;
 								}
@@ -998,7 +1033,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		PermissionCacher.updateJSPPagePermissions(PageContextValue, permissionType, iwc);
+		getPermissionCacher().updateJSPPagePermissions(PageContextValue, permissionType, iwc);
 	}
 
 	public void setObjectPermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)
@@ -1046,7 +1081,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID()), permissionType, iwc);
+		getPermissionCacher().updateObjectPermissions(Integer.toString(obj.getICObjectID()), permissionType, iwc);
 	}
 
 	public void setBundlePermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)
@@ -1094,7 +1129,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		PermissionCacher.updateBundlePermissions(obj.getBundleIdentifier(), permissionType, iwc);
+		getPermissionCacher().updateBundlePermissions(obj.getBundleIdentifier(), permissionType, iwc);
 	}
 
 	public void setObjectInstacePermission(
@@ -1151,7 +1186,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ sGroupList
 							+ ")");
 				if (done) {
-					PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId, permissionKey, iwc);
+					getPermissionCacherStatic().updateObjectInstancePermissions(ObjectInstanceId, permissionKey, iwc);
 				}
 				return done;
 			}
@@ -1328,7 +1363,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						break;
 				}
 
-				PermissionCacher.updatePermissions(permissionCategory, identifier, permissionKey, iwc);
+				getPermissionCacherStatic().updatePermissions(permissionCategory, identifier, permissionKey, iwc);
 
 				return true;
 			}
@@ -1634,7 +1669,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.update();
 		}
 
-		PermissionCacher.updatePermissions(permissionCategory, identifier, permissionKey, iwc);
+		getPermissionCacher().updatePermissions(permissionCategory, identifier, permissionKey, iwc);
 
 	}
 
@@ -1688,7 +1723,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId, permissionType, iwc);
+		getPermissionCacher().updateObjectInstancePermissions(ObjectInstanceId, permissionType, iwc);
 	}
 
 	public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs) throws Exception {
@@ -2184,7 +2219,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		permission.setPermissionValue(Boolean.TRUE);
 		permission.insert();
 
-		//PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID(iwc)),permissionType,iwc);
+		//getPermissionCacher().updateObjectPermissions(Integer.toString(obj.getICObjectID(iwc)),permissionType,iwc);
 
 	}
 
@@ -2384,7 +2419,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 			p.store();
 
-			//PermissionCacher.updatePermissions(,p.getContextValue(),permissionType,iwc);
+			//getPermissionCacher().updatePermissions(,p.getContextValue(),permissionType,iwc);
 			return true;
 		}
 		catch (Exception ex) {
@@ -3376,7 +3411,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public String toString() {
 			return ROLE_STRING;
 		}
-
 	}
 	
 	/**
