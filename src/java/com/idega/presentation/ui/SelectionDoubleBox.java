@@ -179,4 +179,18 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		isSetAsNotEmpty = true;
 		notEmptyErrorMessage = errorMessage;
 	}
+	/**
+	 * @param string
+	 */
+	public void setLeftLabel(String string) {
+		leftLabel = string;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setRightLabel(String string) {
+		rightLabel = string;
+	}
+
 }
