@@ -374,11 +374,6 @@ public void setConnection(Connection conn){
 
 
 
-
-
-
-
-
 public void setDefaultBackgroundColor(String s){
 	setPreference("DefaultBackgroundColor",s);
 }
