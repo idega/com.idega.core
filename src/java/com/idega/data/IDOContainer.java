@@ -183,7 +183,7 @@ public class IDOContainer {
       return entity;
     }
     catch(Exception e){
-      //e.printStackTrace();
+      e.printStackTrace();
       throw new FinderException(e.getMessage());
     }
   }
