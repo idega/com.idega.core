@@ -21,8 +21,7 @@ public class GenericButton extends GenericInput {
 	private Image defaultImage;
 	private final String buttonImageStyle = "cursor:hand;";
 	private Class _windowClassToOpen;
-	private String _parameterName;
-	private String _parameterValue;
+	private Map parameterMap;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -53,9 +52,7 @@ public class GenericButton extends GenericInput {
 				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
 			}
 			if (_windowClassToOpen != null) {
-				String URL = Window.getWindowURL(_windowClassToOpen, iwc);
-				if (_parameterName != null)
-					URL = URL + "&" + _parameterName + "=" + _parameterValue;
+				String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
 				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 			}
 
@@ -116,7 +113,26 @@ public class GenericButton extends GenericInput {
 	}
 	
 	public void addParameterToWindow(String name, String value) {
-		_parameterName = name;
-		_parameterValue = value;
+		if (parameterMap == null)
+			parameterMap = new HashMap();
+		parameterMap.put(name, value);
+	}
+	
+	private String getParameters() {
+		StringBuffer returnString = new StringBuffer();
+		if (parameterMap != null) {
+			Iterator iter = parameterMap.keySet().iterator();
+			while (iter.hasNext()) {
+				String name = (String) iter.next();
+				String value = (String) parameterMap.get(name);
+				if (name != null && value != null) {
+					returnString.append("&");
+					returnString.append(name);
+					returnString.append("=");
+					returnString.append(value);
+				}
+			}
+		}
+		return returnString.toString();
 	}
 }
