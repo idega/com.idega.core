@@ -7,7 +7,8 @@ import java.rmi.RemoteException;
 
 /**
  * Title:        idega Business Objects
- * Description:
+ * Description:  A class to be a base interface for IBO Session (Stateful EJB Session) beans<br><br>
+ * An instance of this type is stored in session for the user and an instance is to be obtained via IBOLookup
  * Copyright:    Copyright (c) 2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>

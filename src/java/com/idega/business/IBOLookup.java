@@ -18,7 +18,9 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * Title:        idega Business Objects
- * Description:
+ * Description:  IBOLookup is a class use to get instances of IBO (Service and Session) objects.<br><br>
+ * <br>Instances of IBOService classes are stored in the IWApplicationContext and obtained by passing a reference to the application context and either a class representing a bean interface of implementation.
+ * <br>Instances of IBOSession classes are stored in the IWUserContext and obtained by passing a reference to the user context and either a class representing a bean interface of implementation.
  * Copyright:    Copyright (c) 2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
@@ -195,8 +197,15 @@ public class IBOLookup {
       try{
         if(interfaceClass==null){
           String className = entityBeanOrInterfaceClass.getName();
-          String interfaceClassName = className.substring(0,className.indexOf(getBeanSuffix()));
-          interfaceClass = Class.forName(interfaceClassName);
+          int endIndex = className.indexOf(getBeanSuffix());
+          if(endIndex!=-1){
+            String interfaceClassName = className.substring(0,endIndex);
+            interfaceClass = Class.forName(interfaceClassName);
+          }
+          else{
+            //For legacy beans
+            interfaceClass = entityBeanOrInterfaceClass;
+          }
         }
         return interfaceClass;
       }

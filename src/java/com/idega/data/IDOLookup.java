@@ -9,7 +9,10 @@ import com.idega.business.IBOLookup;
 
 /**
  * Title:        idegaclasses
- * Description:
+ * Title:        idega Data Objects
+ * Description:  IDOLookup is a class use to look up and get a reference to instances of IDO (BMP Entity EJB Beans) objects.<br><br>
+ * <br>IDOLookup should be used mainly for looking up home instances for a data bean.
+ * <br>Instances of IDO home classes are obtained by passing either a Class representing a bean interface or implementation. (For example User.class or UserBMPBean.class) to the getHome() method.
  * Copyright:    Copyright (c) 2001
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>

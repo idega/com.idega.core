@@ -11,7 +11,7 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * Title:        idega Business Objects
- * Description:
+ * Description:  A class to be a base implementation for IBO Service (Stateless EJB Session) beans
  * Copyright:    Copyright (c) 2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
