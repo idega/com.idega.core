@@ -286,8 +286,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     buttonTable.setWidth(2,1,"7");
     buttonTable.setWidth(4,1,"7");
     
-    IWContext iwc = IWContext.getInstance();
-
 //    buttonTable.add(getHelpButton(iwc),1,1);
     buttonTable.add(ok,3,1);
     buttonTable.add(cancel,5,1);
