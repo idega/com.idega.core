@@ -4,6 +4,7 @@
 */
 package com.idega.core;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * An abstract data model for implementing Tree structures.
@@ -50,6 +51,11 @@ public interface ICTreeNode {
 	 *  Returns the name of the Node
 	 */
 	public String getNodeName();
+	
+	/**
+	*  Returns the name of the Node
+	*/
+	public String getNodeName(Locale locale);
 
 	/**
 	 * Returns the unique ID of the Node in the tree
