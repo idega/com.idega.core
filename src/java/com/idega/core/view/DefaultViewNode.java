@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.5 2005/02/28 17:26:06 gummi Exp $
+ * $Id: DefaultViewNode.java,v 1.6 2005/03/01 11:37:02 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/02/28 17:26:06 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/03/01 11:37:02 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -46,7 +46,8 @@ public class DefaultViewNode implements ViewNode {
 	
 	
 	/**
-	 * @param iwma
+	 * @param viewId the ViewId of this node (must be unique under its parent)
+	 * @param parent the Parent of this node. This node will be added as a child under its parent implicitly by this constructor
 	 */
 	public DefaultViewNode(String viewId,ViewNode parent) {
 		this.setViewId(viewId);
@@ -54,7 +55,7 @@ public class DefaultViewNode implements ViewNode {
 	}	
 	
 	/**
-	 * @param iwma
+	 * @param iwma the IWMainApplication instance to register to this ViewNode
 	 */
 	public DefaultViewNode(IWMainApplication iwma) {
 		this.setIWMainApplication(iwma);
