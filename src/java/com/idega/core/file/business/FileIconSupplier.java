@@ -57,7 +57,6 @@ public class FileIconSupplier {
 	private String resourceURI;
 	private String resourceURL;
 	
-	private String pathToConfigFile;
 	private Properties properties;
 	private static final String PROPS_FILE_NAME_PREFIX = "mimetype-icon-";
 	private static final String PROPS_FILE_NAME_SUFFIX = ".props";
