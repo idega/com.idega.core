@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.118 2004/09/13 15:20:02 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.119 2004/10/11 10:40:46 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,6 +47,7 @@ public abstract class DatastoreInterface {
 
 	private static Hashtable interfacesHashtable;
 	private static Map interfacesByDatasourcesMap;
+	public static boolean usePreparedStatement = true;
 	final static int STATEMENT_INSERT = 1;
 	final static int STATEMENT_UPDATE = 2;
 	protected boolean useTransactionsInEntityCreation = true;
@@ -2250,7 +2251,7 @@ public abstract class DatastoreInterface {
 	}
 	
 	public boolean isUsingPreparedStatements(){
-	    return true;
+	    return usePreparedStatement;
 	}
 	
 }

@@ -39,6 +39,8 @@ import javax.ejb.RemoveException;
 
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.data.query.Criteria;
+import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
@@ -161,7 +163,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	
-	
+	protected static Collection getLoadedEntityBeans(){
+	    	return _allStaticClasses.values();
+	}
 	/**
 	 * Meant to be overrided in subclasses to add default attributes
 	 */
@@ -2101,7 +2105,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " like '" + columnValue + "'");
 	}
 	public int getNumberOfRecords(String columnName, int columnValue) throws SQLException {
-		return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " = " + columnValue);
+		//return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " = " + columnValue);
+	    return getNumberOfRecords(new MatchCriteria(idoQueryTable,columnName,MatchCriteria.EQUALS,columnValue));
 	}
 	public int getNumberOfRecordsRelated(IDOLegacyEntity entity) throws SQLException {
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
@@ -2116,14 +2121,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return getNumberOfRecords(SQLString);
 	}
 	public int getNumberOfRecords() throws SQLException {
-		return getNumberOfRecords("select count(*) from " + getEntityName());
+		//return getNumberOfRecords("select count(*) from " + getEntityName());
+	    return getNumberOfRecords((Criteria)null);
 	}
 	public int getNumberOfRecords(String CountSQLString) throws SQLException {
 		return getIntTableValue(CountSQLString);
 	}
 	
 	public int getNumberOfRecords(SelectQuery query)throws SQLException{
-	    return getIntTableValue(query.toString(true),query.getValues());
+	    return getIntTableValue(query);
 	}
 	
 	public double getAverage(String averageSQLString) throws SQLException {
@@ -2173,16 +2179,31 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public int getNumberOfRecordsForStringColumn(String columnName, String operator, String columnValue) throws SQLException {
-		StringBuffer buffer = new StringBuffer("\'");
-		buffer.append(columnValue);
-		buffer.append('\'');
-		return getNumberOfRecords(columnName,operator, buffer.toString());
+		//StringBuffer buffer = new StringBuffer("\'");
+		//buffer.append(columnValue);
+		//buffer.append('\'');
+		return getNumberOfRecords(columnName,operator, columnValue);
 	}
 	
 	public int getNumberOfRecords(String columnName, String operator, String columnValue) throws SQLException {
-		StringBuffer buffer = new StringBuffer("select count(*) from ");
-		buffer.append(getEntityName()).append(" where ").append(columnName).append(" ").append(operator).append(" ").append(columnValue);
-		return getNumberOfRecords(buffer.toString());
+	    return getNumberOfRecords(new MatchCriteria(idoQueryTable(),columnName,operator,columnValue));
+	    
+		//StringBuffer buffer = new StringBuffer("select count(*) from ");
+		//buffer.append(getEntityName()).append(" where ").append(columnName).append(" ").append(operator).append(" ").append(columnValue);
+		//return getNumberOfRecords(buffer.toString());
+	}
+	private int getNumberOfRecords(Criteria criteria) throws SQLException {
+	    SelectQuery query = new SelectQuery(idoQueryTable());
+	    query.addColumn(new WildCardColumn());
+	    query.setAsCountQuery(true);
+	    if(criteria!=null)
+	        query.addCriteria(criteria);
+	    //query.addCriteria(new MatchCriteria(idoQueryTable(),columnName,operator,columnValue,));
+	    
+		//StringBuffer buffer = new StringBuffer("select count(*) from ");
+		//buffer.append(getEntityName()).append(" where ").append(columnName).append(" ").append(operator).append(" ").append(columnValue);
+		//return getNumberOfRecords(buffer.toString());
+	    return getNumberOfRecords(query);
 	}
 	public int getMaxColumnValue(String columnName) throws SQLException {
 		return getIntTableValue("select max(" + columnName + ") from " + getEntityName());
@@ -2195,19 +2216,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    return getIntTableValue(CountSQLString, null);
 	}
 	
-	public int getIntTableValue(String CountSQLString,List placeHolderValues ) throws SQLException {
+	public int getIntTableValue(SelectQuery query) throws SQLException {
+	    return getIntTableValue(null, query);
+	}
+	
+	private int getIntTableValue(String CountSQLString,SelectQuery query ) throws SQLException {
 		Connection conn = null;
-		PreparedStatement stmt = null;
+		Statement stmt = null;
 		ResultSet rs = null;
 		int recordCount = -1;
 		try {
 			conn = getConnection(this.getDatasource());
-			stmt = conn.prepareStatement(CountSQLString);
-			if(placeHolderValues!=null){
-			    DatastoreInterface dsi = DatastoreInterface.getInstance(this);
-			    dsi.insertIntoPreparedStatement(placeHolderValues,stmt,1);
-			}
-		    	rs = stmt.executeQuery();
+			rs = prepareResultSet(conn,stmt,CountSQLString,query);
 			if (rs.next())
 				recordCount = rs.getInt(1);
 			rs.close();
@@ -3625,7 +3645,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
 	    return idoFindPKsBySQLIgnoringCache(sqlQuery,returningNumber,startingEntry,null);
 	}
-	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry,List placeHolderValues) throws FinderException {
+	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry,SelectQuery query) throws FinderException {
 		//if (this.isDebugActive()) {
 			logSQL(sqlQuery);
 		//}
@@ -3640,18 +3660,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		ResultSet RS = null;
 		Vector vector = new Vector();
 		try {
-		    DatastoreInterface dsi = DatastoreInterface.getInstance(this);
+		    
 			conn = getConnection(getDatasource());
-			if(placeHolderValues==null || placeHolderValues.isEmpty()){
-			    Stmt = conn.createStatement();
-			    RS = Stmt.executeQuery(sqlQuery);
-			}
-			// use PreparedStatement
-			else{
-			    Stmt = conn.prepareStatement(sqlQuery);
-			    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
-			    	RS = ((PreparedStatement)Stmt).executeQuery();
-			}
+			RS = prepareResultSet(conn,Stmt,sqlQuery,query);
 			int counter = 0;
 			boolean addEntity = false;
 			while (RS.next()) {
@@ -3692,6 +3703,32 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return vector;
 	}
+	
+	
+	private ResultSet prepareResultSet(Connection conn,Statement stmt, String sqlString, SelectQuery query) throws SQLException{
+	    ResultSet rs = null;
+	    if(query!=null){
+		    
+		    DatastoreInterface dsi = DatastoreInterface.getInstance(conn);
+			List values = query.getValues();
+			if(values!=null && dsi.isUsingPreparedStatements() ){
+			    stmt = conn.prepareStatement(query.toString(true));
+		    		dsi.insertIntoPreparedStatement(values,(PreparedStatement)stmt,1);
+		    		rs = ((PreparedStatement) stmt).executeQuery();
+			}
+			else{
+			    stmt = conn.createStatement();
+			    rs = stmt.executeQuery(query.toString());
+			}
+	    		
+		}
+		else if(sqlString!=null){
+		    stmt = conn.createStatement();
+		    rs = stmt.executeQuery(sqlString);
+		}
+		return rs;
+	}
+	
 	/**
 	 * Finds all relationships this entity bean instane has with ALL returningEntityInterfaceClass  beans
 	 * Returns a collection of returningEntity instances
@@ -3910,13 +3947,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Finds one primary key by an SQL query
 	 */
 	protected Object idoFindOnePKBySQL(String sqlQuery) throws FinderException {
-	    return idoFindOnePKBySQL(sqlQuery,(List)null);
+	    return idoFindOnePKBySQL(sqlQuery,null);
 	}
 	/**
 	 * Finds one primary key by an SQL query
 	 */
-	private  Object idoFindOnePKBySQL(String sqlQuery,List placeHolderValues) throws FinderException {
-		Collection coll = idoFindPKsBySQL(sqlQuery, 1,-1,placeHolderValues);
+	private  Object idoFindOnePKBySQL(String sqlQuery,SelectQuery selectQuery) throws FinderException {
+		Collection coll = idoFindPKsBySQL(sqlQuery, 1,-1,selectQuery);
 		try {
 			if (!coll.isEmpty()) {
 				return coll.iterator().next();
@@ -3940,7 +3977,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry,List placeHolderValues) throws FinderException {
+	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry,SelectQuery selectQuery) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -3948,7 +3985,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
 		}
 		if (pkColl == null) {
-			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry,placeHolderValues);
+			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry,selectQuery);
 			if (queryCachingActive) {
 				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
 			}
@@ -4542,7 +4579,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
-		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getObjectValues());
+		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,null);
 	}
 	
 	/**
@@ -4552,7 +4589,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
-		return idoFindPKsBySQL(query.toString(true), returningNumberOfEntities, startingEntry,query.getValues());
+		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query);
 	}
 
 	/**
@@ -4561,7 +4598,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByQuery(IDOQuery query) throws FinderException {
-		return idoFindOnePKBySQL(query.toString(),query.getObjectValues());
+		return idoFindOnePKBySQL(query.toString(),null);
 	}
 	
 	/**
@@ -4570,7 +4607,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByQuery(SelectQuery query) throws FinderException {
-		return idoFindOnePKBySQL(query.toString(true),query.getValues());
+		return idoFindOnePKBySQL(query.toString(),query);
 	}
 	
 	/**
