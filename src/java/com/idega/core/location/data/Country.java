@@ -1,12 +1,40 @@
 package com.idega.core.location.data;
 
+import com.idega.data.IDOEntity;
 
-public interface Country extends com.idega.data.IDOEntity
-{
- public java.lang.String getName() ;
- public void setIsoAbbreviation(java.lang.String p0) ;
- public void setName(java.lang.String p0) ;
- public void setDescription(java.lang.String p0) ;
- public java.lang.String getIsoAbbreviation() ;
- public java.lang.String getDescription() ;
+
+/**
+ * @author gimmi
+ */
+public interface Country extends IDOEntity {
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#getName
+	 */
+	public String getName();
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#getDescription
+	 */
+	public String getDescription();
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#getIsoAbbreviation
+	 */
+	public String getIsoAbbreviation();
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#setName
+	 */
+	public void setName(String Name);
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#setDescription
+	 */
+	public void setDescription(String Description);
+
+	/**
+	 * @see com.idega.core.location.data.CountryBMPBean#setIsoAbbreviation
+	 */
+	public void setIsoAbbreviation(String IsoAbbreviation);
 }

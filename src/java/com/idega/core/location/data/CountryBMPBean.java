@@ -3,11 +3,14 @@ package com.idega.core.location.data;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Locale;
-
 import javax.ejb.FinderException;
-
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.Column;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 
 /**
  * Title:        IW Core
@@ -18,7 +21,7 @@ import com.idega.data.IDOQuery;
  * @version 1.0
  */
 
-public class CountryBMPBean extends com.idega.data.GenericEntity implements com.idega.core.location.data.Country {
+public class CountryBMPBean extends GenericEntity implements Country{
 
   public CountryBMPBean(){
     super();
@@ -112,5 +115,16 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
   		IDOQuery query = idoQuery();
   		query.appendSelectAllFrom(this).appendOrderBy(getColumnNameName());
 		  return super.idoFindPKsByQuery(query);
+  }
+  
+  public Collection ejbFindAllFromPostalCodes(Collection postalCodes) throws FinderException {
+  	Table table = new Table(PostalCode.class);
+  	Column postalCol = new Column(table, PostalCodeBMPBean.COLUMN_POSTAL_CODE_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(table, PostalCodeBMPBean.COLUMN_COUNTRY_ID, true);
+  	query.addCriteria(new InCriteria(postalCol, postalCodes));
+  	
+  	return this.idoFindPKsByQuery(query); 
   }
 }
