@@ -87,11 +87,10 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 	 			alreadyStoredElements.add(element);
 	 			WriterToFile currentWriter = (WriterToFile) element.write(this);
 	 			String originalName = currentWriter.getName();
+	 			String mimeType = currentWriter.getMimeType();
 	 			String zipElementName = createZipElementName(originalName, identifierNumber++);
 	 			ZipEntry zipEntry = new ZipEntry(zipElementName);
-	 			String sourceClass = metadata.getSourceClassNameForElement(entryNumber);
-	 			zipEntry.setComment(sourceClass);
-	 			metadata.modifyElementSetNameSetOriginalName(entryNumber++, zipElementName, originalName);
+	 			metadata.modifyElementSetNameSetOriginalName(entryNumber++, zipElementName, originalName, mimeType);
 	 			zipOutputStream.putNextEntry(zipEntry);
 	 			currentWriter.writeData(zipOutputStream);
 	 			zipOutputStream.closeEntry();
@@ -110,6 +109,10 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 	
   public String getName() {
   	return ((IBExportImportData) storable).getName();
+  }
+  
+  public String getMimeType() {
+  	return "application/zip";
   }
 
   public Object write(ICFile file) {
