@@ -707,6 +707,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     return idoFindIDsBySQL(query.toString());
    
 	}
+	
+	public Collection ejbFindUsersByMetaData(String key, String value) throws FinderException {
+		return super.idoFindPKsByMetaData(key,value);
+	}
 
   /** Gets all users that are not marked as deleted and
    *  that are members of the specified group

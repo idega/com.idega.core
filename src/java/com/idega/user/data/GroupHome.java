@@ -1,5 +1,9 @@
 package com.idega.user.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public interface GroupHome extends com.idega.data.IDOHome
 {
@@ -16,5 +20,5 @@ public interface GroupHome extends com.idega.data.IDOHome
  public int getNumberOfGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException, com.idega.data.IDOException;
  public int getNumberOfTopNodeGroupsContained(com.idega.builder.data.IBDomain p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException, com.idega.data.IDOException;
  public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ejb.FinderException;
-
+ public Collection findGroupsByMetaData(String key, String value) throws FinderException;
 }

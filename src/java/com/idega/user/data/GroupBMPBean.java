@@ -1009,6 +1009,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		return super.idoFindPKsBySQL(sql.toString());
 	}
+	
+	public Collection ejbFindGroupsByMetaData(String key, String value) throws FinderException {
+		return super.idoFindPKsByMetaData(key,value);
+	}
 
 
 	public Integer ejbFindSystemUsersGroup() throws FinderException {

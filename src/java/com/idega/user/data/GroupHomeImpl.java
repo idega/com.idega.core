@@ -1,8 +1,8 @@
 package com.idega.user.data;
 
 
-public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHome
-{
+public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHome{
+	
  protected Class getEntityInterfaceClass(){
   return Group.class;
  }
@@ -78,6 +78,12 @@ public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ej
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findGroupsByMetaData(String key, String value) throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsByMetaData(key,value);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (Group) super.findByPrimaryKeyIDO(pk);
