@@ -26,6 +26,22 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   public final static String PRM_IW_EVENT = "iw_event_type";
   public final static String PRM_IW_EVENT_SOURCE = "iw_ev_src";
 //  private final static String SEPARATOR = "|";
+
+
+  /**
+   * @todo Remove hardcoding
+   */
+  public static String IW_EVENT_HANDLER_URL="/servlet/IWEventHandler";
+  private String eventHandlerURL=IW_EVENT_HANDLER_URL;
+  
+  /**
+   * @todo Remove hardcoding
+   */
+  public static String DEFAULT_IW_EVENT_TARGET="iw_event_frame";
+  private String eventTarget=DEFAULT_IW_EVENT_TARGET;
+  
+  public static String EVENT_CONTROLLER = "event_controller";
+  
   private List _parameters = new Vector();
   private Page _page = null;
   private IWContext _iwc = null;
@@ -74,13 +90,14 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
   }
 
-  protected void setSource(PresentationObject source){
-    if(source.getICObjectInstanceID() != 0){
+  public void setSource(PresentationObject source){
+    setSource(source.getCompoundId());
+   /* if(source.getICObjectInstanceID() != 0){
       setSource(source.getICObjectInstanceID());
     } else if(source.getLocation() != null){
       setSource(source.getLocation());
     }
-    //this.source = source;
+    //this.source = source;*/
   }
 
   public void setSource(IWLocation source){
@@ -96,7 +113,9 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     this.addParameter(PRM_IW_EVENT_SOURCE,((Integer)instance.getPrimaryKey()).toString());
   }
 
-
+  private void setSource(String compoundId) {
+    this.addParameter(PRM_IW_EVENT_SOURCE, compoundId);
+  }
 
 
 //  public IWPresentationEvent(PresentationObject source) {
@@ -130,6 +149,10 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
   public Iterator getParameters(){
     return _parameters.iterator();
+  }
+  
+  public void setController(String controllerCompoundId)  {
+    this.addParameter(EVENT_CONTROLLER, controllerCompoundId);
   }
 
   public abstract boolean initializeEvent(IWContext iwc);
@@ -233,8 +256,40 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 //    catch (FinderException fe) {
 //      throw new RuntimeException(fe.getMessage());
 //    }
-
-    return IWPresentationLocation.getLocationObject(sourceString);
+    return sourceString;
+    //return IWPresentationLocation.getLocationObject(sourceString);
   }
+
+	/**
+	 * Returns the eventHandlerURL.
+	 * @return String
+	 */
+	public String getEventHandlerURL() {
+		return eventHandlerURL;
+	}
+
+	/**
+	 * Sets the eventHandlerURL.
+	 * @param eventHandlerURL The eventHandlerURL to set
+	 */
+	public void setEventHandlerURL(String eventHandlerURL) {
+		this.eventHandlerURL = eventHandlerURL;
+	}
+
+	/**
+	 * Returns the eventTarget.
+	 * @return String
+	 */
+	public String getEventTarget() {
+		return eventTarget;
+	}
+
+	/**
+	 * Sets the eventTarget.
+	 * @param eventTarget The eventTarget to set
+	 */
+	public void setEventTarget(String eventTarget) {
+		this.eventTarget = eventTarget;
+	}
 
 }

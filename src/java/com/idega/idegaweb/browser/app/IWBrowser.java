@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 public class IWBrowser extends FrameTable implements StatefullPresentation {
 
 
-  private String _frameName[] = {"iwb_top","iwb_menu","iwb_middle","iwb_bottom","iwb_main_left","iwb_main","iwb_main_right"};
+  private String _frameName[] = {"iwb_top","iwb_menu","iwb_middle",IWPresentationEvent.DEFAULT_IW_EVENT_TARGET,"iwb_main_left","iwb_main","iwb_main_right"};
 
   public static final int POS_TOP = 0;
   public static final int POS_MENU = 1;
@@ -161,6 +161,10 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     this.addToFrame(obj,POS_BOTTOM);
   }
 
+  public void setBottomURL(String url){
+    this.getBottomFrame().setUrlProperty(url);
+  }
+
   public void setSpanPixels(int pos, int pixels){
     _browserFrames[pos].setSpanPixels(pixels);
   }
@@ -198,6 +202,15 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     this.getFrame(this.getFrameName(pos)).addIWActionListener(l);
   }
 
+  /** this method is similar to the method addIWActionListener but uses
+   * the method addActionListener
+   * @param pos
+   * @param l
+   */
+  public void addActionListener(int pos, IWActionListener l){
+    this.getFrame(this.getFrameName(pos)).addActionListener(l);
+  }  
+
 
   public void modifyFrameObject(IWContext iwc, IWFrameBusiness fb, Frame frame) throws RemoteException {
 //      System.out.println("IWBrowser.modifyFrameObject");
@@ -214,7 +227,10 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
         model.setSourceTarget(frame);
 //        System.out.println("-----------------------------");
 //        System.out.println("IWBrowser.frame.location: " +frame.getLocation().getLocationString());
-        model.setSource(frame.getLocation());
+        //model.setSource(frame.getLocation());
+        String id = frame.getCompoundId();
+        obj.setArtificialCompoundId(id,iwc);
+        model.setSource(frame);
 
         ((IWBrowserView)obj).setControlEventModel(model);
 
@@ -470,7 +486,7 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (IWBrowserPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+        _presentationState = (IWBrowserPresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
