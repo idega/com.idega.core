@@ -295,14 +295,18 @@ public class GenericSelect extends InterfaceObject {
 		String val = null;
 		Iterator iter = getChildren().iterator();
 		while (iter.hasNext()) {
-			SelectOption option = (SelectOption) iter.next();
-			boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
-			option.setSelected(setSelected);
-			if(setSelected){
-				val = option.getValueAsString();
+			Object optionObj = iter.next();
+			if(optionObj instanceof SelectOption) {
+				SelectOption option = (SelectOption) optionObj;
+				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
+				option.setSelected(setSelected);
+				if(setSelected){
+					val = option.getValueAsString();
+				}
+			} else {
+				System.out.println("Object other than SelectOption in a GenericSelect, skipping setting selected value");
 			}
 		}
-		
 
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
