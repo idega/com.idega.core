@@ -2,6 +2,7 @@ package com.idega.util.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
@@ -43,6 +44,7 @@ public class MethodInvoker implements Singleton {
   public  Object invokeMethodWithNoParameters(Object instance,String methodName)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 	return invokeMethod(instance,MethodFinder.getInstance().getMethodWithNameAndNoParameters(instance.getClass(),methodName),null);
   }
+
   /**
    * Invoke the static method of class objectClass of name methodName, where that method does not take any arguments
    * @param objectClass The class to invoke a method in.
@@ -115,6 +117,22 @@ public class MethodInvoker implements Singleton {
 	Integer[] argarray = new Integer[]{new Integer(arg0)};
 	return invokeMethod(instance,MethodFinder.getInstance().getMethodWithNameAndOneParameter(instance.getClass(),methodName,Integer.TYPE),argarray);
   }
+  
+  /**
+   * Invoke a method of object instance of name methodName, where that method does take in one argument of type IWContext
+   * @param instance The instance of the object to invoke a method in.
+   * @param methodName the name of the method to invoke (without parentheses)
+   * @param arg0 The int argument to be sent into the metod.
+   * @return the return of the method invokation
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   */
+  public  Object invokeMethodWithIWContextParameter(Object instance,String methodName,IWContext iwc)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+	IWContext[] argarray = new IWContext[]{iwc};
+	return invokeMethod(instance,MethodFinder.getInstance().getMethodWithNameAndOneParameter(instance.getClass(),methodName,IWContext.class),argarray);
+  }
+  
   /**
    * Invoke a method of object instance of name methodName, where that method does take in one argument of type String
    * @param instance The instance of the object to invoke a method in.
