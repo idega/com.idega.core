@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.idega.presentation.IWContext;
@@ -29,7 +30,7 @@ public class SortedByValueMap extends LinkedHashMap {
      * @throws NullPointerException if the specified map is null.
      */
     public SortedByValueMap(Map map) {
-        this(map, null);
+        this(map, (Locale) null);
     }
     
     /**
@@ -40,7 +41,18 @@ public class SortedByValueMap extends LinkedHashMap {
      * @throws NullPointerException if the specified map is null.
      */
     public SortedByValueMap(Map map, IWContext iwc) {
-        Comparator comparator = new SortByValueComparator(map, iwc);
+    	this(map, (iwc == null) ? null : iwc.getCurrentLocale());
+    }
+    	
+    /**
+     * Constructs new Map with the values sorted in alfabetical order using the specified locale.
+     *
+     * @param  map the map containing the unsorted key-value pairs.
+     * @param  locale .
+     * @throws NullPointerException if the specified map is null.
+     */
+    public SortedByValueMap(Map map, Locale locale) {
+        Comparator comparator = new SortByValueComparator(map, locale);
         List keys = new ArrayList(map.keySet());
         Collections.sort(keys, comparator);
         Iterator it = keys.iterator();
@@ -59,13 +71,13 @@ public class SortedByValueMap extends LinkedHashMap {
     	    this.map = map;   	    
     	}
 
-    	public SortByValueComparator(Map map, IWContext iwc) {
+    	public SortByValueComparator(Map map, Locale locale) {
     	    this.map = map;
-    	    if (iwc == null) {
+    	    if (locale == null) {
     	        this.collator = Collator.getInstance();
     	    }
     	    else {
-    	        this.collator = Collator.getInstance(iwc.getCurrentLocale());
+    	        this.collator = Collator.getInstance(locale);
     	    }
     	}
 
