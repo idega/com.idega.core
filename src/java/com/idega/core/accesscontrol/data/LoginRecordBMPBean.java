@@ -101,6 +101,35 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       }
       else throw new FinderException("File was not found");
   }
+    
+    public java.sql.Date ejbHomeGetLastLoginByLoginID(Integer loginID) throws FinderException{
+    	StringBuffer sql = new StringBuffer();
+    	sql.append(" select max(in_stamp) from ic_login_rec  ");
+    	sql.append(" where ic_login_id =  ").append(loginID);
+    	sql.append(" and in_stamp < ");
+    	sql.append(" (select max(in_stamp) from ic_login_rec where ic_login_id =").append(loginID).append( ") ");
+    	try {
+			return getDateTableValue(sql.toString());
+		} catch (SQLException e) {
+			throw new FinderException(e.getMessage());
+		}
+    }
+    
+    public java.sql.Date ejbHomeGetLastLoginByUserID(Integer userID) throws FinderException{
+    	StringBuffer sql = new StringBuffer();
+    	sql.append(" select max(in_stamp) from ic_login_rec r, ic_login l  ");
+    	sql.append(" where l.ic_login_id = r.ic_login_id ");
+    	sql.append(" and l.ic_user_id = ").append(userID);
+    	sql.append(" and in_stamp < ");
+    	sql.append(" (select max(in_stamp) from ic_login_rec r2,ic_login l2 where r2.ic_login_id = l2.ic_login_id  ");
+    	sql.append(" and l2.ic_user_id = ").append(userID).append(" ) ");
+    	System.out.println(sql.toString());
+    	try {
+			return getDateTableValue(sql.toString());
+		} catch (SQLException e) {
+			throw new FinderException(e.getMessage());
+		}
+    }
 
 
 }

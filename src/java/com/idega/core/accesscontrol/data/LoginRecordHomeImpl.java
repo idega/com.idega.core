@@ -32,5 +32,19 @@ public LoginRecord findByLoginID(int p0)throws javax.ejb.FinderException{
  }
 
 
+public java.sql.Date getLastLoginByLoginID(java.lang.Integer p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.sql.Date theReturn = ((LoginRecordBMPBean)entity).ejbHomeGetLastLoginByLoginID(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public java.sql.Date getLastLoginByUserID(java.lang.Integer p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.sql.Date theReturn = ((LoginRecordBMPBean)entity).ejbHomeGetLastLoginByUserID(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

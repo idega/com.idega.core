@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
+import com.idega.core.accesscontrol.data.LoginRecord;
+import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
@@ -787,6 +789,36 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		}
 		return chosenRecord;
+	}
+	
+	/**
+	 * Gets the last login record date before current logged record ( second last entry)
+	 * @param userId
+	 * @return
+	 */
+	public static java.sql.Date getLastLoginByUser(Integer userId) throws RemoteException{
+		try {
+			return getLoginRecordHome().getLastLoginByUserID(userId);
+		} catch (FinderException e) {
+			throw new RemoteException(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Gets the last login record date before current logged record ( second last entry)
+	 * @param userId
+	 * @return
+	 */
+	public static java.sql.Date getLastLoginByLogin(Integer loginId) throws RemoteException{
+		try {
+			return getLoginRecordHome().getLastLoginByLoginID(loginId);
+		} catch (FinderException e) {
+			throw new RemoteException(e.getMessage());
+		}
+	}
+	
+	private static LoginRecordHome getLoginRecordHome()throws RemoteException{
+		return (LoginRecordHome) IDOLookup.getHome(LoginRecord.class);
 	}
 
 	public boolean isLoginExpired(LoginTable loginTable) {
