@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.30 2002/03/15 12:09:33 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.31 2002/04/30 10:47:25 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -348,8 +348,11 @@ writer.println("-->");
   public void __print(IWContext iwc)throws Exception{
 
 
-          if (iwc.getLanguage().equals("WML")){
-                  getResponse().setContentType("text/vnd.wap.wml");
+          if( iwc.getLanguage().equals("HTML") ){
+            getResponse().setContentType("text/html");
+          }
+          else if (iwc.getLanguage().equals("WML")){
+            getResponse().setContentType("text/vnd.wap.wml");
           }
 
           getPage()._print(iwc);
