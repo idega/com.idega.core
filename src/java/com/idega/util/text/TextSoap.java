@@ -89,7 +89,6 @@ public class TextSoap {
 		newString = new String("");
 		outVector = new Vector(10);
 		newString = inputString;
-		String tempString = new String("");
 
 		try {
 			while (newString.indexOf(beginAndEndToken) != -1) {
@@ -139,7 +138,6 @@ public class TextSoap {
 		newString = new String("");
 		outVector = new Vector(10);
 		newString = inputString;
-		String tempString = new String("");
 
 		try {
 			while (newString.indexOf(separatorString) != -1) {

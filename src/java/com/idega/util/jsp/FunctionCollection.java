@@ -436,8 +436,6 @@ private PoolManager poolMgr;
 
 		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
 
-		int	dayW = calendar.get(calendar.DAY_OF_WEEK);
-
 		int	monthY = calendar.get(calendar.MONTH)+1;
 
 		int	year = calendar.get(calendar.YEAR)+000;
@@ -471,8 +469,6 @@ private PoolManager poolMgr;
 
 
 		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
-
-		int	dayW = calendar.get(calendar.DAY_OF_WEEK);
 
 		int	monthY = calendar.get(calendar.MONTH)+1;
 
@@ -610,8 +606,6 @@ private PoolManager poolMgr;
 
 		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
 
-		int	dayW = calendar.get(calendar.DAY_OF_WEEK);
-
 		int	monthY = calendar.get(calendar.MONTH)+1;
 
 		int	year = calendar.get(calendar.YEAR)+000;
@@ -631,28 +625,4 @@ private PoolManager poolMgr;
 
 
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-

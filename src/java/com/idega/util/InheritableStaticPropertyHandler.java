@@ -10,7 +10,7 @@ package com.idega.util;
 
 
 
-import java.util.Map;
+//import java.util.Map;
 
 import com.idega.util.datastructures.InheritablePropertyStorer;
 
@@ -64,7 +64,7 @@ public class InheritableStaticPropertyHandler
 
    public static void setProperty(String propertyName, Object storedPropertyObject,InheritablePropertyStorer storer){
 
-      Map map = storer.getMap();
+      //Map map = storer.getMap();
 
 //      map.put();
 
@@ -74,7 +74,7 @@ public class InheritableStaticPropertyHandler
 
    public static Object getProperty(String propertyName,InheritablePropertyStorer storer){
 
-      Map map = storer.getMap();
+      //Map map = storer.getMap();
 
 //      return map.get();
 

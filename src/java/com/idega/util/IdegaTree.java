@@ -238,7 +238,7 @@ public class IdegaTree {
 
     IdegaNode myNode = (IdegaNode)(theTree.remove(parent));
 
-    boolean temp = myNode.removeChildren(childe);
+    myNode.removeChildren(childe);
 
     theTree.put(parent, myNode);
 

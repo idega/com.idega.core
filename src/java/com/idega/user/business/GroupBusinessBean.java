@@ -565,7 +565,6 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	      List returnGroups = new ArrayList();
 
 	      int j = 0;
-	      int k = 0;
 	      Iterator iter2 = GroupsContained.values().iterator();
 	      if(groupTypes != null && groupTypes.length > 0){
 	    

@@ -111,7 +111,6 @@ public class MiscUtil {
 
     public static void dumpThreads()
     {
-        Object obj = null;
         ThreadGroup threadgroup1 = null;
         for(ThreadGroup threadgroup = Thread.currentThread().getThreadGroup(); threadgroup != null; threadgroup = threadgroup.getParent())
             threadgroup1 = threadgroup;

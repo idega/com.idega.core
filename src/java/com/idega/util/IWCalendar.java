@@ -454,7 +454,7 @@ public class IWCalendar {
 	public String getLocaleDate(Locale locale, int format, int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
 		DateFormat dateFormat = DateFormat.getDateInstance(format, locale);
-		return dateFormat.format(_calendar.getTime());
+		return dateFormat.format(calendar.getTime());
 	}
 
 	/**

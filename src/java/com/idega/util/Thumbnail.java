@@ -24,7 +24,6 @@ public  class Thumbnail
             System.err.println("Usage: java Thumbnail INFILE OUTFILE WIDTH HEIGHT QUALITY");
             System.exit(1);
         }
-        long start = System.currentTimeMillis();
         String fileName = args[0];
         String thumbName = args[1];
         int thumbWidth = Integer.parseInt(args[2]);

@@ -55,8 +55,6 @@ public class GenericUserComparator implements Comparator {
   	else
   		collator = IsCollator.getIsCollator();
   		
-      User p1 = (User) o1;
-      User p2 = (User) o2;
       int result = 0;
 
       switch (this.sortBy) {

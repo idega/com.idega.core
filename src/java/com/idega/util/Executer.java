@@ -234,7 +234,7 @@ public class Executer {
 
         Runtime runner = Runtime.getRuntime();
 
-        Process p = Runtime.getRuntime().exec(exec.toString());
+        Process p = runner.exec(exec.toString());
 
 
 

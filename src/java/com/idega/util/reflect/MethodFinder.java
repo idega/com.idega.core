@@ -346,7 +346,6 @@ public class MethodFinder
 	public Method[] getMethodsWithName(Class objectClass, String name, int maxNumberOfParameters)
 	{
 		Method[] allMethods = objectClass.getMethods();
-		int returningSize = 0;
 		//Method[] matchedMethods = new Method[returningSize];
 		Vector matchedMethodsVector = new Vector();
 		for (int i = 0; i < allMethods.length; i++)
