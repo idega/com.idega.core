@@ -500,7 +500,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		try {
 			Collection relatedGroupIDsColl = ejbFindRelatedGroupIds(this);
-			if (relatedGroupIDsColl.size()==0)
+			if (relatedGroupIDsColl.isEmpty())
 				return theReturn;
 			String commaDelimitedRelatedGroupIds = IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(relatedGroupIDsColl);
 			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false, commaDelimitedRelatedGroupIds));
