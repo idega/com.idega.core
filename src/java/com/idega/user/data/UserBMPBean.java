@@ -9,10 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -48,6 +49,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
 
 
@@ -442,13 +444,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			else setColumn(getColumnNameLastName(), lName);
 		}	
 	}
-
+	
 	/**
 	 * Divides the name string into first(1),middle(1-*) and lastname(1). <br>
 	 * and uses setFirstName(),setMiddleName() and setLastName().
 	 */
-	public void setFullName(String name) {
-		if ((name != null) && (name.length() > 0)) {
+	public void setFullName(String fullName) {
+		if ((fullName != null) && (fullName.length() > 0)) {
+		    Name name = new Name(fullName).capitalize();
+		    setFirstName(name.getFirstName());
+		    setMiddleName(name.getMiddleName());
+		    setLastName(name.getLastName());
+		    /*
 			StringTokenizer token = new StringTokenizer(name);
 			int countWithoutFirstAndLast = token.countTokens() - 2;
 
@@ -479,6 +486,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			else { //remove last name
 				this.removeFromColumn(this.getColumnNameLastName());
 			}
+			*/
 		}
 	}
 
