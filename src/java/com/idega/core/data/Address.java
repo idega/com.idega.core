@@ -97,7 +97,7 @@ public class Address extends GenericEntity{
             return (AddressType) getColumnValue("address_type_id");
 	}
 
-	public void setAddressTypeID(String address_type_id){
+	public void setAddressTypeID(int address_type_id){
 		setColumn("address_type_id",address_type_id);
 	}
         public int getAddressTypeID() {
