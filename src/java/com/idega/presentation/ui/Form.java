@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIForm;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -26,13 +28,18 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.PresentationObjectUtil;
 import com.idega.presentation.Script;
+import com.idega.presentation.text.Text;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class Form extends InterfaceObject {
+public class Form
+//TODO: Move to extend UIForm
+//extends UIForm{
+extends InterfaceObject {
 
 	public static final String ACTION_ON_BLUR = "onblur";
 	public static final String ACTION_ON_CHANGE = "onchange";
@@ -934,4 +941,58 @@ public class Form extends InterfaceObject {
 	public boolean isContainer() {
 		return true;
 	}
+	
+	
+	//TODO: Commit in these methods when extension is moved to be UIForm
+	/*
+	 * 
+	
+	//Legacy methods reimplemented from PresentationObject -> UIComponent move
+	public void add(UIComponent component){
+		getChildren().add(component);
+	}
+	
+	public String getID(){
+		return getId();
+	}
+
+	public void empty() {
+		getChildren().clear();
+	}
+	
+	public void add(String text){
+		add(new Text(text));
+	}	
+	
+	public void addBreak(){
+		add(Text.getBreak());
+	}
+	
+	private Map markupAttributesMap;
+	
+	protected Map getMarkupAttributes(){
+		if (markupAttributesMap==null){
+			markupAttributesMap=new HashMap();
+		}
+		return markupAttributesMap;
+	}
+	
+	protected void setMarkupAttribute(String key,String value){
+		getMarkupAttributes().put(key,value);
+	}
+	
+	protected void setMarkupAttribute(String key,int value){
+		getMarkupAttributes().put(key,new Integer(value));
+	}
+	
+	protected String getMarkupAttribute(String key){
+		return (String)getMarkupAttributes().get(key);
+	}
+	public Page getParentPage()
+	{
+		return PresentationObjectUtil.getParentPage(this);
+	}
+	
+	*/
+	
 } // Class ends
