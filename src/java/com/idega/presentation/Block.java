@@ -263,42 +263,21 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   /** cache specifically for view right and for edit rights**/
   private void setCacheKey(IWContext iwc){
+    boolean edit = false;
+    String locale = iwc.getCurrentLocale().toString();
 
-    //boolean loggedon = LoginBusiness.isLoggedOn(iwc);
-     /* public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception{
-    return hasPermission( _PERMISSIONKEY_EDIT , obj, iwc);
-  }*/
-  boolean edit = false;
-
-  try{
-    edit = iwc.hasEditPermission(this);
-  }
-  catch(Exception e){
-    System.err.println("Block: Error checking for edit rights");
-  }
-
-  String locale = iwc.getCurrentLocale().toString();
-  cacheKey += this.getCacheState(iwc,locale+edit,locale,edit);
-
-  /**@todo remove debug**/
-  debug("cachKey = "+cacheKey);
-
-   // if(loggedon){
-      //String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
-     // String parametervalue = String.valueOf(getParentObjectInstanceID());
-      /*
-      if(parameter.equals(AccessControl.CLUB_ADMIN_GROUP)){
-        parametervalue = (String)iwc.getSessionAttribute(parameter);
-      }
-      else{
-        parametervalue = (String)iwc.getSessionAttribute(parameter);
-        parametervalue += concatter;
-        parametervalue += AccessControl.CLUB_ADMIN_GOLF_UNION_ID_ATTRIBUTE;
-        parametervalue += AccessControl.getGolfUnionOfClubAdmin(iwc);
-      }
-      cacheKey = cacheKey+concatter+parameter+concatter+parametervalue;
+    try{
+      edit = iwc.hasEditPermission(this);
     }
-    */
+    catch(Exception e){
+      System.err.println("Block: Error checking for edit rights");
+    }
+
+    cacheKey += getCacheState(iwc,locale+edit,locale,edit);
+
+    /**@todo remove debug**/
+    debug("cachKey = "+cacheKey);
+
   }
 
   protected boolean isCacheable(){
@@ -311,15 +290,15 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * string prefixed to it unless the block output is the same for every local and edit/view rights.
    * @return cacheStatePrefix
    */
-  private String getCacheState(IWContext iwc, String cacheStatePrefix, String locale, boolean edit){
+  protected String getCacheState(IWContext iwc, String cacheStatePrefix, String locale, boolean edit){
     return cacheStatePrefix;
   }
 
-  /**
+  /**@ todo implement
    * Override this method to invalidate something other than the current state.
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
    */
-  private void invalidateCache(IWContext iwc){
+  protected void invalidateCache(IWContext iwc){
     if( cacheKey!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
   }
 
