@@ -26,6 +26,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
+import com.idega.data.MetaDataCapable;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -37,7 +38,7 @@ import com.idega.util.ListUtil;
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
-public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode {
+public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode,MetaDataCapable {
 	public static final int GROUP_ID_EVERYONE = -7913;
 	public static final int GROUP_ID_USERS = -1906;
 
