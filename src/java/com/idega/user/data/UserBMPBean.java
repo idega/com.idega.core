@@ -15,6 +15,7 @@ import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.core.contact.data.Email;
@@ -325,6 +326,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getGeneralGroup().getHomePage();
 	}
 	
+	public int getHomeFolderID() {
+		return getGeneralGroup().getHomeFolderID();
+	}
+
+	public ICFile getHomeFolder() {
+		return getGeneralGroup().getHomeFolder();
+	}
+	
 	public Timestamp getCreated() {
 		return getGeneralGroup().getCreated();
 	}
@@ -509,6 +518,40 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		try{
 			Group group = getGeneralGroup();
 			group.setHomePage(page);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	
+	public void setHomeFolderID(int fileID)  {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomeFolderID(fileID);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+
+	public void setHomeFolderID(Integer fileID) {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomeFolderID(fileID);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+
+	public void setHomeFolder(ICFile file)  {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomeFolder(file);
 			group.store();
 		}
 		catch(Exception e){

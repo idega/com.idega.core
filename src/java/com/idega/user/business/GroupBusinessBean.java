@@ -27,6 +27,8 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -76,7 +78,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   private AddressHome addressHome;
   private EmailHome emailHome;
   private PhoneHome phoneHome;
+  private ICFileHome fileHome;
   private String[] userRepresentativeType;
+  private static final String GROUP_HOME_FOLDER_LOCALIZATION_PREFIX = "ic_group.home_folder.";
 
 
   public GroupBusinessBean() {
@@ -1013,6 +1017,10 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }  
   
   protected Group createGroup(String name,String description,String type,int homePageID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException{
+	return createGroup(name,description,type,homePageID,-1,aliasID,createUnderDomainRoot,parentGroup);
+  } 
+  
+  protected Group createGroup(String name,String description,String type,int homePageID,int homeFolderID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException{
 		Group newGroup;
 		newGroup = getGroupHome().create();
 		newGroup.setName(name);
@@ -1024,7 +1032,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		if (aliasID != -1) {
 			newGroup.setAliasID(aliasID);
 		}
+		
+		if ( homeFolderID != -1 ) {
+			newGroup.setHomeFolderID(homeFolderID);
+		}
+		
 		newGroup.store(); 
+		
+		if(homeFolderID == -1 ) {
+			createGroupHomeFolder(newGroup);
+		}
 		
 		if(createUnderDomainRoot){
 			addGroupUnderDomainRoot(this.getIWApplicationContext().getDomain(),newGroup);
@@ -1039,7 +1056,33 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		return newGroup;
   }
   
-  public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)  {
+	public ICFileHome getICFileHome(){
+		if(fileHome==null){
+			try{
+				fileHome = (ICFileHome)IDOLookup.getHome(ICFile.class);
+			}
+			catch(RemoteException rme){
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return fileHome;
+	}
+
+	public ICFile createGroupHomeFolder(Group group) throws CreateException {
+		ICFile file = (ICFile)getICFileHome().create();
+		file.setName(group.getName());
+		file.setLocalizationKey(GROUP_HOME_FOLDER_LOCALIZATION_PREFIX+group.getGroupType());
+		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+		file.setDescription("This is a home folder for a group");
+		file.store();
+		
+		group.setHomeFolder(file);
+		group.store();
+		
+		return file;
+	}
+
+	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)  {
     // try to get the group
     Group group;
     try {

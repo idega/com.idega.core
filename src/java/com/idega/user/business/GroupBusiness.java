@@ -8,6 +8,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
@@ -457,4 +458,6 @@ public interface GroupBusiness extends com.idega.business.IBOService {
   public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException;
   
   public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
+	public ICFile createGroupHomeFolder(Group group) throws CreateException;
+
 }

@@ -9,8 +9,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
+import com.idega.core.data.ICApplicationBinding;
+import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.user.data.User;
 import com.idega.core.version.data.ICItem;
@@ -19,7 +22,11 @@ import com.idega.core.version.util.ICVersionQuery;
 import com.idega.data.BlobWrapper;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORuntimeException;
+import com.idega.data.IDOStoreException;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
@@ -53,6 +60,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	private static final String FILE_VALUE = "FILE_VALUE";
 	public static String IC_ROOT_FOLDER_CACHE_KEY = "IC_ROOT_FOLDER";
 	public static String IC_ROOT_FOLDER_NAME = "ICROOT";
+	public static String IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER = "system_folder";
 	
 	public static final int NODETYPE_FOLDER = 0;
 	public static final int NODETYPE_FILE = 1;
@@ -90,6 +98,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		addAttribute(getColumnDeleted(), "Deleted", true, true, String.class, 1);
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(getColumnDeletedWhen(), "Deleted when", true, true, Timestamp.class);
+		addAttribute(getColumnNameLocalizationKey(), "Localization key", true, true, String.class, 255);
 
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
@@ -130,6 +139,9 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public static String getColumnNameLocale() {
 		return "IC_LOCALE_ID";
 	}
+	public static String getColumnNameLocalizationKey() {
+		return "IC_LOCALEIZATION_KEY";
+	}
 	public static String getColumnDeleted() {
 		return "DELETED";
 	}
@@ -161,6 +173,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	public String getName() {
 		return getStringColumnValue(getColumnNameName());
+	}
+	
+	public String getLocalizationKey() {
+		return getStringColumnValue(getColumnNameLocalizationKey());
 	}
 
 	public String getDescription() {
@@ -197,6 +213,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	public void setName(String Name) {
 		setColumn(getColumnNameName(), Name);
+	}
+	
+	public void setLocalizationKey(String key) {
+		setColumn(getColumnNameLocalizationKey(), key);
 	}
 
 	public void setDescription(String description) {
@@ -406,12 +426,55 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	public Object ejbFindRootFolder() throws FinderException {
 		//EntityFinder.findAllByColumn(file,com.idega.core.data.ICFileBMPBean.getColumnNameName(),com.idega.core.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME,com.idega.core.data.ICFileBMPBean.getColumnNameMimeType(),com.idega.core.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
-		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this);
-		query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
-		query.appendAndEqualsQuoted(com.idega.core.file.data.ICFileBMPBean.getColumnNameMimeType(), com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+		Object pkToReturn;
+	
+		try {
+			ICApplicationBindingHome bHome =((ICApplicationBindingHome)IDOLookup.getHome(ICApplicationBinding.class));
+			
+			try {
+				ICApplicationBinding b = bHome.findByPrimaryKey(ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+				pkToReturn = new Integer(b.getValue());
+			} catch (FinderException e) {
+				IDOQuery query = idoQuery();
+				query.appendSelectAllFrom(this);
+				query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+				query.appendAndEqualsQuoted(com.idega.core.file.data.ICFileBMPBean.getColumnNameMimeType(), com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+				
+				Object folderPK = idoFindOnePKByQuery(query);
+				
+				try {
+					ICApplicationBinding b = bHome.create();
+					b.setKey(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+					b.setBindingType(IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER);
+								
+					b.setValue(folderPK.toString());
+					b.store();
+					
+					ICFile folder = ((ICFileHome)getEJBLocalHome()).findByPrimaryKey(folderPK);
+					folder.setLocalizationKey(IC_ROOT_FOLDER_NAME);
+					folder.store();
+				}  catch (IDOStoreException e1) {
+					e1.printStackTrace();
+					throw new IDORuntimeException(e1,this);
+				} catch (CreateException e1) {
+					e1.printStackTrace();
+					throw new IDORuntimeException(e1,this);
+				} catch (FinderException e1) {
+					e1.printStackTrace();
+					throw new IDORuntimeException(e1,this);
+				}
+				
+				pkToReturn = folderPK;
+			}
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+			throw new IDORuntimeException(e,this);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			throw new IDORuntimeException(e,this);
+		}
 
-		return idoFindOnePKByQuery(query);
+		return pkToReturn;
 	}
 
 	/* (non-Javadoc)
@@ -430,9 +493,11 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	}
 
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
-		if (getMimeType().equals(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER)) {
+		if (getLocalizationKey() != null) {
 			IWBundle bundle = iwac.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
-			return bundle.getResourceBundle(locale).getLocalizedString(getNodeName(),getNodeName());
+			String defaultName = "Untitled";
+			String name = bundle.getResourceBundle(locale).getLocalizedString(getLocalizationKey(),defaultName);
+			return (!defaultName.equals(name))?name:getNodeName();
 		} else {
 			return getNodeName();
 		}

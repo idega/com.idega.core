@@ -55,12 +55,12 @@ public interface ICTreeNode {
 	public String getNodeName();
 	
 	/**
-	 *  Returns the name of the Node localized, if localization possible, else it returns getNodeName()
+	 *  @return Returns the name of the Node localized, if localization possible, else it returns getNodeName()
 	 */
 	public String getNodeName(Locale locale);
 	
 	/**
-	 *  Returns the name of the Node localized, if localization possible, else it returns getNodeName()
+	 *  @return Returns the name of the Node localized from the bundle, if localization possible, else it returns getNodeName(Locale locale)
 	 */
 	public String getNodeName(Locale locale, IWApplicationContext iwac);
 	

@@ -2,6 +2,8 @@ package com.idega.user.data;
 
 import java.sql.Timestamp;
 
+import com.idega.core.file.data.ICFile;
+
 
 public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable
 {
@@ -84,6 +86,11 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public int getPermissionControllingGroupID();
  public Group getPermissionControllingGroup();
  public void setIsPermissionControllingGroup(boolean isControlling);
-  public boolean isPermissionControllingGroup();
-  public boolean isAlias();
+ public boolean isPermissionControllingGroup();
+ public boolean isAlias();
+ public int getHomeFolderID();
+ public ICFile getHomeFolder();
+ public void setHomeFolderID(int fileID);
+ public void setHomeFolderID(Integer fileID);
+ public void setHomeFolder(ICFile file);
 }

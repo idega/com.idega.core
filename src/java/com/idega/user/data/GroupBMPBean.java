@@ -17,6 +17,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.data.ICTreeNode;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.location.data.Address;
 import com.idega.core.net.data.ICNetwork;
 import com.idega.core.net.data.ICProtocol;
@@ -57,6 +58,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String COLUMN_EXTRA_INFO = "EXTRA_INFO";
 	static final String COLUMN_CREATED = "CREATED";
 	static final String COLUMN_HOME_PAGE_ID = "HOME_PAGE_ID";
+	static final String COLUMN_HOME_FOLDER_ID = "HOME_FOLDER_ID";
 	static final String COLUMN_ALIAS_TO_GROUP = "ALIAS_ID";
 	static final String COLUMN_PERMISSION_CONTROLLING_GROUP = "PERM_GROUP_ID";
 	static final String COLUMN_IS_PERMISSION_CONTROLLING_GROUP = "IS_PERM_CONTROLLING";
@@ -96,6 +98,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		addManyToOneRelationship(COLUMN_ALIAS_TO_GROUP, Group.class);
 		setNullable(COLUMN_ALIAS_TO_GROUP, true);
+		
+		addManyToOneRelationship(COLUMN_HOME_FOLDER_ID,ICFile.class);
 
 	}
 	public final String getEntityName() {
@@ -276,6 +280,24 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void setHomePage(ICPage page) {
 		setHomePageID((Integer)page.getPrimaryKey());
 	}
+	
+	
+	public int getHomeFolderID() {
+		return getIntColumnValue(COLUMN_HOME_FOLDER_ID);
+	}
+	public ICFile getHomeFolder() {
+		return (ICFile)getColumnValue(COLUMN_HOME_FOLDER_ID);
+	}
+	public void setHomeFolderID(int fileID) {
+		setColumn(COLUMN_HOME_FOLDER_ID, fileID);
+	}
+	public void setHomeFolderID(Integer fileID) {
+		setColumn(COLUMN_HOME_FOLDER_ID, fileID);
+	}
+	public void setHomeFolder(ICFile file) {
+		setHomePageID((Integer)file.getPrimaryKey());
+	}
+
 
 	public String getShortName() {
 		return getStringColumnValue(COLUMN_SHORT_NAME);

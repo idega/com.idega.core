@@ -37,4 +37,6 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public void unDelete(boolean p0)throws java.sql.SQLException;
  public void delete()throws java.sql.SQLException;
  public boolean isFolder();
+ public String getLocalizationKey();
+ public void setLocalizationKey(String key);
 }
