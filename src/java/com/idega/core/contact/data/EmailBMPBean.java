@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import javax.ejb.FinderException;
 import com.idega.core.user.data.User;
+import com.idega.data.IDOQuery;
 import com.idega.user.data.UserBMPBean;
 /**
  * Title:        IW Core
@@ -79,7 +80,8 @@ public class EmailBMPBean
 	}
 	public Integer ejbFindEmailByAddress(String address) throws FinderException
 	{
-		Collection coll = super.idoFindAllIDsByColumnOrderedBySQL(this.getColumnNameAddress(), address);
+		IDOQuery query = idoQueryGetSelect().appendWhereEqualsQuoted(getColumnNameAddress(),address );
+		Collection coll = super.idoFindPKsByQuery(query);
 		if (!coll.isEmpty())
 			return (Integer) coll.iterator().next();
 		else
