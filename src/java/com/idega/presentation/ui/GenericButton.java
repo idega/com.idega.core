@@ -1,18 +1,25 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
+ * $Id: GenericButton.java,v 1.29 2005/03/08 18:15:37 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.faces.context.FacesContext;
 
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
@@ -20,29 +27,68 @@ import com.idega.util.URLUtil;
 import com.idega.util.text.TextSoap;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * This component is for rendering out a input element of type button.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 18:15:37 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.29 $
+ */
 public class GenericButton extends GenericInput {
 
+	//constants:
+	private static final String buttonImageStyle = "cursor:hand;";
+	
+	//Instance variables
 	private int _pageID = -1;
 	private int _fileID = -1;
 	private boolean asImageButton = false;
-	private Image defaultImage;
-	private final String buttonImageStyle = "cursor:hand;";
 	private Class _windowClassToOpen;
 	private Map parameterMap;
-	
 	private boolean _onClickConfirm = false;
 	private String _confirmMessage;
 	private int _parentPageID = -1;
-	
 	private Class classToInstanciate;
 	private Class templatePageClass;
 	private String templateForObjectInstanciation;
-
 	private String _URL;
 
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[13];
+		values[0] = super.saveState(ctx);
+		values[1] = new Integer(_pageID);
+		values[2] = new Integer(_fileID);
+		values[3] = Boolean.valueOf(asImageButton);
+		values[4] = _windowClassToOpen;
+		values[5] = parameterMap;
+		values[6] = Boolean.valueOf(_onClickConfirm);
+		values[7] = _confirmMessage;
+		values[8] = new Integer(_parentPageID);
+		values[9] = classToInstanciate;
+		values[10] = templatePageClass;
+		values[11] = templateForObjectInstanciation;
+		values[12] = _URL;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_pageID = ((Integer)values[1]).intValue();
+		_fileID = ((Integer)values[2]).intValue();
+		asImageButton = ((Boolean)values[3]).booleanValue();
+		_windowClassToOpen = (Class)values[4];
+		parameterMap = (Map)values[6];
+		_onClickConfirm = ((Boolean)values[7]).booleanValue();
+		_confirmMessage = (String)values[8];
+		_parentPageID = ((Integer)values[9]).intValue();
+		classToInstanciate = (Class)values[10];
+		templatePageClass = (Class)values[11];
+		templateForObjectInstanciation = (String) values[12];
+		_URL = (String)values[13];
+	}
+	
 	public GenericButton() {
 		this("untitled", "");
 	}
@@ -64,8 +110,25 @@ public class GenericButton extends GenericInput {
 		this.asImageButton = asImageButton;
 	}
 
+	//TODO remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Image oldDefaultImage;
 	public void setButtonImage(Image image) {
-		this.defaultImage = image;
+		if(IWMainApplication.useJSF){
+			getFacets().put("buttonimage",image);
+		}
+		else{
+			this.oldDefaultImage =image;
+		}
+	}
+	
+	protected Image getButtonImage(){
+		if(IWMainApplication.useJSF){
+			return (Image)getFacet("buttonimage");
+		}
+		else{
+			return this.oldDefaultImage;
+		}
 	}
 
 	private void setSource(String source) {
@@ -127,7 +190,8 @@ public class GenericButton extends GenericInput {
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			if (asImageButton) {
-				defaultImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
+				Image generatedImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
+				setButtonImage(generatedImage);
 			}
 			if (!_onClickConfirm) {
 				if (_windowClassToOpen != null) {
@@ -153,14 +217,15 @@ public class GenericButton extends GenericInput {
 			}
 			
 			getParentPage();
-
-			if (defaultImage == null) {
+			Image buttonImage = getButtonImage();
+			if (buttonImage == null) {
+				//no image on button:
 				super.print(iwc);
 			}
 			else {
-				String URL = defaultImage.getURL();
+				String URL = buttonImage.getURL();
 				if (URL == null) {
-					URL = defaultImage.getMediaURL(iwc);
+					URL = buttonImage.getMediaURL(iwc);
 				}
 
 				ICDomain d = iwc.getDomain();
@@ -177,17 +242,17 @@ public class GenericButton extends GenericInput {
 					}
 				}
 
-				defaultImage.setURL(URL);
-				defaultImage.addMarkupAttributes(getMarkupAttributes());
-				defaultImage.setStyleAttribute(buttonImageStyle);
-				defaultImage.setName(getName());
+				buttonImage.setURL(URL);
+				buttonImage.addMarkupAttributes(getMarkupAttributes());
+				buttonImage.setStyleAttribute(buttonImageStyle);
+				buttonImage.setName(getName());
 
 				if (getInputType().equals(INPUT_TYPE_IMAGE)) {
 					setSource(URL);
 					super.print(iwc);
 				}
 				else
-					print("<img " + defaultImage.getMarkupAttributesString() + " >");
+					print("<img " + buttonImage.getMarkupAttributesString() + " >");
 			}
 		} 
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
@@ -199,8 +264,8 @@ public class GenericButton extends GenericInput {
 
 	public Object clone() {
 		GenericButton obj = (GenericButton) super.clone();
-		if (this.defaultImage != null) {
-			obj.defaultImage = (Image) this.defaultImage.clone();
+		if (this.oldDefaultImage != null) {
+			obj.oldDefaultImage = (Image) this.oldDefaultImage.clone();
 		}
 		return obj;
 	}
