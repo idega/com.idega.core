@@ -19,7 +19,7 @@ import com.idega.data.*;
 public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 
   private static String TABLE_NAME="IC_GROUP_TYPE";
-  private static String TYPE_COLUMN="TYPE";
+  private static String TYPE_COLUMN="GROUP_TYPE";
   private static String DESCRIPTION_COLUMN="DESCRIPTION";
   private static String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
 
