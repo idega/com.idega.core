@@ -266,11 +266,11 @@ public class CategoryFinder {
 
       if (L != null) {
 
-        return ((ICObjectInstance) L.get(0)).getID();
+	return ((ICObjectInstance) L.get(0)).getID();
 
       } else {
 
-        return -1;
+	return -1;
 
       }
 
@@ -316,7 +316,7 @@ public class CategoryFinder {
 
       if (id <= 0 && CreateNew) {
 
-        id = CategoryBusiness.getInstance().createCategory(iObjectInstanceId, type);
+	id = CategoryBusiness.getInstance().createCategory(iObjectInstanceId, type);
 
       }
 
@@ -360,9 +360,9 @@ public class CategoryFinder {
 
       if (ids.length == 0 && CreateNew) {
 
-        ids = new int[1];
+	ids = new int[1];
 
-        ids[0] = CategoryBusiness.getInstance().createCategory(iObjectInstanceId, type);
+	ids[0] = CategoryBusiness.getInstance().createCategory(iObjectInstanceId, type);
 
       }
 
@@ -434,11 +434,11 @@ public class CategoryFinder {
 
       if (L != null) {
 
-        return ((IDOLegacyEntity) L.get(0)).getID();
+	return ((IDOLegacyEntity) L.get(0)).getID();
 
       } else {
 
-        return -1;
+	return -1;
 
       }
 
@@ -490,15 +490,15 @@ public class CategoryFinder {
 
       if (sids != null && sids.length > 0) {
 
-        int[] ids = new int[sids.length];
+	int[] ids = new int[sids.length];
 
-        for (int i = 0; i < sids.length; i++) {
+	for (int i = 0; i < sids.length; i++) {
 
-          ids[i] = Integer.parseInt(sids[i]);
+	  ids[i] = Integer.parseInt(sids[i]);
 
-        }
+	}
 
-        return ids;
+	return ids;
 
       }
 
@@ -792,7 +792,7 @@ public class CategoryFinder {
 
       if (i > 0) {
 
-        sql.append(",");
+	sql.append(",");
 
       }
 
@@ -848,23 +848,23 @@ public class CategoryFinder {
 
       if (ids != null) {
 
-        HashSet H = new HashSet();
+	HashSet H = new HashSet();
 
-        Integer I;
+	Integer I;
 
-        for (int i = 0; i < ids.length; i++) {
+	for (int i = 0; i < ids.length; i++) {
 
-          I = new Integer(ids[i]);
+	  I = new Integer(ids[i]);
 
-          if (!H.contains(I)) {
+	  if (!H.contains(I)) {
 
-            H.add(I);
+	    H.add(I);
 
-          }
+	  }
 
-        }
+	}
 
-        return H;
+	return H;
 
       }
 
@@ -900,11 +900,11 @@ public class CategoryFinder {
 
   public Collection listOfCategoryEntity(Class categoryEntityClass, int iCategoryId) {
 
-    if (categoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
+    //if (categoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
 
       try {
 
-        return EntityFinder.getInstance().findAllByColumn(categoryEntityClass, com.idega.data.CategoryEntityBMPBean.getColumnCategoryId(), iCategoryId);
+	return EntityFinder.getInstance().findAllByColumn(categoryEntityClass, com.idega.data.CategoryEntityBMPBean.getColumnCategoryId(), iCategoryId);
 
       } catch (IDOFinderException ex) {
 
@@ -912,7 +912,7 @@ public class CategoryFinder {
 
       }
 
-    }
+    //}
 
     return null;
 
@@ -954,15 +954,15 @@ public class CategoryFinder {
 
   public List listOfCategoryEntityByInstanceId(Class categoryEntityClass, int ObjectInstanceId) {
 
-    if (categoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
+    //if (categoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
 
 
 
       try {
 
-        String entityName = ((CategoryEntity) categoryEntityClass.newInstance()).getEntityName();
+	String entityName = ((CategoryEntity) categoryEntityClass.newInstance()).getEntityName();
 
-        return EntityFinder.getInstance().findAll(categoryEntityClass, getRelatedEntitySQL(entityName, ObjectInstanceId));
+	return EntityFinder.getInstance().findAll(categoryEntityClass, getRelatedEntitySQL(entityName, ObjectInstanceId));
 
       } catch (IDOFinderException ex) {
 
@@ -974,7 +974,7 @@ public class CategoryFinder {
 
       }
 
-    }
+    //}
 
     return null;
 
@@ -1010,7 +1010,7 @@ public class CategoryFinder {
 
       try {
 
-        return EntityFinder.getInstance().findAll(EntityClass, getRelatedEntitySql(EntityClass, CategoryEntityClass, EntityColumn, ObjectInstanceId));
+	return EntityFinder.getInstance().findAll(EntityClass, getRelatedEntitySql(EntityClass, CategoryEntityClass, EntityColumn, ObjectInstanceId));
 
       } catch (IDOFinderException ex) {
 
