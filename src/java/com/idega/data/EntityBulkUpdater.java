@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.1 2001/05/25 00:26:36 palli Exp $
+ * $Id: EntityBulkUpdater.java,v 1.2 2001/06/14 17:17:00 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,9 +21,11 @@ import java.sql.SQLException;
 public class EntityBulkUpdater {
   private Vector insert_ = null;
   private Vector update_ = null;
+  private Vector delete_ = null;
 
   public static String insert = "insert";
   public static String update = "update";
+  public static String delete = "delete";
 
   public EntityBulkUpdater() {
   }
@@ -48,6 +50,11 @@ public class EntityBulkUpdater {
         insert_ = new Vector();
       insert_.add(entity);
     }
+    else if (action.equalsIgnoreCase(delete)) {
+      if (delete_ == null)
+        delete_ = new Vector();
+      delete_.add(entity);
+    }
     else
       return(false);
 
@@ -59,7 +66,7 @@ public class EntityBulkUpdater {
    */
   public void execute() {
     Connection c = null;
-    if ((update_ == null) && (insert_ == null))
+    if ((update_ == null) && (insert_ == null) && (delete_ == null))
       return;
     try {
       c = ConnectionBroker.getConnection();
@@ -69,6 +76,7 @@ public class EntityBulkUpdater {
           GenericEntity e = (GenericEntity)i.next();
           e.update(c);
         }
+        update_.clear();
       }
 
       if (insert_ != null) {
@@ -77,19 +85,31 @@ public class EntityBulkUpdater {
           GenericEntity e = (GenericEntity)i.next();
           e.insert(c);
         }
+        insert_.clear();
+      }
+
+      if (delete_ != null) {
+        Iterator i = delete_.iterator();
+        while (i.hasNext()) {
+          GenericEntity e = (GenericEntity)i.next();
+          e.delete(c);
+        }
+        delete_.clear();
       }
 
       c.commit();
-      ConnectionBroker.freeConnection(c);
-      update_.clear();
-      insert_.clear();
+
     }
     catch(SQLException e) {
       try {
         c.rollback();
       }
       catch(Exception ex) {}
-      e.printStackTrace();
+      e.printStackTrace(System.err);
+    }
+    finally {
+     if ( c != null )
+       ConnectionBroker.freeConnection(c);
     }
   }
 }

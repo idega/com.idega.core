@@ -319,6 +319,20 @@ public  class EntityControl{
 		}
 	}
 
+	public static void delete(GenericEntity entity, Connection conn)throws Exception{
+          Statement Stmt= null;
+          try {
+            Stmt = conn.createStatement();
+            String statement = "delete from  "+entity.getTableName()+" where "+entity.getIDColumnName()+"="+entity.getID();
+            Stmt.executeUpdate(statement);
+          }
+          finally{
+                  if(Stmt != null){
+                          Stmt.close();
+                  }
+          }
+	}
+
 
 
 	/**

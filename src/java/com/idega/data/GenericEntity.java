@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.15 2001/06/14 13:34:00 gummi Exp $
+ * $Id: GenericEntity.java,v 1.16 2001/06/14 17:16:54 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -939,6 +939,18 @@ public abstract class GenericEntity implements java.io.Serializable {
 		EntityControl.delete(this);
 	}
 
+        public void delete(Connection c) throws SQLException {
+          try {
+            EntityControl.delete(this,c);
+          }
+          catch(Exception ex) {
+            if(ex instanceof SQLException) {
+              ex.printStackTrace();
+              throw (SQLException)ex.fillInStackTrace();
+            }
+          }
+        }
+
 	public void deleteMultiple(String columnName,String stringColumnValue)throws SQLException{
 		EntityControl.deleteMultiple(this,columnName,stringColumnValue);
 	}
@@ -1269,7 +1281,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public GenericEntity[] findAllByColumn(String columnName, int toFind)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"'");
+		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+Integer.toString(toFind)+"'");
 	}
 
         public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
