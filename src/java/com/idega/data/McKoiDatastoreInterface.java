@@ -4,10 +4,13 @@
 */
 package com.idega.data;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
+import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
 
 /**
@@ -351,6 +354,22 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 			return (String[])v.toArray(new String[0]);
 		return null;
 			   
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#format(java.sql.Date)
+	 */
+	public String format(Date date) {
+		IWTimestamp stamp = new IWTimestamp(date);
+		return " {d '"+(stamp.toSQLString())+"'} ";
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#format(java.sql.Timestamp)
+	 */
+	public String format(Timestamp timestamp) {
+		IWTimestamp stamp = new IWTimestamp(timestamp);
+		return " {d '"+(stamp.toSQLString())+"'} ";
 	}
 
 }
