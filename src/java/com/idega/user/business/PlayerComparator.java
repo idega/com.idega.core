@@ -8,7 +8,7 @@ import com.idega.user.data.Group;
 
 /**
  * @author Sigtryggur
- *
+ * Comparator to handle sorting of groups within divisions
  */
 public class PlayerComparator implements Comparator {
 		
