@@ -77,7 +77,7 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 
 		//add the script
 		Script script = getParentPage().getAssociatedScript();
-		script.addFunction("setDropdownOptions", getSelectorScript());
+		script.addFunction("setDropdownOptions", getSelectorScript(iwc));
 		
 		if (_secondarySelected == null)
 			_secondarySelected = "-1";
@@ -101,7 +101,7 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		}
 	}
 
-	private String getSelectorScript() {
+	private String getSelectorScript(IWContext iwc) {
 		StringBuffer s = new StringBuffer();
 		s.append("function setDropdownOptions(input, inputToChange, selected) {").append("\n\t");
 		s.append("var dropdownValues = new Array();").append("\n\t");
@@ -118,8 +118,8 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 				Iterator iterator = map.keySet().iterator();
 				while (iterator.hasNext()) {
 					Object element = iterator.next();
-					String secondKey = getKey(element);
-					String value = getValue(map.get(element));
+					String secondKey = getKey(iwc, element);
+					String value = getValue(iwc, map.get(element));
 					s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+secondKey+"');").append("\n\t");
 				}
 			}
@@ -141,11 +141,11 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		return s.toString();
 	}
 	
-	protected String getKey(Object key) {
+	protected String getKey(IWContext iwc, Object key) {
 		return (String) key;
 	}
 	
-	protected String getValue(Object value) {
+	protected String getValue(IWContext iwc, Object value) {
 		return (String) value;
 	}
 	
