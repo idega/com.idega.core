@@ -376,6 +376,12 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
+	public String getShortNodeName() {
+		if (this._nodeType == TYPE_GROUP)
+			return _group.getShortName();
+		return null;
+	}
+
 	public int getSiblingCount() {
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
