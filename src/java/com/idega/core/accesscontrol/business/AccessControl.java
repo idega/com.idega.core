@@ -607,7 +607,8 @@ public class AccessControl{
       // return new String[0]; // not null
     }
 
-
-
+    public static PermissionGroup getAdministratorGroup() {
+      return AdministratorPermissionGroup;
+    }
 
 } // Class AccessControl
