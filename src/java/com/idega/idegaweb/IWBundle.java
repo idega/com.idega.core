@@ -29,8 +29,7 @@ import com.idega.data.EntityFinder;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
 */
-public class IWBundle implements java.lang.Comparable{
-
+public class IWBundle implements java.lang.Comparable {
   private static final String slash = "/";
   private static final String shared = "shared";
 
@@ -732,6 +731,9 @@ public class IWBundle implements java.lang.Comparable{
     }
 
     public String getComponentName(String className,Locale locale,String returnIfNameNotLocalized){
+      System.out.println("className = " + className);
+      System.out.println("Locale = " + locale.toString());
+      System.out.println("Default = " + returnIfNameNotLocalized);
       return this.getResourceBundle(locale).getLocalizedString("iw.component."+className+".name",returnIfNameNotLocalized);
     }
 
@@ -752,5 +754,14 @@ public class IWBundle implements java.lang.Comparable{
     public int compareTo(Object o){
       IWBundle bundle = (IWBundle)o;
       return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
+    }
+
+    public void addLocalizableString(String key, String value) {
+      localizableStringsMap.put(key,value);
+      storeState();
+    }
+
+    public boolean containsLocalizedString(String key) {
+      return(localizableStringsMap.containsKey(key));
     }
 }

@@ -1,20 +1,22 @@
 
 package com.idega.idegaweb;
-import java.util.Enumeration;
-import java.util.Properties;
+
+import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.idegaweb.IWBundle;
+import com.idega.presentation.Image;
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import com.idega.presentation.Image;
 import java.io.FileNotFoundException;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.TreeMap;
 import java.util.Iterator;
-import com.idega.exception.IWBundleDoesNotExist;
 
 /**
  * Title:        idega Framework
@@ -133,20 +135,19 @@ public class IWResourceBundle extends ResourceBundle {
       this.locale=locale;
     }
 
-    public void storeState(){
-        try{
-          properties.clear();
-          properties.putAll(lookup);
-          properties.store(new FileOutputStream(file),null);
-          //lookup.store(new FileOutputStream(file),null);
-        }
-        catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch(IOException ex){
-          ex.printStackTrace();
-        }
-
+    public void storeState() {
+      try {
+        properties.clear();
+        properties.putAll(lookup);
+        properties.store(new FileOutputStream(file),null);
+        //lookup.store(new FileOutputStream(file),null);
+      }
+      catch(FileNotFoundException e){
+          e.printStackTrace();
+      }
+      catch(IOException ex){
+        ex.printStackTrace();
+      }
     }
 
     /**
@@ -293,4 +294,18 @@ public class IWResourceBundle extends ResourceBundle {
       }
     }
 
+  /**
+   *
+   */
+  public void setLocalizedString(String key, String value) {
+    checkBundleLocalizedString(key,value);
+    lookup.put(key,value);
+    storeState();
+  }
+
+  private void checkBundleLocalizedString(String key, String value) {
+    IWBundle bundle = getIWBundleParent();
+    if (!bundle.containsLocalizedString(key))
+      bundle.addLocalizableString(key,value);
+  }
 }
