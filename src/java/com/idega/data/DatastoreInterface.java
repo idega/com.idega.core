@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.86 2003/12/03 00:37:49 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.87 2003/12/09 15:07:52 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -864,6 +864,8 @@ public abstract class DatastoreInterface {
 			//get all the id's of the metadata
 			StringBuffer statement = new StringBuffer("");
 			statement.append("select ");
+			statement.append(middletable);
+			statement.append('.');
 			statement.append(metadataIdColumn);
 			statement.append(" from ");
 			statement.append(middletable);
