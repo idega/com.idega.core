@@ -79,7 +79,7 @@ public class HtmlPage extends Page {
 					throw new RuntimeException("Attribute <resourceName> for component <" + getId() + ">. Could not load the html from named resource <>");
 				}
 			}
-		//}
+		//}þide	
 		findOutPregions();
 		//return ret;
 	}
@@ -128,22 +128,17 @@ public class HtmlPage extends Page {
 	}
 	
 	
-	public UIComponent getRegion(String regionKey){
-		//Integer index = (Integer) getRegionIdsMap().get(regionKey);
-		//Object o = getChildren().get(index.intValue());
-		Object o = getFacets().get(regionKey);
-		UIComponent region = (UIComponent) o;
+	public HtmlPageRegion getRegion(String regionKey){
+		Integer index = (Integer) getRegionIdsMap().get(regionKey);
+		Object o = getChildren().get(index.intValue());
+		HtmlPageRegion region = (HtmlPageRegion) o;
 		return region;
-	}
-	
-	public void setRegion(String regionKey,UIComponent region){
-		getFacets().put(regionKey,region);
 	}
 	
 	
 	public void add(UIComponent component,String regionId){
-		UIComponent region = getRegion(regionId);
-		region.getChildren().add(component);
+		HtmlPageRegion region = getRegion(regionId);
+		region.add(component);
 	}
 
 	
@@ -168,7 +163,10 @@ public class HtmlPage extends Page {
 		return regionMap;
 	}
 
-	
+	/**
+	 * Returns all the regionIds as Strings
+	 * @return
+	 */
 	public Set getRegionIds(){
 		return getRegionIdsMap().keySet();
 	}
@@ -193,8 +191,7 @@ public class HtmlPage extends Page {
 				//instanciate the region in the children list:
 				HtmlPageRegion region = new HtmlPageRegion();
 				region.setRegionId(regionId);
-				setRegion(regionId,region);
-				//getChildren().add(region);
+				getChildren().add(region);
 				//getChildren().set(regionIndex,region);
 				regionIndex++;
 			}
@@ -349,7 +346,7 @@ public class HtmlPage extends Page {
 				//int childNumber = Integer.parseInt(t[0]) - 1;
 
 				try{
-					UIComponent region = getRegion(regionId);
+					HtmlPageRegion region = getRegion(regionId);
 					renderChild(ctx,region);
 				}
 				catch(ClassCastException cce){
