@@ -93,15 +93,13 @@ public class EventTimer implements Runnable{
 
   public void start(){
     runThread = true;
-    if( t == null ){
+    if( t == null || !isRunning){
+    		//a new thread must be created here because it was null or 
+		//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
       t = new Thread(this,"com.idega.util.EventTimer thread");
       t.setPriority(t.MIN_PRIORITY);
       t.start();
-    }else{
-		if(!isRunning){
-			t.run();
-		}
-	}
+    }
   }
 
   public void stop(){
