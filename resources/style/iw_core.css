@@ -1,6 +1,5 @@
 /*** idegaWeb Core CSS classes ***/
 
-
 /** BEGIN: Searcher and SearchResults classes **/
 
 .iw_search_results{
@@ -24,6 +23,7 @@
 	#background-color: #DEDEDE;
  	border-bottom: 1px dotted;
  	border-color: black;
+        height:27px;
 }
 
 .iw_search_results_row_even{
@@ -32,40 +32,55 @@
 	#background-color: #EDEDED;
  	border-bottom: 1px dotted;
  	border-color: black;
+        height:24px;
+}
+
+.iw_search_result_icon{
+	width: 10px;
+	height:10px;
+	#border: 1px solid;
+	display: inline;
+	margin:2px;
+	float: left;
+	background-image: url(images/search_bullet.gif);
+	background-repeat: no-repeat;
 }
 
 .iw_search_result_link{
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: bold;
 	margin-bottom:2px;
 	text-decoration: underline;
- 	display:block;
+ 	display: inline;
  	color: red;
 }
 
 .iw_search_result_link:hover{
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: bold;
  	font-style: italic;
 	text-decoration: underline;
 	margin-bottom:2px;
- 	display:block;
+ 	display:inline;
  	color: red;
 }
 
 .iw_search_result_abstract{
-	margin-bottom:1px;
  	display:block;
+ 	postition: relative;
+ 	left: 13px;
 }
 
 .iw_search_result_extra_info{
-	margin-bottom:2px;
- 	display:block;
+	#margin-bottom:2px;
+ 	display:inline;
+        float:right;
 }
 
 .iw_searcher{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
+	margin:5px;
 }
 
 .iw_searcher_input{
