@@ -448,12 +448,13 @@ public class FileUtil {
    * @author thomas
    */
   public static File getFileRelativeToFile(File file, String relativePath) {
-  	char[] separators = {UNIX_FILE_SEPARATOR , WINDOWS_FILE_SEPARATOR};
+  	char[] separatorsChar = {UNIX_FILE_SEPARATOR , WINDOWS_FILE_SEPARATOR};
+  	String separators = new String(separatorsChar);
   	File result = file;
   	if (result.isFile()) {
   		result = result.getParentFile();
   	}
-  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators.toString());
+  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators);
   	while (tokenizer.hasMoreTokens()) {
   		String token = tokenizer.nextToken();
   		if (".".equals(token)) {
@@ -510,7 +511,7 @@ public class FileUtil {
   	if (result.isFile()) {
   		result = result.getParentFile();
   	}
-  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators.toString());
+  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators);
   	boolean hasMoreTokens = tokenizer.hasMoreTokens();
   	while (hasMoreTokens) {
   		String token = tokenizer.nextToken();
