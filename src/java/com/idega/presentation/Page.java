@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.138 2005/02/01 17:53:13 thomas Exp $
+ *  $Id: Page.java,v 1.139 2005/03/05 21:54:34 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1543,12 +1543,14 @@ public class Page extends PresentationObjectContainer {
 		if(docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)){
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
+			buffer.append(NEWLINE);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
 		else if(docType.equals(DOCTYPE_XHTML_1_1)){
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
+			buffer.append(NEWLINE);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
