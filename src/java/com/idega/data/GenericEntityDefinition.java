@@ -218,6 +218,14 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		return null;
 	}
 	
+	public boolean hasField(String uniqueName){
+		IDOEntityField field = findFieldByUniqueName(uniqueName);
+		if(field!=null){
+			return true;
+		}
+		else return false;
+	}
+	
 	/* 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

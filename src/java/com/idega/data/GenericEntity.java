@@ -35,6 +35,8 @@ import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import org.doomdark.uuid.*;
+
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
@@ -52,6 +54,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
 	public static final String ONE_TO_ONE = "one-to-one";
+	public static final String UNIQUE_ID_COLUMN_NAME = "IW_UNIQUE_ID";
+	
 	private static Map _theAttributes = new Hashtable();
 	private static Map _allStaticClasses = new Hashtable();
 	private static String DEFAULT_DATASOURCE = "default";
@@ -73,6 +77,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private Hashtable _theMetaDataIds;
 	private Hashtable _theMetaDataTypes;
 	private boolean _hasMetaDataRelationship = false;
+	private boolean _hasUniqueIDColumn = false;
 	private boolean _metaDataHasChanged = false;
 	public String _lobColumnName;
 	private boolean insertStartData = true;
@@ -3225,10 +3230,38 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this._entityContext = null;
 	}
 	public Object ejbCreate() throws CreateException {
+		
+		//if this entity has used addUniqueIdColumn() this method will generated the unique id and set the column in the entity.
+		//see addUniqueIDColumn() and generateAndSetUniqueIDForIDO()
+		if(hasUniqueIDColumn()){
+			generateAndSetUniqueIDForIDO();
+		}
 		if (this.doInsertInCreate()) {
 			this.insertForCreate();
 		}
+		
 		return getPrimaryKey();
+	}
+
+	/**
+	 * Generates unique id string 36 characters long (128bit) and sets the unique id column. <br>
+	 * The default implementation generates the string with a combination of a <br>
+	 * dummy ip address and a time based random number generator.<br>
+	 * For more info see the JUG project, http://www.doomdark.org/doomdark/proj/jug/
+	 * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482 <br>
+	 * You must call addUniqueIDColumn() in your IDO's initializeAttributes method to enable this behavior.
+	 */
+	protected void generateAndSetUniqueIDForIDO() {
+		UUIDGenerator uidGenerator = UUIDGenerator.getInstance();
+		String uniqueId = uidGenerator.generateTimeBasedUUID().toString();
+		
+		setColumn(UNIQUE_ID_COLUMN_NAME,uniqueId);
+	}
+	/**
+	 * @return true if this entity has called addUniqueIdColumn() to add a unique id column to its table
+	 */
+	protected boolean hasUniqueIDColumn() {
+		return getGenericEntityDefinition().hasField(UNIQUE_ID_COLUMN_NAME);
 	}
 	/**
 	 * Default create method for IDO
@@ -3338,11 +3371,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
 
-	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize) throws FinderException, IDOException {
+	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize) throws FinderException {
 		return idoFindPKsByQueryUsingLoadBalance(sqlQuery,null,prefetchSize);
 	}
 	
-	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize) throws FinderException, IDOException {
+	protected Collection idoFindPKsByQueryUsingLoadBalance(String sqlQuery, int prefetchSize) throws FinderException {
+		return idoFindPKsByQueryUsingLoadBalance(idoQuery(sqlQuery),null,prefetchSize);
+	}
+	
+	/**
+	 * Fetches the primarykey resultset and then loads the beans with data(the prefect size determines how many get loaded)
+	 * The query must be a select all query!
+	 * @param sqlQuery
+	 * @param countQuery
+	 * @param prefetchSize
+	 * @return
+	 * @throws FinderException
+	 */
+	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -3369,7 +3415,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @return IDOPrimaryKeyList
 	 * @throws FinderException
 	 */
-	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize ) throws FinderException, IDOException {
+	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize ) throws FinderException {
 		IDOQuery idoCountQuery = null;
 		
 		if(countQuery == null) {
@@ -3385,25 +3431,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			logSQL("countQuery: " + idoCountQuery);
 			
 		}
-		int length = idoGetNumberOfRecords(idoCountQuery);
-		if (length > 0) {
-			if (length < 1000) {
-				return idoFindPKsBySQLIgnoringCache(sqlQuery.toString(), -1, -1);
-			} else {
-				//				try
-				//				{
-				//					conn = getConnection(getDatasource());
-				//					Stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
-				//					ResultSet RS = Stmt.executeQuery(sqlQuery);
-				return new IDOPrimaryKeyList(sqlQuery, this, length,prefetchSize);
-				//				}
-				//				catch (SQLException sqle)
-				//				{
-				//					throw new IDOFinderException(sqle);
-				//				}
-			}
+		int length;
+		try {
+			length = idoGetNumberOfRecords(idoCountQuery);
+		} catch (IDOException e) {
+			//if this happens we return nothing. the sql might have failed
+			e.printStackTrace();
+			return new Vector();
 		}
-		return new Vector();
+		
+		if (length > 0) {	
+			return new IDOPrimaryKeyList(sqlQuery, this, length,prefetchSize);
+		}
+		else {
+			return new Vector();
+		}
 	}
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
@@ -3792,6 +3834,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		return idoFindPKsBySQL(sql.toString());
 
+	}
+	
+	/**
+	 * Finds an entity by its unique id column. <br>
+	 * See also addUniqueIDColumn() on how to add a unique generated id column to your entity.
+	 * 
+	 * @param uniqueID, A 128 bit unique id string (36 characters long)
+	 * @return Object which is the primary key of the object found from the query.
+	 * @throws FinderException if nothing found or there is an error with the query.
+	 */
+	protected Object idoFindOnePKByUniqueId(String uniqueID) throws FinderException {
+		return idoFindOnePKByColumnBySQL(UNIQUE_ID_COLUMN_NAME,uniqueID);
 	}
 
 	/**
@@ -4433,5 +4487,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return IWMainApplicationSettings.isDebugActive();
 	}
 	//END STANDARD LOGGING METHODS
+	
+	/**
+	 * Adds a unique id string column to this entity that is filled with a generated id when the entity is first stored.<br>
+	 * The UID is a 36 character long string (128bit). The default implementation generates the string with a combination of a <br>
+	 * dummy ip address and a time based random number generator.<br>
+	 * For more info see the JUG project, http://www.doomdark.org/doomdark/proj/jug/
+	 * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482
+	 */
+	protected void addUniqueIDColumn() {
+		addAttribute(UNIQUE_ID_COLUMN_NAME,"A generated unique id do not change manually!",String.class,36);
+		_hasUniqueIDColumn = true;
+	}
 
 }
