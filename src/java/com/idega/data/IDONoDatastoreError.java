@@ -15,5 +15,10 @@ public class IDONoDatastoreError extends Error {
     super("Unable to communicate with datastore");
   }
 
+  public IDONoDatastoreError(String message) {
+    super("Unable to communicate with datastore - Message was: "+message);
+  }
+
+
 
 }

@@ -276,7 +276,7 @@ public class ConnectionPool
       return dsc;
     }
     catch(SQLException e){
-      throw new com.idega.data.IDONoDatastoreError();
+      throw new com.idega.data.IDONoDatastoreError(e.getMessage());
     }
    }
 
@@ -409,13 +409,14 @@ public String getPassword(){
         Iterator iter = connections.iterator();
         while (iter.hasNext()) {
           Connection item = (Connection)iter.next();
+          this.removeFromCheckedOutList(item);
           item.close();
           //System.out.print("Closing database connection");
         }
 
       }
       catch(Exception ex){
-        System.out.println("Exception in"+this.getClass().getName());
+        System.out.println("Exception in "+this.getClass().getName());
         ex.printStackTrace();
       }
 

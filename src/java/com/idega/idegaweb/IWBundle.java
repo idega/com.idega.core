@@ -49,7 +49,8 @@ public class IWBundle implements java.lang.Comparable {
 
   private Hashtable localePaths;
   private Hashtable resourceBundles;
-  //debug
+
+  private boolean autoCreateLocalizedResources = true;
   private boolean autoCreate=false;
 
   private Hashtable handlers;
@@ -415,7 +416,10 @@ public class IWBundle implements java.lang.Comparable {
 	try{
 	  if(theReturn == null){
 	    File file;
-	    if(autoCreate){
+	    /**
+         * @todo: Look into this autoCreateLocalizedResources is always set true
+         */
+        if(autoCreateLocalizedResources){
 	      file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale),"Localized.strings");
 	    }
 	    else{
