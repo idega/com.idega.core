@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.4 2001/04/30 16:40:40 palli Exp $
+ * $Id: GenericEntity.java,v 1.5 2001/05/07 22:12:15 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -625,7 +625,9 @@ public abstract class GenericEntity implements java.io.Serializable {
 		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 			//String ColumnName = (String)e.nextElement();
                         String ColumnName = names[i];
-			if (! isNull(ColumnName)){
+                        //debug eiki until Blobwrapper works well
+			//if ( (!isNull(ColumnName) ){
+                          if ( (!isNull(ColumnName)) && (!ColumnName.equalsIgnoreCase("image_value")) ){
 				if (returnString.equals("")){
 					returnString = returnString + ColumnName + "=?";
 				}
