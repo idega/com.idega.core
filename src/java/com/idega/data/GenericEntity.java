@@ -1030,8 +1030,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return (String[])theColumns.toArray(new String[0]);
 	}
-	public boolean isNull(String columnName) {
-		/*if (columns.get(columnName) instanceof java.lang.String){
+	public boolean isNull(String columnName) { 
+	/*if (columns.get(columnName) instanceof java.lang.String) {
 			String tempString = (String)columns.get(columnName);
 			if (tempString.equals("idega_special_null")){
 				return true;
@@ -2028,6 +2028,34 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return getIntTableValue(CountSQLString);
 	}
 	
+	/** Checks if the value of the specified columnName in the database is null.
+	 * 	Use this method for columns where the storage type is a blob, because
+	 * 	even if the value in the database is null, the value in the _columns map is a BlobWrapper, that is
+	 * 	the method isNull(columnName) returns false. 
+	 * 	Why don' t we solve the problem by changing the method isNull(columnName)?  
+	 * 	Because you can't check if the value is null without starting to read the inputstream, 
+	 *  that is after checking you have to reset the internal stream of the BlobWrapper.  
+	* 	In order to avoid this we check the value directly in the database via a sql statement.  
+	*		Keep in mind that the BlobWrapper has to execute a sql statement to get a stream of the value, 
+	*		that is the statement of the method isStoredValueNull is even faster. 
+	 * @author thomas
+	 */
+	protected  boolean  isStoredValueNull(String columnName) {
+		IDOQuery query = idoQuery();
+		query.appendSelectCountFrom(this).appendWhereEquals(getIDColumnName(), getPrimaryKeyValueSQLString());
+		query.appendAndIsNotNull(columnName);
+		// number of records is either zero or one
+		try {
+			int numberOfRecords = getNumberOfRecords(query.toString());
+			return (numberOfRecords == 0);
+		}
+		catch (SQLException sqlEx) {
+			logError("[GenericEntity] Could not check the following column " + columnName);
+			log(sqlEx);
+			return true;
+		}
+	}
+		
 	protected double idoGetValueFromSingleValueResultSet(IDOQuery query) throws IDOException {
 		return idoGetValueFromSingleValueResultSet(query.toString());
 	}
