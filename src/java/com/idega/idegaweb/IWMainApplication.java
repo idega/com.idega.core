@@ -729,7 +729,8 @@ public class IWMainApplication{//implements ServletContext{
 			
 			while(cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)){
 				crypto = Integer.toString(++iCrypto);
-				System.out.println("Conflicting cryptos: creating new crypto number : "+iCrypto);	
+				if (isDebugActive())
+					System.out.println("Conflicting cryptos: creating new crypto number : "+iCrypto);	
 			}
 	
 			 cryptoCodesPropertiesKeyedByClassName.put(className,crypto);
