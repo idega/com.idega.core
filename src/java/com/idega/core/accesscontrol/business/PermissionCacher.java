@@ -58,9 +58,9 @@ public class PermissionCacher {
     return anyPermissionsDefinedForObject(obj,iwc,permissionKey);
   }
 
-  public static boolean anyInstancePermissionsDefinedForPage( Page obj, IWUserContext iwc, String permissionKey) throws SQLException{
+  public static boolean anyInstancePermissionsDefinedForPage( Object pageObj, IWUserContext iwc, String permissionKey) throws SQLException{
     String[] maps = {PERMISSION_MAP_PAGE_INSTANCE};
-    return anyPermissionsDefined(obj,iwc,permissionKey,maps);
+    return anyPermissionsDefined(pageObj,iwc,permissionKey,maps);
   }
 
 
@@ -87,7 +87,7 @@ public class PermissionCacher {
 
 
 
-  private static boolean anyPermissionsDefined( PresentationObject obj, IWUserContext iwc, String permissionKey, String[] maps) throws SQLException{
+  private static boolean anyPermissionsDefined( Object obj, IWUserContext iwc, String permissionKey, String[] maps) throws SQLException{
     String identifier = null;
     Boolean set = null;
 
@@ -95,11 +95,20 @@ public class PermissionCacher {
     for (int i = 0; i < maps.length; i++) {
       String permissionMapKey = maps[i];
       if(permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)){
-        identifier = Integer.toString(obj.getICObjectInstanceID());
+      	PresentationObject pObject = (PresentationObject)obj;
+        identifier = Integer.toString(pObject.getICObjectInstanceID());
       } else if(permissionMapKey.equals(PERMISSION_MAP_OBJECT)){
-          identifier = Integer.toString(obj.getICObjectID());
+      	PresentationObject pObject = (PresentationObject)obj;
+      	identifier = Integer.toString(pObject.getICObjectID());
       } else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
-          identifier = Integer.toString(((Page)obj).getPageID());
+      		if(obj instanceof Page){
+      			Page page = (Page)obj;
+                identifier = Integer.toString(page.getPageID());
+      		}
+      		else if (obj instanceof AccessControl.PagePermissionObject){
+      			AccessControl.PagePermissionObject pageObj = (AccessControl.PagePermissionObject)obj;
+      			identifier = pageObj.getPageKey();
+      		}
       }
 
       if(identifier != null){
@@ -195,7 +204,7 @@ public class PermissionCacher {
     return hasPermission(PERMISSION_MAP_BUNDLE,obj,iwc,permissionKey,groups);
   }
 
-  public static Boolean hasPermissionForPage(Page obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+  public static Boolean hasPermissionForPage(Object obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
     return hasPermission(PERMISSION_MAP_PAGE_INSTANCE,obj,iwc,permissionKey,groups);
   }
   
@@ -254,7 +263,16 @@ public class PermissionCacher {
 		    identifier = ((PresentationObject) obj).getBundleIdentifier();//todo change to bundle?
 		} 
 		else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
-		    identifier = Integer.toString(((Page)obj).getPageID());
+			if(obj instanceof Page){
+			    identifier = Integer.toString(((Page)obj).getPageID());
+			}
+			else if(obj instanceof AccessControl.PagePermissionObject){
+				AccessControl.PagePermissionObject page = (AccessControl.PagePermissionObject)obj;
+				return page.getPageKey();
+			}
+			else if(obj instanceof String){
+				return (String)obj;
+			}
 		    //temp
 		    //identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
 		} 

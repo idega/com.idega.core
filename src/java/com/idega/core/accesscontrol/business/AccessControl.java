@@ -14,12 +14,17 @@ import java.util.Set;
 import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.ICRoleHome;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.accesscontrol.data.PermissionGroupHome;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
@@ -33,6 +38,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.ImplementorRepository;
@@ -674,9 +680,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			//JSP PAGE ENDS
 
 				//PAGE
-				if (obj instanceof Page && ((Page) obj).getPageID() != _notBuilderPageID) {
+				if ((obj instanceof Page && ((Page) obj).getPageID() != _notBuilderPageID) || (obj instanceof PagePermissionObject)){
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = PermissionCacher.hasPermissionForPage((Page) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = PermissionCacher.hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
@@ -685,7 +691,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 
 						// Global - (Page)
-						if (!PermissionCacher.anyInstancePermissionsDefinedForPage((Page) obj, iwc, permissionKey)) {
+						boolean noPermissionsSet = !PermissionCacher.anyInstancePermissionsDefinedForPage(obj, iwc, permissionKey);
+						//if (!PermissionCacher.anyInstancePermissionsDefinedForPage(pPage, iwc, permissionKey)) {
+						if(noPermissionsSet){
 							ICObject page = getStaticPageICObject();
 							if (page != null) {
 								for (int i = 0; i < arrayLength; i++) {
@@ -3278,7 +3286,51 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return false;
 		}
 	}
+	
+	
+		/**
+		 * Gets if the user has 'view' permission for the page with the given pageUri.
+		 * @param pageUri the URI for a page request e.g. '/pages/1234'
+		 */
+	  public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request){
+	  	
+	  	HttpSession session = request.getSession();
+	  	ServletContext sc = session.getServletContext();
 
+	  	//TODO: Optimize this since this has to be done for each request:
+	  	IWUserContext iwuc = new IWUserContextImpl(session,sc);
+	  	
+	  	try {
+	  		String serverName = request.getServerName();
+	  		BuilderService bs = BuilderServiceFactory.getBuilderService(iwuc.getApplicationContext());
+	  		String pageKey = bs.getPageKeyByRequestURIAndServerName(pageUri,serverName);
+	  		return hasViewPermissionForPageKey(pageKey,iwuc);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	  	return false;
+	  }
+	  
+	  /**
+	   * Gets if the user has 'view' permission for the page with the given pageId
+	   * @param pageKey identifier for page e.g. '1234'
+	   * @param iwuc context for the current user
+	   * @return
+	   */
+	  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc){
+  		PagePermissionObject pageKeyObject = new PagePermissionObject(pageKey);
+		try {
+			boolean permission = hasPermission(PERMISSION_KEY_VIEW,pageKeyObject,iwuc);
+			return permission;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+  		//return true;
+	  }
+	
 	/**
 	 * @author eiki
 	 * 
@@ -3302,6 +3354,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		public String toString() {
 			return ROLE_STRING;
+		}
+
+	}
+	
+	/**
+	 * @author eiki
+	 * 
+	 * A helper (flag) class to enable working with Page permissions since hasPermission always needs something to check against (the obj Object in all the methods).
+	 */
+	static class PagePermissionObject{
+		private String pageKey;
+		public PagePermissionObject(String pageKey) {
+			this.pageKey=pageKey;
+		}
+		public String getPageKey(){
+			return pageKey;
 		}
 
 	}

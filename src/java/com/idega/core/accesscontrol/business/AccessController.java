@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.business;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.PermissionGroup;
@@ -164,5 +165,9 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
 //  private String[] getPermissionGroupFilter();  //?
 
 
-
+  /**
+   * Check for "view" or read access for a page by URI
+   */
+  public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request);
+  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc);
 }
