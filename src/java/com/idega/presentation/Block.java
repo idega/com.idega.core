@@ -37,6 +37,9 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   private static final String concatter = "_";
   private static final String newline = "\n";
 
+  public final static String IW_BLOCK_CACHE_KEY="iw_not_cached";
+
+
   public static boolean usingNewAcessControlSystem=false;
 
   public Block(){
@@ -45,6 +48,10 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public String getBundleIdentifier(){
     return IW_CORE_BUNDLE_IDENTIFIER;
+  }
+
+  public String getCacheKey(){
+    return IW_BLOCK_CACHE_KEY;
   }
 
   public String getLocalizedNameKey(){
@@ -333,15 +340,17 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * Override this method to invalidate something other than the current state.
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
    */
-  protected void invalidateCache(IWContext iwc){
+  public void invalidateCache(IWContext iwc){
     if( getDerivedCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getDerivedCacheKey(iwc));
     //debug("INVALIDATING : "+getCacheKey(iwc));
   }
 
+
+
   /**
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey+suffix);
    */
-  protected void invalidateCache(IWContext iwc, String suffix){
+  public void invalidateCache(IWContext iwc, String suffix){
     if( getOriginalCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey(iwc)+suffix);
     //debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
   }
