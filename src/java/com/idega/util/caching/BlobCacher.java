@@ -2,7 +2,7 @@ package com.idega.util.caching;
 
 import java.io.*;
 import java.util.*;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.data.GenericEntity;
 import com.idega.util.FileUtil;
@@ -22,19 +22,19 @@ import com.idega.idegaweb.IWMainApplication;
 
 public class BlobCacher  {
 
-  private static String rootCachingPath = "blobcache";
+  private static String rootCachingPath = "cache";
   private static String applicationObject = "blobcacher";
   private static String separator = FileUtil.getFileSeparator();
 
-  public static String getCachedUrl( String entityClassString, int id, ModuleInfo modinfo, String blobColumnName){
+  public static String getCachedUrl( String entityClassString, int id, IWMainApplication app, String blobColumnName){
      String url = null;
     //check for cachetable in memory
-    if( cacheTableExists( entityClassString, id, modinfo) ){
+    if( cacheTableExists( entityClassString, id, app) ){
       //check if this blob has already been cached
-      HashtableDoubleKeyed cache = getCacheTable(modinfo);
+      HashtableDoubleKeyed cache = getURLCacheTable(app);
       url = (String) cache.get(GenericEntity.getStaticInstance(entityClassString).getEntityName(), Integer.toString(id) );
       if( url == null ) {//if null cache it for next time
-       cacheToFile(entityClassString,id,modinfo.getApplication().getApplicationRealPath(), cache, blobColumnName);
+       cacheToFile(entityClassString,id,app.getApplicationRealPath(), cache, blobColumnName,app);
       }
     }
 
@@ -42,11 +42,13 @@ public class BlobCacher  {
   }
 
 
-  private static void cacheToFile(String entityClassString, int id, String applicationURL, HashtableDoubleKeyed cache, String blobColumnName ){
+  private static void cacheToFile(String entityClassString, int id, String applicationURL, HashtableDoubleKeyed cache, String blobColumnName , IWMainApplication app){
     InputStream input = null;
     GenericEntity entity;
     try{
       entity = GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
+      app.setAttribute();
+
       input = entity.getInputStreamColumnValue(blobColumnName);
       String realPath = applicationURL+separator+rootCachingPath;
       String virtualPath = "/"+rootCachingPath+"/";
@@ -73,11 +75,11 @@ public class BlobCacher  {
 
   }
 
- public static boolean isCached(String entityClassString, int id, ModuleInfo modinfo){
-    if(!cacheTableExists( entityClassString, id, modinfo)) return false;
+ public static boolean isCached(String entityClassString, int id, IWMainApplication app){
+    if(!cacheTableExists( entityClassString, id, app)) return false;
 
     //check if this blob has already been cached
-    String url = (String) getCacheTable(modinfo).get(GenericEntity.getStaticInstance(entityClassString).getEntityName(), Integer.toString(id) );
+    String url = (String) getCacheTable(app).get(GenericEntity.getStaticInstance(entityClassString).getEntityName(), Integer.toString(id) );
     if( url == null ) {//if null cache it for next time
      return false;
     }
@@ -85,19 +87,19 @@ public class BlobCacher  {
 
   }
 
-  private static boolean cacheTableExists(String entityClassString, int id, ModuleInfo modinfo){
+  private static boolean cacheTableExists(String entityClassString, int id, IWMainApplication app){
     //check if the cachingtable exists if not create it
-    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )modinfo.getApplicationAttribute(applicationObject);
+    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )app.getAttribute(applicationObject);
     if ( cache == null ) {
      cache = new HashtableDoubleKeyed();
-     modinfo.setApplicationAttribute(applicationObject,cache);
+     app.setAttribute(applicationObject,cache);
      return false;
     }
     else return true;
   }
 
-  private static HashtableDoubleKeyed getCacheTable(ModuleInfo modinfo){
-    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )modinfo.getApplicationAttribute(applicationObject);
+  private static HashtableDoubleKeyed getCacheTable(IWMainApplication app){
+    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )app.getAttribute(applicationObject);
     return cache;
   }
 
