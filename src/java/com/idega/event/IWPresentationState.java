@@ -1,6 +1,8 @@
 package com.idega.event;
 
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWUserContext;
+
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
@@ -20,6 +22,16 @@ public interface IWPresentationState extends Cloneable {
 
   public IWLocation getLocation();
   public void setLocation(IWLocation location);
+  
+  public String getCompoundId();
+  public void setCompoundId(String compoundId);
+  public void setUserContext(IWUserContext iuwc);
+  public void setArtificialCompoundId(String artificialCompoundId);
+  public String getArtificialCompoundId();
+  /**
+   * @see javax.faces.component.UIComponent#findComponent(java.lang.String
+   */
+  public IWPresentationState findComponent(String expr);
 
   public boolean stateHasChanged();
   public void fireStateChanged();

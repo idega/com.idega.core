@@ -8,4 +8,5 @@ public interface IWEventMachine extends com.idega.business.IBOSession
  public javax.swing.event.EventListenerList getListenersFor(com.idega.core.data.ICObjectInstance p0) throws java.rmi.RemoteException;
  public javax.swing.event.EventListenerList getListenersFor(java.lang.String p0) throws java.rmi.RemoteException;
  public javax.swing.event.EventListenerList getListenersFor(com.idega.idegaweb.IWLocation p0) throws java.rmi.RemoteException;
+ public javax.swing.event.EventListenerList getListenersForCompoundId(String compoundId) throws java.rmi.RemoteException;
 }

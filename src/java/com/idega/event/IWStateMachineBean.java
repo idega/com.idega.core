@@ -189,17 +189,87 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
     }
     return state;
   }
+  
+  
+  public IWPresentationState getStateFor(String compoundId, Class stateClassType) {
+    IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(compoundId);
+    // remove me 
+    if (state == null)  {
+       Map map = this.getUserStatesMap();
+       Collection coll = map.values();
+       Iterator iterator = coll.iterator();
+       while (iterator.hasNext()) {
+         Object object = iterator.next();
+         if (stateClassType.isAssignableFrom(object.getClass()) &&
+            ((IWPresentationState) object).getCompoundId().equals(compoundId))
+          return (IWPresentationState) object;
+       }
+    }
+    
+    
+    
+//    System.out.println("IWPresentationState - STATE = "+state);
+    if(state==null){
+      IWPresentationState globalState = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(compoundId);
+      if(globalState==null){
+//        System.out.println("IWPresentationState location2: "+location);
+        globalState = initializeState(stateClassType);
+        if(globalState != null){
+          globalState.setCompoundId(compoundId);
+          IWUserContext iwuc = getUserContext();
+          globalState.setUserContext(iwuc);
+//          System.out.println("IWPresentationState location3: "+location);
+          getGlobalStatesMap(getUserContext().getApplicationContext()).put(compoundId,globalState);
+        } else {
+          return null;
+        }
+      }
+
+      try{
+        state = (IWPresentationState)((IWPresentationState)globalState).getClass().newInstance();
+        state.setCompoundId(compoundId);
+        IWUserContext iwuc = getUserContext();
+        state.setUserContext(iwuc);
+      }
+      catch(IllegalAccessException iae){
+        throw new RuntimeException(iae.getMessage());
+      }
+      catch(InstantiationException ie){
+        throw new RuntimeException(ie.getMessage());
+      }
+//      System.out.println("IWPresentationState location4: "+location);
+      this.getUserStatesMap().put(compoundId,state);
+    }
+    return state;
+  }
+  
+  
+  
 
   public IWPresentationState getStateFor(IWLocation location, Class stateClassType){
 //    System.out.println("IWPresentationState getStateFor(IWLocation location, Class stateClassType)");
 //    System.out.println("IWPresentationState location: "+location);
     IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(location);
+    //
+    if (state == null)  {
+       Map map = this.getUserStatesMap();
+       Collection coll = map.values();
+       Iterator iterator = coll.iterator();
+       while (iterator.hasNext()) {
+         Object object = iterator.next();
+         if (stateClassType.isAssignableFrom(object.getClass()))
+          return (IWPresentationState) object;
+       }
+    }
+    
+    
+    
 //    System.out.println("IWPresentationState - STATE = "+state);
     if(state==null){
       IWPresentationState globalState = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(location);
       if(globalState==null){
 //        System.out.println("IWPresentationState location2: "+location);
-        globalState = initializeState(location, stateClassType);
+        globalState = initializeState(stateClassType);
         if(globalState != null){
 //          System.out.println("IWPresentationState location3: "+location);
           getGlobalStatesMap(getUserContext().getApplicationContext()).put(location,globalState);
@@ -300,7 +370,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
     }
   }
 
-  private IWPresentationState initializeState(IWLocation location, Class stateClassType)throws RuntimeException{
+  private IWPresentationState initializeState(Class stateClassType)throws RuntimeException{
     try{
       Class stateClass = stateClassType;
       if(stateClass != null){

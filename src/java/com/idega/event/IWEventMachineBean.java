@@ -60,6 +60,11 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
   }
 
 
+  public EventListenerList getListenersForCompoundId(String compoundId)  {
+    return getListenersFor(compoundId);
+  }
+
+
 
 
   private EventListenerList getListenersFor(Object idObj){

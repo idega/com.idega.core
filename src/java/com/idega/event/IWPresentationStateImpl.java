@@ -3,6 +3,9 @@ package com.idega.event;
 import java.util.EventListener;
 import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.StatefullPresentationImplHandler;
+
 import javax.swing.event.*;
 
 /**
@@ -23,7 +26,13 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
   protected ChangeEvent changeEvent = null;
 
   protected IWLocation _location = new IWPresentationLocation();
-
+  
+  // compoundId of the corresponding presentation object
+  protected String compoundId = null;
+  protected String artificialCompoundId = null;
+  
+  protected IWUserContext iwuc = null;
+ 
   public IWPresentationStateImpl() {
   }
 
@@ -109,5 +118,55 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
     }
     return obj;
   }
+
+	/**
+	 * Returns the compoundId.
+	 * @return String
+	 */
+	public String getCompoundId() {
+		return compoundId;
+	}
+
+	/**
+	 * Sets the compoundId.
+	 * @param compoundId The compoundId to set
+	 */
+	public void setCompoundId(String compoundId) {
+		this.compoundId = compoundId;
+	}
+  
+  public void setUserContext(IWUserContext iwuc) {
+    this.iwuc = iwuc;
+  }
+  
+  /**
+   * @see javax.faces.component.UIComponent#findComponent(java.lang.String
+   */
+  public IWPresentationState findComponent(String expr) {
+    // to do: check more expressions!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    String anotherCompoundId = "";
+    if ("..".equals(expr))  {
+      String myCompoundId = getCompoundId();
+      int i = myCompoundId.lastIndexOf("/");
+      anotherCompoundId = myCompoundId.substring(0, i);
+    }
+    return StatefullPresentationImplHandler.getPresentationState(anotherCompoundId, iwuc);
+  }
+
+	/**
+	 * Sets the artificialCompoundId.
+	 * @param artificialCompoundId The artificialCompoundId to set
+	 */
+	public void setArtificialCompoundId(String artificialCompoundId) {
+		this.artificialCompoundId = artificialCompoundId;
+	}
+
+	/**
+	 * Returns the artificialCompoundId.
+	 * @return String
+	 */
+	public String getArtificialCompoundId() {
+		return artificialCompoundId;
+	}
 
 }
