@@ -8,7 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.idega.presentation.text.AnchorLink;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 
 
 /**
@@ -87,8 +89,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      * Constructs and returns a CSSMenu with a Link(menuName,"#") as the label
      */
     public CSSMenu createCSSMenu(String menuName) {
-        Link menuNameNowherelink = new Link(menuName);
-        menuNameNowherelink.setURL("#");
+        AnchorLink menuNameNowherelink = new AnchorLink(new Text(menuName),"");
         
         return createCSSMenu(menuName, menuNameNowherelink);
     }
@@ -220,8 +221,8 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
          * Constructs and adds an Link("#") object to the menu using the supplied text.
          */
         public void addMenuItem(String textMenuItem) {
-            Link menuItemNowhereLink = new Link(textMenuItem);
-            menuItemNowhereLink.setURL("#");
+            AnchorLink menuItemNowhereLink = new AnchorLink(new Text(textMenuItem),"");
+            
             addMenuItem(menuItemNowhereLink);
         }
         
