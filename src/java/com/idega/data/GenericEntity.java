@@ -3353,7 +3353,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			logSQL("countQuery: " + countQuery);
 
 		}
-		int length = idoGetNumberOfRecords(countQuery);
+		int length = idoGetNumberOfRecords(idoCountQuery);
 		if (length > 0) {
 			if (length < 1000) {
 				return idoFindPKsBySQLIgnoringCache(sqlQuery.toString(), -1, -1);
