@@ -1,7 +1,7 @@
 package com.idega.presentation;
 
 import java.util.Collection;
-import com.idega.block.IWBlock;
+import com.idega.idegaweb.block.presentation.Builderaware;
 
 /**
  * Title:
@@ -15,7 +15,7 @@ import com.idega.block.IWBlock;
 public interface MenuBlock {
 
 
-  public void addBlockObject(IWBlock obj);
+  public void addBlockObject(Builderaware obj);
 
   public void addBlockObjectAll(Collection blockCollection);
 

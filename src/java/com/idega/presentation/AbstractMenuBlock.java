@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractMenuBlock.java,v 1.2 2003/04/03 10:08:16 laddi Exp $
+ * $Id: AbstractMenuBlock.java,v 1.3 2003/05/03 00:37:02 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,7 +13,7 @@ package com.idega.presentation;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.block.IWBlock;
+import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.presentation.ui.Parameter;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
   public abstract void addStandardObjects();
   public abstract Class getDefaultBlockClass();
 
-  public void addBlockObject(IWBlock obj){
+  public void addBlockObject(Builderaware obj){
     if(objects == null)
       objects = new Vector();
     objects.add(obj);

@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.idega.block.IWBlock;
+import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.core.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
@@ -29,7 +29,7 @@ import com.idega.presentation.text.Text;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.3
 */
-public class Block extends PresentationObjectContainer implements IWBlock {
+public class Block extends PresentationObjectContainer implements Builderaware {
 
 	private static Map permissionKeyMap = new Hashtable();
 	private String cacheKey = null;
