@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.108 2004/08/27 19:27:07 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.109 2004/09/07 12:06:32 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,6 +11,8 @@ package com.idega.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
@@ -20,15 +22,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.transaction.TransactionManager;
-
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.Gender;
@@ -192,6 +193,44 @@ public abstract class DatastoreInterface {
 		//return getInstance(datastoreType);
 	}
 
+	/**
+	 * This method gets the correct instance of DatastoreInterface for the
+	 * GenericEntity method
+	 * 
+	 * @param procedure
+	 *          the bean instance to get the DatastoreInterface implementation for
+	 * @return
+	 */
+	public static DatastoreInterface getInstance(GenericProcedure procedure) {
+		//String datastoreType=null;
+		try {
+			DatastoreInterface theReturn = getDatastoreInterfaceByDatasource(procedure.getDatasource());
+			if (theReturn == null) {
+				Connection conn = procedure.getConnection();
+				theReturn = getInstance(conn);
+				procedure.freeConnection(conn);
+			}
+			if (theReturn != null) {
+				setDatastoreInterfaceByDatasource(procedure.getDatasource(), theReturn);
+				return theReturn;
+			}
+			else {
+				throw new IDONoDatastoreError("Datastore type can not be obtained or identified");
+			}
+		}
+		catch (Exception ex) {
+			//  System.err.println("Exception in
+			// DatastoreInterface.getInstance(IDOLegacyEntity entity):
+			// "+ex.getMessage());
+			//}
+			//catch(NullPointerException npe){
+			//
+			ex.printStackTrace();
+			throw new IDONoDatastoreError();
+		}
+		//return getInstance(datastoreType);
+	}
+	
 	/**
 	 * 
 	 * Returns the type of the underlying datastore - returns: "mysql",
@@ -1977,6 +2016,144 @@ public abstract class DatastoreInterface {
 	 */
 	public int getOptimalEJBLoadFetchSize(){
 		return 500;
+	}
+	
+	public Object executeGetProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters) throws SQLException {
+		return executeProcedure(dataSourceName, procedure, parameters,false);
+	}
+	
+	public Collection executeFindProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters) throws SQLException {
+		return (Collection)executeProcedure(dataSourceName, procedure, parameters,true);
+	}
+
+	
+	public Object executeProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters,boolean returnCollection) throws SQLException {
+		Connection conn = null;
+		CallableStatement Stmt = null;
+		ResultSet rs = null;
+		Object theReturn = null;
+		try {
+			conn = ConnectionBroker.getConnection(dataSourceName);
+			String prepareArgString = "";
+			if(parameters !=null&&parameters.length>0){
+				prepareArgString = " (";
+				for (int i = 0; i < parameters.length; i++) {
+					prepareArgString += " ?";
+				}
+				prepareArgString += " )";
+			}
+			String sql = "{"+((!returnCollection)?" ? =":"")+" call "+procedure.getName()+prepareArgString+" }";
+			//System.out.println("[DatastorInterface]: "+sql);
+			Stmt = conn.prepareCall(sql);
+			
+			Class[] parameterTypes = procedure.getParameterTypes();
+			int length = Math.min(parameterTypes.length,parameters.length);
+			for (int i = 0; i < length; i++) {
+				try {
+					insertIntoCallableStatement(Stmt,i+1,parameterTypes[i],parameters[i]);
+				}
+				catch (Exception e) {
+					System.out.println("Original error message");
+					e.printStackTrace();
+					throw new SQLException("IDOProcedure: " + procedure.getName() + "; parameter:  " + i + "; value:  " + parameters[i] + " - " + e.getMessage());
+				}
+			}
+			
+			theReturn = procedure.processResultSet(Stmt.executeQuery());
+			
+//			rs = Stmt.executeQuery();
+//			if(returnCollection){
+//				Collection c = new ArrayList();
+//				if (rs != null ){
+//					while(rs.next()) {
+//						c.add(rs.getObject(1));
+//					}
+//				}
+//				theReturn = c;
+//			} else {
+//				if (rs != null && rs.next()) {
+//					theReturn = rs.getObject(1);
+//				}
+//			}
+		}
+		finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+		return theReturn;
+
+	}
+	
+	private void insertIntoCallableStatement(CallableStatement stmt, int index, Class type, Object parameter) throws SQLException{
+		if (type.equals(Integer.class)) {
+			stmt.setInt(index,((Integer)parameter).intValue());
+		}
+		else if (type.equals(Boolean.class)) {
+			stmt.setBoolean(index,((Boolean)parameter).booleanValue());
+		}
+		else if (type.equals(String.class)) {
+			stmt.setString(index,(String)parameter);
+		}
+		else if (type.equals(Float.class)) {
+			stmt.setFloat(index, ((Float)parameter).floatValue());
+		}
+		else if (type.equals(Double.class)) {
+			stmt.setDouble(index, ((Double)parameter).doubleValue());
+		}
+		else if (type.equals(Timestamp.class)) {
+			Timestamp stamp = (Timestamp) parameter;
+			stmt.setTimestamp(index, stamp);
+		}
+		else if (type.equals(Time.class)) {
+			stmt.setTime(index, (Time) parameter);
+		}
+		else if (type.equals(Date.class)) {
+			stmt.setDate(index, (java.sql.Date) parameter);
+		}
+		else if (type.equals(Array.class)) {
+			stmt.setArray(index, (Array) parameter);
+		}
+//			else if (type.equals("com.idega.util.Gender")) {
+//				stmt.setString(index, entity.getColumnValue(columnName).toString());
+//			}
+//			else if (type.equals("com.idega.data.BlobWrapper")) {
+//				handleBlobUpdate(columnName, stmt, index, entity);
+//				//stmt.setDate(index,(java.sql.Date)getColumnValue(columnName));
+//			}
+		else {
+			stmt.setObject(index, parameter);
+		}
+	}
+	
+	public boolean allowsStoredProcedure(){
+		return true;
+	}
+	
+	public boolean hasStoredProcedure(String procedureName) throws SQLException{
+		if(!allowsStoredProcedure()){
+			return false;
+		}
+		boolean toReturn = false;
+		ResultSet rs = null;
+		try {
+			rs = getDatabaseMetaData().getProcedures(null,null,procedureName);
+			toReturn = rs.next();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(rs!=null){
+				rs.close();
+			}
+		}
+		return toReturn;
 	}
 	
 }
