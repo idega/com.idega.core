@@ -5,8 +5,6 @@ import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
 
-import com.idega.core.data.GenericGroup;
-
 /**
  * A very simple class that compares two strings alphabetically by their local.
  * @author Eiki
