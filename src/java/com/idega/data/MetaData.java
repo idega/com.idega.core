@@ -1,4 +1,4 @@
-package com.idega.core.data;
+package com.idega.data;
 
 import com.idega.data.GenericEntity;
 import java.lang.String;
