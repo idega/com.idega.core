@@ -4840,6 +4840,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected void addUniqueIDColumn() {
 		addAttribute(getUniqueIdColumnName(),"A generated unique id do not change manually!",String.class,36);
+		setUnique(getUniqueIdColumnName(), true);
 		_hasUniqueIDColumn = true;
 	}
 	
