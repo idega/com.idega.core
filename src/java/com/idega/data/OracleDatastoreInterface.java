@@ -12,6 +12,10 @@ import javax.naming.*;
 import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
+import java.io.BufferedInputStream;
+import java.io.OutputStream;
+import oracle.sql.*;
+import oracle.jdbc.driver.*;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -233,8 +237,53 @@ public class OracleDatastoreInterface extends DatastoreInterface{
 
 
   protected void insertBlob(GenericEntity entity)throws Exception{
-  }
+    Connection Conn = null;
+    oracle.sql.BLOB blob;
 
+    try{
+      Conn = entity.getConnection();
+      if(Conn == null) return;
+
+      Conn.setAutoCommit(false);
+      Statement stmt2 = Conn.createStatement();
+
+      String cmd = "SELECT "+entity.getLobColumnName()+" FROM "+entity.getEntityName()+" WHERE "+entity.getIDColumnName()+" ='"+entity.getID()+"' FOR UPDATE ";
+      ResultSet RS2 =  stmt2.executeQuery(cmd);
+
+      RS2.next();
+      blob = ((OracleResultSet)RS2).getBLOB(1);
+
+        // write the array of binary data to a BLOB
+      OutputStream outstream = blob.getBinaryOutputStream();
+
+      int size = blob.getBufferSize();
+      byte[] buffer = new byte[size];
+      int length = -1;
+
+      BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
+      BufferedInputStream in = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
+
+      while ((length = in.read(buffer)) != -1)
+          outstream.write(buffer, 0, length );
+
+      outstream.flush();
+      outstream.close();
+      in.close();
+
+      stmt2.close();
+      RS2.close();
+
+      Conn.commit();
+      Conn.setAutoCommit(true);
+
+    }
+    catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
+    catch(Exception ex){ex.printStackTrace();}
+    finally{
+      if(Conn != null) entity.freeConnection(Conn);
+    }
+
+  }
 
   protected String getCreateUniqueIDQuery(GenericEntity entity){
     return "SELECT "+getOracleSequenceName(entity)+".nextval FROM dual";
