@@ -58,6 +58,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String COLUMN_ALIAS_TO_GROUP = "alias_id";
 	static final String COLUMN_SHORT_NAME = "short_name";
 	static final String COLUMN_ABBREVATION = "abbr";
+  
+  static final String META_DATA_HOME_PAGE = "homepage";
 
 	private static List userGroupTypeSingletonList;
 
@@ -249,6 +251,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public String getAbbrevation() {
 		return getStringColumnValue(COLUMN_ABBREVATION);
 	}
+
+  public String getHomePageURL() {
+    return getMetaData(META_DATA_HOME_PAGE);
+  }
+  
+  public void setHomePageURL(String homePage)  {
+    setMetaData(META_DATA_HOME_PAGE, homePage );
+  }
 
 	/**
 	 * Gets a list of all the groups that this "group" is directly member of.

@@ -54,6 +54,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public final static String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
+  
+  static final String META_DATA_HOME_PAGE = "homepage";
 
 	//    public UserBMPBean(){
 	//      super();
@@ -319,6 +321,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   public Timestamp getDeletedWhen() {
     return ((Timestamp) getColumnValue(getColumnNameDeletedWhen()));
   }
+  
+  public String getHomePageURL()  {
+    return getMetaData(META_DATA_HOME_PAGE);
+  }
 
 
 	/*  Getters end   */
@@ -537,6 +543,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Group getAlias() {
 		return null;
 	}
+  
+  public void setHomePageURL(String homePageURL)  {
+    setMetaData(META_DATA_HOME_PAGE, homePageURL);
+  }
   
 	/*  Setters end   */
 
