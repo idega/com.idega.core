@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.94 2004/03/11 17:07:02 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.95 2004/03/12 11:29:59 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -547,11 +547,10 @@ public abstract class DatastoreInterface {
 					//				System.out.println("update size: " + length);
 					for (int i = 0; i < length; i++) {
 						//System.out.println("updating: "+i);
-						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
+						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey((Integer)ids.get(update.elementAt(i)));
 						//do not construct with id to avoid database access
 						if (ids == null)
 							System.out.println("ids is null");
-						data.setID((Integer)ids.get(update.elementAt(i)));
 						//System.out.println("ID: "+data.getID());
 						data.setMetaDataNameAndValue((String)update.elementAt(i), (String)metadata.get((String)update.elementAt(i)));
 						if (types != null && types.containsKey((String)update.elementAt(i)))
