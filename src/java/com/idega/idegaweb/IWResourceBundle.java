@@ -188,6 +188,27 @@ public class IWResourceBundle extends ResourceBundle {
       return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
     }
 
+        /**
+    * Uses getLocalizedString but returns null if resource is not found
+    */
+    public Image getLocalizedImageTab(String key, boolean flip){
+
+      try{
+        String text = getLocalizedString(key);
+        return this.iwBundleParent.getApplication().getImageFactory().createTab(text,iwBundleParent,getLocale(),flip);
+      }
+      catch(MissingResourceException e){
+        return null;
+      }
+    }
+
+    public Image getLocalizedImageTab(String key, String returnValueIfNull, boolean flip){
+      String text = getLocalizedString(key);
+      if (text == null) text = returnValueIfNull;
+      return this.iwBundleParent.getApplication().getImageFactory().createTab(text,iwBundleParent,getLocale(),flip);
+    }
+
+
     ///
    //  *@deprecated Replaced with getLocalizedString(key)
    //  */

@@ -495,6 +495,10 @@ public class IWBundle implements java.lang.Comparable{
      return this.getApplication().getImageFactory().createButton(text,this);
     }
 
+    public Image getImageTab(String text, boolean flip){
+     return this.getApplication().getImageFactory().createTab(text,this,flip);
+    }
+
     public Image getImage(String urlInBundle, String name, int width, int height){
       return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
     }
