@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.28 2002/02/18 12:31:42 aron Exp $
+ * $Id: IWPresentationServlet.java,v 1.29 2002/02/18 14:11:14 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,7 +58,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
                 initializePage();
 	}*/
 
-	private void __initialize(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
           //TODO
           //Find a better solution for this:
           IWContext iwc = null;
@@ -81,13 +81,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 
           storeObject(IW_MODULEINFO_KEY,iwc);
-          try{
-            processBusinessEvent(iwc);
-          }
-          catch(ClassNotFoundException ex){
 
-          }
-          initializePage();
 	}
 
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
@@ -112,9 +106,11 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 long time1 = System.currentTimeMillis();
 //com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
-            __initialize(request,response);
+            __initializeIWC(request,response);
             IWContext iwc = getIWContext();
-
+          try{
+            processBusinessEvent(iwc);
+            initializePage();
 
             //added by gummi@idega.is
             //begin
@@ -166,7 +162,19 @@ long time1 = System.currentTimeMillis();
       //      response.getWriter().println("\n");
             _main(iwc);
 
-            __print(iwc);
+
+          }
+          catch(IWPageInitializationException iwe){
+                    ErrorPage errorPage = new ErrorPage();
+                    errorPage.setErrorMessage(iwe.getMessage());
+                    this.setPage(errorPage);
+          }
+          catch(Exception e){
+                    ErrorPage errorPage = new ErrorPage();
+                    errorPage.setErrorMessage("There was an error, your session is probably expired");
+                    this.setPage(errorPage);
+          }
+          __print(iwc);
 
 long time2 = System.currentTimeMillis();
 PrintWriter writer = iwc.getWriter();
@@ -223,7 +231,7 @@ writer.println("-->");
 
   }
 
-  public void initializePage(){
+  public void initializePage()throws Exception{
     //String servletName = this.getServletConfig().getServletName();
     //System.out.println("Inside initializePage for "+servletName);
     setPage(Page.loadPage(getIWContext()));

@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.36 2002/02/14 18:12:53 eiki Exp $
+ * $Id: Page.java,v 1.37 2002/02/18 14:09:50 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -836,7 +836,7 @@ public class Page extends PresentationObjectContainer {
   /**
    *
    */
-  public static Page loadPage(IWContext iwc){
+  public static Page loadPage(IWContext iwc)throws Exception{
     String classKey = iwc.getParameter(IW_FRAME_CLASS_PARAMETER);
     String frameKey = iwc.getParameter(IW_FRAME_STORAGE_PARMETER);
 
@@ -846,9 +846,15 @@ public class Page extends PresentationObjectContainer {
       return page;
     }
     else if(classKey!=null){
-      try{
+      //try{
       String className = IWMainApplication.decryptClassName(classKey);
-      Page page = (Page)Class.forName(className).newInstance();
+      Page page=null;
+      try{
+        page = (Page)Class.forName(className).newInstance();
+      }
+      catch(ClassNotFoundException e){
+        throw new IWPageInitializationException("There was an error, your session is probably expired");
+      }
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
       try {
         if(sID != null){
@@ -866,15 +872,15 @@ public class Page extends PresentationObjectContainer {
         System.err.println(page+": cannot init ic_object_instance_id");
       }
       return page;
-      }
-      catch(Exception e){
-        Page page = new Page();
-        page.add("Page invalid");
-        page.addBreak();
-        page.add(e.getClass().getName()+"Message: "+e.getMessage());
-        e.printStackTrace();
-        return page;
-      }
+      //}
+      //catch(Exception e){
+      //  Page page = new Page();
+      //  page.add("Page invalid");
+      //  page.addBreak();
+      //  page.add(e.getClass().getName()+"Message: "+e.getMessage());
+      //  e.printStackTrace();
+      //  return page;
+      //}
     }
     else{
       return new Page();
