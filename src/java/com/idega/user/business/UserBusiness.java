@@ -150,5 +150,6 @@ public interface UserBusiness extends com.idega.business.IBOService
   public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException;
   public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException;
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc);
+	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc);
   public Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser);
 }

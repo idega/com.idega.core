@@ -1583,7 +1583,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc) {
     
     Collection resultGroups = new ArrayList();
-    Group userGroup = null;
     GroupBusiness groupBiz = null;
     try {
       groupBiz = getGroupBusiness();
@@ -1591,26 +1590,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
     }
-    int userGroupId = user.getID();
-    try {
-      userGroup = groupBiz.getGroupByGroupID(userGroupId);
-    }
-    catch (FinderException ex)  {
-      System.err.println("[Userbusiness] Message was: " + ex.getMessage());
-      ex.printStackTrace(System.err);
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(userGroup);
+    
+    Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(user);
     List parentGroupsList = user.getParentGroups();
-    Iterator parentGroupIterator = parentGroupsList.iterator();
-    while (parentGroupIterator.hasNext())  {
-      Group parent = (Group) parentGroupIterator.next();
-      Collection editPermissions = AccessControl.getAllGroupEditPermissions(parent);
-      permissions.removeAll(editPermissions); // avoid double entries
+    
+      Collection editPermissions = AccessControl.getAllGroupEditPermissions(parentGroupsList);
+     // permissions.removeAll(editPermissions); // avoid double entries
       permissions.addAll(editPermissions);
-    }
+
     Iterator iterator = permissions.iterator();
     while (iterator.hasNext()) {
       ICPermission perm = (ICPermission) iterator.next();
@@ -1631,6 +1618,52 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return resultGroups;
   }
+  
+	/**
+	 * Returns a collection of Groups. The groups that he has view permissions to<br>
+	 * @param user
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc) {
+    
+		Collection resultGroups = new ArrayList();
+		Group userGroup = null;
+		GroupBusiness groupBiz = null;
+		try {
+			groupBiz = getGroupBusiness();
+		}
+		catch (RemoteException ex)  {
+			throw new RuntimeException(ex.getMessage());
+		}
+		
+		Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(user);
+		List parentGroupsList = user.getParentGroups();
+    
+			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(parentGroupsList);
+		 // permissions.removeAll(editPermissions); // avoid double entries
+			permissions.addAll(viewPermissions);
+
+		Iterator iterator = permissions.iterator();
+		while (iterator.hasNext()) {
+			ICPermission perm = (ICPermission) iterator.next();
+			try {
+				String groupId = perm.getContextValue();
+				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+				resultGroups.add(group);
+			}
+			catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			}
+			catch (FinderException e1) {
+				System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
+			}
+			catch (RemoteException ex)  {
+				throw new RuntimeException(ex.getMessage());
+			}
+		}
+		return resultGroups;
+	}
 
   public Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
     Collection notMovedUsers = new ArrayList();
