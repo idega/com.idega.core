@@ -77,6 +77,13 @@
             <organization>idega software</organization>
             <roles/>
         </developer>
+        <developer>
+            <name>Thomas Hilbig</name>
+            <id>thomas</id>
+            <email>thomas@idega.is</email>
+            <organization>idega software</organization>
+            <roles/>
+        </developer>
     </developers>
     <dependencies>
         <dependency>
