@@ -17,23 +17,25 @@ import com.idega.presentation.*;
 public class CloseButton extends GenericButton{
 
 private Image defaultImage;
+private boolean useGeneratedImage=false;
 
 public CloseButton(){
-	this("Close");
+	//this("Close");
+    useGeneratedImage=true;
+	this.setOnClick("top.window.close()");
 }
 
 public CloseButton(String displayString){
 	super();
 	setName("");
 	setValue(displayString);
-
-	setAttribute("OnClick","top.window.close()");
+	this.setOnClick("top.window.close()");
 }
 
 public CloseButton(Image defaultImage){
 	super();
 	this.defaultImage = defaultImage;
-	setAttribute("OnClick","top.window.close()");
+	this.setOnClick("top.window.close()");
 }
 
 public synchronized Object clone(){
@@ -45,7 +47,10 @@ public synchronized Object clone(){
 }
 
 public void print(IWContext iwc) throws IOException{
-	initVariables(iwc);
+	  if(useGeneratedImage){
+        defaultImage = this.getBundle(iwc).getResourceBundle(iwc).getLocalizedImageButton("close","Close");
+      }
+      initVariables(iwc);
         StringBuffer printString = new StringBuffer();
          if( defaultImage!= null ) {
           setAttribute("src",defaultImage.getMediaURL(iwc));
