@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Collator;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2498,6 +2499,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		else {
 			return super.equals(obj);
 		}
+	}
+	
+	public int compareTo(Object obj) {
+		if (obj instanceof IDOEntity) {
+			return compareTo((IDOEntity)obj);
+		}
+		return 0;
+	}
+	
+	protected int compareTo(IDOEntity entity) {
+		Collator coll = Collator.getInstance();
+		return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
 	}
 
 	public boolean equals(IDOLegacyEntity entity) {

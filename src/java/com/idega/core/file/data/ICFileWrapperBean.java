@@ -10,12 +10,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.Collator;
 import java.util.Locale;
 
 import javax.ejb.FinderException;
 
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.data.BlobWrapper;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookupException;
 import com.idega.data.TreeableEntityWrapper;
 
@@ -358,6 +360,19 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		return ((ICFile)this.getMainEntity()).isFolder();
 	}
 
-
-
+	public int compareTo(Object obj) {
+		try {
+			IDOEntity entity = (IDOEntity) obj;
+			Collator coll = null;
+			if (getLocale() != null)
+				coll = Collator.getInstance(getLocale());
+			else
+				coll = Collator.getInstance();
+			
+			return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
+		}
+		catch (ClassCastException e) {
+			return 0;
+		}
+	}
 }

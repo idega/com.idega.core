@@ -12,7 +12,7 @@ package com.idega.data;
  * @version 1.0
  */
 
-public interface IDOEntity extends javax.ejb.EJBLocalObject{
+public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
 
   //public Object getId() throws RemoteException;
   //public String getName() throws RemoteException;
