@@ -122,7 +122,6 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
@@ -131,6 +130,7 @@ implements IWUserContext, IWApplicationContext {
 				e.printStackTrace();
 			}
 		}
+		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
 	}
 	
 	protected boolean getIfSetRequestCharacterEncoding(){
