@@ -350,7 +350,7 @@ public void print(IWContext iwc)throws IOException{
 
     html = TextSoap.findAndReplace(html,tag+"//", tag+BASEURL);// the // case
     html = TextSoap.findAndReplace(html,tag+"/", tag+BASEURL);
-    String[] unchangedUrlsPrefixes = new String[] {"http:", "ftp:", "mailto:"}; // prefixes of urls not to modify, add as needed
+    String[] unchangedUrlsPrefixes = new String[] {"http:", "ftp:", "mailto:", "https:"}; // prefixes of urls not to modify, add as needed
     html = TextSoap.findAndReplace(html,tag, unchangedUrlsPrefixes,tag+RELATIVEURL);
 
     //System.out.println("tag+BASEURL"+tag+BASEURL);
