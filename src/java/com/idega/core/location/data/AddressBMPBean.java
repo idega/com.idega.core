@@ -304,7 +304,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	 * @see com.idega.core.location.data.Address#isSame(com.idega.core.location.data.Address)
 	 */
 	public boolean isEqualTo(Address address) {
-		if(address!=null){
+		if(address!=null
+				&& getStreetName() != null
+				&& getStreetNumber() != null
+				&& getPostalCode() != null){
 			
 			return (this.getStreetName().equalsIgnoreCase(address.getStreetName())
 					&& this.getStreetNumber().equalsIgnoreCase(address.getStreetNumber())
