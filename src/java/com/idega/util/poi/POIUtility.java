@@ -65,6 +65,9 @@ public class POIUtility {
 				obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
 				if (obj != null) {
 					text = obj.toString();
+					if (text == null) {
+						text = "";
+					}
 					text = sp.matcher(text).replaceAll(" ");
 					text = br.matcher(text).replaceAll("\n");
 					row.createCell((short)(y-1)).setCellValue(text);
