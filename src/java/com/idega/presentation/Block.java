@@ -63,7 +63,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   	//return IWConstants.getDefaultStyles();
   	return null;
   }
-
+  
   public String getCacheKey(){
     return IW_BLOCK_CACHE_KEY;
   }
@@ -266,15 +266,15 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       targetObjInst = getParentObjectInstanceID();
       
     if(getStyleNames() != null){
-    	String prefix = getBundle(iwc).getBundleName();
-    	prefix = prefix.substring(prefix.lastIndexOf(".")) + "_";
+    	//String prefix = getBundle(iwc).getBundleName();
+    	//prefix = prefix.substring(prefix.lastIndexOf(".")) + "_";
     	Map styles = getStyleNames();
     	IWStyleManager manager = new IWStyleManager();
     	Iterator iter = styles.keySet().iterator();
     	while ( iter.hasNext() ) {
     		String style = (String) iter.next();
     		if ( !manager.isStyleSet(style) )
-    			manager.setStyle(prefix + style, (String) styles.get(style));
+    			manager.setStyle(style, (String) styles.get(style));
     	}
     }
 
