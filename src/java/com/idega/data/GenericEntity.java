@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -46,16 +48,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
 	public static final String ONE_TO_ONE = "one-to-one";
-	private static Hashtable _theAttributes = new Hashtable();
-	private static Hashtable _allStaticClasses = new Hashtable();
+	private static Map _theAttributes = new Hashtable();
+	private static Map _allStaticClasses = new Hashtable();
 	private static String DEFAULT_DATASOURCE = "default";
 	//private static NullColumnValue nullColumnValue = new NullColumnValue();
 	private String _dataStoreType;
 	private int _state = STATE_NEW;
-	private Hashtable _columns = new Hashtable();
-	private Hashtable _updatedColumns;
+	private Map _columns = new Hashtable();
+	private Map _updatedColumns;
 	private String _dataSource;
-	String _cachedColumnNameList;
+	String[] _cachedColumnNameList;
 	private EntityContext _entityContext;
 	//private EJBHome _ejbHome;
 	private EJBLocalHome _ejbHome;
@@ -170,18 +172,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 */
 	public abstract String getEntityName();
 	public abstract void initializeAttributes();
-	public Vector getAttributes()
+	public java.util.Collection getAttributes()
 	{
 		//ties the attribute vector to the subclass of IDOLegacyEntity because
 		//the theAttributes variable is static.
-		Vector theReturn = (Vector) _theAttributes.get(this.getClass().getName());
-		/*if (theReturn == null) {
-		  theReturn = new Vector();
-		  theAttributes.put(this.getClass().getName(),theReturn);
-		  firstLoadInMemory();
-		}*/
+		
+		Map m = getAttributesMap();
+		return m.values();
+		//Vector theReturn = (Vector) _theAttributes.get(this.getClass().getName());
+		//return theReturn;
+	}
+	protected Map getAttributesMap()
+	{
+		//ties the attribute vector to the subclass of IDOLegacyEntity because
+		//the theAttributes variable is static.
+		Map theReturn = (Map) _theAttributes.get(this.getClass());
+		if(theReturn == null){
+			theReturn = new HashMap();
+			_theAttributes.put(this.getClass(),theReturn);
+		}
 		return theReturn;
 	}
+	
 	public void setID(int id)
 	{
 		setColumn(getIDColumnName(), new Integer(id));
@@ -227,6 +239,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		//does nothing
 	}
+	/**
+	 * Returns the string value of the primary key, or the string "null" if
+	 * there is no primary key set.
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString()
 	{
 		Object pk = this.getPrimaryKey();
@@ -240,11 +257,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
-	public void addColumnName(String columnName)
+	protected void addColumnName(String columnName)
 	{
 		addAttribute(columnName);
 	}
-	public void addAttribute(String attributeName)
+	protected void addAttribute(String attributeName)
 	{
 		EntityAttribute attribute;
 		attribute = new EntityAttribute(attributeName);
@@ -255,7 +272,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
-	public void addColumnName(
+	protected void addColumnName(
 		String columnName,
 		String longName,
 		boolean ifVisible,
@@ -280,7 +297,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
 	}
-	public void addAttribute(
+	protected void addAttribute(
 		String attributeName,
 		String longName,
 		boolean ifVisible,
@@ -452,7 +469,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	protected void addAttribute(EntityAttribute attribute)
 	{
-		getAttributes().addElement(attribute);
+		getAttributesMap().put(attribute.getName().toUpperCase(),attribute);
+		//getAttributes().addElement(attribute);
 	}
 	protected void addLanguageAttribute()
 	{
@@ -475,7 +493,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public EntityAttribute getAttribute(String attributeName)
 	{
 		//return (EntityAttribute) columns.get(columnName.toLowerCase());
-		EntityAttribute theReturn = null;
+		EntityAttribute theReturn = (EntityAttribute)getAttributesMap().get(attributeName.toUpperCase());
+		
+		/**EntityAttribute theReturn = null;
 		EntityAttribute tempColumn = null;
 		for (Enumeration enumeration = getAttributes().elements(); enumeration.hasMoreElements();)
 		{
@@ -484,7 +504,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			{
 				theReturn = tempColumn;
 			}
-		}
+		}*/
 		/*    if(theReturn==null){
 		      System.err.println("Error in "+this.getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
 		    }*/
@@ -1154,59 +1174,89 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		return "language_id";
 	}
-	/**@todo this should not be done every time cache!!**/
+	
+	/**
+	 * Gets a String array with all the columns defined in this entity bean.
+	 * @see com.idega.data.IDOLegacyEntity#getColumnNames()
+	 */
 	public String[] getColumnNames()
 	{
-		Vector vector = new Vector();
-		int i = 0;
-		//for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
-		for (Enumeration e = getAttributes().elements(); e.hasMoreElements(); i++)
-		{
-			EntityAttribute temp = (EntityAttribute) e.nextElement();
-			if (temp.getAttributeType().equals("column"))
+		String[] theReturn = getCachedColumnNames();
+		
+		if(theReturn==null){
+			Vector vector = new Vector();
+			int i = 0;
+			//for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
+			//for (Enumeration e = getAttributes().elements(); e.hasMoreElements(); i++)
+			for (Iterator iter = getAttributes().iterator(); iter.hasNext(); i++)
 			{
-				//vector.addElement(temp.getColumnName().toLowerCase());
-				vector.addElement(temp.getColumnName());
+				EntityAttribute temp = (EntityAttribute) iter.next();
+				//EntityAttribute temp = (EntityAttribute) e.nextElement();
+				if (temp.getAttributeType().equals("column"))
+				{
+					//vector.addElement(temp.getColumnName().toLowerCase());
+					vector.addElement(temp.getColumnName());
+				}
 			}
+			if (vector != null)
+			{
+				vector.trimToSize();
+				theReturn = (String[]) vector.toArray(new String[0]);
+				//return vector.toArray(new IDOLegacyEntity[0]);
+			}
+			else
+			{
+				theReturn = new String[0];
+			}
+			setCachedColumnNames(theReturn);
 		}
-		if (vector != null)
-		{
-			vector.trimToSize();
-			return (String[]) vector.toArray(new String[0]);
-			//return vector.toArray(new IDOLegacyEntity[0]);
-		}
-		else
-		{
-			return new String[0];
-		}
+		return theReturn;
 	}
+	
+	private String[] getCachedColumnNames()
+	{
+		return ((GenericEntity) getIDOEntityStaticInstance())._cachedColumnNameList;
+	}
+	
+	private void setCachedColumnNames(String[] columnNames)
+	{
+		((GenericEntity) getIDOEntityStaticInstance())._cachedColumnNameList=columnNames;
+	}
+	
+	
+	
 	/**@todo this should not be done every time cache!!**/
 	public String[] getVisibleColumnNames()
 	{
-		Vector theColumns = new Vector();
-		Vector theAttributes = getAttributes();
-		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();)
+		List theColumns = new Vector();
+		//Vector theAttributes = getAttributes();
+		//for (Enumeration e = getAttributes().elements(); e.hasMoreElements();)
+		for (Iterator iter = getAttributes().iterator(); iter.hasNext();)
 		{
-			//for (Enumeration e = columns.elements(); e.hasMoreElements();){
-			String tempName = (String) ((EntityAttribute) e.nextElement()).getColumnName();
+			//String tempName = (String) ((EntityAttribute) e.nextElement()).getColumnName();
+			String tempName = (String) ((EntityAttribute) iter.next()).getColumnName();
 			if (getIfVisible(tempName))
 			{
-				theColumns.addElement(tempName);
+				theColumns.add(tempName);
 			}
 		}
 		return (String[]) theColumns.toArray(new String[0]);
 	}
 	public String[] getEditableColumnNames()
 	{
-		Vector theColumns = new Vector();
-		for (Enumeration e = _columns.keys(); e.hasMoreElements();)
+		Collection theColumns = new Vector();
+		//Collection theAttributes = getAttributes();
+		
+		//for (Enumeration e = getAttributes().elements(); e.hasMoreElements();)
+		for (Iterator iter = getAttributes().iterator(); iter.hasNext();)
 		{
 			//for (Enumeration e = columns.elements(); e.hasMoreElements();){
-			String tempName = (String) e.nextElement();
+			//String tempName = (String) ((EntityAttribute) e.nextElement()).getColumnName();
+			String tempName = (String) ((EntityAttribute) iter.next()).getColumnName();
 			if (getIfEditable(tempName))
 			{
-				theColumns.addElement(tempName);
-			};
+				theColumns.add(tempName);
+			}
 		}
 		return (String[]) theColumns.toArray(new String[0]);
 	}
@@ -4021,7 +4071,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		if (this._updatedColumns == null)
 		{
-			_updatedColumns = new Hashtable();
+			_updatedColumns = new HashMap();
 		}
 		_updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
 	}
@@ -4076,10 +4126,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		this._primaryKey = pk;
 	}
-	public String getCachedColumnNamesList()
-	{
-		return ((GenericEntity) getIDOEntityStaticInstance())._cachedColumnNameList;
-	}
+
 	private static IDOLegacyEntity instanciateEntity(String entityClassName)
 	{
 		try
