@@ -140,8 +140,8 @@ public class SubmitButton extends GenericButton {
 		}
 		if (isEnclosedByForm()) {
 			if (_confirmSubmit) {
-				getScript().addFunction("confirmSubmit", "function confirmSubmit(input) {\n submit = confirm('"+_confirmMessage+"');\n	if (submit==true)\n		\tinput.form.submit();\n}");
-				setOnClick("confirmSubmit(this);");
+				getScript().addFunction("confirmSubmit", "function confirmSubmit(input,message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tinput.form.submit();\n}");
+				setOnClick("confirmSubmit(this,'"+_confirmMessage+"');");
 			}
 			if (_enabledWhenChecked) {
 				getScript().addFunction("enableButton","function enableButton(inputs,button) {\n	\tif (validateInputs(inputs)) \n	\t\tbutton.disabled=eval('false');\n	\telse\n	\t\tbutton.disabled=eval('true');\n }");
