@@ -29,6 +29,8 @@ public class FieldSet extends PresentationObjectContainer {
 			println("<fieldset " + getMarkupAttributesString() + ">");
 			super.print(iwc);
 			println("</fieldset>");	
+		} else {
+			super.print(iwc);
 		}
 	}
 	

@@ -35,6 +35,7 @@ public class IWURL {
     globalMaintainedParameters.add(Page.IW_FRAME_STORAGE_PARMETER);
     globalMaintainedParameters.add(Page.IW_FRAME_CLASS_PARAMETER);
     globalMaintainedParameters.add(IWMainApplication.classToInstanciateParameter);
+    globalMaintainedParameters.add(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
 
     globalMaintainedBuilderParameters = new Vector();
     globalMaintainedBuilderParameters.add(ICBuilderConstants.IB_PAGE_PARAMETER);

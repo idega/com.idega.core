@@ -1,5 +1,6 @@
 package com.idega.presentation.text;
 
+import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -35,7 +36,9 @@ public class Break extends PresentationObject {
 				print("<br " + (!markup.equals(Page.HTML) ? "/" : "") + ">");
 			}
 			else if (getLanguage().equals("WML")) {
-				print("<br />");
+				if(!((this.getParent() instanceof Page) || (this.getParent() instanceof Block))){
+					print("<br />");
+				}
 			}
 		}
 	}

@@ -63,6 +63,7 @@ public class IWConstants{
   public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";
 
+  public final static String PARAM_NAME_OUTPUT_MARKUP_LANGUAGE = "iw_output_markup";
   public static final String MARKUP_LANGUAGE_HTML="HTML";
 	public static final String MARKUP_LANGUAGE_PDF_XML="PDF_XML";
   public static final String MARKUP_LANGUAGE_WML="WML";

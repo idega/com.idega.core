@@ -78,7 +78,6 @@ implements IWUserContext, IWApplicationContext {
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
-	private final static String PARAM_NAME_OUTPUT_MARKUP_LANGUAGE = "iw_output_markup";
 	//private HttpSession session;
 	private String language; //Variable to set the language i.e. HTML
 	private String interfaceStyle; //Variable to enable multiple interface looks
@@ -288,7 +287,7 @@ implements IWUserContext, IWApplicationContext {
 		//Todo: set the language to WML when the user-agent is of that type
 		//--only implemented for the UPG1 test WAP browser
 		// @TODO (jonas) use better method to find content types supported by client. Use rdf docs referenced in request headers.x
-		String mlParam = request.getParameter(PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
+		String mlParam = request.getParameter(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
 		if(mlParam!=null && mlParam.length()>0) {
 			return mlParam;
 		}

@@ -172,7 +172,7 @@ public class Form extends InterfaceObject {
 		setOnAction("onclick", script);
 	}
 
-	private List findAllInputNamesHelper(List vector, PresentationObjectContainer cont) {
+	private List findAllfindAllInterfaceObjectsHelper(List vector, PresentationObjectContainer cont) {
 		List objects = cont.getChildren();
 		if (objects != null) {
 			//for (Enumeration enum = objects.elements();enum.hasMoreElements();){
@@ -180,14 +180,9 @@ public class Form extends InterfaceObject {
 				PresentationObject mo = (PresentationObject) iter.next();
 				if (mo instanceof PresentationObjectContainer) {
 					if (mo instanceof InterfaceObject) {
-						if(!(mo instanceof Parameter) && !(mo instanceof GenericButton)) {
-							String name = mo.getName();
-							if(name != null && !"null".equals(name)) {
-								vector.add(name);
-							}
-						}
+						vector.add((InterfaceObject)mo);
 					} else {
-						vector = findAllInputNamesHelper(vector, (PresentationObjectContainer) mo);
+						vector = findAllfindAllInterfaceObjectsHelper(vector, (PresentationObjectContainer) mo);
 					}
 				}
 			}
@@ -195,13 +190,13 @@ public class Form extends InterfaceObject {
 		return vector;
 	}
 
-	public String[] findAllInputNames() {
+	public InterfaceObject[] findAllInterfaceObjects() {
 
 		List vector = new Vector();
 
-		vector = findAllInputNamesHelper(vector, this);
+		vector = findAllfindAllInterfaceObjectsHelper(vector, this);
 
-		return (String[]) vector.toArray(new String[1]);
+		return (InterfaceObject[]) vector.toArray(new InterfaceObject[1]);
 
 	}
 
@@ -497,9 +492,35 @@ public class Form extends InterfaceObject {
 			setAction(getIdegaSpecialRequestURI(iwc));
 			print("<onevent type=\"onenterforward\" >");
 			print("<refresh>");
-			String[] allInputNames = findAllInputNames();
-			for (int j = 0; j < allInputNames.length; j++) {
-				print("<setvar name=\"" + allInputNames[j] + "\" value=\"\" />");
+			
+			
+			InterfaceObject[] allInterfaceObjects = findAllInterfaceObjects();
+			StringBuffer postFields = new StringBuffer();
+			
+			SubmitButton theButton = new SubmitButton();
+			List parameters = new ArrayList();
+			
+			for (int j = 0; j < allInterfaceObjects.length; j++) {
+				if(!(allInterfaceObjects[j] instanceof Parameter) && !(allInterfaceObjects[j] instanceof GenericButton)) {
+					String name = allInterfaceObjects[j].getName();
+					if(name != null && !"null".equals(name)) {
+						print("<setvar name=\"" + name);
+						String value = allInterfaceObjects[j].getValueAsString();
+						if(value!=null){
+							print("\" value=\""+value+"\" />");
+						}else {
+							print("\" value=\"\" />");
+						}
+						postFields.append("<postfield name=\"" + name + "\" value=\"$" + name + "\" />");
+					}
+				} else if(allInterfaceObjects[j] instanceof Parameter || allInterfaceObjects[j] instanceof HiddenInput) {
+					parameters.add(allInterfaceObjects[j]);
+				}
+				if(allInterfaceObjects[j] instanceof SubmitButton) {
+					theButton = (SubmitButton)allInterfaceObjects[j];
+				}
+				
+				
 			}
 			print("</refresh>");
 			print("</onevent>");
@@ -507,25 +528,11 @@ public class Form extends InterfaceObject {
 			super.print(iwc);
 			print("</fieldset></p>");
 			
-			SubmitButton theButton = new SubmitButton();
-			List parameters = new ArrayList();
-			List children = getChildrenRecursive();
-			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				PresentationObject child = (PresentationObject) iter.next();
-				if(child instanceof Parameter || child instanceof HiddenInput) {
-					parameters.add(child);
-				}
-				if(child instanceof SubmitButton) {
-					theButton = (SubmitButton)child;
-				}
-			}
-			
 			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
 			print("<p><anchor>"+theButton.getContent());
 			print("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
-			for (int i = 0; i < allInputNames.length; i++) {
-				print("<postfield name=\"" + allInputNames[i] + "\" value=\"$" + allInputNames[i] + "\" />");
-			}
+
+			print(postFields.toString());
 			
 			for (Iterator iter = parameters.iterator(); iter.hasNext();) {
 				Parameter child = (Parameter) iter.next();
