@@ -91,7 +91,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	public boolean executeCVSCommit(String directory,String file,String comment){
 		try
 		{
-			String command = "commit "+file+" -m "+comment;
+			String command = "commit -m \""+comment+"\" "+file;
 			int exit = executeCVSCommand(command,directory);
 			if(exit==0){
 				return true;
