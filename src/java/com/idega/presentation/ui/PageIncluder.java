@@ -47,6 +47,7 @@ public class PageIncluder extends PresentationObject implements Index{
   private String pageIncluderFinalParamName = null;
   private int instanceId;
   private boolean forceFrame = false;
+  private boolean useSecureLinks = false;
 
   private boolean changeURL = false;
   private final String symbol = "$";
@@ -130,7 +131,12 @@ public class PageIncluder extends PresentationObject implements Index{
 	if (forceFrame ) {
 
 	  StringBuffer buf = new StringBuffer();
-	  buf.append(iwc.getRequestURI());
+          String uri = iwc.getRequestURI();
+          if( useSecureLinks ){
+            buf.append("https://");
+            buf.append(iwc.getServerName());
+          }
+	  buf.append(uri);
 	  buf.append('?');
 
 	  if( _sendToPage!=null ){
@@ -400,6 +406,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = symbolReplace(html,"#cedil;");
     html = symbolReplace(html,"ccedil;");
     html = symbolReplace(html,"Ccedil;");
+    html = symbolReplace(html,"cedil;");
     html = symbolReplace(html,"oslash;");
     html = symbolReplace(html,"Oslash;");
 
@@ -475,6 +482,10 @@ public class PageIncluder extends PresentationObject implements Index{
 
   public void setForceInFrame(boolean forceFrame){
     this.forceFrame = forceFrame;
+  }
+
+  public void setKeepSecure(boolean useSecureLinks){
+    this.useSecureLinks = useSecureLinks;
   }
 
   public void setLabel(String label) {
