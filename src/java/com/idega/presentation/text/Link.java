@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.110 2004/05/18 17:00:21 gummi Exp $
+ * $Id: Link.java,v 1.111 2004/05/19 08:54:26 birna Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1167,7 +1167,7 @@ public class Link extends Text implements DPTCrawlable {
 				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
 			}
 			
-			addFirstParameter(BuilderConstants.IB_PAGE_PARAMETER, Integer.toString(page.getID()));
+			addParameter(BuilderConstants.IB_PAGE_PARAMETER, Integer.toString(page.getID()));
 		}
 	}
 	
