@@ -4026,4 +4026,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return IDOLookup.getHome(entityClass);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(getEntityName());
+		buffer.append(getPrimaryKey().hashCode());
+		return buffer.toString().hashCode();
+	}
 }
