@@ -1,12 +1,12 @@
 package com.idega.user.data;
 
+import com.idega.builder.data.IBDomain;
+import com.idega.util.ListUtil;
+import com.idega.data.*;
 import javax.ejb.*;
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.ICNetwork;
 import com.idega.core.data.ICProtocol;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOUtil;
-import com.idega.data.SimpleQuerier;
 import com.idega.util.idegaTimestamp;
 
 import java.rmi.RemoteException;
@@ -378,6 +378,142 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
       throw new EJBException(e.getMessage());
     }
     return theReturn;
+  }
+
+
+  public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes )throws RemoteException, FinderException{
+    Collection relations = this.getGroupRelationHome().findGroupsRelationshipsUnder(containingGroup);
+    Iterator iter = relations.iterator();
+    Collection PKs = new Vector();
+    while (iter.hasNext()) {
+      GroupRelation item = (GroupRelation)iter.next();
+      PKs.add(item.getRelatedGroupPK());
+    }
+
+    if(groupTypes.size() > 0 && PKs.size() > 0){
+      IDOQuery query = new IDOQuery();
+      query.appendSelectAllFrom(this.getEntityName());
+      query.appendWhere(this.COLUMN_GROUP_TYPE);
+        IDOQuery subQuery = new IDOQuery();
+        subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+      if(returnTypes){
+        query.appendIn(subQuery);
+      }else{
+        query.appendNotIn(subQuery);
+      }
+      query.appendAnd();
+      query.append(this.COLUMN_GROUP_ID);
+        IDOQuery subQuery2 = new IDOQuery();
+        subQuery2.appendCommaDelimited(PKs);
+      query.appendIn(subQuery2);
+      query.appendOrderBy(this.COLUMN_NAME);
+
+//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
+      return this.idoFindPKsBySQL(query.toString());
+    } else {
+      return ListUtil.getEmptyList();
+    }
+  }
+
+  public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes )throws RemoteException, FinderException, IDOException{
+    Collection relations = this.getGroupRelationHome().findGroupsRelationshipsUnder(containingGroup);
+    Iterator iter = relations.iterator();
+    Collection PKs = new Vector();
+    while (iter.hasNext()) {
+      GroupRelation item = (GroupRelation)iter.next();
+      PKs.add(item.getRelatedGroupPK());
+    }
+
+    if(groupTypes.size() > 0 && PKs.size() > 0){
+      IDOQuery query = new IDOQuery();
+      query.appendSelectCountFrom(this.getEntityName());
+      query.appendWhere(this.COLUMN_GROUP_TYPE);
+        IDOQuery subQuery = new IDOQuery();
+        subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+      if(returnTypes){
+        query.appendIn(subQuery);
+      }else{
+        query.appendNotIn(subQuery);
+      }
+      query.appendAnd();
+      query.append(this.COLUMN_GROUP_ID);
+        IDOQuery subQuery2 = new IDOQuery();
+        subQuery2.appendCommaDelimited(PKs);
+      query.appendIn(subQuery2);
+
+//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
+      return this.idoGetNumberOfRecords(query.toString());
+    } else {
+      return 0;
+    }
+  }
+
+
+  public Collection ejbFindTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes )throws RemoteException, FinderException{
+    Collection relations = this.getGroupDomainRelationHome().findGroupsRelationshipsUnder(containingDomain,getGroupDomainRelationTypeHome().getTopNodeRelationType());
+    Iterator iter = relations.iterator();
+    Collection PKs = new Vector();
+    while (iter.hasNext()) {
+      GroupDomainRelation item = (GroupDomainRelation)iter.next();
+      PKs.add(item.getRelatedGroupPK());
+    }
+
+    if(groupTypes.size() > 0 && PKs.size() > 0){
+      IDOQuery query = new IDOQuery();
+      query.appendSelectAllFrom(this.getEntityName());
+      query.appendWhere(this.COLUMN_GROUP_TYPE);
+        IDOQuery subQuery = new IDOQuery();
+        subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+      if(returnTypes){
+        query.appendIn(subQuery);
+      }else{
+        query.appendNotIn(subQuery);
+      }
+      query.appendAnd();
+      query.append(this.COLUMN_GROUP_ID);
+        IDOQuery subQuery2 = new IDOQuery();
+        subQuery2.appendCommaDelimited(PKs);
+      query.appendIn(subQuery2);
+      query.appendOrderBy(this.COLUMN_NAME);
+
+//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
+      return this.idoFindPKsBySQL(query.toString());
+    } else {
+      return ListUtil.getEmptyList();
+    }
+  }
+
+  public int ejbHomeGetNumberOfTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes )throws RemoteException, FinderException, IDOException{
+    Collection relations = this.getGroupDomainRelationHome().findGroupsRelationshipsUnder(containingDomain,getGroupDomainRelationTypeHome().getTopNodeRelationType());
+    Iterator iter = relations.iterator();
+    Collection PKs = new Vector();
+    while (iter.hasNext()) {
+      GroupDomainRelation item = (GroupDomainRelation)iter.next();
+      PKs.add(item.getRelatedGroupPK());
+    }
+
+    if(groupTypes.size() > 0 && PKs.size() > 0){
+      IDOQuery query = new IDOQuery();
+      query.appendSelectCountFrom(this.getEntityName());
+      query.appendWhere(this.COLUMN_GROUP_TYPE);
+        IDOQuery subQuery = new IDOQuery();
+        subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+      if(returnTypes){
+        query.appendIn(subQuery);
+      }else{
+        query.appendNotIn(subQuery);
+      }
+      query.appendAnd();
+      query.append(this.COLUMN_GROUP_ID);
+        IDOQuery subQuery2 = new IDOQuery();
+        subQuery2.appendCommaDelimited(PKs);
+      query.appendIn(subQuery2);
+
+//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
+      return this.idoGetNumberOfRecords(query.toString());
+    } else {
+      return 0;
+    }
   }
 
 
@@ -775,7 +911,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
   protected boolean identicalGroupExistsInDatabase() throws Exception {
-    return SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'",this.getDatasource()).length > 0;
+//    return SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'",this.getDatasource()).length > 0;
+    return false;
   }
 
 
@@ -868,6 +1005,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return ((GroupRelationHome)IDOLookup.getHome(GroupRelation.class));
   }
 
+  private GroupDomainRelationHome getGroupDomainRelationHome()throws RemoteException{
+    return ((GroupDomainRelationHome)IDOLookup.getHome(GroupDomainRelation.class));
+  }
+
+  private GroupDomainRelationTypeHome getGroupDomainRelationTypeHome()throws RemoteException{
+    return ((GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class));
+  }
+
   public String ejbHomeGetGroupType(){
    return this.getGroupTypeValue();
   }
@@ -897,14 +1042,20 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   }
 
 
+  private GroupTypeHome getGroupTypeHome() throws RemoteException {
+    return ((GroupTypeHome)IDOLookup.getHome(GroupType.class));
+  }
+
   public Iterator getChildren() {
     /**
      * @todo: Change implementation
      *
      */
     if(this.getID()==this.GROUP_ID_USERS){
-      String[] groupTypes = {"ic_user_representative"};
+//      String[] groupTypes = {"ic_user_representative"};
       try{
+        String[] groupTypes = new String[1];
+        groupTypes[0] = ((GroupHome)IDOLookup.getHome(User.class)).getGroupType();
         return this.getGroupHome().findGroups(groupTypes).iterator();
       }
       catch(Exception e){
@@ -912,7 +1063,16 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
       }
     }
     else{
-      return this.getListOfAllGroupsContained().iterator();
+      try {
+        Collection types = this.getGroupTypeHome().findVisibleGroupTypes();
+        return this.getGroupHome().findGroupsContained(this,types,true).iterator();
+      }
+      catch (FinderException e) {
+        throw new EJBException(e);
+      }
+      catch (RemoteException ex) {
+        throw new EJBException(ex);
+      }
     }
   }
   public boolean getAllowsChildren() {
@@ -927,8 +1087,33 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     }
   }
   public int getChildCount() {
-    return this.getListOfAllGroupsContained().size();
+    if(this.getID()==this.GROUP_ID_USERS){
+      try{
+        String[] groupTypes = new String[1];
+        groupTypes[0] = ((GroupHome)IDOLookup.getHome(User.class)).getGroupType();
+        return this.getGroupHome().findGroups(groupTypes).size();
+      }
+      catch(Exception e){
+        throw new RuntimeException(e.getMessage());
+      }
+    }
+    else{
+      try {
+        Collection types = this.getGroupTypeHome().findVisibleGroupTypes();
+        return this.getGroupHome().getNumberOfGroupsContained(this,types,true);
+      }
+      catch (FinderException e) {
+        throw new EJBException(e);
+      }
+      catch (RemoteException ex) {
+        throw new EJBException(ex);
+      }
+      catch (IDOException idoex) {
+        throw new EJBException(idoex);
+      }
+    }
   }
+
   public int getIndex(ICTreeNode node) {
     return node.getNodeID();
   }
@@ -948,7 +1133,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     /**
      * @todo reimplement
      */
-    return !getChildren().hasNext();
+    return getChildCount() > 0;
   }
   public String getNodeName() {
     return this.getName();

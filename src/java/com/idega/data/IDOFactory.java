@@ -179,6 +179,23 @@ public abstract class IDOFactory implements IDOHome{
     return theReturn;
   }
 
+    /**
+   *
+   * @param collectionOfPrimaryKeys
+   * @return Collection of IDOEntity objects for this Factory
+   * @throws FinderException
+   */
+  protected Collection getIDOEntityListForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+    Collection theReturn = new IDOEntityList(this,collectionOfPrimaryKeys);
+//    Iterator iter = collectionOfPrimaryKeys.iterator();
+//    while (iter.hasNext()) {
+//      Object pk = iter.next();
+//      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+//      theReturn.add(entityObject);
+//    }
+    return theReturn;
+  }
+
   protected IDOEntity idoCheckOutPooledEntity(){
     /**
      * @todo: Change implementation

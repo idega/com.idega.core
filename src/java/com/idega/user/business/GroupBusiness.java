@@ -1,5 +1,9 @@
 package com.idega.user.business;
 
+import com.idega.user.data.GroupDomainRelationType;
+import com.idega.user.data.Group;
+import com.idega.builder.data.IBDomain;
+import java.rmi.RemoteException;
 import javax.ejb.*;
 
 public interface GroupBusiness extends com.idega.business.IBOService
@@ -43,5 +47,6 @@ public interface GroupBusiness extends com.idega.business.IBOService
 
  public java.lang.String getGroupType(java.lang.Class p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.Group createGroup(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException,javax.ejb.CreateException, java.rmi.RemoteException;
+ public void addGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException;
 
 }

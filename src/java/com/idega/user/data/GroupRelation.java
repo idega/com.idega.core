@@ -7,6 +7,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public boolean isPassive() throws java.rmi.RemoteException;
  public void setRelatedUser(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.Group getRelatedGroup() throws java.rmi.RemoteException;
+ public java.lang.Integer getRelatedGroupPK() throws java.rmi.RemoteException;
  public void setRelatedGroup(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getStatus() throws java.rmi.RemoteException;
  public java.sql.Timestamp getTerminationDate() throws java.rmi.RemoteException;

@@ -41,6 +41,14 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   public abstract String getGroupTypeDescription();
 //  public String getGroupTypeDescription(){return null;}
 
+  /**
+   * Returns the visibility of the GroupType
+   */
+  public boolean getGroupTypeVisibility(){
+    return true;
+  }
+
+
 //  public void initializeAttributes() {
 //    /**@todo: implement this com.idega.data.GenericEntity abstract method*/
 //  }
@@ -86,6 +94,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
       GroupType type = tghome.create();
       type.setType(getGroupTypeKey());
       type.setDescription(getGroupTypeDescription());
+      type.setVisibility(getGroupTypeVisibility());
       type.store();
 
     }

@@ -13,37 +13,31 @@ public class GroupTypeHomeImpl extends com.idega.data.IDOFactory implements Grou
  }
 
 
- public GroupType createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
+public java.util.Collection findAllGroupTypes()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupTypeBMPBean)entity).ejbFindAllGroupTypes();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
- }
-
+public java.util.Collection findVisibleGroupTypes()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupTypeBMPBean)entity).ejbFindVisibleGroupTypes();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public GroupType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (GroupType) super.findByPrimaryKeyIDO(pk);
  }
 
 
- public GroupType findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (GroupType) super.findByPrimaryKeyIDO(id);
- }
-
-
- public GroupType findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
-
- }
-
+public int getNumberOfVisibleGroupTypes()throws com.idega.data.IDOException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetNumberOfVisibleGroupTypes();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
 
 
 }

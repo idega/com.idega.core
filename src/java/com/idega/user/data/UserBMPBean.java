@@ -1,14 +1,11 @@
 package com.idega.user.data;
 
+import com.idega.data.*;
 import javax.ejb.*;
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
-import com.idega.data.IDOAddRelationshipException;
-import com.idega.data.IDORemoveRelationshipException;
-import com.idega.data.IDOUtil;
-import com.idega.data.IDOFinderException;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -96,6 +93,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       return "ic_user_representative";
     }
 
+    public boolean getGroupTypeVisibility(){
+      return false;
+    }
 
 
     /*  ColumNames begin   */
@@ -599,9 +599,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     return _group;
   }
 
-    public void setGroupID(int icGroupId){
-      this.setID(icGroupId);
-    }
+  public void setGroupID(int icGroupId){
+    this.setID(icGroupId);
+  }
+
+  public int ejbHomeGetUserCount() throws IDOException {
+//    String sqlQuery = "select count(*) from "+ this.getEntityName();
+    return super.idoGetNumberOfRecords();
+  }
+
 
 //      public boolean equals(Object obj){
 //        System.out.println("UserBMPBean: "+this+".equals(Object "+obj+")");

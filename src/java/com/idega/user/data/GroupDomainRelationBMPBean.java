@@ -73,6 +73,10 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     return (Group)getColumnValue(RELATED_GROUP_ID_COLUMN);
   }
 
+  public Integer getRelatedGroupPK(){
+    return (Integer)getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
+  }
+
   public void setRelationship(GroupDomainRelationType type){
     this.setColumn(RELATIONSHIP_TYPE_COLUMN,type);
   }
@@ -100,6 +104,16 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 
   public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain)throws FinderException,RemoteException{
     return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
+  }
+
+  public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain, GroupDomainRelationType type)throws FinderException,RemoteException{
+    IDOQuery query = new IDOQuery();
+    query.appendSelectAllFrom(getEntityName());
+    query.appendWhere(RELATIONSHIP_TYPE_COLUMN);
+    query.appendLike();
+    query.appendWithinSingleQuotes(type.getPrimaryKey());
+    return this.idoFindPKsBySQL(query.toString());
+//    return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
   }
 
   public Collection ejbFindDomainsRelationshipsContaining(Group group)throws FinderException,RemoteException{

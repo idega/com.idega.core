@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import java.util.Collection;
 import com.idega.core.data.ICObject;
 import com.idega.builder.data.IBDomain;
 import javax.ejb.*;
@@ -22,6 +23,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   private static String TYPE_COLUMN="GROUP_TYPE";
   private static String DESCRIPTION_COLUMN="DESCRIPTION";
   private static String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
+  private static String COLUMN_IS_VISIBLE = "IS_VISIBLE";
 
   private static final String TYPE_GENERAL_GROUP = "general";
   private static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
@@ -35,8 +37,13 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
 //    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500);
     this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);
+    this.addAttribute(COLUMN_IS_VISIBLE,"is Visible",Boolean.class);
   }
 
+
+  public void setDefaultValues(){
+    setVisibility(true);
+  }
 
   public void insertStartData(){
     try {
@@ -45,6 +52,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
       GroupType type = home.create();
       type.setType(TYPE_GENERAL_GROUP);
       type.setDescription("");
+      type.setVisibility(true);
       type.store();
     }
     catch (RemoteException ex) {
@@ -60,6 +68,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
       GroupType type = home.create();
       type.setType(TYPE_PERMISSION_GROUP);
       type.setDescription("");
+      type.setVisibility(true);
       type.store();
     }
     catch (RemoteException ex) {
@@ -75,6 +84,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
       GroupType type = home.create();
       type.setType(TYPE_USER_REPRESENTATIVE);
       type.setDescription("");
+      type.setVisibility(false);
       type.store();
     }
     catch (RemoteException ex) {
@@ -87,6 +97,10 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 
   public String getEntityName() {
     return TABLE_NAME;
+  }
+
+  public void setVisibility(boolean visible){
+    setColumn(COLUMN_IS_VISIBLE, visible);
   }
 
   public void setType(String type){
@@ -143,6 +157,39 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 
   public void setGroupTypeAsPermissionGroup(){
     setType(this.TYPE_PERMISSION_GROUP);
+  }
+
+  public boolean getVisibility(){
+    return getBooleanColumnValue(COLUMN_IS_VISIBLE,true);
+  }
+
+  public Collection ejbFindAllGroupTypes() throws FinderException{
+    return super.idoFindIDsBySQL("select * from "+getEntityName());
+  }
+
+  public Collection ejbFindVisibleGroupTypes() throws FinderException{
+    IDOQuery query = new IDOQuery();
+    query.appendSelectAllFrom();
+    query.append(getEntityName());
+    query.appendWhere(COLUMN_IS_VISIBLE);
+    query.appendNOTEqual();
+    query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+    query.appendOrderBy(this.getIDColumnName());
+//    System.out.println("[GroupTypeBMPBean](ejbFindVisibleGroupTypes): "+query.toString());
+    return this.idoFindPKsBySQL(query.toString());
+//    return super.idoFindIDsBySQL("select * from "+getEntityName()+" where "+ COLUMN_IS_VISIBLE + "!='"+super.COLUMN_VALUE_FALSE+"'");
+  }
+
+  public int ejbHomeGetNumberOfVisibleGroupTypes() throws FinderException, IDOException {
+    IDOQuery query = new IDOQuery();
+    query.appendSelectCountFrom();
+    query.append(getEntityName());
+    query.appendWhere(COLUMN_IS_VISIBLE);
+    query.appendNOTEqual();
+    query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+//    System.out.println("[GroupTypeBMPBean](ejbHomeGetNumberOfVisibleGroupTypes): "+query.toString());
+    return this.idoGetNumberOfRecords(query.toString());
+//    return super.idoGetNumberOfRecords("select count(*) from "+getEntityName()+" where "+ COLUMN_IS_VISIBLE + "!='"+super.COLUMN_VALUE_FALSE+"'");
   }
 
 

@@ -57,6 +57,20 @@ public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throw
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws java.rmi.RemoteException, javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsContained(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findTopNodeGroupsContained(com.idega.builder.data.IBDomain p0, java.util.Collection p1, boolean p2)throws java.rmi.RemoteException, javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindTopNodeGroupsContained(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (Group) super.findByPrimaryKeyIDO(pk);
  }
@@ -67,6 +81,16 @@ public java.lang.String getGroupType(){
 	java.lang.String theReturn = ((GroupBMPBean)entity).ejbHomeGetGroupType();
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
+}
+
+public int getNumberOfGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws java.rmi.RemoteException, javax.ejb.FinderException, com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	return ((GroupBMPBean)entity).ejbHomeGetNumberOfGroupsContained(p0,p1,p2);
+}
+
+public int getNumberOfTopNodeGroupsContained(com.idega.builder.data.IBDomain p0, java.util.Collection p1, boolean p2)throws java.rmi.RemoteException, javax.ejb.FinderException, com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	return ((GroupBMPBean)entity).ejbHomeGetNumberOfTopNodeGroupsContained(p0,p1,p2);
 }
 
 

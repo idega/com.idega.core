@@ -278,6 +278,8 @@ public class IDOQuery {
   private static final String WHERE = " WHERE ";
   private static final String LIKE = " LIKE ";
   private static final String EQUAL_SIGN = "=";
+  private static final String EXCLAMATION_MARK = "!";
+  private static final String NOT_EQUAL_SIGN = "!=";
   private static final String WHITE_SPACE = " ";
   private static final String QUOTATION_MARK = "'";
   private static final String DOUBLE_QUOTATION_MARK = "\"";
@@ -314,6 +316,26 @@ public class IDOQuery {
     }
     return this;
   }
+  public IDOQuery appendCommaDelimited(Collection collection) throws RemoteException{
+    Iterator iter = collection.iterator();
+    boolean first = true;
+    while (iter.hasNext()) {
+      Object item = iter.next();
+      if(!first){
+        this.append(COMMA);
+      }
+
+      if(item instanceof IDOEntity ){
+        this.append(((IDOEntity)item).getPrimaryKey());
+      } else {
+        this.append(item);
+      }
+
+      first = false;
+    }
+    return this;
+  }
+
   public IDOQuery appendCommaDelimitedWithinSingleQuotes(String[] str){
     for (int i = 0; i < str.length; i++) {
       if(i != 0){
@@ -406,7 +428,7 @@ public class IDOQuery {
     return this;
   }
   public IDOQuery appendWithinParentheses(IDOQuery query){
-    return appendWithinParentheses(query);
+    return appendWithinParentheses((Object)query);
   }
   public IDOQuery appendWithinParentheses(Object obj){
     this.append(PARENTHESIS_LEFT);
@@ -511,6 +533,10 @@ public class IDOQuery {
 
   public IDOQuery appendEqualSign(){
     return this.append(EQUAL_SIGN);
+  }
+
+  public IDOQuery appendNOTEqual(){
+    return this.append(NOT_EQUAL_SIGN);
   }
 
   public IDOQuery appendSingleQuote(){

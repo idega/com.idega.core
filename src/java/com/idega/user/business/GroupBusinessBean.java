@@ -408,16 +408,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
         boolean specified = false;
         while (iter2.hasNext()) {
           Group tempObj = (Group)iter2.next();
-          for (int i = 0; i < groupTypes.length; i++) {
-            if (tempObj.getGroupType().equals(groupTypes[i])){
-              specifiedGroups.add(j++, tempObj);
-              specified = true;
+          try {
+
+            String tempObjGroupType = tempObj.getGroupType();
+
+            for (int i = 0; i < groupTypes.length; i++) {
+              if (groupTypes[i].equals(tempObjGroupType)){
+                specifiedGroups.add(j++, tempObj);
+                specified = true;
+              }
+            }
+            if(!specified) {
+              notSpecifiedGroups.add(k++, tempObj);
+            } else {
+              specified = false;
             }
           }
-          if(!specified) {
-            notSpecifiedGroups.add(k++, tempObj);
-          } else {
-            specified = false;
+          catch (Exception ex) {
+            ex.printStackTrace();
           }
         }
         notSpecifiedGroups.remove(groupContaining);
@@ -683,7 +691,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
     newGroup.setGroupType(type);
     newGroup.store();
 
-    setGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+    addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
 
     return newGroup;
   }
@@ -694,7 +702,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 
 
-  public void setGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
+  public void addGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
     GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
     relation.setDomain(domain);
     relation.setRelatedGroup(group);
