@@ -35,5 +35,5 @@ public interface InputHandler {
 	 * @param iwc
 	 * @return a string representation for the resulting object
 	 */
-	public String getDisplayStringForResultingObject(Object value, IWContext iwc);
+	public String getDisplayForResultingObject(Object value, IWContext iwc);
 }
