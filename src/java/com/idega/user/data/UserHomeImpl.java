@@ -46,6 +46,13 @@ public java.util.Collection findAllUsersOrderedByFirstName()throws java.rmi.Remo
         return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
+public java.util.Collection findAllByNames(String first,String middle,String last)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByNames(first,middle,last);
+	this.idoCheckInPooledEntity(entity);
+  return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
 
 public User findUserFromEmail(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

@@ -611,6 +611,42 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       */
     }
 
+		public Collection ejbFindByNames(String first,String middle,String last) throws FinderException {
+			StringBuffer sql = new StringBuffer("select * from ");
+			sql.append("ic_user u ");
+			boolean isfirst = true;
+			if(first != null || middle !=null || last !=null){
+				sql.append(" where ");
+				if(first !=null && !"".equals(first)){
+					if(!isfirst)
+						sql.append(" and ");
+					sql.append(" u.").append(getColumnNameFirstName()).append(" like '%");
+					sql.append(first);
+					sql.append("%' ");
+					isfirst = false;
+				}
+				if(middle !=null && !"".equals(middle)){
+					if(!isfirst)
+						sql.append(" and ");
+					sql.append(" and u.").append(getColumnNameMiddleName()).append(" like '%");
+					sql.append(middle);
+					sql.append("%' ");
+					isfirst = false;
+				}
+				if(last !=null && !"".equals(last )){
+					if(!isfirst)
+						sql.append(" and ");
+					sql.append(" u.").append(getColumnNameLastName()).append(" like '%");
+					sql.append(last);
+					sql.append("%' ");
+					isfirst = false;
+				}
+				System.err.println(sql.toString());
+				return super.idoFindPKsBySQL(sql.toString());
+			}
+			throw new FinderException("No legal names provided");
+		}
+
 
     public Integer ejbFindByPersonalID(String personalId)throws FinderException,RemoteException{
       Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(),personalId);
