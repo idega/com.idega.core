@@ -9,6 +9,8 @@ public class TextEditor extends PresentationObject {
   private String width = "300";
   private String height = "300";
   private String color = "white";
+  private int cols = 50;
+  private int rows = 15;
   private boolean menues = true;
   private String text = "";
   private String inputName = DEFAULT_HIDDEN_TEXTEDITOR_INPUT_NAME;
@@ -123,11 +125,39 @@ public class TextEditor extends PresentationObject {
 
       }
       else{
-       TextArea area = new TextArea(inputName,45,20);
+       TextArea area = new TextArea(inputName,cols,rows);
        text = TextSoap.findAndReplace(text, "<br/>","\r\n");
        area.setContent(text);
        area._print(iwc);
       }
     }
   }
+/**
+ * @return Returns the number rows of rows for textarea shown if client does not handle editor.
+ */
+public int getRows() {
+	return rows;
+}
+
+/**
+ * @param rows The number of rows of textarea to show if client does not handle editor.
+ */
+public void setRows(int rows) {
+	this.rows = rows;
+}
+
+/**
+ * @return Returns the number of columns for textarea to show if client does not handle editor.
+ */
+public int getColumns() {
+	return cols;
+}
+
+/**
+ * @param cols The number of  textarea columns to show if client does not handle editor .
+ */
+public void setColumns(int cols) {
+	this.cols = cols;
+}
+
 }
