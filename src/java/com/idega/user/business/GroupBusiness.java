@@ -1,7 +1,17 @@
+/*
+ * $Id: GroupBusiness.java,v 1.44 2004/09/28 16:31:57 eiki Exp $
+ * Created on Sep 27, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -9,527 +19,618 @@ import javax.ejb.FinderException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.EmailHome;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.core.ldap.client.naming.DN;
+import com.idega.core.ldap.util.IWLDAPConstants;
+import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressHome;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupDomainRelationType;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
+import com.idega.user.data.UserGroupPlugInHome;
+import com.idega.user.data.UserGroupRepresentativeHome;
+import com.idega.user.data.UserHome;
 import com.idega.util.datastructures.NestedSetsContainer;
 
-public interface GroupBusiness extends com.idega.business.IBOService {
-
-    //public java.util.Collection getGroupsContaining(int p0)throws
-    // javax.ejb.EJBException, java.rmi.RemoteException;
-    //public java.util.Collection
-    // getGroupsContaining(com.idega.user.data.Group p0)throws
-    // javax.ejb.EJBException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    //public java.util.Collection
-    // getGroupsContaining(com.idega.user.data.Group p0,java.lang.String[]
-    // p1,boolean p2)throws javax.ejb.EJBException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    public java.util.Collection getParentGroupsRecursive(int p0)
-            throws javax.ejb.FinderException, javax.ejb.EJBException,
-            java.rmi.RemoteException;
-
-    public java.util.Collection getParentGroupsRecursive(
-            com.idega.user.data.Group p0) throws javax.ejb.EJBException,
-            java.rmi.RemoteException, java.rmi.RemoteException;
-
-    public java.util.Collection getParentGroupsRecursive(
-    		com.idega.user.data.Group p0,java.util.Map p1,java.util.Map p2) throws javax.ejb.EJBException,
-			java.rmi.RemoteException, java.rmi.RemoteException;
-
-
-    public java.util.Collection getParentGroupsRecursive(
-            com.idega.user.data.Group p0, java.lang.String[] p1, boolean p2)
-            throws javax.ejb.EJBException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public Collection getGroupsByGroupName(String name) throws RemoteException;
-
-    public com.idega.user.data.GroupType getGroupTypeFromString(
-            java.lang.String p0) throws java.rmi.RemoteException,
-            javax.ejb.FinderException, java.rmi.RemoteException;
-
-    public void updateUsersInGroup(int p0, java.lang.String[] p1,
-            com.idega.user.data.User p2) throws java.rmi.RemoteException,
-            javax.ejb.FinderException, java.rmi.RemoteException;
-
-    //public java.util.Collection getRegisteredGroupsNotDirectlyRelated(int
-    // p0) throws java.rmi.RemoteException;
-    public java.util.Collection getNonParentGroupsNonPermissionNonGeneral(int p0)
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getGroupsContainingNotDirectlyRelated(int
-    // p0) throws java.rmi.RemoteException;
-    public java.util.Collection getParentGroupsInDirect(int p0)
-            throws java.rmi.RemoteException;
-
-    public com.idega.user.data.Group createGroup(java.lang.String p0,
-            java.lang.String p1, java.lang.String p2, int p3)
-            throws javax.ejb.CreateException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public com.idega.user.data.Group createGroup(java.lang.String p0,
-            java.lang.String p1, java.lang.String p2, int p3, int p4)
-            throws javax.ejb.CreateException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    //public java.util.Collection
-    // getGroupsContainedDirectlyRelated(com.idega.user.data.Group p0) throws
-    // java.rmi.RemoteException;
-    public java.util.Collection getChildGroups(com.idega.user.data.Group p0)
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getAllGroupsNotDirectlyRelated(int
-    // p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
-    public com.idega.user.data.GroupTypeHome getGroupTypeHome()
-            throws java.rmi.RemoteException, java.rmi.RemoteException;
-
-    //public java.util.Collection getRegisteredGroups() throws
-    // java.rmi.RemoteException;
-    public java.util.Collection getAllNonPermissionOrGeneralGroups()
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getGroupsContainingDirectlyRelated(int p0)
-    // throws java.rmi.RemoteException;
-    public java.util.Collection getParentGroups(int p0) throws FinderException,
-            java.rmi.RemoteException;
-
-    //public java.util.Collection
-    // getGroupsContainingDirectlyRelated(com.idega.user.data.Group p0) throws
-    // java.rmi.RemoteException;
-    public java.util.Collection getParentGroups(com.idega.user.data.Group p0)
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0)
-    // throws java.rmi.RemoteException;
-    public java.util.Collection getNonParentGroups(int p0)
-            throws java.rmi.RemoteException;
-
-    public com.idega.user.data.GroupHome getPermissionGroupHome()
-            throws java.rmi.RemoteException;
-
-    public java.util.Collection getGroups(java.lang.String[] p0)
-            throws javax.ejb.FinderException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public com.idega.user.data.UserHome getUserHome()
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getRegisteredGroupsNotDirectlyRelated(int
-    // p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
-    //public java.util.Collection getGroupsContainedDirectlyRelated(int
-    // p0)throws
-    // javax.ejb.EJBException,javax.ejb.FinderException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    public java.util.Collection getChildGroups(int p0)
-            throws javax.ejb.EJBException, javax.ejb.FinderException,
-            java.rmi.RemoteException, java.rmi.RemoteException;
-
-    /**
-     * Returns recursively down the group tree children of group aGroup with
-     * filtered out with specified groupTypes
-     * 
-     * @param aGroup
-     *            a Group to find children for
-     * @param groupTypes
-     *            the Groups a String array of group types of which the
-     *            returned Groups must by.
-     * @return Collection of Groups found recursively down the tree
-     * @throws EJBException
-     *             If an error occured
-     */
-
-    public void addGroupUnderDomain(com.idega.core.builder.data.ICDomain p0,
-            com.idega.user.data.Group p1,
-            com.idega.user.data.GroupDomainRelationType p2)
-            throws javax.ejb.CreateException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    //public java.util.Collection
-    // getRegisteredGroups(com.idega.presentation.IWContext p0) throws
-    // java.rmi.RemoteException;
-    public java.util.Collection getUserGroupPluginsForUser(
-            com.idega.user.data.User p0) throws java.rmi.RemoteException;
-
-    //public java.util.Collection getGroups(java.lang.String[] p0,boolean
-    // p1,com.idega.presentation.IWContext p2)throws java.lang.Exception,
-    // java.rmi.RemoteException;
-    public com.idega.user.data.GroupHome getGroupHome(java.lang.String p0)
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection getGroupsContained(com.idega.user.data.Group
-    // p0)throws javax.ejb.EJBException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    //public java.util.Collection getGroupsContained(int p0)throws
-    // javax.ejb.EJBException,javax.ejb.FinderException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    //public java.util.Collection getGroupsContained(com.idega.user.data.Group
-    // p0,java.lang.String[] p1,boolean p2)throws java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    public java.util.Collection getChildGroupsRecursive(
-            com.idega.user.data.Group p0) throws javax.ejb.EJBException,
-            java.rmi.RemoteException, java.rmi.RemoteException;
-
-    public java.util.Collection getChildGroupsRecursive(int p0)
-            throws javax.ejb.FinderException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public java.util.Collection getChildGroupsRecursive(
-            com.idega.user.data.Group p0, java.lang.String[] p1, boolean p2)
-            throws java.rmi.RemoteException, java.rmi.RemoteException;
-
-    //public java.util.Collection
-    // getAllGroups(com.idega.presentation.IWContext p0) throws
-    // java.rmi.RemoteException;
-    public com.idega.user.data.UserGroupRepresentativeHome getUserGroupRepresentativeHome()
-            throws java.rmi.RemoteException;
-
-    //public java.util.Collection
-    // getGroupsContainedNotDirectlyRelated(com.idega.user.data.Group p0)throws
-    // javax.ejb.EJBException, java.rmi.RemoteException;
-    public java.util.Collection getChildGroupsInDirect(
-            com.idega.user.data.Group p0) throws javax.ejb.EJBException,
-            java.rmi.RemoteException;
-
-    public java.util.Collection getUserGroupPluginsForGroupTypeString(
-            java.lang.String p0) throws java.rmi.RemoteException;
-
-    public java.util.Collection getUserGroupPluginsForGroupType(
-            com.idega.user.data.GroupType p0) throws java.rmi.RemoteException;
-
-    public java.lang.String getGroupType(java.lang.Class p0)
-            throws java.rmi.RemoteException, java.rmi.RemoteException;
-    
-    public java.util.Collection getUserGroupPluginsForGroup(
-            com.idega.user.data.Group p0) throws java.rmi.RemoteException;
-
-    public java.util.Collection getUsersForUserRepresentativeGroups(
-            java.util.Collection p0) throws javax.ejb.FinderException,
-            java.rmi.RemoteException, java.rmi.RemoteException;
-
-    public com.idega.user.data.User getUserByID(int p0)
-            throws javax.ejb.FinderException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public java.util.Collection getGroups(java.lang.String[] p0, boolean p1)
-            throws java.lang.Exception, java.rmi.RemoteException;
-
-    public java.util.Collection getAllGroups() throws java.rmi.RemoteException;
-
-    public com.idega.user.data.Group getGroupByGroupID(int p0)
-            throws javax.ejb.FinderException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public void addUser(int p0, com.idega.user.data.User p1)
-            throws javax.ejb.EJBException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    //public java.util.Collection getGroupsContainedNotDirectlyRelated(int
-    // p0)throws
-    // javax.ejb.EJBException,javax.ejb.FinderException,java.rmi.RemoteException,
-    // java.rmi.RemoteException;
-    public java.util.Collection getChildGroupsInDirect(int p0)
-            throws javax.ejb.EJBException, javax.ejb.FinderException,
-            java.rmi.RemoteException;
-
-    public com.idega.user.data.GroupHome getGroupHome()
-            throws java.rmi.RemoteException;
-
-    public com.idega.user.data.Group createGroup(java.lang.String p0,
-            java.lang.String p1, java.lang.String p2)
-            throws javax.ejb.CreateException, java.rmi.RemoteException,
-            java.rmi.RemoteException;
-
-    public com.idega.user.data.UserGroupPlugInHome getUserGroupPlugInHome()
-            throws java.rmi.RemoteException, java.rmi.RemoteException;
-
-    public java.util.Collection getUsersDirectlyRelated(
-            com.idega.user.data.Group p0) throws javax.ejb.EJBException,
-            java.rmi.RemoteException, javax.ejb.FinderException;
-
-    public java.util.Collection getUsersNotDirectlyRelated(
-            com.idega.user.data.Group p0) throws javax.ejb.EJBException,
-            java.rmi.RemoteException, javax.ejb.FinderException;
-
-    public java.util.Collection getUsersDirectlyRelated(int p0)
-            throws javax.ejb.EJBException, javax.ejb.FinderException;
-
-    public java.util.Collection getUsers(int p0) throws javax.ejb.EJBException,
-            javax.ejb.FinderException, java.rmi.RemoteException;
-
-    public java.util.Collection getUsersNotDirectlyRelated(int p0)
-            throws javax.ejb.EJBException, javax.ejb.FinderException;
-
-    public Collection getUsersRecursive(int groupId) throws FinderException;
-
-    public Collection getUsersRecursive(Group group) throws FinderException;
-
-    public java.util.Collection getUsers(com.idega.user.data.Group p0)
-            throws javax.ejb.FinderException, java.rmi.RemoteException;
-
-    /**
-     * Creates a group with the general grouptype and adds it under the default
-     * Domain (IBDomain)
-     * 
-     * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
-     *      String)
-     */
-    public Group createGroup(String name) throws CreateException,
-            RemoteException;
-
-    /**
-     * Creates a group with the general grouptype and adds it under the default
-     * Domain (IBDomain)
-     * 
-     * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
-     *      String)
-     */
-    public Group createGroup(String name, String description)
-            throws CreateException, RemoteException;
-
-    public com.idega.core.location.data.Address updateGroupMainAddressOrCreateIfDoesNotExist(
-            Integer groupId, String streetNameAndNumber, Integer postalCodeId,
-            String countryName, String city, String province, String poBox)
-            throws javax.ejb.CreateException, java.rmi.RemoteException;
-
-    public com.idega.core.contact.data.Phone[] getGroupPhones(Group group)
-            throws RemoteException;
-
-    public com.idega.core.contact.data.Phone getGroupPhone(Group group,
-            int phoneTypeId) throws RemoteException;
-
-    public com.idega.core.contact.data.Email getGroupEmail(Group group)
-            throws NoEmailFoundException;
-
-    public void updateGroupMail(Group group, String email)
-            throws CreateException, RemoteException;
-
-    public com.idega.core.contact.data.PhoneHome getPhoneHome();
-
-    public void updateGroupPhone(Group group, int phoneTypeId,
-            String phoneNumber) throws EJBException;
-
-    public boolean isGroupRemovable(Group group);
-
-    public Collection getAllAllowedGroupTypesForChildren(int groupId,
-            com.idega.idegaweb.IWUserContext iwc);
-
-    public Collection getAllAllowedGroupTypesForChildren(Group group,
-            com.idega.idegaweb.IWUserContext iwc);
-
-    public String getNameOfGroupWithParentName(Group group);
-
-    public GroupRelationHome getGroupRelationHome();
-
-    public Collection getChildGroupsRecursiveResultFiltered(Group group,
-            Collection groupTypesAsString, boolean onlyReturnTypesInCollection)
-            throws java.rmi.RemoteException;
-
-    public Collection getChildGroupsRecursiveResultFiltered(int groupId,
-            Collection groupTypesAsString, boolean onlyReturnTypesInCollection)
-            throws java.rmi.RemoteException;
-
-    public Collection getUsersFromGroupRecursive(Group group);
-
-    public Collection getUsersFromGroupRecursive(Group group,
-            Collection groupTypesAsString, boolean onlyReturnTypesInCollection);
-
-    /**
-     * Adds a group direcly under the domain (right in top under the domain in
-     * the group tree). This adds the group with GroupRelationType Top to the
-     * domain.
-     * 
-     * @param domain
-     * @param group
-     * @throws CreateException
-     * @throws RemoteException
-     */
-    public void addGroupUnderDomainRoot(ICDomain domain, Group group)
-            throws CreateException, RemoteException;
-
-    /**
-     * Creates a group and adds it under the default Domain (IBDomain) <br>
-     * If createUnderDomainRoot is true it is added under the root (directly
-     * under in the group tree) of the domain.
-     * 
-     * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
-     *      String)
-     */
-    public Group createGroup(String name, String description, String type,
-            boolean createUnderDomainRoot) throws CreateException,
-            RemoteException;
-
-    /**
-     * Creates a group and adds it under the default Domain (IBDomain) and
-     * under the group parentGroup.
-     */
-    public Group createGroupUnder(String name, String description, String type,
-            Group parentGroup) throws CreateException, RemoteException;
-
-    /**
-     * Creates a group and adds it under the the default Domain (ICDomain) and
-     * under the group parentGroup.
-     */
-    public Group createGroupUnder(String name, String description, String type,
-            int homePageID, int aliasID, Group parentGroup)
-            throws CreateException, RemoteException;
-
-    /**
-     * Creates a general group and adds it under the default Domain (IBDomain)
-     * and under the group parentGroup.
-     */
-    public Group createGroupUnder(String name, String description,
-            Group parentGroup) throws CreateException, RemoteException;
-    
-    /**
-     * Creates a group from an LDAP DN and its attributes and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
-   */
-    public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes)throws CreateException,NamingException,RemoteException; 
-    
-    /**
-     * Creates a group from an LDAP DN and its attributes and adds it under the supplied parentGroup
-   */
-    public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes, Group parentGroup)throws CreateException,NamingException,RemoteException;    	 
-
-
-    /**
-     * Gives all parent groups owners' primary groups, permit permission to this group.
-     * The permission to give others permissions to this group.
-     */
-    public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwuc, Group group) throws RemoteException;
-    
-    /**
-     * Sets the user as the owner of the group.
-     * @param iwc
-     * @param group
-     * @param user
-     */
-    public void applyUserAsGroupsOwner(IWUserContext iwuc, Group group, User user);
-    
-    /**
-     * Sets the currently logged on user as the owner of the group.
-     * @param iwc
-     * @param group
-     */
-    public void applyCurrentUserAsOwnerOfGroup(IWUserContext iwuc, Group group);
-    
-
-    /**
-     * Give the current users primary group all permission except for owner
-     * 
-     */
-    public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group);
-    
-    /**
-     * Give the users primary group all permission except for owner
-     * 
-     */
-    public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user);
-
-    /**
-     * This methods gives the second group specified all permissions to the other groups except for owner permission (set to users not groups).
-     * The permissions include: view,edit,create,remove users, and the permission to give others permissions to it.
-     * @param iwuc
-     * @param groupToSetPermissionTo The group the permission apply to.
-     * @param groupToGetPermissions The group that will own the permissions e.g. get the rights to do the stuff.
-     */
-    public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo, Group groupToGetPermissions);
-    
-    /**
-     * If the groupToGetInheritanceFrom has inherited permission it is copied to the other group.
-     * 
-     * @param groupToGetInheritanceFrom
-     * @param groupToInheritPermissions
-     */
-    public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions);
-
-    /**
-     * This method should only be called once for a newly created group if it was done in code. This method is
-     * automatically called if the group is created in the user application.
-     * Sets the user as the owner of the group and gives his primary group all group permissions to the group. 
-     * Also gives all owners' primary groups of the groups parent groups permission to give others permission 
-     * to this group. Finally checks the groups parent if any for inherited permissions and sets them.
-     * @param iwc
-     * @param newlyCreatedGroup
-     * @param user
-     * @throws RemoteException
-     */
-    public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,Group newlyCreatedGroup, User user) throws RemoteException;
-
-    /**
-     * Returns a collection (list) of User objects that have owner permission to this group 
-   * @param group to get owners for
-   * @return
-   * @throws RemoteException
-   */
-    
-    /**
-     * Applies permissions that have been marked to be inherited to this group from its parents
-   * @param iwuc
-   * @param newlyCreatedGroup
-   * @throws RemoteException
-   */
-  public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException;
-  
-  public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
-	public ICFile createGroupHomeFolder(Group group) throws CreateException;
-  public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException,  IDORelationshipException;
-  public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException;
-
-	/**
-	 * Optimized version of getParentGroups(Group group) by Gummi 25.08.2004
-	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
-	 */
-	public  Collection getParentGroups(Group group,Map cachedParents, Map cachedGroups) throws RemoteException;
-	
-	public	 String getNameOfGroupWithParentName(Group group, Collection parentGroups) throws RemoteException;
-	/**
-	 * Optimized version of getNameOfGroupWithParentName(Group group) by Gummi 25.08.2004
-	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
-	 */
-	  public String getNameOfGroupWithParentName(Group group,Map cachedParents, Map cachedGroups) throws RemoteException;
-	  
-	  /**
-	   * Adds all the ldap attributes as metadata-fields
-	  	 * @param group
-	  	 * @param distinguishedName
-	  	 * @param attributes
-	  	 */
-	  	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes);
-		public Collection getGroupsByLDAPAttribute(String key, String value);
-		
-		public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException;
-		public void refreshGroupTreeSnapShotInANewThread();
-		public void refreshGroupTreeSnapShot() throws EJBException;
-		public boolean userGroupTreeImageProcedureTopNodeSearch();
 
 /**
- * Creates a visible group type from the supplied group type string if it does not already exist,
- * if it exists it will update the group types visibilty to true.
- * @param groupType
- * @return a GroupType bean
- * @throws RemoteException
+ * 
+ *  Last modified: $Date: 2004/09/28 16:31:57 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.44 $
  */
-public GroupType createVisibleGroupType(String groupType) throws RemoteException;
+public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
-/**
- * Creates a group type that has the visibility supplied if the type does not already exist.
- * If it exist this method will update its visibility.
- * @param groupType
- * @param visible
- * @return a GroupType bean
- * @throws RemoteException
- */
-public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException;
-public Group getGroupByUniqueId(String uniqueID) throws FinderException;
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserHome
+	 */
+	public UserHome getUserHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupRepresentativeHome
+	 */
+	public UserGroupRepresentativeHome getUserGroupRepresentativeHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupHome
+	 */
+	public GroupHome getGroupHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getPermissionGroupHome
+	 */
+	public GroupHome getPermissionGroupHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAllGroups
+	 */
+	public Collection getAllGroups() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAllNonPermissionOrGeneralGroups
+	 */
+	public Collection getAllNonPermissionOrGeneralGroups() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroups
+	 */
+	public Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
+	 */
+	public Collection getParentGroups(int uGroupId) throws EJBException, FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
+	 */
+	public Collection getParentGroups(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
+	 */
+	public Collection getParentGroups(Group group, Map cachedParents, Map cachedGroups) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getNonParentGroups
+	 */
+	public Collection getNonParentGroups(int uGroupId) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getNonParentGroupsNonPermissionNonGeneral
+	 */
+	public Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsInDirect
+	 */
+	public Collection getParentGroupsInDirect(int uGroupId) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
+	 */
+	public Collection getParentGroupsRecursive(int uGroupId) throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
+	 */
+	public Collection getParentGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
+	 */
+	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups) throws EJBException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserRepresentativeGroupTypeStringArray
+	 */
+	public String[] getUserRepresentativeGroupTypeStringArray() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
+	 */
+	public Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+			throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsers
+	 */
+	public Collection getUsers(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
+	 */
+	public Collection getUsersDirectlyRelated(int groupId) throws EJBException, FinderException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersNotDirectlyRelated
+	 */
+	public Collection getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
+	 */
+	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
+	 */
+	public Collection getChildGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
+	 */
+	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+			throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsers
+	 */
+	public Collection getUsers(Group group) throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersRecursive
+	 */
+	public Collection getUsersRecursive(Group group) throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersRecursive
+	 */
+	public Collection getUsersRecursive(int groupId) throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
+	 */
+	public Collection getChildGroups(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
+	 */
+	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString,
+			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
+	 */
+	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
+			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
+	 */
+	public Collection getUsersFromGroupRecursive(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
+	 */
+	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString,
+			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
+	 */
+	public Collection getChildGroups(Group aGroup) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
+	 */
+	public Collection getUsersDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
+	 */
+	public Collection getChildGroupsInDirect(int groupId) throws EJBException, FinderException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
+	 */
+	public Collection getChildGroupsInDirect(Group group) throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersNotDirectlyRelated
+	 */
+	public Collection getUsersNotDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroups
+	 */
+	public Collection getGroups(String[] groupIDs) throws FinderException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUsersForUserRepresentativeGroups
+	 */
+	public Collection getUsersForUserRepresentativeGroups(Collection groups) throws FinderException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#updateUsersInGroup
+	 */
+	public void updateUsersInGroup(int groupId, String[] usrGroupIdsInGroup, User currentUser) throws RemoteException,
+			FinderException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupByGroupID
+	 */
+	public Group getGroupByGroupID(int id) throws FinderException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupName
+	 */
+	public Collection getGroupsByGroupName(String name) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserByID
+	 */
+	public User getUserByID(int id) throws FinderException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#addUser
+	 */
+	public void addUser(int groupId, User user) throws EJBException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupHome
+	 */
+	public GroupHome getGroupHome(String groupType) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupRelationHome
+	 */
+	public GroupRelationHome getGroupRelationHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
+	 */
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, boolean createUnderRootDomainGroup,
+			Group parentGroup) throws CreateException, NamingException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupByUniqueId
+	 */
+	public Group getGroupByUniqueId(String uniqueID) throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#setMetaDataFromLDAPAttributes
+	 */
+	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
+	 */
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes) throws CreateException,
+			NamingException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
+	 */
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, Group parentGroup)
+			throws CreateException, NamingException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name, String description) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name, String description, String type) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name, String description, String type, boolean createUnderDomainRoot)
+			throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
+	 */
+	public Group createGroupUnder(String name, String description, String type, Group parentGroup)
+			throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
+	 */
+	public Group createGroupUnder(String name, String description, Group parentGroup) throws CreateException,
+			RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name, String description, String type, int homePageID) throws CreateException,
+			RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroup
+	 */
+	public Group createGroup(String name, String description, String type, int homePageID, int aliasID)
+			throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
+	 */
+	public Group createGroupUnder(String name, String description, String type, int homePageID, int aliasID,
+			Group parentGroup) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getICFileHome
+	 */
+	public ICFileHome getICFileHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroupHomeFolder
+	 */
+	public ICFile createGroupHomeFolder(Group group) throws CreateException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
+	 */
+	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
+	 */
+	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#addGroupTypeChildren
+	 */
+	public void addGroupTypeChildren(List list, GroupType groupType) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupType
+	 */
+	public String getGroupType(Class groupClass) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupTypeFromString
+	 */
+	public GroupType getGroupTypeFromString(String type) throws RemoteException, FinderException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroupTypeString
+	 */
+	public Collection getUserGroupPluginsForGroupTypeString(String groupType) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroupType
+	 */
+	public Collection getUserGroupPluginsForGroupType(GroupType groupType) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroup
+	 */
+	public Collection getUserGroupPluginsForGroup(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForUser
+	 */
+	public Collection getUserGroupPluginsForUser(User user) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupTypeHome
+	 */
+	public GroupTypeHome getGroupTypeHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPlugInHome
+	 */
+	public UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#addGroupUnderDomainRoot
+	 */
+	public void addGroupUnderDomainRoot(ICDomain domain, Group group) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#addGroupUnderDomain
+	 */
+	public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException,
+			RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#updateGroupMainAddressOrCreateIfDoesNotExist
+	 */
+	public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber,
+			Integer postalCodeId, String countryName, String city, String province, String poBox)
+			throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAddressBusiness
+	 */
+	public AddressBusiness getAddressBusiness() throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupMainAddress
+	 */
+	public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException,
+			IDOCompositePrimaryKeyException, IDORelationshipException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAddressHome
+	 */
+	public AddressHome getAddressHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupPhones
+	 */
+	public Phone[] getGroupPhones(Group group) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupEmail
+	 */
+	public Email getGroupEmail(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#updateGroupMail
+	 */
+	public void updateGroupMail(Group group, String email) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getEmailHome
+	 */
+	public EmailHome getEmailHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#updateGroupPhone
+	 */
+	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupPhone
+	 */
+	public Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getPhoneHome
+	 */
+	public PhoneHome getPhoneHome() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#isGroupRemovable
+	 */
+	public boolean isGroupRemovable(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
+	 */
+	public String getNameOfGroupWithParentName(Group group, Collection parentGroups) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
+	 */
+	public String getNameOfGroupWithParentName(Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
+	 */
+	public String getNameOfGroupWithParentName(Group group, Map cachedParents, Map cachedGroups)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createVisibleGroupType
+	 */
+	public GroupType createVisibleGroupType(String groupType) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#createGroupTypeOrUpdate
+	 */
+	public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups
+	 */
+	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc, Group group)
+			throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyUserAsGroupsOwner
+	 */
+	public void applyUserAsGroupsOwner(IWUserContext iwc, Group group, User user) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyCurrentUserAsOwnerOfGroup
+	 */
+	public void applyCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup
+	 */
+	public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToUsersPrimaryGroup
+	 */
+	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToGroup
+	 */
+	public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo,
+			Group groupToGetPermissions) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyPermissionControllingFromGroupToGroup
+	 */
+	public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom,
+			Group groupToInheritPermissions) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup
+	 */
+	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,
+			Group newlyCreatedGroup, User user) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#applyInheritedPermissionsToGroup
+	 */
+	public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getOwnerUsersForGroup
+	 */
+	public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupByDirectoryString
+	 */
+	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByLDAPAttribute
+	 */
+	public Collection getGroupsByLDAPAttribute(String key, String value) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getLastGroupTreeSnapShot
+	 */
+	public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#refreshGroupTreeSnapShotInANewThread
+	 */
+	public void refreshGroupTreeSnapShotInANewThread() throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#refreshGroupTreeSnapShot
+	 */
+	public void refreshGroupTreeSnapShot() throws EJBException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#userGroupTreeImageProcedureTopNodeSearch
+	 */
+	public boolean userGroupTreeImageProcedureTopNodeSearch() throws java.rmi.RemoteException;
 }

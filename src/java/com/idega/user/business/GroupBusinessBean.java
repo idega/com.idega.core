@@ -1329,6 +1329,8 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 		}
       	return groupTypeHome.findVisibleGroupTypes();
       }
+      
+      
       // try to get the corresponding group type
       if (group != null)  {       
         groupTypeString = group.getGroupType();
@@ -1357,6 +1359,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
     ArrayList groupTypes = new ArrayList();
     if (group == null)  {
       // first case: group is null 
+    	
       groupTypes.add(generalType);
       groupTypes.add(aliasType);
     }
@@ -1388,7 +1391,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
     return groupTypes;
   }
 
-  private void addGroupTypeChildren(List list, GroupType groupType)  {
+  public void addGroupTypeChildren(List list, GroupType groupType)  {
     Iterator iterator = groupType.getChildrenIterator();
     while (iterator != null && iterator.hasNext())  {
       GroupType child = (GroupType) iterator.next();
@@ -2310,10 +2313,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/21 18:56:19 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/09/28 16:31:57 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.73 $
+	 * @version $Revision: 1.74 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
