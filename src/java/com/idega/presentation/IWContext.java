@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.115 2004/12/31 02:25:20 tryggvil Exp $
+ * $Id: IWContext.java,v 1.116 2005/01/13 17:05:08 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -74,10 +74,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/31 02:25:20 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/01/13 17:05:08 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.115 $
+ * @version $Revision: 1.116 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -890,6 +890,35 @@ implements IWUserContext, IWApplicationContext {
 	}
 	
 	public void forwardToIBPage(Page fromPage, int pageID,int secondInterval) {
+		try
+		{
+			BuilderService bs;
+			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+			String url = bs.getPageURI(pageID);
+			forwardToURL(fromPage,url,secondInterval);
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	/**
+	 * Forwards to the url specified by setting a meta (refresh) header into the page object given by fromPage.
+	 * @param fromPage
+	 * @param url
+	 */
+	public void forwardToURL(Page fromPage, String url) {
+		forwardToURL(fromPage,url,-1);
+	}
+	
+	/**
+	 * Forwards to the url specified by setting a meta (refresh) header into the page object given by fromPage.
+	 * @param fromPage
+	 * @param url
+	 * @param secondInterval
+	 */
+	public void forwardToURL(Page fromPage, String url,int secondInterval) {
 		/**@todo temporary workaround find out why this doesn't work
 		 * This is supposed to work but I always get: IllegalStateException: cannot forward because writer or stream has been obtained.
 		 */
@@ -903,28 +932,33 @@ implements IWUserContext, IWApplicationContext {
 
 		 this does not work either
 		 sendRedirect(URL.toString());
-
-
 		 */
-		StringBuffer URL = new StringBuffer();
-		BuilderService bs;
-		try
-		{
-			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
-			URL.append(bs.getPageURI(pageID));
-			URL.append('&');
-			URL.append(getRequest().getQueryString());
+		StringBuffer URL = new StringBuffer(url);
+		//try
+		//{
+			//bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+			//URL.append(bs.getPageURI(pageID));
+		
+			String requestString = getRequest().getQueryString();
+			if(requestString!=null){
+				if(url.indexOf("?")==-1){
+					URL.append('?');
+				}
+				else{
+					URL.append('&');
+				}
+				URL.append(requestString);
+			}
 			if(secondInterval>0)
 				fromPage.setToRedirect(URL.toString(),secondInterval);
 			else
 				fromPage.setToRedirect(URL.toString());
 			fromPage.empty();
-		}
-		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//}
+		//catch (RemoteException e)
+		//{
+		//	e.printStackTrace();
+		//}
 		//URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(), pageID));
 	}
 
