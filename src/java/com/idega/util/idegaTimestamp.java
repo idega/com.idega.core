@@ -464,6 +464,14 @@ public class idegaTimestamp{
     Calendar.add(Calendar.MINUTE, num_of_minutes );
   }
 
+  public void addMonths( int num_of_months ){
+    Calendar.add(Calendar.MONTH, num_of_months );
+  }
+
+  public void addYears( int num_of_years ){
+    Calendar.add(Calendar.YEAR, num_of_years );
+  }
+
   public String getLocaleDate(ModuleInfo modinfo) {
     Locale currentLocale = modinfo.getCurrentLocale();
     return getLocaleDate(currentLocale);
