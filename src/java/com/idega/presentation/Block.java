@@ -303,7 +303,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     return valid;
   }
 
-  private String getDerivedCacheKey(){
+  protected String getDerivedCacheKey(){
     return derivedCacheKey;
   }
 

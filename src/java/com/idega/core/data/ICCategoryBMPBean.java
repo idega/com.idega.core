@@ -2,13 +2,13 @@ package com.idega.core.data;
 
 
 
+import java.util.List;
+import com.idega.data.*;
 import com.idega.core.business.Category;
 
 import java.sql.*;
 import javax.ejb.FinderException;
-import com.idega.data.SimpleQuerier;
 
-import com.idega.data.TreeableEntity;
 
 
 
@@ -215,9 +215,20 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 
   }
 
-	public int ejbHomeGetOrderNumber(Category category, ICObjectInstance instance) throws javax.ejb.FinderException{
+  public List ejbHomeGetListOfCategoryForObjectInstance(ICObjectInstance obj, boolean order) throws FinderException {
+    StringBuffer sql = new StringBuffer();
+      sql.append("Select c.* from ").append(EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)).append(" mt, ").append(ICCategoryBMPBean.getEntityTableName()).append(" c");
+      sql.append(" where mt.").append(IC_OBJECT_INSTANCE_COLUMN_NAME).append(" = ").append(obj.getID());
+      sql.append(" and mt.").append(IC_CATEGORY_COLUMN_NAME).append(" = c.").append(IC_CATEGORY_COLUMN_NAME);
+      if (order) {
+        sql.append(" order by mt.").append(TREE_ORDER_COLUMN_NAME);//.append(" desc");
+      }
+    return EntityFinder.getInstance().findAll(ICCategory.class, sql.toString());
+  }
+
+  public int ejbHomeGetOrderNumber(Category category, ICObjectInstance instance) throws javax.ejb.FinderException{
     try {
-      String[] res = SimpleQuerier.executeStringQuery("SELECT TREE_ORDER FROM "+getEntityName()+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+      String[] res = SimpleQuerier.executeStringQuery("SELECT TREE_ORDER FROM "+EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
       if (res == null || res.length == 0 || res[0] == null) {
         return 0;
 
@@ -229,7 +240,12 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
   }
 
   public boolean ejbHomeSetOrderNumber(Category category, ICObjectInstance instance, int orderNumber) throws com.idega.data.IDOException {
-    return this.idoExecuteTableUpdate("UPDATE "+getEntityName()+" SET "+TREE_ORDER_COLUMN_NAME+" = "+orderNumber+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+    /** @todo laga thegar timi gefst */
+//    if (orderNumber == 0) {
+//      return this.idoExecuteTableUpdate("UPDATE "+EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)+" SET "+TREE_ORDER_COLUMN_NAME+" AS null WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+//    }else {
+      return this.idoExecuteTableUpdate("UPDATE "+EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)+" SET "+TREE_ORDER_COLUMN_NAME+" = "+orderNumber+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+//    }
   }
 
 }

@@ -576,6 +576,19 @@ public class CategoryFinder {
 
    */
 
+  public List listOfCategoryForObjectInstanceId(int instanceid, boolean order) {
+    try {
+      ICObjectInstance obj = ICObjectBusiness.getInstance().getICObjectInstance(instanceid);
+
+      return listOfCategoryForObjectInstanceId(obj, order);
+    } catch (Exception ex) {
+
+      return null;
+
+    }
+
+  }
+
   public List listOfCategoryForObjectInstanceId(int instanceid) {
 
     try {
@@ -606,6 +619,11 @@ public class CategoryFinder {
    * @return      Description of the Return Value
 
    */
+
+  public List listOfCategoryForObjectInstanceId(ICObjectInstance obj, boolean order) throws FinderException, RemoteException{
+    ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHome(ICCategory.class);
+    return catHome.getListOfCategoryForObjectInstance(obj, order);
+  }
 
   public List listOfCategoryForObjectInstanceId(ICObjectInstance obj) {
 

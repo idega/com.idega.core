@@ -7,9 +7,11 @@ public class ICCategoryHomeImpl extends com.idega.data.IDOFactory implements ICC
   return ICCategory.class;
  }
 
+
  public ICCategory create() throws javax.ejb.CreateException{
-  return (ICCategory) super.idoCreate();
+  return (ICCategory) super.createIDO();
  }
+
 
  public ICCategory createLegacy(){
 	try{
@@ -21,13 +23,16 @@ public class ICCategoryHomeImpl extends com.idega.data.IDOFactory implements ICC
 
  }
 
- public ICCategory findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (ICCategory) super.idoFindByPrimaryKey(id);
- }
 
  public ICCategory findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (ICCategory) super.idoFindByPrimaryKey(pk);
+  return (ICCategory) super.findByPrimaryKeyIDO(pk);
  }
+
+
+ public ICCategory findByPrimaryKey(int id) throws javax.ejb.FinderException{
+  return (ICCategory) super.findByPrimaryKeyIDO(id);
+ }
+
 
  public ICCategory findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
@@ -39,16 +44,24 @@ public class ICCategoryHomeImpl extends com.idega.data.IDOFactory implements ICC
 
  }
 
- public int getOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1)throws javax.ejb.FinderException{
+
+public boolean setOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1,int p2)throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	boolean theReturn = ((ICCategoryBMPBean)entity).ejbHomeSetOrderNumber(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public int getOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((ICCategoryBMPBean)entity).ejbHomeGetOrderNumber(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
 
- public boolean setOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1,int p2)throws com.idega.data.IDOException{
+public java.util.List getListOfCategoryForObjectInstance(com.idega.core.data.ICObjectInstance p0,boolean p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	boolean theReturn = ((ICCategoryBMPBean)entity).ejbHomeSetOrderNumber(p0,p1,p2);
+	java.util.List theReturn = ((ICCategoryBMPBean)entity).ejbHomeGetListOfCategoryForObjectInstance(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
