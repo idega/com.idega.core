@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.84 2003/10/03 12:40:11 tryggvil Exp $
+ *  $Id: Page.java,v 1.85 2003/10/30 14:33:30 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -719,6 +719,7 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	/**
+	 * Sets the page to go directly back in history one step on load of this page
 	 */
 	public void setToGoBack() {
 		setOnLoad("history.go(-1)");
@@ -731,6 +732,21 @@ public class Page extends PresentationObjectContainer {
 		setOnUnLoad("window.opener.location.reload()");
 	}
 
+	/**
+	 *  Sets the parent (caller) window to submit its first form if there is one
+	 */
+	public void setParentPageMainFormToSubmit() {
+		setParentPageFormToSubmit(0);
+	}
+	
+	/**
+	 *  Sets the parent (caller) window to submit its form at index formIndex if there is one
+	 * @param formIndex index of the form in the parent page
+	 */
+	public void setParentPageFormToSubmit(int formIndex) {
+		setOnUnLoad("window.opener.forms["+formIndex+"].submit()");
+	}
+	
 	/**
 	 *@param  URL  The new toRedirect value
 	 */
