@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.21 2001/06/21 13:57:37 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.22 2001/06/25 13:44:01 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1705,7 +1705,7 @@ public abstract class GenericEntity implements java.io.Serializable {
           }
         }
 
-        protected String getLobColumnName(){
+        public String getLobColumnName(){
           return  this.getStaticInstance().lobColumnName;
         }
 
