@@ -9,6 +9,7 @@ import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
@@ -553,7 +554,7 @@ public void setEventListener(String eventListenerClassName){
   public void setWindowToOpen(Class windowClass){
     this.windowClass=windowClass;
     //setAction(IWMainApplication.windowOpenerURL);
-    //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,getIWApplicationContext().getApplication().getEncryptedClassName(windowClass));
     setWindow(Window.getStaticInstance(windowClass));
   }
 
