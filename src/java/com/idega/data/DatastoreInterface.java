@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.31 2002/01/18 14:55:33 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.32 2002/01/23 22:53:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -502,14 +502,14 @@ public abstract class DatastoreInterface{
 
       statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
       //System.out.println(statement);
-      System.out.println("In insertBlob() in DatastoreInterface");
+      //System.out.println("In insertBlob() in DatastoreInterface");
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
       if(wrapper!=null){
         //System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
         //Conn.setAutoCommit(false);
         InputStream instream = wrapper.getInputStreamForBlobWrite();
         if(instream!=null){
-          System.out.println("In insertBlob() in DatastoreInterface instream != null");
+          //System.out.println("In insertBlob() in DatastoreInterface instream != null");
           Conn = entity.getConnection();
           //if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
           //BufferedInputStream bin = new BufferedInputStream(instream);
@@ -621,22 +621,22 @@ public abstract class DatastoreInterface{
 
         public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
-          System.out.println("DatastoreInterface, in handleBlobUpdate");
+          //System.out.println("DatastoreInterface, in handleBlobUpdate");
           if(wrapper!=null){
             InputStream stream = wrapper.getInputStreamForBlobWrite();
-            System.out.println("DatastoreInterface, in handleBlobUpdate wrapper!=null");
+            //System.out.println("DatastoreInterface, in handleBlobUpdate wrapper!=null");
             if(stream!=null){
               try{
-                System.out.println("in handleBlobUpdate, stream != null");
-                java.io.BufferedInputStream bin = new java.io.BufferedInputStream( stream );
-                statement.setBinaryStream(index, bin, bin.available() );
-                System.out.println("bin.available(): "+bin.available());
+                //System.out.println("in handleBlobUpdate, stream != null");
+                //java.io.BufferedInputStream bin = new java.io.BufferedInputStream( stream );
+                //statement.setBinaryStream(index, bin, bin.available() );
+                //System.out.println("bin.available(): "+bin.available());
                 //System.out.println("stream.available(): "+stream.available());
-                //statement.setBinaryStream(index, stream, stream.available() );
+                statement.setBinaryStream(index, stream, stream.available() );
 
               }
               catch(Exception e){
-                System.err.println("Error updating BLOB field in "+entity.getClass().getName());
+                //System.err.println("Error updating BLOB field in "+entity.getClass().getName());
                 e.printStackTrace(System.err);
               }
             }
