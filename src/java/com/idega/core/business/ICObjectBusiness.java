@@ -93,8 +93,13 @@ public class ICObjectBusiness {
 
   public static IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
     try{
-      ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
-      return instance.getObject().getBundle(iwma);
+      if(icObjectInstanceID==-1){
+        return iwma.getBundle(com.idega.presentation.Page.IW_BUNDLE_IDENTIFIER);
+      }
+      else{
+        ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
+        return instance.getObject().getBundle(iwma);
+      }
     }
     catch(Exception e){
       e.printStackTrace();
@@ -109,7 +114,10 @@ public class ICObjectBusiness {
 
 
   public static Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
-    return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+    if (icObjectInstanceID == -1)
+      return(com.idega.presentation.Page.class);
+    else
+      return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
   }
 
 
