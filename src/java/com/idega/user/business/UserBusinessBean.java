@@ -615,12 +615,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
     User userToUpdate = this.getUser(user_id);
-    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group);
+    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group);
   }
 
-  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
 
     if(firstname != null){
       userToUpdate.setFirstName(firstname);
@@ -646,6 +646,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
     if(primary_group != null){
       userToUpdate.setPrimaryGroupID(primary_group);
+    }
+    if (personalID != null){
+    	userToUpdate.setPersonalID(personalID);
     }
 
     userToUpdate.store();
