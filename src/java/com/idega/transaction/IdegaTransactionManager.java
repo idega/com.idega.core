@@ -7,12 +7,12 @@ package com.idega.transaction;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 0.5
-*UNDER CONSTRUCTION - NOT FINISHED
+*@version 0.9
 */
 import com.idega.util.*;
 import javax.transaction.*;
 import javax.transaction.xa.*;
+import com.idega.data.*;
 
 public class IdegaTransactionManager implements javax.transaction.TransactionManager{
 
@@ -20,6 +20,8 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   private static String transaction_syncronization_attribute_name = "idega_transaction_synchronization";
   private static int transaction_timeout = 1000;
   private static IdegaTransactionManager instance;
+  private GenericEntity _entity;
+  String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
   /**
    * Only this class can construct itself
@@ -55,7 +57,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   if(transactionAlreadyBegun){
       throw new NotSupportedException("Transaction already begun, nested transactions not currently supported");
   }
-  Transaction trans = new IdegaTransaction();
+  Transaction trans = new IdegaTransaction(this.datasource);
   //trans.registerSynchronization(new IdegaTransactionSynchronization());
   ThreadContext.getInstance().setAttribute(Thread.currentThread(),transaction_attribute_name,trans);
  }
@@ -172,4 +174,8 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   }
 
 
+  public void setEntity(GenericEntity entity){
+    this._entity=entity;
+    this.datasource=entity.getDatasource();
+  }
 }

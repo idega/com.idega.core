@@ -25,6 +25,7 @@ private PresentationObject submitToObject;
 //private Parameter controlParameter;
 private Map controlParameters;
 private Class windowClass;
+private int _submitToPage = -1;
 
 private static String FORM_EVENT_PARAMETER="idega_special_form_event";
 
@@ -181,6 +182,10 @@ private String getIdegaSpecialRequestURI(IWContext iwc){
 
 
 public void main(IWContext iwc){
+  if(this._submitToPage!=-1){
+    //Set a builder page as the action
+    this.setAction(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc,_submitToPage));
+  }
   if(window!=null){
    //iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
     com.idega.servlet.WindowOpener.storeWindow(iwc,window);
@@ -403,7 +408,7 @@ public void print(IWContext iwc)throws Exception{
 }
 
 
-  public synchronized Object clone() {
+  public Object clone() {
     Form obj = null;
     try {
       obj = (Form)super.clone();
@@ -511,7 +516,8 @@ public void setEventListener(String eventListenerClassName){
 
 
   public void setPageToSubmitTo(int ibPageID){
-    this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
+    //this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
+    this._submitToPage=ibPageID;
   }
 
 

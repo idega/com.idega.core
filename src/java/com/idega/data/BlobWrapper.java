@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.5 2001/07/16 09:53:22 tryggvil Exp $
+ * $Id: BlobWrapper.java,v 1.6 2002/03/14 21:53:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,9 +47,9 @@ public class BlobWrapper {
   public final static int IS_CLOSED = 3;
 
 	public BlobWrapper(GenericEntity entity, String tableColumnName) {
-    this.setEntity(entity);
-    this.setTableColumnName(tableColumnName);
-    setDatasource(entity.getDatasource());
+      this.setEntity(entity);
+      this.setTableColumnName(tableColumnName);
+      setDatasource(entity.getDatasource());
 	}
 
 

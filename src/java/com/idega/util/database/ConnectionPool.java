@@ -24,12 +24,14 @@ public class ConnectionPool
    private int timeOut;
    private LogWriter logWriter;
 
+   private long lConnectionTimeOut=10*60*1000;//10 minutes
+   private Map checkedOutInfoMap;
 
    //private long lastRefresh;
-   private final long refreshIntervalMillis=1000000;
+   private final long refreshIntervalMillis=20*60*1000;
    private ConnectionRefresher refresher;
 
-   private int checkedOut;
+   //private int checkedOut;
    private Vector freeConnections = new Vector();
 
    public ConnectionPool(String name, String URL, String user,
@@ -74,8 +76,12 @@ public class ConnectionPool
    }
 
    protected synchronized void refresh(){
+      this.cleanUpCheckedOut();
       int size = freeConnections.size();
       int conns = getCurrentConnectionCount();
+
+      System.out.println("size="+size+", conns="+conns+", getCheckedOutCount()="+this.getCheckedOutCount());
+
       for(int i=0;i < conns;i++){
           try{
             Connection conn = getConnection();
@@ -87,6 +93,7 @@ public class ConnectionPool
               ex.printStackTrace();
             }
             conn.close();
+            this.removeFromCheckedOutList(conn);
           }
           catch(SQLException ex){
             System.err.println("There was an error in ConnectionPool.refresh() for i="+i+" \n The error was: "+ex.getMessage());
@@ -182,7 +189,8 @@ public class ConnectionPool
                        LogWriter.ERROR);
          return getConnection(remaining);
       }
-      checkedOut++;
+      //checkedOut++;
+      this.addToCheckedOutList(conn);
       //debug
       //logWriter.log("Delivered connection from pool", LogWriter.INFO);
       logWriter.log(getStats(), LogWriter.DEBUG);
@@ -243,7 +251,7 @@ public class ConnectionPool
          conn = (Connection) freeConnections.firstElement();
          freeConnections.removeElementAt(0);
       }
-      else if (maxConns == 0 || checkedOut < maxConns)
+      else if (maxConns == 0 || this.getCheckedOutCount() < maxConns)
       {
          conn = newConnection();
 
@@ -253,30 +261,45 @@ public class ConnectionPool
 
    private Connection newConnection() throws SQLException
    {
+    try{
       Connection conn = null;
       DatastoreConnection dsc=null;
       if (user == null) {
          conn = DriverManager.getConnection(URL);
-         dsc=new DatastoreConnection(conn);
+         dsc=new DatastoreConnection(conn,this.name);
       }
       else {
          conn = DriverManager.getConnection(URL, user, password);
-         dsc=new DatastoreConnection(conn);
+         dsc=new DatastoreConnection(conn,this.name);
       }
       logWriter.log("Opened a new connection", LogWriter.INFO);
       return dsc;
+    }
+    catch(SQLException e){
+      throw new com.idega.data.IDONoDatastoreError();
+    }
    }
 
    public synchronized void freeConnection(Connection conn)
    {
       // Put the connection at the end of the Vector
-      freeConnections.addElement(conn);
-      checkedOut--;
+      addConnectionToPool(conn);
+      //if(checkedOut!=0){
+        //checkedOut--;
+      //}
+      removeFromCheckedOutList(conn);
       notifyAll();
      //debug
      //logWriter.log("Returned connection to pool", LogWriter.INFO);
       logWriter.log(getStats(), LogWriter.DEBUG);
    }
+
+   private synchronized void addConnectionToPool(Connection conn)
+   {
+      // Put the connection at the end of the Vector
+      freeConnections.addElement(conn);
+   }
+
 
    public synchronized void release()
    {
@@ -303,9 +326,9 @@ public class ConnectionPool
 //  private String getStats() {
 public String getStats(){
       return "Total connections: " +
-         (freeConnections.size() + checkedOut) +
+         (this.getCurrentConnectionCount()) +
          " Available: " + freeConnections.size() +
-         " Checked-out: " + checkedOut;
+         " Checked-out: " + this.getCheckedOutCount();
 }
 
 
@@ -373,7 +396,7 @@ public String getPassword(){
       }
 
       try{
-        this.checkedOut=size;
+        //this.checkedOut=size;
         this.minConns=minSize;
         this.maxConns=maxSize;
 
@@ -464,7 +487,7 @@ public String getPassword(){
       try{
         this.minConns=minSize;
         this.maxConns=maxSize;
-        this.checkedOut=size;
+        //this.checkedOut=size;
         for (int i = 0; i < size; i++) {
           Connection conn = (Connection)connections.get(0);
           connections.remove(0);
@@ -499,7 +522,7 @@ public String getPassword(){
 
  public int getCurrentConnectionCount(){
   //return this.currentConns;
-  return freeConnections.size() + checkedOut;
+  return freeConnections.size() + this.getCheckedOutCount();
  }
 
  public int getMaximumConnectionCount(){
@@ -516,6 +539,51 @@ public String getPassword(){
 
  public int getTimeOut(){
   return this.timeOut;
+ }
+
+
+
+
+ private int getCheckedOutCount(){
+  return getCheckedOutMap().size();
+ }
+
+ private Map getCheckedOutMap(){
+  if(checkedOutInfoMap==null){
+    checkedOutInfoMap= new HashMap();
+  }
+  return checkedOutInfoMap;
+ }
+
+ private void addToCheckedOutList(Connection conn){
+    getCheckedOutMap().put(conn,new Long(System.currentTimeMillis()));
+ }
+
+ private void removeFromCheckedOutList(Connection conn){
+    getCheckedOutMap().remove(conn);
+ }
+
+
+ private void cleanUpCheckedOut(){
+  //debug("Running cleanUpCheckedOut()");
+  Iterator iter = getCheckedOutMap().keySet().iterator();
+  while (iter.hasNext()) {
+    Connection conn = (Connection)iter.next();
+    Long timeCheckedOut = (Long)getCheckedOutMap().get(conn);
+    long lCheckedOut = timeCheckedOut.longValue();
+
+    if(lCheckedOut+lConnectionTimeOut<System.currentTimeMillis()){
+      //Throw away the reference to the connection
+      //debug("Throwing away timed out connection from out-pool");
+      iter.remove();
+    }
+  }
+ }
+
+
+ protected void debug(String debug){
+    //logWriter.log("[ConnectionPool-Debug] : "+debug, LogWriter.DEBUG);
+    System.out.println("[ConnectionPool-Debug] : "+debug);
  }
 
 }

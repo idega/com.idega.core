@@ -44,17 +44,30 @@ public class DatastoreConnection implements Connection{
 
     DatastoreInterface dsi;
 
+    protected String _dataSourceName;
 
 
-    public DatastoreConnection(Connection conn){
+    public DatastoreConnection(Connection conn,String datasourceName)throws SQLException{
+
+        /*this.TRANSACTION_NONE=conn.TRANSACTION_NONE;
+        this.TRANSACTION_READ_COMMITTED=conn.TRANSACTION_READ_COMMITTED;
+        this.TRANSACTION_READ_UNCOMMITTED=conn.TRANSACTION_READ_UNCOMMITTED;
+        this.TRANSACTION_REPEATABLE_READ=conn.TRANSACTION_REPEATABLE_READ;
+        this.TRANSACTION_SERIALIZABLE=conn.TRANSACTION_SERIALIZABLE;
+        */
 
         this.conn=conn;
 
         dsi = DatastoreInterface.getInstance(conn);
-
+        dsi.setDatabaseMetaData(conn.getMetaData());
+        setDatasource(datasourceName);
+        DatastoreInterface.setDatastoreInterfaceByDatasource(datasourceName,dsi);
     }
 
 
+    public void setDatasource(String datasourceName){
+      this._dataSourceName=datasourceName;
+    }
 
 
 
@@ -616,8 +629,9 @@ public class DatastoreConnection implements Connection{
 
      */
 
+     /*
     public int TRANSACTION_NONE	     = 0;
-
+    */
 
 
     /**
@@ -633,9 +647,9 @@ public class DatastoreConnection implements Connection{
      * the second transaction will have retrieved an invalid row.
 
      */
-
+    /*
     public int TRANSACTION_READ_UNCOMMITTED = 1;
-
+    */
 
 
     /**
@@ -647,9 +661,11 @@ public class DatastoreConnection implements Connection{
      * from reading a row with uncommitted changes in it.
 
      */
+     /*
 
     public int TRANSACTION_READ_COMMITTED   = 2;
 
+    */
 
 
     /**
@@ -669,9 +685,9 @@ public class DatastoreConnection implements Connection{
      * (a "non-repeatable read").
 
      */
-
+    /*
     public int TRANSACTION_REPEATABLE_READ  = 4;
-
+    */
 
 
     /**
@@ -694,8 +710,9 @@ public class DatastoreConnection implements Connection{
 
      */
 
+     /*
     public int TRANSACTION_SERIALIZABLE     = 8;
-
+    */
 
 
     /**
@@ -997,11 +1014,6 @@ public class DatastoreConnection implements Connection{
       conn.setTypeMap(map);
 
     }
-
-
-
-
-
 
 
 /** @todo implement this. required for jdk1.4

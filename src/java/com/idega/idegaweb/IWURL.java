@@ -129,15 +129,15 @@ public class IWURL {
     return url;
   }
 
-  public static IWURL getBuilderURL(int pageID){
+  /*public static IWURL getBuilderURL(int pageID){
     return getBuilderURL(Integer.toString(pageID));
-  }
+  }*/
 
-  public static IWURL getBuilderURL(String pageKey){
+  /*public static IWURL getBuilderURL(String pageKey){
     IWURL url = getURL(IWMainApplication.BUILDER_SERVLET_URL);
     url.addParameter("","");
     return url;
-  }
+  }*/
 
   /**
    * Returns the BaseURL + all parameters

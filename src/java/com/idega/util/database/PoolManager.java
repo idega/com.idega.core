@@ -17,6 +17,7 @@ import com.idega.util.LogWriter;
 public class PoolManager
 {
 
+   private static String thePropertiesFileLocation;
    private static String DEFAULT_DSN="default";
    static private PoolManager instance;
    static private int clients;
@@ -51,6 +52,7 @@ public class PoolManager
    {
       if (instance == null)
       {
+         thePropertiesFileLocation=propertiesFileLocation;
          instance = new PoolManager(propertiesFileLocation);
       }
       clients++;
@@ -212,21 +214,22 @@ public class PoolManager
 
    public Connection getConnection(String dataSourceName)
    {
-      Connection conn = null;
-      ConnectionPool pool = (ConnectionPool) pools.get(dataSourceName);
-      if (pool != null)
-      {
-         try
-         {
-            conn = pool.getConnection();
-         }
-         catch (SQLException e)
-         {
-            logWriter.log(e, "Exception getting connection from " +
-               dataSourceName, LogWriter.ERROR);
-         }
-      }
-      return conn;
+        Connection conn = null;
+        ConnectionPool pool = (ConnectionPool) pools.get(dataSourceName);
+        if (pool != null)
+        {
+           try
+           {
+              conn = pool.getConnection();
+           }
+           catch (SQLException e)
+           {
+              logWriter.log(e, "Exception getting connection from " +
+                 dataSourceName, LogWriter.ERROR);
+           }
+        }
+        return conn;
+
    }
 
    public void freeConnection(String datasourceName, Connection con)

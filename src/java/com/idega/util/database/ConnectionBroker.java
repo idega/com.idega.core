@@ -19,6 +19,9 @@ import com.idega.transaction.*;
 */
 public class ConnectionBroker{
 
+    public final static String DEFAULT_POOL="default";
+
+
 
 	public final static int POOL_MANAGER_TYPE_IDEGA=1;
 	public final static int POOL_MANAGER_TYPE_POOLMAN=2;
@@ -34,11 +37,23 @@ public class ConnectionBroker{
           return getConnection(true);
         }
 
-
         /**
          * Returns a Datastore connection from the default datasource
          */
 	public static Connection getConnection(boolean doTransactionCheck){
+      if(doTransactionCheck){
+        return getConnection(DEFAULT_POOL);
+      }
+      else{
+        return PoolManager.getInstance().getConnection();
+      }
+    }
+
+
+        /**
+         * Returns a Datastore connection from the default datasource
+         */
+	private static Connection getConnectionOld(boolean doTransactionCheck){
                 Connection conn = null;
                 IdegaTransactionManager tm  = (IdegaTransactionManager)IdegaTransactionManager.getInstance();
                 if (doTransactionCheck && tm.hasCurrentThreadBoundTransaction()){
@@ -75,13 +90,14 @@ public class ConnectionBroker{
          */
 	public static Connection getConnection(String dataSourceName){
           if(dataSourceName==null){
-            return getConnection(dataSourceName);
+            return getConnection();
           }
           else{
                 Connection conn = null;
                 IdegaTransactionManager tm  = (IdegaTransactionManager)IdegaTransactionManager.getInstance();
                 if (tm.hasCurrentThreadBoundTransaction()){
                   try{
+                    //System.out.println("Getting connection from transaction for datasource: "+dataSourceName);
                     conn = ((IdegaTransaction)tm.getTransaction()).getConnection();
                   }
                   catch(Exception ex){
@@ -90,6 +106,7 @@ public class ConnectionBroker{
                 }
                 else{
                   if(isUsingIdegaPool()){
+                    //System.out.println("Getting connection from pool for datasource: "+dataSourceName);
                     conn = PoolManager.getInstance().getConnection(dataSourceName);
                   }
                   else if(isUsingPoolManPool()){
@@ -116,9 +133,22 @@ public class ConnectionBroker{
 
 
         /**
-         * Frees (Reallocates) a Datastore connection to the default datasource
+         * Returns a Datastore connection from the default datasource
          */
 	public static void freeConnection(Connection connection,boolean doTransactionCheck){
+      if(doTransactionCheck){
+        freeConnection(DEFAULT_POOL,connection);
+      }
+      else{
+         PoolManager.getInstance().freeConnection(connection);
+      }
+    }
+
+
+        /**
+         * Frees (Reallocates) a Datastore connection to the default datasource
+         */
+	private static void freeConnectionOld(Connection connection,boolean doTransactionCheck){
                 if (doTransactionCheck && !((IdegaTransactionManager)IdegaTransactionManager.getInstance()).hasCurrentThreadBoundTransaction()){
                   //PoolManager.getInstance().freeConnection(connection);
                   if(isUsingIdegaPool()){
@@ -145,12 +175,48 @@ public class ConnectionBroker{
         }
 
 
+
         /**
-         * Does not fully support TransactionManager
+         * Frees (Reallocates) a Datastore connection to the datasource
+         */
+	public static void freeConnection(String dataSourceName, Connection connection,boolean doTransactionCheck){
+      if(dataSourceName==null){
+        freeConnection(connection,doTransactionCheck);
+      }
+      else{
+            if (doTransactionCheck && !((IdegaTransactionManager)IdegaTransactionManager.getInstance()).hasCurrentThreadBoundTransaction()){
+
+              if(isUsingIdegaPool()){
+                PoolManager.getInstance().freeConnection(dataSourceName,connection);
+              }
+              else if(isUsingPoolManPool()){
+                  /**
+                   * @todo: Commit in support for com.codestudio.util PoolMan
+                   */
+                  //com.codestudio.util.SQLManager.getInstance().returnConnection(connection);
+              }
+            }
+            else if(!doTransactionCheck){
+              if(isUsingIdegaPool()){
+                PoolManager.getInstance().freeConnection(dataSourceName,connection);
+              }
+              else if(isUsingPoolManPool()){
+                  /**
+                   * @todo: Commit in support for com.codestudio.util PoolMan
+                   */
+                  //com.codestudio.util.SQLManager.getInstance().returnConnection(connection);
+              }
+            }
+        }
+	}
+
+
+
+        /**
          * Frees (Reallocates) a Datastore connection to the datasource
          */
 	public static void freeConnection(String dataSourceName, Connection connection){
-          if(dataSourceName==null){
+          /*if(dataSourceName==null){
             freeConnection(connection);
           }
           else{
@@ -160,13 +226,11 @@ public class ConnectionBroker{
                     PoolManager.getInstance().freeConnection(dataSourceName,connection);
                   }
                   else if(isUsingPoolManPool()){
-                      /**
-                       * @todo: Commit in support for com.codestudio.util PoolMan
-                       */
                       //((com.codestudio.util.JDBCPool)com.codestudio.util.SQLManager.getInstance().getPool(dataSourceName)).returnObject(connection);
                   }
                 }
-          }
+          }*/
+          freeConnection(dataSourceName,connection,true);
 	}
 
 

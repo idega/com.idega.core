@@ -26,6 +26,7 @@ public class BlobInputStream extends InputStream{
   private int status; //not used
   private String columnName;
   private String tableName;
+  private String dataSource;
 
   public BlobInputStream(GenericEntity entity,String tableColumnName) throws SQLException,IOException {
     this.setEntity(entity);
@@ -40,8 +41,16 @@ public class BlobInputStream extends InputStream{
 
   public void setEntity(GenericEntity entity){
     this.entity=entity;
+    setDataSource(entity.getDatasource());
   }
 
+  public void setDataSource(String dataSourceName){
+    this.dataSource=dataSourceName;
+  }
+
+  public String getDataSource(){
+    return this.dataSource;
+  }
 
   public void setTableColumnName(String columnName){
           this.columnName=columnName;
@@ -83,7 +92,7 @@ public class BlobInputStream extends InputStream{
     }
     finally{
       if (conn!= null){
-       ConnectionBroker.freeConnection(conn);
+       ConnectionBroker.freeConnection(getDataSource(),conn);
       }
     }
   }
@@ -164,7 +173,7 @@ public class BlobInputStream extends InputStream{
   }
 
   private void initConnection() throws SQLException{
-    conn = ConnectionBroker.getConnection();
+    conn = ConnectionBroker.getConnection(getDataSource());
   }
 /*
   protected void finalize()throws Throwable{

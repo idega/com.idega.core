@@ -10,8 +10,7 @@ package com.idega.transaction;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 0.5
-*UNDER CONSTRUCTION - NOT FINISHED
+*@version 0.9
 */
 
 import com.idega.util.database.ConnectionBroker;
@@ -25,10 +24,17 @@ private Synchronization syncronization;
 private int status=IdegaTransactionStatus.STATUS_ACTIVE;
 private boolean isRollBackOnly=false;
 private Connection _conn;
+private String _dataSource=ConnectionBroker.DEFAULT_POOL;
 
   protected IdegaTransaction(){
       _conn = getFirstConnection();
   }
+
+  protected IdegaTransaction(String datasource){
+      this.setDatasource(datasource);
+      _conn = getFirstConnection();
+  }
+
 
 
     public void commit()throws RollbackException,
@@ -154,14 +160,24 @@ private void setStatus(int status){
 }
 
 private Connection getFirstConnection(){
-  Connection conn = ConnectionBroker.getConnection(false);
+  //Connection conn = ConnectionBroker.getConnection(false);
+  Connection conn = ConnectionBroker.getConnection(this._dataSource);
+  initFirstConnection(conn);
+  return conn;
+}
+
+private void initFirstConnection(Connection conn){
   try{
-    conn.setAutoCommit(false);
+    //System.out.println("initFirstConnection() conn.getTransactionIsolation()="+conn.getTransactionIsolation());
+    //System.out.println("initFirstConnection() conn.getMetaData().getDefaultTransactionIsolation()="+conn.getMetaData().getDefaultTransactionIsolation());
+    //if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
+      conn.setAutoCommit(false);
+    //}
   }
   catch(SQLException ex){
-    ex.printStackTrace(System.err);
+    System.err.println("Error in IdegaTransaction.freeConnection() Message :"+ex.getMessage());
+    //ex.printStackTrace(System.err);
   }
-  return conn;
 }
 
 public Connection getConnection(){
@@ -171,18 +187,29 @@ public Connection getConnection(){
 public void freeConnection(Connection conn){
   if(conn!=null){
     try{
-      conn.setAutoCommit(true);
+      //System.out.println("freeConnection() conn.getTransactionIsolation()="+conn.getTransactionIsolation());
+      //System.out.println("freeConnection() conn.getMetaData().getDefaultTransactionIsolation()="+conn.getMetaData().getDefaultTransactionIsolation());
+      //if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
+        conn.setAutoCommit(true);
+      //}
     }
     catch(SQLException ex){
-      ex.printStackTrace(System.err);
+      //ex.printStackTrace(System.err);
+      System.err.println("Error in IdegaTransaction.freeConnection() Message :"+ex.getMessage());
     }
-    ConnectionBroker.freeConnection(conn,false);
+    //ConnectionBroker.freeConnection(conn,false);
+    ConnectionBroker.freeConnection(this._dataSource,_conn,false);
+    this._conn=null;
   }
 }
 
 protected void end(){
     freeConnection(this._conn);
     this._conn=null;
+}
+
+protected void setDatasource(String datasourceName){
+  this._dataSource=datasourceName;
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.13 2002/02/10 21:55:33 aron Exp $
+ * $Id: IWPropertyList.java,v 1.14 2002/03/14 21:45:25 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -404,7 +404,18 @@ public class IWPropertyList{
 
   public void store() {
     try {
-      store(new FileOutputStream(xmlFile));
+      String fileName = xmlFile.getName();
+      String fileNameBeginning = fileName.substring(0,fileName.lastIndexOf("."));
+      String fileNameEnding = fileName.substring(fileName.lastIndexOf(".")+1);
+      String tempFileName = fileNameBeginning+"-temp."+fileNameEnding;
+      File tempXMLFile = new File(xmlFile.getParentFile(),tempFileName);
+      store(new FileOutputStream(tempXMLFile));
+      try{
+      com.idega.util.FileUtil.copyFile(tempXMLFile,xmlFile);
+      }
+      catch(IOException io){
+        System.err.println("Error storing "+xmlFile.getAbsolutePath()+xmlFile.getName()+" "+io.getMessage());
+      }
     }
     catch(FileNotFoundException e) {
       e.printStackTrace();
