@@ -226,7 +226,12 @@ public abstract class DatastoreInterface{
                   if(!this.doesTableExist(entity,entity.getTableName())){
                     createTable(entity);
                     createTrigger(entity);
-                    createForeignKeys(entity);
+                    try{
+                      createForeignKeys(entity);
+                    }
+                    catch(Exception e){
+                      e.printStackTrace();
+                    }
                     createMiddleTables(entity);
                     entity.insertStartData();
                   }
@@ -769,7 +774,7 @@ public abstract class DatastoreInterface{
                               //else{
                               //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
                               //}
-                              System.out.println(names[i]);
+                              //System.out.println(names[i]);
                               insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
                               questionmarkCount++;
 
@@ -785,7 +790,7 @@ public abstract class DatastoreInterface{
                               //else{
                               //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
                               //}
-                              System.out.println(names[i]);
+                              //System.out.println(names[i]);
                               insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
                               questionmarkCount++;
 

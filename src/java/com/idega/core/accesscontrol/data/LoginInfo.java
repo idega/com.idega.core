@@ -31,13 +31,13 @@ public class LoginInfo extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName(),"Notandi",true,true,"java.lang.Integer","one-to-one",LoginTable.getStaticInstance().className);
-    addAttribute(getAccountEnabledColumnName(),"Aðgangur virkur",true,true,"java.lang.Boolean");
-    addAttribute(getModifiedColumnName(),"Síðast breytt",true,true,"java.sql.Date");
-    addAttribute(getDaysOfValityColumnName(),"Dagar í gildi",true,true,"java.sql.Integer");
-    addAttribute(getPasswordExpiresColumnName(),"Lykilorð rennur út",true,true,"java.lang.Boolean");
-    addAttribute(getAllowedToChangeColumnName(),"Notandi má breyta",true,true,"java.lang.Boolean");
-    addAttribute(getChangeNextTimeColumnName(),"Breyta næst",true,true,"java.lang.Boolean");
-    addAttribute(getEncryptionTypeColumnName(),"Kóðunaraðferð",true,true,"java.lang.String",30);
+    addAttribute(getAccountEnabledColumnName(),"Aðgangur virkur",true,true,Boolean.class);
+    addAttribute(getModifiedColumnName(),"Síðast breytt",true,true,java.sql.Date.class);
+    addAttribute(getDaysOfValityColumnName(),"Dagar í gildi",true,true,Integer.class);
+    addAttribute(getPasswordExpiresColumnName(),"Lykilorð rennur út",true,true,Boolean.class);
+    addAttribute(getAllowedToChangeColumnName(),"Notandi má breyta",true,true,Boolean.class);
+    addAttribute(getChangeNextTimeColumnName(),"Breyta næst",true,true,Boolean.class);
+    addAttribute(getEncryptionTypeColumnName(),"Kóðunaraðferð",true,true,String.class,30);
   }
 
   public void setDefaultValues(){

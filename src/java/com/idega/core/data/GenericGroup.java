@@ -33,7 +33,9 @@ public class GenericGroup extends GenericEntity{
 		addAttribute(getGroupTypeColumnName(),"Hópgerð", true, true, "java.lang.String");
 		addAttribute(getGroupDescriptionColumnName(),"Lýsing", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(),"Auka upplýsingar", true, true, "java.lang.String");
-                this.addManyToManyRelationShip("com.idega.core.user.data.User","ic_group_user");
+                this.addManyToManyRelationShip(User.class,"ic_group_user");
+
+                this.addTreeRelationShip();
 	}
 
 	public String getEntityName(){
@@ -127,7 +129,7 @@ public class GenericGroup extends GenericEntity{
           buffer.append("select * from ");
           buffer.append(tableToSelectFrom);
           buffer.append(" where ");
-          buffer.append("CHILD_GROUP_ID");
+          buffer.append("CHILD_IC_GROUP_ID");
           buffer.append("=");
           buffer.append(this.getID());
           String SQLString=buffer.toString();
@@ -191,7 +193,7 @@ public class GenericGroup extends GenericEntity{
 		try{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("insert into GROUP_TREE ("+getIDColumnName()+", CHILD_GROUP_ID) values("+getID()+","+groupToAddTo.getID()+")");
+			int i = Stmt.executeUpdate("insert into GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupToAddTo.getID()+")");
 		}catch (Exception ex) {
                     ex.printStackTrace(System.out);
                 }finally{

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.30 2001/07/17 21:03:57 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.31 2001/07/17 21:57:23 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1821,6 +1821,7 @@ public abstract class GenericEntity implements java.io.Serializable {
                 allStaticClasses.put(entityClassName,theReturn);
               }
               catch(Exception ex){
+                ex.printStackTrace();
               }
             }
             return theReturn;
