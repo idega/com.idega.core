@@ -234,15 +234,15 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
   public static Object getSource(IWContext iwc){
     String sourceString = iwc.getParameter(PRM_IW_EVENT_SOURCE);
-    try {
-      Integer primaryKey = new Integer(sourceString);
+   // try {
+   //   Integer primaryKey = new Integer(sourceString);
 //      ICObjectInstance instance = (ICObjectInstance)IDOLookup.findByPrimaryKey(ICObjectInstance.class,primaryKey);
 //      return instance;
-      return primaryKey;
-    }
-    catch (NumberFormatException ex) {
+    //  return primaryKey;
+    //}
+    //catch (NumberFormatException ex) {
       // Source is location
-    }
+    //}
 //    catch (RemoteException rex) {
 //      throw new RuntimeException(rex.getMessage());
 //    }
