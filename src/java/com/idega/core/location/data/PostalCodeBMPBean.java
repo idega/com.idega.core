@@ -94,8 +94,16 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   }
 
   public void setPostalCode(String code){
-  	// remove all whitespace from postal code
-    setColumn(COLUMN_POSTAL_CODE, stripWhitespace(code));
+    code = stripWhitespace(code);
+		setColumn(COLUMN_POSTAL_CODE, code);
+		
+		String name = getName();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(code);
+		if (name != null) {
+			buffer.append(" ").append(name);
+		}
+		setColumn(COLUMN_POSTAL_ADDRESS, buffer.toString());
   }
 
   public String getPostalCode(){
@@ -124,7 +132,15 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
    */
   public void setName(String name){
     setColumn(COLUMN_NAME, name.toUpperCase());
-  }
+
+		String code = getPostalCode();
+		StringBuffer buffer = new StringBuffer();
+		if (code != null) {
+			buffer.append(code).append(" ");
+		}
+		buffer.append(name);
+		setColumn(COLUMN_POSTAL_ADDRESS, buffer.toString());
+	}
 
   public String getName(){
     return getStringColumnValue(COLUMN_NAME);
