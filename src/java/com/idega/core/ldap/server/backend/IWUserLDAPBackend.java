@@ -714,7 +714,6 @@ LDAPReplicationConstants {
 		if(loginInfo!=null){
 			List userName = getAttributeListForSingleEntry(loginInfo.getUserName());
 			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_UID), userName);
-			
 			String password = LDAP_USER_PASSWORD_PREFIX+loginInfo.getPassword();
 			List passwordString = getAttributeListForSingleEntry(password);
 			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_USER_PASSWORD), passwordString);

@@ -3014,7 +3014,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				LoginTable login = LoginDBHandler.getUserLogin(userId);
 				if(login!=null){
 					login.setUserLogin(userName);
-					login.setUserPassword(userPassword);
+					login.setUserPasswordInClearText(userPassword);
 					login.setLastChanged(IWTimestamp.getTimestampRightNow());
 					login.store();
 				}
@@ -3023,7 +3023,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
 					login.setUserId(userId);
 					login.setUserLogin(userName);
-					login.setUserPassword(userPassword);
+					login.setUserPasswordInClearText(userPassword);
 					login.setLastChanged(IWTimestamp.getTimestampRightNow());
 					login.store();
 				}

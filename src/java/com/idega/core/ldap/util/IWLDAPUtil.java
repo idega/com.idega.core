@@ -56,7 +56,7 @@ public class IWLDAPUtil implements IWLDAPConstants{
 				return (String) obj;
 			}
 		} catch (Exception e) {
-			System.out.println("[IWLDAPUtil] No UUID defined in attributes");
+			System.out.println("[IWLDAPUtil] "+attributeKey+" not defined in attributes");
 		}
 		
 		return null;
