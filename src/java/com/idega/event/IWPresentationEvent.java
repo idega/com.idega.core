@@ -9,6 +9,7 @@ import java.util.Vector;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.EventViewerPage;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -29,7 +30,8 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   public final static String PRM_IW_EVENT_SOURCE = "iw_ev_src";
 //  private final static String SEPARATOR = "|";
 
-  public static String IW_EVENT_HANDLER_URL="/servlet/IWEventHandler";
+  private static String IW_EVENT_HANDLER_SERVLET_URL="/servlet/IWEventHandler";
+  
   private String eventHandlerURL = null;
   
   public static String DEFAULT_IW_EVENT_TARGET="iw_event_frame";
@@ -273,8 +275,21 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 */
 	public String getEventHandlerURL(IWContext iwc) {
     if (eventHandlerURL == null)
-      eventHandlerURL = iwc.getIWMainApplication().getTranslatedURIWithContext(IW_EVENT_HANDLER_URL);
+      eventHandlerURL = getEventHandlerFrameURL(iwc);
     return eventHandlerURL;
+	}
+	
+	/**
+	 * Returns the URL to the Event handling frame prefixed with the servlet context path if any.
+	 * @return String
+	 */
+	public static String getEventHandlerFrameURL(IWContext iwc) {
+		if(IWMainApplication.USE_NEW_URL_SCHEME){
+			return iwc.getIWMainApplication().getWindowOpenerURI(EventViewerPage.class);
+		}
+		else{
+			return iwc.getIWMainApplication().getTranslatedURIWithContext(IW_EVENT_HANDLER_SERVLET_URL);
+		}
 	}
 
 	/**
