@@ -173,7 +173,7 @@ private Image bullet;
 
 
 
-      List theObjects = this.getAllContainingObjects();
+      List theObjects = this.getChildren();
 
       if ( theObjects != null ) {
 

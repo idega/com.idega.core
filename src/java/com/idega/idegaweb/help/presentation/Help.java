@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.1 2004/01/22 22:45:34 tryggvil Exp $
+ * $Id: Help.java,v 1.2 2004/02/20 16:37:42 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -57,7 +57,7 @@ public class Help extends Block {
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		if (_iwbCore == null) {
-			_iwbCore = iwc.getApplication().getBundle(CORE_BUNDLE);
+			_iwbCore = iwc.getIWMainApplication().getBundle(CORE_BUNDLE);
 			_iwrbCore = _iwbCore.getResourceBundle(iwc);
 		}
 

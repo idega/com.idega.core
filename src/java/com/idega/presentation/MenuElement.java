@@ -2,6 +2,7 @@ package com.idega.presentation;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 /**
  * A class that constructs a <code>MenuElement</code> of the <code>DynamicJSMenu</code>
  * @author birna
@@ -100,8 +101,8 @@ public class MenuElement extends PresentationObject {
 	 * 
 	 * @return Arraylist which contains the children of a node
 	 */
-	public Iterator getChildren(){
-		return this.children.iterator();
+	public List getChildren(){
+		return this.children;
 	}
 	/**
 	 * 

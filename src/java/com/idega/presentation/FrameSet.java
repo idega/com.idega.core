@@ -254,7 +254,7 @@ public class FrameSet extends Window{
       IWURL url = new IWURL(uri);
       return url;
       */
-      return new IWURL(iwc.getApplication().getWindowOpenerURI(pageClass));
+      return new IWURL(iwc.getIWMainApplication().getWindowOpenerURI(pageClass));
     }
 
     /*public static IWURL getFrameURL(Class pageClass){

@@ -74,7 +74,7 @@ public static String HEADER_COLOR = "#0E2456";
   public void _main(IWContext iwc)throws Exception{
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
-    iwbCore = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+    iwbCore = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
     if( !displayEmpty ){
       makeTables();
       setAllMargins(0);

@@ -463,8 +463,10 @@ public class FolderBlockCategoryWindow extends IWAdminWindow {
 	public void main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
-		core = iwc.getApplication().getCoreBundle();
+
+		core = iwc.getIWMainApplication().getCoreBundle();
 		_folderblockBusiness = (FolderBlockBusiness)IBOLookup.getServiceInstance(iwc, FolderBlockBusiness.class);
+
 		String title = iwrb.getLocalizedString("ic_category_editor", "Category Editor");
 		tree_image_M = core.getImage("/treeviewer/ui/win/treeviewer_M_line.gif");
 		tree_image_L = core.getImage("/treeviewer/ui/win/treeviewer_L_line.gif");

@@ -308,7 +308,7 @@ private static final String FILE_VALUE = "FILE_VALUE";
       IWContext iwc = IWContext.getInstance();
       setDeletedByUserId(iwc.getUserId());
       if( setICRootAsParent ){
-        IWCacheManager cm = iwc.getApplication().getIWCacheManager();
+        IWCacheManager cm = iwc.getIWMainApplication().getIWCacheManager();
         ICFile parent = (ICFile) cm.getCachedEntity(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_CACHE_KEY);
         if( parent!= null ) parent.addChild(this);
       }

@@ -13,7 +13,7 @@ import com.idega.core.builder.data.ICDomain;
 
 public interface IWApplicationContext extends java.io.Serializable{
 
-  public IWMainApplication getApplication();
+  public IWMainApplication getIWMainApplication();
   public IWMainApplicationSettings getApplicationSettings();
   public IWSystemProperties getSystemProperties();
   public void setApplicationAttribute(String attributeName,Object attributeValue);

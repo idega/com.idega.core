@@ -261,7 +261,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 */
 	public String getEventHandlerURL(IWContext iwc) {
     if (eventHandlerURL == null)
-      eventHandlerURL = iwc.getApplication().getTranslatedURIWithContext(IW_EVENT_HANDLER_URL);
+      eventHandlerURL = iwc.getIWMainApplication().getTranslatedURIWithContext(IW_EVENT_HANDLER_URL);
     return eventHandlerURL;
 	}
 

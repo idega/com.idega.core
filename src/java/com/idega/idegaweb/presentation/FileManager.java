@@ -166,8 +166,8 @@ public class FileManager extends Block {
 		
 		//TODO fix x url
 		String server = iwc.getServerURL();
-		String context = iwc.getApplication().getApplicationContextURI();
-		String appURI = iwc.getApplication().getApplicationRealPath();
+		String context = iwc.getIWMainApplication().getApplicationContextURI();
+		String appURI = iwc.getIWMainApplication().getApplicationRealPath();
 		//String appURI =iwc.getApplication().getApplicationContextURI();
 		//int index = currentFile.indexOf(appURI);
 		String url = currentFile.substring(appURI.length());

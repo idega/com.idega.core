@@ -27,7 +27,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	}
 	
 	public boolean updateBundleToMostRecentVersion(String bundleIdentifier,boolean overWriteLocalChanges){
-		IWBundle bundle = this.getIWApplicationContext().getApplication().getBundle(bundleIdentifier);
+		IWBundle bundle = this.getIWApplicationContext().getIWMainApplication().getBundle(bundleIdentifier);
 		return this.updateBundleToMostRecentVersion(bundle,overWriteLocalChanges);
 	}
 	
@@ -46,7 +46,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	}
 	
 	public boolean commitLocalizationFile(String bundleIdentifier,String localeString){
-		IWBundle bundle = this.getIWApplicationContext().getApplication().getBundle(bundleIdentifier);
+		IWBundle bundle = this.getIWApplicationContext().getIWMainApplication().getBundle(bundleIdentifier);
 		Locale locale = LocaleUtil.getLocale(localeString);
 		return commitLocalizationFile(bundle,locale);
 	}

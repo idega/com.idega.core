@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.53 2004/02/06 02:27:36 gimmi Exp $
+ * $Id: Table.java,v 1.54 2004/02/20 16:37:43 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,10 +9,13 @@
  */
 package com.idega.presentation;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import javax.faces.component.UIComponent;
 
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWUserContext;
@@ -961,10 +964,10 @@ public class Table extends PresentationObjectContainer {
 		return moc.set(innercontainerindex, o);
 	}
 
-	public List getAllContainedObjectsRecursive() {
+	public List getChildrenRecursive() {
 		if (allObjects == null) {
 			List toReturn = null;
-			List containedObjects = this.getAllContainingObjects();
+			List containedObjects = this.getChildren();
 			if (theObjects != null) {
 				toReturn = new Vector();
 				toReturn.containsAll(containedObjects);
@@ -974,7 +977,7 @@ public class Table extends PresentationObjectContainer {
 					if (item instanceof PresentationObjectContainer) {
 						toReturn.add(item);
 						//if(!toReturn.contains(item)){
-						List tmp = ((PresentationObjectContainer) item).getAllContainedObjectsRecursive();
+						List tmp = ((PresentationObjectContainer) item).getChildrenRecursive();
 						if (tmp != null) {
 							toReturn.addAll(tmp);
 						}
@@ -990,12 +993,13 @@ public class Table extends PresentationObjectContainer {
 		return allObjects;
 	}
 
-	public List getAllContainingObjects() {
-		Vector theReturn = new Vector();
+	public List getChildren() {
+		List theReturn = new TableList(this);
+		//List theReturn = new ArrayList();
 		for (int x = 0; x < theObjects.length; x++) {
 			for (int y = 0; y < theObjects[x].length; y++) {
 				if (theObjects[x][y] != null) {
-					theReturn.addElement(theObjects[x][y]);
+					theReturn.add(theObjects[x][y]);
 				}
 			}
 		}
@@ -1592,7 +1596,7 @@ public class Table extends PresentationObjectContainer {
 
 	public static Image getTransparentCell(IWContext iwc) {
 		if (transparentcell == null) {
-			transparentcell = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER).getImage("transparentcell.gif");
+			transparentcell = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getImage("transparentcell.gif");
 		}
 		return (Image) transparentcell.clone();
 	}
@@ -1746,5 +1750,36 @@ public class Table extends PresentationObjectContainer {
 			this.lineColor = "#000000";
 		}
 	}
+
+	
+	protected class TableList extends ArrayList{
+		private UIComponent pContainer;
+		TableList(UIComponent container){
+			pContainer=container;
+		}
+		public boolean add(Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			//Table table = (Table)pContainer;
+			//table.getChild(1).getChildren().add(comp);
+			
+			return super.add(comp);
+			
+		}
+		public void add(int index,Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			super.add(index,comp);
+		}
+		public Object set(int index,Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			return super.set(index,child);
+		}
+	}
+	
+	/*
+	 * End JSF SPECIFIC IMPLEMENTAION METHODS
+	 */	
 
 }

@@ -101,15 +101,15 @@ public class IWApplication extends FrameSet
 		IWBundle bundle = null;
 		if (obj == null)
 		{
-			bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+			bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 			iconImage = bundle.getImage("IWApplicationIcon.gif");
 		}
 		else
 		{
-			bundle = obj.getBundle(iwc.getApplication());
+			bundle = obj.getBundle(iwc.getIWMainApplication());
 			if (bundle == null)
 			{
-				bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+				bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 				iconImage = bundle.getImage("IWApplicationIcon.gif");
 			}
 			else

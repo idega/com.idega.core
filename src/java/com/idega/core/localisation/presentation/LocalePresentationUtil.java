@@ -34,7 +34,7 @@ public class LocalePresentationUtil
 	}
 
 	public static DropdownMenu getAvailableLocalesDropdown(IWContext iwc) {
-		IWMainApplication iwma = iwc.getApplication();
+		IWMainApplication iwma = iwc.getIWMainApplication();
 	
 		DropdownMenu down = LocalePresentationUtil.getAvailableLocalesDropdown(iwma, LocaleSwitcher.languageParameterString);
 		Locale l = iwc.getCurrentLocale();

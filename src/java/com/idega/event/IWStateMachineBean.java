@@ -434,7 +434,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
       if(page instanceof StatefullPresentation){
         return ((StatefullPresentation)page).getPresentationStateClass();
       } else {
-        List l = page.getAllContainingObjects();
+        List l = page.getChildren();
         if(l != null){
           Iterator iter = l.iterator();
           while (iter.hasNext()) {

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.98 2004/02/10 14:36:37 laddi Exp $
+ *  $Id: Page.java,v 1.99 2004/02/20 16:37:43 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1085,7 +1085,7 @@ public class Page extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 
 		if (this._styleSheetURL == null)
-			_styleSheetURL = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
+			_styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
 
 		setDefaultValues();
 		setDefaultAttributes(iwc);
@@ -1116,7 +1116,7 @@ public class Page extends PresentationObjectContainer {
 
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
-					String src = iwc.getApplication().getCoreBundle().getResourcesURL();
+					String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 					ICDomain d = iwc.getDomain();
 
 					if (d.getURL() != null) {

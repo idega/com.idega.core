@@ -1357,7 +1357,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
   
   public UserProperties getUserProperties(int userID) {
-  	UserProperties properties = new UserProperties(getIWApplicationContext().getApplication(),userID);
+  	UserProperties properties = new UserProperties(getIWApplicationContext().getIWMainApplication(),userID);
   	return properties;
   }
 
@@ -1821,7 +1821,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
   public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
-    IWMainApplication application = getIWApplicationContext().getApplication();
+    IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
     IWResourceBundle iwrb = bundle.getResourceBundle(locale);
@@ -1887,7 +1887,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser) {
-    IWMainApplication application = getIWApplicationContext().getApplication();
+    IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
     IWResourceBundle iwrb = bundle.getResourceBundle(locale);
@@ -2141,7 +2141,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   	
   	//headerTable.add(getBundle(iwc).getImage(this.getBundle(iwc).getProperty("logo_image_name","top.gif")));
   	
-		IWMainApplication application = getIWApplicationContext().getApplication();
+		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");		
 		String styleScript = "DefaultStyle.css";
 		String styleSrc = bundle.getVirtualPathWithFileNameString(application.getBundle("com.idega.user").getProperty("styleSheet_name",styleScript));

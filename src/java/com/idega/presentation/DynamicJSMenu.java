@@ -507,7 +507,7 @@ public class DynamicJSMenu extends PresentationObject {
 	 * @return String - the url of the javascript source code
 	 */
 	public String scriptSource(String fileName, IWContext iwc){
-		String url = iwc.getApplication().getCoreBundle().getResourcesURL();
+		String url = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 		url = url + "/" + fileName;
 		return url;
 	}	
@@ -554,7 +554,7 @@ public class DynamicJSMenu extends PresentationObject {
 			root1.addChild("child2", "root1", "this is child2", "http://bla.bla");
 			print(root1.output() + "\n");
 			
-			for(Iterator childIter = root1.getChildren(); childIter.hasNext();){
+			for(Iterator childIter = root1.getChildren().iterator(); childIter.hasNext();){
 				MenuElement child = (MenuElement) childIter.next();
 				child.setMenuName("oCMenu");
 				print(child.output() + "\n");

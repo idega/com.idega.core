@@ -25,9 +25,9 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 
 
 	/**
-	 * @see com.idega.idegaweb.IWApplicationContext#getApplication()
+	 * @see com.idega.idegaweb.IWApplicationContext#getIWMainApplication()
 	 */
-	public IWMainApplication getApplication() {
+	public IWMainApplication getIWMainApplication() {
 		return iwma;
 	}
 

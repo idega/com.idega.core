@@ -74,7 +74,7 @@ public class PageIncluder extends PresentationObject implements Index{
   private void sortAndProcess(IWContext iwc){
     //sort
     Page parent = this.getParentPage();/**@todo get in main**/
-    List objects = parent.getAllContainedObjectsRecursive();
+    List objects = parent.getChildrenRecursive();
     ArrayList includers = new ArrayList();
     Iterator iter = objects.iterator();
     while (iter.hasNext()) {

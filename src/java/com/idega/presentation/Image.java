@@ -332,7 +332,7 @@ public class Image extends PresentationObject
 			}
 			else
 			{
-				Integer defImageID = (Integer) this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+				Integer defImageID = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
 				if (defImageID != null)
 				{
 					return defImageID;

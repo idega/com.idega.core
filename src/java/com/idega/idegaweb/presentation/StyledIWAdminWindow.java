@@ -199,7 +199,7 @@ private Image helpImage = null;
 	}
 	public Help getHelp(String helpTextKey) {
 		IWContext iwc = IWContext.getInstance();
-		iwb = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 	 	Help help = new Help();
 	 	helpImage = iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
@@ -209,7 +209,7 @@ private Image helpImage = null;
 	}
 	public Help getHelpWithGrayImage(String helpTextKey, boolean dark) {
 		IWContext iwc = IWContext.getInstance();
-		iwb = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		Help help = new Help();
 		if(dark) {
 			helpImage = iwb.getImage("help_small.gif");

@@ -117,7 +117,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
    * @return
    */
   protected IWMainApplication getIWMainApplication(){
-  	return getIWApplicationContext().getApplication();
+  	return getIWApplicationContext().getIWMainApplication();
   }
 
   /**
@@ -160,7 +160,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
   }
   
   	protected AccessController getAccessController() {
-		return ((AccessController) this.getIWApplicationContext().getApplication().getAccessController());
+		return ((AccessController) this.getIWApplicationContext().getIWMainApplication().getAccessController());
 	}
 
   	

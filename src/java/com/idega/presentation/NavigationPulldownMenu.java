@@ -44,8 +44,8 @@ public class NavigationPulldownMenu extends Block {
 	getParentPage().setMarkupAttribute("onClick","HideMenu(menuBar)");
 	getParentPage().setID("Bdy");
       }
-      getParentPage().addStyleSheetURL(iwc.getApplication().getBundle("com.idega.core").getResourcesVirtualPath()+"/navigation_menu/CascadeMenu.css");
-      getParentPage().addJavascriptURL(iwc.getApplication().getBundle("com.idega.core").getResourcesVirtualPath()+"/navigation_menu/CascadeMenu.js");
+      getParentPage().addStyleSheetURL(iwc.getIWMainApplication().getBundle("com.idega.core").getResourcesVirtualPath()+"/navigation_menu/CascadeMenu.css");
+      getParentPage().addJavascriptURL(iwc.getIWMainApplication().getBundle("com.idega.core").getResourcesVirtualPath()+"/navigation_menu/CascadeMenu.js");
 
       Vector nodeVector = new Vector();
       if ( withRootAsHome && left ) {

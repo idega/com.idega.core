@@ -33,7 +33,7 @@ public class LocaleSwitcher extends com.idega.idegaweb.presentation.LocaleChange
 		add(getTitle());
 		if (!iwc.isIE())
 			getParentPage().setBackgroundColor("#FFFFFF");
-		IWMainApplication iwma = iwc.getApplication();
+		IWMainApplication iwma = iwc.getIWMainApplication();
 
 		DropdownMenu localesDrop = LocalePresentationUtil.getAvailableLocalesDropdown(iwma, com.idega.core.localisation.business.LocaleSwitcher.languageParameterString);
 		//localesDrop.keepStatusOnAction();

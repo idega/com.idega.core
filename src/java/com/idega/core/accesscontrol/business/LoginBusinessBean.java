@@ -392,7 +392,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
 		}
 
-		UserProperties properties = new UserProperties(iwc.getApplication(), user.getID());
+		UserProperties properties = new UserProperties(iwc.getIWMainApplication(), user.getID());
 		setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
 	}
 
@@ -458,7 +458,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				int returnCode = STATE_WRONG_PASSW;
 				int maxFailedLogginAttempts = 0;
 				try {
-					String maxStr = iwc.getApplication().getBundle("com.idega.core").getProperty("max_failed_login_attempts");
+					String maxStr = iwc.getIWMainApplication().getBundle("com.idega.core").getProperty("max_failed_login_attempts");
 					maxFailedLogginAttempts = Integer.parseInt(maxStr);
 				} catch(Exception e) {
 					// default used, no maximum

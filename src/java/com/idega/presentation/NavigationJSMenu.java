@@ -81,7 +81,7 @@ public class NavigationJSMenu extends Block {
 			Script script = getParentPage().getAssociatedScript();
 			script.addFunction("menuScript", buffer.toString());
 
-			getParentPage().addJavascriptURL(iwc.getApplication().getBundle("com.idega.core").getResourcesVirtualPath() + "/navigation_menu/menu.js");
+			getParentPage().addJavascriptURL(iwc.getIWMainApplication().getBundle("com.idega.core").getResourcesVirtualPath() + "/navigation_menu/menu.js");
 
 		}
 	}

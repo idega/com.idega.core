@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.23 2004/01/14 15:15:23 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.24 2004/02/20 16:37:43 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -27,7 +27,7 @@ import com.idega.presentation.text.Text;
  */
 public class PresentationObjectContainer extends PresentationObject
 {
-	protected List theObjects;
+	private List children;
 	protected List allObjects = null;
 	protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
@@ -35,12 +35,13 @@ public class PresentationObjectContainer extends PresentationObject
 	public PresentationObjectContainer()
 	{
 	}
-	protected List getChildComponentList(){
-		if (theObjects == null)
+	public List getChildren(){
+		if (this.children == null)
 		{
-			this.theObjects = new ArrayList();
+			this.children = new PresentationObjectList(this);
+			//this.children=new ArrayList();
 		}
-		return theObjects;
+		return this.children;
 	}
 	/**
 	 * Add an object inside this container
@@ -53,7 +54,7 @@ public class PresentationObjectContainer extends PresentationObject
 			{
 				modObject.setParentObject(this);
 				//        modObject.setLocation(this.getLocation());
-				getChildComponentList().add(index, modObject);
+				getChildren().add(index, modObject);
 			}
 		}
 		catch (Exception ex)
@@ -72,8 +73,19 @@ public class PresentationObjectContainer extends PresentationObject
 			{
 				modObject.setParentObject(this);
 				//        modObject.setLocation(this.getLocation());
-				getChildComponentList().add(modObject);
+				getChildren().add(modObject);
 			}
+		}
+		catch (Exception ex)
+		{
+			//ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+		}
+	}
+	public void add(UIComponent component)
+	{
+		try
+		{
+			getChildren().add(component);
 		}
 		catch (Exception ex)
 		{
@@ -96,7 +108,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		modObject.setParentObject(this);
 		//    modObject.setLocation(this.getLocation());
-		getChildComponentList().add(0, modObject);
+		getChildren().add(0, modObject);
 	}
 	/**
 	 * Add an object inside this container - same as the add() function
@@ -159,12 +171,8 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		addText(Integer.toString(integerToInsert));
 	}
-	public List getAllContainingObjects()
-	{
-		return theObjects;
-	}
 	public PresentationObject getContainedObject(Class objectClass) {
-		List objects = getAllContainingObjects();
+		List objects = getChildren();
 		if (objects != null) {
 			Iterator iter = objects.iterator();
 			while (iter.hasNext()) {
@@ -176,16 +184,17 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return null;
 	}
-	public List getAllContainedObjectsRecursive()
+	public List getChildrenRecursive()
 	{
 		if (allObjects == null)
 		{
 			List toReturn = null;
-			if (theObjects != null)
+			List children = this.getChildren();
+			if (children != null)
 			{
 				toReturn = new ArrayList();
-				toReturn.containsAll(theObjects);
-				Iterator iter = theObjects.iterator();
+				toReturn.containsAll(children);
+				Iterator iter = children.iterator();
 				while (iter.hasNext())
 				{
 					Object item = iter.next();
@@ -193,7 +202,7 @@ public class PresentationObjectContainer extends PresentationObject
 					{
 						toReturn.add(item);
 						//if(!toReturn.contains(item)){
-						List tmp = ((PresentationObjectContainer) item).getAllContainedObjectsRecursive();
+						List tmp = ((PresentationObjectContainer) item).getChildrenRecursive();
 						if (tmp != null)
 						{
 							toReturn.addAll(tmp);
@@ -216,14 +225,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	public boolean isEmpty()
 	{
-		if (theObjects != null)
-		{
-			return theObjects.isEmpty();
-		}
-		else
-		{
-			return true;
-		}
+		return getChildren().isEmpty();
 	}
 	public void _main(IWContext iwc) throws Exception
 	{
@@ -272,14 +274,12 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public void empty()
 	{
-		if (theObjects != null)
-		{
-			theObjects.removeAll(theObjects);
-		}
+		getChildren().clear();
+		//theObjects.removeAll(theObjects);
 	}
-	protected void setObjects(ArrayList objects)
+	protected void setChildren(List newChildren)
 	{
-		this.theObjects = objects;
+		this.children = newChildren;
 	}
 	/*
 	 * protected void prepareClone(PresentationObject newObjToCreate){ int
@@ -340,7 +340,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public PresentationObject getContainedObject(int objectInstanceID)
 	{
-		List list = this.getAllContainingObjects();
+		List list = this.getChildren();
 		if (list != null)
 		{
 			Iterator iter = list.iterator();
@@ -400,7 +400,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public PresentationObject getContainedLabeledObject(String label)
 	{
-		List list = getAllContainingObjects();
+		List list = getChildren();
 		if (list != null)
 		{
 			Iterator iter = list.iterator();
@@ -451,32 +451,15 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public int numberOfObjects()
 	{
-		if (theObjects != null)
-		{
-			return theObjects.size();
-		}
-		else
-		{
-			return 0;
-		}
+		return getChildren().size();
 	}
 	public PresentationObject objectAt(int index)
 	{
-		if (theObjects != null)
-		{
-			return (PresentationObject) theObjects.get(index);
-		}
-		else
-		{
-			return null;
-		}
+		return (PresentationObject)getChildren().get(index);
 	}
 	public int getIndex(PresentationObject ob)
 	{
-		if (theObjects == null)
-			return (-1);
-		else
-			return (theObjects.indexOf(ob));
+		return getChildren().indexOf(ob);
 	}
 	/**
 	 * Insert element at specified index
@@ -485,15 +468,11 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		try
 		{
-			if (theObjects == null)
-			{
-				this.theObjects = new ArrayList();
-			}
 			if (modObject != null)
 			{
 				modObject.setParentObject(this);
 				//        modObject.setLocation(this.getLocation());
-				theObjects.add(index, modObject);
+				getChildren().add(index, modObject);
 			}
 		}
 		catch (Exception ex)
@@ -518,8 +497,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public void removeAll(java.util.Collection c)
 	{
-		if (theObjects != null)
-			theObjects.removeAll(c);
+		getChildren().removeAll(c);
 	}
 	public void _setIWContext(IWContext iwc)
 	{
@@ -569,11 +547,14 @@ public class PresentationObjectContainer extends PresentationObject
 			obj = (PresentationObjectContainer) super.clone();
 			obj._locked = this._locked;
 			//if(!(this instanceof Table)){
-			if (this.theObjects != null)
-			{
+			//if (this.theObjects != null)
+			//{
 				//obj.setObjects((Vector)this.theObjects.clone());
-				obj.theObjects = (List) ((ArrayList) this.theObjects).clone();
-				ListIterator iter = obj.theObjects.listIterator();
+				ArrayList alChildren = (ArrayList)this.getChildren();
+				List clonedChildren = (List)alChildren.clone();
+				obj.setChildren(clonedChildren);
+				//obj.setChildren((List)((ArrayList) this.getChildren()).clone());
+				ListIterator iter = obj.getChildren().listIterator();
 				while (iter.hasNext())
 				{
 					int index = iter.nextIndex();
@@ -584,42 +565,31 @@ public class PresentationObjectContainer extends PresentationObject
 						PresentationObject newObject = (PresentationObject) ((PresentationObject) item)._clone(iwc, askForPermission);
 						newObject.setParentObject(obj);
 						//newObject.setLocation(this.getLocation());
-						obj.theObjects.set(index, newObject);
+						obj.getChildren().set(index, newObject);
 					}
 				}
 				//}
-			}
+			//}
 		}
 		catch (Exception ex)
 		{
-			obj.theObjects = new ArrayList();
+			//obj.theObjects = new ArrayList();
 			ex.printStackTrace(System.err);
 		}
 		return obj;
 	}
 	public boolean remove(PresentationObject obj)
 	{
-		if (theObjects != null)
-		{
-			if (theObjects.remove(obj))
-			{
-				return true;
-			}
-		}
-		return false;
+		return getChildren().remove(obj);
 	}
 	/**
 	 * index lies from 0,length-1
 	 */
 	public Object set(int index, PresentationObject o)
 	{
-		if (theObjects == null)
-		{
-			theObjects = new ArrayList();
-		}
 		o.setParentObject(this);
 		//    o.setLocation(this.getLocation());
-		return theObjects.set(index, o);
+		return this.getChildren().set(index, o);
 	}
 	/**
 	 *  
@@ -666,7 +636,7 @@ public class PresentationObjectContainer extends PresentationObject
 		 * System.err.println("this.instanceId =
 		 * "+this.getICObjectInstanceID()); }
 		 */
-		List l = this.getAllContainedObjectsRecursive();
+		List l = this.getChildrenRecursive();
 		if (l != null)
 		{
 			Iterator iter = l.iterator();
@@ -686,7 +656,7 @@ public class PresentationObjectContainer extends PresentationObject
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
 		super.setLocation(location, iwuc);
-		List l = this.getAllContainingObjects();
+		List l = this.getChildren();
 		if (l != null)
 		{
 			Iterator iter = l.iterator();
@@ -727,22 +697,41 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	
 	public UIComponent getChild(int index){
-		return (UIComponent)getChildComponentList().get(index);
-	}
-
-	public Iterator getChildren(){
-		return getChildComponentList().iterator();
+		return (UIComponent)getChildren().get(index);
 	}
 	
 	public int getChildrenCount(){
-		return this.getChildComponentList().size();
+		return this.getChildren().size();
 	}
 	
 	public void removeChild(int index){
-		this.getChildComponentList().remove(index);
+		this.getChildren().remove(index);
 	}
 
 	public void remove(UIComponent child){
 		this.remove((PresentationObject)child);
 	}
+	
+	protected class PresentationObjectList extends ArrayList{
+		private UIComponent pContainer;
+		PresentationObjectList(UIComponent container){
+			pContainer=container;
+		}
+		public boolean add(Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			return super.add(comp);
+		}
+		public void add(int index,Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			super.add(index,comp);
+		}
+		public Object set(int index,Object child){
+			UIComponent comp = (UIComponent)child;
+			comp.setParent(pContainer);
+			return super.set(index,child);
+		}
+	}
+
 }

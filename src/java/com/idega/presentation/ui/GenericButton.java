@@ -106,7 +106,7 @@ public class GenericButton extends GenericInput {
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
 			if (asImageButton) {
-				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValueAsString());
+				defaultImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
 			}
 			if (!_onClickConfirm) {
 				if (_windowClassToOpen != null) {

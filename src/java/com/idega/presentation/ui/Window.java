@@ -184,7 +184,7 @@ public void setFullScreen(boolean ifFullScreen){
   public String getURL(IWContext iwc){
     String ret = null;
     if (url == null) {
-      ret = iwc.getApplication().getWindowOpenerURI();
+      ret = iwc.getIWMainApplication().getWindowOpenerURI();
     }
     else {
       ret = url;
@@ -359,7 +359,7 @@ private String returnFullScreen() {
 
 public static String getWindowURL(Class windowClass,IWApplicationContext iwc){
   //String url = IWMainApplication.windowOpenerURL;
-  return iwc.getApplication().getWindowOpenerURI(windowClass);
+  return iwc.getIWMainApplication().getWindowOpenerURI(windowClass);
 }
 
 public static String getCallingScriptString(Class windowClass,IWApplicationContext iwac){
@@ -605,19 +605,19 @@ public String getTarget(){
 
   public void setClassToInstanciate(Class presentationObjectClass){
     this.classToInstanciate=presentationObjectClass;
-    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass));
+    this.setURL(IWContext.getInstance().getIWMainApplication().getObjectInstanciatorURI(presentationObjectClass));
   }
 
   public void setClassToInstanciate(Class presentationObjectClass,Class pageTemplateClass){
     setClassToInstanciate(presentationObjectClass);
     this.templatePageClass=pageTemplateClass;
-    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass,pageTemplateClass));
+    this.setURL(IWContext.getInstance().getIWMainApplication().getObjectInstanciatorURI(presentationObjectClass,pageTemplateClass));
   }
 
   public void setClassToInstanciate(Class presentationObjectClass,String template){
     setClassToInstanciate(presentationObjectClass);
     this.templateForObjectInstanciation=template;
-    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass,template));
+    this.setURL(IWContext.getInstance().getIWMainApplication().getObjectInstanciatorURI(presentationObjectClass,template));
   }
 
 

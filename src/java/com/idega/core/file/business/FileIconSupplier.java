@@ -75,7 +75,7 @@ public class FileIconSupplier {
 	}
 	
 	private String getBundleResourceURI(){
-		return iwac.getApplication().getBundle(bundleIdentifier).getResourcesURL();
+		return iwac.getIWMainApplication().getBundle(bundleIdentifier).getResourcesURL();
 	}
 	
 	public String getFolderIconURI(){

@@ -100,7 +100,8 @@ public class FrameTable extends Window{
       frame.setPresentationObject(obj);
       frame.setNameProperty(frameNameCounter++);
       // super.add() but does not set Location = this.location;
-      try {
+      super.add(obj);
+      /*try {
         if (theObjects == null) {
           this.theObjects = new ArrayList();
         }
@@ -112,10 +113,11 @@ public class FrameTable extends Window{
       }
       catch(Exception ex) {
         //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-      }
+      }*/
     }else{
+    	super.add(obj);
       // super.add() but does not set Location = this.location;
-      try {
+      /*try {
         if (theObjects == null) {
           this.theObjects = new ArrayList();
         }
@@ -127,7 +129,7 @@ public class FrameTable extends Window{
       }
       catch(Exception ex) {
         //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-      }
+      }*/
     }
 
   }
@@ -145,7 +147,8 @@ public class FrameTable extends Window{
       frame.setNameProperty(frameNameCounter++);
 
       // super.add() but does not set Location = this.location;
-      try {
+      super.add(index,obj);
+      /*try {
         if (theObjects == null) {
           this.theObjects = new ArrayList();
         }
@@ -157,10 +160,11 @@ public class FrameTable extends Window{
       }
       catch(Exception ex) {
         //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-      }
+      }*/
     }else{
       // super.add() but does not set Location = this.location;
-      try {
+    	super.add(index,obj);
+      /*try {
         if (theObjects == null) {
           this.theObjects = new ArrayList();
         }
@@ -172,7 +176,7 @@ public class FrameTable extends Window{
       }
       catch(Exception ex) {
         //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-      }
+      }*/
     }
   }
 
@@ -189,22 +193,18 @@ public class FrameTable extends Window{
       frame.setNameProperty(frameNameCounter++);
 
       // super.addAtBeginning() but does not set Location = this.location;
-      if (theObjects == null) {
-        theObjects = new ArrayList();
-      }
+
       obj.setParentObject(this);
       obj.setLocation(this.getLocation());
-      theObjects.add(0,obj);
+      getChildren().add(0,obj);
 
     }else{
 
       // super.addAtBeginning() but does not set Location = this.location;
-      if (theObjects == null) {
-        theObjects = new ArrayList();
-      }
+
       obj.setParentObject(this);
       obj.setLocation(this.getLocation());
-      theObjects.add(0,obj);
+      getChildren().add(0,obj);
 
     }
   }
@@ -331,7 +331,7 @@ public class FrameTable extends Window{
       //Class c = (Class)this.getIndexesMap().get(Integer.toString(frameIndex));
       //return getFramesPropertyMap(c);
 //      return (Map) getFramesMap().get(new Integer(frameIndex));
-      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getMarkupAttributes();
+      return ((PresentationObject)this.getChildren().get(frameIndex-1)).getMarkupAttributes();
     }
 
     protected void setFrameSetProperty(String name,String value){
@@ -343,7 +343,7 @@ public class FrameTable extends Window{
     }
 
     public List getAllContainedFrames(){
-      List l = this.getAllContainingObjects();
+      List l = this.getChildren();
       List toReturn = new ArrayList();
       if(l != null){
         Iterator iter = l.iterator();
@@ -393,7 +393,7 @@ public class FrameTable extends Window{
     }
 
     private void adaptFrames(IWContext iwc){
-      if(!(getAllContainingObjects()!=null && getAllContainingObjects().size() > 0)){
+      if(!(getChildren()!=null && getChildren().size() > 0)){
         add(com.idega.presentation.Page.class);
         setSpanPercent(1,100);
         setSpanAdaptive(2);
@@ -412,7 +412,7 @@ public class FrameTable extends Window{
 
 
       int i = 1;
-      List l = this.getAllContainingObjects();
+      List l = this.getChildren();
       if(l != null){
         Iterator iter = l.iterator();
         while (iter.hasNext()) {
@@ -495,8 +495,8 @@ public class FrameTable extends Window{
 
 
       //int counter = 1;
-      if(this.getAllContainingObjects() != null){
-        Iterator iter = this.getAllContainingObjects().iterator();
+      if(this.getChildren() != null){
+        Iterator iter = this.getChildren().iterator();
         while (iter.hasNext()) {
           Object item = iter.next();
           if(item instanceof Frame){
@@ -546,7 +546,7 @@ public class FrameTable extends Window{
       IWURL url = new IWURL(uri);
       return url;
       */
-      return new IWURL(iwc.getApplication().getWindowOpenerURI(pageClass));
+      return new IWURL(iwc.getIWMainApplication().getWindowOpenerURI(pageClass));
     }
 
     /*public static IWURL getFrameURL(Class pageClass){
@@ -679,13 +679,13 @@ public class FrameTable extends Window{
     protected void setFrameProperty(int frameIndex,String propertyName,String propertyValue){
       //getPage(frameIndex).setFrameProperty(propertyName,propertyValue);
       //this.getFramesPropertyMap(frameIndex).put(propertyName,propertyValue);
-      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setMarkupAttribute(propertyName,propertyValue);
+      ((PresentationObject)this.getChildren().get(frameIndex-1)).setMarkupAttribute(propertyName,propertyValue);
     }
 
     protected void setFrameProperty(int frameIndex,String propertyName){
       //getPage(frameIndex).setFrameProperty(propertyName);
       //this.getFramesPropertyMap(frameIndex).put(propertyName,this.slash);
-      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setMarkupAttribute(propertyName,this.slash);
+      ((PresentationObject)this.getChildren().get(frameIndex-1)).setMarkupAttribute(propertyName,this.slash);
     }
 
     protected String getFrameProperty(int frameIndex,String propertyName){
@@ -694,7 +694,7 @@ public class FrameTable extends Window{
 //        return null;
 //      }
 //      return (String)frameProperties.get(propertyName);
-      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getMarkupAttribute(propertyName);
+      return ((PresentationObject)this.getChildren().get(frameIndex-1)).getMarkupAttribute(propertyName);
     }
 
     protected String getFramePropertiesString(Frame frame){
@@ -735,7 +735,7 @@ public class FrameTable extends Window{
       String property = "";
       String comma = ",";
       int i;
-      for (i = 1; i < this.getAllContainingObjects().size(); i++) {
+      for (i = 1; i < this.getChildren().size(); i++) {
         property += getSpan(i);
         property += comma;
       }
@@ -760,7 +760,7 @@ public class FrameTable extends Window{
 
     public void setSpan(){
       boolean nothingset=true;
-      for (int i = 1; i <= this.getAllContainingObjects().size() ; i++){
+      for (int i = 1; i <= this.getChildren().size() ; i++){
 
         String span= getSpan(i);
         if(!span.equals(star)){
@@ -768,9 +768,9 @@ public class FrameTable extends Window{
         }
       }
       if(nothingset){
-        if(this.getAllContainingObjects().size()!=0){
-          int thePercent = (int)(100/this.getAllContainingObjects().size());
-          for (int i = 1; i <= this.getAllContainingObjects().size() ; i++) {
+        if(this.getChildren().size()!=0){
+          int thePercent = (int)(100/this.getChildren().size());
+          for (int i = 1; i <= this.getChildren().size() ; i++) {
               setSpanPercent(i,thePercent);
           }
         }

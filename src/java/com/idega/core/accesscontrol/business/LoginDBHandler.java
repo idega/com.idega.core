@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.48 2004/02/18 12:44:16 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.49 2004/02/20 16:37:43 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -834,7 +834,8 @@ public class LoginDBHandler
 			//{
 			//	String login = possibleLogins[i];
 			for (Iterator iter = possibleLogins.iterator(); iter.hasNext();) {
-				String login = (String) iter.next();
+				Object oLogin =iter.next();
+				String login = (String) oLogin;
 				
 				try
 				{

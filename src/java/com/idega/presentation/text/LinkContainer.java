@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.15 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.16 2004/02/20 16:37:43 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -489,7 +489,7 @@ public class LinkContainer extends PresentationObjectContainer {
 
 			print("<a " + getMarkupAttributesString() + " >");
 
-			List theObjects = this.getAllContainingObjects();
+			List theObjects = this.getChildren();
 			if (theObjects != null) {
 				Iterator iter = theObjects.iterator();
 				while (iter.hasNext()) {
@@ -507,7 +507,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				}
 				print("<a " + getMarkupAttributesString() + " >");
 
-				List theObjects = this.getAllContainingObjects();
+				List theObjects = this.getChildren();
 				if (theObjects != null) {
 					Iterator iter = theObjects.iterator();
 					while (iter.hasNext()) {

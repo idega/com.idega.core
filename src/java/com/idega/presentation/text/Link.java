@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.103 2004/02/18 14:21:07 gimmi Exp $
+ * $Id: Link.java,v 1.104 2004/02/20 16:37:43 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -404,7 +404,7 @@ public class Link extends Text {
 
 		//if (_objectType==(OBJECT_TYPE_WINDOW)) {
 		if (_myWindow != null) {
-			String windowOpenerURI = iwc.getApplication().getWindowOpenerURI();
+			String windowOpenerURI = iwc.getIWMainApplication().getWindowOpenerURI();
 			if (_myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
 				String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc, _myWindow);
 				addParameter(_sessionStorageName, sessionParameterName);
@@ -448,18 +448,18 @@ public class Link extends Text {
 
 		if (isImageButton) { //get a generated button gif image
 			if (useTextAsLocalizedTextKey) { //the text entered is a local key
-				setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text, text));
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text, text));
 			}
 			else {
-				setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(getLocalizedText(iwc)));
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getImageButton(getLocalizedText(iwc)));
 			}
 		}
 		else if (isImageTab) { //get a generated button gif image
 			if (useTextAsLocalizedTextKey) { //the text entered is a local key
-				setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text, text, flip));
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text, text, flip));
 			}
 			else {
-				setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(getLocalizedText(iwc), flip));
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getImageTab(getLocalizedText(iwc), flip));
 			}
 		}
 
@@ -1051,7 +1051,7 @@ public class Link extends Text {
 				return localizedImageID;
 			}
 			else {
-				Integer defImageID = (Integer) this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+				Integer defImageID = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
 				if (defImageID != null) {
 					return defImageID;
 				}
@@ -2079,13 +2079,13 @@ public void setWindowToOpen(String className) {
 	private void setURIToClassToInstanciate(IWContext iwc) {
 		if (this.classToInstanciate != null) {
 			if (this.templatePageClass != null) {
-				this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass));
+				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass));
 			}
 			else if (this.templateForObjectInstanciation != null) {
-				this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
 			}
 			else {
-				this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
 			}
 		}
 	}
@@ -2096,10 +2096,10 @@ public void setWindowToOpen(String className) {
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
 			if (this.icObjectInstanceIDForWindow == -1) {
-				setURL(iwc.getApplication().getWindowOpenerURI(_windowClass));
+				setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass));
 			}
 			else {
-				setURL(iwc.getApplication().getWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
+				setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
 				//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 			}
 		}

@@ -100,7 +100,7 @@ public class IFrame extends InterfaceObject {
 
 	private void setClassToInstanciateAsSource(IWContext iwc) {
 		if (classToInstanciate != null) {
-			this.setSrc(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
 		}
 	}
 

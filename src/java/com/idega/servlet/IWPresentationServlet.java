@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.52 2003/10/03 12:40:11 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.53 2004/02/20 16:37:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -149,7 +149,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 	}
 	private void processApplicationEvents(IWContext iwc)
 		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
-		java.util.List eventListeners = iwc.getApplication().getApplicationEventListeners();
+		java.util.List eventListeners = iwc.getIWMainApplication().getApplicationEventListeners();
 		Iterator iter = eventListeners.iterator();
 		while (iter.hasNext()) {
 			String className = (String) iter.next();
@@ -440,7 +440,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	public IWBundle getBundle(IWContext iwc) {
-		IWMainApplication iwma = iwc.getApplication();
+		IWMainApplication iwma = iwc.getIWMainApplication();
 		return iwma.getBundle(getBundleIdentifier());
 	}
 	public IWResourceBundle getResourceBundle(IWContext iwc) {
@@ -588,7 +588,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 	private void handleMultipartFormData(IWContext iwc) throws Exception {
 		String sep = FileUtil.getFileSeparator();
 		StringBuffer pathToFile = new StringBuffer();
-		pathToFile.append(iwc.getApplication().getApplicationRealPath());
+		pathToFile.append(iwc.getIWMainApplication().getApplicationRealPath());
 		pathToFile.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
 		pathToFile.append(sep);
 		pathToFile.append("upload");
@@ -624,7 +624,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 						if (tokenizer.hasMoreTokens())
 							mimetype = tokenizer.nextToken();
 					}
-					UploadFile file = new UploadFile(fileName, filePath, iwc.getApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
 					long size = filePart.writeTo(file);
 					file.setSize(size);
 					iwc.setUploadedFile(file);

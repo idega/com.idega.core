@@ -169,7 +169,7 @@ public class Form extends InterfaceObjectContainer {
 	}
 
 	private List findAllInputNamesHelper(List vector, PresentationObjectContainer cont) {
-		List objects = cont.getAllContainingObjects();
+		List objects = cont.getChildren();
 		if (objects != null) {
 			//for (Enumeration enum = objects.elements();enum.hasMoreElements();){
 			for (Iterator iter = objects.iterator(); iter.hasNext();) {
@@ -368,15 +368,15 @@ public class Form extends InterfaceObjectContainer {
 	 * temp implementation
 	 */
 	public boolean isParameterSet(String prmName) {
-		if (this.theObjects != null) {
-			Iterator iter = this.theObjects.iterator();
+		//if (this.theObjects != null) {
+			Iterator iter = getChildren().iterator();
 			while (iter.hasNext()) {
 				PresentationObject item = (PresentationObject) iter.next();
 				if (prmName.equals(item.getName())) {
 					return true;
 				}
 			}
-		}
+		//}
 		return false;
 	}
 
@@ -639,7 +639,7 @@ public class Form extends InterfaceObjectContainer {
 	public void setWindowToOpen(Class windowClass) {
 		this.windowClass = windowClass;
 		//setAction(IWMainApplication.windowOpenerURL);
-		addParameter(Page.IW_FRAME_CLASS_PARAMETER, getIWApplicationContext().getApplication().getEncryptedClassName(windowClass));
+		addParameter(Page.IW_FRAME_CLASS_PARAMETER, getIWApplicationContext().getIWMainApplication().getEncryptedClassName(windowClass));
 		setWindow(Window.getStaticInstance(windowClass));
 	}
 
@@ -671,7 +671,7 @@ public class Form extends InterfaceObjectContainer {
 
 	private void setActionToInstanciatedClass(IWContext iwc) {
 		if (this.classToInstanciateAndSubmitTo != null) {
-			this.setAction(iwc.getApplication().getObjectInstanciatorURI(classToInstanciateAndSubmitTo));
+			this.setAction(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciateAndSubmitTo));
 		}
 	}
 
@@ -680,10 +680,10 @@ public class Form extends InterfaceObjectContainer {
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
 			if (this.icObjectInstanceIDForWindow == -1) {
-				setAction(iwc.getApplication().getWindowOpenerURI(windowClass));
+				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass));
 			}
 			else {
-				setAction(iwc.getApplication().getWindowOpenerURI(windowClass, icObjectInstanceIDForWindow));
+				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass, icObjectInstanceIDForWindow));
 				//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 			}
 		}

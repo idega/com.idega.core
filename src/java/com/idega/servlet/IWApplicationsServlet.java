@@ -161,7 +161,7 @@ public class IWApplicationsServlet extends IWPresentationServlet {
 
 				headerImage = iwrb.getImage("/login/header.jpg", "", 323, 196);
 			}
-			Link lheaderLink = new Link(headerImage, iwc.getApplication().getApplicationContextURI());
+			Link lheaderLink = new Link(headerImage, iwc.getIWMainApplication().getApplicationContextURI());
 			mainTable.add(lheaderLink, 1, 1);
 			thePage.add(frameTable);
 		}

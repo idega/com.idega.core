@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.2 2004/01/23 08:28:27 laddi Exp $
+ * $Id: HelpWindow.java,v 1.3 2004/02/20 16:37:42 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -284,9 +284,9 @@ public class HelpWindow extends StyledIWAdminWindow {
 		try {
 			IWBundle iwb = null;
 			if (bundle == null)
-				iwb = iwc.getApplication().getBundle(HELP_BUNDLE);
+				iwb = iwc.getIWMainApplication().getBundle(HELP_BUNDLE);
 			else
-				iwb = iwc.getApplication().getBundle(bundle);
+				iwb = iwc.getIWMainApplication().getBundle(bundle);
 
 			StringBuffer fileName = new StringBuffer(iwb.getResourcesRealPath(loc));
 			if (!fileName.toString().endsWith(FileUtil.getFileSeparator()))
@@ -355,9 +355,9 @@ public class HelpWindow extends StyledIWAdminWindow {
 		try {
 			IWBundle iwb = null;
 			if (bundle == null)
-				iwb = iwc.getApplication().getBundle(HELP_BUNDLE);
+				iwb = iwc.getIWMainApplication().getBundle(HELP_BUNDLE);
 			else
-				iwb = iwc.getApplication().getBundle(bundle);
+				iwb = iwc.getIWMainApplication().getBundle(bundle);
 				
 			XMLParser parser = new XMLParser(false);
 			StringBuffer fileName = new StringBuffer(iwb.getResourcesRealPath(loc));
@@ -415,7 +415,7 @@ public class HelpWindow extends StyledIWAdminWindow {
 
 	public void main(IWContext iwc) {
 		_hasEdit = iwc.hasEditPermission(this);
-		_iwb = iwc.getApplication().getBundle(BUNDLE_IDENTIFIER);
+		_iwb = iwc.getIWMainApplication().getBundle(BUNDLE_IDENTIFIER);
 		_iwrb = _iwb.getResourceBundle(iwc);
 
 		_helpKey = iwc.getParameter(HELP_KEY);

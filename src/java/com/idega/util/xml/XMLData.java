@@ -142,7 +142,7 @@ public class XMLData {
     // write the output first to a file object  
     // get the output stream      
     String separator = FileUtil.getFileSeparator();
-    IWMainApplication mainApp = IWContext.getInstance().getApplication();
+    IWMainApplication mainApp = IWContext.getInstance().getIWMainApplication();
     StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
            
     path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)

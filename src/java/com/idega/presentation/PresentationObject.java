@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.81 2004/02/09 03:58:30 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.82 2004/02/20 16:37:43 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
@@ -68,7 +69,7 @@ import com.idega.util.text.TextStyler;
 public class PresentationObject 
 //implements Cloneable{
 extends UIComponentBase 
-implements Cloneable,UIComponent{
+implements Cloneable{//,UIComponent{
 	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	public final static String WIDTH = "width";
@@ -82,7 +83,7 @@ implements Cloneable,UIComponent{
 	private String language;
 	public Map attributes;
 	private String name;
-	protected PresentationObject parentObject;
+	//protected UIComponent parentObject;
 	private boolean doPrint = true;
 	private String errorMessage;
 	protected boolean hasBeenAdded = false;
@@ -138,7 +139,7 @@ implements Cloneable,UIComponent{
 	 */
 	public PresentationObject getParentObject()
 	{
-		return parentObject;
+		return (PresentationObject)getParent();
 	}
 	public String generateID()
 	{
@@ -181,9 +182,9 @@ implements Cloneable,UIComponent{
 			return tempobj;
 		}
 	}
-	public void setParentObject(PresentationObject modobj)
+	public void setParentObject(PresentationObject pObject)
 	{
-		parentObject = modobj;
+		setParent(pObject);
 	}
 	/**
 	 * Initializes variables contained in the IWContext object
@@ -222,20 +223,24 @@ implements Cloneable,UIComponent{
 	{
 		if (this.doPrint)
 		{
-			PresentationObject parent = getParentObject();
+			UIComponent parent = getParent();
 			if (parent == null)
 			{
 				return this.doPrint;
 			}
 			else
 			{
-				return parent.doPrint(iwc);
+				if(parent instanceof PresentationObject){
+					return ((PresentationObject)parent).doPrint(iwc);
+				}
+				
 			}
 		}
 		else
 		{
 			return false;
 		}
+		return this.doPrint;
 	}
 	protected void setMarkupAttributes(Map attributes)
 	{
@@ -661,14 +666,16 @@ implements Cloneable,UIComponent{
 	public Form getParentForm()
 	{
 		Form returnForm = null;
-		PresentationObject obj = getParentObject();
+		//PresentationObject obj = getParentObject();
+		UIComponent obj = getParent();
 		while (obj != null)
 		{
 			if (obj instanceof Form)
 			{
 				returnForm = (Form) obj;
 			}
-			obj = obj.getParentObject();
+			//obj = obj.getParentObject();
+			obj = obj.getParent();
 		}
 		return returnForm;
 	}
@@ -718,6 +725,19 @@ implements Cloneable,UIComponent{
 	public void main(IWContext iwc) throws Exception
 	{
 	}
+	/**
+	 * This method is the bridge between old idegaWeb and new JSF support and 
+	 * calls the main(IWContext) method and necessary initializing.
+	 * 
+	 * This funcion is invoked on each request by the user (before print(iwc) )
+	 * on a PresentationObject Instance.
+	 */
+	public void facesMain(IWContext iwc) throws Exception
+	{
+		this.initializeInMain(iwc);
+		main(iwc);
+	}
+	
 	protected void prepareClone(PresentationObject newObjToCreate)
 	{
 	}
@@ -1089,7 +1109,7 @@ implements Cloneable,UIComponent{
 	}
 	public IWBundle getBundle(IWUserContext iwuc)
 	{
-		IWMainApplication iwma = iwuc.getApplicationContext().getApplication();
+		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
 		return iwma.getBundle(getBundleIdentifier());
 	}
 	public IWResourceBundle getResourceBundle(IWUserContext iwuc)
@@ -1608,7 +1628,7 @@ implements Cloneable,UIComponent{
 		if (mother != null && (PresentationObjectContainer.class).isAssignableFrom(mother.getClass()))
 		{
 			StringBuffer buffer = new StringBuffer(id);
-			List list = ((PresentationObjectContainer) mother).getAllContainingObjects();
+			List list = ((PresentationObjectContainer) mother).getChildren();
 			int myIndex = list.indexOf(this);
 			// add underscore
 			buffer.append(PresentationObject.COMPOUNDID_CHILD_NUMBER_DELIMITER);
@@ -1740,13 +1760,157 @@ implements Cloneable,UIComponent{
 	}
 	
 	public UIComponent getParent(){
-		return (UIComponent)this.getParentObject();
+		//return parentObject;
+		return super.getParent();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#setParent(javax.faces.component.UIComponent)
+	 */
+	public void setParent(UIComponent arg0) {
+		//this.parentObject=arg0;
+		super.setParent(arg0);
+	}
+
+	
+	
+	/*
+	 * BEGIN JSF SPECIFIC IMPLEMENTAION METHODS
+	 */
+	public void processDecodes(FacesContext context){
+		/*
+		super.processDecodes(fc);
+		List children = this.getChildren();
+		for (Iterator iter = children.iterator(); iter.hasNext();) {
+			UIComponent child = (UIComponent) iter.next();
+			child.processDecodes(fc);
+		}*/
+        // Process all facets and children of this component
+        Iterator kids = getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = (UIComponent) kids.next();
+            kid.processDecodes(context);
+        }
+
+        // Process this component itself
+        try {
+            decode(context);
+        } catch (RuntimeException e) {
+            context.renderResponse();
+            throw e;
+        }
+	}
+	
+	public void decode(FacesContext fc){
+		super.decode(fc);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext fc, Object arg1) {
+		super.restoreState(fc, arg1);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext arg0) {
+		// TODO Auto-generated method stub
+		return super.saveState(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processRestoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void processRestoreState(FacesContext fc, Object arg1) {
+		super.processRestoreState(fc, arg1);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processSaveState(javax.faces.context.FacesContext)
+	 */
+	public Object processSaveState(FacesContext arg0) {
+		// TODO Auto-generated method stub
+		return super.processSaveState(arg0);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processUpdates(javax.faces.context.FacesContext)
+	 */
+	public void processUpdates(FacesContext fc) {
+		super.processUpdates(fc);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processValidators(javax.faces.context.FacesContext)
+	 */
+	public void processValidators(FacesContext arg0) {
+		// TODO Auto-generated method stub
+		super.processValidators(arg0);
+	}
+
+	public void encodeBegin(FacesContext fc)throws IOException{
+		try {
+			IWContext iwc = castToIWContext(fc);
+			initVariables(iwc);
+			this.out = iwc.getWriter();
+			this.print(iwc);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			if(e instanceof IOException){
+				throw (IOException)e;
+			}
+			else{
+				throw new IOException(e.getMessage());
+			}
+		}
+	}
+	 
+	protected IWContext castToIWContext(FacesContext fc){
+		return IWContext.getIWContext(fc);
+	}
+	
+	public boolean getRendersSelf(){
+		return true;
+	}
+	
+	public boolean getRendersChildren(){
+		return true;
+	}
+	
+	public String getId(){
+		if(super.getId()==null){
+			setId(getGeneratedIWId());
+		}
+		return super.getId();
+	}
+	
+	/**
+	 * Default idegaWeb JSF id generation mechanism
+	 * @return
+	 */
+	private String getGeneratedIWId(){
+		UIComponent parent = this.getParent();
+		if(parent!=null){
+			int indexOfMe=this.getParent().getChildren().indexOf(this);
+			return getParent().getId()+"-"+indexOfMe;
+		}
+		return "iwroot";
+	}
+	
 	
 	/*
 	 * END JSF METHODS
 	 */
-	 
+	
+	
+	/*
+	 * END JSF SPECIFIC IMPLEMENTAION METHODS
+	 */	
+	
 	 
 	 //STANDARD LOGGING METHODS:
   	
@@ -1877,6 +2041,5 @@ implements Cloneable,UIComponent{
 
 
 	 //END STANDARD LOGGING METHODS
-	 
-	 
+
 }

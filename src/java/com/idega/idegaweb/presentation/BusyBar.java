@@ -89,10 +89,10 @@ public class BusyBar extends Block {
 
   public void main(IWContext iwc){
     if(_url == null || "".equals(_url) ){
-      _url = iwc.getApplication().getCoreBundle().getImage("busy.gif").getURL();
+      _url = iwc.getIWMainApplication().getCoreBundle().getImage("busy.gif").getURL();
     }
     getParentPage().setOnLoad(Image.getPreloadScript(_url));
-    Image busy = iwc.getApplication().getCoreBundle().getImage("transparentcell.gif");
+    Image busy = iwc.getIWMainApplication().getCoreBundle().getImage("transparentcell.gif");
     busy.setName(name);
     setScripts();
     add(busy);

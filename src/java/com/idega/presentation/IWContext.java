@@ -1,7 +1,7 @@
 //idega 2000-2001 - Tryggvi Larusson
 /*
-*Copyright 2000-2001 idega.is All Rights Reserved.
-*/
+ *Copyright 2000-2001 idega.is All Rights Reserved.
+ */
 package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,15 +18,18 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.faces.FacesException;
+import javax.faces.application.Application;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.ViewHandler;
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
-import javax.faces.context.Message;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseStream;
 import javax.faces.context.ResponseWriter;
-import javax.faces.event.ApplicationEvent;
 import javax.faces.event.FacesEvent;
-import javax.faces.lifecycle.ApplicationHandler;
-import javax.faces.lifecycle.ViewHandler;
-import javax.faces.tree.Tree;
+import javax.faces.render.RenderKit;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.apple.eawt.ApplicationEvent;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.business.BuilderConstants;
@@ -69,9 +73,9 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.2
+ */
 public class IWContext
 extends javax.faces.context.FacesContext
 implements IWUserContext, IWApplicationContext {
@@ -100,6 +104,7 @@ implements IWUserContext, IWApplicationContext {
 	private static Method methodIsBuilderApplicationRunning;
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
+
 	/**
 	 *Default constructor
 	 **/
@@ -124,6 +129,25 @@ implements IWUserContext, IWApplicationContext {
 		setAllDefault();
 		//this.session=session;
 	}
+	private IWContext(FacesContext fc){
+		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse());
+		ServletContext sc = (ServletContext)fc.getExternalContext().getContext();
+		this.setServletContext(sc);
+	}
+	
+	/**
+	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
+	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it constructs a new.
+	 */
+	public static IWContext getIWContext(FacesContext fc){
+			if(fc instanceof IWContext){
+				return (IWContext)fc;
+			}
+			else{
+				return new IWContext(fc);
+			}
+	}
+	
 	private void setAllDefault() {
 		this.interfaceStyle = "default";
 		setDefaultBackgroundColor("#FFFFFF");
@@ -145,8 +169,8 @@ implements IWUserContext, IWApplicationContext {
 		setCompanyFontStyle("regular");
 	}
 	/*public void setSession(HttpSession session){
-		this.session = session;
-	}*/
+	 this.session = session;
+	 }*/
 	public HttpSession getSession() {
 		return getRequest().getSession();
 	}
@@ -550,33 +574,33 @@ implements IWUserContext, IWApplicationContext {
 		return getPreference("CompanyFontStyle");
 	}
 	/*private Hashtable getSessionHashtable(){
-	  Hashtable sessionAttributes;
-	  Object theAttribute = this.getSession().getAttribute("idega_special_session_attribute");
-	  if (theAttribute==null){
-	    sessionAttributes=new Hashtable();
-	    this.getSession().setAttribute("idega_special_session_attribute",sessionAttributes);
-	  }
-	  else{
-	    return (Hashtable) theAttribute;
-	  }
-	  return sessionAttributes;
-	}
+	 Hashtable sessionAttributes;
+	 Object theAttribute = this.getSession().getAttribute("idega_special_session_attribute");
+	 if (theAttribute==null){
+	 sessionAttributes=new Hashtable();
+	 this.getSession().setAttribute("idega_special_session_attribute",sessionAttributes);
+	 }
+	 else{
+	 return (Hashtable) theAttribute;
+	 }
+	 return sessionAttributes;
+	 }
 
-	public void setIdegaSessionAttribute(String attributeName,Object attributeValue){
-	  getSessionHashtable().put(attributeName,attributeValue);
-	}
+	 public void setIdegaSessionAttribute(String attributeName,Object attributeValue){
+	 getSessionHashtable().put(attributeName,attributeValue);
+	 }
 
-	public Object getIdegaSessionAttribute(String attributeName){
-	  return getSessionHashtable().get(attributeName);
-	}
+	 public Object getIdegaSessionAttribute(String attributeName){
+	 return getSessionHashtable().get(attributeName);
+	 }
 
-	public void removeIdegaSessionAttribute(String attributeName){
-	  getSessionHashtable().remove(attributeName);
-	}
+	 public void removeIdegaSessionAttribute(String attributeName){
+	 getSessionHashtable().remove(attributeName);
+	 }
 
-	public void removeAllIdegaSessionAttributes(){
-	  getSessionHashtable().clear();
-	}*/
+	 public void removeAllIdegaSessionAttributes(){
+	 getSessionHashtable().clear();
+	 }*/
 	/**
 	 * @ deprecated replaced width getApplication
 	 */
@@ -606,8 +630,8 @@ implements IWUserContext, IWApplicationContext {
 		return (Map) this.getSessionAttribute("idega_special_maintained_parameters");
 	}
 	/*public void maintainParameter(String parameterName,String parameterValue){
-	  setSessionAttribute(new Parameter(parameterName,parameterValue));
-	}*/
+	 setSessionAttribute(new Parameter(parameterName,parameterValue));
+	 }*/
 	public String getRequestURI() {
 		return getRequest().getRequestURI();
 	}
@@ -650,30 +674,30 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	public void setApplicationAttribute(String attributeName, Object attributeValue) {
-		getApplication().setAttribute(attributeName, attributeValue);
+		getIWMainApplication().setAttribute(attributeName, attributeValue);
 	}
 	public Object getApplicationAttribute(String attributeName) {
-		return getApplication().getAttribute(attributeName);
+		return getIWMainApplication().getAttribute(attributeName);
 	}
 	public void removeApplicationAttribute(String attributeName) {
-		getApplication().removeAttribute(attributeName);
+		getIWMainApplication().removeAttribute(attributeName);
 	}
-	public IWMainApplication getApplication() {
+	public IWMainApplication getIWMainApplication() {
 		return IWMainApplication.getIWMainApplication(getServletContext());
 	}
 	public IWMainApplicationSettings getApplicationSettings() {
-		return getApplication().getSettings();
+		return getIWMainApplication().getSettings();
 	}
-  public IWSystemProperties getSystemProperties() {
-  	return getApplication().getSystemProperties();
-  }
-  public UserProperties getUserProperties() {
-  	return (UserProperties) LoginBusinessBean.getUserProperties(this);
-  }
+	public IWSystemProperties getSystemProperties() {
+		return getIWMainApplication().getSystemProperties();
+	}
+	public UserProperties getUserProperties() {
+		return (UserProperties) LoginBusinessBean.getUserProperties(this);
+	}
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
-			theReturn = getApplication().getSettings().getDefaultLocale();
+			theReturn = getIWMainApplication().getSettings().getDefaultLocale();
 			setCurrentLocale(theReturn);
 		}
 		return theReturn;
@@ -709,7 +733,7 @@ implements IWUserContext, IWApplicationContext {
 	public String getServerURL(){
 		StringBuffer buf = new StringBuffer();
 		if(isSecure()){
-				buf.append("https://");
+			buf.append("https://");
 		}
 		else{
 			buf.append("http://");
@@ -756,8 +780,8 @@ implements IWUserContext, IWApplicationContext {
 	}
 
 	/**
-   	* @deprecated Replaced with getCurrentUser()
-   	**/
+	 * @deprecated Replaced with getCurrentUser()
+	 **/
 	public User getUser() {
 		return (LoginBusinessBean.getUser(this));
 	}
@@ -769,7 +793,7 @@ implements IWUserContext, IWApplicationContext {
 		return -1;
 	}
 	public AccessController getAccessController() {
-		return ((AccessController) this.getApplication().getAccessController());
+		return ((AccessController) this.getIWMainApplication().getAccessController());
 	}
 	public String getRequestContentType() {
 		return getRequest().getContentType();
@@ -848,7 +872,21 @@ implements IWUserContext, IWApplicationContext {
 	 *
 	 */
 	public static IWContext getInstance() throws UnavailableIWContext {
-		return com.idega.servlet.IWPresentationServlet.getIWContext();
+		IWContext theReturn = com.idega.servlet.IWPresentationServlet.getIWContext();
+		if(theReturn==null){
+			try{
+				//If no IWContext is found then try to get the FacesContext:
+				FacesContext fc = FacesContext.getCurrentInstance();
+				if(fc!=null){
+					theReturn = getIWContext(fc);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				throw new UnavailableIWContext();
+			}
+		}
+		return theReturn;
 	}
 	public String getCurrentState(PresentationObject obj) {
 		if (obj != null) {
@@ -858,8 +896,8 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	/**
-	* @todo implement
-	*/
+	 * @todo implement
+	 */
 	public String getCurrentState(int instanceId) {
 		String historyId = this.getParameter(BuilderConstants.PRM_HISTORY_ID);
 		//System.err.println("in iwc.getCurrentState()");
@@ -931,7 +969,7 @@ implements IWUserContext, IWApplicationContext {
 			e.printStackTrace();
 		}
 		/*return(BuilderLogic.getInstance().isBuilderApplicationRunning(this));
-		*/
+		 */
 		return false;
 	}
 	
@@ -961,7 +999,7 @@ implements IWUserContext, IWApplicationContext {
 		return _clientIsHandHeld;
 	}
 	public ICDomain getDomain() {
-		return getApplication().getIWApplicationContext().getDomain();
+		return getIWMainApplication().getIWApplicationContext().getDomain();
 	}
 	
 	public void forwardToIBPage(Page fromPage, ICPage page){
@@ -971,24 +1009,24 @@ implements IWUserContext, IWApplicationContext {
 	public void forwardToIBPage(Page fromPage, int pageID){
 		forwardToIBPage(fromPage,pageID,0);
 	}
-		
+	
 	public void forwardToIBPage(Page fromPage, int pageID,int secondInterval) {
 		/**@todo temporary workaround find out why this doesn't work
 		 * This is supposed to work but I always get: IllegalStateException: cannot forward because writer or stream has been obtained.
 		 */
 		/*try{
-		  RequestDispatcher req = this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
-		  req.forward(this.getRequest(),this.getResponse());
-		}
-		catch(Exception e){
+		 RequestDispatcher req = this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+		 req.forward(this.getRequest(),this.getResponse());
+		 }
+		 catch(Exception e){
 		 e.printStackTrace(System.err);
-		}
+		 }
 
-		this does not work either
-		sendRedirect(URL.toString());
+		 this does not work either
+		 sendRedirect(URL.toString());
 
 
-		*/
+		 */
 		StringBuffer URL = new StringBuffer();
 		BuilderService bs;
 		try
@@ -1013,30 +1051,30 @@ implements IWUserContext, IWApplicationContext {
 
 	/*
 	 *  Returns null if not found
-   */
-  public Cookie getCookie(String cookieName) {
-    Cookie[] cookies = (Cookie[]) this.getCookies();
+	 */
+	public Cookie getCookie(String cookieName) {
+		Cookie[] cookies = (Cookie[]) this.getCookies();
 
-    if (cookies != null) {
-      if (cookies.length > 0) {
+		if (cookies != null) {
+			if (cookies.length > 0) {
 				for (int i = 0 ; i < cookies.length ; i++) {
 					if ( cookies[i].getName().equals(cookieName) ) {
 						return cookies[i];
 					}
 				}
-      }
-    }
+			}
+		}
 
-    return null;
-  }
+		return null;
+	}
 
 
-  /**
-   * Gets the current user associated with this context
-   * <br>This method is meant to replace getUser()
-   * @return The current user if there is one associated with the current context. If there is none the method returns null.
-   **/
-  public com.idega.user.data.User getCurrentUser(){
+	/**
+	 * Gets the current user associated with this context
+	 * <br>This method is meant to replace getUser()
+	 * @return The current user if there is one associated with the current context. If there is none the method returns null.
+	 **/
+	public com.idega.user.data.User getCurrentUser(){
 		com.idega.core.user.data.User user = getUser();
 		if(user!=null){
 			try{
@@ -1053,7 +1091,7 @@ implements IWUserContext, IWApplicationContext {
 			}
 		}
 		return null;
-  }
+	}
 
 	/**
 	 * Gets the Id of the current user associated with this context
@@ -1067,25 +1105,25 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return -1;
 	}
-  
-  /**
-   * TODO reimplement
-   * @return The pageId for the current IBPage that is being displayed. Returns -1 if an error occurred.
-   */
-  public int getCurrentIBPageID(){
-	BuilderService bs;
-	try
-	{
-		bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
-		return bs.getCurrentPageId(this);
+	
+	/**
+	 * TODO reimplement
+	 * @return The pageId for the current IBPage that is being displayed. Returns -1 if an error occurred.
+	 */
+	public int getCurrentIBPageID(){
+		BuilderService bs;
+		try
+		{
+			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+			return bs.getCurrentPageId(this);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
-	catch (RemoteException e)
-	{
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return -1;
-  }
 
 	public boolean isSecure(){
 		return getRequest().isSecure();
@@ -1113,14 +1151,6 @@ implements IWUserContext, IWApplicationContext {
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#addMessage(javax.faces.component.UIComponent, javax.faces.context.Message)
-	 */
-	public void addMessage(UIComponent arg0, Message arg1)
-	{
-		// TODO Auto-generated method stub
-	}
-
-	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getApplicationEvents()
 	 */
 	public Iterator getApplicationEvents()
@@ -1139,15 +1169,6 @@ implements IWUserContext, IWApplicationContext {
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getApplicationHandler()
-	 */
-	public ApplicationHandler getApplicationHandler()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getFacesEvents()
 	 */
 	public Iterator getFacesEvents()
@@ -1161,8 +1182,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public HttpSession getHttpSession()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSession();
 	}
 
 	/* (non-Javadoc)
@@ -1170,71 +1190,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public Locale getLocale()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
-	 */
-	public int getMaximumSeverity()
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getMessages()
-	 */
-	public Iterator getMessages()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getMessages(javax.faces.component.UIComponent)
-	 */
-	public Iterator getMessages(UIComponent arg0)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getModelType(java.lang.String)
-	 */
-	public Class getModelType(String arg0) throws FacesException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getModelValue(java.lang.String)
-	 */
-	public Object getModelValue(String arg0) throws FacesException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getResponseStream()
-	 */
-	public ResponseStream getResponseStream()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getResponseWriter()
-	 */
-	public ResponseWriter getResponseWriter()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.getCurrentLocale();
 	}
 
 	/* (non-Javadoc)
@@ -1242,8 +1198,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public ServletRequest getServletRequest()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.getRequest();
 	}
 
 	/* (non-Javadoc)
@@ -1251,17 +1206,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public ServletResponse getServletResponse()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getTree()
-	 */
-	public Tree getTree()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.getResponse();
 	}
 
 	/* (non-Javadoc)
@@ -1302,43 +1247,135 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public void setLocale(Locale arg0)
 	{
-		// TODO Auto-generated method stub
+		this.setCurrentLocale(arg0);
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#setModelValue(java.lang.String, java.lang.Object)
+	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String, javax.faces.application.FacesMessage)
 	 */
-	public void setModelValue(String arg0, Object arg1) throws FacesException
-	{
+	public void addMessage(String arg0, FacesMessage arg1) {
 		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
+	 */
+	public Iterator getClientIdsWithMessages() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getExternalContext()
+	 */
+	public ExternalContext getExternalContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
+	 */
+	public Severity getMaximumSeverity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMessages()
+	 */
+	public Iterator getMessages() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
+	 */
+	public Iterator getMessages(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getRenderKit()
+	 */
+	public RenderKit getRenderKit() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getRenderResponse()
+	 */
+	public boolean getRenderResponse() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getResponseComplete()
+	 */
+	public boolean getResponseComplete() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getResponseStream()
+	 */
+	public ResponseStream getResponseStream() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getResponseWriter()
+	 */
+	public ResponseWriter getResponseWriter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getViewRoot()
+	 */
+	public UIViewRoot getViewRoot() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
 	 */
-	public void setResponseStream(ResponseStream arg0)
-	{
+	public void setResponseStream(ResponseStream arg0) {
 		// TODO Auto-generated method stub
+
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
 	 */
-	public void setResponseWriter(ResponseWriter arg0)
-	{
+	public void setResponseWriter(ResponseWriter arg0) {
 		// TODO Auto-generated method stub
+
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#setTree(javax.faces.tree.Tree)
+	 * @see javax.faces.context.FacesContext#setViewRoot(javax.faces.component.UIViewRoot)
 	 */
-	public void setTree(Tree arg0)
-	{
+	public void setViewRoot(UIViewRoot arg0) {
 		// TODO Auto-generated method stub
+
 	}
 
-	/*
-	 * BEGIN ABSTRACT METHODS FROM FacesContext
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getApplication()
 	 */
-	
+	public Application getApplication() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -308,7 +308,7 @@ public class Text extends PresentationObject {
 				return localizedString;
 			}
 			else {
-				String defLocalizedString = (String) this.getLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+				String defLocalizedString = (String) this.getLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
 				if (defLocalizedString != null) {
 					return defLocalizedString;
 				}

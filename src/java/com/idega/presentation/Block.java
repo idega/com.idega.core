@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
@@ -245,7 +247,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
 		iwc.setCacheing(false);
-		IWCacheManager.getInstance(iwc.getApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, cacheInterval);
+		IWCacheManager.getInstance(iwc.getIWMainApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, cacheInterval);
 	}
 
 	public boolean hasEditPermission() {
@@ -301,7 +303,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public final void print(IWContext iwc) throws Exception {
 		if (this.isCacheable()) {
 			if (isCacheValid(iwc)) {
-				StringBuffer buffer = (StringBuffer) IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey());
+				StringBuffer buffer = (StringBuffer) IWCacheManager.getInstance(iwc.getIWMainApplication()).getObject(getDerivedCacheKey());
 				iwc.getWriter().print(buffer.toString());
 			}
 			else {
@@ -379,7 +381,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		boolean valid = false;
 		if (cacheable) {
 			if (getDerivedCacheKey() != null) {
-				valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey());
+				valid = IWCacheManager.getInstance(iwc.getIWMainApplication()).isCacheValid(getDerivedCacheKey());
 			}
 		}
 
@@ -448,7 +450,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
 	 */
 	public void invalidateCache(IWContext iwc) {
-		invalidateCache(iwc.getApplication());
+		invalidateCache(iwc.getIWMainApplication());
 		//debug("INVALIDATING : "+getCacheKey(iwc));
 	}
 
@@ -462,7 +464,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 */
 	public void invalidateCache(IWContext iwc, String suffix) {
 		if (getOriginalCacheKey() != null)
-			iwc.getApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey() + suffix);
+			iwc.getIWMainApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey() + suffix);
 		//debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
 	}
 
@@ -647,6 +649,69 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	
 	public String getComponentType(){
 		return "iw.block";
+	}
+	
+	public void decode(FacesContext fc){
+		/*try {
+			IWContext iwc = castToIWContext(fc);
+			
+			
+			editPermission = iwc.hasEditPermission(this);
+			manager = new IWStyleManager();
+
+			if (debugParameters) {
+				debugParameters(iwc);
+			}
+
+			if (iwc.isParameterSet(TARGET_OBJ_INS))
+				targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));
+
+			if (targetObjInst <= 0)
+				targetObjInst = getParentObjectInstanceID();
+
+			if (getStyleNames() != null) {
+				String prefix = getBundle(this.getIWUserContext()).getBundleName();
+				if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER)
+					prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
+
+				Map styles = getStyleNames();
+				Iterator iter = styles.keySet().iterator();
+				while (iter.hasNext()) {
+					String style = (String) iter.next();
+					if (!manager.isStyleSet(prefix + style))
+						manager.setStyle(prefix + style, (String) styles.get(style));
+				}
+			}
+
+			if (this.isCacheable()) {
+				setCacheKey(iwc);
+				if (isCacheValid(iwc)) {
+				}
+				else {
+					//beginCacheing(iwc);
+					//super._main(iwc);
+					main(iwc);
+					//endCacheing(iwc);
+				}
+			}
+			else {
+				//super._main(iwc);
+				main(iwc);
+			}
+			
+			
+			//this.main(castToIWContext(fc));
+		}
+		catch (Exception e) {
+			if(e instanceof RuntimeException){
+				throw (RuntimeException)e;
+			}
+			else{
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		*/
+		super.decode(fc);
 	}
 	
 }
