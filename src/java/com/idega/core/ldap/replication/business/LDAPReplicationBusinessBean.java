@@ -227,6 +227,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		final int searchTimeLimit = (searchTimeLimitInMs!=null && !"".equals(searchTimeLimitInMs))? Integer.parseInt(searchTimeLimitInMs) : 0;
 
 		//Todo eiki ldap implement
+		//FIXME Use the matchByUUID variable so that Laddi won't commit it out of the code and make Eiki mad ;)
 		final String matchByUUID = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);
 		
 		//do stuff
