@@ -15,9 +15,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWCacheManager;
@@ -27,6 +29,7 @@ import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.FileUploadUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.oreilly.servlet.MultipartWrapper;
@@ -306,6 +309,7 @@ public class IWEventProcessor {
 		System.out.println("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
 		
 		if(iwc.getRequest() instanceof MultipartWrapper){
+			//oreilly This ONLY supports one file
 		    // Cast the request to a MultipartWrapper
 	        MultipartWrapper multi = (MultipartWrapper) iwc.getRequest();
 
@@ -340,6 +344,10 @@ public class IWEventProcessor {
 					iwc.setUploadedFile(file);
 				}
 	        }
+		}
+		else if(PresentationObject.USE_JSF_RENDERING){
+			//This is a hack so we don't have to add the myfaces dependency yet
+			FileUploadUtil.handleMyFacesMultiPartRequest(iwc);
 		}
 		else{
 		
