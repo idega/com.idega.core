@@ -153,19 +153,19 @@ public class Form extends InterfaceObjectContainer {
 	}
 
 	public void setMultiPart() {
-		setMarkupAttribute("ENCTYPE", "multipart/form-data");
+		setMarkupAttribute("enctype", "multipart/form-data");
 	}
 
 	public void setOnReset(String script) {
-		setOnAction("onReset", script);
+		setOnAction("onreset", script);
 	}
 
 	public void setOnSubmit(String script) {
-		setOnAction("onSubmit", script);
+		setOnAction("onsubmit", script);
 	}
 
 	public void setOnClick(String script) {
-		setOnAction("onClick", script);
+		setOnAction("onclick", script);
 	}
 
 	private List findAllInputNamesHelper(List vector, PresentationObjectContainer cont) {
