@@ -181,7 +181,8 @@ public class PageIncluder extends PresentationObject implements Index{
 	  pageIncluderPrefix = buf.toString();
 
           StringBuffer buf2 = new StringBuffer();
-          buf2.append("http://").append(serverName).append(pageIncluderPrefix).append("http://");
+          buf2.append("http://").append(serverName).append(pageIncluderPrefix);
+          //.append("http://");
           httpPrefix = buf2.toString();
 
           //System.out.println("httpPrefix"+httpPrefix);
@@ -378,8 +379,6 @@ public class PageIncluder extends PresentationObject implements Index{
     tag = tag+"=\"";
     String prefixHttp= tag+httpPrefix;
     String prefixHttps= tag+httpsPrefix;
-
-
 
     html = TextSoap.findAndReplace(html,tag+"//",tag+BASEURL);// the // case
     html = TextSoap.findAndReplace(html,tag+"/",tag+BASEURL);
