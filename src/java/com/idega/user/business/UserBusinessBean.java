@@ -1928,7 +1928,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				totalTime.start();
 				try {
 					GroupBusiness groupBiz = getGroupBusiness();
-					if (groupBiz.userGroupTreeImageProcedureTopNodeSearch()) {
+					if (false){//(groupBiz.userGroupTreeImageProcedureTopNodeSearch()) {
 						log("[UserBusinessBean]: using stored procedure topnode search");
 						Timer time = new Timer();
 						time.start();
