@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  * @version 1.0
  */
 
-public interface IDOEntity extends EJBObject{
+public interface IDOEntity extends EJBObject,javax.ejb.EJBLocalObject{
 
   //public Object getId() throws RemoteException;
   //public String getName() throws RemoteException;
@@ -21,6 +21,6 @@ public interface IDOEntity extends EJBObject{
   public void removeFrom(IDOEntity entity) throws RemoteException;
   */
   public void store() throws IDOStoreException,RemoteException;
-  public void remove() throws javax.ejb.RemoveException,RemoteException;
+  //public void remove() throws javax.ejb.RemoveException,RemoteException;
   public IDOEntityDefinition getEntityDefinition() throws RemoteException;
 }

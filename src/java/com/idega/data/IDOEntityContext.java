@@ -9,6 +9,10 @@ import java.util.Properties;
 import javax.transaction.UserTransaction;
 import java.rmi.RemoteException;
 
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBLocalHome;
+
+
 /**
  * Title:        idega Data Objects
  * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
@@ -35,6 +39,15 @@ public class IDOEntityContext implements EntityContext {
   public EJBObject getEJBObject() throws java.lang.IllegalStateException {
     return _ejbo;
   }
+
+  public EJBLocalObject getEJBLocalObject() throws java.lang.IllegalStateException {
+    return (EJBLocalObject)_ejbo;
+  }
+
+  public javax.ejb.EJBLocalHome getEJBLocalHome() throws java.lang.IllegalStateException {
+    return this.getEJBLocalObject().getEJBLocalHome();
+  }
+
   public Object getPrimaryKey() throws java.lang.IllegalStateException {
     try{
       return getEJBObject().getPrimaryKey();
