@@ -59,6 +59,9 @@ private String spokenLanguage;
 //private Hashtable sessionAttributes;
 private ServletContext servletContext;
 
+private boolean _doneHandHeldCheck=false;
+private boolean _clientIsHandHeld=false;
+
 private boolean isCaching = false;
 private PrintWriter cacheWriter;
 private HashtableMultivalued _multipartParameters = null;
@@ -1009,6 +1012,38 @@ public void setCacheWriter(PrintWriter writer){
     }
 
     return(edit);
+  }
+
+  /**
+   * @return true if the client is a handheld device such as a PalmPilot, a PocketPC device or a phone
+   */
+  public boolean isClientHandheld(){
+    if(!_doneHandHeldCheck){
+      String user_agent = this.getUserAgent();
+      if(user_agent.indexOf("Windows CE") !=  -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.indexOf("Palm") != -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.toLowerCase().indexOf("wap") != -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.toLowerCase().indexOf("nokia") != -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.toLowerCase().indexOf("ericsson") != -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.toLowerCase().indexOf("symbian") != -1){
+        _clientIsHandHeld=true;
+      }
+      else if(user_agent.toLowerCase().indexOf("wapman") != -1){
+        _clientIsHandHeld=true;
+      }
+      _doneHandHeldCheck=true;
+    }
+    return _clientIsHandHeld;
   }
 }
 
