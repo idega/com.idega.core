@@ -284,6 +284,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  }
        }
 
+        protected void addAttribute(String attributeName,String longName,Class storageClass) {
+          addAttribute(attributeName,longName,true,true,storageClass);
+        }
+
+        protected void addAttribute(String attributeName,String longName,Class storageClass,int maxLength) {
+          addAttribute(attributeName,longName,true,true,storageClass,maxLength);
+        }
 
 	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength) {
 		EntityAttribute attribute = new EntityAttribute(attributeName);
@@ -386,11 +393,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	protected void addManyToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
-      addManyToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
+          addManyToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
 	}
 
 	protected void addManyToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
-      addAttribute(relationshipColumnName,description,true,true, Integer.class,com.idega.data.GenericEntity.ONE_TO_MANY,relatingEntityClass);
+          Class primaryKeyInRelatedClass = ((IDOEntityBean)this.getStaticInstance(relatingEntityClass)).getPrimaryKeyClass();
+          addAttribute(relationshipColumnName,description,true,true, primaryKeyInRelatedClass ,com.idega.data.GenericEntity.ONE_TO_MANY,relatingEntityClass);
 	}
 
 	protected void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
@@ -3207,7 +3215,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     /**
      * Meant to be overrided in subclasses, returns default Integer.class
      */
-    protected Class getPrimaryKeyClass(){
+    public Class getPrimaryKeyClass(){
       return Integer.class;
     }
 

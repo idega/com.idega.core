@@ -24,6 +24,7 @@ public interface IDOEntityBean extends EntityBean{
   //public Object ejbCreate(Object pk) throws CreateException;
   public Object ejbFindByPrimaryKey(Object pk) throws FinderException;
   public void setEJBHome(javax.ejb.EJBHome ejbHome);
+  public Class getPrimaryKeyClass();
 
 
 }
