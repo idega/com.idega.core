@@ -857,17 +857,17 @@ public abstract class DatastoreInterface{
     try{
 
       statement = "update " + entity.getEntityName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
-      System.out.println(statement);
-      System.out.println("In insertBlob() in DatastoreInterface");
+      //System.out.println(statement);
+      //System.out.println("In insertBlob() in DatastoreInterface");
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
       if(wrapper!=null){
-        System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
+        //System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
         //Conn.setAutoCommit(false);
         InputStream instream = wrapper.getInputStreamForBlobWrite();
         if(instream!=null){
-          System.out.println("In insertBlob() in DatastoreInterface instream != null");
+          //System.out.println("In insertBlob() in DatastoreInterface instream != null");
           Conn = entity.getConnection();
-          if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
+          //if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
           //BufferedInputStream bin = new BufferedInputStream(instream);
           PreparedStatement PS = Conn.prepareStatement(statement);
           //System.out.println("bin.available(): "+bin.available());
@@ -980,10 +980,13 @@ public abstract class DatastoreInterface{
 
         public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
+          System.out.println("in handleBlobUpdate");
           if(wrapper!=null){
             InputStream stream = wrapper.getInputStreamForBlobWrite();
+            System.out.println("in handleBlobUpdate wrapper!=null");
             if(stream!=null){
               try{
+                System.out.println("in handleBlobUpdate, stream != null");
                 //BufferedInputStream bin = new BufferedInputStream( stream );
                 //statement.setBinaryStream(index, bin, bin.available() );
                 statement.setBinaryStream(index, stream, stream.available() );
