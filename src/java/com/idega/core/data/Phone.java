@@ -63,4 +63,60 @@ public class Phone extends GenericEntity{
       setColumn(getColumnNamePhoneTypeId(), phone_type_id);
     }
 
+    public static int getHomeNumberID() {
+      int returner = -1;
+      try {
+          PhoneType[] pt = (PhoneType[]) (new PhoneType()).findAllByColumn(GenericType.getColumnNameUniqueName(),PhoneType.UNIQUE_NAME_HOME_PHONE);
+          if (pt.length > 0) {
+            returner = pt[0].getID();
+          }
+      }
+      catch (SQLException sql) {
+          sql.printStackTrace(System.err);
+      }
+      return returner;
+    }
+
+    public static int getWorkNumberID() {
+      int returner = -1;
+      try {
+          PhoneType[] pt = (PhoneType[]) (new PhoneType()).findAllByColumn(GenericType.getColumnNameUniqueName(),PhoneType.UNIQUE_NAME_WORK_PHONE);
+          if (pt.length > 0) {
+            returner = pt[0].getID();
+          }
+      }
+      catch (SQLException sql) {
+          sql.printStackTrace(System.err);
+      }
+      return returner;
+    }
+
+    public static int getFaxNumberID() {
+      int returner = -1;
+      try {
+          PhoneType[] pt = (PhoneType[]) (new PhoneType()).findAllByColumn(GenericType.getColumnNameUniqueName(),PhoneType.UNIQUE_NAME_FAX_NUMBER);
+          if (pt.length > 0) {
+            returner = pt[0].getID();
+          }
+      }
+      catch (SQLException sql) {
+          sql.printStackTrace(System.err);
+      }
+      return returner;
+    }
+
+    public static int getMobileNumberID() {
+      int returner = -1;
+      try {
+          PhoneType[] pt = (PhoneType[]) (new PhoneType()).findAllByColumn(GenericType.getColumnNameUniqueName(),PhoneType.UNIQUE_NAME_MOBILE_PHONE);
+          if (pt.length > 0) {
+            returner = pt[0].getID();
+          }
+      }
+      catch (SQLException sql) {
+          sql.printStackTrace(System.err);
+      }
+      return returner;
+    }
+
 }
