@@ -125,5 +125,7 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
  */
   public Group createGroup(String name,String description)throws CreateException,RemoteException;
 
+  public com.idega.core.data.Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws javax.ejb.CreateException,java.rmi.RemoteException;
 
+  public com.idega.core.data.Address getGroupMainAddress(Group group) throws RemoteException;
 }

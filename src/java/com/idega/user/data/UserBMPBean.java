@@ -86,6 +86,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
 		this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
 		this.setNullable(getColumnNameSystemImage(), true);
+    addMetaDataRelationship();
 		//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
 		// this.setUnique(getColumnNamePersonalID(),true);
 

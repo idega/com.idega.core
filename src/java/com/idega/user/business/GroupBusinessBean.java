@@ -21,6 +21,14 @@ import javax.ejb.RemoveException;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.core.business.AddressBusiness;
+import com.idega.core.data.Address;
+import com.idega.core.data.AddressHome;
+import com.idega.core.data.AddressType;
+import com.idega.core.data.Country;
+import com.idega.core.data.CountryHome;
+import com.idega.core.data.PostalCode;
+import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
@@ -53,6 +61,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   private GroupHome groupHome;
   private UserGroupRepresentativeHome userRepHome;
   private GroupHome permGroupHome;
+  private AddressHome addressHome;
 
 
   public GroupBusinessBean() {
@@ -1062,7 +1071,115 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
+  /**
+   * Method updateUsersMainAddressOrCreateIfDoesNotExist. This method can both be used to update the user main address or to create one<br>
+   * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.
+   * @param userId
+   * @param streetNameAndNumber
+   * @param postalCodeId
+   * @param countryName
+   * @param city
+   * @param province
+   * @param poBox
+   * @return Address the address that was created or updated
+   * @throws CreateException
+   * @throws RemoteException
+   */
+  public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
+    Address address = null;
+      if( streetNameAndNumber!=null && groupId!=null ){
+        try{
+          AddressBusiness addressBiz = getAddressBusiness();
+          String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
+          String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
+          
+          Group group = getGroupByGroupID(groupId.intValue());
+          address = getGroupMainAddress(group);
+          
+          Country country = null;
+          
+          if( countryName!=null ){
+            country = ((CountryHome)getIDOHome(Country.class)).findByCountryName(countryName);
+          }
+          
+          PostalCode code = null;
+          if( postalCodeId!=null){
+            code = ((PostalCodeHome)getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+          }
+                  
+          
+          boolean addAddress = false;/**@todo is this necessary?**/
+  
+          if( address == null ){
+            AddressHome addressHome = addressBiz.getAddressHome();
+            address = addressHome.create();
+            AddressType mainAddressType = addressHome.getAddressType1();
+            address.setAddressType(mainAddressType);
+            addAddress = true;
+          }
+  
+          if( country!=null ) address.setCountry(country);
+          if( code!=null ) address.setPostalCode(code);
+          if( province!=null ) address.setProvince(province);
+          if( city!=null ) address.setCity(city);
+          
+          address.setStreetName(streetName);
+          if( streetNumber!=null ) address.setStreetNumber(streetNumber);
+  
+          address.store();
+  
+          if(addAddress){
+            group.addAddress(address);
+          }
+        }
+        catch(Exception e){
+          e.printStackTrace();
+          System.err.println("Failed to update or create address for groupid : "+ groupId.toString()); 
+        }
+          
+      }
+        else throw new CreateException("No streetname or userId is null!");
+        
+        return address;
+  }
 
+  public AddressBusiness getAddressBusiness() throws RemoteException{
+    return (AddressBusiness) getServiceInstance(AddressBusiness.class);
+  }
+  
+  /**
+   * Gets the users main address and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getGroupMainAddress(Group group) throws RemoteException{
+    return getGroupMainAddress(((Integer)group.getPrimaryKey()).intValue());
+  }  
+
+  /**
+  * Gets the user's main address and returns it.
+  * @returns the address if found or null if not.
+  */
+  public Address getGroupMainAddress(int userID) throws EJBException,RemoteException{
+    try {
+      return getAddressHome().findPrimaryUserAddress(userID);
+    }
+    catch (FinderException fe) {
+      return null;
+    }
+  }
+  
+  public AddressHome getAddressHome(){
+    if(addressHome==null){
+      try{
+        addressHome = (AddressHome)IDOLookup.getHome(Address.class);
+      }
+      catch(RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return addressHome;
+  }
+  
 
 
 } // Class
