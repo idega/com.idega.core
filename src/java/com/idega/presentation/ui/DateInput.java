@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.2 2001/12/19 10:28:56 tryggvil Exp $
+ * $Id: DateInput.java,v 1.3 2001/12/19 10:58:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -97,6 +97,9 @@ public Object clone(){
   }
   if(theYear!=null){
     newObject.theYear = (DropdownMenu)this.theYear.clone();
+  }
+  if(script!=null){
+    newObject.script = (Script) this.script.clone();
   }
   return newObject;
 }
@@ -221,7 +224,7 @@ private void doSomeShit(){
 	//getScript().addFunction("setValueOfHiddenDate","function setValueOfHiddenDate(yearInput,monthInput,dayInput,hiddenInput){\r\r	var yearValue='2000';\r	var monthValue='01';\r	var dayValue='01';\r\r	if(yearInput.selectedIndex != 0){\r		yearValue=yearInput.options[yearInput.selectedIndex].value;\r	}\r	if(monthInput.selectedIndex != 0){\r		monthValue=monthInput.options[monthInput.selectedIndex].value;\r	}\r	if(dayInput.selectedIndex != 0){\r		dayValue=dayInput.options[dayInput.selectedIndex].value;\r	}\r\r	if ((yearInput.selectedIndex == 0) || (monthInput.selectedIndex == 0) || (dayInput.selectedIndex == 0)){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = yearValue+'-'+monthValue+'-'+dayValue+'';\r	}\r}");
 
 
-	super.add(script);
+
 }
 
 /*private void setScript(Script script){
@@ -394,6 +397,7 @@ public void main(IWContext iwc)throws Exception{
     super.add(theMonth);
     super.add(theYear);
     super.add(theWholeDate);
+    super.add(script);
 
     addLocalized(iwc);
     justConstructed = false;
@@ -424,15 +428,15 @@ public void main(IWContext iwc)throws Exception{
 
 
       if(inShort){
-        dayString = iwrb.getLocalizedString(DAY_KEY_S);
-        monthString = iwrb.getLocalizedString(MONTH_KEY_S);
-        yearString = iwrb.getLocalizedString(YEAR_KEY_S);
+        dayString = iwrb.getLocalizedString(DAY_KEY_S,"D");
+        monthString = iwrb.getLocalizedString(MONTH_KEY_S,"M");
+        yearString = iwrb.getLocalizedString(YEAR_KEY_S,"Y");
         monthStrings = symbols.getShortMonths();
       }
       else{
-        dayString = iwrb.getLocalizedString(DAY_KEY);
-        monthString = iwrb.getLocalizedString(MONTH_KEY);
-        yearString = iwrb.getLocalizedString(YEAR_KEY);
+        dayString = iwrb.getLocalizedString(DAY_KEY,"Day");
+        monthString = iwrb.getLocalizedString(MONTH_KEY,"Month");
+        yearString = iwrb.getLocalizedString(YEAR_KEY,"Year");
         monthStrings = symbols.getMonths();
       }
 
