@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
 
 
 /**
