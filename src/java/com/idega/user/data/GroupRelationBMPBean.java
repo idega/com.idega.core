@@ -30,6 +30,9 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	private static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
 	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
   private static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
+  
+  private static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
+  private static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";
@@ -46,6 +49,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
     this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
+    this.addAttribute(INITIATION_MODIFICATION_DATE_COLUMN, "Initiation modification date", Timestamp.class);
+		this.addAttribute(TERMINATION_MODIFICATION_DATE_COLUMN, "Termination modification date", Timestamp.class);
  		this.addMetaDataRelationship();
   }
   public String getEntityName() {
@@ -171,20 +176,29 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	
   public void setInitiationDate(Timestamp stamp){
     this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
+    this.setColumn(INITIATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow());
   }
 
   public Timestamp getInitiationDate(){
     return (Timestamp)getColumnValue(this.INITIATION_DATE_COLUMN);
   }
 
+  public Timestamp getInitiationModificationDate(){
+		return (Timestamp)getColumnValue(this.INITIATION_MODIFICATION_DATE_COLUMN);
+  }
+
   public void setTerminationDate(Timestamp stamp){
     this.setColumn(this.TERMINATION_DATE_COLUMN,stamp);
+    this.setColumn(this.TERMINATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow());
   }
 
   public Timestamp getTerminationDate(){
     return (Timestamp)getColumnValue(this.TERMINATION_DATE_COLUMN);
   }
-
+  
+  public Timestamp getTerminationModificationDate(){
+		return (Timestamp)getColumnValue(this.TERMINATION_MODIFICATION_DATE_COLUMN);
+  }
   public void setPassiveBy(int userId)  {
     setColumn(SET_PASSIVE_BY, userId);
   }

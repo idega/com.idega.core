@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import java.sql.Timestamp;
+
 
 public interface GroupRelation extends com.idega.data.IDOEntity
 {
@@ -17,6 +19,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
 	
  public com.idega.user.data.Group getGroup();
  public java.sql.Timestamp getInitiationDate();
+ public Timestamp getInitiationModificationDate();
  public int getPassiveBy();
  public com.idega.user.data.Group getRelatedGroup();
  public java.lang.Integer getRelatedGroupPK();
@@ -24,6 +27,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public java.lang.String getRelationshipType();
  public java.lang.String getStatus();
  public java.sql.Timestamp getTerminationDate();
+ public Timestamp getTerminationModificationDate();
  public void initializeAttributes();
  public boolean isActive();
  public boolean isActivePending();
