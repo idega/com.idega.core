@@ -17,21 +17,17 @@ import javax.ejb.FinderException;
 public class IDOPrimaryKeyList implements List, Runnable {
 
 	private IDOQuery _sqlQuery;
-	private IDOQuery _countQuery;
+	private String _countQuery;
 //	private Statement _Stmt;
 //	private ResultSet _RS;
 	private GenericEntity _entity;
 	private int _size;
 	private int _cursor = 0;
-	private Vector _PKs=null;
+	private Vector _PKs;
 	private LoadTracker _tracker;
 	private int fetchSize = 1;
 	private int _prefetchSize=100;
 	private boolean isSublist = false;
-	private boolean _initialized = false;
-	
-	private boolean _loadAllNextTime = false;
-	private boolean _handleAsNormalList = false;
 	
 
 	private IDOPrimaryKeyList() {
@@ -72,18 +68,17 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		System.out.println("[IDOPrimaryKeyList]: _PKs content ends");
 	}
 
-	public IDOPrimaryKeyList(IDOQuery sqlQuery,IDOQuery countQuery, GenericEntity entity, int prefetchSize) {
+	public IDOPrimaryKeyList(IDOQuery sqlQuery, GenericEntity entity, int size, int prefetchSize) {
 		_sqlQuery = sqlQuery;
-		_countQuery = countQuery;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
 		_prefetchSize = prefetchSize;
-		_initialized=false;
-    }
-	
-	public IDOPrimaryKeyList(IDOQuery sqlQuery, GenericEntity entity, int prefetchSize) {
-		this(sqlQuery,((IDOQuery)sqlQuery.clone()).setToCount(),entity,prefetchSize);
+		_size = size;
+		_PKs = new Vector(size);
+		_PKs.setSize(size);
+		//FIXME What if someone adds to the list?? the size must be updated
+		_tracker = new LoadTracker(size,fetchSize);
     }
 	
 	
@@ -101,12 +96,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //		int loadIntervalSize = fetchSize;
 //		if(_size < loadIntervalSize){
 			try {
-				if(!_initialized){
-					System.err.println("["+this.getClass().getName()+"]: The size has not been initialized.  It might cause some trouble");
-					loadSubset(0,100);
-				} else {
-					loadSubset(0,_size);
-				}
+				loadSubset(0,_size);
 			}
 			catch (Exception ex) {
 				System.err.println("["+this.getClass()+"]: Exeption: "+ex.getClass()+" occured while executing: "+_sqlQuery);
@@ -139,15 +129,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //			_tracker = new LoadTracker(_size,fetchSize);
 //		}
 
-		if(_tracker == null){
-			int [] interval = new int[2];
-			interval[LoadTracker.FROM_INDEX_IN_ARRAY] = (_loadAllNextTime && _initialized)?0:fromIndex;
-			interval[LoadTracker.TO_INDEX_IN_ARRAY] = (_loadAllNextTime && _initialized)?_size:toIndex;
-			setsToLoad = new Vector();
-			setsToLoad.add(interval);
-		} else {
-			setsToLoad = _tracker.getNotLoadedSubsets(((_loadAllNextTime && _initialized)?0:fromIndex),((_loadAllNextTime && _initialized)?_size:toIndex));
-		}
+
+		setsToLoad = _tracker.getNotLoadedSubsets(fromIndex, toIndex);
 		//assume that setsToLoad is sorted list (lower intervals to higher)
 
 		if (_entity.isDebugActive())
@@ -164,140 +147,79 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		}
 
 
-		if(_loadAllNextTime||(setsToLoad != null && setsToLoad.size() > 0))
+		if(setsToLoad != null && setsToLoad.size() > 0)
 		{
 			Connection conn = null;
 			Statement Stmt = null;
 			try
 			{
-				
 				conn = _entity.getConnection(_entity.getDatasource());
-			
-				DatastoreInterface iface = DatastoreInterface.getInstance(_entity);
-				
-				if(iface.isCabableOfRSScroll()){
-//					JDBC 2.0
-					Stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
-				} else {
-//					JDBC 1.0
-					Stmt = conn.createStatement();
-				}
-				
-				
-								
-				
-//				JDBC 2.0
-				//ResultSet RS = Stmt.executeQuery(_sqlQuery);
+				//JDBC 2.0
+//				Stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+				//JDBC 1.0
+				Stmt = conn.createStatement();
+				//JDBC 2.0
+//				ResultSet RS = Stmt.executeQuery(_sqlQuery);
 //				_size = RS.size(); // not possible yet
 
-				ResultSet RS = null;
-				int tmpSize=-1;
-				if(iface.isCabableOfRSScroll()){
-					//JDBC 1.0
-					RS=Stmt.executeQuery(_sqlQuery.toString());
-					RS.last();
-					tmpSize=RS.getRow();
-					RS.beforeFirst();
-					
-					if(_size!=tmpSize&&_initialized){
-						System.err.println("[WARNING]: IDOPrimaryKey: data has changed since last partition was loaded");
-					}
-				} else{ 
-					if(!_initialized){
-						try {
-							if (_entity.isDebugActive())
-							{
-								_entity.debug("[IDOPrimaryKeyList]: Going to Datastore for SQL count-query: " + _countQuery);
-							}
-							Object result =iface.executeQuery(_entity,_countQuery.toString());
-							if(result != null && result instanceof Integer){
-								tmpSize = ((Integer)result).intValue();
-							}
-						} catch (Exception e) {
-							tmpSize=0;
-							e.printStackTrace();
-						}
-					}
-					RS=Stmt.executeQuery(_sqlQuery.toString());
-				}
-					
-				if(!_initialized){
-					_size=Math.max(0,tmpSize);
-					_PKs = new Vector(_size);
-					_PKs.setSize(_size);
-					//FIXME What if someone adds to the list?? the size must be updated
-					_tracker = new LoadTracker(_size,fetchSize);
-					_initialized=true;
-					setsToLoad = _tracker.getNotLoadedSubsets(((_loadAllNextTime)?0:fromIndex),((_loadAllNextTime)?_size:toIndex));
-				}
-				
-				
-				
 				ListIterator iter = setsToLoad.listIterator();
-				
+				//JDBC 1.0
+				ResultSet RS = Stmt.executeQuery(_sqlQuery.toString());
 				
 				//System.out.println("EIKI DEBUG in idoprimarykeylist: "+_sqlQuery.toString());
 
-				if (setsToLoad != null && setsToLoad.size() > 0){
-				
-					int RSpos = -1;
-					while (iter.hasNext())
+				int RSpos = -1;
+				while (iter.hasNext())
+				{
+					//int i = iter.nextIndex();
+					int[] item = (int[])iter.next();
+					int fIndex = item[LoadTracker.FROM_INDEX_IN_ARRAY];
+//					int tIndex = Math.min(item[LoadTracker.TO_INDEX_IN_ARRAY],_size);
+				    int tIndex = item[LoadTracker.TO_INDEX_IN_ARRAY];
+
+					//JDBC 2.0
+//					RS.absolute(item[LoadTracker.FROM_INDEX_IN_ARRAY]);
+
+				    if (_entity.isDebugActive())
 					{
-						//int i = iter.nextIndex();
-						int[] item = (int[])iter.next();
-						int fIndex = item[LoadTracker.FROM_INDEX_IN_ARRAY];
-	//					int tIndex = Math.min(item[LoadTracker.TO_INDEX_IN_ARRAY],_size);
-					    int tIndex = item[LoadTracker.TO_INDEX_IN_ARRAY];
-	
-						//JDBC 2.0
-	//					RS.absolute(item[LoadTracker.FROM_INDEX_IN_ARRAY]);
-	
-					    if (_entity.isDebugActive())
-						{
-							_entity.debug("[IDOPrimaryKeyList]: getting "+fIndex+" to "+tIndex);
-						}
-	
-	
-					    while((RSpos+1) < fromIndex) {
-							if(!RS.next())
-							{
-							   RSpos =  fromIndex;
-							   break;
-							}
-							RSpos++;  // RS.next()
-						}
-						//
-	
-						//while((RSpos+1) <= tIndex)
-						while((RSpos+1) < tIndex)
-						{
-							if(!RS.next())
-							{
-								RSpos++;
-							    break;
-							}
-							RSpos++;  // RS.next()
-							Object pk = _entity.getPrimaryKeyFromResultSet(RS);
-							if (pk != null)
-							{
-								//Integer pk = new Integer(id);
-								
-								try {
-									_PKs.set(RSpos,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
-								} catch (FinderException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-						_tracker.addLoadedSubSet(fIndex,tIndex);
-	
-	
+						_entity.debug("[IDOPrimaryKeyList]: getting "+fIndex+" to "+tIndex);
 					}
-					
-				}
-				
-				if(_loadAllNextTime){
-					_loadAllNextTime=false;
+
+
+				    while((RSpos+1) < fromIndex) {
+						if(!RS.next())
+						{
+						   RSpos =  fromIndex;
+						   break;
+						}
+						RSpos++;  // RS.next()
+					}
+					//
+
+					//while((RSpos+1) <= tIndex)
+					while((RSpos+1) < tIndex)
+					{
+						if(!RS.next())
+						{
+							RSpos++;
+						    break;
+						}
+						RSpos++;  // RS.next()
+						Object pk = _entity.getPrimaryKeyFromResultSet(RS);
+						if (pk != null)
+						{
+							//Integer pk = new Integer(id);
+							
+							try {
+								_PKs.set(RSpos,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
+							} catch (FinderException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					_tracker.addLoadedSubSet(fIndex,tIndex);
+
+
 				}
 				//JDBC 1.0
 				RS.close();
@@ -366,7 +288,6 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				}
 			}
 		}
-		
 //
 //		if(_entity.isDebugActive()){
 //		    debugPKs();
@@ -406,38 +327,15 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //	}
 
 	public int size() {
-		if(_handleAsNormalList){
-			return _PKs.size();
-		}
-		if(!_initialized){
-			try {
-				loadSubset(0,_prefetchSize);
-			} catch (IDOFinderException e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
 	    return _size;
 	}
 	public boolean isEmpty() {
-		if(_handleAsNormalList){
-			return _PKs.isEmpty();
-		}
-		if(!_initialized){
-			try {
-				loadSubset(0,_prefetchSize);
-			} catch (IDOFinderException e) {
-				e.printStackTrace();
-				return true;
-			}
-		}
 	    return _size == 0;
 	}
 	public void clear() {
 		_size = 0;
 		_PKs.clear();
 		_tracker = new LoadTracker(_size,fetchSize);
-		//_initialized=false;
 //		try {
 //			_RS.close();
 //		}
@@ -554,82 +452,72 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	}
   }
   
-  	private void _handleAsNormalList() {
-  		if(!_handleAsNormalList){
-	  		try {
-				if(!_initialized || _tracker.getLoadRatio() != 1 ){
-					_loadAllNextTime=true;
-					loadSubset(0,_prefetchSize); // any parameters will do
-				}
-			} catch (IDOFinderException e) {
-				e.printStackTrace();
-			} finally{
-				_handleAsNormalList = true;
-			}
-  		}
-	}
-
-  
   public Object remove(int index) {
-  	_handleAsNormalList();
-    return _PKs.remove(index);
+    /**@todo: Implement this java.util.List method*/
+    throw new java.lang.UnsupportedOperationException("Method remove() not yet implemented.");
   }
 
   public boolean remove(Object o) {
-  	_handleAsNormalList();
-    return _PKs.remove(o);
+    throw new java.lang.UnsupportedOperationException("Method remove() not yet implemented.");
   }
   public boolean contains(Object o) {
-  	_handleAsNormalList();
-    return _PKs.contains(o);
+    throw new java.lang.UnsupportedOperationException("Method contains() not yet implemented.");
   }
   public Object[] toArray() {
-  	_handleAsNormalList();
-    return _PKs.toArray();
+    throw new java.lang.UnsupportedOperationException("Method toArray() not yet implemented.");
   }
   public Object[] toArray(Object[] a) {
-  	_handleAsNormalList();
-    return _PKs.toArray(a);
+    throw new java.lang.UnsupportedOperationException("Method toArray() not yet implemented.");
   }
   public boolean add(Object o) {
-  	_handleAsNormalList();
-    return _PKs.add(o);
+/*
+TODO implement so that all the collection is loaded first if this method is called
+  	boolean success = _PKs.add(o);
+  	if(success) {
+  		_size++;	
+  	}
+  	return success;
+*/
+    throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
   }
   public boolean containsAll(Collection c) {
-  	_handleAsNormalList();
-    return _PKs.containsAll(c);
+    throw new java.lang.UnsupportedOperationException("Method containsAll() not yet implemented.");
   }
   public boolean addAll(Collection c) {
-  	_handleAsNormalList();
-    return _PKs.containsAll(c);
+    //throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
+   /* boolean success = _PKs.addAll(c);
+	
+  	if(success) {
+  		_size+=c.size();	
+  	}
+  	
+  	return success;
+  */
+  //todo see add(obj)
+      throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
   }
   public boolean addAll(int index, Collection c) {
-  	_handleAsNormalList();
-    return _PKs.addAll(c);
+    throw new java.lang.UnsupportedOperationException("Method addAll(index,collection) not implemented because you can only add to the end of the collection. use addAll(c) instead");
+    //return _PKs.addAll(index,c);
   }
   public boolean removeAll(Collection c) {
-  	_handleAsNormalList();
-    return _PKs.removeAll(c);
+    throw new java.lang.UnsupportedOperationException("Method removeAll() not yet implemented.");
   }
   public boolean retainAll(Collection c) {
-  	_handleAsNormalList();
-    return _PKs.retainAll(c);
+    throw new java.lang.UnsupportedOperationException("Method retainAll() not yet implemented.");
   }
   public Object set(int index, Object element) {
-  	_handleAsNormalList();
-    return _PKs.set(index,element);
+    throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
   }
   public void add(int index, Object element) {
-  	_handleAsNormalList();
-    _PKs.add(index,element);
+    throw new java.lang.UnsupportedOperationException("Method add() not not implemented because you can only add to the end of the collection. use add(obj) instead (not implemented either yet)");
+    //_PKs.add(index,element);
   }
   public int indexOf(Object o) {
-  	_handleAsNormalList();
-    return _PKs.indexOf(o);
+    throw new java.lang.UnsupportedOperationException("Method indexOf() not yet implemented.");
   }
   public int lastIndexOf(Object o) {
-  	_handleAsNormalList();
-    return _PKs.lastIndexOf(o);
+    throw new java.lang.UnsupportedOperationException("Method lastIndexOf() not yet implemented.");
   }
 
 
