@@ -67,7 +67,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			String childIDColumnName = EntityControl.getTreeRelationShipChildColumnName(this);
 			StringBuffer buffer = new StringBuffer();
 			//buffer.append("select " + thisTable + ".* from " + thisTable + "," + treeTable + " where " + thisTable + "." + idColumnName + "=" + treeTable + "." + childIDColumnName + " and " + treeTable + "." + idColumnName + "='" + this.getPrimaryKey().toString() + "'");
-			buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString());
+			buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(this.getPrimaryKey().toString()).append("'");
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
