@@ -45,6 +45,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	private static final String COLUMN_CREATED = "created";
 	private static final String COLUMN_HOME_PAGE_ID = "home_page_id";
 	private static final String COLUMN_ALIAS_TO_GROUP = "alias_id";
+  private static final String COLUMN_DELETED = "deleted";
+  private static final String COLUMN_DELETED_BY = "deleted_by";
+  private static final String COLUMN_DELETED_WHEN = "deleted_when";
+  
 
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
@@ -54,8 +58,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(getExtraInfoColumnName(), "Extra information", true, true, "java.lang.String");
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
 		addAttribute(getColumnNameHomePageID(), "Home page ID", true, true, Integer.class, "many-to-one", IBPage.class);
+    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
+    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
+    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
 		setNullable(getColumnNameHomePageID(), true);
-
 		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
 		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
     this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
@@ -134,6 +140,19 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public static String getColumnNameHomePageID() {
 		return COLUMN_HOME_PAGE_ID;
 	}
+  
+  public static String getColumnNameDeleted() {
+    return COLUMN_DELETED;
+  }
+  
+  public static String getColumnNameDeletedBy() {
+    return COLUMN_DELETED_BY;
+  }
+  
+  public static String getColumnNameDeletedWhen() {
+    return COLUMN_DELETED_WHEN;
+  }
+  
 	/*  ColumNames end   */
 	/*  functions begin   */
 	public String getName() {
@@ -324,7 +343,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void ejbPostCreateGroup() throws CreateException {
 	}
 	public Object ejbFindByName(String name) throws FinderException {
-		return this.idoFindOnePKBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
+    IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    query.appendAndEqualsQuoted(getNameColumnName(), name);
+    return idoFindOnePKBySQL(query.toString());
+    // original sql statement
+		// return this.idoFindOnePKBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
 	}
 	public Integer ejbFindGroupByPrimaryKey(Object pk) throws FinderException {
 		return (Integer) this.ejbFindByPrimaryKey(pk);
@@ -438,7 +463,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+      query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        // expression starts
+        .appendLeftParenthesis()
+        .append(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -451,8 +482,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.append(this.COLUMN_GROUP_ID);
 			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
-			query.appendOrderBy(this.COLUMN_NAME);
+			query
+        .appendIn(subQuery2)
+        .appendRightParenthesis()
+        // expression ends above
+			  .appendOrderBy(this.COLUMN_NAME);
 			//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
 			return this.idoFindPKsBySQL(query.toString());
 		}
@@ -469,9 +503,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = idoQuery();
-			query.appendSelectCountFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			IDOQuery query = idoQueryGetSelectCount();
+			query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        // expression starts
+        .appendLeftParenthesis()
+			  .append(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -484,7 +523,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.append(this.COLUMN_GROUP_ID);
 			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
+			query
+        .appendIn(subQuery2)
+        // expression ends above
+        .appendRightParenthesis();      
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
 			return this.idoGetNumberOfRecords(query.toString());
 		}
@@ -503,7 +545,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+      query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        // expression starts
+        .appendLeftParenthesis()
+			  .append(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -516,8 +564,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.append(this.COLUMN_GROUP_ID);
 			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
-			query.appendOrderBy(this.COLUMN_NAME);
+			query
+        .appendIn(subQuery2)
+        .appendRightParenthesis()
+        // expression ends above
+			  .appendOrderBy(this.COLUMN_NAME);
 			//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
 			return this.idoFindPKsBySQL(query.toString());
 		}
@@ -534,9 +585,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = idoQuery();
-			query.appendSelectCountFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			IDOQuery query = idoQueryGetSelectCount();
+      query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        // expression starts
+        .appendLeftParenthesis()
+			  .append(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -549,7 +605,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.append(this.COLUMN_GROUP_ID);
 			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
+			query
+        .appendIn(subQuery2)
+        .appendRightParenthesis();
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
 			return this.idoGetNumberOfRecords(query.toString());
 		}
@@ -929,10 +987,39 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			//              typeList += "'"+groupTypes[g]+"'";
 			//            }
 			String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes, true);
-			return super.idoFindIDsBySQL(
-				"select * from " + getEntityName() + " where " + getGroupTypeColumnName() + ((returnSepcifiedGroupTypes) ? " in (" : " not in (") + typeList + ") order by " + getNameColumnName());
+      IDOQuery query = idoQueryGetSelect();
+      query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        // first expression starts
+        .appendLeftParenthesis()
+        .append(getGroupTypeColumnName());
+      if (returnSepcifiedGroupTypes)
+        query.appendIn();
+      else
+        query.appendNotIn();
+      query
+        // second expression starts
+        .appendRightParenthesis()
+        .append(typeList)
+        .appendLeftParenthesis()
+        // second expressions ends above
+        .appendLeftParenthesis()
+        // first expressions ends above
+        .appendOrderBy(getNameColumnName());
+      return idoFindIDsBySQL(query.toString());
+			// original sql statement
+      //return super.idoFindIDsBySQL(
+			//	"select * from " + getEntityName() + " where " + getGroupTypeColumnName() + ((returnSepcifiedGroupTypes) ? " in (" : " not in (") + typeList + ") order by " + getNameColumnName());
 		}
-		return super.idoFindAllIDsOrderedBySQL(getNameColumnName());
+    IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    query.appendOrderBy(getNameColumnName());
+    return idoFindIDsBySQL(query.toString());
+    // original sql statement
+		// return super.idoFindAllIDsOrderedBySQL(getNameColumnName());
 	}
 	/**
 	 *
@@ -940,9 +1027,21 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws FinderException
 	 */
 	public Collection ejbFindAll() throws FinderException {
-		//          String[] types = {this.getGroupTypeValue()};
-		//          return ejbFindAllGroups(types,true);
-		return super.idoFindIDsBySQL("select * from " + getEntityName() + " where " + getGroupTypeColumnName() + " like '" + this.getGroupTypeValue() + "' order by " + getNameColumnName());
+    IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    query
+      .appendAnd()
+      .appendLeftParenthesis()
+      .append(getGroupTypeColumnName())
+      .appendLike()
+      .append(getGroupTypeValue())
+      .appendRightParenthesis()
+      .appendOrderBy(getNameColumnName());
+    
+    return idoFindIDsBySQL(query.toString());
+    // original sql statement:
+		//return super.idoFindIDsBySQL("select * from " + getEntityName() + " where " + getGroupTypeColumnName() + " like '" + this.getGroupTypeValue() + "' order by " + getNameColumnName());
 	}
 	/**
 	 * @deprecated replaced with ejbFindAllGroups
@@ -1042,8 +1141,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		    }*/
 		sGroupList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupIDs);
 		if (!sGroupList.equals("")) {
-			String sql = "SELECT * FROM " + getTableName() + " WHERE " + getIDColumnName() + " in (" + sGroupList + ")";
-			toReturn = super.idoFindPKsBySQL(sql);
+      IDOQuery query = idoQueryGetSelect();
+      query.appendWhere();
+      appendIsNotDeleted(query);
+      query
+        .appendAnd()
+        .appendLeftParenthesis()
+        .append(getIDColumnName())
+        .appendIn(sGroupList)
+        .appendRightParenthesis();
+      // original sql statement
+			//String sql = "SELECT * FROM " + getTableName() + " WHERE " + getIDColumnName() + " in (" + sGroupList + ")";
+			toReturn = idoFindPKsBySQL(query.toString());
 		}
 		return toReturn;
 	}
@@ -1237,6 +1346,59 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   
   public void addPhone(Phone phone) throws IDOAddRelationshipException {
     this.idoAddTo(phone);
+  }  
+  
+  public boolean getDeleted() {
+    return getBooleanColumnValue(getColumnNameDeleted());
+  }
+  
+  public int getDeletedBy() {
+    return getIntColumnValue(getColumnNameDeleted());
+  }
+  
+  public Timestamp getDeletedWhen() {
+    return ((Timestamp) getColumnValue(getColumnNameDeletedWhen()));
+  }
+
+  public void setDeleted(boolean isDeleted) {
+    setColumn(getColumnNameDeleted(), isDeleted);
+  }
+  
+  public void setDeletedBy(int userId)  {
+    setColumn(getColumnNameDeletedBy(), userId);
+  }
+  
+  public void setDeletedWhen(Timestamp timestamp) {
+    setColumn(getColumnNameDeletedWhen(), timestamp);
+  }
+  
+  public void delete() throws SQLException {
+    throw new SQLException("Use delete(int userId) instead");
+  }
+  
+  /**
+   * Delete this instance, store timestamp and the id of the user that causes the
+   * the erasure
+   * 
+   * @param userId id of the user that is responsible for the deletion
+   */
+  public void delete(int userId) throws SQLException {
+    setDeleted(true);
+    
+    setDeletedWhen(IWTimestamp.getTimestampRightNow());
+    setDeletedBy(userId);
+
+    super.update();
+  }    
+  
+  private void appendIsNotDeleted(IDOQuery query) {
+    query      
+      .appendLeftParenthesis()
+      .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
+      .appendOr()
+      .append(getColumnNameDeleted())
+      .append(" IS NULL ")
+      .appendRightParenthesis();
   }  
   
 } // Class Group

@@ -84,5 +84,12 @@ public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNo
 	public Group getAlias() throws java.rmi.RemoteException;
   public void addEmail(com.idega.core.data.Email email) throws IDOAddRelationshipException;
   public void addPhone(com.idega.core.data.Phone phone) throws IDOAddRelationshipException;
+  public boolean getDeleted();
+  public void setDeleted(boolean isDeleted);
+  public int getDeletedBy();
+  public void setDeletedBy(int userId);
+  public java.sql.Timestamp getDeletedWhen();
+  public void setDeletedWhen(java.sql.Timestamp p0);
+  public void delete(int p0)throws java.sql.SQLException;
 }
 
