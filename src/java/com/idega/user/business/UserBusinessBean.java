@@ -1615,6 +1615,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return found;
 	}
 	
+	public boolean hasUserApplicationPermission(User user, IWUserContext iwuc) {
+		try {
+			Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
+			return !topNodes.isEmpty();
+		}
+		catch (RemoteException re) {
+			return false;
+		}
+	}
+	
 	/**
 	 * Returns a collection of Groups that are this users top nodes. The nodes that he has either view or owner permissions to<br>
 	 * To end up with only the top nodes we do the following:<br>

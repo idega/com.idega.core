@@ -229,4 +229,5 @@ public interface UserBusiness extends com.idega.business.IBOService
 		 */
 		public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes);
 		public Collection getUsersByLDAPAttribute(String key, String value);
+		public boolean hasUserApplicationPermission(User user, IWUserContext iwuc) throws RemoteException;
 }
