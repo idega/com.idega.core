@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.44 2001/09/13 18:43:27 eiki Exp $
+ * $Id: GenericEntity.java,v 1.45 2001/09/21 15:50:38 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1361,7 +1361,7 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 
-        public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{
+  public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{
 		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
                 StringBuffer buffer=new StringBuffer();
                 buffer.append("select * from ");
@@ -1370,15 +1370,19 @@ public abstract class GenericEntity implements java.io.Serializable {
                 buffer.append(this.getIDColumnName());
                 buffer.append("=");
                 buffer.append(this.getID());
+                if ( entity.getID() != -1 ) {
+                  buffer.append(" and ");
+                  buffer.append(entity.getIDColumnName());
+                  buffer.append("=");
+                  buffer.append(entity.getID());
+                }
                 String SQLString=buffer.toString();
 
                 return findRelated(entity,SQLString);
 	}
 
 	public GenericEntity[] findReverseRelated(GenericEntity entity)throws SQLException{
-		String tableToSelectFrom = getNameOfMiddleTable(this,entity);
-		String SQLString="select * from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
-		return findRelated(entity,SQLString);
+		return findRelated(entity);
 	}
 
 	protected GenericEntity[] findRelated(GenericEntity entity,String SQLString)throws SQLException{
