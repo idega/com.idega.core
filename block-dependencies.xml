@@ -1,6 +1,6 @@
 <project>
     <extend>base-project.xml</extend>
-    <!--- all jars are included in the core bundle, these jars are a subset of the jars of the core bundle -->
+    <!-- all jars are included in the core bundle, these jars are a subset of the jars of the core bundle -->
     <dependencies>
             <dependency>
             <groupId>servletapi</groupId>
