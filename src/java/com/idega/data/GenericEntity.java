@@ -2739,7 +2739,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
    protected void setPrimaryKey(int pk){
       Integer id = new Integer(pk);
-      this.setPrimaryKey(pk);
+      this.setPrimaryKey(id);
    }
 
    protected void setPrimaryKey(Object pk){
