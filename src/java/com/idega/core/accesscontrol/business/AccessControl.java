@@ -27,7 +27,6 @@ import com.idega.data.IDOLookup;
 import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.GroupBusiness;
