@@ -66,7 +66,7 @@ public class IDOEntityList implements List {
   }
 
   public boolean contains(Object o) {
-  	return _pkLists.contains(o);
+  	return _pkLists.containsIDOEntity(o);
   }
 
   public Object[] toArray() {
