@@ -56,7 +56,7 @@ public static String FONT_SIZE_34_HTML_7 = "7";
 public static String FONT_SIZE_34_STYLE_TAG = "34pt";
 
 public static String NON_BREAKING_SPACE = "&nbsp;";
-public static String BREAK = "<br>";
+public static String BREAK = "<br/>";
 
 public static final String EMPTY_TEXT_STRING = "No text";
 

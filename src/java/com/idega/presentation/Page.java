@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.13 2001/11/09 12:05:42 eiki Exp $
+ * $Id: Page.java,v 1.14 2001/11/09 12:10:55 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -65,7 +65,7 @@ public class Page extends PresentationObjectContainer {
   public static final String IW_FRAME_STORAGE_PARMETER = "idegaweb_frame_page";
   public static final String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
 
-  private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n<html>";
+  private final static String START_TAG="<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n<html>";
   private final static String END_TAG="</html>";
 
   /**
