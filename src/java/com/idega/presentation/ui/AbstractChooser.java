@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.7 2002/03/09 17:42:23 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.8 2002/03/15 00:40:26 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -137,18 +137,15 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     Table table = new Table(2,1);
     table.setCellpadding(0);
     table.setCellspacing(0);
-    TextInput input = new TextInput(displayInputName);
-    input.setDisabled(true);
 
-    if (_style != null) {
-      input.setAttribute("style",_style);
-    }
     Parameter value = new Parameter(getChooserParameter(),"");
-    table.add(value);
-    if(_stringValue!=null && _stringDisplay != null){
-      input.setValue(_stringDisplay);
+    if(_stringValue!=null){
       value.setValue(_stringValue);
     }
+    table.add(value);
+
+    PresentationObject object = getPresentationObject(iwc);
+
     table.add(new Parameter(VALUE_PARAMETER_NAME,value.getName()));
     //GenericButton button = new GenericButton("chooserbutton",bundle.getResourceBundle(iwc).getLocalizedString(chooserText,"Choose"));
     if (_addForm) {
@@ -166,7 +163,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
       link.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+getParentFormString(this));
       link.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
-      link.addParameter(DISPLAYSTRING_PARAMETER_NAME,input.getName());
+      link.addParameter(DISPLAYSTRING_PARAMETER_NAME,object.getName());
       link.addParameter(VALUE_PARAMETER_NAME,value.getName());
       if ( _attributeName != null && _attributeValue != null ) {
 	link.addParameter(_attributeName,_attributeValue);
@@ -175,15 +172,30 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     }
 
     if( _addTextInput ){
-      table.add(input,1,1);
+      table.add(object,1,1);
     }else {
       HiddenInput hInput = new HiddenInput(displayInputName);
       table.add(hInput,1,1);
     }
 
 
-    table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,input.getName()));
+    table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,"151324213"));
     return(table);
+  }
+
+  public PresentationObject getPresentationObject(IWContext iwc) {
+    TextInput input = new TextInput(displayInputName);
+    input.setDisabled(true);
+
+    if (_style != null) {
+      input.setAttribute("style",_style);
+    }
+
+    if(_stringDisplay != null){
+      input.setValue(_stringDisplay);
+    }
+
+    return input;
   }
 
   /*
