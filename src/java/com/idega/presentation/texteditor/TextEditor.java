@@ -41,8 +41,8 @@ public class TextEditor extends PresentationObject {
   public void main(IWContext iwc) {
     if( iwc.isIE() && (!iwc.isMacOS()) ){
       Page parent = getParentPage();
-      parent.addScriptSource(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/dhtmledit/dhtmleditor.js");
-      parent.addScriptSource(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/js/windows.js");
+      parent.addJavascriptURL(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/dhtmledit/dhtmleditor.js");
+      parent.addJavascriptURL(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/js/windows.js");
       //parent.addScriptSource("webEdition/dhtmledit/dhtmleditor.js");
       //parent.addScriptSource("webEdition/js/windows.js");
     }
