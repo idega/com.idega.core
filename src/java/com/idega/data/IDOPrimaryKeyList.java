@@ -77,6 +77,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		_size = size;
 		_PKs = new Vector(size);
 		_PKs.setSize(size);
+		//FIXME What if someone adds to the list?? the size must be updated
 		_tracker = new LoadTracker(size,fetchSize);
     }
 	
@@ -164,7 +165,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				ListIterator iter = setsToLoad.listIterator();
 				//JDBC 1.0
 				ResultSet RS = Stmt.executeQuery(_sqlQuery.toString());
-				System.out.println("EIKI DEBUG: "+_sqlQuery.toString());
+				
+				//System.out.println("EIKI DEBUG in idoprimarykeylist: "+_sqlQuery.toString());
 
 				int RSpos = -1;
 				while (iter.hasNext())
@@ -413,34 +415,41 @@ public class IDOPrimaryKeyList implements List, Runnable {
     /**@todo: Implement this java.util.List method*/
     throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
   }
+  /**
+   * fetches primary keys
+   */
   public Object get(int index) {
     Object obj = _PKs.get(index);
 	if(obj == null){
-		try
-		{
+		try{
 			loadSubset(index,index+_prefetchSize);
+			return ((IDOEntity)_PKs.get(index)).getPrimaryKey();
 		}
-		catch (Exception ex)
-		{
+		catch (Exception ex){
 			ex.printStackTrace();
 		}
+		return null;//otherwise we get a loop
+	}else {
+		return ((IDOEntity)obj).getPrimaryKey();
 	}
-	return ((IDOEntity)_PKs.get(index)).getPrimaryKey();
+	
   }
   
   Object getIDOEntity(int index) {
     Object obj = _PKs.get(index);
 	if(obj == null){
-		try
-		{
+		try{
 			loadSubset(index,index+_prefetchSize);
+			return _PKs.get(index);
 		}
-		catch (Exception ex)
-		{
+		catch (Exception ex){
 			ex.printStackTrace();
 		}
+		return null;//otherwise we get a loop
 	}
-	return ((IDOEntity)_PKs.get(index));
+	else {
+		return obj;
+	}
   }
   
   public Object remove(int index) {
@@ -461,16 +470,35 @@ public class IDOPrimaryKeyList implements List, Runnable {
     throw new java.lang.UnsupportedOperationException("Method toArray() not yet implemented.");
   }
   public boolean add(Object o) {
+/*
+TODO implement so that all the collection is loaded first if this method is called
+  	boolean success = _PKs.add(o);
+  	if(success) {
+  		_size++;	
+  	}
+  	return success;
+*/
     throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
   }
   public boolean containsAll(Collection c) {
     throw new java.lang.UnsupportedOperationException("Method containsAll() not yet implemented.");
   }
   public boolean addAll(Collection c) {
-    throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
+    //throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
+   /* boolean success = _PKs.addAll(c);
+	
+  	if(success) {
+  		_size+=c.size();	
+  	}
+  	
+  	return success;
+  */
+  //todo see add(obj)
+      throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
   }
   public boolean addAll(int index, Collection c) {
-    throw new java.lang.UnsupportedOperationException("Method addAll() not yet implemented.");
+    throw new java.lang.UnsupportedOperationException("Method addAll(index,collection) not implemented because you can only add to the end of the collection. use addAll(c) instead");
+    //return _PKs.addAll(index,c);
   }
   public boolean removeAll(Collection c) {
     throw new java.lang.UnsupportedOperationException("Method removeAll() not yet implemented.");
@@ -482,7 +510,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
     throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
   }
   public void add(int index, Object element) {
-    throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
+    throw new java.lang.UnsupportedOperationException("Method add() not not implemented because you can only add to the end of the collection. use add(obj) instead (not implemented either yet)");
+    //_PKs.add(index,element);
   }
   public int indexOf(Object o) {
     throw new java.lang.UnsupportedOperationException("Method indexOf() not yet implemented.");
