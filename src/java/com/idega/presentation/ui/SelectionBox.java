@@ -135,7 +135,8 @@ public void addMenuElement(int value,String DisplayString){
 }
 
 /**
- * Add menu elements from an List of GenericEntity Objects
+ * Add menu elements from an List of GenericEntity Objects and uses
+ * getName() to get string to display.
  */
 public void addMenuElements(List entityList){
 	if(entityList != null){
@@ -146,6 +147,48 @@ public void addMenuElements(List entityList){
             //if(entity[i].getID() != -1 && entity[i].getName() != null){
             addMenuElement(entity.getID(),entity.getName());
             //}
+          }
+	}
+}
+
+/**
+ * Add menu elements from an List of GenericEntity Objects and column name to
+ * get the display string from.
+ */
+public void addMenuElements(List entityList, String columnToView){
+	if(entityList != null){
+          int length = entityList.size();
+          GenericEntity entity;
+          Object object;
+          for (int i=0;i<length;i++){
+            entity = (GenericEntity) entityList.get(i);
+            object = entity.getColumnValue(columnToView);
+            if (object instanceof String){
+              addMenuElement(entity.getID(), (String) object);
+            }
+            else{
+              addMenuElement(entity.getID(), object.toString());
+            }
+          }
+	}
+}
+
+/**
+ * Add menu elements from an Array of GenericEntity Objects and column name to
+ * get the display string from.
+ */
+public void addMenuElements(GenericEntity[] entityArray, String columnToView){
+	if(entityArray != null){
+          int length = entityArray.length;
+          if (entityArray[0].getColumnValue(columnToView) instanceof String){
+            for (int i=0;i<length;i++){
+              addMenuElement(entityArray[i].getID(),(String)entityArray[i].getColumnValue(columnToView));
+            }
+          }
+          else{
+            for (int i=0;i<length;i++){
+              addMenuElement(entityArray[i].getID(), entityArray[i].getColumnValue(columnToView).toString());
+            }
           }
 	}
 }
