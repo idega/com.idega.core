@@ -313,6 +313,15 @@ public class ImageLabel extends Canvas {
     return(super.getPreferredSize());
   }
 
+
+  public Dimension getPreferredSize() {
+    return preferredSize();
+  }
+
+  public Dimension getMinimumSize() {
+    return minimumSize();
+  }
+
   //----------------------------------------------------
   /** Used by layout managers to calculate the smallest
    *  size allocated for the Component. Since some
