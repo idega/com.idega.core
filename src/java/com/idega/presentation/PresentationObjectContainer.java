@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.24 2004/02/20 16:37:43 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.25 2004/02/23 05:27:24 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -563,9 +563,10 @@ public class PresentationObjectContainer extends PresentationObject
 					if (item instanceof PresentationObject)
 					{
 						PresentationObject newObject = (PresentationObject) ((PresentationObject) item)._clone(iwc, askForPermission);
-						newObject.setParentObject(obj);
+						
 						//newObject.setLocation(this.getLocation());
 						obj.getChildren().set(index, newObject);
+						newObject.setParentObject(obj);
 					}
 				}
 				//}
