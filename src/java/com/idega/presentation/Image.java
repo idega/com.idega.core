@@ -59,6 +59,7 @@ public Image(String url){
 
 public Image(String url,String name){
 	super();
+        if( name.equalsIgnoreCase("") ) name = this.getID();
 	setName(name);
 	setURL(url);
 	setBorder(0);
@@ -283,8 +284,14 @@ public void setOnClickImage(Image image) {
 
 public void setOverImageURL(String overImageURL){
 	this.overImageUrl = overImageUrl;
-
 }
+
+public void setOverImage(Image image){
+  this.overImageUrl =image.getMediaServletString();
+  setAttribute("onMouseOut","swapImgRestore()");
+  setAttribute("onMouseOver","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
+}
+
 
 public String getOverImageURL(){
 	return this.overImageUrl;
