@@ -106,9 +106,9 @@ public class ITextXMLHandler {
 			try {
 				Vector buffers = new Vector();
 				Vector oses = new Vector();
-				System.out.println("Type is "+this.fileType);
+				//System.out.println("Type is "+this.fileType);
 				if((fileType & PDF) == 1){
-					System.out.println("starting PDF buffer");
+					//System.out.println("starting PDF buffer");
 					MemoryFileBuffer buf = new MemoryFileBuffer();
 					OutputStream OS = new MemoryOutputStream(buf);
 					PdfWriter.getInstance(document, OS);
@@ -116,7 +116,7 @@ public class ITextXMLHandler {
 					oses.add(OS);
 				}
 				if((fileType & TXT)==2){
-					System.out.println("starting TXT buffer");
+					//System.out.println("starting TXT buffer");
 					MemoryFileBuffer buf = new MemoryFileBuffer();
 					OutputStream OS = new MemoryOutputStream(buf);
 					TxtWriter.getInstance(document, OS);
@@ -124,7 +124,7 @@ public class ITextXMLHandler {
 					oses.add(OS);
 				}
 				if((fileType & HTML)==4){
-						System.out.println("starting HTML buffer");
+						//System.out.println("starting HTML buffer");
 						MemoryFileBuffer buf = new MemoryFileBuffer();
 						OutputStream OS = new MemoryOutputStream(buf);
 						HtmlWriter.getInstance(document, OS);
