@@ -100,9 +100,9 @@ public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0
 			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
-public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getIDOEntityListForPrimaryKeys(ids);
@@ -115,25 +115,25 @@ public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)thr
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException {
+public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean p2) throws FinderException, RemoteException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds, p2);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
-public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
+public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
-public Collection findUsersByConditions(String firstName, String middleName, String lastName,  String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
+public Collection findUsersByConditions(String firstName, String middleName, String lastName,  String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(firstName, middleName, lastName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(firstName, middleName, lastName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getIDOEntityListForPrimaryKeys(ids);

@@ -21,8 +21,8 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findUsersForUserRepresentativeGroups(java.util.Collection p0)throws javax.ejb.FinderException;
  public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
- public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
- public Collection findUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException;
+ public java.util.Collection findUsersBySearchCondition(java.lang.String p0, boolean orderLastFirst)throws javax.ejb.FinderException,java.rmi.RemoteException;
+ public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException, RemoteException;
  public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
  public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException;
@@ -31,8 +31,8 @@ public interface UserHome extends com.idega.data.IDOHome
  public int getUserCount()throws com.idega.data.IDOException;
  public java.lang.String getGroupType();
  public java.util.Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException;
- public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd) throws FinderException, RemoteException;
- public Collection findUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd) throws FinderException, RemoteException;
+ public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException;
+ public Collection findUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException;
  public Collection findUsersByMetaData(String key, String value) throws FinderException;
  public java.util.Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException;
  public java.util.Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date firstBirthDateInPeriode, java.sql.Date lastBirthDateInPeriode, Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;

@@ -1136,8 +1136,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		this.setID(icGroupId);
 	}
 
-	public Collection ejbFindUsersBySearchCondition(String condition) throws FinderException, RemoteException {
-		return ejbFindUsersBySearchCondition(condition, null);
+	public Collection ejbFindUsersBySearchCondition(String condition, boolean orderLastFirst) throws FinderException, RemoteException {
+		return ejbFindUsersBySearchCondition(condition, null, orderLastFirst);
 	}
 	
 	
@@ -1149,11 +1149,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @throws FinderException
 	 * @throws RemoteException
 	 */
-	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException {
+	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException, RemoteException {
 		
 		//strange stuff...examine
 		if (userIds != null && userIds.length == 0) {
-			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"});
+			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"}, orderLastFirst);
 		}else if (condition == null || condition.equals("")) {
 			if (userIds == null) {
 				return ejbFindAllUsers();
@@ -1161,15 +1161,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return ejbFindUsers(userIds);
 			}
 		}else {
-			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,200,null,userIds,false);
+			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,200,null,userIds,false, orderLastFirst);
 		}
 	}
 	
-	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
-		return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd);
+	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
+		return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 	}
 	
-	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
+	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
 		IDOQuery query = idoQuery();
 		boolean firstOperatorAdded = false;
 		
@@ -1245,7 +1245,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));	
 		}
       
-		query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
+		if (orderLastFirst)
+			query.appendOrderBy(this.getColumnNameLastName()+","+this.getColumnNameFirstName()+","+this.getColumnNameMiddleName());
+		else
+			query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
 			
 		return this.idoFindIDsBySQL(query.toString());
 	}
