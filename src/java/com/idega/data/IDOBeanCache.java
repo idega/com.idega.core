@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 
+import com.idega.util.caching.CacheMap;
+
 /**
  * Title:        idega Data Objects
  * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
@@ -27,21 +29,24 @@ public class IDOBeanCache {
 
   private Map getFindQueryCacheMap(){
     if(findQueryCacheMap==null){
-      findQueryCacheMap=new HashMap();
+      //findQueryCacheMap=new HashMap();
+    	findQueryCacheMap = new CacheMap(200);
     }
     return findQueryCacheMap;
   }
 
   private Map getHomeQueryCacheMap(){
     if(homeQueryCacheMap==null){
-      homeQueryCacheMap=new HashMap();
+      //homeQueryCacheMap=new HashMap();
+    	homeQueryCacheMap = new CacheMap(200);
     }
     return homeQueryCacheMap;
   }
 
   private Map getCacheMap(){
     if(cacheMap==null){
-      cacheMap=new HashMap();
+      //cacheMap=new HashMap();
+    	cacheMap = new CacheMap(200);
     }
     return cacheMap;
   }
