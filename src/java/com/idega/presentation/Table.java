@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.55 2004/02/23 13:36:56 tryggvil Exp $
+ * $Id: Table.java,v 1.56 2004/02/26 09:38:36 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -95,8 +95,8 @@ public class Table extends PresentationObjectContainer {
 	protected int[] lineCols = new int[0];
 	protected String markupLanguage = null;
 	
-	protected String _width = "0";
-	protected String _height = "0";
+	protected String _width = null;
+	protected String _height = null;
 
 
 	public static final String HUNDRED_PERCENT = "100%";
