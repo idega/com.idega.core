@@ -1750,5 +1750,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		 
 	}
 	
+	public static Collection getAllGroupViewPermissions(Group group){
+			Collection returnCol = null;
+			try{
+				returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
+			}
+			catch(FinderException ex){
+				returnCol =  new Vector();//empty
+			}
+			catch(RemoteException x){
+				x.printStackTrace();
+				returnCol =  new Vector();//empty
+			}
+		
+			return returnCol;
+		 
+		}
+	
 
 } // Class AccessControl
