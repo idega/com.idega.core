@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.71 2001/11/21 18:21:56 aron Exp $
+ * $Id: GenericEntity.java,v 1.72 2001/11/25 18:16:47 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1699,6 +1699,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
 		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" like '"+columnValue+"'");
+	}
+
+	 public int getNumberOfRecords(String columnName, int columnValue)throws SQLException{
+		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" = "+columnValue);
 	}
 
         public int getNumberOfRecordsRelated(GenericEntity entity)throws SQLException{
