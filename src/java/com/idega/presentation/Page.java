@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.102 2004/03/31 22:41:52 eiki Exp $
+ *  $Id: Page.java,v 1.103 2004/04/03 16:29:48 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -985,6 +985,8 @@ public class Page extends PresentationObjectContainer {
 				obj._javascripts = _javascripts;
 			if (_styleSheets != null)
 				obj._styleSheets = _styleSheets;
+			if (_styleDefinitions != null)
+				obj._styleDefinitions = _styleDefinitions;
 
 		}
 		catch (Exception ex) {
