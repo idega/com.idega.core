@@ -38,7 +38,7 @@ public void print(IWContext iwc)throws IOException{
 			//
 			//}
 			//else{
-				println("<input type=\"hidden\" name=\""+getName()+"\" "+getAttributeString()+" >");
+				print("<input type=\"hidden\" name=\""+getName()+"\" "+getAttributeString()+" >");
 				//println("</input>");
 			//}
 		}
