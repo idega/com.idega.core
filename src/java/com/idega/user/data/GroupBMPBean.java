@@ -217,6 +217,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new EJBException(e.getMessage());
 		}
 		return theReturn;
