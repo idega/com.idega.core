@@ -1,5 +1,5 @@
 /*
- * $Id: WindowViewNode.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
+ * $Id: WindowViewNode.java,v 1.2 2004/12/20 08:55:01 tryggvil Exp $
  * Created on 4.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,16 +12,16 @@ package com.idega.faces.viewnode;
 import javax.faces.application.ViewHandler;
 import com.idega.core.view.DefaultViewNode;
 import com.idega.core.view.ViewNode;
-import com.idega.faces.smile.WindowViewHandler;
+import com.idega.faces.WindowViewHandler;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class WindowViewNode extends DefaultViewNode {
 
@@ -45,14 +45,14 @@ public class WindowViewNode extends DefaultViewNode {
 	}
 	
 	private void initialize(){
-		this.setCBP(true);
-		try {
+		this.setComponentBased(true);
+		/*try {
 			this.setComponentClass(Class.forName("com.idega.webface.workspace.WorkspaceLoginPage"));
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	

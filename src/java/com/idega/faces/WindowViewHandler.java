@@ -1,10 +1,10 @@
 /*
- * Created on 16.9.2004
+ * Created on 18.5.2004
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,6 +15,11 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.FrameTable;
+import com.idega.presentation.IWContext;
+import com.idega.faces.smile.CbpViewHandler;
+import com.idega.faces.smile.Page;
+import com.idega.faces.smile.PageWrapper;
 import com.idega.util.StringHandler;
 
 /**
@@ -23,24 +28,31 @@ import com.idega.util.StringHandler;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ViewNodeViewHandler extends CbpViewHandler {
+public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	
 	private static Logger log = Logger.getLogger(WindowViewHandler.class.getName());
-	private ViewNode viewNode;
+	private Class defaultPageClass;
 	
 	/**
 	 * 
 	 */
-	public ViewNodeViewHandler() {
+	//public WindowViewHandler() {
+	//	super();
+	//}
+	
+	public WindowViewHandler(ViewHandler parentViewHandler) {
+		//super(parentViewHandler);
 		super();
 	}
+	
 	/**
 	 * @param parentViewHandler
 	 */
-	public ViewNodeViewHandler(ViewNode viewNode) {
-		setViewNode(viewNode);
-		ViewHandler parentViewHandler =viewNode.getViewHandler();
-		this.setParentViewHandler(parentViewHandler);
+	public WindowViewHandler(ViewNode windowViewNode) {
+		this(windowViewNode.getParent().getViewHandler());
+		//this.defaultPageClass=windowViewNode.getComponentClass();
+		
+		//this.setParentViewHandler(parentViewHandler);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
@@ -52,19 +64,32 @@ public class ViewNodeViewHandler extends CbpViewHandler {
 		//Page smilePage getSmilePagesWrapper(obj);
 		UIViewRoot ret = new UIViewRoot();
 		
-		ret.setViewId(viewId);	
+		
 
 		try {
-			Class descriptorClazz = getDescriptorClassNameForViewId(viewId);
-			if(descriptorClazz == null) { 
-				// JSP page....
-			} else {
-				if(Page.class.isAssignableFrom(descriptorClazz)) {
-					Page page = (Page) descriptorClazz.newInstance();
-					page.init(ctx,ret);
+			if(isFrameRequest(ctx)){
+				IWContext iwc = IWContext.getIWContext(ctx);
+				com.idega.presentation.Page frame = com.idega.presentation.Page.loadPage(iwc);
+				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+				String newViewId = viewId+frameId;
+				ret.setViewId(newViewId);
+					
+				Page page = new PageWrapper(frame);
+				page.init(ctx,ret);
+			}
+			else{
+				ret.setViewId(viewId);
+				Class descriptorClazz = getDescriptorClassNameForViewId(viewId);
+				if(descriptorClazz == null) { 
+					// JSP page....
 				} else {
-					Page page = new PageWrapper((UIComponent)descriptorClazz.newInstance());
-					page.init(ctx,ret);
+					if(Page.class.isAssignableFrom(descriptorClazz)) {
+						Page page = (Page) descriptorClazz.newInstance();
+						page.init(ctx,ret);
+					} else {
+						Page page = new PageWrapper((UIComponent)descriptorClazz.newInstance());
+						page.init(ctx,ret);
+					}
 				}
 			}
 		} catch(IllegalAccessException e) {
@@ -98,6 +123,17 @@ public class ViewNodeViewHandler extends CbpViewHandler {
 		return ret;
 	}
 	
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	private boolean isFrameRequest(FacesContext ctx) {
+		String value = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+		if(value!=null){
+			return true;
+		}
+		return false;
+	}
 	private Class getDescriptorClassNameForViewId(String viewId) throws ClassNotFoundException{
 		String encryptedClassName = null;
 		//if(viewId.startsWith("/window")){
@@ -128,17 +164,6 @@ public class ViewNodeViewHandler extends CbpViewHandler {
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{
 		return Class.forName("com.idega.webface.workspace.WorkspaceLoginPage");
-	}
-	/**
-	 * @return Returns the viewNode.
-	 */
-	protected ViewNode getViewNode() {
-		return viewNode;
-	}
-	/**
-	 * @param viewNode The viewNode to set.
-	 */
-	protected void setViewNode(ViewNode viewNode) {
-		this.viewNode = viewNode;
+		//return defaultPageClass;
 	}
 }

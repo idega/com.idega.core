@@ -6,7 +6,7 @@
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import javax.faces.application.ViewHandler;
 
@@ -22,7 +22,7 @@ public class LoginViewHandler extends WindowViewHandler {
 	 * @param parentViewHandler
 	 */
 	public LoginViewHandler(ViewHandler parentViewHandler) {
-		this.setParentViewHandler(parentViewHandler);
+		super(parentViewHandler);
 	}	
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{

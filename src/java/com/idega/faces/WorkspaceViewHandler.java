@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import javax.faces.application.ViewHandler;
 
@@ -15,18 +15,12 @@ import javax.faces.application.ViewHandler;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class WorkspaceViewHandler extends WindowViewHandler {
-	/**
-	 * 
-	 */
-	public WorkspaceViewHandler() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+
 	/**
 	 * @param parentViewHandler
 	 */
 	public WorkspaceViewHandler(ViewHandler parentViewHandler) {
-		this.setParentViewHandler(parentViewHandler);
+		super(parentViewHandler);
 	}
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{

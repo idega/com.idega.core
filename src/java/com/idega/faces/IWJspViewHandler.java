@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.2 2004/11/14 23:37:11 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.1 2004/12/20 08:55:01 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -7,7 +7,7 @@
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,19 +15,17 @@ import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
-import com.idega.faces.ViewHandlerWrapper;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -103,9 +101,9 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public UIViewRoot restoreView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isJSP()){
+		if(node.isResourceBased()){
 			if(!viewId.endsWith(JSP_EXT)){
-				newViewId=node.getJSPURI();
+				newViewId=node.getResourceURI();
 			}
 		}
 		return super.restoreView(context, newViewId);
@@ -117,8 +115,8 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public UIViewRoot createView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isJSP()){
-			newViewId=node.getJSPURI();
+		if(node.isResourceBased()){
+			newViewId=node.getResourceURI();
 		}
 		return super.createView(context, newViewId);
 	}
@@ -127,7 +125,15 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public String getActionURL(FacesContext context, String viewId) {
 		//The default faces implementation is a little bit strange here. it returns something like /contentapp/workspace/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsp
 		//Here we return ust the requestUri. This might have to change.
-		HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
-		return request.getRequestURI();
+		
+		//HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
+		//return request.getRequestURI();
+		String servletPath = context.getExternalContext().getRequestContextPath();
+		String requestUri = getViewManager().getRequestUrl(context);
+		return servletPath+requestUri;
+	}
+	
+	protected ViewManager getViewManager(){
+		return ViewManager.getInstance(IWMainApplication.getDefaultIWMainApplication());
 	}
 }

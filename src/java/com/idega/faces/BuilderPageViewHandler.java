@@ -4,22 +4,21 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Locale;
-
 import javax.faces.FacesException;
-import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-
 import com.idega.builder.business.BuilderLogic;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.faces.smile.Page;
+import com.idega.faces.smile.PageWrapper;
 import com.idega.presentation.IWContext;
 
 /**
@@ -28,18 +27,19 @@ import com.idega.presentation.IWContext;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class BuilderPageViewHandler extends CbpViewHandler {
+public class BuilderPageViewHandler extends ViewHandlerWrapper{//CbpViewHandler {
 	/**
 	 * 
 	 */
-	public BuilderPageViewHandler() {
-		super();
-	}
+	//public BuilderPageViewHandler() {
+	//	super();
+	//}
 	/**
 	 * @param parentViewHandler
 	 */
 	public BuilderPageViewHandler(ViewHandler parentViewHandler) {
-		this.setParentViewHandler(parentViewHandler);
+		//this.setParentViewHandler(parentViewHandler);
+		super(parentViewHandler);
 	}
 	
 	
@@ -72,20 +72,18 @@ public class BuilderPageViewHandler extends CbpViewHandler {
 		// TODO Auto-generated method stub
 		return super.getResourceURL(ctx, path);
 	}
-	/* (non-Javadoc)
-	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#getStateManager()
-	 */
+
+	/*Former Smile methods:
+	 * 
 	public StateManager getStateManager() {
 		// TODO Auto-generated method stub
 		return super.getStateManager();
 	}
-	/* (non-Javadoc)
-	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#getViewIdPath(javax.faces.context.FacesContext, java.lang.String)
-	 */
 	public String getViewIdPath(FacesContext ctx, String viewId) {
 		// TODO Auto-generated method stub
 		return super.getViewIdPath(ctx, viewId);
 	}
+	 */
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
 	 */
@@ -145,17 +143,18 @@ public class BuilderPageViewHandler extends CbpViewHandler {
 	  	BuilderService bs = BuilderServiceFactory.getBuilderService(iwc);
 	    
 
-	    boolean builderview = false;
+	    /*boolean builderview = false;
 	    if (iwc.isParameterSet("view")) {
 	      if(blogic.isBuilderApplicationRunning(iwc)){
 	        String view = iwc.getParameter("view");
 	        if(view.equals("builder"))
 	          builderview=true;
 	      }
-	    }
-
-	    int i_page_id = bs.getCurrentPageId(iwc);
-	    return(blogic.getPage(i_page_id,builderview,iwc));
+	    }*/
+	    //int i_page_id = bs.getCurrentPageId(iwc);
+	    String pageKey = bs.getCurrentPageKey(iwc);
+	    //return(blogic.getPage(i_page_id,builderview,iwc));
+	    return blogic.getPage(pageKey,iwc);
 	}
 	
 	/* (non-Javadoc)

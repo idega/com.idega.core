@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.2 2004/12/20 08:55:01 tryggvil Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.idega.core.view.DefaultViewNode;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
-import com.idega.faces.smile.IWJspViewHandler;
-import com.idega.faces.smile.RootViewHandler;
 import com.idega.idegaweb.IWMainApplication;
 
 
@@ -39,10 +37,10 @@ import com.idega.idegaweb.IWMainApplication;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -92,7 +90,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 		//viewManager.initializeStandardViews(new RootViewHandler(parentViewHandler));
 		ViewNode root = viewManager.getApplicationRoot();
 		DefaultViewNode dRoot = (DefaultViewNode)root;
-		dRoot.setViewHandler(new RootViewHandler(this.getParentViewHandler()));
+		dRoot.setViewHandler(new RootNodeViewHandler(this.getParentViewHandler()));
 	}
 	
 	/*
@@ -153,7 +151,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 		//ViewHandler viewHandler = getViewHandlerForUrl(url,ctx);
 		ViewNode node = getViewManager().getViewNodeForContext(ctx);
 			if(node!=null){
-				if(node.isJSP()){
+				if(node.isResourceBased()){
 					return jspViewHandler;
 				}
 				else{
