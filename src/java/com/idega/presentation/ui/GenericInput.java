@@ -39,10 +39,10 @@ public abstract class GenericInput extends InterfaceObject {
 	
 	public void print(IWContext main) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getAttributeString() + " >");
+			print("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getAttributeString() + " >");
 		}
 		else if (getLanguage().equals("WML")) {
-			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getAttributeString() + " />");
+			print("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getAttributeString() + " />");
 		}
 	}
 	
