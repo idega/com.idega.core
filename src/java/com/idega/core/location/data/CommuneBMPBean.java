@@ -148,7 +148,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
   
 	public Integer ejbFindByCommuneCode(String communeCode) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).appendWhereEquals(COLUMN_COMMUNE_CODE, communeCode)
+		query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(COLUMN_COMMUNE_CODE, communeCode)
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y");
 		return (Integer) idoFindOnePKByQuery(query);
 	}
