@@ -7,6 +7,11 @@
         <logo>http://maven.idega.com/idega_onwhite_120.gif</logo>
     </organization>
     <inceptionYear>2000</inceptionYear>
-    <issueTrackingUrl>http://issues.idega.is</issueTrackingUrl>
+
+  <url>http://maven.idega.com/</url>
+  <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
+  <siteAddress>maven.idega.com</siteAddress>
+  <siteDirectory>/var/www/webs/maven.idega.com/${project.groupId}/${project.artifactId}/</siteDirectory>
+  <distributionDirectory>/var/www/webs/maven.idega.com/${project.groupId}/${project.artifactId}/</distributionDirectory>
 
 </project>
