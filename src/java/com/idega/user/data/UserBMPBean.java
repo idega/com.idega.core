@@ -1176,11 +1176,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
 		IDOQuery query = idoQuery();
-		
-		if(startAge==endAge){
-			
-		}
-		
+				
 		IWTimestamp fromAgeStamp = IWTimestamp.RightNow();
 		IWTimestamp toAgeStamp = IWTimestamp.RightNow();
 		
