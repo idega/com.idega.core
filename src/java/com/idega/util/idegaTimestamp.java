@@ -451,6 +451,9 @@ public class idegaTimestamp{
     Calendar.add(Calendar.DATE, num_of_days );
   }
 
+  public void addMinutes( int num_of_minutes ){
+    Calendar.add(Calendar.MINUTE, num_of_minutes );
+  }
 
   public String getISLDate(){
     return getDate() + "."+getNameOfMonth(getMonth())+"&nbsp;"+getYear();
