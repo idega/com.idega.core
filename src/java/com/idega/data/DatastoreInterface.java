@@ -2,7 +2,7 @@
 
 /*
 
- * $Id: DatastoreInterface.java,v 1.43 2002/03/26 14:58:56 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.44 2002/03/27 19:40:19 eiki Exp $
 
  *
 
@@ -682,7 +682,7 @@ public abstract class DatastoreInterface{
 
       }
 
-      catch (SQLException e)
+      catch (Exception e)
 
       {
 
@@ -698,15 +698,13 @@ public abstract class DatastoreInterface{
 
             }
 
-            catch (SQLException se)
+            catch (Exception se)
 
             { }
 
          }
 
-         //logWriter.log(e, "Pooled Connection was not okay",
-
-         //                  LogWriter.ERROR);
+         //logWriter.log(e, "Pooled Connection was not okay",LogWriter.ERROR);
 
          return false;
 
