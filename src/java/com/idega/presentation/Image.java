@@ -268,6 +268,10 @@ public boolean hasSource(){
 }
 
 
+public void setOnClick(String action){
+  setAttribute("onClick",action);
+}
+
 public void setOverImageURL(String overImageURL){
 	this.overImageUrl = overImageUrl;
 
