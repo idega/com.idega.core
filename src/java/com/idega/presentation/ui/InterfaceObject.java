@@ -20,6 +20,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	private boolean _disableObject = false;
 	private boolean _checkDisabled = false;
 	private boolean _inFocus = false;
+	private boolean _changeValue = false;
 	
 	public static final String ACTION_ON_BLUR = "onBlur";
 	public static final String ACTION_ON_CHANGE = "onChange";
@@ -342,6 +343,48 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 
 	/**
+	 * Sets the value of the given interface object when this object receives the action 
+	 * specified.
+	 * @param action	The action to perform on.
+	 * @param objectToChange	The interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnAction(String action, InterfaceObject objectToChange, String value) {
+		setValueOnAction(action, objectToChange.getName(), value);
+	}
+	
+	/**
+	 * Sets the value of the interface object with the given namewhen this object receives 
+	 * the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectName	The name of the interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnAction(String action, String objectName, String value) {
+		_changeValue = true;
+		setOnAction(action, "changeValue(findObj('"+objectName+"'),'"+value+"');");
+	}
+	
+	/**
+	 * Sets the value of the given interface object when this object is clicked.
+	 * @param objectToChange	The interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnClick(InterfaceObject objectToChange, String value) {
+		setValueOnAction(ACTION_ON_CLICK, objectToChange.getName(), value);
+	}
+	
+	/**
+	 * Sets the value of the interface object with the given name when this object is clicked.
+	 * @param objectName	The name of the interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnClick(String objectName, String value) {
+		setValueOnAction(ACTION_ON_CLICK, objectName, value);
+	}
+	
+	
+	/**
 	 * Sets the interface object in focus on page load.
 	 * @param inFocus	Set to true to set focus on object, false otherwise.
 	 */
@@ -450,12 +493,15 @@ public abstract class InterfaceObject extends PresentationObject {
 		if (isEnclosedByForm()) {
 			if (_checkObject) {
 				if (_checkDisabled)
-					getScript().addFunction("checkAllObjects", "function checkAllObjects (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].checked=eval(value);\n	}");
+					getScript().addFunction("checkAllObjects", "function checkAllObjects (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].checked=eval(value);\n	\t}\n	else\n	\tinputs.checked=eval(value);\n}");
 				else
-					getScript().addFunction("checkEnabledObjects", "function checkEnabledObjects (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tif ( inputs[i].disabled == false )\n	\t\tinputs[i].checked=eval(value);\n	}");
+					getScript().addFunction("checkEnabledObjects", "function checkEnabledObjects (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\tif ( inputs[i].disabled == false )\n	\t\tinputs[i].checked=eval(value);\n	\t}\n	else\n	\tif (inputs.disabled == false)\n	\t\tinputs.checked=eval(value);\n}");
 			}
 			if (_disableObject) {
-				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].disabled=eval(value);\n	}");
+				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
+			}
+			if (_changeValue) {
+				getScript().addFunction("changeValue", "function changeValue (input,newValue) {\n	input.value=newValue;\n}");
 			}
 		}
 		if (_inFocus && hasParentPage()) {
