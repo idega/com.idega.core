@@ -499,6 +499,7 @@ public class Form extends InterfaceObject {
 			
 			SubmitButton theButton = new SubmitButton();
 			List parameters = new ArrayList();
+			boolean useFieldset = false;
 			
 			for (int j = 0; j < allInterfaceObjects.length; j++) {
 				if(!(allInterfaceObjects[j] instanceof Parameter) && !(allInterfaceObjects[j] instanceof GenericButton)) {
@@ -513,6 +514,7 @@ public class Form extends InterfaceObject {
 						}
 						postFields.append("<postfield name=\"" + name + "\" value=\"$" + name + "\" />");
 					}
+					useFieldset = true;
 				} else if(allInterfaceObjects[j] instanceof Parameter || allInterfaceObjects[j] instanceof HiddenInput) {
 					parameters.add(allInterfaceObjects[j]);
 				}
@@ -522,9 +524,13 @@ public class Form extends InterfaceObject {
 			}
 //			print("</refresh>");
 //			print("</onevent>");
-			print("<p><fieldset>");
+			if(useFieldset){
+				print("<p><fieldset>");
+			}
 			super.print(iwc);
-			print("</fieldset></p>");
+			if(useFieldset){
+				print("</fieldset></p>");
+			}
 			
 			print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
 			String url = getAction();
