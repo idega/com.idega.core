@@ -22,6 +22,9 @@ public interface IWApplicationContext extends java.io.Serializable{
   public void setApplicationAttribute(String attributeName,Object attributeValue);
   public Object getApplicationAttribute(String attributeName);
   public void removeApplicationAttribute(String attributeName);
+  /**
+   * Gets the Domain which this idegaWeb Application is running under
+   */
   public IBDomain getDomain()throws RemoteException;
 
 }
