@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
  */
 public class AttributeParser {
 
-	public Map parse(String stringToParse) {
+	public static Map parse(String stringToParse) {
 		Map map = new HashMap();
 		
 		StringTokenizer tokens = new StringTokenizer(stringToParse, " ");
