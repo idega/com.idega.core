@@ -58,16 +58,7 @@ public class User extends GenericEntity {
     }
 
     public void insertStartData() throws SQLException {
-      User firstUser = new User();
-      firstUser.setFirstName(getAdminDefaultName());
-      firstUser.insert();
 
-      UserGroupRepresentative re = new UserGroupRepresentative();
-      re.setName("admin");
-      re.insert();
-
-      firstUser.setGroupID(re.getID());
-      firstUser.update();
     }
 
     public String getIDColumnName(){
@@ -172,6 +163,9 @@ public class User extends GenericEntity {
     /*  Setters begin   */
 
     public void setFirstName(String fName) {
+      if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
+        fName = "Invalid name";
+      }
       setColumn(getColumnNameFirstName(),fName);
     }
 

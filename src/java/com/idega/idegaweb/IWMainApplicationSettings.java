@@ -12,6 +12,9 @@ import com.idega.util.FileUtil;
 import java.util.List;
 import com.idega.util.LocaleUtil;
 import com.idega.data.EntityControl;
+import java.util.Iterator;
+import java.util.Vector;
+import com.idega.core.accesscontrol.business.AccessControler;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -25,6 +28,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
   private static String DEFAULT_FONT="defaultfont";
   private static String DEFAULT_FONT_SIZE="defaultfontsize";
   private static String DEFAULT_LOCALE="defaultlocale";
+  private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
 
 
   public IWMainApplicationSettings(IWMainApplication application){
@@ -85,6 +89,10 @@ public class IWMainApplicationSettings extends IWPropertyList{
       return locale;
     }
 
+    public AccessControler getDefaultAccessControler(){
+      return(AccessControler) new com.idega.core.accesscontrol.business.AccessControl();
+    }
+
     /**
      * Returns false if the removing fails
      */
@@ -103,6 +111,23 @@ public class IWMainApplicationSettings extends IWPropertyList{
      * Returns a list of Class objects corresponding to the IWService Classes
      */
     public List getServiceClasses(){
+      //return null;
+      IWPropertyList plist = getIWPropertyList(_SERVICE_CLASSES_KEY);
+      if(plist!=null){
+        List l = new Vector();
+        Iterator iter = plist.iterator();
+        while (iter.hasNext()) {
+          IWProperty item = (IWProperty)iter.next();
+          String serviceClass = item.getValue();
+          try {
+            l.add(Class.forName(serviceClass));
+          }
+          catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+        return l;
+      }
       return null;
     }
 

@@ -164,7 +164,10 @@ public class CreateUser extends Window {
       gr[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       List groups = com.idega.core.data.GenericGroup.getAllGroups(gr,false);
       if(groups != null){
-        groups.removeAll(AccessControl.getStandardGroups());
+        /**
+         * @todo filter standardGroups
+         */
+        //groups.removeAll(AccessControler.getStandardGroups());
         Iterator iter = groups.iterator();
         while (iter.hasNext()) {
           GenericGroup item = (GenericGroup)iter.next();

@@ -11,7 +11,7 @@ package com.idega.idegaweb;
 *@version 0.5 - Under development
 *Class to serve as a service superclass for background timed services (threads )on an IdegaWeb Application
 */
-public abstract class IWTimedService extends IWService implements Runnable{
+public abstract class IWTimedService extends IWServiceImpl implements Runnable{
 
     private Thread thread;
 

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.2 2001/10/10 12:34:10 gummi Exp $
+ * $Id: PresentationObject.java,v 1.3 2001/10/16 16:06:04 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -392,7 +392,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
     if(askForPermission){
-      if(com.idega.core.accesscontrol.business.AccessControl.hasViewPermission(this,iwc)){
+      if(iwc.getAccessControler().hasViewPermission(this,iwc)){
         return this.clone(iwc,askForPermission);
       } else {
         return NULL_CLONE_OBJECT;

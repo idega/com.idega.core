@@ -300,7 +300,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
           right.addElement(Integer.toString(((GenericGroup)item).getID()),((GenericGroup)item).getName());
         }
       }
-      List notDirectGroups = UserBusiness.getAllGroupsNotDirectlyRelated(userId);
+      List notDirectGroups = UserBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
       if(notDirectGroups != null){
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {

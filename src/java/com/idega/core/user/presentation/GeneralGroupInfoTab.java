@@ -330,7 +330,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
           right.addElement(Integer.toString(((GenericGroup)item).getID()),((GenericGroup)item).getName());
         }
       }
-      List notDirectGroups = UserGroupBusiness.getAllGroupsNotDirectlyRelated(groupId);
+      List notDirectGroups = UserGroupBusiness.getAllGroupsNotDirectlyRelated(groupId,iwc);
       if(notDirectGroups != null){
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {

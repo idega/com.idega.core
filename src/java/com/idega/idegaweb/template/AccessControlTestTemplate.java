@@ -25,7 +25,7 @@ public class AccessControlTestTemplate extends TemplatePage {
   }
 
   public void main(IWContext iwc) throws Exception {
-    if(AccessControl.hasPermission(AccessControl.getViewPermissionString(),myForums,iwc)){
+    if(iwc.getAccessControler().hasPermission(AccessControl.getViewPermissionString(),myForums,iwc)){
       this.add(myForums);
     }else{
       this.add(new Text("ekki leyfi!"));

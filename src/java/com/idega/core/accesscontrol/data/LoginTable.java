@@ -37,7 +37,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 		return "ic_login";
 	}
 
-        public void insertStartData() throws SQLException {
+/*        public void insertStartData() throws SQLException {
           LoginTable login = new LoginTable();
           LoginInfo li = new LoginInfo();
           List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getColumnNameFirstName(),User.getAdminDefaultName());
@@ -59,7 +59,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
             li.setID(login.getID());
             li.insert();
             */
-            LoginDBHandler.createLogin(adminUser.getID(), User.getAdminDefaultName(), "idega", Boolean.TRUE, null, -1, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, EncryptionType.MD5);
+/*            LoginDBHandler.createLogin(adminUser.getID(), User.getAdminDefaultName(), "idega", Boolean.TRUE, null, -1, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, EncryptionType.MD5);
           }
           catch (Exception ex) {
             System.err.println(ex.getMessage());
@@ -77,7 +77,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
             control.createPermissionGroup(AccessControl.getAdministratorGroupName(),null,null,userId,null);
           }
         }
-
+*/
         public static LoginTable getStaticInstance(){
           return (LoginTable)LoginTable.getStaticInstance(LoginTable.class);
         }

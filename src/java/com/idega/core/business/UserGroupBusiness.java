@@ -13,6 +13,7 @@ import java.util.Iterator;
 import com.idega.data.GenericEntity;
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        User
@@ -30,13 +31,13 @@ public class UserGroupBusiness {
   }
 
 
-  public static List getAllGroups() {
+  public static List getAllGroups(IWContext iwc) {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
       groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
-      return UserGroupBusiness.getGroups(groupsNotToReturn,false);
+      return UserGroupBusiness.getGroups(groupsNotToReturn,false,iwc);
       //return EntityFinder.findAll(GenericGroup.getStaticInstance());
     }
     catch (SQLException ex) {
@@ -45,10 +46,10 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
+  public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws SQLException {
     List result = GenericGroup.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
-      result.removeAll(AccessControl.getStandardGroups());
+      result.removeAll(iwc.getAccessControler().getStandardGroups());
     }
     return result;
   }
@@ -94,11 +95,11 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getAllGroupsNotDirectlyRelated(int uGroupId){
+  public static List getAllGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
     try {
       GenericGroup group = new GenericGroup(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      List AllGroups =  UserGroupBusiness.getAllGroups();// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List AllGroups =  UserGroupBusiness.getAllGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){

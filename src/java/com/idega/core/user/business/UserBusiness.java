@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import com.idega.data.GenericEntity;
 import com.idega.core.business.UserGroupBusiness;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        User
@@ -467,7 +468,7 @@ public class UserBusiness {
     }
   }
 
-  public static List getAllGroupsNotDirectlyRelated(int iUserId){
+  public static List getAllGroupsNotDirectlyRelated(int iUserId,IWContext iwc){
     try {
 
       User user = new User(iUserId);
@@ -488,7 +489,7 @@ public class UserBusiness {
         return null;
       }
       */
-      return UserGroupBusiness.getAllGroupsNotDirectlyRelated(user.getGroupID());
+      return UserGroupBusiness.getAllGroupsNotDirectlyRelated(user.getGroupID(),iwc);
     }
     catch (SQLException ex) {
       ex.printStackTrace();

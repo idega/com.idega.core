@@ -1,8 +1,3 @@
-//idega 2001 - Tryggvi Larusson
-/*
-*Copyright 2001 idega.is All Rights Reserved.
-*/
-
 package com.idega.servlet;
 
 import java.io.File;
@@ -118,6 +113,8 @@ public class IWStarterServlet extends GenericServlet
             }
             startDatabasePool();
             application.loadBundles();
+
+            application.startAccessControler();
 
             executeServices(application);
             sendStartMessage("Completed");

@@ -13,7 +13,13 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.*;
+import com.idega.core.user.business.UserBusiness;
+import com.idega.util.idegaTimestamp;
 import com.idega.data.SimpleQuerier;
+import com.idega.util.EncryptionType;
+import com.idega.idegaweb.IWServiceImpl;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.core.user.data.UserGroupRepresentative;
 
 
 
@@ -26,77 +32,35 @@ import com.idega.data.SimpleQuerier;
  * @version 1.0
  */
 
-public class AccessControl{
+public class AccessControl extends IWServiceImpl implements AccessControler {
+/**
+ * @todo change next 4 variables to applicationAddesses
+ */
+  private PermissionGroup AdministratorPermissionGroup = null;
+  private PermissionGroup PermissionGroupEveryOne = null;
+  private PermissionGroup PermissionGroupUsers = null;
+  private List standardGroups = null;
 
-  private static PermissionGroup AdministratorPermissionGroup = null;
-  private static PermissionGroup PermissionGroupEveryOne = null;
-  private static PermissionGroup PermissionGroupUsers = null;
-  private static List statndardGroups = null;
+  private static final String _APPADDRESS_ADMINISTRATOR_USER = "ic_super_admin";
+  private static final String _ADMINISTRATOR_NAME = "Administrator";
 
   public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
   public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
 
-  public static final int _CATEGORY_OBJECT_INSTANCE = 0;
-  public static final int _CATEGORY_OBJECT = 1;
-  public static final int _CATEGORY_BUNDLE = 2;
-  public static final int _CATEGORY_PAGE_INSTANCE = 3;
-  public static final int _CATEGORY_PAGE = 4;
-  public static final int _CATEGORY_JSP_PAGE = 5;
 
   private static final int _GROUP_ID_EVERYONE = -7913;
   private static final int _GROUP_ID_USERS = -1906;
 
 
-  static{
-    try {
-      initAdministratorPermissionGroup();
-      if(AdministratorPermissionGroup == null){
-        new com.idega.core.accesscontrol.data.LoginTable().insertStartData();
-        initAdministratorPermissionGroup();
-      }
-    }
-    catch (Exception ex) {
-      System.err.println("AccessControl: PermissionGroup administrator not created");
-    }
-
-    try {
-      PermissionGroupEveryOne = new PermissionGroup(_GROUP_ID_EVERYONE);
-    }
-    catch (SQLException e) {
-      try {
-        initPermissionGroupEveryone();
-      }
-      catch (Exception ex) {
-        System.err.println("AccessControl: PermissionGroup Everyone not created");
-      }
-    }
-
-    try {
-      PermissionGroupUsers = new PermissionGroup(_GROUP_ID_USERS);
-    }
-    catch (SQLException e) {
-      try {
-        initPermissionGroupUsers();
-      }
-      catch (Exception ex) {
-        System.err.println("AccessControl: PermissionGroup Users not created");
-      }
-    }
+  private void initAdministratorPermissionGroup() throws SQLException {
+    PermissionGroup permission = new PermissionGroup();
+    permission.setName(AccessControl.getAdministratorGroupName());
+    permission.setDescription("Administrator permission");
+    permission.insert();
+    AdministratorPermissionGroup = permission;
   }
 
-  private static void initAdministratorPermissionGroup() throws SQLException {
-    PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
-    List groups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
-    Iterator iter = groups.iterator();
-    while (iter.hasNext()) {
-      Object item = iter.next();
-      if(getAdministratorGroupName().equals (((GenericGroup)item).getName())){
-        AdministratorPermissionGroup = (PermissionGroup)item;
-      }
-    }
-  }
-
-  private static void initPermissionGroupEveryone() throws SQLException {
+  private void initPermissionGroupEveryone() throws SQLException {
     PermissionGroup permission = new PermissionGroup();
     permission.setID(_GROUP_ID_EVERYONE);
     permission.setName("Everyone");
@@ -105,7 +69,7 @@ public class AccessControl{
     PermissionGroupEveryOne = permission;
   }
 
-  private static void initPermissionGroupUsers() throws SQLException {
+  private void initPermissionGroupUsers() throws SQLException {
     PermissionGroup permission = new PermissionGroup();
     permission.setID(_GROUP_ID_USERS);
     permission.setName("Users");
@@ -114,33 +78,37 @@ public class AccessControl{
     PermissionGroupUsers = permission;
   }
 
-  public static PermissionGroup getPermissionGroupEveryOne() throws SQLException {
+  public PermissionGroup getPermissionGroupEveryOne() throws SQLException {
     if(PermissionGroupEveryOne == null){
       initPermissionGroupEveryone();
     }
     return PermissionGroupEveryOne;
   }
 
-  public static PermissionGroup getPermissionGroupUsers() throws SQLException {
+  public PermissionGroup getPermissionGroupUsers() throws SQLException {
     if(PermissionGroupUsers == null){
       initPermissionGroupUsers();
     }
     return PermissionGroupUsers;
   }
 
-  public static PermissionGroup getPermissionGroupAdministrator() throws SQLException {
+  public PermissionGroup getPermissionGroupAdministrator() throws SQLException {
     if(AdministratorPermissionGroup == null){
       initAdministratorPermissionGroup();
     }
     return AdministratorPermissionGroup;
   }
 
-  public static boolean isAdmin(IWContext iwc)throws SQLException{
+  public boolean isAdmin(IWContext iwc)throws SQLException{
     try {
       Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), iwc);
       if(ob != null){
         return ((Boolean)ob).booleanValue();
       }else{
+        if(getAdministratorUser().equals(LoginBusiness.getUser(iwc))){
+          LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
+          return true;
+        }
         List groups = LoginBusiness.getPermissionGroups(iwc);
         if (groups != null){
           Iterator iter = groups.iterator();
@@ -164,7 +132,7 @@ public class AccessControl{
   /**
    * @todo page ownership
    */
-  public static boolean isOwner(PresentationObject obj , IWContext iwc) throws SQLException {
+  public boolean isOwner(PresentationObject obj , IWContext iwc) throws SQLException {
     User user = LoginBusiness.getUser(iwc);
     if(user == null){
       return false;
@@ -201,7 +169,7 @@ public class AccessControl{
 
 
 
-  public static boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
+  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -271,7 +239,7 @@ public class AccessControl{
 
 
 
-  public static boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
+  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -438,7 +406,7 @@ public class AccessControl{
     return "edit";
   }
 
-  public static boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws SQLException{
     return hasPermission( getEditPermissionString() , obj, iwc);
   }
 
@@ -447,7 +415,7 @@ public class AccessControl{
     return "delete";
   }
 
-  public static boolean hasDeletePermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasDeletePermission(PresentationObject obj,IWContext iwc)throws SQLException{
     return hasPermission( getDeletePermissionString(), obj, iwc);
   }
 
@@ -456,7 +424,7 @@ public class AccessControl{
     return "insert";
   }
 
-  public static boolean hasInsertPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasInsertPermission(PresentationObject obj,IWContext iwc)throws SQLException{
     return hasPermission( getInsertPermissionString(), obj, iwc);
   }
 
@@ -465,7 +433,7 @@ public class AccessControl{
     return "view";
   }
 
-  public static boolean hasViewPermission(PresentationObject obj,IWContext iwc){
+  public boolean hasViewPermission(PresentationObject obj,IWContext iwc){
     try {
       /*boolean permission = hasPermission( getViewPermissionString(), obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
@@ -478,7 +446,7 @@ public class AccessControl{
     }
   }
 
-  public static boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc){
+  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc){
     try {
       /*boolean permission = hasPermission( getViewPermissionString(), obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
@@ -496,24 +464,15 @@ public class AccessControl{
     return "admin";
   }
 
-  public static boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
     return hasPermission( getAdminPermissionString(), obj, iwc);
   }
-
-  public static String getIdegaAdminPermissionString(){
-    return "idega_admin";
-  }
-
-  public static boolean hasIdegaAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
-    return hasPermission( getIdegaAdminPermissionString(), obj, iwc);
-  }
-
 
   public static String getOwnerPemissionString(){
     return "owner";
   }
 
-  public static boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws SQLException{
     return hasPermission( getOwnerPemissionString(), obj, iwc);
   }
 
@@ -691,7 +650,7 @@ public class AccessControl{
 
 
 
-  public static void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
+  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -759,7 +718,7 @@ public class AccessControl{
   }
 
 
-  public static void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -842,7 +801,12 @@ public class AccessControl{
 
   public static List getPermissionGroups(User user) throws SQLException{
     //temp - new GenericGroup()
-    return getPermissionGroups(new GenericGroup(user.getGroupID()));
+    int groupId = user.getGroupID();
+    if(groupId != -1){
+      return getPermissionGroups(new GenericGroup(groupId));
+    }else{
+      return null;
+    }
   }
 
   public static List getPermissionGroups(GenericGroup group) throws SQLException{
@@ -855,7 +819,7 @@ public class AccessControl{
     }
   }
 
-  public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException {
+  public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException {
     List toReturn = new Vector(0);
     ICPermission permission = ICPermission.getStaticInstance();
     List permissions = null;
@@ -899,7 +863,7 @@ public class AccessControl{
   }
 
 
-  public static List getAllPermissionGroups()throws SQLException {
+  public List getAllPermissionGroups()throws SQLException {
 
     List permissionGroups = GenericGroup.getAllGroups(getPermissionGroupFilter(),true);
     if(permissionGroups != null){
@@ -910,21 +874,135 @@ public class AccessControl{
   }
 
 
-  public static List getStandardGroups() throws SQLException {
-    if(statndardGroups == null){
+  public List getStandardGroups() throws SQLException {
+    if(standardGroups == null){
       initStandardGroups();
     }
-    return statndardGroups;
+    return standardGroups;
   }
 
-  private static void initStandardGroups() throws SQLException {
-    statndardGroups = new Vector();
-    //statndardGroups.add(AccessControl.getPermissionGroupAdministrator());
-    statndardGroups.add(AccessControl.getPermissionGroupEveryOne());
-    statndardGroups.add(AccessControl.getPermissionGroupUsers());
+  private void initStandardGroups() throws SQLException {
+    standardGroups = new Vector();
+    //standardGroups.add(AccessControl.getPermissionGroupAdministrator());
+    standardGroups.add(this.getPermissionGroupEveryOne());
+    standardGroups.add(this.getPermissionGroupUsers());
   }
 
-  public static String[] getICObjectPermissionKeys(Class ICObject){
+
+  public User getAdministratorUser(){
+    Object ob = getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
+    if(ob == null){
+      try {
+        initAdministratorUser();
+        return (User)getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
+      }
+      catch (Exception ex) {
+        ex.printStackTrace();
+        return null;
+      }
+
+
+    }else{
+      return (User)ob;
+    }
+  }
+
+  private User createAdministratorUser()throws Exception{
+    User adminUser = new User();
+    adminUser.setColumn(User.getColumnNameFirstName(),_ADMINISTRATOR_NAME);
+    adminUser.insert();
+
+    UserGroupRepresentative ugr = new UserGroupRepresentative();
+    ugr.setName("admin");
+    ugr.insert();
+
+    adminUser.setGroupID(ugr.getID());
+    adminUser.setPrimaryGroupID(this.getPermissionGroupAdministrator().getID());
+    adminUser.update();
+
+    LoginDBHandler.createLogin(adminUser.getID(),"Administrator","idega",Boolean.TRUE,idegaTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
+    return adminUser;
+  }
+
+  private void initAdministratorUser() throws Exception{
+    List list = EntityFinder.findAllByColumn(User.getStaticInstance(),User.getColumnNameFirstName(),_ADMINISTRATOR_NAME);
+    User adminUser = null;
+    if(list == null || list.size() < 1){
+      adminUser = createAdministratorUser();
+    } else {
+      adminUser = (User)list.get(0);
+    }
+    getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER,adminUser);
+  }
+
+  public void executeService(){
+
+    try {
+      PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
+      List groups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
+      if(groups != null){
+        Iterator iter = groups.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          if(getAdministratorGroupName().equals (((GenericGroup)item).getName())){
+            AdministratorPermissionGroup = (PermissionGroup)item;
+          }
+        }
+      }
+      if(AdministratorPermissionGroup == null){
+        initAdministratorPermissionGroup();
+      }
+    }
+    catch (Exception ex) {
+      System.err.println("AccessControl: PermissionGroup administrator not initialized");
+      ex.printStackTrace();
+    }
+
+    try {
+      PermissionGroupEveryOne = new PermissionGroup(_GROUP_ID_EVERYONE);
+    }
+    catch (SQLException e) {
+      try {
+        initPermissionGroupEveryone();
+      }
+      catch (Exception ex) {
+        System.err.println("AccessControl: PermissionGroup Everyone not initialized");
+      }
+    }
+
+    try {
+      PermissionGroupUsers = new PermissionGroup(_GROUP_ID_USERS);
+    }
+    catch (SQLException e) {
+      try {
+        initPermissionGroupUsers();
+      }
+      catch (Exception ex) {
+        System.err.println("AccessControl: PermissionGroup Users not initialized");
+      }
+    }
+
+    try {
+      initAdministratorUser();
+    }
+    catch (Exception ex) {
+      System.err.println("AccessControl: User Administrator not initialized");
+      ex.printStackTrace();
+    }
+
+  }
+
+  public String getServiceName(){
+    return "AccessControl";
+  }
+
+  public static boolean isValidUsersFirstName(String name){
+    return !_ADMINISTRATOR_NAME.equals(name);
+  }
+
+
+
+  public String[] getICObjectPermissionKeys(Class ICObject){
     String[] keys = new String[2];
 
     keys[0] = getViewPermissionString();
@@ -937,7 +1015,7 @@ public class AccessControl{
   }
 
 
-  public static String[] getBundlePermissionKeys(Class ICObject){
+  public String[] getBundlePermissionKeys(Class ICObject){
     String[] keys = new String[2];
 
     keys[0] = getViewPermissionString();
@@ -949,7 +1027,7 @@ public class AccessControl{
     // return new String[0]; // not null
   }
 
-  public static String[] getPagePermissionKeys(){
+  public String[] getPagePermissionKeys(){
     String[] keys = new String[1];
 
     keys[0] = getViewPermissionString();
@@ -960,6 +1038,16 @@ public class AccessControl{
 
     // return new String[0]; // not null
   }
+
+
+
+
+
+
+
+
+
+
 
 
 } // Class AccessControl

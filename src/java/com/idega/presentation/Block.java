@@ -33,7 +33,7 @@ public class Block extends PresentationObjectContainer{
 
   public boolean isAdministrator(IWContext iwc)throws Exception{
     if(usingNewAcessControlSystem){
-      return com.idega.core.accesscontrol.business.AccessControl.hasEditPermission(this,iwc);
+      return iwc.getAccessControler().hasEditPermission(this,iwc);
     }
     else{
       return AccessControl.isAdmin(iwc);
@@ -66,7 +66,7 @@ public class Block extends PresentationObjectContainer{
    * <H2>Unimplemented</H2>
    */
   public boolean hasPermission(String permissionType, PresentationObject obj, IWContext iwc)throws Exception{
-    return com.idega.core.accesscontrol.business.AccessControl.hasPermission(permissionType,obj,iwc);
+    return iwc.getAccessControler().hasPermission(permissionType,obj,iwc);
   }
 
 /* public boolean hasPermission(String permissionType,IWContext iwc)throws Exception{
@@ -356,7 +356,7 @@ public class Block extends PresentationObjectContainer{
 
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
     if(askForPermission){
-      if(com.idega.core.accesscontrol.business.AccessControl.hasViewPermission(this,iwc)){
+      if(iwc.getAccessControler().hasViewPermission(this,iwc)){
         return this.clone();
       } else {
         return NULL_CLONE_OBJECT;
