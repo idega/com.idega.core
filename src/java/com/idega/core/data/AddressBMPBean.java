@@ -188,7 +188,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		String number = this.getStreetNumber();
 		if (number != null)
 			addr.append(number);
-		return TextSoap.capitalize(addr.toString());
+		return TextSoap.capitalize(addr.toString(), " ");
 	}
 
 	/**
