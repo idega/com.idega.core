@@ -58,7 +58,7 @@ public class IWStarterServlet extends GenericServlet
                 this.propertiesfile=file;
                 sendStartMessage("Reading Databases from file: "+file);
                 sendStartMessage("Starting Datastore ConnectionPool");
-                com.codestudio.util.SQLManager.getInstance(file);
+                //com.codestudio.util.SQLManager.getInstance(file);
         }
 
 
