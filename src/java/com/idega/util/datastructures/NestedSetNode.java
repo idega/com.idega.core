@@ -1,5 +1,5 @@
 /*
- * $Id: NestedSetNode.java,v 1.1 2004/09/07 10:58:38 gummi Exp $
+ * $Id: NestedSetNode.java,v 1.2 2004/09/08 11:23:43 gummi Exp $
  * Created on 4.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,10 +15,10 @@ package com.idega.util.datastructures;
  * For a small introduction on nested sets see: 
  * @see <a href="http://www.intelligententerprise.com/001020/celko1_1.jhtml?_requestid=224927">Nested Sets</a>
  * 
- *  Last modified: $Date: 2004/09/07 10:58:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2004/09/08 11:23:43 $ by $Author: gummi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NestedSetNode {
 
@@ -76,5 +76,9 @@ public class NestedSetNode {
 	}
 	public boolean hasChildren(){
 		return ((lft+1)!=rgt);
+	}
+	
+	public String toString(){
+		return obj.toString()+" left:"+lft+" right:"+rgt;
 	}
 }
