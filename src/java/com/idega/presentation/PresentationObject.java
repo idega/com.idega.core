@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.98 2004/07/01 04:38:53 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.99 2004/07/02 01:07:36 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -80,7 +80,6 @@ implements Cloneable, PresentationObjectType
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private PrintWriter out;
-	private String interfaceStyle;
 	private String language;
 	public Map attributes;
 	private String name;
@@ -216,14 +215,9 @@ implements Cloneable, PresentationObjectType
 		this._request = iwc.getRequest();
 		this._response = iwc.getResponse();
 		this.language = iwc.getLanguage();
-		this.interfaceStyle = iwc.getInterfaceStyle();
 		if (language == null)
 		{
 			language = IWConstants.MARKUP_LANGUAGE_HTML;
-		}
-		if (interfaceStyle == null)
-		{
-			interfaceStyle = "default";
 		}
 		this.out = iwc.getWriter();
 	}
@@ -596,15 +590,6 @@ implements Cloneable, PresentationObjectType
 	public void setID(int ID)
 	{
 		setMarkupAttribute("id", Integer.toString(ID));
-	}
-
-	/**
-	 * @return The interface style supplied by the IWContext (optional)
-	 * 
-	 * @uml.property name="interfaceStyle"
-	 */
-	public String getInterfaceStyle() {
-		return this.interfaceStyle;
 	}
 
 	public PrintWriter getPrintWriter()
