@@ -460,7 +460,7 @@ private String getHTMLString(IWContext iwc) {
     if (d.getURL() != null) {
       String src = getAttribute("src");
       if (src.startsWith("/")) {
-        setAttribute("src",d.getURL()+src);
+	setAttribute("src",d.getURL()+src);
       }
     }
   }
@@ -597,18 +597,18 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 	  imageTable.add(imageText, 1, 2);
 	}
 
-	imageTable.print(iwc);
+	imageTable._print(iwc);
       }
       else  {
 	if(zoomView){
 	  if ( zoomLink != null ) {
 	    zoomLink.setText(getHTMLString(iwc));
-	    zoomLink.print(iwc);
+	    zoomLink._print(iwc);
 	  }
 	  else {
 	    Link imageLink = new Link(getHTMLString(iwc));
 	    imageLink.addParameter("image_id",imageId);
-	    imageLink.print(iwc);
+	    imageLink._print(iwc);
 	  }
 	}
 	else print(getHTMLString(iwc));
@@ -704,7 +704,7 @@ public void limitImageWidth( boolean limitImageWidth ){
   }
 
   public void print(IWContext iwc)throws Exception{
-    initVariables(iwc);
+
 
     if ( zoomImageID != null ) {
       Link link = new Link();
@@ -722,10 +722,10 @@ public void limitImageWidth( boolean limitImageWidth ){
       //Change the imageId so that it is localized
       imageId = this.getImageID(iwc);
       if( imageId == -1 ){//from an url
-    	  print(getHTMLString(iwc));
+	  print(getHTMLString(iwc));
       }
       else{//from the database
-      	getHTMLImage(iwc);
+	getHTMLImage(iwc);
       }
     }
   }

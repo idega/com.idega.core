@@ -104,7 +104,6 @@ public void setValue(Integer value){
 
 public void print(IWContext iwc)throws IOException{
 
-	initVariables(iwc);
 
 	//if ( doPrint(iwc) ){
 

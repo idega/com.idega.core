@@ -1,6 +1,6 @@
 /*
 
- * $Id: Table.java,v 1.24 2002/05/28 17:22:27 gummi Exp $
+ * $Id: Table.java,v 1.25 2002/06/12 18:28:22 laddi Exp $
 
  *
 
@@ -238,13 +238,13 @@ public class Table extends PresentationObjectContainer {
 
       if(xpos > this.getColumns()){
 
-        setColumns(xpos);
+	setColumns(xpos);
 
       }
 
       if(ypos > this.getRows()){
 
-        setRows(ypos);
+	setRows(ypos);
 
       }
 
@@ -252,13 +252,13 @@ public class Table extends PresentationObjectContainer {
 
     if (theObjects[xpos-1][ypos-1] == null)
 
-          {
+	  {
 
-                  theObjects[xpos-1][ypos-1] = new PresentationObjectContainer();
+		  theObjects[xpos-1][ypos-1] = new PresentationObjectContainer();
 
-                  //super.add(theObjects);
+		  //super.add(theObjects);
 
-          }
+	  }
 
 
 
@@ -282,29 +282,29 @@ public class Table extends PresentationObjectContainer {
 
       if (isResizable) {
 
-        if (xpos > this.getColumns()) {
+	if (xpos > this.getColumns()) {
 
-          setColumns(xpos);
+	  setColumns(xpos);
 
-        }
+	}
 
-        if(ypos > this.getRows()) {
+	if(ypos > this.getRows()) {
 
-          setRows(ypos);
+	  setRows(ypos);
 
-        }
+	}
 
       }
 
       if (theObjects[xpos-1][ypos-1] == null)
 
-                        {
+			{
 
-                          theObjects[xpos-1][ypos-1] = new PresentationObjectContainer();
+			  theObjects[xpos-1][ypos-1] = new PresentationObjectContainer();
 
-                          //super.add(theObjects);
+			  //super.add(theObjects);
 
-                        }
+			}
 
 
 
@@ -315,15 +315,15 @@ public class Table extends PresentationObjectContainer {
 
 
 
-            }
+	    }
 
-            catch(Exception ex){
+	    catch(Exception ex){
 
-              add(new ExceptionWrapper(ex,this));
+	      add(new ExceptionWrapper(ex,this));
 
-            }
+	    }
 
-          }
+	  }
 
 
 
@@ -515,7 +515,7 @@ public class Table extends PresentationObjectContainer {
 
       for (int x=0;x<minCols;x++){
 
-        System.arraycopy(theObjects[x],0,theNewObjects[x],0,minRows);
+	System.arraycopy(theObjects[x],0,theNewObjects[x],0,minRows);
 
       }
 
@@ -543,11 +543,11 @@ public class Table extends PresentationObjectContainer {
 
       for(int y=0;y<rows;y++){
 
-        if( theObjects[x][y] != null ){
+	if( theObjects[x][y] != null ){
 
-          theObjects[x][y].empty();
+	  theObjects[x][y].empty();
 
-        }
+	}
 
 
 
@@ -563,11 +563,11 @@ public class Table extends PresentationObjectContainer {
 
   public void emptyCell(int xpos,int ypos){
 
-        if( theObjects[xpos-1][ypos-1] != null ){
+	if( theObjects[xpos-1][ypos-1] != null ){
 
-                theObjects[xpos-1][ypos-1].empty();
+		theObjects[xpos-1][ypos-1].empty();
 
-        }
+	}
 
   }
 
@@ -1017,13 +1017,13 @@ public class Table extends PresentationObjectContainer {
 
       if(xpos > this.getColumns()){
 
-        setColumns(xpos);
+	setColumns(xpos);
 
       }
 
       if(ypos > this.getRows()){
 
-        setRows(ypos);
+	setRows(ypos);
 
       }
 
@@ -1035,7 +1035,7 @@ public class Table extends PresentationObjectContainer {
 
       this.theObjects[xpos-1][ypos-1] = new PresentationObjectContainer();
 
-                 // super.add(theObjects);
+		 // super.add(theObjects);
 
     }
 
@@ -1077,67 +1077,67 @@ public class Table extends PresentationObjectContainer {
 
 
 
-        ycheck = false;
+	ycheck = false;
 
-        xcheck = false;
+	xcheck = false;
 
 
 
-        Integer temp1 = (Integer) e.nextElement();
+	Integer temp1 = (Integer) e.nextElement();
 
-        Integer temp2 = (Integer) endMergedxpos.elementAt(i);
+	Integer temp2 = (Integer) endMergedxpos.elementAt(i);
 
-        int xlength;
+	int xlength;
 
 
 
-        Integer temp3 = (Integer) beginMergedypos.elementAt(i);
+	Integer temp3 = (Integer) beginMergedypos.elementAt(i);
 
-        Integer temp4 = (Integer) endMergedypos.elementAt(i);
+	Integer temp4 = (Integer) endMergedypos.elementAt(i);
 
-        int ylength;
+	int ylength;
 
 
 
-        int lowerx=0;
+	int lowerx=0;
 
-        int lowery=0;
+	int lowery=0;
 
 
 
-        if (temp1.intValue()<=temp2.intValue()){
+	if (temp1.intValue()<=temp2.intValue()){
 
-          lowerx = temp1.intValue();
+	  lowerx = temp1.intValue();
 
-          xlength = temp2.intValue() - temp1.intValue();
+	  xlength = temp2.intValue() - temp1.intValue();
 
-        }
+	}
 
-        else{
+	else{
 
-          lowerx = temp2.intValue();
+	  lowerx = temp2.intValue();
 
-          xlength = temp1.intValue() - temp2.intValue();
+	  xlength = temp1.intValue() - temp2.intValue();
 
-        }
+	}
 
 
 
-        if (temp3.intValue()<=temp4.intValue()){
+	if (temp3.intValue()<=temp4.intValue()){
 
-          lowery = temp3.intValue();
+	  lowery = temp3.intValue();
 
-          ylength = temp4.intValue() - temp3.intValue();
+	  ylength = temp4.intValue() - temp3.intValue();
 
-        }
+	}
 
-        else{
+	else{
 
-          lowery = temp4.intValue();
+	  lowery = temp4.intValue();
 
-          ylength = temp3.intValue() - temp4.intValue();
+	  ylength = temp3.intValue() - temp4.intValue();
 
-        }
+	}
 
 
 
@@ -1145,55 +1145,55 @@ public class Table extends PresentationObjectContainer {
 
 
 
-        //Check the x coordinate
+	//Check the x coordinate
 
-        if( xpos >= (lowerx) ){
+	if( xpos >= (lowerx) ){
 
-          if(xpos <= (lowerx+xlength) ){
+	  if(xpos <= (lowerx+xlength) ){
 
-            xcheck=true;
+	    xcheck=true;
 
-          }
+	  }
 
-          else{
+	  else{
 
-            xcheck=false;
+	    xcheck=false;
 
-          }
+	  }
 
-        }
+	}
 
-        //Check the y coordinate
+	//Check the y coordinate
 
-        if( ypos >= (lowery) ){
+	if( ypos >= (lowery) ){
 
-          if(ypos <= (lowery+ylength) ){
+	  if(ypos <= (lowery+ylength) ){
 
-            ycheck=true;
+	    ycheck=true;
 
-          }
+	  }
 
-          else{
+	  else{
 
-            ycheck=false;
+	    ycheck=false;
 
-          }
+	  }
 
-        }
+	}
 
 
 
-        if ( xcheck && ycheck)
+	if ( xcheck && ycheck)
 
-        {
+	{
 
-          theReturn = true;
+	  theReturn = true;
 
-        }
+	}
 
 
 
-        i++;
+	i++;
 
       }
 
@@ -1249,17 +1249,17 @@ public class Table extends PresentationObjectContainer {
 
       if (temp1.intValue()<=temp2.intValue()){
 
-        lowerx = temp1.intValue();
+	lowerx = temp1.intValue();
 
-        xlength = temp2.intValue() - temp1.intValue();
+	xlength = temp2.intValue() - temp1.intValue();
 
       }
 
       else{
 
-        lowerx = temp2.intValue();
+	lowerx = temp2.intValue();
 
-        xlength = temp1.intValue() - temp2.intValue();
+	xlength = temp1.intValue() - temp2.intValue();
 
       }
 
@@ -1267,17 +1267,17 @@ public class Table extends PresentationObjectContainer {
 
       if (temp3.intValue()<=temp4.intValue()){
 
-        lowery = temp3.intValue();
+	lowery = temp3.intValue();
 
-        ylength = temp4.intValue() - temp3.intValue();
+	ylength = temp4.intValue() - temp3.intValue();
 
       }
 
       else{
 
-        lowery = temp4.intValue();
+	lowery = temp4.intValue();
 
-        ylength = temp3.intValue() - temp4.intValue();
+	ylength = temp3.intValue() - temp4.intValue();
 
       }
 
@@ -1285,7 +1285,7 @@ public class Table extends PresentationObjectContainer {
 
       if (lowerx==startxpos && lowery==startypos){
 
-        returnint = xlength+1;
+	returnint = xlength+1;
 
       }
 
@@ -1337,17 +1337,17 @@ public class Table extends PresentationObjectContainer {
 
       if (temp1.intValue()<=temp2.intValue()){
 
-        lowerx = temp1.intValue();
+	lowerx = temp1.intValue();
 
-        xlength = temp2.intValue() - temp1.intValue();
+	xlength = temp2.intValue() - temp1.intValue();
 
       }
 
       else{
 
-        lowerx = temp2.intValue();
+	lowerx = temp2.intValue();
 
-        xlength = temp1.intValue() - temp2.intValue();
+	xlength = temp1.intValue() - temp2.intValue();
 
 
 
@@ -1357,17 +1357,17 @@ public class Table extends PresentationObjectContainer {
 
       if (temp3.intValue()<=temp4.intValue()){
 
-        lowery = temp3.intValue();
+	lowery = temp3.intValue();
 
-         ylength = temp4.intValue() - temp3.intValue();
+	 ylength = temp4.intValue() - temp3.intValue();
 
       }
 
       else{
 
-        lowery = temp4.intValue();
+	lowery = temp4.intValue();
 
-         ylength = temp3.intValue() - temp4.intValue();
+	 ylength = temp3.intValue() - temp4.intValue();
 
       }
 
@@ -1375,7 +1375,7 @@ public class Table extends PresentationObjectContainer {
 
       if (lowerx==startxpos && lowery==startypos){
 
-        returnint = ylength+1;
+	returnint = ylength+1;
 
       }
 
@@ -1413,79 +1413,79 @@ public class Table extends PresentationObjectContainer {
 
       for (Enumeration e = beginMergedxpos.elements();e.hasMoreElements();){
 
-        Integer temp1 = (Integer) e.nextElement();
+	Integer temp1 = (Integer) e.nextElement();
 
-        Integer temp2 = (Integer) endMergedxpos.elementAt(i);
+	Integer temp2 = (Integer) endMergedxpos.elementAt(i);
 
-        int xlength;
-
-
-
-        Integer temp3 = (Integer) beginMergedypos.elementAt(i);
-
-        Integer temp4 = (Integer) endMergedypos.elementAt(i);
-
-        int ylength;
+	int xlength;
 
 
 
-        int lowerx=0;
+	Integer temp3 = (Integer) beginMergedypos.elementAt(i);
 
-        int lowery=0;
+	Integer temp4 = (Integer) endMergedypos.elementAt(i);
 
-
-
-        if (temp1.intValue()<=temp2.intValue()){
-
-          lowerx = temp1.intValue();
-
-          xlength = temp2.intValue() - temp1.intValue();
+	int ylength;
 
 
 
-        }
+	int lowerx=0;
 
-        else{
-
-          lowerx = temp2.intValue();
-
-          xlength = temp1.intValue() - temp2.intValue();
-
-        }
+	int lowery=0;
 
 
 
-        if (temp3.intValue()<=temp4.intValue()){
+	if (temp1.intValue()<=temp2.intValue()){
 
-          lowery = temp3.intValue();
+	  lowerx = temp1.intValue();
 
-          ylength = temp4.intValue() - temp3.intValue();
-
-        }
-
-        else{
-
-          lowery = temp4.intValue();
-
-          ylength = temp3.intValue() - temp4.intValue();
-
-        }
+	  xlength = temp2.intValue() - temp1.intValue();
 
 
+
+	}
+
+	else{
+
+	  lowerx = temp2.intValue();
+
+	  xlength = temp1.intValue() - temp2.intValue();
+
+	}
+
+
+
+	if (temp3.intValue()<=temp4.intValue()){
+
+	  lowery = temp3.intValue();
+
+	  ylength = temp4.intValue() - temp3.intValue();
+
+	}
+
+	else{
+
+	  lowery = temp4.intValue();
+
+	  ylength = temp3.intValue() - temp4.intValue();
+
+	}
 
 
 
 
 
-        if ((lowerx==xpos) && (lowery == ypos)){
-
-          theReturn=true;
-
-        }
 
 
+	if ((lowerx==xpos) && (lowery == ypos)){
 
-        i++;
+	  theReturn=true;
+
+	}
+
+
+
+	i++;
 
       }
 
@@ -1519,21 +1519,21 @@ public class Table extends PresentationObjectContainer {
 
       if (y>this.rows){
 
-        theEnd=true;
+	theEnd=true;
 
       }
 
       else{
 
-        setRowColor(y,Color2);
+	setRowColor(y,Color2);
 
-        y++;
+	y++;
 
-        if (y>this.rows){
+	if (y>this.rows){
 
-          theEnd=true;
+	  theEnd=true;
 
-        }
+	}
 
       }
 
@@ -1567,21 +1567,21 @@ public class Table extends PresentationObjectContainer {
 
       if (x>this.cols){
 
-        theEnd=true;
+	theEnd=true;
 
       }
 
       else{
 
-        setColumnColor(x,Color2);
+	setColumnColor(x,Color2);
 
-        x++;
+	x++;
 
-        if (x>this.cols){
+	if (x>this.cols){
 
-          theEnd=true;
+	  theEnd=true;
 
-        }
+	}
 
       }
 
@@ -1663,39 +1663,39 @@ public class Table extends PresentationObjectContainer {
 
       if(theObjects != null){
 
-        toReturn = new Vector();
+	toReturn = new Vector();
 
-        toReturn.containsAll(containedObjects);
+	toReturn.containsAll(containedObjects);
 
-        Iterator iter = containedObjects.iterator();
+	Iterator iter = containedObjects.iterator();
 
-        while (iter.hasNext()) {
+	while (iter.hasNext()) {
 
-          Object item = iter.next();
+	  Object item = iter.next();
 
-          if(item instanceof PresentationObjectContainer){
+	  if(item instanceof PresentationObjectContainer){
 
-            toReturn.add(item);
+	    toReturn.add(item);
 
-            //if(!toReturn.contains(item)){
+	    //if(!toReturn.contains(item)){
 
-              List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
+	      List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
 
-              if(tmp != null){
+	      if(tmp != null){
 
-                toReturn.addAll(tmp);
+		toReturn.addAll(tmp);
 
-              }
+	      }
 
-            //}
+	    //}
 
-          }else{
+	  }else{
 
-            toReturn.add(item);
+	    toReturn.add(item);
 
-          }
+	  }
 
-        }
+	}
 
       }
 
@@ -1719,11 +1719,11 @@ public class Table extends PresentationObjectContainer {
 
       for(int y = 0; y < theObjects[x].length;y++){
 
-        if (theObjects[x][y] != null){
+	if (theObjects[x][y] != null){
 
-          theReturn.addElement(theObjects[x][y]);
+	  theReturn.addElement(theObjects[x][y]);
 
-        }
+	}
 
       }
 
@@ -1745,19 +1745,19 @@ public class Table extends PresentationObjectContainer {
 
       if (theObjects[xpos-1][ypos-1].isEmpty()){
 
-        if( false){
+	if( false){
 
-          //not implemented
+	  //not implemented
 
-        }
+	}
 
-        else{
+	else{
 
-          //print(Text.getNonBrakingSpace().getText());
+	  //print(Text.getNonBrakingSpace().getText());
 
-          print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\" alt=\"\">");
+	  print("<img src=\""+transparentcell.getURL()+"\" width=\"1\" height=\"1\" alt=\"\">");
 
-        }
+	}
 
       }
 
@@ -1791,13 +1791,13 @@ public class Table extends PresentationObjectContainer {
 
       //if(!iwc.isOpera()){
 
-        transparentcell._print(iwc);
+	transparentcell._print(iwc);
 
-        println("</td>");
+	println("</td>");
 
       //} else {
 
-        //println("</td>");  // ?????
+	//println("</td>");  // ?????
 
       //}
 
@@ -1835,7 +1835,6 @@ public class Table extends PresentationObjectContainer {
 
   public void print(IWContext iwc) throws Exception{
 
-    initVariables(iwc);
 
     this.transparentcell = getTransparentCell(iwc);
 
@@ -1843,349 +1842,349 @@ public class Table extends PresentationObjectContainer {
 
       if (getLanguage().equals("HTML")){
 
-        String theErrorMessage = getErrorMessage();
+	String theErrorMessage = getErrorMessage();
 
-        if (theErrorMessage==null){
+	if (theErrorMessage==null){
 
-          //if (getInterfaceStyle().equals("something")){
+	  //if (getInterfaceStyle().equals("something")){
 
-          //}
+	  //}
 
-          //else{
+	  //else{
 
-          StringBuffer printString = new StringBuffer();
+	  StringBuffer printString = new StringBuffer();
 
-          printString.append("<table ");
+	  printString.append("<table ");
 
-          printString.append(getAttributeString());
+	  printString.append(getAttributeString());
 
-          printString.append(" >");
+	  printString.append(" >");
 
-          println(printString.toString());
+	  println(printString.toString());
 
-          if( ! cellsAreMerged){
+	  if( ! cellsAreMerged){
 
-            lineColspan = cols;
+	    lineColspan = cols;
 
-            if(addVerticalLinesBetween){
+	    if(addVerticalLinesBetween){
 
-              lineColspan += (cols-1);
+	      lineColspan += (cols-1);
 
-            } else {
+	    } else {
 
-              lineColspan += lineRows.length;
+	      lineColspan += lineRows.length;
 
-            }
+	    }
 
-            if(addLineLeft){
+	    if(addLineLeft){
 
-              lineColspan++;
+	      lineColspan++;
 
-            }
+	    }
 
-            if(addLineRight){
+	    if(addLineRight){
 
-              lineColspan++;
+	      lineColspan++;
 
-            }
+	    }
 
 
 
-            if(addLineTop){
+	    if(addLineTop){
 
-              printLine(iwc);
+	      printLine(iwc);
 
-            }
+	    }
 
-            for(int y=1;y<=rows;){
+	    for(int y=1;y<=rows;){
 
-              //println("\n<tr>");
+	      //println("\n<tr>");
 
-              println(this.getRowStartTag(iwc));
+	      println(this.getRowStartTag(iwc));
 
-              for(int x=1;x<=cols;){
+	      for(int x=1;x<=cols;){
 
 
 
-                if(this.addLineLeft && x==1){
+		if(this.addLineLeft && x==1){
 
-                  printVerticalLine(iwc);
+		  printVerticalLine(iwc);
 
-                }
+		}
 
 
 
-                if(theObjects[x-1][y-1] != null){
+		if(theObjects[x-1][y-1] != null){
 
-                  if ( theObjects[x-1][y-1].getAttributeString().indexOf("align") == -1 ) {
+		  if ( theObjects[x-1][y-1].getAttributeString().indexOf("align") == -1 ) {
 
-                    setAlignment(x,y,"left");
+		    setAlignment(x,y,"left");
 
-                  }
+		  }
 
-                  if ( theObjects[x-1][y-1].getAttributeString().indexOf("valign") == -1 ) {
+		  if ( theObjects[x-1][y-1].getAttributeString().indexOf("valign") == -1 ) {
 
-                    setVerticalAlignment(x,y,"middle");
+		    setVerticalAlignment(x,y,"middle");
 
-                  }
+		  }
 
 
 
-                  if (printString==null){
+		  if (printString==null){
 
-                    printString = new StringBuffer();
+		    printString = new StringBuffer();
 
-                  }
+		  }
 
-                  else{
+		  else{
 
-                    printString.delete(0,printString.length());
+		    printString.delete(0,printString.length());
 
-                  }
+		  }
 
-                  printString.append("\n<td ");
+		  printString.append("\n<td ");
 
-                  printString.append(theObjects[x-1][y-1].getAttributeString());
+		  printString.append(theObjects[x-1][y-1].getAttributeString());
 
-                  printString.append(" >");
+		  printString.append(" >");
 
-                  println(printString.toString());
+		  println(printString.toString());
 
-                  theObjects[x-1][y-1]._print(iwc);
+		  theObjects[x-1][y-1]._print(iwc);
 
-                  printNbsp(iwc,x,y);
+		  printNbsp(iwc,x,y);
 
 
 
-                }
+		}
 
-                else{
+		else{
 
-                  println("\n<td>");
+		  println("\n<td>");
 
-                  printNbsp(iwc,x,y);
+		  printNbsp(iwc,x,y);
 
-                }
+		}
 
-                println("</td>");
+		println("</td>");
 
 
 
-                if((addLineRight && x==cols) || (addVerticalLinesBetween && x!=cols)){
+		if((addLineRight && x==cols) || (addVerticalLinesBetween && x!=cols)){
 
-                  printVerticalLine(iwc);
+		  printVerticalLine(iwc);
 
-                } else {
+		} else {
 
-                  for (int i = 0; i < lineCols.length; i++) {
+		  for (int i = 0; i < lineCols.length; i++) {
 
-                    if(x == lineCols[i]){
+		    if(x == lineCols[i]){
 
-                      printVerticalLine(iwc);
+		      printVerticalLine(iwc);
 
-                      break;
+		      break;
 
-                    }
+		    }
 
-                  }
+		  }
 
-                }
+		}
 
 
 
-                x++;
+		x++;
 
-              }
+	      }
 
 
 
-              //println("\n</tr>");
+	      //println("\n</tr>");
 
-              println(this.getRowEndTag(iwc));
+	      println(this.getRowEndTag(iwc));
 
 
 
-              if(this.addLinesBetween && y!=rows){
+	      if(this.addLinesBetween && y!=rows){
 
-                printLine(iwc);
+		printLine(iwc);
 
-              } else {
+	      } else {
 
-                for (int i = 0; i < lineRows.length; i++) {
+		for (int i = 0; i < lineRows.length; i++) {
 
-                  if(y == lineRows[i]){
+		  if(y == lineRows[i]){
 
-                    printLine(iwc);
+		    printLine(iwc);
 
-                    break;
+		    break;
 
-                  }
+		  }
 
-                }
+		}
 
-              }
+	      }
 
 
 
-              y++;
+	      y++;
 
-            }
+	    }
 
 
 
-            if(this.addLinesBottom){
+	    if(this.addLinesBottom){
 
-              printLine(iwc);
+	      printLine(iwc);
 
-            }
+	    }
 
-          }
+	  }
 
-          else // if merged
+	  else // if merged
 
-          {
+	  {
 
-            for(int y=1;y<=rows;){
+	    for(int y=1;y<=rows;){
 
-              //println("\n<tr>");
+	      //println("\n<tr>");
 
-              println(this.getRowStartTag(iwc));
+	      println(this.getRowStartTag(iwc));
 
-              for(int x=1;x<=cols;){
+	      for(int x=1;x<=cols;){
 
 
 
-                if(isInMergedCell(x,y)){
+		if(isInMergedCell(x,y)){
 
-                  if(isTopLeftOfMergedCell(x,y)){
+		  if(isTopLeftOfMergedCell(x,y)){
 
-                    if (theObjects[x-1][y-1] == null){
+		    if (theObjects[x-1][y-1] == null){
 
-                      theObjects[x-1][y-1] = new PresentationObjectContainer();
+		      theObjects[x-1][y-1] = new PresentationObjectContainer();
 
-                    }
+		    }
 
-                    if (printString==null){
+		    if (printString==null){
 
-                      printString = new StringBuffer();
+		      printString = new StringBuffer();
 
-                    }
+		    }
 
-                    else{
+		    else{
 
-                      printString.delete(0,printString.length());
+		      printString.delete(0,printString.length());
 
-                    }
+		    }
 
-                    printString.append("\n<td ");
+		    printString.append("\n<td ");
 
-                    printString.append(theObjects[x-1][y-1].getAttributeString());
+		    printString.append(theObjects[x-1][y-1].getAttributeString());
 
-                    printString.append(" colspan=\"");
+		    printString.append(" colspan=\"");
 
-                    printString.append(getWidthOfMergedCell(x,y));
+		    printString.append(getWidthOfMergedCell(x,y));
 
-                    printString.append("\" rowspan=\"");
+		    printString.append("\" rowspan=\"");
 
-                    printString.append(getHeightOfMergedCell(x,y));
+		    printString.append(getHeightOfMergedCell(x,y));
 
-                    printString.append("\" >");
+		    printString.append("\" >");
 
-                    println(printString.toString());
+		    println(printString.toString());
 
 
 
-                    theObjects[x-1][y-1]._print(iwc);
+		    theObjects[x-1][y-1]._print(iwc);
 
-                    printNbsp(iwc,x,y);
+		    printNbsp(iwc,x,y);
 
-                    println("</td>");
+		    println("</td>");
 
 
 
-                  }
+		  }
 
-                }
+		}
 
-                else{
+		else{
 
 
 
-                  if(theObjects[x-1][y-1] != null){
+		  if(theObjects[x-1][y-1] != null){
 
-                    if (printString==null){
+		    if (printString==null){
 
-                      printString = new StringBuffer();
+		      printString = new StringBuffer();
 
-                    }
+		    }
 
-                    else{
+		    else{
 
-                      printString.delete(0,printString.length());
+		      printString.delete(0,printString.length());
 
-                    }
+		    }
 
-                    printString.append("\n<td ");
+		    printString.append("\n<td ");
 
-                    printString.append(theObjects[x-1][y-1].getAttributeString());
+		    printString.append(theObjects[x-1][y-1].getAttributeString());
 
-                    printString.append(" >");
+		    printString.append(" >");
 
-                    println(printString.toString());
+		    println(printString.toString());
 
 
 
-                    theObjects[x-1][y-1]._print(iwc);
+		    theObjects[x-1][y-1]._print(iwc);
 
-                    printNbsp(iwc,x,y);
+		    printNbsp(iwc,x,y);
 
 
 
-                  }
+		  }
 
-                  else{
+		  else{
 
-                    println("\n<td>");
+		    println("\n<td>");
 
-                    printNbsp(iwc,x,y);
+		    printNbsp(iwc,x,y);
 
-                  }
+		  }
 
-                  println("</td>");
+		  println("</td>");
 
-                }
+		}
 
-              x++;
+	      x++;
 
-              }
+	      }
 
 
 
-              println(this.getRowEndTag(iwc));
+	      println(this.getRowEndTag(iwc));
 
-             // println("\n</tr>");
+	     // println("\n</tr>");
 
-              y++;
+	      y++;
 
-            }
+	    }
 
-          }
+	  }
 
-          println("\n</table>");
+	  println("\n</table>");
 
-        //}
+	//}
 
       }
 
       else{
 
-        println("<pre>");
+	println("<pre>");
 
-        println("Exception:");
+	println("Exception:");
 
-        println(theErrorMessage);
+	println(theErrorMessage);
 
-        println("</pre>");
+	println("</pre>");
 
       }
 
@@ -2193,49 +2192,49 @@ public class Table extends PresentationObjectContainer {
 
       else if (getLanguage().equals("WML")){
 
-        for(int y=1;y<=rows;){
+	for(int y=1;y<=rows;){
 
-          for(int x=1;x<=cols;){
+	  for(int x=1;x<=cols;){
 
-            if(theObjects[x-1][y-1] != null){
+	    if(theObjects[x-1][y-1] != null){
 
-              theObjects[x-1][y-1]._print(iwc);
+	      theObjects[x-1][y-1]._print(iwc);
 
-            }
+	    }
 
-            x++;
+	    x++;
 
-          }
+	  }
 
-          y++;
+	  y++;
 
-        }
+	}
 
       }//end if (getLanguage(...
 
-                  else{
+		  else{
 
-                          for(int y=1;y<=rows;){
+			  for(int y=1;y<=rows;){
 
-                                  for(int x=1;x<=cols;){
+				  for(int x=1;x<=cols;){
 
-                                          if(theObjects[x-1][y-1] != null){
+					  if(theObjects[x-1][y-1] != null){
 
-                                                  theObjects[x-1][y-1]._print(iwc);
+						  theObjects[x-1][y-1]._print(iwc);
 
-                                          }
+					  }
 
-                                          x++;
+					  x++;
 
-                                  }
+				  }
 
-                                  y++;
+				  y++;
 
-                          }
+			  }
 
-                  }
+		  }
 
-            //}//end doPrint(iwc)
+	    //}//end doPrint(iwc)
 
   }
 
@@ -2265,17 +2264,17 @@ public class Table extends PresentationObjectContainer {
 
       if (rows!=0){
 
-        int x=Math.round(index/rows);
+	int x=Math.round(index/rows);
 
-        int y=index-x*rows;
+	int y=index-x*rows;
 
-        return theObjects[x][y];
+	return theObjects[x][y];
 
       }
 
       else{
 
-        return null;
+	return null;
 
       }
 
@@ -2321,21 +2320,21 @@ public class Table extends PresentationObjectContainer {
 
       for (int j = 0; j < cols; j++) {
 
-        PresentationObjectContainer cont = (PresentationObjectContainer)theObjects[j][i];
+	PresentationObjectContainer cont = (PresentationObjectContainer)theObjects[j][i];
 
-        if (cont != null) {
+	if (cont != null) {
 
-          int index = cont.getIndex(o);
+	  int index = cont.getIndex(o);
 
-          if (index > -1) {
+	  if (index > -1) {
 
-            int ret[] = {i+1,j+1};
+	    int ret[] = {i+1,j+1};
 
-            return ret;
+	    return ret;
 
-          }
+	  }
 
-        }
+	}
 
      }
 
@@ -2425,27 +2424,27 @@ public boolean isEmpty(int x, int y){
 
       if (this.theObjects != null) {
 
-        obj.theObjects=new PresentationObjectContainer[cols][rows];
+	obj.theObjects=new PresentationObjectContainer[cols][rows];
 
-          for (int x = 0;x<theObjects.length;x++){
+	  for (int x = 0;x<theObjects.length;x++){
 
-                  for(int y = 0; y < theObjects[x].length;y++){
+		  for(int y = 0; y < theObjects[x].length;y++){
 
-                          if (this.theObjects[x][y] != null){
+			  if (this.theObjects[x][y] != null){
 
-                            obj.theObjects[x][y]=(PresentationObjectContainer)((PresentationObjectContainer)this.theObjects[x][y]).clone(iwc,askForPermission); // not _clone(m,a) because moduleObject is cunstructed in table class
+			    obj.theObjects[x][y]=(PresentationObjectContainer)((PresentationObjectContainer)this.theObjects[x][y]).clone(iwc,askForPermission); // not _clone(m,a) because moduleObject is cunstructed in table class
 
-                            obj.theObjects[x][y].setParentObject(obj);
+			    obj.theObjects[x][y].setParentObject(obj);
 
-                            obj.theObjects[x][y].setLocation(this.getLocation());
+			    obj.theObjects[x][y].setLocation(this.getLocation());
 
-                            //obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
+			    //obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
 
-                          }
+			  }
 
-                  }
+		  }
 
-          }
+	  }
 
       }
 
@@ -2455,25 +2454,25 @@ public boolean isEmpty(int x, int y){
 
       if (this.beginMergedxpos != null) {
 
-        obj.beginMergedxpos = (Vector)this.beginMergedxpos.clone();
+	obj.beginMergedxpos = (Vector)this.beginMergedxpos.clone();
 
       }
 
       if (this.beginMergedypos != null) {
 
-        obj.beginMergedypos = (Vector)this.beginMergedypos.clone();
+	obj.beginMergedypos = (Vector)this.beginMergedypos.clone();
 
       }
 
       if (this.endMergedxpos != null) {
 
-        obj.endMergedxpos = (Vector)this.endMergedxpos.clone();
+	obj.endMergedxpos = (Vector)this.endMergedxpos.clone();
 
       }
 
       if (this.endMergedypos != null) {
 
-        obj.endMergedypos = (Vector)this.endMergedypos.clone();
+	obj.endMergedypos = (Vector)this.endMergedypos.clone();
 
       }
 
@@ -2505,11 +2504,11 @@ public boolean isEmpty(int x, int y){
 
       if (cont == null) {
 
-        cont = new PresentationObjectContainer();
+	cont = new PresentationObjectContainer();
 
-        theObjects[x-1][y-1] = cont ;
+	theObjects[x-1][y-1] = cont ;
 
-        cont.setParentObject(this);
+	cont.setParentObject(this);
 
       }
 
@@ -2531,15 +2530,15 @@ public boolean isEmpty(int x, int y){
 
       for (int x = 0;x<theObjects.length;x++){
 
-              for(int y = 0; y < theObjects[x].length;y++){
+	      for(int y = 0; y < theObjects[x].length;y++){
 
 			if (theObjects[x][y] != null){
 
 				if(theObjects[x][y].remove(obj)){
 
-                                  return true;
+				  return true;
 
-                                }
+				}
 
 			}
 
@@ -2811,11 +2810,11 @@ public boolean isEmpty(int x, int y){
 
       for (int i = 0; i < lineRows.length; i++) {
 
-        if(lineRows[i] == row){
+	if(lineRows[i] == row){
 
-          lineRows[i] = -1;  // should decrease array to
+	  lineRows[i] = -1;  // should decrease array to
 
-        }
+	}
 
       }
 
@@ -2841,11 +2840,11 @@ public boolean isEmpty(int x, int y){
 
       for (int i = 0; i < lineCols.length; i++) {
 
-        if(lineCols[i] == column){
+	if(lineCols[i] == column){
 
-          lineCols[i] = -1;  // should decrease array to
+	  lineCols[i] = -1;  // should decrease array to
 
-        }
+	}
 
       }
 

@@ -206,7 +206,7 @@ private void printButton(IWContext iwc) throws IOException{
 
 
 public void print(IWContext iwc) throws Exception{
-	initVariables(iwc);
+
 	//if ( doPrint(iwc) ) {
 		if (getLanguage().equals("HTML")){
 
@@ -233,7 +233,7 @@ public void print(IWContext iwc) throws Exception{
 					//getParentForm().setTarget("#");
 					getParentForm().setOnSubmit(window.getCallingScriptStringForForm(iwc));
 				}
-				myForm.print(iwc);
+				myForm._print(iwc);
 			}
 		}
 	//}

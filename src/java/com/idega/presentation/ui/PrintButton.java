@@ -74,7 +74,6 @@ public PrintButton(Image defaultImage){
 
 public void print(IWContext iwc) throws IOException{
 
-	initVariables(iwc);
 
         StringBuffer printString = new StringBuffer();
 

@@ -79,7 +79,6 @@ public class TextEditor extends PresentationObject {
   }
 
   public void print(IWContext iwc)throws Exception{
-    initVariables(iwc);
 
     if (getLanguage().equals("HTML")){
 
@@ -109,16 +108,16 @@ public class TextEditor extends PresentationObject {
 
         buf.append("</script>");
 
-        source.print(iwc);
+        source._print(iwc);
         println(buf.toString());
         /*
         var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
 
         HiddenInput editor = new HiddenInput("iw_editor","off");  Dont know what enabling this does if anything
-        editor.print(iwc);
+        editor._print(iwc);
         println("");
         HiddenInput editor2 = new HiddenInput("iw_editor[Text#autobr]","off");
-        editor2.print(iwc);
+        editor2._print(iwc);
         //HiddenInput html = new HiddenInput("iw_editor2[Text]",""); this is the original name for the editor
         */
 
@@ -127,7 +126,7 @@ public class TextEditor extends PresentationObject {
        TextArea area = new TextArea(inputName,45,20);
        text = TextSoap.findAndReplace(text, "<br/>","\r\n");
        area.setContent(text);
-       area.print(iwc);
+       area._print(iwc);
       }
     }
   }

@@ -98,7 +98,7 @@ public void setHistoryMove(int howFarBackOrForward){
 
 public void print(IWContext iwc) throws IOException{
 
-	initVariables(iwc);
+
 
         StringBuffer printString = new StringBuffer();
 

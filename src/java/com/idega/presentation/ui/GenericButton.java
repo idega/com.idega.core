@@ -90,7 +90,7 @@ public void setOnClick(Image onClickImage){
 
 public void print(IWContext iwc) throws Exception{
 
-	initVariables(iwc);
+
 
 	//if ( doPrint(iwc) ){
 

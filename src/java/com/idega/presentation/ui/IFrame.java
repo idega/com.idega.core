@@ -190,7 +190,7 @@ public IFrame(String name,String URL,int width,int height){
       //setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
       this.setSrc(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc,ibPageId));
     }
-    initVariables(iwc);
+
     if (getLanguage().equals("HTML")){
       print("<iframe name=\""+getName()+"\""+getAttributeString()+" >");
       String content = super.getContent();

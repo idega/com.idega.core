@@ -1,6 +1,6 @@
 /*
 
- * $Id: EntityUpdater.java,v 1.3 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: EntityUpdater.java,v 1.4 2002/06/12 18:28:23 laddi Exp $
 
  *
 
@@ -554,7 +554,6 @@ public void beforePrint(IWContext iwc)throws IOException{
 
 public void print(IWContext iwc)throws Exception{
 
-	initVariables(iwc);
 
 	theMain(iwc);
 
@@ -562,7 +561,7 @@ public void print(IWContext iwc)throws Exception{
 
 	if(theForm != null){
 
-		theForm.print(iwc);
+		theForm._print(iwc);
 
 	}
 

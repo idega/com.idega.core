@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.74 2002/05/30 19:06:10 gummi Exp $
+ * $Id: Link.java,v 1.75 2002/06/12 18:28:22 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1488,7 +1488,7 @@ public class Link extends Text{
    *
    */
   public void print(IWContext iwc) throws Exception {
-    initVariables(iwc);
+
     boolean addParameters = true;
     String oldURL = getURL(iwc);
 
@@ -1522,17 +1522,17 @@ public class Link extends Text{
       boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
       if(alignSet){
-      	print("<div align=\""+getHorizontalAlignment()+"\">");
-      	removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+	print("<div align=\""+getHorizontalAlignment()+"\">");
+	removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
       }
 
       if(openInNewWindow){
-      	setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
+	setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
       }
       else{
-      	//Should not happen when a new window is opened
-      	if (addParameters) {
-	        setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	//Should not happen when a new window is opened
+	if (addParameters) {
+		setFinalUrl(oldURL+getParameterString(iwc,oldURL));
 	      }
       }//end if (_objectType==(OBJECT_TYPE_WINDOW))
 
@@ -1541,7 +1541,7 @@ public class Link extends Text{
     if (d.getURL() != null) {
       String attr = getAttribute(HREF_ATTRIBUTE);
       if (attr.startsWith("/")) {
-        setAttribute(HREF_ATTRIBUTE,d.getURL()+attr);
+	setAttribute(HREF_ATTRIBUTE,d.getURL()+attr);
       }
     }
 
@@ -1561,19 +1561,19 @@ public class Link extends Text{
 	      /*}*/
 	    } else {
 	      if(_obj!=null){
-		_obj.print(iwc);
+		_obj._print(iwc);
 	      }
 	    }
 	  }
 	  else if (this.isImage()){
 	    Image image = this.getTheCorrectDefaultImage(iwc);
 	    if(image!=null){
-	      image.print(iwc);
+	      image._print(iwc);
 	    }
 	  }
 	  else{
 	    if(_obj !=null){
-	      _obj.print(iwc);
+	      _obj._print(iwc);
 	    }
 	  }
 	/*}*/
@@ -1598,14 +1598,14 @@ public class Link extends Text{
 	      }
 	    }
 	  } else {
-	  _obj.print(iwc);
+	  _obj._print(iwc);
 	  }
 	}
 	else if (this.isImage()){
 	  Image image = this.getTheCorrectDefaultImage(iwc);
-	  image.print(iwc);
+	  image._print(iwc);
 	} else {
-	  _obj.print(iwc);
+	  _obj._print(iwc);
 	}
 	print("</a>");
       }*/
@@ -1622,7 +1622,7 @@ public class Link extends Text{
 	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
 	}
 	print("<a "+getAttributeString()+" >");
-	_obj.print(iwc);
+	_obj._print(iwc);
 	print("</a>");
       }
     }

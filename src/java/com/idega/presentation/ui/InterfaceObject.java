@@ -298,7 +298,6 @@ public Form getParentForm(){
 
 public String getActionString(IWContext iwc)throws IOException{
 
-	initVariables(iwc);
 
 	//String ActionString = "";
 

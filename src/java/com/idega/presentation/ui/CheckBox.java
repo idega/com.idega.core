@@ -116,7 +116,6 @@ public void handleKeepStatus(IWContext iwc){
 
 public void print(IWContext iwc)throws IOException{
 
-	initVariables(iwc);
 
 	handleKeepStatus(iwc);
 

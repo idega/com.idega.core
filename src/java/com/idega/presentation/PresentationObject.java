@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.50 2002/06/12 16:48:20 aron Exp $
+ * $Id: PresentationObject.java,v 1.51 2002/06/12 18:28:22 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -158,8 +158,8 @@ public class PresentationObject extends Object implements Cloneable {
     }
     if (interfaceStyle == null) {
       interfaceStyle = "default";
-    };
-    this.out = iwc.getWriter();
+    }
+
   }
 
   protected void initInMain(IWContext iwc) throws Exception{
@@ -390,8 +390,16 @@ public class PresentationObject extends Object implements Cloneable {
     out.println(string);
   }
 
+  public void _initPrinting(IWContext iwc) throws Exception {
+    //this.out = iwc.getWriter();
+
+    _print(iwc);
+  }
+
   public void _print(IWContext iwc) throws Exception {
-    this.print(iwc);
+    initVariables(iwc);
+    this.out = iwc.getWriter();
+    print(iwc);
   }
 
   /**
@@ -403,7 +411,6 @@ public class PresentationObject extends Object implements Cloneable {
    * This function should only be overrided in idegaWeb Elements.
    */
   public void print(IWContext iwc) throws Exception {
-    initVariables(iwc);
     if (iwc.getLanguage().equals("WML")) {
       getResponse().setContentType("text/vnd.wap.wml");
     }
@@ -705,6 +712,8 @@ public class PresentationObject extends Object implements Cloneable {
     /*if(this.ic_object_instance_id == 0){
       initICObjectInstanceId(iwc);
     }*/
+    initVariables(iwc);
+
     if(_iwuc == null){
       this.setIWUserContext(iwc);
     }
@@ -714,9 +723,9 @@ public class PresentationObject extends Object implements Cloneable {
     }
 
     if (!goneThroughMain) {
-      initVariables(iwc);
       main(iwc);
     }
+
     goneThroughMain = true;
   }
 
@@ -1205,7 +1214,7 @@ public class PresentationObject extends Object implements Cloneable {
     if(this instanceof StatefullPresentation){
       IWPresentationState state = ((StatefullPresentation)this).getPresentationState(iwuc);
       if(state != null){
-        state.setLocation(location);
+	state.setLocation(location);
       }
     }
   }
@@ -1223,28 +1232,28 @@ public class PresentationObject extends Object implements Cloneable {
       return _listenerList;
     } else {
       try {
-        IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
-        System.out.println();
+	IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
+	System.out.println();
 //        System.out.println("getEventListenerList: machine = "+ machine);
 //        System.out.println("getEventListenerList: location = "+this.getLocation());
-        System.out.println();
-        if(this.getICObjectInstanceID() == 0){
-          if(this.getLocation() != null){
-            _listenerList = machine.getListenersFor(this.getLocation());
-            return _listenerList;
-          } else {
-            throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
-          }
-        } else {
-          _listenerList = machine.getListenersFor(this.getICObjectInstance());
-          return _listenerList;
-        }
+	System.out.println();
+	if(this.getICObjectInstanceID() == 0){
+	  if(this.getLocation() != null){
+	    _listenerList = machine.getListenersFor(this.getLocation());
+	    return _listenerList;
+	  } else {
+	    throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
+	  }
+	} else {
+	  _listenerList = machine.getListenersFor(this.getICObjectInstance());
+	  return _listenerList;
+	}
       }
       catch (RemoteException ex) {
-        throw new RuntimeException(ex.getMessage());
+	throw new RuntimeException(ex.getMessage());
       }
       catch (SQLException sql) {
-        throw new RuntimeException(sql.getMessage());
+	throw new RuntimeException(sql.getMessage());
       }
 
     }
@@ -1258,10 +1267,10 @@ public class PresentationObject extends Object implements Cloneable {
     boolean hasBeenAdded = false;
     // Is l on the list?
     for (int i = list.length-2; i>=0; i-=2) {
-        if ((list[i]==IWActionListener.class) && (list[i+1].equals(l) == true)) {
-            hasBeenAdded = true;
-            break;
-        }
+	if ((list[i]==IWActionListener.class) && (list[i+1].equals(l) == true)) {
+	    hasBeenAdded = true;
+	    break;
+	}
     }
     if(!hasBeenAdded){
       getEventListenerList(this.getIWUserContext()).add(IWActionListener.class,l);

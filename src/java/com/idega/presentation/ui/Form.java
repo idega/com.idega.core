@@ -367,7 +367,7 @@ private void addTheMaintainedParameters(IWContext iwc){
 }
 
 public void print(IWContext iwc)throws Exception{
-	initVariables(iwc);
+
 	//if ( doPrint(iwc) ){
 
 		addTheMaintainedParameters(iwc);
@@ -391,9 +391,9 @@ public void print(IWContext iwc)throws Exception{
 
 
 			if (getInterfaceStyle().equals("default")){
-				getPrintWriter().println("<form name=\""+getName()+"\" "+getAttributeString()+" >");
+				println("<form name=\""+getName()+"\" "+getAttributeString()+" >");
 				super.print(iwc);
-				getPrintWriter().print("</form>");
+				print("</form>");
 			}
 		}
 		else if (getLanguage().equals("WML")){

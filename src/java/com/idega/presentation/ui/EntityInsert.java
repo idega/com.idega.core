@@ -666,9 +666,6 @@ public boolean hasInserted(IWContext iwc){
 
 public void print(IWContext iwc)throws Exception{
 
-	initVariables(iwc);
-
-
 
 	if(theForm != null){
 

@@ -234,7 +234,7 @@ public void _main(IWContext iwc)throws Exception{
 
 
 public void print(IWContext iwc)throws IOException{
-	initVariables(iwc);
+
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 

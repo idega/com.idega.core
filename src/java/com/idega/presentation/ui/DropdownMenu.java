@@ -100,7 +100,7 @@ public DropdownMenu(IDOLegacyEntity[] entity){
 
 	//setName(untitled);
 
-        initialize();
+	initialize();
 
 	//setAttribute("CLASS","select");
 
@@ -114,11 +114,11 @@ public DropdownMenu(IDOLegacyEntity[] entity){
 
       for (int i=0;i<entity.length;i++){
 
-              //if(entity[i].getID() != -1 && entity[i].getName() != null){
+	      //if(entity[i].getID() != -1 && entity[i].getName() != null){
 
-          addMenuElement(entity[i].getID(),entity[i].getName());
+	  addMenuElement(entity[i].getID(),entity[i].getName());
 
-              //}
+	      //}
 
       }
 
@@ -316,7 +316,7 @@ private void deselectElements(){
 
 public void setSelectedElement(String ElementValue){
 
-        deselectElements();
+	deselectElements();
 
 	getMenuElement(ElementValue).setSelected(true);
 
@@ -356,7 +356,7 @@ public void keepStatusOnAction(){
 
 public void setToGoToURL(){
 
-        this.setOnChange("location.href=this.form."+getName()+".options[this.form."+getName()+".selectedIndex].value");
+	this.setOnChange("location.href=this.form."+getName()+".options[this.form."+getName()+".selectedIndex].value");
 
 }
 
@@ -378,7 +378,7 @@ public void setToGoToURL(){
 
 public void setToSubmit(){
 
-        this.setOnChange("this.form.submit()");
+	this.setOnChange("this.form.submit()");
 
 }
 
@@ -442,13 +442,12 @@ public void setStyle(String style) {
 
 
 
-public void print(IWContext iwc)throws IOException{
+public void print(IWContext iwc)throws Exception{
 
 
 
 	theElements.trimToSize();
 
-	initVariables(iwc);
 
 	//if ( doPrint(iwc) ){
 
@@ -480,15 +479,15 @@ public void print(IWContext iwc)throws IOException{
 
 
 
-        Iterator iter = theElements.iterator();
+	Iterator iter = theElements.iterator();
 
-        while(iter.hasNext()){
+	while(iter.hasNext()){
 
-          MenuElement tempobj = (MenuElement)  iter.next();
+	  MenuElement tempobj = (MenuElement)  iter.next();
 
-					tempobj.print(iwc);
+					tempobj._print(iwc);
 
-        }
+	}
 
 				println("</select>");
 
@@ -522,15 +521,15 @@ public void print(IWContext iwc)throws IOException{
 
 
 
-        Iterator iter = theElements.iterator();
+	Iterator iter = theElements.iterator();
 
-        while(iter.hasNext()){
+	while(iter.hasNext()){
 
-          MenuElement tempobj = (MenuElement)  iter.next();
+	  MenuElement tempobj = (MenuElement)  iter.next();
 
-					tempobj.print(iwc);
+					tempobj._print(iwc);
 
-        }
+	}
 
 				println("</select>");
 
@@ -560,23 +559,23 @@ public void print(IWContext iwc)throws IOException{
 
       if(this.theElements != null){
 
-        obj.theElements = (Vector)this.theElements.clone();
+	obj.theElements = (Vector)this.theElements.clone();
 
-        java.util.ListIterator iter = obj.theElements.listIterator();
+	java.util.ListIterator iter = obj.theElements.listIterator();
 
-        while (iter.hasNext()) {
+	while (iter.hasNext()) {
 
-          int index = iter.nextIndex();
+	  int index = iter.nextIndex();
 
-          Object item = iter.next();
+	  Object item = iter.next();
 
-          if (item instanceof MenuElement) {
+	  if (item instanceof MenuElement) {
 
-            obj.theElements.set(index,((MenuElement)item).clone());
+	    obj.theElements.set(index,((MenuElement)item).clone());
 
-          }
+	  }
 
-        }
+	}
 
       }
 
@@ -588,7 +587,7 @@ public void print(IWContext iwc)throws IOException{
 
       if(this.script != null){
 
-        obj.script = (Script)this.script.clone();
+	obj.script = (Script)this.script.clone();
 
       }
 

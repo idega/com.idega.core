@@ -650,27 +650,23 @@ protected String getLocalizedText(IWContext iwc){
 
 public void print(IWContext iwc)throws Exception{
 
-	initVariables(iwc);
-
-
-
 	//setDefaultAttributes(iwc);
 
 	//if ( doPrint(iwc) ){
 
 		if (getLanguage().equals("HTML")){
 
-                  boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
+		  boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
-                  if(alignSet){
+		  if(alignSet){
 
-                    print("<div align=\""+getHorizontalAlignment()+"\">");
+		    print("<div align=\""+getHorizontalAlignment()+"\">");
 
-                    removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+		    removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
 
-                  }
+		  }
 
-                  	//if (getInterfaceStyle().equals("something")){
+			//if (getInterfaceStyle().equals("something")){
 
 			//}
 
@@ -712,15 +708,15 @@ public void print(IWContext iwc)throws Exception{
 
 
 
-                  if(alignSet){
+		  if(alignSet){
 
-                    print("</div>");
+		    print("</div>");
 
-                  }
+		  }
 
 
 
-                        //}
+			//}
 
 		}
 
@@ -740,7 +736,7 @@ public void print(IWContext iwc)throws Exception{
 
 				myParagraph.add(this);
 
-				myParagraph.print(iwc);
+				myParagraph._print(iwc);
 
 			}*/
 

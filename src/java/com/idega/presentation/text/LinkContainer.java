@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.6 2002/06/11 15:08:26 laddi Exp $
+ * $Id: LinkContainer.java,v 1.7 2002/06/12 18:28:22 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -432,7 +432,7 @@ public class LinkContainer extends PresentationObjectContainer {
    *
    */
   public void print(IWContext iwc) throws Exception {
-    initVariables(iwc);
+
     boolean addParameters = true;
     String oldURL = getURL();
 
@@ -485,7 +485,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	Iterator iter = theObjects.iterator();
 	while (iter.hasNext()) {
 	  PresentationObject item = (PresentationObject) iter.next();
-	  item.print(iwc);
+	  item._print(iwc);
 	}
       }
 
@@ -502,7 +502,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	Iterator iter = theObjects.iterator();
 	while (iter.hasNext()) {
 	  PresentationObject item = (PresentationObject) iter.next();
-	  item.print(iwc);
+	  item._print(iwc);
 	}
       }
 

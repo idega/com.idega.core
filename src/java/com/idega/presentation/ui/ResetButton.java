@@ -50,7 +50,6 @@ public ResetButton(String name){
 
 public void print(IWContext iwc) throws IOException{
 
-	initVariables(iwc);
 
 	//if ( doPrint(iwc) ){
 

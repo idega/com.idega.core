@@ -64,7 +64,6 @@ public Parameter(String name,String value){
 
 public void print(IWContext iwc)throws IOException{
 
-	initVariables(iwc);
 
 	//if ( doPrint(iwc) ){
 

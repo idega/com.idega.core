@@ -471,7 +471,7 @@ public class FrameTable extends Window{
     public void print(IWContext iwc) throws Exception{
       //goneThroughMain = false;
       //System.out.println("in print()");
-      initVariables(iwc);
+
       StringBuffer buf = new StringBuffer();
       boolean isInFrame = isInFrame();
       if( !isInAWindow && !isInFrame ){

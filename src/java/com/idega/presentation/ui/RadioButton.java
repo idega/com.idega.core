@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioButton.java,v 1.4 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: RadioButton.java,v 1.5 2002/06/12 18:28:23 laddi Exp $
 
  *
 
@@ -124,7 +124,6 @@ public class RadioButton extends InterfaceObject {
 
   public void print(IWContext iwc) throws IOException {
 
-    initVariables(iwc);
 
     if (getLanguage().equals("HTML")){
 

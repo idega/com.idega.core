@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.16 2002/06/10 15:42:28 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.17 2002/06/12 18:28:22 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -41,9 +41,9 @@ public class PresentationObjectContainer extends PresentationObject {
 	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
+	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-        this.theObjects.add(index,modObject);
+	this.theObjects.add(index,modObject);
       }
     }
     catch(Exception ex) {
@@ -60,9 +60,9 @@ public class PresentationObjectContainer extends PresentationObject {
 	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
+	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-        this.theObjects.addElement(modObject);
+	this.theObjects.addElement(modObject);
       }
     }
     catch(Exception ex) {
@@ -447,9 +447,9 @@ public class PresentationObjectContainer extends PresentationObject {
 	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
+	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-        theObjects.insertElementAt(modObject,index);
+	theObjects.insertElementAt(modObject,index);
       }
     }
     catch(Exception ex) {
@@ -467,9 +467,9 @@ public class PresentationObjectContainer extends PresentationObject {
       }
       if (modObject != null) {
 <<<<<<< PresentationObjectContainer.java
-        modObject.setParentObject(this);
+	modObject.setParentObject(this);
 //        modObject.setLocation(this.getLocation());
-        theObjects.setElementAt(modObject,index);
+	theObjects.setElementAt(modObject,index);
 =======
 	modObject.setParentObject(this);
 	theObjects.setElementAt(modObject,index);
@@ -523,22 +523,22 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
       obj = (PresentationObjectContainer)super.clone();
       obj._locked = this._locked;
       //if(!(this instanceof Table)){
-        if (this.theObjects != null) {
-            //obj.setObjects((Vector)this.theObjects.clone());
-            obj.theObjects=(Vector)this.theObjects.clone();
-            ListIterator iter = obj.theObjects.listIterator();
-            while (iter.hasNext()) {
-              int index = iter.nextIndex();
-              Object item = iter.next();
-              //Object item = obj.theObjects.elementAt(index);
-              if(item instanceof PresentationObject){
-                PresentationObject newObject = (PresentationObject) ((PresentationObject)item)._clone(iwc,askForPermission);
-                newObject.setParentObject(obj);
-                //newObject.setLocation(this.getLocation());
-                obj.theObjects.set(index,newObject);
-              }
-            }
-        //}
+	if (this.theObjects != null) {
+	    //obj.setObjects((Vector)this.theObjects.clone());
+	    obj.theObjects=(Vector)this.theObjects.clone();
+	    ListIterator iter = obj.theObjects.listIterator();
+	    while (iter.hasNext()) {
+	      int index = iter.nextIndex();
+	      Object item = iter.next();
+	      //Object item = obj.theObjects.elementAt(index);
+	      if(item instanceof PresentationObject){
+		PresentationObject newObject = (PresentationObject) ((PresentationObject)item)._clone(iwc,askForPermission);
+		newObject.setParentObject(obj);
+		//newObject.setLocation(this.getLocation());
+		obj.theObjects.set(index,newObject);
+	      }
+	    }
+	//}
       }
     }
     catch(Exception ex) {
@@ -639,16 +639,16 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
     if(l != null){
       Iterator iter = l.iterator();
       while (iter.hasNext()) {
-        Object item = iter.next();
-        if(item instanceof PresentationObject){
-          ((PresentationObject)item).setLocation(location,iwuc);
-        }
-        if(item instanceof StatefullPresentation){
-          IWPresentationState state = ((StatefullPresentation)item).getPresentationState(iwuc);
-          if(state != null){
-            state.setLocation(location);
-          }
-        }
+	Object item = iter.next();
+	if(item instanceof PresentationObject){
+	  ((PresentationObject)item).setLocation(location,iwuc);
+	}
+	if(item instanceof StatefullPresentation){
+	  IWPresentationState state = ((StatefullPresentation)item).getPresentationState(iwuc);
+	  if(state != null){
+	    state.setLocation(location);
+	  }
+	}
       }
     }
   }

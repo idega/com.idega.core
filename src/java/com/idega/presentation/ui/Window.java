@@ -51,8 +51,8 @@ public class Window extends Page{
 
 public Window(){
 	this(emptyString);
-        String className = this.getClass().getName();
-        setTitle(className.substring(className.lastIndexOf(".")+1));
+	String className = this.getClass().getName();
+	setTitle(className.substring(className.lastIndexOf(".")+1));
 }
 
 
@@ -62,9 +62,9 @@ public Window(String name){
 }
 
 public Window(int width, int heigth) {
-        this(emptyString,width,heigth);
-        String className = this.getClass().getName();
-        setTitle(className.substring(className.lastIndexOf(".")+1));
+	this(emptyString,width,heigth);
+	String className = this.getClass().getName();
+	setTitle(className.substring(className.lastIndexOf(".")+1));
 }
 
 public Window(String name,int width,int height){
@@ -74,7 +74,7 @@ public Window(String name,int width,int height){
 	//this.width=width;
 	//newURL=false;
 	//setSettings();
-        //this(name,width,height,IWMainApplication.windowOpenerURL);
+	//this(name,width,height,IWMainApplication.windowOpenerURL);
 
     this.setName(name);
     this.setWidth(width);
@@ -117,7 +117,7 @@ public Window(String name,Class classToInstanciate){
 }
 
 private void setSettings(){
-        setID();
+	setID();
 	setToolbar(false);
 	setLocation(false);
 	setScrollbar(true);
@@ -186,7 +186,7 @@ System.out.println("ret1 = " + ret);
 
     if (d.getURL() != null) {
       if (ret.startsWith("/")) {
-        ret = d.getURL() + ret;
+	ret = d.getURL() + ret;
       }
     }
 System.out.println("ret2 = " + ret);
@@ -291,7 +291,7 @@ public String getUrl(){
 
 public void setURL(String url){
 	this.url=url;
-        //newURL=true;
+	//newURL=true;
 }
 
 /*public void setAssociatedScript(Script myScript){
@@ -375,10 +375,10 @@ public String getCallingScriptString(IWContext iwc){
 
 protected String getCallingScriptStringForForm(IWContext iwc){
 	//return "window.open('"+getURL(iwc)+"','"+getName()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+",width="+getWidth()+",height="+getHeight()+"')";
-          /*if (this.getName().equalsIgnoreCase("untitled")){
-            setID();
-            setName(getID());
-          }*/
+	  /*if (this.getName().equalsIgnoreCase("untitled")){
+	    setID();
+	    setName(getID());
+	  }*/
   //return "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
   return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
 }
@@ -389,8 +389,8 @@ protected String getCallingScriptStringForForm(IWContext iwc){
  * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height)
  */
 public static String getWindowCallingScript(String url,String name,boolean tool,
-              boolean loc,boolean dir,boolean stat,boolean menu,boolean title
-              ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight ){
+	      boolean loc,boolean dir,boolean stat,boolean menu,boolean title
+	      ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight ){
 
   String no = "0";
   String yes = "1";
@@ -515,7 +515,7 @@ public String getTarget(){
 
 /*
 public void print(IWContext iwc)throws IOException{
-	initVariables(iwc);
+
 	if ( doPrint(iwc) ){
 		if (! isAttributeSet("bgcolor")){
 			setBackgroundColor(iwc.getDefaultPrimaryInterfaceColor());
@@ -530,7 +530,7 @@ public void print(IWContext iwc)throws IOException{
 				println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n<html>");
 				println("\n<head>");
 				if ( getAssociatedScript() != null){
-					getAssociatedScript().print(iwc);
+					getAssociatedScript()._print(iwc);
 				}
 				println("\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n<META NAME=\"generator\" CONTENT=\"idega arachnea\">\n");
 				println("<title>"+getTitle()+"</title>");

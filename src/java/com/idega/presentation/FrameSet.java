@@ -204,7 +204,7 @@ public class FrameSet extends Window{
 
     public void print(IWContext iwc) throws Exception{
       //goneThroughMain = false;
-      initVariables(iwc);
+
       StringBuffer buf = new StringBuffer();
 
       if( !isInAWindow ){

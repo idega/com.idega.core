@@ -158,7 +158,6 @@ private Image bullet;
 
   public void print(IWContext iwc)throws Exception{
 
-    initVariables(iwc);
 
     getBullet();
 
@@ -184,7 +183,7 @@ private Image bullet;
 
 	  if ( item instanceof Lists )
 
-	    item.print(iwc);
+	    item._print(iwc);
 
 	  else {
 
@@ -208,7 +207,7 @@ private Image bullet;
 
 	      print("<LI>");
 
-	    item.print(iwc);
+	    item._print(iwc);
 
 	    println("</LI>");
 

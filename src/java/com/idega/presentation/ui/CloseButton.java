@@ -50,7 +50,7 @@ public void print(IWContext iwc) throws IOException{
 	  if(useGeneratedImage){
 	defaultImage = this.getBundle(iwc).getResourceBundle(iwc).getLocalizedImageButton("close","Close");
       }
-      initVariables(iwc);
+
 	StringBuffer printString = new StringBuffer();
 	 if( defaultImage!= null ) {
 	  setAttribute("src",defaultImage.getMediaURL(iwc));

@@ -668,7 +668,6 @@ public void print(IWContext iwc)throws Exception{
 
 	theElements.trimToSize();
 
-	initVariables(iwc);
 
 
 
@@ -680,7 +679,7 @@ public void print(IWContext iwc)throws Exception{
 
             movers=false;
 
-            outerTable.print(iwc);
+            outerTable._print(iwc);
 
             movers=false;
 
@@ -704,7 +703,7 @@ public void print(IWContext iwc)throws Exception{
 
               theHeader.addBreak();
 
-              theHeader.print(iwc);
+              theHeader._print(iwc);
 
             }
 
@@ -742,7 +741,7 @@ public void print(IWContext iwc)throws Exception{
 
 					MenuElement tempobj = (MenuElement)  e.nextElement();
 
-					tempobj.print(iwc);
+					tempobj._print(iwc);
 
 
 
@@ -788,7 +787,7 @@ public void print(IWContext iwc)throws Exception{
 
 					MenuElement tempobj = (MenuElement)  e.nextElement();
 
-					tempobj.print(iwc);
+					tempobj._print(iwc);
 
 
 

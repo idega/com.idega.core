@@ -68,7 +68,7 @@ public class PageIncluder extends PresentationObject implements Index{
     while (iter.hasNext()) {
       Object item = iter.next();
       if(item instanceof PageIncluder){
-        includers.add(item);
+	includers.add(item);
       }
     }
 
@@ -80,10 +80,10 @@ public class PageIncluder extends PresentationObject implements Index{
     while (iter2.hasNext()) {
       PageIncluder item = (PageIncluder)iter2.next();
       try {
-        item.process(iwc);
+	item.process(iwc);
       }
       catch (IOException ex) {
-        ex.printStackTrace(System.err);
+	ex.printStackTrace(System.err);
       }
     }
 
@@ -103,14 +103,14 @@ public class PageIncluder extends PresentationObject implements Index{
 
     if( changeURL ){
       if (_sendToPage != null) {
-        if (_sendToPageIfSet == null){
-          forwardToIBPage(_sendToPage,iwc);
-        }
-        else {
-          if (iwc.isParameterSet(_sendToPageIfSet)){
-            forwardToIBPage(_sendToPage,iwc);
-          }
-        }
+	if (_sendToPageIfSet == null){
+	  iwc.forwardToIBPage(_sendToPage);
+	}
+	else {
+	  if (iwc.isParameterSet(_sendToPageIfSet)){
+	    iwc.forwardToIBPage(_sendToPage);
+	  }
+	}
       }
     }
     else{
@@ -122,175 +122,175 @@ public class PageIncluder extends PresentationObject implements Index{
   public void print(IWContext iwc)throws IOException{
     if(URL!=null){
       if( doPrint(iwc) ){
-        if(out!=null) println(out);
-        out = null;
+	if(out!=null) println(out);
+	out = null;
       }
     }
   }
 
   protected void process(IWContext iwc)throws IOException{
-        StringBuffer location = new StringBuffer();
-        StringBuffer queryBuf = new StringBuffer();
+	StringBuffer location = new StringBuffer();
+	StringBuffer queryBuf = new StringBuffer();
 
 
 
-        String query = null;
-        instanceId=getICObjectInstanceID();
+	String query = null;
+	instanceId=getICObjectInstanceID();
 
 /*        Enumeration enum2 = iwc.getParameterNames();
-        while (enum2.hasMoreElements()) {
-          String param2 = (String) enum2.nextElement();
-          System.out.println("param = " + param2);
-        }*/
+	while (enum2.hasMoreElements()) {
+	  String param2 = (String) enum2.nextElement();
+	  System.out.println("param = " + param2);
+	}*/
 
-        if (forceFrame) {
-          String currentPage = getCurrentIBPageIDToURLString(iwc);
-          StringBuffer buf = new StringBuffer();
-          buf.append(iwc.getRequestURI());
-          buf.append('?');
-          buf.append(currentPage);
-          buf.append('&');
-
-
-          if (_sendURLTo == null){
-            buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-            buf.append(instanceId);
-            buf.append('=');
-          }
-          else {
-            if (_sendToPageIfSet == null){
-              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-              buf.append(_sendURLTo);
-              buf.append('=');
-            }
-            else {
-              if (iwc.isParameterSet(_sendToPageIfSet)){
-                buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-                buf.append(_sendURLTo);
-                buf.append('=');
-              }
-              else{
-                buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-                buf.append(instanceId);
-                buf.append('=');
-              }
-            }
-          }
-
-          pageIncluderPrefix = buf.toString();
+	if (forceFrame) {
+	  String currentPage = getCurrentIBPageIDToURLString(iwc);
+	  StringBuffer buf = new StringBuffer();
+	  buf.append(iwc.getRequestURI());
+	  buf.append('?');
+	  buf.append(currentPage);
+	  buf.append('&');
 
 
-        }
-        else {
-         pageIncluderPrefix ="";
-        }
+	  if (_sendURLTo == null){
+	    buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	    buf.append(instanceId);
+	    buf.append('=');
+	  }
+	  else {
+	    if (_sendToPageIfSet == null){
+	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	      buf.append(_sendURLTo);
+	      buf.append('=');
+	    }
+	    else {
+	      if (iwc.isParameterSet(_sendToPageIfSet)){
+		buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+		buf.append(_sendURLTo);
+		buf.append('=');
+	      }
+	      else{
+		buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+		buf.append(instanceId);
+		buf.append('=');
+	      }
+	    }
+	  }
 
-        //after clicking a link and submitting a form
-        // check if the action is for this page includer
-        if ( changeURL ) {
-          //get all parameters even from post actions
-          Enumeration enum = iwc.getParameterNames();
-          while (enum.hasMoreElements()) {
-            String param = (String) enum.nextElement();
-            //debug(param+" : "+iwc.getParameter(param));
-            if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
-             URL = decodeQueryString(iwc.getParameter(param));
-             //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
-             location.append(URL);
-            }
-            else if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
-              URL = decodeQueryString(iwc.getParameter(param));
-              //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
-              //if (_sendURLTo != null)
-              //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
-              debug(URL);
-              location.append(URL);
-            }
-            else{
-              if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
-                queryBuf.append(param);
-                queryBuf.append("=");
-                queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
-                queryBuf.append("&");
-              }
-            }
-          }//while ends
-
-          query = queryBuf.toString();
-
-          if( !query.equals("") ){
-            if(URL.endsWith("/")){//check if the url ends with a slash
-              location.append("?");
-            }
-            else{//no slash at end
-              if( URL.indexOf("?")==-1 ){//check if the url contains a ?
-                if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
-                  location.append("?");
-                }
-                else{
-                  location.append("/?");
-                }
-              }
-              else{//just add to the parameters
-                location.append("&");
-              }
-            }
-            //add the extra parameters
-            location.append(query);
-          }
-        }//if iw_uri check ends
-        else {//using starting state url
-          location.append(URL);
-        }
-
-        String loc = location.toString();
-
-        if( (sessionURL!=null) && (token!=null) ){
-
-          if( sessionId==null ){
-            sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
-            if(sessionId==null){
-              sessionId = FileUtil.getStringFromURL(sessionURL);
-              //debug("Sessions id is : "+sessionId);
-            }
-          }
-
-          iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
-
-          loc = TextSoap.findAndReplace(loc,token,sessionId);
-          loc = TextSoap.findAndCut(loc,"\r\n");
-          loc = TextSoap.findAndCut(loc,"\n");
+	  pageIncluderPrefix = buf.toString();
 
 
-        }
-        else if( (sessionId!=null) && (token!=null)){
-          loc = TextSoap.findAndReplace(loc,token,sessionId);
-        }
+	}
+	else {
+	 pageIncluderPrefix ="";
+	}
 
-        debug("Location url is: "+loc+" and index is: "+index);
+	//after clicking a link and submitting a form
+	// check if the action is for this page includer
+	if ( changeURL ) {
+	  //get all parameters even from post actions
+	  Enumeration enum = iwc.getParameterNames();
+	  while (enum.hasMoreElements()) {
+	    String param = (String) enum.nextElement();
+	    //debug(param+" : "+iwc.getParameter(param));
+	    if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
+	     URL = decodeQueryString(iwc.getParameter(param));
+	     //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+	     location.append(URL);
+	    }
+	    else if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
+	      URL = decodeQueryString(iwc.getParameter(param));
+	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+	      //if (_sendURLTo != null)
+	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
+	      debug(URL);
+	      location.append(URL);
+	    }
+	    else{
+	      if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
+		queryBuf.append(param);
+		queryBuf.append("=");
+		queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
+		queryBuf.append("&");
+	      }
+	    }
+	  }//while ends
+
+	  query = queryBuf.toString();
+
+	  if( !query.equals("") ){
+	    if(URL.endsWith("/")){//check if the url ends with a slash
+	      location.append("?");
+	    }
+	    else{//no slash at end
+	      if( URL.indexOf("?")==-1 ){//check if the url contains a ?
+		if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
+		  location.append("?");
+		}
+		else{
+		  location.append("/?");
+		}
+	      }
+	      else{//just add to the parameters
+		location.append("&");
+	      }
+	    }
+	    //add the extra parameters
+	    location.append(query);
+	  }
+	}//if iw_uri check ends
+	else {//using starting state url
+	  location.append(URL);
+	}
+
+	String loc = location.toString();
+
+	if( (sessionURL!=null) && (token!=null) ){
+
+	  if( sessionId==null ){
+	    sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
+	    if(sessionId==null){
+	      sessionId = FileUtil.getStringFromURL(sessionURL);
+	      //debug("Sessions id is : "+sessionId);
+	    }
+	  }
+
+	  iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
+
+	  loc = TextSoap.findAndReplace(loc,token,sessionId);
+	  loc = TextSoap.findAndCut(loc,"\r\n");
+	  loc = TextSoap.findAndCut(loc,"\n");
 
 
-        out = FileUtil.getStringFromURL(loc);
+	}
+	else if( (sessionId!=null) && (token!=null)){
+	  loc = TextSoap.findAndReplace(loc,token,sessionId);
+	}
+
+	debug("Location url is: "+loc+" and index is: "+index);
 
 
-        URL url = new URL(loc);
-        BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
-        if(loc.lastIndexOf("/")==6) loc+="/";
-        RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+	out = FileUtil.getStringFromURL(loc);
 
-        /**
-         * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
-         * **/
 
-        out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
-        out = preProcess(out);
-        if( forceFrame ){
-          out = encodeQueryStrings(out);
-        }
-        out = changeSrcAttributes(out);
-        out = changeAHrefAttributes(out);
-        out = changeFormActionAttributes(out);
-        out = postProcess(out);
+	URL url = new URL(loc);
+	BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
+	if(loc.lastIndexOf("/")==6) loc+="/";
+	RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+
+	/**
+	 * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
+	 * **/
+
+	out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
+	out = preProcess(out);
+	if( forceFrame ){
+	  out = encodeQueryStrings(out);
+	}
+	out = changeSrcAttributes(out);
+	out = changeAHrefAttributes(out);
+	out = changeFormActionAttributes(out);
+	out = postProcess(out);
   }
 
 
@@ -519,13 +519,4 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToPageIfSet;
   }
 
-  public void forwardToIBPage(IBPage page, IWContext iwc){
-    try{
-      RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
-      req.forward(iwc.getRequest(),iwc.getResponse());
-    }
-    catch(Exception e){
-     e.printStackTrace(System.err);
-    }
-  }
 }

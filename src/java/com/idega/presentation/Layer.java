@@ -173,7 +173,7 @@ private String getOnMouseOut() {
 }
 
 public void print(IWContext iwc) throws Exception{
-  initVariables(iwc);
+
   if( doPrint(iwc)){
 	  if (getLanguage().equals("HTML")){
 

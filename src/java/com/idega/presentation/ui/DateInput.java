@@ -1,6 +1,6 @@
 /*
 
- * $Id: DateInput.java,v 1.14 2002/03/01 14:57:16 gimmi Exp $
+ * $Id: DateInput.java,v 1.15 2002/06/12 18:28:22 laddi Exp $
 
  *
 
@@ -1392,7 +1392,7 @@ public void main(IWContext iwc)throws Exception{
 
         if(this._showYear){
 
-          _theYear.print(iwc);
+          _theYear._print(iwc);
 
         }
 
@@ -1402,11 +1402,11 @@ public void main(IWContext iwc)throws Exception{
 
         }
 
-        _theMonth.print(iwc);
+        _theMonth._print(iwc);
 
         if (_isShowDay) {
 
-          _theDay.print(iwc);
+          _theDay._print(iwc);
 
         }
 
@@ -1416,15 +1416,15 @@ public void main(IWContext iwc)throws Exception{
 
         if (_isShowDay) {
 
-          _theDay.print(iwc);
+          _theDay._print(iwc);
 
         }
 
-        _theMonth.print(iwc);
+        _theMonth._print(iwc);
 
         if(this._showYear){
 
-          _theYear.print(iwc);
+          _theYear._print(iwc);
 
         }
 
@@ -1436,9 +1436,9 @@ public void main(IWContext iwc)throws Exception{
 
       }
 
-      _theWholeDate.print(iwc);
+      _theWholeDate._print(iwc);
 
-      _script.print(iwc);
+      _script._print(iwc);
 
 
 

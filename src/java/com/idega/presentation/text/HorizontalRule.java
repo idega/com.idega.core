@@ -210,7 +210,6 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void print(IWContext iwc)throws IOException{
 
-    initVariables(iwc);
 
     if (getLanguage().equals("HTML")){
 

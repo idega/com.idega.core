@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.55 2002/06/07 11:06:04 gummi Exp $
+ *  $Id: Page.java,v 1.56 2002/06/12 18:28:22 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -906,6 +906,7 @@ public class Page extends PresentationObjectContainer {
       setStyleSheetURL(MediaBusiness.getMediaURL(styleFile.getID(),iwc.getApplication()));
     }
 
+
   }
 
   /*
@@ -939,7 +940,7 @@ public class Page extends PresentationObjectContainer {
    *@exception  Exception  Description of the Exception
    */
   public void print(IWContext iwc) throws Exception {
-    initVariables(iwc);
+
     setDefaultAttributes(iwc);
 
     boolean isInsideOtherPage = this.isChildOfOtherPage();
@@ -966,6 +967,7 @@ public class Page extends PresentationObjectContainer {
 	  println("</script>");
 	  print(getJavascriptURL());
 	}
+
 	if (getAssociatedScript() != null) {
 	  getAssociatedScript()._print(iwc);
 	}
@@ -996,7 +998,8 @@ public class Page extends PresentationObjectContainer {
 	println("<h1>Villa var&eth;!</h1>");
 	println("IW Error");
 	println("<pre>");
-	ex.printStackTrace(iwc.getWriter());
+	println(ex.getMessage());
+	ex.printStackTrace(System.err);
 	println("</pre>");
       }
 
@@ -1019,7 +1022,8 @@ public class Page extends PresentationObjectContainer {
 	println("<p>Villa var&eth;!</p>");
 	println("<p>IWError</p>");
 	println("<p>");
-	ex.printStackTrace(iwc.getWriter());
+	println(ex.getMessage());
+	ex.printStackTrace(System.err);
 	println("</p>");
       }
 

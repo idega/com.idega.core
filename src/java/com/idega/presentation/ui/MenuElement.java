@@ -140,7 +140,6 @@ public class MenuElement extends InterfaceObject{
 
   public void print(IWContext iwc)throws IOException{
 
-          initVariables(iwc);
 
           //if ( doPrint(iwc) ){
 

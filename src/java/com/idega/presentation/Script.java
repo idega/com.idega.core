@@ -192,9 +192,8 @@ public String getFunction(String functionName){
 }
 
 public void print(IWContext iwc)throws Exception{
-	initVariables(iwc);
-	if (doPrint(iwc)){
-		if (getLanguage().equals("HTML")){
+  if (doPrint(iwc)){
+    if (getLanguage().equals("HTML")){
       com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
 
       if (d.getURL() != null) {
@@ -216,16 +215,14 @@ public void print(IWContext iwc)throws Exception{
 				}
 				println("//-->");
 				println("\n</script>");
-				flush();
+				//flush();
 			//}
-		}
-		else if (getLanguage().equals("WML")){
+      }
+      else if (getLanguage().equals("WML")){
 			println("");
-		}
-	}
-	else{
-		super._print(iwc);
-	}
+      }
+    }
+
 }
 
   public void setFunction(String functionName,String functionCode) {

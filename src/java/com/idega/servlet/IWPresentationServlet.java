@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.34 2002/06/07 11:06:04 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.35 2002/06/12 18:29:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -52,51 +52,51 @@ public  class IWPresentationServlet extends IWCoreServlet{
   private static final String IW_MODULEINFO_KEY="idegaweb_iwc";
 	/*
 	public void init(ServletConfig config)
-          throws ServletException{
+	  throws ServletException{
 		super.init(config);
 
 	}*/
 
 	/*public void init()throws ServletException{
-                //System.out.println("Inside init() for "+getServletConfig().getServletName());
+		//System.out.println("Inside init() for "+getServletConfig().getServletName());
 		super.init();
-                String servletName = this.getServletConfig().getServletName();
-                System.out.println("Inside init for "+servletName);
-                initializePage();
+		String servletName = this.getServletConfig().getServletName();
+		System.out.println("Inside init for "+servletName);
+		initializePage();
 	}*/
 
 	private void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
-          //TODO
-          //Find a better solution for this:
-          IWContext iwc = null;
-          //IWContext iwc = (IWContext)request.getSession().getAttribute("idega_special_iwc");
+	  //TODO
+	  //Find a better solution for this:
+	  IWContext iwc = null;
+	  //IWContext iwc = (IWContext)request.getSession().getAttribute("idega_special_iwc");
 
-          if (iwc == null) {
-            iwc = new IWContext(request,response);
-            iwc.setServletContext(getServletContext());
-            request.getSession().setAttribute("idega_special_iwc",iwc);
-          }
-          else {
-            iwc.setRequest(request);
-            iwc.setResponse(response);
-          }
+	  if (iwc == null) {
+	    iwc = new IWContext(request,response);
+	    iwc.setServletContext(getServletContext());
+	    request.getSession().setAttribute("idega_special_iwc",iwc);
+	  }
+	  else {
+	    iwc.setRequest(request);
+	    iwc.setResponse(response);
+	  }
 
-          if(iwc.isMultipartFormData()){
-            //iwc.getWriter().println("form is multipart");
-            handleMultipartFormData(iwc);
-          }
+	  if(iwc.isMultipartFormData()){
+	    //iwc.getWriter().println("form is multipart");
+	    handleMultipartFormData(iwc);
+	  }
 //          else {
 //            iwc.getWriter().println("form is not multipart");
 //            iwc.getWriter().println("<br>type: "+iwc.getRequestContentType());
 //          }
 
-          String markup = iwc.getParameter("idega_special_markup");
-          if(markup != null) {
-            iwc.setLanguage(markup);
-          }
+	  String markup = iwc.getParameter("idega_special_markup");
+	  if(markup != null) {
+	    iwc.setLanguage(markup);
+	  }
 
 
-          storeObject(IW_MODULEINFO_KEY,iwc);
+	  storeObject(IW_MODULEINFO_KEY,iwc);
 
 	}
 
@@ -125,24 +125,24 @@ public  class IWPresentationServlet extends IWCoreServlet{
     if (sessionAddress != null && !"".equals(sessionAddress)){
       Object obj = iwc.getSessionAttribute(sessionAddress);
       if(obj != null) {
-        if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
+	if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
 
-            if(Page.isRequestingTopPage(iwc)){
-              __theService(request,response);
-            }
-          //theServiceDone = true;
-          if(obj instanceof IWModuleEvent){
-            ((IWModuleEvent)obj).setIWContext(iwc);
-          }else{
-            this.getPage()._setIWContext(iwc);
-          }
-          ((ActiveEvent)obj).dispatch();
-          return true;
-        /* Kommentað út þar til kerfið ræður við þræði
-          EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
-          q.postEvent((AWTEvent)obj);
-        */
-        }
+	    if(Page.isRequestingTopPage(iwc)){
+	      __theService(request,response);
+	    }
+	  //theServiceDone = true;
+	  if(obj instanceof IWModuleEvent){
+	    ((IWModuleEvent)obj).setIWContext(iwc);
+	  }else{
+	    this.getPage()._setIWContext(iwc);
+	  }
+	  ((ActiveEvent)obj).dispatch();
+	  return true;
+	/* Kommentað út þar til kerfið ræður við þræði
+	  EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+	  q.postEvent((AWTEvent)obj);
+	*/
+	}
       }
     }
     return false;
@@ -151,61 +151,61 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
-          try {
+	  try {
 
 long time1 = System.currentTimeMillis();
 //com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
-            __initializeIWC(request,response);
-            IWContext iwc = getIWContext();
-          try{
+	    __initializeIWC(request,response);
+	    IWContext iwc = getIWContext();
+	  try{
 
-            processBusinessEvent(iwc);
+	    processBusinessEvent(iwc);
 
-            initializePage();
+	    initializePage();
 
-            processPresentationEvent(iwc);
+	    processPresentationEvent(iwc);
 
-            //added by gummi@idega.is
-            //begin
-            boolean theServiceDone = processAWTEvent(iwc,request,response);
+	    //added by gummi@idega.is
+	    //begin
+	    boolean theServiceDone = processAWTEvent(iwc,request,response);
 
-            //end
+	    //end
 
-            // new Event system
-              increaseHistoryID(iwc);
-              handleEvent(iwc);
-            // event system end
+	    // new Event system
+	      increaseHistoryID(iwc);
+	      handleEvent(iwc);
+	    // event system end
 
-            //if (isActionPerformed(request,response)){
-                    //actionPerformed(new ModuleEvent(request,response));
-                    //actionPerformed(new ModuleEvent(iwc));
-            //}
-            //else{
-                  if(!theServiceDone) //gummi@idega.is
-                  {
-                    if(Page.isRequestingTopPage(iwc)){
-                      __theService(request,response);
-                    }
-                  }
-            //}
+	    //if (isActionPerformed(request,response)){
+		    //actionPerformed(new ModuleEvent(request,response));
+		    //actionPerformed(new ModuleEvent(iwc));
+	    //}
+	    //else{
+		  if(!theServiceDone) //gummi@idega.is
+		  {
+		    if(Page.isRequestingTopPage(iwc)){
+		      __theService(request,response);
+		    }
+		  }
+	    //}
       //      response.getWriter().println("\n");
-            _main(iwc);
+	    _main(iwc);
 
 
-          }
-          catch(IWPageInitializationException iwe){
-                    iwe.printStackTrace();
-                    ErrorPage errorPage = new ErrorPage();
-                    errorPage.setErrorMessage(iwe.getMessage());
-                    this.setPage(errorPage);
-          }
-          catch(Exception e){
-                    e.printStackTrace();
-                    ErrorPage errorPage = new ErrorPage();
-                    errorPage.setErrorMessage("There was an error, your session is probably expired");
-                    this.setPage(errorPage);
-          }
-          __print(iwc);
+	  }
+	  catch(IWPageInitializationException iwe){
+		    iwe.printStackTrace();
+		    ErrorPage errorPage = new ErrorPage();
+		    errorPage.setErrorMessage(iwe.getMessage());
+		    this.setPage(errorPage);
+	  }
+	  catch(Exception e){
+		    e.printStackTrace();
+		    ErrorPage errorPage = new ErrorPage();
+		    errorPage.setErrorMessage("There was an error, your session is probably expired");
+		    this.setPage(errorPage);
+	  }
+	  __print(iwc);
 
 long time2 = System.currentTimeMillis();
 PrintWriter writer = iwc.getWriter();
@@ -238,24 +238,25 @@ writer.println("-->");
 
 //writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
 
-            /*if (connectionRequested()){
-                            freeConnection();
-            }*/
-            //getThreadContext().releaseThread(Thread.currentThread());
-          } catch(Exception ex){
-                  /*if (ex instanceof java.io.IOException){
-                          throw (java.io.IOException) ex.fillInStackTrace();
-                  }
-                  else if (ex instanceof javax.servlet.ServletException){
-                          throw (javax.servlet.ServletException) ex.fillInStackTrace();
-                  }
-                  else{*/
-                          response.getWriter().println("<H2>IWError</H2>");
-                          response.getWriter().println("<pre>");
-                          ex.printStackTrace(response.getWriter());
-                          response.getWriter().println("</pre>");
-                  //}
-          }
+	    /*if (connectionRequested()){
+			    freeConnection();
+	    }*/
+	    //getThreadContext().releaseThread(Thread.currentThread());
+	  } catch(Exception ex){
+		  /*if (ex instanceof java.io.IOException){
+			  throw (java.io.IOException) ex.fillInStackTrace();
+		  }
+		  else if (ex instanceof javax.servlet.ServletException){
+			  throw (javax.servlet.ServletException) ex.fillInStackTrace();
+		  }
+		  else{*/
+			  response.getWriter().println("<H2>IWError</H2>");
+			  response.getWriter().println("<pre>");
+	 	  	  response.getWriter().println(ex.getMessage());
+				ex.printStackTrace(System.err);
+			  response.getWriter().println("</pre>");
+		  //}
+	  }
 	}
 
   public void __theService(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
@@ -286,7 +287,7 @@ writer.println("-->");
   }
 
   public static IWContext getIWContext(){
-        return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
+	return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
   }
 
 
@@ -294,21 +295,21 @@ writer.println("-->");
    * @deprecated
    */
   public HttpServletRequest getRequest(){
-          return getIWContext().getRequest();
+	  return getIWContext().getRequest();
   }
 
   /**
    * @deprecated
    */
   public HttpSession getSession(){
-          return getIWContext().getSession();
+	  return getIWContext().getSession();
   }
 
   /**
    * @deprecated
    */
   public HttpServletResponse getResponse(){
-          return getIWContext().getResponse();
+	  return getIWContext().getResponse();
   }
 
   public String getParameter(String parameterName){
@@ -346,59 +347,60 @@ writer.println("-->");
   }
 
   public void _main(IWContext iwc)throws Exception{
-          //getPage().setTreeID("0");
-          //getPage().updateTreeIDs();
-          //String node = iwc.getParameter("idega_special_tree_node");
-          //if( node != null){
-          //  PresentationObject obj = getPage().getContainedObject(node);
-            //iwc.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
-          //  if(obj!=null){
-         //     obj._main(iwc);
-          //  }
-          //}
+	  //getPage().setTreeID("0");
+	  //getPage().updateTreeIDs();
+	  //String node = iwc.getParameter("idega_special_tree_node");
+	  //if( node != null){
+	  //  PresentationObject obj = getPage().getContainedObject(node);
+	    //iwc.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
+	  //  if(obj!=null){
+	 //     obj._main(iwc);
+	  //  }
+	  //}
 
-          getPage()._main(iwc);
-         //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
+	  getPage()._main(iwc);
+	 //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 
   }
 
   public void __print(IWContext iwc)throws Exception{
 
 
-          if( iwc.getLanguage().equals("HTML") ){
-            getResponse().setContentType("text/html");
-          }
-          else if (iwc.getLanguage().equals("WML")){
-            getResponse().setContentType("text/vnd.wap.wml");
-          }
+	  if( iwc.getLanguage().equals("HTML") ){
+	    getResponse().setContentType("text/html");
+	  }
+	  else if (iwc.getLanguage().equals("WML")){
+	    getResponse().setContentType("text/vnd.wap.wml");
+	  }
 
-          getPage()._print(iwc);
-          //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
+	  //getPage()._print(iwc);
+	  getPage()._initPrinting(iwc);
+	  //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
   }
 
   private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response){
-          if(request.getParameter("idega_special_form_event") != null){
-                  //if (true){
-                          return true;
-                  //}
-                  //else{
-                  //	return false;
-                  //}
-          }
-          else{
-                  return false;
-          }
+	  if(request.getParameter("idega_special_form_event") != null){
+		  //if (true){
+			  return true;
+		  //}
+		  //else{
+		  //	return false;
+		  //}
+	  }
+	  else{
+		  return false;
+	  }
   }
 
 
 
   //public void actionPerformed(ModuleEvent e)throws Exception{
-          //try{
-          //	__theService(e.getRequest(),e.getResponse());
-          /*}
-          catch(IOException, ex){
-                  throw new Exception(ex.getMessage());
-          }*/
+	  //try{
+	  //	__theService(e.getRequest(),e.getResponse());
+	  /*}
+	  catch(IOException, ex){
+		  throw new Exception(ex.getMessage());
+	  }*/
   //}
 
 
@@ -466,13 +468,13 @@ writer.println("-->");
       iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
     } else{
       try {
-        historyIDSession = Integer.toString(Integer.parseInt(historyIDSession)+1);
-        iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
+	historyIDSession = Integer.toString(Integer.parseInt(historyIDSession)+1);
+	iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
       }
       catch (NumberFormatException ex) {
-        //System.err.print("NumberformatException when trying to increase historyID, historyIDSession:"+historyIDSession);
-        historyIDSession = Integer.toString((int)(Math.random()*1000));
-        iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
+	//System.err.print("NumberformatException when trying to increase historyID, historyIDSession:"+historyIDSession);
+	historyIDSession = Integer.toString((int)(Math.random()*1000));
+	iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
       }
     }
 
@@ -496,90 +498,90 @@ writer.println("-->");
 //      System.err.println("PresentationServelt - State = "+ state);
       if(state == null){
 
-        state = new LinkedList();
-        state.addLast(historyID);
-        state.addLast(new Hashtable());
-        iwc.setSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE, state);
-        listJustConstructed = true;
+	state = new LinkedList();
+	state.addLast(historyID);
+	state.addLast(new Hashtable());
+	iwc.setSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE, state);
+	listJustConstructed = true;
       }
       synchronized (state){
 
 //        System.err.println("PresentationServelt - !listJustConstructed = "+ !listJustConstructed);
 //        System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
 
-        ListIterator iter2 = state.listIterator();
-        while (iter2.hasNext()) {
-          Object item = iter2.next();
-          int index = iter2.nextIndex()-1;
-          //System.err.println("PresentationServelt - State index : "+index+" = "+item);
-        }
+	ListIterator iter2 = state.listIterator();
+	while (iter2.hasNext()) {
+	  Object item = iter2.next();
+	  int index = iter2.nextIndex()-1;
+	  //System.err.println("PresentationServelt - State index : "+index+" = "+item);
+	}
 
-        if(!listJustConstructed && state.contains(historyID)){
-          // go back in history
-          int index = state.indexOf(historyID);
-          int size = state.size();
-          for (int i = 0; i <= size-(index+1); i++) {
-            state.removeLast();
-          }
-        }
+	if(!listJustConstructed && state.contains(historyID)){
+	  // go back in history
+	  int index = state.indexOf(historyID);
+	  int size = state.size();
+	  for (int i = 0; i <= size-(index+1); i++) {
+	    state.removeLast();
+	  }
+	}
 
-        if(!listJustConstructed){
-          if(state.size() >= historySize*2){
-            state.removeFirst();
-            state.removeFirst();
-          }
+	if(!listJustConstructed){
+	  if(state.size() >= historySize*2){
+	    state.removeFirst();
+	    state.removeFirst();
+	  }
 
-          int copyFrom = state.size()-1;
-          state.addLast(iwc.getParameter(BuilderLogic.PRM_HISTORY_ID));
-          if(copyFrom >= 1){
-            try {
-              state.addLast(((Hashtable)state.get(copyFrom)).clone());
-            }
-            catch (Exception ex) {
-              ex.printStackTrace();
-            }
-          } else{
-            state.addLast(new Hashtable());
-          }
-          //System.err.println("PresentationServelt - checking stateList");
-          // object geta safnast upp í hashtöflunum því þarf að fjarlægja þau instöns sem ekki eru á nýju síðunni
-          /**
-           * @todo handle pages in frames or iframes with different pageIds
-           */
-          Map newStateMap = (Map)state.getLast();
-          //Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
-          Map pageObjectInstances = logic.getCashedObjectInstancesForPage(this.getPage().getPageID());
+	  int copyFrom = state.size()-1;
+	  state.addLast(iwc.getParameter(BuilderLogic.PRM_HISTORY_ID));
+	  if(copyFrom >= 1){
+	    try {
+	      state.addLast(((Hashtable)state.get(copyFrom)).clone());
+	    }
+	    catch (Exception ex) {
+	      ex.printStackTrace();
+	    }
+	  } else{
+	    state.addLast(new Hashtable());
+	  }
+	  //System.err.println("PresentationServelt - checking stateList");
+	  // object geta safnast upp í hashtöflunum því þarf að fjarlægja þau instöns sem ekki eru á nýju síðunni
+	  /**
+	   * @todo handle pages in frames or iframes with different pageIds
+	   */
+	  Map newStateMap = (Map)state.getLast();
+	  //Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
+	  Map pageObjectInstances = logic.getCashedObjectInstancesForPage(this.getPage().getPageID());
 
-          //System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
+	  //System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
 
 
-          Iterator iter = newStateMap.keySet().iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            if(!((pageObjectInstances != null) && pageObjectInstances.containsKey(item))){
-              //System.err.println("PresentationServelt - removing : "+ item);
-              iter.remove();
-              //newStateMap.remove(item);
-            }else{
-              //System.err.println("PresentationServelt - not removing : "+ item);
-            }
-          }
-        }
+	  Iterator iter = newStateMap.keySet().iterator();
+	  while (iter.hasNext()) {
+	    Object item = iter.next();
+	    if(!((pageObjectInstances != null) && pageObjectInstances.containsKey(item))){
+	      //System.err.println("PresentationServelt - removing : "+ item);
+	      iter.remove();
+	      //newStateMap.remove(item);
+	    }else{
+	      //System.err.println("PresentationServelt - not removing : "+ item);
+	    }
+	  }
+	}
 
       }
       if(listeners != null && listeners.length > 0){
-        PresentationObject source = logic.getIWPOEventSource(iwc);
-        for (int i = 0; i < listeners.length; i++) {
-          //System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
-          //System.err.println("newStateString = "+listeners[i].changeState(source,iwc));
-          String newState = listeners[i].changeState(source,iwc);
-          if(newState != null){
-            ((Hashtable)state.getLast()).put(Integer.toString(listeners[i].getParentObjectInstanceID()),newState);
-          } else {
-            ((Hashtable)state.getLast()).remove(Integer.toString(listeners[i].getParentObjectInstanceID()));
-          }
-          //listeners[i].changeState(source,iwc);
-        }
+	PresentationObject source = logic.getIWPOEventSource(iwc);
+	for (int i = 0; i < listeners.length; i++) {
+	  //System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
+	  //System.err.println("newStateString = "+listeners[i].changeState(source,iwc));
+	  String newState = listeners[i].changeState(source,iwc);
+	  if(newState != null){
+	    ((Hashtable)state.getLast()).put(Integer.toString(listeners[i].getParentObjectInstanceID()),newState);
+	  } else {
+	    ((Hashtable)state.getLast()).remove(Integer.toString(listeners[i].getParentObjectInstanceID()));
+	  }
+	  //listeners[i].changeState(source,iwc);
+	}
       }
     }
     //System.err.println("handleEvent end");
@@ -613,43 +615,43 @@ writer.println("-->");
     while ((part = mp.readNextPart()) != null) {
       String name = part.getName();
       if(part.isParam()){
-        ParamPart paramPart = (ParamPart) part;
-        iwc.setMultipartParameter(paramPart.getName(),paramPart.getStringValue());
-        //System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
+	ParamPart paramPart = (ParamPart) part;
+	iwc.setMultipartParameter(paramPart.getName(),paramPart.getStringValue());
+	//System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
       }
       else if (part.isFile()) {
-        // it's a file part
-        FilePart filePart = (FilePart) part;
-        String fileName = filePart.getFileName();
+	// it's a file part
+	FilePart filePart = (FilePart) part;
+	String fileName = filePart.getFileName();
 
-        if (fileName != null) {
-          pathToFile.append(fileName);
-          String filePath = pathToFile.toString();
-          StringBuffer webPath = new StringBuffer();
-          webPath.append('/');
-          webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
-          webPath.append('/');
-          webPath.append("upload");
-          webPath.append('/');
-          webPath.append(fileName);
+	if (fileName != null) {
+	  pathToFile.append(fileName);
+	  String filePath = pathToFile.toString();
+	  StringBuffer webPath = new StringBuffer();
+	  webPath.append('/');
+	  webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+	  webPath.append('/');
+	  webPath.append("upload");
+	  webPath.append('/');
+	  webPath.append(fileName);
 
 
-        // Opera mimetype fix ( aron@idega.is )
-        String mimetype = filePart.getContentType();
-        if(mimetype!=null){
-          StringTokenizer tokenizer = new StringTokenizer(mimetype," ;:");
-          if(tokenizer.hasMoreTokens())
-            mimetype = tokenizer.nextToken();
-        }
+	// Opera mimetype fix ( aron@idega.is )
+	String mimetype = filePart.getContentType();
+	if(mimetype!=null){
+	  StringTokenizer tokenizer = new StringTokenizer(mimetype," ;:");
+	  if(tokenizer.hasMoreTokens())
+	    mimetype = tokenizer.nextToken();
+	}
 
-        UploadFile file = new UploadFile(fileName,filePath,webPath.toString(),mimetype,(long)-1);
+	UploadFile file = new UploadFile(fileName,filePath,webPath.toString(),mimetype,(long)-1);
 
-        long size = filePart.writeTo(file);
-        file.setSize(size);
+	long size = filePart.writeTo(file);
+	file.setSize(size);
 
-        iwc.setUploadedFile(file);
+	iwc.setUploadedFile(file);
 
-        }
+	}
       }
     }
   }

@@ -250,7 +250,7 @@ public void print(IWContext iwc) throws Exception{
 
     if(button==null){
 
-      link.print(iwc);
+      link._print(iwc);
 
     }
 
@@ -262,7 +262,7 @@ public void print(IWContext iwc) throws Exception{
 
       button.setOnClick(windowStored.getCallingScriptString(iwc));
 
-      button.print(iwc);
+      button._print(iwc);
 
     }
 

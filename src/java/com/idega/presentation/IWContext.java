@@ -5,6 +5,7 @@
 
 package com.idega.presentation;
 
+import com.idega.builder.data.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.Connection;
@@ -17,8 +18,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.UnavailableIWContext;
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBDomainHome;
 import com.idega.data.IDOLookup;
 import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
@@ -1052,25 +1051,25 @@ public void setCacheWriter(PrintWriter writer){
     if(!_doneHandHeldCheck){
       String user_agent = this.getUserAgent();
       if(user_agent.indexOf("Windows CE") !=  -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.indexOf("Palm") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.toLowerCase().indexOf("wap") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.toLowerCase().indexOf("nokia") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.toLowerCase().indexOf("ericsson") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.toLowerCase().indexOf("symbian") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       else if(user_agent.toLowerCase().indexOf("wapman") != -1){
-        _clientIsHandHeld=true;
+	_clientIsHandHeld=true;
       }
       _doneHandHeldCheck=true;
     }
@@ -1083,11 +1082,11 @@ public void setCacheWriter(PrintWriter writer){
       String id = (String)this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
       int domainID=1;
       if (id != null) {
-        try{
-      	  domainID = Integer.parseInt(id);
-        }
-        catch(NumberFormatException nfe){
-        }
+	try{
+	  domainID = Integer.parseInt(id);
+	}
+	catch(NumberFormatException nfe){
+	}
       }
 
       return com.idega.builder.data.IBDomainBMPBean.getDomain(domainID);
@@ -1103,6 +1102,15 @@ public void setCacheWriter(PrintWriter writer){
     }
   }
 
+   public void forwardToIBPage(IBPage page){
+    try{
+      RequestDispatcher req = this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+      req.forward(this.getRequest(),this.getResponse());
+    }
+    catch(Exception e){
+     e.printStackTrace(System.err);
+    }
+   }
 }
 
 
