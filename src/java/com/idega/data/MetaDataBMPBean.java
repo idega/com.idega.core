@@ -16,6 +16,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 
 	public static final String COLUMN_META_KEY = "metadata_name";
 	public static final String COLUMN_META_VALUE = "metadata_value";
+	public static final String COLUMN_META_TYPE = "metadata_type";
 	
   protected MetaDataBMPBean() {
     super();
@@ -29,6 +30,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_META_KEY,"The key name",true,true, String.class,255);
     addAttribute(COLUMN_META_VALUE,"The key's value",true,true, String.class,255);
+		addAttribute(COLUMN_META_TYPE,"The value's type",true,true, String.class,255);
   }
 
   public String getEntityName() {
@@ -48,7 +50,15 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
   }
 
   public String getValue(){
-    return (String) getColumnValue(COLUMN_META_VALUE);
+	return (String) getColumnValue(COLUMN_META_VALUE);
+  }
+
+  public String getMetaDataType(){
+	return getType();
+  }
+
+  public String getType(){
+	return (String) getColumnValue(COLUMN_META_TYPE);
   }
 
   public void setValue(String value){
@@ -70,6 +80,14 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 
   public void setName(String name){
    setColumn(COLUMN_META_KEY,name);
+  }
+
+  public void setMetaDataType(String type){
+		setType(type);
+  }
+
+  public void setType(String type){
+   setColumn(COLUMN_META_TYPE,type);
   }
 
 }

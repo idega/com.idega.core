@@ -65,6 +65,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private Vector _updateMetaDataVector;
 	private Vector _deleteMetaDataVector;
 	private Hashtable _theMetaDataIds;
+	private Hashtable _theMetaDataTypes;
 	private boolean _hasMetaDataRelationship = false;
 	private boolean _metaDataHasChanged = false;
 	public String _lobColumnName;
@@ -2625,6 +2626,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Statement Stmt = null;
 		_theMetaDataAttributes = new Hashtable();
 		_theMetaDataIds = new Hashtable();
+		_theMetaDataTypes = new Hashtable();
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -2632,7 +2634,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			String metadataIdColumn = metadata.getIDColumnName();
 			String tableToSelectFrom = getNameOfMiddleTable(metadata, this);
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value from ");
+			buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value,metadata_type from ");
 			buffer.append(tableToSelectFrom);
 			buffer.append(",ic_metadata where ");
 			buffer.append(tableToSelectFrom);
@@ -2654,6 +2656,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			while (RS.next()) {
 				_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
 				_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
+				if (RS.getString("metadata_type") != null)
+					_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("metadata_type"));
 			}
 			RS.close();
 		} catch (SQLException ex) {
@@ -2689,10 +2693,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		addMetaData(metaDataKey, metaDataValue);
 	}
 
+	public void setMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
+		addMetaData(metaDataKey, metaDataValue, metaDataType);
+	}
+
 	public void addMetaData(String metaDataKey, String metaDataValue) {
+		addMetaData(metaDataKey, metaDataValue, null);
+	}
+
+	public void addMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null
 		if (metaDataValue != null) {
+			if (metaDataType != null) {
+				if (_theMetaDataTypes == null)
+					_theMetaDataTypes = new Hashtable();
+				_theMetaDataTypes.put(metaDataKey, metaDataType);
+			}
 			// change state of the entity bean
 			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
 				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
@@ -2748,18 +2765,31 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public boolean removeMetaData(String metaDataKey) {
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null
+
 		if (_deleteMetaDataVector == null) {
 			_deleteMetaDataVector = new Vector();
 		}
+		
 		if (_theMetaDataAttributes.get(metaDataKey) != null) {
 			_deleteMetaDataVector.add(metaDataKey);
+			
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
+			else {
+				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
+
 			if (_insertMetaDataVector != null)
 				_insertMetaDataVector.remove(metaDataKey);
+			
 			if (_updateMetaDataVector != null)
 				_updateMetaDataVector.remove(metaDataKey);
+			
 			metaDataHasChanged(true);
 			return true;
-		} else
+		}
+		else
 			return false;
 	}
 
@@ -2767,13 +2797,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		_insertMetaDataVector = null;
 		_updateMetaDataVector = null;
 		_deleteMetaDataVector = null;
+		_theMetaDataAttributes = null;
+		_theMetaDataTypes = null;
 	}
 
 	public Hashtable getMetaDataAttributes() {
+		if (_theMetaDataAttributes == null)
+			getMetaData();
 		return _theMetaDataAttributes;
 	}
 	public Hashtable getMetaDataIds() {
 		return _theMetaDataIds;
+	}
+	public Hashtable getMetaDataTypes() {
+		if (_theMetaDataTypes == null)
+			getMetaData();
+		return _theMetaDataTypes;
 	}
 	public Vector getMetaDataUpdateVector() {
 		return _updateMetaDataVector;

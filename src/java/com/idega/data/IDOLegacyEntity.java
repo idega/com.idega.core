@@ -87,6 +87,10 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
+	public void addMetaData(java.lang.String p0, java.lang.String p1, java.lang.String p2);
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
 	public java.lang.String toString();
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
@@ -479,6 +483,10 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
+	public void setMetaData(java.lang.String p0, java.lang.String p1, java.lang.String p2);
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
 	public void removeFrom(com.idega.data.IDOLegacyEntity[] p0) throws java.sql.SQLException;
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
@@ -516,6 +524,10 @@ public interface IDOLegacyEntity extends IDOEntity {
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
 	public java.util.Hashtable getMetaDataAttributes();
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
+	public java.util.Hashtable getMetaDataTypes();
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/

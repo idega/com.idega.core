@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.71 2003/07/05 17:21:46 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.72 2003/07/07 07:33:46 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -471,6 +471,7 @@ public abstract class DatastoreInterface {
 			MetaData data;
 			Hashtable metadata = entity.getMetaDataAttributes();
 			Hashtable ids = entity.getMetaDataIds();
+			Hashtable types = entity.getMetaDataTypes();
 			Vector insert = entity.getMetaDataInsertVector();
 			Vector delete = entity.getMetaDataDeleteVector();
 			Vector update = entity.getMetaDataUpdateVector();
@@ -480,6 +481,10 @@ public abstract class DatastoreInterface {
 				for (int i = 0; i < length; i++) {
 					data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
 					data.setMetaDataNameAndValue((String)insert.elementAt(i), (String)metadata.get((String)insert.elementAt(i)));
+					if (types != null && types.containsKey((String)insert.elementAt(i)))
+						data.setMetaDataType((String) types.get((String)insert.elementAt(i)));
+					else
+						data.setMetaDataType("java.lang.String");
 					updater.add(data, EntityBulkUpdater.insert);
 				}
 			}
@@ -496,6 +501,10 @@ public abstract class DatastoreInterface {
 					data.setID((Integer)ids.get(update.elementAt(i)));
 					//System.out.println("ID: "+data.getID());
 					data.setMetaDataNameAndValue((String)update.elementAt(i), (String)metadata.get((String)update.elementAt(i)));
+					if (types != null && types.containsKey((String)update.elementAt(i)))
+						data.setMetaDataType((String) types.get((String)update.elementAt(i)));
+					else
+						data.setMetaDataType("java.lang.String");
 					updater.add(data, EntityBulkUpdater.update);
 				}
 			}

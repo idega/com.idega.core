@@ -43,7 +43,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 			tempArray[length] = def;
 			_manyToManyRelatedEntities = tempArray;
 		} else {
-			System.err.println(this.getUniqueEntityName() + ": already contains relation to " + def.getUniqueEntityName());
+			//System.err.println(this.getUniqueEntityName() + ": already contains relation to " + def.getUniqueEntityName());
 		}
 	}
 

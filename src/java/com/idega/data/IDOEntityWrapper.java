@@ -379,6 +379,13 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.idega.data.MetadataRelation#setMetaData(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void setMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
+		((MetaDataCapable)this.getCurrentOpenVersionEntity()).setMetaData(metaDataKey, metaDataValue, metaDataType);
+	}
+
+	/* (non-Javadoc)
 	 * @see com.idega.data.MetadataRelation#removeMetaData(java.lang.String)
 	 */
 	public boolean removeMetaData(String metaDataKey) {
@@ -390,6 +397,13 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	 */
 	public Hashtable getMetaDataAttributes() {
 		return ((MetaDataCapable)this.getCurrentOpenVersionEntity()).getMetaDataAttributes();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.MetadataRelation#getMetaDataTypes()
+	 */
+	public Hashtable getMetaDataTypes() {
+		return ((MetaDataCapable)this.getCurrentOpenVersionEntity()).getMetaDataTypes();
 	}
 
 	/* (non-Javadoc)

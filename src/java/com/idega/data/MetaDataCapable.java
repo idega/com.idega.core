@@ -21,11 +21,19 @@ public interface MetaDataCapable
 	 *TODO: change data type to java.util.Map
 	 */
 	public java.util.Hashtable getMetaDataAttributes();
+	/**
+	 *TODO: change data type to java.util.Map
+	 */
+	public java.util.Hashtable getMetaDataTypes();
 	
 	/*
 	 *Set the metadata set for the key metaDataKey to value value
 	 */
 	public void setMetaData(String metaDataKey,String value);
+	/*
+	 *Set the metadata set for the key metaDataKey to value value
+	 */
+	public void setMetaData(String metaDataKey,String value,String type);
 	/*
 	 * Gets the metadata set for the key metaDataKey
 	 */
