@@ -3398,38 +3398,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
-	
-	protected Collection idoFindPKsByQueryUsingLoadBalance(String sqlQuery, int prefetchSize) throws FinderException {
-		return idoFindPKsByQueryUsingLoadBalance(idoQuery(sqlQuery),prefetchSize);
+
+	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize) throws FinderException {
+		return idoFindPKsByQueryUsingLoadBalance(sqlQuery,null,prefetchSize);
 	}
 	
-	/**
-	 * Fetches the primarykey resultset and then loads the beans with data(the prefect size determines how many get loaded)
-	 * The query must be a select all query!
-	 * @param sqlQuery
-	 * @param countQuery
-	 * @param prefetchSize
-	 * @return
-	 * @throws FinderException
-	 */
-	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize) throws FinderException {
-		Collection pkColl = null;
-		Class interfaceClass = this.getInterfaceClass();
-		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
-		if (queryCachingActive) {
-			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery.toString());
-		}
-		if (pkColl == null) {
-			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize);
-			if (queryCachingActive) {
-				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
-			}
-		} else {
-			if (this.isDebugActive()) {
-				logSQL("Cache hit for SQL query: " + sqlQuery);
-			}
-		}
-		return pkColl;
+	protected Collection idoFindPKsByQueryUsingLoadBalance(String sqlQuery, int prefetchSize) throws FinderException {
+		return idoFindPKsByQueryUsingLoadBalance(idoQuery(sqlQuery),null,prefetchSize);
 	}
 	
 	/**
@@ -3461,17 +3436,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return pkColl;
 	}
 
-
-	/**
-	 *
-	 * @param sqlQuery
-	 * @return IDOPrimaryKeyList
-	 * @throws FinderException
-	 */
-	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize ) throws FinderException {
-			return new IDOPrimaryKeyList(sqlQuery, this,prefetchSize);
-	}
-	
 	/**
 	 *
 	 * @param sqlQuery
@@ -3480,7 +3444,36 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 */
 	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize ) throws FinderException {
-			return new IDOPrimaryKeyList(sqlQuery, countQuery, this, prefetchSize);
+		IDOQuery idoCountQuery = null;
+		
+		if(countQuery == null) {
+			idoCountQuery = (IDOQuery)sqlQuery.clone();
+			idoCountQuery.setToCount();
+		} else {
+			idoCountQuery = countQuery;
+		}
+		
+		
+		if (this.isDebugActive()) {
+			logSQL(sqlQuery.toString());
+			logSQL("countQuery: " + idoCountQuery);
+			
+		}
+		int length;
+		try {
+			length = idoGetNumberOfRecords(idoCountQuery);
+		} catch (IDOException e) {
+			//if this happens we return nothing. the sql might have failed
+			e.printStackTrace();
+			return new Vector();
+		}
+		
+		if (length > 0) {	
+			return new IDOPrimaryKeyList(sqlQuery, this, length,prefetchSize);
+		}
+		else {
+			return new Vector();
+		}
 	}
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
