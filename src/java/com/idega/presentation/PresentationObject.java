@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.60 2002/10/15 11:02:22 laddi Exp $
+ * $Id: PresentationObject.java,v 1.61 2002/11/04 15:53:45 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -222,13 +222,20 @@ public class PresentationObject extends Object implements Cloneable {
 
   public void setAttributeMultivalued(String attributeName,String attributeValue){
     String previousAttribute = getAttribute(attributeName);
-    if(previousAttribute==null){
+    if(previousAttribute == null){
       setAttribute(attributeName,attributeValue);
     }
     else{
-      setAttribute(attributeName,previousAttribute+";"+attributeValue);
+    	if (previousAttribute.indexOf(attributeValue) == -1) {
+    		String parameterValue = previousAttribute;
+    		if (previousAttribute.endsWith(";"))
+    			parameterValue = parameterValue + attributeValue;
+    		else
+    			parameterValue = parameterValue + ";" + attributeValue;
+    			
+      	setAttribute(attributeName,parameterValue);
+    	}
     }
-
   }
 
   public void setAttributeMultivalued(String attributeName,boolean attributeValue) {
@@ -257,6 +264,16 @@ public class PresentationObject extends Object implements Cloneable {
     	return this.getAttribute("style");
     return "";
   }
+  
+  public void setToolTip(String toolTip) {
+  	setAttribute("title",toolTip);
+  }
+  
+	public String getToolTip() {
+  	if (isAttributeSet("title"))
+    	return this.getAttribute("title");
+    return "";
+	}
 
   /** Copies all of the attribute mappings from the specified map to attributes.
    *  These mappings will replace attibutes that this map had for any of the
