@@ -1,6 +1,6 @@
 /*
- * $Id: LDAPReplicationBusiness.java,v 1.1 2004/08/31 02:29:32 eiki Exp $
- * Created on Aug 30, 2004
+ * $Id: LDAPReplicationBusiness.java,v 1.2 2004/09/21 18:59:36 eiki Exp $
+ * Created on Sep 17, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -10,21 +10,25 @@
 package com.idega.core.ldap.replication.business;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Properties;
+import javax.ejb.CreateException;
 import javax.naming.NamingException;
+import com.idega.business.IBOService;
 import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
+import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.user.data.Group;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/08/31 02:29:32 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/09/21 18:59:36 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public interface LDAPReplicationBusiness {
+public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationConstants, IWLDAPConstants {
 
 	/**
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#deleteReplicator
@@ -78,10 +82,16 @@ public interface LDAPReplicationBusiness {
 	public void stopAllReplicators() throws IOException, java.rmi.RemoteException;
 
 	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#replicateOneEntry
+	 */
+	public void replicateOneEntry(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId)
+			throws RemoteException, CreateException, NamingException;
+
+	/**
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#replicateEntryAndChildrenRecursively
 	 */
 	public void replicateEntryAndChildrenRecursively(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId)
-			throws NamingException, java.rmi.RemoteException;
+			throws RemoteException, CreateException, NamingException;
 
 	/**
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#createNewReplicationSettings
