@@ -16,11 +16,13 @@ import javax.servlet.http.HttpSession;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.data.IDOLookup;
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
@@ -69,7 +71,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final int STATE_WRONG_PASSW = 4;
 	public static final int STATE_LOGIN_EXPIRED = 5;
 	public static final int STATE_LOGIN_FAILED = 6;
-
+	public static final int STATE_LOGIN_DISABLED = 7;
+	
 	public LoginBusinessBean() {
 	}
 	public static boolean isLoggedOn(IWUserContext iwc) {
@@ -429,7 +432,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 				LoginTable lTable = login_table[0];
 				if (lTable != null) {
 					//					returner = logIn(iwc, login_table[0], login);
-					if (logIn(iwc, login_table[0]))
+					try {
+						LoginInfoHome loginInfoHome = (LoginInfoHome) IDOLookup.getHome(LoginInfo.class);
+						LoginInfo loginInfo = loginInfoHome.findByPrimaryKey(lTable.getPrimaryKey());
+						if (!loginInfo.getAccountEnabled()) {
+							return STATE_LOGIN_EXPIRED;
+						}
+					}
+					catch (FinderException fe) {
+						//Nothing done
+					}
+					if (logIn(iwc, lTable))
 						return STATE_LOGGED_ON;
 				} else {
 					try {
