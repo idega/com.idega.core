@@ -575,6 +575,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			factory.release();
 			System.out.println("[IWMainApplicationStarter] Following log factory was released: " + message);
 		}
+		else {
+			System.out.println("[IWMainApplicationStarter] LogFactory is already null");
+		}
 	}
 	
 	public void sendStartMessage(String message) {
