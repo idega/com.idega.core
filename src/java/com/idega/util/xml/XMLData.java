@@ -8,17 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-//import java.sql.SQLException;
 
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.io.MemoryFileBuffer;
-import com.idega.io.MemoryInputStream;
-import com.idega.io.MemoryOutputStream;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
