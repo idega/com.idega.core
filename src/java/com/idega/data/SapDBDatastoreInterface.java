@@ -118,7 +118,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
   public void createTrigger(GenericEntity entity)throws Exception{
 
                 createSequence(entity);
-
+/*
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
@@ -134,6 +134,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
+  */
   }
 
 
@@ -144,7 +145,8 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 1 MAXVALUE 1.0E28 MINVALUE 1 NOCYCLE CACHE 20 NOORDER");
+                        String seqCreate = "create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 1 MAXVALUE 1.0E28 MINVALUE 1 NOCYCLE CACHE 20 NOORDER";
+                        int i = Stmt.executeUpdate(seqCreate);
 		}
 		finally{
 			if(Stmt != null){
