@@ -9,7 +9,9 @@ import java.util.*;
 
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBPage;
 import com.idega.presentation.*;
+import com.idega.util.URLUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -18,6 +20,7 @@ import com.idega.util.text.TextSoap;
 */
 public class GenericButton extends GenericInput {
 
+	private int _pageID = -1;
 	private boolean asImageButton = false;
 	private Image defaultImage;
 	private final String buttonImageStyle = "cursor:hand;";
@@ -56,6 +59,11 @@ public class GenericButton extends GenericInput {
 				String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
 				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 			}
+			if (_pageID != -1) {
+				setOnClick("javascript:window.location='"+BuilderLogic.getInstance().getIBPageURL(iwc, _pageID)+"';");
+			}
+			
+			getParentPage();
 
 			if (defaultImage == null) {
 				super.print(iwc);
@@ -111,6 +119,15 @@ public class GenericButton extends GenericInput {
 	
 	public void setWindowToOpen(Class windowClassToOpen) {
 		_windowClassToOpen = windowClassToOpen;
+	}
+	
+	public void setPageToOpen(int pageID) {
+		_pageID = pageID;
+	}
+	
+	public void setPageToOpen(IBPage page) {
+		if (page != null && page.getID() != -1)
+			setPageToOpen(page.getID());
 	}
 	
 	public void addParameterToWindow(String name, String value) {
