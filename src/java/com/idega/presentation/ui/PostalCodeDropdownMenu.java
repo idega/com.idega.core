@@ -4,6 +4,9 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Country;
@@ -30,11 +33,34 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 	
 	public void main(IWContext iwc) throws Exception{
 		super.main(iwc);
+		clearChildren();
 		if( countryName!=null && country == null) {
 			country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);			
 		}
-		
+		//TODO extract the following code to a method in CountryDropDownMenu or CountryBMPBean
+		if (country == null) {
+		    try {
+				if( countryName!=null){
+				    country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);	
+				}
+				// we must ensure no external selected country is set
+				else if(country==null){
+				    country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(iwc.getCurrentLocale().getCountry());	
+				}
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			catch (EJBException e) {
+				e.printStackTrace();
+			}
+			catch (FinderException e) {
+				e.printStackTrace();
+			}
+		}
 		if( country!=null ){
+			//TODO add code so id = -1 is submitted and "no postaldcode" is saved over existing postalcode 
+		    addMenuElement("","");
 			if(showCountry){
 				addMenuElement(-1,country.getName());
 			}
