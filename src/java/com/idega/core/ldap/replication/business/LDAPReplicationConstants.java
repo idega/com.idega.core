@@ -25,11 +25,16 @@ public interface LDAPReplicationConstants {
 	public static final String PROPS_REPLICATOR_SEARCH_TIMEOUT_MS = ".search.timeout.milliseconds";
 	public static final String PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT= ".returned.entries.limit";
 	public static final String PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID= ".match.by.uniqueid";	
-	public static final String PROPS_REPLICATOR_AUTO_START= ".auto.start";
+	public static final String PROPS_REPLICATOR_ACTIVE= ".active";
 	public static final String PROPS_REPLICATOR_ROOT_USER= ".root.user";
 	public static final String PROPS_REPLICATOR_ROOT_PASSWORD= ".root.password";
-	//a group to overwrite/update with the baseurl/uniqueid group found
+	/**
+	 * a group to overwrite/update with the baseurl/uniqueid group found
+	 */
 	public static final String PROPS_REPLICATOR_BASE_GROUP_ID = ".base.group.id";
-	//a group to store the replicated tree under
+	/**a group to store the replicated tree under**/
 	public static final String PROPS_REPLICATOR_PARENT_GROUP_ID = ".parent.group.id";
+	/**if we should repeat the replication or should it be a one time thing**/
+	public static final String PROPS_REPLICATOR_REPEAT = ".replication.repeat";	
+	
 }

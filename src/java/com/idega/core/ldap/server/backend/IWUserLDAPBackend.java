@@ -322,7 +322,7 @@ LDAPReplicationConstants {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
 
-				if (base.getDirectoryString().equals(baseDN)) {
+				if (base.getDirectoryString().equals(baseDN) && uniqueId==null) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
