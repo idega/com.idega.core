@@ -3,6 +3,7 @@ package com.idega.graphics.generator;
 import java.util.Vector;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.Image;
 import java.awt.Graphics2D;
 import com.idega.graphics.GIFEncoder;
 import java.io.OutputStream;
@@ -14,6 +15,7 @@ import java.awt.BasicStroke;
 import java.util.Date;
 import java.util.Calendar;
 import java.text.DecimalFormat;
+import java.awt.Font;
 
 /**
  * Title:
@@ -26,15 +28,32 @@ import java.text.DecimalFormat;
 
 public class Button {
 
-  protected static final Color defaultBorderColor = new Color(85,87,92);
-  protected static final int defaultBorderSize = 1;
-  private int borderSize = defaultBorderSize;
-  private Color darkSideColor = new Color(148,151,156);
-  private Color lightSideColor = Color.white;
-  private Color fillColor = new Color(201,203,206);
+  private static final Color defaultBorderColor = new Color(85,87,92);
+  private static final int defaultBorderSize = 1;
+  private static final Color defaultUnderColor = new Color(148,151,156);
+  private static final Color defaultOverColor = Color.white;
+  private static final Color defaultFillColor = new Color(201,203,206);
+  private static final Color defaultFontColor = Color.black;
+  private static final Color defaultHightlightColor = new Color(221,223,226);
+  private static final int BUTTON_UP = 1;
+  private static final int BUTTON_HIGHLIGHT = 2;
+  private static final int BUTTON_DOWN = 3;
+
+
+  private Color underColor = defaultUnderColor;
+  private Color fillColor = defaultFillColor;
+  private Color overColor = defaultOverColor;
   private Color borderColor = defaultBorderColor;
-  private Color fontColor = Color.black;
+  private Color fontColor = defaultFontColor;
+  private Color highlightColor = defaultHightlightColor;
+
+  private int borderSize = defaultBorderSize;
+
   private boolean drawBorder = true;
+  int width = 100;
+  int height = 15;
+  int doubleBorder = (2*borderSize);
+
 
 
   public Button() {
@@ -46,11 +65,31 @@ public class Button {
     System.exit(0);
   }
 
-  public void generate() {
+  public void setFontColor(Color color){
+    fontColor = color;
+  }
 
-    int width = 50+borderSize+1;
-    int height = 18+borderSize+1;
-    int doubleBorder = (2*borderSize);
+  public void setFillColor(Color color){
+    fillColor = color;
+  }
+
+  public void setHighlightColor(Color color){
+    highlightColor = color;
+  }
+
+  public void setBorderColor(Color color){
+    borderColor = color;
+  }
+
+  public void setOverColor(Color color){
+    overColor = color;
+  }
+
+  public void setUnderColor(Color color){
+    underColor = color;
+  }
+
+  public void generate() {
 
     BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
     //AffineTransform trans = new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
@@ -60,39 +99,51 @@ public class Button {
     g = image.createGraphics();
 
     g.setBackground(borderColor);
+
+    String buttonText = "Þetta er flott";
+
+    makeButton(g,buttonText,image,"buttontestup",BUTTON_UP);
+
+    makeButton(g,buttonText,image,"buttontesthighlight",BUTTON_HIGHLIGHT);
+
+    makeButton(g,buttonText,image,"buttontestdown",BUTTON_DOWN);
+
+  }
+
+  public void makeButton(Graphics2D g, String text, Image image, String filename, int effect){
     g.setStroke(new BasicStroke(0.5f));
-    //g.setTransform(trans);
 
-    //g.setColor(borderColor);
-    //g.fillRect(0,0,width,height);
+    if(effect==BUTTON_DOWN) g.setColor(underColor);
+    else g.setColor(overColor);
 
-    g.setColor(lightSideColor);
-    g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-2);
+    g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
 
-    g.setColor(fillColor);
-    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-3);
+    if(effect==BUTTON_HIGHLIGHT) g.setColor(this.highlightColor);
+    else g.setColor(fillColor);
+    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
 
-        g.setColor(darkSideColor);
-    g.setStroke(new BasicStroke(1f));
-    g.drawLine(borderSize,height-doubleBorder-1,width-borderSize,height-borderSize);
-    g.drawLine(width-borderSize-1,height-borderSize,width-borderSize,doubleBorder);
+    if(effect==BUTTON_DOWN) g.setColor(overColor);
+    else g.setColor(underColor);
 
-        g.setStroke(new BasicStroke(2f));
-g.drawLine(0,height,width,0);
-/*
+    //g.setStroke(new BasicStroke(1f));
+    g.drawLine(borderSize,height-doubleBorder,width-borderSize-1,height-doubleBorder);
+    g.drawLine(width-borderSize-1,height-doubleBorder,width-borderSize-1,doubleBorder-1);
+
+    //g.setStroke(new BasicStroke(2f));
+    //g.drawLine(0,height,width,0);
+
+    String fontpath = System.getProperty("java.awt.fonts");
+    System.out.println("Fontpath="+fontpath);
+   // System.setProperty("java.awt.fonts","c:\temp\fonts\");
+
     g.setColor(fontColor);
-    g.drawString("test",5,height-5);*/
-
-/*
-    g.setColor(Color.black);
-    g.drawLine(5,178,50,165);
-    g.drawLine(50,165,100,114);
-    g.drawLine(100,114,150,150);*/
+    Font font = new Font("Impact",Font.PLAIN,10);
+    g.setFont(font);
+    g.drawString(text,5,10);
 
     try {
       GIFEncoder encode = new GIFEncoder(image);
       Date date = Calendar.getInstance().getTime();
-      String filename = "buttontest";//+Long.toString(date.getTime());
       filename = filename.concat(".gif");
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
@@ -105,6 +156,6 @@ g.drawLine(0,height,width,0);
     catch (Exception e) {
       System.out.println("Error : " + e);
     }
-  }
 
+  }
 }
