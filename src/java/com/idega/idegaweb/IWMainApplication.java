@@ -17,6 +17,7 @@ import com.idega.presentation.Page;
 import com.idega.util.caching.BlobCacher;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.graphics.generator.ImageFactory;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -521,6 +522,10 @@ public class IWMainApplication{//implements ServletContext{
 
   private void setAccessController(AccessController controler){
     this.setAttribute(_ADDRESS_ACCESSCONTROLER, controler);
+  }
+
+  public ImageFactory getImageFactory(){
+    return ImageFactory.getStaticInstance(this);
   }
 
 }

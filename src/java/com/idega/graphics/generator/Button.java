@@ -9,13 +9,13 @@ import com.idega.graphics.GIFEncoder;
 import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.awt.geom.AffineTransform;
 import java.awt.FontMetrics;
 import java.awt.BasicStroke;
-import java.util.Date;
-import java.util.Calendar;
 import java.text.DecimalFormat;
 import java.awt.Font;
+import java.util.*;
 
 /**
  * Title:
@@ -35,10 +35,9 @@ public class Button {
   private static final Color defaultFillColor = new Color(201,203,206);
   private static final Color defaultFontColor = Color.black;
   private static final Color defaultHightlightColor = new Color(221,223,226);
-  private static final int BUTTON_UP = 1;
-  private static final int BUTTON_HIGHLIGHT = 2;
-  private static final int BUTTON_DOWN = 3;
-
+  public static final String BUTTON_UP = "_BUTTON_UP";
+  public static final String BUTTON_OVER = "_BUTTON_OVER";
+  public static final String BUTTON_DOWN = "_BUTTON_OVER";
 
   private Color underColor = defaultUnderColor;
   private Color fillColor = defaultFillColor;
@@ -50,17 +49,49 @@ public class Button {
   private int borderSize = defaultBorderSize;
 
   private boolean drawBorder = true;
-  int width = 100;
-  int height = 15;
-  int doubleBorder = (2*borderSize);
+  private int width = 100;
+  private int height = 15;
+  private int doubleBorder = (2*borderSize);
+  private int textXPos = 5;
+  private int textYPos = 10;
 
+  private String buttonUpURL;
+  private String buttonDownURL;
+  private String buttonOverURL;
+
+  private String text;
 
 
   public Button() {
   }
 
+  public Button(String text) {
+    this.text = text;
+  }
+
+  public Button(String text, int width, int height) {
+    this(text);
+    this.width = width;
+    this.height = height;
+  }
+
+  public Button(String text, int width, int height, Color fillColor) {
+    this(text,width,height);
+    this.fillColor = fillColor;
+    highlightColor = fillColor.brighter();
+  }
+
+  public Button(String text, Color fillColor) {
+    this(text);
+    this.fillColor = fillColor;
+    highlightColor = fillColor.brighter();
+  }
+
   public static void main(String[] args) {
-    Button test = new Button();
+    Button test = new Button("Tester",Color.orange);
+    //Button test = new Button("Tester",30,40,Color.orange);
+
+    //test.setHighlightColor(Color.blue.brighter());
     test.generate();
     System.exit(0);
   }
@@ -89,36 +120,84 @@ public class Button {
     underColor = color;
   }
 
+  public String getButtonUpURL(){
+    return buttonUpURL;
+  }
+
+  public String getButtonOverURL(){
+    return buttonOverURL;
+  }
+
+  public String getButtonDownURL(){
+    return buttonDownURL;
+  }
+
+/*
+  public Color getHighlightColor(){
+        highlightColor = color;
+    new Color(fillColor.getRed()+20,fillColor.getGreen()+20,fillColor.getBlue()+20);
+
+  }*/
+
   public void generate() {
+    generate("");
+  }
+  public void generate(String folderPath) {
 
     BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
     //AffineTransform trans = new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
     Graphics2D g = null;
-   // FontMetrics fm = null;
-
     g = image.createGraphics();
 
     g.setBackground(borderColor);
 
-    String buttonText = "Þetta er flott";
+    try {
+      Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream("c:\\test\\Spliffy  Normal.ttf"));
 
-    makeButton(g,buttonText,image,"buttontestup",BUTTON_UP);
+      Font font2 = font.deriveFont(Font.PLAIN,10.f);
 
-    makeButton(g,buttonText,image,"buttontesthighlight",BUTTON_HIGHLIGHT);
+      g.setFont(font2);
+      centerText(font2,g);
 
-    makeButton(g,buttonText,image,"buttontestdown",BUTTON_DOWN);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+
+
+
+    makeButton(g,text,image,folderPath,BUTTON_UP);
+
+    makeButton(g,text,image,folderPath,BUTTON_OVER);
+
+    makeButton(g,text,image,folderPath,BUTTON_DOWN);
 
   }
 
-  public void makeButton(Graphics2D g, String text, Image image, String filename, int effect){
-    g.setStroke(new BasicStroke(0.5f));
+  public void centerText(Font font, Graphics2D g){
+
+    FontMetrics fm = g.getFontMetrics(font);
+    //System.out.println("Leading : "+fm.getLeading());
+    System.out.println("string width : "+fm.stringWidth(text));
+    System.out.println("string height : "+fm.getHeight());
+    System.out.println("string ascend : "+fm.getAscent());
+
+    int tWidth = fm.stringWidth(text);
+    int tHeight = fm.getAscent();
+
+    textXPos = (width-tWidth)/2;
+    textYPos = (height+tHeight)/2;
+  }
+
+  public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
+   // g.setStroke(new BasicStroke(0.5f));
 
     if(effect==BUTTON_DOWN) g.setColor(underColor);
     else g.setColor(overColor);
 
     g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
 
-    if(effect==BUTTON_HIGHLIGHT) g.setColor(this.highlightColor);
+    if(effect==BUTTON_OVER) g.setColor(this.highlightColor);
     else g.setColor(fillColor);
     g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
 
@@ -132,19 +211,30 @@ public class Button {
     //g.setStroke(new BasicStroke(2f));
     //g.drawLine(0,height,width,0);
 
-    String fontpath = System.getProperty("java.awt.fonts");
-    System.out.println("Fontpath="+fontpath);
-   // System.setProperty("java.awt.fonts","c:\temp\fonts\");
-
     g.setColor(fontColor);
-    Font font = new Font("Impact",Font.PLAIN,10);
-    g.setFont(font);
-    g.drawString(text,5,10);
+    g.drawString(text,textXPos,textYPos);
 
     try {
       GIFEncoder encode = new GIFEncoder(image);
       Date date = Calendar.getInstance().getTime();
-      filename = filename.concat(".gif");
+
+      StringBuffer name = new StringBuffer();
+      name.append("test");
+      name.append(width);
+      name.append("x");
+      name.append(height);
+      name.append(effect);
+      name.append(".gif");
+
+      filename.concat(name.toString());
+
+      if( effect == BUTTON_UP ){
+        buttonUpURL = filename;
+      }
+      else if( effect == BUTTON_UP ){
+        buttonDownURL = filename;
+      }
+      else buttonOverURL = filename;
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 
