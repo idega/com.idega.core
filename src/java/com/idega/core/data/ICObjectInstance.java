@@ -28,41 +28,28 @@ import com.idega.core.business.ICObjectBusiness;
 
 */
 
-public class ICObjectInstance extends GenericEntity{
+public class ICObjectInstance extends TreeableEntity {
 
 
 
-	public ICObjectInstance(){
+  public ICObjectInstance(){
+    super();
+  }
 
-		super();
-
-	}
-
-
-
-	public ICObjectInstance(int id)throws SQLException{
-
-		super(id);
-
-	}
+  public ICObjectInstance(int id)throws SQLException{
+    super(id);
+  }
 
   public static final String IBPAGEID = "ib_page_id";
 
 
 
-	public void initializeAttributes(){
-
-		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
-
-		addAttribute(getIDColumnName());
-
-		addManyToOneRelationship("ic_object_id","Module",ICObject.class);
-
-        addManyToOneRelationship(IBPAGEID,"Page",com.idega.builder.data.IBPage.class);
-
-
-
-	}
+  public void initializeAttributes(){
+    //par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
+    addAttribute(getIDColumnName());
+    addManyToOneRelationship("ic_object_id","Module",ICObject.class);
+    addManyToOneRelationship(IBPAGEID,"Page",com.idega.builder.data.IBPage.class);
+  }
 
 
 
