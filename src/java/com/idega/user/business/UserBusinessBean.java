@@ -302,7 +302,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * Creates a user with a firstname,middlename, lastname, where middlename can be null
    */
   public User createUser(String firstname, String middlename, String lastname) throws CreateException,RemoteException{
-    return createUser(firstname,middlename,lastname,null);
+    return createUser(firstname,middlename,lastname,(String)null);
   }
 
   /**
@@ -310,6 +310,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID) throws CreateException,RemoteException{
       return createUser(firstname,middlename,lastname,null,personalID,null,null,null,null);
+  }
+  /**
+   * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null
+   */
+   public User createUser(String firstName, String middleName, String lastName, int primary_groupID) throws CreateException,RemoteException{
+ 		return createUser(firstName,middleName,lastName,null,null,null,null,null,new Integer(primary_groupID));
+  }
+  
+  /**
+   * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null but primary_group can not be noull
+   */
+  public User createUser(String firstName, String middleName, String lastName, Group primary_group) throws CreateException,RemoteException{
+ 		return createUser(firstName,middleName,lastName,null,null,null,null,null,(Integer)primary_group.getPrimaryKey());
   }
 
   /**

@@ -6,6 +6,7 @@ import javax.ejb.CreateException;
 
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.user.data.Group;
 import com.idega.user.data.Gender;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -76,5 +77,12 @@ public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFound
  * returns the correct name of the user. Else it regularely returns the name of the group.
  **/
   public String getNameOfGroupOrUser(com.idega.user.data.Group groupOrUser) throws java.rmi.RemoteException;
-
+  /**
+   * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null
+   */
+   public User createUser(String firstName, String middleName, String lastName, int primary_groupID) throws CreateException,RemoteException;
+  /**
+   * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null but primary_group can not be noull
+   */
+  public User createUser(String firstName, String middleName, String lastName, Group primary_group) throws CreateException,RemoteException;
 }
