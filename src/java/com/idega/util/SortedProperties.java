@@ -269,6 +269,8 @@ public class SortedProperties extends Properties implements SortedMap
 	
 	
 	/**
+	 * ATTENTION THIS METHOD NOW USES UTF-8 NOT ISO 8859-1 LIKE THE JAVADOC SAYS
+	 * <p>
 	 * Writes this property list (key and element pairs) in this
 	 * <code>Properties</code> table to the output stream in a format suitable
 	 * for loading into a <code>Properties</code> table using the
@@ -319,7 +321,10 @@ public class SortedProperties extends Properties implements SortedMap
 	throws IOException
 	{
 		BufferedWriter awriter;
-		awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
+		//awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
+		//TODO change javadoc comment
+		awriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+		
 		if (header != null)
 			writeln(awriter, "#" + header);
 		if(getAddDateHeader())

@@ -202,7 +202,10 @@ public class XMLData implements Storable {
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
-    xmlOutput.setEncoding("iso-8859-1");
+    
+    //xmlOutput.setEncoding("iso-8859-1");
+    xmlOutput.setEncoding("UTF-8");
+    
     // do not use document directly use accessor method
     XMLDocument myDocument = getDocument();
     try {
