@@ -14,9 +14,9 @@ public class FacesConfigMerger extends BundleFileMerger {
 	public FacesConfigMerger(){
 		String xmlHeader = 
 			"<?xml version=\"1.0\"?>\n"+
-			"<!DOCTYPE faces-config PUBLIC"+
-			"\"-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN\""+
-			"\"http://java.sun.com/dtd/web-facesconfig_1_0.dtd\">";
+			"<!DOCTYPE faces-config PUBLIC\n"+
+			"\t\"-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN\"\n"+
+			"\t\"http://java.sun.com/dtd/web-facesconfig_1_0.dtd\">\n";
 			//+"<!-- Generated file by idegaWeb please don't modify the module markers -->";
 		setFileHeader(xmlHeader);
 		setRootXMLElement("faces-config");
