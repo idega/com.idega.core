@@ -16,6 +16,8 @@ import com.idega.util.LocaleUtil;
 import com.idega.util.FileUtil;
 import com.idega.core.data.ICObject;
 
+import com.idega.data.IDOFinderException;
+import com.idega.data.EntityFinder;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -557,24 +559,52 @@ public class IWBundle implements java.lang.Comparable{
 
     /**
      * Returns the ICObjects associated with this bundle
+     * Returns an empty list if nothing found
+     */
+    public List getICObjectsList() throws IDOFinderException{
+      List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+      return l;
+    }
+
+
+    /**
+     * Returns the ICObjects associated with this bundle
      * Returns null if there is an exception
+     * @deprecated Replaced with getICObjectsList()
      */
     public ICObject[] getICObjects(){
       try{
-        return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier());
+        List l = getICObjectsList();
+        return (ICObject[]) l.toArray(new ICObject[0]);
       }
       catch(Exception e){
         return null;
       }
     }
 
+
+
     /**
      * Returns the ICObjects associated with this bundle and of the specified componentType
      * Returns null if there is an exception
      */
+    public List getICObjectsList(String componentType)throws IDOFinderException{
+        List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+        //return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+        return l;
+    }
+
+
+    /**
+     * Returns the ICObjects associated with this bundle and of the specified componentType
+     * Returns null if there is an exception
+     * @deprecated replaced with getICObjectsList(componentType);
+     */
     public ICObject[] getICObjects(String componentType){
       try{
-        return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+        //return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+        List l = getICObjectsList(componentType);
+        return (ICObject[]) l.toArray(new ICObject[0]);
       }
       catch(Exception e){
         return null;
