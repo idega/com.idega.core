@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.125 2004/09/01 20:38:43 aron Exp $
+ *  $Id: Page.java,v 1.126 2004/10/19 11:06:02 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -14,12 +14,11 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
@@ -29,6 +28,7 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
 import com.idega.event.IWFrameBusiness;
+import com.idega.idegaweb.GlobalIncludeManager;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -74,7 +74,7 @@ public class Page extends PresentationObjectContainer {
 	private String _pageStyleFont = Text.FONT_FACE_ARIAL;
 	private String _pageStyleFontSize = Text.FONT_SIZE_10_STYLE_TAG;
 	private String _pageStyleFontStyle = Text.FONT_FACE_STYLE_NORMAL;
-	private String _styleSheetURL;
+	//private String _styleSheetURL;
 	private String _shortCutIconURL = null;
 	private int _shortCutIconID = -1;
 	private boolean _addStyleSheet = false;
@@ -368,7 +368,7 @@ public class Page extends PresentationObjectContainer {
 	 *  Sets the defaultValues attribute of the Page object
 	 */
 	private void setDefaultValues() {
-		addStyleSheetURL(_styleSheetURL);
+		//addStyleSheetURL(_styleSheetURL);
 		getAssociatedScript().addFunction("windowopen", Window.windowScript());
 	}
 
@@ -1044,7 +1044,7 @@ public class Page extends PresentationObjectContainer {
 			obj._visitedColor = _visitedColor;
 			obj._hoverColor = _hoverColor;
 			obj._textDecoration = _textDecoration;
-			obj._styleSheetURL = _styleSheetURL;
+			//obj._styleSheetURL = _styleSheetURL;
 			obj._addStyleSheet = _addStyleSheet;
 			obj._ibPageID = _ibPageID;
 			obj.styleFile = styleFile;
@@ -1285,9 +1285,16 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void initVariables(IWContext iwc) throws IOException {
 		super.initVariables(iwc);
-		if (this._styleSheetURL == null)
-			_styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
-
+		//if (this._styleSheetURL == null)
+		//	_styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
+		
+		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
+		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
+			String url = (String) iter.next();
+			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
+			this.addStyleSheetURL(styleSheetURL);
+		}
+		
 		setDefaultValues();
 		setDefaultAttributes(iwc);
 	}
