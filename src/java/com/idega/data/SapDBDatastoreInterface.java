@@ -283,7 +283,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
     String statement = "drop sequence "+this.getSequenceName(entity);
     try{
       this.executeUpdate(entity,statement);
-      this.createSequence(entity,value);
+      this.createSequence(entity,value+1);
     }
     catch(Exception e){
       e.printStackTrace();

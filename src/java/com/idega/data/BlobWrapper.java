@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.7 2002/03/19 18:36:04 tryggvil Exp $
+ * $Id: BlobWrapper.java,v 1.8 2002/03/21 16:27:48 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -191,9 +191,9 @@ public class BlobWrapper {
           entity.freeConnection(dataSourceName,conn);
         }
       }*/
-      System.out.println("BlobWrapper.close()");
+      //System.out.println("BlobWrapper.close()");
       if(blobInputStream!=null){
-        System.out.println("BlobWrapper.blobInputStream.close()");
+        //System.out.println("BlobWrapper.blobInputStream.close()");
         blobInputStream.close();
         blobInputStream=null;
       }
