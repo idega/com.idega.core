@@ -10,9 +10,6 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfWriter;
-
 public class ExcelOutput extends HttpServlet
 {
   public void init(ServletConfig config) throws ServletException
@@ -22,13 +19,6 @@ public class ExcelOutput extends HttpServlet
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
   {
-
-    /*
-     *  This outputs a given message as PDF to illustrate the workaround
-     *  for the MS Internet Explorer bug discussed at:
-     *  http://www.lowagie.com/iText/faq.html#msie
-     *
-     */
 
     try
     {
@@ -53,10 +43,6 @@ public class ExcelOutput extends HttpServlet
       ServletOutputStream out = response.getOutputStream();
       baos.writeTo(out);
       out.flush();
-
-
-      // this is a workaround for a bug in MSIE
-      // see http://www.lowagie.com/iText/faq.html#msie
 
     }
     catch (Exception e2)
