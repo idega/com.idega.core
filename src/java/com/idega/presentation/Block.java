@@ -145,22 +145,32 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   /**
    * Implement in subclasses:
    */
-  protected void registerPermissionKeys(){
+  public void registerPermissionKeys(){
   }
 
+  /*
   protected void registerPermissionKey(String permissionKey,String localizeableKey){
     Map m = getPermissionKeyClassMap();
     m.put(permissionKey,localizeableKey);
   }
-
+*/
   protected void registerPermissionKey(String permissionKey){
-    registerPermissionKey(permissionKey,permissionKey);
+    Map m = getPermissionKeyMap();
+    if( m.containsKey(getClassName() ) ){
+      List l = (List) m.get(getClassName());
+      l.add(permissionKey);
+    }
+    else{
+      List l = new ArrayList();
+      l.add(permissionKey);
+      m.put(getClassName(),l);
+    }
   }
 
   private Map getPermissionKeyMap(){
     return permissionKeyMap;
   }
-
+/*
   private Map getPermissionKeyClassMap(){
     Map m = (Map)getPermissionKeyMap().get(this.getClass());
     if(m==null){
@@ -169,15 +179,19 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     }
     return m;
   }
+*/
+  public String[] getPermissionKeys(){
+    return getPermissionKeys(getClass());
+  }
 
-  String[] getPermissionKeys(Block obj){
+  public String[] getPermissionKeys(Block obj){
     return getPermissionKeys(obj.getClass());
   }
 
-  String[] getPermissionKeys(Class jPresentationObjectClass){
-    Map m = (Map)getPermissionKeyMap().get(jPresentationObjectClass);
-    if(m!=null){
-      return (String[])m.keySet().toArray(new String[0]);
+  public String[] getPermissionKeys(Class PresentationObjectClass){
+    List l = (List)getPermissionKeyMap().get(PresentationObjectClass.getName());
+    if(l!=null){
+      return (String[])l.toArray(new String[0]);
     }
     return null;
   }

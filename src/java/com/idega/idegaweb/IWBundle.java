@@ -147,10 +147,11 @@ public class IWBundle implements java.lang.Comparable {
 
       installComponents();
       try{
-	createDataRecords();
+	      createDataRecords();
+        registerBlockPermisionKeys();
       }
       catch(Exception e){
-	e.printStackTrace();
+	      e.printStackTrace();
       }
 
       runStartClass();
@@ -174,6 +175,26 @@ public class IWBundle implements java.lang.Comparable {
       }
    }
 
+  private void registerBlockPermissionKeys(Class blockClass) throws Exception{
+    ((com.idega.presentation.Block) blockClass.newInstance()).registerPermissionKeys();
+  }
+
+  private void registerBlockPermisionKeys()throws Exception{
+    List entities = com.idega.data.EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_BLOCK,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+    if(entities!=null){
+      Iterator iter = entities.iterator();
+      while (iter.hasNext()) {
+        ICObject ico = (ICObject)iter.next();
+        try{
+          Class c = ico.getObjectClass();
+          registerBlockPermissionKeys(c);
+        }
+        catch(Exception e){
+          e.printStackTrace();
+        }
+	    }
+    }
+  }
 
    private void runStartClass(){
       String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
@@ -664,13 +685,18 @@ public class IWBundle implements java.lang.Comparable {
 	if(ico==null){
 	  try{
 	    ico = new ICObject();
-	    ico.setObjectClass(Class.forName(className));
+      Class c = Class.forName(className);
+	    ico.setObjectClass(c);
 	    ico.setName(componentName);
 	    ico.setObjectType(componentType);
 	    ico.setBundle(this);
 	    ico.insert();
 	    if(componentType.equals(ICObject.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
 	      com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
+        if(componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
+          registerBlockPermissionKeys(c);
+        }
+
 	    }
 	  }
 	  catch(Exception e){
