@@ -11,5 +11,7 @@ public interface PostalCodeHome extends com.idega.data.IDOHome
  public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException;
  public java.util.Collection findAllUniqueNames()throws java.rmi.RemoteException,javax.ejb.FinderException;
  public java.util.Collection findByName(java.lang.String p0)throws javax.ejb.FinderException;
+ public java.util.Collection findByPostalCode(java.lang.String p0)throws javax.ejb.FinderException;
+ public java.util.Collection findByPostalCodeFromTo(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException;
 
 }

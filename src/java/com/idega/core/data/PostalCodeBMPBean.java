@@ -14,6 +14,7 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOQuery;
 
 
 
@@ -119,6 +120,19 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
       return (Integer)codes.iterator().next();
     }
     else throw new FinderException("PostalCode not found");
+  }
+  
+  public Collection ejbHomeFindByPostalCodeFromTo(String codeFrom, String codeTo) throws FinderException {
+  	IDOQuery query = this.idoQuery();
+  	query.append("Select * from ").append(getEntityName())
+  	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >= ").append(codeFrom)
+		.append(" and ").append(COLUMN_POSTAL_CODE).append(" <= ").append(codeTo)
+		.append(" order by ").append(COLUMN_POSTAL_CODE);
+		return this.idoFindPKsByQuery(query);
+  }
+  
+  public Collection ejbHomeFindByPostalCode(String code) throws FinderException {
+  	return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_POSTAL_CODE, code, COLUMN_POSTAL_CODE);
   }
 
   public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{

@@ -60,5 +60,19 @@ public java.util.Collection findByName(java.lang.String p0)throws javax.ejb.Find
 	return theReturn;
 }
 
+public java.util.Collection findByPostalCode(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection theReturn = ((PostalCodeBMPBean)entity).ejbHomeFindByPostalCode(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public java.util.Collection findByPostalCodeFromTo(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection theReturn = ((PostalCodeBMPBean)entity).ejbHomeFindByPostalCodeFromTo(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }
