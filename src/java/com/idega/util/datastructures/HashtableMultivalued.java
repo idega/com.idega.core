@@ -50,11 +50,36 @@ public class HashtableMultivalued extends Hashtable{
       }
    }
 
+   /**
+   *Returns the first object with this key and removes it from the Hashtable
+   */
+   public Object getAndRemove(Object key){
+      List vector = getList(key);
+      if(vector==null){
+         return null;
+      }
+      else{
+        Object obj = vector.get(0);
+        vector.remove(0);
+        return obj;
+      }
+   }
+
    public Collection getCollection(Object key){
       return (Collection)super.get(key);
    }
 
   public List getList(Object key){
       return (List)super.get(key);
-   }
+  }
+
+  public int getNumberOfValues(Object key){
+      List vector = getList(key);
+      if(vector==null){
+         return 0;
+      }
+      else{
+        return vector.size();
+      }
+  }
 }
