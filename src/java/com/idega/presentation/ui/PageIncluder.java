@@ -95,29 +95,25 @@ public class PageIncluder extends PresentationObject implements Index{
    return index;
   }
 
+
   public void main(IWContext iwc) throws Exception {
-    if (forceFrame) {
-      if (_sendToPage != null) {
-        if (_sendToPageIfSet == null){
-          RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
-          req.forward(iwc.getRequest(),iwc.getResponse());
-        }
-        else {
-          if (iwc.isParameterSet(_sendToPageIfSet)){
-            RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
-            req.forward(iwc.getRequest(),iwc.getResponse());
-          }
+    if (_sendToPage != null) {
+      if (_sendToPageIfSet == null){
+        forwardToIBPage(_sendToPage,iwc);
+      }
+      else {
+        if (iwc.isParameterSet(_sendToPageIfSet)){
+          forwardToIBPage(_sendToPage,iwc);
         }
       }
     }
-    else if( _sendToPage == null ){
+    else{
       if (out==null) sortAndProcess(iwc);
     }
   }
 
   public void print(IWContext iwc)throws IOException{
     if(URL!=null){
-      initVariables(iwc);
       if( doPrint(iwc) ){
         if(out!=null) println(out);
         out = null;
@@ -547,5 +543,15 @@ public class PageIncluder extends PresentationObject implements Index{
 
   public String getSendToPageIfSet() {
     return _sendToPageIfSet;
+  }
+
+  public void forwardToIBPage(IBPage page, IWContext iwc){
+    try{
+      RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
+      req.forward(iwc.getRequest(),iwc.getResponse());
+    }
+    catch(Exception e){
+     e.printStackTrace(System.err);
+    }
   }
 }
