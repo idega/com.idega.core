@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
  * Title:        StringHandler
  * Description:
  * Copyright:    Copyright (c) 2001
- * Company:      idega margmiðlun hf.
+ * Company:      idega margmi?lun hf.
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
  * @version 1.0
 
@@ -138,66 +138,68 @@ public class StringHandler {
 	private static char translateCharacter(char c) {
 		/**
 		 * @todo: Finish implementation
+		 * 
 		 */
+		/*
 		switch (c) {
-			case 'Ä' :
+			case 'A' :
 				return 'A';
-			case 'ä' :
+			case 'a' :
 				return 'a';
-			case 'Å' :
+			case 'A' :
 				return 'A';
-			case 'å' :
+			case 'a' :
 				return 'a';
-			case 'Á' :
+			case 'A' :
 				return 'A';
-			case 'á' :
+			case 'a' :
 				return 'a';
-			case 'É' :
+			case 'F' :
 				return 'E';
-			case 'é' :
+			case 'e' :
 				return 'e';
-			case 'Ë' :
+			case 'E' :
 				return 'E';
-			case 'ë' :
+			case 'e' :
 				return 'e';
-			case 'Ð' :
+			case 'D' :
 				return 'D';
-			case 'ð' :
+			case 'd' :
 				return 'd';
-			case 'Í' :
+			case 'I' :
 				return 'I';
-			case 'í' :
+			case 'i' :
 				return 'i';
-			case 'Ï' :
+			case 'I' :
 				return 'I';
-			case 'ï' :
+			case 'i' :
 				return 'i';
-			case 'Ö' :
+			case 'O' :
 				return 'O';
-			case 'ö' :
+			case 'o' :
 				return 'o';
-			case 'Ó' :
+			case 'O' :
 				return 'O';
-			case 'ó' :
+			case 'o' :
 				return 'o';
-			case 'Ü' :
+			case 'U' :
 				return 'U';
-			case 'ü' :
+			case 'u' :
 				return 'u';
-			case 'Ú' :
+			case 'U' :
 				return 'U';
-			case 'ú' :
+			case 'u' :
 				return 'u';
-			case 'Ý' :
+			case 'Y' :
 				return 'Y';
-			case 'ý' :
+			case 'y' :
 				return 'y';
-			case 'Þ' :
+			case 'T' :
 				return 'T';
-			case 'þ' :
+			case 't' :
 				return 't';
 
-		}
+		}*/
 		return c;
 	}
 } // Class StringHandler
