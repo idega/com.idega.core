@@ -31,6 +31,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import com.idega.data.GenericEntity;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.ThreadContext;
 
 
@@ -43,23 +46,13 @@ import com.idega.util.ThreadContext;
  */
 
 
-public class IdegaTransactionManager implements javax.transaction.TransactionManager{
+public class IdegaTransactionManager implements javax.transaction.TransactionManager, Singleton{
 
 
 
   static String transaction_attribute_name = "idega_transaction";
-  private static String transaction_syncronization_attribute_name = "idega_transaction_synchronization";
 
-  private static int transaction_timeout = 1000;
-
-  private static IdegaTransactionManager instance;
-
-	/**
-	 * 
-	 * @uml.property name="_entity"
-	 * @uml.associationEnd multiplicity="(1 1)"
-	 */
-	private GenericEntity _entity;
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IdegaTransactionManager();}};
 
   String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
@@ -84,15 +77,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
     */
 
   public static TransactionManager getInstance(){
-
-    if(instance==null){
-
-      instance=new IdegaTransactionManager();
-
-    }
-
-    return instance;
-
+  	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstance(IdegaTransactionManager.class, instantiator);
   }
 
 
@@ -310,7 +295,6 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
 
   public void setEntity(GenericEntity entity){
-    this._entity=entity;
     this.datasource=entity.getDatasource();
   }
 
