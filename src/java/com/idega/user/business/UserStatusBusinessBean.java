@@ -144,7 +144,19 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		return null;
 	}
-	
+	public Status getStatusByStatusId(int statusId) throws RemoteException{
+		Status status = null;
+		try {
+			status = getStatusHome().findByPrimaryKey(new Integer(statusId));
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
 	public UserStatus getDeceasedUserStatus(Integer userID) throws RemoteException{
 		try {
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();

@@ -94,5 +94,7 @@ public interface UserStatusBusiness {
      */
     public void setUserAsDeceased(Integer userID, Date deceasedDate)
             throws RemoteException, java.rmi.RemoteException;
+    
+    public Status getStatusByStatusId(int statusId) throws RemoteException;
 
 }
