@@ -26,16 +26,17 @@ import java.rmi.RemoteException;
 public class IWBrowser extends FrameTable implements StatefullPresentation {
 
 
-  private String _frameName[] = {"iwb_top","iwb_menu","iwb_middle",IWPresentationEvent.DEFAULT_IW_EVENT_TARGET,"iwb_main_left","iwb_main","iwb_main_right"};
+  private String _frameName[] = {"iwb_top","iwb_menu","iwb_middle","iwb_bottom",IWPresentationEvent.DEFAULT_IW_EVENT_TARGET,"iwb_main_left","iwb_main","iwb_main_right"};
 
   public static final int POS_TOP = 0;
   public static final int POS_MENU = 1;
   public static final int POS_MIDDLE = 2;
   public static final int POS_BOTTOM = 3;
+  public static final int POS_EVENT = 4;
 
-  public static final int POS_LEFTMAIN = 4;
-  public static final int POS_MAIN = 5;
-  public static final int POS_RIGHTMAIN = 6;
+  public static final int POS_LEFTMAIN = 5;
+  public static final int POS_MAIN = 6;
+  public static final int POS_RIGHTMAIN = 7;
 
   private int _controlPosition = POS_TOP;
 
@@ -44,13 +45,14 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 //  private IWBrowserFrame _mainFrame = null;
 //  private IWBrowserFrame _leftFrame = null;
 //  private IWBrowserFrame _rightFrame = null;
-  private IWBrowserFrame[] _browserFrames = new IWBrowserFrame[6];
+  private IWBrowserFrame[] _browserFrames = new IWBrowserFrame[7];
 
   private FrameTable _middleFrameset;
 
   private boolean _showTopFrame = true;
   private boolean _showMenuFrame = true;
-  private boolean _showBottomFrame = false;
+  private boolean _showBottomFrame = true;
+  private boolean _showEventFrame = false;
   private boolean _showLeftMainFrame = true;
   private boolean _showRightMainFrame = false;
 
@@ -114,6 +116,14 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     _showBottomFrame = value;
   }
 
+  public void showEventFrame(boolean value){
+    _showEventFrame = value;
+  }
+
+  public boolean showEventFrame(){
+    return _showEventFrame;
+  }
+
   public boolean showBottomFrame(){
     return _showBottomFrame;
   }
@@ -163,8 +173,12 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     this.addToFrame(obj,POS_BOTTOM);
   }
 
-  public void setBottomURL(String url){
-    this.getBottomFrame().setUrlProperty(url);
+  public void addToEvent(IWBrowserCompliant obj){
+    this.addToFrame(obj,POS_EVENT);
+  }
+
+  public void setEventURL(String url){
+    this.getEventFrame().setUrlProperty(url);
   }
 
   public void setSpanPixels(int pos, int pixels){
@@ -197,6 +211,10 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 
   protected IWBrowserFrame getBottomFrame(){
     return _browserFrames[POS_BOTTOM];
+  }
+
+  protected IWBrowserFrame getEventFrame(){
+    return _browserFrames[POS_EVENT];
   }
 
 
@@ -285,6 +303,10 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
         frame = this.getBottomFrame();
         addToFrame(frame, obj);
         break;
+      case POS_EVENT:
+        frame = this.getEventFrame();
+        addToFrame(frame, obj);
+        break;
       case POS_MAIN:
         frame = this.getMainFrame();
         addToFrame(frame, obj);
@@ -336,7 +358,7 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
   public void _main(IWContext iwc) throws Exception {
     //System.out.println("in _main()");
 
-    if(_showTopFrame || _showMenuFrame || _showBottomFrame){
+    if(_showTopFrame || _showMenuFrame || _showBottomFrame || _showEventFrame){
       if(_showTopFrame){
         this.add(this.getTopFrame());
       }
@@ -363,9 +385,13 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
       } else {
         this.add(this.getMainFrame());
       }
-
-      if(_showBottomFrame){
-        this.add(this.getBottomFrame());
+      
+      if(_showBottomFrame) {
+      		this.add(this.getBottomFrame());
+      }
+      
+      if(_showEventFrame){
+        this.add(this.getEventFrame());
       }
 
     } else if (_showLeftMainFrame || _showRightMainFrame ) {
