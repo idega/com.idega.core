@@ -1,11 +1,13 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
-
+ * $Id: GenericEntity.java,v 1.4 2001/04/30 16:40:40 palli Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.data;
-
-
 
 import java.sql.*;
 import javax.naming.*;
@@ -13,232 +15,181 @@ import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 import com.idega.util.*;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.3
 */
 public abstract class GenericEntity implements java.io.Serializable {
 
-//private Hashtable columns;
+  private String dataStoreType;
+  public Hashtable columns;
+  private static Hashtable theAttributes;
+  private static Hashtable allStaticClasses;
+  private String dataSource;
 
-
-private String dataStoreType;
-public Hashtable columns;
-//private int id;
-//private String name;
-//private Vector theAttributes;
-private static Hashtable theAttributes;
-private static Hashtable allStaticClasses;
-private String dataSource;
-
-	public GenericEntity(){
-		//columns = new Hashtable();
+	public GenericEntity() {
 		setDatasource("default");
 		columns = new Hashtable();
-		if (theAttributes == null){
-			//theAttributes=new Vector();
+		if (theAttributes == null) {
 			theAttributes=new Hashtable();
-                        //initializeAttributes();
 		}
 		setDefaultValues();
 	}
 
-
-	public GenericEntity(String dataSource){
-		//columns = new Hashtable();
+	public GenericEntity(String dataSource) {
 		setDatasource(dataSource);
 		columns = new Hashtable();
-		if (theAttributes == null){
-			//theAttributes=new Vector();
+		if (theAttributes == null) {
 			theAttributes=new Hashtable();
-			//initializeAttributes();
 		}
 		setDefaultValues();
 	}
 
-
-	public GenericEntity(int id)throws SQLException{
-		//columns = new Hashtable();
+	public GenericEntity(int id) throws SQLException {
 		setDatasource("default");
 		columns = new Hashtable();
-		if (theAttributes == null){
-  			//theAttributes=new Vector();
+		if (theAttributes == null) {
 			theAttributes=new Hashtable();
-			//initializeAttributes();
 		}
 		setColumn(getIDColumnName(),new Integer(id));
 		findByPrimaryKey(getID());
 	}
 
-	public GenericEntity(int id,String dataSource)throws SQLException{
-		//columns = new Hashtable();
+	public GenericEntity(int id,String dataSource) throws SQLException {
 		setDatasource(dataSource);
 		columns = new Hashtable();
-		if (theAttributes == null){
-  			//theAttributes=new Vector();
+		if (theAttributes == null) {
 			theAttributes=new Hashtable();
-			//initializeAttributes();
 		}
 		setColumn(getIDColumnName(),new Integer(id));
 		findByPrimaryKey(getID());
 	}
 
+  private void firstLoadInMemory() {
+    //First store a static instance of this class
+    String className = this.getClass().getName();
+    try {
+      this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+    }
+    catch(Exception ex) {
 
+    }
+    //call the initializeAttributes that stores information about columns and relationships
+    initializeAttributes();
+  }
 
-	//public abstract String getTableName();
-
-	/*public String getTableName(){
-		return "untitled1";
-	};*/
-
-
-        private void firstLoadInMemory(){
-          //First store a static instance of this class
-          String className = this.getClass().getName();
-          try{
-            this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
-          }
-          catch(Exception ex){
-
-          }
-          //call the initializeAttributes that stores information about columns and relationships
-          initializeAttributes();
-        }
-
-
-	protected String getTableName(){
+	protected String getTableName() {
 		return getEntityName();
 	}
 
-
-
-	/**
-	*Subclasses have to implement this method
-	**/
+  /**
+   * Subclasses have to implement this method
+	 */
 	public abstract String getEntityName();
-
-	/*public void initializeColumnNames(){
-		addColumnName(getIDColumnName());
-	}*/
-
 
 	public abstract void initializeAttributes();
 
-        protected Vector getAttributes(){
-          //ties the attribute vector to the subclass of GenericEntity because
-          //the theAttributes variable is static.
-          Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
-          if (theReturn == null){
-            theReturn = new Vector();
-            theAttributes.put(this.getClass().getName(),theReturn);
-            firstLoadInMemory();
-          }
-          return theReturn;
-        }
+  protected Vector getAttributes() {
+    //ties the attribute vector to the subclass of GenericEntity because
+    //the theAttributes variable is static.
+    Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
+    if (theReturn == null) {
+      theReturn = new Vector();
+      theAttributes.put(this.getClass().getName(),theReturn);
+      firstLoadInMemory();
+    }
 
-	public void setID(int id){
+    return theReturn;
+  }
+
+	public void setID(int id) {
 		setColumn(getIDColumnName(),new Integer(id));
 	}
 
-	public int getID(){
-		/*Integer tempInt = (Integer)getColumnValue(getIDColumnName());
-		if (tempInt != null){
-			return tempInt.intValue();
-		}
-		else{
-			return -1;
-		}*/
+	public int getID() {
 		return getIntColumnValue(getIDColumnName());
 	}
 
-	public Integer getIDInteger(){
+	public Integer getIDInteger() {
 		return (Integer)getColumnValue(getIDColumnName());
 	}
 
-
-
 	/**
-	**default unimplemented function, gets the name of the record from the datastore
-	**/
-	public String getName(){
+	 * default unimplemented function, gets the name of the record from the datastore
+	 */
+	public String getName() {
 		return null;
 	}
 
-        public BlobWrapper getEmptyBlob(String columnName){
-          return new BlobWrapper(this,columnName);
-        }
+  public BlobWrapper getEmptyBlob(String columnName) {
+    return new BlobWrapper(this,columnName);
+  }
 
 	/**
-	**default unimplemented function, sets the name of the record in the datastore
-	**/
-	public void setName(String name){
+	 * default unimplemented function, sets the name of the record in the datastore
+	 */
+	public void setName(String name) {
 		//does nothing
 	}
 
-	public String toString(){
+	public String toString() {
 		return Integer.toString(getID());
 	}
 
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
-	public void addColumnName(String columnName){
+	public void addColumnName(String columnName) {
 		addAttribute(columnName);
 	}
 
-
-	public void addAttribute(String attributeName){
-		//setColumn(columnName,null);
-		//columns.put(columnName,new Column(columnName));
-                EntityAttribute attribute;
-                attribute=new EntityAttribute(attributeName.toLowerCase());
-                attribute.setAsPrimaryKey(true);
-                attribute.setNullable(false);
+	public void addAttribute(String attributeName) {
+    EntityAttribute attribute;
+    attribute = new EntityAttribute(attributeName.toLowerCase());
+    attribute.setAsPrimaryKey(true);
+    attribute.setNullable(false);
 		addAttribute(attribute);
 	}
-
 
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
-	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName){
+	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName) {
 		addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName);
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName){
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
 		attribute.setStorageClassName(storageClassName);
-		//columns.put(columnName,column);
 		addAttribute(attribute);
 	}
 
 	/**
-	* Added by Eirikur Hrafnsson
-	*
-	*/
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength){
+	 * Added by Eirikur Hrafnsson
+	 *
+	 */
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
 		attribute.setStorageClassName(storageClassName);
 		attribute.setMaxLength(maxLength);
-		//columns.put(columnName,column);
 		addAttribute(attribute);
 	}
 
-
 	/**
-	 * @deprecated Replaced with addAttribute()
-	 */
-	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName){
+   * @deprecated Replaced with addAttribute()
+ 	  */
+	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
 		addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName,relationShipType,relationShipClassName);
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName){
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
@@ -246,7 +197,6 @@ private String dataSource;
 		attribute.setRelationShipType(relationShipType);
 		attribute.setRelationShipClassName(relationShipClassName);
 		attribute.setStorageClassName(storageClassName);
-		//columns.put(columnName,column);
 		addAttribute(attribute);
 	}
 
@@ -360,33 +310,20 @@ private String dataSource;
         }
 
 	public void setColumn(String columnName,Object columnValue){
-		//System.out.println("Kalla a setColumn Object fyrir "+columnName+" i GenericEntity");
-		/*if (columnValue == null){
-			//columns.put(columnName,"idega_special_null");
-		}
-		else{
-			//columns.put(columnName,columnValue);
-		}*/
-
 		if (this.getRelationShipClassName(columnName).equals("")){
-			setValue(columnName,columnValue);			//System.out.println("Er i setColumnValue "+getColumnName()+" instanceof GenericEntity");		}		else{
+			setValue(columnName,columnValue);
 		}
 		else{
-			setValue(columnName,((GenericEntity)columnValue).getIDInteger());			//System.out.println("Er i setColumnValue "+getColumnName()+" ekki instanceof GenericEntity");		}
+			setValue(columnName,((GenericEntity)columnValue).getIDInteger());
 		}
-
-
-
 	}
 
 
 	public void setColumn(String columnName,int columnValue){
-		//System.out.println("Kalla a setColumn int fyrir "+columnName+" i GenericEntity");
 		setValue(columnName,new Integer(columnValue));
 	}
 
 	public void setColumn(String columnName,Integer columnValue){
-		//System.out.println("Kalla a setColumn Integer fyrir "+columnName+" i GenericEntity");
 		setValue(columnName,columnValue);
 	}
 
@@ -411,14 +348,11 @@ private String dataSource;
 		Object returnObj = null;
 		Object value = getValue(columnName);
 		if (value instanceof com.idega.data.GenericEntity){
-			returnObj = value;			//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof GenericEntity");		}		else if (value instanceof java.lang.Integer){			//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer");			if (!(getRelationShipClassName(columnName).equals(""))){				//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname != \"\"");				if (getRelationShipClassName(columnName).indexOf("idega") != -1){					//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname indexof idega != -1");					try{						returnObj = Class.forName(getRelationShipClassName(columnName)).newInstance();						((GenericEntity)returnObj).findByPrimaryKey(((Integer)value).intValue());					}					catch(Exception ex){						ex.printStackTrace();					}					finally{										}				}				else{					//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname indexof idega == -1");				}			}			else{				//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname == \"\"");				returnObj = value;			}		}		else{			//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof annad");			returnObj= value;		}		if (returnObj== null){			//System.out.println("ReturnObj fyrir "+getColumnName()+" == null");		}		else{			//System.out.println("ReturnObj fyrir "+getColumnName()+" != null");		}				return returnObj;
+			returnObj = value;
 		}
 		else if (value instanceof java.lang.Integer){
-			//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer");
 			if (!(getRelationShipClassName(columnName).equals(""))){
-				//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname != \"\"");
 				if (getRelationShipClassName(columnName).indexOf("idega") != -1){
-					//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname indexof idega != -1");
 					try{
 						returnObj = Class.forName(getRelationShipClassName(columnName)).newInstance();
 						((GenericEntity)returnObj).findByPrimaryKey(((Integer)value).intValue());
@@ -432,23 +366,18 @@ private String dataSource;
 					}
 				}
 				else{
-					//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname indexof idega == -1");
 				}
 			}
 			else{
-				//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof Integer - relationshipclassname == \"\"");
 				returnObj = value;
 			}
 		}
 		else{
-			//System.out.println("Er i getColumnValue "+getColumnName()+" instanceof annad");
 			returnObj= value;
 		}
 		if (returnObj== null){
-			//System.out.println("ReturnObj fyrir "+getColumnName()+" == null");
 		}
 		else{
-			//System.out.println("ReturnObj fyrir "+getColumnName()+" != null");
 		}
 
 		return returnObj;
@@ -1127,31 +1056,14 @@ private String dataSource;
                 buffer.append(this.getID());
                 String SQLString=buffer.toString();
 
-		//String SQLString="select * from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
-
-                //System.out.println("FindRelated SQLString="+SQLString+"crap");
                 return findRelated(entity,SQLString);
 	}
-/*
-	public GenericEntity[] findRelatedOrdered(GenericEntity entity, String column_to_order_by)throws SQLException{
-		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
-		String SQLString="select * from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
-		return findRelated(entity,SQLString);
-	}
 
-*/	public GenericEntity[] findReverseRelated(GenericEntity entity)throws SQLException{
+	public GenericEntity[] findReverseRelated(GenericEntity entity)throws SQLException{
 		String tableToSelectFrom = getNameOfMiddleTable(this,entity);
 		String SQLString="select * from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
 		return findRelated(entity,SQLString);
 	}
-
-/*
-	public GenericEntity[] findReverseRelatedOrdered(GenericEntity entity, String column_to_order_by)throws SQLException{
-		String tableToSelectFrom = getNameOfMiddleTable(this,entity);
-		String SQLString="select * from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
-		return findRelated(entity,SQLString);
-	}
-*/
 
 	protected GenericEntity[] findRelated(GenericEntity entity,String SQLString)throws SQLException{
 		Connection conn= null;
@@ -1165,8 +1077,7 @@ private String dataSource;
 			tableToSelectFrom = entity.getTableName()+"_"+this.getTableName();
 		}
 
-		try
-		{
+		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(SQLString);

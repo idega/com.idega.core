@@ -1,7 +1,12 @@
-//idega 2000-2001 - Tryggvi Larusson
 /*
-*Copyright 2000-2001 idega.is All Rights Reserved.
-*/
+ * $Id: IWPresentationServlet.java,v 1.5 2001/04/30 16:40:41 palli Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.servlet;
 
 import java.io.*;
@@ -80,71 +85,68 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	}
 
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
-		try{
-                  //System.out.println("Inside __main() - Tread: "+Thread.currentThread().toString());
-                  //-//objects.clear();
-                  //initializeThreadContext();
-                  //getThreadContext().putThread(Thread.currentThread());
+		try {
+System.out.println("1");
+      __initialize(request,response);
+System.out.println("2");
+      ModuleInfo moduleinfo = getModuleInfo();
+System.out.println("3");
+      String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
+System.out.println("4");
+      String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
+System.out.println("5");
+      if (eventClass != null) {
+        IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
+        listener.actionPerformed(moduleinfo);
+      }
 
-                  __initialize(request,response);
-                  ModuleInfo moduleinfo = getModuleInfo();
-                  String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
-                  String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
-                  if( eventClass != null){
+System.out.println("6");
+      //added by gummi@idega.is
+      //begin
+      boolean theServiceDone = false;
+System.out.println("7");
+      String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
+System.out.println("8");
+      System.out.println("EventAddress: " + sessionAddress);
+System.out.println("9");
+      if (sessionAddress != null && !"".equals(sessionAddress))
+      {
+        Object obj = moduleinfo.getSessionAttribute(sessionAddress);
+        if(obj != null)
+        {
+          if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
+          {
+            __theService(request,response);
+            theServiceDone = true;
+            this.getPage()._setModuleInfo(moduleinfo);
+            ((ActiveEvent)obj).dispatch();
+          /* Kommentað út þar til kerfið ræður við þræði
+            EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+            q.postEvent((AWTEvent)obj);
+          */
+          }
+        }
 
-                    //try{
-                      IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
-                      listener.actionPerformed(moduleinfo);
-                    //}
-                    //catch(InstanciationException ex){
+      }
 
-                    //}
-                  }
+      //end
 
+      //if (isActionPerformed(request,response)){
+              //actionPerformed(new ModuleEvent(request,response));
+              //actionPerformed(new ModuleEvent(moduleinfo));
+      //}
+      //else{
+            if(!theServiceDone) //gummi@idega.is
+              __theService(request,response);
+      //}
+      response.getWriter().println("\n");
+      _main(moduleinfo);
 
-                  //added by gummi@idega.is
-                  //begin
-                  boolean theServiceDone = false;
-                  String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-                  System.out.println("EventAddress: " + sessionAddress);
-                  if (sessionAddress != null && !"".equals(sessionAddress))
-                  {
-                    Object obj = moduleinfo.getSessionAttribute(sessionAddress);
-                    if(obj != null)
-                    {
-                      if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
-                      {
-                        __theService(request,response);
-                        theServiceDone = true;
-                        this.getPage()._setModuleInfo(moduleinfo);
-                        ((ActiveEvent)obj).dispatch();
-                      /* Kommentað út þar til kerfið ræður við þræði
-                        EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
-                        q.postEvent((AWTEvent)obj);
-                      */
-                      }
-                    }
-
-                  }
-
-                  //end
-
-                  //if (isActionPerformed(request,response)){
-                          //actionPerformed(new ModuleEvent(request,response));
-                          //actionPerformed(new ModuleEvent(moduleinfo));
-                  //}
-                  //else{
-                        if(!theServiceDone) //gummi@idega.is
-                          __theService(request,response);
-                  //}
-                  response.getWriter().println("\n");
-                  _main(moduleinfo);
-
-                  __print(moduleinfo);
-                  /*if (connectionRequested()){
-                                  freeConnection();
-                  }*/
-                  //getThreadContext().releaseThread(Thread.currentThread());
+      __print(moduleinfo);
+      /*if (connectionRequested()){
+                      freeConnection();
+      }*/
+      //getThreadContext().releaseThread(Thread.currentThread());
 		}
 		catch(Exception ex){
 			/*if (ex instanceof java.io.IOException){
