@@ -27,7 +27,7 @@ public class SelectorUtility {
 	}
 	
 	public GenericSelect getSelectorFromIDOEntities(GenericSelect selector, Collection entities, String methodName, IWResourceBundle resourceBundle) {
-		return getSelectorFromIDOEntities(selector, entities, methodName, null, null);
+		return getSelectorFromIDOEntities(selector, entities, methodName, resourceBundle, null);
 	}
 	
 	public GenericSelect getSelectorFromIDOEntities(GenericSelect selector, Collection entities, String methodName, IWResourceBundle resourceBundle, String defaultReturnValue) {
@@ -40,10 +40,12 @@ public class SelectorUtility {
 					try {
 						String value = MethodInvoker.getInstance().invokeMethodWithNoParameters(entity, methodName).toString();
 						if (resourceBundle != null) {
-							if (defaultReturnValue != null)
+							if (defaultReturnValue == null){
+								value = resourceBundle.getLocalizedString(value, value);
+							}
+							else{
 								value = resourceBundle.getLocalizedString(value, defaultReturnValue);
-							else
-								value = resourceBundle.getLocalizedString(value);
+							}
 						}
 						option.setName(value);
 					}
