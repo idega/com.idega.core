@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cruisecontrol>
+  <project name="com.idega.core">
+    <bootstrappers>
+      <currentbuildstatusbootstrapper file="/home/idegaweb/maven/bundles/com.idega.core.bundle/target/cc-logs/currentbuildstatus.txt">
+      </currentbuildstatusbootstrapper>
+    </bootstrappers>
+    <modificationset>
+      <cvs localWorkingCopy="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core/.bundle" cvsroot=":ext:idegaweb@einstein.idega.is:/idega/cvs">
+      </cvs>
+    </modificationset>
+    <schedule interval="300">
+      <maven goal="scm:update-project|clean test|site:deploy" projectfile="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core/.bundle/project.xml" mavenscript="/usr/local/maven/bin/maven">
+      </maven>
+    </schedule>
+    <log dir="/home/idegaweb/maven/bundles/com.idega.core.bundle/target/cc-logs/com.idega.core">
+    </log>
+    <publishers>
+      <currentbuildstatuspublisher file="/home/idegaweb/maven/bundles/com.idega.core.bundle/target/cc-logs/currentbuildstatus.txt">
+      </currentbuildstatuspublisher>
+      <htmlemail logdir="/home/idegaweb/maven/bundles/com.idega.core.bundle/target/cc-logs/com.idega.core" mailhost="localhost" css="/usr/local/cruisecontrol/reporting/jsp/css/cruisecontrol.css" subjectprefix="[BUILD]" returnaddress="tryggvi@idega.com" defaultsuffix="@idega.com" xsldir="/usr/local/cruisecontrol/reporting/jsp/xsl">
+        <map address="tryggvi@idega.is" alias="tryggvil">
+        </map>
+        <map address="palli@idega.is" alias="palli">
+        </map>
+        <map address="eiki@idega.is" alias="eiki">
+        </map>
+        <map address="laddi@idega.is" alias="laddi">
+        </map>
+        <map address="aron@idega.is" alias="aron">
+        </map>
+        <map address="gummi@idega.is" alias="gummi">
+        </map>
+        <map address="gimmi@idega.is" alias="gimmi">
+        </map>
+        <map address="jonas@idega.is" alias="jonas">
+        </map>
+        <map address="thomas@idega.is" alias="thomas">
+        </map>
+        <failure address="tryggvi@idega.com">
+        </failure>
+      </htmlemail>
+    </publishers>
+  </project>
+</cruisecontrol>
