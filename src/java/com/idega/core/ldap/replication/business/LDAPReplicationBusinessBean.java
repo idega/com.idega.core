@@ -803,7 +803,14 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			replicatorConnectionsMap.put(repNum, jndiOps);
 			if(replicateBaseRDN){
 				Group updatedParent = replicateOneGroupEntry(new DN(baseRDN), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit);
-				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,baseUniqueId, maxEntrylimit, searchTimeLimit);	
+				if(updatedParent!=null){
+					if(baseUniqueId==null){
+						replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,updatedParent.getUniqueId(), maxEntrylimit, searchTimeLimit);
+					}
+					else{
+						replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,baseUniqueId, maxEntrylimit, searchTimeLimit);
+					}
+				}				
 			}
 			else{
 				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps, parentGroup,baseUniqueId, maxEntrylimit, searchTimeLimit);
