@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -132,7 +133,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		return groupBiz;
 	}
 
-	private GroupRelationHome getGroupRelationHome() {
+	private GroupRelationHome getGroupRelationHome() throws RemoteException{
 		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome();
 	}
 }
