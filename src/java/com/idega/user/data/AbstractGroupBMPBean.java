@@ -67,6 +67,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
     try{
       _group = this.getGroupHome().create();
       _group.setGroupType(this.getGroupTypeKey());
+      _group.setName(this.getName()+"");
       _group.store();
       this.setPrimaryKey(_group.getPrimaryKey());
 
@@ -318,7 +319,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   public void removeGroup()throws javax.ejb.EJBException, java.rmi.RemoteException{
     this.getGeneralGroup().removeGroup();
   }
-  
+
   public boolean hasRelationTo(Group group)throws java.rmi.RemoteException{
   	return this.getGeneralGroup().hasRelationTo(group);
   }
