@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.87 2003/03/20 14:21:23 laddi Exp $
+ * $Id: Link.java,v 1.88 2003/04/02 12:49:39 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -80,6 +80,7 @@ public class Link extends Text {
 	private boolean isImageTab = false;
 	private boolean useTextAsLocalizedTextKey = false;
 	private boolean flip = true;
+	private boolean isOutgoing = false;
 
 	private boolean hasClass = false;
 	private boolean _maintainAllGlobalParameters = false;
@@ -1520,6 +1521,7 @@ public class Link extends Text {
 		boolean addParameters = true;
 		String oldURL = getURL(iwc);
 
+
 		if (maintainedParameters != null) {
 			maintainParameters(iwc);
 		}
@@ -1559,8 +1561,8 @@ public class Link extends Text {
 			if (openInNewWindow) {
 				setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
 			}
-			else {
-				//Should not happen when a new window is opened
+			else if (!isOutgoing) {
+				//Should not happen when a new window is opened AND not if isOutgoing
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
@@ -2077,6 +2079,9 @@ public class Link extends Text {
     setURL(model.getEventHandlerURL(iwc));
   }
 
+	public void setOutgoing(boolean outgoing) {
+		this.isOutgoing = outgoing;	
+	}
 
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
