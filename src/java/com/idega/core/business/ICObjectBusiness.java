@@ -12,13 +12,12 @@ import com.idega.idegaweb.IWBundle;
 
 /**
  * Title:        IW Core
- * Description:
+ * Description:  Use this class to get and manipulate ICObject and ICObjectInstance data objects rather than constructing them with "new"
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-
 
 public class ICObjectBusiness {
 
@@ -45,7 +44,9 @@ public class ICObjectBusiness {
     return icObjectMap;
   }
 
-
+  /**
+   * Returns an instance of this business object
+   */
   public static ICObjectBusiness getInstance(){
     if(instance==null){
       instance = new ICObjectBusiness();
@@ -54,6 +55,9 @@ public class ICObjectBusiness {
   }
 
 
+  /**
+   * Returns the Class associated with the ICObjectInstance
+   */
   public Class getICObjectClassForInstance(int ICObjectInstanceId) {
     ICObjectInstance instance = this.getICObjectInstance(ICObjectInstanceId);
     ICObject obj = instance.getObject();
@@ -70,6 +74,10 @@ public class ICObjectBusiness {
     }
   }
 
+
+  /**
+   * Returns the Class associated with the ICObject
+   */
   public Class getICObjectClass(int ICObjectId) {
     ICObject obj = this.getICObject(ICObjectId);
     if(obj != null){
@@ -107,6 +115,10 @@ public class ICObjectBusiness {
       return inst;
   }
 
+
+  /**
+   * Constructs a new PresentationObject with the class associated with the ICObjectInstance
+   */
   public  PresentationObject getNewObjectInstance(int icObjectInstanceID){
       PresentationObject inst = null;
       try{
@@ -121,10 +133,17 @@ public class ICObjectBusiness {
   }
 
 
+
+  /**
+   * Returns the IWBundle that the ICObjectInstance is registered to, icObjectInstanceID must be of the form of an int
+   */
   public  IWBundle getBundleForInstance(String icObjectInstanceID,IWMainApplication iwma){
     return getBundleForInstance(Integer.parseInt(icObjectInstanceID),iwma);
   }
 
+  /**
+   * Returns the IWBundle that the ICObjectInstance is registered to
+   */
   public  IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
     try{
       if(icObjectInstanceID==-1){
@@ -141,12 +160,16 @@ public class ICObjectBusiness {
     }
   }
 
-
+  /**
+   * Returns the Class that the ICObjectInstance is associated with, icObjectInstanceID must be of the form of an int
+   */
   public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
     return getClassForInstance(Integer.parseInt(icObjectInstanceID));
   }
 
-
+  /**
+   * Returns the Class that the ICObjectInstance is associated with
+   */
   public Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
     if (icObjectInstanceID == -1)
       return(com.idega.presentation.Page.class);
@@ -154,12 +177,16 @@ public class ICObjectBusiness {
       return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
   }
 
-
+  /**
+   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   */
   public ICObjectInstance getICObjectInstance(String icObjectInstanceID) {
     return getICObjectInstance(Integer.parseInt(icObjectInstanceID));
   }
 
-
+  /**
+   * Returns ICObject that has the specific icObjectID
+   */
   public ICObject getICObject(int icObjectID){
     try{
       Integer key = new Integer(icObjectID);
@@ -175,7 +202,9 @@ public class ICObjectBusiness {
     }
   }
 
-
+  /**
+   * Returns ICObject that has the specific icObjectInstanceID
+   */
   public  ICObjectInstance getICObjectInstance(int icObjectInstanceID){
     try{
       Integer key = new Integer(icObjectInstanceID);
