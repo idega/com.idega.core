@@ -1,7 +1,7 @@
 /*
  * Created on 11.8.2003 by  tryggvil in project com.project
  */
-package com.idega.util.refactor;
+package com.idega.repository.data;
 
 import java.util.HashMap;
 import java.util.Map;
