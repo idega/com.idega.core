@@ -59,7 +59,7 @@ public class POIUtility {
 		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
 		
 		for (int x = 1; x <= rows; x++) { // has to start on 1, because getCellAt does (x-1, y-1)
-			HSSFRow row = sheet.createRow((short)(x-1));
+			HSSFRow row = sheet.createRow((x-1));
 			sheet.setRowSumsBelow(true);
 			for (int y = 1; y <= cols; y++) {// has to start on 1, because getCellAt does (x-1, y-1)
 				obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
