@@ -267,21 +267,19 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   /** cache specifically for view right and for edit rights**/
   private void setCacheKey(IWContext iwc){
-    boolean edit = false;
-    String locale = iwc.getCurrentLocale().toString();
-
-    try{
-      edit = iwc.hasEditPermission(this);
-    }
-    catch(Exception e){
-      System.err.println("Block: Error checking for edit rights");
-    }
-
-    cacheKey += getCacheState(iwc,locale+edit,locale,edit);
-
+    cacheKey += getCacheState(iwc,getCachePrefixString(iwc));
     /**@todo remove debug**/
     debug("cachKey = "+cacheKey);
+  }
 
+  /**
+   * Default string is currentlocale+hasEditPermission
+   */
+  protected String getCachePrefixString(IWContext iwc){
+    boolean edit = hasEditPermission();
+    String locale = iwc.getCurrentLocale().toString();
+
+    return (locale+edit);
   }
 
   protected boolean isCacheable(){
@@ -294,23 +292,31 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   /**
    * Override this method for correct caching. The cacheStateprefix will always be <br>
-   * of the form CurrentLocal+edit(boolean). It is better to return a string with that <br>
-   * string prefixed to it unless the block output is the same for every local and edit/view rights.
+   * of the form CurrentLocal+edit(boolean) unless you override getCachePrefixString(iwc) <br>
+   * It is better to return a string with that string prefixed to it unless the block output <br>
+   * is the same for every local and edit/view rights.
    * @return cacheStatePrefix
    */
-  protected String getCacheState(IWContext iwc, String cacheStatePrefix, String locale, boolean edit){
+  protected String getCacheState(IWContext iwc, String cacheStatePrefix){
     return cacheStatePrefix;
   }
 
-  /**@ todo implement
+  /**
    * Override this method to invalidate something other than the current state.
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
    */
   protected void invalidateCache(IWContext iwc){
-    if( cacheKey!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
-    debug("INVALIDATING : "+cacheKey);
+    if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc));
+    debug("INVALIDATING : "+getCacheKey(iwc));
   }
 
+  /**
+   * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey+suffix);
+   */
+  protected void invalidateCache(IWContext iwc, String suffix){
+    if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc)+suffix);
+    debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
+  }
 
   public class BlockCacheWriter extends java.io.PrintWriter{
 
