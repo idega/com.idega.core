@@ -295,9 +295,19 @@ public void print(IWContext iwc)throws IOException{
     DropdownMenu obj = null;
     try {
       obj = (DropdownMenu)super.clone();
+
       if(this.theElements != null){
         obj.theElements = (Vector)this.theElements.clone();
+        ListIterator iter = obj.theElements.listIterator();
+        while (iter.hasNext()) {
+          int index = iter.nextIndex();
+          Object item = iter.next();
+          if (item instanceof MenuElement) {
+            obj.theElements.set(index,((MenuElement)item).clone());
+          }
+        }
       }
+
       obj.keepStatus = this.keepStatus;
       obj.selectedElementValue = this.selectedElementValue;
       if(this.script != null){
@@ -310,6 +320,5 @@ public void print(IWContext iwc)throws IOException{
 
     return obj;
   }
-
 }
 

@@ -95,4 +95,13 @@ public class MenuElement extends InterfaceObject{
           //}
   }
 
+  public synchronized Object clone() {
+    MenuElement obj = null;
+      obj = (MenuElement)super.clone();
+      obj.isDisabled = isDisabled;
+      obj.isSelected = isSelected;
+
+    return obj;
+  }
+
 }
