@@ -50,7 +50,7 @@ public class Button {
   private int borderSize = defaultBorderSize;
 
   private boolean drawBorder = true;
-  private int width = 100;
+  private int width = 54;
   private int height = 15;
   private int doubleBorder = (2*borderSize);
   private int textXPos = 5;
@@ -61,6 +61,7 @@ public class Button {
   private String buttonOverName;
 
   private String text;
+  private Font font;
 
 
   public Button() {
@@ -68,6 +69,11 @@ public class Button {
 
   public Button(String text) {
     this.text = text;
+  }
+
+  public Button(String text, Font font) {
+    this(text);
+    this.font = font;
   }
 
   public Button(String text, int width, int height) {
@@ -99,6 +105,10 @@ public class Button {
 
   public void setFontColor(Color color){
     fontColor = color;
+  }
+
+  public void setFont(Font font){
+    this.font = font;
   }
 
   public void setFillColor(Color color){
@@ -152,20 +162,9 @@ public class Button {
 
     g.setBackground(borderColor);
 
-    try {
-      Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+"fonts"+FileUtil.getFileSeparator()+"Spliffy.ttf"));
 
-      Font font2 = font.deriveFont(Font.PLAIN,10.f);
-
-      g.setFont(font2);
-      centerText(font2,g);
-
-    }
-    catch (Exception ex) {
-      ex.printStackTrace(System.err);
-    }
-
-
+    if( font!= null ) g.setFont(font);
+    fitText(g);
 
     makeButton(g,text,image,folderPath,BUTTON_UP);
 
@@ -175,17 +174,19 @@ public class Button {
 
   }
 
-  public void centerText(Font font, Graphics2D g){
+  public void fitText(Graphics2D g){
 
-    FontMetrics fm = g.getFontMetrics(font);
+    FontMetrics fm = g.getFontMetrics(g.getFont());
     //System.out.println("Leading : "+fm.getLeading());
     System.out.println("string width : "+fm.stringWidth(text));
     System.out.println("string height : "+fm.getHeight());
     System.out.println("string ascend : "+fm.getAscent());
 
+
     int tWidth = fm.stringWidth(text);
     int tHeight = fm.getAscent();
 
+    if( tWidth >= width ) width = tWidth+8;
     textXPos = (width-tWidth)/2;
     textYPos = (height+tHeight)/2;
   }
@@ -220,7 +221,6 @@ public class Button {
       Date date = Calendar.getInstance().getTime();
 
       StringBuffer name = new StringBuffer();
-      name.append("test");
       name.append(width);
       name.append("x");
       name.append(height);
