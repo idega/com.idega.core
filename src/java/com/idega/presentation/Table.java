@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.9 2001/12/03 16:20:05 palli Exp $
+ * $Id: Table.java,v 1.10 2001/12/04 23:40:13 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,8 @@ import java.util.Enumeration;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
 import com.idega.idegaweb.IWMainApplication;
+
+import java.util.Iterator;
 
 /**
  * A table class. Note xpos is in [1:cols]
@@ -42,7 +44,7 @@ public class Table extends PresentationObjectContainer {
 
   private boolean cellsAreMerged;
 
-  private static final String COLOR_ATTRIBUTE = "bgcolor";
+  private static final String COLOR_ATTRIBUTE="bgcolor";
 
 
   private boolean addLineTop = false;
@@ -83,16 +85,16 @@ public class Table extends PresentationObjectContainer {
   }
 
   /**
-   * Add an object inside this Table in cell with coordinates 1,1 - same as the add() function
-   * @deprecated replaced by the add function
-   */
+  *Add an object inside this Table in cell with coordinates 1,1 - same as the add() function
+  *@deprecated replaced by the add function
+  */
   public void addObject(PresentationObject modObject){
     addObject( modObject,1,1);
   }
 
   /**
-   * Add an object inside this Table in cell with coordinates 1,1
-   */
+  *Add an object inside this Table in cell with coordinates 1,1
+  */
   public void add(PresentationObject modObject){
     add( modObject,1,1);
   }
@@ -789,6 +791,35 @@ public class Table extends PresentationObjectContainer {
       theObjects[xindex][yindex]=moc;
     }
     return moc.set(innercontainerindex,o);
+  }
+
+
+  public List getAllContainedObjectsRecursive(){
+    if(allObjects == null){
+      List toReturn = null;
+      List containedObjects = this.getAllContainingObjects();
+      if(theObjects != null){
+        toReturn = new Vector();
+        toReturn.containsAll(containedObjects);
+        Iterator iter = containedObjects.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          if(item instanceof PresentationObjectContainer){
+            toReturn.add(item);
+            //if(!toReturn.contains(item)){
+              List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
+              if(tmp != null){
+                toReturn.addAll(tmp);
+              }
+            //}
+          }else{
+            toReturn.add(item);
+          }
+        }
+      }
+      allObjects = toReturn;
+    }
+    return allObjects;
   }
 
 

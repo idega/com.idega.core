@@ -29,6 +29,7 @@ public static final String SCROLLING_AUTO = "auto";
 public static final int FRAMEBORDER_ON = 1;
 public static final int FRAMEBORDER_OFF = 0;
 private boolean transparent = false;
+private int ibPageId = 0;
 
 public IFrame(){
 	this("untitled");
@@ -80,6 +81,10 @@ public IFrame(String name,String URL,int width,int height){
     setAttribute("src",source);
   }
 
+  public void setIBPage(int id){
+    ibPageId = id;
+  }
+
   public void setSrc(Class classToAdd){
     setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd));
   }
@@ -91,6 +96,12 @@ public IFrame(String name,String URL,int width,int height){
   public void setWidth(String width){
     setAttribute("width",width);
   }
+
+  public String getWidth(){
+    return getAttribute("width");
+  }
+
+
 
   public void setWidth(int width){
     setAttribute("width",Integer.toString(width));
@@ -116,6 +127,10 @@ public IFrame(String name,String URL,int width,int height){
     setAttribute("frameborder",Integer.toString(border));
   }
 
+  public int getBorder(){
+    return Integer.parseInt(this.getAttribute("frameborder"));
+  }
+
   public void setMarginWidth(int width) {
     setAttribute("marginwidth",Integer.toString(width));
   }
@@ -128,6 +143,10 @@ public IFrame(String name,String URL,int width,int height){
     setAttribute("scrolling",scrolling);
   }
 
+  public String getScrolling(){
+    return this.getAttribute("scrolling");
+  }
+
   public void setAlignment(String alignment) {
     setAttribute("align",alignment);
   }
@@ -138,6 +157,9 @@ public IFrame(String name,String URL,int width,int height){
 
   public void print(IWContext iwc)throws IOException{
     if(transparent) setAttribute("ALLOWTRANSPARENCY","true");
+    if(ibPageId > 0){
+      setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
+    }
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
       print("<iframe name=\""+getName()+"\""+getAttributeString()+" >");
@@ -145,7 +167,7 @@ public IFrame(String name,String URL,int width,int height){
       if(content!=null){
         print(content);
       }
-      print("</iframe>");
+      println("</iframe>\n");
     }
   }
 

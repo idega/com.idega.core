@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.23 2001/11/09 12:23:03 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.24 2001/12/04 23:40:13 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,6 +23,11 @@ import java.awt.ActiveEvent;
 import java.awt.Toolkit;
 import java.awt.AWTEvent;
 import com.idega.event.IWModuleEvent;
+import com.idega.builder.business.BuilderLogic;
+import java.util.Vector;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Collections;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -101,6 +106,7 @@ long time1 = System.currentTimeMillis();
             __initialize(request,response);
             IWContext iwc = getIWContext();
 
+
             //added by gummi@idega.is
             //begin
             boolean theServiceDone = false;
@@ -130,6 +136,15 @@ long time1 = System.currentTimeMillis();
             }
 
             //end
+
+            // new Event system
+            /**
+             * not in use jet
+             */
+              //increaseHistoryID(iwc);
+              //handleEvent(iwc);
+
+            // event system end
 
             //if (isActionPerformed(request,response)){
                     //actionPerformed(new ModuleEvent(request,response));
@@ -369,6 +384,88 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
       return bundle.getLocalizedString(key);
     }
     return null;
+  }
+
+  public void increaseHistoryID(IWContext  iwc){
+    String historyIDSession = (String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID);
+    if(historyIDSession == null){
+      historyIDSession = Integer.toString((int)(Math.random()*1000));
+      iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
+    } else{
+      try {
+        historyIDSession = Integer.toString(Integer.parseInt(historyIDSession)+1);
+        iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
+      }
+      catch (NumberFormatException ex) {
+        //System.err.print("NumberformatException when trying to increase historyID, historyIDSession:"+historyIDSession);
+        historyIDSession = Integer.toString((int)(Math.random()*1000));
+        iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
+      }
+    }
+  }
+
+  public void handleEvent(IWContext  iwc){
+    //System.err.println("-------------------------------------");
+    //System.err.println("handleEvent begin");
+    String historyID = iwc.getParameter(BuilderLogic.PRM_HISTORY_ID);
+    if( historyID != null ){
+      BuilderLogic logic = BuilderLogic.getInstance();
+      PresentationObject[] listeners = logic.getIWPOListeners(iwc);
+      LinkedList state = (LinkedList)iwc.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+      int historySize = 5;
+      boolean listJustConstructed = false;
+      if(state == null){
+
+        state = new LinkedList();
+        state.addLast(historyID);
+        state.addLast(new Hashtable());
+        iwc.setSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE, state);
+        listJustConstructed = true;
+      }
+      synchronized (state){
+        if(!listJustConstructed && state.contains(historyID)){
+          int index = state.indexOf(historyID);
+          int size = state.size();
+          for (int i = 0; i < size-(index+1); i++) {
+            state.removeLast();
+          }
+
+          if(state.size() >= historySize*2){
+            state.removeFirst();
+            state.removeFirst();
+          }
+
+          int copyFrom = state.size()-1;
+          state.addLast(iwc.getParameter(BuilderLogic.PRM_HISTORY_ID));
+          if(copyFrom >= 1){
+            try {
+              state.addLast(((Hashtable)state.get(copyFrom)).clone());
+            }
+            catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          } else{
+            state.addLast(new Hashtable());
+          }
+          // object geta safnast upp í hashtöflunum því þarf að fjarlægja þau instöns sem ekki eru á nýju síðunni
+        }
+      }
+      if(listeners != null && listeners.length > 0){
+        PresentationObject source = logic.getIWPOEventSource(iwc);
+        for (int i = 0; i < listeners.length; i++) {
+          //System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
+          //System.err.println(listeners[i].changeState(source,iwc));
+          String newState = listeners[i].changeState(source,iwc);
+          if(newState != null){
+            ((Hashtable)state.getLast()).put(Integer.toString(listeners[i].getParentObjectInstanceID()),newState);
+          } else {
+            ((Hashtable)state.getLast()).remove(Integer.toString(listeners[i].getParentObjectInstanceID()));
+          }
+          //listeners[i].changeState(source,iwc);
+        }
+      }
+    }
+    //System.err.println("handleEvent end");
   }
 
 }

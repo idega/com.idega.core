@@ -19,6 +19,7 @@ import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.data.ICObject;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.builder.business.BuilderLogic;
 
 
 /**
@@ -822,6 +823,33 @@ public void setCacheWriter(PrintWriter writer){
   public static IWContext getInstance(){
     return com.idega.servlet.IWPresentationServlet.getIWContext();
   }
+
+
+  public String getCurrentState(PresentationObject obj){
+    if(obj != null){
+      return getCurrentState(obj.getParentObjectInstanceID());
+    } else {
+      return null;
+    }
+  }
+
+  /**
+  * @todo implement
+  */
+  public String getCurrentState(int instanceId){
+    String historyId = this.getParameter(BuilderLogic.PRM_HISTORY_ID);
+    if(historyId != null){
+      List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+      if(historyList != null && historyList.contains(historyId)){
+        int index = historyList.indexOf(historyId);
+        Object ob = ((Hashtable)historyList.get(index+1)).get(Integer.toString(instanceId));
+        System.err.println("current state = "+ob);
+        return (String)ob;
+      }
+    }
+    return null;
+  }
+
 }
 
 

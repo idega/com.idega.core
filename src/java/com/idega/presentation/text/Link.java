@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.29 2001/12/04 15:35:08 laddi Exp $
+ * $Id: Link.java,v 1.30 2001/12/04 23:40:13 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,7 +10,9 @@
 package com.idega.presentation.text;
 
 import java.util.List;
+import java.util.Vector;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import com.idega.presentation.PresentationObject;
@@ -27,6 +29,7 @@ import com.idega.builder.data.IBPage;
 import com.idega.core.data.ICFile;
 import com.idega.presentation.Image;
 import com.idega.core.localisation.business.LocaleSwitcher;
+import com.idega.builder.business.BuilderLogic;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -75,6 +78,8 @@ public class Link extends Text {
   private int _onClickImageId;
   private Image _onMouseOverImage = null;
   private Image _onClickImage = null;
+
+  private List listenerInstances = null;
 
   private boolean https = false;
 
@@ -156,7 +161,15 @@ public class Link extends Text {
   public Link(Text text, String url) {
     text.setFontColor("");
     _obj = (PresentationObject)text;
+//    System.err.println("setUrl"+url);
     setURL(url);
+/*    System.err.println("getUrl"+this.getURL());
+    if(this._parameterString != null){
+      System.err.println("prm"+this._parameterString.toString());
+    } else{
+      System.err.println("noParameters");
+    }
+    */
     _obj.setParentObject(this);
     _objectType = OBJECT_TYPE_MODULEOBJECT;
   }
@@ -201,8 +214,9 @@ public class Link extends Text {
    */
   public Link(PresentationObject mo, Class classToInstanciate) {
     this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
-    //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
 
   }
 
@@ -212,8 +226,9 @@ public class Link extends Text {
    */
   public Link(PresentationObject mo, Class classToInstanciate, Class templatePageClass) {
     this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
-        //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
   }
 
 
@@ -222,8 +237,9 @@ public class Link extends Text {
    */
   public Link(PresentationObject mo, String classToInstanciate, String template) {
     this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-        //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
   }
 
   /**
@@ -231,8 +247,9 @@ public class Link extends Text {
    */
   public Link(String displayText, Class classToInstanciate) {
     this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
-        //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
   }
 
   /**
@@ -240,8 +257,9 @@ public class Link extends Text {
    */
   public Link(String displayText, Class classToInstanciate, String target) {
     this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
-        //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
     setTarget(target);
   }
 
@@ -250,8 +268,9 @@ public class Link extends Text {
    */
   public Link(String displayText, String classToInstanciate, String template) {
     this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-        //to avoid double ?
-    _parameterString = new StringBuffer();
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
   }
 
   /**
@@ -346,7 +365,23 @@ public class Link extends Text {
    *
    */
   public void setURL(String url) {
-    setAttribute(HREF_ATTRIBUTE,url);
+    StringTokenizer urlplusprm = new StringTokenizer(url,"?");
+    String newUrl = urlplusprm.nextToken();
+    if(urlplusprm.hasMoreTokens()){
+      String prm = urlplusprm.nextToken();
+      StringTokenizer param = new StringTokenizer(prm,"=&");
+      while (param.hasMoreTokens()) {
+        String p = param.nextToken();
+        String v = null;
+        if(param.hasMoreTokens()){
+          v = param.nextToken();
+        }
+        if(v != null){
+          this.addParameter(p,v);
+        }
+      }
+    }
+    setAttribute(HREF_ATTRIBUTE,newUrl);
   }
 
   /**
@@ -945,6 +980,7 @@ public class Link extends Text {
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
+    //  event this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
 
     if (_maintainBuilderParameters) {
       addTheMaintainedBuilderParameters(iwc);
@@ -961,6 +997,30 @@ public class Link extends Text {
     else {
       if (isLinkOpeningOnSamePage()) {
         addTheMaintainedParameters(iwc);
+      }
+    }
+    List l = getIWPOListeners();
+    if( l != null){
+      int size = l.size();
+      BuilderLogic logic = BuilderLogic.getInstance();
+      if(size>1){
+        int[] pages = new int[size];
+        int[] inst = new int[size];
+        ListIterator lIter = l.listIterator();
+        while (lIter.hasNext()) {
+          int index = lIter.nextIndex();
+          PresentationObject lItem = (PresentationObject)lIter.next();
+          pages[index] = lItem.getParentPageID();
+          inst[index] = lItem.getParentObjectInstanceID();
+        }
+        logic.setICObjectInstanceListeners(this,pages,inst);
+        logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
+      } else if(size==1){
+        PresentationObject obj = (PresentationObject)l.get(0);
+        if(obj != null){
+          logic.setICObjectInstanceListener(this,obj.getParentPageID(),obj.getParentObjectInstanceID());
+          logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
+        }
       }
     }
 
@@ -1080,6 +1140,10 @@ public class Link extends Text {
     return "";
   }
 
+  protected void setFinalUrl(String url){
+    setAttribute(HREF_ATTRIBUTE,url);
+  }
+
   /**
    *
    */
@@ -1090,17 +1154,15 @@ public class Link extends Text {
 
     if (oldURL == null) {
       oldURL = iwc.getRequestURI();
-      setURL(oldURL);
-    }
-    else if (oldURL.equals(com.idega.util.StringHandler.EMPTY_STRING)) {
+      setFinalUrl(oldURL);
+    } else if (oldURL.equals(com.idega.util.StringHandler.EMPTY_STRING)) {
       oldURL = iwc.getRequestURI();
-      setURL(oldURL);
+      setFinalUrl(oldURL);
     }
 
     if (oldURL.equals(HASH)) {
       addParameters = false;
-    }
-    else if(oldURL.startsWith(JAVASCRIPT)) {
+    } else if(oldURL.startsWith(JAVASCRIPT)) {
       addParameters = false;
     }
 
@@ -1108,17 +1170,15 @@ public class Link extends Text {
       if (_objectType==(OBJECT_TYPE_WINDOW)) {
         if (_windowClass == null) {
           setOnClick(_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
-        }
-        else {
+        } else {
           setOnClick(Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
         }
-        setURL(HASH);
+        setFinalUrl(HASH);
         print("<a "+getAttributeString()+" >");
         if (_obj == null) {
           Text myText = new Text(_myWindow.getName());
           myText.print(iwc);
-        }
-        else {
+        } else {
           if (_objectType==OBJECT_TYPE_TEXT) {
             if ( hasClass ) {
               if ( displayString != null ) {
@@ -1129,64 +1189,57 @@ public class Link extends Text {
                   print(((Text)_obj).getText());
                 }
               }
-            }
-            else {
+            } else {
               _obj.print(iwc);
             }
-          }
-          else {
+          } else {
             _obj.print(iwc);
           }
         }
         print("</a>");
-			}
-      else {
+      } else {
         if (addParameters) {
-          setURL(oldURL+getParameterString(iwc,oldURL));
+          setFinalUrl(oldURL+getParameterString(iwc,oldURL));
         }
         print("<a "+getAttributeString()+" >");
         if (_objectType==OBJECT_TYPE_TEXT) {
           if ( hasClass ) {
             if ( displayString != null ) {
               print(displayString);
-            }
-            else {
+            } else {
               if ( ((Text)_obj).getText() != null ) {
                 print(((Text)_obj).getText());
               }
             }
+          } else {
+          _obj.print(iwc);
           }
-          else {
-            _obj.print(iwc);
-          }
-        }
-        else {
+        } else {
           _obj.print(iwc);
         }
         print("</a>");
       }
-		}
-		else if (getLanguage().equals("WML")) {
+    } else if (getLanguage().equals("WML")) {
       if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
-        setURL(_myWindow.getURL(iwc)+getParameterString(iwc,oldURL));
-        setURL(HASH);
+        setFinalUrl(_myWindow.getURL(iwc)+getParameterString(iwc,oldURL));  // ????????????
+        setFinalUrl(HASH);
         print("<a "+getAttributeString()+" >");
         print(_myWindow.getName());
         print("</a>");
-      }
-      else {
+      } else {
         if (addParameters) {
-          setURL(oldURL+getParameterString(iwc,oldURL));
+          setFinalUrl(oldURL+getParameterString(iwc,oldURL));
         }
         print("<a "+getAttributeString()+" >");
         _obj.print(iwc);
         print("</a>");
       }
-		}
+    }
     /**
-     * @todo !!Find out why this is necessary:
-     */
-    setURL(oldURL);
+    * @todo !!Find out why this is necessary:
+    */
+    //setURL(oldURL);
+    setFinalUrl(oldURL);
   }
 
   /**
@@ -1225,7 +1278,7 @@ public class Link extends Text {
    */
   public void setToFormSubmit(Form form, boolean useEvent) {
     _formToSubmit = form;
-    setURL(HASH);
+    setFinalUrl(HASH);
     if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
        //setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
       setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value='"+this.getID()+"';document."+form.getID()+".submit();");
@@ -1241,7 +1294,7 @@ public class Link extends Text {
    */
   public void setAsBackLink(int backUpHowManyPages) {
     setOnClick("history.go(-"+backUpHowManyPages+")");
-    setURL(HASH);
+    setFinalUrl(HASH);
   }
 
   /**
@@ -1252,7 +1305,7 @@ public class Link extends Text {
   }
 
   public void setNoURL(){
-    setURL(HASH);
+    setFinalUrl(HASH);
   }
 
   /**
@@ -1350,6 +1403,20 @@ public class Link extends Text {
     setAsLocalizedImageTab(useTextAsLocalizedTextKey);
   }
 
+
+  public void addIWPOListener(PresentationObject obj){
+    if(listenerInstances == null){
+      listenerInstances = new Vector();
+    }
+    if(!listenerInstances.contains(obj)){
+      listenerInstances.add(obj);
+    }
+  }
+
+  public List getIWPOListeners(){
+    return listenerInstances;
+  }
+
   public void setHttps(boolean useHttps) {
     this.https = useHttps;
   }
@@ -1360,5 +1427,6 @@ public class Link extends Text {
     setAttribute("onMouseOver","swapImage('"+image.getName()+"','','"+mouseOverImage.getMediaServletString()+"',1)");
     setAttribute("onMouseOut","swapImgRestore()");
   }
+
 }
 

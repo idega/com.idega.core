@@ -27,7 +27,40 @@ private String method = "post";
 
 public static String HEADER_COLOR="#0E2456";
 
-  public IWAdminWindow() {
+  public IWAdminWindow(){
+    super();
+  }
+
+  public IWAdminWindow(String name){
+    super(name);
+  }
+
+  public IWAdminWindow(int width, int heigth) {
+    super(width,heigth);
+  }
+
+  public IWAdminWindow(String name,int width,int height){
+    super(name,width,height);
+  }
+
+  public IWAdminWindow(String name,String url){
+    super(name,url);
+  }
+
+  public IWAdminWindow(String name, int width, int height, String url){
+    super(name,width,height,url);
+  }
+
+  public IWAdminWindow(String name,String classToInstanciate,String template){
+    super(name,classToInstanciate,template);
+  }
+
+  public IWAdminWindow(String name,Class classToInstanciate,Class template){
+    super(name,classToInstanciate,template);
+  }
+
+  public IWAdminWindow(String name,Class classToInstanciate){
+    super(name,classToInstanciate);
   }
 
   public void _main(IWContext iwc)throws Exception{

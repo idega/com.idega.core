@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.6 2001/11/02 03:10:39 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.7 2001/12/04 23:40:13 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,6 +19,7 @@ import java.io.*;
  */
 public class PresentationObjectContainer extends PresentationObject {
   protected Vector theObjects;
+  protected List allObjects = null;
   protected boolean goneThroughMain = false;
   protected boolean _locked = true;
   protected String _label = null;
@@ -137,6 +138,37 @@ public class PresentationObjectContainer extends PresentationObject {
     return theObjects;
   }
 
+  public List getAllContainedObjectsRecursive(){
+    if(allObjects == null){
+      List toReturn = null;
+      if(theObjects != null){
+        toReturn = new Vector();
+        toReturn.containsAll(theObjects);
+        Iterator iter = theObjects.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          if(item instanceof PresentationObjectContainer){
+            toReturn.add(item);
+            //if(!toReturn.contains(item)){
+              List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
+              if(tmp != null){
+                toReturn.addAll(tmp);
+              }
+            //}
+          }else{
+            toReturn.add(item);
+          }
+        }
+      }
+      allObjects = toReturn;
+    }
+    return allObjects;
+  }
+
+  public void resetAllContainedObjectsRecursive(){
+    allObjects = null;
+  }
+
   public boolean isEmpty() {
     if (theObjects != null) {
       return theObjects.isEmpty();
@@ -150,6 +182,9 @@ public class PresentationObjectContainer extends PresentationObject {
   }
 
   public void _main(IWContext iwc) throws Exception {
+    if(!initializedInMain){
+      this.initInMain(iwc);
+    }
     if (!goneThroughMain) {
       initVariables(iwc);
       try {
@@ -562,4 +597,28 @@ public class PresentationObjectContainer extends PresentationObject {
   public String getLabel() {
     return(_label);
   }
+
+  public PresentationObject getContainedICObjectInstance(int id){
+/*    System.err.println("-------------------------------------");
+    System.err.println("getContainedICObjectInstance("+id+")");
+    if(this instanceof Page){
+      System.err.println("ibpageid = "+ ((Page)this).getPageID());
+    }else{
+      System.err.println("this.instanceId = "+this.getICObjectInstanceID());
+    }
+*/
+    List l = this.getAllContainedObjectsRecursive();
+    if(l!=null){
+      Iterator iter = l.iterator();
+      while (iter.hasNext()) {
+        Object item = iter.next();
+//        System.err.println("ObjectinstanceID = " +((PresentationObject)item).getICObjectInstanceID());
+        if(item instanceof PresentationObject && (((PresentationObject)item).getICObjectInstanceID()==id)){
+          return ((PresentationObject)item);
+        }
+      }
+    }
+    return null;
+  }
+
 }

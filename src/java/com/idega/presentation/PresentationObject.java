@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.10 2001/11/15 19:38:51 gummi Exp $
+ * $Id: PresentationObject.java,v 1.11 2001/12/04 23:40:13 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,6 +29,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.data.EntityFinder;
 import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.presentation.ui.Form;
+import com.idega.business.GenericState;
 
 
 /**
@@ -65,12 +66,17 @@ public class PresentationObject extends Object implements Cloneable {
   private boolean listenerAdded = false;
   public String eventLocationString = "";
   private IWContext eventIWContext = null;
-  public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
+  //public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
+  public static final PresentationObject NULL_CLONE_OBJECT = new com.idega.presentation.text.Text("NULL_OBJECT",true,false,false);
+
+  protected boolean initializedInMain = false;
 
   private boolean _useBuilderObjectControl = true;
   private boolean _belongsToParent = false;
   private boolean _keepInstanceIDOnInheritance = true;
   private boolean _allowPagePermissionInheritance = true;
+
+  private GenericState defaultState = null;
 
   /**
    * Default constructor
@@ -135,6 +141,15 @@ public class PresentationObject extends Object implements Cloneable {
       interfaceStyle = "default";
     };
     this.out = iwc.getWriter();
+  }
+
+  protected void initInMain(IWContext iwc) throws Exception{
+    initializeInMain(iwc);
+    initializedInMain = true;
+  }
+
+  public void initializeInMain(IWContext iwc) throws Exception{
+
   }
 
   public void setDoPrint(boolean ifDoPrint) {
@@ -439,12 +454,21 @@ public class PresentationObject extends Object implements Cloneable {
    */
   public Page getParentPage() {
     Page returnPage = null;
-    PresentationObject obj = getParentObject();
+    PresentationObject obj = null;
+    if(this instanceof IFrameContent){
+      obj = ((IFrameContent)this).getOwnerInstance();
+    }else {
+      obj = this.getParentObject();
+    }
     while (obj != null) {
       if (obj instanceof Page) {
         returnPage = (Page)obj;
       }
-      obj = obj.getParentObject();
+      if(obj instanceof IFrameContent){
+        obj = ((IFrameContent)obj).getOwnerInstance();
+      }else {
+        obj = obj.getParentObject();
+      }
     }
 
     if((returnPage == null) && (this instanceof Page)){
@@ -452,6 +476,15 @@ public class PresentationObject extends Object implements Cloneable {
     }
 
     return returnPage;
+  }
+
+  public int getParentPageID(){
+    Page obj = getParentPage();
+    if(obj != null){
+      return obj.getPageID();
+    }else{
+      return 0;
+    }
   }
 
   /**
@@ -468,6 +501,36 @@ public class PresentationObject extends Object implements Cloneable {
     }
     return returnForm;
   }
+
+  /**
+   * returns the objectinstance this object is part of
+   */
+    // getContainingObjectInstance
+  public PresentationObject getParentObjectInstance() {
+    PresentationObject obj = this;
+    while (obj != null) {
+      if (obj.getICObjectInstanceID() != 0) {
+        return obj;
+      }
+      if(obj instanceof IFrameContent){
+        obj = ((IFrameContent)obj).getOwnerInstance();
+      }else {
+        obj = obj.getParentObject();
+      }
+    }
+    return null;
+  }
+        // getContainingObjectInstanceID
+  public int getParentObjectInstanceID() {
+    PresentationObject obj = getParentObjectInstance();
+    if(obj != null){
+      return obj.getICObjectInstanceID();
+    }else{
+      return 0;
+    }
+  }
+
+
 
   public void main(IWContext iwc) throws Exception {
   }
@@ -532,11 +595,15 @@ public class PresentationObject extends Object implements Cloneable {
       //obj.setParentObject(this.parentObject);
       this.prepareClone(obj);
       Vector vector;
+      obj.initializedInMain = this.initializedInMain;
+      //obj.defaultState = this.defaultState;  //same object, unnecessary to clone
 
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
     }
+
+
 
     return obj;
   }
@@ -567,6 +634,10 @@ public class PresentationObject extends Object implements Cloneable {
     /*if(this.ic_object_instance_id == 0){
       initICObjectInstanceId(iwc);
     }*/
+    if(!initializedInMain){
+      this.initInMain(iwc);
+    }
+
     if (!goneThroughMain) {
       initVariables(iwc);
       main(iwc);
@@ -864,6 +935,66 @@ public class PresentationObject extends Object implements Cloneable {
 
   public boolean allowPagePermissionInheritance(){
     return _allowPagePermissionInheritance;
+  }
+
+
+
+  /*
+    New Event system
+  */
+
+
+  public String changeState(PresentationObject source, IWContext iwc){
+    System.err.println(this+" state not changed, method not implemented");
+    System.err.println("source = "+ source +" : "+source.getParentPageID()+"_"+source.getParentObjectInstanceID());
+    return null;
+  }
+
+  public GenericState getStateInstance(IWContext iwc){
+    return new GenericState(this,iwc);
+  }
+
+  public GenericState getState(IWContext iwc){
+    GenericState state = null;
+    String stateString = null;
+    if(this instanceof IFrameContent){
+      stateString = iwc.getCurrentState(((IFrameContent)this).getOwnerInstance().getICObjectInstanceID());
+    } else {
+      stateString = iwc.getCurrentState(this.getICObjectInstanceID());
+    }
+    if(stateString != null){
+      state = getStateInstance(iwc);
+      if(state != null){
+        state.updateState(stateString);
+      }
+    }else {
+      state = defaultState;
+    }
+
+    return state;
+  }
+
+  public void setDefaultState(GenericState state){
+    defaultState = state;
+  }
+
+  public GenericState getDefaultStage(){
+    return defaultState;
+  }
+
+  public boolean equals(PresentationObject obj){
+    if(this.getICObjectInstanceID() == obj.getICObjectInstanceID() && this.getICObjectInstanceID() != 0){
+      return true;
+    }
+    return super.equals(obj);
+  }
+
+  public boolean equals(Object obj){
+    if(obj instanceof PresentationObject){
+      return this.equals((PresentationObject)obj);
+    } else {
+      return super.equals(obj);
+    }
   }
 
 }
