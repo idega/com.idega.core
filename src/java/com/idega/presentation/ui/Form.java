@@ -471,6 +471,7 @@ public class Form extends InterfaceObjectContainer {
 		}
 
 		if (getLanguage().equals("HTML")) {
+			String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 			//String Action = getAction();
 			//if (Action.indexOf("idega_session_id") == -1){
 			//setAction(Action+"?idega_session_id="+iwc.getSession().getId());
@@ -479,7 +480,7 @@ public class Form extends InterfaceObjectContainer {
 				add(getAssociatedFormScript());
 
 			if (getInterfaceStyle().equals("default")) {
-				println("<form " + (iwc.isIE() ? "name=\""+getName()+"\"" : "") + getMarkupAttributesString() + " >");
+				println("<form " + (markup.equals(Page.HTML) ? "name=\""+getName()+"\"" : "") + getMarkupAttributesString() + " >");
 				super.print(iwc);
 				print("</form>");
 			}

@@ -475,6 +475,7 @@ public class Image extends PresentationObject
 	}
 	private String getHTMLString(IWContext iwc) throws RemoteException
 	{
+		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 		StringBuffer sPrint = new StringBuffer();
 		sPrint.append("<img ");
 		//alt always added for standards compliancy
@@ -486,9 +487,11 @@ public class Image extends PresentationObject
 		}
 		sPrint.append("\" ");
 		removeMarkupAttribute("alt");
-		/*sPrint.append("name=\"");
-		sPrint.append(getName());
-		sPrint.append("\"");*/
+		if (markup.equals(Page.HTML)) {
+			sPrint.append("name=\"");
+			sPrint.append(getName());
+			sPrint.append("\" ");
+		}
 		if (iwc != null)
 		{
 			BuilderService bs = getBuilderService(iwc);
@@ -517,7 +520,6 @@ public class Image extends PresentationObject
 		{
 			sPrint.append(" align=\"" + align + "\" ");
 		}
-		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 		sPrint.append(" "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		return sPrint.toString();
 	}
