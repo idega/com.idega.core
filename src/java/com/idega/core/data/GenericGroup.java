@@ -417,7 +417,7 @@ public class GenericGroup extends GenericEntity{
         }
 
         protected boolean identicalGroupExistsInDatabase() throws Exception {
-          return SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'").length > 0;
+          return SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'",this.getDatasource()).length > 0;
         }
 
 
@@ -433,8 +433,9 @@ public class GenericGroup extends GenericEntity{
             if(ex instanceof SQLException ){
               throw (SQLException)ex;
             } else {
-              System.err.println(ex.getMessage());
-              ex.printStackTrace();
+              //System.err.println(ex.getMessage());
+              //ex.printStackTrace();
+              throw new SQLException(ex.getMessage());
             }
 
           }

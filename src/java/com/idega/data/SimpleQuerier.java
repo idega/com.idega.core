@@ -59,6 +59,13 @@ public class SimpleQuerier{
 		ConnectionBroker.freeConnection(getDatasource(),connection);
 	}
 
+	/**
+	 * Frees the default connection used, must be done after using a databaseconnection
+	 */
+	private static void freeConnection(Connection connection,String datasource){
+		ConnectionBroker.freeConnection(datasource,connection);
+	}
+
 
 	public static String[] executeStringQuery(String sqlQuery)throws Exception{
 		Connection conn= null;
@@ -68,6 +75,19 @@ public class SimpleQuerier{
                 }finally {
                   if (conn != null){
                           freeConnection(conn);
+                  }
+                }
+        }
+
+
+	public static String[] executeStringQuery(String sqlQuery,String datasource)throws Exception{
+		Connection conn= null;
+                try {
+                  conn = getConnection(datasource);
+                  return executeStringQuery(sqlQuery, conn);
+                }finally {
+                  if (conn != null){
+                          freeConnection(conn,datasource);
                   }
                 }
         }
