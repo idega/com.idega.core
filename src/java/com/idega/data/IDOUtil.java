@@ -77,9 +77,6 @@ public class IDOUtil {
 		StringBuffer sList = new StringBuffer();
 		if (entityArray != null && entityArray.length > 0) {
 			for (int g = 0; g < entityArray.length; g++) {
-				if (g > 0) {
-					sList.append(COMMA_AND_SPACE);
-				}
 				String sPK = null;
 				try {
 					sPK = entityArray[g].getPrimaryKey().toString();
@@ -87,6 +84,9 @@ public class IDOUtil {
 					//e.printStackTrace();
 				}
 				if (sPK != null) {
+					if (g > 0) {
+						sList.append(COMMA_AND_SPACE);
+					}
 					if (whithSimpleQuoteMarks) {
 						sList.append(SINGLE_QUOTE).append(sPK).append(SINGLE_QUOTE);
 					} else {
