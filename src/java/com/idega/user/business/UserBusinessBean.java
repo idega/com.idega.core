@@ -2968,19 +2968,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			user = getUserByDirectoryString(distinguishedName.toString());
 		}
 		
-		if (user == null && firstName != null) {
-			try {
-				Collection users = getUserHome().findUsersByConditions(firstName, middleName, lastName, null, null,
-						null, genderId, -1, -1, -1, null, null, true, false);
-				if (users != null && !users.isEmpty() && users.size() == 1) {
-					//its the only one with this name must be our guy!
-					user = (User) users.iterator().next();
-				}
-			}
-			catch (FinderException e) {
-				System.out.println("UserBusiness: last try...user not found by firstname,middlename,lastname");
-			}
-		}
+//		if (user == null && firstName != null) {
+//			try {
+//				Collection users = getUserHome().findUsersByConditions(firstName, middleName, lastName, null, null,
+//						null, genderId, -1, -1, -1, null, null, true, false);
+//				if (users != null && !users.isEmpty() && users.size() == 1) {
+//					//its the only one with this name must be our guy!
+//					user = (User) users.iterator().next();
+//				}
+//			}
+//			catch (FinderException e) {
+//				System.out.println("UserBusiness: last try...user not found by firstname,middlename,lastname");
+//			}
+//		}
 		
 		//could not find the person create it
 		if (user == null) {
