@@ -1,5 +1,6 @@
 package com.idega.idegaweb.presentation;
 
+import javax.faces.component.UIComponent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWProperty;
 import com.idega.idegaweb.IWResourceBundle;
@@ -163,7 +164,11 @@ public class IWAdminWindow extends Window {
 		adminTable.add(text, 1, 2);
 	}
 
-	public void add(PresentationObject obj) {
+	public void add(PresentationObject pObject) {
+		this.add((UIComponent)pObject);
+	}	
+	
+	public void add(UIComponent obj) {
 		if (!displayEmpty) {
 			if (adminTable == null) {
 				makeTables();
