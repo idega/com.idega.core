@@ -1,5 +1,5 @@
 /*
- * $Id: LibraryDoesNotExist.java,v 1.1 2001/11/01 17:21:07 palli Exp $
+ * $Id: LibraryDoesNotExist.java,v 1.2 2002/04/06 19:07:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

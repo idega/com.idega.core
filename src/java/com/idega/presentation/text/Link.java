@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.67 2002/04/04 13:04:21 gummi Exp $
+ * $Id: Link.java,v 1.68 2002/04/06 19:07:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1074,7 +1074,7 @@ public class Link extends Text{
   public void setPage(int pageID) {
     IBPage page = null;
     try {
-      page = new IBPage(pageID);
+      page = ((com.idega.builder.data.IBPageHome)com.idega.data.IDOLookup.getHomeLegacy(IBPage.class)).findByPrimaryKeyLegacy(pageID);
     }
     catch (Exception e) {
       page = null;

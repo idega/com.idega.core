@@ -14,9 +14,9 @@ package com.idega.data;
 
 public class IDOCopier {
 
-  private GenericEntity fromEntity;
+  private IDOLegacyEntity fromEntity;
   private String toDataSourceName;
-  private GenericEntity toEntity;
+  private IDOLegacyEntity toEntity;
   private List entityToCopyList;
 
   private List entityRelationshipInfos= new Vector();
@@ -25,7 +25,7 @@ public class IDOCopier {
   protected IDOCopier(){
   }
 
-  private IDOCopier(GenericEntity entity) {
+  private IDOCopier(IDOLegacyEntity entity) {
     this.fromEntity=entity;
     addEntityToCopy(entity);
   }
@@ -34,7 +34,7 @@ public class IDOCopier {
     return new IDOCopier();
   }
 
-  public static IDOCopier getCopierInstance(GenericEntity entity){
+  public static IDOCopier getCopierInstance(IDOLegacyEntity entity){
     return new IDOCopier(entity);
   }
 
@@ -42,7 +42,7 @@ public class IDOCopier {
     this.toDataSourceName=dataSourceName;
   }
 
-  public void addEntityToCopy(GenericEntity entity){
+  public void addEntityToCopy(IDOLegacyEntity entity){
     if(fromEntity==null){
       fromEntity=entity;
     }
@@ -62,7 +62,7 @@ public class IDOCopier {
 
   public void copyAllData(){
     try{
-      toEntity = (GenericEntity)fromEntity.getClass().newInstance();
+      toEntity = (IDOLegacyEntity)fromEntity.getClass().newInstance();
       toEntity.setDatasource(getToDatasource());
       toEntity.setToInsertStartData(false);
 
@@ -79,11 +79,11 @@ public class IDOCopier {
       Class item = (Class)iter.next();
     	//out.println(item.getName()+"\n<br>");
         try{
-          GenericEntity toInstance = (GenericEntity)item.newInstance();
+          IDOLegacyEntity toInstance = (IDOLegacyEntity)item.newInstance();
           toInstance.setDatasource(this.getToDatasource());
           toInstance.setToInsertStartData(false);
 
-          GenericEntity fromInstance = (GenericEntity)item.newInstance();
+          IDOLegacyEntity fromInstance = (IDOLegacyEntity)item.newInstance();
           fromInstance.setDatasource(this.fromEntity.getDatasource());
 
           DatastoreInterface.getInstance(toInstance).createEntityRecord(toInstance);
@@ -105,7 +105,7 @@ public class IDOCopier {
 
 
 
-  private void copyAllData(GenericEntity fromInstance,GenericEntity toInstance,boolean maintainIDs){
+  private void copyAllData(IDOLegacyEntity fromInstance,IDOLegacyEntity toInstance,boolean maintainIDs){
     try{
       System.out.println("[idoCopier] Copying data for "+fromInstance.getClass().getName());
       List l = null;
@@ -129,7 +129,7 @@ public class IDOCopier {
         int highestID=1;
         Iterator iter = l.iterator();
         while (iter.hasNext()) {
-          GenericEntity tempEntity = (GenericEntity)iter.next();
+          IDOLegacyEntity tempEntity = (IDOLegacyEntity)iter.next();
           String originalDatasource = tempEntity.getDatasource();
           tempEntity.setDatasource(this.getToDatasource());
           if(!maintainIDs){
@@ -164,7 +164,7 @@ public class IDOCopier {
   }
 
 
-  private void copyManyToManyData(GenericEntity fromInstance,GenericEntity toInstance){
+  private void copyManyToManyData(IDOLegacyEntity fromInstance,IDOLegacyEntity toInstance){
       addToCopiedEntityList(fromInstance);
       List infoList = getManyToManyRelatedAndCopied(fromInstance);
       Iterator iter = infoList.iterator();
@@ -197,7 +197,7 @@ public class IDOCopier {
 
 
 
-  private void addToCopiedEntityList(GenericEntity entity){
+  private void addToCopiedEntityList(IDOLegacyEntity entity){
     copiedEntityClasses.add(entity.getClass());
     List relations = EntityControl.getManyToManyRelationShips(entity);
     if(relations!=null){
@@ -232,7 +232,7 @@ public class IDOCopier {
   /**
    *   Returns a List of IDOEntityRelationshipCopyInfo Objects
    */
-  private List getManyToManyRelatedAndCopied(GenericEntity entity){
+  private List getManyToManyRelatedAndCopied(IDOLegacyEntity entity){
     return entityRelationshipInfos;
   }
 
@@ -316,7 +316,7 @@ public class IDOCopier {
   }
 
 
-  private void updateNumberGeneratorValue(GenericEntity entity, int highestValue){
+  private void updateNumberGeneratorValue(IDOLegacyEntity entity, int highestValue){
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;

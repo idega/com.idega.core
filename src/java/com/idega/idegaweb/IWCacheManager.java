@@ -16,7 +16,7 @@ import java.util.*;
 import java.io.PrintWriter;
 import com.idega.util.caching.Cache;
 import com.idega.util.FileUtil;
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOLegacyEntity;
 import com.idega.data.CacheableEntity;
 import com.idega.util.StringHandler;
 
@@ -196,10 +196,10 @@ public class IWCacheManager {
 
   private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma){
     InputStream input = null;
-    GenericEntity entity;
+    IDOLegacyEntity entity;
     Cache cacheObject = null;
     try{
-      entity = GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
+      entity = com.idega.data.GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
       input = entity.getInputStreamColumnValue(entity.getLobColumnName());
       String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
       String virtualPath = "/"+IW_ROOT_CACHE_DIRECTORY;
@@ -243,17 +243,17 @@ public class IWCacheManager {
     cacheTable(entity,entity.getCacheKey());
   }
 
-/** caches a single entity of type GenericEntity **/
-  public void cacheEntity(GenericEntity entity, String cacheKey){
+/** caches a single entity of type IDOLegacyEntity **/
+  public void cacheEntity(IDOLegacyEntity entity, String cacheKey){
     if( entityMaps == null ){
       entityMaps = new HashMap();
     }
     entityMaps.put(cacheKey, entity);
   }
 
-  public GenericEntity getCachedEntity(String cacheKey){
+  public IDOLegacyEntity getCachedEntity(String cacheKey){
     if( entityMaps != null ){
-      return (GenericEntity) entityMaps.get(cacheKey);
+      return (IDOLegacyEntity) entityMaps.get(cacheKey);
     }
     else return null;
   }
@@ -294,7 +294,7 @@ public class IWCacheManager {
       Map entityMap = new HashMap();
       Vector keys = new Vector();
 
-      GenericEntity[] e;
+      IDOLegacyEntity[] e;
       try {
         e = entity.findAll();
         if( (e!= null) && (e.length>0) ){
@@ -327,20 +327,20 @@ public class IWCacheManager {
 
   }
 
-  public GenericEntity getFromCachedTable(Class entityClass, String value ){
-    GenericEntity entity = null;
+  public IDOLegacyEntity getFromCachedTable(Class entityClass, String value ){
+    IDOLegacyEntity entity = null;
 
     if( entityMaps != null ){
       Map entityMap = getEntityMap(entityClass);
       if( entityMap != null ){
-       entity = (GenericEntity) entityMap.get(value);
+       entity = (IDOLegacyEntity) entityMap.get(value);
       }
     }else System.out.println("IWCacheManager entityMaps is null!");
 
     return entity;
   }
 
-  public GenericEntity getFromCachedTable(Class entityClass, String value, String value2 ){
+  public IDOLegacyEntity getFromCachedTable(Class entityClass, String value, String value2 ){
     return getFromCachedTable(entityClass, StringHandler.concatAlphabetically(value,value2));
   }
 
@@ -365,7 +365,7 @@ public class IWCacheManager {
   }
 
 
-  public void updateFromCachedTable(GenericEntity entity){
+  public void updateFromCachedTable(IDOLegacyEntity entity){
     Vector keys = getEntityKeyVector(entity.getClass());
     if( keys!=null ){
       int length = keys.size();
@@ -378,7 +378,7 @@ public class IWCacheManager {
     }
   }
 
-  public void deleteFromCachedTable(GenericEntity entity){
+  public void deleteFromCachedTable(IDOLegacyEntity entity){
     Vector keys = getEntityKeyVector(entity.getClass());
     if( keys!=null ){
       int length = keys.size();
@@ -391,7 +391,7 @@ public class IWCacheManager {
     }
   }
 
-  public void insertIntoCachedTable(GenericEntity entity){
+  public void insertIntoCachedTable(IDOLegacyEntity entity){
     updateFromCachedTable(entity);
   }
 

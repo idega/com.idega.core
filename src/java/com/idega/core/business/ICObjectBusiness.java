@@ -197,7 +197,7 @@ public class ICObjectBusiness {
       Integer key = new Integer(icObjectID);
       ICObject theReturn = (ICObject)getIcObjectMap().get(key);
       if(theReturn == null){
-        theReturn =  new ICObject(icObjectID);
+        theReturn =  ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).findByPrimaryKeyLegacy(icObjectID);
         getIcObjectMap().put(key,theReturn);
       }
       return theReturn;
@@ -215,7 +215,7 @@ public class ICObjectBusiness {
       Integer key = new Integer(icObjectInstanceID);
       ICObjectInstance theReturn = (ICObjectInstance)getIcoInstanceMap().get(key);
       if(theReturn == null){
-        theReturn =  new ICObjectInstance(icObjectInstanceID);
+        theReturn =  ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceID);
         getIcoInstanceMap().put(key,theReturn);
       }
       return theReturn;
@@ -232,7 +232,7 @@ public class ICObjectBusiness {
    */
   public  ICObjectInstance createICObjectInstance() throws IDOCreateException{
     try{
-      return new ICObjectInstance();
+      return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).createLegacy();
     }
     catch(RuntimeException re){
       throw new IDOCreateException(re);
@@ -246,7 +246,7 @@ public class ICObjectBusiness {
    */
   public ICObject createICObject()throws IDOCreateException{
     try{
-      return new ICObject();
+      return ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
     }
     catch(RuntimeException re){
       throw new IDOCreateException(re);
@@ -292,7 +292,7 @@ public class ICObjectBusiness {
     try {
       List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
       if(!L.isEmpty()){
-        return ((GenericEntity) L.get(0)).getID();
+        return ((IDOLegacyEntity) L.get(0)).getID();
       }
       else
         return -1;
@@ -308,10 +308,10 @@ public class ICObjectBusiness {
    * Catches the error if there is any and returns the number -2
    * @todo cache somehow
    */
-  public GenericEntity getRelatedEntity(ICObjectInstance icObjectInstance, Class entityToGetIdFrom) throws IDOFinderException{
+  public IDOLegacyEntity getRelatedEntity(ICObjectInstance icObjectInstance, Class entityToGetIdFrom) throws IDOFinderException{
       List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
       if(!L.isEmpty()){
-        return (GenericEntity) L.get(0);
+        return (IDOLegacyEntity) L.get(0);
       }
       else{
         throw new IDOFinderException("Nothing found for ICObjectInstance with id="+icObjectInstance.getID()+" and "+entityToGetIdFrom.getName());

@@ -143,7 +143,7 @@ public class CreateUserGroup extends Window {
 
 
       for (int i = 0; i < groupType.size(); i++){
-        String value = ((GenericGroup)GenericGroup.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
+        String value = ((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
         String text = value.substring(1);
         text = value.substring(0,1).toUpperCase() + text;
 
@@ -159,9 +159,9 @@ public class CreateUserGroup extends Window {
       propertyTable.add(frPane,1,1);
       frameTable.add(propertyTable,1,2);
     }else if (size == 1){
-      frameTable.add(new HiddenInput(((GenericGroup)GenericGroup.getStaticInstance((Class)groupType.get(0))).getGroupTypeValue()));
+      frameTable.add(new HiddenInput(((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance((Class)groupType.get(0))).getGroupTypeValue()));
     }else{
-      frameTable.add(new HiddenInput(groupTypeFieldParameterName,GenericGroup.getStaticInstance().getGroupTypeValue()));
+      frameTable.add(new HiddenInput(groupTypeFieldParameterName,com.idega.core.data.GenericGroupBMPBean.getStaticInstance().getGroupTypeValue()));
     }
     // Property end
 
@@ -203,7 +203,7 @@ public class CreateUserGroup extends Window {
       throw new Exception("no group_type selected");
     }
 
-    newGroup = new GenericGroup();
+    newGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).createLegacy();
     newGroup.setName(name);
     newGroup.setDescription(description);
     newGroup.setGroupType(type);

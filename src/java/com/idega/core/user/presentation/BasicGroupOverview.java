@@ -43,8 +43,8 @@ public class BasicGroupOverview extends Page {
 
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
-    types[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-    List groups = GenericGroup.getAllGroups(types,false);
+    types[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    List groups = com.idega.core.data.GenericGroupBMPBean.getAllGroups(types,false);
 
 
 

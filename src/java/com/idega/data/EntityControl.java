@@ -70,7 +70,7 @@ public  class EntityControl{
 
     // throw away!!
 
-	protected static String getInterbaseGeneratorName(GenericEntity entity){
+	protected static String getInterbaseGeneratorName(IDOLegacyEntity entity){
 
 		String entityName = entity.getTableName();
 
@@ -92,7 +92,7 @@ public  class EntityControl{
 
     // throw away!!
 
-	protected static String getOracleSequenceName(GenericEntity entity){
+	protected static String getOracleSequenceName(IDOLegacyEntity entity){
 
 		String entityName = entity.getTableName();
 
@@ -124,7 +124,7 @@ public  class EntityControl{
 
     // throw away!!
 
-	public static int createUniqueID(GenericEntity entity) throws SQLException{
+	public static int createUniqueID(IDOLegacyEntity entity) throws SQLException{
 
 		int returnInt = -1;
 
@@ -208,7 +208,7 @@ public  class EntityControl{
 
   /**
 
-	public static void insert(GenericEntity entity)throws SQLException{
+	public static void insert(IDOLegacyEntity entity)throws SQLException{
 
 
 
@@ -366,7 +366,7 @@ public  class EntityControl{
 
 /*
 
-  public static void update(GenericEntity entity)throws SQLException{
+  public static void update(IDOLegacyEntity entity)throws SQLException{
 
       try{
 
@@ -394,7 +394,7 @@ public  class EntityControl{
 
   /*
 
-	public static void update(GenericEntity entity)throws SQLException{
+	public static void update(IDOLegacyEntity entity)throws SQLException{
 
 		Connection conn= null;
 
@@ -446,7 +446,7 @@ public  class EntityControl{
 
   /*
 
-	protected static String setForPreparedStatement(PreparedStatement statement,GenericEntity entity)throws SQLException{
+	protected static String setForPreparedStatement(PreparedStatement statement,IDOLegacyEntity entity)throws SQLException{
 
 		String returnString = "";
 
@@ -490,7 +490,7 @@ public  class EntityControl{
 
   /*
 
-	private static void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,GenericEntity entity)throws SQLException{
+	private static void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,IDOLegacyEntity entity)throws SQLException{
 
     String storageClassName = entity.getStorageClassName(columnName);
 
@@ -584,7 +584,7 @@ public  class EntityControl{
 
 
 
-	public static void deleteMultiple(GenericEntity entity, String columnName,String stringColumnValue)throws SQLException{
+	public static void deleteMultiple(IDOLegacyEntity entity, String columnName,String stringColumnValue)throws SQLException{
 
 		Connection conn= null;
 
@@ -622,7 +622,7 @@ public  class EntityControl{
 
 
 
-	public static void deleteMultiple(GenericEntity entity, String columnName1,String stringColumnValue1, String columnName2,String stringColumnValue2)throws SQLException{
+	public static void deleteMultiple(IDOLegacyEntity entity, String columnName1,String stringColumnValue1, String columnName2,String stringColumnValue2)throws SQLException{
 
 		Connection conn= null;
 
@@ -666,7 +666,7 @@ public  class EntityControl{
 
 	**/
 
-	public static void clear(GenericEntity entity)throws SQLException{
+	public static void clear(IDOLegacyEntity entity)throws SQLException{
 
 		Connection conn= null;
 
@@ -714,7 +714,7 @@ public  class EntityControl{
 
         */
 
-      public static void addManyToManyRelationShip(GenericEntity relatingEntity1,GenericEntity relatingEntity2,String relationShipTableName){
+      public static void addManyToManyRelationShip(IDOLegacyEntity relatingEntity1,IDOLegacyEntity relatingEntity2,String relationShipTableName){
 
 	 try{
 
@@ -750,7 +750,7 @@ public  class EntityControl{
 
         try{
 
-          addManyToManyRelationShip(GenericEntity.getStaticInstance(relatingEntityClassName1),GenericEntity.getStaticInstance(relatingEntityClassName2),relationShipTableName);
+          addManyToManyRelationShip(com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName1),com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName2),relationShipTableName);
 
         }
 
@@ -766,7 +766,7 @@ public  class EntityControl{
 
 
 
-      public static String getTreeRelationShipTableName(GenericEntity entity) {
+      public static String getTreeRelationShipTableName(IDOLegacyEntity entity) {
 
         return entity.getTableName()+"_tree";
 
@@ -774,7 +774,7 @@ public  class EntityControl{
 
 
 
-      public static String getTreeRelationShipChildColumnName(GenericEntity entity) {
+      public static String getTreeRelationShipChildColumnName(IDOLegacyEntity entity) {
 
         return "child_"+entity.getIDColumnName();
 
@@ -782,7 +782,7 @@ public  class EntityControl{
 
 
 
-      public static void addTreeRelationShip(GenericEntity entity){
+      public static void addTreeRelationShip(IDOLegacyEntity entity){
 
         String relationShipTableName = getTreeRelationShipTableName(entity);
 
@@ -798,7 +798,7 @@ public  class EntityControl{
 
 
 
-      private static void addManyToManyRelationShip(GenericEntity relatingEntity1,GenericEntity relatingEntity2,String relationShipTableName,String column1,String column2){
+      private static void addManyToManyRelationShip(IDOLegacyEntity relatingEntity1,IDOLegacyEntity relatingEntity2,String relationShipTableName,String column1,String column2){
 
           //if(relationshipTables==null){
 
@@ -842,7 +842,7 @@ public  class EntityControl{
 
       public static List getManyToManyRelationShipClasses(Class entityClass){
 
-        return getManyToManyRelationShipClasses(GenericEntity.getStaticInstance(entityClass));
+        return getManyToManyRelationShipClasses(com.idega.data.GenericEntity.getStaticInstance(entityClass));
 
       }
 
@@ -856,7 +856,7 @@ public  class EntityControl{
 
        */
 
-      protected static List getManyToManyRelationShipClasses(GenericEntity entity){
+      protected static List getManyToManyRelationShipClasses(IDOLegacyEntity entity){
 
         return relationshipClasses.getList(entity.getClass());
 
@@ -870,7 +870,7 @@ public  class EntityControl{
 
        */
 
-      protected static List getManyToManyRelationShips(GenericEntity entity){
+      protected static List getManyToManyRelationShips(IDOLegacyEntity entity){
 
         if(relationshipTables!=null){
 
@@ -892,13 +892,13 @@ public  class EntityControl{
 
       public static String getManyToManyRelationShipTableName(Class entityClass1,Class entityClass2){
 
-          return getManyToManyRelationShipName(GenericEntity.getStaticInstance(entityClass1),GenericEntity.getStaticInstance(entityClass2));
+          return getManyToManyRelationShipName(com.idega.data.GenericEntity.getStaticInstance(entityClass1),com.idega.data.GenericEntity.getStaticInstance(entityClass2));
 
       }
 
 
 
-      protected static String getManyToManyRelationShipName(GenericEntity entity1,GenericEntity entity2){
+      protected static String getManyToManyRelationShipName(IDOLegacyEntity entity1,IDOLegacyEntity entity2){
 
           return getManyToManyRelationShipName(entity1.getEntityName(),entity2.getEntityName());
 
@@ -940,7 +940,7 @@ public  class EntityControl{
 
 
 
-	protected static String getMiddleTableString(GenericEntity entity1,GenericEntity entity2){
+	protected static String getMiddleTableString(IDOLegacyEntity entity1,IDOLegacyEntity entity2){
 
           String tableToSelectFrom = "";
 
@@ -972,7 +972,7 @@ public  class EntityControl{
 
 
 
-        protected static String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+        protected static String getNameOfMiddleTable(IDOLegacyEntity entity1,IDOLegacyEntity entity2){
 
 
 
@@ -1006,7 +1006,7 @@ public  class EntityControl{
 
          */
 
-        public static int returnSingleSQLQuery(GenericEntity entity,String SQLString){
+        public static int returnSingleSQLQuery(IDOLegacyEntity entity,String SQLString){
 
             Connection conn = null;
 
@@ -1098,7 +1098,7 @@ public  class EntityControl{
 
          */
 
-        public static int[] returnIntArraySQLQuery(GenericEntity entity,String SQLString){
+        public static int[] returnIntArraySQLQuery(IDOLegacyEntity entity,String SQLString){
 
             Connection conn = null;
 
@@ -1248,13 +1248,13 @@ public  class EntityControl{
 
         /**
 
-         * Returns a list of GenericEntity Class objects that have N:1 relationship with entityClass
+         * Returns a list of IDOLegacyEntity Class objects that have N:1 relationship with entityClass
 
          */
 
         public static List getNToOneRelatedClasses(Class entityClass){
 
-          return getNToOneRelatedClasses(GenericEntity.getEntityInstance(entityClass));
+          return getNToOneRelatedClasses(com.idega.data.GenericEntity.getEntityInstance(entityClass));
 
         }
 
@@ -1264,11 +1264,11 @@ public  class EntityControl{
 
         /**
 
-         * Returns a list of GenericEntity Class objects that have N:1 relationship with entity
+         * Returns a list of IDOLegacyEntity Class objects that have N:1 relationship with entity
 
          */
 
-        public static List getNToOneRelatedClasses(GenericEntity entity){
+        public static List getNToOneRelatedClasses(IDOLegacyEntity entity){
 
           List theReturn = new java.util.Vector();
 

@@ -60,7 +60,7 @@ public class LoginDBHandler {
 
 
 
-    List noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserIDColumnName(), userID);
+    List noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(), userID);
 
 
 
@@ -92,7 +92,7 @@ public class LoginDBHandler {
 
       }
 
-      loginTable = new LoginTable();
+      loginTable = ((com.idega.core.accesscontrol.data.LoginTableHome)com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
 
     }
 
@@ -138,7 +138,7 @@ public class LoginDBHandler {
 
         if (!loginTable.getUserLogin().equals(userLogin)) {
 
-          noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserLoginColumnName(), userLogin);
+          noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), userLogin);
 
           if (noLogin != null && (noLogin.size() > 0 && ((LoginTable)noLogin.get(0)).getUserId() != userID)) {
 
@@ -170,7 +170,7 @@ public class LoginDBHandler {
 
       if( userLogin != null && !"".equals(userLogin)){
 
-        noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserLoginColumnName(), userLogin);
+        noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), userLogin);
 
         if(noLogin != null ){
 
@@ -248,7 +248,7 @@ public class LoginDBHandler {
 
   protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
 
-    List noLoginInfo = EntityFinder.findAllByColumn(LoginInfo.getStaticInstance(), LoginInfo.getLoginTableIdColumnName(), loginTableID);
+    List noLoginInfo = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginInfoBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginInfoBMPBean.getLoginTableIdColumnName(), loginTableID);
 
 
 
@@ -278,7 +278,7 @@ public class LoginDBHandler {
 
       }
 
-      logInfo = new LoginInfo();
+      logInfo = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).createLegacy();
 
     }
 
@@ -416,7 +416,7 @@ public class LoginDBHandler {
 
           try {
 
-            new LoginTable(loginTableID).delete();
+            ((com.idega.core.accesscontrol.data.LoginTableHome)com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).findByPrimaryKeyLegacy(loginTableID).delete();
 
             throw new Exception(e.getMessage()+"LoginTable entry was removed");
 
@@ -518,7 +518,7 @@ public class LoginDBHandler {
 
 
 
-    List noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserIDColumnName(), userID);
+    List noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(), userID);
 
     loginTable = (LoginTable)noLogin.get(0);
 
@@ -562,9 +562,9 @@ public class LoginDBHandler {
 
     try {
 
-      LoginTable l = LoginTable.getStaticInstance();
+      LoginTable l = com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance();
 
-      List list = EntityFinder.findAllByColumn(l,LoginTable.getUserIDColumnName(),userId);
+      List list = EntityFinder.findAllByColumn(l,com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(),userId);
 
       if(list != null){
 
@@ -591,10 +591,10 @@ public class LoginDBHandler {
   public static LoginInfo getLoginInfo(int loginTableId){
     LoginInfo li = null;
     try {
-      li = new LoginInfo(loginTableId);
+      li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(loginTableId);
     } catch (SQLException ex) {
       try {
-        li = new LoginInfo();
+        li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).createLegacy();
         li.setID(loginTableId);
         li.insert();
       } catch (SQLException e) {
@@ -620,7 +620,7 @@ public class LoginDBHandler {
 
     try {
 
-      return (0 < LoginTable.getStaticInstance().getNumberOfRecords(LoginTable.getUserLoginColumnName(),login));
+      return (0 < com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance().getNumberOfRecords(com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),login));
 
     }
 
@@ -644,7 +644,7 @@ public class LoginDBHandler {
 
       try {
 
-        LoginInfo li = new LoginInfo(login.getID());
+        LoginInfo li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(login.getID());
 
 
 
@@ -682,7 +682,7 @@ public class LoginDBHandler {
 
     try {
 
-      LoginRecord inRec =new LoginRecord();
+      LoginRecord inRec =((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).createLegacy();
 
       inRec.setIPAdress(IPAddress);
 
@@ -724,7 +724,7 @@ public class LoginDBHandler {
 
       StringBuffer sql = new StringBuffer("update ");
 
-      sql.append(LoginRecord.getEntityTableName());
+      sql.append(com.idega.core.accesscontrol.data.LoginRecordBMPBean.getEntityTableName());
 
       sql.append(" set out_stamp = '");
 
@@ -734,7 +734,7 @@ public class LoginDBHandler {
 
       sql.append(" where ");
 
-      sql.append(new LoginRecord().getIDColumnName());
+      sql.append(((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).createLegacy().getIDColumnName());
 
       sql.append( " = ");
 
@@ -770,7 +770,7 @@ public class LoginDBHandler {
 
     boolean returner = false;
 
-    java.util.List c = EntityFinder.getInstance().findAllByColumn(LoginTable.class,LoginTable.getUserLoginColumnName(),user);
+    java.util.List c = EntityFinder.getInstance().findAllByColumn(LoginTable.class,com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),user);
 
     if(c!=null && c.size() > 0){
 

@@ -361,7 +361,7 @@ public class GroupMembershipTab extends UserGroupTab {
 
         String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
-        User user = new User(userId);
+        User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
         List currentRelationShip = UserBusiness.getUserGroupsDirectlyRelated(user);
 
 
@@ -370,7 +370,7 @@ public class GroupMembershipTab extends UserGroupTab {
           if(currentRelationShip != null){
             for (int i = 0; i < related.length; i++) {
               int id = Integer.parseInt(related[i]);
-              GenericGroup gr = new GenericGroup(id);
+              GenericGroup gr = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(id);
               if(!currentRelationShip.remove(gr)){
                 //user.addTo(gr);
                 gr.addUser(user);
@@ -387,8 +387,8 @@ public class GroupMembershipTab extends UserGroupTab {
           } else{
             for (int i = 0; i < related.length; i++) {
               //user.addTo(GenericGroup.class,Integer.parseInt(related[i]));
-              //new GenericGroup(Integer.parseInt(related[i])).addUser(user);
-              GenericGroup.addUser(Integer.parseInt(related[i]),user);
+              //((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
+              com.idega.core.data.GenericGroupBMPBean.addUser(Integer.parseInt(related[i]),user);
             }
           }
 

@@ -46,7 +46,7 @@ public class IDODependencyList {
 
 
   /**
-   * Takes in a collection of either Class of GenericEntity Objects
+   * Takes in a collection of either Class of IDOLegacyEntity Objects
    */
   public void addAllEntityClasses(Collection startingEntityClasses){
     Iterator iter = startingEntityClasses.iterator();
@@ -56,8 +56,8 @@ public class IDODependencyList {
       if(item instanceof Class){
         c = (Class)item;
       }
-      else if(item instanceof GenericEntity){
-        c = ((GenericEntity)item).getClass();
+      else if(item instanceof IDOLegacyEntity){
+        c = ((IDOLegacyEntity)item).getClass();
       }
       addEntityClass(c);
     }

@@ -172,7 +172,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
    */
 
-  public void createTrigger(GenericEntity entity)throws Exception{
+  public void createTrigger(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -218,7 +218,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  public void createSequence(GenericEntity entity)throws Exception{
+  public void createSequence(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -258,7 +258,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-    public void deleteEntityRecord(GenericEntity entity)throws Exception{
+    public void deleteEntityRecord(IDOLegacyEntity entity)throws Exception{
 
       /**
 
@@ -276,7 +276,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-      protected void deleteSequence(GenericEntity entity)throws Exception{
+      protected void deleteSequence(IDOLegacyEntity entity)throws Exception{
 
 		Connection conn= null;
 
@@ -314,7 +314,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  /*  public void createForeignKeys(GenericEntity entity)throws Exception{
+  /*  public void createForeignKeys(IDOLegacyEntity entity)throws Exception{
 
 		Connection conn= null;
 
@@ -338,7 +338,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
                             Stmt = conn.createStatement();
 
-                            String statement = "ALTER TABLE "+entity.getTableName()+" ADD FOREIGN KEY ("+names[i]+") REFERENCES "+((GenericEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName()+" ";
+                            String statement = "ALTER TABLE "+entity.getTableName()+" ADD FOREIGN KEY ("+names[i]+") REFERENCES "+((IDOLegacyEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName()+" ";
 
                             System.out.println(statement);
 
@@ -382,7 +382,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
+  protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
 
 				if ( entity.isNull(entity.getIDColumnName()) ){
 
@@ -396,7 +396,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 /*
 
-  protected void insertBlob(GenericEntity entity)throws Exception{
+  protected void insertBlob(IDOLegacyEntity entity)throws Exception{
 
     Connection Conn = null;
 
@@ -506,7 +506,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 	**/
 
-	public int createUniqueID(GenericEntity entity) throws Exception{
+	public int createUniqueID(IDOLegacyEntity entity) throws Exception{
 
 		int returnInt = -1;
 
@@ -558,7 +558,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  private static String getInformixSequenceTableName(GenericEntity entity){
+  private static String getInformixSequenceTableName(IDOLegacyEntity entity){
 
 		String entityName = entity.getTableName();
 
@@ -582,7 +582,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void insertBlob(GenericEntity entity)throws Exception{
+  protected void insertBlob(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -674,7 +674,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-        public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
+        public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,IDOLegacyEntity entity){
 
 
 
@@ -788,7 +788,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  /*protected void insertBlob(GenericEntity entity)throws Exception{
+  /*protected void insertBlob(IDOLegacyEntity entity)throws Exception{
 
     checkBlobTable();
 
@@ -802,7 +802,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  private int insertIntoBlobTable(GenericEntity entity)throws Exception{
+  private int insertIntoBlobTable(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -896,7 +896,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  private void updateRealTable(int blobID,GenericEntity entity)throws Exception{
+  private void updateRealTable(int blobID,IDOLegacyEntity entity)throws Exception{
 
       String blobColumn= entity.getLobColumnName();
 
@@ -978,7 +978,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
 
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
 
@@ -996,7 +996,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,GenericEntity entity)throws SQLException{
+  protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,IDOLegacyEntity entity)throws SQLException{
     int maxlength = entity.getMaxLength(columnName);
     if(maxlength<=2000){
       statement.setString(index,entity.getStringColumnValue(columnName));
@@ -1058,7 +1058,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
   }
 
 
-  protected void fillStringColumn(GenericEntity entity,String columnName,ResultSet rs)throws SQLException{
+  protected void fillStringColumn(IDOLegacyEntity entity,String columnName,ResultSet rs)throws SQLException{
     int maxlength = entity.getMaxLength(columnName);
     if(maxlength<=2000){
         //System.out.println("Informix: Filling column for varchar field:"+columnName);
@@ -1108,7 +1108,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
   }
 
 
-  /*protected String getColumnStringForSelectList(GenericEntity entity,String columnName){
+  /*protected String getColumnStringForSelectList(IDOLegacyEntity entity,String columnName){
     int columnType = entity.getAttribute(columnName).getStorageClassType();
     int maxLength = entity.getMaxLength(columnName);
     if(columnType==EntityAttribute.TYPE_JAVA_LANG_STRING){

@@ -1,5 +1,5 @@
 /*
- * $Id: Stripper.java,v 1.2 2001/09/28 13:25:00 aron Exp $
+ * $Id: Stripper.java,v 1.3 2002/04/06 19:07:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

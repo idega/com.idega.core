@@ -29,7 +29,7 @@ public class DatabaseFix {
   }
 
   public void main() throws Exception {
-    List users = EntityFinder.findAll(User.getStaticInstance());
+    List users = EntityFinder.findAll(com.idega.core.user.data.UserBMPBean.getStaticInstance());
 
     if(users != null){
       Iterator iter = users.iterator();
@@ -38,14 +38,14 @@ public class DatabaseFix {
         System.err.print("Fixing user: "+item.getID());
         try {
           if(item.getGroupID() < 1){
-            UserGroupRepresentative group = new UserGroupRepresentative();
+            UserGroupRepresentative group = ((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).createLegacy();
             group.setName(item.getName());
             group.insert();
 
             item.setGroupID(group.getID());
             item.update();
 
-            List groups = EntityFinder.findRelated(item,GenericGroup.getStaticInstance());
+            List groups = EntityFinder.findRelated(item,com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
 
             if(groups != null){
               Iterator iter2 = groups.iterator();

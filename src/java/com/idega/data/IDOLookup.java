@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 
 public class IDOLookup{
 
-  private static final String FACTORY_SUFFIX = "Factory";
+  private static final String FACTORY_SUFFIX = "HomeImpl";
   private static final String BEAN_SUFFIX = "BMPBean";
 
   private static Map homes = new Hashtable();
@@ -99,14 +99,14 @@ public class IDOLookup{
   }
 
 
-   public static GenericEntity createLegacy(Class entityInterfaceOrBeanClass){
+   public static IDOLegacyEntity createLegacy(Class entityInterfaceOrBeanClass){
       //return createNew(entityInterfaceClass);
       if(entityInterfaceOrBeanClass.isInterface()){
         return createLegacy(IDOLookup.getBeanClassFor(entityInterfaceOrBeanClass));
       }
       else{
         try{
-          return (GenericEntity)entityInterfaceOrBeanClass.newInstance();
+          return (IDOLegacyEntity)entityInterfaceOrBeanClass.newInstance();
         }
         catch(Exception e){
           e.printStackTrace();
@@ -125,10 +125,10 @@ public class IDOLookup{
   }
 
 
-  public static GenericEntity findByPrimaryKeyLegacy(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
     //return findByPrimaryKeyNew(entityInterfaceOrBeanClass,id);
     try{
-      GenericEntity entity = createLegacy(entityInterfaceOrBeanClass);
+      IDOLegacyEntity entity = createLegacy(entityInterfaceOrBeanClass);
       entity.findByPrimaryKey(id);
       return entity;
     }

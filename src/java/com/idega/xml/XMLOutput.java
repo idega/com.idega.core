@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.1 2001/12/03 16:17:43 palli Exp $
+ * $Id: XMLOutput.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

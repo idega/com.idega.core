@@ -2,7 +2,7 @@
 
 /*
 
- * $Id: DatastoreInterface.java,v 1.45 2002/04/05 18:34:39 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.46 2002/04/06 19:07:43 tryggvil Exp $
 
  *
 
@@ -221,7 +221,7 @@ public abstract class DatastoreInterface{
 
    */
 
-  public static DatastoreInterface getInstance(GenericEntity entity){
+  public static DatastoreInterface getInstance(IDOLegacyEntity entity){
 
     //String datastoreType=null;
 
@@ -241,7 +241,7 @@ public abstract class DatastoreInterface{
 
     catch(Exception ex){
 
-    //  System.err.println("Exception in DatastoreInterface.getInstance(GenericEntity entity): "+ex.getMessage());
+    //  System.err.println("Exception in DatastoreInterface.getInstance(IDOLegacyEntity entity): "+ex.getMessage());
 
     //}
 
@@ -407,7 +407,7 @@ public abstract class DatastoreInterface{
 
 
 
-    public void createEntityRecord(GenericEntity entity)throws Exception{
+    public void createEntityRecord(IDOLegacyEntity entity)throws Exception{
 
       getTableCreator().createEntityRecord(entity);
 
@@ -425,13 +425,13 @@ public abstract class DatastoreInterface{
 
 
 
-  public void executeBeforeCreateEntityRecord(GenericEntity entity)throws Exception{
+  public void executeBeforeCreateEntityRecord(IDOLegacyEntity entity)throws Exception{
 
   }
 
 
 
-  public void executeAfterCreateEntityRecord(GenericEntity entity)throws Exception{
+  public void executeAfterCreateEntityRecord(IDOLegacyEntity entity)throws Exception{
 
   }
 
@@ -443,7 +443,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void deleteEntityRecord(GenericEntity entity)throws Exception{
+  public void deleteEntityRecord(IDOLegacyEntity entity)throws Exception{
 
     getTableCreator().deleteEntityRecord(entity);
 
@@ -455,17 +455,17 @@ public abstract class DatastoreInterface{
 
 
 
-  public abstract void createTrigger(GenericEntity entity)throws Exception;
+  public abstract void createTrigger(IDOLegacyEntity entity)throws Exception;
 
 
 
-  //public abstract void createForeignKeys(GenericEntity entity)throws Exception;
+  //public abstract void createForeignKeys(IDOLegacyEntity entity)throws Exception;
 
 
 
 
 
-  protected Object executeQuery(GenericEntity entity,String SQLCommand)throws Exception{
+  protected Object executeQuery(IDOLegacyEntity entity,String SQLCommand)throws Exception{
 
       Connection conn = null;
 
@@ -511,7 +511,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected int executeUpdate(GenericEntity entity,String SQLCommand)throws Exception{
+  protected int executeUpdate(IDOLegacyEntity entity,String SQLCommand)throws Exception{
 
       Connection conn = null;
 
@@ -699,7 +699,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void insert(GenericEntity entity)throws Exception{
+  public void insert(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -785,7 +785,7 @@ public abstract class DatastoreInterface{
 
 	**/
 
-	public int createUniqueID(GenericEntity entity) throws Exception{
+	public int createUniqueID(IDOLegacyEntity entity) throws Exception{
 
 		int returnInt = -1;
 
@@ -839,7 +839,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected String getCreateUniqueIDQuery(GenericEntity entity)throws Exception{
+  protected String getCreateUniqueIDQuery(IDOLegacyEntity entity)throws Exception{
 
     return "";
 
@@ -847,13 +847,13 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
+  protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
 
   }
 
 
 
-  protected void executeAfterInsert(GenericEntity entity)throws Exception{
+  protected void executeAfterInsert(IDOLegacyEntity entity)throws Exception{
 
     if( entity.hasLobColumn() ) insertBlob(entity);
 
@@ -865,13 +865,13 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void executeBeforeUpdate(GenericEntity entity)throws Exception{
+  protected void executeBeforeUpdate(IDOLegacyEntity entity)throws Exception{
 
   }
 
 
 
-  protected void executeAfterUpdate(GenericEntity entity)throws Exception{
+  protected void executeAfterUpdate(IDOLegacyEntity entity)throws Exception{
 
     if(!supportsBlobInUpdate()){
 
@@ -885,7 +885,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void executeBeforeDelete(GenericEntity entity)throws Exception{
+  protected void executeBeforeDelete(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -895,13 +895,13 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void executeAfterDelete(GenericEntity entity)throws Exception{
+  protected void executeAfterDelete(IDOLegacyEntity entity)throws Exception{
 
   }
 
 
 
-  protected void crunchMetaData(GenericEntity entity)throws SQLException{
+  protected void crunchMetaData(IDOLegacyEntity entity)throws SQLException{
 
     if( entity.metaDataHasChanged() ){//else do nothing
 
@@ -931,7 +931,7 @@ public abstract class DatastoreInterface{
 
         for (int i = 0; i < length; i++) {
 
-          data = new MetaData();
+          data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
 
           data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get((String) insert.elementAt(i)));
 
@@ -955,7 +955,7 @@ public abstract class DatastoreInterface{
 
           //System.out.println("updating: "+i);
 
-          data = new MetaData();//do not construct with id to avoid database access
+          data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();//do not construct with id to avoid database access
 
           if(ids==null) System.out.println("ids is null");
 
@@ -981,7 +981,7 @@ public abstract class DatastoreInterface{
 
         for (int i = 0; i < length; i++) {
 
-          data = new MetaData();
+          data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
 
           data.setID((Integer) ids.get(delete.elementAt(i)));
 
@@ -1011,7 +1011,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void insertBlob(GenericEntity entity)throws Exception{
+  protected void insertBlob(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -1127,7 +1127,7 @@ public abstract class DatastoreInterface{
 
 
 
-	protected String setForPreparedStatement(int insertOrUpdate,PreparedStatement statement,GenericEntity entity)throws SQLException{
+	protected String setForPreparedStatement(int insertOrUpdate,PreparedStatement statement,IDOLegacyEntity entity)throws SQLException{
 
 		String returnString = "";
 
@@ -1203,7 +1203,7 @@ public abstract class DatastoreInterface{
 
 
 
-	private void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,GenericEntity entity)throws SQLException{
+	private void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,IDOLegacyEntity entity)throws SQLException{
 
           String storageClassName = entity.getStorageClassName(columnName);
 
@@ -1295,7 +1295,7 @@ public abstract class DatastoreInterface{
 
 
 
-        public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
+        public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,IDOLegacyEntity entity){
 
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
 
@@ -1355,7 +1355,7 @@ public abstract class DatastoreInterface{
 
 
 
-	public void update(GenericEntity entity)throws Exception{
+	public void update(IDOLegacyEntity entity)throws Exception{
 
 
 
@@ -1443,7 +1443,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void update(GenericEntity entity, Connection conn)throws Exception{
+  public void update(IDOLegacyEntity entity, Connection conn)throws Exception{
 
     executeBeforeUpdate(entity);
 
@@ -1499,7 +1499,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void insert(GenericEntity entity, Connection conn) throws Exception {
+  public void insert(IDOLegacyEntity entity, Connection conn) throws Exception {
 
     executeBeforeInsert(entity);
 
@@ -1561,7 +1561,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void delete(GenericEntity entity)throws Exception{
+  public void delete(IDOLegacyEntity entity)throws Exception{
 
     executeBeforeInsert(entity);
 
@@ -1625,7 +1625,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void delete(GenericEntity entity, Connection conn)throws Exception{
+  public void delete(IDOLegacyEntity entity, Connection conn)throws Exception{
 
     executeBeforeInsert(entity);
 
@@ -1681,7 +1681,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void deleteMetaData(GenericEntity entity, Connection conn)throws Exception{
+  public void deleteMetaData(IDOLegacyEntity entity, Connection conn)throws Exception{
 
     Statement Stmt = null;
 
@@ -1689,7 +1689,7 @@ public abstract class DatastoreInterface{
 
     try{
 
-      MetaData metadata = (MetaData) GenericEntity.getStaticInstance(MetaData.class);
+      MetaData metadata = (MetaData) com.idega.data.GenericEntity.getStaticInstance(MetaData.class);
 
       Stmt = conn.createStatement();
 
@@ -1825,7 +1825,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void deleteMetaData(GenericEntity entity)throws Exception{
+  public void deleteMetaData(IDOLegacyEntity entity)throws Exception{
 
     Connection conn= null;
 
@@ -1873,7 +1873,7 @@ public abstract class DatastoreInterface{
 
 	**/
 
-	protected String getQuestionmarksForColumns(GenericEntity entity){
+	protected String getQuestionmarksForColumns(IDOLegacyEntity entity){
 
 		String returnString = "";
 
@@ -1909,7 +1909,7 @@ public abstract class DatastoreInterface{
 
 
 
-  boolean isValidColumnForUpdateList(GenericEntity entity,String columnName){
+  boolean isValidColumnForUpdateList(IDOLegacyEntity entity,String columnName){
 
     boolean isIDColumn = entity.getIDColumnName().equalsIgnoreCase(columnName);
 
@@ -1985,7 +1985,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected static boolean isValidColumnForInsertList(GenericEntity entity,String columnName){
+  protected static boolean isValidColumnForInsertList(IDOLegacyEntity entity,String columnName){
 
       if (entity.isNull(columnName)){
 
@@ -2009,7 +2009,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected static boolean isValidColumnForSelectList(GenericEntity entity,String columnName){
+  protected static boolean isValidColumnForSelectList(IDOLegacyEntity entity,String columnName){
 
     return !(entity.getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER);
 
@@ -2022,7 +2022,7 @@ public abstract class DatastoreInterface{
    * @param columnName
    * @return the columnName if there is nothing specific about the select
    */
-  protected String getColumnStringForSelectList(GenericEntity entity,String columnName){
+  protected String getColumnStringForSelectList(IDOLegacyEntity entity,String columnName){
     return columnName;
   }
 
@@ -2032,7 +2032,7 @@ public abstract class DatastoreInterface{
    * @param entity
    * @return the SQL query string
    */
-  protected String getCommaDelimitedColumnNamesForSelect(GenericEntity entity){
+  protected String getCommaDelimitedColumnNamesForSelect(IDOLegacyEntity entity){
 
     String newCachedColumnNameList = entity.getCachedColumnNamesList();
 
@@ -2075,7 +2075,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected static String getCommaDelimitedColumnNames(GenericEntity entity){
+  protected static String getCommaDelimitedColumnNames(IDOLegacyEntity entity){
 
     String newCachedColumnNameList = entity.getCachedColumnNamesList();
 
@@ -2125,7 +2125,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected static String getCommaDelimitedColumnValues(GenericEntity entity){
+  protected static String getCommaDelimitedColumnValues(IDOLegacyEntity entity){
 
     StringBuffer returnString = null;
 
@@ -2171,7 +2171,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected String getAllColumnsAndQuestionMarks(GenericEntity entity){
+  protected String getAllColumnsAndQuestionMarks(IDOLegacyEntity entity){
 
     StringBuffer returnString = null;
 
@@ -2251,7 +2251,7 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
 
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
 
@@ -2271,7 +2271,7 @@ public abstract class DatastoreInterface{
 
 
 
-  public void setNumberGeneratorValue(GenericEntity entity,int value){
+  public void setNumberGeneratorValue(IDOLegacyEntity entity,int value){
 
     throw new RuntimeException("setNumberGeneratorValue() not implemented for "+this.getClass().getName());
 
@@ -2289,7 +2289,7 @@ public abstract class DatastoreInterface{
 
     */
 
-   private static void debug(String outputString,GenericEntity entity){
+   private static void debug(String outputString,IDOLegacyEntity entity){
 
     if( IWMainApplicationSettings.isDebugActive() ){
 
@@ -2375,18 +2375,18 @@ public abstract class DatastoreInterface{
 
 
 
-  protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,GenericEntity entity)throws SQLException{
+  protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,IDOLegacyEntity entity)throws SQLException{
     statement.setString(index,entity.getStringColumnValue(columnName));
   }
 
 
-  protected void fillStringColumn(GenericEntity entity,String columnName,ResultSet rs)throws SQLException{
+  protected void fillStringColumn(IDOLegacyEntity entity,String columnName,ResultSet rs)throws SQLException{
         if (rs.getString(columnName) != null){
                 entity.setColumn(columnName,rs.getString(columnName));
         }
   }
 
-  protected void fillColumn(GenericEntity entity,String columnName,ResultSet RS)throws SQLException{
+  protected void fillColumn(IDOLegacyEntity entity,String columnName,ResultSet RS)throws SQLException{
 
 		int classType = entity.getStorageClassType(columnName);
 

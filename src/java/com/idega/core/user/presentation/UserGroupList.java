@@ -66,7 +66,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       }
     }
     try {
-      User user = new User(this.getUserId());
+      User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
       int prgroupid = user.getPrimaryGroupID();
       fieldValues.put(primaryGroupFieldName, (prgroupid != -1)?Integer.toString(prgroupid):"");
     }
@@ -104,7 +104,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
   public boolean store(IWContext iwc) {
     try {
       String pr = (String)this.fieldValues.get(this.primaryGroupFieldName);
-      UserBusiness.setPermissionGroup(new User(this.getUserId()), ("".equals(pr))?null:new Integer(pr));
+      UserBusiness.setPermissionGroup(((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId()), ("".equals(pr))?null:new Integer(pr));
       return true;
     }
     catch (SQLException ex) {
@@ -329,7 +329,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
         String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
-        User user = new User(userId);
+        User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
         List currentRelationShip = UserBusiness.getUserGroupsDirectlyRelated(user);
 
 
@@ -338,7 +338,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
           if(currentRelationShip != null){
             for (int i = 0; i < related.length; i++) {
               int id = Integer.parseInt(related[i]);
-              GenericGroup gr = new GenericGroup(id);
+              GenericGroup gr = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(id);
               if(!currentRelationShip.remove(gr)){
                 //user.addTo(gr);
                 gr.addUser(user);
@@ -355,8 +355,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
           } else{
             for (int i = 0; i < related.length; i++) {
               //user.addTo(GenericGroup.class,Integer.parseInt(related[i]));
-              //new GenericGroup(Integer.parseInt(related[i])).addUser(user);
-              GenericGroup.addUser(Integer.parseInt(related[i]),user);
+              //((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
+              com.idega.core.data.GenericGroupBMPBean.addUser(Integer.parseInt(related[i]),user);
             }
           }
 

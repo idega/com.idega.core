@@ -1,91 +1,11 @@
 package com.idega.data;
 
-import java.lang.String;
-import java.lang.Integer;
-import java.sql.SQLException;
-import com.idega.data.GenericEntity;
-import com.idega.idegaweb.IWMainApplication;
+import javax.ejb.*;
 
-
-/**
- * Title:        idegaWeb Classes
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
- * @version 1.0
- */
-
-public class CacheableEntity extends GenericEntity {
-
-
-  public CacheableEntity() {
-    super();
-  }
-
-  public CacheableEntity(int id) throws SQLException{
-    super(id);
-  }
-
-  /** implemented in subclasses*/
-  public void initializeAttributes() {
-  }
-  /** implemented in subclasses*/
-  public String getEntityName() {
-    return null;
-  }
-
-  /**
-  *Inserts this entity as a record into the datastore and cache
-  */
-  public void insert()throws SQLException{
-    super.insert();
-    cacheEntity();/**@todo this should not happen all the time*/
-    IWMainApplication.getIWCacheManager().insertIntoCachedTable(this);
-  }
-
-  /**
-  *deletes this entity as a record in the datastore and cache
-  */
-  public void delete()throws SQLException{
-    cacheEntity();
-    super.delete();
-    IWMainApplication.getIWCacheManager().deleteFromCachedTable(this);
-  }
-
-  /**
-  *updates this entity as a record in the datastore and cache
-  */
-  public void update()throws SQLException{
-    cacheEntity();
-    super.update();
-    IWMainApplication.getIWCacheManager().updateFromCachedTable(this);
-  }
-
-  /**
-  *Stores this entities table in memory. The default is to use
-  *the idColumnName value as a key when fetching individual entities
-  *from memory. you could override this method in a subclass and store
-  *the table differently in the IWCacheManager.
-  *default is cacheTable(GenericEntity entity)
-  *also available are cacheTable(GenericEntity entity, String columnNameForKey)
-  *and cacheTable(GenericEntity entity, String columnNameForKey,String columnNameForSecondKey)
-  */
-  public void cacheEntity(){
-    IWMainApplication.getIWCacheManager().cacheTable(this,getCacheKey());
-    //IWMainApplication.getIWCacheManager().cacheTable(this,key1);
-    //IWMainApplication.getIWCacheManager().cacheTable(this,key1,key2);
-  }
-
-  public void cacheEntityByID(){
-    IWMainApplication.getIWCacheManager().cacheTable(this,getIDColumnName());
-  }
-
-  public String getCacheKey(){
-    return getIDColumnName();
-  }
-
-
-
+public interface CacheableEntity extends com.idega.data.IDOLegacyEntity
+{
+ public void cacheEntity();
+ public void cacheEntityByID();
+ public void delete()throws java.sql.SQLException;
+ public java.lang.String getCacheKey();
 }
-

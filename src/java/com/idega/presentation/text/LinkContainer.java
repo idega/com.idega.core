@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.4 2002/04/03 10:41:41 laddi Exp $
+ * $Id: LinkContainer.java,v 1.5 2002/04/06 19:07:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

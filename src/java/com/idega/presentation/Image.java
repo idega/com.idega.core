@@ -186,7 +186,7 @@ private void getImage(IWContext iwc) throws SQLException{
     }
     else
     {
-      image = new ImageEntity(imageId);
+      image = ((com.idega.block.image.data.ImageEntityHome)com.idega.data.IDOLookup.getHomeLegacy(ImageEntity.class)).findByPrimaryKeyLegacy(imageId);
     }
 
     StringBuffer URIBuffer;

@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionHelper.java,v 1.3 2001/09/28 10:34:50 gummi Exp $
+ * $Id: ExceptionHelper.java,v 1.4 2002/04/06 19:07:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

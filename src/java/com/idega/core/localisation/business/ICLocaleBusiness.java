@@ -43,7 +43,7 @@ public class ICLocaleBusiness {
 
   private static List listOfICLocalesInUse(){
     try {
-     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,ICLocale.getColumnNameInUse(),"Y");
+     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
     }
     catch (IDOFinderException ex) {
       ex.printStackTrace();
@@ -54,9 +54,9 @@ public class ICLocaleBusiness {
   private static List listOfICLocales(boolean inUse){
     try {
       if(inUse)
-        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,ICLocale.getColumnNameInUse(),"Y");
+        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
       else
-        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,ICLocale.getColumnNameInUse(),"N");
+        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"N");
     }
     catch (IDOFinderException ex) {
       ex.printStackTrace();
@@ -70,11 +70,11 @@ public class ICLocaleBusiness {
     if(L == null){
       try {
         Vector V = new Vector();
-        ICLocale is= new ICLocale();
+        ICLocale is= ((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
         is.setLocale("is_IS");
         is.insert();
 
-        ICLocale en= new ICLocale();
+        ICLocale en= ((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
         en.setLocale("en");
         en.insert();
         V.add(is);
@@ -94,7 +94,7 @@ public class ICLocaleBusiness {
     return listOfLocalesInUse();
     /*
     try {
-      return EntityFinder.findAll(new ICLocale());
+      return EntityFinder.findAll(((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy());
     }
     catch (SQLException ex) {
       return null;

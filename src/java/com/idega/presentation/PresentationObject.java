@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.41 2002/03/26 10:04:23 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.42 2002/04/06 19:07:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -761,7 +761,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   public ICObjectInstance getICObjectInstance()throws SQLException{
     if(getICObjectInstanceID() != 0){
-      return new ICObjectInstance(getICObjectInstanceID());
+      return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID());
     } else {
       return null;
     }
@@ -791,7 +791,7 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   protected ICObject getICObject(Class c) throws SQLException {
-    List result = EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),"class_name",c.getName());
+    List result = EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),"class_name",c.getName());
     if(result != null && result.size() > 0){
       return (ICObject)result.get(0);
     }else{
@@ -802,7 +802,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   public ICObjectInstance getICInstance(IWContext iwc) throws IWException {
     try {
-      return new ICObjectInstance(getICObjectInstanceID(iwc));
+      return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID(iwc));
     }
     catch (Exception excep) {
       IWException exep = new IWException(excep.getMessage());

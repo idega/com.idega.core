@@ -218,18 +218,18 @@ public class AccessControllerApp extends IWApplication {
       public void main(IWContext iwc) throws Exception {
         IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 
-        ICObject staticICO = (ICObject)ICObject.getStaticInstance(ICObject.class);
+        ICObject staticICO = (ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class);
 
         List bundles = iwc.getApplication().getRegisteredBundles();
         List bundleLinks = tranceformBundleListToLinkList(bundles);
 
-        List elements = EntityFinder.findAllByColumn(staticICO,ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_ELEMENT);
+        List elements = EntityFinder.findAllByColumn(staticICO,com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT);
         List elementLinks = tranceformICObjectListToLinkList(elements);
 
-        List blocks = EntityFinder.findAllByColumn(staticICO,ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_BLOCK);
+        List blocks = EntityFinder.findAllByColumn(staticICO,com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK);
         List blockLinks = tranceformICObjectListToLinkList(blocks);
 
-        List applications = EntityFinder.findAllByColumn(staticICO,ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_APPLICATION);
+        List applications = EntityFinder.findAllByColumn(staticICO,com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_APPLICATION);
         List applicationLinks = tranceformICObjectListToLinkList(applications);
 
 

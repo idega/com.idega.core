@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.6 2002/01/26 00:44:46 aron Exp $
+ * $Id: EntityBulkUpdater.java,v 1.7 2002/04/06 19:07:43 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,7 +9,7 @@
  */
 package com.idega.data;
 
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOLegacyEntity;
 import com.idega.util.database.ConnectionBroker;
 import java.util.Vector;
 import java.util.Collection;
@@ -32,17 +32,17 @@ public class EntityBulkUpdater {
   public static String addto = "addto";
   public static String removefrom = "removefrom";
 
-  private GenericEntity relatedEntity;
+  private IDOLegacyEntity relatedEntity;
 
   public EntityBulkUpdater() {
   }
 
-  public EntityBulkUpdater(GenericEntity relatedEntity) {
+  public EntityBulkUpdater(IDOLegacyEntity relatedEntity) {
     this.relatedEntity = relatedEntity;
   }
 
   /**
-   * Adds a GenericEntity to the list of elememts to be updated/inserted
+   * Adds a IDOLegacyEntity to the list of elememts to be updated/inserted
    * into the database.
    *
    * @param entity The entity to update/insert
@@ -50,7 +50,7 @@ public class EntityBulkUpdater {
    *
    * @return True if the entity was added to the list, false otherwise.
    */
-  public boolean add(GenericEntity entity, String action) {
+  public boolean add(IDOLegacyEntity entity, String action) {
     if ((action == null) || (action.equalsIgnoreCase(update))) {
       if (update_ == null)
         update_ = new Vector();
@@ -126,7 +126,7 @@ public class EntityBulkUpdater {
       if (insert_ != null) {
         Iterator i = insert_.iterator();
         while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
+          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           e.insert(c);
           if( relatedEntity != null ){
             relatedEntity.addTo(e,c);
@@ -138,7 +138,7 @@ public class EntityBulkUpdater {
       if (update_ != null) {
         Iterator i = update_.iterator();
         while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
+          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           e.update(c);
         }
         update_.clear();
@@ -147,7 +147,7 @@ public class EntityBulkUpdater {
       if (delete_ != null) {
         Iterator i = delete_.iterator();
         while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
+          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
             e.removeFrom(relatedEntity,c);
           }
@@ -159,7 +159,7 @@ public class EntityBulkUpdater {
       if (addto_ != null) {
         Iterator i = addto_.iterator();
         while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
+          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
             e.addTo(relatedEntity,c);
           }
@@ -169,7 +169,7 @@ public class EntityBulkUpdater {
       if (removefrom_ != null) {
         Iterator i = removefrom_.iterator();
         while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
+          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
             e.removeFrom(relatedEntity,c);
           }
@@ -195,7 +195,7 @@ public class EntityBulkUpdater {
     }
   }
 
-  public void setRelatedEntity(GenericEntity relatedEntity){
+  public void setRelatedEntity(IDOLegacyEntity relatedEntity){
    this.relatedEntity = relatedEntity;
   }
 

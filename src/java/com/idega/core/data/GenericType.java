@@ -1,72 +1,15 @@
 package com.idega.core.data;
 
-import com.idega.data.*;
-import java.sql.SQLException;
+import javax.ejb.*;
 
-
-/**
- * Title:        IW Core
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version 1.0
- */
-
-public abstract class GenericType extends GenericEntity {
-
-  public GenericType() {
-    super();
-  }
-
-  public GenericType(int id) throws SQLException {
-    super(id);
-  }
-
-  public void initializeAttributes() {
-    this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameDisplayName(),"Nafn",true,true,String.class,255);
-    this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
-    this.addAttribute(getColumnNameUniqueName(),"unique name",true,true,String.class,255);
-  }
-
-  public static String getColumnNameDisplayName(){return "type_display_name";}
-  public static String getColumnNameUniqueName() {return "unique_name";}
-  public static String getColumnNameDescription(){return "type_description";}
-
-
-  public String getName(){
-    return this.getStringColumnValue(getColumnNameDisplayName());
-  }
-
-  public String getDisplayName(){
-    return this.getStringColumnValue(getColumnNameDisplayName());
-  }
-
-  public String getDescription(){
-    return this.getStringColumnValue(getColumnNameDescription());
-  }
-
-  public void setDisplayName(String typeName){
-    this.setColumn(getColumnNameDisplayName(),typeName);
-  }
-
-  public void setName(String typeName){
-    this.setColumn(getColumnNameDisplayName(),typeName);
-  }
-
-  public void setDescription(String typeDescription){
-    this.setColumn(getColumnNameDescription(),typeDescription);
-  }
-
-  public String getUniqueName() {
-    return this.getStringColumnValue(getColumnNameUniqueName());
-  }
-
-  public void setUniqueName(String uniqueName) {
-    this.setColumn(getColumnNameUniqueName(),uniqueName);
-  }
-
-
-
-} // Class GenericType
+public interface GenericType extends com.idega.data.IDOLegacyEntity
+{
+ public java.lang.String getDescription();
+ public java.lang.String getDisplayName();
+ public java.lang.String getName();
+ public java.lang.String getUniqueName();
+ public void setDescription(java.lang.String p0);
+ public void setDisplayName(java.lang.String p0);
+ public void setName(java.lang.String p0);
+ public void setUniqueName(java.lang.String p0);
+}

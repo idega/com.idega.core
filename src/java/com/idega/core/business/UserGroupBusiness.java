@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Iterator;
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOLegacyEntity;
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.presentation.IWContext;
@@ -39,10 +39,10 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
       return UserGroupBusiness.getGroups(groupsNotToReturn,false,iwc);
-      //return EntityFinder.findAll(GenericGroup.getStaticInstance());
+      //return EntityFinder.findAll(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -54,8 +54,8 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[2];
-      groupsNotToReturn[0] = ((GenericGroup)GenericGroup.getStaticInstance(GenericGroup.class)).getGroupTypeValue();
-      groupsNotToReturn[0] = ((PermissionGroup)PermissionGroup.getStaticInstance(PermissionGroup.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance(GenericGroup.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((PermissionGroup)com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticInstance(PermissionGroup.class)).getGroupTypeValue();
       //filter end
       return UserGroupBusiness.getGroups(groupsNotToReturn,true,iwc);
     }
@@ -66,7 +66,7 @@ public class UserGroupBusiness {
   }
 
   public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws Exception {
-    List result = GenericGroup.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
+    List result = com.idega.core.data.GenericGroupBMPBean.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
       result.removeAll(iwc.getAccessController().getStandardGroups());
     }
@@ -74,7 +74,7 @@ public class UserGroupBusiness {
   }
 
   public static void deleteGroup(int groupId) throws SQLException {
-    GenericGroup delGroup = new GenericGroup(groupId);
+    GenericGroup delGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId);
     deleteGroup(delGroup);
   }
 
@@ -86,7 +86,7 @@ public class UserGroupBusiness {
 
   public static List getGroupsContaining(int uGroupId)throws SQLException{
     try {
-      return getGroupsContaining(new GenericGroup(uGroupId));
+      return getGroupsContaining(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(uGroupId));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -96,7 +96,7 @@ public class UserGroupBusiness {
 
   public static List getGroupsContainingDirectlyRelated(int uGroupId){
     try {
-      return getGroupsContainingDirectlyRelated(new GenericGroup(uGroupId));
+      return getGroupsContainingDirectlyRelated(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(uGroupId));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -116,9 +116,9 @@ public class UserGroupBusiness {
 
   public static List getAllGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
     try {
-      GenericGroup group = new GenericGroup(uGroupId);
+      GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      List AllGroups =  UserGroupBusiness.getAllGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List AllGroups =  UserGroupBusiness.getAllGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -143,9 +143,9 @@ public class UserGroupBusiness {
 
   public static List getRegisteredGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
     try {
-      GenericGroup group = new GenericGroup(uGroupId);
+      GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      List AllGroups =  UserGroupBusiness.getRegisteredGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List AllGroups =  UserGroupBusiness.getRegisteredGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -170,9 +170,9 @@ public class UserGroupBusiness {
 
   public static List getGroupsContainingNotDirectlyRelated(int uGroupId){
     try {
-      GenericGroup group = new GenericGroup(uGroupId);
+      GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      List AllGroups =  UserGroupBusiness.getGroupsContaining(uGroupId);   //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List AllGroups =  UserGroupBusiness.getGroupsContaining(uGroupId);   //  EntityFinder.findAll(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
 
 
 
@@ -200,7 +200,7 @@ public class UserGroupBusiness {
   public static List getGroupsContaining(GenericGroup group) throws SQLException {
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
     return UserGroupBusiness.getGroupsContaining(group,groupsNotToReturn,false);
   }
@@ -291,34 +291,34 @@ public class UserGroupBusiness {
 
 
   public static List getGroupsContained(int groupId) throws SQLException{
-    return UserGroupBusiness.getGroupsContained(new GenericGroup(groupId));
+    return UserGroupBusiness.getGroupsContained(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
   public static List getUsersContained(int groupId) throws SQLException{
-    return UserGroupBusiness.getUsersContained(new GenericGroup(groupId));
+    return UserGroupBusiness.getUsersContained(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
   public static List getGroupsContainedDirectlyRelated(int groupId) throws SQLException{
-    return UserGroupBusiness.getGroupsContainedDirectlyRelated(new GenericGroup(groupId));
+    return UserGroupBusiness.getGroupsContainedDirectlyRelated(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
   public static List getUsersContainedDirectlyRelated(int groupId) throws SQLException{
-    return UserGroupBusiness.getUsersContainedDirectlyRelated(new GenericGroup(groupId));
+    return UserGroupBusiness.getUsersContainedDirectlyRelated(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
   public static List getGroupsContainedNotDirectlyRelated(int groupId) throws SQLException{
-    return UserGroupBusiness.getGroupsContainedNotDirectlyRelated(new GenericGroup(groupId));
+    return UserGroupBusiness.getGroupsContainedNotDirectlyRelated(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
   public static List getUsersContainedNotDirectlyRelated(int groupId) throws SQLException{
-    return UserGroupBusiness.getUsersContainedNotDirectlyRelated(new GenericGroup(groupId));
+    return UserGroupBusiness.getUsersContainedNotDirectlyRelated(((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId));
   }
 
 
   public static List getGroupsContained(GenericGroup group) throws SQLException{
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
 
     return UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,false);
@@ -387,7 +387,7 @@ public class UserGroupBusiness {
   public static List getUsersContained(GenericGroup group) throws SQLException{
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
 
     List list = UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,true);
@@ -402,7 +402,7 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
 
       List list = group.getGroupsContained(groupsNotToReturn,false);
@@ -513,7 +513,7 @@ public class UserGroupBusiness {
       }
     }
     if(!sGroupList.equals("")){
-      GenericGroup group = GenericGroup.getStaticInstance();
+      GenericGroup group = com.idega.core.data.GenericGroupBMPBean.getStaticInstance();
       toReturn = EntityFinder.findAll(group,"SELECT * FROM " + group.getEntityName() + " WHERE " + group.getIDColumnName() + " in (" + sGroupList + ")");
     }
     return toReturn;
@@ -530,8 +530,8 @@ public class UserGroupBusiness {
         sGroupList += item.getID();
       }
       if(!sGroupList.equals("")){
-        User user = User.getStaticInstance();
-        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+User._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+        User user = com.idega.core.user.data.UserBMPBean.getStaticInstance();
+        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+com.idega.core.user.data.UserBMPBean._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
       }
     }
     return null;
@@ -541,7 +541,7 @@ public class UserGroupBusiness {
   public static void updateUsersInGroup( int groupId, String[] usrGroupIdsInGroup) throws SQLException {
 
     if(groupId != -1){
-      GenericGroup group = new GenericGroup(groupId);
+      GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId);
       //System.out.println("before");
       List lDirect = com.idega.core.business.UserGroupBusiness.getUsersContainedDirectlyRelated(groupId);
       Set direct = new HashSet();

@@ -1,6 +1,6 @@
 package com.idega.util.caching;
 
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOLegacyEntity;
 
 /**
  * Title: Cache
@@ -15,13 +15,13 @@ public class Cache {
 
   private String realPathToFile;
   private String virtualPathToFile;
-  private GenericEntity cachedEntity;
+  private IDOLegacyEntity cachedEntity;
 
 
   public Cache() {
   }
 
-  public Cache(String realPathToFile, String virtualPathToFile, GenericEntity cachedEntity) {
+  public Cache(String realPathToFile, String virtualPathToFile, IDOLegacyEntity cachedEntity) {
     this(realPathToFile,virtualPathToFile);
     this.cachedEntity = cachedEntity;
   }
@@ -31,11 +31,11 @@ public class Cache {
     this.virtualPathToFile = virtualPathToFile;
   }
 
-  public void setEntity(GenericEntity entity){
+  public void setEntity(IDOLegacyEntity entity){
     this.cachedEntity = entity;
   }
 
-  public GenericEntity getEntity(){
+  public IDOLegacyEntity getEntity(){
     return cachedEntity;
   }
 

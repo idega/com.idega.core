@@ -91,7 +91,7 @@ public class GenericState extends Object implements Cloneable {
 //      //First store a static instance of this class
 //      String className = this.getClass().getName();
 //      try {
-//        _allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+//        _allStaticClasses.put(className,(IDOLegacyEntity)Class.forName(className).newInstance());
 //      }
 //      catch(Exception ex) {
 //        ex.printStackTrace();

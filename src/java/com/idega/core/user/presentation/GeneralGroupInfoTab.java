@@ -59,7 +59,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
 
      try{
-      GenericGroup group = new GenericGroup(getGroupId());
+      GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(getGroupId());
 
       fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
       fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
@@ -112,7 +112,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     try{
       if(getGroupId() > -1){
 
-        GenericGroup group = new GenericGroup(getGroupId());
+        GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(getGroupId());
         group.setName((String)fieldValues.get(this.nameFieldName));
         group.setDescription((String)fieldValues.get(this.descriptionFieldName));
 
@@ -361,7 +361,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
         String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
-        GenericGroup group = new GenericGroup(groupId);
+        GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId);
         List currentRelationShip = group.getListOfAllGroupsContainingThis();
 
 
@@ -370,7 +370,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
           if(currentRelationShip != null){
             for (int i = 0; i < related.length; i++) {
               int id = Integer.parseInt(related[i]);
-              GenericGroup gr = new GenericGroup(id);
+              GenericGroup gr = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(id);
               if(!currentRelationShip.remove(gr)){
                 gr.addGroup(group);
               }
@@ -384,7 +384,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
           } else{
             for (int i = 0; i < related.length; i++) {
-              new GenericGroup(Integer.parseInt(related[i])).addGroup(group);
+              ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addGroup(group);
             }
           }
 

@@ -38,11 +38,11 @@ public class IDOTableCreator{
     this._dsi=dsi;
   }
 
-  protected void executeQuery(GenericEntity entity,String SQLCode)throws Exception{
+  protected void executeQuery(IDOLegacyEntity entity,String SQLCode)throws Exception{
     _dsi.executeQuery(entity,SQLCode);
   }
 
-  protected int executeUpdate(GenericEntity entity,String SQLCode)throws Exception{
+  protected int executeUpdate(IDOLegacyEntity entity,String SQLCode)throws Exception{
 
     return _dsi.executeUpdate(entity,SQLCode);
   }
@@ -59,7 +59,7 @@ public class IDOTableCreator{
       return alreadyInCreation;
   }
 
-  protected void registerEndOfCreatingEntity(GenericEntity entity){
+  protected void registerEndOfCreatingEntity(IDOLegacyEntity entity){
       List alreadyInCreation=(List)ThreadContext.getInstance().getAttribute(recordCreationKey);
       if(alreadyInCreation!=null){
         alreadyInCreation.remove(entity.getClass());
@@ -69,7 +69,7 @@ public class IDOTableCreator{
       }
   }
 
-  protected void registerStartOfCreatingEntity(GenericEntity entity){
+  protected void registerStartOfCreatingEntity(IDOLegacyEntity entity){
       //Code block to prevent circular recursiveness
       //i.e. that it infinately recurses through the same entity when it is circularly referenced
       List alreadyInCreation=this.getCreationList();
@@ -79,12 +79,12 @@ public class IDOTableCreator{
       }
   }
 
-  protected boolean hasAlreadyStartedCreatingEntity(GenericEntity entity){
+  protected boolean hasAlreadyStartedCreatingEntity(IDOLegacyEntity entity){
     List alreadyInCreation=this.getCreationList();
     return alreadyInCreation.contains(entity.getClass());
   }
 
-  protected boolean startEntityCreationTransaction(GenericEntity entity,boolean isPermittedToCommit){
+  protected boolean startEntityCreationTransaction(IDOLegacyEntity entity,boolean isPermittedToCommit){
     TransactionManager trans=null;
     boolean canCommit=isPermittedToCommit;
     try{
@@ -109,7 +109,7 @@ public class IDOTableCreator{
   }
 
 
-  protected void endEntityCreationTransaction(GenericEntity entity,boolean isPermittedToCommit,boolean transactionSuccessful){
+  protected void endEntityCreationTransaction(IDOLegacyEntity entity,boolean isPermittedToCommit,boolean transactionSuccessful){
       boolean canCommit = isPermittedToCommit;
       try{
         TransactionManager trans = com.idega.transaction.IdegaTransactionManager.getInstance();
@@ -146,7 +146,7 @@ public class IDOTableCreator{
   }
 
 
-  protected boolean doesTableExist(GenericEntity entity,String tableName){
+  protected boolean doesTableExist(IDOLegacyEntity entity,String tableName){
     boolean theReturner=true;
     try{
         executeQuery(entity,"select * from "+tableName);
@@ -168,7 +168,7 @@ public class IDOTableCreator{
   /**
    * Creates an entity record (table) that represents the entity in the datastore
    */
-  public void createEntityRecord(GenericEntity entity)throws Exception{
+  public void createEntityRecord(IDOLegacyEntity entity)throws Exception{
     if(!doesTableExist(entity,entity.getTableName())){
     System.out.println("[idoTableCreator]  Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
@@ -227,7 +227,7 @@ public class IDOTableCreator{
   }
 
 
-  protected String getCreationStatement(GenericEntity entity){
+  protected String getCreationStatement(IDOLegacyEntity entity){
 		String returnString = "CREATE TABLE "+entity.getTableName()+"(";
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
@@ -248,11 +248,11 @@ public class IDOTableCreator{
 
 
 
-  public void deleteEntityRecord(GenericEntity entity)throws Exception{
+  public void deleteEntityRecord(IDOLegacyEntity entity)throws Exception{
     deleteTable(entity);
   }
 
-  protected void deleteTable(GenericEntity entity)throws Exception{
+  protected void deleteTable(IDOLegacyEntity entity)throws Exception{
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
@@ -270,13 +270,13 @@ public class IDOTableCreator{
 		}
   }
 
-  protected void createRefrencedTables(GenericEntity entity)throws Exception{
+  protected void createRefrencedTables(IDOLegacyEntity entity)throws Exception{
       /*String[] names = entity.getColumnNames();
       for (int i = 0; i < names.length; i++) {
         String relationShipClass = entity.getRelationShipClassName(names[i]);
         if (!relationShipClass.equals("")) {
           try{
-            GenericEntity relationShipEntity = (GenericEntity)Class.forName(relationShipClass).newInstance();
+            IDOLegacyEntity relationShipEntity = (IDOLegacyEntity)Class.forName(relationShipClass).newInstance();
             createEntityRecord(relationShipEntity);
           }
           catch(Exception ex){
@@ -290,8 +290,8 @@ public class IDOTableCreator{
         //String className = (String)iter.next();
         Class myClass = (Class)iter.next();
           //try{
-            //GenericEntity relationShipEntity = (GenericEntity)Class.forName(className).newInstance();
-            GenericEntity relationShipEntity = (GenericEntity)myClass.newInstance();
+            //IDOLegacyEntity relationShipEntity = (IDOLegacyEntity)Class.forName(className).newInstance();
+            IDOLegacyEntity relationShipEntity = (IDOLegacyEntity)myClass.newInstance();
             createEntityRecord(relationShipEntity);
           //}
           //catch(Exception ex){
@@ -304,7 +304,7 @@ public class IDOTableCreator{
    * Gets the entities that are related by  one-to many and many-to-many relationships
    * Returns a List of Class Objects
    */
-  private List getRelatedEntityClasses(GenericEntity entity){
+  private List getRelatedEntityClasses(IDOLegacyEntity entity){
       List returnNames = new Vector();
       String[] names = entity.getColumnNames();
       for (int i = 0; i < names.length; i++) {
@@ -326,7 +326,7 @@ public class IDOTableCreator{
    * Gets the entities that are related by many-to-many relationships
    * Returns a List of Class Objects
    */
-  private List getManyToManyRelatedEntityClasses(GenericEntity entity){
+  private List getManyToManyRelatedEntityClasses(IDOLegacyEntity entity){
       List list = new Vector();
       List classList = EntityControl.getManyToManyRelationShipClasses(entity);
       if(classList!=null){
@@ -341,7 +341,7 @@ public class IDOTableCreator{
       return list;
   }
 
-  protected void createMiddleTables(GenericEntity entity)throws Exception{
+  protected void createMiddleTables(IDOLegacyEntity entity)throws Exception{
 
     //List classList = EntityControl.getManyToManyRelationShipClasses(entity);
     List relationshipList = EntityControl.getManyToManyRelationShips(entity);
@@ -364,7 +364,7 @@ public class IDOTableCreator{
         EntityRelationship relation = (EntityRelationship)relIter.next();
         Map relMap = relation.getColumnsAndReferencingClasses();
         String tableName = relation.getTableName();
-        GenericEntity relatingEntity = null;
+        IDOLegacyEntity relatingEntity = null;
 
 
         boolean doCreateMiddleTable = !doesTableExist(entity,tableName);
@@ -375,7 +375,7 @@ public class IDOTableCreator{
             while (tempIter.hasNext() && doCreateMiddleTable) {
               String column = (String)tempIter.next();
               Class relClass = (Class)relMap.get(column);
-              GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+              IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
               String referencingTableName = entity1.getTableName();
               doCreateMiddleTable = doesTableExist(entity,referencingTableName);
             }
@@ -418,7 +418,7 @@ public class IDOTableCreator{
               String column = (String)iter.next();
               Class relClass = (Class)relMap.get(column);
               //try{
-                GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+                IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
                 //createEntityRecord(entity1);
                 createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
               //}
@@ -432,7 +432,7 @@ public class IDOTableCreator{
 
 
           /*
-          relatingEntity = (GenericEntity)item.newInstance();
+          relatingEntity = (IDOLegacyEntity)item.newInstance();
           if(!this.doesTableExist(entity,tableName)){
             String creationStatement = "CREATE TABLE "+tableName+" ( "+entity.getIDColumnName() + " INTEGER NOT NULL,"+relatingEntity.getIDColumnName() + " INTEGER NOT NULL , PRIMARY KEY("+entity.getIDColumnName() + "," + relatingEntity.getIDColumnName() +") )";
             executeUpdate(entity,creationStatement);
@@ -457,7 +457,7 @@ public class IDOTableCreator{
   }
 
 
-  protected void createForeignKeys(GenericEntity entity) throws Exception {
+  protected void createForeignKeys(IDOLegacyEntity entity) throws Exception {
     /*Connection conn = null;
     Statement Stmt = null;
     try {
@@ -468,7 +468,7 @@ public class IDOTableCreator{
       for (int i = 0; i < names.length; i++) {
         if (!entity.getRelationShipClassName(names[i]).equals("")) {
           Stmt = conn.createStatement();
-          int n = Stmt.executeUpdate("ALTER TABLE " + entity.getTableName() + " ADD FOREIGN KEY (" + names[i] + ") REFERENCES " + ((GenericEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName() + " ");
+          int n = Stmt.executeUpdate("ALTER TABLE " + entity.getTableName() + " ADD FOREIGN KEY (" + names[i] + ") REFERENCES " + ((IDOLegacyEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName() + " ");
           if (Stmt != null) {
             Stmt.close();
           }
@@ -489,7 +489,7 @@ public class IDOTableCreator{
           Class relationShipClass = entity.getRelationShipClass(names[i]);
           if (relationShipClass!=null) {
             //String table1=entity.getTableName();
-            GenericEntity entityToReference = (GenericEntity)relationShipClass.newInstance();
+            IDOLegacyEntity entityToReference = (IDOLegacyEntity)relationShipClass.newInstance();
             //String tableToReference=entityToReference.getTableName();
             //if(!doesTableExist(entity,tableToReference)){
             //  createEntityRecord(entityToReference);
@@ -508,48 +508,48 @@ public class IDOTableCreator{
   }
 
 
-  protected void createTable(GenericEntity entity)throws Exception{
+  protected void createTable(IDOLegacyEntity entity)throws Exception{
     //if(!doesTableExist(entity,entity.getTableName())){
       executeUpdate(entity,getCreationStatement(entity));
     //}
   }
 
-  protected void createTrigger(GenericEntity entity)throws Exception{
+  protected void createTrigger(IDOLegacyEntity entity)throws Exception{
     this._dsi.createTrigger(entity);
   }
 
-  protected void createForeignKey(GenericEntity entity,String columnName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,String columnName)throws Exception{
       Class referencingClass = entity.getRelationShipClass(columnName);
-      GenericEntity referencingEntity = (GenericEntity)referencingClass.newInstance();
+      IDOLegacyEntity referencingEntity = (IDOLegacyEntity)referencingClass.newInstance();
       createForeignKey(entity,referencingEntity,columnName);
   }
 
-  protected void createForeignKey(GenericEntity entity,GenericEntity entityToReference,String columnName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,IDOLegacyEntity entityToReference,String columnName)throws Exception{
       createForeignKey(entity,entity.getTableName(),columnName,entityToReference.getTableName(),entityToReference.getIDColumnName());
   }
 
-  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName)throws Exception{
       createForeignKey(entity,baseTableName,columnName,refrencingTableName,columnName);
   }
 
-  /*protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  /*protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       executeUpdate(entity,SQLCommand);
   }*/
 
-  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
       _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
   }
 
-  protected void createPrimaryKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createPrimaryKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
       _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
   }
 
-  protected void updateColumns(GenericEntity entity)throws Exception{
+  protected void updateColumns(IDOLegacyEntity entity)throws Exception{
     String[] columnArrayFromDB = getColumnArrayFromMetaData(entity);
     String[] columnArrayFromEntity = entity.getColumnNames();
     for (int i = 0; i < columnArrayFromEntity.length; i++) {
@@ -568,7 +568,7 @@ public class IDOTableCreator{
     }
   }
 
-  private String[] getColumnArrayFromMetaData(GenericEntity entity){
+  private String[] getColumnArrayFromMetaData(IDOLegacyEntity entity){
     Connection conn = null;
     ResultSet rs = null;
     try{
@@ -621,12 +621,12 @@ public class IDOTableCreator{
     return false;
   }
 
-  private void addColumn(String columnName,GenericEntity entity)throws Exception{
+  private void addColumn(String columnName,IDOLegacyEntity entity)throws Exception{
     String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
     executeUpdate(entity,SQLString);
   }
 
-  protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
+  protected String getColumnSQLDefinition(String columnName,IDOLegacyEntity entity){
     boolean isPrimaryKey = entity.isPrimaryKey(columnName);
 
     String type;
@@ -651,7 +651,7 @@ public class IDOTableCreator{
     return returnString;
   }
 
-  private boolean doesColumnHaveRelationship(String columnName,GenericEntity entity){
+  private boolean doesColumnHaveRelationship(String columnName,IDOLegacyEntity entity){
     return (entity.getRelationShipClass(columnName)!=null);
   }
 

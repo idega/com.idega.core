@@ -158,7 +158,7 @@ public class GeneralUserInfoTab extends UserTab{
 
     Gender[] genders = null;
     try {
-      Gender g = (Gender)Gender.getStaticInstance(Gender.class);
+      Gender g = (Gender)com.idega.core.user.data.GenderBMPBean.getStaticInstance(Gender.class);
       genders = (Gender[])g.findAll();
     }
     catch (Exception ex) {
@@ -312,7 +312,7 @@ public class GeneralUserInfoTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      User user = new User(getUserId());
+      User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(getUserId());
 
       fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
       fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );

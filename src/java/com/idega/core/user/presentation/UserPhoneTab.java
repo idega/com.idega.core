@@ -101,7 +101,7 @@ public class UserPhoneTab extends UserTab{
   public void initializeFields() {
     PhoneType[] phoneTypes = null;
     try {
-      phoneTypes = (PhoneType[]) PhoneType.getStaticInstance(PhoneType.class).findAll();
+      phoneTypes = (PhoneType[]) com.idega.core.data.PhoneTypeBMPBean.getStaticInstance(PhoneType.class).findAll();
     }
     catch (SQLException ex) {
       ex.printStackTrace();

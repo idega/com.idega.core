@@ -43,7 +43,7 @@ public class BasicUserOverview extends Page {
 
 
   public Table getUsers(IWContext iwc) throws Exception{
-    List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
+    List users = EntityFinder.findAllOrdered(com.idega.core.user.data.UserBMPBean.getStaticInstance(),com.idega.core.user.data.UserBMPBean.getColumnNameFirstName());
     Table userTable = null;
     List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 

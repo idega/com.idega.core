@@ -264,6 +264,44 @@ public class FileUtil {
     return buffer.toString();
   }
 
+
+/** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  public static void getURLToFile(String uri,File file){
+    //FileOutputStream fos = new FileOutputStream(file);
+    FileWriter writer= null;
+    String line;
+    BufferedInputStream bin;
+    BufferedReader in;
+    URL url;
+
+    try {
+      writer = new FileWriter(file);
+      url = new URL(uri);
+      bin = new BufferedInputStream(url.openStream());
+      in = new BufferedReader(new InputStreamReader(bin));
+      //Put the contents in a string
+      while ((line = in.readLine()) != null) {
+        writer.write(line);
+        writer.write('\n');
+      }
+      in.close();
+      writer.close();
+    }
+    catch(MalformedURLException mue) { // URL c'tor
+      //return "MalformedURLException: Site not available or wrong url";
+      mue.printStackTrace();
+    }
+    catch(IOException ioe) { // Stream constructors
+      //return "IOException: Site not available or wrong url";
+      ioe.printStackTrace();
+    }
+
+  }
+
+
+
+
+
   /** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
 
    public static Vector getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{

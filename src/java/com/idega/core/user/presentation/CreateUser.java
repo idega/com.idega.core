@@ -165,8 +165,8 @@ public class CreateUser extends Window {
 
     try {
       String[] gr = new String[1];
-      gr[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-      List groups = com.idega.core.data.GenericGroup.getAllGroups(gr,false);
+      gr[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      List groups = com.idega.core.data.GenericGroupBMPBean.getAllGroups(gr,false);
       if(groups != null){
         /**
          * @todo filter standardGroups

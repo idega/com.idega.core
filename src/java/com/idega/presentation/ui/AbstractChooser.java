@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.11 2002/04/02 12:31:24 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.12 2002/04/06 19:07:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

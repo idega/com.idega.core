@@ -1,5 +1,5 @@
 /*
- * $Id: FileLocalizer.java,v 1.1 2001/09/26 20:00:42 aron Exp $
+ * $Id: FileLocalizer.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *

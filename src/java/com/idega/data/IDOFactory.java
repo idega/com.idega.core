@@ -35,7 +35,7 @@ public abstract class IDOFactory implements IDOHome{
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,int id)throws javax.ejb.FinderException{
     try{
       IDOEntity theReturn = idoCreate(entityInterfaceClass);
-      ((GenericEntity)theReturn).findByPrimaryKey(id);
+      ((IDOLegacyEntity)theReturn).findByPrimaryKey(id);
       return theReturn;
     }
     catch(Exception e){
@@ -129,8 +129,8 @@ public abstract class IDOFactory implements IDOHome{
     return theReturn;
   }
 
-  protected GenericEntity idoGetPooledEntity(){
-    return GenericEntity.getStaticInstance(this.getEntityInterfaceClass());
+  protected IDOLegacyEntity idoGetPooledEntity(){
+    return com.idega.data.GenericEntity.getStaticInstance(this.getEntityInterfaceClass());
   }
 
 }

@@ -174,7 +174,7 @@ public class IWBundle implements java.lang.Comparable {
    }
 
    private void createDataRecords()throws Exception{
-      List entities = com.idega.data.EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_DATA,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+      List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_DATA,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
       if(entities!=null){
 	Iterator iter = entities.iterator();
 	while (iter.hasNext()) {
@@ -198,7 +198,7 @@ public class IWBundle implements java.lang.Comparable {
   }
 
   private void registerBlockPermisionKeys()throws Exception{
-    List entities = com.idega.data.EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_BLOCK,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+    List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
     if(entities!=null){
       Iterator iter = entities.iterator();
       while (iter.hasNext()) {
@@ -237,10 +237,10 @@ public class IWBundle implements java.lang.Comparable {
 	String componentType = this.getComponentType(className);
 
 	addComponentToDatabase(className,componentType,componentName);
-      /*  ICObject ico = ICObject.getICObject(className);
+      /*  ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
 	if(ico==null){
 	  try{
-	    ico = new ICObject();
+	    ico = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
 	    ico.setObjectClass(Class.forName(className));
 	    ico.setName(componentName);
 	    ico.setObjectType();
@@ -628,7 +628,7 @@ public class IWBundle implements java.lang.Comparable {
      * Returns an empty list if nothing found
      */
     public List getICObjectsList() throws IDOFinderException{
-      List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+      List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
       return l;
     }
 
@@ -655,8 +655,8 @@ public class IWBundle implements java.lang.Comparable {
      * Returns null if there is an exception
      */
     public List getICObjectsList(String componentType)throws IDOFinderException{
-	List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
-	//return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+	List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
+	//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
 	return l;
     }
 
@@ -668,7 +668,7 @@ public class IWBundle implements java.lang.Comparable {
      */
     public ICObject[] getICObjects(String componentType){
       try{
-	//return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+	//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
 	List l = getICObjectsList(componentType);
 	return (ICObject[]) l.toArray(new ICObject[0]);
       }
@@ -683,7 +683,7 @@ public class IWBundle implements java.lang.Comparable {
     }
 
     public static List getAvailableComponentTypes(){
-      return ICObject.getAvailableComponentTypes();
+      return com.idega.core.data.ICObjectBMPBean.getAvailableComponentTypes();
     }
 
 
@@ -710,19 +710,19 @@ public class IWBundle implements java.lang.Comparable {
 
 
     private void addComponentToDatabase(String className,String componentType,String componentName){
-	ICObject ico = ICObject.getICObject(className);
+	ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
 	if(ico==null){
 	  try{
-	    ico = new ICObject();
+	    ico = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
       Class c = Class.forName(className);
 	    ico.setObjectClass(c);
 	    ico.setName(componentName);
 	    ico.setObjectType(componentType);
 	    ico.setBundle(this);
 	    ico.insert();
-	    if(componentType.equals(ICObject.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
+	    if(componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)){
 	      com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
-        if(componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
+        if(componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)){
           registerBlockPermissionKeys(c);
         }
 
@@ -809,7 +809,7 @@ public class IWBundle implements java.lang.Comparable {
 
     public void removeComponent(String className){
       getComponentList().removeProperty(className);
-      ICObject.removeICObject(className);
+      com.idega.core.data.ICObjectBMPBean.removeICObject(className);
     }
 
     public List getComponentKeys(){
