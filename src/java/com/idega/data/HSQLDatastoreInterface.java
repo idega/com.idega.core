@@ -79,10 +79,15 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		// "+entity.getTableName()+" CALL \""+this.getClass().getName()+"\"");
 	}
 
-	public String getIDColumnType() {
-		return "INTEGER IDENTITY";
+	public String getIDColumnType(GenericEntity entity)
+	{
+		if (entity.getIfAutoIncrement()) {
+			return "INTEGER IDENTITY";
+		} else {
+			return "INTEGER";
+		}
 	}
-
+	
 	public void createSequence(GenericEntity entity) throws Exception {
 	}
 
