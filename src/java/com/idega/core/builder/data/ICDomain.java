@@ -17,4 +17,8 @@ public interface ICDomain extends com.idega.data.IDOLegacyEntity
  public com.idega.core.builder.data.ICPage getStartTemplate();
  public void setServerName(String serverName);
  public String getServerName();
+ /**
+  * Get the UUID that uniquely identifies this domain
+  */
+ public String getUniqueId();
 }

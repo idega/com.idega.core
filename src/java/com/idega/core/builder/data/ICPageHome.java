@@ -1,5 +1,8 @@
 package com.idega.core.builder.data;
 
+import java.util.Collection;
+import javax.ejb.FinderException;
+
 
 public interface ICPageHome extends com.idega.data.IDOHome
 {
@@ -12,6 +15,10 @@ public interface ICPageHome extends com.idega.data.IDOHome
  * @param integer
  * @return
  */
-public java.util.Collection findByTemplate(Integer integer)throws javax.ejb.FinderException;
-
+ public java.util.Collection findByTemplate(Integer integer)throws javax.ejb.FinderException;
+ public ICPage findByUri(String pageUri,int domainId)throws javax.ejb.FinderException;
+/**
+ * @return
+ */
+ public Collection findAllPagesWithoutUri()throws FinderException;
 }
