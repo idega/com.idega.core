@@ -405,13 +405,13 @@ public class Form extends InterfaceObjectContainer {
 		this.addTheMaintainedBuilderParameters(iwc);
 
 		if (maintainAllParameters) {
-			if (iwc.getParameter("idega_special_form_parameter") != null) {
+			/*if (iwc.getParameter("idega_special_form_parameter") != null) {
 				PresentationObjectContainer cont = (PresentationObjectContainer) iwc.getSessionAttribute("idega_special_form_parameters");
 				if (cont != null) {
 					this.add(cont);
 				}
 			}
-			else {
+			else {*/
 
 				PresentationObjectContainer cont = new PresentationObjectContainer();
 				for (Enumeration enum = iwc.getParameterNames(); enum.hasMoreElements();) {
@@ -420,8 +420,8 @@ public class Form extends InterfaceObjectContainer {
 				}
 				cont.add(new Parameter("idega_special_form_parameter", ""));
 				this.add(cont);
-				iwc.setSessionAttribute("idega_special_form_parameters", cont);
-			}
+				//iwc.setSessionAttribute("idega_special_form_parameters", cont);
+			//}
 		}
 		else if (maintainedParameters != null) {
 			for (Enumeration e = maintainedParameters.elements(); e.hasMoreElements();) {
