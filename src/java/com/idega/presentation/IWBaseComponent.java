@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.3 2004/10/29 01:17:24 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.4 2004/11/14 23:24:05 tryggvil Exp $
  * Created on 20.2.2004 by  tryggvil in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -28,16 +28,11 @@ import com.idega.util.text.TextStyler;
  * @version 1.0
  */
 public class IWBaseComponent extends UIComponentBase {
-
-	/**
-	 * 
-	 * @uml.property name="_styler"
-	 * @uml.associationEnd multiplicity="(0 1)"
-	 */
+	
 	private TextStyler _styler;
-
 	private String styleAttribute;
-
+	private boolean isInitialized = false;
+	
 	/**
 	 * This is an old idegaWeb style add method.
 	 * Does the same as getChildren().add(comp) in JSF>
@@ -63,8 +58,12 @@ public class IWBaseComponent extends UIComponentBase {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
-	public void encodeBegin(FacesContext arg0) throws IOException {
-		super.encodeBegin(arg0);
+	public void encodeBegin(FacesContext context) throws IOException {
+		if(!isInitialized()){
+			initializeContent();
+			setInitialized();
+		}
+		super.encodeBegin(context);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
@@ -148,5 +147,49 @@ public class IWBaseComponent extends UIComponentBase {
 	 */
 	public String getFamily() {
 		return "idegaweb";
-	}	
+	}
+
+
+	/**
+	 * This is a method that is ensured that is only called once in initalization in a
+	 * state saved component. This method is intended to be implemented in subclasses for example to add components.
+	 */
+	protected void initializeContent() {
+		//does nothing by default
+	}
+	
+	protected boolean isInitialized(){
+		return this.isInitialized;
+	}
+	
+	protected void setInitialized(){
+		this.isInitialized=true;
+	}
+	
+	
+	/**
+	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[4];
+		values[0] = super.saveState(ctx);
+		values[1] = styleAttribute;
+		values[2] = _styler;
+		values[3] = new Boolean(isInitialized);
+		return values;
+	}
+
+	/**
+	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext,
+	 *      java.lang.Object)
+	 */
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		styleAttribute = ((String) values[1]);
+		_styler = (TextStyler) values[2];
+		isInitialized = ((Boolean) values[3]).booleanValue();
+	}
+	
+	
 }
