@@ -158,8 +158,8 @@ public class IWStarterServlet extends GenericServlet
               startIdegaDatabasePool();
             }
 
-            application.loadBundles();
             application.startAccessController();
+            application.loadBundles();
             executeServices(application);
             sendStartMessage("Completed");
         }
