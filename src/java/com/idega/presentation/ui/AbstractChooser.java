@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.3 2001/10/31 13:12:38 tryggvil Exp $
+ * $Id: AbstractChooser.java,v 1.4 2001/11/23 18:22:56 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -38,6 +38,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private String _style;
   private String _stringValue;
   private String _stringDisplay;
+  private String _attributeValue;
+  private String _attributeName;
 
   /**
    *
@@ -162,6 +164,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       link.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
       link.addParameter(DISPLAYSTRING_PARAMETER_NAME,input.getName());
       link.addParameter(VALUE_PARAMETER_NAME,value.getName());
+      if ( _attributeName != null && _attributeValue != null ) {
+        link.addParameter(_attributeName,_attributeValue);
+      }
       table.add(link,2,1);
     }
 
@@ -199,5 +204,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
   public void setChooseButtonImage(Image buttonImage){
     _buttonImage = buttonImage;
+  }
+
+  public void setParameterValue(String attributeName, String attributeValue) {
+    _attributeName = attributeName;
+    _attributeValue = attributeValue;
   }
 }
