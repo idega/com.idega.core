@@ -6,6 +6,7 @@ import com.idega.builder.data.IBPageHome;
 
 import java.sql.SQLException;
 import com.idega.user.data.*;
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
@@ -22,10 +23,12 @@ import com.idega.idegaweb.presentation.DataEmailer;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -33,6 +36,7 @@ import com.idega.data.*;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 import com.idega.block.staff.business.StaffBusiness;
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.business.AddressBusiness;
 
@@ -1346,6 +1350,96 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public boolean hasUserLogin(int userID)throws RemoteException{
 		LoginTable lt = LoginDBHandler.getUserLogin(userID);
 		return lt!=null;
+	}
+	
+	/**
+	 * Returns a collection of Groups that are this users top nodes. The nodes that he has either view or owner permissions to<br>
+	 * To end up with only the top nodes we do the following:<br>
+	 * For each group (key) in the parents Map we check if that group is contained within any of<br>
+	 * the other groups' parents. If another group has this group as a parent it is removed and its parent list<br>
+	 * and we move on to the next key. This way the map we iterate through will always get smaller until only the<br>
+	 * top node groups are left.
+	 * @param user
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user)throws RemoteException{
+		Collection topNodes = new Vector();
+
+		
+		try {
+		
+		Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+		HashMap parents = new HashMap();
+		
+		//get all view permissions for direct parent and put in a list
+		Iterator groups = directlyRelatedParents.iterator();
+		List allViewAndOwnerPermissions = new Vector();
+		while (groups.hasNext()) {
+			Group group = (Group) groups.next();
+			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
+			allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
+			allViewAndOwnerPermissions.addAll(viewPermissions);
+		}
+		Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
+		allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
+		allViewAndOwnerPermissions.addAll(ownedPermissions);
+		
+		
+		//get all (recursively) parents for permission
+		GroupBusiness groupBiz = getGroupBusiness();
+		Iterator permissions = allViewAndOwnerPermissions.iterator();
+		while (permissions.hasNext()) {
+			ICPermission perm = (ICPermission) permissions.next();
+			try {
+				String groupId = perm.getContextValue();
+				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+				Collection recParents = groupBiz.getParentGroupsRecursive(group);
+				parents.put(group,recParents);
+			}
+			catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			}
+			catch (FinderException e1) {
+				System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
+			}
+		}
+		
+		
+		//Filter out the real top nodes!
+		List skipThese = new ArrayList();
+		Set keys = parents.keySet();
+		Iterator iter = keys.iterator();
+		while (iter.hasNext()) {
+			Group myGroup = (Group) iter.next();
+		
+			Iterator iter2 = parents.keySet().iterator();
+			while (iter2.hasNext()) {
+				Group myGroup2 = (Group) iter2.next();
+				if(myGroup.equals(myGroup2) || skipThese.contains(myGroup)) continue;//dont check for self
+				
+				Collection theParents = (Collection) (parents.get(myGroup2));
+				
+				if(theParents!=null && theParents.contains(myGroup)){
+					skipThese.add(myGroup2); 
+				}//remove if this group is a child group of myGroup
+					
+			}
+		}
+		
+		topNodes = parents.keySet();
+		topNodes.removeAll(skipThese);
+			
+		}
+		catch (EJBException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+					
+		return 	topNodes;
+	
 	}
 	
 

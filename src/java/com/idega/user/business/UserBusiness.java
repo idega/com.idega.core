@@ -131,6 +131,11 @@ public interface UserBusiness extends com.idega.business.IBOService
 	 *  Returns User from personal id, throws EJBException if not found
 	 */
 	public  User getUser(String personalID) throws EJBException;
+
+	
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user)throws RemoteException;
+
   public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException;
   public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException;
+
 }
