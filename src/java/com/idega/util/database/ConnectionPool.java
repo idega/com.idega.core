@@ -24,6 +24,31 @@ import com.idega.util.LogWriter;
 */
 public class ConnectionPool
 {
+	/**
+	 * Constructor ConnectionPool.
+	 * @param poolName
+	 * @param url
+	 * @param user
+	 * @param password
+	 * @param max
+	 * @param init
+	 * @param timeOut
+	 * @param pw
+	 * @param logLevel
+	 * @param lRefreshIntervalMillis
+	 */
+	public ConnectionPool(
+		String poolName,
+		String url,
+		String user,
+		String password,
+		int max,
+		int init,
+		int timeOut,
+		PrintWriter pw,
+		int logLevel) {
+			this(poolName,url,user,password,max,init,timeOut,pw,logLevel,-1);			
+	}
 	private String name;
 	private String URL;
 	private String user;
@@ -35,7 +60,9 @@ public class ConnectionPool
 	private long lConnectionTimeOut = 10 * 60 * 1000; //10 minutes
 	private Map checkedOutInfoMap;
 	//private long lastRefresh;
-	private final long refreshIntervalMillis = 20 * 60 * 1000;
+	//private final long refreshIntervalMillis = 1 * 60 * 1000;
+	private long refreshIntervalMillis = 20 * 60 * 1000;
+
 	private ConnectionRefresher refresher;
 	//private int checkedOut;
 	private Vector freeConnections = new Vector();
@@ -50,12 +77,16 @@ public class ConnectionPool
 		int initConns,
 		int timeOut,
 		PrintWriter pw,
-		int logLevel)
+		int logLevel,
+		long refreshIntervalMilis)
 	{
 		this.name = name;
 		this.URL = URL;
 		this.user = user;
 		this.password = password;
+		if(refreshIntervalMilis!=-1){
+			this.refreshIntervalMillis=refreshIntervalMilis;
+		}
 		//Special case if using Interbase/Firebird
 		if ((URL.indexOf("interbase") != -1) || (URL.indexOf("firebird") != -1))
 		{
@@ -96,7 +127,9 @@ public class ConnectionPool
 	}
 	public void initializeRefresher(long refreshIntervalMillis)
 	{
-		refresher = new ConnectionRefresher(this, refreshIntervalMillis);
+		if(refresher==null){
+			refresher = new ConnectionRefresher(this, refreshIntervalMillis);
+		}
 	}
 	protected synchronized void refresh()
 	{
@@ -104,6 +137,11 @@ public class ConnectionPool
 		int size = freeConnections.size();
 		int conns = getCurrentConnectionCount();
 		debug("[ConnectionPool.refresh()] : size=" + size + ", conns=" + conns + ", getCheckedOutCount()=" + this.getCheckedOutCount());
+		if(conns==0){
+			//This should only happen if the datastore has become unreachable
+			initPool(minConns);	
+			return;
+		}
 		for (int i = 0; i < conns; i++)
 		{
 			try
@@ -135,10 +173,16 @@ public class ConnectionPool
 			}
 			catch (Exception ex)
 			{
-				System.err.println("There was an error in ConnectionPool.refresh() for i=" + i + " \n The error was: " + ex.getMessage());
+				System.err.println("There was an exception in ConnectionPool.refresh() for i=" + i + " \n The exception was: " + ex.getMessage());
 				System.err.println("Error calling freeConnection(this.newConnection())");
 				ex.printStackTrace(System.err);
 			}
+			//catch (Error ex)
+			//{
+			//	System.err.println("There was an Error in ConnectionPool.refresh() for i=" + i + " \n The Error was: " + ex.getMessage());
+			//	System.err.println("Error calling freeConnection(this.newConnection())");
+			//	ex.printStackTrace(System.err);
+			//}
 		}
 	}
 	private void initPool(int initConns)

@@ -49,6 +49,7 @@ public class PoolManager
 		clients++;
 		return instance;
 	}
+
 	static synchronized public PoolManager getInstance(String propertiesFileLocation)
 	{
 		if (instance == null)
@@ -59,6 +60,7 @@ public class PoolManager
 		clients++;
 		return instance;
 	}
+
 	private void init(String propertiesFile)
 	{
 		// Log to System.err until we have read the logfile property
@@ -131,6 +133,8 @@ public class PoolManager
 				String user = props.getProperty(poolName + ".user");
 				String password = props.getProperty(poolName + ".password");
 				String maxConns = props.getProperty(poolName + ".maxconns", "0");
+				String sRefreshIntervalMinutes=props.getProperty(poolName + ".refreshminutes", "20");;
+				long lRefreshIntervalMillis;
 				int max;
 				try
 				{
@@ -177,7 +181,18 @@ public class PoolManager
 				{
 					logLevel = LogWriter.DEBUG;
 				}
-				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, pw, logLevel);
+				try
+				{
+					int iRefreshIntervalMinutes=Long.valueOf(sRefreshIntervalMinutes).intValue();
+					lRefreshIntervalMillis = iRefreshIntervalMinutes * 60 * 1000;
+				}
+				catch (NumberFormatException e)
+				{
+					lRefreshIntervalMillis=20*1000*60;
+					logWriter.log("Invalid refreshminutes value " + sRefreshIntervalMinutes + " for " + poolName, LogWriter.ERROR);
+					max = 0;
+				}
+				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, pw, logLevel,lRefreshIntervalMillis);
 				pools.put(poolName, pool);
 			}
 		}

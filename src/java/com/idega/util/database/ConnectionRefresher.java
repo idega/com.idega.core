@@ -9,26 +9,24 @@ package com.idega.util.database;
 import com.idega.data.IDONoDatastoreError;
 
 /**
-
  *
-
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
 *@version 1.3
-
 * Class to deliver database connections through a poolmanager
-
 */
 public class ConnectionRefresher implements Runnable
 {
 	private Thread refresher;
 	private ConnectionPool pool;
-	private long refreshIntervalMillis;
+	private long setRefreshIntervalMillis;
+	private long emergencyIntervalMillis=30*1000;//30 secs.
 	private long lastRun;
+	private boolean datastoreNotReachable=false;
 	protected ConnectionRefresher(ConnectionPool pool, long refreshIntervalMillis)
 	{
 		this.pool = pool;
-		this.refreshIntervalMillis = refreshIntervalMillis;
+		this.setRefreshIntervalMillis=refreshIntervalMillis;
+		setRefreshIntervalMillis = refreshIntervalMillis;
 		lastRun=System.currentTimeMillis();
 		refresher = new Thread(this);
 		refresher.setPriority(Thread.MIN_PRIORITY);
@@ -41,7 +39,8 @@ public class ConnectionRefresher implements Runnable
 		{
 			try
 			{
-				refresher.sleep(this.refreshIntervalMillis + Math.round((this.refreshIntervalMillis / 2) * Math.random()));
+				//refresher.sleep(this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random()));
+				refresher.sleep(getSleepTime());
 				runRefresh();
 			}
 			catch (InterruptedException ex)
@@ -57,8 +56,8 @@ public class ConnectionRefresher implements Runnable
 			//refresher.interrupt();
 			try
 			{
-				//refresher.sleep(this.refreshIntervalMillis + Math.round((this.refreshIntervalMillis / 2) * Math.random()));
 				pool.refresh();
+				datastoreNotReachable=false;
 			}
 			catch (Exception ex)
 			{
@@ -66,8 +65,24 @@ public class ConnectionRefresher implements Runnable
 			}
 			catch (IDONoDatastoreError ex)
 			{
+				datastoreNotReachable=true;
 				System.err.println("There was an IDONoDatastoreError in ConnectionRefresher.run() The error was: " + ex.getMessage());
 			}
+			catch (Throwable th)
+			{
+				datastoreNotReachable=true;
+				System.err.println("There was a Throwable caught in ConnectionRefresher.run() The error was: " + th.getClass().getName()+" : "+th.getMessage());
+			}
+			
+	}
+	
+	private long getSleepTime(){
+		if(datastoreNotReachable){
+			return this.emergencyIntervalMillis;	
+		}
+		else{
+			return this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random());	
+		}
 	}
 	
 	public void stop()
