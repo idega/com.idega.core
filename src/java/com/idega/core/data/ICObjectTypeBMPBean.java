@@ -69,7 +69,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		  ICObjectType type = home.create();
 		  type.setType(objectType);
 		  type.setName(objectName);
-		  type.setRequiredInterfacesString(superClass);
+		  type.setRequiredSuperClassName(superClass);
 		  type.setRequiredInterfacesString(interfaces);
 		  type.setFinalReflectionClassName(reflection);
 		  type.setMethodStartFiltersString(filters);
