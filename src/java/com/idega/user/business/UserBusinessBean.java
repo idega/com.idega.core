@@ -1494,7 +1494,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Iterator iterator = topNodes.iterator();
 		while ( iterator.hasNext()) {
 			Group group = (Group) iterator.next();
-			String groupType = group.getGroupTypeKey();
+			String groupType = group.getGroupType(); 
 			groupTypeGroup.put(groupType, group);
 		}
 		Iterator typeIterator = groupTypes.iterator();
