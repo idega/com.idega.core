@@ -51,7 +51,7 @@ public class User extends GenericEntity {
       this.setNullable(getColumnNameSystemImage(),true);
       this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
       //temp
-      //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
+      this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
     }
 
     public void setDefaultValues(){
