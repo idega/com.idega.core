@@ -1,9 +1,8 @@
 <project>
     <pomVersion>3</pomVersion>
+    <name>idegaWeb Core</name>
     <groupId>com.idega.core</groupId>
     <artifactId>com.idega.core</artifactId>
-    <name>idegaWeb Core</name>
-    <id>com.idega.core</id>
     <currentVersion>2.0</currentVersion>
     <organization>
         <name>idega software</name>
@@ -29,29 +28,29 @@
     </mailingLists>
     <developers>
         <developer>
-            <id>tryggvil</id>
             <name>Tryggvi Larusson</name>
+            <id>tryggvil</id>
             <email>tryggvi@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>palli</id>
             <name>Pall Helgason</name>
+            <id>palli</id>
             <email>palli@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>eiki</id>
             <name>Eirikur Sveinn Hrafnsson</name>
+            <id>eiki</id>
             <email>eiki@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>laddi</id>
             <name>Thorhallur Helgason</name>
+            <id>laddi</id>
             <email>laddi@idega.is</email>
             <organization>idega software</organization>
             <roles/>
@@ -188,6 +187,7 @@
         </dependency>
     </dependencies>
     <build>
+        <nagEmailAddress>idegaweb-dev@idega.com</nagEmailAddress>
         <sourceDirectory>src/java</sourceDirectory>
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
         <unitTest>
@@ -206,4 +206,5 @@
         <report>maven-file-activity-plugin</report>
         <report>maven-changes-plugin</report>
     </reports>
+    <properties/>
 </project>
