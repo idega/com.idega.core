@@ -49,7 +49,7 @@ public abstract class DatastoreInterface{
         className = "com.idega.data.MySQLDatastoreInterface";
     }
     else{
-        className = "unimplemented";
+        className = "unimplemented DatastoreInterface";
     }
 
     theReturn = (DatastoreInterface)interfacesHashtable.get(className);
@@ -458,6 +458,7 @@ public abstract class DatastoreInterface{
               Class relClass = (Class)relMap.get(column);
               try{
                 GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+                createEntityRecord(entity1);
                 createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
               }
               catch(Exception e){
