@@ -1025,32 +1025,32 @@ public static String findAndReplace(String text, String stringToFind, String str
   public static String stripHTMLTagAndChangeBodyTagToTable(String html){
 
    Vector crappy = TextSoap.FindAllBetween(html,"<body","</body>");
+   String prefix = "<tr><td>";
+   String suffix = "</td></tr></table>";
+   String tabletag = "<table cellpadding=\"0\" cellspacing=\"0\" ";
+   String crap = "";
+   int bracket = -1;
 
    if( crappy.size() >0 ){
-
-    String crap = (String)crappy.elementAt(0);
-
-    html = "<table "+crap+"</table>";
-
+    crap = (String)crappy.elementAt(0);
+    bracket = crap.indexOf(">");
    }
-
    else{
-
     crappy = TextSoap.FindAllBetween(html,"<BODY","</BODY>");
-
     if( crappy.size() >0 ){
-
-      String crap = (String)crappy.elementAt(0);
-
-      html = "<table "+crap+"</table>";
-
+      crap = (String)crappy.elementAt(0);
+      bracket = crap.indexOf(">");
     }
-
    }
 
+   if( bracket!=-1){
+    String temp = crap.substring(bracket+1,crap.length());
+    crap = crap.substring(0,bracket)+prefix+temp;
+   }
 
+   html = tabletag+crap+suffix;
 
-    return html;
+   return html;
 
   }
 
