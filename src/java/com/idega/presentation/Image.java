@@ -318,12 +318,23 @@ public void setNoImageLink(){
   this.linkOnImage = false;
 }
 
-private String getPrintStringWithName(){
+public void setAlt(String alt){
+ setAttribute("alt",alt);
+}
+
+public String getAlt(){
+ return getAttribute("alt");
+}
+
+private String getHTMLString(){
   StringBuffer sPrint = new StringBuffer();
-  sPrint.append("<img alt=\"");
-  sPrint.append(getName());
-  sPrint.append("\"");
-  sPrint.append(" name=\"");
+  sPrint.append("<img ");
+  if( getAlt()!=null ){
+    sPrint.append("alt=\"");
+    sPrint.append(getAlt());
+    sPrint.append("\" ");
+  }
+  sPrint.append("name=\"");
   sPrint.append(getName());
   sPrint.append("\"");
   sPrint.append(getAttributeString());
@@ -332,26 +343,6 @@ private String getPrintStringWithName(){
   }
   sPrint.append(" >");
   return sPrint.toString();
-}
-
-private String getPrintString(){
-  StringBuffer sPrint = new StringBuffer();
-  sPrint.append("<img ");
-  sPrint.append(getAttributeString());
-  if ( align != null ) {
-    sPrint.append(" align=\""+align+"\" ");
-  }
-  sPrint.append(" />");
-  return sPrint.toString();
-}
-
-private String getHTMLString(){
-  if (getName() != null){
-    return getPrintStringWithName();
-  }
-  else{
-    return getPrintString();
-  }
 }
 
 public static String getNoImageSource(){
@@ -583,12 +574,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     if (getLanguage().equals("HTML")){
       //added by eiki
       if( imageId ==-1 ){//from an url
-        if (getName() != null){
-          print(getPrintStringWithName());
-        }
-        else{
-          print(getPrintString());
-        }
+          print(getHTMLString());
       }
       else{//from the database
         getHTMLImage(iwc);
