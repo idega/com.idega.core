@@ -104,6 +104,10 @@ private Image helpImage = null;
 		headerTable.setWidth("100%");
 		headerTable.setAlignment(2,1,"right");
 		headerTable.setVerticalAlignment(1,1,"top");
+		if(titleIsSet) {
+			headerTable.setCellpaddingRight(2, 1, 12);
+			headerTable.add(getAdminTitle(),2,1);
+		}
 
 		mainTable = new Table();
 		mainTable.setStyleClass(backTableStyle);
@@ -199,13 +203,6 @@ private Image helpImage = null;
 		super._main(iwc);
 	}
 	public void main(IWContext iwc)throws Exception{
-	}
-	public void print(IWContext iwc) throws Exception {
-		if(titleIsSet) {
-			headerTable.setCellpaddingRight(2, 1, 12);
-			headerTable.add(getAdminTitle(),2,1);
-		}
-		super.print(iwc);
 	}
 	public Help getHelp(String helpTextKey) {
 		IWContext iwc = IWContext.getInstance();
