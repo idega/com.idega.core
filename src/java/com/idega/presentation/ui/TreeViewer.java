@@ -211,7 +211,7 @@ public class TreeViewer extends AbstractTreeViewer {
           String nodeName = node.getNodeName();
           l.setURL("#");
           if ( fromEditor )
-          	l.setOnClick("save('http://localhost:8005/servlet/IBMainServlet?ib_page="+node.getNodeID()+"','_self')");
+          	l.setOnClick("save('http://"+iwc.getServerName()+"/servlet/IBMainServlet?ib_page="+node.getNodeID()+"','_self')");
           else
           	l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
         } else if(nodeActionPrm != null){
