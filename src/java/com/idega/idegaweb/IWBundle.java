@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.84 2004/11/14 23:27:24 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.85 2004/12/21 17:39:33 gimmi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.FinderException;
+import javax.faces.component.html.HtmlGraphicImage;
+import javax.faces.component.html.HtmlOutputText;
 
 import com.idega.core.component.data.ICObject;
 import com.idega.data.IDOLookupException;
@@ -29,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2004/11/14 23:27:24 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/21 17:39:33 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.84 $
+ * @version $Revision: 1.85 $
  */
 public interface IWBundle {
 	/**
@@ -272,4 +274,13 @@ public interface IWBundle {
 	 * @return
 	 */
 	public String getJSPURI(String jspInBundle);
+	
+	public HtmlGraphicImage getLocalizedImage(String pathAndName);
+	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context);
+	/**
+	 * Returns a localized HtmlOutputText objec bound tot he localizationKey
+	 * @param localizationKey LocalizationKey
+	 * @return 
+	 */
+	public HtmlOutputText getLocalizedText(String localizationKey);
 }
