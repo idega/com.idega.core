@@ -64,4 +64,7 @@ public interface UserBusiness extends com.idega.business.IBOService
    * Creates a new user with a firstname,middlename, lastname and personalID where middlename and personalID can be null
    */
   public com.idega.user.data.User createUser(String firstname, String middlename, String lastname,String personalID) throws CreateException,java.rmi.RemoteException;
-}
+
+  public com.idega.core.data.Address getUsersMainAddress(com.idega.user.data.User user) throws java.rmi.RemoteException;
+
+  }

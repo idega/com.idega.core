@@ -468,6 +468,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   }
 
+  /**
+   * @depricated Use getUsersMainAddress(user) instead.
+   */
   public Address getUserAddress1(int userId) throws EJBException,RemoteException{
     AddressType addressType1 = this.getAddressHome().getAddressType1();
     //IDOLegacyEntity[] result = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.AddressBMPBean.getStaticInstance(Address.class));
@@ -488,6 +491,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return null;
   }
+
+  /**
+   * Gets the users main address and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getUsersMainAddress(User user) throws RemoteException{
+    AddressType addressType1 = this.getAddressHome().getAddressType1();
+    Collection addresses = user.getAddresses();
+    if(addresses != null){
+      Iterator iter = addresses.iterator();
+      while (iter.hasNext()) {
+        Address item = (Address)iter.next();
+        if(item.getAddressType().equals(addressType1))
+          return item;
+      }
+    }
+    return null;
+  }
+
 
 
   public void updateUserAddress1(int userId, String streetName, String streetNumber, String city, Integer postalCodeId, String providence, Integer countryId, String pobox ) throws CreateException,RemoteException {
