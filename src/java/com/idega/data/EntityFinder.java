@@ -1333,28 +1333,16 @@ public class EntityFinder{
       String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
 
 
-
       StringBuffer buffer=new StringBuffer();
-
         buffer.append("select "+returningEntity.getTableName()+".* from ");
-
         buffer.append(returningEntity.getTableName());
-
         buffer.append(" where ");
-
         buffer.append(returningEntity.getIDColumnName());
-
         buffer.append(" not in (select "+returningEntity.getIDColumnName()+" from ");
-
         buffer.append(tableToSelectFrom);
-
         buffer.append(")");
 
-
-
       String SQLString=buffer.toString();
-
-
 
       return findRelated(fromEntity,returningEntity,SQLString);
 

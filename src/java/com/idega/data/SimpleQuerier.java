@@ -24,11 +24,11 @@ import com.idega.util.database.ConnectionBroker;
 
 
 /**
-
+*A class to query/update directly to an SQL datastore. This class should only be used by data implementation classes
+*
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
+*
 *@version 1.0
-
 */
 
 public class SimpleQuerier{
@@ -36,15 +36,9 @@ public class SimpleQuerier{
 
 
         /**
-
          * Does nothing
-
          */
-
         private SimpleQuerier(){
-
-
-
         }
 
 
@@ -52,205 +46,110 @@ public class SimpleQuerier{
 
 
         private static String getDatasource(){
-
           return "default";
-
         }
 
 
 
 	/**
-
 	 * Gets a databaseconnection identified by the datasourceName
-
 	 */
-
 	private static Connection getConnection(String datasourceName)throws SQLException{
-
 		return ConnectionBroker.getConnection(datasourceName);
-
 	}
 
 
-
 	/**
-
 	 * Gets the default database connection
-
 	 */
-
 	private static Connection getConnection()throws SQLException{
-
 		return ConnectionBroker.getConnection(getDatasource());
-
 	}
 
 
-
 	/**
-
 	 * Frees the connection used, must be done after using a databaseconnection
-
 	 */
-
 	private static void freeConnection(String datasourceName,Connection connection){
-
 		ConnectionBroker.freeConnection(datasourceName,connection);
-
 	}
 
 
 
 	/**
-
 	 * Frees the default connection used, must be done after using a databaseconnection
-
 	 */
-
 	private static void freeConnection(Connection connection){
-
 		ConnectionBroker.freeConnection(getDatasource(),connection);
-
 	}
-
 
 
 	/**
-
 	 * Frees the default connection used, must be done after using a databaseconnection
-
 	 */
-
 	private static void freeConnection(Connection connection,String datasource){
-
 		ConnectionBroker.freeConnection(datasource,connection);
-
 	}
-
-
-
-
 
 	public static String[] executeStringQuery(String sqlQuery)throws Exception{
-
 		Connection conn= null;
-
                 try {
-
                   conn = getConnection();
-
                   return executeStringQuery(sqlQuery, conn);
-
                 }finally {
-
                   if (conn != null){
-
                           freeConnection(conn);
-
                   }
-
                 }
-
         }
-
-
 
 
 
 	public static String[] executeStringQuery(String sqlQuery,String datasource)throws Exception{
-
 		Connection conn= null;
-
                 try {
-
                   conn = getConnection(datasource);
-
                   return executeStringQuery(sqlQuery, conn);
-
                 }finally {
-
                   if (conn != null){
-
                           freeConnection(conn,datasource);
-
                   }
-
                 }
-
         }
 
 
 
 	public static String[] executeStringQuery(String sqlQuery, Connection conn)throws Exception{
-
 		Statement Stmt= null;
-
                 String[] theReturn = null;
-
 		try{
-
 			Stmt = conn.createStatement();
-
                         ResultSet RS = Stmt.executeQuery(sqlQuery);
-
-
-
                         Vector vector = new Vector();
-
-
-
                         while(RS.next()){
-
                           vector.add(RS.getString(1));
-
                         }
-
-
-
 			RS.close();
-
                         theReturn = (String[]) vector.toArray(new String[0]);
-
-
-
 		}
-
 		finally{
-
 			if(Stmt != null){
-
 				Stmt.close();
-
 			}
-
 		}
-
                 return theReturn;
-
 	}
 
 
-
-
-
         public static int executeIntQuery(String sqlQuery, Connection conn)throws Exception{
-
 		Statement Stmt= null;
-
                 int theReturn = -1;
-
 		try{
-
 			Stmt = conn.createStatement();
-
                         ResultSet RS = Stmt.executeQuery(sqlQuery);
 
-
-
                         Vector vector = new Vector();
-
                         if(RS.next()){
-
                           theReturn = RS.getInt(1);
 
                         }
@@ -269,53 +168,87 @@ public class SimpleQuerier{
 
 		}
 
-        IDOContainer.getInstance().flushAllCache();
-        return theReturn;
+            return theReturn;
 
 	}
 
 
 
-
-
-
-
+        /**
+         * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()
+         */
         public static boolean execute(String sqlString)throws Exception{
+            return execute(sqlString,true);
+        }
 
+
+        /**
+         * @deprecated Replaced with executeUpdate() or idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity
+         */
+        private static boolean execute(String sqlString,boolean flushCache)throws Exception{
 		Connection conn= null;
-
 		Statement Stmt= null;
-
                 boolean theReturn = false;
-
 		try{
-
 			conn = getConnection();
-
 			Stmt = conn.createStatement();
-
                         theReturn = Stmt.execute(sqlString);
-
 		}
-
 		finally{
-
 			if(Stmt != null){
-
 				Stmt.close();
-
 			}
-
 			if (conn != null){
-
 				freeConnection(conn);
-
 			}
-
 		}
-        IDOContainer.getInstance().flushAllCache();
-        return theReturn;
+                if(flushCache){
+                    IDOContainer.getInstance().flushAllCache();
+                }
+          return theReturn;
+	}
 
+
+
+        /**
+         * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
+         *  @returns true if there was an update, false if there was no update
+         *  @throws SQLException if there was an error
+         */
+        protected static boolean executeUpdate(String sqlString,String dataSource)throws SQLException{
+          return executeUpdate(sqlString,dataSource,true);
+        }
+
+        /**
+         * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if flushCache==true
+         *  @returns true if there was an update, false if there was no update
+         *  @throws SQLException if there was an error
+         */
+        protected static boolean executeUpdate(String sqlString,String dataSource,boolean flushCache)throws SQLException{
+		Connection conn= null;
+		Statement Stmt= null;
+                boolean theReturn = false;
+                int count=0;
+		try{
+			conn = getConnection(dataSource);
+			Stmt = conn.createStatement();
+                        count = Stmt.executeUpdate(sqlString);
+                        if(count>0){
+                          theReturn=true;
+                        }
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(dataSource,conn);
+			}
+		}
+                if(flushCache&&theReturn){
+                    IDOContainer.getInstance().flushAllCache();
+                }
+                return theReturn;
 	}
 
 }

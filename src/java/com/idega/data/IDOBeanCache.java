@@ -82,20 +82,20 @@ public class IDOBeanCache {
     return(getHomeQueryCacheMap().get(queryString)!=null);
   }
 
-  void flushAllHomeQueryCache(){
+  synchronized void flushAllHomeQueryCache(){
     homeQueryCacheMap=null;
   }
 
-  void flushAllFindQueryCache(){
+  synchronized void flushAllFindQueryCache(){
     findQueryCacheMap=null;
   }
 
-  void flushAllBeanCache(){
+  synchronized void flushAllBeanCache(){
     cacheMap=null;
   }
 
 
-  void flushAllQueryCache(){
+  synchronized void flushAllQueryCache(){
     flushAllFindQueryCache();
     flushAllHomeQueryCache();
   }

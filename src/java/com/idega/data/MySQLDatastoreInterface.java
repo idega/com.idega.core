@@ -328,43 +328,23 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
   public void createSequenceTable(IDOLegacyEntity entity)throws Exception{
-
     Connection conn = null;
-
     Statement Stmt = null;
-
     try {
-
       conn = entity.getConnection();
-
       Stmt = conn.createStatement();
-
       String s = "CREATE table " + getSequenceTableName(entity)+"("+entity.getIDColumnName()+" integer PRIMARY KEY auto_increment)";
-
       System.out.println(s);
-
       int i = Stmt.executeUpdate(s);
-
-
-
     }
-
     finally {
-
       if (Stmt != null) {
-
         Stmt.close();
-
       }
-
       if (conn != null) {
-
         entity.freeConnection(conn);
-
       }
-
     }
-
   }
 
 
@@ -372,15 +352,12 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
   public void createTrigger(IDOLegacyEntity entity)throws Exception{
-
     createSequenceTable(entity);
-
   }
 
 
 
   public void createForeignKeys(IDOLegacyEntity entity)throws Exception{
-
   }
 
 
@@ -388,14 +365,9 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
     protected String getCreationStatement(IDOLegacyEntity entity){
-
 		String returnString = "create table "+entity.getTableName()+"(";
-
 		String[] names = entity.getColumnNames();
-
 		for (int i = 0; i < names.length; i++){
-
-
 
                     /*if (entity.getMaxLength(names[i]) == -1){
 
