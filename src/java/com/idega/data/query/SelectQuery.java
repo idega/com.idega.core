@@ -23,6 +23,8 @@ public class SelectQuery implements Outputable {
 	private List criteria;
 	private List order;
 	private List groupBy;
+	private boolean _countQuery = false;
+    private boolean _distinct =false;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
@@ -220,11 +222,26 @@ public class SelectQuery implements Outputable {
 	public void write(Output out) {
 
 		out.println("SELECT");
+		
+		 if (_countQuery) {
+        	out.indent();
+        	out.println("COUNT(");
+        }
+        
+        if(_distinct){
+        	out.indent();
+        	out.print(" distinct ");
+        }
 
 		// Add columns to select
 		out.indent();
 		appendList(out, columns, ",");
 		out.unindent();
+		
+		if (_countQuery) {
+        	out.println(")");
+        	out.unindent();
+        }
 
 		// Add tables to select from
 		out.println("FROM");
@@ -331,5 +348,20 @@ public class SelectQuery implements Outputable {
 		}
 
 		return allTables;
+	}
+	
+	/**
+	 * @param countQuery The countQuery to set.
+	 */
+	public void setAsCountQuery(boolean countQuery) {
+		_countQuery = countQuery;
+	}
+	
+	/**
+	 * 
+	 * @param distinct The distinct to set
+	 */
+	public void setAsDistinct(boolean distinct){
+		_distinct = distinct;
 	}
 }
