@@ -1110,12 +1110,12 @@ public class IDOQuery {
 		this.appendAnd().append(dateColumnName).appendLessThanOrEqualsSign().append(toStamp);
 		return this;
 	}
-//	public IDOQuery appendWhereEqualsTimestamp(String dateColumnName, Timestamp stamp) {
-//		appendWhere(dateColumnName);
-//		this.appendEqualSign();
-//		this.append(stamp);
-//		return this;
-//	}
+	public IDOQuery appendWhereEqualsTimestamp(String dateColumnName, Timestamp stamp) {
+		appendWhere(dateColumnName);
+		this.appendEqualSign();
+		this.append(stamp);
+		return this;
+	}
 	
 	/**
 	 * Append condition for periods columns overlapping provided start and end date
