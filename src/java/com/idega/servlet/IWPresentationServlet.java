@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.55 2004/05/05 08:32:06 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.56 2004/05/05 09:04:15 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -355,8 +355,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 			iwc.setContentType("application/pdf");
 		}
 		//getPage()._print(iwc);
-		//getPage()._initPrinting(iwc);
-		getPage().renderComponent(iwc);
+		getPage()._initPrinting(iwc);
+		//getPage().renderComponent(iwc);
 		//System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 	private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response) {
