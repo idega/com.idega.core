@@ -2,7 +2,7 @@
 
 /*
 
- * $Id: DatastoreInterface.java,v 1.47 2002/04/15 12:57:29 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.48 2002/05/02 19:47:35 tryggvil Exp $
 
  *
 
@@ -1359,38 +1359,23 @@ public abstract class DatastoreInterface{
 
 //		  Stmt = conn.createStatement();
 
-
-
             StringBuffer statement = new StringBuffer("");
-
             statement.append("update ");
-
             statement.append(entity.getTableName());
-
             statement.append(" set ");
-
             statement.append(getAllColumnsAndQuestionMarks(entity));
-
-            statement.append(" where ");
-
+            /*statement.append(" where ");
             statement.append(entity.getIDColumnName());
-
             statement.append("=");
-
             statement.append(entity.getID());
-
-
+            */
+            appendPrimaryKeyWhereClause(entity,statement);
 
             //System.out.println(statement);
-
             Stmt = conn.prepareStatement(statement.toString());
-
             setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
-
             //Stmt.execute();
-
             Stmt.executeUpdate();
-
 
 
             //int i = Stmt.executeUpdate("update "+entity.getTableName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
@@ -1430,37 +1415,24 @@ public abstract class DatastoreInterface{
 
 
   public void update(IDOLegacyEntity entity, Connection conn)throws Exception{
-
     executeBeforeUpdate(entity);
-
     PreparedStatement Stmt = null;
-
     try {
-
       StringBuffer statement = new StringBuffer("");
-
       statement.append("update ");
-
       statement.append(entity.getTableName());
-
       statement.append(" set ");
-
       statement.append(getAllColumnsAndQuestionMarks(entity));
-
+      /*
       statement.append(" where ");
-
       statement.append(entity.getIDColumnName());
-
       statement.append("=");
-
       statement.append(entity.getID());
-
-
+      */
+      appendPrimaryKeyWhereClause(entity,statement);
 
       Stmt = conn.prepareStatement (statement.toString());
-
       setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
-
       Stmt.execute();
 
     }
@@ -1558,22 +1530,17 @@ public abstract class DatastoreInterface{
       try{
 
               conn = entity.getConnection();
-
               Stmt = conn.createStatement();
-
               StringBuffer statement = new StringBuffer("");
-
               statement.append("delete from  ");
-
               statement.append(entity.getTableName());
-
+              /*
               statement.append(" where ");
-
               statement.append(entity.getIDColumnName());
-
               statement.append("=");
-
               statement.append(entity.getID());
+              */
+              appendPrimaryKeyWhereClause(entity,statement);
 
               Stmt.executeUpdate(statement.toString());
 
@@ -1622,27 +1589,19 @@ public abstract class DatastoreInterface{
       Stmt = conn.createStatement();
 
       StringBuffer statement = new StringBuffer("");
-
       statement.append("delete from  ");
-
       statement.append(entity.getTableName());
 
-      statement.append(" where ");
-
+      /*statement.append(" where ");
       statement.append(entity.getIDColumnName());
-
       statement.append("=");
-
       statement.append(entity.getID());
-
+      */
+      appendPrimaryKeyWhereClause(entity,statement);
       Stmt.executeUpdate(statement.toString());
 
-
-
       if( entity.hasMetaDataRelationship() ){
-
         deleteMetaData(entity,conn);
-
       }
 
     }
@@ -2458,6 +2417,27 @@ public abstract class DatastoreInterface{
 		}
 
   }
+
+
+  String getPrimaryKeyWhereClause(IDOLegacyEntity entity){
+            StringBuffer statement = new StringBuffer();
+            appendPrimaryKeyWhereClause(entity,statement);
+            return statement.toString();
+  }
+
+  void appendPrimaryKeyWhereClause(IDOLegacyEntity entity,StringBuffer bufferToAppendTo){
+    try{
+            bufferToAppendTo.append(" where ");
+            bufferToAppendTo.append(entity.getIDColumnName());
+            bufferToAppendTo.append("=");
+            bufferToAppendTo.append(entity.getPrimaryKey());
+    }
+    catch(java.rmi.RemoteException rme){
+      throw new RuntimeException(rme.getMessage());
+    }
+
+  }
+
 
 
 

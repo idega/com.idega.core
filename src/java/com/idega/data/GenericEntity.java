@@ -3140,15 +3140,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	return coll;
       }
       else{
-	Collection returningColl = new Vector();
-	Iterator iter = returningColl.iterator();
-	int counter = 1;
-	while (iter.hasNext() && (counter<=returningNumberOfRecords)) {
-	  Integer item = (Integer)iter.next();
-	  returningColl.add(item);
-	  counter++;
-	}
-	return returningColl;
+        Collection returningColl = new Vector();
+        Iterator iter = coll.iterator();
+        int counter = 1;
+        while (iter.hasNext() && (counter<=returningNumberOfRecords)) {
+          Integer item = (Integer)iter.next();
+          returningColl.add(item);
+          counter++;
+        }
+        return returningColl;
       }
     }
 
@@ -3217,7 +3217,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       return theReturn;
     }
 
-    public int idoGetNumberOfRecords()throws EJBException{
+    protected int idoGetNumberOfRecords()throws EJBException{
 	try{
 	    return this.getNumberOfRecords();
 	}
@@ -3226,7 +3226,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
     }
 
-    public int idoGetNumberOfRecords(String sql)throws EJBException{
+    protected int idoGetNumberOfRecords(String sql)throws EJBException{
 	try{
 	    return this.getNumberOfRecords(sql);
 	}

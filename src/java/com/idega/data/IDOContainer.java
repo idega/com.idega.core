@@ -140,22 +140,22 @@ public class IDOContainer {
     }
   }
 
-  public void setBeanCaching(boolean onOrOff){
-    this.beanCachingActive=onOrOff;
+  public synchronized void setBeanCaching(boolean onOrOff){
     if(!onOrOff){
       this.flushAllBeanCache();
     }
+    this.beanCachingActive=onOrOff;
   }
 
   protected boolean beanCachingActive(Class entityInterfaceClass){
     return this.beanCachingActive;
   }
 
-  public void setQueryCaching(boolean onOrOff){
-    this.queryCachingActive=onOrOff;
+  public synchronized void setQueryCaching(boolean onOrOff){
     if(!onOrOff){
       this.flushAllQueryCache();
     }
+    this.queryCachingActive=onOrOff;
   }
 
   protected boolean queryCachingActive(Class entityInterfaceClass){
