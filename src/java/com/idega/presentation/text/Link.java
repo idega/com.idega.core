@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.22 2001/11/03 13:56:31 gummi Exp $
+ * $Id: Link.java,v 1.23 2001/11/03 14:38:31 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -824,23 +824,23 @@ public class Link extends Text {
    */
   private void addTheMaintainedBuilderParameters(IWContext iwc) {
     List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
-    System.out.println("--------------------------------------");
-    System.out.println("builderPrm");
+    //System.out.println("--------------------------------------");
+    //System.out.println("builderPrm");
     if (list != null) {
       Iterator iter = list.iterator();
       while(iter.hasNext()) {
         String parameterName = (String)iter.next();
         String parameterValue = iwc.getParameter(parameterName);
-        System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
+        //System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
         if (parameterValue != null) {
           if(!this.isParameterSet(parameterName)){
-            System.out.println("false");
+            //System.out.println("false");
             addParameter(parameterName,parameterValue);
           } else{
-            System.out.println("true");
+            //System.out.println("true");
           }
         }else{
-          System.out.println("null");
+          //System.out.println("null");
         }
       }
     }
@@ -883,94 +883,91 @@ public class Link extends Text {
     if (URL == null) {
       URL = "";
     }
-
-    if (_parameterString == null) {
-      _parameterString = new StringBuffer();
-      if (_addSessionId && (!iwc.isSearchEngine())) {
-        if (URL.equals("#")) {
-          return("");
-        }
-        else if (URL.indexOf("://") == -1) { //does not include ://
-          if (URL.indexOf("?") != -1) {
-            _parameterString.append("&idega_session_id=");
-            _parameterString.append(iwc.getSession().getId());
-            return(_parameterString.toString());
-          }
-          else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1 )) {
-            //the case where the URL is etc. http://www.idega.is
-            _parameterString.append("/?idega_session_id=");
-            _parameterString.append(iwc.getSession().getId());
-            return(_parameterString.toString());
-          }
-          else {
-            if (URL.indexOf("/") != -1) {
-              //If the URL ends with a "/"
-              if (URL.lastIndexOf("/") == (URL.length()-1)) {
+    if((!this.isParameterSet("idega_session_id"))){
+      if (_parameterString == null) {
+        _parameterString = new StringBuffer();
+        if (_addSessionId && (!iwc.isSearchEngine())) {
+          if (URL.equals("#")) {
+            return("");
+          } else if (URL.indexOf("://") == -1) { //does not include ://
+            if (URL.indexOf("?") != -1) {
+              _parameterString.append("&idega_session_id=");
+              _parameterString.append(iwc.getSession().getId());
+              return(_parameterString.toString());
+            } else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1 )) {
+              //the case where the URL is etc. http://www.idega.is
+              _parameterString.append("/?idega_session_id=");
+              _parameterString.append(iwc.getSession().getId());
+              return(_parameterString.toString());
+            } else {
+              if (URL.indexOf("/") != -1) {
+                //If the URL ends with a "/"
+                if (URL.lastIndexOf("/") == (URL.length()-1)) {
+                  _parameterString.append("?idega_session_id=");
+                  _parameterString.append(iwc.getSession().getId());
+                  return(_parameterString.toString());
+                }else {
+                  //There is a dot after the last "/" interpreted as a file not a directory
+                  if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
+                    _parameterString.append("?idega_session_id=");
+                    _parameterString.append(iwc.getSession().getId());
+                    return(_parameterString.toString());
+                  }
+                  else {
+                    _parameterString.append("/?idega_session_id=");
+                    _parameterString.append(iwc.getSession().getId());
+                    return(_parameterString.toString());
+                  }
+                }
+              } else {
                 _parameterString.append("?idega_session_id=");
                 _parameterString.append(iwc.getSession().getId());
                 return(_parameterString.toString());
               }
-              else {
-                //There is a dot after the last "/" interpreted as a file not a directory
-                if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
-                  _parameterString.append("?idega_session_id=");
-                  _parameterString.append(iwc.getSession().getId());
-                  return(_parameterString.toString());
-                }
-                else {
-                  _parameterString.append("/?idega_session_id=");
-                  _parameterString.append(iwc.getSession().getId());
-                  return(_parameterString.toString());
-                }
-              }
             }
-            else {
-              _parameterString.append("?idega_session_id=");
+          } else {
+            /**
+             * @todo Temporary solution??? :// in link then no idega_session_id
+             */
+            return("");
+          }
+        } else {
+          return("");
+        }
+
+      }else{
+        /**
+        * @todo Temporary solution??? :// in link then no idega_session_id
+        */
+        if (URL.indexOf("?") == -1) {
+          if (_addSessionId && (!iwc.isSearchEngine())) {
+            if ( _parameterString.toString().indexOf("?") == -1) {
+              _parameterString.insert(0,'?');
+            }
+             _parameterString.append("&");
+            if (URL.indexOf("://") == -1) {
+              _parameterString.append("idega_session_id=");
               _parameterString.append(iwc.getSession().getId());
-              return(_parameterString.toString());
             }
           }
-		    }
-		    else {
-          /**
-           * @todo Temporary solution??? :// in link then no idega_session_id
-           */
-		      return("");
-		    }
-      }
-      else {
-        return("");
-      }
-	  }
-	  else {
-      /**
-       * @todo Temporary solution??? :// in link then no idega_session_id
-       */
-      if (URL.indexOf("?") == -1) {
-        if (_addSessionId && (!iwc.isSearchEngine())) {
-          if ( _parameterString.toString().indexOf("?") == -1) {
-            _parameterString.insert(0,'?');
-          }
-           _parameterString.append("&");
-
-          if (URL.indexOf("://") == -1) {
-            _parameterString.append("idega_session_id=");
-            _parameterString.append(iwc.getSession().getId());
+        }
+        else {
+          if (_addSessionId && (!iwc.isSearchEngine())) {
+            _parameterString.append("&");
+            if (URL.indexOf("://") == -1) {
+              _parameterString.append("idega_session_id=");
+              _parameterString.append(iwc.getSession().getId());
+            }
           }
         }
+        return(_parameterString.toString());
       }
-      else {
-        if (_addSessionId && (!iwc.isSearchEngine())) {
-          _parameterString.append("&");
-          if (URL.indexOf("://") == -1) {
-            _parameterString.append("idega_session_id=");
-            _parameterString.append(iwc.getSession().getId());
-          }
-        }
-      }
-
+    }
+    if(_parameterString != null){
       return(_parameterString.toString());
-	  }
+    } else {
+      return("");
+    }
   }
 
   /**
