@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.11 2001/10/24 17:57:50 eiki Exp $
+ * $Id: Link.java,v 1.12 2001/10/25 19:27:53 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -67,14 +67,13 @@ public class Link extends Text {
   private boolean _addSessionId = true;
 
 
-
-
+  private final static String DEFAULT_TEXT_STRING = "No text";
 
   /**
    *
    */
   public Link() {
-    this("");
+    this(DEFAULT_TEXT_STRING);
   }
 
   /**
