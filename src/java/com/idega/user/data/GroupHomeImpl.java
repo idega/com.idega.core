@@ -71,6 +71,14 @@ public java.util.Collection findTopNodeGroupsContained(com.idega.builder.data.IB
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsByType(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+
  public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (Group) super.findByPrimaryKeyIDO(pk);
  }

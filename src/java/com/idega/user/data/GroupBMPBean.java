@@ -997,6 +997,19 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return toReturn;
 	}
+
+	public Collection ejbFindGroupsByType(String type) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(getEntityName());
+		sql.append(" where ");
+		sql.append(COLUMN_GROUP_TYPE);
+		sql.append(" = ");
+		sql.append(type);
+		
+		return super.idoFindPKsBySQL(sql.toString());
+	}
+
+
 	public Integer ejbFindSystemUsersGroup() throws FinderException {
 		return new Integer(this.GROUP_ID_USERS);
 	}
