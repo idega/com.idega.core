@@ -27,7 +27,7 @@ public class IWCalendar {
 	private String temp_holiday_name = "";
 	private int[] easterDay = { 0, 0, 0 };
 
-	public boolean isFullMoon(int ar, int manudur, int dagur) {
+	/*public boolean isFullMoon(int ar, int manudur, int dagur) {
 		boolean returner = false;
 		if (getMoonStatus(ar, manudur, dagur) == 1) {
 			returner = true;
@@ -99,16 +99,6 @@ public class IWCalendar {
 			++teljari;
 
 			correctDate(temp_year, temp_month, temp_day);
-			/*
-			                if (temp_day == 0) {
-			                    --temp_month;
-			                    if (temp_month == 0) {
-			                      --temp_year;
-			                      temp_month = 12;
-			                    }
-			                    temp_day = this.getLengthOfMonth(temp_month,temp_year);
-			                }
-			*/
 			if (getMoonStatus(temp_year, temp_month, temp_day) == 1) {
 				return_month = temp_month;
 				return_day = temp_day;
@@ -123,9 +113,9 @@ public class IWCalendar {
 
 		return returner;
 
-	}
+	}*/
 
-	public int getMoonStatus(int ar, int manudur, int dagur) {
+	/*public int getMoonStatus(int ar, int manudur, int dagur) {
 		int returner = -1;
 
 		if (ar == 2001) {
@@ -208,153 +198,74 @@ public class IWCalendar {
 		}
 
 		return returner;
-	}
+	}*/
 
-	public int getLengthOfMonth(String mon, String ar) {
-		try {
-			return getLengthOfMonth(Integer.parseInt(mon), Integer.parseInt(ar));
-		}
-		catch (NumberFormatException n) {
-			return 0;
-		}
-	}
-	public int getLengthOfMonth(String mon, int ar) {
-		try {
-			return getLengthOfMonth(Integer.parseInt(mon), ar);
-		}
-		catch (NumberFormatException n) {
-			return 0;
-		}
-	}
-	public int getLengthOfMonth(int mon, String ar) {
-		try {
-			return getLengthOfMonth(mon, Integer.parseInt(ar));
-		}
-		catch (NumberFormatException n) {
-			return 0;
-		}
-	}
-
-	public int getLengthOfMonth(int mon, int ar) {
+	public int getLengthOfMonth(int month, int year) {
 		GregorianCalendar calendar = new GregorianCalendar();
 
-		int dagarman = 31;
+		int daysInMonth = 31;
 
-		switch (mon) {
+		switch (month) {
 			case 0 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 1 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 2 :
-				if (calendar.isLeapYear(ar)) {
-					dagarman = 29;
+				if (calendar.isLeapYear(year)) {
+					daysInMonth = 29;
 				}
 				else {
-					dagarman = 28;
+					daysInMonth = 28;
 				}
 				break;
 			case 3 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 4 :
-				dagarman = 30;
+				daysInMonth = 30;
 				break;
 			case 5 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 6 :
-				dagarman = 30;
+				daysInMonth = 30;
 				break;
 			case 7 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 8 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 9 :
-				dagarman = 30;
+				daysInMonth = 30;
 				break;
 			case 10 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 11 :
-				dagarman = 30;
+				daysInMonth = 30;
 				break;
 			case 12 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 			case 13 :
-				dagarman = 31;
+				daysInMonth = 31;
 				break;
 
 		}
-		return dagarman;
+		return daysInMonth;
 	}
 
-	public String getNameOfMonth(String manudur) {
-		return getNameOfMonth(Integer.parseInt(manudur));
+	public String getNameOfMonth(int month) {
+		return getNameOfMonth(month,new Locale("is","IS"));
 	}
 
-	public String getISLNameOfMonth(int month) {
-		return getNameOfMonth(month);
-	}
-
-	public String getNameOfMonth(int mon) {
-		String manudurnafn = "";
-		switch (mon) {
-			case 0 :
-				manudurnafn = ("Desember");
-				break;
-			case 01 :
-				manudurnafn = ("Janúar");
-				break;
-			case 02 :
-				manudurnafn = ("Febrúar");
-				break;
-			case 03 :
-				manudurnafn = ("Mars");
-				break;
-			case 04 :
-				manudurnafn = ("Apríl");
-				break;
-			case 05 :
-				manudurnafn = ("Maí");
-				break;
-			case 06 :
-				manudurnafn = ("Júní");
-				break;
-			case 07 :
-				manudurnafn = ("Júlí");
-				break;
-			case 8 :
-				manudurnafn = ("Ágúst");
-				break;
-			case 9 :
-				manudurnafn = ("September");
-				break;
-			case 10 :
-				manudurnafn = ("Október");
-				break;
-			case 11 :
-				manudurnafn = ("Nóvember");
-				break;
-			case 12 :
-				manudurnafn = ("Desember");
-				break;
-			case 13 :
-				manudurnafn = ("Janúar");
-				break;
-		}
-		return manudurnafn;
-	}
-
-	public String getNameOfMonth(int month, IWContext iwc) {
-		Locale currentLocale = iwc.getCurrentLocale();
+	public String getNameOfMonth(int month, Locale locale) {
 		String returner = "";
 
-		DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+		DateFormatSymbols dfs = new DateFormatSymbols(locale);
 		String[] months = dfs.getMonths();
 		if (months != null) {
 			returner = months[month - 1];
@@ -364,118 +275,18 @@ public class IWCalendar {
 	}
 
 	public String getENGNameOfMonth(int month) {
-		String manudurnafn = "";
-		switch (month) {
-			case 0 :
-				manudurnafn = ("December");
-				break;
-			case 01 :
-				manudurnafn = ("Janary");
-				break;
-			case 02 :
-				manudurnafn = ("February");
-				break;
-			case 03 :
-				manudurnafn = ("March");
-				break;
-			case 04 :
-				manudurnafn = ("April");
-				break;
-			case 05 :
-				manudurnafn = ("May");
-				break;
-			case 06 :
-				manudurnafn = ("June");
-				break;
-			case 07 :
-				manudurnafn = ("July");
-				break;
-			case 8 :
-				manudurnafn = ("August");
-				break;
-			case 9 :
-				manudurnafn = ("September");
-				break;
-			case 10 :
-				manudurnafn = ("October");
-				break;
-			case 11 :
-				manudurnafn = ("November");
-				break;
-			case 12 :
-				manudurnafn = ("December");
-				break;
-			case 13 :
-				manudurnafn = ("January");
-				break;
-		}
-		return manudurnafn;
+		return getNameOfMonth(month,Locale.ENGLISH);
 	}
 
-	public int getWeekOfYear(int ar, int manudur, int dagur) {
-
-		GregorianCalendar calendar = new GregorianCalendar(ar, manudur - 1, dagur);
-
-		int vdagur = calendar.get(calendar.WEEK_OF_YEAR) + 2;
-
-		return vdagur;
+	public int getWeekOfYear(int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(day, month - 1, day);
+		return calendar.get(calendar.WEEK_OF_YEAR) + 2;
 	}
 
-	public String getShortNameOfMonth(int mon) {
-		String manudurnafn = "";
-
-		switch (mon) {
-			case 0 :
-				manudurnafn = ("des");
-				break;
-			case 01 :
-				manudurnafn = ("jan");
-				break;
-			case 02 :
-				manudurnafn = ("feb");
-				break;
-			case 03 :
-				manudurnafn = ("mars");
-				break;
-			case 04 :
-				manudurnafn = ("apríl");
-				break;
-			case 05 :
-				manudurnafn = ("maí");
-				break;
-			case 06 :
-				manudurnafn = ("júní");
-				break;
-			case 07 :
-				manudurnafn = ("júlí");
-				break;
-			case 8 :
-				manudurnafn = ("ágúst");
-				break;
-			case 9 :
-				manudurnafn = ("sept");
-				break;
-			case 10 :
-				manudurnafn = ("okt");
-				break;
-			case 11 :
-				manudurnafn = ("nóv");
-				break;
-			case 12 :
-				manudurnafn = ("des");
-				break;
-			case 13 :
-				manudurnafn = ("jan");
-				break;
-		}
-		return manudurnafn;
-	}
-
-	public String getShortNameOfDay(int day, IWContext iwc) {
-		Locale currentLocale = iwc.getCurrentLocale();
+	public String getShortNameOfDay(int day, Locale locale) {
 		String returner = "";
 
-		DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+		DateFormatSymbols dfs = new DateFormatSymbols(locale);
 		String[] days = dfs.getShortWeekdays();
 		if (days != null) {
 			returner = days[day];
@@ -484,11 +295,10 @@ public class IWCalendar {
 		return returner;
 	}
 
-	public String getShortNameOfMonth(int month, IWContext iwc) {
-		Locale currentLocale = iwc.getCurrentLocale();
+	public String getShortNameOfMonth(int month, Locale locale) {
 		String returner = "";
 
-		DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+		DateFormatSymbols dfs = new DateFormatSymbols(locale);
 		String[] months = dfs.getShortMonths();
 		if (months != null) {
 			returner = months[month - 1];
@@ -497,104 +307,26 @@ public class IWCalendar {
 		return returner;
 	}
 
-	public String getShortISLNameOfMonth(int mon) {
-		return getShortNameOfMonth(mon);
+	public String getShortISLNameOfMonth(int month) {
+		return getShortNameOfMonth(month,new Locale("is","IS"));
 	}
 
-	public String getShortENGNameOfMonth(int mon) {
-
-		String manudurnafn = "";
-
-		switch (mon) {
-			case 0 :
-				manudurnafn = ("Dec");
-				break;
-			case 01 :
-				manudurnafn = ("Jan");
-				break;
-			case 02 :
-				manudurnafn = ("Feb");
-				break;
-			case 03 :
-				manudurnafn = ("Mar");
-				break;
-			case 04 :
-				manudurnafn = ("Apr");
-				break;
-			case 05 :
-				manudurnafn = ("May");
-				break;
-			case 06 :
-				manudurnafn = ("Jun");
-				break;
-			case 07 :
-				manudurnafn = ("Jul");
-				break;
-			case 8 :
-				manudurnafn = ("Aug");
-				break;
-			case 9 :
-				manudurnafn = ("Sep");
-				break;
-			case 10 :
-				manudurnafn = ("Oct");
-				break;
-			case 11 :
-				manudurnafn = ("Nov");
-				break;
-			case 12 :
-				manudurnafn = ("Dec");
-				break;
-			case 13 :
-				manudurnafn = ("Jan");
-				break;
-		}
-		return manudurnafn;
-
+	public String getShortENGNameOfMonth(int month) {
+		return getShortNameOfMonth(month,Locale.ENGLISH);
 	}
 
-	public String getNameOfDay(String dagur) {
-		return getNameOfDay(Integer.parseInt(dagur));
+	public String getNameOfDay(int day) {
+		return getNameOfDay(day,new Locale("is","IS"));
 	}
 
-	public String getNameOfDay(int dagur) {
-		String nafn = "";
-
-		switch (dagur) {
-			case 1 :
-				nafn = ("Sunnudagur");
-				break;
-			case 2 :
-				nafn = ("Mánudagur");
-				break;
-			case 3 :
-				nafn = ("Þriðjudagur");
-				break;
-			case 4 :
-				nafn = ("Miðvikudagur");
-				break;
-			case 5 :
-				nafn = ("Fimmtudagur");
-				break;
-			case 6 :
-				nafn = ("Föstudagur");
-				break;
-			case 7 :
-				nafn = ("Laugardagur");
-				break;
-		}
-		return nafn;
+	public String getISLNameOfDay(int day) {
+		return getNameOfDay(day,new Locale("is","IS"));
 	}
 
-	public String getISLNameOfDay(int dagur) {
-		return getNameOfDay(dagur);
-	}
-
-	public String getNameOfDay(int day, IWContext iwc) {
-		Locale currentLocale = iwc.getCurrentLocale();
+	public String getNameOfDay(int day, Locale locale) {
 		String returner = "";
 
-		DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+		DateFormatSymbols dfs = new DateFormatSymbols(locale);
 		String[] days = dfs.getWeekdays();
 		if (days != null) {
 			returner = days[day];
@@ -603,71 +335,27 @@ public class IWCalendar {
 		return returner;
 	}
 
-	public String getENGNameOfDay(int dagur) {
-		String nafn = getNameOfDay(dagur);
-		switch (dagur) {
-			case 1 :
-				nafn = ("Sunday");
-				break;
-			case 2 :
-				nafn = ("Monday");
-				break;
-			case 3 :
-				nafn = ("Tuesday");
-				break;
-			case 4 :
-				nafn = ("Wednesday");
-				break;
-			case 5 :
-				nafn = ("Thursday");
-				break;
-			case 6 :
-				nafn = ("Friday");
-				break;
-			case 7 :
-				nafn = ("Saturday");
-				break;
-		}
-		return nafn;
+	public String getENGNameOfDay(int day) {
+		return getNameOfDay(day,Locale.ENGLISH);
 	}
 
-	public int getDayOfWeek(int ar, int manudur, int dagur) {
-
-		GregorianCalendar calendar = new GregorianCalendar(ar, manudur - 1, dagur);
-
-		int vdagur = calendar.get(calendar.DAY_OF_WEEK);
-
-		return vdagur;
+	public int getDayOfWeek(int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		return calendar.get(calendar.DAY_OF_WEEK);
 	}
 
 	/**
-	 * @Depricated
+	 * @deprecated
 	 */
-
-	public boolean getHoliday(int ar, int manudur, int dagur) {
-		return isHoliday(ar, manudur, dagur);
+	public boolean getHoliday(int year, int month, int day) {
+		return isHoliday(year, month, day);
 	}
 
-	public String getSpecialNameOfDay(int ar, int manudur, int dagur) {
-		String crapper = checkForHoliday(ar, manudur, dagur);
-		String returner = "";
-		if (crapper != null) {
-			returner = crapper;
-		}
-
-		return returner;
-	}
-
-	public boolean isHoliday(int ar, int manudur, int dagur) {
-
-		temp_holiday_name = checkForHoliday(ar, manudur, dagur);
-		System.out.println("Frídagur " + ar + "/" + manudur + "/" + dagur + " heitir : " + temp_holiday_name);
-		boolean returner = false;
-
-		returner = bIsHoliday;
-
+	public boolean isHoliday(int year, int month, int day) {
+		temp_holiday_name = checkForHoliday(year,month,day);
+		//System.out.println("Frídagur " + ar + "/" + manudur + "/" + dagur + " heitir : " + temp_holiday_name);
+		boolean returner = bIsHoliday;
 		bIsHoliday = false;
-
 		return returner;
 	}
 
@@ -697,44 +385,6 @@ public class IWCalendar {
 		int[] returner = { year, n, (p + 1)};
 
 		return returner;
-
-		/*
-		Besta reiknireglan til að finna páska í nýja stíl mun vera sú sem birtist nafnlaust í breska tímaritinu Nature árið 1876. Reglan er þessi:
-		
-		       Deilið í ártalið með 19 og kallið afganginn a.
-		       Deilið í ártalið með 100, kallað deildina b og afganginn c.
-		       Deilið í b með 4, kallið deildina d og afganginn e.
-		       Deilið í b + 8 með 25 og kallið deildina f.
-		       Deilið í b -f + 1 með 3 og kallið deildina g.
-		       Deilið í 19a + b - d - g + 15 með 30 og kallið afganginn h.
-		       Deilið í c með 4 og kallið deildina i og afganginn j.
-		       Deilið í 32 + 2e + 2i - h - j með 7 og kallið afganginn k.
-		       Deilið í a + 11h+22k með 451 og kallið deildina m.
-		       Deilið í h + k - 7m + 114 með 31, kallið deildina n og afganginn p.
-		
-		Þá er n mánuðurinn sem páskadagur fellur í, og p + 1 er mánaðardagurinn
-		*/
-
-	}
-
-	public void correctDate(int ar, int manudur, int dagur) {
-		if (dagur < 1) {
-			--manudur;
-			if (manudur == 0) {
-				--ar;
-				manudur = 12;
-			}
-			dagur = getLengthOfMonth(manudur, ar) + dagur;
-		}
-		else if (dagur > getLengthOfMonth(manudur, ar)) {
-			++manudur;
-			if (manudur == 13) {
-				++ar;
-				manudur = 1;
-			}
-			dagur = dagur - getLengthOfMonth(manudur, ar);
-		}
-
 	}
 
 	public String checkForHoliday(int ar, int manudur, int dagur) {
@@ -914,122 +564,18 @@ public class IWCalendar {
 		return nameOfDay;
 	}
 
-	public String getDateStamp() {
-
-		GregorianCalendar calendar = new GregorianCalendar();
-
-		String stamp;
-
-		int dayM = calendar.get(calendar.DAY_OF_MONTH);
-		int dayW = calendar.get(calendar.DAY_OF_WEEK);
-		int monthY = calendar.get(calendar.MONTH) + 1;
-		int year = calendar.get(calendar.YEAR);
-
-		stamp = dayM + "." + getNameOfMonth(monthY) + " " + year;
-
-		return stamp;
-
-	}
-
-	/**
-	*
-	*Skila dagsetningu á mySQL formi
-	*
-	*
-	**/
-
-	public String getDateStampRS() {
-
-		GregorianCalendar calendar = new GregorianCalendar();
-
-		String stamp;
-
-		int dayM = calendar.get(calendar.DAY_OF_MONTH);
-		int dayW = calendar.get(calendar.DAY_OF_WEEK);
-		int monthY = calendar.get(calendar.MONTH) + 1;
-		int year = calendar.get(calendar.YEAR) + 000;
-
-		stamp = year + "-" + monthY + "-" + dayM;
-
-		return stamp;
-
-	}
-
 	public int getMonth() {
-
 		GregorianCalendar calendar = new GregorianCalendar();
-
-		int month = calendar.get(calendar.MONTH) + 1;
-
-		return month;
+		return calendar.get(calendar.MONTH) + 1;
 	}
 
 	public int getDay() {
-
 		GregorianCalendar calendar = new GregorianCalendar();
-
-		int day = calendar.get(calendar.DAY_OF_MONTH);
-
-		return day;
+		return calendar.get(calendar.DAY_OF_MONTH);
 	}
 
 	public int getYear() {
-
 		GregorianCalendar calendar = new GregorianCalendar();
-
-		int year = calendar.get(calendar.YEAR);
-
-		return year;
-	}
-
-	public int getRows(ResultSet RS) {
-
-		ResultSet RS_new = RS;
-		int teljari = 0;
-		try {
-
-			while (RS_new.next()) {
-				++teljari;
-			}
-
-			RS_new.close();
-		}
-		catch (SQLException E) {
-			E.printStackTrace();
-		}
-
-		return teljari;
-	}
-
-	/**
-	*Returns an new timestamp before (int) number of days in the past before timestamp_in
-	**/
-	public static Timestamp getTimestampBefore(Timestamp timestamp_in, int days) {
-		long milliseconds = timestamp_in.getTime();
-		milliseconds = milliseconds - days * 24 * 60 * 60 * 1000;
-		return new Timestamp(milliseconds);
-	}
-
-	/**
-	*Returns an new timestamp after (int) number of days in the future after timestamp_in
-	**/
-	public static Timestamp getTimestampAfter(Timestamp timestamp_in, int days) {
-		long milliseconds = timestamp_in.getTime();
-		milliseconds = milliseconds + days * 24 * 60 * 60 * 1000;
-		return new Timestamp(milliseconds);
-	}
-
-	public String getTimeStamp() {
-
-		String stamp;
-
-		int hours = GregorianCalendar.HOUR;
-		int minutes = GregorianCalendar.MINUTE;
-		int seconds = GregorianCalendar.SECOND;
-
-		stamp = hours + ":" + minutes + ":" + seconds;
-
-		return stamp;
-
+		return calendar.get(calendar.YEAR);
 	}
 }
