@@ -1,208 +1,176 @@
-/*
- * $Id:$
- *
- * Copyright (C) 2000 Idega hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- *
- */
 package com.idega.util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.Time;
 import java.text.DateFormatSymbols;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import com.idega.presentation.IWContext;
+import com.ibm.icu.util.CalendarAstronomer;
+import com.ibm.icu.util.Holiday;
 
 /**
- * @author idega 2000 - idega team
- * @version 1.0
+ * <code>IWCalendar</code> is a class that can give localized names of days, months
+ * and holidays for a specific locale.  It also can give moonphases, times of sun/moon
+ * rises and sets.  It can also give certain information about the specific calendar,
+ * i.e. length of months, week numbers and day numbers.<br><br>
+ * Uses the ICU4J classes from IBM (@link http://www-124.ibm.com/icu4j)
+ *
+ * @author idega 2002 - idega team
+ * @version 1.1
  */
 public class IWCalendar {
-	private boolean bIsHoliday = false;
-	private String temp_holiday_name = "";
-	private int[] easterDay = { 0, 0, 0 };
 
-	/*public boolean isFullMoon(int ar, int manudur, int dagur) {
-		boolean returner = false;
-		if (getMoonStatus(ar, manudur, dagur) == 1) {
-			returner = true;
-		}
-		return false;
+	/**
+	  * Construct a new <code>IWCalendar</code> object that is initialized to
+	  * the default calendar and locale.
+	  */
+	public IWCalendar() {
+		this(LocaleUtil.getIcelandicLocale(), new GregorianCalendar());
 	}
 
-	public boolean isFullMoon(GregorianCalendar calendar) {
-		boolean returner = false;
-		if (getMoonStatus(calendar.YEAR, calendar.MONTH + 1, calendar.DAY_OF_MONTH) == 0) {
-			returner = true;
-		}
-		return false;
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given locale and default calendar.
+	 */
+	public IWCalendar(Locale locale) {
+		this(locale, new GregorianCalendar());
 	}
 
-	public int[] getNextFullMoon(int ar, int manudur, int dagur) {
-		int return_year = 0;
-		int return_month = 0;
-		int return_day = 0;
-		int temp_year = ar;
-		int temp_month = manudur;
-		int temp_day = dagur;
-
-		boolean done = false;
-		int teljari = 0;
-
-		while ((!done) && (teljari < 100)) {
-			++teljari;
-
-			//                correctDate(temp_year,temp_month,temp_day);
-
-			if (temp_day == getLengthOfMonth(temp_month, temp_year) + 1) {
-				++temp_month;
-				if (temp_month == 13) {
-					++temp_year;
-					temp_month = 1;
-				}
-				temp_day = 1;
-			}
-
-			if (getMoonStatus(temp_year, temp_month, temp_day) == 1) {
-				return_month = temp_month;
-				return_day = temp_day;
-				return_year = temp_year;
-				done = true;
-			}
-
-			temp_day++;
-		}
-		int[] returner = { return_year, return_month, return_day };
-		System.out.println("Næsta fulla tungl : " + return_year + " " + return_month + " " + return_day);
-
-		return returner;
-
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given calendar and default locale.
+	 */
+	public IWCalendar(GregorianCalendar calendar) {
+		this(LocaleUtil.getIcelandicLocale(), calendar);
 	}
 
-	public int[] getLastFullMoon(int ar, int manudur, int dagur) {
-		int return_year = 0;
-		int return_month = 0;
-		int return_day = 0;
-		int temp_year = ar;
-		int temp_month = manudur;
-		int temp_day = dagur;
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given calendar and locale.
+	 */
+	public IWCalendar(Locale locale, GregorianCalendar calendar) {
+		_calendar = calendar;
+		_locale = locale;
+	}
 
-		boolean done = false;
-		int teljari = 0;
+	/**
+	 * A type setting for use with getDayName and getMonthName. Represents an abbreviated
+	 * return type.
+	 * @see IWCalendar#getDayName(int day)
+	 * @see IWCalendar#getMonthName(int month)
+	 */
+	public static final int SHORT = 1;
 
-		while ((!done) && (teljari < 100)) {
-			++teljari;
+	/**
+	 * A type setting for use with getDayName and getMonthName. Represents a full
+	 * return type.
+	 * @see IWCalendar#getDayName(int day)
+	 * @see IWCalendar#getMonthName(int month)
+	 */
+	public static final int LONG = 2;
 
-			correctDate(temp_year, temp_month, temp_day);
-			if (getMoonStatus(temp_year, temp_month, temp_day) == 1) {
-				return_month = temp_month;
-				return_day = temp_day;
-				return_year = temp_year;
-				done = true;
-			}
+	/**
+	 * The value of the moonphase when the moon is new.
+	 * @see IWCalendar#getMoonPhase()
+	 */
+	public static final double NEW_MOON = 0.00;
 
-			temp_day--;
-		}
-		int[] returner = { return_year, return_month, return_day };
-		System.out.println(return_year + " " + return_month + " " + return_day);
+	/**
+	 * The value of the moonphase when the moon is in its first quarter.
+	 * @see IWCalendar#getMoonPhase()
+	 */
+	public static final double FIRST_QUARTER = 0.25;
 
-		return returner;
+	/**
+	 * The value of the moonphase when the moon is full.
+	 * @see IWCalendar#getMoonPhase()
+	 */
+	public static final double FULL_MOON = 0.50;
 
-	}*/
+	/**
+	 * The value of the moonphase when the moon is in its last quarter.
+	 * @see IWCalendar#getMoonPhase()
+	 */
+	public static final double LAST_QUARTER = 0.75;
 
-	/*public int getMoonStatus(int ar, int manudur, int dagur) {
-		int returner = -1;
+	private Locale _locale;
+	private GregorianCalendar _calendar;
 
-		if (ar == 2001) {
-			if ((manudur == 3) && (dagur == 9)) {
-				returner = 1;
-			}
-			else if ((manudur == 4) && (dagur == 7)) {
-				returner = 1;
-			}
-			else if ((manudur == 5) && (dagur == 7)) {
-				returner = 1;
-			}
-			else if ((manudur == 6) && (dagur == 5)) {
-				returner = 1;
-			}
-			else if ((manudur == 7) && (dagur == 5)) {
-				returner = 1;
-			}
-			else if ((manudur == 8) && (dagur == 3)) {
-				returner = 1;
-			}
-			else if ((manudur == 9) && (dagur == 2)) {
-				returner = 1;
-			}
-			else if ((manudur == 10) && (dagur == 1)) {
-				returner = 1;
-			}
-			else if ((manudur == 10) && (dagur == 30)) {
-				returner = 1;
-			}
-			else if ((manudur == 11) && (dagur == 29)) {
-				returner = 1;
-			}
-			else if ((manudur == 12) && (dagur == 28)) {
-				returner = 1;
-			}
-		}
-		else if (ar == 2002) {
-			if ((manudur == 1) && (dagur == 27)) {
-				returner = 1;
-			}
-			else if ((manudur == 2) && (dagur == 26)) {
-				returner = 1;
-			}
-			else if ((manudur == 3) && (dagur == 27)) {
-				returner = 1;
-			}
-			else if ((manudur == 4) && (dagur == 26)) {
-				returner = 1;
-			}
-			else if ((manudur == 5) && (dagur == 25)) {
-				returner = 1;
-			}
-			else if ((manudur == 6) && (dagur == 24)) {
-				returner = 1;
-			}
-			else if ((manudur == 7) && (dagur == 23)) {
-				returner = 1;
-			}
-			else if ((manudur == 8) && (dagur == 22)) {
-				returner = 1;
-			}
-			else if ((manudur == 9) && (dagur == 20)) {
-				returner = 1;
-			}
-			else if ((manudur == 10) && (dagur == 20)) {
-				returner = 1;
-			}
-			else if ((manudur == 11) && (dagur == 18)) {
-				returner = 1;
-			}
-			else if ((manudur == 12) && (dagur == 18)) {
-				returner = 1;
-			}
-		}
-		else if (ar == 2003) {
-			if ((manudur == 1) && (dagur == 16)) {
-				returner = 1;
-			}
-		}
+	/**
+	 * Returns the day for the default date setting.
+	 * @return int
+	 */
+	public int getDay() {
+		return _calendar.get(_calendar.DAY_OF_MONTH);
+	}
 
-		return returner;
-	}*/
+	/**
+	 * Returns the month for the default date setting (January = 1).
+	 * @return int
+	 */
+	public int getMonth() {
+		return _calendar.get(_calendar.MONTH) + 1;
+	}
 
+	/**
+	 * Returns the year for the default date setting.
+	 * @return int
+	 */
+	public int getYear() {
+		return _calendar.get(_calendar.YEAR);
+	}
+
+	/**
+	 * Returns the day of the week (Sunday = 1). Uses the default date settings.
+	 * @param year					The year to use.
+	 * @param month				The month to use (January = 1).
+	 * @param day					The day to use.
+	 * @return int
+	 */
+	public int getDayOfWeek() {
+		return _calendar.get(_calendar.DAY_OF_WEEK);
+	}
+
+	/**
+	 * Returns the day of the week for the specified date (Sunday = 1).
+	 * @param year					The year to use.
+	 * @param month				The month to use (January = 1).
+	 * @param day					The day to use.
+	 * @return int
+	 */
+	public int getDayOfWeek(int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		return calendar.get(calendar.DAY_OF_WEEK);
+	}
+
+	/**
+	 * Returns the week number (1-52).  Uses the default date settings.
+	 * @return int
+	 */
+	public int getWeekOfYear() {
+		return getWeekOfYear(getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns the week number (1-52) of the given date.
+	 * @param year							The year to use.
+	 * @param month						The month to use (January = 1).
+	 * @param day							The day to use.
+	 * @return int
+	 */
+	public int getWeekOfYear(int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(day, month - 1, day);
+		return calendar.get(calendar.WEEK_OF_YEAR) + 2;
+	}
+
+	/**
+	 * Returns the length of the given month of the given year.
+	 * @param month						The month to use (January = 1).
+	 * @param year							The year to use.
+	 * @return int
+	 */
 	public int getLengthOfMonth(int month, int year) {
-		GregorianCalendar calendar = new GregorianCalendar();
-
 		int daysInMonth = 31;
 
 		switch (month) {
@@ -213,7 +181,7 @@ public class IWCalendar {
 				daysInMonth = 31;
 				break;
 			case 2 :
-				if (calendar.isLeapYear(year)) {
+				if (_calendar.isLeapYear(year)) {
 					daysInMonth = 29;
 				}
 				else {
@@ -258,15 +226,54 @@ public class IWCalendar {
 		return daysInMonth;
 	}
 
-	public String getNameOfMonth(int month) {
-		return getNameOfMonth(month,new Locale("is","IS"));
+	/**
+	 * Returns the name of the specified month. Uses default locale settings and uses 
+	 * LONG as default type.
+	 * @param month			The month (January = 1).
+	 * @return String
+	 */
+	public String getMonthName(int month) {
+		return getMonthName(month, _locale, LONG);
 	}
 
-	public String getNameOfMonth(int month, Locale locale) {
+	/**
+	 * Returns the name of the specified month. Uses default locale settings.
+	 * @param month			The month (January = 1).
+	 * @param type				The type of string to return.  LONG (2) returns the full
+	 * 												localized name whereas SHORT (1) returns abbreviated names
+	 * 												(three letters).  All other values return LONG.
+	 * @return String
+	 */
+	public String getMonthName(int month, int type) {
+		return getMonthName(month, _locale, type);
+	}
+
+	/**
+	 * Returns the name of the specified month for the given locale.
+	 * @param month			The month (January = 1).
+	 * @param locale			The locale to use.
+	 * @param type				The type of string to return.  LONG (2) returns the full
+	 * 										localized name whereas SHORT (1) returns abbreviated names
+	 * 										(three letters).  All other values return LONG.
+	 * @return String
+	 */
+	public String getMonthName(int month, Locale locale, int type) {
 		String returner = "";
 
 		DateFormatSymbols dfs = new DateFormatSymbols(locale);
-		String[] months = dfs.getMonths();
+		String[] months = null;
+		switch (type) {
+			case SHORT :
+				months = dfs.getShortMonths();
+				break;
+			case LONG :
+				months = dfs.getMonths();
+				break;
+			default :
+				months = dfs.getMonths();
+				break;
+		}
+
 		if (months != null) {
 			returner = months[month - 1];
 		}
@@ -274,60 +281,54 @@ public class IWCalendar {
 		return returner;
 	}
 
-	public String getENGNameOfMonth(int month) {
-		return getNameOfMonth(month,Locale.ENGLISH);
+	/**
+	 * Returns the name of the specified day. Uses default locale settings and uses LONG
+	 * as default type.
+	 * @param day				The day of the week (Sunday = 1).
+	 * @return String
+	 */
+	public String getDayName(int day) {
+		return getDayName(day, _locale, LONG);
 	}
 
-	public int getWeekOfYear(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(day, month - 1, day);
-		return calendar.get(calendar.WEEK_OF_YEAR) + 2;
+	/**
+	 * Returns the name of the specified day. Uses default locale settings.
+	 * @param day				The day of the week (Sunday = 1).
+	 * @param type				The type of string to return.  LONG (2) returns the full
+	 * 										localized name whereas SHORT (1) returns abbreviated names
+	 * 										(three letters).  All other values return LONG.
+	 * @return String
+	 */
+	public String getDayName(int day, int type) {
+		return getDayName(day, _locale, type);
 	}
 
-	public String getShortNameOfDay(int day, Locale locale) {
-		String returner = "";
-
-		DateFormatSymbols dfs = new DateFormatSymbols(locale);
-		String[] days = dfs.getShortWeekdays();
-		if (days != null) {
-			returner = days[day];
-		}
-
-		return returner;
-	}
-
-	public String getShortNameOfMonth(int month, Locale locale) {
-		String returner = "";
-
-		DateFormatSymbols dfs = new DateFormatSymbols(locale);
-		String[] months = dfs.getShortMonths();
-		if (months != null) {
-			returner = months[month - 1];
-		}
-
-		return returner;
-	}
-
-	public String getShortISLNameOfMonth(int month) {
-		return getShortNameOfMonth(month,new Locale("is","IS"));
-	}
-
-	public String getShortENGNameOfMonth(int month) {
-		return getShortNameOfMonth(month,Locale.ENGLISH);
-	}
-
-	public String getNameOfDay(int day) {
-		return getNameOfDay(day,new Locale("is","IS"));
-	}
-
-	public String getISLNameOfDay(int day) {
-		return getNameOfDay(day,new Locale("is","IS"));
-	}
-
-	public String getNameOfDay(int day, Locale locale) {
+	/**
+	 * Returns the name of the specified day for the given locale.
+	 * @param day				The day of the week (Sunday = 1).
+	 * @param locale			The locale to use.
+	 * @param type				The type of string to return.  LONG (2) returns the full
+	 * 										localized name whereas SHORT (1) returns abbreviated names
+	 * 										(three letters).  All other values return LONG.
+	 * @return String
+	 */
+	public String getDayName(int day, Locale locale, int type) {
 		String returner = "";
 
 		DateFormatSymbols dfs = new DateFormatSymbols(locale);
 		String[] days = dfs.getWeekdays();
+		switch (type) {
+			case SHORT :
+				days = dfs.getShortWeekdays();
+				break;
+			case LONG :
+				days = dfs.getWeekdays();
+				break;
+			default :
+				days = dfs.getWeekdays();
+				break;
+		}
+
 		if (days != null) {
 			returner = days[day];
 		}
@@ -335,247 +336,316 @@ public class IWCalendar {
 		return returner;
 	}
 
-	public String getENGNameOfDay(int day) {
-		return getNameOfDay(day,Locale.ENGLISH);
-	}
-
-	public int getDayOfWeek(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
-		return calendar.get(calendar.DAY_OF_WEEK);
+	/**
+	 * Checks whether a specific date is a locale holiday. Uses default locale and date 
+	 * settings.
+	 * @return boolean		Returns true if the default Locale has a holiday specified	
+	 * 										for the given date.
+	 */
+	public boolean isHoliday() {
+		return isHoliday(_locale, getYear(), getMonth(), getDay());
 	}
 
 	/**
-	 * @deprecated
+	 * Checks whether the specific date is a locale holiday. Uses default locale settings.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return boolean		Returns true if the default Locale has a holiday specified
+	 * 										for the given date.
 	 */
-	public boolean getHoliday(int year, int month, int day) {
-		return isHoliday(year, month, day);
-	}
-
 	public boolean isHoliday(int year, int month, int day) {
-		temp_holiday_name = checkForHoliday(year,month,day);
-		//System.out.println("Frídagur " + ar + "/" + manudur + "/" + dagur + " heitir : " + temp_holiday_name);
-		boolean returner = bIsHoliday;
-		bIsHoliday = false;
-		return returner;
+		return isHoliday(_locale, year, month, day);
 	}
 
 	/**
-	 * Returns int[]
-	 * int[0] = year, int[1] = month, int[2] = day
+	 * Checks whether the specific date is a locale holiday for the the given locale.
+	 * @param locale 		The locale to use.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return boolean		Returns true if the given Locale has a holiday specified
+	 * 										for the given date.
 	 */
+	public boolean isHoliday(Locale locale, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day + 1);
 
-	public int[] getEasterDay(int year) {
-		int a, b, c, d, e, f, g, h, i, j, k, m, n, p = 0;
+		Holiday[] holidays = Holiday.getHolidays(locale);
 
-		a = (int) year % 19;
-		b = (int) year / 100;
-		c = (int) year % 100;
-		d = (int) b / 4;
-		e = (int) b % 4;
-		f = (int) (b + 8) / 25;
-		g = (int) (b - f + 1) / 3;
-		h = (int) ((19 * a) + b - d - g + 15) % 30;
-		i = (int) c / 4;
-		j = (int) c % 4;
-		k = (int) (32 + (2 * e) + (2 * i) - h - j) % 7;
-		m = (int) (a + (11 * h) + (22 * k)) / 451;
-		n = (int) (h + k - (7 * m) + 114) / 31;
-		p = (int) (h + k - (7 * m) + 114) % 31;
-
-		int[] returner = { year, n, (p + 1)};
-
-		return returner;
+		for (int a = 0; a < holidays.length; a++) {
+			Holiday holiday = holidays[a];
+			if (holiday.isOn(calendar.getTime()))
+				return true;
+		}
+		return false;
 	}
 
-	public String checkForHoliday(int ar, int manudur, int dagur) {
-		boolean svara = false;
-		String nameOfDay = null;
-
-		int dayOfWeek = getDayOfWeek(ar, manudur, dagur);
-		easterDay = getEasterDay(ar);
-		IWTimestamp stamp = new IWTimestamp(easterDay[2], easterDay[1], easterDay[0]);
-
-		//  Finna Sumardaginn fyrsti
-		if (!(svara)) {
-			if ((manudur == 4) && (dagur >= 19) && (dagur <= 25)) {
-				if (dayOfWeek == 5) {
-					svara = true;
-					nameOfDay = "Sumardagurinn fyrsti";
-				}
-			}
-		}
-
-		if (!(svara)) {
-			if ((manudur == 8) && (dagur >= 1) && (dagur <= 7)) {
-				if (dayOfWeek == 2) {
-					svara = true;
-					nameOfDay = "Frídagur verslunarmanna";
-				}
-			}
-		}
-
-		if (!(svara))
-			switch (manudur) {
-				case 1 :
-					if (dagur == 1) {
-						svara = true;
-						nameOfDay = "Nýársdagur";
-					}
-					break;
-				case 2 :
-					break;
-				case 3 :
-					if (dagur == 20) {
-						nameOfDay = "Vorjafndægur";
-					}
-					break;
-				case 4 :
-					break;
-				case 5 :
-					if (dagur == 1) {
-						svara = true;
-						nameOfDay = "Verkalýðsdagurinn";
-					}
-					break;
-				case 6 :
-					if (dagur == 17) {
-						svara = true;
-						nameOfDay = "Lýðveldisdagurinn";
-					}
-					else if (dagur == 21) {
-						nameOfDay = "Sumarsólstöður";
-					}
-					break;
-				case 7 :
-					break;
-				case 8 :
-					break;
-				case 9 :
-					break;
-				case 10 :
-					if (dagur == 22) {
-						nameOfDay = "Haustjafndægur";
-					}
-					break;
-				case 11 :
-					break;
-				case 12 :
-					if (dagur == 1) {
-						nameOfDay = "Fullveldisdagurinn";
-					}
-					else if (dagur == 21) {
-						nameOfDay = "Vetrarsólstöður";
-					}
-					else if (dagur == 23) {
-						nameOfDay = "Þorláksmessa";
-					}
-					else if (dagur == 24) {
-						svara = true; // eftir 12:00
-						nameOfDay = "Aðfangadagur";
-					}
-					else if (dagur == 25) {
-						svara = true;
-						nameOfDay = "Jóladagur";
-					}
-					else if (dagur == 26) {
-						svara = true;
-						nameOfDay = "Annar í jólum";
-					}
-					else if (dagur == 31) {
-						svara = true; // eftir 12:00
-						nameOfDay = "Gamlársdagur";
-					}
-					break;
-			}
-
-		//  Finna páskadag
-		if (!(svara)) {
-			if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-				nameOfDay = "Páskadagur";
-				svara = true;
-			}
-
-		}
-
-		// checka á dögum eftir páska
-		if (!(svara)) {
-			stamp.addDays(1);
-			if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-				nameOfDay = "Annar í páskum";
-				svara = true;
-			}
-			if (!(svara)) {
-				stamp.addDays(38);
-				if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-					nameOfDay = "Uppstigningardagur";
-					svara = true;
-				}
-				if (!(svara)) {
-					stamp.addDays(10);
-					if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-						nameOfDay = "Hvítasunna";
-						svara = true;
-					}
-					if (!(svara)) {
-						stamp.addDays(1);
-						if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-							nameOfDay = "Annar í hvítasunnu";
-							svara = true;
-						}
-					}
-				}
-			}
-		}
-		// stilla aftur á páskadag
-		stamp.addDays(-50);
-
-		// checka á dögum fyrir páskadag
-		if (!(svara)) {
-			stamp.addDays(-1);
-			if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-				nameOfDay = "";
-				svara = true;
-			}
-			if (!(svara)) {
-				stamp.addDays(-1);
-				if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-					nameOfDay = "Föstudagurinn langi";
-					svara = true;
-				}
-				if (!(svara)) {
-					stamp.addDays(-1);
-					if ((ar == stamp.getYear()) && (manudur == stamp.getMonth()) && (dagur == stamp.getDate())) {
-						nameOfDay = "Skírdagur";
-						svara = true;
-					}
-				}
-			}
-		}
-
-		//  Laugadagur og sunnudagur
-		if ((dayOfWeek == 1) || (dayOfWeek == 7)) {
-			if (!svara) {
-				svara = true;
-				nameOfDay = "";
-			}
-		}
-
-		bIsHoliday = svara;
-		return nameOfDay;
+	/**
+	 * Returns the holiday for a date.  Uses default locale and date settings.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return String		Returns null if the current date has no holiday for the 
+	 * 										given Locale.
+	 */
+	public String getHoliday() {
+		return getHoliday(_locale, getYear(), getMonth(), getDay());
 	}
 
-	public int getMonth() {
-		GregorianCalendar calendar = new GregorianCalendar();
-		return calendar.get(calendar.MONTH) + 1;
+	/**
+	 * Returns the holiday for the given date.  Uses default locale settings.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return String		Returns null if the current date has no holiday for the 
+	 * 										given Locale.
+	 */
+	public String getHoliday(int year, int month, int day) {
+		return getHoliday(_locale, year, month, day);
 	}
 
-	public int getDay() {
-		GregorianCalendar calendar = new GregorianCalendar();
-		return calendar.get(calendar.DAY_OF_MONTH);
+	/**
+	 * Returns the locale holiday for the given date.
+	 * @param locale			The locale to use.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return String		Returns null if the current date has no holiday for the 
+	 * 										given Locale.
+	 */
+	public String getHoliday(Locale locale, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day + 1);
+
+		Holiday[] holidays = Holiday.getHolidays(locale);
+
+		for (int a = 0; a < holidays.length; a++) {
+			Holiday holiday = holidays[a];
+			if (holiday.isOn(calendar.getTime())) {
+				return holiday.getDisplayName(locale);
+			}
+		}
+		return null;
 	}
 
-	public int getYear() {
-		GregorianCalendar calendar = new GregorianCalendar();
-		return calendar.get(calendar.YEAR);
+	/**
+	 * Returns whether there is a full moon on the given date. Uses default locale and 
+	 * date settings.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return boolean
+	 */
+	public boolean isFullMoon() {
+		return isFullMoon(_locale, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns whether there is a full moon on the given date. Uses default locale settings.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return boolean
+	 */
+	public boolean isFullMoon(int year, int month, int day) {
+		return isFullMoon(_locale, year, month, day);
+	}
+
+	/**
+	 * Returns whether there is a full moon on the given date.
+	 * @param locale			The locale to use.
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return boolean
+	 */
+	public boolean isFullMoon(Locale locale, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
+
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		if (moonCalendar.getMoonPhase() == FULL_MOON)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Returns a Date object with the specified date for the next full moon.  Uses the 
+	 * default locale and date settings.
+	 * @return Date
+	 */
+	public Date getNextFullMoon() {
+		return getNextFullMoon(_locale, getYear(), getMonth(), getDay());
+
+	}
+
+	/**
+	 * Returns a Date object with the specified date for the next full moon from the 
+	 * given date.  Uses the default locale setting.
+	 * @param year					The year to use.
+	 * @param month				The month to use.
+	 * @param day					The day to use.
+	 * @return Date
+	 */
+	public Date getNextFullMoon(int year, int month, int day) {
+		return getNextFullMoon(_locale, year, month, day);
+	}
+
+	/**
+	 * Returns a Date object with the specified date for the next full moon from the 
+	 * given date.
+	 * @param locale				The locale to use.
+	 * @param year					The year to use.
+	 * @param month				The month to use.
+	 * @param day					The day to use.
+	 * @return Date
+	 */
+	public Date getNextFullMoon(Locale locale, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
+
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		return new Date(moonCalendar.getMoonTime(FULL_MOON, true));
+	}
+
+	/**
+	 * Returns the current phase of the moon.  Uses default locale and date settings.
+	 * @return double
+	 * @see IWCalendar#getMoonPhase(Locale locale, int year, int month, int day)
+	 */
+	public double getMoonPhase() {
+		return getMoonPhase(_locale, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns the current phase of the moon according to the specified date settings.
+	 * Uses default locale settings.
+	 * @param year			The year to use.
+	 * @param month		The month to use (1-based).
+	 * @param day			The day to use.
+	 * @return double
+	 * @see IWCalendar#getMoonPhase(Locale locale, int year, int month, int day)
+	 */
+	public double getMoonPhase(int year, int month, int day) {
+		return getMoonPhase(_locale, year, month, day);
+	}
+
+	/**
+	 * Returns the current phase of the moon according to the specified date and locale
+	 * settings.
+	 * @param locale			The locale to use.
+	 * @param year				The year to use.
+	 * @param month			The month to use (1-based).
+	 * @param day				The day to use.
+	 * @return double		The returned phase is a <code>double</code> in the range
+	 * 										<code>0 <= phase < 1</code>, interpreted as follows:
+	 * 										<ul>
+	 * 										<li>0.00: New moon
+	 * 										<li>0.25: First quarter
+	 * 										<li>0.50: Full moon
+	 * 										<li>0.75: Last quarter
+	 * 										</ul>
+	 */
+	public double getMoonPhase(Locale locale, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
+
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		return moonCalendar.getMoonPhase();
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the moonrise/moonset of the specified date. 
+	 * Uses the default locale and date settings.
+	 * @param rise				Set whether to return sunrise or sunset (true = sunrise)
+	 * @return Time
+	 */
+	public Time getMoonRiseSet(boolean rise) {
+		return getMoonRiseSet(_locale, rise, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the moonrise/moonset of the specified date.
+	 * Uses the default locale setting.
+	 * @param rise				Set whether to return sunrise or sunset (true = sunrise)
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return Time
+	 */
+	public Time getMoonRiseSet(boolean rise, int year, int month, int day) {
+		return getMoonRiseSet(_locale, rise, year, month, day);
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the moonrise/moonset of the specified date.
+	 * @param locale			The locale to use.
+	 * @param rise				Set whether to return sunrise or sunset (true = moonrise)
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return Time
+	 */
+	public Time getMoonRiseSet(Locale locale, boolean rise, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
+
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		return new Time(moonCalendar.getMoonRiseSet(rise));
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the sunrise/sunset of the specified date. 
+	 * Uses the default locale and date settings.
+	 * @param rise				Set whether to return sunrise or sunset (true = sunrise)
+	 * @return Time
+	 */
+	public Time getSunRiseSet(boolean rise) {
+		return getSunRiseSet(_locale, rise, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the sunrise/sunset of the specified date. 
+	 * Uses the default locale setting.
+	 * @param rise				Set whether to return sunrise or sunset (true = sunrise)
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return Time
+	 */
+	public Time getSunRiseSet(boolean rise, int year, int month, int day) {
+		return getSunRiseSet(_locale, rise, year, month, day);
+	}
+
+	/**
+	 * Returns a Time object with h/m/s on the sunrise/sunset of the specified date.
+	 * @param locale	The locale to use.
+	 * @param rise				Set whether to return sunrise or sunset (true = sunrise)
+	 * @param year				The year to use.
+	 * @param month			The month to use.
+	 * @param day				The day to use.
+	 * @return Time
+	 */
+	public Time getSunRiseSet(Locale locale, boolean rise, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
+
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		return new Time(moonCalendar.getSunRiseSet(rise));
+	}
+
+	/**
+	 * Returns the current date settings as Date
+	 * @return Date
+	 */
+	public Date toDate() {
+		return _calendar.getTime();
+	}
+
+	/**
+	 * Returns the current date settings as long
+	 * @return long
+	 */
+	public long toTime() {
+		return _calendar.getTimeInMillis();
 	}
 }
