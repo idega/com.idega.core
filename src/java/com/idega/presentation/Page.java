@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.90 2003/11/21 19:01:10 tryggvil Exp $
+ *  $Id: Page.java,v 1.91 2004/01/18 13:25:59 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,6 +19,7 @@ import java.util.Vector;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
@@ -33,6 +34,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
+import com.idega.util.URLUtil;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -115,6 +117,9 @@ public class Page extends PresentationObjectContainer {
 
 	private final static String END_TAG = "</html>";
 	private boolean _isCategory = false;
+	private ICPage _windowToOpenOnLoad;
+	private int _windowWidth = 800;
+	private int _windowHeight = 600;
 
 	/**
 	 */
@@ -1086,6 +1091,11 @@ public class Page extends PresentationObjectContainer {
 					setDoPrint(false);
 				}
 
+				if (_windowToOpenOnLoad != null) {
+					URLUtil url = new URLUtil(iwc, _windowToOpenOnLoad);
+					setOnLoad("javascript:"+Window.getCallingScript(url.toString(), _windowWidth, _windowHeight));	
+				}
+				
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 //				shortcut icon
@@ -1512,6 +1522,16 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setWindowToOpenOnLoad(Link link, IWContext iwc) {
 		this.setOnLoad(link.getWindowToOpenCallingScript(iwc));
+	}
+	
+	public void setWindowToOpenOnLoad(ICPage page) {
+		setWindowToOpenOnLoad(page, 800, 600);
+	}
+	
+	public void setWindowToOpenOnLoad(ICPage page, int width, int height) {
+		_windowToOpenOnLoad = page;
+		_windowWidth = width;
+		_windowHeight = height;
 	}
 
 	/**
