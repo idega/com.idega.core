@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.18 2002/01/17 14:39:08 aron Exp $
+ * $Id: PresentationObject.java,v 1.19 2002/02/04 10:59:08 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,13 +92,20 @@ public class PresentationObject extends Object implements Cloneable {
     return parentObject;
   }
 
-  public void setID() {
+  public String generateID() {
     int hashCode = hashCode();
+    String code;
     if (hashCode < 0) {
       hashCode = -hashCode;
     }
-    setID("id"+hashCode);
+    code = "id"+hashCode;
+    return code;
   }
+
+  public void setID(){
+   setID(generateID());
+  }
+
 
   public String getID() {
     String theReturn = getAttribute("id");

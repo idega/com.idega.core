@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.12 2001/12/06 10:06:11 gimmi Exp $
+ * $Id: Table.java,v 1.13 2002/02/04 10:59:00 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -873,7 +873,7 @@ public class Table extends PresentationObjectContainer {
       //}
 
 //    }
-    println("\n</tr>");
+    println("</tr>");
   }
 
   protected void printVerticalLine(IWContext iwc) throws Exception{
