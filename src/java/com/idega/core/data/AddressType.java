@@ -13,6 +13,9 @@ import java.sql.*;
 
 public class AddressType extends GenericType{
 
+  public final static String ADDRESS_1 = "ic_user_address_1";
+  public final static String ADDRESS_2 = "ic_user_address_2";
+
 	public AddressType(){
           super();
 	}
@@ -31,11 +34,13 @@ public class AddressType extends GenericType{
           at = new AddressType();
             at.setName("Home");
             at.setDescription("Home");
+            at.setUniqueName(ADDRESS_1);
           at.insert();
 
           at = new AddressType();
             at.setName("Work");
             at.setDescription("Work");
+            at.setUniqueName(ADDRESS_2);
           at.insert();
         }
 
