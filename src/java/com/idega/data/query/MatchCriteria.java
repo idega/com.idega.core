@@ -67,7 +67,8 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		} else {
 			this.value = quote(value);
-			this.placeHolderValue = value;
+			if(!matchType.equalsIgnoreCase(LIKE))
+			    this.placeHolderValue = value;
 		}
 		this.matchType = matchType;
 		
@@ -82,21 +83,24 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		}
 		this.matchType = matchType;
-		this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, float value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
-		this.placeHolderValue = new Float(value);
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = new Float(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, int value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
-		this.placeHolderValue = new Integer(value);
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = new Integer(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, boolean value) {
@@ -108,21 +112,24 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = quote("N");
 		}
 		this.matchType = matchType;
-		this.placeHolderValue = new Boolean(value);
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = new Boolean(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, Object value) {
 		this.column = column;
 		this.value = value.toString();
 		this.matchType = matchType;
-		this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, Date value) {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
-		this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = value;
 		
 	}
 
@@ -130,7 +137,8 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
-		this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE))
+		    this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, IDOEntity value) {
@@ -190,7 +198,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	public void write(Output out) {
-	    if(getPlaceValue()!=null  && !this.matchType.equalsIgnoreCase(LIKE) && getDatastore().isUsingPreparedStatements())
+	    if(getPlaceValue()!=null && getDatastore().isUsingPreparedStatements())
 	        out.print(column).print(' ').print(matchType).print(' ').print("?");
 	    else
 	        out.print(column).print(' ').print(matchType).print(' ').print(value);
