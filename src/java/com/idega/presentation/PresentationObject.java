@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.122 2004/12/30 15:45:50 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.123 2005/01/06 02:31:07 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
@@ -26,8 +25,8 @@ import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
-
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.component.data.ICObject;
@@ -70,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/30 15:45:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/01/06 02:31:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.122 $
+ * @version $Revision: 1.123 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -967,11 +966,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		{
 			this.initInMain(iwc);
 		}
-		if (!goneThroughMain)
+		//if (!goneThroughMain)
+		if(mayGoThroughMain())
 		{
 			main(iwc);
 		}
-		goneThroughMain = true;
+		//goneThroughMain = true;
+		setGoneThroughMain();
 	}
 
 	/**
@@ -2125,8 +2126,18 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 					}
 				}
 				//initVariables(iwc);
-				this._main(iwc);
+				//if(this instanceof AbstractTreeViewer){
+				//	boolean check=true;
+				//}
+				if(mayGoThroughMain()){
+					this._main(iwc);
+				}
+				setGoneThroughMain();
 			//}
+		}
+		catch(NotLoggedOnException noex){
+			//handle this exception specially and re-throw it
+			throw noex;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2164,6 +2175,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				initVariables(iwc);
 				this.print(iwc);
 			//}
+		}
+		catch(NotLoggedOnException noex){
+			//handle this exception specially and re-throw it
+			throw noex;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2242,6 +2257,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		super.encodeEnd(arg0);
 		this.setRenderedPhaseDone();
+		resetGoneThroughMain();
 	}
 	 
 	protected IWContext castToIWContext(FacesContext fc){
@@ -2527,6 +2543,37 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  */
 	 protected boolean resetGoneThroughMainInRestore(){
 	 	return false;
+	 }
+	 
+	 /**
+	  * Gets if the class allows to call the main(iwcontext) method
+	  * @return
+	  */
+	 protected boolean mayGoThroughMain(){
+	 	if(supportsMultipleMainCalls()){
+	 		return true;
+	 	}
+	 	else{
+	 		return !this.goneThroughMain;
+	 	}
+	 }
+	 /**
+	  * Gets if the class allows to call the main(iwcontext) method more than once on the same instance
+	  * @return
+	  */
+	 protected boolean supportsMultipleMainCalls(){
+	 	return false;
+	 }
+	 /**
+	  * Gets if the main(iwcontext) method has been called for this object
+	  * @return
+	  */
+	 protected void setGoneThroughMain(){
+	 	this.goneThroughMain=true;
+	 }
+	 
+	 protected void resetGoneThroughMain(){
+	 	this.goneThroughMain=false;
 	 }
 	 
 	/**

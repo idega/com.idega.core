@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.43 2004/12/28 00:20:56 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.44 2005/01/06 02:31:07 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
@@ -27,10 +28,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/28 00:20:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/01/06 02:31:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.43 $
+ * @version $Revision: 1.44 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -250,13 +251,20 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			this.initInMain(iwc);
 		}
-		if (!goneThroughMain)
+		//if (!goneThroughMain)
+		if(mayGoThroughMain())
 		{
-			initVariables(iwc);
+			//initVariables(iwc);
 			try
 			{
 				//super.main(iwc);
 				main(iwc);
+			}
+			catch (NotLoggedOnException noex)
+			{
+				//add(new ExceptionWrapper(ex, this));
+				//throw the exception further:
+				throw noex;
 			}
 			catch (Exception ex)
 			{
@@ -302,7 +310,8 @@ public class PresentationObjectContainer extends PresentationObject
 			//}
 			}
 		}
-		goneThroughMain = true;
+		//goneThroughMain = true;
+		setGoneThroughMain();
 	}
 
 	/**
@@ -383,7 +392,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
 	public void initVariables(IWContext iwc) throws IOException {
-		goneThroughMain = false;
+		//goneThroughMain = false;
 		super.initVariables(iwc);
 	}
 	/**

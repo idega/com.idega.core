@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.132 2004/12/28 00:20:56 tryggvil Exp $
+ *  $Id: Page.java,v 1.133 2005/01/06 02:31:07 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
@@ -49,7 +50,7 @@ import com.idega.util.datastructures.QueueMap;
  * This object maps to and renders the 
  * <pre>
  * <HTML><HEAD>...</HEAD> <BODY>... </BODY></HTML>
- * </code>
+ * </pre>
  * tags in HTML and renders the children inside the body tags.
  * 
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -1319,7 +1320,7 @@ public class Page extends PresentationObjectContainer {
 
 	
 	public void encodeBegin(FacesContext context) throws IOException{
-		//callMain(context);
+		callMain(context);
 		this.printBegin(IWContext.getIWContext(context));
 	}
 	
@@ -1416,11 +1417,21 @@ public class Page extends PresentationObjectContainer {
 	public void encodeChildren(FacesContext context)throws IOException{
 		List children = getChildren();
 		//This is a temporary workaround, because of iterator NoSuchElementException problem (iterator should be used when it starts working)
-		Object[] array = children.toArray();
-		for (int i = 0; i < array.length; i++) {
-			Object obj = array[i];
-			UIComponent child = (UIComponent)obj;
-			renderChild(context,child);
+		
+		try{
+			Object[] array = children.toArray();
+			for (int i = 0; i < array.length; i++) {
+				Object obj = array[i];
+				UIComponent child = (UIComponent)obj;
+				renderChild(context,child);
+			}
+		}
+		catch(NotLoggedOnException noex){
+			//TODO: Change this, this is a workaround till a better not logged on error page is created:
+			IWContext iwc = castToIWContext(context);
+			String notLoggedOnString = getResourceBundle(iwc).getLocalizedString("error_not_logged_on","You are not logged on, please go to login page and log in.");
+			println("<h2>"+notLoggedOnString+"</h2>");
+			
 		}
 		
 		/*Iterator iter = children.iterator();
@@ -1434,6 +1445,7 @@ public class Page extends PresentationObjectContainer {
 	
 	public void encodeEnd(FacesContext context)throws IOException{
 		this.printEnd(IWContext.getIWContext(context));
+		resetGoneThroughMain();
 	}
 	/**
 	 * Bridging method for JSF:
