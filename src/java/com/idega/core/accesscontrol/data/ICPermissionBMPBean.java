@@ -22,14 +22,18 @@ import com.idega.util.IWTimestamp;
  */
 
 public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.ICPermission {
-	private static final String GROUP_ID_COLUMN = "group_id";
-	private static final String PERMISSION_VALUE_COLUMN = "permission_value";
-	private static final String PERMISSION_STRING_VALUE = "permission_string_value";
-	private static final String PERMISSION_STRING_COLUMN = "permission_string";
-	private static final String CONTEXT_VALUE_COLUMN = "permission_context_value";
+
 	private static final String ENTITY_NAME = "ic_permission";
-	private static final String CONTEXT_TYPE_COLUMN = "permission_context_type";
-	private static final String sClassName = ICPermission.class.getName();
+	
+	private static final String PERMISSION_TYPE_COLUMN = "permission_type";//defines the type of permission e.g. ic_object_id,group_id,role
+	private static final String CONTEXT_TYPE_COLUMN = "permission_context_type"; //just backward compatability, use permission type
+	private static final String CONTEXT_VALUE_COLUMN = "permission_context_value";
+	private static final String PERMISSION_STRING_COLUMN = "permission_string";
+	private static final String PERMISSION_VALUE_COLUMN = "permission_value";
+	private static final String GROUP_ID_COLUMN = "group_id";
+	
+//private static final String PERMISSION_STRING_VALUE = "permission_string_value"; removed because never used! eiki
+	
 	
 	private static final String INITIATION_DATE_COLUMN="INITIATION_DATE";
 	private static final String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
@@ -49,10 +53,16 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
-		addAttribute(getContextTypeColumnName(), "Context type", true, true, "java.lang.String");
+		addAttribute(getContextTypeColumnName(), "Context type", true, true, "java.lang.String");// ic_object_id , group_id, role etc. this just for backward compatability, use permission_type
+		addManyToOneRelationship(getPermissionTypeColumnName(),ICPermissionType.class); 
+		
 		addAttribute(getContextValueColumnName(), "Context value", true, true, "java.lang.String");
+		
+		
 		addAttribute(getPermissionStringColumnName(), "Permission string", true, true, "java.lang.String");
-		addAttribute(getPermissionStringValueColumnName(), "Permission string value", true, true, "java.lang.String");
+		
+		//addAttribute(getPermissionStringValueColumnName(), "Permission string value", true, true, "java.lang.String");
+		
 		addAttribute(getPermissionValueColumnName(), "Permission value", true, true, "java.lang.Boolean");
 		addAttribute(getGroupIDColumnName(), "GroupID", true, true, Integer.class, "many-to-one", PermissionGroup.class);
 		
@@ -74,11 +84,22 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	  }
 	
 	*/
+	
+	public static String getPermissionTypeColumnName() {
+		return PERMISSION_TYPE_COLUMN;
+	}
+	
 	public static String getContextTypeColumnName() {
 		return CONTEXT_TYPE_COLUMN;
 	}
 	public String getContextType() {
-		return getStringColumnValue(getContextTypeColumnName());
+		//TODO depricate
+		String type = getStringColumnValue(getContextTypeColumnName());
+		if(type==null){
+			type = getStringColumnValue(getPermissionTypeColumnName());//backward compatability
+		}
+		
+		return type;
 	}
 	public void setContextType(String ContextType) {
 		setColumn(getContextTypeColumnName(), ContextType);
@@ -101,15 +122,29 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	public void setPermissionString(String PermissionString) {
 		setColumn(getPermissionStringColumnName(), PermissionString);
 	}
+	
+	public String getPermissionType() {
+		return getStringColumnValue(getPermissionTypeColumnName());
+	}
+	public void setPermissionType(String type) {
+		setColumn(getPermissionTypeColumnName(), type);
+		setColumn(getContextTypeColumnName(),type);
+	}
+	
+	/*
 	public static String getPermissionStringValueColumnName() {
 		return PERMISSION_STRING_VALUE;
 	}
+	
 	public String getPermissionStringValue() {
 		return getStringColumnValue(getPermissionStringValueColumnName());
 	}
 	public void setPermissionStringValue(String PermissionStringValue) {
 		setColumn(getPermissionStringValueColumnName(), PermissionStringValue);
 	}
+	*/
+	
+	
 	public static String getPermissionValueColumnName() {
 		return PERMISSION_VALUE_COLUMN;
 	}
@@ -179,8 +214,8 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 	
 
-	
-	public Collection ejbFindAllPermissionsByContextTypeAndContextValue(String contextType, String contextValue) throws FinderException{
+	//TODO Eiki add finders for permissiontype
+	public Collection ejbFindAllPermissionsByTypeAndContextValue(String contextType, String contextValue) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)

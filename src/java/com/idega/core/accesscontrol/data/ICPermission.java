@@ -4,8 +4,6 @@ import com.idega.user.data.User;
 
 public interface ICPermission extends com.idega.data.IDOEntity,com.idega.data.IDOLegacyEntity
 {
- public java.lang.String getPermissionStringValue();
- public void setPermissionStringValue(java.lang.String p0);
  public java.lang.String getPermissionString();
  public java.lang.String getContextType();
  public int getGroupID();
