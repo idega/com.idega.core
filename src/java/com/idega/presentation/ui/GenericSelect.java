@@ -237,7 +237,7 @@ public class GenericSelect extends InterfaceObject {
 	public void main(IWContext iwc) throws Exception {
 		if (_isSetAsNotEmpty)
 			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", _notEmptyErrorMessage, _emptyValue);
-		if (_isSetToDisable) {
+//		if (_isSetToDisable) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\n");
 			if (!_isMultiple) {
@@ -245,7 +245,7 @@ public class GenericSelect extends InterfaceObject {
 			}
 			buffer.append("}");
 			getScript().addFunction("disableObjectByDropdown", buffer.toString());
-		}
+//		}
 		if (_isSetToSubmit)
 			getScript().addFunction("submitWhenSelected", "function submitWhenSelected (dropdown,selectedValue) {\n\tif (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue))\n\t\tdropdown.form.submit();\n}");
 	}
