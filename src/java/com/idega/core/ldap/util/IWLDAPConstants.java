@@ -52,6 +52,8 @@ public interface IWLDAPConstants {
 	 */
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_PRIMARY_KEY= "idegawebPrimaryKey";
 	
+	public static String LDAP_ATTRIBUTE_IDEGAWEB_ABBREVIATION = "idegawebGroupAbbreviation";
+	
 	/**
 	 * User login name
 	 */

@@ -850,6 +850,9 @@ LDAPReplicationConstants {
 		String name = getGroupName(group);
 		String desc = group.getDescription();
 		String uuid = group.getUniqueId();
+		String abbr = group.getAbbrevation();
+		String type = group.getGroupType();
+		
 		//could need to escape all values??
 		List names = getAttributeListForSingleEntry(name);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_ORGANIZATION_UNIT), names);
@@ -861,9 +864,13 @@ LDAPReplicationConstants {
 			List uniqueID = getAttributeListForSingleEntry(group.getUniqueId());
 			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
 		}
-		List groupType = getAttributeListForSingleEntry(group.getGroupType());
+		List groupType = getAttributeListForSingleEntry(type);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE), groupType);
 		
+		if(abbr != null){
+			List abbreviation = getAttributeListForSingleEntry(abbr);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_ABBREVIATION), abbreviation);
+		}
 		
 		//emails
 		addEmailsToEntry(group, entry);

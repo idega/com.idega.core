@@ -1061,6 +1061,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	 	
 	  	String name = ldapUtil.getNameOfGroupFromAttributes(attributes);
 	  	String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION,attributes);
+	  	String abbr = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_ABBREVIATION,attributes);
 		String type = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE,attributes);
 		if(type==null){
 			type = getGroupTypeHome().getGeneralGroupTypeString();
@@ -1086,23 +1087,23 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  			group.store();
 	  		}
 	  	}
-	  	else{
-	  		//TODO update the group
-	  		group.setName(name);
-	  		group.setDescription(description);
-	  		group.setGroupType(type);
-	  		if(uniqueID!=null){
-	  			group.setUniqueId(uniqueID);
-	  		}
-	  		
-	  		//todoupdate emails,addresses,phone and email
-	  		group.store();
 	  	
-	  		List parent = group.getParentGroups();
-	  		if(parent.isEmpty() && parentGroup!=null){
-	  			parentGroup.addGroup(group);
-	  		}
-	  	}
+  		//TODO update the group
+  		group.setName(name);
+  		group.setDescription(description);
+  		group.setGroupType(type);
+  		group.setAbbrevation(abbr);
+  		if(uniqueID!=null){
+  			group.setUniqueId(uniqueID);
+  		}
+  		
+  		//todoupdate emails,addresses,phone and email
+  		group.store();
+  	
+  		List parent = group.getParentGroups();
+  		if(parent.isEmpty() && parentGroup!=null){
+  			parentGroup.addGroup(group);
+  		}
 	  	
 	  	//set all the attributes as metadata also
 	  	setMetaDataFromLDAPAttributes(group,distinguishedName,attributes);
@@ -2428,10 +2429,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/16 14:53:32 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/11/17 17:32:07 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.84 $
+	 * @version $Revision: 1.85 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
