@@ -251,14 +251,14 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		return CREATE_STRINGS;
 	}
 	public void setEntityBeanCaching(boolean onOrOff) {
-		this.setProperty(this.IDO_ENTITY_BEAN_CACHING_KEY, onOrOff);
+		this.setProperty(IDO_ENTITY_BEAN_CACHING_KEY, onOrOff);
 		com.idega.data.IDOContainer.getInstance().setBeanCaching(onOrOff);
 		if (!onOrOff) {
 			setEntityQueryCaching(false);
 		}
 	}
 	public void setEntityQueryCaching(boolean onOrOff) {
-		this.setProperty(this.IDO_ENTITY_QUERY_CACHING_KEY, onOrOff);
+		this.setProperty(IDO_ENTITY_QUERY_CACHING_KEY, onOrOff);
 		com.idega.data.IDOContainer.getInstance().setQueryCaching(onOrOff);
 		if (onOrOff) {
 			setEntityBeanCaching(true);

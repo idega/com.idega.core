@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.12 2004/01/27 12:36:55 laddi Exp $
+ * $Id: IWProperty.java,v 1.13 2004/11/02 14:54:51 tryggvil Exp $
 
  *
 
@@ -58,11 +58,11 @@ public class IWProperty implements Comparable
 	}
 	public String getName()
 	{
-		return this.getPropertyName(getKeyElement());
+		return IWProperty.getPropertyName(getKeyElement());
 	}
 	public String getType()
 	{
-		return this.getPropertyType(getKeyElement());
+		return IWProperty.getPropertyType(getKeyElement());
 	}
 	public boolean getBooleanValue()
 	{
@@ -94,7 +94,7 @@ public class IWProperty implements Comparable
 	}
 	public String getValue()
 	{
-		return this.getPropertyValue(getKeyElement());
+		return IWProperty.getPropertyValue(getKeyElement());
 	}
 	public void setValue(String sValue)
 	{
