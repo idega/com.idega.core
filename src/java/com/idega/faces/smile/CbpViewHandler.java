@@ -178,9 +178,9 @@ public class CbpViewHandler extends ViewHandler {
 	 */
 	public Locale calculateLocale(FacesContext ctx) {
 		Locale result = null;
-		for(Enumeration enum = ((ServletRequest)ctx.getExternalContext().getRequest()).getLocales(); enum.hasMoreElements();)
+		for(Enumeration enumeration = ((ServletRequest)ctx.getExternalContext().getRequest()).getLocales(); enumeration.hasMoreElements();)
 		{
-			Locale locale = (Locale)enum.nextElement();
+			Locale locale = (Locale)enumeration.nextElement();
 			result = getMatch(ctx, locale);
 			if(result != null)
 				break;
