@@ -26,13 +26,10 @@ public class BlobInputStream extends InputStream{
 
   private String columnName;
   private String tableName;
-  private String dataSourceName;
-  private int status;
 
   public BlobInputStream(GenericEntity entity,String tableColumnName) throws SQLException,IOException {
     this.setEntity(entity);
     this.setTableColumnName(tableColumnName);
-    setDatasource(entity.getDatasource());
     initConnection();
     in = getInputStreamForBlobRead();
   }
@@ -68,25 +65,28 @@ public class BlobInputStream extends InputStream{
   public void close() throws IOException {
     try{
       if( in!=null) in.close();
-      if (entity!= null){
-        if (RS != null){
+
+      if (RS != null){
           RS.close();
-        }
-        if(Stmt!= null){
-          Stmt.close();
-        }
-        if (conn!= null){
-         // conn.commit();
-          //conn.setAutoCommit(true);
-          entity.freeConnection(dataSourceName,conn);
-        }
-      }
+       }
+
     }
     catch(Exception ex){
       System.err.println("Error in BlobInputStream: "+ex.getMessage());
       ex.printStackTrace(System.err);
     }
-  //  this.setStatus(this.IS_CLOSED);
+    finally{
+
+      if(Stmt!= null){
+        Stmt.close();
+        Stmt = null;
+      }
+      if (conn!= null){
+        entity.freeConnection(conn);
+      }
+
+    }
+
 
   }
 
@@ -119,12 +119,14 @@ public class BlobInputStream extends InputStream{
   public InputStream getInputStreamForBlobRead(){
     try{
       if (in == null){
-        Stmt = conn.createStatement();
-        RS = Stmt.executeQuery("select "+getTableColumnName()+" from "+entity.getTableName()+" where "+entity.getIDColumnName()+"='"+entity.getID()+"'");
-        if (RS.next()) {
-          in = RS.getBinaryStream(1);
-        }
+        if( conn != null ){
+          Stmt = conn.createStatement();
+          RS = Stmt.executeQuery("select "+getTableColumnName()+" from "+entity.getTableName()+" where "+entity.getIDColumnName()+"='"+entity.getID()+"'");
 
+          if ( (RS!=null) && (RS.next()) ) {
+            in = RS.getBinaryStream(1);
+          }
+        }
       }
       }
     catch(Exception ex){
@@ -167,14 +169,9 @@ public class BlobInputStream extends InputStream{
     return this.dataSourceName;
   }
 
-  private Connection getConnection(){
-    return conn;
-  }
-
   private void initConnection() throws SQLException{
     if(entity!=null){
       conn=entity.getConnection();
-    //  if ( conn!=null ) conn.setAutoCommit(false);
     }
   }
 
@@ -183,80 +180,4 @@ public class BlobInputStream extends InputStream{
     super.finalize();
   }
 
-  ////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////
-
-  /*
-
-
-  public void populate(){
-    DatastoreInterface.getInstance(conn).populateBlob(this);
-  }
-
-  public String toString(){
-    if (entity!= null){
-      return entity.toString();
-    }
-    else{
-      return "-1";
-    }
-  }
-
-
-  protected void finalize()throws Throwable{
-    if(!(this.getStatus()==this.IS_CLOSED)){
-      close();
-    }
-    super.finalize();
-  }
-
-
-*/
-
-
- // public OutputStream getOutputStreamForBlobRead()throws IOException{
-     /* if (readOutputStream == null){
-        readOutputStream = new OutputStream();
-      }*/
-/*
-    byte	buffer[]= new byte[1024];
-    int		noRead	= 0;
-
-    InputStream myInputStream = this.getInputStreamForBlobRead();
-
-    noRead = myInputStream.read( buffer, 0, 1023 );
-
-    //Write out the blob to the outputStream
-    while ( noRead != -1 ){
-      readOutputStream.write( buffer, 0, noRead );
-      noRead	= myInputStream.read( buffer, 0, 1023 );
-    }
-    return readOutputStream;
-  }
-
-
-  public OutputStream getOutputStreamForBlobWrite(){
-          if (writeOutputStream== null){
-
-
-          }
-          return writeOutputStream;
-  }
-
-  public void setOutputStreamForBlobWrite(OutputStream stream){
-          writeOutputStream=stream;
-  }
-
-
-
-
-  public void setInputStreamForBlobWrite(InputStream stream){
-    writeInputStream=stream;
-  }
-
-  public InputStream getInputStreamForBlobWrite(){
-    return writeInputStream;
-  }
-
-  */
 }

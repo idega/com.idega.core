@@ -103,24 +103,41 @@ public class FileUtil {
 /*
 * streams an inputstream to a file and closes the input stream
 */
-  public static void streamToFile( InputStream input, String filePath, String fileName) throws Exception{
-    File file = getFileAndCreateIfNotExists(filePath,fileName);
-    FileOutputStream fileOut = new FileOutputStream(file);
+  public static void streamToFile( InputStream input, String filePath, String fileName){
+    try{
+      File file = getFileAndCreateIfNotExists(filePath,fileName);
+      FileOutputStream fileOut = new FileOutputStream(file);
 
-    byte buffer[]= new byte[1024];
-    int	noRead	= 0;
+      byte buffer[]= new byte[1024];
+      int	noRead	= 0;
 
-    noRead = input.read( buffer, 0, 1024 );
+      if(input!=null){
+        noRead = input.read( buffer, 0, 1024 );
 
-    //Write out the stream to the file
-    while ( noRead != -1 ){
-      fileOut.write( buffer, 0, noRead );
-      noRead = input.read( buffer, 0, 1024 );
+        //Write out the stream to the file
+        while ( noRead != -1 ){
+          fileOut.write( buffer, 0, noRead );
+          noRead = input.read( buffer, 0, 1024 );
+        }
+        fileOut.flush();
+        fileOut.close();
+      }
+      else System.err.println("FileUtil : InputStream is null!");
+
     }
-
-    fileOut.flush();
-    fileOut.close();
-    input.close();
+    catch(IOException e){
+      e.printStackTrace(System.err);
+      System.err.println("FileUtil : Error writing to file!");
+    }
+    finally{
+      try{
+        if(input!=null) input.close();
+      }
+      catch(IOException e){
+        e.printStackTrace(System.err);
+        System.err.println("FileUtil : Error closing the inputstream");
+      }
+    }
   }
 
 
