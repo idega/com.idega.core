@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.93 2004/03/03 11:50:49 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.94 2004/03/11 17:07:02 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -537,7 +537,8 @@ public abstract class DatastoreInterface {
 							data.setMetaDataType((String) types.get((String)insert.elementAt(i)));
 						else
 							data.setMetaDataType("java.lang.String");
-						data.insert();
+						data.store();
+						entity.idoAddTo(data);
 					}
 				}
 				//else       System.out.println("insert is null");
@@ -557,7 +558,7 @@ public abstract class DatastoreInterface {
 							data.setMetaDataType((String) types.get((String)update.elementAt(i)));
 						else
 							data.setMetaDataType("java.lang.String");
-						data.update();
+						data.store();
 					}
 				}
 				//else       System.out.println("update is null");
@@ -566,7 +567,7 @@ public abstract class DatastoreInterface {
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
 						data.setID((Integer)ids.get(delete.elementAt(i)));
-						data.delete();
+						data.remove();
 					}
 				}
 				//else       System.out.println("delete is null");
