@@ -208,7 +208,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     catch(FinderException ex){
       Name name = new Name(fullName);
     		
-      user = createUser(name.getFirstName(), name.getMiddleName() , name.getLastName() , personalID, gender, dateOfBirth);
+      user = createUser(name.getFirstName(), name.getMiddleName() , name.getLastName() , fullName, personalID, null, gender!=null?(Integer)gender.getPrimaryKey():null, dateOfBirth, null);
+      //user = createUser(name.getFirstName(), name.getMiddleName() , name.getLastName() , personalID, gender, dateOfBirth);
     }
 
     return user;
@@ -262,7 +263,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 
       userToAdd.setFullName(fullName);
-	 
+
       
       /*userToAdd.setFirstName(firstName);
       userToAdd.setMiddleName(middleName);
@@ -823,6 +824,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		  return updateUsersMainAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
 	}	
 	
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
+    AddressType mainAddressType = getAddressHome().getAddressType1();
+    return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, mainAddressType);
+	}
+	
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
     AddressType mainAddressType = getAddressHome().getAddressType1();
     return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
@@ -845,32 +851,49 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
   		return updateUsersCoAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
   }	
+ 
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
+    AddressType coAddressType = getAddressHome().getAddressType2();
+    return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, coAddressType);
+	}
+
   public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
-    AddressType mainAddressType = getAddressHome().getAddressType2();
-    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
+    AddressType coAddressType = getAddressHome().getAddressType2();
+    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, coAddressType);
   }    
     
   private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException,RemoteException {  
+    try {
+      User user = getUser(userId);
+
+      Country country = null;
+      if( countryName!=null ){
+	    		country = ((CountryHome)getIDOHome(Country.class)).findByCountryName(countryName);
+	    }
+	    
+	    PostalCode code = null;
+	    if( postalCodeId!=null){
+	    		code = ((PostalCodeHome)getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+	    }
+	    
+	    return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, code, country, city, province, poBox, communeID, addressType);
+    } catch (Exception e) {
+
+    }
+		return null;
+
+  }
+
+  private Address updateUsersAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException,RemoteException {  
      Address address = null;
-      if( streetNameAndNumber!=null && userId!=null ){
+      if( streetNameAndNumber!=null && user!=null ){
       	try{
       		AddressBusiness addressBiz = getAddressBusiness();
 	        String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
 	        String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
 	        
-	        User user = getUser(userId);
-	        address = getUserAddressByAddressType(userId.intValue(), addressType);
+	        address = getUserAddressByAddressType( ((Integer) user.getPrimaryKey()).intValue(), addressType);
 	        
-	        Country country = null;
-	        
-	        if( countryName!=null ){
-	        	country = ((CountryHome)getIDOHome(Country.class)).findByCountryName(countryName);
-	        }
-	        
-	        PostalCode code = null;
-	        if( postalCodeId!=null){
-	        	code = ((PostalCodeHome)getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
-	        }
 	                
 	        
 	        boolean addAddress = false;/**@todo is this necessary?**/
@@ -883,7 +906,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	        }
 	
 	        if( country!=null ) address.setCountry(country);
-	        if( code!=null ) address.setPostalCode(code);
+	        if( postalCode!=null ) address.setPostalCode(postalCode);
 	        if( province!=null ) address.setProvince(province);
 	        if( city!=null ) address.setCity(city);
           if( poBox!=null)  address.setPOBox(poBox);
@@ -908,11 +931,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       	}
       	catch(Exception e){
       		e.printStackTrace();
-      		System.err.println("Failed to update or create address for userid : "+userId.toString());	
+      		System.err.println("Failed to update or create address for userid : "+user.getPrimaryKey());	
       	}
       	  
       }
-        else throw new CreateException("No streetname or userId is null!");
+        else throw new CreateException("No streetname or user is null!");
         
         return address;
 	}
