@@ -1069,19 +1069,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   /**
    * Adds email to the given user, and removes older emails if requested
+   * if addres is null or empty the no email vill exist any more for the user
+   * @return null if no email was stored
    */
   public Email storeUserEmail(User user,String emailAddress,boolean replaceExistentRecord ){
   	try {
 		if(replaceExistentRecord)
 			removeUserEmails(user);
-		Email emailRecord = lookupEmail(emailAddress);
-		if(emailRecord==null){
-			emailRecord = this.getEmailHome().create();
-			emailRecord.setEmailAddress(emailAddress);
-			emailRecord.store();
+		if(!"".equals(emailAddress)){
+			Email emailRecord = lookupEmail(emailAddress);
+			if(emailRecord==null){
+				emailRecord = this.getEmailHome().create();
+				emailRecord.setEmailAddress(emailAddress);
+				emailRecord.store();
+			}
+			user.addEmail(emailRecord);
+			return emailRecord;
 		}
-		user.addEmail(emailRecord);
-		return emailRecord;
 	} catch (IDOStoreException e) {
 		e.printStackTrace();
 	} catch (IDOAddRelationshipException e) {
