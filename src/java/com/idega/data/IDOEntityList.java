@@ -268,10 +268,16 @@ public class IDOEntityList implements List {
 	}
 
     public void set(Object o) {
-      throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
+    		if (o instanceof IDOEntity)
+	 		_list.set(_index,((IDOEntity)o));
+	 	else
+	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
     public void add(Object o) {
-      throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
+    		if (o instanceof IDOEntity)
+	 		_list.add(((IDOEntity)o));
+	 	else
+	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
 
   }
