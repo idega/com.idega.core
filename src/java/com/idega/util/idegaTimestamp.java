@@ -197,18 +197,23 @@ public class idegaTimestamp{
 
   public boolean isLaterThan( idegaTimestamp compareStamp ){
 
-    if (this.getYear() > compareStamp.getYear())
-      return true;
-    if (this.getYear() < compareStamp.getYear())
-      return false;
-    if (this.getMonth() > compareStamp.getMonth())
-      return true;
-    if (this.getMonth() < compareStamp.getMonth())
-      return false;
-    if (this.getDate() > compareStamp.getDate())
-      return true;
-    if (this.getDate() < compareStamp.getDate())
-      return false;
+
+    if(!this.isTime){
+      if (this.getYear() > compareStamp.getYear())
+        return true;
+      if (this.getYear() < compareStamp.getYear())
+        return false;
+      if (this.getMonth() > compareStamp.getMonth())
+        return true;
+      if (this.getMonth() < compareStamp.getMonth())
+        return false;
+      if (this.getDate() > compareStamp.getDate())
+        return true;
+      if (this.getDate() < compareStamp.getDate())
+        return false;
+    }
+
+    if(!this.isDate){
     if (this.getHour() > compareStamp.getHour())
       return true;
     if (this.getHour() < compareStamp.getHour())
@@ -221,7 +226,7 @@ public class idegaTimestamp{
       return true;
     if (this.getSecond() < compareStamp.getSecond())
       return false;
-
+    }
       return false;
   }
 
