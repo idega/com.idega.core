@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.61 2004/07/02 01:59:51 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.62 2004/12/03 01:02:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -125,12 +125,12 @@ public class IWPresentationServlet extends IWCoreServlet {
 						__theService(request, response);
 					}
 					//theServiceDone = true;
-					if (obj instanceof IWModuleEvent) {
+					/*if (obj instanceof IWModuleEvent) {
 						((IWModuleEvent) obj).setIWContext(iwc);
 					}
 					else {
 						this.getPage()._setIWContext(iwc);
-					}
+					}*/
 					((ActiveEvent) obj).dispatch();
 					return true;
 					/* Kommenta� �t �ar til kerfi� r��ur vi� �r��i
