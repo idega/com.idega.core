@@ -85,4 +85,11 @@ public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFound
    * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null but primary_group can not be noull
    */
   public User createUser(String firstName, String middleName, String lastName, Group primary_group) throws CreateException,RemoteException;
+  /**
+   * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
+   * @throws NullPointerException if primaryGroup is null
+   */
+  public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimestamp dateOfBirth,Group primaryGroup) throws CreateException,RemoteException;
+
+
 }
