@@ -24,7 +24,7 @@ public class IWConstants{
   //public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#D4D0C8";
   //public final static String DEFAULT_DARK_INTERFACE_COLOR="gray";
 
-  public final static String DEFAULT_INTERFACE_COLOR="#B0B29D";
+  public final static String DEFAULT_INTERFACE_COLOR="#C1C3B4";
   public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#FFFFFF";
   public final static String DEFAULT_DARK_INTERFACE_COLOR="#74858D";
 
