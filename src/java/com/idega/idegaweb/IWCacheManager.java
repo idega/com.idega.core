@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import com.idega.util.caching.Cache;
 import com.idega.util.FileUtil;
 import com.idega.data.GenericEntity;
+import com.idega.data.CacheableEntity;
 import com.idega.util.StringHandler;
 
 
@@ -198,19 +199,22 @@ public class IWCacheManager {
   }
 
 
-  public void cacheTable(GenericEntity entity){
-    cacheTable(entity,entity.getIDColumnName());
+  public void cacheTable(CacheableEntity entity){
+    cacheTable(entity,entity.getCacheKey());
   }
 
-  public void cacheTable(GenericEntity entity, String columnNameForKey){
+  public void cacheTable(CacheableEntity entity, String columnNameForKey){
     cacheTable(entity,columnNameForKey,null);
   }
 
-  public void cacheTable(GenericEntity entity, String columnNameForKey ,String columnNameForSecondKey){
+  public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
+
     if( entityMaps == null ){
       entityMaps = new HashMap();
       entityMapsKeys = new HashMap();
     }
+
+
     if( entityMaps.get(entity.getClass()) == null ){
       Map entityMap = new HashMap();
       Vector keys = new Vector();
@@ -234,7 +238,7 @@ public class IWCacheManager {
               entityMap.put(StringHandler.concatAlphabetically(e[i].getStringColumnValue(columnNameForKey),e[i].getStringColumnValue(columnNameForSecondKey)),e[i]);
             }
             else{
-              entityMap.put(e[i].getStringColumnValue(columnNameForKey),e[i]);
+               entityMap.put(e[i].getStringColumnValue(columnNameForKey),e[i]);
             }
           }
           entityMaps.put(entity.getClass(),entityMap);
@@ -256,7 +260,7 @@ public class IWCacheManager {
       if( entityMap != null ){
        entity = (GenericEntity) entityMap.get(value);
       }
-    }//else System.out.println("IWCacheManager entityMaps is null!");
+    }else System.out.println("IWCacheManager entityMaps is null!");
 
     return entity;
   }
