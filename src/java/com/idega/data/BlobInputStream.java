@@ -159,10 +159,10 @@ public class BlobInputStream extends InputStream{
   private void initConnection() throws SQLException{
       conn = ConnectionBroker.getConnection();
   }
-
+/*
   protected void finalize()throws Throwable{
     close();
     super.finalize();
   }
-
+*/
 }
