@@ -18,13 +18,26 @@ public class MatchCriteria extends Criteria {
     public static final String GREATEREQUAL = ">=";
     public static final String LESSEQUAL = "<=";
     public static final String LIKE = "LIKE";
+    
+    private static final String IS = "IS";
+    private static final String NULL = "NULL";
 
     private Column column;
     private String value;
     private String matchType;
 		private DatastoreInterface dataStore;
 
-    public MatchCriteria(Column column, String matchType, String value) {
+		/**
+		 * Adds a null value to the given <code>Column</code> (...AND columnName IS NULL...)
+		 * @param column
+		 */
+		public MatchCriteria(Column column) {
+			this.column = column;
+			this.value = NULL;
+			this.matchType = IS;
+		}
+
+		public MatchCriteria(Column column, String matchType, String value) {
         this.column = column;
         this.value = quote(value);
         this.matchType = matchType;
@@ -76,6 +89,10 @@ public class MatchCriteria extends Criteria {
     		this.value = quote(pk.toString());
     	}
     	this.matchType = matchType;
+    }
+
+    public MatchCriteria(Table table, String columnname) {
+    	this(table.getColumn(columnname));
     }
 
     public MatchCriteria(Table table, String columnname, String matchType, boolean value) {
