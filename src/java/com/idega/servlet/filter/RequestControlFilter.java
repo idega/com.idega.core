@@ -69,6 +69,24 @@ import javax.servlet.http.HttpSession;
  */
 public class RequestControlFilter implements Filter {
 
+	/** A list of Pattern objects that match paths to exclude */
+	private LinkedList excludePatterns;
+
+	/** A map from Pattern to max wait duration (Long objects) */
+	private HashMap maxWaitDurations;
+
+	/** The session attribute key for the request currently being processed */
+	private final static String REQUEST_IN_PROCESS = "RequestControlFilter.requestInProcess";
+
+	/** The session attribute key for the request currently waiting in the queue */
+	private final static String REQUEST_QUEUE = "RequestControlFilter.requestQueue";
+
+	/** The session attribute key for the synchronization object */
+	private final static String SYNC_OBJECT_KEY = "RequestControlFilter.sessionSync";
+
+	/** The default maximum number of milliseconds to wait for a request */
+	private final static long DEFAULT_DURATION = 5000;
+
 	/**
 	 * Initialize this filter by reading its configuration parameters
 	 * 
@@ -306,22 +324,4 @@ public class RequestControlFilter implements Filter {
 		// this path is not excluded
 		return true;
 	}
-
-	/** A list of Pattern objects that match paths to exclude */
-	private LinkedList excludePatterns;
-
-	/** A map from Pattern to max wait duration (Long objects) */
-	private HashMap maxWaitDurations;
-
-	/** The session attribute key for the request currently being processed */
-	private final static String REQUEST_IN_PROCESS = "RequestControlFilter.requestInProcess";
-
-	/** The session attribute key for the request currently waiting in the queue */
-	private final static String REQUEST_QUEUE = "RequestControlFilter.requestQueue";
-
-	/** The session attribute key for the synchronization object */
-	private final static String SYNC_OBJECT_KEY = "RequestControlFilter.sessionSync";
-
-	/** The default maximum number of milliseconds to wait for a request */
-	private final static long DEFAULT_DURATION = 5000;
 }
