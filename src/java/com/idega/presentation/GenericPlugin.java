@@ -167,7 +167,7 @@ public void print(IWContext iwc)throws IOException{
       if( getWidth()!=null ) buffer.append(getWidthString());
       buffer.append(">\n");
       buffer.append(getParams());
-      buffer.append("\n<embed pluginspage=\"");
+      buffer.append("<embed pluginspage=\"");
       buffer.append(pluginspace);
       buffer.append("\"");
       buffer.append(getAttributeString());

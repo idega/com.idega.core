@@ -44,6 +44,7 @@ public Flash(String url,int width,int height){
 
 public void setURL(String url){
   setParam("movie",url);
+  setAttribute("src",url);
 }
 
 public void setTransparent(){
