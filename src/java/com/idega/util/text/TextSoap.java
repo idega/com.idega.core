@@ -738,5 +738,18 @@ public class TextSoap {
     return decimalFormat.format(doubleToDecimalFormat);
   }
 
+   public static String stripHTMLTagAndChangeBodyTagToTable(String html) {
+    return html;
+  }
+
+  public static String findAndReplace(String html, String param1, String param2, String param3, String param4) {
+    return html;
+  }
+
+  public static String findAndReplace(String html, String param1, String param2, String param3) {
+    return findAndReplace(html,param1,param2,param3,null);
+  }
+
+
 }
 // class TestSoap
