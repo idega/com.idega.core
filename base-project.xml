@@ -10,8 +10,8 @@
     <groupId>bundles</groupId>
 
     <repository>
-        <connection>scm:cvs:ext:${maven.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}/.bundle</connection>
-        <developerConnection>scm:cvs:ext:${maven.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}/.bundle</developerConnection>
+        <connection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</connection>
+        <developerConnection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</developerConnection>
     </repository>
 
   <url>http://maven.idega.com/${pom.groupId}/${pom.artifactId}</url>
@@ -21,6 +21,6 @@
   <distributionSite>maven.idega.com</distributionSite>
   <distributionDirectory>/var/www/webs/maven.idega.com/maven</distributionDirectory>
   <build>
-    <nagEmailAdress>tryggvi@idega.is</nagEmailAdress>
+    <nagEmailAddress>tryggvi@idega.is</nagEmailAddress>
   </build> 
 </project>
