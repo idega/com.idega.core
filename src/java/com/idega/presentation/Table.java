@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.73 2004/09/06 12:30:56 laddi Exp $
+ * $Id: Table.java,v 1.74 2004/09/16 16:38:52 gimmi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1889,6 +1889,34 @@ public class Table extends PresentationObjectContainer {
 				return styler.getStyleValue("background-color");
 			return null;
 		}
+	}
+	/**
+	 * Returns the style of a Cell
+	 * Returns NULL of no style is set
+	 */
+	public String getStyle(int xpos, int ypos) {
+		PresentationObjectContainer cont = theCells[xpos - 1][ypos - 1];
+		if (cont != null) {
+			String styleAtt = cont.getStyleAttribute();
+			if (!"".equals(styleAtt)) {
+				return styleAtt;
+			} 
+		}
+		return null;
+	}
+	/**
+	 * Returns the styleClass of a Cell
+	 * Returns NULL of no style is set
+	 */
+	public String getClass(int xpos, int ypos) {
+		PresentationObjectContainer cont = theCells[xpos - 1][ypos - 1];
+		if (cont != null) {
+			String classAtt = cont.getMarkupAttribute("class");
+			if (!"".equals(classAtt)) {
+				return classAtt;
+			}
+		}
+		return null;
 	}
 
 	public void setResizable(boolean resizable) {
