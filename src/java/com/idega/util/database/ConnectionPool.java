@@ -325,10 +325,12 @@ public String getPassword(){
     }
  }
 
+
+
  /**
   * Trims the pool so that it has only size number of connections
   */
- public void trimTo(int size,int minSize,int maxSize){
+ public synchronized void trimTo(int size,int minSize,int maxSize){
 
     //setTimeOut(3*getTimeOut());
 
@@ -339,44 +341,57 @@ public String getPassword(){
       size=minSize;
     }
 
-    Vector connections = new Vector();
-    try{
-      int dummy=0;
-      while(this.maxConns>dummy){
-            connections.add(getConnection());
-            dummy++;
-            System.out.println("ConnectionPool.trimTo() : Getting Connection nr "+dummy+", maxConns="+this.maxConns);
-      }
-    }
-    catch(Exception ex){
-      System.out.println("Exception in"+this.getClass().getName());
-      ex.printStackTrace();
-    }
+    int currentConnectionCount = this.getCurrentConnectionCount();
 
-    try{
-      this.checkedOut=size;
-      this.minConns=minSize;
-      this.maxConns=maxSize;
+    if(size==1 && minSize == 1 && maxSize == 1 && (currentConnectionCount==1)){
+        this.minConns=minSize;
+        this.maxConns=maxSize;
+    }
+    else{
 
-      for (int i = 0; i < size; i++) {
-        Connection conn = (Connection)connections.get(0);
-        connections.remove(0);
-        connections.trimToSize();
-        this.freeConnection(conn);
+      Vector connections = new Vector();
+      try{
+        int dummy=0;
+        while(this.maxConns>dummy){
+              connections.add(getConnection());
+              dummy++;
+              //System.out.println("ConnectionPool.trimTo() : Getting Connection nr "+dummy+", maxConns="+this.maxConns);
+        }
       }
-      Iterator iter = connections.iterator();
-      while (iter.hasNext()) {
-        Connection item = (Connection)iter.next();
-        item.close();
-        System.out.print("Closing database connection");
+      catch(Exception ex){
+        System.out.println("Exception in"+this.getClass().getName());
+        ex.printStackTrace();
       }
 
-    }
-    catch(Exception ex){
-      System.out.println("Exception in"+this.getClass().getName());
-      ex.printStackTrace();
-    }
+      try{
+        this.checkedOut=size;
+        this.minConns=minSize;
+        this.maxConns=maxSize;
 
+        for (int i = 0; i < size; i++) {
+          Connection conn = (Connection)connections.get(0);
+          connections.remove(0);
+          connections.trimToSize();
+          this.freeConnection(conn);
+        }
+        Iterator iter = connections.iterator();
+        while (iter.hasNext()) {
+          Connection item = (Connection)iter.next();
+          item.close();
+          //System.out.print("Closing database connection");
+        }
+
+      }
+      catch(Exception ex){
+        System.out.println("Exception in"+this.getClass().getName());
+        ex.printStackTrace();
+      }
+
+      System.out.println("\n---- ConnectionPool trim ---");
+      System.out.println("\tDatasource "+this.name+" contains "+getCurrentConnectionCount()+" connections");
+      System.out.println("----");
+
+    }
     //setTimeOut((int)getTimeOut()/3);
 
  }
@@ -384,9 +399,9 @@ public String getPassword(){
  /**
   * Enlarges the pool so it has size number of connections
   */
- public void enlargeTo(int size,int minSize,int maxSize){
+ public synchronized void enlargeTo(int size,int minSize,int maxSize){
 
-      setTimeOut(getTimeOut()*3);
+    //setTimeOut(getTimeOut()*3);
 
 
     if(size>maxSize){
@@ -396,57 +411,76 @@ public String getPassword(){
       size=minSize;
     }
 
-    Vector connections = new Vector();
+    int currentConnectionCount = this.getCurrentConnectionCount();
+    int currentMaxSize = this.getMaximumConnectionCount();
+    int currentMinimumSize = this.getMinimumConnectionCount();
 
-    try{
-      int dummy=0;
-      while(this.maxConns>dummy){
-            connections.add(getConnection());
-            dummy++;
-      }
-    }
-    catch(Exception ex){
-      ex.printStackTrace();
-    }
+    if(currentConnectionCount==1 && currentMaxSize == 1 && currentMinimumSize == 1 && (size==1)){
 
-    int currentconns = connections.size();
-    if(currentconns<size){
-      int difference = size-currentconns;
-      for (int i = 0; i < difference; i++) {
-        try{
-          Connection conn = newConnection();
-          connections.add(conn);
+        this.minConns=minSize;
+        this.maxConns=maxSize;
+
+    }
+    else{
+
+
+      Vector connections = new Vector();
+
+      try{
+        int dummy=0;
+        while(this.maxConns>dummy){
+              connections.add(getConnection());
+              dummy++;
         }
-        catch(Exception ex){
-          ex.printStackTrace();
-        }
-
       }
-    }
-
-    try{
-      this.minConns=minSize;
-      this.maxConns=maxSize;
-      this.checkedOut=size;
-      for (int i = 0; i < size; i++) {
-        Connection conn = (Connection)connections.get(0);
-        connections.remove(0);
-        connections.trimToSize();
-        this.freeConnection(conn);
-      }
-      Iterator iter = connections.iterator();
-      while (iter.hasNext()) {
-        Connection item = (Connection)iter.next();
-        item.close();
-        System.out.print("Closing database connection");
-      }
-
-    }
-    catch(Exception ex){
+      catch(Exception ex){
         ex.printStackTrace();
+      }
+
+      int currentconns = connections.size();
+      if(currentconns<size){
+        int difference = size-currentconns;
+        for (int i = 0; i < difference; i++) {
+          try{
+            Connection conn = newConnection();
+            connections.add(conn);
+          }
+          catch(Exception ex){
+            ex.printStackTrace();
+          }
+
+        }
+      }
+
+      try{
+        this.minConns=minSize;
+        this.maxConns=maxSize;
+        this.checkedOut=size;
+        for (int i = 0; i < size; i++) {
+          Connection conn = (Connection)connections.get(0);
+          connections.remove(0);
+          connections.trimToSize();
+          this.freeConnection(conn);
+        }
+        Iterator iter = connections.iterator();
+        while (iter.hasNext()) {
+          Connection item = (Connection)iter.next();
+          item.close();
+          //System.out.print("Closing database connection");
+        }
+
+      }
+      catch(Exception ex){
+          ex.printStackTrace();
+      }
+
+      System.out.println("\n---- ConnectionPool enlargement ---");
+      System.out.println("\tDatasource "+this.name+" contains "+getCurrentConnectionCount()+" connections");
+      System.out.println("----");
+
     }
 
-    setTimeOut((int)getTimeOut()/3);
+    //setTimeOut((int)getTimeOut()/3);
 
  }
 
