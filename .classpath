@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <classpath>
-  <classpathentry excluding="" kind="src" path="src/java">
+  <classpathentry excluding="" kind="src" path="src\java">
   </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
@@ -19,7 +19,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jaf/jars/jaf-1.0.2.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/cos/jars/cos-05Nov2002.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/servlets.com/jars/cos-05Nov2002.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-2.4.jar">
   </classpathentry>
@@ -43,6 +43,6 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.3.jar">
   </classpathentry>
-  <classpathentry kind="output" path="target/classes">
+  <classpathentry kind="output" path="target\classes">
   </classpathentry>
 </classpath>
