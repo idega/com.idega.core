@@ -350,6 +350,26 @@ public class TextSoap {
   }
 
 
+  public static String stripHTMLandBodyTag(String html){
+   Vector crappy = TextSoap.FindAllBetween(html,"<body","</body>");
+   if( crappy.size() >0 ){
+    String crap = (String)crappy.elementAt(0);
+    int rest = crap.indexOf(">");
+    if( rest!=-1 ){
+      html = crap.substring(rest+1,crap.length());
+    }
+   }
+
+    return html;
+  }
+
+ public static String addHTMLandBodyTag(String html){
+   StringBuffer buf = new StringBuffer("<html><body>");
+   buf.append(html);
+   buf.append("</body><html>");
+   return buf.toString();
+ }
+
   /**
    * @todo finish
    *  Description of the Method
