@@ -260,7 +260,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 
       userToAdd.setFullName(fullName);
-
+	 
       
       /*userToAdd.setFirstName(firstName);
       userToAdd.setMiddleName(middleName);
@@ -384,7 +384,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException{
-      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),dateOfBirth,null);
+      return createUser(firstname,middlename,lastname,null,personalID,null,gender!=null?(Integer)gender.getPrimaryKey():null,dateOfBirth,null);
   }
 
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException {
