@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.25 2003/07/05 17:21:46 gummi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.26 2003/09/11 16:33:19 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -388,23 +388,29 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 	}
 	
-	public boolean doesTableExist(GenericEntity entity, String tableName){
-	    try{
+	
+	
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#doesTableExist(java.lang.String, java.lang.String)
+	 */
+	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
+		try{
 	 
-	    	StringBuffer query = new StringBuffer("SELECT COUNT(RDB$RELATION_NAME) ");
-	    	query.append("	FROM RDB$RELATIONS where RDB$RELATION_NAME = '");
-	    	query.append(tableName.toUpperCase());
-			query.append("'");
-			//System.err.println(query.toString());
-			int count = entity.getNumberOfRecords(query.toString());
-			//System.err.println("count was "+count);
-			return count >0;
-	    }
-	    catch(Exception e){
-	    	//e.printStackTrace();
-	    	return false;
-	    }
+		  StringBuffer query = new StringBuffer("SELECT COUNT(RDB$RELATION_NAME) ");
+		  query.append("	FROM RDB$RELATIONS where RDB$RELATION_NAME = '");
+		  query.append(tableName.toUpperCase());
+		  query.append("'");
+		  //System.err.println(query.toString());
+		  //int count = entity.getNumberOfRecords(query.toString());
+		  //System.err.println("count was "+count);
+		  Object obj = executeQuery(dataSourceName,query.toString());
+		  return obj !=null;
+	  }
+	  catch(Exception e){
+		  //e.printStackTrace();
+		  return false;
+	  }
 			
 	}
-	
+
 }
