@@ -777,7 +777,7 @@ public PrintWriter getWriter()throws IOException{
 
 public void sendRedirect(String URL){
   try {
-    getResponse().sendRedirect(URL);
+    getResponse().sendRedirect(getResponse().encodeRedirectURL(URL));
   }
   catch (IOException e) {
     e.printStackTrace(System.err);
@@ -1104,6 +1104,7 @@ public void setCacheWriter(PrintWriter writer){
 
    public void forwardToIBPage(IBPage page){
     try{
+      this.getResponse().reset();
       RequestDispatcher req = this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
       req.forward(this.getRequest(),this.getResponse());
     }
