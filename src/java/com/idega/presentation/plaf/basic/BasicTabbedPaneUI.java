@@ -79,10 +79,10 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
     public PresentationObject getTab(int index,boolean selected){
       Link tempObj = (Link)this.getAddedTabs().elementAt(index);
-      tempObj.setStyleClass("styledLink"); //added - birna
+      tempObj.setStyleClass("styledLink"); 
       Tab tempTab = new Tab(this.getColor());
       tempTab.setSelected(selected);
-      tempTab.addLink(tempObj); //added - birna
+      tempTab.addLink(tempObj); 
       //commented out - birna
 //      if(selected){
 //        tempTab.addLink(tempObj.getObject());
@@ -100,11 +100,11 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
     public void lineUpTabs(){
       //this.resize(this.getAddedTabs().size()+3, 2);
       this.empty();
-      /*IWColor color = getColor();
+      IWColor color = getColor();
       IWColor dark = color.darker();
       IWColor darker = dark.darker();
       IWColor darkest = darker.darker();
-      IWColor bright = color.brighter();*/
+      IWColor bright = color.brighter();
       
       int tabSize = this.getAddedTabs().size();
 			if(this.getSelectedIndex() == -1 && tabSize != 0){
@@ -113,24 +113,24 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       
       int row = 2;
       int column = 2;
-      if ( tabSize > 4 )//changed from 5
+      if ( tabSize > 5 )//changed from 5
       	row = 4;
 
       for (int i = 0; i < tabSize; i++) {
         PresentationObject tempObj = this.getTab(i,(this.getSelectedIndex()==i));
         this.add(tempObj,column,row-1);
         this.add(Text.emptyString(),column,row);
-//        this.setWidth(i+2,tempObj.getWidth());
-        this.setWidth(column,"100%");
-//        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);        
-        if ( i == 4 ) {
-        	row = 4;
+ //       this.setWidth(i+2,tempObj.getWidth());
+        this.setWidth(column,"70");
+        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);        
+        if ( i == 3 ) {
+        	row = 2;
         	column = 2;
         }
       }
 
 			int size = getAddedTabs().size();
-			if ( size > 4 ) { //changed from 5
+			if ( size > 5 ) { //changed from 5
 				size = 5;
 				row = 4;	
 			}
@@ -321,7 +321,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
     	this.setHeight("100%");
 //    	this.setStyleClass("back");
 			this.setAlignment(1,1,"center"); //changed from ...ment(3,1,"center");
-			this.setVerticalAlignment(1,1,"middle");
+			this.setVerticalAlignment(1,1,"top");
 
 
 //      this.resize(5,3);

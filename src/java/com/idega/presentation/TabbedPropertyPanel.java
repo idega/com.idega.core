@@ -285,7 +285,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     buttonTable.setCellspacing(0);
     buttonTable.setHeight(27);
     buttonTable.setStyleClass("main");
-    buttonTable.setWidth("100%");
+    buttonTable.setWidth("400");
 
     buttonTable.setVerticalAlignment(1,1,"middle");
     buttonTable.setVerticalAlignment(2,1,"middle");
@@ -303,7 +303,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 //    buttonTable.add(apply,5,1);
 
     frameTable.add(buttonTable,1,2);
-    frameTable.setAlignment(1,2,"right");
+    frameTable.setAlignment(1,2,"center");
 
   }
 
