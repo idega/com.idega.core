@@ -165,30 +165,14 @@ public class TextArea extends InterfaceObject
 	 */
 	public void setWidth(String width)
 	{
-		try
-		{
-			int w = Integer.parseInt(width);
-			this.setStyleAttribute("width:" + width + "px");
-		}
-		catch (NumberFormatException e)
-		{
-			this.setStyleAttribute("width:" + width);
-		}
+		setWidthStyle(width);
 	}
 	/**
 	 * Sets the height in pixels or percents
 	 */
 	public void setHeight(String height)
 	{
-		try
-		{
-			int h = Integer.parseInt(height);
-			this.setStyleAttribute("height:" + height + "px");
-		}
-		catch (NumberFormatException e)
-		{
-			this.setStyleAttribute("height:" + height);
-		}
+		setHeightStyle(height);
 	}
 	/**
 	 * Sets the number of character columns in this text area
