@@ -33,12 +33,17 @@ public class GenericUserComparator implements Comparator {
   }
 
   public GenericUserComparator(Locale locale) {
-  	locale = locale;
+  	this.locale = locale;
   }
 
   public GenericUserComparator(int toSortBy) {
       sortBy = toSortBy;
   }
+
+	public GenericUserComparator(Locale locale, int toSortBy) {
+		this.locale = locale;
+		sortBy = toSortBy;
+	}
 
   public void sortBy(int toSortBy) {
       sortBy = toSortBy;
