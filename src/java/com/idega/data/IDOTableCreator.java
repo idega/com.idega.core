@@ -578,7 +578,7 @@ public class IDOTableCreator{
             //String columnInTableToReference=entityToReference.getIDColumnName();
             //String columnName = names[i];
 			String columnName = fields[i].getSQLFieldName();
-            createForeignKey(entity,entityToReference,columnName);
+            createForeignKey((GenericEntity)entity,entityToReference,columnName);
             //createForeignKey(entity,table1,columnName,tableToReference,columnInTableToReference);
           }
         //}
@@ -605,7 +605,7 @@ public class IDOTableCreator{
       createForeignKey(entity,referencingEntity,columnName);
   }
 
-  protected void createForeignKey(IDOEntity entity,GenericEntity entityToReference,String columnName)throws Exception{
+  protected void createForeignKey(GenericEntity entity,GenericEntity entityToReference,String columnName)throws Exception{
       createForeignKey(entity,entity.getEntityDefinition().getSQLTableName(),columnName,entityToReference.getEntityDefinition().getSQLTableName(),entityToReference.getIDColumnName());
   }
 
@@ -618,7 +618,7 @@ public class IDOTableCreator{
       executeUpdate(entity,SQLCommand);
   }*/
 
-  protected void createForeignKey(IDOEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
       _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
