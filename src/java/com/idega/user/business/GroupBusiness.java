@@ -126,6 +126,7 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public com.idega.core.data.Address getGroupMainAddress(Group group) throws RemoteException;
   
   public  com.idega.core.data.Phone[] getGroupPhones(Group group)throws RemoteException;
+  public com.idega.core.data.Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException;
   
   public com.idega.core.data.Email getGroupEmail(Group group)throws NoEmailFoundException;
   
