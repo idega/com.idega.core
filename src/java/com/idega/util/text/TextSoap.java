@@ -655,8 +655,9 @@ public class TextSoap {
 	 *@return                Description of the Return Value
 	 *@exception  Exception  Description of the Exception
 	 */
-	public static String removeWhiteSpace(String string) throws Exception {
-	    if (string == null) return "";
+	public static String removeWhiteSpace(String string) {
+	    if (string == null || string.equals("")) 
+	        return "";
 	    
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
