@@ -62,6 +62,11 @@ public class MetaData extends GenericEntity {
    setName(name);
   }
 
+  public void setMetaDataNameAndValue(String name, String value){
+   setName(name);
+   setValue(value);
+  }
+
   public void setName(String name){
    setColumn("metadata_name",name);
   }
