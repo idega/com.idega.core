@@ -4034,17 +4034,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * @todo why use like? isn't that slower?? also use IDOQuery or at least a StringBuffer!
+	 * @todo use selectquery in all ido find methods
 	 */
 	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind) throws FinderException {
-		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " like '" + toFind + "'");
+		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
 	/**
-	 * Finds one entity that has this column value
+	 * Finds one entity that has this exact column value
 	 */
 	protected Object idoFindOnePKByColumnBySQL(String columnName, String toFind) throws FinderException {
-		return idoFindOnePKBySQL("select * from " + getTableName() + " where " + columnName + " like '" + toFind + "'");
+		return idoFindOnePKBySQL("select * from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
 	/**
@@ -4162,7 +4162,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind, String orderByColumnName) throws FinderException {
-		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = " + toFind + " order by " + orderByColumnName);
+		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = '" + toFind + "' order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind, String orderByColumnName) throws FinderException {
 		return idoFindAllIDsByColumnOrderedBySQL(columnName, Integer.toString(toFind), orderByColumnName);
