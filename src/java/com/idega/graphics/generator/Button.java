@@ -195,9 +195,9 @@ public class Button {
 
     FontMetrics fm = g.getFontMetrics(g.getFont());
     //System.out.println("Leading : "+fm.getLeading());
-    System.out.println("string width : "+fm.stringWidth(text));
+    /*System.out.println("string width : "+fm.stringWidth(text));
     System.out.println("string height : "+fm.getHeight());
-    System.out.println("string ascend : "+fm.getAscent());
+    System.out.println("string ascend : "+fm.getAscent());*/
 
 
     int tWidth = fm.stringWidth(text);
@@ -265,13 +265,13 @@ public class Button {
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 
-      System.out.println("filename = " + filename);
+     // System.out.println("filename = " + filename);
 
       encode.Write(output);
       output.close();
     }
     catch (Exception e) {
-      System.out.println("Error : " + e);
+      e.printStackTrace(System.err);
     }
 
   }

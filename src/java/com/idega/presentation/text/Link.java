@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.5 2001/10/18 18:38:18 laddi Exp $
+ * $Id: Link.java,v 1.6 2001/10/21 21:00:01 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,18 +31,17 @@ import com.idega.presentation.Image;
  *@modified by  <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
 public class Link extends Text {
+
   private PresentationObject _obj;
-  private String _objectType;
   private Window _myWindow;
-  private StringBuffer _parameterString;
-  private boolean _addSessionId = true;
-  private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
   private Form _formToSubmit;
   private Class _windowClass = null;
-  private boolean _maintainAllGlobalParameters = false;
-  private String displayString;
-  private boolean hasClass = false;
 
+  private StringBuffer _parameterString;
+  private String displayString;
+  private String _objectType;
+
+  private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
   private static final String HASH = "#";
   private static final String JAVASCRIPT = "javascript:";
   private static final String TARGET_ATTRIBUTE = "target";
@@ -57,6 +56,16 @@ public class Link extends Text {
   public static final String TARGET_BLANK_WINDOW = "_blank";
   public static final String TARGET_PARENT_WINDOW = "_parent";
   public static final String TARGET_TOP_WINDOW = "_top";
+
+  private boolean isImageButton = false;
+  private boolean useTextAsLocalizedTextKey = false;
+  private boolean hasClass = false;
+  private boolean _maintainAllGlobalParameters = false;
+  private boolean _addSessionId = true;
+
+
+
+
 
   /**
    *
@@ -262,6 +271,19 @@ public class Link extends Text {
         }
       }
     }
+
+
+    if( isImageButton ){//get a generated button gif image
+      if(useTextAsLocalizedTextKey){//the text entered is a local key
+        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text);
+      }
+      else{
+        _obj = iwc.getApplication().getCoreBundle().getImageButton(text);
+      }
+      _obj.setParentObject(this);
+      _objectType = OBJECT_TYPE_MODULEOBJECT;
+    }
+
     if (_obj != null) {
       _obj.main(iwc);
     }
@@ -560,6 +582,10 @@ public class Link extends Text {
   public void setText(String text) {
     if (isText()){
       ((Text)_obj).setText(text);
+      this.text = text;
+    }
+    else{
+      this.text = text;
     }
   }
 
@@ -698,6 +724,9 @@ public class Link extends Text {
       linkObj._parameterString = _parameterString;
       linkObj._addSessionId = _addSessionId;
       linkObj._maintainAllGlobalParameters = _maintainAllGlobalParameters;
+      linkObj.text = text;
+      linkObj.isImageButton = isImageButton;
+      linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
 
       if (_parameterString != null) {
         linkObj._parameterString = new StringBuffer(_parameterString.toString());
@@ -1083,6 +1112,19 @@ public class Link extends Text {
       }
     }
     return false;
+  }
+
+  public void setAsImageButton(boolean isImageButton){
+   this.isImageButton = isImageButton;
+  }
+
+  public void setAsLocalizedImageButton( boolean useTextAsLocalizedTextKey ){
+    this.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
+  }
+
+  public void setAsImageButton(boolean isImageButton, boolean useTextAsLocalizedTextKey ){
+    setAsImageButton(isImageButton);
+    setAsLocalizedImageButton(useTextAsLocalizedTextKey);
   }
 }
 
