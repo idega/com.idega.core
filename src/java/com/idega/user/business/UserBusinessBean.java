@@ -2853,16 +2853,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			user = (User)users.iterator().next();
 		}
 		else{
-			int index = dn.indexOf("/");
+			int index = dn.indexOf(IWLDAPConstants.LDAP_USER_DIRECTORY_STRING_SEPARATOR);
 			int commaIndex = dn.indexOf(",");
-			if(index>0 && index<commaIndex){
-				String pid = dn.substring(index+1,commaIndex);
-				try {
-					user = getUser(pid);
+				if(index>0 && index<commaIndex){
+					String pid = dn.substring(index+1,commaIndex);
+					try {
+						user = getUser(pid);
+					}
+					catch (FinderException e) {
+					}
 				}
-				catch (FinderException e) {
+				else{
+					//TODO find by his name
+					//getUserHome().findUsersByConditions()
 				}
-			}
+			
 		}
 		
 		
