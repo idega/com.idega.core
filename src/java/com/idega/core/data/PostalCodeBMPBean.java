@@ -77,8 +77,11 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
     return getStringColumnValue("postal_code");
   }
 
+  /**
+   * All names are stored in uppercase, uses String.toUpperCase();
+   */
   public void setName(String name){
-    setColumn("name", name);
+    setColumn("name", name.toUpperCase());
   }
 
   public String getName(){

@@ -260,7 +260,7 @@ public class AddressInfoTab extends UserTab{
 
       fieldValues.put(this.streetFieldName,(hasAddress) ? addr.getStreetName()+" "+addr.getStreetNumber():"" );
       fieldValues.put(this.cityFieldName,(hasAddress) ? addr.getCity():"" );
-      fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvidence():"" );
+      fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvince():"" );
       fieldValues.put(this.postalCodeFieldName,(hasAddress) ? "":"" );
       fieldValues.put(this.countryFieldName,(hasAddress) ? "":"" );
       fieldValues.put(this.poBoxFieldName,(hasAddress) ? addr.getPOBox():"");

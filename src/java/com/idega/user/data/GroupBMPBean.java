@@ -272,6 +272,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   public void ejbPostCreateGroup() throws CreateException {
   }
 
+  public Object ejbFindByName(String name) throws FinderException {
+    return this.idoFindOnePKBySQL("select * from "+this.getEntityName()+" where "+this.getNameColumnName()+" = '"+name+"'");
+  }
+
   public Integer ejbFindGroupByPrimaryKey(Object pk) throws FinderException {
     return (Integer)this.ejbFindByPrimaryKey(pk);
   }

@@ -10,7 +10,6 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public void setPostalCodeID(int p0);
  public void setDefaulValues();
  public void setStreetNumber(java.lang.String p0);
- public java.lang.String getProvidence();
  public com.idega.core.data.AddressType getAddressType();
  public void setPostalCode(com.idega.core.data.PostalCode p0);
  public java.lang.String getCity();
@@ -25,9 +24,11 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public com.idega.core.data.PostalCode getPostalCode()throws java.sql.SQLException;
  public void setAddressType(com.idega.core.data.AddressType p0);
  public void setStreetName(java.lang.String p0);
- public void setProvidence(java.lang.String p0);
+ public void setProvince(java.lang.String p0);
  public com.idega.core.data.Country getCountry();
  public int getCountryId();
  public int getPostalCodeID();
  public void setCity(java.lang.String p0);
+ public java.lang.String getProvince();
+
 }
