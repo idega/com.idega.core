@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.53 2004/02/20 16:37:44 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.54 2004/03/31 18:09:41 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -90,29 +90,31 @@ public class IWPresentationServlet extends IWCoreServlet {
 			return true;
 		}
 	}
-	protected void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected void initializeIWContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//TODO: Find a better solution for this
-		IWContext iwc = null;
-		if (!hasCheckedCurrentAppContext()) {
-			this.getApplication().setApplicationContextURI(request.getContextPath());
+		IWContext iwc = getIWContext();
+		if(iwc==null) {
+			if (!hasCheckedCurrentAppContext()) {
+				this.getApplication().setApplicationContextURI(request.getContextPath());
+			}
+	
+			iwc = new IWContext(request, response);
+			iwc.setServletContext(getServletContext());
+	
+			if (iwc.isMultipartFormData()) {
+				//writer.println("form is multipart");
+				handleMultipartFormData(iwc);
+			}
+			//          else {
+			//            writer.println("form is not multipart");
+			//            writer.println("<br>type: "+iwc.getRequestContentType());
+			//          }
+			String markup = iwc.getParameter("idega_special_markup");
+			if (markup != null) {
+				iwc.setLanguage(markup);
+			}
+			storeObject(IW_CONTEXT_KEY, iwc);
 		}
-
-		iwc = new IWContext(request, response);
-		iwc.setServletContext(getServletContext());
-
-		if (iwc.isMultipartFormData()) {
-			//writer.println("form is multipart");
-			handleMultipartFormData(iwc);
-		}
-		//          else {
-		//            writer.println("form is not multipart");
-		//            writer.println("<br>type: "+iwc.getRequestContentType());
-		//          }
-		String markup = iwc.getParameter("idega_special_markup");
-		if (markup != null) {
-			iwc.setLanguage(markup);
-		}
-		storeObject(IW_CONTEXT_KEY, iwc);
 	}
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		__main(servReq, servRes);
@@ -189,7 +191,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		try {
 			//long time1 = System.currentTimeMillis();
 			//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
-			__initializeIWC(request, response);
+			initializeIWContext(request, response);
 			IWContext iwc = getIWContext();
 			com.idega.util.ThreadContext tc = this.getThreadContext();
 			tc.getAttribute("");

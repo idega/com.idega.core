@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +47,7 @@ public class IWCoreServlet extends HttpServlet
 	/**
 	 * This Service method by default synchronizes the first access to it for performance/caching reasons
 	 */
-	public void service(ServletRequest _req, ServletResponse _res)
+	public void service(HttpServletRequest _req, HttpServletResponse _res)
 	throws ServletException, IOException{
 		if(getIfSyncronizeAccess(_req,_res)){
 			synchronized(this){
@@ -65,7 +63,7 @@ public class IWCoreServlet extends HttpServlet
 	/**
 	 * The real service method implementation besides synchronization
 	 */
-	protected void unSynchronizedService(ServletRequest _req, ServletResponse _res)
+	protected void unSynchronizedService(HttpServletRequest _req, HttpServletResponse _res)
 	throws ServletException, IOException{
 				ThreadContext context = getThreadContext();
 		//Thread ct = Thread.currentThread();
@@ -80,7 +78,7 @@ public class IWCoreServlet extends HttpServlet
 	 * @param _res
 	 * @return true if the current service access sould be synchronized, false otherwise.
 	 */
-	protected boolean getIfSyncronizeAccess(ServletRequest _req, ServletResponse _res){
+	protected boolean getIfSyncronizeAccess(HttpServletRequest _req, HttpServletResponse _res){
 		return synchronizeFirstAccess&&isFirstAccessor;
 	}
 	/**
@@ -89,7 +87,7 @@ public class IWCoreServlet extends HttpServlet
 	 * @param _res
 	 * @return true if successfully unSet.
 	 */
-	protected boolean unSetSyncronizedAccess(ServletRequest _req, ServletResponse _res){
+	protected boolean unSetSyncronizedAccess(HttpServletRequest _req, HttpServletResponse _res){
 		return isFirstAccessor=false;
 	}
 	
