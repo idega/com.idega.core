@@ -45,7 +45,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
   public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
   public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
-	private static final String EMPTY_STRING = "";
 
 	private static final String COLUMN_GROUP_ID = "ic_group_id";
 	private static final String COLUMN_NAME = "name";
@@ -980,7 +979,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public String ejbHomeGetGroupType() {
 		return this.getGroupTypeValue();
-	}
+  }
+    
+  public String ejbHomeGetRelationTypeGroupParent() {
+    return RELATION_TYPE_GROUP_PARENT;
+  }  
+    
 	public Collection ejbFindGroups(String[] groupIDs) throws FinderException {
 		Collection toReturn = new ArrayList(0);
 		String sGroupList = "";

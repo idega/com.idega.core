@@ -15,6 +15,7 @@ public interface GroupHome extends com.idega.data.IDOHome
  public Group findSystemUsersGroup()throws javax.ejb.FinderException;
  public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.FinderException;
  public java.lang.String getGroupType();
+ public java.lang.String getRelationTypeGroupParent();
  public java.util.Collection findGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException;
  public java.util.Collection findTopNodeGroupsContained(com.idega.builder.data.IBDomain p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException;
  public int getNumberOfGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException, com.idega.data.IDOException;

@@ -97,6 +97,14 @@ public java.lang.String getGroupType(){
 	return theReturn;
 }
 
+public java.lang.String getRelationTypeGroupParent()  {
+  com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+  java.lang.String theReturn = ((GroupBMPBean)entity).ejbHomeGetRelationTypeGroupParent();
+  this.idoCheckInPooledEntity(entity);
+  return theReturn;
+}
+
+
 public int getNumberOfGroupsContained(com.idega.user.data.Group p0, java.util.Collection p1, boolean p2)throws javax.ejb.FinderException, com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	return ((GroupBMPBean)entity).ejbHomeGetNumberOfGroupsContained(p0,p1,p2);
