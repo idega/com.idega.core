@@ -96,8 +96,6 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   public void main(IWContext iwc) throws Exception {
-    if (out==null) sortAndProcess(iwc);
-
     if (forceFrame) {
       if (_sendToPage != null) {
         if (_sendToPageIfSet == null){
@@ -111,6 +109,9 @@ public class PageIncluder extends PresentationObject implements Index{
           }
         }
       }
+    }
+    else if( _sendToPage == null ){
+      if (out==null) sortAndProcess(iwc);
     }
   }
 
