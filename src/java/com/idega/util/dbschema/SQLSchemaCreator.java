@@ -17,10 +17,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/12/02 21:35:09 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/05 09:48:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class SQLSchemaCreator{
@@ -321,7 +321,7 @@ public class SQLSchemaCreator{
   	
   	SchemaColumn[] fields = schema.getColumns();
 	for (int i = 0; i < fields.length; i++){
-        String columnName = fields[i].getSQLName();
+        //String columnName = fields[i].getSQLName();
         returnString.append(getColumnSQLDefinition(fields[i],schema));
         if (i!=fields.length-1){
           returnString.append(",");
@@ -668,7 +668,7 @@ public class SQLSchemaCreator{
  
   
   private void updateIndexes( Schema schema) {
-		if (sa.useIndexes()) {
+		/*if (sa.useIndexes()) {
 			Index[] indexesFromDB = sa.getTableIndexes( schema.getSQLName());
   		try {
   		    
@@ -676,7 +676,7 @@ public class SQLSchemaCreator{
 				Index[] indexes = schema.getIndexes();
 				
   		    
-  		    		/*
+  		    		
 				Set indexesFromEntity = map.keySet();
 				Set setFromDB = indexesFromDB.keySet();
 			
@@ -724,12 +724,12 @@ public class SQLSchemaCreator{
 					catch (Exception e1) {
 						System.out.println("IDOTableCreator : failed to create index : "+indexName+" ("+e1.getMessage()+")");
 					}
-				}*/
+				}
 			}
 			catch (Exception e) {
 		
 			}
-		}
+		}*/
 
 }
 
