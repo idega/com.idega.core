@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <extend>${base.project.dir}/base-project.xml</extend>
+  <extend>${base.project.dir}/base-dependencies.xml</extend>
   <name>idegaWeb JavaServer Faces</name>
   <artifactId>com.idega.faces</artifactId>
   <currentVersion>0.9.1-SNAPSHOT</currentVersion>
@@ -47,56 +47,11 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>ejb</groupId>
-      <artifactId>ejb</artifactId>
-      <version>2.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/ejb/docs.html</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
-    <dependency>
-      <groupId>jta</groupId>
-      <artifactId>jta</artifactId>
-      <version>spec1_0_1</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
-    <dependency>
-      <groupId>servletapi</groupId>
-      <artifactId>servletapi</artifactId>
-      <version>2.4</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/servlet/docs.html</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>servlets.com</groupId>
-      <artifactId>cos</artifactId>
-      <version>05Nov2002</version>
-      <type>jar</type>
-      <url>http://www.servlets.com/cos/</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>myfaces</groupId>
-      <artifactId>jsf-api</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
-      <properties/>
-    </dependency>
-    <dependency>
       <groupId>myfaces</groupId>
       <artifactId>myfaces</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.7</version>
       <type>jar</type>
-      <url>http://myfaces.org/</url>
-      <properties/>
+      <url>http://www.myfaces.org/</url>
     </dependency>
     <dependency>
       <groupId>smile</groupId>
