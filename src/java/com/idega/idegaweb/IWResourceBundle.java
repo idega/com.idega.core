@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.29 2003/12/05 21:11:47 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.30 2003/12/09 21:57:58 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -154,7 +154,9 @@ public class IWResourceBundle extends ResourceBundle {
 						}
 					}
 				}
-				properties.store(new FileOutputStream(file), null);
+				FileOutputStream fos = new FileOutputStream(file);
+				properties.store(fos, null);
+				fos.close();
 			}
 		}
 		catch (FileNotFoundException e) {

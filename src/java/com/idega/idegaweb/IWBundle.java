@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.71 2003/12/06 14:27:06 laddi Exp $
+ * $Id: IWBundle.java,v 1.72 2003/12/09 21:57:58 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -578,7 +578,9 @@ public class IWBundle implements java.lang.Comparable
 					}
 				}
 			}*/
-			getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()), null);
+			FileOutputStream fos = new FileOutputStream(getLocalizableStringsFile());
+			getLocalizableStringsProperties().store(fos, null);
+			fos.close();
 		}
 		catch (IOException ex)
 		{
