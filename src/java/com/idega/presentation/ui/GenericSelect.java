@@ -18,6 +18,10 @@ import com.idega.presentation.IWContext;
  */
 public class GenericSelect extends InterfaceObject {
 
+	private boolean isSetAsNotEmpty;
+	private String notEmptyErrorMessage;
+	private String emptyValue;
+
 	private List theElements;
 	private List selectedElements;
 	private boolean _allSelected = false;
@@ -182,6 +186,23 @@ public class GenericSelect extends InterfaceObject {
 		return false;
 	}
 
+	public void _main(IWContext iwc) throws Exception {
+		if (getParentForm() != null) {
+			if (isSetAsNotEmpty) {
+				getParentForm().setOnSubmit("return checkSubmit(this)");
+				setCheckSubmit();
+				getScript().addToFunction("checkSubmit", "if (warnIfDropdownEmpty (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "') == false ){\nreturn false;\n}\n");
+				getScript().addFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == '"+emptyValue+"' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
+			}
+		}
+	}
+
+	private void setCheckSubmit() {
+		if (getScript().getFunction("checkSubmit") == null) {
+			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+		}
+	}
+
 	/**
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
@@ -278,5 +299,26 @@ public class GenericSelect extends InterfaceObject {
 
 	protected void setAllSelected(boolean allSelected) {
 		_allSelected = allSelected;
+	}
+
+	/**
+	 * Sets the selection so that it can not be empty, displays an alert with the given 
+	 * error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 * @param emptyValue		The value representing the "empty" value.
+	 */
+	public void setAsNotEmpty(String errorMessage, String emptyValue) {
+		isSetAsNotEmpty = true;
+		notEmptyErrorMessage = errorMessage;
+		this.emptyValue = emptyValue;
+	}
+
+	/**
+	 * Sets the selection so that it can not be empty, displays an alert with the given 
+	 * error message if the "error" occurs, uses -1 as the empty value.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsNotEmpty(String errorMessage) {
+		setAsNotEmpty(errorMessage, "-1");
 	}
 }
