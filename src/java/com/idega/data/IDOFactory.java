@@ -129,8 +129,18 @@ public abstract class IDOFactory implements IDOHome{
     return theReturn;
   }
 
-  protected IDOLegacyEntity idoGetPooledEntity(){
+  protected IDOLegacyEntity idoCheckOutPooledEntity(){
+    /**
+     * @todo: Change implementation
+     */
     return com.idega.data.GenericEntity.getStaticInstance(this.getEntityInterfaceClass());
+  }
+
+
+  protected void idoCheckInPooledEntity(IDOLegacyEntity entity){
+    /**
+     * @todo: implement
+     */
   }
 
 }
