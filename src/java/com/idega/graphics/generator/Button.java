@@ -339,7 +339,10 @@ public class Button {
         sName+=".gif";
       }
 
+      sName= sName.toLowerCase();
       path+=sName;
+
+     // System.out.print("BUTTON NAME : "+sName);
 
       if( effect == getStaticButtonUpString() ){
         buttonUpName = URLEncoder.encode(sName);

@@ -51,7 +51,7 @@ public class ImageFactory {
     images = new HashMap();
     String folderPath = coreBundle.getResourcesRealPath()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
     try {
-    System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
+    //System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
       File file = new File(folderPath+iwma.CORE_DEFAULT_FONT);
       FileInputStream fis = new FileInputStream(file);
 
