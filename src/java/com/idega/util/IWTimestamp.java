@@ -875,7 +875,7 @@ public class IWTimestamp implements Comparable {
 	 */
 	//To methods
 	public String toString() {
-		return this.getTimestamp().toString();
+		return this.getTimestamp().toString().substring(0,19);
 	}
 
 	/**
@@ -889,7 +889,7 @@ public class IWTimestamp implements Comparable {
 		else if (isTime())
 			return toSQLTimeString();
 		else
-			return getTimestamp().toString();
+			return getTimestamp().toString().substring(0,19);
 	}
 
 	/**
