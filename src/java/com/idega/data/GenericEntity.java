@@ -508,21 +508,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @param needsToUpdate true if this is a column that is changing, false if it is just being loaded from the database
 	 */
 	protected void setValue(String columnName, Object columnValue, boolean needsToUpdate) {
+		//only update if it is a new value
+		//and remove if it a null value
+		String upperCaseColumnName = columnName.toUpperCase();
+		Object oldValue = _columns.get(upperCaseColumnName);
+		
 		if (columnValue != null) {
-			//_columns.put(columnName.toLowerCase(),columnValue);
-			_columns.put(columnName.toUpperCase(), columnValue);
+			if( !(oldValue!=null && columnValue.equals(oldValue)) ){
+				_columns.put(upperCaseColumnName, columnValue);
+			}
+			else{
+//				its the same, don't add it
+				needsToUpdate = false;
+			}
 		} else {
-			removeFromColumn(columnName);
+			removeFromColumn(upperCaseColumnName);
 		}
 		
 		if(needsToUpdate){
-			flagColumnUpdate(columnName);
-		}
-		
-		if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-			setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-		} else {
-			if(needsToUpdate){
+			flagColumnUpdate(upperCaseColumnName);
+			
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			} else {
 				setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
 			}
 		}
@@ -542,10 +550,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Sets the column to null
 	 */
 	public void removeFromColumn(String columnName) {
-		//_columns.remove(columnName.toLowerCase());
 		_columns.remove(columnName.toUpperCase());
 		this.flagColumnUpdate(columnName);
-		//setValue(columnName,this.getNullColumnValue());
 	}
 	/**
 	 * This method is called when changing a columns value or initilizing it
@@ -3089,41 +3095,65 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public void addMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
-		if (_theMetaDataAttributes == null)
+		boolean dataHasChanged = false;
+		if (_theMetaDataAttributes == null){
 			getMetaData(); //get all meta data first if null
-		if (metaDataValue != null) {
-			if (metaDataType != null) {
-				if (_theMetaDataTypes == null)
-					_theMetaDataTypes = new Hashtable();
-				_theMetaDataTypes.put(metaDataKey, metaDataType);
+		}
+		
+		//this null string is a strange value coming from the user tabs in the user system, it means the value is empty or should be removed
+		if (metaDataValue != null && !"null".equals(metaDataValue)) {
+			if (metaDataType != null) {				
+				Object oldType = _theMetaDataTypes.get(metaDataKey);
+				if( !(oldType!=null && metaDataType.equals(oldType)) ){
+					//the value changed
+					_theMetaDataTypes.put(metaDataKey, metaDataType);
+					dataHasChanged = true;
+				}				
 			}
-			// change state of the entity bean
-			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-			} else {
-				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			
+			Object oldValue = _theMetaDataAttributes.get(metaDataKey);
+			Object obj = null;
+			if( !(oldValue!=null && metaDataValue.equals(oldValue)) ){
+				//the value changed
+				obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
+				dataHasChanged = true;
 			}
-			Object obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
-			metaDataHasChanged(true);
-			if (obj == null) { //is new
-				if (_insertMetaDataVector == null) {
-					_insertMetaDataVector = new Vector();
-				}
-				_insertMetaDataVector.add(metaDataKey);
-			} else { //is old
-				if (_updateMetaDataVector == null) {
-					_updateMetaDataVector = new Vector();
-				}
-				if (_insertMetaDataVector != null) {
-					if (_insertMetaDataVector.indexOf(metaDataKey) == -1) { //is old and not in the insertlist
+				
+			if(dataHasChanged){		
+				if (obj == null) { //is new
+					if (_insertMetaDataVector == null) {
+						_insertMetaDataVector = new Vector();
+					}
+					_insertMetaDataVector.add(metaDataKey);
+				} else { //is old
+					if (_updateMetaDataVector == null) {
+						_updateMetaDataVector = new Vector();
+					}
+					if (_insertMetaDataVector != null) {
+						if (_insertMetaDataVector.indexOf(metaDataKey) == -1) { //is old and not in the insertlist
+							_updateMetaDataVector.add(metaDataKey);
+						}
+					} else {
 						_updateMetaDataVector.add(metaDataKey);
 					}
-				} else {
-					_updateMetaDataVector.add(metaDataKey);
 				}
+			
+				// change state of the entity bean
+				if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+					setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+				} else {
+					this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+				}
+				
+				metaDataHasChanged(true);
 			}
+			
+		}
+		else if(metaDataValue == null || "null".equals(metaDataValue)){
+			removeMetaData(metaDataKey);
 		}
 	}
+	
 	public void removeAllMetaData() {
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null
@@ -3153,11 +3183,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null
 
-		if (_deleteMetaDataVector == null) {
-			_deleteMetaDataVector = new Vector();
-		}
-		
 		if (_theMetaDataAttributes.get(metaDataKey) != null) {
+			if (_deleteMetaDataVector == null) {
+				_deleteMetaDataVector = new Vector();
+			}
 			_deleteMetaDataVector.add(metaDataKey);
 			
 			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
@@ -3215,10 +3244,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public void metaDataHasChanged(boolean metaDataHasChanged) {
 		_metaDataHasChanged = metaDataHasChanged;
-
-		if (!_metaDataHasChanged) {
-			clearMetaDataVectors();
-		}
 	}
 
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
