@@ -40,7 +40,6 @@ import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
@@ -1328,6 +1327,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
           if( code!=null ) address.setPostalCode(code);
           if( province!=null ) address.setProvince(province);
           if( city!=null ) address.setCity(city);
+          if( poBox!=null) address.setPOBox(poBox);
           
           address.setStreetName(streetName);
           if( streetNumber!=null ) address.setStreetNumber(streetNumber);
