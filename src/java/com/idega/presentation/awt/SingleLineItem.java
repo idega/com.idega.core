@@ -16,7 +16,7 @@ import java.util.Vector;
  * @version 1.0
  */
 
-public class SingleLineItem extends Container {
+public class SingleLineItem extends Panel {
   private int height = 16;
   private int width = 100;
   private int nextXpos = 0;
