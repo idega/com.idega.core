@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.121 2004/08/08 13:01:06 laddi Exp $
+ *  $Id: Page.java,v 1.122 2004/08/08 16:00:38 laddi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -910,8 +910,8 @@ public class Page extends PresentationObjectContainer {
 		return _redirectInfo;
 	}
 	
-	public void forwardToPage(Page page) {
-		this.forwardPage = page;
+	public void setToForwardToPage(ICPage page) {
+		forwardPage = page;
 	}
 
 	/**
