@@ -52,6 +52,7 @@ public class Image extends PresentationObject
 	 * @uml.associationEnd multiplicity="(0 1)" qualifier="locale:java.util.Locale new:java.lang.Integer"
 	 */
 	private Map _ImageLocalizationMap;
+	private Map _overImageLocalizationMap;
 
 	private String textBgColor = "#CCCCCC";
 	private boolean limitImageWidth = false;
@@ -82,6 +83,7 @@ public class Image extends PresentationObject
 	private static final String BORDER_COLOR_DEFAULT = "#000000";
 	private static final String BORDER_STYLE_DEFAULT = StyleConstants.BORDER_SOLID;
 	private static final int BORDER_WIDTH_DEFAULT = 0;
+
 	
 	public Image()
 	{
@@ -159,75 +161,46 @@ public class Image extends PresentationObject
 		setWidth(width);
 		setHeight(height);
 	}
-	protected void setImageURL(IWContext iwc) throws Exception
-	{
-		//IWMainApplication iwma = iwc.getApplication();
-		//**@todo: remove this when no longer needed
-		/*String mmProp = iwma.getSettings().getProperty(MediaServlet.USES_OLD_TABLES);
-		if (mmProp != null)
-		{
-			usesOldImageTables = true;
-		}*/
-		//if (useCaching)
-		//{
-			//Cache cachedImage;
-			/*if (usesOldImageTables)
-			{ //eiki: could this clash with other cached files and overwrite them?
-				cachedImage =
-					(Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.jmodule.image.data.ImageEntity", imageId, iwma);
-			}
-			else
-			{*/
-				//cachedImage =
-				//	(Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.block.image.data.ImageEntity", imageId, iwma);
-			//}
-			/*if (cachedImage != null)
-			{
-				//**@todo: remove this when no longer needed
-				if (usesOldImageTables)
-				{
-					image2 = (com.idega.jmodule.image.data.ImageEntity) cachedImage.getEntity();
-				}
-				else
-				{
-					image = (ImageEntity) cachedImage.getEntity();
-				}
-				setURL(cachedImage.getVirtualPathToFile());
-			}*/
+	
+	protected void setImageURL(IWContext iwc) throws Exception{
 
-				String url;
-				url = getICFileSystem(iwc).getFileURI(imageId);
-				setURL(url);
-			
-		//}
-		//**@todo: remove this when no longer needed
-		//if(image==null){//if something went wrong or we are not using caching
-		// if( (image==null) ){//&& (image2==null) ){//if something went wrong or we are not using caching
-		
-		/*if ((image == null) && (image2 == null))
-		{ //if something went wrong or we are not using caching
-			if (usesOldImageTables)
-			{
-				image2 = new com.idega.jmodule.image.data.ImageEntity(imageId);
-			}
-			else
-			{
-				image =
-					(
-						(com.idega.block.image.data.ImageEntityHome) com.idega.data.IDOLookup.getHomeLegacy(
-							ImageEntity.class)).findByPrimaryKeyLegacy(
-						imageId);
-			}
-			StringBuffer URIBuffer;
-			URIBuffer = new StringBuffer(iwma.getMediaServletURI());
-			URIBuffer.append(imageId);
-			URIBuffer.append("image?");
-			URIBuffer.append(idName);
-			URIBuffer.append("=");
-			URIBuffer.append(imageId);
-			setURL(URIBuffer.toString());
-		}*/
+	
+		String url;
+		url = getICFileSystem(iwc).getFileURI(imageId);
+		setURL(url);
 	}
+	
+	/**
+	 * Sets the over image url and its javascript. locales always win
+	 * @param iwc
+	 * @throws Exception
+	 */
+	protected void setOverImageURLAndJavascript(IWContext iwc) throws Exception{
+		Integer overImageId = null;
+		String finalOverImageUrl = null;
+		if (_overImageLocalizationMap != null && !_overImageLocalizationMap.isEmpty()){
+			Locale currLocale = iwc.getCurrentLocale();
+			overImageId = (Integer) this.getOverImageLocalizationMap().get(currLocale);
+			if (overImageId == null){
+				overImageId = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
+			}
+		
+			if(overImageId!=null){
+				finalOverImageUrl = getICFileSystem(iwc).getFileURI(overImageId.intValue());
+			}
+		}else if(overImageUrl!=null){
+			finalOverImageUrl = overImageUrl;
+		}
+			
+		
+		if(finalOverImageUrl!=null){
+			setOnMouseOut("swapImgRestore()");
+			setOnMouseOver("swapImage('" + getName() + "','','" + finalOverImageUrl + "',1)");
+		}
+		
+	}
+	
+	
 	public void setLocalizedImage(String localeString, int imageID)
 	{
 		setLocalizedImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString), imageID);
@@ -236,6 +209,17 @@ public class Image extends PresentationObject
 	{
 		getImageLocalizationMap().put(locale, new Integer(imageID));
 	}
+	
+	public void setLocalizedOverImage(String localeString, int overImageID)
+	{
+		setLocalizedOverImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString), overImageID);
+	}
+	
+	public void setLocalizedOverImage(Locale locale, int overImageID)
+	{
+		getOverImageLocalizationMap().put(locale, new Integer(overImageID));
+	}
+	
 	private Map getImageLocalizationMap()
 	{
 		if (_ImageLocalizationMap == null)
@@ -244,6 +228,19 @@ public class Image extends PresentationObject
 		}
 		return _ImageLocalizationMap;
 	}
+	
+	private Map getOverImageLocalizationMap()
+	{
+		if (_overImageLocalizationMap == null){
+			_overImageLocalizationMap = new HashMap();
+		}
+		return _overImageLocalizationMap;
+	}
+	
+	public void setOverImageLocalizationMap(Map overImagesmap){
+		_overImageLocalizationMap = overImagesmap;
+	}
+	
 	public void setProperty(String key, String values[])
 	{
 		if (key.equalsIgnoreCase("url"))
@@ -320,11 +317,24 @@ public class Image extends PresentationObject
 	{
 		return this.imageId;
 	}
-	public int getImageID(IWContext iwc)
-	{
+	
+	/**
+	 * Gets the dominating image id, locales always win
+	 * @param iwc
+	 * @return
+	 */
+	public int getImageID(IWContext iwc){
 		try
 		{
-			Integer localizedID = getTheCorrectDefaultImageID(iwc);
+			Integer localizedID = null;
+			if (_ImageLocalizationMap != null){
+				Locale currLocale = iwc.getCurrentLocale();
+				localizedID = (Integer) this.getImageLocalizationMap().get(currLocale);
+				if(localizedID==null){
+					localizedID = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
+				}
+			}
+
 			if (localizedID == null)
 			{
 				return this.imageId;
@@ -339,30 +349,9 @@ public class Image extends PresentationObject
 			return this.imageId;
 		}
 	}
-	/**
-	 * Returns the correct Image, localized or not depending on what has been set.
-	 */
-	private Integer getTheCorrectDefaultImageID(IWContext iwc) throws Exception
-	{
-		if (this._ImageLocalizationMap != null)
-		{
-			Locale currLocale = iwc.getCurrentLocale();
-			Integer localizedImageID = (Integer) this.getImageLocalizationMap().get(currLocale);
-			if (localizedImageID != null)
-			{
-				return localizedImageID;
-			}
-			else
-			{
-				Integer defImageID = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
-				if (defImageID != null)
-				{
-					return defImageID;
-				}
-			}
-		}
-		return null;
-	}
+		
+
+
 	public void setVerticalSpacing(int spacing)
 	{
 		setMarkupAttribute("vspace", Integer.toString(spacing));
@@ -426,9 +415,8 @@ public class Image extends PresentationObject
 	public void setOverImage(Image image)
 	{
 		this.overImageUrl = image.getMediaURL();
-		setOnMouseOut("swapImgRestore()");
-		setOnMouseOver("swapImage('" + getName() + "','','" + overImageUrl + "',1)");
 	}
+	
 	public void setImageToOpenInPopUp(Image image)
 	{
 		this.setOnClick(
@@ -497,6 +485,8 @@ public class Image extends PresentationObject
 	}
 	private String getHTMLString(IWContext iwc) throws RemoteException
 	{
+		//Eiki: this does not seem to support over images or anything???
+		
 		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 		StringBuffer sPrint = new StringBuffer();
 		sPrint.append("<img ");
@@ -545,41 +535,19 @@ public class Image extends PresentationObject
 		sPrint.append(" "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		return sPrint.toString();
 	}
-	public static String getNoImageSource()
-	{
-		return "/idegaweb/bundles/core.bundle/resources/noimage.gif";
-	}
+
 	private void getHTMLImage(IWContext iwc)
 	{ //optimize by writing in pure html
 		try
 		{
 			setImageURL(iwc);
-			//if( (image!=null) && (image.getID()!=-1) ){//begin debug
-			/**@todo : remove temporary backward compatability when no longer needed
-			 *
-			 */
-			// if( ((image!=null) && (image.getID()!=-1)) ){//(|| ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
-			//if (((image != null) && (image.getPrimaryKey() != null)) || ((image2 != null) && (image2.getID() != -1)))
-			//{ //begin debug
+			setOverImageURLAndJavascript(iwc);
+			
 				String texti = null;
 				String link = null;
 				String width = null;
 				String height = null;
-			/*	if (usesOldImageTables)
-				{
-					texti = image2.getText();
-					link = image2.getLink();
-					width = image2.getWidth();
-					height = image2.getHeight();
-				}
-				else
-				{
-					//texti = image.getDescription();
-					//link = image.getLink();
-					// width = image.getWidth();
-					// height = image.getHeight();
-				}*/
-				// if( getName() != null && name != null ) setName(name);
+			
 				if (!limitImageWidth)
 				{
 					if ((width != null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")))
@@ -780,6 +748,9 @@ public class Image extends PresentationObject
 			obj.linkOnImage = this.linkOnImage;
 			obj.imageId = this.imageId;
 			obj.maxImageWidth = this.maxImageWidth;
+			obj._ImageLocalizationMap = this._ImageLocalizationMap;
+			obj._overImageLocalizationMap = this._overImageLocalizationMap;
+			
 		}
 		catch (Exception ex)
 		{
@@ -822,8 +793,7 @@ public class Image extends PresentationObject
 		}
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML))
 		{
-			//added by eiki
-			//Change the imageId so that it is localized
+		
 			imageId = this.getImageID(iwc);
 			if (imageId == -1)
 			{ //from an url

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.134 2004/08/27 15:28:00 thomas Exp $
+ * $Id: Link.java,v 1.135 2004/09/03 17:09:48 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,7 +58,6 @@ public class Link extends Text {
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
-	private Map _ImageLocalizationMap;
 
 	private StringBuffer _parameterString;
 	//private String displayString;
@@ -124,6 +123,9 @@ public class Link extends Text {
 	public static boolean usingEventSystem = false;
 	//A BuilderPage to link to:
 	private int ibPage=0;
+	//todo use the methods in the image object
+	private Map _overImageLocalizationMap;
+	private Map _ImageLocalizationMap;
 
 	/**
 	 *
@@ -442,6 +444,8 @@ public class Link extends Text {
 				else if (_onMouseOverImageId > 0) {
 					((Image) _obj).setOverImage(new Image(_onMouseOverImageId));
 				}
+				
+				//add localizedcrap
 				if (_onClickImage != null) {
 					((Image) _obj).setOnClickImage(_onClickImage);
 				}
@@ -1059,16 +1063,6 @@ public class Link extends Text {
 		_obj.setParentObject(this);
 	}
 
-	/*
-	public void setLocalizedImage(int icLocaleID,Image image){
-	    setLocalizedImage(ICLocaleBusiness.getLocale(icLocaleID),image);
-	}
-	
-	public void setLocalizedImage(Locale locale,Image image){
-	    setLocalizedImage(locale,image);
-	}
-	*/
-
 	public void setLocalizedImage(String localeString, int imageID) {
 		setLocalizedImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString), imageID);
 	}
@@ -1077,12 +1071,24 @@ public class Link extends Text {
 		this._objectType = OBJECT_TYPE_IMAGE;
 		getImageLocalizationMap().put(locale, new Integer(imageID));
 	}
+	
+	public void setLocalizedOverImage(String localeString, int overImageID) {
+		this._objectType = OBJECT_TYPE_IMAGE;
+		getOverImageLocalizationMap().put(ICLocaleBusiness.getLocaleFromLocaleString(localeString), new Integer(overImageID));
+	}
 
 	private Map getImageLocalizationMap() {
 		if (_ImageLocalizationMap == null) {
 			_ImageLocalizationMap = new HashMap();
 		}
 		return _ImageLocalizationMap;
+	}
+	
+	private Map getOverImageLocalizationMap() {
+		if (_overImageLocalizationMap == null) {
+			_overImageLocalizationMap = new HashMap();
+		}
+		return _overImageLocalizationMap;
 	}
 
 	public boolean isImage() {
@@ -1341,7 +1347,11 @@ public class Link extends Text {
 				linkObj._parameterString = new StringBuffer(_parameterString.toString());
 			}
 			if (this._ImageLocalizationMap != null) {
-				linkObj._ImageLocalizationMap = (Map) ((HashMap) this._ImageLocalizationMap).clone();
+				linkObj._ImageLocalizationMap = this._ImageLocalizationMap;
+			}
+			
+			if (this._overImageLocalizationMap != null) {
+				linkObj._overImageLocalizationMap = this._overImageLocalizationMap;
 			}
 
 		}
@@ -1745,6 +1755,10 @@ public class Link extends Text {
 			else if (this.isImage()) {
 				Image image = this.getTheCorrectDefaultImage(iwc);
 				if (image != null) {
+					
+					if(_overImageLocalizationMap!=null){
+						image.setOverImageLocalizationMap(getOverImageLocalizationMap());
+					}
 					image._print(iwc);
 				}
 			}
