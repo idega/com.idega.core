@@ -1,8 +1,6 @@
 /*
  * Created on 3.6.2004
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package com.idega.util;
 
@@ -24,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import com.idega.builder.business.PageCacher;
+
 import com.idega.core.builder.data.ICPage;
 
 
@@ -187,7 +185,6 @@ public class HtmlReferenceRewriter {
 			}
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		StringBuffer outString = null;
