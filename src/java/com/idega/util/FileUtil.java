@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +32,6 @@ public class FileUtil {
   public static char UNIX_FILE_SEPARATOR = '/';
   public static char WINDOWS_FILE_SEPARATOR = '\\';
   
-	
   private static String systemSeparatorString =  "file.separator";
 
 
@@ -42,7 +40,6 @@ public class FileUtil {
   }
 
   public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
-
     createFolder(path);
     String filePath = getFileNameWithPath(path,fileNameWithoutFullPath);
     createFile(filePath);
@@ -381,39 +378,43 @@ public class FileUtil {
   }
 
 
-/** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
-  public static void getURLToFile(String uri,File file){
-    //FileOutputStream fos = new FileOutputStream(file);
-    FileWriter writer= null;
-    String line;
-    BufferedInputStream bin;
-    BufferedReader in;
-    URL url;
-
-    try {
-      writer = new FileWriter(file);
-      url = new URL(uri);
-      bin = new BufferedInputStream(url.openStream());
-      in = new BufferedReader(new InputStreamReader(bin));
-      //Put the contents in a string
-      while ((line = in.readLine()) != null) {
-        writer.write(line);
-        writer.write('\n');
-      }
-      in.close();
-      writer.close();
-    }
-    catch(MalformedURLException mue) { // URL c'tor
-      //return "MalformedURLException: Site not available or wrong url";
-      mue.printStackTrace();
-    }
-    catch(IOException ioe) { // Stream constructors
-      //return "IOException: Site not available or wrong url";
-      ioe.printStackTrace();
-    }
-
+  /**
+   * Works well to e.g. save images from a website to a file
+   * @param uri
+   * @param file
+   */
+  public static void createFileFromURL(String uri,File file){
+  	try {
+  		BufferedInputStream bin;
+  		URL url = new URL(uri);
+  		BufferedInputStream input = new BufferedInputStream(url.openStream());
+  		
+  		FileOutputStream output  = new FileOutputStream(file);
+  		
+  		byte buffer[]= new byte[1024];
+  		int	noRead	= 0;
+  		
+  		noRead = input.read( buffer, 0, 1024 );
+  		
+  		//Write out the stream to the file
+  		while ( noRead != -1 ){
+  			output.write( buffer, 0, noRead );
+  			noRead = input.read( buffer, 0, 1024 );
+  		}
+  		output.flush();
+  		output.close();
+ 
+  	}
+  	catch(MalformedURLException mue) { // URL c'tor
+  		//return "MalformedURLException: Site not available or wrong url";
+  		mue.printStackTrace();
+  	}
+  	catch(IOException ioe) { // Stream constructors
+  		//return "IOException: Site not available or wrong url";
+  		ioe.printStackTrace();
+  	}
+  	
   }
-
 
 
 
