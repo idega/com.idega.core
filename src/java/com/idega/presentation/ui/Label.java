@@ -31,10 +31,9 @@ public class Label extends InterfaceObject {
 			print("<label "+getMarkupAttributesString()+" >");
 			print(_label);
 			println("</label>");	
-		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {
-			println("<br/>");	
+		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {	
 			print(_label);
-			println("<br/>");	
+			print("<br/>");	
 		}
 	}	
 	
