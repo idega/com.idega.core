@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IWFrameBusiness;
+import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWPresentationLocation;

@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.event.ChangeListener;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.*;
-import com.idega.business.IWFrameBusiness;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.event.IWBrowseEvent;
 import java.rmi.RemoteException;

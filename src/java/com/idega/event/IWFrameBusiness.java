@@ -1,4 +1,6 @@
-package com.idega.business;
+package com.idega.event;
+
+import com.idega.business.IBOSession;
 
 
 public interface IWFrameBusiness extends com.idega.business.IBOSession

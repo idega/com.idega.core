@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.83 2003/10/03 01:41:55 tryggvil Exp $
+ *  $Id: Page.java,v 1.84 2003/10/03 12:40:11 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IWFrameBusiness;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
+import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;

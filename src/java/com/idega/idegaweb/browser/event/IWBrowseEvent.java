@@ -1,6 +1,6 @@
 package com.idega.idegaweb.browser.event;
 
-import com.idega.business.IWFrameBusiness;
+import com.idega.event.IWFrameBusiness;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.NoSuchEventException;
 import com.idega.presentation.Frame;

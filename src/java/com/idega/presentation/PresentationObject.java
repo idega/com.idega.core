@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.72 2003/10/03 01:41:55 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.73 2003/10/03 12:40:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
-import com.idega.business.GenericState;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
@@ -35,6 +34,7 @@ import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.event.GenericState;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWEvent;
 import com.idega.event.IWEventMachine;

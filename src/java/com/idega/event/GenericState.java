@@ -1,4 +1,4 @@
-package com.idega.business;
+package com.idega.event;
 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;

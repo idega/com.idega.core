@@ -1,6 +1,6 @@
 package com.idega.core.localisation.business;
 
-import com.idega.business.IWEventListener;
+import com.idega.event.IWPageEventListener;
 import com.idega.presentation.IWContext;
 import java.util.Locale;
 import com.idega.util.LocaleUtil;
@@ -14,7 +14,7 @@ import com.idega.util.LocaleUtil;
  * @version 1.0
  */
 
-public class LocaleSwitcher implements IWEventListener{
+public class LocaleSwitcher implements IWPageEventListener{
 
   public static String languageParameterString = "iw_language";
   public static String englishParameterString = "en";

@@ -15,13 +15,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IWEventListener;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWUserContext;
@@ -41,7 +41,7 @@ import com.idega.util.reflect.MethodFinder;
 
  */
 
-public class LoginBusinessBean implements IWEventListener {
+public class LoginBusinessBean implements IWPageEventListener {
 	public static String UserAttributeParameter = "user_login";
 	public static String PermissionGroupParameter = "user_permission_groups";
 	public static String LoginStateParameter = "login_state";

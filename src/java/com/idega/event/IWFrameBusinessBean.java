@@ -1,7 +1,8 @@
-package com.idega.business;
+package com.idega.event;
 
 import java.util.Hashtable;
 
+import com.idega.business.IBOSessionBean;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.browser.app.IWBrowser;

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.51 2003/08/05 19:45:36 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.52 2003/10/03 12:40:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,12 +27,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IWEventListener;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.EventLogic;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWModuleEvent;
+import com.idega.event.IWPageEventListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
@@ -138,7 +138,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		if (EventListenerClass != null) {
 			if (iwc.getApplicationSettings().getIfDebug())
 				System.out.println("IWEventListener: " + EventListenerClass);
-			IWEventListener listener = (IWEventListener) Class.forName(EventListenerClass).newInstance();
+			IWPageEventListener listener = (IWPageEventListener) Class.forName(EventListenerClass).newInstance();
 			listener.actionPerformed(iwc);
 		}
 	}

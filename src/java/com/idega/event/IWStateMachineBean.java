@@ -13,7 +13,6 @@ import javax.swing.event.ChangeListener;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOSessionBean;
-import com.idega.business.IWFrameBusiness;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWApplicationContext;
