@@ -1,8 +1,13 @@
-// idega 2001 - Tryggvi Larusson
 /*
- * Copyright 2001 idega.is All Rights Reserved.
+ * $Id: IWMainApplication.java,v 1.101 2004/11/02 15:18:21 tryggvil Exp $
+ * Created in 2001 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
  */
-
 package com.idega.idegaweb;
 
 import java.io.File;
@@ -36,10 +41,15 @@ import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
 
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
- * @version 1.0
+ * This is a class that is a base center for an idegaWeb application.<br>
+ * There is typically one instance of this class per application (i.e. per servlet context).
+ * This class is instanciated at startup and loads all Bundles, which can then be accessed through
+ * this class.
  * 
- * Class to serve as a base center for an IdegaWeb WebApplication
+ *  Last modified: $Date: 2004/11/02 15:18:21 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.101 $
  */
 public class IWMainApplication {//implements ServletContext{
 
