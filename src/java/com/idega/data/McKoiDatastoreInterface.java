@@ -4,7 +4,11 @@
 */
 package com.idega.data;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.idega.util.database.ConnectionBroker;
 
 /**
 *A class for database abstraction for the McKoi Database.
@@ -313,5 +317,40 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 
 	
 
-	
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#getTableColumnNames(java.lang.String, java.lang.String)
+	 */
+	public String[] getTableColumnNames(String dataSourceName, String tableName) {
+		
+		Connection conn = null;
+		Statement stmnt = null;
+		ResultSet rs = null;
+		java.util.Vector v = new java.util.Vector();
+		try{
+		  conn = ConnectionBroker.getConnection(dataSourceName);
+		
+		  stmnt = conn.createStatement();
+		  rs = stmnt.executeQuery("DESCRIBE "+tableName);
+		  while (rs.next()) {
+		  	 String column = rs.getString("NAME");
+			 v.add(column);
+			 //System.out.println("\t\t"+column);
+		 }
+		 rs.close();
+		 return (String[])v.toArray(new String[0]);
+		 }
+		catch(SQLException e){
+		   e.printStackTrace();
+		 }
+		finally{
+		   if(conn!=null){
+			 ConnectionBroker.freeConnection(conn);
+		   }
+		}
+		if(v!=null && !v.isEmpty())
+			return (String[])v.toArray(new String[0]);
+		return null;
+			   
+	}
+
 }
