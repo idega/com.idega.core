@@ -5,6 +5,7 @@ import com.idega.presentation.text.*;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.*;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWProperty;
 import com.idega.idegaweb.IWResourceBundle;
 
 public class IWAdminWindow extends Window {
@@ -24,6 +25,9 @@ private Table leftTable;
 private Table rightTable;
 private boolean merged = true;
 private boolean displayEmpty = false;
+private String styleScript = "DefaultStyle.css";
+private boolean useStyleSheetFromCoreBundle = true;
+
 
 private String rightWidth = "160";
 private String method = "post";
@@ -89,6 +93,8 @@ public static String HEADER_COLOR = "#0E2456";
     }
 
     super._main(iwc);
+    //add the stylesheet path and filename of the chosen stylesheet to the page
+    this.setStyleSheetURL(getStyleSheetPath(iwc)+styleScript);
   }
 
   public void main(IWContext iwc)throws Exception{
@@ -118,12 +124,14 @@ public static String HEADER_COLOR = "#0E2456";
       adminForm.add(adminTable);
 
     headerTable = new Table();
+    	  headerTable.setStyleClass("top");
       headerTable.setCellpadding(0);
       headerTable.setCellspacing(0);
       headerTable.setWidth("100%");
       headerTable.setAlignment(2,1,"right");
-      Image idegaweb = iwbCore.getImage("/editorwindow/idegaweb.gif","idegaWeb");
-      headerTable.add(idegaweb,1,1);
+//      Image idegaweb = iwbCore.getImage("/editorwindow/idegaweb.gif","idegaWeb");
+//      headerTable.add(idegaweb,1,1);
+      headerTable.setStyleClass(1,1,"banner");
       adminTable.add(headerTable,1,1);
 
     leftTable = new Table();
@@ -386,6 +394,45 @@ public static String HEADER_COLOR = "#0E2456";
 
   public String getBundleIdentifier(){
     return IW_BUNDLE_IDENTIFIER;
+  }
+  
+  /**
+   * This method depends on iwbCore and iwb to be initialized
+   * @return the path of the chosen stylesheet
+   */
+  private String getStyleSheetPath(IWContext iwc) {
+  	IWProperty styleSheet = null;
+	String styleSrc = null;
+  	if(useStyleSheetFromCoreBundle) {
+  		styleSheet = iwc.getIWMainApplication().getSystemProperties().getIWProperty(IW_BUNDLE_IDENTIFIER+".editorwindow_styleSheet_path");
+  		if(styleSheet==null) {
+			styleSrc = iwbCore.getVirtualPath()+"/editorwindow/";
+			iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(IW_BUNDLE_IDENTIFIER+".editorwindow_styleSheet_path",styleSrc);
+		} else {
+			styleSrc = styleSheet.getValue();
+		}
+  	} else {
+  		styleSheet = iwc.getIWMainApplication().getSystemProperties().getIWProperty(getBundleIdentifier()+".editorwindow_styleSheet_name");
+  		if(styleSheet==null) {
+  			styleSrc = iwb.getVirtualPath()+"/editorwindow/";
+  			iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(getBundleIdentifier()+".editorwindow_styleSheet_name",styleSrc);
+  		} else {
+  			styleSrc = styleSheet.getValue();
+  		}
+  	}
+	return styleSrc;
+  }
+  
+  public void setStyleScript(String styleScriptName) {
+  	styleScript= styleScriptName;
+  }
+  
+  /**
+   * 
+   * @param value if false it uses the current bundle of the extended class.  Default value is true.
+   */
+  public void setToUseStyleSheetFromCoreBundle(boolean value) {
+  	useStyleSheetFromCoreBundle = value;
   }
 
 }
