@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.30 2001/12/04 23:40:13 gummi Exp $
+ * $Id: Link.java,v 1.31 2001/12/10 13:14:53 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1151,6 +1151,12 @@ public class Link extends Text {
     initVariables(iwc);
     boolean addParameters = true;
     String oldURL = getURL(iwc);
+    /**
+     * @todo: Temporary solution, if the user is not logged on then do not add a session id to the link
+     */
+    if(!com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)){
+      setSessionId(false);
+    }
 
     if (oldURL == null) {
       oldURL = iwc.getRequestURI();

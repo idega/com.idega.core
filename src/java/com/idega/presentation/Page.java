@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.22 2001/12/10 13:14:41 tryggvil Exp $
+ * $Id: Page.java,v 1.23 2001/12/10 13:17:50 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -753,7 +753,10 @@ public class Page extends PresentationObjectContainer {
    *
    */
   public String getMetaInformation(IWContext iwc){
-    String theReturn = "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+
+    boolean addIdegaAuthorAndCopyRight=false;
+
+    String theReturn = "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n";
 
     //If the user is logged on then there is no caching by proxy servers
     boolean notUseProxyCaching=true;
@@ -770,6 +773,12 @@ public class Page extends PresentationObjectContainer {
     if (getRedirectInfo() != null) {
       theReturn += "<meta http-equiv=\"refresh\" content=\""+getRedirectInfo()+"\"/>";
     }
+    /**
+     * @todo: Add an option to set the author and copyright
+     */
+     if(addIdegaAuthorAndCopyRight){
+         theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+     }
     return theReturn;
   }
 
