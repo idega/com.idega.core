@@ -242,7 +242,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				List placeHolderValues = initialQuery.getValues();
 			    if(placeHolderValues==null || placeHolderValues.isEmpty()){
 				    Stmt = conn.createStatement();
-				    RS = Stmt.executeQuery(initialQuery.toString());
+				    RS = Stmt.executeQuery(initialQuery.toString(true));
 				}
 				// use PreparedStatement
 				else{
@@ -408,7 +408,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    List placeHolderValues = subsetQuery.getValues();
 		    if(placeHolderValues==null || placeHolderValues.isEmpty()){
 			    Stmt = conn.createStatement();
-			    RS = Stmt.executeQuery(subsetQuery.toString());
+			    RS = Stmt.executeQuery(subsetQuery.toString(true));
 			}
 			// use PreparedStatement
 			else{
