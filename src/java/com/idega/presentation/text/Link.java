@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.108 2004/05/11 14:35:04 gummi Exp $
+ * $Id: Link.java,v 1.109 2004/05/18 10:17:30 birna Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -592,6 +592,42 @@ public class Link extends Text implements DPTCrawlable {
 	public void setParameter(String parameterName, String parameterValue) {
 		addParameter(parameterName, parameterValue);
 	}
+	
+	/**
+	 * adds a parameter name and its value at the beginning of the links parameter list
+	 * so the added parameter is written out after the '?' :
+	 * .../?p=s&... becomes .../?parameterName=parameterValue&p=s&...
+	 * @param parameterName 
+	 * @param parameterValue
+	 */
+	public void addFirstParameter(String parameterName, String parameterValue) {
+		if ((parameterName != null) && (parameterValue != null)) {
+			parameterName = java.net.URLEncoder.encode(parameterName);
+			parameterValue = java.net.URLEncoder.encode(parameterValue);
+
+			if (_parameterString == null) {
+				_parameterString = new StringBuffer();
+				_parameterString.append("?");
+				_parameterString.append(parameterName);
+				_parameterString.append("=");
+				_parameterString.append(parameterValue);
+			}
+			else {
+				StringBuffer temp = new StringBuffer();
+				temp.append(parameterName);
+				temp.append("=");
+				temp.append(parameterValue);
+				temp.append("&");
+				_parameterString.insert(1,temp);
+			}
+		}
+		else if (parameterName != null) {
+			parameterName = java.net.URLEncoder.encode(parameterName);
+		}
+		else if (parameterValue != null) {
+			parameterValue = java.net.URLEncoder.encode(parameterValue);
+		}
+	}
 
 	/**
 	 *
@@ -1124,10 +1160,11 @@ public class Link extends Text implements DPTCrawlable {
 			if (value != null) {
 				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
 			}
-
-			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getID());
+			
+			addFirstParameter(BuilderConstants.IB_PAGE_PARAMETER, Integer.toString(page.getID()));
 		}
 	}
+	
 
 	public void setPage(int pageID) {
 		ICPage page = null;
