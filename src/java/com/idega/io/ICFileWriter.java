@@ -27,8 +27,7 @@ public class ICFileWriter extends WriterToFile {
 	}
 	
 	public ICFileWriter(Storable storable, IWApplicationContext iwac) {
-		this(iwac);
-		setSource(storable);
+		super(storable, iwac);
 	}
 	
 	public String createContainer() throws IOException {
