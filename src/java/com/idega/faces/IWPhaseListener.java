@@ -1,5 +1,5 @@
 /*
- * $Id: IWPhaseListener.java,v 1.4 2005/01/20 17:25:04 tryggvil Exp $
+ * $Id: IWPhaseListener.java,v 1.5 2005/01/20 17:26:34 tryggvil Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ public class IWPhaseListener implements PhaseListener{
 	}
 	
 	protected void callMainOnRoot(FacesContext context,UIViewRoot root){
-		log.finer("IWPhaseListener.callMainOnRoot");
+		log.finer("IWPhaseListener.callMainOnRoot()");
 		IWContext iwc = IWContext.getIWContext(context);
 		//recurseMain(iwc,root);
 		callMain(iwc,root);
@@ -137,9 +137,9 @@ public class IWPhaseListener implements PhaseListener{
 	/* (non-Javadoc)
 	 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
 	 */
-	public void beforePhase(PhaseEvent arg0) {
-		log.finer("IWPhaseListener.processAllEvents:");
-		IWEventProcessor.getInstance().processAllEvents(IWContext.getIWContext(arg0.getFacesContext()));
+	public void beforePhase(PhaseEvent phase) {
+		log.finer("IWPhaseListener.beforePhase() : "+phase.getPhaseId().toString());
+		IWEventProcessor.getInstance().processAllEvents(IWContext.getIWContext(phase.getFacesContext()));
 	}
 
 	/* (non-Javadoc)
