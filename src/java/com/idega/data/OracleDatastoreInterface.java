@@ -363,7 +363,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt.execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 			stmt.close();
 			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FF'");
+			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle: ");
 		}
