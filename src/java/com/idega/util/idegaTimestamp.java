@@ -18,6 +18,9 @@ import java.text.DateFormat;
 
 public class idegaTimestamp{
 
+  public static final String FIRST_SECOND_OF_DAY = "00:00:00.0000";
+  public static final String LAST_SECOND_OF_DAY = "23:59:59.9999";
+
   private GregorianCalendar Calendar;
   private boolean isDate;
   private boolean isTime;
