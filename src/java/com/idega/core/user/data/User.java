@@ -146,7 +146,26 @@ public class User extends GenericEntity {
     }
 
     public String getName(){
-      return this.getFirstName() + " " + this.getMiddleName() + " " + this.getLastName();
+	  String firstName=this.getFirstName();
+	  String middleName=this.getMiddleName();
+	  String lastName = this.getLastName();
+
+	  if(firstName == null){
+	    firstName="";
+	  }
+
+	  if(middleName == null){
+	  	middleName="";
+	  }else{
+	    middleName = " "+middleName;
+	  }
+
+	  if(lastName == null){
+	  	lastName="";
+	  }else{
+  		lastName = " " + lastName;
+  	  }
+      return firstName + middleName + lastName;
     }
 
     /*  Getters end   */
