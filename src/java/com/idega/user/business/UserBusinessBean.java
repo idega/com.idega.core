@@ -497,23 +497,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    */
   public Address getUserAddress1(int userId) throws EJBException,RemoteException{
     AddressType addressType1 = this.getAddressHome().getAddressType1();
-    //IDOLegacyEntity[] result = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.AddressBMPBean.getStaticInstance(Address.class));
-    Collection addresses = this.getUser(userId).getAddresses();
-    if(addresses != null){
-      /*int addrTypeId = com.idega.core.data.AddressTypeBMPBean.getId(com.idega.core.data.AddressTypeBMPBean.ADDRESS_1);
-      for (int i = 0; i < result.length; i++) {
-        if(((Address)result[i]).getAddressTypeID() == addrTypeId){
-          return (Address)result[i];
-        }
-      }*/
-      Iterator iter = addresses.iterator();
-      while (iter.hasNext()) {
-        Address item = (Address)iter.next();
-        if(item.getAddressType().equals(addressType1))
-          return item;
-      }
+    User user = this.getUser(userId);
+    if( user!=null ){
+      return this.getUsersMainAddress(user);
     }
-    return null;
+   else return null;
   }
 
   /**
