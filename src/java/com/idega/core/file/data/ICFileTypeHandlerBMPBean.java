@@ -20,6 +20,9 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 	public static String IC_FILE_TYPE_HANDLER_VECTOR_GRAPHICS = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_VECTOR_GRAPHICS + SUFFIX;
 	public static String IC_FILE_TYPE_HANDLER_VIDEO = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_VIDEO + SUFFIX;
 	public static String IC_FILE_TYPE_HANDLER_SYSTEM = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_SYSTEM + SUFFIX;
+	private static final String ENTITY_NAME = "IC_FILE_TYPE_HANDLER";
+	private static final String COLUMN_TYPE_HANDLER_CLASS = "TYPE_HANDLER_CLASS";
+	private static final String COLUMN_TYPE_HANDLER_NAME = "TYPE_HANDLER_NAME";
 	//idegaWeb database file system (type)
 	public ICFileTypeHandlerBMPBean()
 	{
@@ -37,15 +40,15 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 	}
 	public String getEntityName()
 	{
-		return ("ic_file_type_handler");
+		return (ENTITY_NAME);
 	}
 	public static String getColumnNameHandlerName()
 	{
-		return "type_handler_name";
+		return COLUMN_TYPE_HANDLER_NAME;
 	}
 	public static String getColumnNameHandlerClass()
 	{
-		return "type_handler_class";
+		return COLUMN_TYPE_HANDLER_CLASS;
 	}
 	public String getName()
 	{
