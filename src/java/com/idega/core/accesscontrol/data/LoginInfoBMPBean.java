@@ -100,7 +100,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   }
 
   public static String getEncryptionTypeColumnName(){
-    return "encryption_type";
+    return "ENCRYPTION_TYPE";
   }
 
   /*  ColumNames end   */
