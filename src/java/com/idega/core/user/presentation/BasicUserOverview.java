@@ -30,7 +30,7 @@ public class BasicUserOverview extends ModuleObjectContainer {
 
 
   public Table getUsers(ModuleInfo modinfo) throws Exception{
-    List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getFirstNameColumnName());
+    List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
     Table userTable = null;
     if(users != null){
       userTable = new Table(3,users.size());
@@ -40,7 +40,7 @@ public class BasicUserOverview extends ModuleObjectContainer {
         if(tempUser != null){
 
 //          Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getUserIDColumnName(),modinfo).getSessionAddressString());
-          Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getUserIDColumnName(),modinfo));
+          Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getColumnNameUserID(),modinfo));
           aLink.addParameter(BasicUserOverview.userIdParameterString, tempUser.getID());
           userTable.add(aLink,1,i+1);
         }

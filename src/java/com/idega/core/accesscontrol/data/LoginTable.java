@@ -28,7 +28,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
 	public void initializeAttributes(){
           addAttribute(this.getIDColumnName());
-          addAttribute(User.getUserIDColumnName(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
+          addAttribute(User.getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
           addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,20);
           addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
 	}
@@ -39,7 +39,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
         public void insertStartData() throws SQLException {
           LoginTable login = new LoginTable();
-          List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getFirstNameColumnName(),User.getAdminDefaultName());
+          List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getColumnNameFirstName(),User.getAdminDefaultName());
           User adminUser = null;
           if(user != null){
             adminUser = ((User)user.get(0));
@@ -107,7 +107,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 	}
 
         public static String getUserIDColumnName(){
-          return User.getUserIDColumnName();
+          return User.getColumnNameUserID();
         }
 
 }
