@@ -48,7 +48,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 				uStatus.setUserId(user_id);
 				uStatus.setGroupId(group_id);
 				uStatus.setDateFrom(now.getTimestamp());
-				uStatus.setStatusId(Integer.toString(status_id));
+				uStatus.setStatusId(status_id);
 				uStatus.store();
 			}
 		}

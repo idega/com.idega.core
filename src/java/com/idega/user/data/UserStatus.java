@@ -17,7 +17,7 @@ public interface UserStatus extends com.idega.data.IDOEntity
  public void setGroup(com.idega.user.data.Group p0);
  public void setGroupId(int p0);
  public void setStatus(com.idega.user.data.Status p0);
- public void setStatusId(java.lang.String p0);
+ public void setStatusId(int p0);
  public void setUser(com.idega.user.data.User p0);
  public void setUserId(int p0);
 }

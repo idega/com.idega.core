@@ -62,7 +62,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		return (Status)getColumnValue(STATUS_ID);
 	}
 
-	public void setStatusId(String id) {
+	public void setStatusId(int id) {
 		setColumn(STATUS_ID,id);
 	}
 	
