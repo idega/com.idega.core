@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
@@ -200,10 +202,14 @@ public class PageIncluder extends PresentationObject implements Index{
     out = changeAHrefAttributes(out);
     out = changeFormActionAttributes(out);
     out = changeSrcAttributes(out);
+    
+    out = changeJSOpenWindowURL(out);
 
     out = postProcess(out,iwc);
+    
+    
   }
-  }
+ }
 
 
   protected String preProcess(String html,IWContext iwc){
@@ -355,7 +361,7 @@ public class PageIncluder extends PresentationObject implements Index{
   protected String encodeQueryStrings(String html){
     //laddi changed links in idegaweb to use amp; instead of a & 
     //so we need to fix that here!
-    //html = TextSoap.findAndReplace(html,"&amp;","&");
+    html = TextSoap.findAndReplace(html,"&amp;","&");
     
     //laddi again, only replacing single &, a javascript issue
     html = TextSoap.findAndReplace(html,"&","&",symbol);
@@ -381,7 +387,7 @@ public class PageIncluder extends PresentationObject implements Index{
 
     html = symbolReplace(html,"nbsp;");
     
-    html = symbolReplace(html,"amp;");// a muuu point see top of method
+//    html = symbolReplace(html,"amp;");// a muuu point see top of method
     
     html = symbolReplace(html,"quot;");
     html = symbolReplace(html,"middot");
@@ -672,5 +678,32 @@ private void setPrefixes(IWContext iwc)throws Exception{
     }
   }
 
-
+	private String changeJSOpenWindowURL(String html) {
+		String regex = ":openwindow\\(\\\'\\/servlet\\/WindowOpener\\??[\\w+\\=\\-?.+\\"+symbol+"?]*\\\',";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(html);	
+		StringBuffer sbURL = new StringBuffer();
+		StringBuffer sbSymbol = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
+		while(matcher.find()) {
+			String rURL = "\\(\\\'\\/servlet";
+			Pattern pURL = Pattern.compile(rURL);
+			Matcher mURL = pURL.matcher(matcher.group());
+			while(mURL.find()) {
+				mURL.appendReplacement(sbURL,"('"+BASEURL+"servlet");
+			}
+			mURL.appendTail(sbURL);
+			String rSymbol = "\\"+symbol;
+			Pattern pSymbol = Pattern.compile(rSymbol);
+			Matcher mSymbol = pSymbol.matcher(sbURL.toString());
+			while(mSymbol.find()) {
+				mSymbol.appendReplacement(sbSymbol,"&");
+			}
+			mSymbol.appendTail(sbSymbol);
+			
+			matcher.appendReplacement(sb,sbSymbol.toString());
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
+	}
 }
