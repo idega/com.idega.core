@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.85 2003/10/30 14:33:30 tryggvil Exp $
+ *  $Id: Page.java,v 1.86 2003/10/30 14:42:03 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -705,14 +705,14 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	/**
-	 *  Sets the window to close immediately
+	 *  Sets the window to close immediately when this page is loaded
 	 */
 	public void close() {
 		setOnLoad("window.close()");
 	}
 
 	/**
-	 *  Sets the window to close immediately
+	 *  Sets the window to maintain focus when it is blurred
 	 */
 	public void keepFocus() {
 		setOnBlur("window.focus()");
@@ -733,21 +733,22 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	/**
-	 *  Sets the parent (caller) window to submit its first form if there is one
+	 *  Sets the parent (caller) window to submit its first form when this page unloads if there is one
 	 */
-	public void setParentPageMainFormToSubmit() {
-		setParentPageFormToSubmit(0);
+	public void setParentPageMainFormToSubmitOnUnLoad() {
+		setParentPageFormToSubmitOnUnLoad(0);
 	}
 	
 	/**
-	 *  Sets the parent (caller) window to submit its form at index formIndex if there is one
+	 *  Sets the parent (caller) window to submit its form at index formIndex if there is one, on unload of this page.
 	 * @param formIndex index of the form in the parent page
 	 */
-	public void setParentPageFormToSubmit(int formIndex) {
+	public void setParentPageFormToSubmitOnUnLoad(int formIndex) {
 		setOnUnLoad("window.opener.forms["+formIndex+"].submit()");
 	}
 	
 	/**
+	 *Sets the parent (caller) page to change location (URL) when this page unloads
 	 *@param  URL  The new toRedirect value
 	 */
 	public void setParentToRedirect(String URL) {
@@ -755,8 +756,8 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	/**
-	 *  Displaying an Alert aron@idega.is
-	 *
+	 * Displays an alert on load of this page.<br>
+	 *@author aron@idega.is
 	 *@param  sMessage  The new toLoadAlert value
 	 */
 	public void setToLoadAlert(String sMessage) {
