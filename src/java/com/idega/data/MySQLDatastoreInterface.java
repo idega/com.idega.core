@@ -147,4 +147,35 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 		return returnString;
 }
 
+  protected void insertBlob(GenericEntity entity)throws Exception{
+  }
+
+
+  protected void executeAfterInsert(GenericEntity entity)throws Exception{
+    Connection conn= null;
+    Statement Stmt= null;
+		ResultSet RS = null;
+		try{
+			conn = entity.getConnection();
+      if (entity.getID() == -1){
+					Stmt = conn.createStatement();
+					RS = Stmt.executeQuery("select last_insert_id()");
+					RS.next();
+					entity.setID(RS.getInt(1));
+			}
+
+		}
+		finally{
+			if (RS != null){
+				RS.close();
+			}
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				entity.freeConnection(conn);
+			}
+		}
+  }
+
 }

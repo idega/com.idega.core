@@ -224,4 +224,31 @@ public class OracleDatastoreInterface extends DatastoreInterface{
 			}
 		}
   }
+
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
+				if ( entity.isNull(entity.getIDColumnName()) ){
+					entity.setID(createUniqueID(entity));
+				}
+  }
+
+
+  protected void insertBlob(GenericEntity entity)throws Exception{
+  }
+
+
+  protected String getCreateUniqueIDQuery(GenericEntity entity){
+    return "SELECT "+getOracleSequenceName(entity)+".nextval FROM dual";
+  }
+
+
+	private static String getOracleSequenceName(GenericEntity entity){
+		String entityName = entity.getTableName();
+		return entityName+"_seq";
+                /*if (entityName.endsWith("_")){
+			return entityName+"seq";
+		}
+		else{
+			return entityName+"_seq";
+		}*/
+	}
 }

@@ -22,8 +22,7 @@ public  class EntityControl{
 
     private static HashtableDoubleKeyed relationShips;
 
-
-	protected static String getInterbaseGeneratorName(GenericEntity entity){
+	/*protected static String getInterbaseGeneratorName(GenericEntity entity){
 		String entityName = entity.getTableName();
 		if (entityName.endsWith("_")){
 			return (entityName+"gen").toUpperCase();
@@ -31,24 +30,25 @@ public  class EntityControl{
 		else{
 			return (entityName+"_gen").toUpperCase();
 		}
-	}
+	}*/
 
 
-	protected static String getOracleSequenceName(GenericEntity entity){
+	/*protected static String getOracleSequenceName(GenericEntity entity){
 		String entityName = entity.getTableName();
 		return entityName+"_seq";
-                /*if (entityName.endsWith("_")){
-			return entityName+"seq";
-		}
-		else{
-			return entityName+"_seq";
-		}*/
-	}
+    //if (entityName.endsWith("_")){
+		//	return entityName+"seq";
+		//}
+		//else{
+		//	return entityName+"_seq";
+		//}
+	}*/
 
 
 	/**
 	**Creates a unique ID for the ID column
 	**/
+  /*
 	public static int createUniqueID(GenericEntity entity) throws SQLException{
 		int returnInt = -1;
 		Connection conn = null;
@@ -85,11 +85,16 @@ public  class EntityControl{
 			}
 		}
 		return returnInt;
-	}
+	}*/
 
 
+
+
+  /**
 	public static void insert(GenericEntity entity)throws SQLException{
-		Connection conn= null;
+
+
+    Connection conn= null;
 		//Statement Stmt= null;
 		PreparedStatement Stmt = null;
 
@@ -162,7 +167,23 @@ public  class EntityControl{
 			}
 		}
 	}
+  **/
 
+/*
+  public static void update(GenericEntity entity)throws SQLException{
+      try{
+        DatastoreInterface.getInstance(entity).update(entity);
+      }
+      catch(Exception ex){
+        if(ex instanceof SQLException){
+          ex.printStackTrace();
+          throw (SQLException)ex.fillInStackTrace();
+        }
+      }
+  }
+*/
+
+  /*
 	public static void update(GenericEntity entity)throws SQLException{
 		Connection conn= null;
 		PreparedStatement Stmt= null;
@@ -186,21 +207,21 @@ public  class EntityControl{
 				entity.freeConnection(conn);
 			}
 		}
-	}
+	}*/
 
-
+  /*
 	protected static String setForPreparedStatement(PreparedStatement statement,GenericEntity entity)throws SQLException{
 		String returnString = "";
 		String[] names = entity.getColumnNames();
                 int questionmarkCount=1;
 		for (int i = 0; i < names.length; i++){
 			if (!entity.isNull(names[i])){
-				/*if (returnString.equals("")){
-					returnString = 	"'"+getStringColumnValue(names[i])+"'";
-				}
-				else{
-					returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
-				}*/
+				//if (returnString.equals("")){
+				//	returnString = 	"'"+getStringColumnValue(names[i])+"'";
+				//}
+				//else{
+				//	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
+				//}
                                 insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
 			        questionmarkCount++;
 
@@ -208,10 +229,11 @@ public  class EntityControl{
 		}
 		return returnString;
 	}
+  */
 
-
+  /*
 	private static void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,GenericEntity entity)throws SQLException{
-                String storageClassName = entity.getStorageClassName(columnName);
+    String storageClassName = entity.getStorageClassName(columnName);
 		if (storageClassName.equals("java.lang.Integer")){
 			statement.setInt(index,entity.getIntColumnValue(columnName));
 		}
@@ -246,13 +268,14 @@ public  class EntityControl{
                     statement.setString(index,entity.getColumnValue(columnName).toString());
 		}
 		else if (storageClassName.equals("com.idega.data.BlobWrapper")){
+
                     //statement.setDate(index,(java.sql.Date)getColumnValue(columnName));
 		}
 		else{
 		  statement.setObject(index,entity.getColumnValue(columnName));
 		}
 	}
-
+*/
 
 
 

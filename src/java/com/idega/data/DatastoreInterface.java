@@ -233,7 +233,7 @@ public abstract class DatastoreInterface{
 
 
 
-	public void populateBlob(BlobWrapper blob){
+	/*public void populateBlob(BlobWrapper blob){
             try{
 		PreparedStatement myPreparedStatement = blob.getConnection().prepareStatement("insert into "+blob.getEntity().getTableName()+"("+blob.getTableColumnName()+") values(?) where "+blob.getEntity().getIDColumnName()+"='"+blob.getEntity().getID()+"'");
 		// ByteArrayInputStream byteinstream = new ByteArrayInputStream(longbbuf);
@@ -244,17 +244,16 @@ public abstract class DatastoreInterface{
                 //InputStream myInputStream = new InputStream();
 
 
-					/*byte	buffer[]= new byte[1024];
-					int		noRead	= 0;
+					//byte	buffer[]= new byte[1024];
+					//int		noRead	= 0;
 
-					noRead	= myInputStream.read( buffer, 0, 1023 );*/
+					//noRead	= myInputStream.read( buffer, 0, 1023 );
 
 					//Write out the file to the browser
-					/*while ( noRead != -1 ){
-						output.write( buffer, 0, noRead );
-						noRead	= myInputStream.read( buffer, 0, 1023 );
-
-					}*/
+					//while ( noRead != -1 ){
+					//	output.write( buffer, 0, noRead );
+					//	noRead	= myInputStream.read( buffer, 0, 1023 );
+          //
 
 
 		myPreparedStatement.setBinaryStream(1, byteinstream, byteinstream.available() );
@@ -267,7 +266,7 @@ public abstract class DatastoreInterface{
                 ex.printStackTrace(System.err);
               }
 
-	}
+	}*/
 
 
    public boolean isConnectionOK(Connection conn)
@@ -305,6 +304,196 @@ public abstract class DatastoreInterface{
    }
 
 
+
+  public void insert(GenericEntity entity)throws Exception{
+
+    this.executeBeforeInsert(entity);
+
+    Connection conn= null;
+		//Statement Stmt= null;
+		PreparedStatement Stmt = null;
+		ResultSet RS = null;
+		try{
+			conn = entity.getConnection();
+      //Stmt = conn.createStatement();
+      //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
+      String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+      //System.out.println(statement);
+      Stmt = conn.prepareStatement (statement);
+      setForPreparedStatement(Stmt,entity);
+      Stmt.execute();
+		}
+		finally{
+			if (RS != null){
+				RS.close();
+			}
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				entity.freeConnection(conn);
+			}
+		}
+    this.executeAfterInsert(entity);
+	}
+
+
+	/**
+	**Creates a unique ID for the ID column
+	**/
+	public int createUniqueID(GenericEntity entity) throws Exception{
+		int returnInt = -1;
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet RS = null;
+		try{
+
+			conn = entity.getConnection();
+			String datastoreType=DatastoreInterface.getDataStoreType(conn);
+
+			/*if (datastoreType.equals("interbase")){
+				stmt = conn.createStatement();
+				RS = stmt.executeQuery("SELECT GEN_ID("+getInterbaseGeneratorName(entity)+", 1) FROM RDB$DATABASE");
+				RS.next();
+				returnInt = RS.getInt(1);
+			}
+			else if (datastoreType.equals("oracle")){
+				stmt = conn.createStatement();
+				RS = stmt.executeQuery("SELECT "+getOracleSequenceName(entity)+".nextval  FROM dual");
+				RS.next();
+				returnInt = RS.getInt(1);
+			}*/
+				stmt = conn.createStatement();
+				RS = stmt.executeQuery(getCreateUniqueIDQuery(entity));
+				RS.next();
+				returnInt = RS.getInt(1);
+		}
+		finally{
+			if (RS != null){
+				RS.close();
+			}
+			if (stmt != null){
+				stmt.close();
+			}
+			if (conn != null){
+				entity.freeConnection(conn);
+			}
+		}
+		return returnInt;
+	}
+
+  protected String getCreateUniqueIDQuery(GenericEntity entity)throws Exception{
+    return "";
+  }
+
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
+  }
+
+  protected void executeAfterInsert(GenericEntity entity)throws Exception{
+    Boolean hasLobColumn = entity.getStaticInstance().hasLobColumn;
+    if( hasLobColumn == null ){
+      String[] columnNames = entity.getColumnNames();
+      for (int i = 0; i < columnNames.length; i++) {
+        if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == entity.getStorageClassType(columnNames[i]) ){
+          hasLobColumn = new Boolean(true);
+          insertBlob(entity);
+        }
+      }
+    }
+  }
+
+  protected void insertBlob(GenericEntity entity)throws Exception{
+  }
+
+
+	protected String setForPreparedStatement(PreparedStatement statement,GenericEntity entity)throws SQLException{
+		String returnString = "";
+		String[] names = entity.getColumnNames();
+                int questionmarkCount=1;
+		for (int i = 0; i < names.length; i++){
+			if (!entity.isNull(names[i])){
+          //if (returnString.equals("")){
+          //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
+          //}
+          //else{
+          //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
+          //}
+          insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
+          questionmarkCount++;
+
+      }
+		}
+		return returnString;
+	}
+
+	private void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,GenericEntity entity)throws SQLException{
+    String storageClassName = entity.getStorageClassName(columnName);
+		if (storageClassName.equals("java.lang.Integer")){
+			statement.setInt(index,entity.getIntColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.lang.Boolean")){
+                  boolean bool = entity.getBooleanColumnValue(columnName);
+                  if (bool){
+                    statement.setString(index,"Y");
+                  }
+                  else{
+                    statement.setString(index,"N");
+                  }
+		}
+		else if (storageClassName.equals("java.lang.String")){
+                    statement.setString(index,entity.getStringColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.lang.Float")){
+                    statement.setFloat(index,entity.getFloatColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.lang.Double")){
+                  statement.setDouble(index,entity.getDoubleColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.sql.Timestamp")){
+                  statement.setTimestamp(index,(Timestamp)entity.getColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.sql.Time")){
+                  statement.setTime(index,(Time)entity.getColumnValue(columnName));
+		}
+		else if (storageClassName.equals("java.sql.Date")){
+                    statement.setDate(index,(java.sql.Date)entity.getColumnValue(columnName));
+		}
+		else if (storageClassName.equals("com.idega.util.Gender")){
+                    statement.setString(index,entity.getColumnValue(columnName).toString());
+		}
+		else if (storageClassName.equals("com.idega.data.BlobWrapper")){
+
+                    //statement.setDate(index,(java.sql.Date)getColumnValue(columnName));
+		}
+		else{
+		  statement.setObject(index,entity.getColumnValue(columnName));
+		}
+	}
+
+	public void update(GenericEntity entity)throws Exception{
+		Connection conn= null;
+		PreparedStatement Stmt= null;
+		try{
+			conn = entity.getConnection();
+//			Stmt = conn.createStatement();
+
+                                String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                                //System.out.println(statement);
+		                Stmt = conn.prepareStatement (statement);
+                                setForPreparedStatement(Stmt,entity);
+                                Stmt.execute();
+
+			//int i = Stmt.executeUpdate("update "+entity.getEntityName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				entity.freeConnection(conn);
+			}
+		}
+	}
 
 
 }

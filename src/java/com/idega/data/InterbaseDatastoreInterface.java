@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.2 2001/05/17 13:27:46 palli Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.3 2001/05/17 17:59:19 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -72,7 +72,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     try {
       conn = entity.getConnection();
       Stmt = conn.createStatement();
-      String s = "CREATE TRIGGER " + entity.getTableName() + "_trig for " + entity.getTableName() + " ACTIVE BEFORE INSERT POSITION 0 AS BEGIN IF (NEW." + entity.getIDColumnName() + " IS NULL) THEN NEW." + entity.getIDColumnName() + " = GEN_ID(" + EntityControl.getInterbaseGeneratorName(entity) + ", 1); END";
+      String s = "CREATE TRIGGER " + entity.getTableName() + "_trig for " + entity.getTableName() + " ACTIVE BEFORE INSERT POSITION 0 AS BEGIN IF (NEW." + entity.getIDColumnName() + " IS NULL) THEN NEW." + entity.getIDColumnName() + " = GEN_ID(" + getInterbaseGeneratorName(entity) + ", 1); END";
       System.out.println(s);
       int i = Stmt.executeUpdate(s);
     }
@@ -92,7 +92,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     try {
       conn = entity.getConnection();
       Stmt = conn.createStatement();
-      String s = "CREATE GENERATOR " + EntityControl.getInterbaseGeneratorName(entity);
+      String s = "CREATE GENERATOR " + getInterbaseGeneratorName(entity);
       System.out.println(s);
       int i = Stmt.executeUpdate(s);
 
@@ -165,7 +165,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     try {
       conn = entity.getConnection();
       Stmt = conn.createStatement();
-      int i = Stmt.executeUpdate("delete from RDB$GENERATORS WHERE RDB$GENERATOR_NAME='" + EntityControl.getInterbaseGeneratorName(entity) + "'");
+      int i = Stmt.executeUpdate("delete from RDB$GENERATORS WHERE RDB$GENERATOR_NAME='" + getInterbaseGeneratorName(entity) + "'");
     }
     finally {
       if (Stmt != null) {
@@ -208,4 +208,34 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     }
     return true;
   }
+
+
+  protected String getCreateUniqueIDQuery(GenericEntity entity){
+    return "SELECT GEN_ID("+getInterbaseGeneratorName(entity)+", 1) FROM RDB$DATABASE";
+  }
+
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
+				if ( entity.isNull(entity.getIDColumnName()) ){
+					entity.setID(createUniqueID(entity));
+				}
+  }
+
+
+  protected void insertBlob(GenericEntity entity)throws Exception{
+
+
+  }
+
+
+	private static String getInterbaseGeneratorName(GenericEntity entity){
+		String entityName = entity.getTableName();
+		if (entityName.endsWith("_")){
+			return (entityName+"gen").toUpperCase();
+		}
+		else{
+			return (entityName+"_gen").toUpperCase();
+		}
+	}
+
+
 }

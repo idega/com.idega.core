@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.7 2001/05/16 15:57:07 gimmi Exp $
+ * $Id: GenericEntity.java,v 1.8 2001/05/17 17:59:19 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,9 +27,14 @@ public abstract class GenericEntity implements java.io.Serializable {
   private static Hashtable theAttributes;
   private static Hashtable allStaticClasses;
   private String dataSource;
+  private static String defaultString="default";
+  private String cachedColumnNameList;
+  //debug eiki
+  public Boolean hasLobColumn;
+  public String LobColumnName;
 
 	public GenericEntity() {
-		setDatasource("default");
+		setDatasource(defaultString);
 		columns = new Hashtable();
 		if (theAttributes == null) {
 			theAttributes=new Hashtable();
@@ -47,7 +52,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public GenericEntity(int id) throws SQLException {
-		setDatasource("default");
+		setDatasource(defaultString);
 		columns = new Hashtable();
 		if (theAttributes == null) {
 			theAttributes=new Hashtable();
@@ -703,7 +708,8 @@ public abstract class GenericEntity implements java.io.Serializable {
 		String returnString = "";
 		String[] names = getColumnNames();
 		for (int i = 0; i < names.length; i++){
-			if (!isNull(names[i])){
+			if(isValidColumnForList(names[i])){
+      //if (!isNull(names[i])){
 				if (returnString.equals("")){
 					returnString = 	"?";
 				}
@@ -715,21 +721,35 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return returnString;
 	}
 
+  private boolean isValidColumnForList(String columnName){
+      if (!isNull(columnName)){
+        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+          return false;
+        }
+        return true;
+      }
+      return false;
+  }
+
 
 	protected String getCommaDelimitedColumnNames(){
-		String returnString = "";
-		String[] names = getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if (!isNull(names[i])){
-				if (returnString.equals("")){
-					returnString = 	names[i];
-				}
-				else{
-					returnString = 	returnString + "," + names[i];
-				}
-			}
-		}
-		return returnString;
+    String newCachedColumnNameList = getStaticInstance().cachedColumnNameList;
+		if(newCachedColumnNameList==null){
+      String returnString = "";
+      String[] names = getColumnNames();
+      for (int i = 0; i < names.length; i++){
+        if (isValidColumnForList(names[i])){
+          if (returnString.equals("")){
+            returnString = 	names[i];
+          }
+          else{
+            returnString = 	returnString + "," + names[i];
+          }
+        }
+      }
+      newCachedColumnNameList = returnString;
+    }
+		return newCachedColumnNameList;
 	}
 
 
@@ -739,7 +759,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		String returnString = "";
 		String[] names = getColumnNames();
 		for (int i = 0; i < names.length; i++){
-			if (!isNull(names[i])){
+			if (isValidColumnForList(names[i])){
 				if (returnString.equals("")){
 					returnString = 	"'"+getStringColumnValue(names[i])+"'";
 				}
@@ -819,21 +839,45 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 
-
-
 	/**
 	*Inserts this entity as a record into the datastore
 	*/
-	public void insert()throws SQLException{
+  public void insert(GenericEntity entity)throws SQLException{
+    try{
+      DatastoreInterface.getInstance(this).insert(this);
+    }
+    catch(Exception ex){
+      if(ex instanceof SQLException){
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+    }
+  }
+  /*
+  public void insert()throws SQLException{
 		EntityControl.insert(this);
-	}
+	}*/
 
 	/**
 	*Updates the entity in the datastore
 	*/
-	public void update()throws SQLException{
+  public void update(GenericEntity entity)throws SQLException{
+      try{
+        DatastoreInterface.getInstance(this).update(this);
+      }
+      catch(Exception ex){
+        if(ex instanceof SQLException){
+          ex.printStackTrace();
+          throw (SQLException)ex.fillInStackTrace();
+        }
+      }
+  }
+
+	/*
+  public void update()throws SQLException{
 		EntityControl.update(this);
 	}
+  */
 
 	public void delete()throws SQLException{
 		EntityControl.delete(this);
@@ -1524,6 +1568,10 @@ public abstract class GenericEntity implements java.io.Serializable {
           return false;
         }
 
+
+        public GenericEntity getStaticInstance(){
+          return getStaticInstance(this.getClass().getName());
+        }
 
         public static GenericEntity getStaticInstance(String entityClassName){
             if (allStaticClasses==null){
