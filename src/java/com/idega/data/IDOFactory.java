@@ -18,7 +18,7 @@ public abstract class IDOFactory implements IDOHome{
   protected IDOFactory(){
   }
 
-  public static IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
+  public IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
     Class beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
     try{
       return (IDOEntity)beanClass.newInstance();
@@ -28,7 +28,7 @@ public abstract class IDOFactory implements IDOHome{
     }
   }
 
-  public static IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,int id)throws javax.ejb.FinderException{
+  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,int id)throws javax.ejb.FinderException{
     try{
       IDOEntity theReturn = idoCreate(entityInterfaceClass);
       ((GenericEntity)theReturn).findByPrimaryKey(id);
@@ -39,7 +39,7 @@ public abstract class IDOFactory implements IDOHome{
     }
   }
 
-  public static IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Integer id)throws javax.ejb.FinderException{
+  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Integer id)throws javax.ejb.FinderException{
     return idoFindByPrimaryKey(entityInterfaceClass,id.intValue());
   }
 

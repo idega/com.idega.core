@@ -1,12 +1,12 @@
 /*
 <<<<<<< GenericEntity.java
 <<<<<<< GenericEntity.java
- * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
 =======
- * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
 >>>>>>> 1.83
 =======
- * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
 >>>>>>> 1.84
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
@@ -32,6 +32,8 @@ import com.idega.util.StringHandler;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import javax.ejb.EntityContext;
+import javax.ejb.EJBHome;
 
 /**
  * A class to serve as a base class for objects mapped to persistent data.
@@ -78,6 +80,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   protected static int STATE_DELETED = 4;
 
   private int _state = STATE_NEW;
+  private EntityContext _entityContext;
+  private EJBHome _ejbHome;
 
   public GenericEntity() {
 	  this(DEFAULT_DATASOURCE);
@@ -2592,12 +2596,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     _metaDataHasChanged = metaDataHasChanged;
   }
 
-  /**
-   * not implemented
-   * @todo: implement
-   */
+  public void setEJBHome(javax.ejb.EJBHome ejbHome){
+    _ejbHome=ejbHome;
+  }
+
   public javax.ejb.EJBHome getEJBHome(){
-    return null;
+    return _ejbHome;
   }
 
   /**
@@ -2633,8 +2637,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
   }
 
-
   public void store()throws IDOStoreException{
+    ejbStore();
+  }
+
+  private void storeImpl()throws IDOStoreException{
     try{
       if((getEntityState()==STATE_NEW)||(getEntityState()==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
 	    insert();
@@ -2661,11 +2668,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public void ejbRemove()throws javax.ejb.RemoveException{remove();}
 
-  public void ejbStore(){store();}
+  public void ejbStore(){storeImpl();}
 
-  public void setEntityContext(javax.ejb.EntityContext ctx){}
+  public void setEntityContext(javax.ejb.EntityContext ctx){this._entityContext=ctx;}
 
-  public void unsetEntityContext(){}
+  public void unsetEntityContext(){this._entityContext=null;}
+
+  public Object ejbCreate(){return getPrimaryKey();}
+
+  public Object ejbPostCreate(){return getPrimaryKey();}
+
+  public Object ejbFindByPrimaryKey(Object pk){return getPrimaryKey();}
+
+
+
+
 
   void flagColumnUpdate(String columnName){
     if(this._updatedColumns==null){
