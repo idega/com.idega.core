@@ -1,5 +1,5 @@
 /*
- * $Id: BarChart.java,v 1.1 2001/05/16 20:26:33 eiki Exp $
+ * $Id: BarChart.java,v 1.2 2001/05/17 10:26:38 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -7,7 +7,6 @@
  * Use is subject to license terms.
  *
  */
-
 package com.idega.graphics;
 
 import java.util.Vector;
@@ -25,13 +24,11 @@ import java.util.Calendar;
 import java.text.DecimalFormat;
 
 /**
- * An utility class to use the BarChart and PieChart classes.
- * Defines an API to set the data required to create bar or pie charts.
  *
- * @version $Id: BarChart.java,v 1.1 2001/05/16 20:26:33 eiki Exp $
- * @author Pall Helgason
+ *
+ * @author <a href="mailto:palli@idega.is">Pall Helgason</a>
+ * @version 1.0alpha
  */
-
 public class BarChart extends Chart {
 
   public BarChart() {

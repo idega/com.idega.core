@@ -1,26 +1,23 @@
 /*
- * $Id: Chart.java,v 1.1 2001/05/16 20:26:33 eiki Exp $
+ * $Id: Chart.java,v 1.2 2001/05/17 10:26:38 palli Exp $
  *
- * Copyright (C) 2000 Idega hf. All Rights Reserved.
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
  *
  */
-
 package com.idega.graphics;
 
 import java.util.Vector;
 import java.awt.Color;
 
 /**
- * An utility class to use the BarChart and PieChart classes.
- * Defines an API to set the data required to create bar or pie charts.
  *
- * @version $Id: Chart.java,v 1.1 2001/05/16 20:26:33 eiki Exp $
- * @author Pall Helgason
+ *
+ * @author <a href="mailto:palli@idega.is">Pall Helgason</a>
+ * @version 1.0alpha
  */
-
 public abstract class Chart {
 
   /*
