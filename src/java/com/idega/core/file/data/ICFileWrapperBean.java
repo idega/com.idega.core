@@ -407,4 +407,18 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.file.data.ICFile#getLocalizationKey()
+	 */
+	public String getLocalizationKey() {
+		return ((ICFile)this.getMainEntity()).getLocalizationKey();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.file.data.ICFile#setLocalizationKey(java.lang.String)
+	 */
+	public void setLocalizationKey(String key) {
+		((ICFile)this.getMainEntity()).setLocalizationKey(key);
+	}
 }
