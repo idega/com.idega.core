@@ -1,103 +1,103 @@
 package com.idega.util.text;
 
 /**
- * Title:
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author
- * @version 1.0
+ * Title: Description: Copyright: Copyright (c) 2001 Company:
+ * 
+ * @author @version 1.0
  */
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-
 public class TextStyler {
 
-private HashMap _styleMap;
-private String _styleString;
-private String[] _styles = StyleConstants.ALL_STYLES;
+	private HashMap _styleMap;
 
-public TextStyler() {
-  setDefaultValues();
-}
+	private String _styleString;
 
-public TextStyler(String styleString) {
-  this();
-  _styleString = styleString;
-  parseStyleString(styleString);
-}
+	private String[] _styles = StyleConstants.ALL_STYLES;
 
-  public String getStyleString() {
-    Iterator iter = _styleMap.keySet().iterator();
-    String attribute;
-    String value;
-    StringBuffer styleString = new StringBuffer();
-    while (iter.hasNext()) {
-      attribute = (String) iter.next();
-      value = (String) _styleMap.get(attribute);
-      if ( value != null ) {
-        styleString.append(attribute).append(StyleConstants.DELIMITER_COLON).append(value).append(StyleConstants.DELIMITER_SEMICOLON);
-      }
-    }
-    return styleString.toString();
-  }
+	public TextStyler() {
+		setDefaultValues();
+	}
 
-  public void parseStyleString(String styleString) {
-    if ( styleString != null ) {
-      StringTokenizer tokens = new StringTokenizer(styleString,";");
-      int a = -1;
-      String attribute;
-      String value;
+	public TextStyler(String styleString) {
+		this();
+		_styleString = styleString;
+		parseStyleString(styleString);
+	}
 
-      while (tokens.hasMoreTokens()) {
-        StringTokenizer tokens2 = new StringTokenizer(tokens.nextToken(),":");
+	public String getStyleString() {
+		Iterator iter = _styleMap.keySet().iterator();
+		String attribute;
+		String value;
+		StringBuffer styleString = new StringBuffer();
+		while (iter.hasNext()) {
+			attribute = (String) iter.next();
+			value = (String) _styleMap.get(attribute);
+			if (value != null) {
+				styleString.append(attribute).append(StyleConstants.DELIMITER_COLON).append(value).append(StyleConstants.DELIMITER_SEMICOLON);
+			}
+		}
+		return styleString.toString();
+	}
 
-        a = 1;
-        attribute = null;
-        value = null;
+	public void parseStyleString(String styleString) {
+		if (styleString != null) {
+			StringTokenizer tokens = new StringTokenizer(styleString, ";");
+			int a = -1;
+			String attribute;
+			String value;
 
-        while (tokens2.hasMoreTokens()) {
-          if ( a == 1 ) {
-            attribute = tokens2.nextToken();
-            a++;
-          }
-          else if ( a == 2 )
-            value = tokens2.nextToken();
-        }
-        _styleMap.put(attribute,value);
-      }
-    }
-  }
+			while (tokens.hasMoreTokens()) {
+				StringTokenizer tokens2 = new StringTokenizer(tokens.nextToken(), ":");
 
-  private void setDefaultValues() {
-    if ( _styleMap == null )
-      _styleMap = new HashMap();
+				a = 1;
+				attribute = null;
+				value = null;
 
-    if ( _styles != null ) {
-      for ( int a = 0; a < _styles.length; a++ ) {
-        _styleMap.put(_styles[a],null);
-      }
-    }
-  }
+				while (tokens2.hasMoreTokens()) {
+					if (a == 1) {
+						attribute = tokens2.nextToken();
+						a++;
+					}
+					else if (a == 2) value = tokens2.nextToken();
+				}
+				_styleMap.put(attribute, value);
+			}
+		}
+	}
 
-  public void setStyleValue(String attribute,String value) {
-    _styleMap.put(attribute,value);
-  }
+	private void setDefaultValues() {
+		if (_styleMap == null) _styleMap = new HashMap();
 
-  public String getStyleValue(String attribute) {
-    String value = (String) _styleMap.get(attribute);
-    if ( value != null )
-      return value;
-    return "";
-  }
-  
-  public boolean isStyleSet(String attribute) {
-  	String value = (String) _styleMap.get(attribute);
-  	if (value != null)
-  		return true;
-  	return false;
-  }
+		if (_styles != null) {
+			for (int a = 0; a < _styles.length; a++) {
+				_styleMap.put(_styles[a], null);
+			}
+		}
+	}
+
+	public void setStyleValue(String attribute, String value) {
+		_styleMap.put(attribute, value);
+	}
+
+	public String getStyleValue(String attribute) {
+		String value = (String) _styleMap.get(attribute);
+		if (value != null) return value;
+		return "";
+	}
+
+	public boolean isStyleSet(String attribute) {
+		String value = (String) _styleMap.get(attribute);
+		if (value != null) return true;
+		return false;
+	}
+
+	public void removeStyleValue(String attribute) {
+		if (isStyleSet(attribute)) {
+			_styleMap.remove(attribute);
+		}
+	}
 }
