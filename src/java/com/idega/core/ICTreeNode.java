@@ -58,4 +58,10 @@ public String getNodeName();
  */
 public int getNodeID();
 
+
+/**
+ * @return the number of siblings this node has
+ */
+public int getSiblingCount();
+
 }
