@@ -84,6 +84,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private Image _superRootNodeIcon = null;
   private boolean _showTreeIcons = true;
   private boolean _showTreeIcons_changed = false;
+  private boolean _showHeaderRow = false;
 
   public AbstractTreeViewer() {
     super();
@@ -172,7 +173,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     this.empty();
     this.add(frameTable);
     frameTable.empty();
-    treeTableIndex = 1;
+    treeTableIndex = ((!_showHeaderRow)?1:2);
     if(_showSuperRootNode){
       drawSuperRoot(iwc);
     }else{
@@ -651,6 +652,17 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   public int getNestLevelAtOpen(){
     return getDefaultOpenLevel();
+  }
+
+
+  //HeaderRow methods
+
+  public void setHeaderRowHeight(String height){
+    frameTable.setHeight(1,height);
+  }
+
+  public void addToHeaderRow(int col, PresentationObject obj){
+    frameTable.add(obj,1,col);
   }
 
 
