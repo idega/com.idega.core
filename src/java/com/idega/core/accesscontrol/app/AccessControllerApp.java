@@ -362,26 +362,51 @@ public class AccessControllerApp extends IWApplication {
 
           String[] keys = null;
 
+          Class objectClass = null;
           switch (intPermissionCategory) {
-            case AccessController._CATEGORY_OBJECT_INSTANCE :
-              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier)));
+            case AccessControl._CATEGORY_OBJECT_INSTANCE :
+              objectClass = ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier));
+              keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessController._CATEGORY_OBJECT :
-              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier)));
+            case AccessControl._CATEGORY_OBJECT :
+              objectClass = ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier));
+              keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessController._CATEGORY_BUNDLE :
+            case AccessControl._CATEGORY_BUNDLE :
               keys = iwc.getAccessController().getBundlePermissionKeys(identifier);
               break;
-            case AccessController._CATEGORY_PAGE_INSTANCE :
+            case AccessControl._CATEGORY_PAGE_INSTANCE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessController._CATEGORY_PAGE :
+            case AccessControl._CATEGORY_PAGE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessController._CATEGORY_JSP_PAGE :
+            case AccessControl._CATEGORY_JSP_PAGE :
               keys = new String[0];
               break;
           }
+
+
+//          switch (intPermissionCategory) {
+//            case AccessController._CATEGORY_OBJECT_INSTANCE :
+//              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier)));
+//              break;
+//            case AccessController._CATEGORY_OBJECT :
+//              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier)));
+//              break;
+//            case AccessController._CATEGORY_BUNDLE :
+//              keys = iwc.getAccessController().getBundlePermissionKeys(identifier);
+//              break;
+//            case AccessController._CATEGORY_PAGE_INSTANCE :
+//              keys = iwc.getAccessController().getPagePermissionKeys();
+//              break;
+//            case AccessController._CATEGORY_PAGE :
+//              keys = iwc.getAccessController().getPagePermissionKeys();
+//              break;
+//            case AccessController._CATEGORY_JSP_PAGE :
+//              keys = new String[0];
+//              break;
+//          }
 
 
           for (int i = 0; i < keys.length; i++) {
