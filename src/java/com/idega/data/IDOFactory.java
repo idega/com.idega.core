@@ -103,9 +103,17 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
-    if(primaryKey instanceof IDOEntity)
-    	throw new FinderException("Argument of type: "+primaryKey.getClass()+" is not currently supported for findByPrimaryKey()");
-    return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
+    Object realPK = primaryKey;
+    if(primaryKey instanceof IDOEntity){
+    	try{
+				throw new FinderException("Argument of type: "+primaryKey.getClass()+" is currently supported for findByPrimaryKey() but should not be used. Please remove this usage !!!");
+    	}
+    	catch(FinderException fe){
+    		fe.printStackTrace(System.err);
+    	}
+    	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
+    }
+    return idoFindByPrimaryKey(getEntityInterfaceClass(),realPK);
   }
 
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
