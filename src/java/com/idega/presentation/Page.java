@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.18 2001/11/17 21:33:24 aron Exp $
+ * $Id: Page.java,v 1.19 2001/11/20 13:50:18 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -324,11 +324,30 @@ public class Page extends PresentationObjectContainer {
     setAttribute("background",imageURL);
   }
 
-  /**
-   *
-   */
-  public void setBackgroundImage(Image backgroundImage) {
-    setAttribute("background",backgroundImage.getURL());
+/**@todo : this must implemented in the print method...like in the Link class
+ * IMPORTANT! for this to work you must have an application property called
+ * IW_USES_OLD_MEDIA_TABLES   (set to anything)
+ *
+ */
+  public void setBackgroundImage(Image backgroundImage){
+    if(backgroundImage!=null){
+      setBackgroundImage( getImageUrl(backgroundImage) );
+    }
+  }
+/**@todo : replace this with a implementation in print
+ * IMPORTANT! for this to work you must have an application property called
+ * IW_USES_OLD_MEDIA_TABLES   (set to anything)
+ *
+ */
+  private String getImageUrl(Image image){
+
+    if(image.getURL()!=null ){
+      return image.getURL();
+    }
+    else{
+      return image.getMediaServletString();
+    }
+
   }
 
   /**
