@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.25 2003/06/02 18:02:58 palli Exp $
+ * $Id: IWResourceBundle.java,v 1.26 2003/06/24 13:05:38 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -259,8 +259,15 @@ public class IWResourceBundle extends ResourceBundle {
 		return iwBundleParent;
 	}
 
+	/*
+	 * Returns the Resource URI for the image with the internal url urlInBundle inside the resource bundle
+	 */
+	public String getImageURI(String urlInBundle) {
+		return getResourcesURL() + slash + urlInBundle;
+	}
+
 	public Image getImage(String urlInBundle) {
-		return new Image(getResourcesURL() + slash + urlInBundle);
+		return new Image(getImageURI(urlInBundle));
 	}
 
 	public Image getImage(String urlInBundle, int width, int height) {
