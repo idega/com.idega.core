@@ -4,9 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -35,7 +36,7 @@ public class IWStyleManager {
 	}
 	
 	public IWMainApplication application;
-	public static HashMap map;
+	public static Map map;
 	public static File file;
 	public static final String[] defaultStyles = { "A", "A:hover", "body", "table", "form" };
 
@@ -118,10 +119,14 @@ public class IWStyleManager {
 		while (iter.hasNext()) {
 			tokenizer = new StringTokenizer((String) iter.next(), "{");
 			while (tokenizer.hasMoreTokens()) {
-				String styleName = TextSoap.findAndReplace(tokenizer.nextToken(), " ", "");
+				/*String styleName = TextSoap.findAndReplace(tokenizer.nextToken(), " ", "");
 				styleName = TextSoap.findAndReplace(styleName, ".", "");
 				String styleParameter = TextSoap.findAndReplace(tokenizer.nextToken(), "}", "");
 				styleParameter = TextSoap.findAndReplace(styleParameter, " ", "");
+				setStyle(styleName, styleParameter);*/
+
+				String styleName = TextSoap.findAndReplace(tokenizer.nextToken(), ".", "");
+				String styleParameter = TextSoap.findAndReplace(tokenizer.nextToken(), "}", "");
 				setStyle(styleName, styleParameter);
 			}
 		}
@@ -134,8 +139,8 @@ public class IWStyleManager {
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
 				String style = getStyle(name);
-				int length = name.length() + style.length() + 5;
-				String writeString = name + " { " + style + " }";
+				int length = name.length() + style.length() + 2;
+				String writeString = name + "{" + style + "}";
 				if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
 					writeString = "." + writeString; 
 					length++;
@@ -152,9 +157,9 @@ public class IWStyleManager {
 		}
 	}
 
-	private HashMap getStyleMap() {
+	private Map getStyleMap() {
 		if ( map == null )
-			map = new HashMap();	
+			map = new LinkedHashMap();	
 		return map;
 	}
 
