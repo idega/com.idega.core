@@ -194,6 +194,13 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 			return false;
 		}
 	}
+	public boolean isSafari() {
+		if (getUserAgent().indexOf("Safari") != -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	public boolean isSearchEngine() {
 		if (getUserAgent().indexOf("Ultraseek") != -1) {
 			return true;
