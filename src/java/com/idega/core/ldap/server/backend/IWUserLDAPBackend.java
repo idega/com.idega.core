@@ -22,8 +22,8 @@ import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import org.codehaus.plexus.ldapserver.server.util.DirectoryException;
 import org.codehaus.plexus.ldapserver.server.util.InvalidDNException;
 import com.idega.business.IBOLookup;
-import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.core.accesscontrol.business.LoginContext;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
@@ -712,16 +712,15 @@ LDAPReplicationConstants {
 	 Below is an example of a userPassword attribute: 
 	 	userPassword: {crypt}X5/DBrWPOQQaI
 	*/				
-						
-		LoginContext loginInfo = LoginBusinessBean.getLoginContext(user);
-		if(loginInfo!=null){
-			List userName = getAttributeListForSingleEntry(loginInfo.getUserName());
+		int userId = ((Integer)user.getPrimaryKey()).intValue();
+		LoginTable login = LoginDBHandler.getUserLogin(userId);
+		if(login!=null){
+			List userName = getAttributeListForSingleEntry(login.getUserLogin());
 			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_UID), userName);
-			String password = LDAP_USER_PASSWORD_PREFIX+loginInfo.getPassword();
+			String password = LDAP_USER_PASSWORD_PREFIX+login.getUserPasswordInClearText();
 			List passwordString = getAttributeListForSingleEntry(password);
 			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_USER_PASSWORD), passwordString);
 		}
-		
 	}
 
 	protected void addGenderToEntry(User user, Entry entry) {
