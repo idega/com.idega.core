@@ -68,6 +68,7 @@ public class Form extends InterfaceObject {
 	private Map _objectsToDisable;
 	private boolean _disableOnSubmit;
 	private boolean showLoadingLayerOnSubmit = true;
+	private boolean printLoadingLayer = false;
 	
 	/**
 	*Defaults to send to the page itself and the POST method
@@ -236,7 +237,7 @@ public class Form extends InterfaceObject {
 		if (_disableObject) {
 			getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
 			if (_disableOnSubmit) {
-				setOnSubmit("return checkSubmit(this)");
+				
 				Iterator iter = _objectsToDisable.keySet().iterator();
 				while (iter.hasNext()) {
 					String name = (String) iter.next();
@@ -247,8 +248,13 @@ public class Form extends InterfaceObject {
 			}
 		}
 //		 temporary not allowing when event handler used
+		handleLoadingLayer(iwc);
+		handleKeepStatus(iwc);
 		
-		if(showLoadingLayerOnSubmit && getTarget()==null){//&& !("iw_event_frame").equals(target)){
+	}
+	
+	private void handleLoadingLayer(IWContext iwc){
+	    if(showLoadingLayerOnSubmit && getTarget()==null){//&& !("iw_event_frame").equals(target)){
 		    
 		    if(getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer")==null)
 		        getParentPage().getAssociatedScript().addFunction("showLoadingLayer",getShowLoadingLayerScript(iwc));
@@ -266,9 +272,10 @@ public class Form extends InterfaceObject {
 			//getForm().setOnSubmit("showLoadingLayer();");
 			//setOnSubmitFunction("displayLoadingLayer","function displayLoadingLayer(theInput,message){ \n\t showLoadingLayer();\n\t return true;\n}","");
 			//getParentPage().setOnUnLoad("showLoadingLayer();");
-			setOnSubmit("showLoadingLayer();");
+			///setOnSubmit("showLoadingLayer();");
+			setCheckSubmit();
+			printLoadingLayer=true;
 		}
-		
 	}
 	
 	private String getShowLoadingLayerScript(IWContext iwc){
@@ -387,6 +394,7 @@ public class Form extends InterfaceObject {
 	protected void setCheckSubmit() {
 		if (getScript().getFunction("checkSubmit") == null) {
 			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+			setOnSubmit("return checkSubmit(this)");
 		}
 	}
 	
@@ -536,8 +544,9 @@ public class Form extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-
 		if (getScript().doesFunctionExist("checkSubmit")) {
+		    if(printLoadingLayer)
+		        getScript().addToFunction("checkSubmit","showLoadingLayer();");
 			getScript().addToFunction("checkSubmit", "return true;");
 		}
 		//if ( doPrint(iwc) ){
