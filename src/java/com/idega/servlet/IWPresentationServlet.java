@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.57 2004/05/26 12:53:41 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.58 2004/06/09 14:23:28 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -141,7 +141,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 					}
 					((ActiveEvent) obj).dispatch();
 					return true;
-					/* Kommentað út þar til kerfið ræður við þræði
+					/* Kommentaï¿½ ï¿½t ï¿½ar til kerfiï¿½ rï¿½ï¿½ur viï¿½ ï¿½rï¿½ï¿½i
 					  EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
 					  q.postEvent((AWTEvent)obj);
 					*/
@@ -444,8 +444,10 @@ public class IWPresentationServlet extends IWCoreServlet {
 		pathToFile.append("upload");
 		pathToFile.append(sep);
 		FileUtil.createFolder(pathToFile.toString());
-		MultipartParser mp = new MultipartParser(iwc.getRequest(), iwc.getRequest().getContentLength());
-		/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/
+		int maxSize = iwc.getRequest().getContentLength();
+		System.out.println("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
+		MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
+		/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/ 
 		Part part;
 		while ((part = mp.readNextPart()) != null) {
 			if (part.isParam()) {
