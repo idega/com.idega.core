@@ -70,8 +70,8 @@ public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNo
 	public boolean isUser();
 	public java.util.Collection getReverseRelatedBy(String relationType) throws FinderException, java.rmi.RemoteException;
 
-	public void setAliasID(int id);
-	public void setAlias(Group alias);
-	public int getAliasID();
-	public Group getAlias();
+	public void setAliasID(int id) throws java.rmi.RemoteException;;
+	public void setAlias(Group alias) throws java.rmi.RemoteException;;
+	public int getAliasID() throws java.rmi.RemoteException;;
+	public Group getAlias() throws java.rmi.RemoteException;;
 }
