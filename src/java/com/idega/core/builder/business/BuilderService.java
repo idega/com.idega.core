@@ -106,6 +106,11 @@ public interface BuilderService extends IBOService
 	public ICTreeNode getPageTree(int startNodeId)throws RemoteException;
 	
 	/**
+	 * Unloads all the resources associated with the Builder
+	 */
+	public void unload();
+	
+	/**
 	 * DRAFT OF METHODS TO BE IN THIS CLASS:
 	 * 
 	 * public IBPage getPublicRootPage();
