@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.32 2002/03/07 12:02:01 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.33 2002/03/07 12:02:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1085,6 +1085,9 @@ public class PresentationObject extends Object implements Cloneable {
       return this.getBundle(iwuc).getComponentName(this.getClass(),iwuc.getCurrentLocale());
    }
 
+   /**
+    * Returns the page parameter used by idegaWeb Builder
+    */
    public String getIBPageParameterName(){
      return BuilderLogic.IB_PAGE_PARAMETER;
    }
