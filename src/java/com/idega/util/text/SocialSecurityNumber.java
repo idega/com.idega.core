@@ -80,7 +80,7 @@ public class SocialSecurityNumber {
 	
 
 	public static boolean isValidSocialSecurityNumber(String ssn,Locale locale){
-		if(locale.equals(new Locale("is","IS"))){
+		if(ssn!=null && locale.equals(new Locale("is","IS"))){
 			return isValidIcelandicSocialSecurityNumber(ssn);
 		}
 		// TODO handle other system locales
