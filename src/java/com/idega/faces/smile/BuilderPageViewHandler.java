@@ -8,8 +8,10 @@ package com.idega.faces.smile;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Locale;
 
 import javax.faces.FacesException;
+import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
@@ -42,6 +44,62 @@ public class BuilderPageViewHandler extends CbpViewHandler {
 	
 	
 
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#calculateLocale(javax.faces.context.FacesContext)
+	 */
+	public Locale calculateLocale(FacesContext ctx) {
+		// TODO Auto-generated method stub
+		return super.calculateLocale(ctx);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#calculateRenderKitId(javax.faces.context.FacesContext)
+	 */
+	public String calculateRenderKitId(FacesContext ctx) {
+		// TODO Auto-generated method stub
+		return super.calculateRenderKitId(ctx);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#getActionURL(javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public String getActionURL(FacesContext ctx, String viewId) {
+		// TODO Auto-generated method stub
+		return super.getActionURL(ctx, viewId);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#getResourceURL(javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public String getResourceURL(FacesContext ctx, String path) {
+		// TODO Auto-generated method stub
+		return super.getResourceURL(ctx, path);
+	}
+	/* (non-Javadoc)
+	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#getStateManager()
+	 */
+	public StateManager getStateManager() {
+		// TODO Auto-generated method stub
+		return super.getStateManager();
+	}
+	/* (non-Javadoc)
+	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#getViewIdPath(javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public String getViewIdPath(FacesContext ctx, String viewId) {
+		// TODO Auto-generated method stub
+		return super.getViewIdPath(ctx, viewId);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public UIViewRoot restoreView(FacesContext ctx, String viewId) {
+		//return super.restoreView(ctx, viewId);
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.application.ViewHandler#writeState(javax.faces.context.FacesContext)
+	 */
+	public void writeState(FacesContext ctx) throws IOException {
+		// TODO Auto-generated method stub
+		super.writeState(ctx);
+	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
@@ -106,5 +164,6 @@ public class BuilderPageViewHandler extends CbpViewHandler {
 			throws IOException, FacesException {
 		super.renderView(ctx, viewId);
 	}	
+	
 	
 }
