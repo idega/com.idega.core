@@ -16,7 +16,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  public java.util.Collection getParentGroupsRecursive(int p0)throws javax.ejb.FinderException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getParentGroupsRecursive(com.idega.user.data.Group p0)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getParentGroupsRecursive(com.idega.user.data.Group p0,java.lang.String[] p1,boolean p2)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
- 
+ public Group getGroupByGroupName(String name)throws FinderException,RemoteException;
 
  public com.idega.user.data.GroupType getGroupTypeFromString(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public void updateUsersInGroup(int p0,java.lang.String[] p1, com.idega.user.data.User p2)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;

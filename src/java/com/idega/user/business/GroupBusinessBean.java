@@ -785,6 +785,10 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   public Group getGroupByGroupID(int id)throws FinderException,RemoteException{
     return this.getGroupHome().findByPrimaryKey(new Integer(id));
   }
+  
+	public Group getGroupByGroupName(String name)throws FinderException,RemoteException{
+		return this.getGroupHome().findByName(name);
+	}
 
   public User getUserByID(int id)throws FinderException,RemoteException{
     return this.getUserHome().findByPrimaryKey(new Integer(id));
