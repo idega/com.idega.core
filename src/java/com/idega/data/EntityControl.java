@@ -363,7 +363,6 @@ public  class EntityControl{
 	}
 
 
-
        /**
         * Attention: Beta implementation
         */
@@ -396,16 +395,42 @@ public  class EntityControl{
 
       }
 
-             /**
-        * Attention: Beta implementation
-        */
-      public static void addManyToManyRelationShip(Class relatingEntityClass1,Class relatingEntityClass2,String relationShipTableName){
+
+      public static void addTreeRelationShip(GenericEntity entity){
+        String relationShipTableName = entity.getTableName()+"_tree";
+        String idColumnName1 = entity.getIDColumnName();
+        String idColumnName2 = "child_"+entity.getIDColumnName();
+        addManyToManyRelationShip(entity.getClass(),entity.getClass(),relationShipTableName,idColumnName1,idColumnName2);
+      }
+
+      static void addManyToManyRelationShip(Class relatingEntityClass1,Class relatingEntityClass2,String relationShipTableName){
+        try{
+          GenericEntity entity1 = (GenericEntity)relatingEntityClass1.newInstance();
+          GenericEntity entity2 = (GenericEntity)relatingEntityClass2.newInstance();
+          String idColumnName1 = entity1.getIDColumnName();
+          String idColumnName2 = entity2.getIDColumnName();
+          addManyToManyRelationShip(relatingEntityClass1,relatingEntityClass2,relationShipTableName,idColumnName1,idColumnName2);
+        }
+        catch(Exception e){
+
+        }
+      }
+
+      private static void addManyToManyRelationShip(Class relatingEntityClass1,Class relatingEntityClass2,String relationShipTableName,String column1,String column2){
           //if(relationshipTables==null){
           //  relationshipTables=new HashtableDoubleKeyed();
           //}
           String relatingEntityClassName1 = relatingEntityClass1.getName();
           String relatingEntityClassName2 = relatingEntityClass2.getName();
-          relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
+
+          EntityRelationship rel = new EntityRelationship();
+          rel.setTableName(relationShipTableName);
+          rel.addColumn(column1,relatingEntityClass1);
+          rel.addColumn(column2,relatingEntityClass1);
+
+          relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,rel);
+
+          //relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
           relationshipClasses.put(relatingEntityClass1,relatingEntityClass2);
           relationshipClasses.put(relatingEntityClass2,relatingEntityClass1);
       }
@@ -418,10 +443,13 @@ public  class EntityControl{
       }
 
       /**
-       * Returns a list of String Objects
+       * Returns a list of EntityRelationship Objects
        */
-      protected static List getManyToManyRelationShipTables(GenericEntity entity){
-        return relationshipTables.get(entity.getClass().getName());
+      protected static List getManyToManyRelationShips(GenericEntity entity){
+        if(relationshipTables!=null){
+          return relationshipTables.get(entity.getClass().getName());
+        }
+        return null;
       }
 
       protected static String getManyToManyRelationShipName(GenericEntity entity1,GenericEntity entity2){
@@ -433,7 +461,14 @@ public  class EntityControl{
             relationshipTables=new HashtableDoubleKeyed();
             return null;
           }
-          return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
+          EntityRelationship rel = (EntityRelationship)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
+          if(rel==null){
+            return null;
+          }
+          else{
+            return rel.getTableName();
+          }
+          //return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
       }
 
 

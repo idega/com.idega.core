@@ -397,8 +397,8 @@ public abstract class DatastoreInterface{
 
   public void createMiddleTables(GenericEntity entity)throws Exception{
 
-    List classList = EntityControl.getManyToManyRelationShipClasses(entity);
-    List tableList = EntityControl.getManyToManyRelationShipTables(entity);
+    //List classList = EntityControl.getManyToManyRelationShipClasses(entity);
+    List relationshipList = EntityControl.getManyToManyRelationShips(entity);
 
     /*
     if(classList==null){
@@ -408,29 +408,72 @@ public abstract class DatastoreInterface{
       System.out.println("tableList==null for "+entity.getClass().getName());
     }*/
 
-    if(classList!=null && tableList!=null){
+    if(relationshipList!=null){
       //System.out.println("inside 1 for "+entity.getClass().getName());
-      Iterator iter = classList.iterator();
-      Iterator iter2 = tableList.iterator();
-      while (iter.hasNext() && iter2.hasNext()) {
+      //Iterator iter = classList.iterator();
+      Iterator relIter = relationshipList.iterator();
+      while (relIter.hasNext()) {
         //System.out.println("inside 2 for "+entity.getClass().getName());
-        Class item = (Class)iter.next();
-        String tableName = (String)iter2.next();
+        //Class item = (Class)iter.next();
+        EntityRelationship relation = (EntityRelationship)relIter.next();
+        Map relMap = relation.getColumnsAndReferencingClasses();
+        String tableName = relation.getTableName();
         GenericEntity relatingEntity = null;
         try{
-        relatingEntity = (GenericEntity)item.newInstance();
+          String creationStatement = "CREATE TABLE (";
+
+          Set set;
+          Iterator iter;
+
+          set = relMap.keySet();
+          iter = set.iterator();
+          while (iter.hasNext()) {
+            if(creationStatement.indexOf(",")!=-1){
+              creationStatement += ',';
+            }
+            String column = (String)iter.next();
+            creationStatement += column + " INTEGER NOT NULL";
+          }
+          creationStatement += ")";
+          executeUpdate(entity,creationStatement);
+
+
+
+           set = relMap.keySet();
+           iter = set.iterator();
+          while (iter.hasNext()) {
+            String column = (String)iter.next();
+            Class relClass = (Class)relMap.get(column);
+            try{
+              GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+              createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
+            }
+            catch(Exception e){
+              e.printStackTrace();
+            }
+          }
+
+
+
+
+
+
+
+          /*
+          relatingEntity = (GenericEntity)item.newInstance();
+          if(!this.doesTableExist(entity,tableName)){
+            String creationStatement = "CREATE TABLE "+tableName+" ( "+entity.getIDColumnName() + " INTEGER NOT NULL,"+relatingEntity.getIDColumnName() + " INTEGER NOT NULL , PRIMARY KEY("+entity.getIDColumnName() + "," + relatingEntity.getIDColumnName() +") )";
+            executeUpdate(entity,creationStatement);
+            createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getTableName());
+            createForeignKey(entity,tableName,relatingEntity.getIDColumnName(),relatingEntity.getTableName());
+          }*/
         }
         catch(Exception ex){
           System.err.println("Failed creating middle-table: "+tableName);
           ex.printStackTrace();
         }
 
-          if(!this.doesTableExist(entity,tableName)){
-            String creationStatement = "CREATE TABLE "+tableName+" ( "+entity.getIDColumnName() + " INTEGER NOT NULL,"+relatingEntity.getIDColumnName() + " INTEGER NOT NULL , PRIMARY KEY("+entity.getIDColumnName() + "," + relatingEntity.getIDColumnName() +") )";
-            executeUpdate(entity,creationStatement);
-            createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getTableName());
-            createForeignKey(entity,tableName,relatingEntity.getIDColumnName(),relatingEntity.getTableName());
-          }
+
         //}
         //catch(Exception ex){
         //  System.err.println("Failed creating middle-table: "+tableName);
@@ -488,7 +531,11 @@ public abstract class DatastoreInterface{
   }
 
   protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName)throws Exception{
-      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName;
+      createForeignKey(entity,baseTableName,columnName,refrencingTableName,columnName);
+  }
+
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       executeUpdate(entity,SQLCommand);
   }
 
