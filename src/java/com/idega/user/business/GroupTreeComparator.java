@@ -26,7 +26,7 @@ public class GroupTreeComparator implements Comparator {
 	  public int compare(Object o1, Object o2) {
 		int returner = 0;
 	  	Collator collator = Collator.getInstance(_locale);
-		System.out.println(o1.getClass()+" "+o2.getClass());
+
 	  	if (o1 instanceof GroupTreeNode &&  o2 instanceof GroupTreeNode) {
 			GroupTreeNode g1 = (GroupTreeNode) o1;
 			GroupTreeNode g2 = (GroupTreeNode) o2;
