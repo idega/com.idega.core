@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <projectDescription>
-	<name>com.idega.faces</name>
-	<comment>
+  <name>com.idega.faces</name>
+  <comment>
   </comment>
-	<projects>
-		<project>com.idega.core</project>
-		<project>com.idega.builder</project>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>com.ibm.sse.model.structuredbuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-	</natures>
+  <projects>
+    <project>com.idega.core</project>
+    <project>com.idega.builder</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
 </projectDescription>
