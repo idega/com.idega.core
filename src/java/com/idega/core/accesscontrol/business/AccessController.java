@@ -1,5 +1,6 @@
 package com.idega.core.accesscontrol.business;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.idega.core.accesscontrol.data.PermissionGroup;
@@ -29,13 +30,17 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final String CATEGORY_STRING_PAGE = "page";//don't know what this is for
   public static final String CATEGORY_STRING_JSP_PAGE = "jsp_page";
   public static final String CATEGORY_STRING_FILE_ID = "ic_file_id";
-	public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
+public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
+//public static final String CATEGORY_STRING_ROLE = "role"; we use RoleObject.getStaticInstance().toString()
   
   //public static final String CATEGORY_STRING_ENTITY_RECORD_ID = "ic_entity_record_id"; for general data permissions?
 
   public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
   public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
+  
+  public static final String PERMISSION_KEY_ROLE_MASTER = "role_master";
 
+  
   public static final String PERMISSION_KEY_VIEW = "view";
   public static final String PERMISSION_KEY_EDIT = "edit";
 	public static final String PERMISSION_KEY_DELETE = "delete";
@@ -50,7 +55,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final int CATEGORY_JSP_PAGE = 5;
   public static final int CATEGORY_FILE_ID = 6;
 	public static final int CATEGORY_GROUP_ID = 7;
-  
+	public static final int CATEGORY_ROLE = 8;
   //public static final int CATEGORY_ENTITY_RECORD_ID = 7;
 
 
@@ -75,6 +80,10 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
 
   public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception;
+  /**
+	   * 
+	   * @deprecated only used in idegaWeb Project removed in next major version
+	   */
   public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwc) throws Exception;
   public boolean hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception;
   //temp public boolean hasDataPermission(String permissionKey, Class entity, int entityRecordId, IWUserContext iwc)throws Exception;
@@ -111,11 +120,17 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
   public boolean hasEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
   public boolean hasViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  public void addEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  public void revokeEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  public void addViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  public void revokeViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-
+  
+  public boolean hasRole(String roleKey, IWUserContext iwuc);
+  public boolean isRoleMaster(IWUserContext iwuc);
+  public void addGroupAsRoleMaster(Group group, IWUserContext iwuc);
+  public void addRoleToGroup(String roleKey, Group group, IWUserContext iwuc);
+  public boolean addRoleToGroup(String roleKey, Integer groupId, IWUserContext iwuc);
+  public Collection getAllRolesForGroup(Group group);
+  public Collection getAllRoles();
+  public Collection getAllGroupsThatAreRoleMasters(IWUserContext iwuc);
+  public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc);
+  public String getRoleIdentifier();
 
 /*
   public static List getPermissionGroups(User user) throws Exception;
