@@ -1111,7 +1111,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			firstOperatorAdded = true;
 		}
 				
-		if( (startAge > 0) && (endAge >startAge) ){
+		if( (startAge > 0) && (endAge >=startAge) ){
 			if(firstOperatorAdded ) query.appendAnd();
 			
 			query.append(" ( ")
