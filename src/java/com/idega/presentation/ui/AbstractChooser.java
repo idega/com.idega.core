@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.9 2002/03/15 13:42:46 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.10 2002/03/27 17:23:41 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,13 +23,13 @@ import com.idega.idegaweb.IWBundle;
  * @version 1.0
  */
 public abstract class AbstractChooser extends PresentationObjectContainer {
-  static final String CHOOSER_SELECTION_PARAMETER = "iw_chooser_sel_par";
-  static final String DISPLAYSTRING_PARAMETER = "chooser_displaystring";
-  static final String VALUE_PARAMETER = "chooser_value";
-  static final String DISPLAYSTRING_PARAMETER_NAME = "chooser_displaystr_n";
-  static final String VALUE_PARAMETER_NAME = "chooser_value_n";
-  static final String SCRIPT_PREFIX_PARAMETER = "iw_chooser_prefix";
-  static final String SCRIPT_SUFFIX_PARAMETER = "iw_chooser_suffix";
+  static final String CHOOSER_SELECTION_PARAMETER = "iw_ch_p";
+  static final String DISPLAYSTRING_PARAMETER = "iw_ch_d";
+  static final String VALUE_PARAMETER = "iw_ch_v";
+  static final String DISPLAYSTRING_PARAMETER_NAME = "iw_ch_d_n";
+  static final String VALUE_PARAMETER_NAME = "iw_ch_v_n";
+  static final String SCRIPT_PREFIX_PARAMETER = "iw_ch_ch_p";
+  static final String SCRIPT_SUFFIX_PARAMETER = "iw_ch_s";
 
   public String chooserParameter = VALUE_PARAMETER;
   public String displayInputName = DISPLAYSTRING_PARAMETER;
