@@ -193,34 +193,9 @@ public class XMLData implements Storable {
     FileUtil.createFolder(path.toString());
     // set name of auxiliary file
     path.append(separator).append(AUXILIARY_FILE).append(xmlFileId).append(XML_EXTENSION);
-    BufferedOutputStream outputStream = null;
-    File auxiliaryFile = null;
-    try {
-      auxiliaryFile = new File(path.toString());
-      outputStream = new BufferedOutputStream(new FileOutputStream(auxiliaryFile));
-    }
-    catch (FileNotFoundException ex)  {
-      System.err.println("[XMLData] problem creating file. Message is: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      throw new IOException("xml file could not be stored");
-    }
-    // now we have an output stream of the auxiliary file
-    // write to the xml file
-    XMLOutput xmlOutput = new XMLOutput("  ", true);
-    xmlOutput.setLineSeparator(System.getProperty("line.separator"));
-    xmlOutput.setTextNormalize(true);
-    
-    //xmlOutput.setEncoding("iso-8859-1");
-    xmlOutput.setEncoding("UTF-8");
-    
-    // do not use document directly use accessor method
-    XMLDocument myDocument = getDocument();
-    try {
-      xmlOutput.output(myDocument, outputStream);
-    }
-   finally {
-   	close(outputStream);
-   }
+
+    File auxiliaryFile =  new File(path.toString());
+    writeToFile(auxiliaryFile);
    //writing finished
     // get size of the file
     int size = (int) auxiliaryFile.length();
@@ -411,5 +386,34 @@ public class XMLData implements Storable {
   	XMLElement dataRootElement = data.getDocument().getRootElement();
   	dataRootElement = dataRootElement.detach();
   	getDocument().getRootElement().addContent(dataRootElement);  	
+  }
+  
+  public void writeToFile(File output) throws IOException {
+    BufferedOutputStream outputStream = null;
+    try {
+        outputStream = new BufferedOutputStream(new FileOutputStream(output));
+      }
+      catch (FileNotFoundException ex)  {
+        System.err.println("[XMLData] problem creating file. Message is: "+ex.getMessage());
+        ex.printStackTrace(System.err);
+        throw new IOException("xml file could not be stored");
+      }
+      // now we have an output stream of the auxiliary file
+      // write to the xml file
+      XMLOutput xmlOutput = new XMLOutput("  ", true);
+      xmlOutput.setLineSeparator(System.getProperty("line.separator"));
+      xmlOutput.setTextNormalize(true);
+      
+      //xmlOutput.setEncoding("iso-8859-1");
+      xmlOutput.setEncoding("UTF-8");
+      
+      // do not use document directly use accessor method
+      XMLDocument myDocument = getDocument();
+      try {
+        xmlOutput.output(myDocument, outputStream);
+      }
+     finally {
+     	close(outputStream);
+     } 	
   }
 }
