@@ -15,7 +15,7 @@ import com.idega.presentation.text.Text;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -653,6 +653,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	public void setToMaintainParameter(String parameterName, IWContext iwc) {
 		openCloseLink.maintainParameter(parameterName, iwc);
+	}
+	
+	public void addOpenCloseParameter(String name,String value){
+		openCloseLink.addParameter(name,value);
 	}
 
 	protected Link getOpenCloseLinkClone(PresentationObject obj) {
