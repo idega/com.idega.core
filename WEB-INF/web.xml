@@ -94,6 +94,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
+    <!-- The IWUrlRedirector Filter -->
+    <filter>
+        <filter-name>IWUrlRedirector</filter-name>
+        <filter-class>com.idega.servlet.filter.IWUrlRedirector</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWUrlRedirector</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <!-- The IWAuthenticator Filter -->
     <filter>
