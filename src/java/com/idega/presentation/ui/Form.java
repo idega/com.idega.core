@@ -14,9 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
@@ -27,7 +26,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
-import com.idega.repository.data.ImplementorRepository;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -45,7 +43,7 @@ public class Form extends InterfaceObject {
 	public static final String ACTION_ON_SELECT = "onselect";
 	public static final String ACTION_ON_SUBMIT = "onsubmit";
 	
-	private static final String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, Form.class)).getPageParameter();
+	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
 
 	private Window window;
 	private Vector maintainedParameters;

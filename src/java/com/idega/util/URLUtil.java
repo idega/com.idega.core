@@ -10,10 +10,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.datastructures.MultivaluedHashMap;
 import com.idega.util.text.TextSoap;
 
@@ -22,7 +21,7 @@ import com.idega.util.text.TextSoap;
  */
 public class URLUtil {
 
-	private static final String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, URLUtil.class)).getPageParameter();
+	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
 
 	private MultivaluedHashMap _parameters;
 	private String _path;

@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.18 2004/06/24 20:12:25 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.19 2004/06/28 17:07:02 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,9 +13,8 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
@@ -25,7 +24,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.ui.Window;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.StringHandler;
 import com.idega.util.text.TextSoap;
 
@@ -49,7 +47,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	public static final String TARGET_PARENT_WINDOW = "_parent";
 	public static final String TARGET_TOP_WINDOW = "_top";
 
-	private static final  String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, LinkContainer.class)).getPageParameter();
+	private static final  String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER; 
 	
 	private boolean _addSessionId = true;
 

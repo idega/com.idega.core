@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.116 2004/06/24 20:12:25 tryggvil Exp $
+ * $Id: Link.java,v 1.117 2004/06/28 17:07:02 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,8 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObjectInstance;
@@ -43,7 +42,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -67,8 +65,8 @@ public class Link extends Text {
 	private String windowOpenerJavascriptString = null;
 	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
 	
-	private static final String IB_PAGE_PARAMETER;
-	private static final String PRM_HISTORY_ID;
+	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
+	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	
 	public static final String HASH = "#";
 	public static final String JAVASCRIPT = "javascript:";
@@ -125,13 +123,6 @@ public class Link extends Text {
 	//A BuilderPage to link to:
 	private int ibPage=0;
 
-	static {
-		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, Link.class);
-		IB_PAGE_PARAMETER = constants.getPageParameter();
-		PRM_HISTORY_ID = constants.getHistoryIdParameter();
-	}
-	
-	
 	/**
 	 *
 	 */

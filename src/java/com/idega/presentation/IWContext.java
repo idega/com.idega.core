@@ -36,7 +36,7 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
@@ -51,7 +51,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
 import com.idega.util.datastructures.HashtableMultivalued;
@@ -100,20 +99,14 @@ implements IWUserContext, IWApplicationContext {
 	private static Method methodIsBuilderApplicationRunning;
 	private FacesContext realFacesContext;
 	
-	private static final String PRM_HISTORY_ID;
-	private static final String SESSION_OBJECT_STATE;
+	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
+	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 	public static final String[] WML_USER_AGENTS = new String[] {"nokia", "ericsson", "wapman", "upg1", "symbian", "wap"}; // NB: must be lowercase
 	private boolean isRequestCharacterEncodingSet;
 
-	static {
-		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, IWContext.class);
-		PRM_HISTORY_ID=  constants.getHistoryIdParameter();
-		SESSION_OBJECT_STATE = constants.getSessionObjectInstanceParameter();
-	}
-	
 	/**
 	 *Default constructor
 	 **/

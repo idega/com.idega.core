@@ -16,11 +16,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.ui.Parameter;
-import com.idega.repository.data.ImplementorRepository;
 
 public class IWURL {
 
@@ -32,14 +31,13 @@ public class IWURL {
   private static List globalMaintainedBuilderParameters;
 
   static{
-  	ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, IWURL.class);
     globalMaintainedParameters = new Vector();
     globalMaintainedParameters.add(Page.IW_FRAME_STORAGE_PARMETER);
     globalMaintainedParameters.add(Page.IW_FRAME_CLASS_PARAMETER);
     globalMaintainedParameters.add(IWMainApplication.classToInstanciateParameter);
 
     globalMaintainedBuilderParameters = new Vector();
-    globalMaintainedBuilderParameters.add(constants.getPageParameter());
+    globalMaintainedBuilderParameters.add(ICBuilderConstants.IB_PAGE_PARAMETER);
   }
 
   private Map parametersMap;

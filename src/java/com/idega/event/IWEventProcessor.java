@@ -12,11 +12,10 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.idega.core.builder.data.ICBuilderConstants;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWException;
@@ -26,7 +25,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.FileUtil;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.LocaleUtil;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -42,20 +40,13 @@ import com.oreilly.servlet.multipart.Part;
 public class IWEventProcessor {
 	
 	
-	private final static String PRM_HISTORY_ID;
-	private final static String SESSION_OBJECT_STATE;
+	private final static String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
+	private final static String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	
 	private static IWEventProcessor instance;
 	
-	static {
-		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, IWEventProcessor.class);
-		PRM_HISTORY_ID = constants.getHistoryIdParameter();
-		SESSION_OBJECT_STATE = constants.getSessionObjectInstanceParameter();
-	}
-	
-	
-	
 	private IWEventProcessor() {
+		// default constructor
 	}
 
 	/**
