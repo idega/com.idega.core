@@ -380,7 +380,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public void setPrimaryGroupID(int icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
-
+	
+	public void setPrimaryGroup(Group group)
+	{
+		try{
+			int groupID = 	((Integer)group.getPrimaryKey()).intValue();
+			setPrimaryGroupID(groupID);
+		}
+		catch(Exception e){
+			e.printStackTrace();	
+		}
+	}
 	public void setPrimaryGroupID(Integer icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}

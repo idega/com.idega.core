@@ -24,6 +24,8 @@ public interface User extends Group//com.idega.data.IDOEntity
  public void removeAllAddresses()throws com.idega.data.IDORemoveRelationshipException, java.rmi.RemoteException;
  public java.util.Collection getAddresses() throws java.rmi.RemoteException;
  public void setPrimaryGroupID(java.lang.Integer p0) throws java.rmi.RemoteException;
+ public void setPrimaryGroup(Group group) throws java.rmi.RemoteException;
+ 
  public void addPhone(com.idega.core.data.Phone p0)throws com.idega.data.IDOAddRelationshipException, java.rmi.RemoteException;
  public void setSystemImageID(java.lang.Integer p0) throws java.rmi.RemoteException;
  public void setPersonalID(java.lang.String p0) throws java.rmi.RemoteException;
