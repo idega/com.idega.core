@@ -670,6 +670,14 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery appendAndEquals(String columnName, Object columnValue) {
+		appendAnd();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
 	public IDOQuery appendOrEqualsQuoted(String columnName, String columnValue) {
 		appendOr();
 		append(columnName);
@@ -695,6 +703,14 @@ public class IDOQuery {
 	}
 
 	public IDOQuery appendOrEquals(String columnName, String columnValue) {
+		appendOr();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
+	public IDOQuery appendOrEquals(String columnName, Object columnValue) {
 		appendOr();
 		append(columnName);
 		this.appendEqualSign();
