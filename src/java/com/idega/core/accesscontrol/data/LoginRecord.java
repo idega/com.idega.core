@@ -1,5 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
+import com.idega.user.data.User;
+
 
 public interface LoginRecord extends com.idega.data.IDOEntity
 {
@@ -12,4 +14,11 @@ public interface LoginRecord extends com.idega.data.IDOEntity
  public void setLogInStamp(java.sql.Timestamp p0);
  public void setLogOutStamp(java.sql.Timestamp p0);
  public void setLoginId(int p0);
+ 
+ public int getLoginAsUserID();
+ public void setLoginAsUserID(int userId);
+ public User getLoginAsUser();
+ public void setLoginAsUser(User user);
+ 
+ 
 }

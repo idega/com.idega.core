@@ -20,6 +20,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   private User _user = null;
 //  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
+  private int _loginTableId = -1;
   private String _login = null;
   private int _loginRecordId = -1;
   private String _encryptionType = null;
@@ -146,6 +147,20 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	 */
 	public void setLoginType(String loginType) {
 		_loginType = loginType;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getLoginTableId() {
+		return _loginTableId;
+	}
+
+	/**
+	 * @param id
+	 */
+	public void setLoginTableId(int id) {
+		_loginTableId = id;
 	}
 
 }

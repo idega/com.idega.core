@@ -642,7 +642,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
   	return getApplication().getSystemProperties();
   }
   public UserProperties getUserProperties() {
-  	return (UserProperties) this.getSessionAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER);
+  	return (UserProperties) LoginBusinessBean.getUserProperties(this);
   }
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);

@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.42 2003/05/27 21:57:34 gummi Exp $
+ * $Id: LoginDBHandler.java,v 1.43 2003/06/16 15:46:25 gummi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -718,30 +718,45 @@ public class LoginDBHandler
 	 */
 	public static int recordLogin(int iLoginId, String IPAddress)
 	{
+		return recordLogin(iLoginId,IPAddress,-1);
+	}
+	
+	
+	/**
+	 *  Records a login record, returns true if succeeds
+	 */
+	public static int recordLogin(int iLoginId, String IPAddress, int asUser)
+	{
 		try
 		{
-			
-      
-      LoginRecordHome lHome = (LoginRecordHome)com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
+		
+    
+			LoginRecordHome lHome = (LoginRecordHome)com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
 
-      LoginRecord inRec = lHome.create();
+			LoginRecord inRec = lHome.create();
 			inRec.setIPAdress(IPAddress);
 			inRec.setLoginId(iLoginId);
 			inRec.setLogInStamp(IWTimestamp.getTimestampRightNow());
+			if(asUser != -1){
+				inRec.setLoginAsUserID(asUser);
+			}
 			inRec.store();
 			Integer id = (Integer) inRec.getPrimaryKey();
 			return id.intValue();
 		}
-    catch (CreateException ce)
-    {
-      ce.printStackTrace();
-      return (-1);
-    }
+		catch (CreateException ce)
+		{
+			ce.printStackTrace();
+			return (-1);
+		}
 		catch (RemoteException ex)
 		{
 			return (-1);
 		}
 	}
+	
+	
+	
 	/**
 	 *  Records a logout record, returns true if succeeds
 	 */

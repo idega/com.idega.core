@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 
+import com.idega.user.data.User;
+
 import javax.ejb.FinderException;
 
 /**
@@ -22,6 +24,7 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     public static String getColumnInStamp(){return "IN_STAMP";}
     public static String getColumnOutStamp(){return "OUT_STAMP";}
     public static String getColumnIPAddress(){return "IP";}
+	public static String getColumnLoginAsUser(){return "USER_ID";}
 
     public LoginRecordBMPBean(){
       super();
@@ -37,6 +40,8 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       addAttribute(getColumnInStamp(),"Login Stamp",true,true,Timestamp.class);
       addAttribute(getColumnOutStamp(),"Logout Stamp",true,true,Timestamp.class);
       addAttribute(getColumnIPAddress(),"IP address",true,true,String.class,16);
+      addManyToOneRelationship(getColumnLoginAsUser(),User.class);
+      setNullable(getColumnLoginAsUser(),true);
     }
 
     public String getEntityName(){
@@ -66,6 +71,20 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     public void setIPAdress(String ip){
       setColumn(getColumnIPAddress(),ip);
     }
+    
+	public int getLoginAsUserID(){
+		return getIntColumnValue(getColumnLoginAsUser());
+	}
+	public void setLoginAsUserID(int userId){
+		setColumn(getColumnLoginAsUser(),userId);
+	}
+	
+	public User getLoginAsUser(){
+		return (User)getColumnValue(getColumnLoginAsUser());
+	}
+	public void setLoginAsUser(User user){
+		setColumn(getColumnLoginAsUser(),user);
+	}
 
     public Collection ejbFindAllLoginRecords(int loginID)throws FinderException{
       String sql = "select * from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
