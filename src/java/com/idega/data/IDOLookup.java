@@ -73,12 +73,12 @@ public class IDOLookup{
 
 
 
-  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass)throws java.sql.SQLException{
+  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass){
     try{
       return (IDOLegacyEntity)getHome(entityInterfaceClass).idoCreate();
     }
     catch(Exception e){
-      throw new java.sql.SQLException(e.getMessage());
+      throw new RuntimeException(e.getMessage());
     }
   }
 
