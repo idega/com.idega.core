@@ -59,6 +59,10 @@ public class GenericGroup extends GenericEntity{
 
         /*  ColumNames begin   */
 
+        public static String getColumnNameGroupID(){
+          return "ic_group_id";
+        }
+
         public static String getNameColumnName(){
           return "name";
         }
