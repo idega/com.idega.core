@@ -142,4 +142,19 @@ import com.idega.util.LocaleUtil;
 			else System.out.println("com.idega.util.text.Name fullname is an empty string!");
 		}
 	}
+    
+    /**
+     * Capitalizes every part of a Name
+     * @return 
+     */
+    public Name capitalize(){
+        if(this.firstName!=null)
+            this.firstName = TextSoap.capitalize(this.firstName);
+        if(this.lastName!=null)
+            this.lastName = TextSoap.capitalize(this.lastName);
+        if(this.middleName!=null)
+            this.middleName = TextSoap.capitalize(this.middleName," ");
+        this.fullName = getName();
+        return this;
+    }
   }
