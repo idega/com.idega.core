@@ -41,7 +41,7 @@ public class SetIterator implements ListIterator  {
   
   // index of the current element
   private int indexOfCurrentElement;
-  
+    
   public SetIterator()  {
   }
   
@@ -56,7 +56,12 @@ public class SetIterator implements ListIterator  {
     this.firstIndexOfCurrentSet = firstIndex;
     this.indexOfCurrentElement = firstIndex - 1;
   }
+   
     
+  public static void releaseStoredState(IWUserContext iwuc, String id) {
+    iwuc.removeSessionAttribute(SET_ITERATOR_STATE_KEY + id);
+    iwuc.removeSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id); 
+  }
     
     
 	/**
@@ -260,6 +265,7 @@ public class SetIterator implements ListIterator  {
  
   
   public boolean retrieveStateFromSession(IWUserContext iwuc, String listId, String id)  {
+    // retrieve current one
     String stateString = (String) iwuc.getSessionAttribute(SET_ITERATOR_STATE_KEY + id);
     String listIdString = (String) iwuc.getSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
     if (stateString == null || listIdString == null || (! listIdString.equals(listId))) {
