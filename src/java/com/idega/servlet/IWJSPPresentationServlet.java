@@ -12,6 +12,8 @@ import javax.servlet.jsp.JspPage;
 
 */
 public class IWJSPPresentationServlet extends IWPresentationServlet implements JspPage {
+	boolean handleJSPTags = true;
+	
 	public void jspInit() {
 		/*try{
 		 	super.init();
@@ -22,7 +24,10 @@ public class IWJSPPresentationServlet extends IWPresentationServlet implements J
 	public void __theService(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		try {
-			_jspService(request, response);
+			
+			if(handleJSPTags){
+				_jspService(request, response);
+			}
 		}
 		catch (Exception ex) {
 			handleException(ex, this);
@@ -34,4 +39,21 @@ public class IWJSPPresentationServlet extends IWPresentationServlet implements J
 	public void _jspService(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 	}
+	/**
+	 * Returns the handleJSPTags.
+	 * @return boolean
+	 */
+	public boolean canHandleJSPTags() {
+		return handleJSPTags;
+	}
+
+	/**
+	 * Sets the handleJSPTags boolean. If set to true the content of a jsp will be sent <br>
+	 * to the application server for parsing a compiling otherwise it is ignored.
+	 * @param handleJSPTags The handleJSPTags to set
+	 */
+	public void setHandleJSPTags(boolean handleJSPTags) {
+		this.handleJSPTags = handleJSPTags;
+	}
+
 }

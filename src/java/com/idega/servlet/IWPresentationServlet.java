@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.39 2002/11/20 16:05:23 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.40 2002/11/20 20:49:10 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -220,7 +220,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 					}
 				}
 				//}
-				//      response.getWriter().println("\n");
+				//      iwc.getWriter().println("\n");
 				_main(iwc);
 			}
 			catch (IWPageInitializationException iwe) {
