@@ -1626,7 +1626,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc) {
     
 		Collection resultGroups = new ArrayList();
-		Group userGroup = null;
+		//Group userGroup = null;
 		GroupBusiness groupBiz = null;
 		try {
 			groupBiz = getGroupBusiness();
