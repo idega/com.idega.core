@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.29 2004/10/19 11:08:07 tryggvil Exp $
+ * $Id: StringHandler.java,v 1.30 2004/10/25 14:44:47 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import java.util.TreeSet;
 
 /**
  *  This class has utility methods to work with strings.<br>
- *  Last modified: $Date: 2004/10/19 11:08:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/10/25 14:44:47 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class StringHandler {
   
@@ -94,6 +94,7 @@ public class StringHandler {
 	public static final String EMPTY_STRING= "";
 	public static final String DASH= "-";
 	public static final String SLASH="/";
+	public static final String NEWLINE="\n";
 	
 	public StringHandler() {}
 	/**
