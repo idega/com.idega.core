@@ -1,13 +1,10 @@
-
-package com.idega.business;
+package com.idega.data;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
-import com.idega.data.EntityAttribute;
-import com.idega.data.GenericEntity;
 import com.idega.util.IsCollator;
 
 
@@ -20,26 +17,26 @@ import com.idega.util.IsCollator;
  * @version 1.0
  */
 
-public class GenericEntityComparator implements Comparator {
+public class IDOLegacyEntityComparator implements Comparator {
 
   private String[] sortBy;
 
-  public GenericEntityComparator() {
+  public IDOLegacyEntityComparator() {
       sortBy = null;
   }
 
-  public GenericEntityComparator(String columnName ) {
+  public IDOLegacyEntityComparator(String columnName ) {
       sortBy = new String[1];
         sortBy[0] = columnName;
   }
 
-  public GenericEntityComparator(String[] columnNames){
+  public IDOLegacyEntityComparator(String[] columnNames){
     sortBy = columnNames;
   }
 
   public int compare(Object o1, Object o2) {
-      GenericEntity p1 = (GenericEntity) o1;
-      GenericEntity p2 = (GenericEntity) o2;
+      IDOLegacyEntity p1 = (IDOLegacyEntity) o1;
+      IDOLegacyEntity p2 = (IDOLegacyEntity) o2;
       int result = 0;
 
 
