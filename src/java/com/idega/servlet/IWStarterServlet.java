@@ -30,6 +30,7 @@ public class IWStarterServlet extends GenericServlet {
     public void destroy() {
         sendShutdownMessage("Destroying IdegaWebStarterServlet");
         starter.shutdown();
+        starter=null;
         sendShutdownMessage("Destroyed IdegaWebStarterServlet");
     }
 
