@@ -1,4 +1,14 @@
+/*
+ * $Id: StringHandler.java,v 1.29 2004/10/19 11:08:07 tryggvil Exp $
+ * Created on 14.9.2004
+ *
+ * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,17 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+
 /**
- * Title:        StringHandler
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega margmi?lun hf.
+ *  This class has utility methods to work with strings.<br>
+ *  Last modified: $Date: 2004/10/19 11:08:07 $ by $Author: tryggvil $
+ * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
- * @version 1.0  
-
- */   
-
+ * @version $Revision: 1.29 $
+ */
 public class StringHandler {
   
   /**
@@ -83,6 +93,7 @@ public class StringHandler {
 	
 	public static final String EMPTY_STRING= "";
 	public static final String DASH= "-";
+	public static final String SLASH="/";
 	
 	public StringHandler() {}
 	/**
@@ -215,7 +226,9 @@ public class StringHandler {
 		};
 	}
 	/**
-	 * Strips the string of all non-roman characters such as special Icelandic,Swedish,German etc. characters
+	 * Strips the string of all non-roman characters such as special Icelandic,Swedish,German etc. characters.<br>
+	 * This method replaces these characters and re-writes them with Roman equivalents.<br>
+	 * So 'Þ'/&THORN; becomes TH, '‡'/&aacute; becomes a, 'Š'/&auml; becomes ae, etc.
 	 */
 	public static String stripNonRomanCharacters(String inputString) {
 		char[] cAinputString= inputString.toCharArray();
@@ -713,5 +726,70 @@ public class StringHandler {
 		return str;
 	}
 	
+	
+	
+	/**
+	 * Breaks down the URL string separated by the '/' charachter to an array.<br>
+	 * For instance it breaks down the URL "/component/78909" to {"component","78909"}
+	 * @return
+	 */
+	public static String[] breakDownURL(String urlString) {
+		//Performance optimization to handle the first 4 parameters without having to construct the Vector
+		String s1=null;
+		String s2=null;
+		String s3=null;
+		String s4=null;
+		List list = null;
+		StringTokenizer st = new StringTokenizer(urlString,SLASH);
+		int index=0;
+		while(st.hasMoreTokens()){
+			index++;
+			if(index==1){
+				s1=st.nextToken();
+			}
+			else if(index==2){
+				s2=st.nextToken();
+			}
+			else if(index==3){
+				s3=st.nextToken();
+			}
+			else if(index==4){
+				s4=st.nextToken();
+			}
+			else if(index==5){
+				list=new ArrayList();
+				list.add(s1);
+				list.add(s2);
+				list.add(s3);
+				list.add(s4);
+				list.add(st.nextToken());
+			}
+			else if(index>5){
+				st.nextToken();
+			}	
+		}
+		if(index==1){
+			String[] theReturn={s1};
+			return theReturn;
+		}
+		else if(index==2){
+			String[] theReturn={s1,s2};
+			return theReturn;
+		}
+		else if(index==3){
+			String[] theReturn={s1,s2,s3};
+			return theReturn;
+		}
+		else if(index==4){
+			String[] theReturn={s1,s2,s3,s4};
+			return theReturn;
+		}
+		else if(index>4){
+			String[] theReturn = (String[])list.toArray(new String[0]);
+			return theReturn;
+		}
+		return null;
+	}
+
 	
 } 
