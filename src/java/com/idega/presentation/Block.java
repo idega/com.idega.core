@@ -269,7 +269,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   private void setCacheKey(IWContext iwc){
     cacheKey += getCacheState(iwc,getCachePrefixString(iwc));
     /**@todo remove debug**/
-    debug("cachKey = "+cacheKey);
+    //debug("cachKey = "+cacheKey);
   }
 
   /**
@@ -307,7 +307,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    */
   protected void invalidateCache(IWContext iwc){
     if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc));
-    debug("INVALIDATING : "+getCacheKey(iwc));
+    //debug("INVALIDATING : "+getCacheKey(iwc));
   }
 
   /**
@@ -315,7 +315,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    */
   protected void invalidateCache(IWContext iwc, String suffix){
     if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc)+suffix);
-    debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
+    //debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
   }
 
   public class BlockCacheWriter extends java.io.PrintWriter{
