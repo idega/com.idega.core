@@ -68,13 +68,13 @@ public class IWAuthenticator implements Filter {
 		//IWContext iwc = IWContext.getIWContext(fc);
 		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 		
-		Enumeration headerNames = request.getHeaderNames();
-		System.out.println("------------HEADER BEGINS-------------");
-		while (headerNames.hasMoreElements()) {
-		String headerName = (String) headerNames.nextElement();
-		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
-		}
-		System.out.println("------------HEADER ENDS-------------");
+//		Enumeration headerNames = request.getHeaderNames();
+//		System.out.println("------------HEADER BEGINS-------------");
+//		while (headerNames.hasMoreElements()) {
+//		String headerName = (String) headerNames.nextElement();
+//		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
+//		}
+//		System.out.println("------------HEADER ENDS-------------");
 		
 //		Enumeration parameterNames = request.getParameterNames();
 //		System.out.println("------------PARAMETERS BEGINS-------------");
