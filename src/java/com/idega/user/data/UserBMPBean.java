@@ -551,7 +551,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
      * @deprecated
      */
     public Group getUserGroup(){
-      return super;
+      try {
+        return super.getGeneralGroup();
+      }
+      catch (RemoteException ex) {
+        throw new EJBException(ex);
+      }
     }
 
     public void setGroupID(int icGroupId){

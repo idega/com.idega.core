@@ -24,27 +24,11 @@ import javax.ejb.RemoveException;
  * @version 1.0
  */
 
-//public class AbstractPartyBMPBean extends GenericEntity {
-//
-//  public AbstractPartyBMPBean() {
-//  }
-//  public void initializeAttributes() {
-//    /**@todo: implement this com.idega.data.GenericEntity abstract method*/
-//  }
-//  public String getEntityName() {
-//    /**@todo: implement this com.idega.data.GenericEntity abstract method*/
-//  }
-//}
+
 
 public abstract class AbstractGroupBMPBean extends GenericEntity implements Group{
-//public class AbstractPartyBMPBean extends GenericEntity implements Group{
 
   private Group _group;
-
-
-//  public AbstractPartyBMPBean(int id) throws SQLException{
-//    super(id);
-//  }
 
   /**
    * Returns a unique Key to identify this GroupType
