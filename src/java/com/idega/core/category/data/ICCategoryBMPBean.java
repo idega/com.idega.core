@@ -24,7 +24,9 @@ import com.idega.data.SimpleQuerier;
 
 public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean implements ICCategory, Category, MetaDataCapable {
 	
-	private String IC_CATEGORY_COLUMN_NAME = ICCategoryBMPBean.getEntityTableName() + "_ID";
+	
+private static final String IC_CATEGORY_IC_OBJECT_INSTANCE_MIDDLE_TABLE_NAME = "IC_CATEGORY_IC_OBJECT_INSTANCE";
+    private String IC_CATEGORY_COLUMN_NAME = ICCategoryBMPBean.getEntityTableName() + "_ID";
 	private static String IC_OBJECT_INSTANCE_COLUMN_NAME = "IC_OBJECT_INSTANCE_ID";
 	private static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
 	
@@ -48,7 +50,7 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 		addAttribute(getColumnCreated(), "Created", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnInvalidationDate(), "Invalidation date", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnValid(), "Valid", true, true, Boolean.class);
-		addManyToManyRelationShip(ICObjectInstance.class,"IC_CATEGORY_IC_OBJECT_INSTANCE");
+		addManyToManyRelationShip(ICObjectInstance.class,IC_CATEGORY_IC_OBJECT_INSTANCE_MIDDLE_TABLE_NAME);
 		// Gimmi 8.04.2003
 		addManyToManyRelationShip(com.idega.core.file.data.ICFile.class);
 		addMetaDataRelationship();
@@ -59,8 +61,9 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 	}
 
 	public void insertStartData() {
-		String table = com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
-		String sql = "ALTER TABLE " + table.toUpperCase() + " ADD " + TREE_ORDER_COLUMN_NAME + " INTEGER";
+		//String table = com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
+		String table = IC_CATEGORY_IC_OBJECT_INSTANCE_MIDDLE_TABLE_NAME;
+		String sql = "ALTER TABLE " + table + " ADD " + TREE_ORDER_COLUMN_NAME + " INTEGER";
 		System.out.println(sql);
 		try {
 			idoExecuteTableUpdate(sql);
