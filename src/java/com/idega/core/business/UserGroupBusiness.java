@@ -389,8 +389,6 @@ public class UserGroupBusiness {
       GenericGroup group = GenericGroup.getStaticInstance();
       toReturn = EntityFinder.findAll(group,"SELECT * FROM " + group.getEntityName() + " WHERE " + group.getIDColumnName() + " in (" + sGroupList + ")");
     }
-    System.err.println("groupIDs : "+groupIDs);
-    System.err.println("sGroupList : "+sGroupList);
     return toReturn;
   }
 

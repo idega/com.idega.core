@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
@@ -26,13 +26,50 @@ public class PermissionCacher {
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT = "ic_permissionmap_object";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE = "ic_permissionmap_object_instance";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE = "ic_permissionmap_bundle";
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_PAGE = "ic_permissionmap_page";
+  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE = "ic_permissionmap_page_instance";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE = "ic_permissionmap_jsp_page";
 
 
   public PermissionCacher() {
   }
+  /**
+   * Does not handle pages or jsp pages
+   */
+  public static boolean permissionSet( ModuleObject obj, ModuleInfo modinfo, String permissionKey) throws SQLException {
+    String identifier = null;
 
+    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE, APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
+
+    for (int i = 0; i < maps.length; i++) {
+      String permissionMapKey = maps[i];
+      if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
+        identifier = Integer.toString(obj.getICObjectInstanceID(modinfo));
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
+          identifier = Integer.toString(obj.getICObject().getID());
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
+          identifier = obj.getICObject().getBundleIdentifier();
+      }
+
+      if(identifier != null){
+        PermissionMap permissionMap = (PermissionMap)modinfo.getApplicationAttribute(permissionMapKey);
+        if(permissionMap == null){
+          return false;
+        }
+
+        Map permissions = permissionMap.get(identifier,permissionKey);
+
+
+        if(permissions == null){
+          return false;
+        } else {
+          return !permissions.isEmpty();
+        }
+      } else {
+        throw new RuntimeException("PermissionCacher: Cannot find identifier for "+permissionMapKey+" - "+ obj);
+      }
+    }
+    return false;
+  }
 
   private static Boolean hasPermission(String permissionMapKey, ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
     //
@@ -43,7 +80,7 @@ public class PermissionCacher {
         identifier = Integer.toString(obj.getICObject().getID());
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
         identifier = obj.getICObject().getBundleIdentifier();
-    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE)){
+    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
         identifier = null;
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
         identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(modinfo));
@@ -78,7 +115,7 @@ public class PermissionCacher {
             }
           }
         }
-      } // instance
+      }
       return trueOrNull;
     } else {
       return null;
@@ -101,7 +138,7 @@ public class PermissionCacher {
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getObjectIdString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getBundleIdentifierString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE)){
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
           permissions = null; //EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getPageIdString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getPageIdString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
@@ -116,7 +153,7 @@ public class PermissionCacher {
       Map mapToPutTo = new Hashtable();
       while (iter.hasNext()) {
         ICPermission item = (ICPermission)iter.next();
-        mapToPutTo.put(new Integer(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
+        mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
       }
       permissionMap.put(identifier, permissionKey,mapToPutTo);
     } else {
@@ -125,64 +162,6 @@ public class PermissionCacher {
   }
 
 
-/*
-  public static Boolean hasPermissionForObjectInstance(ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
-
-    PermissionMap permissionMap = (PermissionMap)modinfo.getApplicationAttribute(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE);
-    if(permissionMap == null){
-        updateObjectInstancePermissions(new Integer(obj.getICObjectInstanceID(modinfo)), permissionKey, modinfo);
-        permissionMap = (PermissionMap)modinfo.getApplicationAttribute(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE);
-    }
-
-    List permissions = permissionMap.get(new Integer(obj.getICObjectInstanceID(modinfo)),permissionKey,groups);
-
-    if(permissions == null){
-      Integer InstanceId = new Integer(obj.getICObjectInstanceID(modinfo));
-      updateObjectInstancePermissions(InstanceId, permissionKey, modinfo);
-      permissions = permissionMap.get(InstanceId,permissionKey,groups);
-    }
-
-    Boolean trueOrNull = null;
-    if (permissions != null){
-      Iterator iter = permissions.iterator();
-      while (iter.hasNext()) {
-        Boolean item = (Boolean)iter.next();
-        if (item != null){
-          if (item.equals(Boolean.TRUE)){
-            trueOrNull = Boolean.TRUE;
-          }else{
-            return Boolean.FALSE;
-          }
-        }
-      }
-    } // instance
-    return trueOrNull;
-  }
-
-  public static void updateObjectInstancePermissions(Integer instanceId, String permissionKey, ModuleInfo modinfo) throws SQLException{
-    PermissionMap permissionMap = (PermissionMap)modinfo.getApplicationAttribute(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE);
-    if(permissionMap == null){
-      permissionMap = new PermissionMap();
-      modinfo.setApplicationAttribute(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,permissionMap);
-    }
-
-    List permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getObjectInstanceIdString(),ICPermission.getContextValueColumnName(),instanceId.toString(),ICPermission.getPermissionStringColumnName(),permissionKey);
-
-    if(permissions != null){
-      Iterator iter = permissions.iterator();
-      String oldPermissionKey = "";
-      boolean first = true;
-      Map mapToPutTo = new Hashtable();
-      while (iter.hasNext()) {
-        ICPermission item = (ICPermission)iter.next();
-        mapToPutTo.put(new Integer(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
-      }
-      permissionMap.put(instanceId, permissionKey,mapToPutTo);
-    } else {
-      permissionMap.put(instanceId, permissionKey,new Hashtable());
-    }
-  }
-  */
 
   public static Boolean hasPermissionForObjectInstance(ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
     return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,obj,modinfo,permissionKey,groups);
@@ -209,11 +188,11 @@ public class PermissionCacher {
   }
 
   public static Boolean hasPermissionForPage(ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE,obj,modinfo,permissionKey,groups);
+    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,obj,modinfo,permissionKey,groups);
   }
 
   public static void updatePagePermissions(String pageId, String permissionKey, ModuleInfo modinfo) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE,pageId,permissionKey,modinfo);
+    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,pageId,permissionKey,modinfo);
   }
 
   public static Boolean hasPermissionForJSPPage(ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
@@ -222,6 +201,30 @@ public class PermissionCacher {
 
   public static void updateJSPPagePermissions(String jspPageId, String permissionKey, ModuleInfo modinfo) throws SQLException{
     updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,jspPageId,permissionKey,modinfo);
+  }
+
+
+  public static void updatePermissions(int permissionCategory, String identifier, String permissionKey, ModuleInfo modinfo) throws SQLException{
+    switch (permissionCategory) {
+      case AccessControl._CATEGORY_OBJECT_INSTANCE :
+        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,identifier,permissionKey,modinfo);
+        break;
+      case AccessControl._CATEGORY_OBJECT :
+        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,identifier,permissionKey,modinfo);
+        break;
+      case AccessControl._CATEGORY_BUNDLE :
+        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE,identifier,permissionKey,modinfo);
+        break;
+      case AccessControl._CATEGORY_PAGE_INSTANCE :
+        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,identifier,permissionKey,modinfo);
+        break;
+      case AccessControl._CATEGORY_PAGE :
+        //
+        break;
+      case AccessControl._CATEGORY_JSP_PAGE :
+        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,identifier,permissionKey,modinfo);
+        break;
+    }
   }
 
 }

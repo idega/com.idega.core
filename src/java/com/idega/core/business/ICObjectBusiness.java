@@ -15,9 +15,24 @@ import java.sql.SQLException;
 public class ICObjectBusiness {
 
 
-  public static Class getICObjectClass(int ICObjectInstanceId) throws SQLException{
+  public static Class getICObjectClassForInstance(int ICObjectInstanceId) throws SQLException{
     ICObjectInstance instance = new ICObjectInstance(ICObjectInstanceId);
     ICObject obj = instance.getObject();
+    if(obj != null){
+      try {
+        return obj.getObjectClass();
+      }
+      catch (ClassNotFoundException ex) {
+        ex.printStackTrace();
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  public static Class getICObjectClass(int ICObjectId) throws SQLException{
+    ICObject obj = new ICObject(ICObjectId);
     if(obj != null){
       try {
         return obj.getObjectClass();

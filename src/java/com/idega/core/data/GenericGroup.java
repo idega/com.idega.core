@@ -11,7 +11,7 @@ import java.util.List;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
@@ -56,12 +56,7 @@ public class GenericGroup extends GenericEntity{
         public String getGroupTypeValue(){
           return "general";
         }
-        /**
-         * overwrite in extended classes
-         */
-        public static String getClassName(){
-          return GenericGroup.class.getName();
-        }
+
 
         /*  ColumNames begin   */
 
@@ -121,7 +116,7 @@ public class GenericGroup extends GenericEntity{
 	}
 
         public static GenericGroup getStaticInstance(){
-          return (GenericGroup)getStaticInstance(getClassName());
+          return (GenericGroup)getStaticInstance(GenericGroup.class);
         }
 
 

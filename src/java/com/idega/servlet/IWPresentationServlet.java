@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.16 2001/08/27 20:37:37 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.17 2001/09/19 12:39:49 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -50,29 +50,30 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	}*/
 
 	private void __initialize(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    //TODO
-    //Find a better solution for this:
-    ModuleInfo moduleinfo = null;
-    //ModuleInfo moduleinfo = (ModuleInfo)request.getSession().getAttribute("idega_special_moduleinfo");
+          //TODO
+          //Find a better solution for this:
+          ModuleInfo moduleinfo = null;
+          //ModuleInfo moduleinfo = (ModuleInfo)request.getSession().getAttribute("idega_special_moduleinfo");
 
-    if (moduleinfo == null) {
-      moduleinfo = new ModuleInfo(request,response);
-      moduleinfo.setServletContext(getServletContext());
-      request.getSession().setAttribute("idega_special_moduleinfo",moduleinfo);
-    }
-    else {
-      moduleinfo.setRequest(request);
-      moduleinfo.setResponse(response);
-    }
+          if (moduleinfo == null) {
+            moduleinfo = new ModuleInfo(request,response);
+            moduleinfo.setServletContext(getServletContext());
+            request.getSession().setAttribute("idega_special_moduleinfo",moduleinfo);
+          }
+          else {
+            moduleinfo.setRequest(request);
+            moduleinfo.setResponse(response);
+          }
 
-    String markup = moduleinfo.getParameter("idega_special_markup");
-    if(markup != null) {
-      moduleinfo.setLanguage(markup);
-    }
+          String markup = moduleinfo.getParameter("idega_special_markup");
+          if(markup != null) {
+            moduleinfo.setLanguage(markup);
+          }
 
 
-		storeObject(IW_MODULEINFO_KEY,moduleinfo);
-		initializePage();
+          storeObject(IW_MODULEINFO_KEY,moduleinfo);
+          processBusinessEvent(moduleinfo);
+          initializePage();
 	}
 
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
@@ -83,82 +84,86 @@ public  class IWPresentationServlet extends IWCoreServlet{
 		__main(servReq,servRes);
 	}
 
-	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
-		try {
-      __initialize(request,response);
-      ModuleInfo moduleinfo = getModuleInfo();
-      String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
-      String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
-      if (eventClass != null) {
-        IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
-        listener.actionPerformed(moduleinfo);
-      }
-
-      //added by gummi@idega.is
-      //begin
-      boolean theServiceDone = false;
-      String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-
-      if (sessionAddress != null && !"".equals(sessionAddress)){
-        Object obj = moduleinfo.getSessionAttribute(sessionAddress);
-        if(obj != null) {
-          if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
-
-              if(Page.isRequestingTopPage(moduleinfo)){
-                __theService(request,response);
-              }
-            theServiceDone = true;
-            if(obj instanceof IWModuleEvent){
-              ((IWModuleEvent)obj).setModuleInfo(moduleinfo);
-            }else{
-              this.getPage()._setModuleInfo(moduleinfo);
-            }
-            ((ActiveEvent)obj).dispatch();
-          /* Kommentað út þar til kerfið ræður við þræði
-            EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
-            q.postEvent((AWTEvent)obj);
-          */
+        public void processBusinessEvent(ModuleInfo moduleinfo)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+          String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
+          String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
+          if (eventClass != null) {
+            IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
+            listener.actionPerformed(moduleinfo);
           }
         }
-      }
 
-      //end
+	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
+          try {
 
-      //if (isActionPerformed(request,response)){
-              //actionPerformed(new ModuleEvent(request,response));
-              //actionPerformed(new ModuleEvent(moduleinfo));
-      //}
-      //else{
-            if(!theServiceDone) //gummi@idega.is
-            {
-              if(Page.isRequestingTopPage(moduleinfo)){
-                __theService(request,response);
+
+            __initialize(request,response);
+            ModuleInfo moduleinfo = getModuleInfo();
+
+            //added by gummi@idega.is
+            //begin
+            boolean theServiceDone = false;
+            String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
+
+            if (sessionAddress != null && !"".equals(sessionAddress)){
+              Object obj = moduleinfo.getSessionAttribute(sessionAddress);
+              if(obj != null) {
+                if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
+
+                    if(Page.isRequestingTopPage(moduleinfo)){
+                      __theService(request,response);
+                    }
+                  theServiceDone = true;
+                  if(obj instanceof IWModuleEvent){
+                    ((IWModuleEvent)obj).setModuleInfo(moduleinfo);
+                  }else{
+                    this.getPage()._setModuleInfo(moduleinfo);
+                  }
+                  ((ActiveEvent)obj).dispatch();
+                /* Kommentað út þar til kerfið ræður við þræði
+                  EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+                  q.postEvent((AWTEvent)obj);
+                */
+                }
               }
             }
-      //}
-//      response.getWriter().println("\n");
-      _main(moduleinfo);
 
-      __print(moduleinfo);
-      /*if (connectionRequested()){
-                      freeConnection();
-      }*/
-      //getThreadContext().releaseThread(Thread.currentThread());
-		}
-		catch(Exception ex){
-			/*if (ex instanceof java.io.IOException){
-				throw (java.io.IOException) ex.fillInStackTrace();
-			}
-			else if (ex instanceof javax.servlet.ServletException){
-				throw (javax.servlet.ServletException) ex.fillInStackTrace();
-			}
-			else{*/
-				response.getWriter().println("<H2>IWError</H2>");
-				response.getWriter().println("<pre>");
-				ex.printStackTrace(response.getWriter());
-				response.getWriter().println("</pre>");
-			//}
-		}
+            //end
+
+            //if (isActionPerformed(request,response)){
+                    //actionPerformed(new ModuleEvent(request,response));
+                    //actionPerformed(new ModuleEvent(moduleinfo));
+            //}
+            //else{
+                  if(!theServiceDone) //gummi@idega.is
+                  {
+                    if(Page.isRequestingTopPage(moduleinfo)){
+                      __theService(request,response);
+                    }
+                  }
+            //}
+      //      response.getWriter().println("\n");
+            _main(moduleinfo);
+
+            __print(moduleinfo);
+            /*if (connectionRequested()){
+                            freeConnection();
+            }*/
+            //getThreadContext().releaseThread(Thread.currentThread());
+          } catch(Exception ex){
+                  /*if (ex instanceof java.io.IOException){
+                          throw (java.io.IOException) ex.fillInStackTrace();
+                  }
+                  else if (ex instanceof javax.servlet.ServletException){
+                          throw (javax.servlet.ServletException) ex.fillInStackTrace();
+                  }
+                  else{*/
+                          response.getWriter().println("<H2>IWError</H2>");
+                          response.getWriter().println("<pre>");
+                          ex.printStackTrace(response.getWriter());
+                          response.getWriter().println("</pre>");
+                  //}
+          }
 	}
 
   public void __theService(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{

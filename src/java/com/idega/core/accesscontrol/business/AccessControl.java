@@ -13,12 +13,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.*;
-import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.data.SimpleQuerier;
-
-/**
- * @todo move com.idega.builder.business.IBJspHandler to com.idega.core.business.ICJspHandler
- */
 
 
 /**
@@ -33,19 +28,43 @@ import com.idega.data.SimpleQuerier;
 public class AccessControl{
 
     private static PermissionGroup AdministratorPermissionGroup = null;
+    private static PermissionGroup PermissionGroupEveryOne = null;
 
+    public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
+    public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
+
+    public static final int _CATEGORY_OBJECT_INSTANCE = 0;
+    public static final int _CATEGORY_OBJECT = 1;
+    public static final int _CATEGORY_BUNDLE = 2;
+    public static final int _CATEGORY_PAGE_INSTANCE = 3;
+    public static final int _CATEGORY_PAGE = 4;
+    public static final int _CATEGORY_JSP_PAGE = 5;
+
+    private static final int _GROUP_ID_EVERYONE = -7913;
 
 
     static{
       try {
         initAdministratorPermissionGroup();
         if(AdministratorPermissionGroup == null){
-          PermissionGroup.getStaticPermissionGroupInstance().insertStartData();
+          LoginTable.getStaticInstance().insertStartData();
           initAdministratorPermissionGroup();
         }
       }
       catch (Exception ex) {
+        System.err.println("AccessControl: PermissionGroup administrator not created");
+      }
 
+      try {
+        PermissionGroupEveryOne = new PermissionGroup(_GROUP_ID_EVERYONE);
+      }
+      catch (SQLException e) {
+        try {
+          initPermissionGroupEveryone();
+        }
+        catch (Exception ex) {
+          System.err.println("AccessControl: PermissionGroup Everyone not created");
+        }
       }
 
     }
@@ -60,6 +79,22 @@ public class AccessControl{
           AdministratorPermissionGroup = (PermissionGroup)item;
         }
       }
+    }
+
+    private static void initPermissionGroupEveryone() throws SQLException {
+      PermissionGroup permission = new PermissionGroup();
+      permission.setID(_GROUP_ID_EVERYONE);
+      permission.setName("Everyone");
+      permission.setDescription("Permission if not logged on");
+      permission.insert();
+      PermissionGroupEveryOne = permission;
+    }
+
+    public static PermissionGroup getPermissionGroupEveryOne() throws SQLException {
+      if(PermissionGroupEveryOne == null){
+        initPermissionGroupEveryone();
+      }
+      return PermissionGroupEveryOne;
     }
 
     public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
@@ -106,63 +141,98 @@ public class AccessControl{
       }
 
       User user = LoginBusiness.getUser(modinfo);
-      if (user == null){
-        return false;
-      }
-
       ICPermission permission = ICPermission.getStaticInstance();
       ICPermission[] Permissions = null;
-      PermissionGroup[] groups = getPermissionGroups(user);
+      PermissionGroup[] groups = null;
       String sGroupList = "";
-
       List tempGroupList = new Vector();
-      if (groups != null && groups.length > 0){
-        for(int g = 0; g < groups.length; g++){
-          if(g>0){ sGroupList += ", "; }
-          tempGroupList.add(new Integer(groups[g].getID()));
-          sGroupList += Integer.toString(groups[g].getID());
-        }
+      List[] permissionOreder = null; // Everyone, user, primaryGroup, otherGroups
+
+      if (user == null){
+        permissionOreder = new List[1];
+        permissionOreder[0] = new Vector();
+        ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
       } else {
-        return false;
-      }
 
-      if (obj == null){ // JSP page
-        Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICJspHandler.getJspPageInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")");
-        if (Permissions != null){
-          for (int i = 0; i < Permissions.length; i++){
-            if (Permissions[i].getPermissionValue())
-              return true;
+        groups = LoginBusiness.getPermissionGroups(modinfo);
+
+        if (groups != null && groups.length > 0){
+          for(int g = 0; g < groups.length; g++){
+            if(g>0){ sGroupList += ", "; }
+            tempGroupList.add( Integer.toString(groups[g].getID()));
+            sGroupList += Integer.toString(groups[g].getID());
           }
-        }
-      } else { // if (obj != null)
-
-        if(obj instanceof Page){
-          myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,tempGroupList);
-        }else{
-          //instance
-          myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,tempGroupList);
-          //instance
-
-          // Bundle
-          if (myPermission == null){
-            myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,tempGroupList);
-          }else{
-            return myPermission.booleanValue();
-          } // Bundle
-
-
-          // Global - (object)
-          if (myPermission == null){
-            myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,tempGroupList);
-          }else{
-            return myPermission.booleanValue();
-          } // Global - (object)
-        }
-
-        if(myPermission != null){
-          return myPermission.booleanValue();
+          permissionOreder = new List[2];
+          permissionOreder[0] = new Vector();
+          ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
+          permissionOreder[1] = tempGroupList;
+        } else {
+          permissionOreder = new List[1];
+          permissionOreder[0] = new Vector();
+          ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
         }
       }
+
+
+
+
+
+      for (int i = 0; i < permissionOreder.length; i++) { // Everyone, user, primaryGroup, otherGroups
+        if (obj == null){ // JSP page
+          myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionOreder[i]);
+        } else { // if (obj != null)
+
+          if(obj instanceof Page){
+            myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionOreder[i]);
+
+          }else{
+            //instance
+            myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionOreder[i]);
+            //instance
+
+            // Bundle
+            if (myPermission == null){
+              myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionOreder[i]);
+            }else{
+              return myPermission.booleanValue();
+            }// Bundle
+
+
+            // Global - (object)
+            if (myPermission == null){
+              myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionOreder[i]);
+            }else{
+              return myPermission.booleanValue();
+            } // Global - (object)
+          }
+
+
+          if(myPermission != null){
+            return myPermission.booleanValue();
+          }
+
+        }
+      }
+
+
+      // Default permission: view == true if not Page, else false
+      // If no permission set, view = true for all objects other than Page objects
+      if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
+        // if some view permission for object, bundle, ... are set
+        // then false
+        // else true
+        // => view hashtable for obj, ...  has object
+        return !PermissionCacher.permissionSet( obj, modinfo, permissionType);
+        /*
+        if(permissionSet( obj, modinfo, permissionType)){
+          return false;
+        }
+        else{
+          return true;
+        }
+        */
+      }
+
       return false;
 
     } // method hasPermission
@@ -201,6 +271,14 @@ public class AccessControl{
      * If the name-string changes this will be the only method to change.
      */
     public static String getPageIdString(){
+      return "page_id";
+    }
+
+    /**
+     * use this method when writing to database to avoid errors in database.
+     * If the name-string changes this will be the only method to change.
+     */
+    public static String getPageString(){
       return "page";
     }
 
@@ -412,6 +490,124 @@ public class AccessControl{
 
     }
 
+
+    public static boolean removePermissionRecords(int permissionCategory, ModuleInfo modinfo, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+      String sGroupList = "";
+      if (groupsToRemove != null && groupsToRemove.length > 0){
+        for(int g = 0; g < groupsToRemove.length; g++){
+          if(g>0){ sGroupList += ", "; }
+          sGroupList += groupsToRemove[g];
+        }
+      }
+      if(!sGroupList.equals("")){
+        ICPermission permission = ICPermission.getStaticInstance();
+        try {
+          boolean done = false;
+
+          switch (permissionCategory) {
+            case AccessControl._CATEGORY_OBJECT_INSTANCE :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+            case AccessControl._CATEGORY_OBJECT :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+            case AccessControl._CATEGORY_BUNDLE :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+            case AccessControl._CATEGORY_PAGE_INSTANCE :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+            case AccessControl._CATEGORY_PAGE :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+            case AccessControl._CATEGORY_JSP_PAGE :
+              done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+              break;
+          }
+
+          PermissionCacher.updatePermissions(permissionCategory,ObjectInstanceId,permissionKey,modinfo);
+
+          return true;
+        }
+        catch (Exception ex) {
+          return false;
+        }
+      } else {
+        return true;
+      }
+
+    }
+
+
+
+    public static void setPermission(int permissionCategory, ModuleInfo modinfo, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
+      ICPermission permission = ICPermission.getStaticInstance();
+      boolean update = true;
+      try {
+        switch (permissionCategory) {
+          case AccessControl._CATEGORY_OBJECT_INSTANCE :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+          case AccessControl._CATEGORY_OBJECT :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+          case AccessControl._CATEGORY_BUNDLE :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+          case AccessControl._CATEGORY_PAGE_INSTANCE :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+          case AccessControl._CATEGORY_PAGE :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+          case AccessControl._CATEGORY_JSP_PAGE :
+            permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+            break;
+        }
+
+      }
+      catch (Exception ex) {
+        permission = new ICPermission();
+        update = false;
+      }
+
+      if(!update){
+
+        switch (permissionCategory) {
+          case AccessControl._CATEGORY_OBJECT_INSTANCE :
+            permission.setContextType(AccessControl.getObjectInstanceIdString());
+            break;
+          case AccessControl._CATEGORY_OBJECT :
+            permission.setContextType(AccessControl.getObjectIdString());
+            break;
+          case AccessControl._CATEGORY_BUNDLE :
+            permission.setContextType(AccessControl.getBundleIdentifierString());
+            break;
+          case AccessControl._CATEGORY_PAGE_INSTANCE :
+            permission.setContextType(AccessControl.getPageIdString());
+            break;
+          case AccessControl._CATEGORY_PAGE :
+            permission.setContextType(AccessControl.getPageString());
+            break;
+          case AccessControl._CATEGORY_JSP_PAGE :
+            permission.setContextType(AccessControl.getJSPPageString());
+            break;
+        }
+
+        permission.setContextValue(identifier);
+        permission.setGroupID(new Integer(permissionGroupId));
+        permission.setPermissionString(permissionKey);
+//        permission.setPermissionStringValue();
+        permission.setPermissionValue(permissionValue);
+        permission.insert();
+      } else{
+        permission.setPermissionValue(permissionValue);
+        permission.update();
+      }
+      PermissionCacher.updatePermissions(permissionCategory, identifier, permissionKey, modinfo);
+    }
+
+
     public static void setObjectInstacePermission(ModuleInfo modinfo, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
@@ -541,10 +737,32 @@ public class AccessControl{
 
 
 
-    public static List getAllowedGroups(int ICObjectInstanceId, String permissionKey) throws SQLException {
+    public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException {
       List toReturn = new Vector(0);
       ICPermission permission = ICPermission.getStaticInstance();
-      List permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICObjectInstanceId + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+      List permissions = null;
+
+      switch (permissionCategory) {
+        case AccessControl._CATEGORY_OBJECT_INSTANCE :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+        case AccessControl._CATEGORY_OBJECT :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+        case AccessControl._CATEGORY_BUNDLE :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+        case AccessControl._CATEGORY_PAGE_INSTANCE :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+        case AccessControl._CATEGORY_PAGE :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+        case AccessControl._CATEGORY_JSP_PAGE :
+          permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+          break;
+      }
+
       if (permissions != null){
         Iterator iter = permissions.iterator();
         while (iter.hasNext()) {
@@ -557,16 +775,6 @@ public class AccessControl{
           }
 
         }
-        /*
-        for (int i = 0; i < permissions.length; i++) {
-          try {
-            toReturn.add(new PermissionGroup(permissions[i].getGroupID()));
-          }
-          catch (SQLException ex) {
-            System.err.println("Accesscontrol.getAllowedGroups(): Group not created for id "+permissions[i].getGroupID());
-          }
-        }
-        */
       }
       toReturn.remove(AdministratorPermissionGroup);
       return toReturn;
