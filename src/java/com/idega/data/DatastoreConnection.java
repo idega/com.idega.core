@@ -62,6 +62,8 @@ public class DatastoreConnection implements Connection{
         dsi.setDatabaseMetaData(conn.getMetaData());
         setDatasource(datasourceName);
         DatastoreInterface.setDatastoreInterfaceByDatasource(datasourceName,dsi);
+        
+        dsi.onConnectionCreate(this);
     }
 
 

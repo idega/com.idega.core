@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.52 2002/11/14 22:59:03 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.53 2002/11/15 02:16:26 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1176,5 +1176,17 @@ public abstract class DatastoreInterface {
 		} catch (java.rmi.RemoteException rme) {
 			throw new RuntimeException(rme.getMessage());
 		}
+	}
+	
+	/**
+	 * Override in subclasses
+	 **/
+	public void onConnectionCreate(Connection newConn){
+		/*try{
+			Statement stmt = newConn.createStatement();
+			stmt.execute("")
+		}
+		catch(SQLException sqle){		
+		}*/
 	}
 }

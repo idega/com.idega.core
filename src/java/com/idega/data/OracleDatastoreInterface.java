@@ -354,4 +354,19 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
+	/**
+	 * Override in subclasses
+	 **/
+	public void onConnectionCreate(Connection newConn){
+		try{
+			Statement stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
+			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
+			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle: ");
+		}
+		catch(SQLException sqle){		
+			System.err.println("OracleDatastoreInterface: Error setting date format environment variable for Oracle: "+sqle.getMessage());
+		}
+	}
+
 }
