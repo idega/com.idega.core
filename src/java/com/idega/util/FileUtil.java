@@ -148,11 +148,12 @@ public class FileUtil {
 /*
 * streams an inputstream to a file
 */
-  public static void streamToFile( InputStream input, String filePath, String fileName){
+  public static File streamToFile( InputStream input, String filePath, String fileName){
+  	File file = null;
     try{
       if(input!=null){
         input.available();//this casts an ioexception if the stream is null
-        File file = getFileAndCreateIfNotExists(filePath,fileName);
+        file = getFileAndCreateIfNotExists(filePath,fileName);
         FileOutputStream fileOut = new FileOutputStream(file);
 
         byte buffer[]= new byte[1024];
@@ -184,6 +185,7 @@ public class FileUtil {
       }
     }
 
+    return file;
   }
 
     /** 
