@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -31,6 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -78,13 +79,8 @@ implements IWUserContext, IWApplicationContext {
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
-	//private HttpSession session;
 	private String language; //Variable to set the language i.e. HTML
-	private String interfaceStyle; //Variable to enable multiple interface looks
-	private Connection Conn;
-	private Hashtable preferences;
 	private String spokenLanguage;
-	//private Hashtable sessionAttributes;
 	private ServletContext servletContext;
 	private boolean _doneHandHeldCheck = false;
 	private boolean _clientIsHandHeld = false;
@@ -127,7 +123,6 @@ implements IWUserContext, IWApplicationContext {
 		setResponse(response);
 		setServletContext(context);
 		setLanguage(getRightLanguage(request));
-		setAllDefault();
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
@@ -156,30 +151,6 @@ implements IWUserContext, IWApplicationContext {
 				return new IWContext(fc);
 			}
 	}
-	
-	private void setAllDefault() {
-		this.interfaceStyle = "default";
-		setDefaultBackgroundColor("#FFFFFF");
-		setDefaultFontFace("helvetica,arial");
-		setDefaultFontSize("2");
-		setDefaultFontColor("black");
-		setDefaultFontStyle("regular");
-		setDefaultPrimaryInterfaceColor("gray");
-		setDefaultSecondaryInterfaceColor("dark-gray");
-		setDefaultInterfaceFontFace("helvetica,arial");
-		setDefaultInterfaceFontColor("#FFFFFF");
-		setDefaultInterfaceFontSize("14pt");
-		setDefaultInterfaceFontStyle("regular");
-		setCompanyPrimaryColor("#000000");
-		setCompanySecondaryColor("#FFFFFF");
-		setCompanyFontFace("Courier New, Courier, mono");
-		setCompanyFontColor("#FF9933");
-		setCompanyFontSize("5");
-		setCompanyFontStyle("regular");
-	}
-	/*public void setSession(HttpSession session){
-	 this.session = session;
-	 }*/
 	public HttpSession getSession() {
 		return getRequest().getSession();
 	}
@@ -358,21 +329,6 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
-	public void setPreference(String Name, String Value) {
-		if (preferences == null) {
-			preferences = new Hashtable();
-			preferences.put((Object) Name, (Object) Value);
-		} else {
-			preferences.put((Object) Name, (Object) Value);
-		}
-	}
-	public String getPreference(String name) {
-		if (preferences == null) {
-			return null;
-		} else {
-			return (String) preferences.get((Object) name);
-		}
-	}
 	/**
 	 * @deprecated
 	 */
@@ -400,9 +356,9 @@ implements IWUserContext, IWApplicationContext {
 	public void setSpokenLanguage(String spokenLanguage) {
 		this.spokenLanguage = spokenLanguage;
 	}
-	public void setInterfaceStyle(String InterfaceStyle) {
-		this.interfaceStyle = InterfaceStyle;
-	}
+	//public void setInterfaceStyle(String InterfaceStyle) {
+	//	this.interfaceStyle = InterfaceStyle;
+	//}
 	public HttpServletRequest getRequest() {
 		return this._request;
 	}
@@ -487,151 +443,6 @@ implements IWUserContext, IWApplicationContext {
 			this.setSpokenLanguage("IS");
 		return this.spokenLanguage;
 	}
-	public String getInterfaceStyle() {
-		return this.interfaceStyle;
-	}
-	/**
-	 * @deprecated
-	 */
-	public Connection getConnection() {
-		return this.Conn;
-	}
-	/**
-	 * @deprecated
-	 */
-	public void setConnection(Connection conn) {
-		this.Conn = conn;
-	}
-	public void setDefaultBackgroundColor(String s) {
-		setPreference("DefaultBackgroundColor", s);
-	}
-	public String getDefaultBackgroundColor() {
-		return getPreference("DefaultBackgroundColor");
-	}
-	public void setDefaultFontFace(String s) {
-		setPreference("DefaultFontFace", s);
-	}
-	public String getDefaultFontFace() {
-		return getPreference("DefaultFontFace");
-	}
-	public void setDefaultFontSize(String s) {
-		setPreference("DefaultFontSize", s);
-	}
-	public String getDefaultFontSize() {
-		return getPreference("DefaultFontSize");
-	}
-	public void setDefaultFontColor(String s) {
-		setPreference("DefaultFontColor", s);
-	}
-	public String getDefaultFontColor() {
-		return getPreference("DefaultFontColor");
-	}
-	public void setDefaultFontStyle(String s) {
-		setPreference("DefaultFontStyle", s);
-	}
-	public String getDefaultFontStyle() {
-		return getPreference("DefaultFontStyle");
-	}
-	public void setDefaultPrimaryInterfaceColor(String s) {
-		setPreference("DefaultPrimaryInterfaceColor", s);
-	}
-	public String getDefaultPrimaryInterfaceColor() {
-		return getPreference("DefaultPrimaryInterfaceColor");
-	}
-	public void setDefaultSecondaryInterfaceColor(String s) {
-		setPreference("DefaultSecondaryInterfaceColor", s);
-	}
-	public String getDefaultSecondaryInterfaceColor() {
-		return getPreference("DefaultSecondaryInterfaceColor");
-	}
-	public void setDefaultInterfaceFontFace(String s) {
-		setPreference("DefaultInterfaceFontFace", s);
-	}
-	public String getDefaultInterfaceFontFace() {
-		return getPreference("DefaultInterfaceFontFace");
-	}
-	public void setDefaultInterfaceFontColor(String s) {
-		setPreference("DefaultInterfaceFontColor", s);
-	}
-	public String getDefaultInterfaceFontColor() {
-		return getPreference("DefaultInterfaceFontColor");
-	}
-	public void setDefaultInterfaceFontSize(String s) {
-		setPreference("DefaultInterfaceFontSize", s);
-	}
-	public String getDefaultInterfaceFontSize() {
-		return getPreference("DefaultInterfaceFontSize");
-	}
-	public void setDefaultInterfaceFontStyle(String s) {
-		setPreference("DefaultInterfaceFontStyle", s);
-	}
-	public String getDefaultInterfaceFontStyle() {
-		return getPreference("DefaultInterfaceFontStyle");
-	}
-	public void setCompanyPrimaryColor(String s) {
-		setPreference("CompanyPrimaryColor", s);
-	}
-	public String getCompanyPrimaryColor() {
-		return getPreference("CompanyPrimaryColor");
-	}
-	public void setCompanySecondaryColor(String s) {
-		setPreference("CompanySecondaryColor", s);
-	}
-	public String getCompanySecondaryColor() {
-		return getPreference("CompanySecondaryColor");
-	}
-	public void setCompanyFontFace(String s) {
-		setPreference("CompanyFontFace", s);
-	}
-	public String getCompanyFontFace() {
-		return getPreference("CompanyFontFace");
-	}
-	public void setCompanyFontColor(String s) {
-		setPreference("CompanyFontColor", s);
-	}
-	public String getCompanyFontColor() {
-		return getPreference("CompanyFontColor");
-	}
-	public void setCompanyFontSize(String s) {
-		setPreference("CompanyFontSize", s);
-	}
-	public String getCompanyFontSize() {
-		return getPreference("CompanyFontSize");
-	}
-	public void setCompanyFontStyle(String s) {
-		setPreference("CompanyFontStyle", s);
-	}
-	public String getCompanyFontStyle() {
-		return getPreference("CompanyFontStyle");
-	}
-	/*private Hashtable getSessionHashtable(){
-	 Hashtable sessionAttributes;
-	 Object theAttribute = this.getSession().getAttribute("idega_special_session_attribute");
-	 if (theAttribute==null){
-	 sessionAttributes=new Hashtable();
-	 this.getSession().setAttribute("idega_special_session_attribute",sessionAttributes);
-	 }
-	 else{
-	 return (Hashtable) theAttribute;
-	 }
-	 return sessionAttributes;
-	 }
-
-	 public void setIdegaSessionAttribute(String attributeName,Object attributeValue){
-	 getSessionHashtable().put(attributeName,attributeValue);
-	 }
-
-	 public Object getIdegaSessionAttribute(String attributeName){
-	 return getSessionHashtable().get(attributeName);
-	 }
-
-	 public void removeIdegaSessionAttribute(String attributeName){
-	 getSessionHashtable().remove(attributeName);
-	 }
-
-	 public void removeAllIdegaSessionAttributes(){
-	 getSessionHashtable().clear();
-	 }*/
 	/**
 	 * @ deprecated replaced width getApplication
 	 */
@@ -828,7 +639,10 @@ implements IWUserContext, IWApplicationContext {
 	public int getUserId() {
 		User usr = getUser();
 		if (usr != null) {
-			return (usr.getID());
+		    Number id = (Number)usr.getPrimaryKey();
+		    if(id!=null){
+		        return id.intValue();
+		    }
 		}
 		return -1;
 	}
@@ -1043,7 +857,7 @@ implements IWUserContext, IWApplicationContext {
 	}
 	
 	public void forwardToIBPage(Page fromPage, ICPage page){
-		forwardToIBPage(fromPage,((Integer) page.getPrimaryKeyValue()).intValue());
+		forwardToIBPage(fromPage,((Integer) page.getPrimaryKey()).intValue());
 	}
 	
 	public void forwardToIBPage(Page fromPage, int pageID){
@@ -1330,13 +1144,13 @@ implements IWUserContext, IWApplicationContext {
 		return getRealFacesContext().getApplication();
 	}
 	
-	/*
+	/**
 	*Gets the real (underlying) FacesContext instance
 	*/
 	private FacesContext getRealFacesContext(){
 		return realFacesContext;
 	}
-	/*
+	/**
 	 *Sets the real (underlying) FacesContext instance
 	 **/
 	private void setRealFacesContext(FacesContext fc){
