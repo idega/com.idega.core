@@ -611,6 +611,14 @@ public void limitImageWidth( boolean limitImageWidth ){
     }
   }
 
+  /**
+   *  return a call to image preloadscript
+   *
+   */
+  public static String getPreloadScript(String url){
+    return "preLoadImages('"+url+"')";
+  }
+
   public synchronized Object clone() {
     Image obj = null;
     try {
@@ -646,7 +654,7 @@ public void limitImageWidth( boolean limitImageWidth ){
 	rollOverScript.addFunction("swapImage()","function swapImage(){ var i,j=0,x,a=swapImage.arguments; document.sr=new Array; for(i=0;i<(a.length-2);i+=3) if ((x=findObj(a[i]))!=null){document.sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}}");
 
 	parent.setAssociatedScript(rollOverScript);
-	parent.setOnLoad("preLoadImages('"+overImageUrl+"')");
+	parent.setOnLoad(getPreloadScript(overImageUrl));
       }
     }
   }
