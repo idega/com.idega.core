@@ -23,6 +23,7 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   public static String IC_FILE_TYPE_VECTOR_GRAPHICS = "ic_vector";
   public static String IC_FILE_TYPE_VIDEO = "ic_video";
   public static String IC_FILE_TYPE_SYSTEM = "ic_system";//idegaWeb database file system (type)
+  public static String IC_FILE_TYPE_ZIP = "ic_zip";
   private static final String ENTITY_NAME = "IC_FILE_TYPE";
   private static final String COLUMN_IC_FILE_TYPE_HANDLER_ID = "IC_FILE_TYPE_HANDLER_ID";
   private static final String COLUMN_TYPE_DESCRIPTION = "TYPE_DESCRIPTION";
@@ -155,6 +156,13 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
       type.setType(IC_FILE_TYPE_VIDEO);
       type.setDescription("Video or movie files such as .mov .mpg .avi");
       type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,com.idega.core.file.data.ICFileTypeHandlerBMPBean.IC_FILE_TYPE_HANDLER_VIDEO));
+      type.insert();
+      
+      type = ((com.idega.core.file.data.ICFileTypeHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileType.class)).createLegacy();
+      type.setName("Zip");
+      type.setType(IC_FILE_TYPE_ZIP);
+      type.setDescription("Zip archive files .zip");
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,com.idega.core.file.data.ICFileTypeHandlerBMPBean.IC_FILE_TYPE_HANDLER_ZIP));
       type.insert();
 
       this.cacheEntity();

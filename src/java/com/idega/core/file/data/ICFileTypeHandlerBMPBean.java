@@ -20,6 +20,7 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 	public static String IC_FILE_TYPE_HANDLER_VECTOR_GRAPHICS = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_VECTOR_GRAPHICS + SUFFIX;
 	public static String IC_FILE_TYPE_HANDLER_VIDEO = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_VIDEO + SUFFIX;
 	public static String IC_FILE_TYPE_HANDLER_SYSTEM = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_SYSTEM + SUFFIX;
+	public static String IC_FILE_TYPE_HANDLER_ZIP = com.idega.core.file.data.ICFileTypeBMPBean.IC_FILE_TYPE_ZIP+SUFFIX;
 	private static final String ENTITY_NAME = "IC_FILE_TYPE_HANDLER";
 	private static final String COLUMN_TYPE_HANDLER_CLASS = "TYPE_HANDLER_CLASS";
 	private static final String COLUMN_TYPE_HANDLER_NAME = "TYPE_HANDLER_NAME";
@@ -120,6 +121,10 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 			handler.store();
 			handler = ftHome.create();
 			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_VIDEO, Class.forName("com.idega.block.media.business.VideoTypeHandler"));
+			handler.store();
+			
+			handler = ftHome.create();
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_ZIP, Class.forName("com.idega.block.media.business.ZipTypeHandler"));
 			handler.store();
 			handler.cacheEntity();
 		}
