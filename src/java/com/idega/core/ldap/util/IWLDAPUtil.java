@@ -248,7 +248,6 @@ public class IWLDAPUtil implements IWLDAPConstants{
 		
 		
 		directoryString = removeTrailingSpaces(directoryString);
-		
 		directoryString = TextSoap.findAndReplace(directoryString,"\\+","+");
 		directoryString = TextSoap.findAndReplace(directoryString,"+","\\+");
 		return directoryString;

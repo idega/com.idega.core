@@ -10,6 +10,7 @@ package com.idega.core.ldap.replication.business;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -216,7 +217,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					return executeReplicator(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBaseRDN, baseUniqueId, intervalMinute,schedulerCronString,true,null);
 				}
 				else {
-					System.out.println("Replicator : " + repNum + " already started!");
+					logWarning("Replicator : " + repNum + " already started!");
 				}
 			}
 			else if (startOrStop.equals(STOP_REPLICATOR)) {
@@ -313,7 +314,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 		}
 		else{
-			System.out.println("[LDAPReplication] " + new Date() + " - Tried to start replicator nr: "+ repNum+" again before finished");
+			logWarning("[LDAPReplication] " + new Date() + " - Tried to start replicator nr: "+ repNum+" again before finished");
 			return false;//already running
 		}
 	}
@@ -362,7 +363,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 //				get the attributes for this DN
 				Attributes attribs = result.getAttributes();
 				
-				System.out.println(entryDN.toString());
+				logDebug(entryDN.toString());
 				
 				if(attribs==null){
 					//load the attributes
@@ -370,20 +371,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				}
 				
 					if(ldapUtil.isUser(entryDN)){
-						if(parentGroup!=null){
-							getUserBusiness().createOrUpdateUser(entryDN, attribs,parentGroup);
-						}
-						else{
-							getUserBusiness().createOrUpdateUser(entryDN, attribs);
-						}
+						createOrUpdateUser(parentGroup, attribs, entryDN);
 					}
 					else if(ldapUtil.isGroup(entryDN)){
-						if(parentGroup!=null){
-							getGroupBusiness().createOrUpdateGroup(entryDN, attribs,parentGroup);
-						}
-						else{
-							getGroupBusiness().createOrUpdateGroup(entryDN, attribs);	
-						}
+						createOrUpdateGroup(parentGroup,attribs,entryDN);
 					}
 			}
 		}
@@ -428,7 +419,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				//create the child dn with the full parent dn path
 				DN childDN = new DN(dn);
 				childDN.addParentRDN(entryDN.toString());
-				System.out.println(childDN.toString());
+				logDebug(childDN.toString());
 				
 				
 				if(childAttribs==null){
@@ -438,22 +429,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				
 				Group childGroup = null;
 					if(ldapUtil.isUser(childDN)){
-						if(parentGroup!=null){
-							getUserBusiness().createOrUpdateUser(childDN, childAttribs,parentGroup);
-						}
-						else{
-							getUserBusiness().createOrUpdateUser(childDN, childAttribs);
-						}
+						createOrUpdateUser(parentGroup, childAttribs, childDN);
 					}
 					else if(ldapUtil.isGroup(childDN)){
-						if(parentGroup!=null){
-							childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs,parentGroup);
-						}
-						else{
-							childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs);	
-						}
-						
-						
+						childGroup = createOrUpdateGroup(parentGroup, childAttribs, childDN);
 					}
 					
 //					if (childAttribs != null) {
@@ -469,6 +448,52 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 						replicateEntryAndChildrenRecursively(childDN, jndiOps,childGroup,UUID);
 					}
 			}
+		}
+	}
+
+	/**
+	 * Creates or updates a group from the attributes and distinguished name.
+	 * Also calls methods in registered UserGroupPlugins
+	 * @param parentGroup
+	 * @param childAttribs
+	 * @param childDN
+	 * @return
+	 * @throws CreateException
+	 * @throws NamingException
+	 * @throws RemoteException
+	 */
+	protected Group createOrUpdateGroup(Group parentGroup, Attributes childAttribs, DN childDN) throws CreateException, NamingException, RemoteException {
+		Group childGroup;
+		if(parentGroup!=null){
+			childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs,parentGroup);
+		}
+		else{
+			childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs);	
+		}
+		
+//		get plugins
+		Collection plugins = getGroupBusiness().getUserGroupPluginsForGroup(childGroup);
+		
+		
+		return childGroup;
+	}
+
+	/**
+	 * Creates or updates a user from the attributes and distinguished name.
+	 * Also calls methods in registered UserGroupPlugins
+	 * @param parentGroup
+	 * @param childAttribs
+	 * @param childDN
+	 * @throws RemoteException
+	 * @throws CreateException
+	 * @throws NamingException
+	 */
+	protected void createOrUpdateUser(Group parentGroup, Attributes childAttribs, DN childDN) throws RemoteException, CreateException, NamingException {
+		if(parentGroup!=null){
+			getUserBusiness().createOrUpdateUser(childDN, childAttribs,parentGroup);
+		}
+		else{
+			getUserBusiness().createOrUpdateUser(childDN, childAttribs);
 		}
 	}
 
@@ -545,7 +570,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			storeReplicationProperties();
 		}
 		catch (NumberFormatException ex) {
-			System.err.println("'" + PROPS_REPLICATION_NUM + "' must be an integer.");
+			logError("'" + PROPS_REPLICATION_NUM + "' must be an integer.");
 		}
 	}
 
@@ -595,7 +620,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			catch (FileNotFoundException e) {
 				FileUtil.createFile(pathToFile);//create the file if it does
 				// not exist;
-				System.out.println("LDAPManager: creating replication settings file : " + pathToFile);
+				logConfig("LDAPManager: creating replication settings file : " + pathToFile);
 				repProps = getEmbeddedLDAPServerBusiness().loadProperties(pathToFile);
 			}
 		}
@@ -636,7 +661,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//so it does not run again until we are done.
 		entry.setCanRun(false);
 		
-		System.out.println("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" host:"+host+ " base rdn:"+baseRDN);
+		logConfig("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" host:"+host+ " base rdn:"+baseRDN);
 		JNDIOps jndiOps;
 		try {
 			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
@@ -655,7 +680,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		catch (NamingException e) {
 			e.printStackTrace();
-			System.err.println("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
+			logError("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
 			try {
 				stopReplicator(replicatorNumber);
 			}
@@ -665,7 +690,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
-			System.err.println("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
+			logError("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
 			try {
 				stopReplicator(replicatorNumber);
 			}
@@ -675,7 +700,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		catch (CreateException e) {
 			e.printStackTrace();
-			System.err.println("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
+			logError("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
 			try {
 				stopReplicator(replicatorNumber);
 			}

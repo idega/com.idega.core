@@ -121,7 +121,7 @@ LDAPReplicationConstants {
 	 * @see org.codehaus.plexus.ldapserver.server.backend.Backend#add(org.codehaus.plexus.ldapserver.server.Entry)
 	 */
 	public LDAPResultEnum add(Entry entryToAdd) {
-		System.out.println(entryToAdd.getName().toString());
+		System.out.println("Trying to add : "+entryToAdd.getName().toString());
 		return super.add(entryToAdd);
 	}
 	
@@ -129,7 +129,7 @@ LDAPReplicationConstants {
 	 * Not supported yet, dangerous so it really needs to check permissions
 	 */
 	public LDAPResultEnum delete(DirectoryString dn) {
-		System.out.println(dn.toString());
+		System.out.println("Trying to delete : "+dn.toString());
 		return super.delete(dn);
 	}
 	
@@ -218,8 +218,8 @@ LDAPReplicationConstants {
 						}
 						//this also converts the string to utf so we actually find something
 						String searchWord = new DirectoryString(bytes).toString();
-						
-						System.out.println("type: " + type + " searchword:" + searchWord);
+						//TODO implement logging
+						//System.out.println("type: " + type + " searchword:" + searchWord);
 						try {
 							doSubStringSearch(base,entries,alreadyLoaded, type, searchWord);
 						}
