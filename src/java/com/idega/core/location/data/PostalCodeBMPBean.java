@@ -16,6 +16,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
+import com.idega.data.SimpleQuerier;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -169,14 +170,53 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	query.addOrder(table, COLUMN_POSTAL_CODE, true);
   	
   	return this.idoFindPKsByQuery(query);
-//    return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId),COLUMN_POSTAL_CODE);
+  }
+  /**
+   * 
+   * @param countryId
+   * @return Collection of strings, containing names
+   * @throws FinderException
+   * @throws RemoteException
+   */
+  public Collection ejbGetUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId)throws FinderException,RemoteException{
+  	Table table = new Table(this);
+  	Column countryCol = new Column(table, COLUMN_COUNTRY_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(table, COLUMN_NAME, true);
+  	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryId));
+  	query.addGroupByColumn(table, COLUMN_NAME);
+  	query.addOrder(table, COLUMN_NAME, true);
+  	
+  	try {
+	  	String[] names = SimpleQuerier.executeStringQuery(query.toString());
+	  	Vector coll = new Vector();
+	  	if (names != null) {
+	  		for (int i = 0; i< names.length; i++) {
+	  			coll.add(names[i]);
+	  		}
+	  	}
+	  	return coll;
+  	} catch (Exception e) {
+  		throw new FinderException(e.getMessage());
+  	}
+  }
+
+  public Collection ejbFindByNameAndCountry(String name, Object countryPK) throws FinderException {
+  	Table table = new Table(this);
+  	Column nameCol = new Column(table, COLUMN_NAME);
+  	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(new WildCardColumn(table));
+  	
+  	query.addCriteria(new MatchCriteria(nameCol, MatchCriteria.EQUALS, name));
+  	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryPK));
+  	
+  	return this.idoFindPKsByQuery(query);
   }
   
-  public Collection ejbHomeFindByName(String name) throws FinderException {
-  	return this.idoFindAllIDsByColumnBySQL(COLUMN_NAME, name);
-  }
-  
-  public Collection ejbHomeFindAllUniqueNames() throws RemoteException, FinderException {
+  public Collection ejbFindAllUniqueNames() throws RemoteException, FinderException {
   	Collection all = ejbFindAll();
   	Collection names = new Vector();
   	Collection pks = new Vector();

@@ -1,5 +1,5 @@
 /*
- * $Id: PostalCodeHome.java,v 1.2 2004/09/13 15:09:50 joakim Exp $
+ * $Id: PostalCodeHome.java,v 1.3 2004/11/23 13:51:03 gimmi Exp $
  * Created on 13.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import com.idega.data.IDOHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/13 15:09:50 $ by $Author: joakim $
+ *  Last modified: $Date: 2004/11/23 13:51:03 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface PostalCodeHome extends IDOHome {
 
@@ -38,10 +38,13 @@ public interface PostalCodeHome extends IDOHome {
 	 */
 	public Collection findAllByCountryIdOrderedByPostalCode(int countryId) throws FinderException, RemoteException;
 
+	
+  public Collection getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId)throws FinderException,RemoteException;
+
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeFindByName
 	 */
-	public Collection findByName(String name) throws FinderException;
+	public Collection findByNameAndCountry(String name, Object countryPK) throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeFindAllUniqueNames
