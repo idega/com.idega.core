@@ -9,17 +9,22 @@ package com.idega.util;
  * @version 1.0
  */
 
- import java.io.File;
- import java.io.InputStream;
- import java.io.FileOutputStream;
- import java.io.IOException;
- import java.io.LineNumberReader;
- import java.io.FileReader;
- import java.net.*;
- import java.io.*;
- import java.util.Vector;
- import java.util.StringTokenizer;
- import java.util.Iterator;
+ import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class FileUtil {
 
@@ -261,8 +266,8 @@ public class FileUtil {
 		}
 	}
 
-  public static Vector getLinesFromFile(File fromFile) throws IOException{
-    Vector strings = new Vector();
+  public static List getLinesFromFile(File fromFile) throws IOException{
+    List strings = new ArrayList();
 
     FileReader reader;
     LineNumberReader lineReader = null;
@@ -273,7 +278,7 @@ public class FileUtil {
     lineReader.mark(1);
     while (lineReader.read() != -1) {
         lineReader.reset();
-        strings.addElement(lineReader.readLine());
+        strings.add(lineReader.readLine());
         lineReader.mark(1);
     }
 
@@ -281,7 +286,7 @@ public class FileUtil {
   }
 
 /** Gets the lines from a file and return the as a vector of strings **/
-  public static Vector getLinesFromFile(String pathAndFile) throws IOException{
+  public static List getLinesFromFile(String pathAndFile) throws IOException{
     File f = new File(pathAndFile);
     return getLinesFromFile(f);
   }
@@ -289,9 +294,9 @@ public class FileUtil {
 /** Uses getLinesFromFile and returns them in a string with "\n" between them **/
   public static String getStringFromFile(String pathAndFile) throws IOException{
     StringBuffer buffer = new StringBuffer();
-    Vector vector = getLinesFromFile(pathAndFile);
-    if ( vector != null ) {
-      Iterator iter = vector.iterator();
+    List list = getLinesFromFile(pathAndFile);
+    if ( list != null ) {
+      Iterator iter = list.iterator();
       while (iter.hasNext()) {
         buffer.append((String) iter.next());
         buffer.append('\n');
@@ -372,9 +377,9 @@ public class FileUtil {
 
   /** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
 
-   public static Vector getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
-    Vector lines = getLinesFromFile(pathAndFile);
-    Vector tokens = new Vector();
+   public static List getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
+    List lines = getLinesFromFile(pathAndFile);
+    List tokens = new ArrayList();
     String item;
 
     Iterator iter = lines.iterator();
