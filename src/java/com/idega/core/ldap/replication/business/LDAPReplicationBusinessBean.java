@@ -85,12 +85,13 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		stopReplicator(replicatorNumber);
 		//move all values up one level and then delete the last replicator (its
 		// already been copied up)
-		/*Properties props = */getReplicationSettings();
+		getReplicationSettings();
 		int num = getNumberOfReplicators();
 		if (num != 1) {
 			for (int i = replicatorNumber + 1; i <= num; i++) {
 				int previous = i - 1;
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_BASE_RDN, i, previous);
+				copyPropertyBetweenReplicators(PROPS_REPLICATOR_BASE_UNIQUE_ID, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_HOST, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_PORT, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_REPLICATE_BASE_RDN, i, previous);
@@ -193,18 +194,22 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		final String baseUniqueId = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber+PROPS_REPLICATOR_BASE_UNIQUE_ID);
 		final String baseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_BASE_RDN);
-		/*final String replicateBaseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
-				+ PROPS_REPLICATOR_REPLICATE_BASE_RDN);*/
+		//Todo eiki ldap implement
+		final String replicateBaseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
+				+ PROPS_REPLICATOR_REPLICATE_BASE_RDN);
+		
 		final String intervalMinute = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_INTERVAL_MINUTES);
 		final String schedulerCronString = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SCHEDULER_STRING);
-		/*final String searchEntryLimit = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
+		
+//		Todo eiki ldap implement
+		final String searchEntryLimit = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT);
 		final String searchTimeLimitInMs = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SEARCH_TIMEOUT_MS);
 		final String matchByUUID = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
-				+ PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);*/
+				+ PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);
 		
 		//do stuff
 		try {
@@ -571,7 +576,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//so it does not run again until we are done.
 		entry.setCanRun(false);
 		
-		System.out.println("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum);
+		System.out.println("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" host:"+host+ " base rdn:"+baseRDN);
 		JNDIOps jndiOps;
 		try {
 			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
@@ -587,8 +592,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		catch (NamingException e) {
 			e.printStackTrace();
-			System.err.println("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum
-					+ " failed. Stopping the replicator...");
+			System.err.println("[LDAPReplication] " + new Date() + " - Replicator nr: " + repNum+" host:"+host+ " base rdn:"+baseRDN+ " failed. Stopping the replicator...");
 			try {
 				stopReplicator(replicatorNumber);
 			}
