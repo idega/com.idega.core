@@ -34,7 +34,7 @@ public class PermissionCacher {
   private static final String PERMISSION_MAP_JSP_PAGE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_JSP_PAGE;
   private static final String PERMISSION_MAP_FILE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_FILE_ID;
 	private static final String PERMISSION_MAP_GROUP = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_GROUP_ID;
-	
+	private static final String PERMISSION_MAP_ROLE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_ROLE;
   private static final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";//for performance (ask Gummi)
 
 
@@ -202,6 +202,11 @@ public class PermissionCacher {
 	public static Boolean hasPermissionForGroup(Group group, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
 		return hasPermission(PERMISSION_MAP_GROUP,group,iwc,permissionKey,groups);
 	}
+	
+  
+	public static Boolean hasPermissionForRole(String theRoleIdentifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+		return hasPermission(PERMISSION_MAP_ROLE,theRoleIdentifier,iwc,permissionKey,groups);
+	}
 
   public static Boolean hasPermissionForJSPPage(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
     return hasPermission(PERMISSION_MAP_JSP_PAGE,identifier,iwc,permissionKey,groups);
@@ -230,9 +235,6 @@ public class PermissionCacher {
 	public static Boolean hasPermissionForGroup(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
 		return hasPermission(PERMISSION_MAP_GROUP,identifier,iwc,permissionKey,groups);
 	}
-
-  //public static Boolean hasPermission()
-
 
   private static Boolean hasPermission(String permissionMapKey, Object obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
     String identifier = getIdentifier(permissionMapKey, obj, iwc);
@@ -425,9 +427,14 @@ public class PermissionCacher {
       case AccessControl.CATEGORY_PAGE_INSTANCE :
         updatePermissions(PERMISSION_MAP_PAGE_INSTANCE,identifier,permissionKey,iwc);
         break;
-      case AccessControl.CATEGORY_JSP_PAGE :
-        updatePermissions(PERMISSION_MAP_JSP_PAGE,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_GROUP_ID :
+        updatePermissions(PERMISSION_MAP_GROUP,identifier,permissionKey,iwc);
         break;
+      case AccessControl.CATEGORY_ROLE :
+		updatePermissions(PERMISSION_MAP_ROLE,identifier,permissionKey,iwc);
+		break;
+        
+        
     }
   }
 
