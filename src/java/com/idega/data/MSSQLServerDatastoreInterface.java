@@ -396,4 +396,11 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		return true;
 	}
 	
+	/**
+	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
+	 */
+	public int getOptimalEJBLoadFetchSize(){
+		return 1000;
+	}
+	
 }

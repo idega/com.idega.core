@@ -246,6 +246,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			    int tIndex = item[LoadTracker.TO_INDEX_IN_ARRAY];
 			    
 			    int partitionSize = iFace.getOptimalEJBLoadFetchSize();
+			    System.out.println("[PrimaryKeyList]: partitionSize "+ partitionSize);
 			    int partitions = (tIndex-fIndex)/partitionSize;
 			    if(partitions==0 || (tIndex-fIndex)%partitions>0){
 			    		partitions++;
@@ -329,11 +330,11 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					Object pk = (Object) iter.next();
 					_entities.set(i,mapOfEntities.get(pk));
 //					_tracker.setAsLoaded(firstIndex+i);
-					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
-						no++;
-						System.err.println("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
-						System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
-					} 
+//					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
+//						no++;
+//						System.err.println("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+//						System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+//					} 
 				}
 		    		_tracker.setSubsetAsLoaded(firstIndex,firstIndex+listOfPrimaryKeys.size());
 		    } else {
@@ -344,12 +345,12 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					{
 						try {
 							_entities.set(i,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
-							if(!pk.equals(this.get(i))){
-	//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
-								no++;
-								System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
-								System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
-							}
+//							if(!pk.equals(this.get(i))){
+//	//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
+//								no++;
+//								System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+//								System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+//							}
 						} catch (FinderException e) {
 							//The row must have been deleted from database
 	//						this.remove(pk);
