@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.6 2004/02/26 09:09:53 laddi Exp $
+ * $Id: TimeInput.java,v 1.7 2004/09/23 15:53:28 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -380,6 +380,12 @@ public class TimeInput extends InterfaceObject
 		theHour.setStyleAttribute(style);
 		theMinute.setStyleAttribute(style);
 	}
+	public void setStyleClass(String styleName) 
+	{
+		theHour.setStyleClass(styleName);
+		theMinute.setStyleClass(styleName);
+	}
+	
 	/**
 	**Does nothing - overrides function in superclass
 	**/
