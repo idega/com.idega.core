@@ -1109,8 +1109,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       if (! aliasType.getType().equals(groupTypeString)){
         groupTypes.add(aliasType);
       }
+      
+      
+      
       // then add children of type of selected group
       addGroupTypeChildren(groupTypes, groupType);
+      
+//    hack
+      //add same type
+      groupTypes.add(groupType);
+      
     }
     return groupTypes;
   }
