@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.33 2002/02/14 15:04:59 gummi Exp $
+ * $Id: Page.java,v 1.34 2002/02/14 15:22:16 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -60,7 +60,7 @@ public class Page extends PresentationObjectContainer {
   private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
   static{
-    Text pageNotFound = new Text("Page not found",true,false,false);
+    Text pageNotFound = new Text("No permission",true,false,false);
     pageNotFound.setFontSize(4);
     NULL_CLONE_PAGE.add(pageNotFound);
 
