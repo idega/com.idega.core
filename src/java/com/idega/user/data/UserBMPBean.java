@@ -735,6 +735,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection ejbFindUsersInPrimaryGroup(Group group) throws FinderException, RemoteException {
     IDOQuery query = idoQueryGetSelect();
     query
+    	.appendWhere()
       .appendEqualsQuoted(_COLUMNNAME_PRIMARY_GROUP_ID, group.getPrimaryKey().toString())
       .appendAnd();
     appendIsNotDeleted(query);
