@@ -3,14 +3,12 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.ldap.client.naming.DN;
@@ -22,7 +20,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
-import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
 import com.idega.util.datastructures.NestedSetsContainer;
 
