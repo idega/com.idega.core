@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 import com.idega.core.data.ICTreeNode;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
@@ -37,13 +37,13 @@ public class GroupTreeNode implements ICTreeNode {
 	private int _nodeType;
 	private GroupBusiness groupBiz;
 	private List _children = null;
-	private IWApplicationContext _iwc = null;
+	private IWApplicationContext _iwac = null;
 	
 	public static final int TYPE_DOMAIN = 0;
 	public static final int TYPE_GROUP = 1;
 
 	public GroupTreeNode(ICDomain domain,  IWApplicationContext iwc) {
-		_iwc = iwc;
+		setIWApplicationContext(iwc);
 		Map m = (Map)iwc.getApplicationAttribute("domain_group_tree");
 		if (m == null) {
 			m = new Hashtable();
@@ -66,6 +66,15 @@ public class GroupTreeNode implements ICTreeNode {
 		}			
 	}
 
+	protected void setIWApplicationContext(IWApplicationContext iwac){
+		IWApplicationContext iwacToSet = iwac;
+		if(iwac instanceof IWContext){
+			IWContext iwc = (IWContext)iwac;
+			iwacToSet = iwc.getApplicationContext();
+		}
+		this._iwac=iwacToSet;
+	}
+	
 	public GroupTreeNode(Group group,  IWApplicationContext iwc) {
 		Map m = (Map)iwc.getApplicationAttribute("group_tree");
 		if (m == null) {
@@ -285,7 +294,7 @@ public class GroupTreeNode implements ICTreeNode {
 					Group aliasGroup = getAlias();
 					Collection allAncestors = null;
 					try {
-						allAncestors = getGroupBusiness(_iwc).getParentGroupsRecursive(this.getNodeID());
+						allAncestors = getGroupBusiness(_iwac).getParentGroupsRecursive(this.getNodeID());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
