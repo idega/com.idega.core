@@ -1,5 +1,8 @@
 package com.idega.core.location.data;
 
+import java.util.Collection;
+import com.idega.data.IDORelationshipException;
+
 
 public interface Address extends com.idega.data.IDOLegacyEntity
 {
@@ -34,8 +37,8 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public void setCommuneID(int communeId);
  public boolean isEqualTo(Address address);
  
- public String getCoordinate();
- public void setCoordinate(String coordinate);
+ public Collection getCoordinates() throws IDORelationshipException;
+ public void setCoordinate(AddressCoordinate coordinate) throws IDORelationshipException;
  
      /**
      * Gets the street name together with the number
