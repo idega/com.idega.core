@@ -20,6 +20,7 @@ import com.idega.idegaweb.*;
     public static final int URL = 2;
     public static final int OBJ = 3;
     public static final int FRAMESET = 4;
+    public static final String COMPOUND_ID_FRAME_NAME_KEY = ":frame:";    
     private int type = NONE;
 
     private static final String star = "*";
@@ -30,6 +31,30 @@ import com.idega.idegaweb.*;
       this.getLocation().isInFrameSet(true);
     }
 
+
+    /**
+     *  Returns   the last occurence of a frame name in the specified compoundId
+     * 	or null.
+     * 	If	 the	 compoundId points to a frame it returns the corresponding
+     * 	frame		name. if the compoundId does not point to a frame it returns the
+     * 	name	 	of	 the frame the objects is contained.
+     * 	@param	 compoundId
+     * 	@return	 the name of a frame
+ 		*/
+    public static String getFrameName(String compoundId) {
+      int i = compoundId.lastIndexOf(Frame.COMPOUND_ID_FRAME_NAME_KEY);
+      if (i < 0)
+        return null;
+      i += Frame.COMPOUND_ID_FRAME_NAME_KEY.length();
+      String frameName = compoundId.substring(i);
+      i = frameName.indexOf(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
+      // the compoundId points to a frame
+      if (i < 0)
+        return frameName;
+      else
+      // the compoundId does not point to a frame
+        return frameName.substring(0, i);
+    }
 
 
     public void setUrlProperty(String url){
@@ -244,5 +269,17 @@ import com.idega.idegaweb.*;
       _obj._main(iwc);
     }
   }
+  
+  /**
+	 * @see com.idega.presentation.PresentationObject#getComponentId()
+	 */
+	public String getComponentId() {
+		StringBuffer buffer = new StringBuffer(super.getComponentId());
+    String frameName = this.getAttribute("name");
+    buffer.append(Frame.COMPOUND_ID_FRAME_NAME_KEY).append(frameName);
+    return buffer.toString();
+    
+	}
+
 
   }
