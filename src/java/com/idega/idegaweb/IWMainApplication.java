@@ -77,8 +77,10 @@ public class IWMainApplication {//implements ServletContext{
     private Properties bundlesFile;
     private File bundlesFileFile;
     private String propertiesRealPath;
-    public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
-    public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
+    private String bundlesRealPath;
+    private final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
+    private final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
+    private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
     public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
     public final static String CORE_DEFAULT_FONT = "default.ttf";
@@ -143,6 +145,7 @@ public class IWMainApplication {//implements ServletContext{
     private void load() {
         lw = new LogWriter(this.getApplicationRealPath(), LogWriter.INFO);
         this.setPropertiesRealPath();
+        this.setBundlesRealPath();
         IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
         IWSystemProperties systemProperties = new IWSystemProperties(this);
@@ -402,17 +405,41 @@ public class IWMainApplication {//implements ServletContext{
         return bundlesFile;
     }
 
+    
+    /**
+     * Gets the Path to the folder where application properties are located by default.
+     * e.g. /home/idegaweb/webapp1/idegaweb/properties
+     * @return the path as a String
+     */    
     public String getPropertiesRealPath() {
         return propertiesRealPath;
     }
 
     private void setPropertiesRealPath() {
         this.propertiesRealPath = this.getApplicationSpecialRealPath()
-                + FileUtil.getFileSeparator() + "properties";
+                + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
         //debug
         //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
     }
 
+    
+    /**
+     * Gets the Path to the folder where bundles are located by default.
+     * e.g. /home/idegaweb/webapp1/idegaweb/bundles
+     * @return the path as a String
+     */
+    public String getBundlesRealPath() {
+        return bundlesRealPath;
+    }
+
+    private void setBundlesRealPath() {
+        this.bundlesRealPath = this.getApplicationSpecialRealPath()
+                + FileUtil.getFileSeparator() + BUNDLES_STANDARD_DIRECTORY;
+        //debug
+        //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
+    }
+    
+    
     /**
      * Returns the real path to the WebApplication
      */

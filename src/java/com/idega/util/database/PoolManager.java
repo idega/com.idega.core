@@ -28,7 +28,8 @@ public class PoolManager
 {
 	
 private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";//a string you can use in a connection url
-    private static String thePropertiesFileLocation;
+private static final String IW_BUNDLES_PATH_PLACE_HOLDER = "{iw_bundles_path}";//a string you can use in a connection url    
+private static String thePropertiesFileLocation;
 	private static String DEFAULT_DSN = "default";
 	static private PoolManager instance;
 	static private int clients;
@@ -159,9 +160,15 @@ private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_
 //				  replace the {iw_application_path} variable with the real path to the applications we folder
 				    if(iwma!=null) {
 				        String applicationRealPath = iwma.getApplicationRealPath();
+				        String bundlesRealPath = iwma.getBundlesRealPath();
 				        //does not work because the string must be an expression 
 				        //url.replaceAll(IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
-				        url = TextSoap.findAndReplace(url,IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+				        if(url.indexOf(IW_APPLICATION_PATH_PLACE_HOLDER)!=-1){
+				        		url = TextSoap.findAndReplace(url,IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+				        }
+				        else if(url.indexOf(IW_BUNDLES_PATH_PLACE_HOLDER)!=-1){
+				        		url = TextSoap.findAndReplace(url,IW_BUNDLES_PATH_PLACE_HOLDER, bundlesRealPath);
+				        }
 				    }
 				}
 				String user = props.getProperty(poolName + ".user");
