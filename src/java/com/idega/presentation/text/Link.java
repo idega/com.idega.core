@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.135 2004/09/03 17:09:48 eiki Exp $
+ * $Id: Link.java,v 1.136 2004/09/07 06:59:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1926,6 +1926,11 @@ public class Link extends Text {
 	
 	public void setAsCloseLink() {
 		setOnClick("top.window.close()");
+		setFinalUrl(HASH);
+	}
+	
+	public void setAsPrintLink() {
+		setOnClick("javascript:window.print();");
 		setFinalUrl(HASH);
 	}
 
