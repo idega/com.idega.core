@@ -1009,9 +1009,23 @@ public class IDOQuery {
 		this.appendAnd().append(dateColumnName).appendLessThanSign().append(toDate);
 		return this;
 	}
+	
+	/**
+	 * Appends a condition where timestamp column specified is within the provided timestamps
+	 * including the provided timestamps (see appendWithinStamps for included dates)
+	 * @param dateColumnName
+	 * @param fromStamp
+	 * @param toStamp
+	 * @return
+	 */
+	public IDOQuery appendBetweenStamps(String dateColumnName,Date fromStamp,Date toStamp){
+		this.append(dateColumnName).appendGreaterThanSign().append(fromStamp);
+		this.appendAnd().append(dateColumnName).appendLessThanSign().append(toStamp);
+		return this;
+	}
 	/**
 	 * Appends a condition where date column specified is within the provided dates
-	 * including the provided dates (see appendBetweenDates for included dates)
+	 * including the provided dates (see appendBetweenDates for excluded dates)
 	 * @param dateColumnName
 	 * @param fromDate
 	 * @param toDate
@@ -1020,6 +1034,19 @@ public class IDOQuery {
 	public IDOQuery appendWithinDates(String dateColumnName,Date fromDate,Date toDate){
 		this.append(dateColumnName).appendGreaterThanOrEqualsSign().append(fromDate);
 		this.appendAnd().append(dateColumnName).appendLessThanOrEqualsSign().append(toDate);
+		return this;
+	}
+	/**
+	 * Appends a condition where timestamp column specified is within the provided timestamps
+	 * including the provided timestamps (see appendBetweenDates for excluded timestamp)
+	 * @param dateColumnName
+	 * @param fromStamp
+	 * @param toStamp
+	 * @return
+	 */
+	public IDOQuery appendWithinStamps(String dateColumnName,Timestamp fromStamp,Timestamp toStamp){
+		this.append(dateColumnName).appendGreaterThanOrEqualsSign().append(fromStamp);
+		this.appendAnd().append(dateColumnName).appendLessThanOrEqualsSign().append(toStamp);
 		return this;
 	}
 	
