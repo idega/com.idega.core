@@ -188,6 +188,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return (BlobWrapper)getColumnValue(getColumnFileValue());
 	}
 
+	public boolean isEmpty() {
+		return isStoredValueNull(getColumnNameFileValue());
+	}
+	
 	public InputStream getFileValue() {
 		return getInputStreamColumnValue(getColumnFileValue());
 	}

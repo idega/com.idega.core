@@ -421,4 +421,8 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	public void setLocalizationKey(String key) {
 		((ICFile)this.getMainEntity()).setLocalizationKey(key);
 	}
+	
+	public boolean isEmpty() {
+		return ((ICFile)this.getMainEntity()).isEmpty();
+	}
 }
