@@ -7,6 +7,7 @@
 package com.idega.core.component.data;
 //import java.util.*;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -285,5 +286,14 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	public Collection ejbFindAllElements() throws FinderException
 	{
 		return ejbFindAllByObjectType(COMPONENT_TYPE_ELEMENT);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object obj) {
+		if (obj instanceof ICObject) {
+			return Collator.getInstance().compare(this.getName(), ((ICObject)obj).getName());
+		}
+		return super.compareTo(obj);
 	}
 }
