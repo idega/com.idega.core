@@ -8,6 +8,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
+import com.idega.builder.data.IBPage;
 
 /**
  * A presentationObject that uses FileUtil.getStringFromURL to serverside include a given URL
@@ -19,6 +20,10 @@ public class PageIncluder extends PresentationObject{
   private String BASEURL = null;
   private String RELATIVEURL = null;
   private String pageIncluderPrefix = null;
+  private String _label = null;
+  private String _sendURLTo = null;
+  private IBPage _sendToPage = null;
+  private String _sendToPageIfSet = null;
 
   private String sessionId = null;
   private String sessionURL = null;
@@ -48,15 +53,84 @@ public class PageIncluder extends PresentationObject{
         String query = null;
         instanceId=getICObjectInstanceID();
 
-        if(forceFrame){
-          pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+/*        Enumeration enum2 = iwc.getParameterNames();
+        while (enum2.hasMoreElements()) {
+          String param2 = (String) enum2.nextElement();
+          System.out.println("param = " + param2);
+        }*/
+
+        if (forceFrame) {
+          if (_sendURLTo == null)
+            pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+          else {
+            if (_sendToPageIfSet == null)
+              pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo+"=";
+            else {
+              if (iwc.isParameterSet(_sendToPageIfSet))
+                pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo+"=";
+              else
+                pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+            }
+          }
+
+          if (_sendToPage != null) {
+            if (_sendToPageIfSet == null)
+              iwc.setSessionAttribute("ib_page_id",((Integer)_sendToPage.getPrimaryKeyValue()).toString());
+            else {
+              if (iwc.isParameterSet(_sendToPageIfSet))
+                iwc.setSessionAttribute("ib_page_id",((Integer)_sendToPage.getPrimaryKeyValue()).toString());
+            }
+          }
         }
         else {
          pageIncluderPrefix ="";
         }
 
+        if (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) {//after clicking a link og submitting a form
+          //get all parameters even from post actions
+          Enumeration enum = iwc.getParameterNames();
+          while (enum.hasMoreElements()) {
+            String param = (String) enum.nextElement();
+            debug(param+" : "+iwc.getParameter(param));
+            if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
+             URL = decodeQueryString(iwc.getParameter(param));
+             TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+             location.append(URL);
+            }
+            else if(!param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
+              if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
+                queryBuf.append(param);
+                queryBuf.append("=");
+                queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
+                queryBuf.append("&");
+              }
+            }
+          }//while ends
 
-        if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
+          query = queryBuf.toString();
+
+          if( !query.equals("") ){
+            if(URL.endsWith("/")){//check if the url ends with a slash
+              location.append("?");
+            }
+            else{//no slash at end
+              if( URL.indexOf("?")==-1 ){//check if the url contains a ?
+                if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
+                  location.append("?");
+                }
+                else{
+                  location.append("/?");
+                }
+              }
+              else{//just add to the parameters
+                location.append("&");
+              }
+            }
+            //add the extra parameters
+            location.append(query);
+          }
+        }
+        else if(iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
           //get all parameters even from post actions
           Enumeration enum = iwc.getParameterNames();
           while (enum.hasMoreElements()) {
@@ -65,13 +139,17 @@ public class PageIncluder extends PresentationObject{
             /**@todo use a post method to get the page or stringbuffer this URL  encode?**/
             if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
              URL = decodeQueryString(iwc.getParameter(param));
+             if (_sendURLTo != null)
+               TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
              location.append(URL);
             }
             else{
-              queryBuf.append(param);
-              queryBuf.append("=");
-              queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
-              queryBuf.append("&");
+//              if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
+                queryBuf.append(param);
+                queryBuf.append("=");
+                queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
+                queryBuf.append("&");
+//              }
             }
           }//while ends
 
@@ -314,5 +392,41 @@ public class PageIncluder extends PresentationObject{
     this.forceFrame = forceFrame;
   }
 
+  public void setLabel(String label) {
+    _label = label;
   }
 
+  /**
+   * Redirects the URL from this PageIncluder to another PageIncluder with the
+   * corresponding label.
+   *
+   * @param label The label of the PageIncluder which we want to redirect to.
+   */
+  public void setRedirectTo(String label) {
+    _sendURLTo = label;
+  }
+
+  public String getLabel() {
+    return _label;
+  }
+
+  public String getRedirectTo() {
+    return _sendURLTo;
+  }
+
+  public void setSendToPage(IBPage page) {
+    _sendToPage = page;
+  }
+
+  public IBPage getSendToPage() {
+    return _sendToPage;
+  }
+
+  public void setSendToPageIfSet(String condition) {
+    _sendToPageIfSet = condition;
+  }
+
+  public String getSendToPageIfSet() {
+    return _sendToPageIfSet;
+  }
+}
