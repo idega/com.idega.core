@@ -114,7 +114,7 @@ public class Tab extends Button {
       g.fillRect(width-2,2,1,height-2);
 
       g.setColor(borderColor);
-      g.fillRect(width-2,1,0,0);
+      g.fillRect(width-2,1,1,1);
       g.fillRect(width-1,2,1,height-2);
     }
     else{
