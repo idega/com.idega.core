@@ -382,4 +382,15 @@ public class LoginDBHandler {
     return false;
 
   }
+
+  public static boolean verifyPassword(String user, String password) throws Exception{
+    boolean returner = false;
+    java.util.List c = EntityFinder.getInstance().findAllByColumn(LoginTable.class,LoginTable.getUserLoginColumnName(),user);
+    if(c!=null && c.size() > 0){
+      LoginTable lt = (LoginTable) c.get(0);
+      return Encrypter.verifyOneWayEncrypted(lt.getUserPassword(),password);
+    }
+    return false;
+  }
+
 }
