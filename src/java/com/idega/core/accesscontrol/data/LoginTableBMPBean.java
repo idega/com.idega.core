@@ -224,6 +224,12 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
         }
 
 
+/**
+ * just sets the password column value as this string without encoding.
+ */
+public void setUserPasswordInClearText(String password){
+	setColumn(getNewUserPasswordColumnName(), password);
+}
 
 /**
  * just returns the password column value as is.
