@@ -13,6 +13,8 @@ import com.idega.presentation.ui.*;
 import java.io.*;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
 import com.idega.block.login.business.LoginBusiness;
@@ -27,7 +29,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class IWContext extends Object{
+public class IWContext extends Object implements IWUserContext,IWApplicationContext{
 
 
 private HttpServletRequest Request;
@@ -286,9 +288,6 @@ public void setInterfaceStyle(String InterfaceStyle){
 	this.interfaceStyle = InterfaceStyle;
 }
 
-/**
- * @deprecated
- */
 public HttpServletRequest getRequest(){
 	return this.Request;
 }
@@ -317,9 +316,6 @@ public String getQueryString(){
   return getRequest().getQueryString();
 }
 
-/**
- * @deprecated
- */
 public HttpServletResponse getResponse(){
 	return this.Response;
 }
@@ -894,6 +890,10 @@ public void setCacheWriter(PrintWriter writer){
     return null;
   }
 
+
+  public IWApplicationContext getApplicationContext(){
+    return this;
+  }
 }
 
 
