@@ -1,6 +1,7 @@
 package com.idega.core.localisation.business;
 
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOFinderException;
 import com.idega.core.data.ICLocale;
 import com.idega.util.LocaleUtil;
 import com.idega.util.idegaTimestamp;
@@ -27,7 +28,42 @@ import java.util.Iterator;
 public class ICLocaleBusiness {
   private static Hashtable LocaleHashByString = null, LocaleHashById = null;
   private static Hashtable LocaleHashInUseByString = null, LocaleHashInUseById = null;
+  private static List allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
   private static idegaTimestamp reloadStamp = null;
+
+
+  private static List listOfAllICLocales(){
+    try {
+      return EntityFinder.getInstance().findAll(ICLocale.class);
+    }
+    catch (IDOFinderException ex) {
+      return null;
+    }
+  }
+
+  private static List listOfICLocalesInUse(){
+    try {
+     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,ICLocale.getColumnNameInUse(),"Y");
+    }
+    catch (IDOFinderException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  private static List listOfICLocales(boolean inUse){
+    try {
+      if(inUse)
+        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,ICLocale.getColumnNameInUse(),"Y");
+      else
+        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,ICLocale.getColumnNameInUse(),"N");
+    }
+    catch (IDOFinderException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
 
   public static List listLocaleCreateIsEn(){
     List L = listOfLocales();
@@ -67,34 +103,30 @@ public class ICLocaleBusiness {
   }
 
   public static List listOfAllLocales(){
-    try {
-      return EntityFinder.findAll(new ICLocale());
-    }
-    catch (SQLException ex) {
-      return null;
-    }
+    if(allIcLocales==null)
+      reload();
+    return allIcLocales;
   }
+
+
 
   public static List listOfLocalesInUse(){
-    try {
-     return  EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"Y");
-    }
-    catch (SQLException ex) {
-      ex.printStackTrace();
-      return null;
-    }
+    if(usedIcLocales ==null)
+      reload();
+    return usedIcLocales;
   }
 
+
   public static List listOfLocales(boolean inUse){
-    try {
-      if(inUse)
-        return  EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"Y");
-      else
-        return EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"N");
+    if(inUse){
+      if(usedIcLocales == null)
+        reload();
+      return  usedIcLocales;
     }
-    catch (SQLException ex) {
-      ex.printStackTrace();
-      return null;
+    else{
+      if(notUsedIcLocales == null)
+        reload();
+      return notUsedIcLocales;
     }
   }
 
@@ -134,6 +166,14 @@ public class ICLocaleBusiness {
     }
   }
 
+  private static void makeLists(){
+    allIcLocales = listOfAllICLocales();
+    usedIcLocales = listOfICLocalesInUse();
+    notUsedIcLocales = new Vector();
+    notUsedIcLocales.addAll(allIcLocales);
+    notUsedIcLocales.removeAll(usedIcLocales);
+  }
+
   public static Map mapOfLocalesInUseById(){
     if(LocaleHashInUseById == null)
       reload();
@@ -147,7 +187,9 @@ public class ICLocaleBusiness {
   }
 
   public static void reload(){
+    makeLists();
     makeHashtables();
+
     reloadStamp = idegaTimestamp.RightNow();
   }
 
