@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.zip.ZipInputStream;
 
@@ -53,25 +54,25 @@ public class XMLData implements Storable {
   private String name = null;
   private String rootName = null;
   
-  public static XMLData getInstanceForInputStream(InputStream inputStream) {
+  public static XMLData getInstanceForInputStream(InputStream inputStream) throws IOException {
   	XMLData data = new XMLData();
     data.initialize(inputStream);
     return data;
   }
   
-  public static XMLData getInstanceForInputStream(ZipInputStream zipInputStream) {
+  public static XMLData getInstanceForInputStream(ZipInputStream zipInputStream) throws IOException {
   	XMLData data = new XMLData();
     data.initialize(zipInputStream);
     return data;
   }
   
-  public static XMLData getInstanceForFile(int xmlFileId) {
+  public static XMLData getInstanceForFile(int xmlFileId) throws IOException {
     XMLData data = new XMLData();
     data.initialize(xmlFileId);
     return data;
   }
   
-  public static XMLData getInstanceForFile(ICFile file) {
+  public static XMLData getInstanceForFile(ICFile file) throws IOException {
     XMLData data = new XMLData();
     data.initialize(file);
     return data;
@@ -100,7 +101,7 @@ public class XMLData implements Storable {
   	return data;
   }
  
-  public void initialize(int fileId) {
+  public void initialize(int fileId) throws IOException {
     ICFile xmlFile = getXMLFile(fileId);
     initialize(xmlFile);
   }
@@ -202,14 +203,10 @@ public class XMLData implements Storable {
     try {
       xmlOutput.output(myDocument, outputStream);
     }
-    catch (IOException ex) {
-      System.err.println("[XMLData] problem writing to file. Message is: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      outputStream.close();
-      throw new IOException("xml file could not be stored");
-    }
-    outputStream.close();
-    // writing finished
+   finally {
+   	close(outputStream);
+   }
+   //writing finished
     // get size of the file
     int size = (int) auxiliaryFile.length();
     // get the input stream of the auxiliary file
@@ -226,7 +223,12 @@ public class XMLData implements Storable {
     
     // write to the ICFile object
     xmlFile.setFileSize(size);
-    xmlFile.setFileValue(inputStream);
+    try {
+    	xmlFile.setFileValue(inputStream);
+    }
+    finally {
+    	close(inputStream);
+    }
 //    try {
       //xmlFile.update();
     xmlFile.store();
@@ -236,7 +238,6 @@ public class XMLData implements Storable {
 //      ex.printStackTrace(System.err);
 //      throw new IOException("xml file could not be stored");
 //    }
-    inputStream.close();
     // reading finished
     // delete file
     auxiliaryFile.delete();
@@ -245,46 +246,39 @@ public class XMLData implements Storable {
   
   
 
-  private void initialize(ICFile xmlFile) {
+  private void initialize(ICFile xmlFile) throws IOException {
   	 name = xmlFile.getName();
   	 xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
   	 InputStream inputStream = xmlFile.getFileValue();
   	 initialize(inputStream);
   }
   	 
-  private void initialize(ZipInputStream inputStream) {
+  private void initialize(ZipInputStream inputStream) throws IOException {
   	// do not close zip input streams
   	try {
   		XMLParser parser = new XMLParser();
   		document = parser.parse(inputStream);
   	}
   	catch (XMLException ex)  {
-      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
-      ex.printStackTrace(System.err);
       document = null;
       xmlFileId = -1;
+      throw new IOException("[XMLData] input strream could not be parsed. Message is: " + ex.getMessage());
   	}
   }
   
-  private void initialize(InputStream inputStream) {
+  private void initialize(InputStream inputStream) throws IOException {
     try {
       XMLParser parser = new XMLParser();
       document = parser.parse(inputStream);
-      inputStream.close();
     }
-    catch (Exception ex)  {
-      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
-      ex.printStackTrace(System.err);
+    catch (XMLException ex)  {
       document = null;
       xmlFileId = -1;
-      try { 
-        inputStream.close();
-      }
-      catch (IOException ioEx)  {
-        System.err.println("[XMLData]: input stream could not be closed. Message was: "+ ex.getMessage());
-        ioEx.printStackTrace(System.err);
-      }
-    }      
+      throw new IOException("[XMLData] input strream could not be parsed. Message is: " + ex.getMessage());
+    }
+     finally { 
+        close(inputStream);
+     }
   } 
     
   private void initialize(String path) throws IOException {
@@ -324,6 +318,27 @@ public class XMLData implements Storable {
     
   }
   
+  private void close(InputStream input) {
+  	try {
+			if (input != null) {
+				input.close();
+			}
+		}
+		// do not hide an existing exception
+		catch (IOException io) {
+		}
+  }		
+  
+  private void close(OutputStream output) {
+  	try {
+  		if (output != null) {
+  			output.close();
+  		}
+  	}
+  	// do not hide an existing exception
+  	catch (IOException io) {
+  	}
+  }
 
   /**
   * @return
