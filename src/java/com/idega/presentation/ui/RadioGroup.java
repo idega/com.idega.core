@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.6 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: RadioGroup.java,v 1.7 2004/02/26 09:09:53 laddi Exp $
 
  *
 
@@ -42,7 +42,7 @@ import com.idega.data.IDOLegacyEntity;
 
  */
 
-public class RadioGroup extends InterfaceObjectContainer {
+public class RadioGroup extends InterfaceObject {
 
   Vector _buttons;
 
@@ -598,4 +598,16 @@ public class RadioGroup extends InterfaceObjectContainer {
 
   }
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

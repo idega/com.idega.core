@@ -43,6 +43,14 @@ public class SelectOption extends InterfaceObject {
 	}
 	
 	/**
+	 * Sets the label for the <code>SelectOption</code>.
+	 * @param label	The label to set.
+	 */
+	public void setLabel(String label) {
+		setMarkupAttribute("label", label);
+	}
+	
+	/**
 	 * Returns the selected status of the <code>SelectOption</code>.
 	 * @return boolean	True if <code>SelectOption</code> is selected, false otherwise.
 	 */
@@ -69,5 +77,12 @@ public class SelectOption extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
 	}
 }

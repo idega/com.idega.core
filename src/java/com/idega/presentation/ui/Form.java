@@ -29,7 +29,7 @@ import com.idega.presentation.Script;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class Form extends InterfaceObjectContainer {
+public class Form extends InterfaceObject {
 
 	public static final String ACTION_ON_BLUR = "onblur";
 	public static final String ACTION_ON_CHANGE = "onchange";
@@ -747,5 +747,17 @@ public class Form extends InterfaceObjectContainer {
 	 */
 	public void setName(String name) {
 		super.setID(name);
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return true;
 	}
 } // Class ends

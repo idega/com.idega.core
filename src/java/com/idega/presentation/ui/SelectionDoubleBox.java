@@ -15,7 +15,7 @@ import com.idega.presentation.Table;
 *@version 1.0
 */
 
-public class SelectionDoubleBox extends InterfaceObjectContainer {
+public class SelectionDoubleBox extends InterfaceObject {
 
 	private SelectionBox leftBox = null;
 	private SelectionBox rightBox = null;
@@ -193,4 +193,16 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		rightLabel = string;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

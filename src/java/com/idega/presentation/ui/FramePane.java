@@ -28,7 +28,7 @@ import com.idega.presentation.text.Text;
 
 
 
-public class FramePane extends InterfaceObjectContainer{
+public class FramePane extends InterfaceObject {
 
 
 
@@ -278,4 +278,16 @@ public void setHeight(int height){
 
 
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

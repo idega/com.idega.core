@@ -49,4 +49,10 @@ public class FileInput extends InterfaceObject {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

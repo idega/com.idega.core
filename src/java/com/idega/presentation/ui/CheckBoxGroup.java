@@ -19,7 +19,7 @@ import com.idega.presentation.text.Text;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class CheckBoxGroup extends InterfaceObjectContainer
+public class CheckBoxGroup extends InterfaceObject
 {
 	private String parameterName;
 	private Table boxTable;
@@ -153,4 +153,16 @@ public class CheckBoxGroup extends InterfaceObjectContainer
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

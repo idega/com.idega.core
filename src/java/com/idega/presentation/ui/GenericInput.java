@@ -52,4 +52,11 @@ public abstract class GenericInput extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public abstract void handleKeepStatus(IWContext iwc);
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

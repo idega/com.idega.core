@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.5 2002/07/26 10:44:50 tryggvil Exp $
+ * $Id: TimeInput.java,v 1.6 2004/02/26 09:09:53 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,7 +20,7 @@ import com.idega.presentation.Script;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class TimeInput extends InterfaceObjectContainer
+public class TimeInput extends InterfaceObject
 {
 	private Script script;
 	private DropdownMenu theHour;
@@ -287,7 +287,7 @@ public class TimeInput extends InterfaceObjectContainer
 		theSecond.addMenuElement("59","59");
 		
 		*/
-		getScript().addFunction(
+		getJavaScript().addFunction(
 			"setValueOfHiddenTime",
 			"function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
 	}
@@ -365,7 +365,7 @@ public class TimeInput extends InterfaceObjectContainer
 	{
 		return theMinute.getName();
 	}
-	private Script getScript()
+	private Script getJavaScript()
 	{
 		return this.script;
 	}
@@ -395,5 +395,17 @@ public class TimeInput extends InterfaceObjectContainer
 				theHour.getSelectedElementValue() + ":" + theMinute.getSelectedElementValue() + ":00.000000");
 		}
 		super.print(iwc);
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
 	}
 }

@@ -25,7 +25,7 @@ import com.idega.presentation.Script;
 
 
 
-public class MenuBar extends InterfaceObjectContainer {
+public class MenuBar extends InterfaceObject {
 
 
 
@@ -529,5 +529,16 @@ public class MenuBar extends InterfaceObjectContainer {
 
 
 
-} // Class MenuBar
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
+} // Class MenuBar

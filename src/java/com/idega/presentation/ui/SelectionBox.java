@@ -495,4 +495,10 @@ public class SelectionBox extends InterfaceObject
 		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

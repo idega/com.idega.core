@@ -4,9 +4,8 @@
 package com.idega.presentation.ui;
 
 import java.util.Collection;
-import java.util.Iterator;
-//TODO: Replace to LinkedHashMap when moved to JDK1.4
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -17,7 +16,7 @@ import com.idega.presentation.Table;
 /**
  * @author laddi
  */
-public class SelectDropdownDouble extends InterfaceObjectContainer {
+public class SelectDropdownDouble extends InterfaceObject {
 
 	private String _styleClass;
 	private String _primarySelected;
@@ -237,4 +236,16 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		return _secondaryMap;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

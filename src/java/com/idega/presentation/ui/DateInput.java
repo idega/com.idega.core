@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.37 2004/02/18 14:19:05 laddi Exp $
+ * $Id: DateInput.java,v 1.38 2004/02/26 09:09:53 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,7 +28,7 @@ import java.util.Locale;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class DateInput extends InterfaceObjectContainer {
+public class DateInput extends InterfaceObject {
   private Script _script;
   private DropdownMenu _theDay;
   private DropdownMenu _theMonth;
@@ -748,4 +748,10 @@ public class DateInput extends InterfaceObjectContainer {
     showNullValue = b;
   }
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }

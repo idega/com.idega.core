@@ -204,4 +204,10 @@ public class TextArea extends InterfaceObject {
 		setContent(String.valueOf(value));
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }
