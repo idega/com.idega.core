@@ -154,6 +154,7 @@ public class SingleLineItem extends Container {
       if( e.getClickCount() > 1){
         isSelected = true;
         setBackground(Color.blue);
+        repaint();
         openWindow();
       }
       else{
