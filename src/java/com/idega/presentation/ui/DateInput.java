@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.40 2004/03/05 17:33:02 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.41 2004/03/12 15:04:03 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -758,7 +758,7 @@ public class DateInput extends InterfaceObject implements InputHandler{
 		return false;
 	}
 
-	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+	public String getDisplayStringForResultingObject(Object value, IWContext iwc) {
 		
 		if (value != null) {
 			return value.toString();
