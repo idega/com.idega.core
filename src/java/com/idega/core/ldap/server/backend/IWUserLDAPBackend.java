@@ -329,8 +329,8 @@ LDAPReplicationConstants {
 						//FIXME Use the subFilter variable so that Laddi won't commit it out of the code and make Eiki mad ;)
 						Filter subFilter = (Filter) filters.next();
 						if (subFilter.choiceId == Filter.EQUALITYMATCH_CID) {
-							DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
-							DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+							DirectoryString matchType = new DirectoryString(subFilter.equalityMatch.attributeDesc);
+							DirectoryString matchVal = new DirectoryString(subFilter.equalityMatch.assertionValue);
 							String type = matchType.toString();
 							String value = matchVal.toString();
 							
