@@ -4594,6 +4594,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String[] theReturn = { s };
 		return theReturn;
 	}
+	/**
+	 * The default implementation. Returns the number of all records for this
+	 * entity.
+	 * @return int the count of all records
+	 * @throws IDOException if there was an exceptoin accessing the datastore
+	 */
 	protected int idoGetNumberOfRecords() throws IDOException
 	{
 		try
@@ -4605,6 +4611,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			throw new IDOException(e, this);
 		}
 	}
+	/**
+	 * Returns the number of recors for the query sql.
+	 * @param sql A count SQL query.
+	 * @return int the count of the records
+	 * @throws IDOException if there was an error with the query or erroraccessing the datastore
+	 */
 	protected int idoGetNumberOfRecords(String sql) throws IDOException
 	{
 		try
@@ -4616,6 +4628,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			throw new IDOException(e, this);
 		}
 	}
+	/**
+	 * Returns the number of recors for the query sql.
+	 * @param query A count query.
+	 * @return int the count of the records
+	 * @throws IDOException if there was an error with the query or erroraccessing the datastore
+	 */
+	protected int idoGetNumberOfRecords(IDOQuery query) throws IDOException
+	{
+		return idoGetNumberOfRecords(query.toString());
+	}
+	
 	/**
 	**Default remove behavior with a many-to-many relationship
 	** Deletes <b>ALL</b> records of relation with all instances of entityInterfaceClass with this entity bean instance
@@ -4824,6 +4847,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		else return false;
 	}
+	
+		 /**
+		  * Gets a new empty query
+		 *@return IDOQuery which is new and emtpy 
+		 */
+		 protected IDOQuery idoQuery(){
+				IDOQuery query = new IDOQuery();
+				return query;
+		}
+	
 	
       	/**
 		*@return IDOQuery With a prefixed select statement from this entity record.
