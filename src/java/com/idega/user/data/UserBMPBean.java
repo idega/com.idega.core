@@ -578,6 +578,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	  groupID=userGroupID;
 	}
 	_group = getGroupHome().findByPrimaryKey(groupID);
+        //System.out.println("Getting userGroup "+_group.getName()+",id="+_group.getPrimaryKey()+" for user: "+this.getName()+",id="+this.getID());
       }
       catch(FinderException fe){
 	throw new EJBException(fe.getMessage());

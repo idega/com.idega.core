@@ -97,7 +97,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   protected boolean doInsertInCreate(){
     return true;
   }
-
+/*
   public Object ejbFindByPrimaryKey(Object key)throws FinderException{
     try{
       _group = this.getGroupHome().findByPrimaryKey(key);
@@ -107,7 +107,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
       throw new EJBException(rme.getMessage());
     }
   }
-
+*/
   public void store()throws IDOStoreException{
     try{
       if(this.getGroupType()==null  ){ // || getGroupHome().getGroupType().equals(this.getGroupType())

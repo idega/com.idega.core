@@ -171,9 +171,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   //    group.setName(userToAdd.getName());
   //    group.setDescription("User representative in table ic_group");
   //    group.store();
-  //
   //    userToAdd.setGroup(group);
-
   //    userToAdd.store();
 
       if(primary_group != null){
