@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.55 2002/07/22 17:21:52 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.56 2002/07/22 17:34:27 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1330,5 +1330,38 @@ public class PresentationObject extends Object implements Cloneable {
     }
     System.out.println("--[DEBUG: "+this+"]: listenerList: DONE");
   }
+  
+  	/**
+	 * Sets the width in pixels or percents
+	 * Sets the width inside a style attribute
+	 */
+	protected void setWidthStyle(String width)
+	{
+		try
+		{
+			int w = Integer.parseInt(width);
+			this.setStyleAttribute("width:" + width + "px");
+		}
+		catch (NumberFormatException e)
+		{
+			this.setStyleAttribute("width:" + width);
+		}
+	}
+	/**
+	 * Sets the height in pixels or percents
+	 * Sets the height inside a style attribute
+	 */
+	protected void setHeightStyle(String height)
+	{
+		try
+		{
+			int h = Integer.parseInt(height);
+			this.setStyleAttribute("height:" + height + "px");
+		}
+		catch (NumberFormatException e)
+		{
+			this.setStyleAttribute("height:" + height);
+		}
+	}
 
 }
