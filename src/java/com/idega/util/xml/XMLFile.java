@@ -1,4 +1,4 @@
-package com.idega.xml;
+package com.idega.util.xml;
 
 import com.idega.core.data.ICFile;
 
