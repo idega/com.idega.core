@@ -26,7 +26,7 @@ public class ICLocale extends GenericEntity {
     this.addAttribute(getColumnNameLocale(),"Locale",true,true,String.class,20);
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
-    this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class,"many-to-one",Country.class);
+    this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class);
   }
 
   public void insertStartData() throws Exception{
