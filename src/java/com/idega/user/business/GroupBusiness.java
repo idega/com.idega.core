@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.ejb.*;
 
+import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 
 public interface GroupBusiness extends com.idega.business.IBOService
@@ -140,4 +141,8 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException;
 
   public boolean isGroupRemovable(Group group); 
+  
+  public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwc);
+  
+  public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwc);
 }

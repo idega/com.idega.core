@@ -35,12 +35,13 @@ import com.idega.core.data.PostalCode;
 import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
@@ -1004,6 +1005,81 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		return newGroup;
   }
   
+  public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)  {
+    // try to get the group
+    Group group;
+    try {
+      group = (groupId > -1) ? getGroupByGroupID(groupId) : null;
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }  
+    return getAllAllowedGroupTypesForChildren(group, iwuc);
+  }  
+        
+        
+  public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) {
+    GroupTypeHome groupTypeHome; 
+    GroupType groupType;
+    String groupTypeString;
+    try {
+      groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+      // super admin: return all group types
+      if (iwuc.isSuperAdmin())
+        return groupTypeHome.findVisibleGroupTypes();
+      // try to get the corresponding group type
+      if (group != null)  {       
+        groupTypeString = group.getGroupType();
+        groupType = groupTypeHome.findByPrimaryKey(groupTypeString);
+      }
+      else  {
+      // okay, group is null, but we need an instance 
+      // to get the alias and general group type
+        groupTypeString = "";
+        groupType = GroupTypeBMPBean.getStaticInstance();
+
+      }
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    // get general and alias group type
+    GroupType generalType = findOrCreateGeneralGroupType(groupType, groupTypeHome);
+    GroupType aliasType = findOrCreateAliasGroupType(groupType, groupTypeHome);
+
+    ArrayList groupTypes = new ArrayList();
+    if (group == null)  {
+      // first case: group is null 
+      groupTypes.add(generalType);
+      groupTypes.add(aliasType);
+    }
+    else {
+      // second case: group is not null
+      // first: type of selected group
+      groupTypes.add(groupType);
+      // second: general type
+      if (! generalType.getType().equals(groupTypeString))
+        groupTypes.add(generalType);
+      // third: alias type
+      if (! aliasType.getType().equals(groupTypeString))
+        groupTypes.add(aliasType);
+      // then add children of type of selected group
+      addGroupTypeChildren(groupTypes, groupType);
+    }
+    return groupTypes;
+  }
+
+  private void addGroupTypeChildren(List list, GroupType groupType)  {
+    Iterator iterator = groupType.getChildren();
+    while (iterator != null && iterator.hasNext())  {
+      GroupType child = (GroupType) iterator.next();
+      list.add(child);
+      addGroupTypeChildren(list, child);
+    }
+  }
+        
+    
+  
   public String getGroupType(Class groupClass)throws RemoteException{
     return ((GroupHome)IDOLookup.getHome(groupClass)).getGroupType();
   }
@@ -1341,6 +1417,41 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       throw new RuntimeException(rme.getMessage());
     }
   } 
+  
+  private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {  
+    try {
+      GroupType type = home.findByPrimaryKey(aGroupType.getAliasGroupTypeString());
+      return type;
+    }
+    catch (FinderException findEx)  {
+      try {
+      GroupType type = home.create();
+      type.setGroupTypeAsAliasGroup();
+      return type;
+      }
+      catch (CreateException createEx)  {
+        throw new RuntimeException(createEx.getMessage());
+      }
+    }
+  }
+    
+
+  private GroupType findOrCreateGeneralGroupType(GroupType aGroupType, GroupTypeHome home) {  
+    try {
+      GroupType type = home.findByPrimaryKey(aGroupType.getGeneralGroupTypeString());
+      return type;
+    }
+    catch (FinderException findEx)  {
+      try {
+      GroupType type = home.create();
+      type.setGroupTypeAsGeneralGroup();
+      return type;
+      }
+      catch (CreateException createEx)  {
+        throw new RuntimeException(createEx.getMessage());
+      }
+    }
+  }  
  
 } // Class
 
