@@ -1208,7 +1208,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		if(personalId!=null && !personalId.equals("") ){
 			query.append(operator)
 			.append(" ( ")
-			.append(getColumnNamePersonalID()).append(" like '").append(personalId).append("%' ")
+			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
 			.append(" ) ");
 		}
 			
@@ -1249,7 +1249,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			query.appendOrderBy(this.getColumnNameLastName()+","+this.getColumnNameFirstName()+","+this.getColumnNameMiddleName());
 		else
 			query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
-			
+		
 		return this.idoFindIDsBySQL(query.toString());
 	}
 
