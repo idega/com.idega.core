@@ -3341,7 +3341,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @param uniqueId
 	 */
 	public void setUniqueId(String uniqueId){
-		setColumn(getUniqueIdColumnName(),uniqueId);
+		if(uniqueId!=null){
+			setColumn(getUniqueIdColumnName(),uniqueId);
+		}
+		else{
+			//removing
+			removeFromColumn(getUniqueIdColumnName());
+		}
 	}
 
 	/**
