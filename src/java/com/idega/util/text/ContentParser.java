@@ -54,14 +54,4 @@ public class ContentParser {
         return H;
     }
 
-
-    /**
-     *  Static method to provide a formatted tag string
-     *
-     * @param  tag  Description of the Parameter
-     * @return      The formatted tag value
-     */
-    public static String getFormattedTag(String tag) {
-        return "[" + tag + "]";
-    }
 }

@@ -1,10 +1,11 @@
 package com.idega.core.data;
 
+import com.idega.core.business.Category;
 import java.sql.*;
 import com.idega.data.TreeableEntity;
 
 
-public class ICCategory extends TreeableEntity{
+public class ICCategory extends TreeableEntity implements Category{
 
   public ICCategory(){
     super();

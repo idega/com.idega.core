@@ -1,5 +1,6 @@
 package com.idega.core.data;
 
+import com.idega.core.business.EmailDataView;
 import com.idega.data.*;
 import java.sql.SQLException;
 import com.idega.core.user.data.User;
@@ -14,7 +15,7 @@ import com.idega.core.user.data.User;
  * @version 1.0
  */
 
-public class Email extends GenericEntity {
+public class Email extends GenericEntity implements EmailDataView{
 
   public Email(){
     super();

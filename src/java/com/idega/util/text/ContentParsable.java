@@ -43,4 +43,11 @@ public interface ContentParsable {
      * @return    The parse types value
      */
     String[] getParseTypes();
+
+    /**
+     *  Returns the tag delimiters
+     */
+    String getDelimiters();
+
+    String formatTag(String tag);
 }
