@@ -204,7 +204,8 @@ public class IDOTableCreator{
         System.err.println("\tMessage: "+ex.getMessage());
         System.err.println("===");
         //ex.printStackTrace();
-        this.endEntityCreationTransaction(entity,canCommit,false);
+        /**@todo fix this Tryggvi so that we can use it!**/
+        //this.endEntityCreationTransaction(entity,canCommit,false);
       }
     }
     else{
