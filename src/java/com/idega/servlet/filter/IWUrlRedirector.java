@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.3 2005/01/07 11:25:38 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.4 2005/01/07 12:41:17 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,23 +28,17 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/01/07 11:25:38 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/07 12:41:17 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	public void init(FilterConfig arg0) throws ServletException {
 
+	public void init(FilterConfig arg0) throws ServletException {
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
 			FilterChain chain) throws IOException, ServletException {
 		
@@ -122,9 +116,6 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#destroy()
-	 */
 	public void destroy() {
 		// TODO Auto-generated method stub
 
