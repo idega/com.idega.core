@@ -46,6 +46,8 @@ public class AccessControl{
   private static final int _GROUP_ID_USERS = -1906;
 
 
+  public static int _COUNTER = 0;
+
   static{
     try {
       initAdministratorPermissionGroup();
@@ -400,6 +402,7 @@ public class AccessControl{
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
+      _COUNTER++;
       return hasPermission( getViewPermissionString(), obj, modinfo);
     }
     catch (SQLException ex) {
