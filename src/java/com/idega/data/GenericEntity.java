@@ -116,9 +116,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			//IDOEntityDefinition ends
 
 			//First store a static instance of this class
-			//String className = this.getClass().getName();
 			try {
-				_allStaticClasses.put(this.getClass().getName(), this.instanciateEntity(this.getClass()));
+				_allStaticClasses.put(this.getClass(), this.instanciateEntity(this.getClass()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -2433,12 +2432,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		if (_allStaticClasses == null) {
 			_allStaticClasses = new Hashtable();
 		}
-		IDOLegacyEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass.getName());
+		IDOLegacyEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass);
 		if (theReturn == null) {
 			try {
-				//theReturn = (IDOLegacyEntity)entityClass.newInstance();
 				theReturn = instanciateEntity(entityClass);
-				_allStaticClasses.put(entityClass.getName(), theReturn);
+        // it might be that the method instanciateEntity(Class) has just put an
+        // initialized instance of the specified entityClass into 
+        // the _allStaticInstances map.
+        // !!!!!!This instance should not be replaced!!!!
+        // Therefore get the "right" instance.
+        IDOLegacyEntity correctInstance = (GenericEntity)_allStaticClasses.get(entityClass);
+        if (correctInstance != null) {
+          theReturn = correctInstance;
+        }
+        else {
+				  _allStaticClasses.put(entityClass, theReturn);
+        }
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
