@@ -52,6 +52,7 @@ import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
@@ -1558,6 +1559,172 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return 	topNodes;
 	
 	}
-	
+  
+
+  /**
+   * Returns a collection of Groups. The groups that he has edit permissions to<br>
+   * @param user
+   * @return
+   * @throws RemoteException
+   */
+  public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc) {
+    
+    Collection resultGroups = new ArrayList();
+    Group userGroup = null;
+    GroupBusiness groupBiz = null;
+    try {
+      groupBiz = getGroupBusiness();
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    int userGroupId = user.getID();
+    try {
+      userGroup = groupBiz.getGroupByGroupID(userGroupId);
+    }
+    catch (FinderException ex)  {
+      System.err.println("[Userbusiness] Message was: " + ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(userGroup);
+    List parentGroupsList = user.getParentGroups();
+    Iterator parentGroupIterator = parentGroupsList.iterator();
+    while (parentGroupIterator.hasNext())  {
+      Group parent = (Group) parentGroupIterator.next();
+      Collection editPermissions = AccessControl.getAllGroupEditPermissions(parent);
+      permissions.removeAll(editPermissions); // avoid double entries
+      permissions.addAll(editPermissions);
+    }
+    Iterator iterator = permissions.iterator();
+    while (iterator.hasNext()) {
+      ICPermission perm = (ICPermission) iterator.next();
+      try {
+        String groupId = perm.getContextValue();
+        Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+        resultGroups.add(group);
+      }
+      catch (NumberFormatException e1) {
+        e1.printStackTrace();
+      }
+      catch (FinderException e1) {
+        System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
+      }
+      catch (RemoteException ex)  {
+        throw new RuntimeException(ex.getMessage());
+      }
+    }
+    return resultGroups;
+  }
+
+  public Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
+    Collection notMovedUsers = new ArrayList();
+    GroupBusiness groupBiz = null;
+    Group targetGroup = null;
+    try {
+      groupBiz = getGroupBusiness();
+      targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
+    }
+    catch (FinderException ex)  {
+      throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Iterator iterator = userIds.iterator();
+    while (iterator.hasNext()) {
+      String userId = (String) iterator.next();
+      User user = getUser(new Integer(userId));
+      boolean successfull = moveUser(user, parentGroup, targetGroup, currentUser);
+      if (! successfull)  {
+        notMovedUsers.add(user);
+      }
+    }
+    return notMovedUsers;
+  }
+   
+  /**
+   * @param currentUser user that is responsible for the action
+   */ 
+  private boolean moveUser(User user, Group parentGroup, Group targetGroup, User currentUser)  {
+    int userId = ((Integer) user.getPrimaryKey()).intValue();
+    int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
+    int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
+    // target and source are the same do nothing
+    if (parentGroupId == targetGroupId) {
+      return false;
+    }
+    // it is allowed to add this user to the group?
+    // check age and gender
+    if (! isUserAssignableToGroup(user, parentGroup, targetGroup)) {
+      return false;
+    }
+    int primaryGroupId = user.getPrimaryGroupID();
+    // Transaction starts
+    javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
+    try {
+      transactionManager.begin();
+      // check if the primaryGroup is the parentGroup
+      boolean targetIsSetAsPrimaryGroup;
+      if (targetIsSetAsPrimaryGroup = (parentGroupId == primaryGroupId))  {
+        user.setPrimaryGroup(targetGroup);
+      }
+      // remove user from parent group
+      // IMPORTANT
+      // if the parent group was the primary group there might(!) be 
+      // a corresponding GroupRelation.
+      // usually there should not be such a GroupRelation
+      // therefore be sure that the method below does not throw an error if it 
+      // is not able to find a group relation.
+      parentGroup.removeUser(user,currentUser);
+      // set target group
+      if (! targetIsSetAsPrimaryGroup)  {
+        targetGroup.addGroup(userId);
+      }
+      else  {
+      /** TODO solve group relation primary group problem
+       */
+      // this is a hack. If the target group is already the primary group
+      // it should not be necessary to add a corresponding group relation.
+      // but if it is not added the group tree does not know that this user is a child 
+      // of the target group
+        targetGroup.addGroup(userId);
+      }
+      transactionManager.commit();
+    }
+    catch (Exception e) {
+      e.printStackTrace(System.err);
+      try {
+        transactionManager.rollback();  
+      }
+      catch (javax.transaction.SystemException sy) {
+        sy.printStackTrace(System.err);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  private boolean isUserAssignableToGroup(User user, Group parentGroup, Group targetGroup) {
+    try {
+      Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
+      Iterator iter = plugins.iterator();
+      while (iter.hasNext()) {
+        UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+        UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
+        if (! pluginBiz.isUserAssignableFromGroupToGroup(user, parentGroup, targetGroup)) {  
+          return false;
+        }    
+      }
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    return true;
+  }
+    
+    
 
 } // Class UserBusiness
