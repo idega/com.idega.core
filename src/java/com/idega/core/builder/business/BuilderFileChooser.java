@@ -1,5 +1,7 @@
 package com.idega.core.builder.business;
 
+import com.idega.presentation.PresentationObjectType;
+
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -7,12 +9,11 @@ package com.idega.core.builder.business;
  * <p>Company: idega Software</p>
  * @author <a href="thomas@idega.is">Thomas Hilbig</a>
  * @version 1.0
- * Created on Jun 10, 2004
+ * Created on Jun 15, 2004
  */
-public interface BuilderClassesFactory {
-	
-	BuilderImageInserter createImageInserterImpl();
-	
-	BuilderFileChooser createFileChooserImpl();
-	
+public interface BuilderFileChooser extends PresentationObjectType {
+
+	 void setChooserParameter(String parameterName);
+	 
+	 void setValue(Object file);
 }

@@ -27,5 +27,7 @@ public interface BuilderImageInserter extends PresentationObjectType {
 	
 	void setWindowToReload(boolean reload);
 	
+	void setNullImageIDDefault();
+	
 	
 }
