@@ -37,6 +37,10 @@ public class HashtableDoubleKeyed{
       return table.get(StringHandler.concatAlphabetically(key1,key2));
   }
 
+   public Object remove(String key1,String key2){
+      return table.remove(StringHandler.concatAlphabetically(key1,key2));
+  }
+
   /**
    * Returns a list of objects put for this key
    */
