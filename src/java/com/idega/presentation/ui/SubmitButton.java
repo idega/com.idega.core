@@ -225,6 +225,27 @@ public class SubmitButton extends GenericButton {
 	}
 	
 	/**
+	 * Sets to enable the <code>SubmitButton</code> only when the
+	 * <code>RadioButton</code> with the name specified is selected. Remains
+	 * disabled otherwise.
+	 * @param selectedButtonName	The name of the <code>RadioButton</code> that
+	 * enables the button when checked.
+	 */
+	public void setToEnableWhenSelected(String selectedButtonName) {
+		setToEnableWhenChecked(selectedButtonName);
+	}
+	
+	/**
+	 * Sets to enable the <code>SubmitButton</code> only when the
+	 * <code>RadioButton</code> specified is selected. Remains disabled otherwise.
+	 * @param radioButton	The <code>RadioButton</code> that enables the button
+	 * when selected.
+	 */
+	public void setToEnableWhenSelected(RadioButton radioButton) {
+		setToEnableWhenChecked(radioButton.getName());
+	}
+	
+	/**
 	 * @see com.idega.presentation.ui.GenericButton#setButtonImage(Image)
 	 */
 	public void setButtonImage(Image image) {
