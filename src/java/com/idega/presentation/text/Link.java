@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.53 2002/03/15 16:38:55 gummi Exp $
+ * $Id: Link.java,v 1.54 2002/03/15 19:58:32 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.text;
 
+import com.idega.block.media.business.MediaBusiness;
 import java.net.URLDecoder;
 import com.idega.util.text.TextSoap;
 import java.util.List;
@@ -97,6 +98,7 @@ public class Link extends Text{
   private boolean https = false;
 
   private int dptTemplateId = 0;
+  private ICFile file = null;
 
 
   private final static String DEFAULT_TEXT_STRING = "No text";
@@ -332,6 +334,9 @@ public class Link extends Text{
    *
    */
   public void main(IWContext iwc)throws Exception {
+    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
+
+
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_myWindow != null) {
 	if (_myWindow.getURL(iwc).indexOf(IWMainApplication.windowOpenerURL) != -1) {
@@ -1069,20 +1074,11 @@ public class Link extends Text{
 
   /**
    * method for adding a link to a file object
-   * @depricated use setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(file))
+   * the url generation is done in the main method
    */
   public void setFile(ICFile file) {
-    setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(file));
+    this.file = file;
   }
-
-  /**
-   * @depricated use setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(fileID))
-   */
-  public void setFile(int fileID) {
-    setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(fileID));
-  }
-
-
 
   /**
    *
@@ -1131,6 +1127,7 @@ public class Link extends Text{
       linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
       linkObj.isImageTab = isImageTab;
       linkObj.flip = flip;
+      linkObj.file = file;
 
       if (_parameterString != null) {
 	linkObj._parameterString = new StringBuffer(_parameterString.toString());
@@ -1749,7 +1746,7 @@ public class Link extends Text{
   public void setOnMouseOverImage(Image image, Image mouseOverImage) {
     image.setOverImage(mouseOverImage);
 
-    setAttribute("onMouseOver","swapImage('"+image.getName()+"','','"+mouseOverImage.getMediaServletString()+"',1)");
+    setAttribute("onMouseOver","swapImage('"+image.getName()+"','','"+mouseOverImage.getMediaURL()+"',1)");
     setAttribute("onMouseOut","swapImgRestore()");
   }
 

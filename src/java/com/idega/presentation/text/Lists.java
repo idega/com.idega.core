@@ -71,7 +71,8 @@ private Image bullet;
 
   private void getBullet() {
     if ( bullet != null ) {
-      String styleString = "list-style-image: url("+bullet.getMediaServletString()+");";
+      /**todo use MediaBusiness.getMediaURL(fileid,iwma);**/
+      String styleString = "list-style-image: url("+bullet.getMediaURL()+");";
       setStyle(styleString);
     }
   }
