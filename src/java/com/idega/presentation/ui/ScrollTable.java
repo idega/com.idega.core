@@ -117,7 +117,7 @@ public class ScrollTable extends Block implements TableType {
 	public void main(IWContext iwc) throws Exception {
 		
 			numberOfHeaderRows = numberOfHeaderRows<1?1:numberOfHeaderRows;
-			Table headerTable = (Table) theTable.clone(iwc,false,1,numberOfHeaderRows);
+			Table headerTable = (Table) theTable.clone(null,false,1,numberOfHeaderRows);
 			headerTable.resize(theTable.getColumns(),numberOfHeaderRows);
 			headerTable.removeStyleAttribute(Table.HEIGHT);
 			
@@ -134,7 +134,7 @@ public class ScrollTable extends Block implements TableType {
 					headerTable.setStyleAttribute(cell.getStyleAttribute());
 				}
 			}*/
-			Table table = (Table)theTable.clone(iwc,false);
+			Table table = (Table)theTable.clone(null,false);
 			int layerWidth = -1,layerHeight=-1;
 			if(theTable.getWidth()!=null){
 				try {
