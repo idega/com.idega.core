@@ -7,6 +7,7 @@ package com.idega.presentation.ui;
 import java.io.*;
 import java.util.*;
 
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
@@ -21,6 +22,7 @@ import com.idega.util.text.TextSoap;
 public class GenericButton extends GenericInput {
 
 	private int _pageID = -1;
+	private int _fileID = -1;
 	private boolean asImageButton = false;
 	private Image defaultImage;
 	private final String buttonImageStyle = "cursor:hand;";
@@ -61,6 +63,9 @@ public class GenericButton extends GenericInput {
 			}
 			if (_pageID != -1) {
 				setOnClick("javascript:window.location='"+BuilderLogic.getInstance().getIBPageURL(iwc, _pageID)+"';");
+			}
+			if (_fileID != -1) {
+				setOnClick("javascript:window.location='"+MediaBusiness.getMediaURL(_fileID, iwc.getApplication())+"';");	
 			}
 			
 			getParentPage();
@@ -157,4 +162,13 @@ public class GenericButton extends GenericInput {
 		}
 		return TextSoap.convertSpecialCharacters(returnString.toString());
 	}
+
+	/**
+	 * Sets the fileID for the ICFile to open on click.
+	 * @param fileID 	The fileID to set
+	 */
+	public void setFileToOpen(int fileID) {
+		_fileID = fileID;
+	}
+
 }
