@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.138 2004/09/28 16:35:03 eiki Exp $
+ * $Id: Link.java,v 1.139 2004/09/29 17:04:23 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -126,7 +126,8 @@ public class Link extends Text {
 	//todo use the methods in the image object
 	private Map _overImageLocalizationMap;
 	private Map _ImageLocalizationMap;
-
+	private Map _toolTipLocalizationMap;
+	
 	/**
 	 *
 	 */
@@ -1059,6 +1060,10 @@ public class Link extends Text {
 	 */
 	public void setImage(Image image) {
 		_obj = image;
+		String toolTip = getToolTip();
+		if (toolTip != null) {
+			((Image) _obj).setAlt(toolTip);
+		}
 		_objectType = OBJECT_TYPE_IMAGE;
 		_obj.setParentObject(this);
 	}
@@ -1083,6 +1088,8 @@ public class Link extends Text {
 		}
 		return _ImageLocalizationMap;
 	}
+	
+	
 	
 	private Map getOverImageLocalizationMap() {
 		if (_overImageLocalizationMap == null) {
@@ -2322,4 +2329,30 @@ public void setWindowToOpen(String className) {
 		return this.protocol;
 	}
 
+	public void setToolTip(String toolTip) 	{
+		super.setToolTip(toolTip);
+		if (_objectType == OBJECT_TYPE_IMAGE) {
+			((Image) _obj).setAlt(toolTip);
+		}
+	}
+	
+	public void setLocalizedToolTip(Locale locale, String toolTip) {
+		getToolTipLocalizationMap().put(locale, toolTip);
+		Image im = (Image) getImageLocalizationMap().get(locale);
+		if (im != null) {
+			im.setAlt(toolTip);
+		}
+		im = (Image) getOverImageLocalizationMap().get(locale);
+		if (im != null) {
+			im.setAlt(toolTip);
+		}
+	}
+	
+	private Map getToolTipLocalizationMap() {
+		if (_toolTipLocalizationMap == null) {
+			_toolTipLocalizationMap = new HashMap();
+		}
+		return _toolTipLocalizationMap;
+	}
+	
 }
