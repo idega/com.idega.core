@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.11 2001/05/18 13:31:35 eiki Exp $
+ * $Id: GenericEntity.java,v 1.12 2001/05/18 15:18:15 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,11 +26,10 @@ public abstract class GenericEntity implements java.io.Serializable {
   private String dataStoreType;
   public Hashtable columns;
   private static Hashtable theAttributes;
-  private static Hashtable allStaticClasses;
+  private static Hashtable allStaticClasses=new Hashtable();
   private String dataSource;
   private static String defaultString="default";
   private String cachedColumnNameList;
-  private Boolean hasLobColumn;
   private String lobColumnName;
 
 	public GenericEntity() {
@@ -75,13 +74,18 @@ public abstract class GenericEntity implements java.io.Serializable {
     //First store a static instance of this class
     String className = this.getClass().getName();
     try {
+System.out.println("x1");
       this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+System.out.println("x2");
+
+System.out.println("x3");
     }
     catch(Exception ex) {
-
+      ex.printStackTrace();
     }
     //call the initializeAttributes that stores information about columns and relationships
     initializeAttributes();
+    setLobColumnName();
   }
 
 	protected String getTableName() {
@@ -355,6 +359,7 @@ public abstract class GenericEntity implements java.io.Serializable {
           }
           else{
             wrapper = new BlobWrapper(this,columnName);
+            wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
             setColumn(columnName,wrapper);
           }
         }
@@ -364,15 +369,13 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 
-        /**
-         * Returns null if no BlobWrapper is present
-         */
         public InputStream getInputStreamColumnValue(String columnName)throws Exception{
           BlobWrapper wrapper = getBlobColumnValue(columnName);
-          if(wrapper!=null){
-            return wrapper.getBlobInputStream();
+          if(wrapper==null){
+            wrapper = new BlobWrapper(this,columnName);
+            this.setColumn(columnName,wrapper);
           }
-          return null;
+          return wrapper.getBlobInputStream();
         }
 
 
@@ -1601,22 +1604,30 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
         protected boolean hasLobColumn()throws Exception{
-          Boolean hasLobColumn = this.getStaticInstance().hasLobColumn;
           String lobColumnName = this.getStaticInstance().lobColumnName;
-          boolean bool = false;
-          if( hasLobColumn == null ){
+          if(lobColumnName==null){
+System.out.println("false");
+            return false;
+          }
+System.out.println("true");
+          return true;
+        }
+
+
+        private void setLobColumnName(){
+System.out.println("1");
+          if( this.getStaticInstance().lobColumnName == null ) {
             String[] columnNames = this.getColumnNames();
+System.out.println("Number of columns: " + columnNames.length);
             for (int i = 0; i < columnNames.length; i++) {
+System.out.println("ColumnName["+i+"] = " + columnNames[i]);
+System.out.println("ColumnType["+i+"] = " + getStorageClassType(columnNames[i]));
               if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
-                hasLobColumn = new Boolean(true);
-                lobColumnName = columnNames[i];
-                bool = hasLobColumn.booleanValue();
+System.out.println("Setting loaColumnName");
+                this.getStaticInstance().lobColumnName = columnNames[i];
               }
             }
           }
-          else bool = hasLobColumn.booleanValue();
-
-          return bool;
         }
 
         protected String getLobColumnName(){
