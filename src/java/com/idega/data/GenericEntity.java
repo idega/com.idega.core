@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.35 2001/08/22 20:21:49 eiki Exp $
+ * $Id: GenericEntity.java,v 1.36 2001/08/23 13:57:35 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -997,9 +997,9 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 
-	/**
-	*Inserts this entity as a record into the datastore
-	*/
+  /**
+  *Inserts this entity as a record into the datastore
+  */
   public void insert()throws SQLException{
     try{
       DatastoreInterface.getInstance(this).insert(this);
@@ -1963,6 +1963,8 @@ public abstract class GenericEntity implements java.io.Serializable {
   private boolean getMetaData(){
     Connection conn= null;
     Statement Stmt= null;
+    theMetaDataAttributes = new Hashtable();
+
     try{
       conn = getConnection(getDatasource());
       Stmt = conn.createStatement();
@@ -1992,7 +1994,6 @@ public abstract class GenericEntity implements java.io.Serializable {
       ResultSet RS = Stmt.executeQuery(buffer.toString());
 
       while(RS.next()){
-        if( theMetaDataAttributes == null ) theMetaDataAttributes = new Hashtable();
         theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
       }
 
@@ -2027,8 +2028,13 @@ public abstract class GenericEntity implements java.io.Serializable {
     return (String) theMetaDataAttributes.get(metaDataKey);
   }
 
-  private void insertAndUpdateAndDeleteMetaData(){
-
+  private void insertAndUpdateAndRemoveMetaData(){
+  /*
+    insert: smida metadata og inserta með entitybulkupdater + addTo í milli töflu
+    update: update table metadata með bulk...
+    delete: delete from ic_metadata where ( select ic_metadata_id from ...middletable..)
+    remove: delete from where id..and metada_name = sdf
+  */
   }
 
   public void setMetaData(String metaDataKey, String metaDataValue){
@@ -2037,8 +2043,9 @@ public abstract class GenericEntity implements java.io.Serializable {
     Object obj = theMetaDataAttributes.put(metaDataKey,metaDataValue);
     if( obj == null ){
       if( insertMetaDataAttributes == null ) insertMetaDataAttributes = new Hashtable();
-     // insertMetaDataAttributes.get();
-      insertMetaDataAttributes.put(metaDataKey,metaDataValue);
+        if( insertMetaDataAttributes.get(metaDataKey) == null ){
+          insertMetaDataAttributes.put(metaDataKey,metaDataValue);
+        }
     }else{
       if( updateMetaDataAttributes == null ) updateMetaDataAttributes = new Hashtable();
       updateMetaDataAttributes.put(metaDataKey,metaDataValue);
@@ -2046,6 +2053,7 @@ public abstract class GenericEntity implements java.io.Serializable {
   }
 
   public void removeMetaData(String metaDataKey){
+
     //deleteMetaDataAttributes.
   }
 }
