@@ -362,7 +362,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
         String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
         GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(groupId);
-        List currentRelationShip = group.getListOfAllGroupsContainingThis();
+        List currentRelationShip = group.getParentGroups();
 
 
         if(related != null){
