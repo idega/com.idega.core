@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.38 2002/02/19 12:03:14 eiki Exp $
+ * $Id: Page.java,v 1.39 2002/02/25 14:09:53 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -561,7 +561,7 @@ public class Page extends PresentationObjectContainer {
   }
 
 
-  public synchronized Object _clone(IWContext iwc, boolean askForPermission){
+  public Object _clone(IWContext iwc, boolean askForPermission){
     //return this.clone(iwc,true);
     if(iwc.hasViewPermission(this)){
       return this.clone(iwc,askForPermission);
@@ -594,7 +594,7 @@ public class Page extends PresentationObjectContainer {
   /**
    *
    */
-  public synchronized Object clone(IWContext iwc, boolean askForPermission) {
+  public Object clone(IWContext iwc, boolean askForPermission) {
     Page obj = null;
     try {
       obj = (Page)super.clone(iwc, askForPermission);
@@ -712,7 +712,7 @@ public class Page extends PresentationObjectContainer {
         println("\n<head>");
         if(addGlobalScript){
           //Print a reference to the global .js script file
-          println("<script type=\"text/javascript\" language=\"javascript\" src=\""+this.getBundle(iwc).getResourcesURL()+"/iw_core.js\">");
+          println("<script type=\"text/javascript\" language=\"javascript\" src=\""+iwc.getApplication().getCoreBundle().getResourcesURL()+"/iw_core.js\">");
           println("</script>");
         }
         if (getAssociatedScript() != null) {
