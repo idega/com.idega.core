@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.9 2001/08/16 09:53:08 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.10 2001/09/13 16:06:42 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.idegaweb;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.Map;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -143,6 +144,25 @@ public class IWPropertyList {
   }
 
 
+  public void setProperties(Map properties){
+    if(properties!=null){
+      Iterator iter = properties.keySet().iterator();
+      while (iter.hasNext()) {
+        Object oKey = iter.next();
+        String sKey = oKey.toString();
+        Object oValue = properties.get(oKey);
+        if(oValue instanceof Map){
+          IWPropertyList iwp = this.getNewPropertyList(sKey);
+          iwp.setProperties((Map)oValue);
+        }
+        else{
+          //String sValue = oValue.toString();
+          setProperty(sKey,oValue);
+        }
+      }
+    }
+  }
+
   /**
    * Returns null if there is no IWProperty associated with the specific key
    */
@@ -156,14 +176,25 @@ public class IWPropertyList {
 
   /**
    * Returns null if there is no IWPropertyList associated with the specific key
+   * Throws IWNotPropertyListException if this IWProperty has a Single Property not a PropertyList
    */
-  public IWPropertyList getPropertyList(String key){
+  public IWPropertyList getPropertyList(String key)throws IWNotPropertyListException{
     Element keyElement = this.findKeyElement(key);
     if(keyElement!=null){
       return IWProperty.getPropertyList(keyElement);
     }
     return null;
   }
+
+  /**
+   * Same as getPropertyList(String key)
+   * Returns null if there is no IWPropertyList associated with the specific key
+   * Throws IWNotPropertyListException if this IWProperty has a Single Property not a PropertyList
+   */
+  public IWPropertyList getIWPropertyList(String key)throws IWNotPropertyListException{
+    return getPropertyList(key);
+  }
+
 
   /**
    * Creates a new IWPropertyList associated with the specific key

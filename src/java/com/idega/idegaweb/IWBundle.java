@@ -21,7 +21,7 @@ import com.idega.core.data.ICObject;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0a1- Under development
 */
-public class IWBundle{
+public class IWBundle implements java.lang.Comparable{
 
   private static final String slash = "/";
 
@@ -609,4 +609,8 @@ public class IWBundle{
     }
 
 
+    public int compareTo(Object o){
+      IWBundle bundle = (IWBundle)o;
+      return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
+    }
 }

@@ -32,6 +32,7 @@ public class IWProperty{
    static String typeTag = IWPropertyList.typeTag;
    static String stringTag = IWPropertyList.stringTag;
    static String stringString = IWPropertyList.stringString;
+   public static String MAP_TYPE = mapTag;
 
   IWProperty(IWPropertyList parentList){
     this(null,parentList);
@@ -198,17 +199,22 @@ public class IWProperty{
     }
   }
 
-
   public void setProperty(String key, Object value) {
     setProperty(key,value.toString(),value.getClass().getName());
   }
 
-
-  public IWPropertyList getPropertyList(){
+  /**
+   * Throws IWNotPropertyListException if this IWProperty has a Single Property not a PropertyList
+   */
+  public IWPropertyList getPropertyList() throws IWNotPropertyListException{
     return getPropertyList(getKeyElementAndCreateIfNotExists());
   }
 
-  static IWPropertyList getPropertyList(Element keyElement){
+
+  /**
+   * Throws IWNotPropertyListException if this IWProperty has a Single Property not a PropertyList
+   */
+  static IWPropertyList getPropertyList(Element keyElement)throws IWNotPropertyListException{
     Element valueElement = getValueElement(keyElement);
     String type = getPropertyType(keyElement);
     if(type!=null){
@@ -216,6 +222,9 @@ public class IWProperty{
         if(valueElement!=null){
           return new IWPropertyList(valueElement);
         }
+      }
+      else{
+        throw new IWNotPropertyListException(getPropertyName(keyElement));
       }
     }
     return null;
