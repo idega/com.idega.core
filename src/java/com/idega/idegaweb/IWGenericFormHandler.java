@@ -2,6 +2,8 @@ package com.idega.idegaweb;
 
 import com.idega.presentation.IWContext;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +24,7 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
 
   private Map parameterDescriptions;
   private Map parameterTypes;
-
+	private Collection parameterOrder;
 
   private static final String COLON = ":";
   private static final String SPACE = " ";
@@ -42,11 +44,13 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
   public IWGenericFormHandler() {
     parameterDescriptions=new HashMap();
     parameterTypes = new HashMap();
+    parameterOrder = new ArrayList();
   }
 
   public void addProcessedParameter(String parameterName,String parameterDescription,String parameterType){
     getDescMap().put(parameterName,parameterDescription);
     getTypesMap().put(parameterName,parameterType);
+    getOrderList().add(parameterName);
   }
 
   /*public void addProcessedParameter(String parameterName,String parameterDescription,String parameterType){
@@ -62,6 +66,10 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
     return parameterTypes;
   }
 
+	private Collection getOrderList(){
+		return parameterOrder;
+	}
+
 
   /**
    * Formats the output of the form with descriptions in front of values and newlines between values
@@ -69,9 +77,9 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
   public String processPlainTextFormatted(IWContext iwc){
     StringBuffer buffer = new StringBuffer();
 
-    Iterator iter = getTypesMap().keySet().iterator();
+    Iterator iter = getOrderList().iterator();
     while (iter.hasNext()) {
-      String paramName = (String)iter.next();
+      String paramName = (String) iter.next();
       String[] paramValues = iwc.getParameterValues(paramName);
       if(paramValues!=null){
         String desc = getDescriptionForParameter(paramName);
@@ -172,6 +180,9 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
       if(this.parameterTypes!=null){
         newHandler.parameterTypes = (Map)((HashMap)this.parameterTypes).clone();
       }
+			if(this.parameterOrder!=null){
+				newHandler.parameterOrder = (Collection)((ArrayList)this.parameterOrder).clone();
+			}
       return newHandler;
     }
     catch(java.lang.CloneNotSupportedException e){
