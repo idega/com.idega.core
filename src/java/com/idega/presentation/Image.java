@@ -4,7 +4,7 @@
 
 package com.idega.presentation;
 
-import java.io.*;
+//import java.io.*;
 import java.util.*;
 import java.sql.*;
 import com.idega.idegaweb.IWMainApplication;
@@ -15,6 +15,7 @@ import com.idega.idegaweb.IWCacheManager;
 import com.idega.util.caching.Cache;
 import com.idega.block.media.servlet.MediaServlet;
 import com.idega.block.media.data.ImageEntity;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 
 
 /**
@@ -27,6 +28,8 @@ public class Image extends PresentationObject{
 private Script theAssociatedScript;
 private String overImageUrl;
 private String downImageUrl;
+
+private Map _ImageLocalizationMap;
 
 private String textBgColor = "#CCCCCC";
 private boolean limitImageWidth = false;
@@ -180,6 +183,21 @@ private void getImage(IWContext iwc) throws SQLException{
 
 }
 
+  public void setLocalizedImage(String localeString,int imageID){
+      setLocalizedImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString),imageID);
+  }
+
+  public void setLocalizedImage(Locale locale,int imageID){
+      getImageLocalizationMap().put(locale,new Integer(imageID));
+  }
+
+  private Map getImageLocalizationMap(){
+    if(_ImageLocalizationMap==null){
+      _ImageLocalizationMap=new HashMap();
+    }
+    return _ImageLocalizationMap;
+  }
+
 
   public void setProperty(String key, String values[]) {
     if (key.equalsIgnoreCase("url"))
@@ -238,9 +256,45 @@ public void setImageID(int imageID){
   this.imageId=imageID;
 }
 
-public int getImageID(){
+public int getDefaultImageID(){
   return this.imageId;
 }
+
+public int getImageID(IWContext iwc){
+  try{
+    Integer localizedID = getTheCorrectDefaultImageID(iwc);
+    if(localizedID==null){
+      return this.imageId;
+    }
+    else{
+      return localizedID.intValue();
+    }
+  }
+  catch(Exception e){
+    return this.imageId;
+  }
+}
+
+  /**
+   * Returns the correct Image, localized or not depending on what has been set.
+   */
+  private Integer getTheCorrectDefaultImageID(IWContext iwc)throws Exception{
+    if(this._ImageLocalizationMap!=null){
+      Locale currLocale = iwc.getCurrentLocale();
+
+      Integer localizedImageID = (Integer)this.getImageLocalizationMap().get(currLocale);
+      if(localizedImageID!=null){
+        return localizedImageID;
+      }
+      else{
+        Integer defImageID = (Integer)this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+        if(defImageID!=null){
+          return defImageID;
+        }
+      }
+    }
+    return null;
+  }
 
 public void setVerticalSpacing(int spacing){
   setAttribute("vspace",Integer.toString(spacing));
@@ -575,11 +629,14 @@ public void limitImageWidth( boolean limitImageWidth ){
     }
   }
 
-  public void print(IWContext iwc)throws IOException{
+  public void print(IWContext iwc)throws Exception{
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
       //added by eiki
-      if( imageId ==-1 ){//from an url
+
+      //Change the imageId so that it is localized
+      imageId = this.getImageID(iwc);
+      if( imageId == -1 ){//from an url
           print(getHTMLString());
       }
       else{//from the database

@@ -5,9 +5,13 @@
 
 package com.idega.presentation.text;
 
-import java.io.*;
-import java.util.*;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Locale;
 import com.idega.presentation.*;
+import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.data.ICLocale;
 
 
 /**
@@ -21,6 +25,7 @@ private static Text HTMLbreak;
 private static Text HTMLnbsp;
 
 protected String text;
+protected Map localizationMap;
 protected boolean attributeSet;
 protected boolean teletype;
 protected boolean bold;
@@ -72,7 +77,7 @@ public Text(){
 
 public Text(String text){
 	super();
-	this.text=text;
+	setText(text);
 	attributeSet=false;
 	teletype=false;
 	bold=false;
@@ -152,6 +157,26 @@ public void addToText(String s){
 public void setText(String s){
 	text=s;
 }
+
+public void setLocalizedText(String localeString,String text){
+    setLocalizedText(ICLocaleBusiness.getLocaleFromLocaleString(localeString),text);
+}
+
+public void setLocalizedText(int icLocaleID,String text){
+    setLocalizedText(ICLocaleBusiness.getLocale(icLocaleID),text);
+}
+
+public void setLocalizedText(Locale locale,String text){
+    getLocalizationMap().put(locale,text);
+}
+
+private Map getLocalizationMap(){
+  if(localizationMap==null){
+    localizationMap=new HashMap();
+  }
+  return localizationMap;
+}
+
 
 public void addBreak(){
 	addToText(BREAK);
@@ -266,6 +291,9 @@ private void setDefaultAttributes(IWContext iwc){
       obj.italic = this.italic;
       obj.underline = this.underline;
       obj.addHTMLFontTag = this.addHTMLFontTag;
+      if(this.localizationMap!=null){
+        obj.localizationMap=(Map)((HashMap)this.localizationMap).clone();
+      }
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
@@ -273,6 +301,27 @@ private void setDefaultAttributes(IWContext iwc){
 
     return obj;
   }
+
+
+
+protected String getLocalizedText(IWContext iwc){
+
+  if(this.localizationMap!=null){
+    Locale currLocale = iwc.getCurrentLocale();
+
+    String localizedString = (String)this.getLocalizationMap().get(currLocale);
+    if(localizedString!=null){
+      return localizedString;
+    }
+    else{
+      String defLocalizedString = (String)this.getLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+      if(defLocalizedString!=null){
+        return defLocalizedString;
+      }
+    }
+  }
+  return getText();
+}
 
 public void print(IWContext iwc)throws Exception{
 	initVariables(iwc);
@@ -289,11 +338,11 @@ public void print(IWContext iwc)throws Exception{
 				if (attributeSet){
 
 					print("<font "+getAttributeString()+" >");
-					print(text);
+					print(getLocalizedText(iwc));
 					print("</font>");
 				}
 				else{
-					print(text);
+					print(getLocalizedText(iwc));
 				}
 			if (bold)
 				{print("</b>");}
@@ -311,7 +360,7 @@ public void print(IWContext iwc)throws Exception{
 				myParagraph.add(this);
 				myParagraph.print(iwc);
 			}*/
-				print(text);
+				print(getLocalizedText(iwc));
 		}
 	//}
 }
