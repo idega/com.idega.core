@@ -51,8 +51,6 @@ import com.idega.user.data.User;
 public class IWUserLDAPBackend extends BaseBackend implements Backend, IWLDAPConstants, EmbeddedLDAPServerConstants,
 LDAPReplicationConstants {
 	
-	
-private static final String UNICODE_ENCODING = "UTF-8";
 	private List exactIndexes = null;
 	
 	private  String baseDN = null;
@@ -263,9 +261,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			}
 		}
 		else if (scope == SearchRequestEnum.SINGLELEVEL) {
-//			this forces the directorystring to be in the current encoding
-			base = getDirectoryStringForIdentifier(base.getDirectoryString());
-			
+		
 			try {
 				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
 					addTopGroupsToEntries(base, entries);
@@ -323,9 +319,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		else if (scope == SearchRequestEnum.BASEOBJECT) {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
-//				this forces the directorystring to be in the current encoding
-				base = getDirectoryStringForIdentifier(base.getDirectoryString());
-				
+
 				if (base.getDirectoryString().equals(baseDN)) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
@@ -348,9 +342,6 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			//we only allow substring searches for these attributes
 			//(|(givenName=Fred*)(sn=Fred*)(cn=Fred*)(mail=Fred*))
 		type = type.toLowerCase();
-//		this forces the directorystring to be in the current encoding
-		base = getDirectoryStringForIdentifier(base.getDirectoryString());
-		
 		Collection col = null;
 		
 		if(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase().equals(type) || LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase().equals(type)){
@@ -395,14 +386,6 @@ private static final String UNICODE_ENCODING = "UTF-8";
 
 	private DirectoryString getDirectoryStringForIdentifier(String identifier) {
 		return new DirectoryString(identifier);
-//		We only have to create a new DirectoryString from the base and java will encode it for us
-//		try {
-//			return new DirectoryString(new String(identifier.getBytes(),UNICODE_ENCODING));
-//		}
-//		catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//			return new DirectoryString(identifier);
-//		}
 	}
 
 	/*
@@ -413,8 +396,8 @@ private static final String UNICODE_ENCODING = "UTF-8";
 	public Entry getByDN(DirectoryString dn) throws DirectoryException {
 		try {
 			//this may seem strange but is needed so the DN is converted to the current encoding
-			DirectoryString converted = getDirectoryStringForIdentifier(dn.getDirectoryString());
-			return getEntry(converted, null, null);
+			//DirectoryString converted = getDirectoryStringForIdentifier(dn.getDirectoryString());
+			return getEntry(dn, null, null);
 		}
 		catch (Exception e) {
 			throw new DirectoryException(e.getMessage());
