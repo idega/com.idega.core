@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWUserContext;
@@ -232,13 +233,17 @@ public class HtmlPage extends Page {
 		String template = getHtml();
 		if(template != null) {
 			//Process the HEAD first:
-			String[] headOpensSplit = template.split("<head>");
+			Pattern headOpensPattern = Pattern.compile("<head>", Pattern.CASE_INSENSITIVE);
+			String[] headOpensSplit = headOpensPattern.split(template);
+			//String[] headOpensSplit = template.split("<head>");
 			String preHead = headOpensSplit[0];
 			String postHeadOpens = headOpensSplit[1];
 			out.write(preHead);
 			out.write("<head>");
 			
-			String[] headClosesSplit = postHeadOpens.split("</head>");
+			Pattern headClosesPattern = Pattern.compile("</head>", Pattern.CASE_INSENSITIVE);
+			String[] headClosesSplit = headClosesPattern.split(postHeadOpens);
+//			String[] headClosesSplit = postHeadOpens.split("</head>");
 			String headContent = headClosesSplit[0];
 			String body = headClosesSplit[1];
 			
@@ -252,10 +257,15 @@ public class HtmlPage extends Page {
 			String htmlTitle="";
 			try{
 				//Try to find where the TITLE tag is in the HEAD:
-				String[] titleSplit = headContent.split("<title>");
+				Pattern titlePattern = Pattern.compile("<title>", Pattern.CASE_INSENSITIVE);
+				String[] titleSplit = titlePattern.split(headContent);
+				//String[] titleSplit = headContent.split("<title>");
 				String preTitleHead= titleSplit[0];
 				String postTitleOpens = titleSplit[1];
-				String[] postTitleSplit = postTitleOpens.split("</title>");
+				
+				Pattern postTitlePattern = Pattern.compile("</title>", Pattern.CASE_INSENSITIVE);
+				String[] postTitleSplit = postTitlePattern.split(postTitleOpens);
+				//String[] postTitleSplit = postTitleOpens.split("</title>");
 				htmlTitle = postTitleSplit[0];
 				String postTitleHead = postTitleSplit[1];
 				
@@ -296,7 +306,7 @@ public class HtmlPage extends Page {
 				out.write(htmlBody[index++]);
 			}
 			body = htmlBody[index];
-			
+
 			String attributes = body.substring(0, body.indexOf(">"));
 			Map attributeMap = AttributeParser.parse(attributes);
 			Iterator iter = attributeMap.keySet().iterator();
