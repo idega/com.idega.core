@@ -1,0 +1,394 @@
+<dsml:dsml xmlns:dsml="http://www.dsml.org/DSML">
+  <dsml:directory-schema>
+   <dsml:class
+         id="extensibleObject"
+         type="auxiliary"
+         superior="#top">
+   <dsml:name>extensibleObject</dsml:name>
+   <dsml:description>The extensibleObject object class</dsml:description>
+   <dsml:object-identifier>1.3.6.1.4.1.1466.101.120.111</dsml:object-identifier>
+  </dsml:class>
+   <dsml:class
+         id="subschema"
+         type="auxiliary">
+   <dsml:name>subschema</dsml:name>
+   <dsml:description>This object class is used in the subschema entry</dsml:description>
+   <dsml:object-identifier>2.5.20.1</dsml:object-identifier>
+   <dsml:attribute ref="#dITStructureRules" required="false"/>
+   <dsml:attribute ref="#nameForms" required="false"/>
+   <dsml:attribute ref="#ditContentRules" required="false"/>
+   <dsml:attribute ref="#objectClasses" required="false"/>
+   <dsml:attribute ref="#attributeTypes" required="false"/>
+   <dsml:attribute ref="#matchingRules" required="false"/>
+   <dsml:attribute ref="#matchingRuleUse" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="top"
+         type="abstract">
+   <dsml:name>top</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.0</dsml:object-identifier>
+   <dsml:attribute ref="#objectClass" required="true"/>
+   <dsml:attribute ref="#dITStructureRules" required="false"/>
+   <dsml:attribute ref="#nameForms" required="false"/>
+   <dsml:attribute ref="#ditContentRules" required="false"/>
+   <dsml:attribute ref="#objectClasses" required="false"/>
+   <dsml:attribute ref="#attributeTypes" required="false"/>
+   <dsml:attribute ref="#matchingRules" required="false"/>
+   <dsml:attribute ref="#matchingRuleUse" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="alias"
+         type="structural"
+         superior="#top">
+   <dsml:name>alias</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.1</dsml:object-identifier>
+   <dsml:attribute ref="#aliasedObjectName" required="true"/>
+   <dsml:attribute ref="#dITStructureRules" required="false"/>
+   <dsml:attribute ref="#nameForms" required="false"/>
+   <dsml:attribute ref="#ditContentRules" required="false"/>
+   <dsml:attribute ref="#objectClasses" required="false"/>
+   <dsml:attribute ref="#attributeTypes" required="false"/>
+   <dsml:attribute ref="#matchingRules" required="false"/>
+   <dsml:attribute ref="#matchingRuleUse" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="country"
+         type="structural"
+         superior="#top">
+   <dsml:name>country</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.2</dsml:object-identifier>
+   <dsml:attribute ref="#c" required="true"/>
+   <dsml:attribute ref="#searchGuide" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="locality"
+         type="structural"
+         superior="#top">
+   <dsml:name>locality</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.3</dsml:object-identifier>
+   <dsml:attribute ref="#c" required="true"/>
+   <dsml:attribute ref="#street" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#searchGuide" required="false"/>
+   <dsml:attribute ref="#st" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="organization"
+         type="structural"
+         superior="#top">
+   <dsml:name>organization</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.4</dsml:object-identifier>
+   <dsml:attribute ref="#o" required="true"/>
+   <dsml:attribute ref="#userPassword" required="false"/>
+   <dsml:attribute ref="#searchGuide" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#businessCategory" required="false"/>
+   <dsml:attribute ref="#x121Address" required="false"/>
+   <dsml:attribute ref="#registeredAddress" required="false"/>
+   <dsml:attribute ref="#destinationIndicator" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#telexNumber" required="false"/>
+   <dsml:attribute ref="#teletexTerminalIdentifier" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#internationaliSDNNumber" required="false"/>
+   <dsml:attribute ref="#facsimileTelephoneNumber" required="false"/>
+   <dsml:attribute ref="#street" required="false"/>
+   <dsml:attribute ref="#postOfficeBox" required="false"/>
+   <dsml:attribute ref="#postalCode" required="false"/>
+   <dsml:attribute ref="#postalAddress" required="false"/>
+   <dsml:attribute ref="#physicalDeliveryOfficeName" required="false"/>
+   <dsml:attribute ref="#st" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="organizationalUnit"
+         type="structural"
+         superior="#top">
+   <dsml:name>organizationalUnit</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.5</dsml:object-identifier>
+   <dsml:attribute ref="#ou" required="true"/>
+   <dsml:attribute ref="#userPassword" required="false"/>
+   <dsml:attribute ref="#searchGuide" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#businessCategory" required="false"/>
+   <dsml:attribute ref="#x121Address" required="false"/>
+   <dsml:attribute ref="#registeredAddress" required="false"/>
+   <dsml:attribute ref="#destinationIndicator" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#telexNumber" required="false"/>
+   <dsml:attribute ref="#teletexTerminalIdentifier" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#internationaliSDNNumber" required="false"/>
+   <dsml:attribute ref="#facsimileTelephoneNumber" required="false"/>
+   <dsml:attribute ref="#street" required="false"/>
+   <dsml:attribute ref="#postOfficeBox" required="false"/>
+   <dsml:attribute ref="#postalCode" required="false"/>
+   <dsml:attribute ref="#postalAddress" required="false"/>
+   <dsml:attribute ref="#physicalDeliveryOfficeName" required="false"/>
+   <dsml:attribute ref="#st" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="person"
+         type="structural"
+         superior="#top">
+   <dsml:name>person</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.6</dsml:object-identifier>
+   <dsml:attribute ref="#sn" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#userPassword" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="organizationalPerson"
+         type="structural"
+         superior="#person">
+   <dsml:name>organizationalPerson</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.7</dsml:object-identifier>
+   <dsml:attribute ref="#sn" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#userPassword" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#facsimileTelephoneNumber" required="false"/>
+   <dsml:attribute ref="#title" required="false"/>
+   <dsml:attribute ref="#postalAddress" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="organizationalRole"
+         type="structural"
+         superior="#top">
+   <dsml:name>organizationalRole</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.8</dsml:object-identifier>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#x121Address" required="false"/>
+   <dsml:attribute ref="#registeredAddress" required="false"/>
+   <dsml:attribute ref="#destinationIndicator" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#telexNumber" required="false"/>
+   <dsml:attribute ref="#teletexTerminalIdentifier" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#internationaliSDNNumber" required="false"/>
+   <dsml:attribute ref="#facsimileTelephoneNumber" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#roleOccupant" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#street" required="false"/>
+   <dsml:attribute ref="#postOfficeBox" required="false"/>
+   <dsml:attribute ref="#postalCode" required="false"/>
+   <dsml:attribute ref="#postalAddress" required="false"/>
+   <dsml:attribute ref="#physicalDeliveryOfficeName" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#st" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="groupOfNames"
+         type="structural"
+         superior="#top">
+   <dsml:name>groupOfNames</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.9</dsml:object-identifier>
+   <dsml:attribute ref="#member" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#businessCategory" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#owner" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#o" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="residentialPerson"
+         type="structural"
+         superior="#person">
+   <dsml:name>residentialPerson</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.10</dsml:object-identifier>
+   <dsml:attribute ref="#l" required="true"/>
+   <dsml:attribute ref="#businessCategory" required="false"/>
+   <dsml:attribute ref="#x121Address" required="false"/>
+   <dsml:attribute ref="#registeredAddress" required="false"/>
+   <dsml:attribute ref="#destinationIndicator" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#telexNumber" required="false"/>
+   <dsml:attribute ref="#teletexTerminalIdentifier" required="false"/>
+   <dsml:attribute ref="#telephoneNumber" required="false"/>
+   <dsml:attribute ref="#internationaliSDNNumber" required="false"/>
+   <dsml:attribute ref="#facsimileTelephoneNumber" required="false"/>
+   <dsml:attribute ref="#preferredDeliveryMethod" required="false"/>
+   <dsml:attribute ref="#street" required="false"/>
+   <dsml:attribute ref="#postOfficeBox" required="false"/>
+   <dsml:attribute ref="#postalCode" required="false"/>
+   <dsml:attribute ref="#postalAddress" required="false"/>
+   <dsml:attribute ref="#physicalDeliveryOfficeName" required="false"/>
+   <dsml:attribute ref="#st" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="applicationProcess"
+         type="structural"
+         superior="#top">
+   <dsml:name>applicationProcess</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.11</dsml:object-identifier>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="applicationEntity"
+         type="structural"
+         superior="#top">
+   <dsml:name>applicationEntity</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.12</dsml:object-identifier>
+   <dsml:attribute ref="#presentationAddress" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#supportedApplicationContext" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#o" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="dSA"
+         type="structural"
+         superior="#applicationEntity">
+   <dsml:name>dSA</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.13</dsml:object-identifier>
+   <dsml:attribute ref="#presentationAddress" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#knowledgeInformation" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="device"
+         type="structural"
+         superior="#top">
+   <dsml:name>device</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.14</dsml:object-identifier>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#serialNumber" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#owner" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#o" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="strongAuthenticationUser"
+         type="auxiliary"
+         superior="#top">
+   <dsml:name>strongAuthenticationUser</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.15</dsml:object-identifier>
+   <dsml:attribute ref="#userCertificate" required="true"/>
+   <dsml:attribute ref="#serialNumber" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#owner" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#o" required="false"/>
+   <dsml:attribute ref="#l" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="certificationAuthority"
+         type="auxiliary"
+         superior="#top">
+   <dsml:name>certificationAuthority</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.16</dsml:object-identifier>
+   <dsml:attribute ref="#authorityRevocationList" required="true"/>
+   <dsml:attribute ref="#certificateRevocationList" required="true"/>
+   <dsml:attribute ref="#cACertificate" required="true"/>
+   <dsml:attribute ref="#crossCertificatePair" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="groupOfUniqueNames"
+         type="structural"
+         superior="#top">
+   <dsml:name>groupOfUniqueNames</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.17</dsml:object-identifier>
+   <dsml:attribute ref="#uniqueMember" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#businessCategory" required="false"/>
+   <dsml:attribute ref="#seeAlso" required="false"/>
+   <dsml:attribute ref="#owner" required="false"/>
+   <dsml:attribute ref="#ou" required="false"/>
+   <dsml:attribute ref="#o" required="false"/>
+   <dsml:attribute ref="#description" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="userSecurityInformation"
+         type="auxiliary"
+         superior="#top">
+   <dsml:name>userSecurityInformation</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.18</dsml:object-identifier>
+   <dsml:attribute ref="#uniqueMember" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#supportedAlgorithms" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="certificationAuthority-V2"
+         type="auxiliary">
+   <dsml:name>certificationAuthority-V2</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.16.2</dsml:object-identifier>
+   <dsml:attribute ref="#uniqueMember" required="true"/>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#deltaRevocationList" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="cRLDistributionPoint"
+         type="structural"
+         superior="#top">
+   <dsml:name>cRLDistributionPoint</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.19</dsml:object-identifier>
+   <dsml:attribute ref="#cn" required="true"/>
+   <dsml:attribute ref="#certificateRevocationList" required="false"/>
+   <dsml:attribute ref="#authorityRevocationList" required="false"/>
+   <dsml:attribute ref="#deltaRevocationList" required="false"/>
+  </dsml:class>
+   <dsml:class
+         id="dmd"
+         type="structural"
+         superior="#top">
+   <dsml:name>dmd</dsml:name>
+   <dsml:description></dsml:description>
+   <dsml:object-identifier>2.5.6.20</dsml:object-identifier>
+   <dsml:attribute ref="#dmdName" required="true"/>
+   <dsml:attribute ref="#certificateRevocationList" required="false"/>
+   <dsml:attribute ref="#authorityRevocationList" required="false"/>
+   <dsml:attribute ref="#deltaRevocationList" required="false"/>
+  </dsml:class>
+ </dsml:directory-schema>
+</dsml:dsml>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>aplus &raquo; AD xMenu &raquo; Examples &raquo; Basic full script</title>
+<script type="text/javascript" src="../../../wch/code2/wch.js"></script>
+<script type="text/javascript" src="../../code2/adxmenu.js"></script>
+<script type="text/javascript">
+//	add the menu for processing
+ADXM_oX.Add( "menuList", "H" );
+</script>
+<style type="text/css" media="screen, tv, projection"> @import "menu.css"; </style>
+</head>
+<body>
+
+<h1><a href="http://www.aplus.co.yu/sparks/adxmenu/">ADxMenu</a></h1>
+
+<h2>Basic style</h2>
+
+<p><a href="index.html">Pure CSS</a> / <strong>Full script</strong></p>
+
+<div id="menu">
+<ul id="menuList">
+<li><a href="#" class="disabled">Our stores</a></li>
+<li><a class="submenu" href="#">My account</a>
+	<ul id="MyAccountMenu">
+		<li><a href="#">Basket</a></li>
+		<li><a href="#">Orders</a></li>
+		<li><a href="#">History</a></li>
+	</ul>
+</li>
+<li><a class="submenu" href="#">Support</a>
+	<ul id="SupportMenu">
+		<li><a href="#">Frequently asked questions</a></li>
+		<li><a href="#">Help</a></li>
+		<li><a href="#">Contact</a></li>
+	</ul>
+</li>
+<li><a href="#">Logout</a></li>
+<li><a href="#" class="submenu">Products</a>
+	<ul id="ProductsMenu">
+		<li><a href="#">Overview</a></li>
+		<li><a class="submenu" href="#">Categories</a>
+			<ul id="CategoriesMenu">
+				<li><a href="#">Software</a></li>
+				<li><a class="submenu" href="#">Hardware</a>
+					<ul id="HardwareMenu">
+						<li><a href="#">Monitors</a></li>
+						<li><a href="#">Printers</a></li>
+						<li><a href="#">Memory</a></li>
+					</ul>
+				</li>
+				<li><a href="#" class="disabled">Electronics</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Wishlist</a></li>
+		<li><a href="#">Search</a></li>
+	</ul>
+</li>
+</ul>
+</div><!-- menu -->
+
+<form action="">
+<select id="test" name="test">
+<option>This is placed here to show-off WCH2 script.</option>
+<option>Only have effect in IE5.5+/Win. Other browsers have drop-down hiding by them self.</option>
+</select>
+</form>
+
+<p>
+This menu uses the minimum of CSS required for menu to operate. See other <a href="../">examples</a>.
+</p>
+
+<p id="cclicence">
+&copy; Copyright 2004, APLUS. Content is <a href="http://creativecommons.org/licenses/by/1.0/">licensed under a Creative Commons License</a>. (Some rights reserved)
+</p>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+#itemCategories {
+	background-image: url(categories.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 50%;
+}
+
+#itemSearch {
+	background-image: url(search.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 50%;
+}
+
+#itemHelp {
+	background-image: url(help.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 50%;
+}
+
+#itemBasket {
+	background-image: url(basket.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 50%;
+}
+
+#itemHistory {
+	background-image: url(history.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 50%;
+}
+

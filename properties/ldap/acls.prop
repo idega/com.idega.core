@@ -1,0 +1,8 @@
+[root]|entry#grant:r,b,t#[all]#public
+dc=javaldap,dc=com|subtree#grant:a#[entry]#authzID-dn:cn=blah
+dc=javaldap,dc=com|subtree#grant:r#[all]#public:
+dc=javaldap,dc=com|subtree#grant:b,t#[entry]#public:
+dc=javaldap,dc=com|subtree#deny:r#userpassword#public:
+dc=javaldap,dc=com|subtree#grant:r#userpassword#this:
+dc=javaldap,dc=com|subtree#grant:w,o#userpassword,title,description,postaladdress,telephonenumber#this:
+ou=Accounting,dc=javaldap,dc=com|subtree#deny:a#[entry]#authzID-dn:cn=blah

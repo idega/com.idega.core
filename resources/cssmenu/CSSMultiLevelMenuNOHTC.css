@@ -1,0 +1,105 @@
+/*		------	:hover simulator for IE		------		*/
+/* added automatically by CSSMultiLevelMenu if the browser is IE */
+
+/*		------	Basic style	------		*/
+#menu ul {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	list-style-type: none;
+}
+
+#menu li {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: block;
+	float: left;
+	position: relative;
+}
+
+#menu a {
+	float: left;/* \*/float: none;/*  */
+	display: block;
+}
+
+#menu li ul {
+	visibility: hidden;
+	position: absolute;
+	z-index: 10;
+}
+
+#menu li ul li {
+	width: 100%;
+	display: block;
+	float: left;
+	position: static;
+}
+html>body #menu li ul li {
+	float: none;
+	position: relative;
+}
+
+#menu li ul li:hover, * html #menu li ul li.iehover {
+	position: relative;
+}
+
+/* fix the position */
+#menu li ul li ul {
+	top: 0;
+	left: 100%;
+}
+
+/* simulate child selector for IE */
+* html div#menu li.iehover ul, * html #menu li.iehover li.iehover ul, * html #menu li.iehover li.iehover li.iehover ul {
+	visibility: visible;
+}
+* html #menu li.iehover li ul, * html #menu li.iehover li.iehover li ul, * html #menu li.iehover li.iehover li.iehover li ul {
+	visibility: hidden;
+}
+
+/*		------   Make-up	--------			*/
+
+#menu {
+	font-family: "Verdana";
+	color: white;
+	height: 25px;
+}
+
+#menu li {
+	width: auto;
+}
+
+#menu li ul {
+	color: #000;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	width: 150px;
+}
+
+#menu a {
+	text-decoration: none;
+	color: white;
+	padding: 5px;
+}
+
+#menu li:hover, * html #menu li.iehover {
+	background-color: #999;
+}
+
+#menu li ul a {
+	padding: 4px 16px 5px 5px;
+}
+
+#menu li ul a.submenu {
+	background-image: url(arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 100% 7px;
+}
+
+/*		------   Fixes		--------			*/
+
+#menu {
+	border: 1px solid #fff;	/* simply to avoid margin-collapsing... */
+	margin-bottom: 30px;		/* ...and to have some space around the menu in the example */
+}

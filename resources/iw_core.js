@@ -35,7 +35,27 @@ new_win.focus();
 
 function swapImage(){ var i,j=0,x,a=swapImage.arguments; document.sr=new Array; for(i=0;i<(a.length-2);i+=3) if ((x=findObj(a[i]))!=null){document.sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}}
 
-function findObj(n, d){var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {  d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=findObj(n,d.layers[i].document); return x;}
+// old function findObj(n, d){var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {  d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=findObj(n,d.layers[i].document); return x;}
+
+/**
+* Improved finder
+* To reference any frame, iframe, form, input, image or anchor (but not link) by its name, or
+* positioned element by its id in the current document - it can optionally scan through any frameset
+* structure to find it (searching in frames that have not loaded will cause an error):
+*/
+function findObj( oName, oFrame, oDoc ) {
+	if( !oDoc ) {if( oFrame ) { oDoc = oFrame.document; } else { oDoc = window.document; } }
+	if( oDoc[oName] ) { return oDoc[oName]; } if( oDoc.all && oDoc.all[oName] ) { return oDoc.all[oName]; }
+	if( oDoc.getElementById && oDoc.getElementById(oName) ) { return oDoc.getElementById(oName); }
+	for( var x = 0; x < oDoc.forms.length; x++ ) { if( oDoc.forms[x][oName] ) { return oDoc.forms[x][oName]; } }
+	for( var x = 0; x < oDoc.anchors.length; x++ ) { if( oDoc.anchors[x].name == oName ) { return oDoc.anchors[x]; } }
+	for( var x = 0; document.layers && x < oDoc.layers.length; x++ ) {
+	var theOb = findObj( oName, null, oDoc.layers[x].document ); if( theOb ) { return theOb; } }
+	if( !oFrame && window[oName] ) { return window[oName]; } if( oFrame && oFrame[oName] ) { return oFrame[oName]; }
+	for( var x = 0; oFrame && oFrame.frames && x < oFrame.frames.length; x++ ) {
+	var theOb = findObj( oName, oFrame.frames[x], oFrame.frames[x].document ); if( theOb ) { return theOb; } }
+	return null;
+}
 
 function preLoadImages(){var d=document; if(d.images){ if(!d.p) d.p=new Array(); var i,j=d.p.length,a=preLoadImages.arguments; for(i=0; i<a.length; i++)  if (a[i].indexOf("#")!=0){ d.p[j]=new Image; d.p[j++].src=a[i];}}}
 
@@ -84,11 +104,16 @@ function iwPopulateDaysWithMonth(yearValue,monthInput,dayInput,dayDisplayString)
 }
 
 function iwPopulateDays(yearValue,monthValue,dayInput,dayDisplayString) {
-
-	var previousDayLength = dayInput.options.length;
-	timeA = new Date(yearValue,monthValue,1);
 	
-	//timeA = new Date(yearInput.options[yearInput.selectedIndex].text, monthInput.options[monthInput.selectedIndex].value,1);
+	if (yearValue==-1){
+		var currentYear = new Date();
+		yearValue = currentYear.getFullYear();
+	}
+	var previousDayLength = dayInput.options.length;
+
+	timeA = new Date(yearValue,monthValue,'01');
+	
+	//a trick to get the last day of the previous month compared to monthValue, 86400000 is one day (24 hours)
 	timeDifference = timeA - 86400000;
 	timeB = new Date(timeDifference);
 	
@@ -96,11 +121,11 @@ function iwPopulateDays(yearValue,monthValue,dayInput,dayDisplayString) {
 	var daysInMonth = timeB.getDate();
 	
 	if(previousDayLength>=2){
-		for (var i = 1; i < previousDayLength ; i++) {
+		for (var i = 0; i < previousDayLength ; i++) {
 			dayInput.options[i] = null;
 		}
 	}
-	//dayInput.options[0] = new Option(dayDisplayString,dayDisplayString);
+	dayInput.options[0] = new Option(dayDisplayString,dayDisplayString);
 	
 	for (var i = 1; i <= daysInMonth; i++) {
 
@@ -112,7 +137,12 @@ function iwPopulateDays(yearValue,monthValue,dayInput,dayDisplayString) {
 			}
 	}
 
-	dayInput.options[oldSelectedDay].selected = true;
+	if (oldSelectedDay < daysInMonth) {
+		dayInput.options[oldSelectedDay].selected = true;
+	}
+	else {
+		dayInput.options[daysInMonth].selected = true;
+	}
 	
 }
 

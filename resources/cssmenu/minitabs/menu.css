@@ -1,0 +1,147 @@
+@import url( ../page.css );
+
+/*		------	:hover simulator for IE		------		*/
+body { behavior:url("../../code2/csshover.htc"); }
+
+/*		------	Basic style	------		*/
+#menu ul {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	list-style-type: none;
+}
+
+#menu li {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: block;
+	float: left;
+	position: relative;
+}
+
+#menu a {
+	float: left;/* \*/float: none;/*  */
+	display: block;
+}
+
+#menu li ul {
+	visibility: hidden;
+	position: absolute;
+	z-index: 10;
+}
+
+#menu li ul li {
+	width: 100%;
+	display: block;
+	float: left;
+	position: static;
+}
+html>body #menu li ul li {
+	float: none;
+	position: relative;
+}
+
+#menu li ul li:hover {
+	position: relative;
+}
+
+/* fix the position */
+#menu li ul li ul {
+	top: 0;
+	left: 100%;
+}
+
+/* simulate child selector for IE */
+div#menu li:hover ul, #menu li:hover li:hover ul, #menu li:hover li:hover li:hover ul {
+	visibility: visible;
+}
+#menu li:hover li ul, #menu li:hover li:hover li ul, #menu li:hover li:hover li:hover li ul {
+	visibility: hidden;
+}
+
+/* do the normal show, with increased specificity */
+#menu ul#menuList li:hover > ul {
+	visibility: visible;
+}
+
+/*		------   Make-up	--------			*/
+
+#menu {
+	font-family: Tahoma, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	color: #000;
+	border-bottom: 1px solid #696;
+	display: block;
+	height: 24px;
+}
+
+#menu a {
+	text-decoration: none;
+	color: #9c9;
+	padding: 4px 6px 8px;
+}
+
+#menu li li a {
+	padding: 4px 6px;
+}
+
+#menu li li {
+	border-bottom: 1px solid #9c9;
+}
+
+#menu li li:hover {
+	background-color: #f0f8ea;
+	border-bottom: 1px solid #696;
+}
+
+#menu li:hover > a {
+	color: #363;
+}
+#menu a:hover {
+	color: #363;
+}
+
+#menu li ul {
+	text-align: left;
+	width: 130px;
+}
+#menu li li ul {
+	border-left: 1px solid #f0f8ea;
+}
+
+
+#menu li:hover ul {
+	background-color: #fff;
+}
+
+#menu li li a.submenu {
+	background: url(arrow.gif) no-repeat 100% 4px !important;
+}
+#menu li li:hover a.submenu {
+	background-position: 100% -12px !important;
+}
+
+html>body #menu li:hover a.submenu {
+	background: url(shape-circle.png) no-repeat center bottom;
+}
+html>body #menu li:hover li a.submenu {
+	background-image: none;
+}
+
+
+/*		------   Fixes	for buggy browsers	--------			*/
+
+* html #menu li li a {
+	width: 130px;
+	w\idth: 118px;
+}
+
+
+
+
+#menu {
+	margin-bottom: 30px;		/* simply to have some space around the menu in the example */
+}

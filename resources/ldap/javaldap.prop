@@ -1,0 +1,67 @@
+#JavaLDAP Server Properties
+#Sat Jun 10 11:34:38 CDT 2000
+
+# Basic Server Identification
+javaldap.server.name=localhost
+javaldap.server.port=10389
+
+# Not yet used...plan to pool threads soon
+javaldap.server.threads=16
+
+# Schema file locations...Only STD is currently used
+# These files are in DSML format
+javaldap.schema.user=./user.oc.xml
+javaldap.schema.std=./std.oc.xml
+
+# Backend Configuration
+javaldap.server.backends=./backends.prop
+
+# Schema Checking On=1/Off=0
+javaldap.schemacheck=0
+
+# ACL Checking On=1/Off=0
+javaldap.aclcheck=0
+javaldap.acl.props=./acls.prop
+
+# Root User and Password - Bypass ACLs
+javaldap.rootuser=cn=Admin
+javaldap.rootpw=manager
+
+# Debug Level (Currently 0-9 with 9 being most verbose)
+javaldap.debug=9
+
+# JDBC Config for HSQL
+#javaldap.backendjdbc.longvarchar=LONGVARCHAR
+#javaldap.backendjdbc.createtable=CREATE TABLE
+#javaldap.backendjdbc.dbdriver=org.hsql.jdbcDriver
+#javaldap.backendjdbc.dburl=jdbc:HypersonicSQL:jldapdb
+#javaldap.backendjdbc.dbuser=sa
+#javaldap.backendjdbc.dbpass=
+
+# JDBC Config for IBM DB2 - be sure that the database 'jldapdb' (or whatever
+#     you change it to) exists before running. Tables will be configured.
+javaldap.backendjdbc.longvarchar=LONG VARCHAR
+javaldap.backendjdbc.createtable=CREATE TABLE
+javaldap.backendjdbc.dbdriver=COM.ibm.db2.jdbc.app.DB2Driver
+javaldap.backendjdbc.dburl=jdbc:db2:jldapdb
+javaldap.backendjdbc.dbuser=db2admin
+javaldap.backendjdbc.dbpass=manager
+
+# JDBC Config for InstantDB
+#javaldap.backendjdbc.longvarchar=LONGVARBINARY
+#javaldap.backendjdbc.createtable=CREATE TABLE
+#javaldap.backendjdbc.dbdriver=org.enhydra.instantdb.jdbc.idbDriver
+#javaldap.backendjdbc.dburl=jdbc:idb:jldap-instantdb.prp
+#javaldap.backendjdbc.dbuser=
+#javaldap.backendjdbc.dbpass=
+
+
+# JDBC Config for Oracle 8i
+#
+javaldap.backendjdbc.longvarchar=LONG VARCHAR
+javaldap.backendjdbc.createtable=CREATE TABLE
+javaldap.backendjdbc.dbdriver=oracle.jdbc.driver.OracleDriver
+javaldap.backendjdbc.dburl=jdbc:oracle:oci8:@
+javaldap.backendjdbc.dbuser=test
+javaldap.backendjdbc.dbpass=tester
+

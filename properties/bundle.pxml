@@ -535,6 +535,21 @@
       <type>java.lang.String</type>
       <value>Mini 7-plain-10</value>
     </key>
+    <key>
+      <name>max_failed_login_attempts</name>
+      <type>java.lang.String</type>
+      <value>3</value>
+    </key>
+    <key>
+      <name>EventHistoryList.date_format_string</name>
+      <type>java.lang.String</type>
+      <value>dd.MM.yy</value>
+    </key>
+    <key>
+      <name>EventHistoryList.time_format_string</name>
+      <type>java.lang.String</type>
+      <value>hh:mm</value>
+    </key>
   </map>
 </pxml>
 

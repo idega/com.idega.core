@@ -1,0 +1,117 @@
+/*		------	:hover simulator for IE		------		*/
+/* added automatically by CSSMultiLevelMenu if the browser is IE */
+body { behavior:url("/idegaweb/bundles/com.idega.core.bundle/resources/cssmenu/csshover.htc"); }
+
+/*		------	Basic style	------		*/
+#menu ul {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	list-style-type: none;
+}
+
+#menu li {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: block;
+	float: left;
+	position: relative;
+}
+
+#menu a {
+	float: left;/* \*/float: none;/*  */
+	display: block;
+}
+
+#menu li ul {
+	visibility: hidden;
+	position: absolute;
+	z-index: 10;
+}
+
+#menu li ul li {
+	width: 100%;
+	display: block;
+	float: left;
+	position: static;
+}
+html>body #menu li ul li {
+	float: none;
+	position: relative;
+}
+
+#menu li ul li:hover {
+	position: relative;
+}
+
+/* fix the position */
+#menu li ul li ul {
+	top: 0;
+	left: 100%;
+}
+
+/* simulate child selector for IE */
+div#menu li:hover ul, #menu li:hover li:hover ul, #menu li:hover li:hover li:hover ul {
+	visibility: visible;
+}
+#menu li:hover li ul, #menu li:hover li:hover li ul, #menu li:hover li:hover li:hover li ul {
+	visibility: hidden;
+}
+
+/* do the normal show, with increased specificity */
+#menu ul#menuList li:hover > ul {
+	visibility: visible;
+}
+
+/*		------   Make-up	--------			*/
+
+#menu {
+	font-family: "Verdana";
+	color: white;
+	height: 25px;
+}
+
+#menu li {
+	width: auto;
+}
+
+#menu li ul {
+	color: white;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	width: 150px;
+}
+
+#menu a {
+	text-decoration: none;
+	color: #000000;
+	padding: 5px;
+}
+
+#menu li:hover {
+	background-color: #999;
+}
+
+#menu li ul a {
+	padding: 4px 16px 5px 5px;
+}
+
+#menu li ul a.submenu {
+	color: white;
+	background-image: url(arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 100% 7px;
+}
+
+#menu ul li a.submenu {
+	color: white;
+	font-weight: bold;
+}
+
+/*		------   Fixes		--------			*/
+
+#menu {
+	border: 0px solid #fff;	/* simply to avoid margin-collapsing... */
+	margin-bottom: 0px;		/* ...and to have some space around the menu in the example */
+}

@@ -1,0 +1,8 @@
+# JavaLDAP Server Backend Configuration File
+#
+backend.num=1
+backend.0.root=dc=idega,dc=com
+backend.0.type=com.idega.core.ldap.server.backend.IWUserLDAPBackend
+#backend.0.type=org.codehaus.plexus.ldapserver.server.backend.BackendMemory
+#backend.0.root=dc=javaldap,dc=com
+#backend.0.type=org.codehaus.plexus.ldapserver.server.backend.BackendJDBC
