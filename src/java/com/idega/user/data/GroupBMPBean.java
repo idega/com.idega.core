@@ -8,12 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
@@ -37,10 +35,13 @@ import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.AND;
+import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -480,6 +481,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public Collection ejbFindGroupsByName(String name) throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
+	}
+	public Collection ejbFindGroupsByNameAndDescription(String name, String description) throws FinderException {
+		Table table = new Table(this);
+		Column nameCol = new Column(table, getNameColumnName());
+		Column desc = new Column(table, getGroupDescriptionColumnName());
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(new WildCardColumn(table));
+		query.addCriteria(new MatchCriteria(nameCol, MatchCriteria.EQUALS, name));
+		query.addCriteria(new MatchCriteria(desc, MatchCriteria.EQUALS, description));
+		
+		return this.idoFindPKsByQuery(query);
 	}
 	public Integer ejbFindGroupByPrimaryKey(Object primaryKey) throws FinderException {
 		return (Integer)this.ejbFindByPrimaryKey(primaryKey);
