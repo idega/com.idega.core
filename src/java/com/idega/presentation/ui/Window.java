@@ -81,7 +81,10 @@ public Window(String name,int width,int height){
     this.setName(name);
     this.setWidth(width);
     this.setHeight(height);
-		this.setOnLoad("focus()");
+    
+    if(!isInFrameSet()) {
+    	setOnLoad("focus()");
+    } 
 	
 }
 
@@ -130,7 +133,10 @@ private void setSettings(){
 	setStatus(false);
 	setTitlebar(false);
 	setResizable(false);
-	this.setOnLoad("this.getFocus()");
+	
+	if(!isInFrameSet()) {
+		setOnLoad("focus()");
+	} 
 }
 
 public void setToolbar(boolean ifToolbar){
