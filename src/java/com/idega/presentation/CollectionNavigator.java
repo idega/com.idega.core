@@ -22,6 +22,8 @@ public class CollectionNavigator extends Block {
 	
 	private int _padding = 0;
 	
+	private String uniqueIdentifier = "";
+	
 	private java.util.List maintainedPrms = new ArrayList();
 	
 	private IWResourceBundle _iwrb;
@@ -78,7 +80,7 @@ public class CollectionNavigator extends Block {
 		}
 		if (_currentPage > 0) {
 			Link lPrev = getLink(localize("previous", "Previous"));
-			lPrev.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(_currentPage - 1));
+			lPrev.addParameter(getUniqueParameterName(), Integer.toString(_currentPage - 1));
 			navigationTable.add(lPrev, 1, 1);
 			lPrev.setToMaintainParameters(this.maintainedPrms);
 		}
@@ -89,7 +91,7 @@ public class CollectionNavigator extends Block {
 
 		if (_currentPage < _maxPage) {
 			Link lNext = getLink(localize("next", "Next"));
-			lNext.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(_currentPage + 1));
+			lNext.addParameter(getUniqueParameterName(), Integer.toString(_currentPage + 1));
 			navigationTable.add(lNext, 3, 1);
 			lNext.setToMaintainParameters(maintainedPrms);
 		}
@@ -123,8 +125,8 @@ public class CollectionNavigator extends Block {
 	}
 	
 	private void parse(IWContext iwc) {
-		if (iwc.isParameterSet(PARAMETER_CURRENT_PAGE))
-			_currentPage = Integer.parseInt(iwc.getParameter(PARAMETER_CURRENT_PAGE));
+		if (iwc.isParameterSet(getUniqueParameterName()))
+			_currentPage = Integer.parseInt(iwc.getParameter(getUniqueParameterName()));
 	}
 	
 	private void initialize(IWContext iwc) {
@@ -222,5 +224,17 @@ public class CollectionNavigator extends Block {
 	 */
 	public void setUseShortText(boolean useShortText) {
 		this.useShortText = useShortText;
+	}
+	
+	/**
+	 * To identify two different instances of the navigator in the same view
+	 * @param identifier
+	 */
+	public void setIdentifier(String identifier){
+	    	this.uniqueIdentifier = identifier;
+	}
+	
+	private String getUniqueParameterName(){
+	    return PARAMETER_CURRENT_PAGE + uniqueIdentifier;
 	}
 }
