@@ -221,6 +221,15 @@ public class IWBundle{
       return (String[])getLocalizableStringsMap().keySet().toArray(new String[0]);
     }
 
+    public boolean removeLocalizableString(String key){
+      Enumeration enum = this.resourceBundles.elements();
+      while (enum.hasMoreElements()) {
+        IWResourceBundle item = (IWResourceBundle)enum.nextElement();
+        item.removeString(key);
+      }
+      return this.localizableStringsMap.remove(key)!=null?true:false;
+    }
+
     protected Properties getLocalizableStringsProperties(){
       initializePropertiesStrings();
       return localizableStringsProperties;

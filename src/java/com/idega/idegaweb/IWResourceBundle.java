@@ -184,6 +184,10 @@ public class IWResourceBundle extends ResourceBundle {
       }
     }
 
+    public boolean removeString(String key){
+      return (String) lookup.remove(key)!=null?true:false;
+    }
+
     private void setIWBundleParent(IWBundle parent){
       this.iwBundleParent=parent;
     }
