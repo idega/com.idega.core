@@ -41,21 +41,28 @@ public class ImageFactory {
 	public final static String GENERATED_HIGHLIGHT_COLOR = "iw_generated_highligth_color";	
 	
 	//Instance variables:
-	private IWMainApplication iwma;
 	private IWBundle coreBundle;
-	private String fontPath;
 	private Font defaultFont;
 	private HashMap images;
 	private Font fontbase;
 
 
-	ImageFactory(IWMainApplication iwma) {
-		this.iwma = iwma;
+	/**
+	 * Unloads or shutdowns the factory
+	 *
+	 */
+	public static void unload(){
+		factory=null;
+	}
+	
+	
+	ImageFactory() {
+		// empty
 	}
 
 	public static ImageFactory getStaticInstance(IWMainApplication iwma) {
 		if (factory == null) {
-			factory = new ImageFactory(iwma);
+			factory = new ImageFactory();
 			factory.coreBundle = iwma.getCoreBundle();
 			factory.images = new HashMap();
 			//if (!shutdown) {
@@ -79,13 +86,7 @@ public class ImageFactory {
 		return factory;
 	}
 
-	/**
-	 * Unloads or shutdowns the factory
-	 *
-	 */
-	public void unload(){
-		factory=null;
-	}
+
 
 
 	public Image createButton(String textOnButton, IWBundle iwb) {
