@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.27 2002/02/25 15:51:24 gummi Exp $
+ * $Id: PresentationObject.java,v 1.28 2002/02/25 15:59:07 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -610,10 +610,7 @@ public class PresentationObject extends Object implements Cloneable {
 
     PresentationObject obj = null;
     try {
-      //This is forbidden in clone i.e. "new":
-      //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
-      //obj = (PresentationObject)super.clone();
-      obj = (PresentationObject)this.clone();
+      obj = (PresentationObject)super.clone();
       if (this.attributes != null) {
 	obj.setAttribute((Hashtable)this.attributes.clone());
       }
