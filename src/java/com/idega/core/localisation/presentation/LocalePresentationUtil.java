@@ -42,7 +42,6 @@ public class LocalePresentationUtil
 			down.setSelectedElement(l.toString());
 		}
 	
-		down.keepStatusOnAction();
 		down.setToSubmit();
 	
 		return down;
