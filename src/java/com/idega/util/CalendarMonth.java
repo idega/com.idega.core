@@ -4,8 +4,6 @@
 package com.idega.util;
 
 import java.sql.Date;
-import java.text.DateFormat;
-import java.util.GregorianCalendar;
 
 /**
  * CalendarMonth A class which represents a month of a year
