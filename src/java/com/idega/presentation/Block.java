@@ -327,8 +327,9 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     int instanceID = this.getICObjectInstanceID();
     boolean edit = hasEditPermission();
     String locale = iwc.getCurrentLocale().toString();
+    boolean isSecure = iwc.getRequest().isSecure();
 
-    return (instanceID+locale+edit);
+    return (instanceID+locale+edit+isSecure);
   }
 
   protected boolean isCacheable(){
