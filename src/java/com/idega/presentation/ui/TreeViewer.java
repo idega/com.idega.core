@@ -216,7 +216,7 @@ public class TreeViewer extends AbstractTreeViewer {
     _linkStyle = style;
   }
 
-  public void setLinkProtototype(Link link){
+  public void setLinkPrototype(Link link){
     _linkPrototype=link;
   }
 
