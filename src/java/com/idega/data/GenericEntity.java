@@ -2090,7 +2090,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(dateSQLString);
 			if (rs.next())
-				date = rs.getDate(1);
+				date = new Date(rs.getTimestamp(1).getTime());
 			rs.close();
 			//System.out.println(SQLString+"\n");
 		} catch (SQLException e) {
