@@ -571,13 +571,7 @@ public class IWTimestamp implements Comparable {
 		return Timestamp.valueOf(getDateString(pattern));
 	}
 
-	/**
-	 * @deprecated
-	 * @see IWTimestamp#getDate()
-	 */
-	public Date getSQLDate() {
-		return getDate();
-	}
+
 
 	/**
 	 * Returns a <code>Date</code> object with the current date/time settings.
@@ -585,14 +579,6 @@ public class IWTimestamp implements Comparable {
 	 */
 	public Date getDate() {
 		return new Date(getTimestamp().getTime());
-	}
-
-	/**
-	 * @deprecated
-	 * @see IWTimestamp#getTime()
-	 */
-	public Time getSQLTime() {
-		return getTime();
 	}
 
 	/**
@@ -695,6 +681,14 @@ public class IWTimestamp implements Comparable {
 
 	/**
 	 * @deprecated
+	 * @see IWTimestamp#getDate()
+	 */
+	public Date getSQLDate() {
+		return getDate();
+	}
+	
+	/**
+	 * Get a date string for the current locale. Will be deprecated soon , this method uses IWCalendar.getLocaleDate().
 	 * @see IWCalendar#getLocaleDate()
 	 */
 	public String getLocaleDate(IWContext iwc) {
@@ -703,7 +697,7 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
-	 * @deprecated
+ 	* Get a date string for the locale. Will be deprecated soon , this method uses IWCalendar.getLocaleDate().
 	 * @see IWCalendar#getLocaleDate()
 	 */
 	public String getLocaleDate(Locale locale) {
@@ -712,8 +706,8 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
-	 * @deprecated
-	 * @see IWTimestamp#getDateString(String pattern)
+	 * Get a date string with the icalandic data format: DAY MONTH (YEAR)
+	 * @return IWTimestamp#getDateString(String pattern)
 	 */
 	public String getISLDate(String spacer, boolean withYear) {
 		String pattern = DAY + spacer + MONTH;
