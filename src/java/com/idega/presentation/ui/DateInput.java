@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.10 2002/02/19 13:35:08 tryggvil Exp $
+ * $Id: DateInput.java,v 1.11 2002/02/20 19:33:33 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,7 +31,7 @@ private Script _script;
 private DropdownMenu _theDay;
 private DropdownMenu _theMonth;
 private DropdownMenu _theYear;
-private Parameter _theYearHidden;
+//private Parameter _theYearHidden;
 private Parameter _theWholeDate;
 private boolean _setCheck = false;
 private boolean _isShowDay = true;
@@ -63,7 +63,7 @@ public DateInput(String name){
   super();
   super.setName(name);
   _justConstructed = true;
-
+  constructInputs();
 }
 
 public DateInput(String name, boolean _inShort){
@@ -87,6 +87,7 @@ public DateInput(String name, boolean _inShort){
   doSomeShit();
   */
   this._inShort=_inShort;
+  constructInputs();
 }
 
 public Object clone(){
@@ -103,12 +104,13 @@ public Object clone(){
   if(_theYear!=null){
     newObject._theYear = (DropdownMenu)this._theYear.clone();
   }
-  if(_theYearHidden!=null){
-    newObject._theYearHidden = (Parameter)this._theYearHidden.clone();
-  }
+  //if(_theYearHidden!=null){
+  //  newObject._theYearHidden = (Parameter)this._theYearHidden.clone();
+  //}
   if(_script!=null){
     newObject._script = (Script) this._script.clone();
   }
+  newObject._justConstructed=false;
   return newObject;
 }
 
@@ -129,26 +131,26 @@ public void setName(String name){
     }
   }
   else{
-    if(_theYearHidden!=null){
-      _theYearHidden.setName(name+"_year");
-    }
+    //if(_theYearHidden!=null){
+    //  _theYearHidden.setName(name+"_year");
+    //}
   }
 
 }
 
-private void doSomeShit(){
+private void addMenuElementsToDropdowns(){
 //private void doSomeShit(String strDay, String strMonth, String strYear) {
 
 
 
-	_theDay.setParentObject(this.getParentObject());
-	_theMonth.setParentObject(this.getParentObject());
-	if(_showYear){
-      _theYear.setParentObject(this.getParentObject());
-    }
-    else{
-      _theYearHidden.setParentObject(this.getParentObject());
-    }
+	//_theDay.setParentObject(this.getParentObject());
+	//_theMonth.setParentObject(this.getParentObject());
+	//if(_showYear){
+    //  _theYear.setParentObject(this.getParentObject());
+    //}
+    //else{
+      //_theYearHidden.setParentObject(this.getParentObject());
+    //}
 
 
 	//_theYear.addMenuElement("",strYear);
@@ -159,7 +161,7 @@ private void doSomeShit(){
           this.setYearRange(currentYear,currentYear+5);
         }
         else{
-          this._theYearHidden.setValue(currentYear);
+          //this._theYearHidden.setValue(currentYear);
         }
 
 	//_theYear.addMenuElement("2000","2000");
@@ -284,25 +286,31 @@ private Script getScript(){
 	return this._script;
 }
 
-public void setStyle(String _styleAttribute){
-  _theDay.setStyle(_styleAttribute);
-  _theMonth.setStyle(_styleAttribute);
+public void setStyle(String styleAttribute){
+  if(this._isShowDay){
+    _theDay.setStyle(styleAttribute);
+  }
+  _theMonth.setStyle(styleAttribute);
   if(this._showYear){
-    _theYear.setStyle(_styleAttribute);
+    _theYear.setStyle(styleAttribute);
   }
 }
 
 public void setStyleAttribute(String attributeName,String attributeValue){
+
   _theDay.setAttribute(attributeName,attributeValue);
   _theMonth.setAttribute(attributeName,attributeValue);
   _theYear.setAttribute(attributeName,attributeValue);
+
 }
 
 
 public void keepStatusOnAction(){
+
 	_theDay.keepStatusOnAction();
 	_theMonth.keepStatusOnAction();
 	_theYear.keepStatusOnAction();
+
 }
 
 /*
@@ -419,12 +427,16 @@ public void setYearRange(int _fromYear,int _toYear){
 
 
   public void setNoDayView(){
-    _isShowDay = false;
-    this.setDay(1);
+    setToShowDay(false);
   }
 
   public void setToShowDay(boolean ifShow){
     this._isShowDay=ifShow;
+    if(ifShow){
+    }
+    else{
+      this.setDay(1);
+    }
   }
 
   public void setToShowYear(boolean ifShow){
@@ -449,18 +461,20 @@ private void constructInputs(){
   if(_justConstructed){
     String name = getName();
     _script = new Script();
-    _theDay = new DropdownMenu(name+"_day");
+    if(this._isShowDay){
+      _theDay = new DropdownMenu(name+"_day");
+    }
+
     _theMonth = new DropdownMenu(name+"_month");
     if(_showYear){
       _theYear = new DropdownMenu(name+"_year");
     }
-    else{
-      _theYearHidden = new Parameter(name+"_year");
-    }
+    //else{
+      //_theYearHidden = new Parameter(name+"_year");
+    //}
     _theWholeDate = new Parameter(name,"");
 
-    doSomeShit();
-    //doSomeShit("Dagur", "Mánuður", "Ár");
+    addMenuElementsToDropdowns();
   }
 }
 
@@ -473,14 +487,16 @@ private void setSetValues(){
       this._theDay.setSelectedElement(_setDay);
     }
   }
-    if(this._showYear){
-      if(_fromYear < _toYear){
-        for (int i=_fromYear;i<=_toYear;i++){
-          _theYear.addMenuElement(Integer.toString(i));
-        }
-      }else{
-        for (int i=_fromYear;i>=_toYear;i--){
-          _theYear.addMenuElement(Integer.toString(i));
+    if(this._justConstructed){
+      if(this._showYear){
+        if(_fromYear < _toYear){
+          for (int i=_fromYear;i<=_toYear;i++){
+            _theYear.addMenuElement(Integer.toString(i));
+          }
+        }else{
+          for (int i=_fromYear;i>=_toYear;i--){
+            _theYear.addMenuElement(Integer.toString(i));
+          }
         }
       }
     }
@@ -490,14 +506,14 @@ private void setSetValues(){
         _theYear.setSelectedElement(Integer.toString(_selectedYear));
       }
       else{
-        _theYearHidden.setValue(_selectedYear);
+        //_theYearHidden.setValue(_selectedYear);
       }
     }
     else{
       if(this._showYear){
       }
       else{
-        _theYearHidden.setValue(_fromYear);
+        //_theYearHidden.setValue(_fromYear);
       }
     }
 
@@ -509,44 +525,47 @@ private void setSetValues(){
     }
 }
 
+private void addDropDowns(){
+    if(_justConstructed){
+      if(_displayDayLast){
+        if(this._showYear){
+          super.add(_theYear);
+        }
+        else{
+          //super.add(_theYearHidden);
+        }
+        super.add(_theMonth);
+        if (_isShowDay) {
+          super.add(_theDay);
+        }
+      }
+      else{
+        if (_isShowDay) {
+          super.add(_theDay);
+        }
+        super.add(_theMonth);
+        if(this._showYear){
+          super.add(_theYear);
+        }
+        else{
+          //super.add(_theYearHidden);
+        }
+      }
+      super.add(_theWholeDate);
+      super.add(_script);
+  }
+}
+
 public void main(IWContext iwc)throws Exception{
 
-  constructInputs();
+  //constructInputs();
   setSetValues();
+  addDropDowns();
 
-  if(_justConstructed){
-    if(_displayDayLast){
-      if(this._showYear){
-        super.add(_theYear);
-      }
-      else{
-        super.add(_theYearHidden);
-      }
-      super.add(_theMonth);
-      if (_isShowDay) {
-        super.add(_theDay);
-      }
-    }
-    else{
-      if (_isShowDay) {
-        super.add(_theDay);
-      }
-      super.add(_theMonth);
-      if(this._showYear){
-        super.add(_theYear);
-      }
-      else{
-        super.add(_theYearHidden);
-      }
-    }
-    super.add(_theWholeDate);
-    super.add(_script);
-
-    addLocalized(iwc);
-    _justConstructed = false;
-  }
-
+  addLocalized(iwc);
   addScriptElements(iwc);
+
+  _justConstructed = false;
 }
 
 
@@ -635,9 +654,6 @@ public void main(IWContext iwc)throws Exception{
 
   }
 
-  public void print(IWContext iwc)throws Exception{
-    super.print(iwc);
-  }
 
   public String getCurrentYear(){
     if(this._showYear){
