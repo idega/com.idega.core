@@ -19,6 +19,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 
   protected List _openNodes = new Vector();
   protected boolean _initLevel = true;
+  private String lastOpenedOrClosedNode = null;
 
   public TreeViewerPS() {
   }
@@ -26,6 +27,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
   public void reset() {
     _openNodes.clear();
     _initLevel = true;
+    lastOpenedOrClosedNode = null;
   }
 
   public List getOpenNodeList(){
@@ -66,8 +68,14 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
     return obj;
   }
 
+  public String getLastOpenedOrClosedNode() {
+  	return lastOpenedOrClosedNode;
+  }
 
-
+  public void resetLastOpenedOrClosedNode() {
+  	lastOpenedOrClosedNode = null;
+  }
+  
   public void actionPerformed(IWPresentationEvent e)throws IWException{
 
     if(e instanceof ResetPresentationEvent){
@@ -88,6 +96,10 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
       if(close != null){
         _openNodes.remove(close);
         changed = true;
+      }
+      lastOpenedOrClosedNode = ((TreeViewerEvent)e).getOpenNodeAction();
+      if (lastOpenedOrClosedNode == null) { 
+      	lastOpenedOrClosedNode = ((TreeViewerEvent)e).getCloseNodeAction();
       }
 
       if(changed){
