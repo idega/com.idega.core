@@ -2438,7 +2438,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			try {
 				//theReturn = (IDOLegacyEntity)entityClass.newInstance();
 				theReturn = instanciateEntity(entityClass);
-				_allStaticClasses.put(entityClass, theReturn);
+				_allStaticClasses.put(entityClass.getName(), theReturn);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
