@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -357,7 +358,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     Collection groups = aGroup.getParentGroups();
 
     if (groups != null && groups.size() > 0){
-      Hashtable GroupsContained = new Hashtable();
+      Map GroupsContained = new Hashtable();
 
       String key = "";
       Iterator iter = groups.iterator();
@@ -412,7 +413,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	}
   }
 
-  private  void putGroupsContaining(Group group, Hashtable GroupsContained ) {
+  private  void putGroupsContaining(Group group, Map GroupsContained ) {
   	try{
 	    Collection pGroups = group.getParentGroups();
 	    if (pGroups != null){
@@ -537,7 +538,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	    Collection groups = aGroup.getChildGroups();
 	
 	    if (groups != null && groups.size() > 0){
-	      Hashtable GroupsContained = new Hashtable();
+	      Map GroupsContained = new Hashtable();
 	
 	      String key = "";
 	      Iterator iter = groups.iterator();
@@ -752,7 +753,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
-  private  void putGroupsContained(Group group, Hashtable GroupsContained ) throws EJBException,RemoteException{
+  private  void putGroupsContained(Group group,Map GroupsContained ) throws EJBException,RemoteException{
     Collection pGroups = group.getChildGroups();
     if (pGroups != null){
       String key = "";

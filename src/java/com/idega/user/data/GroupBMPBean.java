@@ -31,6 +31,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final String EMPTY_STRING = "";
 	
+	
 	private static final String COLUMN_GROUP_ID = "ic_group_id";
 	private static final String COLUMN_NAME = "name";
 	private static final String COLUMN_GROUP_TYPE = "group_type";
@@ -209,10 +210,29 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 					theReturn.add(parent);
 				}
 			}
+			if(isUser()){
+				User user = getUserForGroup();
+				Group parent = user.getPrimaryGroup();
+				if(!theReturn.contains(parent)){
+					theReturn.add(parent);
+				}
+			}
 		} catch (Exception e) {
 			throw new EJBException(e.getMessage());
 		}
 		return theReturn;
+	}
+	/**
+	 * Returns the User instance representing the Group if the Group is of type UserGroupRepresentative
+	 **/
+	private User getUserForGroup(){
+		try{
+			UserHome uHome = (UserHome)IDOLookup.getHome(User.class);
+			return uHome.findUserForUserGroup(this);
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
 	
 	/**
@@ -1046,5 +1066,15 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public void store() {
 		super.store();
+	}
+	
+	/**
+	 * Gets if the group is of type "UserGroupRepresentative"
+	 **/
+	public boolean isUser(){
+		if(UserBMPBean.USER_GROUP_TYPE.equals(this.getGroupType())){
+			return true;
+		}
+		return false;
 	}
 } // Class Group

@@ -376,6 +376,15 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+
+	public boolean isUser(){
+		try{
+			return getGeneralGroup().isUser();	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
 	//
 	//
 	//

@@ -36,6 +36,7 @@ import javax.ejb.FinderException;
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
 	private static String sClassName = User.class.getName();
+	static String USER_GROUP_TYPE="ic_user_representative";
 
 	//    public UserBMPBean(){
 	//      super();
@@ -99,7 +100,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public String getGroupTypeKey() {
-		return "ic_user_representative";
+		return USER_GROUP_TYPE;
 	}
 	
 	public String ejbHomeGetGroupType(){
@@ -588,18 +589,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
 	public void removeUser(User p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method removeUser() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method removeUser() not supported.");
 	}
 	public void setGroupType(String p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
 	}
 	public String getGroupTypeValue() {
-		return "user_group_representative";
+		return USER_GROUP_TYPE;
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
 	}
@@ -609,7 +610,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	public void removeGroup() throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
 	/* public boolean equals(Group p0) throws java.rmi.RemoteException {
 	   //throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
@@ -618,11 +619,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 }*/
 	public void addGroup(Group p0) throws EJBException{
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
@@ -630,15 +631,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	public void addGroup(int p0) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	public List getChildGroups() throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not supported");
 	}
 	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not supported.");
 	}
 	public void removeGroup(Group p0) throws EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
@@ -681,6 +682,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
 	}
 
+	public boolean isUser(){
+		return true;
+	}
+	
 	public Iterator getChildren() {
 		return ListUtil.getEmptyList().iterator();
 	}
@@ -805,8 +810,20 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 */
 	public Integer ejbFindUserForUserGroup(Group userRepGroup) throws FinderException {
 		try{
-			int groupID = ((Integer) userRepGroup.getPrimaryKey()).intValue();
-			return this.ejbFindUserForUserGroup(groupID);
+			try{
+				int groupID = ((Integer) userRepGroup.getPrimaryKey()).intValue();
+				return this.ejbFindUserForUserGroup(groupID);
+			}
+			catch(FinderException e){
+				if(userRepGroup.isUser()){
+					//return this.getUserHome().findByPrimaryKey(userGroup.getPrimaryKey());
+					return (Integer)userRepGroup.getPrimaryKey();
+				}
+				else{
+					throw new IDOFinderException("UserBMPBean.ejbFindUserForUserGroup() : No User found for Group with id:"+userRepGroup.toString());
+				}
+			}
+
 		}
 		catch(RemoteException rme){
 			throw new IDOFinderException(rme);

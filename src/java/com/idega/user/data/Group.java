@@ -66,4 +66,5 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setHomePage(com.idega.builder.data.IBPage p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setHomePageID(int p0) throws java.rmi.RemoteException;
  public void setHomePageID(java.lang.Integer p0) throws java.rmi.RemoteException;
+ public boolean isUser();
   }

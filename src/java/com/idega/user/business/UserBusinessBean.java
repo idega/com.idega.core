@@ -1166,17 +1166,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return (User)userGroup;	
 			}
 			else{
-				return this.getUserHome().findUserForUserGroup(userGroup);
+				//try{
+					return this.getUserHome().findUserForUserGroup(userGroup);
+				//}
+				//catch(FinderException e){
+					//if(userGroup.isUser()){
+					//	return this.getUserHome().findByPrimaryKey(userGroup.getPrimaryKey());
+					//}
+				//}
 			}
 		}
 		catch(Exception e){
 			throw new IBORuntimeException(e);	
 		}
+		//throw new IBORuntimeException("Error find user for group "+userGroup.toString());
 	}
 	
 
 	/**
-	 * Cast a Group that is a "UserReresentative" Group to a User instance.
+	 * Cast a Collection of Groups that is a "UserReresentative" Group to a User instance.
 	 * @param userGroupCollection A Collection with instnances of a Group that are really a "UserReresentative" groups i.e. the Group representation of the User
 	 * @return Collection of user instances representing the Groups
 	 * @throws EJBException If an error occurs casting
