@@ -1696,16 +1696,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 //Methods added after big changes by Eiki
 	public static Collection getAllPermissions(Group group, String contextType){
-		Collection returnCol = null;
+		Collection returnCol = new Vector();//empty
 		try{
 			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType,group);
 		}
 		catch(FinderException ex){
-			returnCol =  new Vector();//empty
+			ex.printStackTrace();
 		}
 		catch(RemoteException x){
 			x.printStackTrace();
-			returnCol =  new Vector();//empty
 		}
 		
 		return returnCol;
@@ -1717,39 +1716,58 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 	
 	public static Collection getAllPermissionsOwnedByGroup(Group group, String contextType){
-		Collection returnCol = null;
+		Collection returnCol =  new Vector();//empty
 		try{
 			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,contextType);
 		}
 		catch(FinderException ex){
-			returnCol =  new Vector();//empty
+			ex.printStackTrace();
 		}
 		catch(RemoteException x){
 			x.printStackTrace();
-			returnCol =  new Vector();//empty
 		}
 		
 		return returnCol;
 		
 	}
+
+	public static Collection getAllPermissionsForContextTypeAndContextValue(String contextType,String contextValue){
+		Collection returnCol = new Vector();//empty
+		try{
+			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndContextValue(contextType,contextValue);
+		}
+		catch(FinderException ex){
+			ex.printStackTrace();
+		}
+		catch(RemoteException x){
+			x.printStackTrace();
+		}
+		
+		return returnCol;
+	}
+	
+	public static Collection getAllGroupPermissionsReverseForGroup(Group group){
+		return getAllPermissionsForContextTypeAndContextValue( AccessControl.CATEGORY_STRING_GROUP_ID, group.getPrimaryKey().toString());
+	}
+	
 	
 	public static Collection getAllGroupPermissionsOwnedByGroup(Group group){
-		Collection returnCol = null;
+		Collection returnCol =  new Vector();//empty
 		try{
 			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,AccessControl.CATEGORY_STRING_GROUP_ID);
 		}
 		catch(FinderException ex){
-			returnCol =  new Vector();//empty
+			ex.printStackTrace();
 		}
 		catch(RemoteException x){
 			x.printStackTrace();
-			returnCol =  new Vector();//empty
 		}
 		
 		return returnCol;
 		 
 	}
 	
+
 	public static Collection getAllGroupViewPermissions(Group group){
 			Collection returnCol = null;
 			try{
