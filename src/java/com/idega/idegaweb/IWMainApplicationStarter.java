@@ -244,10 +244,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		application.startAccessController();
 		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		
-		if(IWMainApplication.USE_JSF){
+		//if(IWMainApplication.USE_JSF){
 			application.loadViewManager();
 			sendStartMessage("Loaded the ViewManager");
-		}		
+		//}		
 		
 		application.loadBundles();
 

@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.119 2004/12/21 10:37:32 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.120 2004/12/21 12:56:16 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/21 12:56:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.119 $
+ * @version $Revision: 1.120 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -235,18 +235,26 @@ public class IWMainApplication //{//implements ServletContext{
 
     public void loadViewManager(){
     		
-    		ApplicationFactory factory = getApplicationFactory();
-		replaceJSFApplication(factory);
-		
-		Application app = factory.getApplication();
-		ViewHandler standardViewHandler = app.getViewHandler();
-		//ViewHandler iwViewHandler=origViewHandler;
-		
+
 		ViewManager viewManager = ViewManager.getInstance(this);
-		viewManager.initializeStandardViews(standardViewHandler);
-		
-		//Note: this ViewHandler instance will be changed later by 
-		// the IWFacesInstaller and IWViewHandlerImpl.
+		if(USE_JSF){
+	    	
+	    		ApplicationFactory factory = getApplicationFactory();
+			replaceJSFApplication(factory);
+			
+			Application app = factory.getApplication();
+			ViewHandler standardViewHandler = app.getViewHandler();
+			//ViewHandler iwViewHandler=origViewHandler;
+			
+			viewManager.initializeStandardViews(standardViewHandler);
+			
+			//Note: this ViewHandler instance will be changed later by 
+			// the IWFacesInstaller and IWViewHandlerImpl.
+		}
+		else{
+			//Here there is no default ViewHandler
+			viewManager.initializeStandardViews(null);
+		}
     }
     
     
