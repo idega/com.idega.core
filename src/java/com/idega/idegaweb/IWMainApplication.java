@@ -686,9 +686,9 @@ public class IWMainApplication{//implements ServletContext{
       crypto = (String) cryptoCodes.get(classObject.getName());
     }
     else{
-      long iCrypto = calculate(classObject.getName());
+      int iCrypto = calculate(classObject.getName());
       iCrypto += addon;
-      crypto = Long.toString(iCrypto);
+      crypto = Integer.toString(iCrypto);
       if( cryptoProps.containsKey(crypto) ){//if this was made before for a different class get me a new number
       	crypto = getHashCode(classObject,++addon);
       }
