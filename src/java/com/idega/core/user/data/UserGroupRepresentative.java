@@ -32,5 +32,8 @@ public class UserGroupRepresentative extends GenericGroup {
     return UserGroupRepresentative.class.getName();
   }
 
+  protected boolean identicalGroupExistsInDatabase() throws Exception {
+    return false;
+  }
 
 }

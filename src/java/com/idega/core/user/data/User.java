@@ -49,6 +49,8 @@ public class User extends GenericEntity {
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
       //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
+      this.setNullable(getColumnNameSystemImage(),true);
+      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
     }
 
     public void setDefaultValues(){
@@ -93,7 +95,7 @@ public class User extends GenericEntity {
     public static String getColumnNameDateOfBirth(){return "date_of_birth";}
     public static String getColumnNameGender(){return "ic_gender_id";}
     public static String getColumnNameSystemImage(){return "system_image_id";}
-    public static final String _COLUMNNAME_USER_GROUP_ID = "user_representive";
+    public static final String _COLUMNNAME_USER_GROUP_ID = "user_representative";
     public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "primary_group";
     /*  ColumNames end   */
 

@@ -407,13 +407,18 @@ public class GenericGroup extends GenericEntity{
           return EntityFinder.findAllOrdered(GenericGroup.getStaticInstance(),GenericGroup.getNameColumnName());
         }
 
+        protected boolean identicalGroupExistsInDatabase() throws Exception {
+          return SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'").length > 0;
+        }
+
+
         public void insert()throws SQLException{
           try {
-            if(!this.getName().equals("")){
-              if(SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'").length > 0){
+//            if(!this.getName().equals("")){
+              if(identicalGroupExistsInDatabase()){
                 throw new SQLException("group with same name and type already in database");
               }
-            }
+//            }
             super.insert();
           } catch (Exception ex) {
             if(ex instanceof SQLException ){

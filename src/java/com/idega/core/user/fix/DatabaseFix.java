@@ -37,9 +37,12 @@ public class DatabaseFix {
         User item = (User)iter.next();
         System.err.print("Fixing user: "+item.getID());
         try {
-          if(item.getGroupID() == -1){
+          if(item.getGroupID() < 1){
             UserGroupRepresentative group = new UserGroupRepresentative();
+            group.setName(item.getName());
             group.insert();
+
+            System.err.println("item : "+item.getID()+", group = "+group.getID());
 
             item.setGroupID(group.getID());
             item.update();
@@ -55,12 +58,15 @@ public class DatabaseFix {
             }
             System.err.println(" - fixed");
           } else {
-            System.err.println(" - not needed");
+            System.err.println(" - not needed, groupid = "+item.getGroupID());
           }
         } catch (Exception ex) {
           System.err.println(" - failed");
         }
       }
+      System.err.println("done");
+    } else {
+      System.err.println("no Users");
     }
   }
 }
