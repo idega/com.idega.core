@@ -16,7 +16,7 @@ import com.idega.presentation.text.Link;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -37,6 +37,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	String nodeNameTarget = null;
 	String nodeActionPrm = null;
 	Link _linkPrototype = null;
+	Link _linkOpenClosePrototype = null;
 	String _linkStyle = null;
 	boolean _usesOnClick = false;
 	private boolean _nowrap = true;
@@ -93,7 +94,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		getParentPage().setAssociatedScript(script);
 	}
 
-	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
+	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodesOpen, boolean nodeHasChild, boolean isRootNode) {
 		boolean fromEditor = false;
 		if (iwc.isParameterSet("from_editor")) {
 			fromEditor = true;
@@ -102,75 +103,101 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		switch (colIndex) {
 			case 1 :
-				if (!node.isLeaf()) {
-					if (nodeIsOpen) {
-						if (isRootNode && !showRootNodeTreeIcons()) {
-							Link l = new Link();
-							l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
-							if (!nodeIsOpen) {
-								setLinkToOpenOrCloseNode(l, node, nodeIsOpen);
-							}
-							return l;
-						}
-						else {
-							return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
-						}
-					}
-					else {
-						if (isRootNode && !showRootNodeTreeIcons()) {
-							Link l = new Link();
-							l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
-							setLinkToOpenOrCloseNode(l, node, nodeIsOpen);
-							return l;
-						}
-						else {
-							return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
-						}
-					}
-				}
-				else {
-					if (isRootNode && !showRootNodeTreeIcons()) {
-						Link l = new Link();
-						l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE]);
-						setLinkToOpenOrCloseNode(l, node, nodeIsOpen);
-						return l;
-					}
-					else {
-						return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE];
-					}
-				}
+				return getFirstColumnObject(node, nodesOpen, isRootNode);
 			case 2 :
-				String nodeName = null;
-				String titleName = null;
-				if (node instanceof PageTreeNode)
-					nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
-				else
-					nodeName = node.getNodeName();
-					
-				if (_maxNodeNameLength > 0) {
-					if (nodeName.length() > _maxNodeNameLength) {
-						titleName = nodeName;
-						nodeName = nodeName.substring(0,_maxNodeNameLength-3) + "...";
-					} 
-				}
-				
-				Link l = getLinkPrototypeClone(nodeName);
-				if (titleName != null)
-					l.setAttribute("title",titleName);
-				if (_usesOnClick) {
-					l.setURL("#");
-					if (fromEditor)
-						l.setOnClick("save('http://" + iwc.getServerName() + BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID()) + "','_self')");
-					else
-						l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeID() + "')");
-				}
-				else if (nodeActionPrm != null) {
-					l.addParameter(nodeActionPrm, node.getNodeID());
-				}
-				setLinkToMaintainOpenAndClosedNodes(l);
-				return l;
+				return getSecondColumnObject(node, iwc, fromEditor);
 		}
 		return null;
+	}
+	
+	public boolean getShortenedNodeName(String nodeName){
+		if (_maxNodeNameLength > 0) {
+			if (nodeName.length() > _maxNodeNameLength) {
+				nodeName = nodeName.substring(0,_maxNodeNameLength-3) + "...";
+				return true;
+			} 
+		}
+		return false;
+	}
+
+	public PresentationObject getSecondColumnObject(ICTreeNode node, IWContext iwc, boolean fromEditor) {
+		String nodeName = null;
+		String titleName = null;
+		if (node instanceof PageTreeNode)
+			nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
+		else
+			nodeName = node.getNodeName();
+			
+		titleName = nodeName;
+		if(!getShortenedNodeName(nodeName))
+			titleName = null;
+		/*	
+		if (_maxNodeNameLength > 0) {
+			if (nodeName.length() > _maxNodeNameLength) {
+				titleName = nodeName;
+				nodeName = nodeName.substring(0,_maxNodeNameLength-3) + "...";
+			} 
+		}
+		*/
+		
+		Link l = getLinkPrototypeClone(nodeName);
+		if (titleName != null)
+			l.setAttribute("title",titleName);
+		if (_usesOnClick) {
+			l.setURL("#");
+			if (fromEditor)
+				l.setOnClick("save('http://" + iwc.getServerName() + BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID()) + "','_self')");
+			else
+				l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeID() + "')");
+		}
+		else if (nodeActionPrm != null) {
+			l.addParameter(nodeActionPrm, node.getNodeID());
+		}
+		setLinkToMaintainOpenAndClosedNodes(l);
+		return l;
+	}
+
+	public PresentationObject getFirstColumnObject(ICTreeNode node, boolean nodesOpen, boolean isRootNode) {
+		if (!node.isLeaf()) {
+			if (nodesOpen) {
+				if (isRootNode && !showRootNodeTreeIcons()) {
+					//Link l = new Link();
+					Link l = getLinkOpenClosePrototype();
+					l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
+					if (!nodesOpen) {
+						setLinkToOpenOrCloseNode(l, node, nodesOpen);
+					}
+					return l;
+				}
+				else {
+					return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
+				}
+			}
+			else {
+				if (isRootNode && !showRootNodeTreeIcons()) {
+					//Link l = new Link();
+					Link l = getLinkOpenClosePrototype();
+					l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
+					setLinkToOpenOrCloseNode(l, node, nodesOpen);
+					return l;
+				}
+				else {
+					return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
+				}
+			}
+		}
+		else {
+			if (isRootNode && !showRootNodeTreeIcons()) {
+				//Link l = new Link();
+				Link l = getLinkOpenClosePrototype();
+				l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE]);
+				setLinkToOpenOrCloseNode(l, node, nodesOpen);
+				return l;
+			}
+			else {
+				return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE];
+			}
+		}
 	}
 
 	public void setWrap() {
@@ -195,6 +222,21 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	public void setLinkPrototype(Link link) {
 		_linkPrototype = link;
+	}
+	
+	private Link getLinkOpenClosePrototype() {
+		if (_linkOpenClosePrototype == null) {
+			_linkOpenClosePrototype = new Link();
+		}
+		return _linkOpenClosePrototype;
+	}
+	
+	public void setLinkOpenClosePrototype(Link link) {
+			_linkOpenClosePrototype = link;
+	}
+	
+	private Link getLinkOpenClosePrototypeClone() {
+			return (Link) getLinkOpenClosePrototype().clone();
 	}
 
 	private Link getLinkPrototype() {
