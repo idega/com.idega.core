@@ -1,7 +1,7 @@
 package com.idega.core.data;
 
 import com.idega.data.*;
-
+import java.util.Locale;
 
 /**
  * Title:        IW Core
@@ -91,6 +91,14 @@ public class ICLocale extends GenericEntity {
   }
   public boolean getInUse(){
     return getBooleanColumnValue(getColumnNameInUse());
+  }
+
+  public Locale getLocaleObject(){
+    String localeString = this.getLocale();
+    if(localeString!=null){
+      return com.idega.core.localisation.business.ICLocaleBusiness.getLocaleFromLocaleString(localeString);
+    }
+    return null;
   }
 
 }

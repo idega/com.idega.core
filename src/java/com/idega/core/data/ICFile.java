@@ -14,7 +14,7 @@ import com.idega.presentation.IWContext;
 import com.idega.util.idegaTimestamp;
 import java.util.Iterator;
 import com.idega.idegaweb.IWCacheManager;
-
+import java.util.Locale;
 
 /**
  * Title:        idegaWeb Classes
@@ -47,7 +47,9 @@ public class ICFile extends TreeableEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute(getColumnNameLanguageId(),"Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
+    //Removed LanguageIDColumn in favor of Locale
+    //addAttribute(getColumnNameLanguageId(),"Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
+    addAttribute(getColumnNameLocale(),"Locale",true,true, Integer.class,"many-to-one",ICLocale.class);
     addAttribute(getColumnNameMimeType(),"Mime Type of file",true,true, String.class,100,"many-to-one",ICMimeType.class);
     addAttribute(getColumnNameName(),"File name",true,true, String.class, 255);
     addAttribute(getColumnNameDescription(),"Description",true,true, String.class, 1000);
@@ -78,10 +80,14 @@ public class ICFile extends TreeableEntity {
   public static String getColumnNameCreationDate(){return "CREATION_DATE";}
   public static String getColumnNameModificationDate(){return "MODIFICATION_DATE";}
   public static String getColumnNameFileSize(){return "FILE_SIZE";}
-  public static String getColumnNameLanguageId(){return "IC_LANGUAGE_ID";}
+  public static String getColumnNameLocale() {return "IC_LOCALE_ID";}
   public static String getColumnDeleted() {return "DELETED";}
   public static String getColumnDeletedBy() {return "DELETED_BY";}
   public static String getColumnDeletedWhen() {return "DELETED_WHEN";}
+  /**
+   * @deprecated Replaced with getColumnLocale()
+   */
+  public static String getColumnNameLanguageId(){return "IC_LANGUAGE_ID";}
 
   public static String getColumnFileValue(){
     return FILE_VALUE;
@@ -177,6 +183,26 @@ public class ICFile extends TreeableEntity {
   public void update()throws SQLException{
     this.setModificationDate(com.idega.util.idegaTimestamp.getTimestampRightNow());
     super.update();
+  }
+
+  public Locale getLocale(){
+    ICLocale icLocale = this.getICLocale();
+    if(icLocale!=null){
+      return icLocale.getLocaleObject();
+    }
+    return null;
+  }
+
+  public ICLocale getICLocale(){
+    return (ICLocale)super.getColumnValue(this.getColumnNameLocale());
+  }
+
+  public int getLocaleId(){
+    return super.getIntColumnValue(this.getColumnNameLocale());
+  }
+
+  public void setLocale(){
+    super.getIntColumnValue(this.getColumnNameLocale());
   }
 
 // and here are the delete functions
