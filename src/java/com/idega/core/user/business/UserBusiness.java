@@ -2,6 +2,7 @@ package com.idega.core.user.business;
 
 import java.sql.SQLException;
 import com.idega.core.user.data.*;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
 import com.idega.util.idegaTimestamp;
 import java.util.List;
@@ -67,6 +68,23 @@ public class UserBusiness {
     return userToAdd;
 
   }
+
+
+  public static void deleteUser(int userId) throws SQLException {
+    User delUser = new User(userId);
+
+    delUser.removeFrom(GenericGroup.getStaticInstance());
+    delUser.removeFrom((Address)Address.getStaticInstance(Address.class));
+    delUser.removeFrom((Email)Email.getStaticInstance(Email.class));
+    delUser.removeFrom((Phone)Phone.getStaticInstance(Phone.class));
+
+    LoginDBHandler.deleteUserLogin(userId);
+
+    delUser.delete();
+
+  }
+
+
 
   /**
    * Male: M, male, 0

@@ -107,6 +107,8 @@ public class LoginDBHandler {
  }
 
 
+
+
   protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
     List noLoginInfo = EntityFinder.findAllByColumn(LoginInfo.getStaticInstance(), LoginInfo.getLoginTableIdColumnName(), loginTableID);
 
@@ -275,5 +277,23 @@ public class LoginDBHandler {
     }
     return LT;
   }
+
+  public static void deleteUserLogin(int userId)throws SQLException {
+      deleteLogin(findUserLogin(userId));
+  }
+
+  public static void deleteLogin(LoginTable login) throws SQLException {
+    if(login != null){
+      LoginInfo li = new LoginInfo(login.getID());
+
+      li.delete();
+
+      login.delete();
+
+    }
+  }
+
+
+
 
 }
