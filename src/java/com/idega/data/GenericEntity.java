@@ -2236,6 +2236,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				Integer tempInt = (Integer) enum.nextElement();
 				vector.addElement(new IDOLegacyEntity(tempInt.intValue()));
 			}*/
+		this.logSQL(SQLString);
 		List list = EntityFinder.findAll((IDOLegacyEntity)this, SQLString, returningNumberOfRecords);
 		if (list != null) {
 			return (IDOLegacyEntity[])list.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(), 0));
