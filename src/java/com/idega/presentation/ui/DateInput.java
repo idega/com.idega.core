@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.24 2003/03/14 11:19:03 laddi Exp $
+ * $Id: DateInput.java,v 1.25 2003/03/25 13:08:44 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -420,6 +420,8 @@ public class DateInput extends InterfaceObjectContainer {
   }
 
   public void main(IWContext iwc) throws Exception {
+  	this.empty();
+  	System.out.println("Entering main");
     setSetValues();
     addLocalized(iwc);
     addScriptElements(iwc);
