@@ -1,6 +1,5 @@
 package com.idega.event;
 
-import com.idega.business.IBOHomeImpl;
 
 
 public class IWFrameBusinessHomeImpl extends com.idega.business.IBOHomeImpl implements IWFrameBusinessHome

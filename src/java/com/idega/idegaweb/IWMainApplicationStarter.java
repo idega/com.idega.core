@@ -17,7 +17,6 @@ import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
 import com.idega.util.refactor.RefactorClassRegistry;
-import com.idega.util.reflect.MethodFinder;
 
 
 /**

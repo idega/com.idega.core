@@ -2,14 +2,11 @@ package com.idega.core.localisation.presentation;
 
 import java.util.Enumeration;
 
-
-//import com.idega.development.presentation.IWDeveloper;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
-import com.idega.util.LocaleUtil;
 
 /**
  * Title:        idega Framework
