@@ -13,6 +13,7 @@ import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import org.apache.commons.logging.LogFactory;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
@@ -566,6 +567,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// therefore stop first and then end database pool
 		endDatabasePool();
 		sendShutdownMessage("Completed");
+		LogFactory factory = LogFactory.getFactory();
+		if (factory != null) {
+			factory.release();
+		}
 	}
 	public void sendStartMessage(String message) {
 		System.out.println("[idegaWeb] : startup : " + message);
