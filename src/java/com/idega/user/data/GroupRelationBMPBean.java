@@ -7,6 +7,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOQuery;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
@@ -384,4 +385,121 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     setPassiveBy(userId);
     store();
   }
+  
+  
+  public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
+  	
+	//constructing query
+	IDOQuery query = idoQuery();
+	//select
+	query.appendSelectAllFrom(this);
+	//where
+	query.appendWhere();
+	query.appendEquals(GROUP_ID_COLUMN,String.valueOf(group.getPrimaryKey()));
+	//and
+	query.appendAnd();
+	query.appendEquals(RELATED_GROUP_ID_COLUMN,String.valueOf(relatedGroup.getPrimaryKey()));
+	//and
+	query.appendAnd();
+	query.append(TERMINATION_DATE_COLUMN);
+	query.appendGreaterThanOrEqualsSign();
+	query.append(firstDateInPeriod);
+	//and
+	query.appendAnd();
+	query.append(TERMINATION_DATE_COLUMN);
+	query.appendLessThanOrEqualsSign();
+	query.append(lastDateInPeriod);
+	
+	
+	//and if relationstatus
+	if(relationStatus!= null){
+		//and
+		query.appendAnd();
+		query.append(STATUS_COLUMN);
+		query.appendInArrayWithSingleQuotes(relationStatus);		
+	}
+  	
+//	System.out.println("SQL -> "+this.getClass()+":"+query);
+	return idoFindPKsByQuery(query); 
+	
+
+  }
+  
+  public Collection ejbFindAllGroupsRelationshipsValidWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
+  	
+		//constructing query
+		IDOQuery query = idoQuery();
+		//select
+		query.appendSelectAllFrom(this);
+		//where
+		query.appendWhere();
+		query.appendEquals(GROUP_ID_COLUMN,String.valueOf(group.getPrimaryKey()));
+		//and
+		query.appendAnd();
+		query.appendEquals(RELATED_GROUP_ID_COLUMN,String.valueOf(relatedGroup.getPrimaryKey()));
+		//and
+		query.appendAnd();
+		query.append(INITIATION_DATE_COLUMN);
+		query.appendLessThanOrEqualsSign();
+		query.append(firstDateInPeriod);
+		//and
+		query.appendAnd();
+		query.append(TERMINATION_DATE_COLUMN);
+		query.appendGreaterThanSign();
+		query.append(lastDateInPeriod);
+	
+	
+		//and if relationstatus
+		if(relationStatus!= null){
+			//and
+			query.appendAnd();
+			query.append(STATUS_COLUMN);
+			query.appendInArrayWithSingleQuotes(relationStatus);		
+		}
+  	
+//		System.out.println("SQL -> "+this.getClass()+":"+query);
+		return idoFindPKsByQuery(query); 
+	
+
+  }
+  
+  
+	public Collection ejbFindAllGroupsRelationshipsValidBeforeAndPastSpecifiedTime(Group group, Group relatedGroup, Timestamp time, String[] relationStatus) throws FinderException{
+  	
+		//constructing query
+		IDOQuery query = idoQuery();
+		//select
+		query.appendSelectAllFrom(this);
+		//where
+		query.appendWhere();
+		query.appendEquals(GROUP_ID_COLUMN,String.valueOf(group.getPrimaryKey()));
+		//and
+		query.appendAnd();
+		query.appendEquals(RELATED_GROUP_ID_COLUMN,String.valueOf(relatedGroup.getPrimaryKey()));
+		//and
+		query.appendAnd();
+		query.append(INITIATION_DATE_COLUMN);
+		query.appendLessThanSign();
+		query.append(time);
+		//and
+		query.appendAnd();
+		query.append(TERMINATION_DATE_COLUMN);
+		query.appendGreaterThanSign();
+		query.append(time);
+	
+	
+		//and if relationstatus
+		if(relationStatus!= null){
+			//and
+			query.appendAnd();
+			query.append(STATUS_COLUMN);
+			query.appendInArrayWithSingleQuotes(relationStatus);		
+		}
+  	
+//		System.out.println("SQL -> "+this.getClass()+":"+query);
+		return idoFindPKsByQuery(query); 
+	
+
+	}
+  
 }
