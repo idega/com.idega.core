@@ -6,6 +6,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.RemoveException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import java.rmi.RemoteException;
@@ -47,7 +48,8 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   	if(_iwuc instanceof IWContext){
 		IWContext iwc = (IWContext)_iwuc;
   		HttpSession session = iwc.getSession();
-  		iwucToSet = new IWUserContextImpl(session);
+  		ServletContext sc = iwc.getServletContext();
+  		iwucToSet = new IWUserContextImpl(session,sc);
   	}
     this.iwuc=iwucToSet;
   }

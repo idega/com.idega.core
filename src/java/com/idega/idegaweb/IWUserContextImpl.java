@@ -5,6 +5,7 @@
 
 package com.idega.idegaweb;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import com.idega.presentation.IWContext;
@@ -21,9 +22,11 @@ import com.idega.presentation.IWContext;
  */
 public class IWUserContextImpl extends IWContext implements IWUserContext{
 	private HttpSession session;
+	
 
-	public IWUserContextImpl(HttpSession session){
+	public IWUserContextImpl(HttpSession session,ServletContext sc){
 		this.session=session;	
+		this.setServletContext(sc);
 	}
 	
 	public HttpSession getSession(){
