@@ -90,7 +90,7 @@ public class IWCoreServlet extends HttpServlet
 	 * @return true if successfully unSet.
 	 */
 	protected boolean unSetSyncronizedAccess(ServletRequest _req, ServletResponse _res){
-		return isFirstAccessor=true;
+		return isFirstAccessor=false;
 	}
 	
 	
