@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.14 2003/07/05 17:21:46 gummi Exp $
+ * $Id: BlobWrapper.java,v 1.15 2004/03/19 11:30:17 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,12 +21,12 @@ import com.idega.io.MemoryOutputStream;
 public class BlobWrapper {
 	private int status;
 	private InputStream writeInputStream;
-	private InputStream readInputStream;
-	private OutputStream readOutputStream;
+// unused private InputStream readInputStream;
+// unused 	private OutputStream readOutputStream;
 	private OutputStream writeOutputStream;
 	private String columnName;
 	private String tableName;
-	private String dataSourceName;
+// unused	private String dataSourceName;
 	private BlobInputStream blobInputStream;
 	//private Connection conn;
 	private GenericEntity entity;
@@ -143,7 +143,7 @@ public class BlobWrapper {
 	
 	  }*/
 	public BlobInputStream getBlobInputStream(){
-		if (blobInputStream == null) {
+		if (blobInputStream == null || blobInputStream.isClosed()) {
 			blobInputStream = (new BlobInputStream(this.entity, this.getTableColumnName()));
 		}
 		return blobInputStream;
@@ -175,12 +175,16 @@ public class BlobWrapper {
 	protected String getTableName() {
 		return this.tableName;
 	}
-	private void setDatasource(String datasourceName) {
-		this.dataSourceName = datasourceName;
-	}
-	private String getDatasource() {
-		return this.dataSourceName;
-	}
+	
+// unused methods	
+//	private void setDatasource(String datasourceName) {
+//		this.dataSourceName = datasourceName;
+//	}
+//	private String getDatasource() {
+//		return this.dataSourceName;
+//	}
+	
+	
 	/*protected Connection getConnection() {
 	
 	  return conn;
@@ -223,7 +227,7 @@ public class BlobWrapper {
 			System.err.println("Error in BlobWrapper close(): " + ex.getMessage());
 			ex.printStackTrace(System.err);
 		}
-		this.setStatus(this.IS_CLOSED);
+		this.setStatus(BlobWrapper.IS_CLOSED);
 	}
 	/*
 	
@@ -496,7 +500,7 @@ public class BlobWrapper {
 		}
 	}
 	protected void finalize() throws Throwable {
-		if (!(this.getStatus() == this.IS_CLOSED)) {
+		if (!(this.getStatus() == BlobWrapper.IS_CLOSED)) {
 			close();
 		}
 		super.finalize();
