@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.4 2005/01/24 18:26:50 thomas Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.5 2005/02/01 18:04:09 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,6 +28,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.MutableClass;
 import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
@@ -35,12 +36,12 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/01/24 18:26:50 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/01 18:04:09 $ by $Author: thomas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
-public abstract class SQLSchemaAdapter {
+public abstract class SQLSchemaAdapter implements MutableClass {
 
 	private static final boolean DEFAULT_VALUE_USE_PREPARED_STATEMENT = true;
 	private static Hashtable interfacesHashtable = null;
