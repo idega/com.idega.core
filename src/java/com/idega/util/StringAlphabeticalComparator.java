@@ -23,7 +23,7 @@ public class StringAlphabeticalComparator implements Comparator {
 	 */
 	public int compare(Object o1, Object o2) {
 		Collator collator = Collator.getInstance(_locale);		
-		return collator.compare((String)o1,(String)o1);
+		return collator.compare((String)o1,(String)o2);
 	}
 
 }
