@@ -28,10 +28,10 @@ public class Executer {
   public static void main(String[] args) {
     try {
       if (args != null) {
-        Runtime runner = Runtime.getRuntime();
+
         for (int i = 0; i < args.length; i++) {
           System.out.println("com.idega.util.Executer args["+i+"] = "+args[i]);
-          Process p = runner.exec(args[i]);
+          Process p = Runtime.getRuntime().exec(args[i]);
           StringBuffer sbOut = new StringBuffer(1000);
           BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
           while (true) {
@@ -42,7 +42,7 @@ public class Executer {
             System.out.println(s);
           }
           br.close();
-          p.waitFor();
+          //p.waitFor();
           System.out.println(sbOut.toString());
           System.out.println("Exit status: " + p.exitValue());
           p.destroy();

@@ -106,7 +106,6 @@ public class IWStarterServlet extends GenericServlet
 	protected void addToClassPath(){
           String classPathProperty = "java.class.path";
           String classPath = System.getProperty(classPathProperty);
-                      System.out.println("CLASSPATH : "+classPath);
           StringBuffer classes = new StringBuffer(classPath);
 
 	  File webINF = new File(this.getServletContext().getRealPath("/WEB-INF/classes"));

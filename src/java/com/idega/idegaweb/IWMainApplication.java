@@ -74,6 +74,7 @@ public class IWMainApplication{//implements ServletContext{
   private static IWCacheManager cacheManager;
   private static boolean alreadyUnLoaded = false;//for restartApplication
 
+  private static final String APACHE_RESTART_PARAMETER = "apache";
 
   public IWMainApplication(ServletContext application){
     this.application=application;
@@ -508,6 +509,8 @@ public class IWMainApplication{//implements ServletContext{
    * Only works when running on Tomcat
    */
   public boolean restartApplication(){
+    String apache = this.getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart apache string
+
     unload();
 
     String prePath = System.getProperty("user.dir");//return /tomcat/bin
@@ -515,13 +518,28 @@ public class IWMainApplication{//implements ServletContext{
 
     try{//windows
       if(System.getProperty("os.name").toLowerCase().indexOf("win")!=-1){
-	String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat"};
-        Executer.executeInAnotherVM(array);
+        if(apache==null){
+          String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat"};
+          Executer.executeInAnotherVM(array);
+        }
+        else{
+          String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat",apache};
+          Executer.executeInAnotherVM(array);
+        }
       }
       else{//unix
-	String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh"};
-	Executer.executeInAnotherVM(array);
+        if(apache==null){
+          String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh"};
+          Executer.executeInAnotherVM(array);
+        }
+        else{
+          String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh",apache};
+          Executer.executeInAnotherVM(array);
+        }
+
       }
+
+
 
       return true;
     }
