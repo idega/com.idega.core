@@ -8,7 +8,7 @@ import com.idega.presentation.ui.TextArea;
 public class TextEditor extends PresentationObject {
   public static final String DEFAULT_HIDDEN_TEXTEDITOR_INPUT_NAME = "myTextEditor";
   private String width = "300";
-  private String height = "400";
+  private String height = "300";
   private String color = "white";
   private boolean menues = true;
   private String text = "";
@@ -38,7 +38,7 @@ public class TextEditor extends PresentationObject {
   }
 
   public void main(IWContext iwc) {
-    if( iwc.isIE() ){
+    if( iwc.isIE() && (!iwc.isMacOS()) ){
       Page parent = getParentPage();
       parent.addScriptSource(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/dhtmledit/dhtmleditor.js");
       parent.addScriptSource(this.getBundle(iwc).getResourcesVirtualPath()+"/texteditor/js/windows.js");
@@ -90,18 +90,30 @@ public class TextEditor extends PresentationObject {
         //HiddenInput html = new HiddenInput("iw_editor2[Text]",""); this is the original name for the hidden html field
         */
 
-        HiddenInput html = new HiddenInput(inputName,TextSoap.findAndReplace(text,"\"","\\\""));
-        html.print(iwc);
+
+        Layer source = new Layer();
+        source.setZIndex(1);
+        source.setVisibility("hidden");
+        source.setLeftPosition(-500);
+        source.setTopPosition(-500);
+
+        TextArea sourceView = new TextArea(inputName,text,65,18);
+        source.add(sourceView);
 
         String menu = "1";
         if(!menues ){
           menu = "0";
         }
 
-        println("<script language=\"JavaScript1.2\">");
-        println("new DHTMLEdit(\""+inputName+"\","+width+","+height+",\"\","+menu+",\""+color+"\");");
-        println("</script>");
 
+        StringBuffer buf = new StringBuffer();
+        buf.append("<script language=\"JavaScript1.2\">");
+        buf.append("new DHTMLEdit(\"").append(inputName).append("\",").append(width).append(",").append(height)
+            .append(",\"\",").append(menu).append(",\"").append(color).append("\");");
+        buf.append("</script>");
+
+        source.print(iwc);
+        println(buf.toString());
 
       }
       else{
