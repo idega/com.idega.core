@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.2 2001/10/15 17:36:11 tryggvil Exp $
+ * $Id: AbstractChooser.java,v 1.3 2001/10/31 13:12:38 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,6 +36,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private Form _form = null;
   private Image _buttonImage = null;
   private String _style;
+  private String _stringValue;
+  private String _stringDisplay;
 
   /**
    *
@@ -63,6 +65,23 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     if (displayInputName == DISPLAYSTRING_PARAMETER) {
       displayInputName = parameterName + "_displaystring";
     }
+  }
+
+  protected void setChooserValue(String displayString,String valueString){
+    this._stringValue=valueString;
+    this._stringDisplay=displayString;
+  }
+
+  protected void setChooserValue(String displayString,int valueInt){
+    setChooserValue(displayString,Integer.toString(valueInt));
+  }
+
+  public void setValue(Object objectValue){
+    setValue(objectValue.toString());
+  }
+
+  public void setValue(String stringValue){
+    setChooserValue(stringValue,stringValue);
   }
 
   /**
@@ -110,11 +129,16 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     table.setCellspacing(0);
     TextInput input = new TextInput(displayInputName);
     input.setDisabled(true);
+
     if (_style != null) {
       input.setAttribute("style",_style);
     }
     Parameter value = new Parameter(getChooserParameter(),"");
     table.add(value);
+    if(_stringValue!=null && _stringDisplay != null){
+      input.setValue(_stringDisplay);
+      value.setValue(_stringValue);
+    }
     table.add(new Parameter(VALUE_PARAMETER_NAME,value.getName()));
     //GenericButton button = new GenericButton("chooserbutton",bundle.getResourceBundle(iwc).getLocalizedString(chooserText,"Choose"));
     if (_addForm) {
