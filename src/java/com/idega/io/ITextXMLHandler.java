@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -72,7 +73,7 @@ public class ITextXMLHandler {
 	 * @param xmlIS
 	 * @return MemoryBuffer[]
 	 */
-	public MemoryFileBuffer[] writeToBuffers(Map tagMap, InputStream xmlIS ){
+	public List writeToBuffers(Map tagMap, InputStream xmlIS ){
 		return  writeToBuffers(getDocument(PageSize.A4), tagMap,  xmlIS );
 	}
 	
@@ -82,7 +83,7 @@ public class ITextXMLHandler {
 	 * @param xmlURL
 	 * @return
 	 */
-	public MemoryFileBuffer[] writeToBuffers(Map tagMap, String xmlURI ){
+	public List writeToBuffers(Map tagMap, String xmlURI ){
 			try {
 				return  writeToBuffers(getDocument(PageSize.A4), tagMap,  new FileInputStream(xmlURI) );
 			}
@@ -100,30 +101,34 @@ public class ITextXMLHandler {
 	 * @param xmlIS
 	 * @return
 	 */
-	public MemoryFileBuffer[] writeToBuffers(Document document,Map tagMap, InputStream xmlIS ){
+	public List writeToBuffers(Document document,Map tagMap, InputStream xmlIS ){
 		
 			try {
 				Vector buffers = new Vector();
 				Vector oses = new Vector();
+				System.out.println("Type is "+this.fileType);
 				if((fileType & PDF) == 1){
-					MemoryFileBuffer bout = new MemoryFileBuffer();
-					OutputStream OS = new MemoryOutputStream(bout);
+					System.out.println("starting PDF buffer");
+					MemoryFileBuffer buf = new MemoryFileBuffer();
+					OutputStream OS = new MemoryOutputStream(buf);
 					PdfWriter.getInstance(document, OS);
-					buffers.add(OS);
+					buffers.add(buf);
 					oses.add(OS);
 				}
-				if((fileType & TXT)==1){
-					MemoryFileBuffer bout = new MemoryFileBuffer();
-					OutputStream OS = new MemoryOutputStream(bout);
+				if((fileType & TXT)==2){
+					System.out.println("starting TXT buffer");
+					MemoryFileBuffer buf = new MemoryFileBuffer();
+					OutputStream OS = new MemoryOutputStream(buf);
 					TxtWriter.getInstance(document, OS);
-					buffers.add(OS);
+					buffers.add(buf);
 					oses.add(OS);
 				}
-				if((fileType & TXT)==1){
-						MemoryFileBuffer bout = new MemoryFileBuffer();
-						OutputStream OS = new MemoryOutputStream(bout);
+				if((fileType & HTML)==4){
+						System.out.println("starting HTML buffer");
+						MemoryFileBuffer buf = new MemoryFileBuffer();
+						OutputStream OS = new MemoryOutputStream(buf);
 						HtmlWriter.getInstance(document, OS);
-						buffers.add(OS);
+						buffers.add(buf);
 						oses.add(OS);
 				}
 				
@@ -137,7 +142,7 @@ public class ITextXMLHandler {
 					OutputStream os = (OutputStream) iter.next();
 					os.close();			
 				}
-				return (MemoryFileBuffer[])buffers.toArray();
+				return buffers;
 			}
 			catch (DocumentException e) {
 				
