@@ -48,10 +48,21 @@ public class PersonalIDFormatter {
 		return originalString;
 	}
 	
+	/**
+	 * Strips all non-digit characters from the given id and puts a database wildcard in front of it
+	 * @param personalID
+	 * @return
+	 */
 	public static String stripForDatabaseSearch(String personalID){
 		return stripForDatabaseSearch(personalID,false);
 	}
 	
+	/**
+	 * Strips all non-digit characters from the given id and puts a database wildcard in front and back of it
+	 * @param personalID
+	 * @param trailingWildCard
+	 * @return
+	 */
 	public static String stripForDatabaseSearch(String personalID,boolean trailingWildCard){
 		StringBuffer sb = new StringBuffer();
 
