@@ -73,6 +73,8 @@ public class IWMainApplication{//implements ServletContext{
   public IWMainApplication(ServletContext application){
     this.application=application;
     application.setAttribute(ApplicationStorageParameterName,this);
+    //attention this must be reviewed if we implement multi domains within one virtualmachine
+    cacheManager = IWCacheManager.getInstance(this);
     load();
   }
 
@@ -97,10 +99,6 @@ public class IWMainApplication{//implements ServletContext{
     this.setPropertiesRealPath();
     IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
     setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
-    //attention this must be reviewed if we implement multi domains within one virtualmachine
-    cacheManager = IWCacheManager.getInstance(this);
-    //
-
     System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
 
