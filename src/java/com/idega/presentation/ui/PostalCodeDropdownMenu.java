@@ -15,11 +15,11 @@ import java.util.*;
  * 
  * @author Eirikur Hrafnsson	
  */
-class PostalCodeDropdownMenu extends DropdownMenu {
+public class PostalCodeDropdownMenu extends DropdownMenu {
 	
 	private Country country = null;
 	private String countryName = null;
-	private static final String IW_POSTAL_CODE_MENU_PARAM_NAME="iw_postal_code_id";
+	public static final String IW_POSTAL_CODE_MENU_PARAM_NAME="iw_postal_code_id";
 	
 	public PostalCodeDropdownMenu(){
 		super(IW_POSTAL_CODE_MENU_PARAM_NAME); 
