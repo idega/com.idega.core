@@ -73,6 +73,16 @@
 	      </resource>
 	    </resources>
     </build>
+  <dependencies>
+	<!--This is only needed for the statcvs report -->
+	<dependency>
+	  <groupId>statcvs</groupId>
+	  <artifactId>maven-statcvs-plugin</artifactId>
+	  <version>2.5</version>
+	  <type>plugin</type>
+	</dependency>
+  </dependencies>
+  
   <reports>
     <report>maven-tasklist-plugin</report>
     <report>maven-changes-plugin</report>
