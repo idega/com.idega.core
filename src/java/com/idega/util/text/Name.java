@@ -60,7 +60,10 @@ import com.idega.util.LocaleUtil;
     public String getName(Locale locale, boolean commaSeperated) {
     		if (fullName == null) {
     			StringBuffer buffer = new StringBuffer();
-    			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
+    			 firstName = (firstName==null) ? "" : firstName;
+	    		 middleName = (middleName==null) ? "" : middleName;
+	    		 lastName = (lastName==null) ? "" : lastName;
+    			if (locale.equals(LocaleUtil.getIcelandicLocale())) {     
     				buffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
     			}
     			else {
