@@ -27,6 +27,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	public static final String ACTION_ON_CHANGE = "onChange";
 	public static final String ACTION_ON_CLICK = "onClick";
 	public static final String ACTION_ON_FOCUS = "onFocus";
+	public static final String ACTION_ON_KEY_PRESS = "onKeyPress";
 	public static final String ACTION_ON_KEY_DOWN = "onKeyDown";
 	public static final String ACTION_ON_KEY_UP = "onKeyUp";
 	public static final String ACTION_ON_SELECT = "onSelect";
@@ -117,6 +118,14 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 
 	/**
+	 * Sets the action to perform when a key is pressed in the interface object.
+	 * @param action	The action to perform.
+	 */
+	public void setOnKeyPress(String action) {
+		setOnAction(ACTION_ON_KEY_PRESS, action);
+	}
+
+	/**
 	 * Sets the action to perform when a key is released in the interface object.
 	 * @param action	The action to perform.
 	 */
@@ -170,6 +179,14 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public String getOnKeyDown() {
 		return getAttribute(ACTION_ON_KEY_DOWN);
+	}
+
+	/**
+	 * Returns the action to perform when a key is pressed in the interface object.
+	 * @return String	The action to perform.  Returns null if no action is set.
+	 */
+	public String getOnKeyPress() {
+		return getAttribute(ACTION_ON_KEY_PRESS);
 	}
 
 	/**
