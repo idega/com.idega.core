@@ -69,13 +69,16 @@ public class EntityFinder{
 					ex.printStackTrace(System.err);
 				}
 				if(tempobj != null){
+                                  String columnName = null;
 					for (int i = 1; i <= metaData.getColumnCount(); i++){
 
+                                          //debug getting an object every time? that sucks tryggvi ;)
+                                          columnName = metaData.getColumnName(i);
+						if ( RS.getObject(columnName) != null ){
+                                                  //this must be done if using AS in an sql query
+                                                  if ( "".equals(columnName) ) columnName = metaData.getColumnLabel(i);
 
-						if ( RS.getObject(metaData.getColumnName(i)) != null){
-
-							//System.out.println("ColumName "+i+": "+metaData.getColumnName(i));
-							tempobj.fillColumn(metaData.getColumnName(i),RS);
+                                                  tempobj.fillColumn(columnName,RS);
 						}
 					}
 
