@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.1 2001/10/05 07:59:19 tryggvil Exp $
+ * $Id: DateInput.java,v 1.2 2001/12/19 10:28:56 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -56,6 +56,7 @@ public DateInput(){
 
 public DateInput(String name){
   super();
+  super.setName(name);
   justConstructed = true;
   script = new Script();
   theDay = new DropdownMenu(name+"_day");
@@ -70,6 +71,7 @@ public DateInput(String name){
 
 public DateInput(String name, boolean inShort){
   super();
+  super.setName(name);
   justConstructed = true;
   script = new Script();
   theDay = new DropdownMenu(name+"_day");
@@ -82,14 +84,34 @@ public DateInput(String name, boolean inShort){
   doSomeShit();
 }
 
+public Object clone(){
+  DateInput newObject = (DateInput)super.clone();
+  if(theWholeDate!=null){
+    newObject.theWholeDate = (Parameter)this.theWholeDate.clone();
+  }
+  if(theDay!=null){
+    newObject.theDay = (DropdownMenu)this.theDay.clone();
+  }
+  if(theMonth!=null){
+    newObject.theMonth = (DropdownMenu)this.theMonth.clone();
+  }
+  if(theYear!=null){
+    newObject.theYear = (DropdownMenu)this.theYear.clone();
+  }
+  return newObject;
+}
+
+public void setName(String name){
+  super.setName(name);
+  theWholeDate.setName(name);
+  theDay.setName(name+"_day");
+  theMonth.setName(name+"_month");
+  theYear.setName(name+"_year");
+}
+
 private void doSomeShit(){
 //private void doSomeShit(String strDay, String strMonth, String strYear) {
 
-
-
-	theYear.setOnChange("populateDays(this,this.form."+theMonth.getName()+",this.form."+theDay.getName()+");setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
-	theMonth.setOnChange("populateDays(this.form."+theYear.getName()+",this,this.form."+theDay.getName()+");setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
-	theDay.setOnChange("setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
 
 
 	theDay.setParentObject(this.getParentObject());
@@ -377,8 +399,15 @@ public void main(IWContext iwc)throws Exception{
     justConstructed = false;
   }
 
-
+  addScriptElements(iwc);
 }
+
+
+  public void addScriptElements(IWContext iwc){
+	theYear.setOnChange("populateDays(this,this.form."+theMonth.getName()+",this.form."+theDay.getName()+");setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
+	theMonth.setOnChange("populateDays(this.form."+theYear.getName()+",this,this.form."+theDay.getName()+");setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
+	theDay.setOnChange("setValueOfHiddenDate(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theWholeDate.getName()+");");
+  }
 
   private void addLocalized(IWContext iwc){
       Locale locale = iwc.getCurrentLocale();
