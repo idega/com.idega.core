@@ -180,4 +180,13 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 
 	// IDOEntityDefinition ends //
 
+	public IDOEntityField findFieldByUniqueName(String name){
+		for (int i = 0; i < _fields.length; i++) {
+			if(_fields[i].getUniqueFieldName().equals(name)){
+				return 	_fields[i];
+			}
+		}
+		return null;
+	}
+	
 }

@@ -16,4 +16,5 @@ public interface IDOEntityDefinition {
     public IDOEntityField[] getFields();
 	public IDOPrimaryKeyDefinition getPrimaryKeyDefinition();
 	public Class getInterfaceClass();
+	public IDOEntityField findFieldByUniqueName(String name);
 }
