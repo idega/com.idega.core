@@ -119,6 +119,8 @@ public class SetIterator implements ListIterator  {
   
   public void setIncrement(int increment) {
     this.increment = (increment > 0) ? increment : 1;
+    // increment has changed..
+    adjustFirstIndexOfCurrentSet();
   }
   
   public int getIncrement() {
@@ -298,12 +300,59 @@ public class SetIterator implements ListIterator  {
       return false;
     // if you change this order or add or remove something do the same with the method
     // storeStateIntoString  
-    indexOfCurrentElement = Integer.parseInt(tokenizer.nextToken());  
-    firstIndex = Integer.parseInt(tokenizer.nextToken());
-    lastIndex = Integer.parseInt(tokenizer.nextToken());
-    firstIndexOfCurrentSet = Integer.parseInt(tokenizer.nextToken());
-    increment = Integer.parseInt(tokenizer.nextToken());
-    quantity = Integer.parseInt(tokenizer.nextToken());
+    int indexOfCurrentElement = Integer.parseInt(tokenizer.nextToken());  
+    int firstIndex = Integer.parseInt(tokenizer.nextToken());
+    int lastIndex = Integer.parseInt(tokenizer.nextToken());
+    int firstIndexOfCurrentSet = Integer.parseInt(tokenizer.nextToken());
+    int increment = Integer.parseInt(tokenizer.nextToken());
+    int quantity = Integer.parseInt(tokenizer.nextToken());
+    if (increment > 0)
+      this.increment = increment;
+    if (quantity > 0)
+      this.quantity = quantity;
+      
+    // adjust values (list has changed)
+    if (this.firstIndex == firstIndex && this.lastIndex == lastIndex) {
+      // list has not changed its size
+      this.indexOfCurrentElement = indexOfCurrentElement;
+      this.firstIndexOfCurrentSet = firstIndexOfCurrentSet;
+      return true;
+    }
+    
+    // list has changed, repair it....
+    int diff = firstIndex - this.firstIndex;
+    firstIndexOfCurrentSet += diff;
+    // is the new value within the range?
+    if (firstIndexOfCurrentSet > this.lastIndex)  {
+      this.firstIndexOfCurrentSet = lastIndex;
+    }
+    else  {
+      this.firstIndexOfCurrentSet = firstIndexOfCurrentSet;
+    }
+    // now adjust the current set
+    adjustFirstIndexOfCurrentSet();
     return true;  
+  }
+  
+  private void adjustFirstIndexOfCurrentSet()  {
+    int size = size();
+    
+    if (size == 0)  {
+      // list is empty (compare constructor)
+      firstIndexOfCurrentSet = firstIndex;
+      indexOfCurrentElement = firstIndex - 1;
+      return;
+    }
+          
+    int position = firstIndexOfCurrentSet - firstIndex + 1;
+
+    // positionFromZero is now at least 1
+    int division = position / increment;
+    int mod = position % increment;
+    if (mod == 0)
+      division -= 1;
+    firstIndexOfCurrentSet = division * increment;
+    currentSet();
+    return;  
   }
 }
