@@ -426,7 +426,7 @@ public  class EntityControl{
           EntityRelationship rel = new EntityRelationship();
           rel.setTableName(relationShipTableName);
           rel.addColumn(column1,relatingEntityClass1);
-          rel.addColumn(column2,relatingEntityClass1);
+          rel.addColumn(column2,relatingEntityClass2);
 
           relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,rel);
 
