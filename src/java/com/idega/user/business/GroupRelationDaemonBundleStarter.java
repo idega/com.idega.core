@@ -9,6 +9,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.user.data.GroupRelation;
+import com.idega.user.data.GroupRelationHome;
 import com.idega.util.EventTimer;
 import com.idega.util.IWTimestamp;
 
@@ -42,9 +43,16 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	
 	public void actionPerformed(ActionEvent event) {
 		try {
+			Collection relationsWithoutRelatedGroupType = getGroupRelationHome().findAllGroupsWithoutRelatedGroupType();
+			Iterator iterWithoutRelGroupType = relationsWithoutRelatedGroupType.iterator();
+			while (iterWithoutRelGroupType.hasNext()) {
+				GroupRelation relation = (GroupRelation) iterWithoutRelGroupType.next();
+				relation.setRelatedGroupType(relation.getRelatedGroup().getGroupType());
+  				relation.store();
+			}	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
 				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
-				Collection relations = getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome().findAllPendingGroupRelationships();
+				Collection relations = getGroupRelationHome().findAllPendingGroupRelationships();
 				
 				Iterator iter = relations.iterator();
 				IWTimestamp stamp = IWTimestamp.RightNow();
@@ -94,5 +102,9 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 			}
 		}
 		return groupBiz;
+	}
+
+	private GroupRelationHome getGroupRelationHome() {
+		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome();
 	}
 }
