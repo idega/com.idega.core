@@ -8,6 +8,7 @@ package com.idega.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +16,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
+import com.idega.core.data.ICFile;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
@@ -27,15 +29,18 @@ import com.lowagie.text.xml.SAXmyHandler;
  */
 public class PDFTemplateWriter {
 	
-	public MemoryFileBuffer writeToBuffer(Document document,HashMap tagmap, String xmlTemplateFileUrl)throws DocumentException,IOException,SAXException,ParserConfigurationException{
+	public MemoryFileBuffer writeToBuffer(HashMap tagmap, String xmlTemplateFileURL)throws DocumentException,IOException,SAXException,ParserConfigurationException{
+		return writeToBuffer(getDocument(PageSize.A4), tagmap, xmlTemplateFileURL);
+	}
 	
+	public MemoryFileBuffer writeToBuffer(Document document,HashMap tagmap, String xmlTemplateFileURL)throws DocumentException,IOException,SAXException,ParserConfigurationException{
 		MemoryFileBuffer bout = new MemoryFileBuffer();
 		OutputStream OS = new MemoryOutputStream(bout);
 		InputStream IS = new MemoryInputStream(bout);
 		PdfWriter writer = PdfWriter.getInstance(document, OS);
 		document.open();
 		
-		parseTagMap(document,tagmap, xmlTemplateFileUrl);
+		parseTagMap(document,tagmap, xmlTemplateFileURL);
 		
 		document.close();
 		OS.close();
@@ -43,11 +48,46 @@ public class PDFTemplateWriter {
 		return bout;		
 	}
 	
-	public void parseTagMap(Document document, HashMap tagMap, String templateFileUrl)throws SAXException,ParserConfigurationException,IOException{
+	public void parseTagMap(Document document, HashMap tagMap, String xmlTemplateFileURL)throws SAXException,ParserConfigurationException,IOException{
 		javax.xml.parsers.SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 		SAXmyHandler handler = new SAXmyHandler(document,tagMap);
 		handler.setControlOpenClose(false); 
-		parser.parse(templateFileUrl,handler);
+		parser.parse(xmlTemplateFileURL,handler);
+	}
+	
+	public int writeToDatabase(HashMap tagmap, String xmlTemplateFileURL) {
+		try {
+			MemoryFileBuffer bout = writeToBuffer(tagmap, xmlTemplateFileURL);
+			InputStream is = new MemoryInputStream(bout);
+			
+			ICFile pdfFile = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+			pdfFile.setFileValue(is);
+			pdfFile.setMimeType("application/pdf");
+			pdfFile.setName("document.pdf");
+			pdfFile.setFileSize(bout.length());
+			pdfFile.insert();
+			return pdfFile.getID();
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+			return -1;
+		}
+		catch (DocumentException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		catch (SAXException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 	
 	public Document getDocument(Rectangle size){
