@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.70 2003/12/05 21:11:47 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.71 2003/12/06 14:27:06 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
