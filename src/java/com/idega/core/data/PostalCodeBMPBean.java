@@ -46,7 +46,7 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class,50);
     addAttribute(COLUMN_NAME, "Name", true, true, String.class,50);
-    addManyToOneRelationship(COLUMN_NAME, "Country", Country.class);
+    addManyToOneRelationship(COLUMN_COUNTRY_ID, "Country", Country.class);
   }
 
 
