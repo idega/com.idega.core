@@ -1579,22 +1579,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	private boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
 		boolean found = false; // whether ancestry with a top group node is found or not
-		while(!found && group!=null) {
-			if(topGroupNodes.contains(group)) {
-				found = true;
-				System.out.println("found top group ancestor, " + group.getName());
-				break;
-			}
-			Iterator parents = group.getParentGroups().iterator();
-			while(parents.hasNext() && !found) {
-				Group parent = (Group) parents.next();
-				try {
-					found = isGroupUnderUsersTopGroupNode(iwc, parent, user);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-				if(found) {
-					break;
+		if(group!=null && topGroupNodes.contains(group)) {
+			found = true;
+		} else {
+			while(!found) {
+				Iterator parents = group.getParentGroups().iterator();
+				while(parents.hasNext() && !found) {
+					Group parent = (Group) parents.next();
+					try {
+						found = isGroupUnderUsersTopGroupNode(iwc, parent, user, topGroupNodes);
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+					if(found) {
+						break;
+					}
 				}
 			}
 		}
