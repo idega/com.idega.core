@@ -183,7 +183,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 		}
 		catch (FinderException e) {
 			commune = communeHome.create();
-			commune.setCommuneCode(OTHER);
+//			commune.setCommuneCode(OTHER);
 			commune.setCommuneName(OTHER);
 			commune.setIsValid(true);
 			commune.store();
