@@ -3193,7 +3193,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				this.updateMetaData();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new IDOStoreException(e.getMessage());
 		}
 	}
