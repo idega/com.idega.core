@@ -5,7 +5,6 @@
 package com.idega.presentation.ui;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
