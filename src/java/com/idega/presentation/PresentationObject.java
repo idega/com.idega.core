@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.54 2002/07/09 23:51:26 aron Exp $
+ * $Id: PresentationObject.java,v 1.55 2002/07/22 17:21:52 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -236,8 +236,18 @@ public class PresentationObject extends Object implements Cloneable {
     setAttribute(attributeName,slash);
   }
 
+	/**
+	 * Sets or adds to the style tag of this object
+	 * <br><br>Preserves previous set values with this method
+	 * */
   public void setStyleAttribute(String style){
-    setAttribute("style",style);
+  	String prevStyle = getAttribute("style");
+  	if(prevStyle==null){
+    	setAttribute("style",style);
+  	}
+  	else{
+  		setAttribute("style",prevStyle+";"+style);
+  	}
   }
 
   public String getStyleAttribute(){
