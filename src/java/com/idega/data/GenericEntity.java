@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.17 2001/06/18 15:49:46 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.18 2001/06/20 04:38:10 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -24,54 +24,44 @@ import java.io.InputStream;
 public abstract class GenericEntity implements java.io.Serializable {
 
   private String dataStoreType;
-  public Hashtable columns;
-  private static Hashtable theAttributes;
+  public Hashtable columns=new Hashtable();
+  private static Hashtable theAttributes=new Hashtable();
   private static Hashtable allStaticClasses=new Hashtable();
   private String dataSource;
   private static String defaultString="default";
   private String cachedColumnNameList;
   private String lobColumnName;
+  private static boolean useEntityCacher=false;
+
+  private int state;
+
+  protected static int STATE_NEW=0;
+  protected static int STATE_IN_SYNCH_WITH_DATASTORE=1;
+  protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE=2;
+  protected static int STATE_DELETED=3;
+
 
 	public GenericEntity() {
-		setDatasource(defaultString);
-		columns = new Hashtable();
-		if (theAttributes == null) {
-			theAttributes=new Hashtable();
-		}
-                      firstLoadInMemoryCheck();
-		setDefaultValues();
+		this(defaultString);
 	}
 
 	public GenericEntity(String dataSource) {
 		setDatasource(dataSource);
-		columns = new Hashtable();
-		if (theAttributes == null) {
-			theAttributes=new Hashtable();
-		}
-                      firstLoadInMemoryCheck();
+                firstLoadInMemoryCheck();
 		setDefaultValues();
 	}
 
 	public GenericEntity(int id) throws SQLException {
-		setDatasource(defaultString);
-		columns = new Hashtable();
-		if (theAttributes == null) {
-			theAttributes=new Hashtable();
-		}
-		setColumn(getIDColumnName(),new Integer(id));
-                      firstLoadInMemoryCheck();
-		findByPrimaryKey(getID());
+		this(id,defaultString);
 	}
 
 	public GenericEntity(int id,String dataSource) throws SQLException {
-		setDatasource(dataSource);
-		columns = new Hashtable();
-		if (theAttributes == null) {
-			theAttributes=new Hashtable();
-		}
-		setColumn(getIDColumnName(),new Integer(id));
-                      firstLoadInMemoryCheck();
-		findByPrimaryKey(getID());
+		//this(dataSource);
+                setDatasource(dataSource);
+		//setColumn(getIDColumnName(),new Integer(id));
+                firstLoadInMemoryCheck();
+		//findByPrimaryKey(getID());
+                findByPrimaryKey(id);
 	}
 
 
@@ -329,16 +319,17 @@ public abstract class GenericEntity implements java.io.Serializable {
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
 			columns.put(columnName.toLowerCase(),columnValue);
-		}
+		        this.setState(this.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+                }
 	}
 
 	protected Object getValue(String columnName){
 		return columns.get(columnName.toLowerCase());
 	}
 
-  public void removeFromColumn(String columnName){
-    columns.remove(columnName.toLowerCase());
-  }
+        public void removeFromColumn(String columnName){
+          columns.remove(columnName.toLowerCase());
+        }
 
 	public void setColumn(String columnName,Object columnValue){
 		if (this.getRelationShipClassName(columnName).equals("")){
@@ -987,6 +978,7 @@ public abstract class GenericEntity implements java.io.Serializable {
               throw (SQLException)ex.fillInStackTrace();
             }
           }
+
         }
 
 	public void deleteMultiple(String columnName,String stringColumnValue)throws SQLException{
@@ -1132,6 +1124,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 	public void findByPrimaryKey(int id)throws SQLException{
+                setColumn(getIDColumnName(),new Integer(id));
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
@@ -1674,6 +1667,10 @@ public abstract class GenericEntity implements java.io.Serializable {
           return false;
         }
 
+        public void empty(){
+          this.columns.clear();
+        }
+
 
         private GenericEntity getStaticInstance(){
           return getStaticInstance(this.getClass().getName());
@@ -1735,6 +1732,18 @@ public abstract class GenericEntity implements java.io.Serializable {
       public void addManyToManyRelationShip(String relatingEntityClassName){
             String relationShipTableName = StringHandler.concatAlphabetically(this.getClass().getName(),relatingEntityClassName);
             addManyToManyRelationShip(relationShipTableName);
+      }
+
+      public int getState(){
+        return this.state;
+      }
+
+      protected void setState(int state){
+        this.state=state;
+      }
+
+      public boolean isInSynchWithDatastore(){
+        return (getState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
 }

@@ -638,6 +638,7 @@ public abstract class DatastoreInterface{
 			}
 		}
             this.executeAfterInsert(entity);
+            entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
         }
 
 	/**
@@ -786,6 +787,7 @@ public abstract class DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
+                entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
 	public void update(GenericEntity entity, Connection conn)throws Exception{
@@ -801,28 +803,31 @@ public abstract class DatastoreInterface{
 				Stmt.close();
 			}
 		}
+                entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
   public void insert(GenericEntity entity, Connection conn) throws Exception {
 
-    executeBeforeInsert(entity);
-		PreparedStatement Stmt = null;
-		ResultSet RS = null;
-		try {
-      String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
-      System.out.println(statement);
-      Stmt = conn.prepareStatement (statement);
-      setForPreparedStatement(Stmt,entity);
-      Stmt.execute();
-		}
-		finally {
-			if (RS != null) {
-				RS.close();
-			}
-			if(Stmt != null) {
-				Stmt.close();
-			}
-		}
-    executeAfterInsert(entity);
-	}
+      executeBeforeInsert(entity);
+      PreparedStatement Stmt = null;
+      ResultSet RS = null;
+      try {
+        String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+        System.out.println(statement);
+        Stmt = conn.prepareStatement (statement);
+        setForPreparedStatement(Stmt,entity);
+        Stmt.execute();
+      }
+      finally {
+              if (RS != null) {
+                      RS.close();
+              }
+              if(Stmt != null) {
+                      Stmt.close();
+              }
+      }
+      executeAfterInsert(entity);
+      entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+    }
+
 }

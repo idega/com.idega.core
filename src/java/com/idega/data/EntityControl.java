@@ -319,6 +319,7 @@ public  class EntityControl{
 				entity.freeConnection(conn);
 			}
 		}
+                entity.setState(entity.STATE_DELETED);
 	}
 
 	public static void delete(GenericEntity entity, Connection conn)throws Exception{
@@ -333,6 +334,7 @@ public  class EntityControl{
                           Stmt.close();
                   }
           }
+          entity.setState(entity.STATE_DELETED);
 	}
 
 
@@ -357,6 +359,7 @@ public  class EntityControl{
 				entity.freeConnection(conn);
 			}
 		}
+                entity.setState(entity.STATE_DELETED);
 	}
 
 
