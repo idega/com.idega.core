@@ -100,6 +100,7 @@ implements IWUserContext, IWApplicationContext {
 	//Defined as private static variables to speed up reflection:
 	private static Object builderLogicInstance;
 	private static Method methodIsBuilderApplicationRunning;
+	private FacesContext realFacesContext;
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 
@@ -131,6 +132,7 @@ implements IWUserContext, IWApplicationContext {
 		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse());
 		ServletContext sc = (ServletContext)fc.getExternalContext().getContext();
 		this.setServletContext(sc);
+		setRealFacesContext(fc);
 	}
 	
 	/**
@@ -1136,50 +1138,6 @@ implements IWUserContext, IWApplicationContext {
 	/*
 	 * BEGIN ABSTRACT METHODS FROM FacesContext
 	 */
-	
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#addFacesEvent(javax.faces.event.FacesEvent)
-	 */
-	public void addFacesEvent(FacesEvent arg0)
-	{
-		// TODO Auto-generated method stub
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getApplicationEvents()
-	 */
-	public Iterator getApplicationEvents()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getApplicationEventsCount()
-	 */
-	public int getApplicationEventsCount()
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getFacesEvents()
-	 */
-	public Iterator getFacesEvents()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getHttpSession()
-	 */
-	public HttpSession getHttpSession()
-	{
-		return this.getSession();
-	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getLocale()
@@ -1189,37 +1147,13 @@ implements IWUserContext, IWApplicationContext {
 		return this.getCurrentLocale();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getServletRequest()
-	 */
-	public ServletRequest getServletRequest()
-	{
-		return this.getRequest();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getServletResponse()
-	 */
-	public ServletResponse getServletResponse()
-	{
-		return this.getResponse();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#getViewHandler()
-	 */
-	public ViewHandler getViewHandler()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#release()
 	 */
 	public void release()
 	{
-		// TODO Auto-generated method stub
+		getRealFacesContext().release();
 	}
 
 	/* (non-Javadoc)
@@ -1227,7 +1161,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public void renderResponse()
 	{
-		// TODO Auto-generated method stub
+		getRealFacesContext().renderResponse();
 	}
 
 	/* (non-Javadoc)
@@ -1235,7 +1169,7 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public void responseComplete()
 	{
-		// TODO Auto-generated method stub
+		getRealFacesContext().responseComplete();
 	}
 
 	/* (non-Javadoc)
@@ -1250,128 +1184,125 @@ implements IWUserContext, IWApplicationContext {
 	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String, javax.faces.application.FacesMessage)
 	 */
 	public void addMessage(String arg0, FacesMessage arg1) {
-		// TODO Auto-generated method stub
-
+		getRealFacesContext().addMessage(arg0,arg1);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
 	 */
 	public Iterator getClientIdsWithMessages() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getClientIdsWithMessages();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getExternalContext()
 	 */
 	public ExternalContext getExternalContext() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getExternalContext();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
 	 */
 	public Severity getMaximumSeverity() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getMaximumSeverity();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getMessages()
 	 */
 	public Iterator getMessages() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getMessages();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
 	 */
 	public Iterator getMessages(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getMessages(arg0);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getRenderKit()
 	 */
 	public RenderKit getRenderKit() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getRenderKit();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getRenderResponse()
 	 */
 	public boolean getRenderResponse() {
-		// TODO Auto-generated method stub
-		return false;
+		return getRealFacesContext().getRenderResponse();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getResponseComplete()
 	 */
 	public boolean getResponseComplete() {
-		// TODO Auto-generated method stub
-		return false;
+		return getRealFacesContext().getResponseComplete();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getResponseStream()
 	 */
 	public ResponseStream getResponseStream() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getResponseStream();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
 	public ResponseWriter getResponseWriter() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getResponseWriter();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getViewRoot()
 	 */
 	public UIViewRoot getViewRoot() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getViewRoot();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
 	 */
 	public void setResponseStream(ResponseStream arg0) {
-		// TODO Auto-generated method stub
-
+		getRealFacesContext().setResponseStream(arg0);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
 	 */
 	public void setResponseWriter(ResponseWriter arg0) {
-		// TODO Auto-generated method stub
-
+		getRealFacesContext().setResponseWriter(arg0);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#setViewRoot(javax.faces.component.UIViewRoot)
 	 */
 	public void setViewRoot(UIViewRoot arg0) {
-		// TODO Auto-generated method stub
-
+		getRealFacesContext().setViewRoot(arg0);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#getApplication()
 	 */
 	public Application getApplication() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRealFacesContext().getApplication();
+	}
+	
+	/*
+	*Gets the real (underlying) FacesContext instance
+	*/
+	private FacesContext getRealFacesContext(){
+		return realFacesContext;
+	}
+	/*
+	 *Sets the real (underlying) FacesContext instance
+	 **/
+	private void setRealFacesContext(FacesContext fc){
+		this.realFacesContext=fc;
 	}
 
 }
