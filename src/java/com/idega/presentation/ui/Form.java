@@ -5,6 +5,14 @@
 
 package com.idega.presentation.ui;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.business.LocaleSwitcher;
@@ -16,13 +24,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
-
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -216,6 +217,7 @@ public class Form extends InterfaceObjectContainer {
 			//Set a builder page as the action
 			BuilderService bservice = getBuilderService(iwc);
 			this.setAction(bservice.getPageURI(_submitToPage));
+			
 		}
 		if (window != null) {
 			//iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
@@ -293,7 +295,13 @@ public class Form extends InterfaceObjectContainer {
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				String parameterName = (String) iter.next();
-				String parameterValue = iwc.getParameter(parameterName);
+				String parameterValue;
+				if(parameterName.equals(BuilderConstants.IB_PAGE_PARAMETER) && _submitToPage>0) {
+					// fix for multipart forms
+					parameterValue = Integer.toString(_submitToPage);
+				} else {
+					parameterValue = iwc.getParameter(parameterName);
+				}
 				if (parameterValue != null) {
 					if (!this.isParameterSet(parameterName)) {
 						addParameter(parameterName, parameterValue);
@@ -314,8 +322,14 @@ public class Form extends InterfaceObjectContainer {
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				String parameterName = (String) iter.next();
-				String parameterValue = iwc.getParameter(parameterName);
+				String parameterValue;
 				//System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
+				if(parameterName.equals(BuilderConstants.IB_PAGE_PARAMETER) && _submitToPage>0) {
+					// fix for multipart forms
+					parameterValue = Integer.toString(_submitToPage);
+				} else {
+					parameterValue = iwc.getParameter(parameterName);
+				}
 				if (parameterValue != null) {
 					if (!this.isParameterSet(parameterName)) {
 						//System.out.println("false");
