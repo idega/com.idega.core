@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.49 2004/05/11 18:04:35 thomas Exp $
+ * $Id: DateInput.java,v 1.50 2004/05/17 17:38:09 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
 package com.idega.presentation.ui;
 
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -715,11 +716,24 @@ public class DateInput extends InterfaceObject implements InputHandler{
 		}
 	}
 
-	public PresentationObject getHandlerObject(String name,	String stringValue, IWContext iwc) {
+	public PresentationObject getHandlerObject(String name,	String value, IWContext iwc) {
 		this.setName(name);
+		if (value != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
+			try {
+				Date date = formatter.parse(value);
+				java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+				setDate(sqlDate);
+				return this;
+			}
+			catch (ParseException ex) {
+				logError("[DateInput] The value "+ value + " could not be parsed");
+				// go further to the default setting
+			}
+		}
 		IWTimestamp to = IWTimestamp.RightNow();
 		this.setYearRange(SYSTEM_LAUNCH_YEAR, to.getYear());
-		this.setDate(to.getDate());			
+		this.setDate(to.getDate());
 		return this;
 	}
 
