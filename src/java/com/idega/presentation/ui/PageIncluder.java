@@ -140,8 +140,9 @@ public class PageIncluder extends PresentationObject implements Index{
     String loc = getLocation(iwc);
     //System.out.println("Loc = "+loc);
 
+    //get a session id from a session creating page
   if( (sessionURL!=null) && (token!=null) ){
-
+      
     if( sessionId==null ){
       sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
       if(sessionId==null){
@@ -569,11 +570,24 @@ public class PageIncluder extends PresentationObject implements Index{
       //add the extra parameters
       location.append(query);
     }
+    
+    String finalLocationString = finalizeLocationString(location.toString(),iwc);
 
-    return location.toString();
+    return finalLocationString;
+    
    }
 
-  private void setPrefixes(IWContext iwc)throws Exception{
+  /**
+   * A method for extending classes to influence the location string (the url) that is sent to the real page.
+   * For example to add extra parameters.
+ * @param location The finished url to the real page the pageincluder is including
+ * @return
+ */
+protected String finalizeLocationString(String location, IWContext iwc) {
+    return location;
+}
+
+private void setPrefixes(IWContext iwc)throws Exception{
     if (forceFrame ) {
       StringBuffer buf = new StringBuffer();
       String uri = iwc.getRequestURI();
