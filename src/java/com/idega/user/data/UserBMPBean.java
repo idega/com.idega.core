@@ -268,6 +268,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
           for(int i = 0; i < countWithoutFirstAndLast; i++) {
             middleName.append((String) token.nextElement());
+
+            if( i != (countWithoutFirstAndLast-1) ) middleName.append(" ");
+
           }
 
           setMiddleName(middleName.toString());
