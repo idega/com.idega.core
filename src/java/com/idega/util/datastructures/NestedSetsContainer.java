@@ -1,5 +1,5 @@
 /*
- * $Id: NestedSetsContainer.java,v 1.1 2004/09/07 10:58:38 gummi Exp $
+ * $Id: NestedSetsContainer.java,v 1.2 2004/09/08 11:23:18 gummi Exp $
  * Created on 5.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import java.util.Set;
  * For a small introduction on nested sets see: 
  * @see <a href="http://www.intelligententerprise.com/001020/celko1_1.jhtml?_requestid=224927">Nested Sets</a>
  * 
- *  Last modified: $Date: 2004/09/07 10:58:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2004/09/08 11:23:18 $ by $Author: gummi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NestedSetsContainer {
 	
@@ -50,17 +50,17 @@ public class NestedSetsContainer {
 		int index = container.indexOf(topNode);
 		while(index!=-1){
 			List subtree = container;//container.subList(index,container.size());  //if the container is sorted right this sublist should contain the whole subtree
-			Iterator iter = subtree.iterator();
-			NestedSetNode node = (NestedSetNode) iter.next();
+			NestedSetNode node = (NestedSetNode)container.get(index);
 			if(node.hasChildren()){ // has children
 				int l = node.getLeft();
 				int r = node.getRight();
+				Iterator iter = subtree.iterator();
 				while (iter.hasNext()) {
 					NestedSetNode element = (NestedSetNode) iter.next();
 					if(l < element.getLeft() && r>element.getRight()){
 						set.add(element.getObject());
 					} else {
-						break;
+						continue;  //break;  //if the container is sorted right it should be ok to have break here
 					}
 				}
 			}
@@ -87,5 +87,21 @@ public class NestedSetsContainer {
 				container.add(node);
 			}
 		}
-	}	
+	}
+	
+	public String toString(Object obj){
+		StringBuffer s = new StringBuffer();
+		for (Iterator iter = container.iterator(); iter.hasNext();) {
+			NestedSetNode node = (NestedSetNode) iter.next();
+			if(obj == null || (node.hashCode()==obj.hashCode() && node.equals(obj))){
+				s.append(node);
+				s.append("\n");
+			}
+		}
+		return s.toString();
+	}
+	
+	public String toString(){
+		return toString(null);
+	}
 }
