@@ -272,6 +272,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getIntColumnValue(getColumnNameGender());
 	}
 
+	public Gender getGender() {
+		return (Gender) getColumnValue(getColumnNameGender());
+	}
+
 	public int getSystemImageID() {
 		return getIntColumnValue(getColumnNameSystemImage());
 	}

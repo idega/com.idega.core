@@ -91,6 +91,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public java.lang.String getGroupTypeDescription();
  public java.lang.String getDescription();
  public int getGenderID();
+ public com.idega.user.data.Gender getGender();
  public com.idega.user.data.Group getPrimaryGroup();
  public java.sql.Timestamp getCreated();
  public void setHomePage(com.idega.core.builder.data.ICPage p0);
