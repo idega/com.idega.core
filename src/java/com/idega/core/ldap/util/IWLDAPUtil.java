@@ -151,7 +151,7 @@ public class IWLDAPUtil implements IWLDAPConstants{
 	public String getAttributeKeyWithoutMetaDataNamePrefix(String key){
 		int index = key.indexOf(LDAP_META_DATA_KEY_PREFIX);
 		
-		if(index>0){
+		if(index>=0){
 			return key.substring(index,key.length());
 		}
 		else return key;
