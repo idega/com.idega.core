@@ -703,13 +703,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public boolean getBooleanColumnValue(String columnName){
-		Boolean tempBool = (Boolean) getValue(columnName);
-    if (tempBool != null){
-      return tempBool.booleanValue();
-    }
-    else{
-      return false;
-    }
+          return getBooleanColumnValue(columnName, false);
+        }
+
+	public boolean getBooleanColumnValue(String columnName, boolean returnValueIfNull){
+            Object value = getValue(columnName);
+            if(value!=null){
+              //Boolean tempBool = (Boolean) getValue(columnName);
+              //if (tempBool != null){
+                //return tempBool.booleanValue();
+              if(value instanceof Boolean){
+                return ((Boolean)value).booleanValue();
+              }
+              else if (value instanceof String ){
+                String sValue = (String)value;
+                if(sValue.equals("Y")){
+                  return true;
+                }
+                else if(sValue.equals("N")){
+                  return false;
+                }
+              }
+            }
+            return returnValueIfNull;
 	}
 
 
