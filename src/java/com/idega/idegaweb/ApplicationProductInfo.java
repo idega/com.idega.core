@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.1 2005/01/05 01:21:58 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.2 2005/01/05 01:23:44 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.util.FileUtil;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/01/05 01:21:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/05 01:23:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ApplicationProductInfo {
 	
@@ -50,7 +50,7 @@ public class ApplicationProductInfo {
 			Properties properties = new Properties();
 			try {
 				properties.load(new FileInputStream(file));
-				iwma.sendStartupMessage("Loading product.properties from file: "+file.getPath());
+				//iwma.sendStartupMessage("Loading product.properties from file: "+file.getPath());
 				
 				String inceptionYear = (String) properties.get("application.product.inceptionyear");
 				if(inceptionYear!=null){

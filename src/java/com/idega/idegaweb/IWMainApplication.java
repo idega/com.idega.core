@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.121 2005/01/05 01:21:58 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.122 2005/01/05 01:23:44 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/05 01:21:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/05 01:23:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.121 $
+ * @version $Revision: 1.122 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -629,7 +629,7 @@ public class IWMainApplication //{//implements ServletContext{
                 + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
     		}    
         //debug
-        sendStartupMessage("setting propertyRealPath to : "+propertiesRealPath);
+        //sendStartupMessage("setting propertyRealPath to : "+propertiesRealPath);
     }
 
     
