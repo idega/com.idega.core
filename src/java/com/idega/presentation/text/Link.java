@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.52 2002/03/15 12:09:33 gummi Exp $
+ * $Id: Link.java,v 1.53 2002/03/15 16:38:55 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1792,14 +1792,16 @@ public class Link extends Text{
 	  StringTokenizer token2 = new StringTokenizer(st,"=",false);
 	  if (token2.hasMoreTokens()) {
 	    String name = token2.nextToken();
-	    String value = token2.nextToken();
 	    if (!name.equals(prmName)) {
 	      if(!firstToken){
 		newBuffer.append("&");
 	      }
 	      newBuffer.append(name);
-	      newBuffer.append("=");
-	      newBuffer.append(value);
+              if(token2.hasMoreTokens()){
+                String value = token2.nextToken();
+                newBuffer.append("=");
+                newBuffer.append(value);
+              }
 	    }
 	  }
 	  /*else {
