@@ -915,6 +915,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
         InputStream stream = new IDOInformixStringStream(stringValue);
         statement.setAsciiStream(index,stream,stringValue.length());
 
+
         /*if(stringValue!=null){
           Reader reader = new StringReader(stringValue);
           com.informix.jdbc.IfxPreparedStatement ifxStatement = (com.informix.jdbc.IfxPreparedStatement)statement;

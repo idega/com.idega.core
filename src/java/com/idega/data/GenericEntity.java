@@ -2839,10 +2839,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     * "debug" is set to "TRUE"
     */
    public void debug(String outputString){
-    if( IWMainApplicationSettings.isDebugActive() ){
+    if( isDebugActive() ){
       System.out.println("[DEBUG] \""+outputString+"\" : "+this.getEntityName());
 
     }
+   }
+
+   protected boolean isDebugActive(){
+    return IWMainApplicationSettings.isDebugActive();
    }
 
    public void setToInsertStartData(boolean ifTrue){
@@ -2904,10 +2908,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery,pkColl);
       }
     }
+    else{
+      if(this.isDebugActive()){
+        this.debug("Cache hit for SQL query: "+sqlQuery);
+      }
+    }
     return pkColl;
   }
 
   protected Collection idoFindIDsBySQLIgnoringCache(String sqlQuery)throws FinderException{
+        if(this.isDebugActive()){
+          this.debug("Going to Datastore for SQL query: "+sqlQuery);
+        }
 		Connection conn= null;
 		Statement Stmt= null;
 		int length;
@@ -2917,7 +2929,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
 			while (RS.next()){
-			  vector.addElement(RS.getObject(getIDColumnName()));
+              int id = RS.getInt(getIDColumnName());
+              if(!RS.wasNull()){
+                vector.addElement(new Integer(id));
+              }
+              //vector.addElement(RS.(getIDColumnName()));
 			}
 			RS.close();
 
@@ -2959,7 +2975,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity instances
    */
-  protected Collection idoGetRelatedEntities(IDOLegacyEntity returningEntity)throws EJBException{
+  protected Collection idoGetRelatedEntities(IDOEntity returningEntity)throws EJBException{
     Vector vector = new Vector();
     Collection ids = idoGetRelatedEntityIDs(returningEntity);
     Iterator iter = ids.iterator();
@@ -2988,8 +3004,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity primary keys
    */
-  protected Collection idoGetRelatedEntityIDs(IDOLegacyEntity returningEntity)throws EJBException{
-        String sqlQuery = this.getFindRelatedSQLQuery(returningEntity,"","");
+  protected Collection idoGetRelatedEntityIDs(IDOEntity returningEntity)throws EJBException{
+        IDOLegacyEntity legacyEntity = (IDOLegacyEntity)returningEntity;
+        String sqlQuery = this.getFindRelatedSQLQuery(legacyEntity,"","");
 		Connection conn= null;
 		Statement Stmt= null;
 		int length;
@@ -3000,7 +3017,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
 			while (RS.next()){
-              Integer pk = (Integer)RS.getObject(returningEntity.getIDColumnName());
+              Integer pk = (Integer)RS.getObject(legacyEntity.getIDColumnName());
               //IDOEntity entityToAdd = home.idoFindByPrimaryKey(pk);
 			  //vector.addElement(entityToAdd);
 			  vector.add(pk);

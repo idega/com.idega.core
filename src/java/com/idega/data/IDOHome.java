@@ -18,6 +18,6 @@ public interface IDOHome extends EJBHome {
   public IDOEntity createIDO() throws CreateException, RemoteException;
   /*public IDOEntity idoFindByPrimaryKey(int primaryKey) throws RemoteException, FinderException;*/
   public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
-  public List findAll() throws RemoteException, FinderException;
+  /*public List findAll() throws RemoteException, FinderException;*/
 
 }

@@ -321,7 +321,6 @@ public class IWMainApplicationSettings extends IWPropertyList{
     public void setDebug(boolean ifDebug){
 
       this.setProperty("debug",ifDebug);
-
       setDebugMode(ifDebug);
 
     }
@@ -349,9 +348,8 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
 
   public static void setDebugMode(boolean debugFlag){
-
     DEBUG_FLAG = debugFlag;
-
+    com.idega.data.EntityFinder.debug=debugFlag;
   }
 
 
