@@ -17,6 +17,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Image;
 import com.idega.util.FileUtil;
+import com.idega.util.text.TextSoap;
 import java.awt.Font;
 import java.util.Locale;
 import java.io.FileInputStream;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
-import java.net.URLEncoder;
 
 public class ImageFactory {
   private static IWMainApplication iwma;
@@ -103,7 +103,7 @@ public class ImageFactory {
     String downName = fileVirtualPath+button.getDownName();
     String overName = fileVirtualPath+button.getOverName();
 
-    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),upName,overName,downName);
+    image = new Image(textOnButton,upName,overName,downName);
     image.setWidth(button.getWidth());
     image.setHeight(button.getHeight());
 
@@ -148,7 +148,7 @@ public class ImageFactory {
     String downName = fileVirtualPath+flip+tab.getDownName();
     String overName = fileVirtualPath+flip+tab.getOverName();
 
-    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),upName,overName,downName);
+    image = new Image(textOnTab,upName,overName,downName);
     image.setWidth(tab.getWidth());
     image.setHeight(tab.getHeight());
 

@@ -322,7 +322,7 @@ public class Button {
 
       if( name==null ){
         StringBuffer name = new StringBuffer();
-        name.append(text);
+        name.append(TextSoap.findAndReplace(text," ",""));
         name.append(width);
         name.append("x");
         name.append(height);
@@ -341,20 +341,17 @@ public class Button {
 
       path+=sName;
 
-      sName = TextSoap.findAndCut(sName," ");
-      sName = URLEncoder.encode(sName);
-
       if( effect == getStaticButtonUpString() ){
-        buttonUpName = sName;
+        buttonUpName = URLEncoder.encode(sName);
       }
       else if( effect == getStaticButtonDownString() ){
-        buttonDownName = sName;
+        buttonDownName = URLEncoder.encode(sName);
       }
       else{
-        buttonOverName = sName;
+        buttonOverName = URLEncoder.encode(sName);
       }
 
-      FileUtil.delete(path);
+      //FileUtil.delete(path); why???
       OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
 
       encode.Write(output);
