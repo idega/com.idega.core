@@ -1,6 +1,8 @@
 package com.idega.business;
 
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -131,4 +133,97 @@ public class IBOServiceBean implements IBOService, SessionBean {
 		return ((AccessController) this.getIWApplicationContext().getApplication().getAccessController());
 	}
 
+  	
+  	//STANDARD LOGGING METHODS:
+  	
+	/**
+	 * @param string
+	 */
+	protected void log(String msg) {
+		//System.out.println(string);
+		getLogger().log(getDefaultLogLevel(),msg);
+	}
+
+	/**
+	 * @param string
+	 */
+	protected void log(Exception e) {
+		//e.printStackTrace();
+		StackTraceElement[] ste = e.getStackTrace();
+		StringBuffer buf = new StringBuffer(e.getClass().getName());
+		buf.append(" : ");
+		if(ste.length>0){
+			buf.append(ste[0].getMethodName());
+			buf.append(":");
+			buf.append(ste[0].getLineNumber());
+		}
+		logError(buf.toString());
+	}
+	
+	/**
+	 * @param string
+	 */
+	protected void log(Level level,String msg) {
+		//System.out.println(msg);
+		getLogger().log(level,msg);
+	}
+	
+	/**
+	 * @param string
+	 */
+	protected void logError(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.SEVERE,msg);
+	}
+
+	/**
+	 * @param string
+	 */
+	protected void logDebug(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.FINER,msg);
+	}
+	
+	/**
+	 * @param string
+	 */
+	protected void logSevere(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.SEVERE,msg);
+	}	
+	
+	
+	/**
+	 * @param string
+	 */
+	protected void logWarning(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.WARNING,msg);
+	}
+	
+	/**
+	 * @param string
+	 */
+	protected void logConfig(String msg) {
+		//System.err.println(msg);
+		getLogger().log(Level.CONFIG,msg);
+	}	
+	
+	/**
+	 * @param string
+	 */
+	protected void debug(String msg) {
+		logDebug(msg);
+	}	
+	
+	protected Logger getLogger(){
+		return Logger.getLogger(this.getClass().getName());
+	}
+	
+	protected Level getDefaultLogLevel(){
+		return Level.INFO;
+	}
+
+  	//END STANDARD LOGGING METHODS
+  	
 }
