@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.77 2003/11/24 02:38:40 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.78 2004/02/03 14:03:30 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -124,6 +124,8 @@ implements Cloneable,UIComponent{
 	private String artificialCompoundId = null;
 	// former compound id (necessary to watch changes of the compoundId)
 	private String formerCompoundId = null;
+	
+	private TextStyler _styler;
 	/**
 	 * Default constructor
 	 */
@@ -309,8 +311,11 @@ implements Cloneable,UIComponent{
 	 */
 	public void setStyleAttribute(String style)
 	{
-		TextStyler styler = new TextStyler(getStyleAttribute() + style);
-		setMarkupAttribute("style", styler.getStyleString());
+		if (_styler == null) {
+			_styler = new TextStyler();
+		}
+		_styler.parseStyleString(style);
+		setMarkupAttribute("style", _styler.getStyleString());
 	}
 	public String getStyleAttribute()
 	{
@@ -1274,11 +1279,35 @@ implements Cloneable,UIComponent{
 	}
 	public String getHeight()
 	{
-		return getMarkupAttribute(HEIGHT);
+		String height = getMarkupAttribute(HEIGHT);
+		if (height == null) {
+			if (_styler != null) {
+				height = _styler.getStyleValue(HEIGHT);
+				if (height != null && height.indexOf("px") != -1) {
+					height = height.substring(0, height.indexOf("px"));
+				}
+			}
+		}
+		return height;
 	}
 	public String getWidth()
 	{
-		return getMarkupAttribute(WIDTH);
+		String width = getMarkupAttribute(WIDTH);
+		if (width == null) {
+			if (_styler != null) {
+				width = _styler.getStyleValue(WIDTH);
+				if (width != null && width.indexOf("px") != -1) {
+					width = width.substring(0, width.indexOf("px"));
+				}
+			}
+		}
+		return width;
+	}
+	public boolean isWidthSet() {
+		return getWidth() != null;
+	}
+	public boolean isHeightSet() {
+		return getHeight() != null;
 	}
 	public void setHorizontalAlignment(String align)
 	{
@@ -1533,11 +1562,11 @@ implements Cloneable,UIComponent{
 	{
 		try
 		{
-			this.setStyleAttribute("width:" + Integer.parseInt(width) + "px");
+			this.setStyleAttribute(WIDTH + ":" + Integer.parseInt(width) + "px");
 		}
 		catch (NumberFormatException e)
 		{
-			this.setStyleAttribute("width:" + width);
+			this.setStyleAttribute(WIDTH + ":" + width);
 		}
 	}
 	/**
@@ -1548,11 +1577,11 @@ implements Cloneable,UIComponent{
 	{
 		try
 		{
-			this.setStyleAttribute("height:" + Integer.parseInt(height) + "px");
+			this.setStyleAttribute(HEIGHT + ":" + Integer.parseInt(height) + "px");
 		}
 		catch (NumberFormatException e)
 		{
-			this.setStyleAttribute("height:" + height);
+			this.setStyleAttribute(HEIGHT + ":" + height);
 		}
 	}
 	/**
