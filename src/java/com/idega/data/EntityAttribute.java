@@ -5,13 +5,18 @@
 
 package com.idega.data;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class EntityAttribute implements IDOEntityField {
+public class EntityAttribute implements IDOEntityField, IDOReportableField {
 
 	private String name;
+	private String _uniqueName = null;
 	//private Object value;
 	private String longName;
 	private String relationShip;
@@ -27,6 +32,7 @@ public class EntityAttribute implements IDOEntityField {
 	private boolean isPrimaryKey = false;
 	private boolean isUnique = false;
 	private String _description = null;
+	private HashMap _localizedNames = new HashMap();
 
 	private GenericEntityDefinition entityDefinition;
 
@@ -331,6 +337,10 @@ public class EntityAttribute implements IDOEntityField {
 	public void setUnique(boolean ifUnique) {
 		isUnique = ifUnique;
 	}
+	
+	public void setUniqueFieldName(String name) {
+		_uniqueName = name;
+	}
 
 	public boolean isOneToNRelationship() {
 		return (this.relationShipClass != null);
@@ -344,7 +354,12 @@ public class EntityAttribute implements IDOEntityField {
 		return this.entityDefinition;
 	}
 	public String getUniqueFieldName() {
-		return this.getColumnName();
+		if(_uniqueName==null){
+			return this.getColumnName();
+		} else {
+			return _uniqueName;
+		}
+
 	}
 	public String getSQLFieldName() {
 		return this.getColumnName();
@@ -368,4 +383,44 @@ public class EntityAttribute implements IDOEntityField {
 			throw new IDORelationshipException("This field is not part of many-to-one relationship");
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOReportableField#getDescription()
+	 */
+	public String getDescription() {
+		return _description;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOReportableField#setDescription(java.lang.String)
+	 */
+	public void setDescription(String description) {
+		_description = description;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOReportableField#getValueClass()
+	 */
+	public Class getValueClass() {
+		return this.getDataTypeClass();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOReportableField#getLocalizedName(java.util.Locale)
+	 */
+	public String getLocalizedName(Locale locale) {
+		return (String)_localizedNames.get(locale);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOReportableField#setLocalizedName(java.lang.String, java.util.Locale)
+	 */
+	public void setLocalizedName(String name, Locale locale) {
+		_localizedNames.put(locale, name);
+	}
+	
+	public Map getMapOfLocalizedNames(){
+		return (Map)_localizedNames.clone();
+	}
+	
 }
