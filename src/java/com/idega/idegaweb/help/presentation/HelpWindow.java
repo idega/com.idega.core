@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.4 2004/02/24 11:33:11 birna Exp $
+ * $Id: HelpWindow.java,v 1.5 2004/03/01 16:54:36 birna Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -99,7 +99,7 @@ public class HelpWindow extends StyledIWAdminWindow {
 		setResizable(true);
 		setScrollbar(true);
 		setHeight(500);
-		setWidth(310);
+		setWidth(500);
 	}
 
 	private void edit(IWContext iwc) {
@@ -107,8 +107,10 @@ public class HelpWindow extends StyledIWAdminWindow {
 		Form form = new Form();
 		Table t = new Table(1, 10);
 		t.setStyleClass(mainTableStyle);
-		t.setWidth(210);
-		t.setHeight(400);
+		t.setCellpadding(4);
+		t.setCellspacing(0);
+		t.setWidth("97%");
+		t.setHeight("97%");
 		DropdownMenu localeDrop = ICLocalePresentation.getLocaleDropdownIdKeyed(LOCALE);
 		localeDrop.setToSubmit();
 		
@@ -182,7 +184,7 @@ public class HelpWindow extends StyledIWAdminWindow {
 
 		Table t = new Table();
 		t.setStyleClass(mainTableStyle);
-		t.setWidth(210);
+		t.setWidth("97%");
 //		t.setHeight(400);
 		CloseButton close = new CloseButton(_iwrb.getLocalizedImageButton(CLOSE_WINDOW, "Close"));
 		int row = 1;
