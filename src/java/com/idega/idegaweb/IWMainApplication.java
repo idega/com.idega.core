@@ -583,7 +583,7 @@ public class IWMainApplication {//implements ServletContext{
 		if (bundleDir.indexOf(BUNDLES_STANDARD_DIRECTORY) == -1) {
 			bundleDir = IWMainApplication.BUNDLES_STANDARD_DIRECTORY + File.separator + bundleDir;
 		}
-        return registerBundle(bundleIdentifier, bundleDir, false);
+        return registerBundle(bundleIdentifier, bundleDir, autoCreate);
     }    
     
     /**
