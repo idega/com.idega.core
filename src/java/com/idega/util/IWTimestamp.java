@@ -623,6 +623,17 @@ public class IWTimestamp implements Comparable,Cloneable {
 
 	/**
 	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date settings of the given <code>Date</code> object.  Time settings are
+	 * disgarded.
+	 */
+	public IWTimestamp(Locale locale, java.util.Date date) {
+		this(locale);
+		setAsDate();
+		calendar.setTime(date);
+	}
+
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
 	 * the date and time settings of the given <code>GregorianCalendar</code> object.
 	 */
 	public IWTimestamp(GregorianCalendar theCalendar) {
