@@ -18,7 +18,8 @@ import com.idega.util.RenderUtils;
 
 
 /**
- * Base class for Renderer. With some helper functions.
+ * Base class for Renderer. With some helper functions.<br>
+ * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version 1.0
  */

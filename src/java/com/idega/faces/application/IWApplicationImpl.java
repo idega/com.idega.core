@@ -5,8 +5,6 @@ package com.idega.faces.application;
 
 import net.sourceforge.myfaces.application.ApplicationImpl;
 
-import com.idega.faces.smile.IWViewHandlerImpl;
-
 
 /**
  * IWApplicationImpl //TODO: tryggvil Describe class

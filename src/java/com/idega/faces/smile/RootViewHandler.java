@@ -11,11 +11,8 @@ import java.util.Locale;
 import java.util.logging.Logger;
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
-import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.util.StringHandler;
 
 /**
  * @author tryggvil

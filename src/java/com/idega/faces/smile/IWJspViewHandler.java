@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.1 2004/10/25 14:48:52 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.2 2004/11/14 23:37:11 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,18 +16,18 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
 import com.idega.faces.ViewHandlerWrapper;
-import com.idega.faces.view.ViewManager;
-import com.idega.faces.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/10/25 14:48:52 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -90,10 +90,9 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * @param facesContext
 	 * @return
 	 */
-	private ViewNode getNode(FacesContext facesContext) {
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(facesContext);
-		String url = facesContext.getExternalContext().getRequestServletPath();
-		return ViewManager.getInstance(iwma).getViewNodeForUrl(url);
+	private ViewNode getNode(FacesContext context) {
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		return ViewManager.getInstance(iwma).getViewNodeForContext(context);
 	}
 
 	private static String JSP_EXT = ".jsp";
@@ -109,7 +108,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 				newViewId=node.getJSPURI();
 			}
 		}
-		return super.restoreView(context, viewId);
+		return super.restoreView(context, newViewId);
 	}
 	
 	/* (non-Javadoc)

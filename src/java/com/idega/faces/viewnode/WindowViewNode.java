@@ -1,5 +1,5 @@
 /*
- * $Id: WindowViewNode.java,v 1.1 2004/10/19 10:37:10 tryggvil Exp $
+ * $Id: WindowViewNode.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
  * Created on 4.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -7,18 +7,18 @@
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
  */
-package com.idega.faces.view.node;
+package com.idega.faces.viewnode;
 
 import javax.faces.application.ViewHandler;
+import com.idega.core.view.DefaultViewNode;
+import com.idega.core.view.ViewNode;
 import com.idega.faces.smile.WindowViewHandler;
-import com.idega.faces.view.DefaultViewNode;
-import com.idega.faces.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/10/19 10:37:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.1 $

@@ -1,45 +1,65 @@
 /*
- * Created on 19.5.2004
+ * $Id: IWFacesInstaller.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Created on 19.5.2004 by Tryggvi Larusson
+ *
+ * Copyright (C) 2004 Idega. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega.
+ * Use is subject to license terms.
+ *
  */
-package com.idega.faces.smile;
+package com.idega.faces;
 
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
 import javax.faces.application.ViewHandler;
+import javax.faces.lifecycle.Lifecycle;
+import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import com.idega.idegaweb.IWMainApplication;
 
 /**
- * @author tryggvil
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This Listener starts up the JavaServerFaces extensions for idegaWeb.
+ * 
+ * 
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  */
-public class IWInstaller implements ServletContextListener {
+public class IWFacesInstaller implements ServletContextListener {
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("IWInstaller.contextInitialized");
 		installViewHandler(arg0.getServletContext());
+		installFacesPhaseListener();
 	}
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
 	 */
 	public void contextDestroyed(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 	
+	protected Lifecycle getDefaultLifecycle(){
+		return getLifecycleFactory().getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+	}
 	
+	protected LifecycleFactory getLifecycleFactory(){
+		return (LifecycleFactory)FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+	}
+	
+	protected void installFacesPhaseListener(){
+		//This installs the phasesListener that invokes the main(iwc) method;
+		getDefaultLifecycle().addPhaseListener(new IWPhaseListener());
+	}
 
 	
 	public static void installViewHandler(ServletContext context) {
+		
+		//This installs the special idegaWeb viewHandlers that use the ViewNode system.
 		
 		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
 		Application app = factory.getApplication();

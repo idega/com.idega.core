@@ -1,7 +1,14 @@
 /*
+ * $Id: IWViewHandlerImpl.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
-package com.idega.faces.smile;
+
+package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -14,22 +21,29 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.idega.faces.view.ViewManager;
-import com.idega.faces.view.ViewNode;
+import com.idega.core.view.DefaultViewNode;
+import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
+import com.idega.faces.smile.IWJspViewHandler;
+import com.idega.faces.smile.RootViewHandler;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
- * IWViewHandlerImpl //TODO: tryggvil Describe class
- * Copyright (C) idega software 2004
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * This is the main JSF ViewHandler implementation for idegaWeb.<br>
+ * The instance of this class handles the idegaWeb specific urls if it detects one
+ * and uses the ViewNode structure to handle that.<br>
+ * If there is not an incoming idegaWeb request coming in it delegates the
+ * calls to the underlying system ViewHandler.<br>
+ * 
+ * Copyright (C) idega software 2004<br>
+ * 
+ * Last modified: $Date: 2004/11/14 23:37:11 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.1 $
  */
-//Removed refeence to Smile
-//public class IWViewHandlerImpl extends CbpViewHandlerImpl {
 public class IWViewHandlerImpl extends ViewHandler{
 	
 	//private static Logger log = Logger.getLogger(IWViewHandlerImpl.class);
@@ -38,6 +52,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	private Map childHandlerMap;
 	private ViewManager viewManager;
 	private ViewHandler jspViewHandler;
+	private IWMainApplication iwma;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
@@ -63,10 +78,22 @@ public class IWViewHandlerImpl extends ViewHandler{
 		addChildViewHandler("/workspace",workspaceViewHandler);
 		addChildViewHandler("/idegaweb/workspace",workspaceViewHandler);
 		*/
-		viewManager = ViewManager.getInstance(iwma);
-		viewManager.initializeStandardViews(new RootViewHandler(parentViewHandler));
+		this.iwma=iwma;
 		
-	}	
+		updateViewManagerViewHandler(iwma);
+		
+	}
+	
+	protected void updateViewManagerViewHandler(IWMainApplication iwma){
+		//This updates the viewhandler Instance that the root viewnode has.
+		// the ViewHandler before this is just the system ViewHandler
+		
+		viewManager = ViewManager.getInstance(iwma);
+		//viewManager.initializeStandardViews(new RootViewHandler(parentViewHandler));
+		ViewNode root = viewManager.getApplicationRoot();
+		DefaultViewNode dRoot = (DefaultViewNode)root;
+		dRoot.setViewHandler(new RootViewHandler(this.getParentViewHandler()));
+	}
 	
 	/*
 	protected void addChildViewHandler(String urlPrefix, ViewHandler handler) {

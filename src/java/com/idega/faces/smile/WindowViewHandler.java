@@ -13,7 +13,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import com.idega.faces.view.ViewNode;
+import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.StringHandler;
 
