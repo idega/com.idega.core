@@ -73,13 +73,16 @@ public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNo
   public boolean isUser();
   public java.util.Collection getReverseRelatedBy(String relationType) throws FinderException, java.rmi.RemoteException;
   public void setMetaData(java.lang.String p0, java.lang.String p1); 
+  public java.lang.String getMetaData(java.lang.String p0);
   public void addAddress(com.idega.core.data.Address p0) throws IDOAddRelationshipException;
   public java.util.Collection getPhones();
   public java.util.Collection getEmails();
 
-	public void setAliasID(int id) throws java.rmi.RemoteException;;
-	public void setAlias(Group alias) throws java.rmi.RemoteException;;
-	public int getAliasID() throws java.rmi.RemoteException;;
-	public Group getAlias() throws java.rmi.RemoteException;;
+	public void setAliasID(int id) throws java.rmi.RemoteException;
+	public void setAlias(Group alias) throws java.rmi.RemoteException;
+	public int getAliasID() throws java.rmi.RemoteException;
+	public Group getAlias() throws java.rmi.RemoteException;
+  public void addEmail(com.idega.core.data.Email email) throws IDOAddRelationshipException;
+  public void addPhone(com.idega.core.data.Phone phone) throws IDOAddRelationshipException;
 }
 

@@ -3657,6 +3657,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		addManyToManyRelationShip(MetaData.class);
 		//this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
 		 ((GenericEntity) this.getIDOEntityStaticInstance())._hasMetaDataRelationship = true;
+     // bug in getIDOEntityStaticInstance
+     _hasMetaDataRelationship = true;
 	}
 	public boolean hasMetaDataRelationship()
 	{

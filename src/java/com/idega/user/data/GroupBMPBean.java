@@ -1230,5 +1230,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
       throw new RuntimeException("Error in getEmails() : " + e.getMessage());
     }
   }
-
+  
+  public void addEmail(Email email) throws IDOAddRelationshipException {
+    this.idoAddTo(email);
+  }
+  
+  public void addPhone(Phone phone) throws IDOAddRelationshipException {
+    this.idoAddTo(phone);
+  }  
+  
 } // Class Group
