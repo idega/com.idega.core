@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -644,5 +645,47 @@ public class FileUtil {
     else{
       throw new IOException(inputDirectory.toString()+" is not a directory");
     }
+  }
+  
+  /**
+   * Converts a long number representing bytes into human readable format.
+   * <p>
+   * This value is mainly for formating values like a file size, memory size
+   * and so forth, so instead of seeing a large incoherent number you can see
+   * something like '308.123KB' or '9.68MB'
+   * @param bytes to format into a string.
+   * @return human readable format for larger byte counts.
+   */
+  public static String getHumanReadableSize(long bytes) {
+
+      long mb = (long) Math.pow(2, 20);
+      long kb = (long) Math.pow(2, 10);
+      long gb = (long) Math.pow(2, 30);
+      long tb = (long) Math.pow(2, 40);
+      
+      NumberFormat nf = NumberFormat.getNumberInstance();
+      nf.setMaximumFractionDigits(3);
+      double relSize = 0.0d;
+      long abytes = Math.abs(bytes);
+      String id = "";
+      if ((abytes / tb) >= 1) {
+        relSize = (double) abytes / (double) kb;
+        id = "TB";
+      }
+      else if ((abytes / gb) >= 1) {
+          relSize = (double) abytes / (double) gb;
+          id = "GB";
+      } else if ((abytes / mb) >= 1) {
+          relSize = (double) abytes / (double) mb;
+          id = "MB";
+      } else if ((abytes / kb) >= 1) {
+          relSize = (double) abytes / (double) kb;
+          id = "KB";
+      }  
+      else {
+          relSize = abytes;
+          id = "b";
+      }
+      return nf.format((bytes < 0 ? -1 : 1) * relSize) + id;
   }
 }
