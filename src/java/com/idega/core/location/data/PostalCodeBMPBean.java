@@ -55,6 +55,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     addIndex("IDX_IC_POSTALCODE2", new String[]{COLUMN_POSTAL_CODE, COLUMN_NAME});
     addIndex("IDX_IC_POSTALCODE3", new String[]{COLUMN_POSTAL_CODE, COLUMN_COUNTRY_ID});
     addIndex("IDX_IC_POSTALCODE4", COLUMN_COUNTRY_ID);
+    getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
 

@@ -67,6 +67,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 		//addAttribute("image_id","MyndN?mer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
+		getEntityDefinition().setBeanCachingActiveByDefault(true);
 	}
 	private String getColumnObjectName() {
 		return COLUMN_OBJECT_NAME;

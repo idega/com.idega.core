@@ -30,6 +30,7 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getNameColumnName(),"Nafn",true,true,"java.lang.String");
     this.addAttribute(getDescriptionColumnName(),"Description",true,true,"java.lang.String",1000);
+    getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
   public String getEntityName() {
     return "ic_gender";
