@@ -1,10 +1,9 @@
 package com.idega.business;
 
-import javax.ejb.SessionContext;
-import javax.ejb.EJBObject;
+
 import java.security.Identity;
 import java.security.Principal;
-import javax.ejb.EJBHome;
+import javax.ejb.*;
 import java.util.Properties;
 import javax.transaction.UserTransaction;
 import javax.transaction.SystemException;
@@ -86,5 +85,13 @@ public class IBOSessionContext implements SessionContext {
   }
   public void setRollbackOnly() throws java.lang.IllegalStateException {
     this.roolbackOnly=true;
+  }
+
+  public EJBLocalObject getEJBLocalObject(){
+    return (EJBLocalObject)this.getEJBObject();
+  }
+
+  public EJBLocalHome getEJBLocalHome(){
+    return (EJBLocalHome)this.getEJBHome();
   }
 }
