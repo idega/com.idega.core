@@ -61,7 +61,7 @@ public class PageIncluder extends PresentationObject implements Index{
 
   private void sortAndProcess(IWContext iwc){
     //sort
-    Page parent = this.getParentPage();
+    Page parent = this.getParentPage();/**@todo get in main**/
     List objects = parent.getAllContainedObjectsRecursive();
     ArrayList includers = new ArrayList();
     Iterator iter = objects.iterator();
@@ -100,33 +100,27 @@ public class PageIncluder extends PresentationObject implements Index{
 
   public void main(IWContext iwc) throws Exception {
     Page fromPage = this.getParentPage();
-
+    instanceId=getICObjectInstanceID();
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
-    if( changeURL ){
-      if (_sendToPage != null) {
-	if (_sendToPageIfSet == null){
+    if( changeURL && _sendToPage != null) {//forwarding
+      if (_sendToPageIfSet == null){
+	iwc.forwardToIBPage(fromPage,_sendToPage);
+      }
+      else {
+	if (iwc.isParameterSet(_sendToPageIfSet)){
 	  iwc.forwardToIBPage(fromPage,_sendToPage);
-	}
-	else {
-	  if (iwc.isParameterSet(_sendToPageIfSet)){
-	    iwc.forwardToIBPage(fromPage,_sendToPage);
-	  }
 	}
       }
     }
-    else{
-      if (out==null) sortAndProcess(iwc);
-    }
+    else if(out==null) sortAndProcess(iwc);//ususal
 
   }
 
   public void print(IWContext iwc)throws IOException{
     if(URL!=null){
-      if( doPrint(iwc) ){
-	if(out!=null) println(out);
-	out = null;
-      }
+      if(out!=null) println(out);
+      out = null;
     }
   }
 
@@ -137,15 +131,13 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
 	String query = null;
-	instanceId=getICObjectInstanceID();
-
 /*        Enumeration enum2 = iwc.getParameterNames();
 	while (enum2.hasMoreElements()) {
 	  String param2 = (String) enum2.nextElement();
 	  System.out.println("param = " + param2);
 	}*/
 
-	if (forceFrame) {
+	if (forceFrame ) {
 	  String currentPage = getCurrentIBPageIDToURLString(iwc);
 	  StringBuffer buf = new StringBuffer();
 	  buf.append(iwc.getRequestURI());
@@ -190,6 +182,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	//after clicking a link and submitting a form
 	// check if the action is for this page includer
 	if ( changeURL ) {
+
 	  //get all parameters even from post actions
 	  Enumeration enum = iwc.getParameterNames();
 	  while (enum.hasMoreElements()) {
@@ -205,7 +198,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
 	      //if (_sendURLTo != null)
 	      //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
-	      debug(URL);
+	      //System.out.println("THE URL: "+URL);
 	      location.append(URL);
 	    }
 	    else{
@@ -246,6 +239,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	}
 
 	String loc = location.toString();
+	//System.out.println("Loc = "+loc);
 
 	if( (sessionURL!=null) && (token!=null) ){
 
@@ -269,30 +263,31 @@ public class PageIncluder extends PresentationObject implements Index{
 	  loc = TextSoap.findAndReplace(loc,token,sessionId);
 	}
 
-	debug("Location url is: "+loc+" and index is: "+index);
+	//System.out.println("Location url is: "+loc+" and index is: "+index);
 
 
 	out = FileUtil.getStringFromURL(loc);
 
+	if(loc!=null){
+	  URL url = new URL(loc);
+	  BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
+	  if(loc.lastIndexOf("/")==6) loc+="/";
+	  RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
 
-	URL url = new URL(loc);
-	BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
-	if(loc.lastIndexOf("/")==6) loc+="/";
-	RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+	  /**
+	   * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
+	   * **/
 
-	/**
-	 * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
-	 * **/
-
-	out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
-	out = preProcess(out);
-	if( forceFrame ){
-	  out = encodeQueryStrings(out);
+	  out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
+	  out = preProcess(out);
+	  if( forceFrame ){
+	    out = encodeQueryStrings(out);
+	  }
+	  out = changeSrcAttributes(out);
+	  out = changeAHrefAttributes(out);
+	  out = changeFormActionAttributes(out);
+	  out = postProcess(out);
 	}
-	out = changeSrcAttributes(out);
-	out = changeAHrefAttributes(out);
-	out = changeFormActionAttributes(out);
-	out = postProcess(out);
   }
 
 
