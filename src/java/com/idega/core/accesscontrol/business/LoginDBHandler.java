@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.31 2002/07/31 14:29:28 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.32 2002/07/31 14:43:48 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -747,6 +747,7 @@ public class LoginDBHandler
 			}
 			catch (Exception e)
 			{
+				e.printStackTrace();
 				System.err.println("Error creating login for userID: " + user.getID() + " with login: " + login);
 			}
 		}
