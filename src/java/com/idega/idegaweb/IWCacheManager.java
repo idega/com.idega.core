@@ -202,7 +202,7 @@ public class IWCacheManager {
       entity = com.idega.data.GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
       input = entity.getInputStreamColumnValue(entity.getLobColumnName());
       String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
-      String virtualPath = "/"+IW_ROOT_CACHE_DIRECTORY;
+      String virtualPath = iwma.getApplicationContextURI()+IW_ROOT_CACHE_DIRECTORY;
       String fileName = entity.getID()+"_"+entity.getName();
       fileName = TextSoap.findAndCut(fileName," ");//remove spaces
 
