@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.77 2002/07/12 14:31:59 eiki Exp $
+ * $Id: Link.java,v 1.78 2002/07/30 13:50:02 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -570,6 +570,10 @@ public class Link extends Text{
     return false; // false
   }
 
+  public void setParameter(String parameterName, String parameterValue) {
+ 	addParameter(parameterName,parameterValue);	
+  }
+  
   /**
    *
    */
