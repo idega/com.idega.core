@@ -676,9 +676,15 @@ public class IDOQuery {
   	return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array));	
   }
 
+	public IDOQuery appendInArrayWithSingleQuotes(String[] array) {
+		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array, true));	
+	}
+
 	public IDOQuery appendNotInArray(String[] array) {
 		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array));
 	}
 
-
+	public IDOQuery appendNotInArrayWithSingleQuotes(String[] array) {
+		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array,true));
+	}
 }
