@@ -344,6 +344,10 @@ public class IDOPrimaryKeyList implements List, Runnable {
 			}
 			catch (SQLException sqle)
 			{
+				System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
+				if(_countQuery!=null){
+					System.err.println("[IDOPrimaryKeyList]: or for for SQL count query: " + _countQuery);
+				}
 				sqle.printStackTrace();
 				throw new IDOFinderException(sqle);
 			}
@@ -1086,11 +1090,17 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //			}
 			
 		    public void set(Object o) {
-		        throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
-		      }
-		      public void add(Object o) {
-		        throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
-		      }
+		    		if (o instanceof IDOEntity)
+			 		_list.set(_index-1,((IDOEntity)o));
+			 	else
+			 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+		    }
+		    public void add(Object o) {
+		    		if (o instanceof IDOEntity)
+			 		_list.add(_index,((IDOEntity)o));
+			 	else
+			 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+		    }
 
 }
 

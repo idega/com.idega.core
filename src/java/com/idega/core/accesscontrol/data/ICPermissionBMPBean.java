@@ -10,6 +10,7 @@ import com.idega.data.IDOUtil;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 
 /**
  * Title:        ICPermissionBMPBean
@@ -304,6 +305,10 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 * @throws FinderException
 	 */
 	public Collection ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException{
+		if(groups==null || groups.isEmpty()){
+			return ListUtil.getEmptyList();
+		}
+		
 		IDOQuery sql = idoQuery();
 		IDOUtil util = IDOUtil.getInstance();
 		sql.appendSelectAllFrom(this).appendWhere()

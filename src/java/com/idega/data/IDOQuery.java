@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.idega.data.query.SelectQuery;
+import com.idega.util.IWTimestamp;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -193,6 +194,10 @@ public class IDOQuery implements Cloneable {
 		//this.appendWithinSingleQuotes(stamp.toSQLString());
 		this.append(getDatastore().format(timestamp));
 		return this;
+	}
+	
+	public IDOQuery append(IWTimestamp timestamp) {
+		return this.append(timestamp.getTimestamp());
 	}
 
 	public IDOQuery append(IDOEntity entity) {

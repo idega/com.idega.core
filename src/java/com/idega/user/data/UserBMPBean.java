@@ -1331,7 +1331,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//TODO Eiki add sql for only allowed groups
 		if( statusId>0 ){
 			query.append(operator)
-			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId));
+			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId,IWTimestamp.RightNow()));
 		}
 		
 		//group search
@@ -1420,12 +1420,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * @param condition
 	 */
-	private String getUserStatusSearchString(int statusId) {
-		StringBuffer sql = new StringBuffer();
+	private String getUserStatusSearchString(int statusId, IWTimestamp currentTime) {
+		IDOQuery sql = idoQuery();
 		
 		sql.append("select distinct(ic_user_id) from ic_usergroup_status where status_id = ")
 		.append(statusId);
-
+		sql.appendAnd().append("date_from").appendGreaterThanOrEqualsSign().append(currentTime)
+		.appendAnd().appendLeftParenthesis().append("date_to").appendIsNull().appendOr().append("date_to").appendLessThanSign().append(currentTime).appendRightParenthesis();
+		
 		return sql.toString();
 	}
 

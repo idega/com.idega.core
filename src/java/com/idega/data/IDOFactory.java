@@ -191,8 +191,12 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 		    Iterator iter = collectionOfPrimaryKeys.iterator();
 		    while (iter.hasNext()) {
 		      Object pk = iter.next();
-		      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
-		      theReturn.add(entityObject);
+		      if(pk instanceof IDOEntity){
+		      	theReturn.add((IDOEntity)pk);
+		      } else {
+			      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+			      theReturn.add(entityObject);
+		      }
 		    }
 	    }
 	    return theReturn;
