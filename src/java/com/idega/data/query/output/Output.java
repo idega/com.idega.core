@@ -1,12 +1,15 @@
 package com.idega.data.query.output;
 
+import com.idega.data.query.Flag;
+
 /**
  * The Output is where the elements of the query output their bits of SQL to.
  *
  * @author <a href="mailto:joe@truemesh.com">Joe Walnes</a>
  */
-public class Output {
+public class Output implements Flag{
 
+    protected boolean flag = false;
     /**
      * @param indent String to be used for indenting (e.g. "", "  ", "       ", "\t")
      */
@@ -62,5 +65,12 @@ public class Output {
         	   result.append(' ');//.append(currentIndent);
             newLineComing = false;
         }
+    }
+    
+    public boolean isFlagged(){
+        return flag;
+    }
+    public void flag(boolean flag){
+        this.flag = flag;
     }
 }

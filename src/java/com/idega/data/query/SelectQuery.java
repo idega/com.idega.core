@@ -15,12 +15,11 @@ import com.idega.data.IDOEntityField;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.query.output.Output;
 import com.idega.data.query.output.Outputable;
-import com.idega.data.query.output.ToStringer;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
  */
-public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
+public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 	public static final int indentSize = 4;
 
@@ -30,9 +29,9 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 	private Vector criteria;
 	private Vector order;
 	private Vector groupBy;
-	private Vector placeHolderValues;
 	private boolean _countQuery = false;
     private boolean _distinct =false;
+    private boolean flag = false;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
@@ -40,7 +39,6 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 		criteria = new Vector();
 		order = new Vector();
 		groupBy = new Vector();
-		placeHolderValues = new Vector();
 	}
 
 	public Table getBaseTable() {
@@ -233,7 +231,18 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 	}
 
 	public String toString() {
-		return ToStringer.toString(this);
+		//return ToStringer.toString(this);
+	    Output out = new Output("    ");
+	    out.flag(isFlagged());
+        this.write(out);
+        return out.toString();
+	}
+	
+	public String toString(boolean flag){
+	    Output out =new Output("");
+	    out.flag(flag);
+	    this.write(out);
+	    return out.toString();
 	}
 
 	public void write(Output out) {
@@ -311,12 +320,16 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 	    }
 	    return list;
 	}
+	
+	private void appendList(Output out, Collection collection, String seperator){
+	    appendList(out,collection,seperator,false);
+	}
 
 	/**
 	 * Iterate through a Collection and append all entries (using .toString()) to
 	 * a StringBuffer.
 	 */
-	private void appendList(Output out, Collection collection, String seperator) {
+	private void appendList(Output out, Collection collection, String seperator,boolean flag) {
 		Iterator i = collection.iterator();
 		boolean hasNext = i.hasNext();
 
@@ -441,4 +454,10 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 		return order;
 	}
 	
+    public void flag(boolean flag) {
+        this.flag = flag;
+    }
+    public boolean isFlagged() {
+        return this.flag;
+    }
 }
