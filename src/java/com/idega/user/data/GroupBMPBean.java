@@ -34,7 +34,7 @@ import com.idega.util.ListUtil;
 /**
  * Title:        IW Core
  * Description:
- * Copyright:    Copyright (c) 2001
+ * Copyright:    Copyright (c) 2001-2003 idega software
  * Company:      idega.is
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
@@ -127,7 +127,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * overwrite in extended classes
 	 */
 	public String getGroupTypeValue() {
-		return "general";
+		return getGroupTypeHome().getGeneralGroupTypeString();
 	}
 	public String getGroupTypeKey() {
 		return getGroupTypeValue();
