@@ -1,6 +1,6 @@
 package com.idega.core.accesscontrol.data;
 
-import com.idega.core.data.GeneralGroup;
+import com.idega.core.data.GenericGroup;
 import java.sql.*;
 
 
@@ -13,7 +13,7 @@ import java.sql.*;
  * @version 1.0
  */
 
-public class PermissionGroup extends GeneralGroup {
+public class PermissionGroup extends GenericGroup {
 
 
   public PermissionGroup() {
@@ -29,7 +29,7 @@ public class PermissionGroup extends GeneralGroup {
   }
 
   public static String getClassName(){
-    return "com.idega.builder.accesscontrol.data.PermissionGroup";
+    return "com.idega.core.accesscontrol.data.PermissionGroup";
   }
 
    public static PermissionGroup getStaticPermissionGroupInstance(){

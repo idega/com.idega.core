@@ -16,13 +16,13 @@ import com.idega.core.user.data.User;
 *@version 1.2
 */
 
-public abstract class GeneralGroup extends GenericEntity{
+public class GenericGroup extends GenericEntity{
 
-	public GeneralGroup(){
+	public GenericGroup(){
 		super();
 	}
 
-	public GeneralGroup(int id)throws SQLException{
+	public GenericGroup(int id)throws SQLException{
 		super(id);
 	}
 
@@ -47,13 +47,14 @@ public abstract class GeneralGroup extends GenericEntity{
         /**
          * overwrite in extended classes
          */
-        public abstract String getGroupTypeValue();
-
+        public String getGroupTypeValue(){
+          return "general";
+        }
         /**
          * overwrite in extended classes
          */
         public static String getClassName(){
-          return "com.idega.core.data.GeneralGroup";
+          return "com.idega.core.data.GenericGroup";
         }
 
         /*  ColumNames begin   */
@@ -113,14 +114,14 @@ public abstract class GeneralGroup extends GenericEntity{
 		setColumn(getExtraInfoColumnName(),extraInfo);
 	}
 
-        public static Group getStaticInstance(){
-          return (Group)getStaticInstance(getClassName());
+        public static GenericGroup getStaticInstance(){
+          return (GenericGroup)getStaticInstance(getClassName());
         }
 
 
         //??
-        public Group[] getAllGroupsContainingThis()throws SQLException{
-          String tableToSelectFrom = "GROUP_TREE";
+        public GenericGroup[] getAllGroupsContainingThis()throws SQLException{
+          String tableToSelectFrom = "IC_GROUP_TREE";
           StringBuffer buffer=new StringBuffer();
           buffer.append("select * from ");
           buffer.append(tableToSelectFrom);
@@ -168,7 +169,7 @@ public abstract class GeneralGroup extends GenericEntity{
 
 		if (vector != null){
 			vector.trimToSize();
-			return (Group[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
+			return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
 		}
 		else{
 			return null;
@@ -178,11 +179,11 @@ public abstract class GeneralGroup extends GenericEntity{
           //return (Group[])this.findReverseRelated(this);
         }
 
-        public Group[] getAllGroupsContainingUser(User user)throws SQLException{
-          return (Group[])user.findRelated(this);
+        public GenericGroup[] getAllGroupsContainingUser(User user)throws SQLException{
+          return (GenericGroup[])user.findRelated(this);
         }
 
-        public void addGroup(Group groupToAddTo)throws SQLException{
+        public void addGroup(GenericGroup groupToAddTo)throws SQLException{
 
 		Connection conn= null;
 		Statement Stmt= null;

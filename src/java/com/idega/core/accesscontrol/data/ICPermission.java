@@ -12,19 +12,19 @@ import java.sql.*;
  * @version 1.0
  */
 
-public class IBPermission extends GenericEntity {
+public class ICPermission extends GenericEntity {
 
 
-  private static String[] Columns = {"ib_permission_context_type", "ib_permission_context_value", "ib_permission_string", "ib_permission_string_value", "ib_permission_value", "group_id"};
+  private static String[] Columns = {"permission_context_type", "permission_context_value", "permission_string", "permission_string_value", "permission_value", "group_id"};
 
-  private static String sClassName = "com.idega.builder.accesscontrol.data.IBPermission";
+  private static String sClassName = "com.idega.core.accesscontrol.data.ICPermission";
 
 
-  public IBPermission() {
+  public ICPermission() {
     super();
   }
 
-  public IBPermission(int id) throws SQLException{
+  public ICPermission(int id) throws SQLException{
     super(id);
   }
 
@@ -39,7 +39,7 @@ public class IBPermission extends GenericEntity {
 
   }
   public String getEntityName() {
-    return "ib_permission";
+    return "ic_permission";
   }
 /*
   public void setDefaultValues(){
@@ -128,8 +128,8 @@ public class IBPermission extends GenericEntity {
 
 
 
-  public static IBPermission getStaticInstance(){
-    return (IBPermission)getStaticInstance(sClassName);
+  public static ICPermission getStaticInstance(){
+    return (ICPermission)getStaticInstance(sClassName);
   }
 
 

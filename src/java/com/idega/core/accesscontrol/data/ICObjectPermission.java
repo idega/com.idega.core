@@ -12,33 +12,33 @@ import java.sql.*;
  * @version 1.0
  */
 
-public class IBObjectPermission extends GenericEntity {
+public class ICObjectPermission extends GenericEntity {
 
-  private static String sClassName = "com.idega.builder.accesscontrol.data.IBObjectPermission";
+  private static String sClassName = "com.idega.core.accesscontrol.data.ICObjectPermission";
 
-  public IBObjectPermission() {
+  public ICObjectPermission() {
     super();
   }
 
-  public IBObjectPermission(int id) throws SQLException{
+  public ICObjectPermission(int id) throws SQLException{
     super(id);
   }
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute(getArObjectIDColumnName(),"Object",true,true,"java.lang.Integer","many-to-one","com.idega.builder.data.IBObject");
+    addAttribute(getArObjectIDColumnName(),"Object",true,true,"java.lang.Integer","many-to-one","com.idega.builder.data.ICObject");
     addAttribute(getPermissionTypeColumnName(),"Permission Type",true,true,"java.lang.String");
     addAttribute(getDescripionColumnName(),"Description",true,true,"java.lang.String");
 
   }
 
   public String getEntityName() {
-    return "ib_object_permission";
+    return "ic_object_permission";
   }
 
 
   public static String getArObjectIDColumnName(){
-    return "ib_object_id";
+    return "ic_object_id";
   }
 
   public int getArObjectID(){
@@ -76,8 +76,8 @@ public class IBObjectPermission extends GenericEntity {
   }
 
 
-  public static IBObjectPermission getStaticInstance(){
-    return (IBObjectPermission)getStaticInstance(sClassName);
+  public static ICObjectPermission getStaticInstance(){
+    return (ICObjectPermission)getStaticInstance(sClassName);
   }
 
 

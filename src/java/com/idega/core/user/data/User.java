@@ -53,6 +53,14 @@ public class User extends GenericEntity {
       return getUserIDColumnName();
     }
 
+    public static User getStaticInstance(){
+      return (User)User.getStaticInstance(sClassName);
+    }
+
+
+
+
+
     /*  ColumNames begin   */
 
     public static String getUserIDColumnName(){
@@ -180,8 +188,17 @@ public class User extends GenericEntity {
     /*  Setters end   */
 
 
+    /*  relationship begin  */
 
-
+    public List getAllGroups() throws SQLException{
+      return EntityFinder.findRelated(this,GenericGroup.getStaticInstance());
+    }
+/*
+    public List getPermissionGroups() throws SQLException{
+      return EntityFinder.findRelated(this,PermissionGroup.getStaticPermissionGroupInstance());
+    }
+*/
+    /* relationship end */
 
 
 
@@ -190,23 +207,12 @@ public class User extends GenericEntity {
     /*  OLD   */
 
 
-    public Group[] getGenericGroups()throws SQLException{
-      Group group = new Group();
-      return (Group[]) findRelated(group);
+    public GenericGroup[] getGenericGroups()throws SQLException{
+      GenericGroup group = new GenericGroup();
+      return (GenericGroup[]) findRelated(group);
     }
 
-    public List getAllGroups() throws SQLException{
-      return EntityFinder.findRelated(this,Group.getStaticInstance());
-    }
 
-    public List getPermissionGroups() throws SQLException{
-      return EntityFinder.findRelated(this,PermissionGroup.getStaticPermissionGroupInstance());
-      //return (PermissionGroup[])findResated(new PermissionGroup());
-    }
-
-    public static User getStaticInstance(){
-      return (User)User.getStaticInstance(sClassName);
-    }
 
 
 }

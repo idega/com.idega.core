@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.9 2001/05/18 19:48:06 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.10 2001/06/14 20:28:57 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -125,7 +125,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
             if(!theServiceDone) //gummi@idega.is
               __theService(request,response);
       //}
-      response.getWriter().println("\n");
+//      response.getWriter().println("\n");
       _main(moduleinfo);
 
       __print(moduleinfo);
