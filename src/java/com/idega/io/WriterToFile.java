@@ -40,22 +40,15 @@ public abstract class WriterToFile {
 	
 	public abstract String getName();
 	
+	public abstract String getMimeType();
+	
 	public abstract OutputStream writeData(OutputStream destination) throws IOException;
 	
 	public void setSource(Storable storable) {
 		this.storable = storable;
 	}
 		
-  public void close(OutputStream output) {
-  	try {
-  		if (output != null) {
-  			output.close();
-  		}
-  	}
-  	// do not hide an existing exception
-  	catch (IOException io) {
-  	}
-  }
+
 
   protected String getRealPathToFile(String fileName, String extension, long folderIdentifier) {
     IWMainApplication mainApp = iwac.getIWMainApplication();
@@ -126,6 +119,17 @@ public abstract class WriterToFile {
 		catch (IOException io) {
 		}
   }		
+  
+  protected void close(OutputStream output) {
+  	try {
+  		if (output != null) {
+  			output.close();
+  		}
+  	}
+  	// do not hide an existing exception
+  	catch (IOException io) {
+  	}
+  }
   
 	protected void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
 		// parts of this method  were copied from "Java in a nutshell" by David Flanagan

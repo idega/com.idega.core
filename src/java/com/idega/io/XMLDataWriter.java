@@ -60,6 +60,10 @@ public class XMLDataWriter extends WriterToFile {
 		return ((XMLData) storable).getName();
 	}
 	
+	public String getMimeType() {
+		return "text/xml";
+	}
+	
 	public OutputStream writeData(OutputStream destination) throws IOException {  
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));

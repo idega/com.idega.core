@@ -32,7 +32,7 @@ public class ICFileWriter extends WriterToFile {
 	}
 	
 	public String createContainer() throws IOException {
-		//String mimeType = ((ICFile) file).getMimeType();
+
 		
 		long folderIdentifier = System.currentTimeMillis();
 		String name = ((ICFile) storable).getName();
@@ -57,7 +57,11 @@ public class ICFileWriter extends WriterToFile {
 		return getURLToFile(name, null, folderIdentifier);
 	}
 
-
+	public String getMimeType() {
+		return ((ICFile) storable).getMimeType();
+	}
+		
+	
   public String getName() {
   	return ((ICFile) storable).getName();
   }
