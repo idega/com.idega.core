@@ -55,6 +55,7 @@ public class BusyBar extends Block {
   }
 
   private void setScripts(){
+    if(interfaceObjects!=null){
     java.util.Iterator iter = interfaceObjects.iterator();
     while(iter.hasNext()){
       Object o = (Object) iter.next();
@@ -69,6 +70,7 @@ public class BusyBar extends Block {
         obj.setOnClick(getDisabledScript());
       }
 
+    }
     }
   }
 
