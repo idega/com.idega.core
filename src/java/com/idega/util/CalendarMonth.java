@@ -220,6 +220,9 @@ public class CalendarMonth extends TimePeriod{
 		newStamp.addMonths(-1);
 		return new CalendarMonth(newStamp);
 	}
+	public boolean equals(Object o){
+		return toString().equals(o);
+	}
 	
 	/**
 	 * Testing method:
