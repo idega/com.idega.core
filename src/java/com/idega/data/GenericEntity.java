@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.63 2001/10/26 16:40:32 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.64 2001/10/26 16:58:24 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -168,7 +168,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         }
 
 	public Integer getIDInteger() {
-		return (Integer)getColumnValue(getIDColumnName());
+		return (Integer)getPrimaryKeyValue();
 	}
 
 	/**
@@ -416,7 +416,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			setValue(columnName,columnValue);
 		}
 		else{
-			setValue(columnName,((GenericEntity)columnValue).getPrimaryKeyValue());
+                        if(columnValue instanceof Integer){
+                          setValue(columnName,(Integer)columnValue);
+                        }
+                        else if(columnValue instanceof String){
+                          setValue(columnName,(String)columnValue);
+                        }
+                        //else if (columnValue instanceof GenericEntity){
+                        else {
+                          setValue(columnName,((GenericEntity)columnValue).getPrimaryKeyValue());
+                        }
 		}
 	}
 
@@ -779,6 +788,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public String getDatasource(){
 		return _dataSource;
 	}
+
+        /**
+         * @todo add:
+	public String getPKColumnName(){
+          String entityName = getEntityName();
+          if (entityName.endsWith("_")){
+                  return entityName+"id";
+          }
+          else{
+                  return entityName+"_id";
+          }
+	}
+        */
 
 	public String getIDColumnName(){
           String entityName = getEntityName();
