@@ -77,6 +77,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
       throw new EJBException(rme.getMessage());
     }
   }
+  
+  public String ejbHomeGetGroupType(){
+   return this.getGroupTypeKey();
+  }
 
 
   public void setDefaultValues(){
@@ -100,7 +104,8 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 
     }
     catch(Exception e){
-      e.printStackTrace();
+      System.err.println("[Error : "+getClass().getName()+"] Registering grouptype '"+getGroupTypeKey()+"'. Errormessage was: "+e.getMessage());
+      //e.printStackTrace();
     }
   }
 
@@ -462,6 +467,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
       throw new EJBException(rme.getMessage());
     }
   }
+
 
   /**
    * ICTreeNode implementation ends

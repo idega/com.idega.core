@@ -12,6 +12,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findAllUsersOrderedByFirstName()throws java.rmi.RemoteException,javax.ejb.FinderException;
  public User findUserFromEmail(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException;
  public User findByPersonalID(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException;
+ public java.lang.String getGroupType() throws java.rmi.RemoteException;
 
  public User findUserForUserGroup(Group userGroup)throws java.rmi.RemoteException,javax.ejb.FinderException;
  public User findUserForUserGroup(int userGroupID)throws java.rmi.RemoteException,javax.ejb.FinderException;

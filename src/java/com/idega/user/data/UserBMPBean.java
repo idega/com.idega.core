@@ -98,6 +98,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public String getGroupTypeKey() {
 		return "ic_user_representative";
 	}
+	
+	public String ejbHomeGetGroupType(){
+		return super.ejbHomeGetGroupType();
+	}
 
 	public boolean getGroupTypeVisibility() {
 		return false;

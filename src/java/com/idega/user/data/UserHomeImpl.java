@@ -86,6 +86,11 @@ public User findByPersonalID(java.lang.String p0)throws java.rmi.RemoteException
   return (User) super.findByPrimaryKeyIDO(pk);
  }
 
-
+public java.lang.String getGroupType(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((UserBMPBean)entity).ejbHomeGetGroupType();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
 
 }
