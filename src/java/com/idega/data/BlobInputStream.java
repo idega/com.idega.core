@@ -31,7 +31,7 @@ public class BlobInputStream extends InputStream{
     this.setEntity(entity);
     this.setTableColumnName(tableColumnName);
     initConnection();
-    in = getInputStreamForBlobRead();
+    getInputStreamForBlobRead();
   }
 
   public BlobInputStream(InputStream in){
@@ -48,11 +48,13 @@ public class BlobInputStream extends InputStream{
   }
 
   public int read() throws IOException {
-    return in.read();
+    if ( in!=null ) return in.read();
+    else throw new IOException("BlobInputStream: read() inputstream is null!");
   }
 
   public int read(byte b[], int off, int len) throws IOException {
-    return in.read(b, off, len);
+    if ( in!=null ) return in.read(b, off, len);
+    else throw new IOException("BlobInputStream:  read(byte b[], int off, int len) inputstream is null!");
   }
 
   public int read(byte b[]) throws IOException {
@@ -71,7 +73,8 @@ public class BlobInputStream extends InputStream{
           Stmt.close();
       }
 
-      if( in!=null) in.close();
+      //debug for interbase...not closing the stream
+     // if( in!=null) in.close();
 
     }
     catch(Exception ex){
@@ -87,28 +90,32 @@ public class BlobInputStream extends InputStream{
 
   // basic inputstream functions
   public int available() throws IOException {
-      return in.available();
+    if( in != null) return in.available();
+    else throw new IOException("BlobInputStream:  available() inputstream is null!");
   }
 
   public boolean markSupported() {
-      return in.markSupported();
+    if( in != null) return in.markSupported();
+    else return false;
   }
 
   public synchronized void mark(int readlimit) {
-    in.mark(readlimit);
+    if(in!=null) in.mark(readlimit);
   }
 
   public long skip(long n) throws IOException {
-    return in.skip(n);
+    if ( in!=null ) return in.skip(n);
+    else throw new IOException("BlobInputStream: skip() inputstream is null!");
   }
 
   private void ensureOpen() throws IOException {
     if (in == null)
-        throw new IOException("Stream closed");
+        throw new IOException("BlobInputStream: ensureOpen() InputStream is closed(null)!");
   }
 
   public synchronized void reset() throws IOException {
-      in.reset();
+    if ( in!=null ) in.reset();
+    else throw new IOException("BlobInputStream: reset() inputstream is null!");
   }
 
   public InputStream getInputStreamForBlobRead(){
