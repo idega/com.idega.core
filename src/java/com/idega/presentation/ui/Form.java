@@ -31,15 +31,15 @@ import com.idega.presentation.Script;
 */
 public class Form extends InterfaceObjectContainer {
 
-	public static final String ACTION_ON_BLUR = "onBlur";
-	public static final String ACTION_ON_CHANGE = "onChange";
-	public static final String ACTION_ON_CLICK = "onClick";
-	public static final String ACTION_ON_FOCUS = "onFocus";
-	public static final String ACTION_ON_KEY_PRESS = "onKeyPress";
-	public static final String ACTION_ON_KEY_DOWN = "onKeyDown";
-	public static final String ACTION_ON_KEY_UP = "onKeyUp";
-	public static final String ACTION_ON_SELECT = "onSelect";
-	public static final String ACTION_ON_SUBMIT = "onSubmit";
+	public static final String ACTION_ON_BLUR = "onblur";
+	public static final String ACTION_ON_CHANGE = "onchange";
+	public static final String ACTION_ON_CLICK = "onclick";
+	public static final String ACTION_ON_FOCUS = "onfocus";
+	public static final String ACTION_ON_KEY_PRESS = "onkeypress";
+	public static final String ACTION_ON_KEY_DOWN = "onkeydown";
+	public static final String ACTION_ON_KEY_UP = "onkeyup";
+	public static final String ACTION_ON_SELECT = "onselect";
+	public static final String ACTION_ON_SUBMIT = "onsubmit";
 
 	private Window window;
 	private Vector maintainedParameters;
@@ -479,7 +479,7 @@ public class Form extends InterfaceObjectContainer {
 				add(getAssociatedFormScript());
 
 			if (getInterfaceStyle().equals("default")) {
-				println("<form name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
+				println("<form " + getMarkupAttributesString() + " >");
 				super.print(iwc);
 				print("</form>");
 			}
@@ -735,4 +735,16 @@ public class Form extends InterfaceObjectContainer {
 		sendToHTTPS = doSendToHTTPS;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#getName()
+	 */
+	public String getName() {
+		return super.getID();
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#setName(java.lang.String)
+	 */
+	public void setName(String name) {
+		super.setID(name);
+	}
 } // Class ends
