@@ -37,6 +37,10 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
 	}
 
+        public void setDefaultValues(){
+          setColumn(getOldUserPasswordColumnName(),"rugl");
+        }
+
 	public String getEntityName(){
 		return "ic_login";
 	}
