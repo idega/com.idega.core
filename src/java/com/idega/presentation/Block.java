@@ -11,6 +11,7 @@ import java.io.*;
 //import com.idega.jmodule.login.business.*;
 //import com.idega.block.login.business.LoginBusiness;
 //import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.block.IWBlock;
 
@@ -24,6 +25,8 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   private String cacheKey = null;
   private boolean cacheable=false;
   private long cacheInterval;
+  private int targetObjInst = -1;
+  private int targetObjInstset = -2;
 
   private boolean editPermission = false;
 
@@ -51,6 +54,33 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public String getLocalizedName(IWContext iwc){
     return getLocalizedString(getLocalizedNameKey(),getLocalizedNameValue(),iwc);
   }
+
+  /////// target features ///////
+  /////// target code begins ////////////
+
+  public void setTargetObjectInstance(ICObjectInstance instance){
+    if(instance !=null)
+      this.targetObjInst = instance.getID();
+  }
+
+  public int getTargetObjectInstance(){
+    if(targetObjInst >0)
+      return targetObjInst;
+    else
+      return getICObjectInstanceID();
+  }
+
+  public void setAsObjectInstanceTarget(Link link){
+    if(targetObjInst > 0)
+      link.setTargetObjectInstance(getTargetObjectInstance());
+  }
+
+  public boolean isTarget(){
+    System.err.println("targetObjInstset "+targetObjInstset+" targetObjInst"+ targetObjInst);
+    return this.targetObjInstset==this.targetObjInst;
+  }
+  /////// target code ends ////////////
+
 
   public boolean deleteBlock(int ICObjectInstanceId){
     System.err.println("method deleteBlock(int ICObjectInstanceId) not implemented in class "+this.getClass().getName());
@@ -180,6 +210,12 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public void _main(IWContext iwc)throws Exception{
     editPermission = iwc.hasEditPermission(this);
+
+    if(iwc.isParameterSet(TARGET_OBJ_INS))
+      targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));
+
+    if(targetObjInst <=0)
+      targetObjInst = getParentObjectInstanceID();
 
     if(this.isCacheable()){
       setCacheKey(iwc);
@@ -412,7 +448,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
     obj.cacheable = this.cacheable;
     obj.cacheInterval = this.cacheInterval;
-
+    obj.targetObjInst = this.targetObjInst;
     if(this.cacheKey != null){
       obj.cacheKey = this.cacheKey;
     }

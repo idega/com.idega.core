@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.20 2002/02/04 11:34:37 eiki Exp $
+ * $Id: PresentationObject.java,v 1.21 2002/02/08 09:55:22 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -71,6 +71,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   protected boolean initializedInMain = false;
 
+  public static final String TARGET_OBJ_INS = "tois";
 
   private boolean _useBuilderObjectControl = true;
   private boolean _belongsToParent = false;

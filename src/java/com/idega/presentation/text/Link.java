@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.43 2002/02/07 00:36:59 gummi Exp $
+ * $Id: Link.java,v 1.44 2002/02/08 09:55:40 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,6 +31,7 @@ import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.builder.data.IBPage;
 import com.idega.core.data.ICFile;
+import com.idega.core.data.ICObjectInstance;
 import com.idega.presentation.Image;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.builder.business.BuilderLogic;
@@ -957,6 +958,22 @@ public class Link extends Text {
 
   public void setOnClickImageId(int imageId){
     _onClickImageId = imageId;
+  }
+
+  /**
+   *  set the target object instance
+   */
+  public void setTargetObjectInstance(ICObjectInstance instance){
+    if( (instance!=null) && (instance.getID()!=-1) ){
+      addParameter(TARGET_OBJ_INS,instance.getID());
+    }
+  }
+
+  /**
+  *  set the target object instance
+  */
+  public void setTargetObjectInstance(int instanceid){
+    addParameter(TARGET_OBJ_INS,instanceid);
   }
 
 
