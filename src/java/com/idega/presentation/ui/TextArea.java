@@ -16,95 +16,64 @@ import com.idega.presentation.*;
 
 */
 public class TextArea extends InterfaceObject {
-	protected String content;
-	protected boolean editable;
-	protected boolean keepContent;
-	protected boolean wrap = true;
+
 	private static String ROWS_ATTRIBUTE = "rows";
 	private static String COLS_ATTRIBUTE = "cols";
+	private static String WRAP_ATTRIBUTE = "wrap";
 	private static String UNTITLED_STRING = "untitled";
 	private static String EMPTY_STRING = "";
 
+	private String _content = EMPTY_STRING;
 	private int maximum = -1;
 	private boolean asMaximum = false;
 
+	/**
+	 * Constructs a new <code>TextArea</code> with the the default name.
+	 */
 	public TextArea() {
 		this(UNTITLED_STRING);
 	}
+	
+	/**
+	 * Constructs a new <code>TextArea</code> with the name specified and no contents.
+	 * @param name	The name of the <code>TextArea</code>
+	 */
 	public TextArea(String name) {
 		this(name, EMPTY_STRING);
 	}
+	
+	/**
+	 * Constructs a new <code>TextArea</code> with the parameters specified.
+	 * @param name	The name of the <code>TextArea</code>
+	 * @param content	The content of the <code>TextArea</code>
+	 */
 	public TextArea(String name, String content) {
 		super();
 		setName(name);
-		this.content = content;
-		editable = true;
-		keepContent = false;
+		setContent(content);
 	}
-	public TextArea(String name, int width, int height) {
-		this(name, "");
-		setWidth(width);
-		setHeight(height);
+
+	/**
+	 * Constructs a new <code>TextArea</code> with the parameters specified.
+	 * @param name	The name of the <code>TextArea</code>
+	 * @param columns	The width of the <code>TextArea</code>
+	 * @param rows	The height of the <code>TextArea</code>
+	 */
+	public TextArea(String name, int columns, int rows) {
+		this(name, "", columns, rows);
 	}
-	public TextArea(String name, String content, int width, int height) {
+
+	/**
+	 * Constructs a new <code>TextArea</code> with the parameters specified.
+	 * @param name	The name of the <code>TextArea</code>
+	 * @param content	The content of the <code>TextArea</code>
+	 * @param columns	The width of the <code>TextArea</code>
+	 * @param rows	The height of the <code>TextArea</code>
+	 */
+	public TextArea(String name, String content, int columns, int rows) {
 		this(name, content);
-		setWidth(width);
-		setHeight(height);
-	}
-	/**
-	 * Sets the width in columns
-	 * @deprecated Replaced with setWidth(String) or setColumnn(int)
-	 */
-	public void setWidth(int columns) {
 		setColumns(columns);
-	}
-	/**
-	 * Sets the height in rows
-	 * @deprecated Replaced with setHeight(String) or setRows(int)
-	 */
-	public void setHeight(int rows) {
 		setRows(rows);
-	}
-	public void setAsEditable() {
-		editable = true;
-	}
-	public void setAsNotEditable() {
-		editable = false;
-	}
-	public void setValue(String value) {
-		setContent(value);
-	}
-	public void setValue(int value) {
-		setValue(Integer.toString(value));
-	}
-	public void setContent(String s) {
-		content = s;
-	}
-	public String getValue() {
-		return getContent();
-	}
-	public void setWrap(boolean wrapping) {
-		this.wrap = wrapping;
-	}
-	//Enables the possibility of maintaining the content of the area between requests.
-	public void keepContent() {
-		keepContent = true;
-	}
-	public void keepStatusOnAction() {
-		keepContent();
-	}
-	public String getContent() {
-		if (getRequest().getParameter(getName()) == null) {
-			return content;
-		}
-		else {
-			if (keepContent == true) {
-				return getRequest().getParameter(getName());
-			}
-			else {
-				return content;
-			}
-		}
 	}
 
 	public void _main(IWContext iwc) throws Exception {
@@ -121,52 +90,24 @@ public class TextArea extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws IOException {
-		//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")) {
-			String EditableString = "";
-			if (!editable) {
-				EditableString = "READONLY";
-			}
-			//eiki,idega iceland
-			if (!wrap) {
-				EditableString += " wrap=\"OFF\"";
-			}
-			//if (getInterfaceStyle().equals("default"))
-			print("<textarea name=\"" + getName() + "\"" + getAttributeString() + EditableString + " >");
+			print("<textarea name=\"" + getName() + "\"" + getAttributeString() + " >");
 			print(getContent());
 			print("</textarea>");
-			// }
 		}
 		else if (getLanguage().equals("WML")) {
-			if (content != null) {
-				setValue(content);
-			}
 			print("<input type=\"text\" name=\"" + getName() + "\" value=\"" + getContent() + "\" >");
 			print("</input>");
 		}
-		//}
 	}
-	public void setStyle(String style) {
-		setAttribute("class", style);
-	}
-	/**
-	 * Sets the width in pixels or percents
-	 */
-	public void setWidth(String width) {
-		setWidthStyle(width);
-	}
-	/**
-	 * Sets the height in pixels or percents
-	 */
-	public void setHeight(String height) {
-		setHeightStyle(height);
-	}
+
 	/**
 	 * Sets the number of character columns in this text area
 	 */
 	public void setColumns(int cols) {
 		setAttribute(COLS_ATTRIBUTE, Integer.toString(cols));
 	}
+	
 	/**
 	 * Sets the number of character rows in this text area
 	 */
@@ -174,15 +115,62 @@ public class TextArea extends InterfaceObject {
 		setAttribute(ROWS_ATTRIBUTE, Integer.toString(rows));
 	}
 
+	/**
+	 * Sets the maximum allowed characters to be entered into the textarea
+	 * @param maximum	The number of characters allowed.
+	 */
 	public void setMaximumCharacters(int maximum) {
 		this.maximum = maximum;
 		this.asMaximum = true;
 	}
 
 	/**
+	 * Sets whether the text in the textarea should automatically wrap at the end of a line.
+	 * @param wrapping	True if text should wrap, false otherwise.
+	 */
+	public void setWrap(boolean wrapping) {
+		if (wrapping)
+			removeAttribute(WRAP_ATTRIBUTE);
+		else
+			setAttribute(WRAP_ATTRIBUTE,"OFF");
+	}
+
+	/**
+	 * Sets the width in columns
+	 * @deprecated Replaced with setWidth(String) or setColumnn(int)
+	 */
+	public void setWidth(int columns) {
+		setColumns(columns);
+	}
+
+	/**
+	 * Sets the height in rows
+	 * @deprecated Replaced with setHeight(String) or setRows(int)
+	 */
+	public void setHeight(int rows) {
+		setRows(rows);
+	}
+
+	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
+		if (iwc.isParameterSet(getName()))
+			this.setContent(iwc.getParameter(getName()));
+	}
+
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#getContent()
+	 */
+	public String getContent() {
+		return _content;
+	}
+
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#setContent(String)
+	 */
+	public void setContent(String content) {
+		_content = content;
 	}
 
 }
