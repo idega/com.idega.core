@@ -1,5 +1,5 @@
 /*
- * $Id: URIObject.java,v 1.1 2005/01/18 17:11:31 tryggvil Exp $
+ * $Id: IWActionURIHandler.java,v 1.1 2005/02/03 11:25:48 eiki Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,18 +10,18 @@
 package com.idega.core.uri;
 
 
+
 /**
- *  <p>
- *  Class to wrap more information in each URI.
- *  </p>
- *  Last modified: $Date: 2005/01/18 17:11:31 $ by $Author: tryggvil $
+ * 
+ *  Last modified: $Date: 2005/02/03 11:25:48 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.1 $
  */
-public interface URIObject{
+public interface IWActionURIHandler {
 	
-	public String getURI();
-	public java.net.URI toURI();
+	public String getRedirectURL(String requestURI);
+	
+	public String getRedirectURL(IWActionURI uri);	
 	
 }
