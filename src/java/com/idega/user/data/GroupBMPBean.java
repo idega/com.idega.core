@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 /**
  * Title:        IW Core
  * Description:
@@ -26,18 +27,19 @@ import java.util.List;
 public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode {
 	public static final int GROUP_ID_EVERYONE = -7913;
 	public static final int GROUP_ID_USERS = -1906;
-	//private static final String RELATION_TYPE_GROUP_CHILD = "GROUP_CHILD";
+	
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final String EMPTY_STRING = "";
-	
 	
 	private static final String COLUMN_GROUP_ID = "ic_group_id";
 	private static final String COLUMN_NAME = "name";
 	private static final String COLUMN_GROUP_TYPE = "group_type";
 	private static final String COLUMN_DESCRIPTION = "description";
 	private static final String COLUMN_EXTRA_INFO = "extra_info";
-	private static final String COLUMN_CREATED = "CREATED";
+	private static final String COLUMN_CREATED = "created";
 	private static final String COLUMN_HOME_PAGE_ID = "home_page_id";
+	private static final String COLUMN_ALIAS_TO_GROUP = "alias_id"; 
+	
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
@@ -47,8 +49,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
 		addAttribute(getColumnNameHomePageID(), "Home page ID", true, true, Integer.class, "many-to-one", IBPage.class);
 		setNullable(getColumnNameHomePageID(), true);
-		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
-		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+		addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
+		addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+		addManyToOneRelationship(COLUMN_ALIAS_TO_GROUP,Group.class);
+		setNullable(COLUMN_ALIAS_TO_GROUP,true);
     addMetaDataRelationship();//can have extra info in the ic_metadata table
 	}
 	public final String getEntityName() {
@@ -143,6 +147,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void setGroupType(GroupType groupType) {
 		setColumn(getGroupTypeColumnName(), groupType);
 	}
+	
+	public void setAliasID(int id) {
+		setColumn(COLUMN_ALIAS_TO_GROUP,id);
+	}
+	
+	public void setAlias(Group alias) {
+		setColumn(COLUMN_ALIAS_TO_GROUP,alias);
+	}
+	
+	public int getAliasID() {
+		return getIntColumnValue(COLUMN_ALIAS_TO_GROUP);
+	}
+	
+	public Group getAlias() {
+		return (Group)getColumnValue(COLUMN_ALIAS_TO_GROUP);
+	}
+	
 	public String getDescription() {
 		return (String) getColumnValue(getGroupDescriptionColumnName());
 	}

@@ -37,6 +37,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   private static final String TYPE_GENERAL_GROUP = "general";
   private static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
   private static final String TYPE_PERMISSION_GROUP = "permission";
+  private static final String TYPE_ALIAS = "alias";
 
   public void initializeAttributes() {
     //this.addAttribute(getIDColumnName());
@@ -103,6 +104,22 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
     catch (CreateException ex) {
       ex.printStackTrace();
     }
+    
+		try {
+			GroupTypeHome home = (GroupTypeHome)IDOLookup.getHome(GroupType.class);
+
+			GroupType type = home.create();
+			type.setType(TYPE_ALIAS);
+			type.setDescription("Alias group, points to another group");
+			type.setVisibility(true);
+			type.store();
+		}
+		catch (RemoteException ex) {
+			throw new EJBException(ex);
+		}
+		catch (CreateException ex) {
+			ex.printStackTrace();
+		}    
   }
 
   public String getEntityName() {
@@ -168,6 +185,10 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   public String getPermissionGroupTypeString(){
     return TYPE_PERMISSION_GROUP;
   }
+  
+  public String getAliasGroupTypeString() {
+  	return TYPE_ALIAS;
+  }
 
   public void setGroupTypeAsGeneralGroup(){
     setType(this.TYPE_GENERAL_GROUP);
@@ -175,6 +196,10 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 
   public void setGroupTypeAsPermissionGroup(){
     setType(this.TYPE_PERMISSION_GROUP);
+  }
+  
+  public void setGroupTypeAsAliasGroup() {
+  	setType(TYPE_ALIAS);
   }
 
   public boolean getVisibility(){
@@ -209,6 +234,4 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
     return this.idoGetNumberOfRecords(query.toString());
 //    return super.idoGetNumberOfRecords("select count(*) from "+getEntityName()+" where "+ COLUMN_IS_VISIBLE + "!='"+super.COLUMN_VALUE_FALSE+"'");
   }
-
-
 }

@@ -520,7 +520,33 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   public void setDeletedWhen(Timestamp timestamp) {
     setColumn(getColumnNameDeletedWhen(), timestamp);
   }
-
+  
+  /**
+   * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
+   */
+  public void setAliasID(int id) {
+  }
+  
+	/**
+	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
+	 */
+  public void setAlias(Group alias) {
+  }
+  
+	/**
+	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
+	 */
+  public int getAliasID() {
+  	return -1;
+  }
+  
+	/**
+	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
+	 */
+	public Group getAlias() {
+		return null;
+	}
+  
 	/*  Setters end   */
 
 	/*  Business methods begin   */

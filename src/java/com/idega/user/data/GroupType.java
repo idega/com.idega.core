@@ -10,6 +10,7 @@ public interface GroupType extends com.idega.data.IDOEntity
  public void setGroupTypeAsPermissionGroup() throws java.rmi.RemoteException;
  public void initializeAttributes() throws java.rmi.RemoteException;
  public void setGroupTypeAsGeneralGroup() throws java.rmi.RemoteException;
+ public void setGroupTypeAsAliasGroup() throws java.rmi.RemoteException;
  public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
  public java.lang.String getDescription() throws java.rmi.RemoteException;
  public void setType(java.lang.String p0) throws java.rmi.RemoteException;
@@ -17,6 +18,7 @@ public interface GroupType extends com.idega.data.IDOEntity
  public java.lang.String getGeneralGroupTypeString() throws java.rmi.RemoteException;
  public java.lang.String getType() throws java.rmi.RemoteException;
  public java.lang.String getPermissionGroupTypeString() throws java.rmi.RemoteException;
+ public java.lang.String getAliasGroupTypeString() throws java.rmi.RemoteException;
  public void setDefaultGroupName(String name);
  public String getDefaultGroupName();
 }
