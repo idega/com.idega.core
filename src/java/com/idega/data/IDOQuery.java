@@ -1,4 +1,6 @@
 package com.idega.data;
+import java.util.Collection;
+import java.util.Iterator;
 import java.rmi.RemoteException;
 import java.lang.StringBuffer;
 
@@ -287,12 +289,131 @@ public class IDOQuery {
   private static final String DELETE = "DELETE ";
   private static final String INSERT = "INSERT ";
   private static final String UPDATE = "UPDATE ";
-  private static final String IN = " IN( ";
-  private static final String NOT_IN = " NOT IN(";
-  private static final String VALUES = " VALUES(";
+  private static final String IN = " IN ";
+  private static final String NOT_IN = " NOT IN ";
+  private static final String VALUES = " VALUES ";
   private static final String COMMA = ",";
+  private static final String AND = " AND ";
+  private static final String OR = " OR ";
 
 
+  public IDOQuery appendLeftParenthesis(){
+    return this.append(PARENTHESIS_LEFT);
+  }
+
+  public IDOQuery appendRightParenthesis(){
+    return this.append(PARENTHESIS_RIGHT);
+  }
+
+  public IDOQuery appendCommaDelimited(String[] str){
+    for (int i = 0; i < str.length; i++) {
+      if(i != 0){
+        this.append(COMMA);
+      }
+      this.append(str[i]);
+    }
+    return this;
+  }
+  public IDOQuery appendCommaDelimitedWithinSingleQuotes(String[] str){
+    for (int i = 0; i < str.length; i++) {
+      if(i != 0){
+        this.append(COMMA);
+      }
+      this.appendWithinSingleQuotes(str[i]);
+    }
+    return this;
+  }
+  public IDOQuery appendCommaDelimitedWithinSingleQuotes(Collection collection) throws RemoteException{
+    Iterator iter = collection.iterator();
+    boolean first = true;
+    while (iter.hasNext()) {
+      Object item = iter.next();
+      if(!first){
+        this.append(COMMA);
+      }
+
+      if(item instanceof IDOEntity ){
+        this.appendWithinSingleQuotes(((IDOEntity)item).getPrimaryKey());
+      } else {
+        this.appendWithinSingleQuotes(item);
+      }
+
+      first = false;
+    }
+    return this;
+  }
+  public IDOQuery appendCommaDelimitedWithinDoubleQuotes(String[] str){
+    for (int i = 0; i < str.length; i++) {
+      if(i != 0){
+        this.append(COMMA);
+      }
+      this.appendWithinDoubleQuotes(str[i]);
+    }
+    return this;
+  }
+  public IDOQuery appendCommaDelimitedWithinDoubleQuotes(Collection collection) throws RemoteException{
+    Iterator iter = collection.iterator();
+    boolean first = true;
+    while (iter.hasNext()) {
+      Object item = iter.next();
+      if(!first){
+        this.append(COMMA);
+      }
+
+      if(item instanceof IDOEntity ){
+        this.appendWithinDoubleQuotes(((IDOEntity)item).getPrimaryKey());
+      } else {
+        this.appendWithinSingleQuotes(item);
+      }
+
+      first = false;
+    }
+    return this;
+  }
+
+  public IDOQuery appendWithinDoubleQuotes(String str){
+    this.appendDoubleQuote();
+    this.append(str);
+    this.appendDoubleQuote();
+    return this;
+  }
+
+  public IDOQuery appendWithinSingleQuotes(String str){
+    this.appendSingleQuote();
+    this.append(str);
+    this.appendSingleQuote();
+    return this;
+  }
+
+  public IDOQuery appendWithinDoubleQuotes(Object obj){
+    this.appendDoubleQuote();
+    this.append(obj);
+    this.appendDoubleQuote();
+    return this;
+  }
+
+  public IDOQuery appendWithinSingleQuotes(Object obj){
+    this.appendSingleQuote();
+    this.append(obj);
+    this.appendSingleQuote();
+    return this;
+  }
+
+  public IDOQuery appendWithinParentheses(String str){
+    this.append(PARENTHESIS_LEFT);
+    this.append(str);
+    this.append(PARENTHESIS_RIGHT);
+    return this;
+  }
+  public IDOQuery appendWithinParentheses(IDOQuery query){
+    return appendWithinParentheses(query);
+  }
+  public IDOQuery appendWithinParentheses(Object obj){
+    this.append(PARENTHESIS_LEFT);
+    this.append(obj);
+    this.append(PARENTHESIS_RIGHT);
+    return this;
+  }
 
 
 
@@ -349,6 +470,41 @@ public class IDOQuery {
     return this.append(WHERE);
   }
 
+  public IDOQuery appendWhere(String str){
+    this.append(WHERE);
+    this.append(str);
+    return this;
+  }
+
+  public IDOQuery appendIn(){
+    return this.append(IN);
+  }
+  public IDOQuery appendIn(String str){
+    this.append(IN);
+    this.appendWithinParentheses(str);
+    return this;
+  }
+  public IDOQuery appendIn(IDOQuery query){
+    this.append(IN);
+    this.appendWithinParentheses(query);
+    return this;
+  }
+
+  public IDOQuery appendNotIn(){
+    return this.append(NOT_IN);
+  }
+  public IDOQuery appendNotIn(String str){
+    this.append(NOT_IN);
+    this.appendWithinParentheses(str);
+    return this;
+  }
+  public IDOQuery appendNotIn(IDOQuery query){
+    this.append(NOT_IN);
+    this.appendWithinParentheses(query);
+    return this;
+  }
+
+
   public IDOQuery appendLike(){
     return this.append(LIKE);
   }
@@ -363,6 +519,14 @@ public class IDOQuery {
 
   public IDOQuery appendDoubleQuote(){
     return this.append(DOUBLE_QUOTATION_MARK);
+  }
+
+  public IDOQuery appendAnd(){
+    return this.append(AND);
+  }
+
+  public IDOQuery appendOr(){
+    return this.append(OR);
   }
 
 
