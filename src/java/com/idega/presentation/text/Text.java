@@ -237,6 +237,7 @@ public static Text getBreak(){
   if (HTMLbreak == null){
     HTMLbreak = new Text(BREAK);
     HTMLbreak.addHTMLFontTag(false);
+    HTMLbreak.setUseBuilderObjectControl(false);
    // HTMLbreak.setFontSize("1");
   }
   return HTMLbreak;
