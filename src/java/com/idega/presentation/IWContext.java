@@ -5,6 +5,7 @@
 package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.sql.Connection;
@@ -100,6 +101,7 @@ implements IWUserContext, IWApplicationContext {
 	private FacesContext realFacesContext;
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
+	private boolean isRequestCharacterEncodingSet;
 
 	/**
 	 *Default constructor
@@ -141,6 +143,17 @@ implements IWUserContext, IWApplicationContext {
 		setServletContext(context);
 		setLanguage(getRightLanguage(request, response));
 		setAllDefault();
+//		TODO check if this is ok for multipart forms
+		if(!isRequestCharacterEncodingSet){
+			try {
+				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
+				isRequestCharacterEncodingSet = true;
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			//TODO remove debug
+			System.out.println("characterencoding: " + getRequest().getCharacterEncoding());
+		}
 	}
 	/**
 	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
@@ -373,7 +386,7 @@ implements IWUserContext, IWApplicationContext {
 	 * @deprecated
 	 */
 	public void setRequest(HttpServletRequest request) {
-		this._request = request;
+		this._request = request;	
 	}
 	/**
 	 * @deprecated
