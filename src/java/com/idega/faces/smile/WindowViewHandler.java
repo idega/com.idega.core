@@ -15,6 +15,9 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.FrameTable;
+import com.idega.presentation.IWContext;
+import com.idega.faces.smile.Page;
 import com.idega.util.StringHandler;
 
 /**
@@ -53,19 +56,32 @@ public class WindowViewHandler extends CbpViewHandler {
 		//Page smilePage getSmilePagesWrapper(obj);
 		UIViewRoot ret = new UIViewRoot();
 		
-		ret.setViewId(viewId);	
+		
 
 		try {
-			Class descriptorClazz = getDescriptorClassNameForViewId(viewId);
-			if(descriptorClazz == null) { 
-				// JSP page....
-			} else {
-				if(Page.class.isAssignableFrom(descriptorClazz)) {
-					Page page = (Page) descriptorClazz.newInstance();
-					page.init(ctx,ret);
+			if(isFrameRequest(ctx)){
+				IWContext iwc = IWContext.getIWContext(ctx);
+				com.idega.presentation.Page frame = com.idega.presentation.Page.loadPage(iwc);
+				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+				String newViewId = viewId+frameId;
+				ret.setViewId(newViewId);
+					
+				Page page = new PageWrapper(frame);
+				page.init(ctx,ret);
+			}
+			else{
+				ret.setViewId(viewId);
+				Class descriptorClazz = getDescriptorClassNameForViewId(viewId);
+				if(descriptorClazz == null) { 
+					// JSP page....
 				} else {
-					Page page = new PageWrapper((UIComponent)descriptorClazz.newInstance());
-					page.init(ctx,ret);
+					if(Page.class.isAssignableFrom(descriptorClazz)) {
+						Page page = (Page) descriptorClazz.newInstance();
+						page.init(ctx,ret);
+					} else {
+						Page page = new PageWrapper((UIComponent)descriptorClazz.newInstance());
+						page.init(ctx,ret);
+					}
 				}
 			}
 		} catch(IllegalAccessException e) {
@@ -99,6 +115,17 @@ public class WindowViewHandler extends CbpViewHandler {
 		return ret;
 	}
 	
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	private boolean isFrameRequest(FacesContext ctx) {
+		String value = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+		if(value!=null){
+			return true;
+		}
+		return false;
+	}
 	private Class getDescriptorClassNameForViewId(String viewId) throws ClassNotFoundException{
 		String encryptedClassName = null;
 		//if(viewId.startsWith("/window")){
