@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.31 2002/03/07 11:51:16 aron Exp $
+ * $Id: PresentationObject.java,v 1.34 2002/03/07 12:03:21 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,6 +17,7 @@ import com.idega.util.database.*;
 import com.idega.core.data.*;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWConstants;
 import javax.swing.event.EventListenerList;
 import com.idega.event.IWEvent;
 import com.idega.event.IWLinkEvent;
@@ -36,8 +37,10 @@ import com.idega.builder.business.BuilderLogic;
 
 
 /**
+ * The base class for objects that present themselves to a user on screen in idegaWeb.
+ *
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- *@version 1.2
+ *@version 1.3
  */
 public class PresentationObject extends Object implements Cloneable {
   //private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
@@ -147,7 +150,7 @@ public class PresentationObject extends Object implements Cloneable {
     this.language = iwc.getLanguage();
     this.interfaceStyle = iwc.getInterfaceStyle();
     if (language == null) {
-      language = "HTML";
+      language = IWConstants.MARKUP_LANGUAGE_HTML;
     }
     if (interfaceStyle == null) {
       interfaceStyle = "default";
@@ -1082,6 +1085,9 @@ public class PresentationObject extends Object implements Cloneable {
       return this.getBundle(iwuc).getComponentName(this.getClass(),iwuc.getCurrentLocale());
    }
 
+   /**
+    * Returns the page parameter used by idegaWeb Builder
+    */
    public String getIBPageParameterName(){
      return BuilderLogic.IB_PAGE_PARAMETER;
    }

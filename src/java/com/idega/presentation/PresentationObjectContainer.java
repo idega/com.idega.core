@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.9 2002/02/25 18:07:20 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.10 2002/03/07 12:02:01 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,6 +14,8 @@ import java.util.*;
 import java.io.*;
 
 /**
+ * A base class for Containers of PresentationObjects
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */

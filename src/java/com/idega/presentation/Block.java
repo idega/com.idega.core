@@ -16,6 +16,9 @@ import com.idega.idegaweb.IWCacheManager;
 import com.idega.block.IWBlock;
 
 /**
+ *
+ * A base class for idegaWeb Blocks
+ *
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.3
 */

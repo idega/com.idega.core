@@ -8,8 +8,7 @@ package com.idega.core;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 0.5 - Under development
-*UNFINISHED
+ * @version 0.5 UNFINISHED -  UNDER DEVELOPMENT
 */
 
 public interface ICSession{

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.38 2002/02/20 00:03:36 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.39 2002/03/07 11:59:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,6 +28,8 @@ import java.io.IOException;
 
 
 /**
+ * A class to serve as an abstraction of the underlying datastore
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
   */
@@ -1110,6 +1112,8 @@ public abstract class DatastoreInterface{
   protected String getCreatePrimaryKeyStatementBeginning(String tableName){
     return "alter table "+tableName+" add primary key (";
   }
+
+
 
 
   }

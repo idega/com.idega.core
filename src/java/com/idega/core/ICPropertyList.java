@@ -21,7 +21,7 @@ import com.idega.xml.XMLOutput;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.8 - Under development
+ * @version 0.5 UNFINISHED -  UNDER DEVELOPMENT
  */
 public class ICPropertyList {
   private XMLDocument xmlDocument;
