@@ -60,6 +60,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
 
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
+	public static boolean USING_OLD_USER_SYSTEM=false;
 
 	public static final int STATE_NO_STATE = 0;
 	public static final int STATE_LOGGED_ON = 1;
@@ -357,19 +358,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	protected void storeUserAndGroupInformationInSession(IWContext iwc, User user) throws Exception {
-		//New user system
-		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
-		LoginBusinessBean.setUser(iwc, user);
-		com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
-		com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
-		List groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
-		//New user system end
-
-		//Old user system
-//		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
-//		LoginBusinessBean.setUser(iwc, user);
-//		List groups = UserBusiness.getUserGroups(user);
-		//Old user system end
+		List groups = null;
+		if(isUsingOldUserSystem()){
+			//Old user system
+			iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+			LoginBusinessBean.setUser(iwc, user);
+			groups = UserBusiness.getUserGroups(user);
+			//Old user system end
+		}
+		else{
+			//New user system
+			iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+			LoginBusinessBean.setUser(iwc, user);
+			com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
+			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
+			groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
+			//New user system end
+		}
 
 		if (groups != null) {
 			LoginBusinessBean.setPermissionGroups(iwc, groups);
@@ -387,6 +392,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
 	}
 
+	/**
+	 * @return
+	 */
+	private boolean isUsingOldUserSystem()
+	{
+		return this.USING_OLD_USER_SYSTEM;
+	}
 	protected void storeLoggedOnInfoInSession(IWContext iwc, int loginTableId, String login, User user, int loginRecordId, String loginType) {
 		LoggedOnInfo lInfo = createLoggedOnInfo(iwc);
 		lInfo.setLoginTableId(loginTableId);
