@@ -41,7 +41,7 @@ public class PageIncluder extends PresentationObject implements Index{
   private String tokenReplacer;
 
   private String out;
-  private int index = 100;
+  private int index = 1000;
 
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
   private static final String PAGE_INCLUDER_SESSION_NAME="iw_session_token";
@@ -65,13 +65,13 @@ public class PageIncluder extends PresentationObject implements Index{
     Iterator iter = objects.iterator();
     while (iter.hasNext()) {
       Object item = iter.next();
-      if( (item instanceof PageIncluder) && (!item.equals(this)) ){
+      if(item instanceof PageIncluder){
         includers.add(item);
       }
     }
 
     IndexComparator indexer = new IndexComparator(IndexComparator.ORDER_BY_INDEX);
-    indexer.sortedArrayList(includers);
+    includers = indexer.sortedArrayList(includers);
 
     //process
     Iterator iter2 = includers.iterator();
@@ -96,7 +96,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   public void main(IWContext iwc) throws Exception {
-    sortAndProcess(iwc);
+    if (out==null) sortAndProcess(iwc);
 
     if (forceFrame) {
       if (_sendToPage != null) {
@@ -118,11 +118,7 @@ public class PageIncluder extends PresentationObject implements Index{
     if(URL!=null){
       initVariables(iwc);
       if( doPrint(iwc) ){
-        if(out==null){
-          process(iwc);
-        }
-
-        println(out);
+        if(out!=null) println(out);
         out = null;
       }
     }
@@ -187,7 +183,7 @@ public class PageIncluder extends PresentationObject implements Index{
           Enumeration enum = iwc.getParameterNames();
           while (enum.hasMoreElements()) {
             String param = (String) enum.nextElement();
-            debug(param+" : "+iwc.getParameter(param));
+            //debug(param+" : "+iwc.getParameter(param));
             if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
              URL = decodeQueryString(iwc.getParameter(param));
              TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
@@ -231,7 +227,7 @@ public class PageIncluder extends PresentationObject implements Index{
           Enumeration enum = iwc.getParameterNames();
           while (enum.hasMoreElements()) {
             String param = (String) enum.nextElement();
-            debug(param+" : "+iwc.getParameter(param));
+            //debug(param+" : "+iwc.getParameter(param));
             /**@todo use a post method to get the page or stringbuffer this URL  encode?**/
             if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
              URL = decodeQueryString(iwc.getParameter(param));
@@ -284,7 +280,7 @@ public class PageIncluder extends PresentationObject implements Index{
             sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
             if(sessionId==null){
               sessionId = FileUtil.getStringFromURL(sessionURL);
-              debug("Sessions id is : "+sessionId);
+              //debug("Sessions id is : "+sessionId);
             }
           }
 
@@ -300,7 +296,7 @@ public class PageIncluder extends PresentationObject implements Index{
           loc = TextSoap.findAndReplace(loc,token,sessionId);
         }
 
-        debug("Location url is: "+loc);
+        debug("Location url is: "+loc+" and index is: "+index);
 
 
         out = FileUtil.getStringFromURL(loc);
@@ -466,6 +462,7 @@ public class PageIncluder extends PresentationObject implements Index{
       obj.token = this.token;
       obj.tokenReplacer = this.tokenReplacer;
       obj.out = this.out;
+      obj.index = this.index;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
