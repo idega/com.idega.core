@@ -866,7 +866,7 @@ public class DatastoreConnection implements Connection{
 
       throws SQLException{
 
-        return createStatement(resultSetType,resultSetConcurrency);
+        return conn.createStatement(resultSetType,resultSetConcurrency);
 
       }
 

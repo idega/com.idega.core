@@ -1266,7 +1266,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				else if (connection.getClass().getName().indexOf("mysql") != -1 ){
 					dataStoreType =  "mysql";
 				}
-	
+
 				else{
 					dataStoreType = "unimplemented";
 				}
@@ -1588,7 +1588,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		DatastoreInterface.getInstance(this).fillColumn(this, columnName, RS);
 		/*
 		int classType = getStorageClassType(columnName);
-		
+
 		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
 			//if (RS.getInt(columnName) != -1){
 			int theInt = RS.getInt(columnName);
@@ -1597,14 +1597,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			    setColumn(columnName,new Integer(theInt));
 			    //setColumn(columnName.toLowerCase(),new Integer(theInt));
 			}
-		
+
 			//}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
 			if (RS.getString(columnName) != null){
 				setColumn(columnName,RS.getString(columnName));
 			}
-		
+
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN){
 			String theString = RS.getString(columnName);
@@ -1624,7 +1624,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			    setColumn(columnName,new Float(theFloat));
 			    //setColumn(columnName.toLowerCase(),new Float(theFloat));
 			}
-		
+
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
 			double theDouble = RS.getFloat(columnName);
@@ -1633,7 +1633,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			    setColumn(columnName,new Double(theDouble));
 			    //setColumn(columnName.toLowerCase(),new Double(theDouble));
 			}
-		
+
 			double doble = RS.getDouble(columnName);
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
@@ -1659,14 +1659,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			//}
 			setColumn(columnName,getEmptyBlob(columnName));
 			//setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
-		
+
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
 			String gender = RS.getString(columnName);
 			if (gender != null){
 				setColumn(columnName,new Gender(gender));
 		//setColumn(columnName.toLowerCase(),new Gender(gender));
-		
+
 			}
 		}
 		*/
@@ -1802,7 +1802,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
 	}
-	private Object getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException
+	Object getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException
 	{
 		Object theReturn = null;
 		if (this.getPrimaryKeyClass() == Integer.class)
@@ -1851,7 +1851,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				    //}
 				    }
 				    catch(SQLException exep){
-				
+
 				     System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
 					    //exep.printStackTrace(System.err);
 				    }
@@ -2569,7 +2569,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				      check=false;
 				    }
 				  }
-		
+
 					IDOLegacyEntity tempobj=null;
 					try{
 						tempobj = (IDOLegacyEntity)Class.forName(this.getClass().getName()).newInstance();
@@ -2580,21 +2580,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					}
 					if(tempobj != null){
 						for (int i = 1; i <= metaData.getColumnCount(); i++){
-		
-		
+
+
 							if ( RS.getObject(metaData.getColumnName(i)) != null){
-		
+
 								//System.out.println("ColumName "+i+": "+metaData.getColumnName(i));
 								tempobj.fillColumn(metaData.getColumnName(i),RS);
 							}
 						}
-		
+
 					}
 					vector.addElement(tempobj);
-		
+
 				}
 				RS.close();
-		
+
 			}
 			finally{
 				if(Stmt != null){
@@ -3861,7 +3861,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public void ejbPostCreate()
 	{}
 	/*public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
-	
+
 	public Object ejbPostCreate(Object primaryKey){return primaryKey;}
 	*/
 	public Object ejbFindByPrimaryKey(Object pk) throws FinderException
@@ -4007,6 +4007,75 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return pkColl;
 	}
+
+
+	protected Collection idoFindPKsBySQL(String sqlQuery, String countQuery) throws FinderException, IDOException
+	{
+		Collection pkColl = null;
+		Class interfaceClass = this.getInterfaceClass();
+		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
+		if (queryCachingActive)
+		{
+			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
+		}
+		if (pkColl == null)
+		{
+			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery,countQuery);
+			if (queryCachingActive)
+			{
+				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
+			}
+		}
+		else
+		{
+			if (this.isDebugActive())
+			{
+				this.debug("Cache hit for SQL query: " + sqlQuery);
+			}
+		}
+		return pkColl;
+	}
+
+	/**
+	 *
+	 * @param sqlQuery
+	 * @param countQuery
+	 * @return IDOPrimaryKeyList
+	 * @throws FinderException
+	 */
+	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, String countQuery) throws FinderException, IDOException
+	{
+		if (this.isDebugActive())
+		{
+			this.debug("Going to Datastore for SQL query: " + sqlQuery);
+		    this.debug("Going to Datastore for SQL countQuery: " + countQuery);
+
+		}
+		Connection conn = null;
+		Statement Stmt = null;
+		int length = idoGetNumberOfRecords(countQuery);
+		if(length > 0){
+			if(length < 1000){
+			  return idoFindPKsBySQLIgnoringCache(sqlQuery);
+			}
+			else
+			{
+//				try
+//				{
+//					conn = getConnection(getDatasource());
+//					Stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+//					ResultSet RS = Stmt.executeQuery(sqlQuery);
+					return new IDOPrimaryKeyList(sqlQuery,countQuery,this,length);
+//				}
+//				catch (SQLException sqle)
+//				{
+//					throw new IDOFinderException(sqle);
+//				}
+			}
+		}
+		return new Vector();
+	}
+
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery) throws FinderException
 	{
 		if (this.isDebugActive())
@@ -4316,7 +4385,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return false;
 	}
-	private void prefetchBeanFromResultSet(Object pk, ResultSet rs)
+	void prefetchBeanFromResultSet(Object pk, ResultSet rs)
 	{
 		try
 		{

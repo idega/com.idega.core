@@ -38,6 +38,7 @@ public class IDOEntityIterator implements ListIterator {
       return entityObject;
     }
     catch (FinderException ex) {
+	  ex.printStackTrace();
       throw new EJBException(ex);
     }
   }

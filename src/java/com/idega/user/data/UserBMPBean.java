@@ -1,15 +1,26 @@
 package com.idega.user.data;
 
-import java.util.*;
-import com.idega.data.*;
-import javax.ejb.*;
+
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOException;
+import com.idega.data.IDOFinderException;
+import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.IDOUtil;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 
 
 
@@ -398,7 +409,35 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       String sGroupList = IDOUtil.getInstance().convertListToCommaseparatedString(groupList);
 //      System.out.println("[UserBMPBean]: sGroupList = "+sGroupList);
 //      System.out.println("[UserBMPBean]: "+"select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
-      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
+
+	  IDOQuery query = new IDOQuery();
+	  query.appendSelectAllFrom(getEntityName());
+	  query.appendWhere(this.getIDColumnName());
+//		  IDOQuery subQuery = new IDOQuery();
+//		  try{
+//            subQuery.appendCommaDelimited(groupList);
+//          }
+//          catch(RemoteException rme){
+//            throw new EJBException(rme);
+//          }
+
+	  query.appendIn(sGroupList);
+	  query.appendOrderBy(this.getColumnNameFirstName());
+
+	  IDOQuery countQuery = new IDOQuery();
+	  countQuery.appendSelectCountFrom(getEntityName());
+	  countQuery.appendWhere(this.getIDColumnName());
+	  countQuery.appendIn(sGroupList);
+//	  return this.idoFindPKsBySQL(query.toString());
+		try
+		{
+			return this.idoFindPKsBySQL(query.toString(), countQuery.toString());
+		}
+		catch (IDOException ex)
+		{
+			throw new EJBException(ex);
+		}
+//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
     }
 
     public Collection ejbFindAllUsers()throws FinderException{
@@ -410,7 +449,25 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     }
 
     public Collection ejbFindAllUsersOrderedByFirstName()throws FinderException,RemoteException{
-      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
+	  IDOQuery query = new IDOQuery();
+	  query.appendSelectAllFrom(this.getEntityName());
+	  query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
+
+	  IDOQuery countQuery = new IDOQuery();
+	  countQuery.appendSelectCountFrom(this.getEntityName());
+
+//	  return super.idoFindPKsBySQL(query.toString());
+		try
+		{
+			return super.idoFindPKsBySQL(query.toString(),countQuery.toString());
+		}
+		catch (IDOException ex)
+		{
+			throw new EJBException(ex);
+		}
+
+
+//      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
     }
 
 

@@ -108,16 +108,13 @@ public class IDOEntityList implements List {
   public boolean retainAll(Collection c) {
     throw new UnsupportedOperationException("Method retainAll(Collection c) not yet implemented.");
   }
-
-
   public Object set(int index, Object element) {
     throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
   }
   public void add(int index, Object element) {
     throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
   }
-
-  public int indexOf(Object o) {
+ public int indexOf(Object o) {
     throw new java.lang.UnsupportedOperationException("Method indexOf() not yet implemented.");
   }
   public int lastIndexOf(Object o) {
