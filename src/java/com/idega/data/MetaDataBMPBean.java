@@ -29,7 +29,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_META_KEY,"The key name",true,true, String.class,255);
-    addAttribute(COLUMN_META_VALUE,"The key's value",true,true, String.class,255);
+    addAttribute(COLUMN_META_VALUE,"The key's value",true,true, String.class,2000);
 		addAttribute(COLUMN_META_TYPE,"The value's type",true,true, String.class,255);
   }
 
