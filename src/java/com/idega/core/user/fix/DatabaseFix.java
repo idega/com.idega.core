@@ -35,27 +35,34 @@ public class DatabaseFix {
       Iterator iter = users.iterator();
       while (iter.hasNext()) {
         User item = (User)iter.next();
+        System.err.print("Fixing user: "+item.getID());
+        try {
+          if(item.getGroupID() == -1){
+            UserGroupRepresentative group = new UserGroupRepresentative();
+            group.insert();
 
-        if(item.getGroupID() == -1){
-          UserGroupRepresentative group = new UserGroupRepresentative();
-          group.insert();
+            item.setGroupID(group.getID());
+            item.update();
 
-          item.setGroupID(group.getID());
-          item.update();
+            List groups = EntityFinder.findRelated(item,GenericGroup.getStaticInstance());
 
-          List groups = EntityFinder.findRelated(item,GenericGroup.getStaticInstance());
-
-          if(groups != null){
-            Iterator iter2 = groups.iterator();
-            while (iter.hasNext()) {
-              GenericGroup item2 = (GenericGroup)iter2.next();
-              item2.addUser(item);
+            if(groups != null){
+              Iterator iter2 = groups.iterator();
+              while (iter.hasNext()) {
+                GenericGroup item2 = (GenericGroup)iter2.next();
+                item2.addUser(item);
+              }
             }
+            System.err.println(" - fixed");
+          } else {
+            System.err.println(" - not needed");
           }
-
+        } catch (Exception ex) {
+          System.err.println(" - failed");
         }
       }
     }
   }
-
 }
+
+
