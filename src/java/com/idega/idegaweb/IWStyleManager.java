@@ -102,7 +102,7 @@ public class IWStyleManager {
 
 	public void setStyle(String name, String style) {
 		if ( name.length() > 0 ) {
-			getStyleMap().put(name, style);
+			getStyleMap().put(name, style != null ? style : "");
 			writeStyleSheet();
 		}
 	}
@@ -179,7 +179,7 @@ public class IWStyleManager {
 				writer.write(writeString, 0, writeString.length());
 				writer.newLine();
 				
-				if (style.length() > 0 ) {
+				if (style != null && style.length() > 0 ) {
 					StringTokenizer tokens = new StringTokenizer(style, ";");
 					while (tokens.hasMoreTokens()) {
 						writeString = "\t" + tokens.nextToken() + ";";
