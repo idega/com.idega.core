@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.28 2001/11/26 20:03:17 laddi Exp $
+ * $Id: Link.java,v 1.29 2001/12/04 15:35:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1352,6 +1352,13 @@ public class Link extends Text {
 
   public void setHttps(boolean useHttps) {
     this.https = useHttps;
+  }
+
+  public void setOnMouseOverImage(Image image, Image mouseOverImage) {
+    image.setOverImage(mouseOverImage);
+
+    setAttribute("onMouseOver","swapImage('"+image.getName()+"','','"+mouseOverImage.getMediaServletString()+"',1)");
+    setAttribute("onMouseOut","swapImgRestore()");
   }
 }
 
