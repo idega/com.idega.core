@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.21 2004/10/19 12:07:17 gummi Exp $
+ * $Id: IWPropertyList.java,v 1.22 2004/12/02 20:36:16 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -478,4 +478,11 @@ public class IWPropertyList {
 		setProperty(propertyName,Boolean.toString(setValue));
 	}
 
+	public void unload(){
+		this.xmlFile=null;
+		xmlDocument=null;
+		parentElement=null;
+		mapElement=null;
+	}
+	
 }
