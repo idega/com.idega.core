@@ -44,6 +44,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean isAdmin(IWContext iwc)throws Exception;
   public boolean isOwner(PresentationObject obj , IWContext iwc) throws Exception ;
   public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
+//  public boolean hasPermission(String permissionType, ICObject obj,IWContext iwc) throws Exception;
   public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
 //  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception;
 //  public boolean hasViewPermission(PresentationObject obj,IWContext iwc);

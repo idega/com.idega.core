@@ -769,9 +769,9 @@ public void setCacheWriter(PrintWriter writer){
     return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT,obj);
   }
 
-  public boolean isAdmin(){
+  public boolean isSuperAdmin(){
     try {
-      return this.getAccessController().isAdmin(this);
+      return this.getUser().equals(this.getAccessController().getAdministratorUser());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -779,7 +779,9 @@ public void setCacheWriter(PrintWriter writer){
     }
   }
 
-
+  public boolean isLoggedOn(){
+    return com.idega.block.login.business.LoginBusiness.isLoggedOn(this);
+  }
 }
 
 

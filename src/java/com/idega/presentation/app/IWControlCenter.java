@@ -71,36 +71,58 @@ public class IWControlCenter extends PresentationObjectContainer {
 
 
     List icoList = IWApplication.getApplictionICObjects();
+    boolean anyApp = false;
     if(icoList!=null){
       int x =1;
       int y =1;
       Iterator iter = icoList.iterator();
       while (iter.hasNext()) {
         ICObject item = (ICObject)iter.next();
-        Class c = null;
         try{
-          c = item.getObjectClass();
-        }
-        catch(Exception e){
-        }
+          PresentationObject pObj = (PresentationObject)Class.forName(item.getClassName()).newInstance();
+          pObj.setICObject(item);
+          if(iwc.hasEditPermission( pObj )){
+            anyApp = true;
+            Class c = null;
+            try{
+              c = item.getObjectClass();
+            }
+            catch(Exception e){
+            }
 
-        PresentationObject icon = IWApplication.getIWApplicationIcon(c,iwc);
-        body.setAlignment(x,y,"center");
-        body.setVerticalAlignment(x,y,"middle");
-        body.add(icon,x,y);
-        if(x==1){
-          x=2;
-        }
-/* Uncomment for three line application suite
-        else if(x==2){
-          x=3;
-        }
-*/
-        else{
-          x=1;
-          y++;
+            PresentationObject icon = IWApplication.getIWApplicationIcon(c,iwc);
+            body.setAlignment(x,y,"center");
+            body.setVerticalAlignment(x,y,"middle");
+            body.add(icon,x,y);
+            if(x==1){
+              x=2;
+            }
+      /* Uncomment for three line application suite
+            else if(x==2){
+              x=3;
+            }
+      */
+            else{
+              x=1;
+              y++;
+            }
+          }
+        } catch(ClassCastException e){
+          e.printStackTrace();
+        }catch(ClassNotFoundException e){
+          e.printStackTrace();
+        }catch(IllegalAccessException e){
+          e.printStackTrace();
+        }catch(InstantiationException e){
+          e.printStackTrace();
         }
       }
+    }
+
+    if(!anyApp){
+      body.setAlignment(1,1,"center");
+      body.setVerticalAlignment(1,1,"middle");
+      body.add(new Text("- - -"),1,1);
     }
 
   }

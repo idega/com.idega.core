@@ -97,15 +97,15 @@ private IWResourceBundle iwrb;
       Image bottomImage = iwrb.getImage("login/bottom.gif","",323,12);
       mainTable.add(bottomImage,1,4);
 
-      boolean isAdministrator = false;
+      boolean isLoggedOn = false;
       try{
-        isAdministrator = iwc.isAdmin();
+        isLoggedOn = iwc.isLoggedOn();
       }
       catch(Exception e){
-        isAdministrator = false;
+        isLoggedOn = false;
       }
 
-      if(isAdministrator){
+      if(isLoggedOn){
         IWControlCenter iwcc = new IWControlCenter();
         mainTable.setHeight(2,"165");
         mainTable.setAlignment(1,2,"center");
