@@ -38,14 +38,14 @@ public class BooleanInput extends DropdownMenu{
 
     IWBundle iwb = this.getBundle(iwc);
     IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
+
     if(_showSelectOption){
-      addMenuElement("","Select:");
+      addMenuElement("",iwrb.getLocalizedString(SELECT_KEY,"Select:"));
     }
+
     addMenuElement("N");
     addMenuElement("Y");
-    if(_showSelectOption){
-      setMenuElementDisplayString("",iwrb.getLocalizedString(SELECT_KEY,"Select:"));
-    }
+
     setMenuElementDisplayString("N",iwrb.getLocalizedString(NO_KEY));
     setMenuElementDisplayString("Y",iwrb.getLocalizedString(YES_KEY));
   }
