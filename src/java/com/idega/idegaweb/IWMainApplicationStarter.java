@@ -89,7 +89,7 @@ public class IWMainApplicationStarter {
 		String classPathProperty = "java.class.path";
 		String classPath = System.getProperty(classPathProperty);
 		StringBuffer classes = new StringBuffer(classPath);
-		File webINF = new File(iwma.getRealPath("/WEB-INF/classes"));
+		File webINF = new File(iwma.getRealPath("/WEB-INF/lib"));
 		File[] subfiles = webINF.listFiles();
 		if (subfiles != null) {
 			for (int i = 0; i < subfiles.length; i++) {
