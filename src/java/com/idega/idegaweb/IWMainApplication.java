@@ -44,106 +44,68 @@ import com.idega.util.text.TextSoap;
 public class IWMainApplication {//implements ServletContext{
 
     public static String IdegaEventListenerClassParameter = "idegaweb_event_classname";
-
     public static String ApplicationEventListenersParameter = "idegaweb_application_events";
-
     public static String IWEventSessionAddressParameter = "iw_event_address"; // added
-                                                                              // by
+    
+    protected static IWMainApplication defaultIWMainApplication;
                                                                               // gummi@idega.is
-
     public static final String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
-
     private static String windowOpenerURL = "/servlet/WindowOpener";
-
     private static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
-
     public static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
-
     public static String FILE_SERVLET_URL = "/servlet/FileServlet/";
-
     private static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
-
     private static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
-
     private static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
-
     private static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
-
+    
     public static String templateParameter = "idegaweb_template";
-
     public static String templateClassParameter = "idegaweb_template_class";
-
     public static String classToInstanciateParameter = "idegaweb_instance_class";
 
     private static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
 
     private Map loadedBundles;
-
     private Properties bundlesFile;
-
     private File bundlesFileFile;
-
     private String propertiesRealPath;
-
     public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
-
     public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
-
     public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
-
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
-
     public final static String CORE_DEFAULT_FONT = "default.ttf";
-
     public final static String IW_ACCESSCONTROL_TYPE_PROPERTY = "iw_accesscontrol_type";
-
     public final static String _PROPERTY_USING_EVENTSYSTEM = "using_eventsystem";
-
     public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
-
     public static final String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
-
     private static String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
-
     private static String bundlesFileName = "bundles.properties";
-
     private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
-
     private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;
-
     public static String ApplicationStorageParameterName = "idegaweb_application";
-
     //public static String
     // DefaultPropertiesStorageParameterName="idegaweb_default_properties";
     private ServletContext application;
-
     private LogWriter lw;
-
     private static IWCacheManager cacheManager;
-
     private static boolean alreadyUnLoaded = false;//for restartApplication
-
     private static final String APACHE_RESTART_PARAMETER = "restart_apache";
-
     private static final String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
-
     private String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
-
     private String appContext;
-
     private static String SLASH = "/";
-
     private boolean checkedAppContext;
-
     private String cacheDirURI;
-
     private IWApplicationContext iwappContext;
-
     public static boolean DEBUG_FLAG = false;
 
     public IWMainApplication(ServletContext application) {
         this.application = application;
         application.setAttribute(ApplicationStorageParameterName, this);
+        //set the default application instance to this
+        if(defaultIWMainApplication==null){
+        		defaultIWMainApplication=this;
+        }
         //attention this must be reviewed if we implement multi domains within
         // one virtualmachine
         cacheManager = IWCacheManager.getInstance(this);
@@ -1021,4 +983,21 @@ public class IWMainApplication {//implements ServletContext{
         if (eventListeners == null) eventListeners = new ArrayList();
         return eventListeners;
     }
+    /**
+     * Gets the default IWMainApplication instance running.
+     * This is set when the first IWMainApplication is instanciated.
+     * @return the default application instance
+     */
+    public static IWMainApplication getDefaultIWMainApplication(){
+    		return defaultIWMainApplication;
+    }
+    /**
+     * Gets the context for the default IWMainApplication instance running.
+     * This is set when the first IWMainApplication is instanciated.
+     * @return the default application context
+     */    
+    public static IWApplicationContext getDefaultIWApplicationContext(){
+		return getDefaultIWMainApplication().getIWApplicationContext();
+	}
+
 }
