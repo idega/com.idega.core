@@ -391,6 +391,7 @@ public  class EntityControl{
           addManyToManyRelationShip(Class.forName(relatingEntityClassName1),Class.forName(relatingEntityClassName2),relationShipTableName);
         }
         catch(Exception ex){
+          ex.printStackTrace();
         }
 
       }
@@ -412,7 +413,7 @@ public  class EntityControl{
           addManyToManyRelationShip(relatingEntityClass1,relatingEntityClass2,relationShipTableName,idColumnName1,idColumnName2);
         }
         catch(Exception e){
-
+          e.printStackTrace();
         }
       }
 
