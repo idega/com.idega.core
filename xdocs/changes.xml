@@ -4,7 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-  
+      <release version="1.0.1" date="2005-04-06">
+      <action dev="tryggvil" type="update">
+        Declaration of version for use with 3.0.4 core.
+      </action>              
+    </release>
+    
     <release version="1.0.0" date="2005-03-10">
       <action dev="tryggvil" type="update">
         Declaration of version for use with 3.0.0 core.
