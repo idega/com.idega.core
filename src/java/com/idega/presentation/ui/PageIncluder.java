@@ -1,11 +1,8 @@
 package com.idega.presentation.ui;
 
+import java.util.*;
 import java.net.URL;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 import java.net.URLEncoder;
-import java.util.Enumeration;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import com.idega.presentation.PresentationObject;
@@ -42,6 +39,8 @@ public class PageIncluder extends PresentationObject implements Index{
   private String serverName = null;
   private String httpPrefix = null;
   private String httpsPrefix = null;
+
+  private Map findReplaceStrings = null;
 
   private String out;
   private int index = 1000;
@@ -320,7 +319,34 @@ public class PageIncluder extends PresentationObject implements Index{
 
   protected String postProcess(String html){
     html = TextSoap.findAndReplace(html,"httpIW_PREPROCESSED","href=\"javascript");
+    html = findAndReplaceStrings(html);
     return html;
+  }
+
+  /**@todo temporary Strengs fix. We should change the find replace method with the simpler:<br>
+   * 1. find all between symbol=".." strings
+   * 2. Change them
+   * 3. Find replace the original found strings with the new ones
+   */
+
+  private String findAndReplaceStrings(String html){
+    if( findReplaceStrings != null ){
+      Set keys = findReplaceStrings.keySet();
+      Iterator iter = keys.iterator();
+      String key;
+      while (iter.hasNext()) {
+        key = (String)iter.next();
+        html = TextSoap.findAndReplace(html,key,(String)findReplaceStrings.get(key));
+      }
+
+    }
+    return html;
+
+  }
+
+  public void setFindAndReplaceString(String stringToFind, String stringToReplace){
+    if( findReplaceStrings == null ) findReplaceStrings = new HashMap();
+    findReplaceStrings.put(stringToFind,stringToReplace);
   }
 
   protected String changeAHrefAttributes(String html){
