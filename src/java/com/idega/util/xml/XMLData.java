@@ -365,6 +365,7 @@ public class XMLData {
       }
       outputStream.flush();
       outputStream.close();
+      input.close();
       // read file 
       BufferedInputStream inputStream = null;
       try {
