@@ -324,17 +324,20 @@ public class TextSoap {
     //return r.replaceAll(text); with regular expr. package called PAT
     StringBuffer buf = new StringBuffer("");
     String returnString;
-    int index = text.indexOf(stringToFind);
-    int index2 = 0;
-    int length = stringToFind.length();
 
-    while (index != -1) {
-      buf.append(text.substring(index2, index));//paste from last index or beginning
-      buf.append(stringToReplace);
-      index2 = index+length;
-      index = text.indexOf(stringToFind,index2);
-      if (index == -1) {//paste the last remaining part
-        buf.append(text.substring(index2, text.length()));
+    if( stringToFind!=null && !stringToFind.equals("") ){
+      int index = text.indexOf(stringToFind);
+      int index2 = 0;
+      int length = stringToFind.length();
+
+      while (index != -1) {
+        buf.append(text.substring(index2, index));//paste from last index or beginning
+        buf.append(stringToReplace);
+        index2 = index+length;
+        index = text.indexOf(stringToFind,index2);
+        if (index == -1) {//paste the last remaining part
+          buf.append(text.substring(index2, text.length()));
+        }
       }
     }
 
