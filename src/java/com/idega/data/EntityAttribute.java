@@ -27,7 +27,7 @@ private String relationShip;
 private int storageClassType;
 private boolean editable;
 private boolean visible;
-private String relationShipClassName;
+private Class relationShipClass;
 private int maxLength;
 private boolean nullable=true;
 private String attributeType;
@@ -53,27 +53,25 @@ protected static int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 	public EntityAttribute(String columnName){
 		setName(columnName);
 		setLongName(columnName);
-		setStorageClassName("java.lang.Integer");
+		setStorageClass(Integer.class);
 		setRelationShipType("unconnected");
 		setEditable(false);
 		setVisible(false);
-		setRelationShipClassName("");
                 setAttributeType("column");
-    	setMaxLength(-1);
+    	        setMaxLength(-1);
   	}
 
 
 	public EntityAttribute(String columnName,Object columnValue){
 		setName(columnName);
 		setLongName(columnName);
-		setStorageClassName(columnValue.getClass().getName());
+		setStorageClass(columnValue.getClass());
 		setRelationShipType("unconnected");
 		setEditable(false);
 		setVisible(false);
-		setRelationShipClassName("");
    		setAttributeType("column");
 		setMaxLength(-1);
-   }
+        }
 
 	public void setName(String name){
 		this.name=name.toLowerCase();
@@ -152,10 +150,8 @@ protected static int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 		//return storageClassName;
 	}
 
-        /**
-         * @deprecated replaced with setStorageClassType
-         */
-	public void setStorageClassName(String className){
+        public void setStorageClass(Class storageClass){
+          String className = storageClass.getName();
           if(className.equals("java.lang.Integer")){
             setStorageClassType(TYPE_JAVA_LANG_INTEGER);
           }
@@ -215,12 +211,20 @@ protected static int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 		return visible;
 	}
 
+
 	public String getRelationShipClassName(){
-		return relationShipClassName;
+              if(relationShipClass!=null){
+		return relationShipClass.getName();
+              }
+              return null;
 	}
 
-	public void setRelationShipClassName(String className){
-		relationShipClassName=className;
+	public Class getRelationShipClass(){
+            return relationShipClass;
+	}
+
+	public void setRelationShipClass(Class relClass){
+		relationShipClass=relClass;
 	}
 
 	public void setMaxLength(int maxLength){

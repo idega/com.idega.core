@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.12 2001/07/16 13:25:07 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.13 2001/07/17 19:14:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -103,6 +103,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
         Object obj = moduleinfo.getSessionAttribute(sessionAddress);
         if(obj != null) {
           if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
+
               if(Page.isRequestingTopPage(moduleinfo)){
                 __theService(request,response);
               }

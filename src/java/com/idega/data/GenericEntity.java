@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.27 2001/07/16 09:53:22 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.28 2001/07/17 19:14:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -168,11 +168,11 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void addAttribute(String attributeName) {
-    EntityAttribute attribute;
-    attribute = new EntityAttribute(attributeName.toLowerCase());
-    attribute.setAsPrimaryKey(true);
-    attribute.setNullable(false);
-		addAttribute(attribute);
+            EntityAttribute attribute;
+            attribute = new EntityAttribute(attributeName.toLowerCase());
+            attribute.setAsPrimaryKey(true);
+            attribute.setNullable(false);
+            addAttribute(attribute);
 	}
 
 	/**
@@ -183,57 +183,73 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName) {
-		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
-		attribute.setLongName(longName);
-		attribute.setVisible(ifVisible);
-		attribute.setEditable(ifEditable);
-		attribute.setStorageClassName(storageClassName);
-		addAttribute(attribute);
+          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName));
+        }
+
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass) {
+            EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
+            attribute.setLongName(longName);
+            attribute.setVisible(ifVisible);
+            attribute.setEditable(ifEditable);
+            attribute.setStorageClass(storageClass);
+            addAttribute(attribute);
 	}
 
 	/**
 	 * Added by Eirikur Hrafnsson
 	 *
 	 */
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
+       public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
+          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength);
+       }
+
+
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
-		attribute.setStorageClassName(storageClassName);
+		attribute.setStorageClass(storageClass);
 		attribute.setMaxLength(maxLength);
 		addAttribute(attribute);
 	}
 
 	/**
-   * @deprecated Replaced with addAttribute()
+          * @deprecated Replaced with addAttribute()
  	  */
 	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
 		addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName,relationShipType,relationShipClassName);
 	}
 
+
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
+            addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),relationShipType,Class.forName(relationShipClassName));
+        }
+
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,String relationShipType,Class relationShipClass) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
 		attribute.setRelationShipType(relationShipType);
-		attribute.setRelationShipClassName(relationShipClassName);
-		attribute.setStorageClassName(storageClassName);
+		attribute.setRelationShipClass(relationShipClass);
+		attribute.setStorageClass(storageClass);
 		addAttribute(attribute);
 	}
 
-
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName){
+          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength,relationShipType,Class.forName(relationShipClassName));
+        }
+
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass){
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
 		attribute.setRelationShipType(relationShipType);
-		attribute.setRelationShipClassName(relationShipClassName);
-		attribute.setStorageClassName(storageClassName);
+		attribute.setRelationShipClass(relationShipClass);
+		attribute.setStorageClass(storageClass);
 		attribute.setMaxLength(maxLength);
-		//columns.put(columnName,column);
 		addAttribute(attribute);
 	}
 
@@ -274,7 +290,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		EntityAttribute attribute = new EntityAttribute();
 		attribute.setName(relationshipName);
 		attribute.setAttributeType("relationship");
-		attribute.setRelationShipClassName(relationshipClassName);
+		attribute.setRelationShipClass(Class.forName(relationshipClassName));
 		addAttribute(attribute);
 	}
 
@@ -554,7 +570,7 @@ public abstract class GenericEntity implements java.io.Serializable {
          * @deprecated replaced with setStorageClassType
          */
 	public void setStorageClassName(String columnName,String className){
-		getColumn(columnName).setStorageClassName(className);
+		getColumn(columnName).setStorageClass(Class.forName(className));
 	}
 
         public void setStorageClassType(String columnName,int classType){
@@ -586,7 +602,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void setRelationShipClassName(String columnName,String className){
-		getColumn(columnName).setRelationShipClassName(className);
+		getColumn(columnName).setRelationShipClass(Class.forName(className));
 	}
 
 
@@ -1796,6 +1812,10 @@ public abstract class GenericEntity implements java.io.Serializable {
 
       public void addManyToManyRelationShip(Class relatingEntityClass){
                 addManyToManyRelationShip(relatingEntityClass.getName());
+      }
+
+      public void addTreeRelationShip(){
+        EntityControl.addTreeRelationShip(this);
       }
 
       protected int getEntityState(){
