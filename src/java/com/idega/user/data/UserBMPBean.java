@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -1074,6 +1075,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @throws RemoteException
 	 */
 	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException {
+		
+		//strange stuff...examine
 		if (userIds != null && userIds.length == 0) {
 			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"});
 		}else if (condition == null || condition.equals("")) {
@@ -1083,53 +1086,122 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return ejbFindUsers(userIds);
 			}
 		}else {
-			IDOQuery query = idoQuery();
 			
-			//name
-			query.appendSelectAllFrom(this).appendWhere()
-			.append("(")
-			.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%'")
-			.appendOr()
-			.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%'")
-			.appendOr()
-			.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
-			.appendOr()
-			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'")
-			.append(")");
+			//TODO finish
 			
-		//address
-			query.appendOr().append(getIDColumnName()).appendIn(getUserAddressSearchString(condition));
-			
-			//status
-			//TODO add sql for status
-			
-			//not deleted
-			query.appendAnd();
-			appendIsNotDeleted(query);
-			
-			//filter by users
-			if ( userIds != null) {
-				query.appendAnd().append(getIDColumnName()).append(" IN (");
-				for (int i = 0; i < userIds.length; i++) {
-					if (i != 0) {
-						query.append(",");	
-					}
-					query.append(userIds[i]);
-				}	
-				query.append(")");	
+			Vector users = null;
+			if( userIds !=null){
+					 users = new Vector();
+					for (int i = 0; i < userIds.length; i++) {
+						users.add(userIds[i]);
+					}	
 			}
-      
-      query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
 			
-			return this.idoFindIDsBySQL(query.toString());
+			return ejbFindUsersByConditions(condition,condition,condition,condition,null,condition,0,110,null,null);
 		}
 	}
 	
-	private String getUserAddressSearchString(String search){
+	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, Gender gender, String status, int startAge, int endAge, Collection allowedGroups, Collection allowedUsers) throws FinderException, RemoteException {
+		IDOQuery query = idoQuery();
+			
+		query.appendSelectAllFrom(this).appendWhere();
+		
+		//name	
+		if(userName!=null){
+			query.append(getUserNameSearchString(userName));	
+		}
+	
+		//address
+		if(streetName!=null){
+			query.appendOr();
+			query.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
+		}
+		
+		//personalId
+		if(personalId!=null){
+			query.appendOr();
+			query.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%'");
+		}
+		
+		//gender
+		if(gender!=null){
+			query.appendAnd();
+			query.append(getColumnNameGender()).appendEqualSign().append((Integer)gender.getPrimaryKey());
+		}
+			
+		//status
+		//TODO add sql for status
+		//query.appendOr().append(getIDColumnName()).appendIn(getUserStatusSearchString(condition));
+		
+		//age
+		//IWTimestamp.RightNow().
+			
+		//group search
+		//TODO filter out only allowed
+		if(groupName!=null || (allowedGroups!=null && !allowedGroups.isEmpty() )){
+			query.appendOr();//virkar ekki alveg svona thyrfti ad vera and og or
+			query.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
+		}	
+		//not deleted
+		query.appendAnd();
+		appendIsNotDeleted(query);
+			
+		//filter by users
+		if ( allowedUsers != null && !allowedUsers.isEmpty()) {
+			query.appendAnd().append(getIDColumnName()).append(" IN (");
+			query.append(IDOUtil.getInstance().convertListToCommaseparatedString(allowedUsers) );
+			query.append(")");	
+		}
+      
+		query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
+			
+		return this.idoFindIDsBySQL(query.toString());
+	}
+	
+	
+	/**
+	 * @param condition
+	 * @return
+	 */
+	private String getUserNameSearchString(String condition) {
+		StringBuffer sql = new StringBuffer();
+		sql.append("(")
+		.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%' OR ")
+		.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%' OR ")
+		.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
+		.append(")");
+		
+		return sql.toString();
+	}
+
+	/**
+	 * @param condition
+	 */
+	private String getUserStatusSearchString(String condition) {
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("select ua.ic_user_id from ic_user u,iwme_user_status us where u.ic_user_id=us.ic_user_id")
+		.append(" and us.status like '%").append(condition.toUpperCase()).append("%' ");
+
+		return sql.toString();
+	}
+
+	private String getUserInAllowedGroupsSearchString(String condition, Collection allowedGroups) {
+		StringBuffer sql = new StringBuffer();
+		sql.append("select gr.related_ic_group_id from ic_group g, ic_group_relation gr where gr.ic_group_id = g.ic_group_id ")
+		.append("and g.name like '%")
+		.append(condition)
+		.append("%' and gr.group_relation_status='ST_ACTIVE' ");
+		//and g.ic_group_id in (view permission groups)
+			
+		return sql.toString();
+	}
+
+	private String getUserAddressSearchString(String condition){
 		StringBuffer sql = new StringBuffer();
 		
 		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id")
-		.append(" and a.street_name like '%").append(search.toUpperCase()).append("%' ");
+		.append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
 	
 		return sql.toString();
 		
