@@ -5,7 +5,6 @@ package com.idega.presentation.plaf.basic;
 import java.util.Vector;
 
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.plaf.GenericTabbedPaneUI;
@@ -166,9 +165,9 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       this.empty();
 
       IWColor color = getColor();
-      IWColor dark = color.darker();
-      IWColor darker = dark.darker();
-      IWColor darkest = darker.darker();
+      //IWColor dark = color.darker();
+      //IWColor darker = dark.darker();
+      //IWColor darkest = darker.darker();
       IWColor bright = color.brighter();
 
       if(this.getSelectedIndex() == -1 && this.getAddedTabs().size() != 0){
