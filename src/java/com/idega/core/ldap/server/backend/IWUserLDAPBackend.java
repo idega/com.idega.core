@@ -229,6 +229,7 @@ LDAPReplicationConstants {
 				String type = matchType.toString();
 				String value = matchVal.toString();
 				//TODO search for each type separately
+				//FIXME Use the uniqueId variable so that Laddi won't commit it out of the code and make Eiki mad ;)
 				String uniqueId = null;
 				//todo handle uniqueid in search
 				if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
@@ -271,6 +272,7 @@ LDAPReplicationConstants {
 			}
 			
 			//FIXME this does something to the DN so it get rid of \\ and what nots...
+			//FIXME Use the entry variable so that Laddi won't commit it out of the code and make Eiki mad ;)
 			Entry entry = new Entry(base);
 		
 			try {
@@ -324,6 +326,7 @@ LDAPReplicationConstants {
 					Iterator filters = filter.and.values().iterator();
 					while(filters.hasNext()){
 						//todo only fill the returning entries, that would be much faster and more memory efficient
+						//FIXME Use the subFilter variable so that Laddi won't commit it out of the code and make Eiki mad ;)
 						Filter subFilter = (Filter) filters.next();
 						if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
 							DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
