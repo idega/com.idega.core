@@ -995,7 +995,10 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     return getAllAllowedGroupTypesForChildren(group, iwuc);
   }  
         
-        
+  /**
+   * It is allowed and makes sense if the parameter group is null: 
+   * In this case alias and general group type is returned.
+   */      
   public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) {
     GroupTypeHome groupTypeHome; 
     GroupType groupType;
