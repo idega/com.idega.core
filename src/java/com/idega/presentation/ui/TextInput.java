@@ -289,6 +289,7 @@ public class TextInput extends GenericInput {
 
 			//formating decimal sign (for default Locale) and number of decimals
 			NumberFormat number = NumberFormat.getInstance(); 
+			number.setGroupingUsed(false); 
 			if (decimals >= 0){
 				number.setMaximumFractionDigits(decimals);
 				number.setMinimumFractionDigits(decimals);				
