@@ -66,6 +66,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	//temp
 	private static ICObject staticPageICObject = null;
 	private static ICObject staticFileICObject = null;
+	private ArrayList rolesList;
 
 	private void initAdministratorPermissionGroup() throws Exception {
 		PermissionGroup permission = getPermissionGroupHome().create();
@@ -2514,10 +2515,20 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public Collection getAllRolesForGroup(Group group) {
 		Collection returnCol = new Vector(); //empty
 		try {
-			returnCol =
+			Collection permissions=
 				getPermissionHome().findAllPermissionsByTypeAndPermissionGroupOrderedByContextValue(
 					RoleHelperObject.getStaticInstance().toString(),
 					group);
+			
+			if(permissions!=null && !permissions.isEmpty()){
+						Iterator permissionsIter = permissions.iterator();
+						while (permissionsIter.hasNext()) {
+							ICPermission perm = (ICPermission) permissionsIter.next();
+							if(perm.getPermissionValue()){
+								returnCol.add(perm);
+							}
+						}
+					}		
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2810,33 +2821,48 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @param roleKey
 	 */
 	private boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey) {
-		try {
-			getICRoleHome().findByPrimaryKey(roleKey);
-			return true;
+		if(rolesList==null){
+			rolesList = new ArrayList();
 		}
-		catch (FinderException e) {
-			if(roleKey!=null){
-				System.out.println("AccessControl: the role "+roleKey+" does not exist creating it!");
+		
+		if(!rolesList.contains(roleKey)){
+			try {
+				getICRoleHome().findByPrimaryKey(roleKey);
+				rolesList.add(roleKey);
+				return true;
+			}
+			catch (FinderException e) {
+				if(roleKey!=null){
+					System.out.println("AccessControl: the role "+roleKey+" does not exist creating it!");
 					
-				try {
-					ICRole role = getICRoleHome().create();
-					role.setRoleKey(roleKey);
-					role.setRoleDescriptionLocalizableKey("ROLE."+roleKey+".description");
-					role.setRoleNameLocalizableKey("ROLE."+roleKey+".name");
-					role.store();
+					if(createRoleWithRoleKey(roleKey)!=null){
+						rolesList.add(roleKey);
+						return true;
+					}
+					else return false;
 					
-					return true;
 				}
-				catch (CreateException e1) {
-					e1.printStackTrace();
-					return false;
-				}
-				
 			}
 		}
-		
 		return true;
 		
+	}
+
+	public ICRole createRoleWithRoleKey(String roleKey) {
+		try {
+			ICRole role = getICRoleHome().create();
+			role.setRoleKey(roleKey);
+			role.setRoleDescriptionLocalizableKey("ROLE."+roleKey+".description");
+			role.setRoleNameLocalizableKey("ROLE."+roleKey+".name");
+			role.store();
+			
+			return role;
+		}
+		catch (CreateException e1) {
+			e1.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	private ICRoleHome getICRoleHome() {

@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.business;
 import java.util.Collection;
 import java.util.List;
 
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
@@ -133,6 +134,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public void removeGroupFromRoleMastersList(Group group, IWUserContext iwuc);
   public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWUserContext iwuc);
   public boolean removeRoleFromGroup(String roleKey, Group group, IWUserContext iwuc);
+  public ICRole createRoleWithRoleKey(String roleKey);
   public String getRoleIdentifier();
 
 /*

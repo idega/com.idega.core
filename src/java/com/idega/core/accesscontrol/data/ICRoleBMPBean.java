@@ -1,5 +1,4 @@
 package com.idega.core.accesscontrol.data;
-import java.sql.SQLException;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -18,27 +17,28 @@ import com.idega.data.TreeableEntityBMPBean;
 
 public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,TreeableEntity {
 
-	private static final String ENTITY_NAME = "IC_ROLES";
+	private static final String ENTITY_NAME = "IC_PERM_ROLE";
 	
 	private static final String COLUMN_ROLE_KEY = "ROLE_KEY";//defines the type of permission e.g. ic_object_id,group_id,role
 	private static final String COLUMN_ROLE_DESCRIPTION_LOCALIZABLE_KEY ="DESC_LOC_KEY";
 	private static final String COLUMN_ROLE_NAME_LOCALIZABLE_KEY ="NAME_LOC_KEY";
 	
-	
-	public ICRoleBMPBean() {
-		super();
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOEntityBean#getPrimaryKeyClass()
+	 */
+	public Class getPrimaryKeyClass() {
+		return String.class;
 	}
-	public ICRoleBMPBean(int id) throws SQLException {
-		super(id);
-	}
-	
+
 	public void initializeAttributes() {
-		addAttribute(getIDColumnName(),"The roles system name or key", true, true, java.lang.String.class);
+		addAttribute(getIDColumnName(),"The roles system name or key", java.lang.String.class,50);
 		addAttribute(getDescriptionLocalizableKeyColumnName(), "a localizable key for a description", true, true, java.lang.String.class);
 		addAttribute(getNameLocalizableKeyColumnName(), "a localizable key for a name", true, true, java.lang.String.class);
 		
 		setAsPrimaryKey(getIDColumnName(),true);//needed?
 	}
+	
+	
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
