@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.30 2004/10/25 14:44:47 tryggvil Exp $
+ * $Id: StringHandler.java,v 1.31 2004/11/23 17:28:11 thomas Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import java.util.TreeSet;
 
 /**
  *  This class has utility methods to work with strings.<br>
- *  Last modified: $Date: 2004/10/25 14:44:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/23 17:28:11 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class StringHandler {
   
@@ -658,8 +658,95 @@ public class StringHandler {
 		return result;
 	}
 			
+
+	/** Compares two versions strings like "000.003.001" and "0.0044" in 
+	 * a fast way.
+	 * @param version1
+	 * @param version2
+	 * @return Zero if the versions are the same, a value 
+	 * less than zero if the first version is less than the second version and 
+	 * value larger than zero if the first version is larger.
+	 * @author thomas
+	 */
 				
-		
+	public static int compareVersions(String version1, String version2) {
+		int index1 = 0;
+		int index2 = 0;
+		int result = 0;
+		char c1;
+		char c2;
+		boolean firstDigitIsZero1 = true;
+		boolean firstDigitIsZero2 = true;
+		int versionLength1 = version1.length();
+		int versionLength2 = version2.length();
+		while (true) {
+			if (index1 == versionLength1) {
+				c1 = '.';
+			}
+			else {
+				c1 = version1.charAt(index1);
+			}
+			if (index2 == versionLength2) {
+				c2 = '.';
+			}
+			else {
+				c2 = version2.charAt(index2);
+			}
+			// one of the numbers starts with zero value
+			if (firstDigitIsZero1 || firstDigitIsZero2) {
+				if (firstDigitIsZero1 && c1 == '0' && c2 != '0') {
+					index1++;
+					firstDigitIsZero2 = false;
+				}
+				else if (firstDigitIsZero2 && c1 != '0' && c2 == '0') {
+					index2++;
+					firstDigitIsZero1 = false;
+				}
+				else if ( c1 == '0' && c2 == '0') {
+					index1++;
+					index2++;
+				}
+				else {
+					firstDigitIsZero1 = false;
+					firstDigitIsZero2 = false;
+				}
+			}
+			// both numbers start with a non-zero value
+			else if (c1 == '.' && c2 != '.') {
+				// c2 is larger
+				return -1;
+			}
+			else if (c1 != '.' && c2 == '.') {
+				// c1 is larger
+				return 1;
+			}
+			else if (c1 == '.' && c2 == '.') {
+				// both numbers have the same length
+				// look at the result!
+				if (result != 0) {
+					return result;
+				}
+				// bad luck!
+				// go to the next number
+				// is there a next number?
+				if (index1 == versionLength1 || index2 == versionLength2) {
+					return result;
+				}
+				firstDigitIsZero1 = true;
+				firstDigitIsZero2 = true;
+				index1++;
+				index2++;
+			}
+			else {
+				// both characters are numbers
+				if (result == 0) {
+					result = c1 - c2;
+				}
+				index1++;
+				index2++;
+			}
+		}
+	}
 	
   
 	/** Checks if the specified string contains the specified pattern.
