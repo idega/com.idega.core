@@ -52,11 +52,11 @@ public class IBOLookup {
   protected IBOLookup() {
   }
 
-  public static EJBHome getHomeForClass(Class beanInterfaceClass)throws RemoteException{
+  protected static EJBHome getHomeForClass(Class beanInterfaceClass)throws RemoteException{
     return getInstance().getEJBHomeInstance(beanInterfaceClass);
   }
 
-  public static IBOHome getIBOHomeForClass(Class beanInterfaceClass)throws RemoteException{
+  protected static IBOHome getIBOHomeForClass(Class beanInterfaceClass)throws RemoteException{
     return (IBOHome)getHomeForClass(beanInterfaceClass);
   }
 
