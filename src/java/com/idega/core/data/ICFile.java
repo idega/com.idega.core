@@ -28,21 +28,26 @@ public class ICFile extends GenericEntity {
     super();
   }
 
-    public ICFile(int id) throws SQLException{
+  public ICFile(int id) throws SQLException{
     super(id);
   }
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
     addAttribute("ic_language_id","Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
-    addAttribute("mime_type","Type of file",true,true, String.class,20);
-    addAttribute("name","File name",true,true, String.class, 20);
+    addAttribute("mime_type","Type of file",true,true, String.class,255);
+    addAttribute("name","File name",true,true, String.class, 255);
     addAttribute("description","Description",true,true, String.class, 1000);
     addAttribute(getColumnFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
     addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFile.class);
+
     setNullable("parent_id",true);
+    addMetaDataRelationship();//can have extra info in the ic_metadata table
+
+    addManyToManyRelationShip(ICFileCategory.class,"ic_file_file_category");
+
   }
 
   public String getEntityName() {
@@ -86,10 +91,6 @@ public class ICFile extends GenericEntity {
     return (Timestamp) getColumnValue("modification_date");
   }
 
-  public int getParentID(){
-    return getIntColumnValue("parent_id");
-  }
-
 
   public void setLanguage(int language){
     setColumn("ic_language_id", new Integer(language));
@@ -129,5 +130,9 @@ public class ICFile extends GenericEntity {
 
   public void setParentID(int parentID){
     setColumn("parent_id", new Integer(parentID));
+  }
+
+  public int getParentID(){
+    return getIntColumnValue("parent_id");
   }
 }

@@ -1,9 +1,6 @@
 package com.idega.core.data;
 
 import com.idega.data.GenericEntity;
-import com.idega.data.BlobWrapper;
-import com.idega.core.data.ICLanguage;
-import java.sql.Timestamp;
 import java.lang.String;
 import java.lang.Integer;
 import java.sql.SQLException;
@@ -33,75 +30,52 @@ public class ICFileCategory extends GenericEntity {
     addAttribute("category_type","Type of category",true,true, String.class,255);
     addAttribute("category_name","File category name",true,true, String.class, 255);
     addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFileCategory.class);
-    setNullable("parent_id",false);
+    setNullable("parent_id",true);
+
+    addManyToManyRelationShip(ICFile.class,"ic_file_file_category");
   }
 
   public String getEntityName() {
     return("ic_file_category");
   }
 
-  public int getLanguage(){
-    return getIntColumnValue("ic_language_id");
-  }
-
-  public String getMimeType(){
-    return (String) getColumnValue("mime_type");
-  }
-
   public String getName(){
-    return (String) getColumnValue("name");
+    return (String) getColumnValue("category_name");
   }
 
-  public String getDescription(){
-    return (String) getColumnValue("description");
+  public String getFileCategoryName(){
+    return getName();
   }
 
-  public BlobWrapper getFileValue(){
-    return (BlobWrapper) getColumnValue("file_value");
+  public void setFileCategoryName(String fileCategoryName){
+    setColumn("category_name", fileCategoryName);
   }
 
-  public Timestamp getCreationDate(){
-    return (Timestamp) getColumnValue("creation_date");
+  public void setName(String fileCategoryName){
+    setFileCategoryName(fileCategoryName);
   }
 
-  public Timestamp getModificationDate(){
-    return (Timestamp) getColumnValue("modification_date");
+  public String getType(){
+    return (String) getColumnValue("category_type");
   }
 
-  public int getParentID(){
-    return getIntColumnValue("parent_id");
+  public String getFileCategoryType(){
+    return getType();
   }
 
-
-  public void setLanguage(int language){
-    setColumn("ic_language_id", new Integer(language));
+  public void setFileCategoryType(String fileCategoryType){
+    setColumn("category_type", fileCategoryType);
   }
 
-  public void setMimeType(String mimeType){
-    setColumn("mime_type", mimeType);
-  }
-
-  public void setName(String Name){
-    setColumn("name", Name);
-  }
-
-  public void setDescription(String description){
-    setColumn("description", description);
-  }
-
-  public void setFileValue(BlobWrapper fileValue){
-    setColumn("file_value", fileValue);
-  }
-
-  public void setCreationDate(Timestamp creationDate){
-    setColumn("creation_date", creationDate);
-  }
-
-  public void setModificationDate(Timestamp modificationDate){
-    setColumn("modification_date", modificationDate);
+  public void setType(String fileCategoryType){
+    setFileCategoryType(fileCategoryType);
   }
 
   public void setParentID(int parentID){
     setColumn("parent_id", new Integer(parentID));
+  }
+
+  public int getParentID(){
+    return getIntColumnValue("parent_id");
   }
 }
