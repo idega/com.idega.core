@@ -1,5 +1,5 @@
 /*
- * $Id: PageDescriptionDoesNotExists.java,v 1.1 2001/05/14 14:27:27 palli Exp $
+ * $Id: PageDoesNotExist.java,v 1.1 2001/07/16 10:42:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,16 +17,16 @@ import com.idega.util.ExceptionHelper;
  * @author <a href="mailto:palli@idega.is">Pall Helgason</a>
  * @version 1.0alpha
  */
- public class PageDescriptionDoesNotExists extends Exception {
+ public class PageDoesNotExist extends Exception {
 
-  private static String key = "PageDescriptionDoesNotExists";
+  private static String key = "PageDoesNotExist";
   private static ExceptionHelper e = new ExceptionHelper();
 
-  public PageDescriptionDoesNotExists() {
+  public PageDoesNotExist() {
     super(e.getExceptionText(key));
   }
 
-  public PageDescriptionDoesNotExists(String userDefinedKey) {
+  public PageDoesNotExist(String userDefinedKey) {
     super(e.getExceptionText(userDefinedKey));
   }
 }

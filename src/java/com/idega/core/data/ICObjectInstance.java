@@ -29,12 +29,12 @@ public class ICObjectInstance extends GenericEntity{
 		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
 
 		addAttribute(getIDColumnName());
-		addAttribute("ib_object_id","Vefeining",true,true,"java.lang.Integer","many-to-one","com.idega.core.data.ICObject");
+		addAttribute("ic_object_id","Module",true,true,"java.lang.Integer","many-to-one","com.idega.core.data.ICObject");
 
 	}
 
 	public String getEntityName(){
-		return "ib_object_instance";
+		return "ic_object_instance";
 	}
 
 	public void setDefaultValues(){
@@ -45,15 +45,19 @@ public class ICObjectInstance extends GenericEntity{
 		return getObject().getName()+" nr. "+this.getID();
 	}
 
-        public void setObjectID(int id){
-          this.setColumn("ib_object_id",id);
+        public void setICObjectID(int id){
+          this.setColumn("ic_object_id",id);
+        }
+
+        public void setICObject(ICObject object){
+          this.setColumn("ic_object_id",object);
         }
 
 	public ICObject getObject(){
-		return (ICObject) getColumnValue("ib_object_id");
+		return (ICObject) getColumnValue("ic_object_id");
 	}
 
-	public ModuleObject getNewInstance()throws Exception{
+	public ModuleObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
 		return getObject().getNewInstance();
 	}
 
