@@ -19,7 +19,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  
 
  public com.idega.user.data.GroupType getGroupTypeFromString(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
- public void updateUsersInGroup(int p0,java.lang.String[] p1)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
+ public void updateUsersInGroup(int p0,java.lang.String[] p1, com.idega.user.data.User p2)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  
  //public java.util.Collection getRegisteredGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
  public java.util.Collection getNonParentGroupsNonPermissionNonGeneral(int p0) throws java.rmi.RemoteException;
@@ -33,9 +33,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  
  //public java.util.Collection getGroupsContainedDirectlyRelated(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
  public java.util.Collection getChildGroups(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
- 
- 
- public void deleteGroup(com.idega.user.data.Group p0)throws javax.ejb.RemoveException,java.rmi.RemoteException, java.rmi.RemoteException;
+
  //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
  public com.idega.user.data.GroupTypeHome getGroupTypeHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 
@@ -101,8 +99,6 @@ public interface GroupBusiness extends com.idega.business.IBOService
  public com.idega.user.data.Group createGroup(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
 
  public com.idega.user.data.UserGroupPlugInHome getUserGroupPlugInHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
-
- public void deleteGroup(int p0)throws javax.ejb.RemoveException,javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  
  public java.util.Collection getUsersDirectlyRelated(com.idega.user.data.Group p0)throws javax.ejb.EJBException,java.rmi.RemoteException,javax.ejb.FinderException;
  public java.util.Collection getUsersNotDirectlyRelated(com.idega.user.data.Group p0)throws javax.ejb.EJBException,java.rmi.RemoteException,javax.ejb.FinderException;

@@ -440,7 +440,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 				Group group = (Group) iter.next();
-				group.removeUser(delUser);
+				removeUserFromGroup(delUser, group, currentUser);
 				}
 			}
 			
@@ -468,7 +468,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
   
-  public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException {
+  public void removeUserFromGroup(int userId, Group group, User currentUser) {
     User user = getUser(userId);
     removeUserFromGroup(user, group, currentUser);
   }
@@ -476,12 +476,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   public void removeUserFromGroup(User user, Group group, User currentUser)  {
     try {
-      group.removeUser(user);
+      group.removeUser(user, currentUser);
     }
     catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
     }
-    //@TODO set current user
   }
 
   public  void setPermissionGroup(User user, Integer primaryGroupId) throws IDOStoreException,RemoteException {

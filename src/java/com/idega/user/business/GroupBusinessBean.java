@@ -179,18 +179,6 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
     return result;
   }
 
-  public  void deleteGroup(int groupId) throws RemoveException,FinderException,RemoteException {
-    Group delGroup = this.getGroupByGroupID(groupId);
-    //Group delGroup = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
-    deleteGroup(delGroup);
-  }
-
-  public  void deleteGroup(Group group)throws RemoveException,RemoteException {
-    group.removeGroup();
-    group.remove();
-  }
-
-
 
 /**
  * Returns all the groups that are a direct parent of the group with id uGroupId
@@ -860,7 +848,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
-  public  void updateUsersInGroup( int groupId, String[] usrGroupIdsInGroup) throws RemoteException,FinderException {
+  public  void updateUsersInGroup( int groupId, String[] usrGroupIdsInGroup, User currentUser) throws RemoteException,FinderException {
 
     if(groupId != -1){
       Group group = this.getGroupByGroupID(groupId);
@@ -898,7 +886,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       while (iter2.hasNext()) {
         String item = (String)iter2.next();
         //System.out.println("id: "+ item);
-        group.removeGroup(Integer.parseInt(item), false);
+        group.removeGroup(Integer.parseInt(item), currentUser, false);
       }
 
       //System.out.println("toAdd");
