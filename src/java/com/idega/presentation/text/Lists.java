@@ -109,8 +109,12 @@ public class Lists extends PresentationObjectContainer {
 						if (compact) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("<li");
-							if (getMarkupAttribute("style") != null)
-							buffer.append(" style=\"" + getMarkupAttribute("style") + "\"");
+							if (getMarkupAttribute("style") != null) {
+								buffer.append(" style=\"" + getMarkupAttribute("style") + "\"");
+							}
+							if (getMarkupAttribute("class") != null) {
+								buffer.append(" class=\"" + getMarkupAttribute("class") + "\"");
+							}
 							buffer.append(">");
 							print(buffer.toString());
 						}
