@@ -441,4 +441,11 @@ public interface GroupBusiness extends com.idega.business.IBOService {
      */
     public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,Group newlyCreatedGroup, User user) throws RemoteException;
 
+    /**
+     * Returns a collection (list) of User objects that have owner permission to this group 
+   * @param group to get owners for
+   * @return
+   * @throws RemoteException
+   */
+  public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 }

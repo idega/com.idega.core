@@ -1721,6 +1721,29 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
           applyPermissionInheritanceFromGroupToGroup((Group)parentGroups.iterator().next(), newlyCreatedGroup);
       }
   }
+  
+  /**
+   * Returns a collection (list) of User objects that have owner permission to this group 
+ * @param group to get owners for
+ * @return
+ * @throws RemoteException
+ */
+public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
+      Collection permissions = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(group);
+      ArrayList listOfOwnerUsers = new ArrayList();
+      UserBusiness userBiz = getUserBusiness();
+      
+	    //we only want active ones
+	    Iterator permissionsIter = permissions.iterator();
+	    while (permissionsIter.hasNext()) {
+	        ICPermission perm = (ICPermission) permissionsIter.next();
+		    if(perm.getPermissionValue()){
+		        listOfOwnerUsers.add(userBiz.getUser(perm.getGroupID()));
+			}
+	    }
+    
+	    return listOfOwnerUsers;
+  }
  
 } // Class
 
