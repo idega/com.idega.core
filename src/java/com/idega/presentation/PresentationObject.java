@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.24 2002/02/22 13:02:07 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.25 2002/02/22 13:22:42 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1098,8 +1098,9 @@ public class PresentationObject extends Object implements Cloneable {
     }
    }
 
-   public String getBuilderName(IWUserContext iwc) {
-      return this.getClassName().substring(this.getClassName().lastIndexOf(".")+1);
+   public String getBuilderName(IWUserContext iwuc) {
+      //return this.getClassName().substring(this.getClassName().lastIndexOf(".")+1);
+      return this.getBundle(iwuc).getComponentName(this.getClass(),iwuc.getCurrentLocale());
    }
 
 
