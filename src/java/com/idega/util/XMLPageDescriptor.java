@@ -1,5 +1,5 @@
 /*
- * $Id: XMLPageDescriptor.java,v 1.1 2001/05/15 09:38:31 palli Exp $
+ * $Id: XMLPageDescriptor.java,v 1.2 2001/05/16 18:58:06 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,80 +92,6 @@ public class XMLPageDescriptor {
     List li = element.getAttributes();
 
     return(li);
-  }
-
-
-
-
-  /**
-   * A test method. Will be removed.
-   *
-   * @param filename Name of the XML file to read and display the tree for.
-   */
-  public void ReadDocument(String filename) {
-    try {
-      SAXBuilder b = new SAXBuilder();
-      Document doc = b.build(filename);
-
-      Element rootElement = doc.getRootElement();
-      List rootAttributes = rootElement.getAttributes();
-      List rootChildren = rootElement.getChildren();
-      Iterator it = rootAttributes.iterator();
-
-      System.out.println("Root: " + rootElement.getName());
-
-      while (it.hasNext()) {
-        Attribute at = (Attribute)it.next();
-        System.out.println("At: " + at.getName() + " = " + at.getValue());
-      }
-
-      it = rootChildren.iterator();
-      while (it.hasNext()) {
-        Element e = (Element)it.next();
-        parseElements(e, "");
-      }
-    }
-    catch(org.jdom.JDOMException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /*
-   * Parses the Elements recursively and prints out information
-   * about the element, its attributes and the values it contains.
-   *
-   * @param e The element to parse.
-   * @param space The number of spaces to insert in front of the text printed out.
-   */
-  private void parseElements(Element e, String space) {
-    space = space.concat(" ");
-    System.out.println(space + "El: " + e.getName());
-    List attr = e.getAttributes();
-    Iterator it = attr.iterator();
-    while (it.hasNext()) {
-      Attribute at = (Attribute)it.next();
-      System.out.println(space + "At: " + at.getName() + " = " + at.getValue());
-    }
-
-    String s = e.getTextTrim();
-    if (s != null && !s.equals(""))
-      System.out.println(space + "Val : " + s);
-
-    if (e.hasChildren()) {
-      List children = e.getChildren();
-      it = children.iterator();
-      while (it.hasNext()) {
-        Element el = (Element)it.next();
-        parseElements(el,space);
-      }
-    }
-
-    System.out.println(space + "El: /" +  e.getName());
-  }
-
-  public static void main(String args[]) {
-    XMLPageDescriptor x = new XMLPageDescriptor(true);
-    x.ReadDocument(args[0]);
   }
 }
 
