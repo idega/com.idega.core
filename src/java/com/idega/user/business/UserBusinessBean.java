@@ -1452,7 +1452,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
 		Collection topNodes = new Vector();
 		
-		topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES);
+		topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
 		
 		if( topNodes != null ) return topNodes;
 		
