@@ -1014,33 +1014,18 @@ public class CategoryFinder {
   }
 
 
-
-
-
   /**
-
    *  Gets the mapOfCategoriesById of the CategoryFinder object
-
    *
-
    * @param  c  Description of the Parameter
-
    * @return    The map of categories by id value
-
    */
-
   public Map getMapOfCategoriesById(int instanceId) {
-
     return EntityFinder.getInstance().getMapOfEntity(listOfCategoryForObjectInstanceId(instanceId), com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class).getIDColumnName());
-
   }
 
-
-
   public String getInstanceManyToManyRelationShipName(){
-
     return EntityControl.getManyToManyRelationShipTableName(ICCategory.class,ICObjectInstance.class);
-
   }
 
 	public ICCategoryHome getCategoryHome() throws java.rmi.RemoteException{
