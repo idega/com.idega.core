@@ -214,6 +214,13 @@ public class IWCacheManager {
     }
   }
 
+  public Map getCachedTableMap(Class entityClass){
+    if( entityMaps!=null ){
+       return (Map) entityMaps.get(entityClass);
+    }
+    else return null;
+  }
+
   public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
 
     if( entityMaps == null ){
