@@ -9,6 +9,7 @@ package com.idega.core.ldap.replication.business;
  */
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
@@ -576,7 +577,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				baseGroupToOverwrite.setUniqueId(entryUniqueId);
 			}
 			if(entryDN!=null){
-				baseGroupToOverwrite.setMetaData(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING),entryDN.toString());
+				baseGroupToOverwrite.setMetaData(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,entryDN.toString().toLowerCase());
 			}	
 			baseGroupToOverwrite.store();
 		}
@@ -645,6 +646,14 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//TODO remove server crap, it never happens any more?
 		String dn = result.getName();
 		dn = TextSoap.findAndReplace(dn,"\"","");
+		
+		try {
+			//TODO just testing remove if does nothing
+			dn = new String(dn.getBytes(),"UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		
 //		
 //			int startindex = dn.indexOf("://");
