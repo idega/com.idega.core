@@ -39,7 +39,7 @@ public Script(String scriptLanguage){
 }*/
 
 protected Map getScriptCode(){
-	if(scriptCode!=null){
+	if(scriptCode==null){
 		scriptCode=new LinkedHashMap();
 	}
 	return scriptCode;
