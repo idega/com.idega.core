@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.59 2002/09/04 12:50:36 eiki Exp $
+ *  $Id: Page.java,v 1.60 2002/09/04 13:47:14 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -990,7 +990,15 @@ public class Page extends PresentationObjectContainer {
 
 					if (d.getURL() != null) {
 						if (src.startsWith("/")) {
-							src = d.getURL() + src;
+                                                  String protocol;
+                                                  /**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
+                                                  if( iwc.getRequest().isSecure() ){
+                                                    protocol = "https://";
+                                                  }
+                                                  else{
+                                                    protocol = "http://";
+                                                  }
+                                                  src = protocol+d.getURL()+src;
 						}
 					}
 

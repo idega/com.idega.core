@@ -462,9 +462,9 @@ private String getHTMLString(IWContext iwc) {
     if (d.getURL() != null) {
       String src = getAttribute("src");
       if (src.startsWith("/")) {
-        String protocol = iwc.getRequest().getProtocol();
+        String protocol;
 //@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-        if( protocol.indexOf("HTTPS")!=-1  ){
+        if( iwc.getRequest().isSecure() ){
           protocol = "https://";
         }
         else{
