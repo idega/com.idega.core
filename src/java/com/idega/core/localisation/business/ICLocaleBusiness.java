@@ -1,6 +1,5 @@
 package com.idega.core.localisation.business;
 
-import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -10,8 +9,7 @@ import java.util.Vector;
 
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.localisation.data.ICLocaleHome;
-import com.idega.data.EntityFinder;
-import com.idega.data.IDOFinderException;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.util.IWTimestamp;
@@ -34,18 +32,20 @@ public class ICLocaleBusiness {
 
   private static List listOfAllICLocales(){
     try {
-      return EntityFinder.getInstance().findAll(ICLocale.class);
+      //return EntityFinder.getInstance().findAll(ICLocale.class);
+      return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAll());
     }
-    catch (IDOFinderException ex) {
+    catch (Exception ex) {
       return null;
     }
   }
 
   private static List listOfICLocalesInUse(){
     try {
-     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
+     //return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
+     return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAllInUse());
     }
-    catch (IDOFinderException ex) {
+    catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
@@ -53,12 +53,14 @@ public class ICLocaleBusiness {
 
   private static List listOfICLocales(boolean inUse){
     try {
-      if(inUse)
+      /*if(inUse)
         return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
       else
         return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"N");
+       */
+        return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findByUsage(inUse));
     }
-    catch (IDOFinderException ex) {
+    catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
@@ -70,18 +72,18 @@ public class ICLocaleBusiness {
     if(L == null){
       try {
         Vector V = new Vector();
-        ICLocale is= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
+        ICLocale is= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class)).create();
         is.setLocale("is_IS");
-        is.insert();
+        is.store();
 
-        ICLocale en= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
+        ICLocale en= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class)).create();
         en.setLocale("en");
-        en.insert();
+        en.store();
         V.add(is);
         V.add(en);
         return V;
       }
-      catch (SQLException ex) {
+      catch (Exception ex) {
         ex.printStackTrace();
         return null;
       }
@@ -166,10 +168,10 @@ public class ICLocaleBusiness {
       LocaleHashInUseById = new Hashtable();
       for (int i = 0; i < len; i++) {
         ICLocale ICL = (ICLocale) L.get(i);
-        LocaleHashById.put(new Integer(ICL.getID()),ICL);
+        LocaleHashById.put( (Integer)  ICL.getPrimaryKey(),ICL);
         LocaleHashByString.put(ICL.getLocale(),ICL);
         if(ICL.getInUse()){
-          LocaleHashInUseById.put(new Integer(ICL.getID()),ICL);
+          LocaleHashInUseById.put((Integer)ICL.getPrimaryKey(),ICL);
           LocaleHashInUseByString.put(ICL.getLocale(),ICL);
         }
       }
@@ -234,7 +236,7 @@ public class ICLocaleBusiness {
       reload();
     if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
       ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
-      r = ICL.getID();
+      r = ((Integer)ICL.getPrimaryKey()).intValue();
     }
     return r;
   }
@@ -314,7 +316,7 @@ public class ICLocaleBusiness {
         List oldCurrentLocales = new Vector();
         oldCurrentLocales.addAll(currentLocales);
         while (I.hasNext()) {
-          ICLocale locale = home.findByPrimaryKey(Integer.parseInt((String)I.next()));
+          ICLocale locale = home.findByPrimaryKey(Integer.valueOf((String)I.next()));
           locale.setInUse(true);
           locale.store();
           oldCurrentLocales.remove(locale);

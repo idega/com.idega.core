@@ -1,8 +1,15 @@
 package com.idega.core.localisation.data;
 
+import java.util.Collection;
 import java.util.Locale;
 
-import com.idega.core.location.data.*;
+import javax.ejb.FinderException;
+
+import com.idega.core.location.data.Country;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 
 /**
  * Title:        IW Core
@@ -13,7 +20,7 @@ import com.idega.core.location.data.*;
  * @version 1.0
  */
 
-public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com.idega.core.localisation.data.ICLocale {
+public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements ICLocale{
 
   public ICLocaleBMPBean() {
   }
@@ -37,7 +44,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com
     ICLocale il;
     String sLocale;
     for (int i = 0; i < JavaLocales.length; i++) {
-      il = ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
+      il = ((ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class)).create();
       sLocale = JavaLocales[i].toString();
       il.setLocale(sLocale);
       if(sLocale.equals("en"))
@@ -94,6 +101,10 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com
   public boolean getInUse(){
     return getBooleanColumnValue(getColumnNameInUse());
   }
+  
+  public int getLocaleID(){
+      return ((Integer) getPrimaryKey()).intValue();
+  }
 
   public Locale getLocaleObject(){
     String localeString = this.getLocale();
@@ -102,5 +113,26 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com
     }
     return null;
   }
+  
+  public Collection ejbFindAll() throws FinderException{
+      Table table = new Table(this);
+      SelectQuery query = new SelectQuery(table);
+      query.addColumn(new WildCardColumn());
+      return idoFindPKsByQuery(query);
+  }
+  
+  public Collection ejbFindAllInUse()throws FinderException{
+      return ejbFindByUsage(true);
+  }
+  
+  public Collection ejbFindByUsage(boolean usage) throws FinderException{
+      Table table = new Table(this);
+      SelectQuery query = new SelectQuery(table);
+      query.addColumn(new WildCardColumn());
+      query.addCriteria(new MatchCriteria(table,getColumnNameInUse(),MatchCriteria.EQUALS,usage));
+      return idoFindPKsByQuery(query);	
+  }
+  
+  
 
 }
