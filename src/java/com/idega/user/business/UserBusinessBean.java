@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -43,6 +44,7 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
+import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
@@ -1480,70 +1482,82 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if( topNodes != null ) return topNodes;
 			
 			else{
-			
-				
+
 				try {
-				
-				Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
-				HashMap parents = new HashMap();
-				
-				//get all view permissions for direct parent and put in a list
-				Iterator groups = directlyRelatedParents.iterator();
-				List allViewAndOwnerPermissions = new Vector();
-				while (groups.hasNext()) {
-					Group group = (Group) groups.next();
-					Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
-					allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
-					allViewAndOwnerPermissions.addAll(viewPermissions);
-				}
-				Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
-				allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
-				allViewAndOwnerPermissions.addAll(ownedPermissions);
-				
-				
-				//get all (recursively) parents for permission
-				GroupBusiness groupBiz = getGroupBusiness();
-				Iterator permissions = allViewAndOwnerPermissions.iterator();
-				while (permissions.hasNext()) {
-					ICPermission perm = (ICPermission) permissions.next();
-					try {
-						String groupId = perm.getContextValue();
-						Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
-						Collection recParents = groupBiz.getParentGroupsRecursive(group);
-						parents.put(group,recParents);
+					System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
+					Map parents = new HashMap();
+					Map groupMap = new HashMap();
+					IDOUtil idoUtil = IDOUtil.getInstance();
+					
+					Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+					Collection ownedPermissions = null;
+					List allViewAndOwnerPermissions = new Vector();//could be arraylist?
+					
+					//get all view permissions for direct parent and put in a list
+					Iterator groups = directlyRelatedParents.iterator();
+					Group group = null;
+					while (groups.hasNext()) {
+						group = (Group) groups.next();
+						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
+						allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
+						allViewAndOwnerPermissions.addAll(viewPermissions);
 					}
-					catch (NumberFormatException e1) {
-						e1.printStackTrace();
+					
+					ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
+					allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
+					allViewAndOwnerPermissions.addAll(ownedPermissions);
+					
+					//get all (recursively) parents for permission
+					GroupBusiness groupBiz = getGroupBusiness();
+					Iterator permissions = allViewAndOwnerPermissions.iterator();
+					while (permissions.hasNext()) {
+						ICPermission perm = (ICPermission) permissions.next();
+						try {
+							String groupId = perm.getContextValue();
+							Group permissionGroup = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+							Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup);
+							Object primaryKey = permissionGroup.getPrimaryKey();
+	
+							Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
+							parents.put(primaryKey,parentMap);
+							groupMap.put(primaryKey,permissionGroup);
+					
+						}
+						catch (NumberFormatException e1) {
+							e1.printStackTrace();
+						}
+						catch (FinderException e1) {
+							System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
+						}
 					}
-					catch (FinderException e1) {
-						System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
-					}
-				}
-				
-				
-				//Filter out the real top nodes!
-				List skipThese = new ArrayList();
-				Set keys = parents.keySet();
-				Iterator iter = keys.iterator();
-				while (iter.hasNext()) {
-					Group myGroup = (Group) iter.next();
-				
-					Iterator iter2 = parents.keySet().iterator();
-					while (iter2.hasNext()) {
-						Group myGroup2 = (Group) iter2.next();
-						if(myGroup.equals(myGroup2) || skipThese.contains(myGroup)) continue;//dont check for self
-						
-						Collection theParents = (Collection) (parents.get(myGroup2));
-						
-						if(theParents!=null && theParents.contains(myGroup)){
-							skipThese.add(myGroup2); 
-						}//remove if this group is a child group of myGroup
+					
+					System.out.println("TOP NODES fetch ends and sort start : "+ IWTimestamp.RightNow().toString());
+					//Filter out the real top nodes!
+					Map skipThese = new HashMap();
+					Set keys = parents.keySet();
+					Iterator iter = keys.iterator();
+					while (iter.hasNext()) {
+						Integer myGroup = (Integer) iter.next();
+					
+						Iterator iter2 = parents.keySet().iterator();
+						while (iter2.hasNext()) {
+							Integer myGroup2 = (Integer) iter2.next();
+							if(myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
 							
-					}
-				}
-				
-				topNodes = parents.keySet();
-				topNodes.removeAll(skipThese);
+							Map theParents = (Map) (parents.get(myGroup2));
+							
+							if(theParents!=null && theParents.containsKey(myGroup)){
+								skipThese.put(myGroup2,null); 
+								groupMap.remove(myGroup2);
+								
+							}//remove if this group is a child group of myGroup
+								
+						}//inner while ends
+						
+					}//outer while ends
+					
+					topNodes = groupMap.values();
+					System.out.println("TOP NODES sort ends : "+ IWTimestamp.RightNow().toString());
 					
 				}
 				catch (EJBException e) {
