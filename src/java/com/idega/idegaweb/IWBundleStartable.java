@@ -12,5 +12,6 @@ package com.idega.idegaweb;
 public interface IWBundleStartable{
 
   public void start(IWBundle starterBundle);
+  public void stop(IWBundle starterBundle);
 
 }

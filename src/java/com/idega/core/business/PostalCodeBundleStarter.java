@@ -85,5 +85,10 @@ private IWApplicationContext iwac;
 		return (AddressBusiness) IBOLookup.getServiceInstance(iwac,AddressBusiness.class);
 	}
 	
-	
+	/**
+	 * @see com.idega.idegaweb.IWBundleStartable#stop(IWBundle)
+	 */
+	public void stop(IWBundle starterBundle) {
+		//does nothing...
+	}
 }
