@@ -32,7 +32,7 @@ public class Executer {
         for (int i = 0; i < args.length; i++) {
           System.out.println(args[i]);
           Process p = runner.exec(args[i]);
-          p.waitFor();
+          //p.waitFor();
         }
       }
     } catch (Exception ex) {
