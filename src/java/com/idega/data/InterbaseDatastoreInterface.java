@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.16 2002/01/22 14:46:04 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.17 2002/01/23 20:19:09 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -303,10 +303,9 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
       info.datasource=datasource;
       ThreadContext.getInstance().setAttribute(infoKey,info);
 
-      System.out.println();
-      System.out.println("ConnectionPool trimmed and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
-      System.out.println();
-
+      //System.out.println();
+      //System.out.println("ConnectionPool trimmed and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
+      //System.out.println();
   }
 
   /**
@@ -325,9 +324,9 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 
       pmgr.enlargeTo(datasource,size,min,max);
 
-      System.out.println();
-      System.out.println("ConnectionPool enlarged and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
-      System.out.println();
+      //System.out.println();
+      //System.out.println("ConnectionPool enlarged and datasource "+datasource+" contains "+pmgr.getCurrentConnectionCount(datasource)+" connections");
+      //System.out.println();
 
       ThreadContext.getInstance().removeAttribute(infoKey);
 
