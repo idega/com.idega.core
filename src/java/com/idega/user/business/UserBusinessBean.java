@@ -2066,13 +2066,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return styleSrc;
 
   }
-  public Image getTopImage(IWContext iwc) {
-		IWMainApplication application = getIWApplicationContext().getApplication();
-		IWBundle bundle = application.getBundle("com.idega.user");		
-		Image top = bundle.getImage("top.gif");
-		return top;
-  	
-  }
 
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
 		Address address = getUsersMainAddress(user);

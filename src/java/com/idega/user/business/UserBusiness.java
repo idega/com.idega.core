@@ -172,11 +172,6 @@ public interface UserBusiness extends com.idega.business.IBOService
    * @author <a href="mailto:birna@idega.is">Birna Iris Jonsdottir</a>
    */
   public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc);
-  /**
-   * 
-   * @param iwc
-   * @return the image for the top banner
-   */
-	public Image getTopImage(IWContext iwc);
+
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
 }
