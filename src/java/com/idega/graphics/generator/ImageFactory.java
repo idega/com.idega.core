@@ -11,7 +11,6 @@ package com.idega.graphics.generator;
  * @version 1.0
  */
 
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -27,190 +26,195 @@ import java.util.List;
 import java.util.Iterator;
 
 public class ImageFactory {
-  private static IWMainApplication iwma;
-  private static ImageFactory factory;
-  private static IWBundle coreBundle;
-  private static String fontPath;
-  private static Font defaultFont;
-  private static HashMap images;
-  private static Font fontbase;
-  private static String BUTTON_SUFFIX = "_button";
-  private static String TAB_SUFFIX = "_tab";
+	private static IWMainApplication iwma;
+	private static ImageFactory factory;
+	private static IWBundle coreBundle;
+	private static String fontPath;
+	private static Font defaultFont;
+	private static HashMap images;
+	private static Font fontbase;
+	private static String BUTTON_SUFFIX = "_button";
+	private static String TAB_SUFFIX = "_tab";
 
-  private static String GENERATED_IMAGES_FOLDER = "iw_generated";
+	private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 
+	ImageFactory(IWMainApplication iwma) {
+		this.iwma = iwma;
+	}
 
-  ImageFactory(IWMainApplication iwma) {
-    this.iwma = iwma;
-  }
+	public static ImageFactory getStaticInstance(IWMainApplication iwma, boolean shutdown) {
+		if (factory == null) {
+			factory = new ImageFactory(iwma);
+			coreBundle = iwma.getCoreBundle();
+			images = new HashMap();
+			if (!shutdown) {
+				String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
+				try {
+					//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
+					File file = new File(folderPath + iwma.CORE_DEFAULT_FONT);
+					FileInputStream fis = new FileInputStream(file);
 
-  public static ImageFactory getStaticInstance(IWMainApplication iwma){
-   if(factory == null){
-    factory = new ImageFactory(iwma);
-    coreBundle = iwma.getCoreBundle();
-    images = new HashMap();
-    String folderPath = coreBundle.getResourcesRealPath()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
-    try {
-    //System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
-      File file = new File(folderPath+iwma.CORE_DEFAULT_FONT);
-      FileInputStream fis = new FileInputStream(file);
+					fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
+					defaultFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 
+				}
+				catch (Exception ex) {
+					System.err.println("ImageFactory : default font is missing using default java font instead");
+				}
+			}
 
-      fontbase = Font.createFont(Font.TRUETYPE_FONT,fis);
+		}
 
+		return factory;
+	}
 
-      defaultFont = fontbase.deriveFont(Font.PLAIN,getDefaultFontSize());
+	public static ImageFactory getStaticInstance(IWMainApplication iwma) {
+		return getStaticInstance(iwma, false);
+	}
 
-    }
-    catch (Exception ex) {
-      System.err.println("ImageFactory : default font is missing using default java font instead");
-    }
+	public Image createButton(String textOnButton, IWBundle iwb) {
+		return createButton(textOnButton, iwb, null);
+	}
 
-   }
-   return factory;
-  }
+	public Image createButton(String textOnButton, IWBundle iwb, Locale local) {
+		String filePath;
+		String fileVirtualPath;
+		Image image;
 
-  public Image createButton(String textOnButton, IWBundle iwb){
-    return createButton(textOnButton,iwb,null);
-  }
+		if (local != null) {
+			image = (Image) images.get(textOnButton + BUTTON_SUFFIX + local.toString());
+			if (image != null)
+				return image;
+			filePath = iwb.getResourcesRealPath(local);
+			fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+		}
+		else {
+			image = (Image) images.get(textOnButton + BUTTON_SUFFIX);
+			if (image != null)
+				return image;
+			filePath = iwb.getResourcesRealPath();
+			fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+		}
 
-  public Image createButton(String textOnButton, IWBundle iwb, Locale local){
-    String filePath;
-    String fileVirtualPath;
-    Image image;
+		filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
 
-    if( local!=null ){
-      image = (Image) images.get(textOnButton+BUTTON_SUFFIX+local.toString());
-      if( image != null ) return image;
-      filePath = iwb.getResourcesRealPath(local);
-      fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
-    }
-    else{
-      image = (Image) images.get(textOnButton+BUTTON_SUFFIX);
-      if( image != null ) return image;
-      filePath = iwb.getResourcesRealPath();
-      fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
-    }
+		FileUtil.createFolder(filePath);
 
-    filePath = filePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator();
+		Button button = new Button(textOnButton, defaultFont);
+		button.generate(filePath);
 
-    FileUtil.createFolder(filePath);
+		System.out.println("fileVirtualPath :" + fileVirtualPath);
 
-    Button button = new Button(textOnButton,defaultFont);
-    button.generate(filePath);
+		String upName = fileVirtualPath + button.getUpName();
+		String downName = fileVirtualPath + button.getDownName();
+		String overName = fileVirtualPath + button.getOverName();
 
+		image = new Image(textOnButton, upName, overName, downName);
+		image.setWidth(button.getWidth());
+		image.setHeight(button.getHeight());
 
-    System.out.println("fileVirtualPath :"+fileVirtualPath);
+		addToStoredImages(textOnButton + BUTTON_SUFFIX, image, local);
 
-    String upName = fileVirtualPath+button.getUpName();
-    String downName = fileVirtualPath+button.getDownName();
-    String overName = fileVirtualPath+button.getOverName();
+		return image;
+	}
 
-    image = new Image(textOnButton,upName,overName,downName);
-    image.setWidth(button.getWidth());
-    image.setHeight(button.getHeight());
+	public Image createTab(String textOnTab, IWBundle iwb, boolean flip) {
+		return createTab(textOnTab, iwb, null, flip);
+	}
 
-    addToStoredImages(textOnButton+BUTTON_SUFFIX,image,local);
+	public Image createTab(String textOnTab, IWBundle iwb, Locale local, boolean flip) {
+		String filePath;
+		String fileVirtualPath;
+		Image image;
 
-    return image;
-  }
+		if (local != null) {
+			image = (Image) images.get(textOnTab + TAB_SUFFIX + flip + local.toString());
+			if (image != null)
+				return image;
+			filePath = iwb.getResourcesRealPath(local);
+			fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+		}
+		else {
+			image = (Image) images.get(textOnTab + TAB_SUFFIX + flip);
+			if (image != null)
+				return image;
+			filePath = iwb.getResourcesRealPath();
+			fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+		}
 
-  public Image createTab(String textOnTab, IWBundle iwb, boolean flip){
-    return createTab(textOnTab,iwb,null,flip);
-  }
+		filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
 
-  public Image createTab(String textOnTab, IWBundle iwb, Locale local, boolean flip){
-    String filePath;
-    String fileVirtualPath;
-    Image image;
+		FileUtil.createFolder(filePath);
+		Font tabFont = null;
 
-    if( local!=null ){
-      image = (Image) images.get(textOnTab+TAB_SUFFIX+flip+local.toString());
-      if( image != null ) return image;
-      filePath = iwb.getResourcesRealPath(local);
-      fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
-    }
-    else{
-      image = (Image) images.get(textOnTab+TAB_SUFFIX+flip);
-      if( image != null ) return image;
-      filePath = iwb.getResourcesRealPath();
-      fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
-    }
+		tabFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 
-    filePath = filePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator();
+		Tab tab = new Tab(textOnTab, tabFont);
+		tab.flip(flip);
+		tab.generate(filePath);
 
-    FileUtil.createFolder(filePath);
-    Font tabFont = null;
+		String upName = fileVirtualPath + flip + tab.getUpName();
+		String downName = fileVirtualPath + flip + tab.getDownName();
+		String overName = fileVirtualPath + flip + tab.getOverName();
 
+		image = new Image(textOnTab, upName, overName, downName);
+		image.setWidth(tab.getWidth());
+		image.setHeight(tab.getHeight());
 
-    tabFont = fontbase.deriveFont(Font.PLAIN,getDefaultFontSize());
+		addToStoredImages(textOnTab + TAB_SUFFIX + flip, image, local);
 
+		return image;
+	}
 
-    Tab tab = new Tab(textOnTab,tabFont);
-    tab.flip(flip);
-    tab.generate(filePath);
+	private void addToStoredImages(String key, Image image, Locale local) {
+		if (local != null) {
+			images.put(key + local.toString(), image);
+		}
+		else {
+			images.put(key, image);
+		}
+	}
 
-    String upName = fileVirtualPath+flip+tab.getUpName();
-    String downName = fileVirtualPath+flip+tab.getDownName();
-    String overName = fileVirtualPath+flip+tab.getOverName();
+	/** delete all generated images in bundles and the (webroot)/iw_generated folder*/
+	public static void deleteGeneratedImages(IWMainApplication iwma) {
+		FileUtil.deleteAllFilesInDirectory(iwma.getApplicationRealPath() + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator());
 
-    image = new Image(textOnTab,upName,overName,downName);
-    image.setWidth(tab.getWidth());
-    image.setHeight(tab.getHeight());
+		List bundles = iwma.getRegisteredBundles();
+		List locales = iwma.getAvailableLocales();
 
-    addToStoredImages(textOnTab+TAB_SUFFIX+flip,image,local);
+		Iterator iter = bundles.iterator();
 
-    return image;
-  }
+		while (iter.hasNext()) {
+			IWBundle bundle = (IWBundle) iter.next();
 
-  private void addToStoredImages(String key , Image image, Locale local){
-    if( local!=null){
-      images.put(key+local.toString(),image);
-    }
-    else{
-      images.put(key,image);
-    }
-  }
+			String resourcePath = bundle.getResourcesRealPath();
+			FileUtil.deleteAllFilesInDirectory(resourcePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator());
 
-  /** delete all generated images in bundles and the (webroot)/iw_generated folder*/
-  public static void deleteGeneratedImages(IWMainApplication iwma){
+			Iterator iter2 = locales.iterator();
+			while (iter2.hasNext()) {
+				Locale item = (Locale) iter2.next();
+				resourcePath = bundle.getResourcesRealPath(item);
+				FileUtil.deleteAllFilesInDirectory(resourcePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator());
+			}
+		}
+		
+		images = new HashMap();
+	}
 
-    FileUtil.deleteAllFilesInDirectory(iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-
-    List bundles = iwma.getRegisteredBundles();
-    List locales = iwma.getAvailableLocales();
-
-    Iterator iter = bundles.iterator();
-
-    while (iter.hasNext()) {
-      IWBundle bundle = (IWBundle ) iter.next();
-      String resourcePath = bundle.getResourcesRealPath();
-      FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-
-      Iterator iter2 = locales.iterator();
-      while (iter2.hasNext()) {
-        Locale item = (Locale)iter2.next();
-        resourcePath = bundle.getResourcesRealPath(item);
-        FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-      }
-    }
-  }
-
-
-  static float getDefaultFontSize(){
-      String VMVer = System.getProperty("java.vm.version","1.3");
-      String OS = System.getProperty("os.name","Windows");
-      /**
-       * Special check for "correct" point sizing on MacOS X and JVM 1.4
-       */
-      if(OS.startsWith("Mac")|| VMVer.startsWith("1.4")){
-        //defaultFont = fontbase.deriveFont(Font.PLAIN,10);
-        return 10;
-      }
-      else{
-        //defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
-        return 8.5f;
-      }
-  }
+	static float getDefaultFontSize() {
+		String VMVer = System.getProperty("java.vm.version", "1.3");
+		String OS = System.getProperty("os.name", "Windows");
+		/**
+		 * Special check for "correct" point sizing on MacOS X and JVM 1.4
+		 */
+		if (OS.startsWith("Mac") || VMVer.startsWith("1.4")) {
+			//defaultFont = fontbase.deriveFont(Font.PLAIN,10);
+			return 10;
+		}
+		else {
+			//defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
+			return 8.5f;
+		}
+	}
 
 }

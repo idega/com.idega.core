@@ -322,7 +322,7 @@ public class IWMainApplication{//implements ServletContext{
       storeStatus();
       storeCryptoProperties();
       //IWCacheManager.deleteCachedBlobs(this);
-      getImageFactory().deleteGeneratedImages(this);
+//      getImageFactory(true).deleteGeneratedImages(this);
       alreadyUnLoaded = true;
     }
   }
@@ -588,6 +588,10 @@ public class IWMainApplication{//implements ServletContext{
     this.setAttribute(_ADDRESS_ACCESSCONTROLER, controler);
   }
 
+  public ImageFactory getImageFactory(boolean shutdown){
+    return ImageFactory.getStaticInstance(this,shutdown);
+  }
+
   public ImageFactory getImageFactory(){
     return ImageFactory.getStaticInstance(this);
   }
@@ -649,11 +653,14 @@ public class IWMainApplication{//implements ServletContext{
    private void storeCryptoProperties(){
     if(cryptoProps!=null){
       sendShutdownMessage("Storing Cryptonium");
+      
       try{
       String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
       cryptoProps.store(new FileOutputStream(file),"Cryptonium");
       }
-      catch(Exception ex){}
+      catch(Exception ex){
+      	ex.printStackTrace();
+      }
     }
   }
 

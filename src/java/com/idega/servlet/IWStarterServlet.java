@@ -72,11 +72,13 @@ public class IWStarterServlet extends GenericServlet {
 			endIdegaDatabasePool();
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 		}
 		try {
 			endPoolManDatabasePool();
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	public void endPoolManDatabasePool() {
