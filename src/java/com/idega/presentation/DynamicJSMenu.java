@@ -1,6 +1,7 @@
 package com.idega.presentation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import com.idega.presentation.text.Text;
  *
  * Creates a dynamic JavaScript menu using external
  * javaScript; coolmenus4.js 
+ * see <a href="http://www.dhtmlcentral.com/projects/coolmenus/">http://www.dhtmlcentral.com/projects/coolmenus/</a>
  * 
  */
 public class DynamicJSMenu extends PresentationObject {
@@ -19,6 +21,10 @@ public class DynamicJSMenu extends PresentationObject {
 	private PresentationObject _obj;
 	
 	IWContext iwc = new IWContext();
+	
+	String _menuObjectName = "oCMenu";
+	/** a list of LinkMenu */
+	private List _menus = new ArrayList();
 	
 	private List theMenuElements;
 	private List theMenuLevelElements;
@@ -75,6 +81,7 @@ public class DynamicJSMenu extends PresentationObject {
 	private String cursor = ""; 
 	private String borderColor = ""; 
 	private String borderLayerColor = "";
+	
 	/**
 	 * the default constructor
 	 *
@@ -119,6 +126,7 @@ public class DynamicJSMenu extends PresentationObject {
 		setZIndex(zIndex);
 		setWait(wait);
 	}
+	
 	/**
 	 * adds a level to the <code> DynamicJSMenu </code>
 	 * @param level
@@ -510,60 +518,144 @@ public class DynamicJSMenu extends PresentationObject {
 		String url = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 		url = url + "/" + fileName;
 		return url;
-	}	
+	}
 	public void main(IWContext iwc) throws Exception{
 		// get the current page to print the coolMenu4.js and the coolStyle.css src to it
 		parentPage = this.getParentPage();
 		coolMenuSrc = scriptSource(coolMenuScript, iwc);
-//		menuStyleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + menuStyleScript);
+		menuStyleSrc = scriptSource(menuStyleScript, iwc);
 		parentPage.addJavascriptURL(coolMenuSrc);
-//		parentPage.addStyleSheetURL(menuStyleSrc);
+		parentPage.addStyleSheetURL(menuStyleSrc);
 		addStyles(parentPage);	
-		this.addLevel("0");
-		this.addLevel("1");		
-
 	}
 	public void print(IWContext main) throws Exception {
 		if (getLanguage().equals("HTML")){
-			String menuName = "oCMenu";
 			
-			print("<script>");
-			print(menuName + "=new makeCM(\"" + menuName + "\")\n" );
-			print(_getAttributeString());
-								
-			Map levelMap = levelElement.attributes;
-			Map.Entry mapEntry;
+			print("<script type=\"text/javascript\">\n");
+			print(_menuObjectName + "=new makeCM(\"" + _menuObjectName + "\")\n" );
+			
+			if(theMenuLevelElements!=null && theMenuLevelElements.size()>0) {
+				print(_getAttributeString());
+				Map levelMap = levelElement.attributes;
+				Map.Entry mapEntry;
 				
-            Iterator iter = theMenuLevelElements.iterator();
-			while (iter.hasNext()) {
-				levelElement = (MenuLevelElement) iter.next();
-				print(menuName + ".level[" + levelElement.getLevel() + "]=new cm_makeLevel()\n");
-
-				Iterator levelIter = levelMap.entrySet().iterator();
-				while (levelIter.hasNext()) {
-					mapEntry = (Map.Entry) levelIter.next();
-					print(menuName + ".level[" + levelElement.getLevel() + "]." + (String) mapEntry.getKey() + "=" + (String) mapEntry.getValue() + "\n");
+	            Iterator iter = theMenuLevelElements.iterator();
+				while (iter.hasNext()) {
+					levelElement = (MenuLevelElement) iter.next();
+					print(_menuObjectName + ".level[" + levelElement.getLevel() + "]=new cm_makeLevel()\n");
+	
+					Iterator levelIter = levelMap.entrySet().iterator();
+					while (levelIter.hasNext()) {
+						mapEntry = (Map.Entry) levelIter.next();
+						print(_menuObjectName + ".level[" + levelElement.getLevel() + "]." + (String) mapEntry.getKey() + "=" + (String) mapEntry.getValue() + "\n");
+					}
+				}
+			} else {
+				printMenuProperties(_menuObjectName);
+				int count = _menus.size();
+				for(int i=0; i<count; i++) {
+					LinkMenu menu = (LinkMenu) _menus.get(i);
+					printMenu(menu, i);
 				}
 			}
-			MenuElement root1 = new MenuElement();
-			root1.setMenuName("oCMenu");
-			root1.setName("root1");
-			root1.setText("this is the root1");
-			root1.setLink("http://bla.bla");
-			root1.addChild("child1", "root1", "this is child1", "http://bla.bla");
-			root1.addChild("child2", "root1", "this is child2", "http://bla.bla");
-			print(root1.output() + "\n");
 			
-			for(Iterator childIter = root1.getChildren().iterator(); childIter.hasNext();){
-				MenuElement child = (MenuElement) childIter.next();
-				child.setMenuName("oCMenu");
-				print(child.output() + "\n");
-			}
-			print(menuName + ".construct()\n\n");
+			print(_menuObjectName + ".construct()\n\n");
 			print("</script>");			
 		}
 		else if (getLanguage().equals("WML")){
 			println("");
 		}
 	}
+	
+	private void printMenu(LinkMenu menu, int id) {
+		List texts = menu.getTextList();
+		List urls  = menu.getUrlList();
+		int count = texts.size();
+		String topId = "top" + id;
+		String subIdPrefix = "sub" + id + "_";
+		for(int i=0; i<count; i++) {
+			String menuId = i==0?topId:(subIdPrefix + i);
+			String parentMenuId = i==0?"":topId;
+			System.out.println("Printing link \"" + texts.get(i) + "\" to menu \"" + topId + "\"");
+			print(_menuObjectName + ".makeMenu('" + menuId + "','" + parentMenuId + "','" + 
+			texts.get(i) + "','" + 
+			urls.get(i) + "'" + (i==0?", ''":"") + ")\n");
+		}
+	}
+	
+	/**
+	 * Adds a link to the i=th menu. Before a link is added to the i-th menu, make sure to add links to all preceeding
+	 * menus, i.e. zeroth to (i-1)th.
+	 * @param i the menu to add the link to, starting at zero.
+	 * @param text The text in the link
+	 * @param url The url for the link
+	 */
+	public void addLinkToMenu(int i, String text, String url) {
+		LinkMenu menu = null;
+		try {
+			menu = (LinkMenu) _menus.get(i);
+		} catch(Exception e) {
+			// first link being added to menu
+		}
+		if(menu==null) {
+			menu = new LinkMenu();
+			_menus.add(menu);
+		}
+		
+		System.out.println("Adding link \"" + text + "\" to menu #" + i);
+		
+		menu.getTextList().add(text);
+		menu.getUrlList().add(url);
+	}
+	
+	private void printMenuProperties(String menuName) {
+		for(int i=0; i<menuProps.length; i++) {
+			print(menuName + "." + menuProps[i] + "=" + menuValues[i] + "\n");
+		}
+		
+		//print(menuName + ".level[0]=new cm_makeLevel(180,22,\"l1\",\"l1over\",0,1,\"clB\",0,\"right\",0,0,\"/images/arrow_closed.gif\",15,11)\n");
+		print(menuName + ".level[0]=new cm_makeLevel()\n");
+		for(int j=0; j<levelProps.length; j++) {
+			print(menuName + ".level[0]." + levelProps[j] + "=" + levelValues[j] + "\n");
+		}
+		print(menuName + ".level[1]=new cm_makeLevel()\n");
+	}
+	
+	private class LinkMenu {
+		
+		public List getTextList() {
+			return _textList;
+		}
+		
+		public List getUrlList() {
+			return _urlList;
+		}
+		
+		private List _textList = new ArrayList();
+		private List _urlList = new ArrayList();
+	}
+	
+	private String[] menuProps = {"frames","pxBetween","fromLeft","fromTop","rows","menuPlacement","offlineRoot","onlineRoot","resizeCheck","wait",
+                                  "zIndex","useBar","barWidth","barHeight","barClass","barX","barY","barBorderX","barBorderY","barBorderClass"};
+	private String[] menuValues = {"0","30","20","0","1","\"center\"","\"file:///idegaweb/daddara/\"","","1","1000","0","1","\"100%\"",
+                                   "\"menu\"","\"clBar\"","0","0","0","0","\"\""};
+	
+	private String[] levelProps = {"width","height","regClass","overClass","borderX","borderY","borderClass","offsetX","offsetY","rows","arrow",
+                                   "arrowWidth","arrowHeight","align"};
+	private String[] levelValues = {"110","25","\"clLevel0\"","\"clLevel0over\"","1","1","\"clLevel0border\"","0","0","0","0","0","0","\"bottom\""};
+	
+	/*
+	//EXAMPLE SUB LEVEL[1] PROPERTIES - You have to specify the properties you want different from LEVEL[0] - If you want all items to look the same just remove this
+	oCMenu.level[1]=new cm_makeLevel() //Add this for each new level (adding one to the number)
+	oCMenu.level[1].width=oCMenu.level[0].width-2
+	oCMenu.level[1].height=22
+	oCMenu.level[1].regClass="clLevel1"
+	oCMenu.level[1].overClass="clLevel1over"
+	oCMenu.level[1].borderX=1
+	oCMenu.level[1].borderY=1
+	oCMenu.level[1].align="right" 
+	oCMenu.level[1].offsetX=-(oCMenu.level[0].width-2)/2+20
+	oCMenu.level[1].offsetY=0
+	oCMenu.level[1].borderClass="clLevel1border"
+	*/
 }
