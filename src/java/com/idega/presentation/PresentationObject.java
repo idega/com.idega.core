@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.110 2004/11/19 01:27:27 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.111 2004/11/24 23:04:19 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,10 +64,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/19 01:27:27 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/24 23:04:19 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -701,41 +701,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public Page getParentPage()
 	{
-		Page returnPage = null;
-		UIComponent obj = null;
-		if (this instanceof IFrameContent)
-		{
-			obj = ((IFrameContent) this).getOwnerInstance();
-		}
-		else
-		{
-			//try{
-				obj = this.getParent();
-			//}
-			//catch(ClassCastException cce){
-			//	obj=null;
-			//}
-		}
-		while (obj != null)
-		{
-			if (obj instanceof Page)
-			{
-				returnPage = (Page) obj;
-			}
-			if (obj instanceof IFrameContent)
-			{
-				obj = ((IFrameContent) obj).getOwnerInstance();
-			}
-			else
-			{
-				obj = obj.getParent();
-			}
-		}
-		if ((returnPage == null) && (this instanceof Page))
-		{
-			return (Page) this;
-		}
-		return returnPage;
+		return PresentationObjectUtil.getParentPage(this);
 	}
 	public int getParentPageID()
 	{
