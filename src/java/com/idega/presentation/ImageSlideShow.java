@@ -67,30 +67,6 @@ private PresentationObject leftObject,rightObject;
       buttonRow = 1;
     }
 
-    try {
-      name = fileFolder.getName();
-      if(name.indexOf(".")> 0)
-        name = name.substring(0,name.indexOf("."));
-      name = "p"+name;
-
-      Image image = new Image(fileFolder.getID());
-      if ( image != null ) {
-        if ( width > 0 )
-          image.setWidth(width);
-        if ( height > 0 )
-          image.setHeight(height);
-        if ( alt != null )
-          image.setAlt(alt);
-      }
-      urls.add(image.getServletURL(fileFolder.getID()));
-      image.setName(name);
-      T.add(image,1,imageRow);
-
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-
     // iterator init
     Iterator iter = null;
     if ( fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null ) {
@@ -102,14 +78,38 @@ private PresentationObject leftObject,rightObject;
 
     // iterator work
     if(iter !=null && iter.hasNext()){
-      ICFile image ;
+      ICFile fileImage;
+      Image image = new Image();
+      name = fileFolder.getName();
+      if(name.indexOf(".")> 0)
+        name = name.substring(0,name.indexOf("."));
+      name = "p"+name;
+
+      try{
+      fileImage = (ICFile)iter.next();
+      image = new Image(fileImage.getID());
+      if ( image != null ) {
+        if ( width > 0 )
+          image.setWidth(width);
+        if ( height > 0 )
+          image.setHeight(height);
+        if ( alt != null )
+          image.setAlt(alt);
+      }
+      urls.add(image.getServletURL(fileFolder.getID()));
+      image.setName(name);
+      T.add(image,1,imageRow);
+      }
+      catch(SQLException sql){
+
+      }
+
       while (iter.hasNext()) {
-        image = (ICFile)iter.next();
+        fileImage = (ICFile)iter.next();
         try{
-          Image img = new Image(image.getID());
-          urls.add(img.getServletURL(image.getID()));
+          urls.add(image.getServletURL(fileImage.getID()));
         }
-        catch(SQLException ex){
+        catch(Exception ex){
           ex.printStackTrace(System.err);
 
         }
