@@ -18,40 +18,13 @@ import com.idega.data.GenericEntity;
 
 public class ImageSave {
 
-  public ImageSave(){
-
-  }
-
   public static int saveImageToDB(Connection Conn,int imageId, InputStream in,String ContentType,String FileName,boolean NewImage){
-    int id = -1;
-    String statement ;
-      try{
-        if(Conn== null)
-          return id;
-        else{
-        Conn.setAutoCommit(false);
-        if(NewImage){
-          id = com.idega.data.EntityControl.createUniqueID(new com.idega.data.genericentity.Image());
-          statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file) values("+id+",?,?,?,'"+idegaTimestamp.getTimestampRightNow().toString()+"','N')";
-        }
-        else
-          statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+imageId;
-
-        com.idega.data.EntityControl.createUniqueID(new com.idega.data.genericentity.Image() );
-
-        BufferedInputStream bin = new BufferedInputStream(in);
-        PreparedStatement PS = Conn.prepareStatement(statement);
-        PS.setBinaryStream(1, bin, bin.available() );
-        PS.setString(2, ContentType );
-        PS.setString(3, FileName );
-        PS.execute();
-        PS.close();
-        Conn.setAutoCommit(true);
-        }
-      }
-      catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
-      catch(Exception ex){ex.printStackTrace();}
-      return id;
+    if (Conn!=null){
+      String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
+      if( !dataBaseType.equalsIgnoreCase("oracle")  ) return saveImageToDB(imageId,-1,in,ContentType,FileName,"-1", "-1",NewImage);
+      else return saveImageToOracleDB(imageId,-1,in,ContentType,FileName,"-1","-1",NewImage);
+    }
+    else return -1;
     }
 
   public static int saveImageToDB(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
@@ -175,19 +148,6 @@ System.out.println("ImageSave : height ="+height);
       if(Conn != null) GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
     }
     return id;
-  }
-
-  static public String getUploadDirParameterName(){
-    return "FileSaverUploadDir";
-  }
-
-  static public String getUploadDir(ModuleInfo modinfo){
-    String s = (String) modinfo.getSession().getAttribute(getUploadDirParameterName());
-    return s;
-  }
-
-  static public void setUploadDir(ModuleInfo modinfo,String sFilePath){
-    modinfo.getSession().setAttribute(getUploadDirParameterName(),sFilePath);
   }
 }
 
