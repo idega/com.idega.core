@@ -180,7 +180,9 @@ public void freeConnection(Connection conn){
 }
 
 protected void end(){
-  freeConnection(this.conn);
+  if(this.conn!=null){
+    freeConnection(this.conn);
+  }
 }
 
 }
