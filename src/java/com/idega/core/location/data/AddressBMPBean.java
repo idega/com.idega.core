@@ -256,6 +256,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		IDOQuery query = idoQuery();
 		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
 		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
+		query.append("iat.ic_address_type_id = a.ic_address_type_id");
 		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("iat.unique_name = ").appendWithinSingleQuotes(AddressTypeBMPBean.ADDRESS_1);
 
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
