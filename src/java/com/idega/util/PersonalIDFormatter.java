@@ -21,7 +21,7 @@ public class PersonalIDFormatter {
 	 * Accepts input in which is a valid personalID for a specific locale.
 	 * @return A formatted version of the personalID if the personalID is valid for the specified locale and the PersonalIDFormatter can handle the locale.
 	 **/
-	public static String formatPersonalID(
+	public static String format(
 		String originalString,
 		Locale locale) {
 		if (originalString != null) {
@@ -69,6 +69,6 @@ public class PersonalIDFormatter {
 		if(localeString==null){
 			localeString="sv_SE";	
 		}
-		System.out.println("Output: "+formatPersonalID(personalID,LocaleUtil.getLocale(localeString)));
+		System.out.println("Output: "+format(personalID,LocaleUtil.getLocale(localeString)));
 	}
 }
