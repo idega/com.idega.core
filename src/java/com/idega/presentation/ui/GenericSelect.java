@@ -1,12 +1,8 @@
 package com.idega.presentation.ui;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import com.idega.presentation.IWContext;
@@ -24,15 +20,25 @@ public class GenericSelect extends InterfaceObject {
 	private Vector theElements;
 	private boolean _allSelected = false;
 
+	/**
+	 * Creates a new <code>GenericSelect</code> with the name "undefined".
+	 */
 	public GenericSelect() {
 		this("undefined");	
 	}
 	
+	/**
+	 * Creates a new <code>GenericSelect</code> with the given name.
+	 * @param name	The name of the <code>GenericSelect</code> object.
+	 */
 	public GenericSelect(String name) {
 		setName(name);
 		theElements = new Vector();
 	}
 	
+	/**
+	 * Removes all <code>SelectOption</code> objects from the select object.
+	 */
 	public void removeElements() {
 		theElements.clear();
 	}
@@ -45,25 +51,43 @@ public class GenericSelect extends InterfaceObject {
 		setAttribute("onChange","this.form.submit()");
 	}
 
+	/**
+	 * Adds a <code>SelectOption</code> to the select object.
+	 * @param option	The <code>SelectOption</code> to add.
+	 */
 	public void addOption(SelectOption option) {
 		theElements.add(option);	
 	}
 	
+	/**
+	 * Adds a <code>SelectOption</code> to the select object as the first option.
+	 * @param option	The <code>SelectOption</code> to add.
+	 */
 	public void addFirstOption(SelectOption option) {
 		theElements.add(0, option);
 	}
 	
+	/**
+	 * Adds a disabled <code>SelectOption</code> to the select object.
+	 * @param option	The disabled <code>SelectOption</code> to add.
+	 */
 	public void addDisabledOption(SelectOption option) {
 		option.setDisabled(true);
 		theElements.add(option);	
 	}
 	
+	/**
+	 * Adds a separator into the select object.
+	 */
 	public void addSeparator() {
 		SelectOption option = new SelectOption("----------------------------", "separator");
 		option.setDisabled(true);
 		addOption(option);
 	}
 
+	/**
+	 * Sets all <code>SelectOption</code> object in the select object as not selected.
+	 */
 	protected void deselectOptions() {
 		Iterator iter = theElements.iterator();
 		while (iter.hasNext()) {
@@ -73,6 +97,10 @@ public class GenericSelect extends InterfaceObject {
 		}	
 	}
 	
+	/**
+	 * Gets the value of the selected <code>SelectOption</code>.
+	 * @return String	The value of the <code>SelectOption</code> in the select object.
+	 */
 	public String getSelectedValue() {
 		Iterator iter = theElements.iterator();
 		while (iter.hasNext()) {
@@ -83,6 +111,11 @@ public class GenericSelect extends InterfaceObject {
 		return "";
 	}
 	
+	/**
+	 * Sets the <code>SelectOption</code> with the given value as selected.  If the select object
+	 * allows multiple values this selected value is added to existing selected values.
+	 * @param value	The value of the <code>SelectOption</code> to set as selected.
+	 */
 	public void setSelectedOption(String value) {
 		if (!getMultiple())
 			deselectOptions();
@@ -90,6 +123,11 @@ public class GenericSelect extends InterfaceObject {
 		option.setSelected(true);
 	}
 	
+	/**
+	 * Gets the <code>SelectOption</code> with the given value.
+	 * @param value	The value of the <code>SelectOption</code>.
+	 * @return SelectOption
+	 */
 	protected SelectOption getOption(String value) {
 		SelectOption theReturn = new SelectOption();
 		Iterator iter = theElements.iterator();
@@ -101,11 +139,20 @@ public class GenericSelect extends InterfaceObject {
 		return theReturn;
 	}
 	
+	/**
+	 * Sets the name of the <code>SelectOption</code> with the given value.
+	 * @param value	The value of the <code>SelectOption</code>
+	 * @param name	The new name of the <code>SelectOption</code>.
+	 */
 	public void setOptionName(String value, String name) {
 		SelectOption option = getOption(value);
 		option.setName(name);	
 	}
 
+	/**
+	 * Sets this select object to allow multiple selections.
+	 * @param multiple	True to allow multiple, false otherwise.
+	 */
 	protected void setMultiple(boolean multiple) {
 		if (multiple)
 			setAttribute("multiple");
@@ -113,6 +160,10 @@ public class GenericSelect extends InterfaceObject {
 			removeAttribute("multiple");
 	}
 	
+	/**
+	 * Returns if this select object is set to allow multiple selections.
+	 * @return True if allows multiple, false otherwise.
+	 */
 	protected boolean getMultiple() {
 		if (isAttributeSet("multiple"))
 			return true;
@@ -154,15 +205,6 @@ public class GenericSelect extends InterfaceObject {
 			obj = (GenericSelect) super.clone();
 			if (this.theElements != null) {
 				obj.theElements = (Vector) this.theElements.clone();
-				ListIterator iter = obj.theElements.listIterator();
-				while (iter.hasNext()) {
-					int index = iter.nextIndex();
-					Object item = iter.next();
-					if (item instanceof SelectOption) {
-						SelectOption option = (SelectOption) item;
-						obj.theElements.add(index, ((SelectOption) item).clone());
-					}
-				}
 			}
 		}
 		catch (Exception ex) {
