@@ -33,6 +33,9 @@ import javax.ejb.RemoveException;
 
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
+
+import dori.jasper.engine.JRException;
+import dori.jasper.engine.JRField;
 /**
  * A class to serve as a base implementation for objects mapped to persistent data in the IDO Framework.
  *
@@ -334,6 +337,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, Class storageClass, int maxLength, String relationShipType, Class relationShipClass) {
 		EntityAttribute attribute = new EntityAttribute(attributeName);
+		attribute.setAsPrimaryKey(this.getIDColumnName().equalsIgnoreCase(attributeName));
 		attribute.setDeclaredEntity(getGenericEntityDefinition());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
@@ -342,6 +346,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		attribute.setRelationShipClass(relationShipClass);
 		attribute.setStorageClass(storageClass);
 		attribute.setMaxLength(maxLength);
+		
 		addAttribute(attribute);
 	}
 	protected void addAttribute(EntityAttribute attribute) {
@@ -3878,5 +3883,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Object idoFindOnePKByQuery(IDOQuery query) throws FinderException {
 		return idoFindOnePKBySQL(query.toString());
 	}
+	
+	/**
+	 * Default implimentation for IDOReportableEntity
+	 * @param field, IDOEntityField extends JRField and can therefore be used
+	 * @return
+	 * @throws JRException
+	 */
+	public Object getFieldValue(JRField field) throws JRException {
+		return this.getColumnValue(field.getName());
+	}
+	
 
 }
