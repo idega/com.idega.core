@@ -142,6 +142,7 @@ public class IWStarterServlet extends GenericServlet
 	}
 
 	public void startIdegaWebApplication(){
+		long start = System.currentTimeMillis();
 	    try{
 	      addToClassPath();
 	    }
@@ -210,8 +211,9 @@ public class IWStarterServlet extends GenericServlet
 
 	    //create ibdomain
 	    IBDomain domain = ((com.idega.builder.data.IBDomainHome)com.idega.data.IDOLookup.getHomeLegacy(IBDomain.class)).createLegacy();
-
-	    sendStartMessage("Completed");
+		long end = System.currentTimeMillis();
+		long time = (end-start)/1000;
+	    sendStartMessage("Completed in "+time+" seconds");
 	}
 
 	/**
