@@ -211,6 +211,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Group)getColumnValue(COLUMN_ALIAS_TO_GROUP);
 	}
 	
+	/**
+	 * This only returns true if the group is of the type alias and the id is bigger than 0
+	 */
 	public boolean isAlias() {
 	    return ("alias".equals(getGroupType()) &&  ( getAliasID()>0 ));
 	}
