@@ -44,4 +44,21 @@ public class AddressType extends GenericType{
           at.insert();
         }
 
+
+
+        public static int getId(String uniqueKey) throws SQLException {
+            int returner;
+            AddressType[] addrTypes = (AddressType[]) (new AddressType()).findAllByColumn(AddressType.getColumnNameUniqueName(),uniqueKey);
+            if (addrTypes.length == 0) {
+                AddressType addrType = new AddressType();
+                  addrType.setUniqueName(uniqueKey);
+                  addrType.setDisplayName(uniqueKey);
+                addrType.insert();
+                returner = addrType.getID();
+            }else {
+              returner = addrTypes[addrTypes.length-1].getID();
+            }
+
+            return returner;
+        }
 }
