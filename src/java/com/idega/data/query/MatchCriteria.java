@@ -190,7 +190,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	public void write(Output out) {
-	    if(getPlaceValue()!=null  && this.matchType.equalsIgnoreCase(LIKE) && getDatastore().isUsingPreparedStatements())
+	    if(getPlaceValue()!=null  && !this.matchType.equalsIgnoreCase(LIKE) && getDatastore().isUsingPreparedStatements())
 	        out.print(column).print(' ').print(matchType).print(' ').print("?");
 	    else
 	        out.print(column).print(' ').print(matchType).print(' ').print(value);
