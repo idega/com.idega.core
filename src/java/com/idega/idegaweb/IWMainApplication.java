@@ -31,16 +31,15 @@ public class IWMainApplication{//implements ServletContext{
 
   public static String IdegaEventListenerClassParameter="idegaweb_event_classname";
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
-  public static String windowOpenerURL="/servlet/WindowOpener";
   public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
 
-
+  public static String windowOpenerURL="/servlet/WindowOpener";
   public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
   public static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
   private static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
-  public static String _IFRAME_CONTENT_URL="/servlet/IBIFrameServlet/";
+  private static String _IFRAME_CONTENT_URL="/servlet/IBIFrameServlet/";
 
   public static String templateParameter="idegaweb_template";
   public static String templateClassParameter="idegaweb_template_class";
@@ -764,19 +763,23 @@ public class IWMainApplication{//implements ServletContext{
     return url;
   }
 
-  public String getObjectInstanciatorURL(){
+  public String getWindowOpenerURI(){
+    return getTranslatedURLWithContext(this.windowOpenerURL);
+  }
+
+  public String getObjectInstanciatorURI(){
     return getTranslatedURLWithContext(objectInstanciatorURL);
   }
 
-  public String getMediaServletURL(){
+  public String getMediaServletURI(){
     return getTranslatedURLWithContext(this.MEDIA_SERVLET_URL);
   }
 
-  public String getBuilderServletURL(){
+  public String getBuilderServletURI(){
     return getTranslatedURLWithContext(this.BUILDER_SERVLET_URL);
   }
 
-  public String getIFrameContentURL(){
+  public String getIFrameContentURI(){
     return getTranslatedURLWithContext(this._IFRAME_CONTENT_URL);
   }
 
