@@ -14,8 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
+
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -28,9 +27,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.PresentationObjectUtil;
 import com.idega.presentation.Script;
-import com.idega.presentation.text.Text;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
