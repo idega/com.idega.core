@@ -1,9 +1,13 @@
-//idega 2001 - Tryggvi Larusson
 /*
-*Copyright 2001 idega.is All Rights Reserved.
-*/
-
-package com.idega.idegaweb;
+ * $Id: IWException.java,v 1.2 2001/05/14 14:27:27 palli Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
+ package com.idega.idegaweb;
 
 /**
  *

@@ -15,7 +15,7 @@ import com.idega.jmodule.object.ModuleObject;
 
 public class IWEvent extends AWTEvent implements ActiveEvent{
 
-  public static final int IWEVENT_RESERVED_ID_MAX = AWTEvent.RESERVED_ID_MAX+1000;
+  public static final int IWEVENT_RESERVED_ID_MAX = AWTEvent.RESERVED_ID_MAX + 1000;
 
 
   public IWEvent(Object source, int id) {

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.6 2001/05/02 14:01:07 palli Exp $
+ * $Id: IWPresentationServlet.java,v 1.7 2001/05/14 14:27:27 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,59 +28,37 @@ import com.idega.event.IWEvent;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public  class IWPresentationServlet extends IWCoreServlet{
+public class IWPresentationServlet extends IWCoreServlet {
+	private void __initialize(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    //TODO
+    //Find a better solution for this:
+    ModuleInfo moduleinfo = null;
+    //ModuleInfo moduleinfo = (ModuleInfo)request.getSession().getAttribute("idega_special_moduleinfo");
 
-	/*
-	public void init(ServletConfig config)
-          throws ServletException{
-		super.init(config);
+    if (moduleinfo == null) {
+      moduleinfo = new ModuleInfo(request,response);
+      moduleinfo.setServletContext(getServletContext());
+      request.getSession().setAttribute("idega_special_moduleinfo",moduleinfo);
+    }
+    else {
+      moduleinfo.setRequest(request);
+      moduleinfo.setResponse(response);
+    }
 
-	}*/
-
-	/*public void init()throws ServletException{
-                //System.out.println("Inside init() for "+getServletConfig().getServletName());
-		super.init();
-                String servletName = this.getServletConfig().getServletName();
-                System.out.println("Inside init for "+servletName);
-                initializePage();
-	}*/
-
-
-	private void __initialize(HttpServletRequest request, HttpServletResponse response)throws Exception {
-                //TODO
-                //Find a better solution for this:
-                ModuleInfo moduleinfo=null;
-                //ModuleInfo moduleinfo = (ModuleInfo)request.getSession().getAttribute("idega_special_moduleinfo");
-
-                if (moduleinfo == null){
-                  moduleinfo = new ModuleInfo(request,response);
-                  moduleinfo.setServletContext(getServletContext());
-                  request.getSession().setAttribute("idega_special_moduleinfo",moduleinfo);
-                }
-                else{
-                  moduleinfo.setRequest(request);
-                  moduleinfo.setResponse(response);
-                }
-
-                String markup = moduleinfo.getParameter("idega_special_markup");
-                if(markup != null){
-                  moduleinfo.setLanguage(markup);
-                }
+    String markup = moduleinfo.getParameter("idega_special_markup");
+    if(markup != null) {
+      moduleinfo.setLanguage(markup);
+    }
 
 		storeObject("idega_moduleinfo",moduleinfo);
 		initializePage();
-
-
-		//request.getSession().setAttribute("idega_mypage",myPage);
-		//request.getSession().setAttribute("idega_moduleinfo",moduleinfo);
 	}
 
-	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes)throws ServletException, IOException {
-
+	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		__main(servReq,servRes);
 	}
 
-	public void doPost(HttpServletRequest servReq,HttpServletResponse servRes)throws ServletException, IOException{
+	public void doPost(HttpServletRequest servReq,HttpServletResponse servRes)throws ServletException, IOException {
 		__main(servReq,servRes);
 	}
 
@@ -100,13 +78,10 @@ public  class IWPresentationServlet extends IWCoreServlet{
       boolean theServiceDone = false;
       String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
       System.out.println("EventAddress: " + sessionAddress);
-      if (sessionAddress != null && !"".equals(sessionAddress))
-      {
+      if (sessionAddress != null && !"".equals(sessionAddress)) {
         Object obj = moduleinfo.getSessionAttribute(sessionAddress);
-        if(obj != null)
-        {
-          if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
-          {
+        if(obj != null) {
+          if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
             __theService(request,response);
             theServiceDone = true;
             this.getPage()._setModuleInfo(moduleinfo);
@@ -117,7 +92,6 @@ public  class IWPresentationServlet extends IWCoreServlet{
           */
           }
         }
-
       }
 
       //end
