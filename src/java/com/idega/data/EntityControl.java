@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
@@ -822,7 +823,8 @@ public class EntityControl {
 	 */
 	public static List getNToOneRelatedClasses(IDOLegacyEntity entity) {
 		List theReturn = new java.util.Vector();
-		List attributes = entity.getAttributes();
+		IDOEntityBean bean = (IDOEntityBean)entity;
+		Collection attributes = bean.getAttributes();
 		java.util.Iterator iter = attributes.iterator();
 		while (iter.hasNext()) {
 			EntityAttribute item = (EntityAttribute) iter.next();
