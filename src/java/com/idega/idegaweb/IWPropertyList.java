@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.5 2001/06/18 15:49:46 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.6 2001/06/18 16:25:38 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -90,6 +90,14 @@ public class IWPropertyList {
     setProperty(key,value.toString(),value.getClass().getName());
   }
 
+  public void setProperty(String key, int value) {
+    setProperty(key,new Integer(value));
+  }
+
+  public void setProperty(String key, boolean value) {
+    setProperty(key,new Boolean(value));
+  }
+
   public void setProperty(String key, String value) {
     setProperty(key,value,stringString);
   }
@@ -108,9 +116,7 @@ public class IWPropertyList {
     }
   }
 
-  public void setProperty(String key, int value) {
-    setProperty(key, new Integer(value));
-  }
+
 
   private Element createValueElement(Element parent){
     Element valueElement = new Element(valueTag);

@@ -107,7 +107,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
 
     public void setEntityAutoCreation(boolean ifAutoCreate){
-      this.setProperty("entity-auto-create",String.valueOf(ifAutoCreate));
+      this.setProperty("entity-auto-create",ifAutoCreate);
     }
 
     public boolean getIfEntityAutoCreate(){
