@@ -77,7 +77,7 @@ public class FileManager extends Block {
 				if(null!=folder){
 					if(relativePath == true){
 						String appURI = iwc.getIWMainApplication().getApplicationRealPath();
-						folder =appURI+folder;
+						folder = appURI+folder;
 						currentFolder = folder;
 //						System.out.println("Path is relative to: "+appURI);
 						relativePath = false;
@@ -326,9 +326,11 @@ public class FileManager extends Block {
 		headerTable.add(getText(iwrb.getLocalizedString("current_folder","Current folder")+": "), 1, 1);
 		String absolute = dir.getAbsolutePath().replace('\\','/');
 		String shortdir = absolute.substring(absolute.indexOf(topLevelFolder)+topLevelFolder.length());
+/*
 		System.out.println("absolute path: "+absolute);
 		System.out.println("top level path: "+topLevelFolder);
 		System.out.println("shortdir path: "+shortdir);
+*/
 		if(shortdir.length()==0){
 			shortdir ="/";
 			headerTable.add(getSubFolderLink(shortdir,iwc), 1, 1);
@@ -563,6 +565,7 @@ public class FileManager extends Block {
 			topLevelFolder = "/"+toplevel;
 		else
 			topLevelFolder = toplevel;
+//		System.out.println("Toplevel folder set to "+topLevelFolder);
 	}
 
 	/**
@@ -585,8 +588,9 @@ public class FileManager extends Block {
 	public void setStartingFolderRealPath(String folder) {
 		relativePath = false;
 		this.folder = folder;
-		if(this.topLevelFolder==null)
-			topLevelFolder = folder;
+		if(topLevelFolder.equalsIgnoreCase("/")){
+			setTopLevelBrowseFolder(folder);
+		}
 //		System.out.println("Path set to "+folder);
 	}
 
@@ -596,8 +600,9 @@ public class FileManager extends Block {
 	public void setStartingFolderRelativePath(String folder) {
 		relativePath = true;
 		this.folder = folder;
-		if(this.topLevelFolder==null)
-			topLevelFolder = folder;
+		if(topLevelFolder.equalsIgnoreCase("/")){
+			setTopLevelBrowseFolder(folder);
+		}
 //		System.out.println("Path set to "+folder);
 	}
 
