@@ -14,4 +14,15 @@ public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.uti
  public void setUserId(int p0);
  public void setUserLogin(java.lang.String p0);
  public void setUserPassword(java.lang.String p0);
+
+
+  /**
+  * Sets both the intented encrypted password and the original unencrypted password for temporary retrieval
+  */
+ public void setUserPassword(java.lang.String encryptedPassword,String unEncryptedPassword)throws java.rmi.RemoteException;
+ /**
+ * Gets the original password if the record is newly created, therefore it can be retrieved , if this is not a newly created record the exception PasswordNotKnown is thrown
+ */
+ public String getUnencryptedUserPassword()throws PasswordNotKnown,java.rmi.RemoteException;
+
 }

@@ -35,65 +35,43 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
         public static String className = LoginTable.class.getName();
-
         public static String _COLUMN_PASSWORD = "usr_password";
 
-
+        private transient String unEncryptedUserPassword;
 
 	public LoginTableBMPBean(){
-
 		super();
-
 	}
 
 
-
 	public LoginTableBMPBean(int id)throws SQLException{
-
 		super(id);
-
 	}
 
 
 
 	public void initializeAttributes(){
-
           addAttribute(this.getIDColumnName());
-
           addAttribute(getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
-
           addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
-
           addAttribute(getNewUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
-
           //deprecated column
-
           addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
-
           addAttribute(getLastChangedColumnName(),"Síðast breytt",true,true,Timestamp.class);
-
           setNullable(getUserLoginColumnName(), false);
-
           setUnique(getUserLoginColumnName(),true);
-
-
-
 	}
 
 
 
         public void setDefaultValues(){
-
           setColumn(getOldUserPasswordColumnName(),"rugl");
-
         }
 
 
 
 	public String getEntityName(){
-
 		return "ic_login";
-
 	}
 
 
@@ -381,118 +359,81 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
 	public void setUserPassword(String userPassword){
-
           try {
-
             String str = "";
-
             char[] pass = userPassword.toCharArray();
-
             for (int i = 0; i < pass.length; i++) {
-
               String hex = Integer.toHexString((int)pass[i]);
-
               while (hex.length() < 2) {
-
                 String s = "0";
-
                 s += hex;
-
                 hex = s;
-
               }
-
               str += hex;
-
             }
-
-
-
             if(str.equals("") && !userPassword.equals("")){
-
               str = null;
-
             }
-
-
-
             setColumn(getNewUserPasswordColumnName(), str);
-
           }
-
           catch (Exception ex) {
-
             ex.printStackTrace();
-
             setColumn(getNewUserPasswordColumnName(), userPassword);
-
           }
-
-
-
-
-
 	}
 
 
 
 	public void setUserLogin(String userLogin) {
-
           setColumn(getUserLoginColumnName(), userLogin);
-
 	}
 
 	public String getUserLogin() {
-
           return getStringColumnValue(getUserLoginColumnName());
-
 	}
-
-
 
 	public int getUserId(){
-
           return getIntColumnValue(getUserIDColumnName());
-
 	}
 
-
-
 	public void setUserId(Integer userId){
-
           setColumn(getUserIDColumnName(), userId);
-
 	}
 
 	public void setUserId(int userId) {
-
           setColumn(getUserIDColumnName(),userId);
-
 	}
 
-
-
         public static String getUserIDColumnName(){
-
           return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
-
         }
 
+        public void setLastChanged(Timestamp when) {
+          setColumn(getLastChangedColumnName(),when);
+        }
 
+        public Timestamp getLastChanged() {
+          return((Timestamp)getColumnValue(getLastChangedColumnName()));
+        }
 
-  public void setLastChanged(Timestamp when) {
+        /**
+         * Sets both the intented encrypted password and the original unencrypted password for temporary retrieval
+         */
+        public void setUserPassword(String encryptedPassword,String unEncryptedPassword){
+          this.unEncryptedUserPassword=unEncryptedPassword;
+          this.setUserPassword(encryptedPassword);
+        }
 
-    setColumn(getLastChangedColumnName(),when);
-
-  }
-
-
-
-  public Timestamp getLastChanged() {
-
-    return((Timestamp)getColumnValue(getLastChangedColumnName()));
-
-  }
-
+        /**
+         * Gets the original password if the record is newly created, therefore it can be retrieved , if this is not a newly created record the exception PasswordNotKnown is thrown
+         */
+        public String getUnencryptedUserPassword()throws PasswordNotKnown{
+          if(unEncryptedUserPassword==null){
+            throw new PasswordNotKnown(this.getUserLogin());
+          }
+          else{
+            return unEncryptedUserPassword;
+          }
+        }
 }
 
