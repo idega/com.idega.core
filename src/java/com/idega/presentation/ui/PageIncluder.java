@@ -16,6 +16,9 @@ import com.idega.util.text.TextSoap;
 */
 public class PageIncluder extends PresentationObject{
   private String URL = null;
+  private String BASEURL = null;
+  private String RELATIVEURL = null;
+  private String pageIncluderPrefix = null;
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
   private int instanceId;
 
@@ -36,6 +39,7 @@ public class PageIncluder extends PresentationObject{
         StringBuffer queryBuf = new StringBuffer();
         String query = null;
         instanceId=getICObjectInstanceID();
+        pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
 
         if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
           //get all parameters even from post actions
@@ -83,56 +87,98 @@ public class PageIncluder extends PresentationObject{
           location.append(URL);
         }
 
-        debug("Location = "+location.toString());
-        String html = FileUtil.getStringFromURL(location.toString());
+        String loc = location.toString();
+        String html = FileUtil.getStringFromURL(loc);
 
-        /**@todo fix if e.g. some src= do include the URI so that the URI isn't added twice
+        URL url = new URL(loc);
+        BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
+        if(loc.lastIndexOf("/")==6) loc+="/";
+        RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+
+        /**
          * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
          * **/
 
         html = TextSoap.stripHTMLandBodyTag(html);
+        html = preProcess(html);
         html = encodeQueryStrings(html);
-        html = changeSrcAttributes(html,location.toString());
-        html = changeAHrefAttributes(html,iwc);
-        html = changeFormActionAttributes(html,iwc);
+        html = changeSrcAttributes(html);
+        html = changeAHrefAttributes(html);
+        html = changeFormActionAttributes(html);
+        html = postProcess(html);
 
         println(html);
       }
     }
   }
 
-  protected String changeAHrefAttributes(String html,IWContext iwc){
-    String prefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
-    html = TextSoap.findAndInsertAfter(html,"href=\"",prefix);
-    return TextSoap.findAndInsertAfter(html,"HREF=\"",prefix);
-  }
 
-  protected String changeFormActionAttributes(String html,IWContext iwc){
-    String prefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
-    html = TextSoap.findAndInsertAfter(html,"action=\"",prefix);
-    return TextSoap.findAndInsertAfter(html,"ACTION=\"",prefix);
-  }
-
-  protected String changeSrcAttributes(String html, String location){
-
-    try {
-      URL url = new URL(location);
-      String prefix = url.getProtocol()+"://"+url.getHost()+"/";
-      html = TextSoap.findAndInsertAfter(html,"background=\"",prefix);
-      html = TextSoap.findAndInsertAfter(html,"BACKGROUND=\"",prefix);
-      html = TextSoap.findAndInsertAfter(html,"src=\"",prefix);
-      html = TextSoap.findAndInsertAfter(html,"SRC=\"",prefix);
-    }
-    catch (MalformedURLException ex) {
-      ex.printStackTrace();
-    }
-
+  protected String preProcess(String html){
+    html = TextSoap.findAndReplace(html,"href=\"javascript","IW_PREPROCESSED");
     return html;
   }
 
+  protected String postProcess(String html){
+    html = TextSoap.findAndReplace(html,"IW_PREPROCESSED","href=\"javascript");
+    return html;
+  }
+
+  protected String changeAHrefAttributes(String html){
+    /*
+      Possibilities	tags: ahref and action		src
+      /xxx/xx		prefix+baseurl+/xxx/xx		baseurl+/xxx/xx
+      xxx/xx		prefix+relativeurl+/+xxx/xx	relative+/+xxx/xx
+      http://		prefix				ekkert
+      //slashdot.org/ prefix+http:			http:
+    */
+    html = insertPageIncludeInTagIgnoreCase("href",html);
+    return html;
+  }
+
+
+  protected String changeFormActionAttributes(String html){
+    html = insertPageIncludeInTagIgnoreCase("action",html);
+    return html;
+  }
+
+  protected String changeSrcAttributes(String html){
+    html = changeURLToAbsoluteValueIgnoreCase("src",html);
+    html = changeURLToAbsoluteValueIgnoreCase("background",html);
+    return html;
+  }
+
+  protected String insertPageIncludeInTagIgnoreCase(String tag,String html){
+    html = insertPageIncludeInTag(tag.toLowerCase(),html);
+    html = insertPageIncludeInTag(tag.toUpperCase(),html);
+    return html;
+  }
+
+  protected String insertPageIncludeInTag(String tag,String html){
+    html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+pageIncluderPrefix+"http://");// the // case
+    html = TextSoap.findAndReplace(html,tag+"=\"http://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
+    html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
+    html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
+    return html;
+  }
+
+  protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){
+    html = changeURLToAbsoluteValue(tag.toLowerCase(),html);
+    html = changeURLToAbsoluteValue(tag.toUpperCase(),html);
+    return html;
+  }
+
+  protected String changeURLToAbsoluteValue(String tag,String html){
+    html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+"http://");// the // case
+    html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL );// the / case
+    html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+RELATIVEURL);
+    return html;
+  }
+
+
   protected String encodeQueryStrings(String html){
     html = TextSoap.findAndReplace(html,"&","#");
-    //fixing this should be done with a HTMLEditor object
+    //fixing this should be done with a HTMLEditor object OR
+    //make a single general expression fix
     html = TextSoap.findAndReplace(html,"#eth;","&eth;");
     html = TextSoap.findAndReplace(html,"#ETH;","&ETH;");
     html = TextSoap.findAndReplace(html,"#thorn;","&thorn;");
@@ -145,6 +191,11 @@ public class PageIncluder extends PresentationObject{
     html = TextSoap.findAndReplace(html,"#amp;","&amp;");
     html = TextSoap.findAndReplace(html,"#quot;","&quot;");
     html = TextSoap.findAndReplace(html,"#middot","&middot");
+    html = TextSoap.findAndReplace(html,"#raquo;","&raquo;");
+    html = TextSoap.findAndReplace(html,"##149;","&#149;");
+    html = TextSoap.findAndReplace(html,"##039;","&#039;");
+    html = TextSoap.findAndReplace(html,"##169;","&#169;");
+    html = TextSoap.findAndReplace(html,"#gt;","&gt;");
     html = TextSoap.findAndReplace(html," # "," & ");
 
 //islenskir broddstafir
@@ -182,6 +233,10 @@ public class PageIncluder extends PresentationObject{
     try {
       obj = (PageIncluder)super.clone();
       obj.URL = this.URL;
+      obj.BASEURL = this.BASEURL;
+      obj.RELATIVEURL = this.RELATIVEURL;
+      obj.pageIncluderPrefix = this.pageIncluderPrefix;
+      obj.instanceId = this.instanceId;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
