@@ -49,6 +49,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private AddressHome addressHome;
   private PhoneHome phoneHome;
 
+  private Gender male,female;
+
   public UserBusinessBean() {
   }
 
@@ -253,14 +255,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * Creates a new user with a firstname,middlename, lastname ,personalID and gender where middlename and personalID can be null
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender) throws CreateException,RemoteException{
-      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKeyValue(),null,null);
+      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),null,null);
   }
 
   /**
    * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, idegaTimestamp dateOfBirth) throws CreateException,RemoteException{
-      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKeyValue(),dateOfBirth,null);
+      return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),dateOfBirth,null);
   }
 
 
@@ -357,25 +359,32 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * Male: M, male, 0
    * Female: F, female, 1
    */
-  public  Integer getGenderId(String gender) throws Exception{
-      String genderName = null;
+  public Integer getGenderId(String gender) throws Exception{
+    try{
+      GenderHome home = (GenderHome) this.getIDOHome(Gender.class);
+
       if(gender == "M" || gender == "male" || gender == "0" ){
-        genderName = com.idega.user.data.GenderBMPBean.NAME_MALE;
-      } else if(gender == "F" || gender == "female" || gender == "1" ){
-        genderName = com.idega.user.data.GenderBMPBean.NAME_FEMALE;
-      } else{
+        if(male == null){
+          male = home.getMaleGender();
+        }
+        return (Integer) male.getPrimaryKey();
+      }
+      else if(gender == "F" || gender == "female" || gender == "1" ){
+        if(female == null){
+          female = home.getFemaleGender();
+        }
+        return (Integer) female.getPrimaryKey();
+      }
+      else{
         //throw new RuntimeException("String gender must be: M, male, 0, F, female or 1 ");
         return null;
       }
-      Gender g = (Gender)com.idega.user.data.GenderBMPBean.getStaticInstance(Gender.class);
-      String[] result = com.idega.data.SimpleQuerier.executeStringQuery("Select "+g.getIDColumnName()+" from "+g.getEntityName()+"where "+com.idega.user.data.GenderBMPBean.getNameColumnName()+" = '"+genderName+"'");
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return null;
+    }
 
-      if(result != null && result.length > 0){
-        return new Integer(result[0]);
-      } else {
-        return null;
-        //throw new RuntimeException("no result");
-      }
   }
 
   public  Phone[] getUserPhones(int userId)throws RemoteException{
