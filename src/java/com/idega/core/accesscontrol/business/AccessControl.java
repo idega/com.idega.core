@@ -20,6 +20,8 @@ import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWServiceNotStartedException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.builder.data.IBPage;
 
 import java.sql.SQLException;
 import java.util.Set;
@@ -108,7 +110,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return AdministratorPermissionGroup;
   }
 
-  public boolean isAdmin(IWContext iwc)throws Exception{
+  public boolean isAdmin(IWUserContext iwc)throws Exception{
     try {
       Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), iwc);
       if(ob != null){
@@ -141,7 +143,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo page ownership
    */
-  public boolean isOwner(PresentationObject obj , IWContext iwc) throws Exception {
+  public boolean isOwner(PresentationObject obj , IWUserContext iwc) throws Exception {
     User user = LoginBusiness.getUser(iwc);
     if(user == null){
       return false;
@@ -176,7 +178,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return "administrator";
   }
 
-  public boolean hasPermission(String permissionKey, int category, String identifier, IWContext iwc) throws Exception{
+  public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     if (isAdmin(iwc)){
@@ -232,7 +234,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionType, IWContext iwc ) throws Exception {
+  private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionType, IWUserContext iwc ) throws Exception {
     Boolean myPermission = null;
     if(permissionGroupLists != null){
       int arrayLength = permissionGroupLists.length;
@@ -328,7 +330,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
+  public boolean hasPermission(String permissionType, PresentationObject obj,IWUserContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     if (isAdmin(iwc)){
@@ -384,7 +386,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
+  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWUserContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     ICPermission permission = ICPermission.getStaticInstance();
@@ -438,7 +440,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  private static Boolean checkForPermission(List[] permissionGroupLists, PresentationObject obj, String permissionType, IWContext iwc ) throws Exception {
+  private static Boolean checkForPermission(List[] permissionGroupLists, PresentationObject obj, String permissionType, IWUserContext iwc ) throws Exception {
     Boolean myPermission = null;
     if(permissionGroupLists != null){
       int arrayLength = permissionGroupLists.length;
@@ -597,12 +599,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 //
 
 
-  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception{
+  public boolean hasEditPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_EDIT , obj, iwc);
   }
 
 
-  public boolean hasViewPermission(PresentationObject obj,IWContext iwc){
+  public boolean hasViewPermission(PresentationObject obj,IWUserContext iwc){
     try {
       /*boolean permission = hasPermission( _PERMISSIONKEY_VIEW, obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
@@ -615,7 +617,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
   }
 
-  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc){
+  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWUserContext iwc){
     try {
       /*boolean permission = hasPermission( _PERMISSIONKEY_VIEW, obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
@@ -629,11 +631,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws Exception{
+  public boolean hasAdminPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_ADMIN, obj, iwc);
   }
 
-  public boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws Exception{
+  public boolean hasOwnerPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_OWNER, obj, iwc);
   }
 
@@ -649,7 +651,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 */
 
 
-  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception{
+  public void setJSPPagePermission(IWUserContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -676,11 +678,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     PermissionCacher.updateJSPPagePermissions(PageContextValue,permissionType,iwc);
   }
 
-  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
+  public void setObjectPermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectID(iwc) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectID() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = new ICPermission();
@@ -689,7 +691,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
     if(!update){
       permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_ID);
-      permission.setContextValue(Integer.toString(obj.getICObjectID(iwc)));
+      permission.setContextValue(Integer.toString(obj.getICObjectID()));
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
 //        permission.setPermissionStringValue();
@@ -699,11 +701,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID(iwc)),permissionType,iwc);
+    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID()),permissionType,iwc);
   }
 
 
-  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
+  public void setBundlePermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -731,11 +733,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
-    setObjectInstacePermission(iwc,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(iwc).getID()),permissionType,permissionValue);
+  public void setObjectInstacePermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
+    setObjectInstacePermission(iwc,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance().getID()),permissionType,permissionValue);
   }
 
-  public static boolean removeICObjectInstancePermissionRecords(IWContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+  public static boolean removeICObjectInstancePermissionRecords(IWUserContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
     String sGroupList = "";
     if (groupsToRemove != null && groupsToRemove.length > 0){
       for(int g = 0; g < groupsToRemove.length; g++){
@@ -762,7 +764,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public static boolean removePermissionRecords(int permissionCategory, IWContext iwc, String identifier, String permissionKey, String[] groupsToRemove){
+  public static boolean removePermissionRecords(int permissionCategory, IWUserContext iwc, String identifier, String permissionKey, String[] groupsToRemove){
     String sGroupList = "";
     if (groupsToRemove != null && groupsToRemove.length > 0){
       for(int g = 0; g < groupsToRemove.length; g++){
@@ -812,7 +814,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception{
+  public void setPermission(int permissionCategory, IWUserContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -887,7 +889,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws Exception{
+  public void setObjectInstacePermission(IWUserContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -1265,33 +1267,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
   /**
-   * @todo implement hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception
+   * @todo implement hasPermission(String permissionKey, ICObject obj, IWUserContext iwc) throws Exception
    * temp implementation
    */
-  public boolean hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception{
+  public boolean hasPermission(String permissionKey, ICObject obj, IWUserContext iwc) throws Exception{
     PresentationObject pObj = (PresentationObject)Class.forName(obj.getClassName()).newInstance();
     pObj.setICObject(obj);
     return this.hasPermission(permissionKey,(PresentationObject)pObj,iwc);
   }
 
   /**
-   * @todo implement hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception
+   * @todo implement hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception
    */
-  public boolean hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception{
+  public boolean hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception{
     return true;
   }
 
   /**
-   * @todo implement hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWContext iwc)
+   * @todo implement hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWUserContext iwc)
    */
-  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWContext iwc) throws Exception{
+  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWUserContext iwc) throws Exception{
     return true;
   }
 
 
 
 /*
-  public boolean hasPermission(Class someClass, int id, IWContext iwc) throws Exception{
+  public boolean hasPermission(Class someClass, int id, IWUserContext iwc) throws Exception{
     if(someClass.equals(ICFile.class)){
       return true;
     }else if(someClass.equals(ICObject.class)){
@@ -1302,36 +1304,44 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 */
   /**
-   * @todo implement isOwner(ICFile file, IWContext iwc)throws Exception
+   * @todo implement isOwner(ICFile file, IWUserContext iwc)throws Exception
    */
 
-  public boolean isOwner(ICFile file, IWContext iwc)throws Exception{
+  public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception{
     return hasPermission(AccessControl._PERMISSIONKEY_OWNER, AccessController._CATEGORY_FILE_ID, Integer.toString(file.getID()),iwc);
   }
 
   /**
-   * @todo implement isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
+   * @todo implement isOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception
    */
-  public boolean isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception{
+  public boolean isOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception{
     return false;
   }
 
   /**
-   * @todo implement setAsOwner(PresentationObject obj , IWContext iwc) throws Exception
+   * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
    */
-  public void setAsOwner(PresentationObject obj, int groupId, IWContext iwc) throws Exception {}
+  public void setAsOwner(IBPage page, IWUserContext iwc)throws Exception {
+    int groupId = iwc.getUser().getPrimaryGroupID();
+    //setPermission(AccessController._CATEYGORYSTRING_PAGE_ID,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+  }
 
   /**
-   * @todo implement setAsOwner(ICFile file, IWContext iwc)throws Exception
+   * @todo implement setAsOwner(PresentationObject obj , IWUserContext iwc) throws Exception
    */
-  public void setAsOwner(ICFile file, int groupId, IWContext iwc)throws Exception {
+  public void setAsOwner(PresentationObject obj, int groupId, IWUserContext iwc) throws Exception {}
+
+  /**
+   * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
+   */
+  public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception {
     setPermission(AccessController._CATEGORY_FILE_ID,iwc,Integer.toString(groupId),Integer.toString(file.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
   }
 
   /**
-   * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
+   * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception
    */
-  public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWContext iwc)throws Exception {
+  public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWUserContext iwc)throws Exception {
     throw new Exception(this.getClass().getName()+".setAsOwner(...) : not implemented");
   }
 
