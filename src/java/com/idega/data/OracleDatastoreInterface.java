@@ -3,16 +3,28 @@
 *Copyright 2000-2002 idega.is All Rights Reserved.
 */
 package com.idega.data;
-import java.io.BufferedInputStream;
-import java.io.OutputStream;
-import java.sql.Blob;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import oracle.jdbc.driver.OracleResultSet;
-import oracle.sql.BLOB;
+import oracle.jdbc.OracleResultSet;
+import oracle.sql.CLOB;
+
+
+/**
+ * @author eiki
+ *
+ * To change this generated comment edit the template variable "typecomment":
+ * Window>Preferences>Java>Templates.
+ * To enable and disable the creation of type comments go to
+ * Window>Preferences>Java>Code Generation.
+ */
 /**
 *A class for database abstraction for the Oracle Database.
 * This is an implemention that ovverrides implementations from com.idega.data.DatastoreInterface 
@@ -372,4 +384,73 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
+
+
+	/**
+	 * Varchar is limited to 4000 chars need to use clob for larger fields. Great example http://www.experts-exchange.com/Databases/Oracle/Q_20358143.html
+	 * @see com.idega.data.DatastoreInterface#fillStringColumn(IDOLegacyEntity, String, ResultSet)
+	 */
+	protected void fillStringColumn(IDOLegacyEntity entity, String columnName, ResultSet rs) throws SQLException {
+		
+		int maxlength = entity.getMaxLength(columnName);
+		if (maxlength<=4000) {
+			String string = rs.getString(columnName);
+			if (string != null) {
+				entity.setColumn(columnName, string);
+			}
+		}
+		else {
+			try {
+				Reader chrInstream;           // Unicode clob reader
+			    char chrBuffer[];                 // Clob buffer
+				CLOB clob = ((OracleResultSet) rs).getCLOB(columnName);
+				
+				if( clob!=null ){
+					//set buffersize
+					chrBuffer = new char[(int)clob.length()];
+	        		
+	        		// Now get as a unicode stream.
+			        chrInstream = clob.getCharacterStream();
+			        
+			        if(chrInstream!=null ){       
+				        chrInstream.read( chrBuffer );
+				       
+				        String value = new String(chrBuffer);
+				        entity.setColumn(columnName, value); 
+			        }
+				}
+				
+			}
+			catch (IOException io) {
+				throw new SQLException("IOException: " + io.getMessage());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) throws SQLException{
+		try {
+			int maxlength = entity.getMaxLength(columnName);
+			if (maxlength <= 4000) {
+				statement.setString(index, entity.getStringColumnValue(columnName));
+			}
+			else {
+				//collect clobs
+				String stringValue = entity.getStringColumnValue(columnName);
+								
+				Reader reader = new StringReader(stringValue);
+				//InputStream stream = new StringInputStream(stringValue);				
+				//statement.setAsciiStream(index, stream, stringValue.length());
+
+				statement.setCharacterStream(index,reader, stringValue.length());
+				
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
