@@ -62,7 +62,8 @@ public class IDOCopier {
 
   public void copyAllData(){
     try{
-      toEntity = (IDOLegacyEntity)fromEntity.getClass().newInstance();
+      //toEntity = (IDOLegacyEntity)fromEntity.getClass().newInstance();
+      toEntity = this.createEntityInstance(fromEntity);
       toEntity.setDatasource(getToDatasource());
       toEntity.setToInsertStartData(false);
 
@@ -79,11 +80,13 @@ public class IDOCopier {
       Class item = (Class)iter.next();
     	//out.println(item.getName()+"\n<br>");
         try{
-          IDOLegacyEntity toInstance = (IDOLegacyEntity)item.newInstance();
+          IDOLegacyEntity toInstance = (IDOLegacyEntity)this.createEntityInstance(item);
+          //IDOLegacyEntity toInstance = (IDOLegacyEntity)item.newInstance();
           toInstance.setDatasource(this.getToDatasource());
           toInstance.setToInsertStartData(false);
 
-          IDOLegacyEntity fromInstance = (IDOLegacyEntity)item.newInstance();
+          //IDOLegacyEntity fromInstance = (IDOLegacyEntity)item.newInstance();
+          IDOLegacyEntity fromInstance = this.createEntityInstance(item);
           fromInstance.setDatasource(this.fromEntity.getDatasource());
 
           DatastoreInterface.getInstance(toInstance).createEntityRecord(toInstance);
@@ -342,6 +345,22 @@ public class IDOCopier {
       }
     }
     DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity,valueToSet);
+  }
+
+
+  protected IDOLegacyEntity createEntityInstance(IDOLegacyEntity entity){
+    return createEntityInstance(entity.getClass());
+  }
+
+
+  protected IDOLegacyEntity createEntityInstance(Class entityInterfaceOrBeanClass){
+    try{
+    Class interfaceClass = IDOLookup.getInterfaceClassFor(entityInterfaceOrBeanClass);
+    return (IDOLegacyEntity)IDOLookup.getHome(interfaceClass).idoCreate();
+    }
+    catch(Exception e){
+      throw new RuntimeException("[idoCopier] : Error creating entity "+entityInterfaceOrBeanClass.getName()+" Message: "+e.getMessage());
+    }
   }
 
 }

@@ -1,7 +1,7 @@
 package com.idega.data;
 
 import java.util.Map;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.rmi.RemoteException;
 
 
@@ -19,21 +19,30 @@ public class IDOLookup{
   private static final String FACTORY_SUFFIX = "HomeImpl";
   private static final String BEAN_SUFFIX = "BMPBean";
 
-  private static Map homes = new Hashtable();
-
+  private static Map homes = new HashMap();
+  private static Map beanClasses = new HashMap();
+  private static Map interfaceClasses = new HashMap();
 
   private IDOLookup() {
   }
 
+  /**
+   * Gets the Class object for the (Remote) interface of a data bean.
+   * @param entityBeanOrInterfaceClass can be either the BMP bean class or the interface class itself.
+   */
   public static Class getInterfaceClassFor(Class entityBeanOrInterfaceClass){
     if(entityBeanOrInterfaceClass.isInterface()){
       return entityBeanOrInterfaceClass;
     }
     else{
-      String className = entityBeanOrInterfaceClass.getName();
-      String interfaceClassName = className.substring(0,className.indexOf(BEAN_SUFFIX));
+      Class interfaceClass = (Class)interfaceClasses.get(entityBeanOrInterfaceClass);
       try{
-        return Class.forName(interfaceClassName);
+        if(interfaceClass==null){
+          String className = entityBeanOrInterfaceClass.getName();
+          String interfaceClassName = className.substring(0,className.indexOf(BEAN_SUFFIX));
+          interfaceClass = Class.forName(interfaceClassName);
+        }
+        return interfaceClass;
       }
       catch(ClassNotFoundException e){
         throw new RuntimeException(e.getClass()+": "+e.getMessage());
@@ -47,11 +56,21 @@ public class IDOLookup{
     return Class.forName(homeClassName);
   }
 
+  /**
+   * Gets the Class object for the (BMP) bean class of a data bean.
+   * @param entityInterfaceClass i the (Remote) interface of the data bean.
+   */
   public static Class getBeanClassFor(Class entityInterfaceClass){
     try{
-      String className = entityInterfaceClass.getName();
-      String homeClassName = className + BEAN_SUFFIX;
-      return Class.forName(homeClassName);
+      Class beanClass = (Class)beanClasses.get(entityInterfaceClass);
+      if(beanClass==null){
+        String className = entityInterfaceClass.getName();
+        String beanClassName = className + BEAN_SUFFIX;
+        beanClass = Class.forName(beanClassName);
+        beanClasses.put(entityInterfaceClass,beanClass);
+        interfaceClasses.put(beanClass,entityInterfaceClass);
+      }
+      return beanClass;
     }
     catch(Exception e){
       e.printStackTrace();
@@ -60,6 +79,12 @@ public class IDOLookup{
     //return null;
   }
 
+
+  /**
+   * Gets an instance of the implementation of the Home interface for the data bean.
+   * <br>The object retured can then needs to be casted to the specific home interface for the bean.
+   * @param entityInterfaceClass i the (Remote) interface of the data bean.
+   */
   public static IDOHome getHome(Class entityInterfaceClass)throws RemoteException{
     IDOHome home = (IDOHome)homes.get(entityInterfaceClass);
     if(home==null){
@@ -69,7 +94,8 @@ public class IDOLookup{
         homes.put(entityInterfaceClass,home);
       }
       catch(Exception e){
-        e.printStackTrace();
+        //e.printStackTrace();
+        throw new RuntimeException("Error initializing Home for Data class:"+entityInterfaceClass.getName()+" - Message: "+e.getMessage());
       }
     }
     return home;

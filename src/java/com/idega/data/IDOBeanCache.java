@@ -3,6 +3,7 @@ package com.idega.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * Title:        idega Data Objects
@@ -17,12 +18,28 @@ public class IDOBeanCache {
 
   Class entityInterfaceClass;
   Map cacheMap;
+  Map findQueryCacheMap;
+  Map homeQueryCacheMap;
 
   public IDOBeanCache(Class entityInterfaceClass){
     this.entityInterfaceClass=entityInterfaceClass;
   }
 
-  protected Map getCacheMap(){
+  private Map getFindQueryCacheMap(){
+    if(findQueryCacheMap==null){
+      findQueryCacheMap=new HashMap();
+    }
+    return findQueryCacheMap;
+  }
+
+  private Map getHomeQueryCacheMap(){
+    if(homeQueryCacheMap==null){
+      homeQueryCacheMap=new HashMap();
+    }
+    return homeQueryCacheMap;
+  }
+
+  private Map getCacheMap(){
     if(cacheMap==null){
       cacheMap=new HashMap();
     }
@@ -35,6 +52,43 @@ public class IDOBeanCache {
 
   void putCachedEntity(Object pk,IDOEntity entity){
     getCacheMap().put(pk,entity);
+  }
+
+  void putCachedFindQuery(String querySQL,Collection pkColl){
+      getFindQueryCacheMap().put(querySQL,pkColl);
+  }
+
+  Collection getCachedFindQuery(String querySQL){
+      return (Collection)getFindQueryCacheMap().get(querySQL);
+  }
+
+  boolean isFindQueryCached(String queryString){
+    return(getFindQueryCacheMap().get(queryString)!=null);
+  }
+
+  void putCachedHomeQuery(String querySQL,Object objectToCache){
+      getHomeQueryCacheMap().put(querySQL,objectToCache);
+  }
+
+  Object getCachedHomeQuery(String querySQL){
+      return (Collection)getHomeQueryCacheMap().get(querySQL);
+  }
+
+  boolean isHomeQueryCached(String queryString){
+    return(getHomeQueryCacheMap().get(queryString)!=null);
+  }
+
+  void flushAllHomeQueryCache(){
+    homeQueryCacheMap=null;
+  }
+
+  void flushAllFindQueryCache(){
+    findQueryCacheMap=null;
+  }
+
+  void flushAllQueryCache(){
+    flushAllFindQueryCache();
+    flushAllHomeQueryCache();
   }
 
 }

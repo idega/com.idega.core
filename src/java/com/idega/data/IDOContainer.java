@@ -19,6 +19,7 @@ import javax.ejb.*;
 public class IDOContainer {
 
   private static IDOContainer instance;
+  private boolean beanCachingActive=false;
 
   private Map emptyBeanInstances;
   private Map beanCacheMap;
@@ -125,8 +126,12 @@ public class IDOContainer {
     }
   }
 
+  public void setBeanCaching(boolean onOrOff){
+    this.beanCachingActive=onOrOff;
+  }
+
   protected boolean beancachingActive(Class entityInterfaceClass){
-    return false;
+    return this.beanCachingActive;
   }
 
   IDOEntity getPooledInstance(Class entityInterfaceClass){
