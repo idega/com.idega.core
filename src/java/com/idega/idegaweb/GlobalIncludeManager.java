@@ -65,7 +65,9 @@ public class GlobalIncludeManager {
 		IWBundle iwb = getIWMainApplication().getBundle(bundleIdentifier);
 		String resourcesUrl = iwb.getResourcesVirtualPath();
 		String cssRealUrl = resourcesUrl+url;
-		getStyleSheets().add(cssRealUrl);
+		if (cssRealUrl != null && !getStyleSheets().contains(cssRealUrl)) {
+			getStyleSheets().add(cssRealUrl);
+		}
 	}
 	
 	
