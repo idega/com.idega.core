@@ -5,12 +5,13 @@
 package com.idega.util;
 import java.util.HashMap;
 import java.util.Map;
+import com.idega.repository.data.Singleton;
 /**
 *Class to store objects in context to a thread throughout its execution or some part of it
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class ThreadContext
+public class ThreadContext implements Singleton
 {
 	private Map threadsMap;
 	private static ThreadContext instance;
@@ -33,8 +34,7 @@ public class ThreadContext
 	/**
 	 * Unloads the ThreadContext
 	 */
-	public void unload(){
-		instance.threadsMap=null;
+	public static void unload(){
 		instance=null;
 	}
 
