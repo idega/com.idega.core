@@ -9,16 +9,4 @@
     <inceptionYear>2000</inceptionYear>
     <issueTrackingUrl>http://issues.idega.is</issueTrackingUrl>
 
-  <dependencies>
-    <dependency>
-      <id>commons-jelly+tags-velocity</id>
-      <version>SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <id>velocity</id>
-      <version>1.3</version>
-    </dependency>
- </dependencies>
-
 </project>
