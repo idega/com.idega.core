@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.19 2001/10/01 14:12:43 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.20 2001/10/04 18:59:56 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -97,7 +97,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
           try {
 
 long time1 = System.currentTimeMillis();
-com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
+//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
             __initialize(request,response);
             ModuleInfo moduleinfo = getModuleInfo();
 
@@ -152,7 +152,7 @@ long time2 = System.currentTimeMillis();
 PrintWriter writer = moduleinfo.getWriter();
 writer.println("<!-- --------------------------------------- -->");
 writer.println("<!-- Printing page: "+ (time2 - time1 )+ " ms -->");
-writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
+//writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
 writer.println("<!-- --------------------------------------- -->");
 
             /*if (connectionRequested()){

@@ -46,8 +46,6 @@ public class AccessControl{
   private static final int _GROUP_ID_USERS = -1906;
 
 
-  public static int _COUNTER = 0;
-
   static{
     try {
       initAdministratorPermissionGroup();
@@ -212,7 +210,7 @@ public class AccessControl{
       // then do nothing
       // else true
       // => view hashtable for obj, ...  has object
-      if(!PermissionCacher.permissionSet( obj, modinfo, permissionType)){
+      if(!PermissionCacher.somePermissionSet( obj, modinfo, permissionType)){
         return true;
       }
     }
@@ -259,48 +257,124 @@ public class AccessControl{
         permissionOrder[2].add( Integer.toString(user.getGroupID()) );
         permissionOrder[3] = new Vector();
         permissionOrder[3].add( Integer.toString(user.getPrimaryGroupID()) );
+        // Everyone, user, primaryGroup, otherGroups
     }
-
-    for (int i = 0; i < permissionOrder.length; i++) { // Everyone, user, primaryGroup, otherGroups
-      if (obj == null){ // JSP page
-        myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionOrder[i]);
-      } else { // if (obj != null)
-
-        if(obj instanceof Page){
-          myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionOrder[i]);
-
-        }else{
-          //instance
-          myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionOrder[i]);
-          //instance
-
-          // Global - (object)
-          if (myPermission == null){
-            myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionOrder[i]);
-          }else{
-            return myPermission.booleanValue();
-          } // Global - (object)
-
-          // Bundle
-          if (myPermission == null){
-            myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionOrder[i]);
-          }else{
-            return myPermission.booleanValue();
-          }// Bundle
-
-        }
-
-        if(myPermission != null){
-          return myPermission.booleanValue();
-        }
+    for (int i = 0; i < permissionOrder.length; i++) {
+      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, modinfo);
+      if(myPermission != null){
+        return myPermission.booleanValue();
       }
     }
-
     return false;
-
   } // method hasPermission
 
 
+
+  public static boolean hasPermission(List groupIds,String permissionType, ModuleObject obj,ModuleInfo modinfo) throws SQLException{
+    Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
+
+    // Default permission: view == true if not Page, else false
+    // If no permission set, view = true for all objects other than Page objects
+    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
+      // if some view permission for object, bundle, ... are set
+      // then do nothing
+      // else true
+      // => view hashtable for obj, ...  has object
+      if(!PermissionCacher.somePermissionSet( obj, modinfo, permissionType)){
+        return true;
+      }
+    }
+
+    ICPermission permission = ICPermission.getStaticInstance();
+    ICPermission[] Permissions = null;
+    List groups = null;
+    List[] permissionOrder = null; // Everyone, users, (primaryGroup), otherGroups
+
+    if(groupIds != null){
+      if (groupIds.contains(Integer.toString(getPermissionGroupAdministrator().getID()))){
+        return true;
+      } else {
+        if(groupIds.size() == 1){
+          if(groupIds.get(0).equals(Integer.toString(_GROUP_ID_EVERYONE))){
+            permissionOrder = new List[1];
+            permissionOrder[0] = new Vector();
+            permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+          }else {
+            if(groupIds.get(0).equals(Integer.toString(_GROUP_ID_USERS))){
+              permissionOrder = new List[2];
+            } else{
+              permissionOrder = new List[3];
+              permissionOrder[2] = groupIds;
+            }
+              permissionOrder[0] = new Vector();
+              permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+              permissionOrder[1] = new Vector();
+              permissionOrder[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
+          }
+        } else if (groupIds.size() > 1){
+            permissionOrder = new List[3];
+            permissionOrder[0] = new Vector();
+            permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+            permissionOrder[1] = new Vector();
+            permissionOrder[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
+            permissionOrder[2] = groupIds;
+            // Everyone, users, (primaryGroup), otherGroups
+        } else {
+          return false;
+        }
+      }
+    } else{
+        return false;
+    }
+    for (int i = 0; i < permissionOrder.length; i++) {
+      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, modinfo);
+      if(myPermission != null){
+        return myPermission.booleanValue();
+      }
+    }
+    return false;
+  } // method hasPermission
+
+
+
+
+  private static Boolean checkForPermission(List permissionGroups, ModuleObject obj, String permissionType, ModuleInfo modinfo ) throws SQLException {
+    Boolean myPermission = null;
+
+    if (obj == null){ // JSP page
+      myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionGroups);
+
+      return myPermission;
+    } else { // if (obj != null)
+
+      if(obj instanceof Page){
+        myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionGroups);
+
+        return myPermission;
+      }else{
+        //instance
+        myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionGroups);
+        //instance
+
+        // Global - (object)
+        if (myPermission == null){
+          myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionGroups);
+        }else{
+          return myPermission;
+        } // Global - (object)
+
+        // Bundle
+        if (myPermission == null){
+          myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionGroups);
+        }else{
+          return myPermission;
+        }// Bundle
+
+      }
+
+        return myPermission;
+    }
+  }
 
 
   /**
@@ -396,7 +470,6 @@ public class AccessControl{
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
-      _COUNTER++;
       return hasPermission( getViewPermissionString(), obj, modinfo);
     }
     catch (SQLException ex) {
@@ -404,6 +477,18 @@ public class AccessControl{
     }
   }
 
+  public static boolean hasViewPermission(List groupIds, ModuleObject obj,ModuleInfo modinfo){
+    try {
+      /*boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
+      System.err.println(obj.getClass().getName()+" has permission: " + permission);
+      return permission;
+      */
+      return hasPermission(groupIds, getViewPermissionString(), obj, modinfo);
+    }
+    catch (SQLException ex) {
+      return false;
+    }
+  }
 
 
   public static String getAdminPermissionString(){
@@ -746,14 +831,21 @@ public class AccessControl{
   }
 
 
-  public static List getPermissionGroups(User user) throws SQLException{
+  private static String[] getPermissionGroupFilter(){
     //filter begin
     String[] groupsToReturn = new String[1];
     groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
     //filter end
+    return groupsToReturn;
+  }
 
+  public static List getPermissionGroups(User user) throws SQLException{
     //temp - new GenericGroup()
-    List permissionGroups = UserGroupBusiness.getGroupsContaining(new GenericGroup(user.getGroupID()),groupsToReturn,true);
+    return getPermissionGroups(new GenericGroup(user.getID()));
+  }
+
+  public static List getPermissionGroups(GenericGroup group) throws SQLException{
+    List permissionGroups = UserGroupBusiness.getGroupsContaining(group,getPermissionGroupFilter(),true);
 
     if(permissionGroups != null){
       return permissionGroups;
@@ -761,8 +853,6 @@ public class AccessControl{
       return null;
     }
   }
-
-
 
   public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException {
     List toReturn = new Vector(0);
@@ -809,23 +899,13 @@ public class AccessControl{
 
 
   public static List getAllPermissionGroups()throws SQLException {
-    //filter begin
-    String[] groupsToReturn = new String[1];
-    groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
-    // filter end
 
-    List permissionGroups = GenericGroup.getAllGroups(groupsToReturn,true);
+    List permissionGroups = GenericGroup.getAllGroups(getPermissionGroupFilter(),true);
     if(permissionGroups != null){
       permissionGroups.remove(getPermissionGroupAdministrator());
     }
 
     return permissionGroups;
-    /*
-    PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
-    List pGroups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
-    pGroups.remove(AdministratorPermissionGroup);
-    return pGroups;
-    */
   }
 
 
@@ -861,6 +941,18 @@ public class AccessControl{
 
     keys[0] = getViewPermissionString();
     keys[1] = getEditPermissionString();
+    //keys[2] = getDeletePermissionString();
+
+    return keys;
+
+    // return new String[0]; // not null
+  }
+
+  public static String[] getPagePermissionKeys(){
+    String[] keys = new String[1];
+
+    keys[0] = getViewPermissionString();
+    //keys[1] = getEditPermissionString();
     //keys[2] = getDeletePermissionString();
 
     return keys;

@@ -4,6 +4,7 @@ import com.idega.jmodule.object.ModuleInfo;
 import com.idega.jmodule.object.ModuleObject;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.ICJspHandler;
+import com.idega.jmodule.object.Page;
 import com.idega.data.EntityFinder;
 import java.util.Iterator;
 import java.util.List;
@@ -28,17 +29,18 @@ public class PermissionCacher {
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE = "ic_permissionmap_bundle";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE = "ic_permissionmap_page_instance";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE = "ic_permissionmap_jsp_page";
-
+  private static final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";
 
   public PermissionCacher() {
   }
   /**
    * Does not handle pages or jsp pages
    */
-  public static boolean permissionSet( ModuleObject obj, ModuleInfo modinfo, String permissionKey) throws SQLException {
+  public static boolean somePermissionSet( ModuleObject obj, ModuleInfo modinfo, String permissionKey) throws SQLException {
     String identifier = null;
-
+    Boolean set = null;
     String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE, APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
+
 
     for (int i = 0; i < maps.length; i++) {
       String permissionMapKey = maps[i];
@@ -53,22 +55,32 @@ public class PermissionCacher {
       if(identifier != null){
         PermissionMap permissionMap = (PermissionMap)modinfo.getApplicationAttribute(permissionMapKey);
         if(permissionMap == null){
-          return false;
+          updatePermissions(permissionMapKey,identifier,permissionKey,modinfo);
+          permissionMap = (PermissionMap)modinfo.getApplicationAttribute(permissionMapKey);
         }
 
         Map permissions = permissionMap.get(identifier,permissionKey);
 
 
         if(permissions == null){
-          return false;
+          updatePermissions(permissionMapKey,identifier,permissionKey,modinfo);
+          permissions = permissionMap.get(identifier,permissionKey);
+          set = ((Boolean)permissions.get(_SOME_VIEW_PERMISSION_SET));
         } else {
-          return !permissions.isEmpty();
+          set = ((Boolean)permissions.get(_SOME_VIEW_PERMISSION_SET));
         }
       } else {
         throw new RuntimeException("PermissionCacher: Cannot find identifier for "+permissionMapKey+" - "+ obj);
       }
+      if(set != null && set.equals(Boolean.TRUE)){
+        return true;
+      }
     }
-    return false;
+    if(set != null && set.equals(Boolean.FALSE)){
+      return false;
+    } else{
+      return true;
+    }
   }
 
   private static Boolean hasPermission(String permissionMapKey, ModuleObject obj, ModuleInfo modinfo, String permissionKey, List groups) throws SQLException {
@@ -81,7 +93,9 @@ public class PermissionCacher {
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
         identifier = obj.getICObject().getBundleIdentifier();
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
-        identifier = null;
+        //identifier = ((Page)obj).getIBPageId();
+        //temp
+        identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(modinfo);
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
         identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(modinfo));
     }
@@ -139,9 +153,9 @@ public class PermissionCacher {
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getBundleIdentifierString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
-          permissions = null; //EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getPageIdString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getPageIdString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
+          permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessControl.getJSPPageString(),ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       }
     }
     //
@@ -155,9 +169,12 @@ public class PermissionCacher {
         ICPermission item = (ICPermission)iter.next();
         mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
       }
+      mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.TRUE);
       permissionMap.put(identifier, permissionKey,mapToPutTo);
     } else {
-      permissionMap.put(identifier, permissionKey,new Hashtable());
+      Map mapToPutTo = new Hashtable();
+      mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.FALSE);
+      permissionMap.put(identifier, permissionKey,mapToPutTo);
     }
   }
 
