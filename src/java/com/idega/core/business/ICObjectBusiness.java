@@ -3,9 +3,11 @@ package com.idega.core.business;
 import com.idega.core.data.*;
 import com.idega.presentation.PresentationObject;
 import java.sql.SQLException;
+import com.idega.data.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWBundle;
@@ -237,6 +239,28 @@ public class ICObjectBusiness {
   public  ICObject createICObject(){
     return new ICObject();
   }
+
+
+  /**
+   * Returns the related object's id relative to the objectinstance we have
+   * @todo cache somehow
+   */
+  public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFrom){
+    try {
+      List L = EntityFinder.findRelated(icObjectInstance,entityToGetIdFrom);
+      if(L!= null){
+        return ((GenericEntity) L.get(0)).getID();
+      }
+      else
+        return -1;
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return -2;
+    }
+  }
+
+
 
 
 } // Class

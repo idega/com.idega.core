@@ -308,6 +308,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    */
   protected void invalidateCache(IWContext iwc){
     if( cacheKey!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
+    debug("INVALIDATING : "+cacheKey);
   }
 
 
