@@ -129,4 +129,8 @@ public abstract class IDOFactory implements IDOHome{
     return theReturn;
   }
 
+  protected GenericEntity idoGetPooledEntity(){
+    return GenericEntity.getStaticInstance(this.getEntityInterfaceClass());
+  }
+
 }
