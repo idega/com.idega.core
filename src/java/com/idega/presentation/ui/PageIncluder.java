@@ -160,7 +160,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	    buf.append(getCurrentIBPageIDToURLString(iwc));
 	    buf.append('&');
 
-	    if (_sendURLTo != null){
+	    if ( (_sendURLTo != null) && (_sendToPageIfSet==null) ){
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(_sendURLTo);
 	      buf.append('=');
