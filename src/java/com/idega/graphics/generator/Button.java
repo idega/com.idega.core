@@ -57,6 +57,9 @@ public class Button {
   protected boolean drawBorder = true;
   protected int width = 54;
   protected int height = 15;
+  int tWidth = 0;
+  int tHeight = 0;
+
   protected int doubleBorder = (2*borderSize);
   protected int textXPos = 5;
   protected int textYPos = 10;
@@ -258,8 +261,8 @@ public class Button {
     System.out.println("string ascend : "+fm.getAscent());*/
 
 
-    int tWidth = fm.stringWidth(text);
-    int tHeight = fm.getAscent();
+    tWidth = fm.stringWidth(text);
+    tHeight = fm.getAscent();
 
     if( tWidth >= width ){
       width = tWidth+(2*verticalPadding);
@@ -285,6 +288,7 @@ public class Button {
 
     if(effect==BUTTON_OVER) g.setColor(highlightColor);
     else g.setColor(fillColor);
+
     g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
 
     if(effect==BUTTON_DOWN) g.setColor(overColor);
@@ -321,14 +325,14 @@ public class Button {
 
         sName = name.toString();
       }
-      else {
+      else {//only used for multiple button generation from localized.strings file.
         sName = name;
         if( effect != getStaticButtonUpString() ){
           sName+=effect;
         }
-
         sName+=".gif";
       }
+
       path+=sName;
 
       if( effect == getStaticButtonUpString() ){
@@ -341,6 +345,7 @@ public class Button {
         buttonOverName = sName;
       }
 
+      FileUtil.delete(path);
       OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
 
       encode.Write(output);

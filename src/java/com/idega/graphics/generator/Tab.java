@@ -75,8 +75,11 @@ public class Tab extends Button {
   }
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
-    if( flip ) g.transform(flipTransform);
 
+    if( flip ){
+      g.transform(flipTransform);
+      if( flip ) textYPos = height-2;
+    }
     g.setColor(overColor);// delete this when transparencies are supported
     g.fillRect(0,0,width,height);
 
@@ -87,6 +90,7 @@ public class Tab extends Button {
       g.setColor(highlightColor);
     }
     else g.setColor(fillColor);
+
     g.fillRect(1,0,width-doubleBorder,height-doubleBorder);
 
     g.setColor(overColor);
@@ -114,7 +118,7 @@ public class Tab extends Button {
     if( flip ) g.transform(flipTransform);
     g.drawString(text,textXPos,textYPos-3);
 
-    encode(image,filename,effect);
+    encode(image,filename+flip,effect);
 
   }
 

@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
+import java.net.URLEncoder;
 
 public class ImageFactory {
   private static IWMainApplication iwma;
@@ -32,6 +33,8 @@ public class ImageFactory {
   private static Font defaultFont;
   private static HashMap images;
   private static Font fontbase;
+  private static String BUTTON_SUFFIX = "_button";
+  private static String TAB_SUFFIX = "_tab";
 
   private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 
@@ -68,13 +71,13 @@ public class ImageFactory {
     Image image;
 
     if( local!=null ){
-      image = (Image) images.get(textOnButton+local.toString());
+      image = (Image) images.get(textOnButton+BUTTON_SUFFIX+local.toString());
       if( image != null ) return image;
       filePath = iwb.getResourcesRealPath(local);
       fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
     }
     else{
-      image = (Image) images.get(textOnButton);
+      image = (Image) images.get(textOnButton+BUTTON_SUFFIX);
       if( image != null ) return image;
       filePath = iwb.getResourcesRealPath();
       fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
@@ -87,16 +90,16 @@ public class ImageFactory {
     Button button = new Button(textOnButton,defaultFont);
     button.generate(filePath);
 
-    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getUpName(),fileVirtualPath+button.getOverName(),fileVirtualPath+button.getDownName());
+    String upName = URLEncoder.encode(button.getUpName());
+    String downName = URLEncoder.encode(button.getDownName());
+    String overName = URLEncoder.encode(button.getOverName());
+
+    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+upName,fileVirtualPath+overName,fileVirtualPath+downName);
     image.setWidth(button.getWidth());
     image.setHeight(button.getHeight());
 
-    if( local!=null){
-      images.put(textOnButton+local.toString(),image);
-    }
-    else{
-      images.put(textOnButton,image);
-    }
+    addToStoredImages(textOnButton+BUTTON_SUFFIX,image,local);
+
     return image;
   }
 
@@ -110,13 +113,13 @@ public class ImageFactory {
     Image image;
 
     if( local!=null ){
-      image = (Image) images.get(textOnTab+local.toString());
+      image = (Image) images.get(textOnTab+TAB_SUFFIX+flip+local.toString());
       if( image != null ) return image;
       filePath = iwb.getResourcesRealPath(local);
       fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
     }
     else{
-      image = (Image) images.get(textOnTab);
+      image = (Image) images.get(textOnTab+TAB_SUFFIX+flip);
       if( image != null ) return image;
       filePath = iwb.getResourcesRealPath();
       fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
@@ -132,17 +135,26 @@ public class ImageFactory {
     tab.flip(flip);
     tab.generate(filePath);
 
-    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+tab.getUpName(),fileVirtualPath+tab.getOverName(),fileVirtualPath+tab.getDownName());
+    String upName = URLEncoder.encode(tab.getUpName());
+    String downName = URLEncoder.encode(tab.getDownName());
+    String overName = URLEncoder.encode(tab.getOverName());
+
+    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+flip+upName,fileVirtualPath+flip+overName,fileVirtualPath+flip+downName);
     image.setWidth(tab.getWidth());
     image.setHeight(tab.getHeight());
 
+    addToStoredImages(textOnTab+TAB_SUFFIX+flip,image,local);
+
+    return image;
+  }
+
+  private void addToStoredImages(String key , Image image, Locale local){
     if( local!=null){
-      images.put(textOnTab+local.toString(),image);
+      images.put(key+local.toString(),image);
     }
     else{
-      images.put(textOnTab,image);
+      images.put(key,image);
     }
-    return image;
   }
 
   /** delete all generated images in bundles and the (webroot)/iw_generated folder*/
