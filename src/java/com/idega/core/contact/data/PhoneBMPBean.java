@@ -76,7 +76,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	}
 	public static int getHomeNumberID()
 	{
-		int returner = -1;
+		/*int returner = -1;
 		try
 		{
 			PhoneType[] pt =
@@ -92,11 +92,12 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		{
 			sql.printStackTrace(System.err);
 		}
-		return returner;
+		return returner;*/
+		return PhoneTypeBMPBean.HOME_PHONE_ID;
 	}
 	public static int getWorkNumberID()
 	{
-		int returner = -1;
+		/*int returner = -1;
 		try
 		{
 			PhoneType[] pt =
@@ -112,11 +113,12 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		{
 			sql.printStackTrace(System.err);
 		}
-		return returner;
+		return returner;*/
+		return PhoneTypeBMPBean.WORK_PHONE_ID;
 	}
 	public static int getFaxNumberID()
 	{
-		int returner = -1;
+		/*int returner = -1;
 		try
 		{
 			PhoneType[] pt =
@@ -132,11 +134,12 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		{
 			sql.printStackTrace(System.err);
 		}
-		return returner;
+		return returner;*/
+		return PhoneTypeBMPBean.FAX_NUMBER_ID;
 	}
 	public static int getMobileNumberID()
 	{
-		int returner = -1;
+		/*int returner = -1;
 		try
 		{
 			PhoneType[] pt =
@@ -152,7 +155,8 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		{
 			sql.printStackTrace(System.err);
 		}
-		return returner;
+		return returner;*/
+		return PhoneTypeBMPBean.MOBILE_PHONE_ID;
 	}
 	public Integer ejbFindUsersHomePhone(com.idega.user.data.User user) throws FinderException
 	{
