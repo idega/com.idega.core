@@ -62,7 +62,12 @@ public class IBOLookup {
     return (IBOHome)getHomeForClass(beanInterfaceClass);
   }
 
-
+  /**
+   * Returns an instance of a IBOSession bean.
+   * The instance is stored in the session for the (current) user context. After <b>this</b> method is called there should be a corresponding call to removeSessionAttribute() to clean up from the users context.
+   * @param iwuc A reference to the user (context) the bean instance is working under.
+   * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+   */
   public static IBOSession getSessionInstance(IWUserContext iwuc,Class beanInterfaceClass)throws RemoteException{
     return getInstance().getSessionInstanceImpl(iwuc,beanInterfaceClass);
   }
@@ -82,11 +87,21 @@ public class IBOLookup {
     return session;
   }
 
+  /**
+   * Cleans up after an an instance of a IBOSession bean has been used.
+   * @param iwuc A reference to the user (context) the bean instance is working under.
+   * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+   */
   public static void removeSessionInstance(IWUserContext iwuc,Class beanInterfaceClass)throws RemoteException,RemoveException{
-    IBOSession session = getSessionInstance(iwuc,beanInterfaceClass);
-    session.remove();
+      getInstance().removeSessionInstanceImpl(iwuc,beanInterfaceClass);
   }
 
+
+  private void removeSessionInstanceImpl(IWUserContext iwuc,Class beanInterfaceClass)throws RemoteException,RemoveException{
+    IBOSession session = getSessionInstance(iwuc,beanInterfaceClass);
+    session.remove();
+    iwuc.removeSessionAttribute(getSessionKeyForObject(beanInterfaceClass));
+  }
 
   private IBOSession instanciateSessionBean(Class beanInterfaceClass)throws RemoteException,CreateException{
     return (IBOSession)instanciateServiceBean(beanInterfaceClass);
@@ -99,7 +114,12 @@ public class IBOLookup {
     return session;
   }
 
-
+  /**
+   * Returns an instance of a IBOService bean.
+   * The instance is stored in the application context and is shared between all users.
+   * @param iwac A reference to the application (context) the bean should be looked up.
+   * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+   */
   public static IBOService getServiceInstance(IWApplicationContext iwac,Class beanInterfaceClass)throws RemoteException{
     return getInstance().getServiceInstanceImpl(iwac,beanInterfaceClass);
   }
