@@ -8,6 +8,7 @@ import javax.servlet.*;
 
 import com.idega.util.database.*;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
 import com.idega.data.EntityControl;
@@ -48,8 +49,21 @@ public class IWStarterServlet extends GenericServlet
 		//super.destroy();
 	}
 
+        public void starPoolManDatabasePool(){
+                ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
+                String separator = FileUtil.getFileSeparator();
+                ServletContext cont = this.getServletContext();
+                String file = "poolman.xml";
+                //String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"poolman.xml";
+                this.propertiesfile=file;
+                sendStartMessage("Reading Databases from file: "+file);
+                sendStartMessage("Starting Datastore ConnectionPool");
+                com.codestudio.util.SQLManager.getInstance(file);
+        }
 
-        public void startDatabasePool(){
+
+        public void startIdegaDatabasePool(){
+                ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
                 String separator = FileUtil.getFileSeparator();
                 ServletContext cont = this.getServletContext();
                 String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"db.properties";
@@ -60,8 +74,28 @@ public class IWStarterServlet extends GenericServlet
                 poolMgr = PoolManager.getInstance(file);
         }
 
+
         public void endDatabasePool(){
-          sendShutdownMessage("Stopping Database Pool");
+           sendShutdownMessage("Stopping Database Pool");
+          try{
+            endIdegaDatabasePool();
+          }
+          catch(Exception e){
+
+          }
+          try{
+            endPoolManDatabasePool();
+          }
+          catch(Exception e){
+
+          }
+        }
+
+        public void endPoolManDatabasePool(){
+
+        }
+
+        public void endIdegaDatabasePool(){
           PoolManager.getInstance().release();
         }
 
@@ -111,12 +145,23 @@ public class IWStarterServlet extends GenericServlet
             if(accControlType!=null){
                 com.idega.presentation.Block.usingNewAcessControlSystem=true;
             }
-            startDatabasePool();
+            String poolType = application.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
+            if(poolType!=null){
+              if(poolType.equalsIgnoreCase("poolman")){
+                this.starPoolManDatabasePool();
+              }
+              else if(poolType.equalsIgnoreCase("idega")){
+                this.startIdegaDatabasePool();
+              }
+            }
+            else{
+              startIdegaDatabasePool();
+            }
+
             application.loadBundles();
-
             application.startAccessController();
-
             executeServices(application);
+            is.idega.experimental.StartupTest.doLoginTest();
             sendStartMessage("Completed");
         }
 
@@ -156,7 +201,7 @@ public class IWStarterServlet extends GenericServlet
         }
 
         public void sendShutdownMessage(String message){
-          System.out.println("idegaWeb : shutdown : "+message);
+          System.out.println("[idegaWeb] : shutdown : "+message);
         }
 
 }

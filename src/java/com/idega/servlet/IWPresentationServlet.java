@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.21 2001/10/05 08:02:22 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.22 2001/10/26 18:24:19 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -202,7 +202,7 @@ writer.println("<!-- --------------------------------------- -->");
       return Page.getPage(getIWContext());
     }
 
-    public IWContext getIWContext(){
+    public static IWContext getIWContext(){
           return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
     }
 

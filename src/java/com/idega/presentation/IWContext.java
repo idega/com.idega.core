@@ -782,6 +782,14 @@ public void setCacheWriter(PrintWriter writer){
   public boolean isLoggedOn(){
     return com.idega.block.login.business.LoginBusiness.isLoggedOn(this);
   }
+
+
+  /**
+   * Expensive function, not recommended to use frequently
+   */
+  public static IWContext getInstance(){
+    return com.idega.servlet.IWPresentationServlet.getIWContext();
+  }
 }
 
 
