@@ -163,7 +163,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     catch(FinderException ex){
       Name name = new Name(fullName);
     		
-      user = createUser(name.getFirstName(),name.getMiddleName(),name.getLastName(),personalID,gender,dateOfBirth);
+      user = createUser(name.getFirstName(), name.getMiddleName() , name.getLastName() , personalID, gender, dateOfBirth);
     }
 
     return user;
@@ -900,7 +900,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   public Collection getAllUsersOrderedByFirstName()throws FinderException,RemoteException{
-    return this.getUserHome().findAllUsersOrderedByFirstName();
+    return this.getUserHome().findAllUsersOrderedByFirstName(); 
   }
   
   
