@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.4 2004/11/14 23:24:05 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.5 2004/12/15 14:54:45 gimmi Exp $
  * Created on 20.2.2004 by  tryggvil in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -166,6 +166,9 @@ public class IWBaseComponent extends UIComponentBase {
 		this.isInitialized=true;
 	}
 	
+	protected void setInitialized(boolean initialized) {
+		this.isInitialized = initialized;
+	}
 	
 	/**
 	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
