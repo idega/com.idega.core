@@ -47,4 +47,11 @@ public class XMLCDATA {
   		
   	return _data.getText();	
   }
+  
+  public XMLCDATA setText(String text) {
+  	if (_data != null)
+  		_data.setText(text);
+  		
+  	return this;
+  }
 }

@@ -1,28 +1,40 @@
-//idega 2001 - Tryggvi Larusson
 /*
-*Copyright 2001 idega.is All Rights Reserved.
-*/
-
+ * $Id: IWBundle.java,v 1.56 2002/12/11 18:59:04 palli Exp $
+ *
+ * Copyright (C) 2002 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.idegaweb;
 
-
-import java.util.*;
-import com.idega.presentation.Image;
-import com.idega.presentation.IWContext;
-import java.io.*;
-import java.util.Hashtable;
-import java.util.ResourceBundle;
-
-import com.idega.user.business.UserProperties;
-import com.idega.util.LocaleUtil;
-import com.idega.util.FileUtil;
 import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.data.ICObject;
-import com.idega.presentation.Block;
-
-import com.idega.data.IDOFinderException;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOFinderException;
 import com.idega.data.IDOLookup;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.user.business.UserProperties;
+import com.idega.util.FileUtil;
+import com.idega.util.LocaleUtil;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.
@@ -31,855 +43,728 @@ import com.idega.data.IDOLookup;
  * An idegaWeb Bundle is a wrapper for contained components and their properties and resources.
  * <br>
  * <br>
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.0
-*/
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.0
+ */
 public class IWBundle implements java.lang.Comparable {
-  private static final String slash = "/";
-  private static final String shared = "shared";
+	private static final String slash = "/";
+	private static final String shared = "shared";
 
-  private String identifier;
-  private String rootVirtualPath;
-  private String rootRealPath;
+	private String identifier;
+	private String rootVirtualPath;
+	private String rootRealPath;
 
-  private String resourcesVirtualPath;
-  private String resourcesRealPath;
+	private String resourcesVirtualPath;
+	private String resourcesRealPath;
 
-  private String propertiesRealPath;
+	private String propertiesRealPath;
 
-  private String classesRealPath;
+	private String classesRealPath;
 
-  private IWMainApplication superApplication;
+	private IWMainApplication superApplication;
 
-  private Hashtable localePaths;
-  private Hashtable resourceBundles;
+	private Hashtable localePaths;
+	private Hashtable resourceBundles;
 
-  private boolean autoCreateLocalizedResources = true;
-  private boolean autoCreate=false;
+	private boolean autoCreateLocalizedResources = true;
+	private boolean autoCreate = false;
 
-  private Hashtable handlers;
-  //private static Hashtable instances;
-  private Hashtable localeRealPaths;
+	private Hashtable handlers;
+	private Hashtable localeRealPaths;
 
-  private SortedMap localizableStringsMap;
-  private Properties localizableStringsProperties;
+	private SortedMap localizableStringsMap;
+	private Properties localizableStringsProperties;
 
-  private File localizableStringsFile;
+	private File localizableStringsFile;
 
-  private IWPropertyList propertyList;
+	private IWPropertyList propertyList;
 
-  static final String propertyFileName = "bundle.pxml";
+	static final String propertyFileName = "bundle.pxml";
 
-  final static String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
-  final static String COMPONENTLIST_KEY = "iw_components";
+	final static String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
+	final static String COMPONENTLIST_KEY = "iw_components";
 
-  private final static String COMPONENT_NAME_PROPERTY="component_name";
-  private final static String COMPONENT_TYPE_PROPERTY="component_type";
-  private final static String COMPONENT_ICON_PROPERTY="component_icon";
-  private final static String COMPONENT_CLASS_PROPERTY="component_class";
-  private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
+	private final static String COMPONENT_NAME_PROPERTY = "component_name";
+	private final static String COMPONENT_TYPE_PROPERTY = "component_type";
+	private final static String COMPONENT_ICON_PROPERTY = "component_icon";
+	private final static String COMPONENT_CLASS_PROPERTY = "component_class";
+	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 
 	private IWBundleStartable starter;
 
-
-   protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
-	this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
-   }
-
-   protected IWBundle(String rootRealPath,String rootVirtualPath,String bundleIdentifier,IWMainApplication superApplication){
-      this(rootRealPath,rootVirtualPath,bundleIdentifier,superApplication,false);
-   }
-
-   protected IWBundle(String rootRealPath,String rootVirtualPath,String bundleIdentifier,IWMainApplication superApplication,boolean autoCreate){
-      this.autoCreate=autoCreate;
-      this.superApplication=superApplication;
-      this.identifier=bundleIdentifier;
-      handlers = new Hashtable();
-      localeRealPaths = new Hashtable();
-      resourceBundles = new Hashtable();
-      setRootRealPath(rootRealPath);
-      setRootVirtualPath(rootVirtualPath);
-      try{
-        loadBundle();
-      }
-      catch(Exception e){
-        throw new com.idega.exception.IWBundleDoesNotExist(bundleIdentifier);
-      }
-      this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY,bundleIdentifier);
-   }
-
-  /**
-  * Beta implementation
-  *
-   private IWBundle(IWComponent component,IWContext iwc){
-      this("/idegaweb/bundles/"+component.getName()+".bundle");
-   }
-  */
-
-  /**
-   * Beta implementation
-
-   public static IWBundle getInstance(IWComponent component,IWContext iwc){
-      Class componentClass = component.getClass();
-      IWBundle instance = (IWBundle) instances.get(componentClass);
-      if (instance==null){
-	instance = new IWBundle(component,iwc);
-	instances.put(componentClass,instance);
-      }
-      return instance;
-   }
-    */
-
-    public void reloadBundle(){
-      loadBundle();
-      resourceBundles.clear();
-      localizableStringsProperties=null;
-    }
-
-   private void loadBundle(){
-      setResourcesVirtualPath(getRootVirtualPath()+"/"+"resources");
-
-      //System.out.println("getResourcesVirtualPath() : "+ getResourcesVirtualPath() );
-
-      setResourcesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"resources");
-
-	//System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
-
-
-      setPropertiesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"properties");
-
-	//System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
-
-      setClassesRealPath();
-      if(autoCreate){
-	this.initializeStructure();
-	propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,true);
-      }
-      else{
-	propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
-      }
-
-      StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
-      SystemClassPath.append(File.pathSeparator);
-      SystemClassPath.append(getClassesRealPath());
-
-      System.setProperty("java.class.path",SystemClassPath.toString());
-
-      installComponents();
-      try{
-	      createDataRecords();
-        registerBlockPermisionKeys();
-      }
-      catch(Exception e){
-	      e.printStackTrace();
-      }
-
-      runStartClass();
-
-   }
-
-   private void createDataRecords()throws Exception{
-      List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_DATA,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
-      if(entities!=null){
-	Iterator iter = entities.iterator();
-	while (iter.hasNext()) {
-	  ICObject ico = (ICObject)iter.next();
-	  try{
-	    Class c = ico.getObjectClass();
-	    //c.newInstance();
-	    IDOLookup.instanciateEntity(c);
-          }
-	  catch(Exception e){
-	    e.printStackTrace();
-	  }
+	protected IWBundle(String rootRealPath, String bundleIdentifier, IWMainApplication superApplication) {
+		this(rootRealPath, rootRealPath, bundleIdentifier, superApplication);
 	}
-      }
-   }
 
-  private void registerBlockPermissionKeys(Class blockClass) throws Exception{
-    Object o =  blockClass.newInstance();
-    if(o instanceof Block)
-    ((Block)o).registerPermissionKeys();
-  }
-
-  private void registerBlockPermisionKeys()throws Exception{
-    List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
-    if(entities!=null){
-      Iterator iter = entities.iterator();
-      while (iter.hasNext()) {
-        ICObject ico = (ICObject)iter.next();
-        try{
-          Class c = ico.getObjectClass();
-          registerBlockPermissionKeys(c);
-        }
-        catch(Exception e){
-          e.printStackTrace();
-        }
-	    }
-    }
-  }
-
-   private void runStartClass(){
-      String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
-      if(starterClassName!=null){
-	try{
-	  starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
-	  starter.start(this);
+	protected IWBundle(String rootRealPath, String rootVirtualPath, String bundleIdentifier, IWMainApplication superApplication) {
+		this(rootRealPath, rootVirtualPath, bundleIdentifier, superApplication, false);
 	}
-	catch(Exception e){
-	  e.printStackTrace();
+
+	protected IWBundle(String rootRealPath, String rootVirtualPath, String bundleIdentifier, IWMainApplication superApplication, boolean autoCreate) {
+		this.autoCreate = autoCreate;
+		this.superApplication = superApplication;
+		this.identifier = bundleIdentifier;
+		handlers = new Hashtable();
+		localeRealPaths = new Hashtable();
+		resourceBundles = new Hashtable();
+		setRootRealPath(rootRealPath);
+		setRootVirtualPath(rootVirtualPath);
+		try {
+			loadBundle();
+		}
+		catch (Exception e) {
+			throw new com.idega.exception.IWBundleDoesNotExist(bundleIdentifier);
+		}
+		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
-      }
-   }
-   
-   
-  public void unload(){
+
+	public void reloadBundle() {
+		loadBundle();
+		resourceBundles.clear();
+		localizableStringsProperties = null;
+	}
+
+	private void loadBundle() {
+		setResourcesVirtualPath(getRootVirtualPath() + "/" + "resources");
+		setResourcesRealPath(getRootRealPath() + FileUtil.getFileSeparator() + "resources");
+		setPropertiesRealPath(getRootRealPath() + FileUtil.getFileSeparator() + "properties");
+
+		setClassesRealPath();
+		if (autoCreate) {
+			this.initializeStructure();
+			propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, true);
+		}
+		else {
+			propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, false);
+		}
+
+		StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
+		SystemClassPath.append(File.pathSeparator);
+		SystemClassPath.append(getClassesRealPath());
+
+		System.setProperty("java.class.path", SystemClassPath.toString());
+
+		installComponents();
+		try {
+			createDataRecords();
+			registerBlockPermisionKeys();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		runStartClass();
+
+	}
+
+	private void createDataRecords() throws Exception {
+		List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_DATA, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
+		if (entities != null) {
+			Iterator iter = entities.iterator();
+			while (iter.hasNext()) {
+				ICObject ico = (ICObject) iter.next();
+				try {
+					Class c = ico.getObjectClass();
+					IDOLookup.instanciateEntity(c);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void registerBlockPermissionKeys(Class blockClass) throws Exception {
+		Object o = blockClass.newInstance();
+		if (o instanceof Block)
+			 ((Block) o).registerPermissionKeys();
+	}
+
+	private void registerBlockPermisionKeys() throws Exception {
+		List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
+		if (entities != null) {
+			Iterator iter = entities.iterator();
+			while (iter.hasNext()) {
+				ICObject ico = (ICObject) iter.next();
+				try {
+					Class c = ico.getObjectClass();
+					registerBlockPermissionKeys(c);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void runStartClass() {
+		String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
+		if (starterClassName != null) {
+			try {
+				starter = (IWBundleStartable) Class.forName(starterClassName).newInstance();
+				starter.start(this);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void unload() {
 		storeState();
-		stopStartClass();  	
-  }
-   
-   private void stopStartClass(){
-   	if (starter != null) {
-   		starter.stop(this);	
-   	}	
-   }
-
-
-    private void installComponents(){
-      List list = this.getComponentKeys();
-      Iterator iter = list.iterator();
-      while (iter.hasNext()) {
-	String className = (String)iter.next();
-	String componentName = getComponentName(className);
-	String componentType = this.getComponentType(className);
-
-	addComponentToDatabase(className,componentType,componentName);
-      /*  ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
-	if(ico==null){
-	  try{
-	    ico = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
-	    ico.setObjectClass(Class.forName(className));
-	    ico.setName(componentName);
-	    ico.setObjectType();
-	    ico.setBundle(this);
-	    ico.insert();
-	  }
-	  catch(Exception e){
-	    e.printStackTrace();
-	  }
+		stopStartClass();
 	}
-	*/
-      }
 
-    }
-
-   protected String getRootRealPath(){
-    return rootRealPath;
-   }
-
-   protected String getRootVirtualPath(){
-    return rootVirtualPath;
-   }
-
-   public Image getIconImage(){
-      return new Image(getProperty("iconimage"));
-   }
-
-    public String getProperty(String propertyName){
-      return propertyList.getProperty(propertyName);
-    }
-
-    public String getProperty(String propertyName, String returnValueIfNull){
-      String prop = getProperty(propertyName);
-      if( prop == null ) {
-	if ( getApplication().getSettings().isAutoCreatePropertiesActive() ) {
-	  if ( getApplication().getSettings().isDebugActive() )
-	    System.out.println("Storing property: "+propertyName);
-	  setProperty(propertyName,returnValueIfNull);
+	private void stopStartClass() {
+		if (starter != null) {
+			starter.stop(this);
+		}
 	}
-	return returnValueIfNull;
-      }
-      else return prop;
-    }
 
-    public void removeProperty(String propertyName) {
-      propertyList.removeProperty(propertyName);
-    }
+	private void installComponents() {
+		List list = this.getComponentKeys();
+		Iterator iter = list.iterator();
+		while (iter.hasNext()) {
+			String className = (String) iter.next();
+			String componentName = getComponentName(className);
+			String componentType = this.getComponentType(className);
 
-    public void setProperty(String propertyName,String propertyValue){
-      propertyList.setProperty(propertyName,propertyValue);
-    }
-
-    public void setProperty(String propertyName,String[] propertyValues){
-      propertyList.setProperty(propertyName,propertyValues);
-    }
-
-    public void setArrayProperty(String propertyName,String propertyValue){
-      propertyList.setArrayProperty(propertyName,propertyValue);
-    }
-
-    public IWMainApplication getApplication(){
-      return this.superApplication;
-    }
-
-    public void setProperty(String propertyName){
-      propertyList.removeProperty(propertyName);
-    }
-    private void setResourcesRealPath(String path){
-	resourcesRealPath=path;
-    }
-
-    private void setResourcesVirtualPath(String path){
-	resourcesVirtualPath=path;
-    }
-
-    private void setPropertiesRealPath(String path){
-      propertiesRealPath=path;
-    }
-
-    private void setRootRealPath(String path){
-	rootRealPath=path;
-    }
-
-    public void setRootVirtualPath(String path){
-	rootVirtualPath=path;
-    }
-
-    public Image getLocalizedImage(String name,Locale locale){
-	return getResourceBundle(locale).getImage(name);
-    }
-
-    /**
-     * Convenience method - Recommended to create a ResourceBundle (through getResourceBundle(locale)) to use instead more efficiently
-     */
-    public String getLocalizedString(String name,Locale locale){
-      return getResourceBundle(locale).getString(name);
-    }
-
-    //public String getResourcesPath(IWContext iwc){
-    //    return resourcesPath+"/"+iwc.getCurrentLocale().toString();
-    //}
-
-    //public String getResourcePath(String resourceType,IWContext iwc){
-    //  return null;
-    //}
-
-    protected String getClassesRealPath(){
-	return classesRealPath;
-    }
-
-    private void setClassesRealPath(){
-      classesRealPath=this.getRootRealPath()+FileUtil.getFileSeparator()+"classes";
-    }
-
-
-    public String[] getAvailableProperties(){
-      return ( (String[]) ((Vector)propertyList.getKeys()).toArray(new String[0]) );
-    }
-
-
-    public String[] getLocalizableStrings(){
-      return (String[])getLocalizableStringsMap().keySet().toArray(new String[0]);
-    }
-
-    public boolean removeLocalizableString(String key){
-      Enumeration enum = this.resourceBundles.elements();
-      while (enum.hasMoreElements()) {
-	IWResourceBundle item = (IWResourceBundle)enum.nextElement();
-	item.removeString(key);
-      }
-      return this.localizableStringsMap.remove(key)!=null?true:false;
-    }
-
-    protected Properties getLocalizableStringsProperties(){
-      initializePropertiesStrings();
-      return localizableStringsProperties;
-    }
-
-    protected Map getLocalizableStringsMap(){
-      initializePropertiesStrings();
-      return localizableStringsMap;
-    }
-
-    private void initializePropertiesStrings(){
-      if(localizableStringsProperties==null){
-	localizableStringsProperties = new Properties();
-	try{
-	  localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
-	  localizableStringsMap = new TreeMap(localizableStringsProperties);
+			addComponentToDatabase(className, componentType, componentName);
+		}
 	}
-	catch(IOException ex){
-	  ex.printStackTrace();
+
+	protected String getRootRealPath() {
+		return rootRealPath;
 	}
-       }
-    }
 
-    private File getLocalizableStringsFile(){
-	if(localizableStringsFile==null){
-	  try{
-	    localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(),"Localizable.strings");
-	  }
-	  catch(IOException ex){
-	    ex.printStackTrace();
-	  }
+	protected String getRootVirtualPath() {
+		return rootVirtualPath;
 	}
-	return localizableStringsFile;
-    }
 
-    public IWPropertyList getUserProperties(IWUserContext iwuc) {
-    	UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
-    	if ( properties != null )
-	    	return properties.getProperties(this.getBundleName());
-	    return null;
-    }
-    
-    public IWResourceBundle getResourceBundle(IWContext iwc){
-      return getResourceBundle(iwc.getCurrentLocale());
-    }
-
-    public IWResourceBundle getResourceBundle(Locale locale){
-	IWResourceBundle theReturn = (IWResourceBundle)resourceBundles.get(locale);
-	try{
-	  if(theReturn == null){
-	    File file;
-	    /**
-         * @todo: Look into this autoCreateLocalizedResources is always set true
-         */
-        if(autoCreateLocalizedResources){
-	      file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale),"Localized.strings");
-	    }
-	    else{
-	      file = new File(getResourcesRealPath(locale)+FileUtil.getFileSeparator()+"Localized.strings");
-	    }
-	    theReturn = new IWResourceBundle(this,file,locale);
-	    resourceBundles.put(locale,theReturn);
-	  }
+	public Image getIconImage() {
+		return new Image(getProperty("iconimage"));
 	}
-	catch(Exception ex){
-	  ex.printStackTrace();
+
+	public String getProperty(String propertyName) {
+		return propertyList.getProperty(propertyName);
 	}
-	return theReturn;
-    }
 
-    /*protected IWLocalizedStringHandler getIWLocalizedStringHandler(Locale locale){
-      IWLocalizedStringHandler handler = (IWLocalizedStringHandler) handlers.get(locale);
-      if (handler==null){
-	handler = new IWLocalizedStringHandler(this,getResourcesRealPath()+File.pathSeparator+"Localized.strings",locale);
-	handlers.put(locale,handler);
-      }
-      return handler;
-    }*/
+	public String getProperty(String propertyName, String returnValueIfNull) {
+		String prop = getProperty(propertyName);
+		if (prop == null) {
+			if (getApplication().getSettings().isAutoCreatePropertiesActive()) {
+				if (getApplication().getSettings().isDebugActive())
+					System.out.println("Storing property: " + propertyName);
+				setProperty(propertyName, returnValueIfNull);
+			}
+			return returnValueIfNull;
+		}
+		else
+			return prop;
+	}
 
+	public void removeProperty(String propertyName) {
+		propertyList.removeProperty(propertyName);
+	}
 
-    public String getVersion(){
-      String theReturn =  getProperty("version");
-      if(theReturn == null){
-	theReturn = "1";
-      }
-      return theReturn;
-    }
+	public void setProperty(String propertyName, String propertyValue) {
+		propertyList.setProperty(propertyName, propertyValue);
+	}
 
-    public String getBundleType(){
-      String theReturn =  getProperty("bundletype");
-      if(theReturn == null){
-	theReturn = "bundle";
-      }
-      return theReturn;
-    }
+	public void setProperty(String propertyName, String[] propertyValues) {
+		propertyList.setProperty(propertyName, propertyValues);
+	}
 
-    public static String getFileSeparator(){
-      return FileUtil.getFileSeparator();
-    }
+	public void setArrayProperty(String propertyName, String propertyValue) {
+		propertyList.setArrayProperty(propertyName, propertyValue);
+	}
 
-    public void storeState(){
-      propertyList.store();
-      Enumeration enum = this.resourceBundles.elements();
-      while (enum.hasMoreElements()) {
-        IWResourceBundle item = (IWResourceBundle)enum.nextElement();
-        item.storeState();
-      }
-      try{
-        //System.out.println("localizableStringsFile:"+localizableStringsFile);
-        getLocalizableStringsProperties().clear();
-        Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
-        while (keyIter.hasNext()) {
-          Object key = keyIter.next();
-          if(key!=null){
-            Object value = getLocalizableStringsMap().get(key);
-            if(value != null){
-              getLocalizableStringsProperties().put(key,value);
-            }
-          }
-        }
-        getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
-      }
-      catch(IOException ex){
-	    ex.printStackTrace();
-      }
-    }
+	public IWMainApplication getApplication() {
+		return this.superApplication;
+	}
 
-    //public String getResourcesVirtualPath(){
-    //
-    //}
+	public void setProperty(String propertyName) {
+		propertyList.removeProperty(propertyName);
+	}
+	private void setResourcesRealPath(String path) {
+		resourcesRealPath = path;
+	}
 
-    public String getResourcesRealPath(){
-	  return resourcesRealPath;
-	 //return resourcesPath+"/"+iwc.getCurrentLocale().toString();
-    }
+	private void setResourcesVirtualPath(String path) {
+		resourcesVirtualPath = path;
+	}
 
-/*    public String getResourcesURL(Locale locale){
-      return getResourcesVirtualPath(locale);
-    }
+	private void setPropertiesRealPath(String path) {
+		propertiesRealPath = path;
+	}
 
-    public String getResourcesURL(){
-      return getResourcesVirtualPath();
-    }
+	private void setRootRealPath(String path) {
+		rootRealPath = path;
+	}
 
-    public String getResourcesVirtualPath(Locale locale){
-    //private String getLocaleDirectory(Locale locale){
-	//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-	return this.getResourceBundle(locale).getResourcesURL();
-    }
+	public void setRootVirtualPath(String path) {
+		rootVirtualPath = path;
+	}
 
-    public String getResourcesVirtualPath(){
-    //private String getLocaleDirectory(Locale locale){
-	//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-	return resourcesVirtualPath;
-    }
-*/
+	public Image getLocalizedImage(String name, Locale locale) {
+		return getResourceBundle(locale).getImage(name);
+	}
 
-	public String getResourcesURL(Locale locale)
-	{
+	/**
+	 * Convenience method - Recommended to create a ResourceBundle (through getResourceBundle(locale)) to use instead more efficiently
+	 */
+	public String getLocalizedString(String name, Locale locale) {
+		return getResourceBundle(locale).getString(name);
+	}
+
+	protected String getClassesRealPath() {
+		return classesRealPath;
+	}
+
+	private void setClassesRealPath() {
+		classesRealPath = this.getRootRealPath() + FileUtil.getFileSeparator() + "classes";
+	}
+
+	public String[] getAvailableProperties() {
+		return ((String[]) ((Vector) propertyList.getKeys()).toArray(new String[0]));
+	}
+
+	public String[] getLocalizableStrings() {
+		return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
+	}
+
+	public boolean removeLocalizableString(String key) {
+		Enumeration enum = this.resourceBundles.elements();
+		while (enum.hasMoreElements()) {
+			IWResourceBundle item = (IWResourceBundle) enum.nextElement();
+			item.removeString(key);
+		}
+		return this.localizableStringsMap.remove(key) != null ? true : false;
+	}
+
+	protected Properties getLocalizableStringsProperties() {
+		initializePropertiesStrings();
+		return localizableStringsProperties;
+	}
+
+	protected Map getLocalizableStringsMap() {
+		initializePropertiesStrings();
+		return localizableStringsMap;
+	}
+
+	private void initializePropertiesStrings() {
+		if (localizableStringsProperties == null) {
+			localizableStringsProperties = new Properties();
+			try {
+				localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
+				localizableStringsMap = new TreeMap(localizableStringsProperties);
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	private File getLocalizableStringsFile() {
+		if (localizableStringsFile == null) {
+			try {
+				localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), "Localizable.strings");
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return localizableStringsFile;
+	}
+
+	public IWPropertyList getUserProperties(IWUserContext iwuc) {
+		UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
+		if (properties != null)
+			return properties.getProperties(this.getBundleName());
+		return null;
+	}
+
+	public IWResourceBundle getResourceBundle(IWContext iwc) {
+		return getResourceBundle(iwc.getCurrentLocale());
+	}
+
+	public IWResourceBundle getResourceBundle(Locale locale) {
+		IWResourceBundle theReturn = (IWResourceBundle) resourceBundles.get(locale);
+		try {
+			if (theReturn == null) {
+				File file;
+				/**
+				   * @todo: Look into this autoCreateLocalizedResources is always set true
+				   */
+				if (autoCreateLocalizedResources) {
+					file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), "Localized.strings");
+				}
+				else {
+					file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + "Localized.strings");
+				}
+				theReturn = new IWResourceBundle(this, file, locale);
+				resourceBundles.put(locale, theReturn);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return theReturn;
+	}
+
+	public String getVersion() {
+		String theReturn = getProperty("version");
+		if (theReturn == null) {
+			theReturn = "1";
+		}
+		return theReturn;
+	}
+
+	public String getBundleType() {
+		String theReturn = getProperty("bundletype");
+		if (theReturn == null) {
+			theReturn = "bundle";
+		}
+		return theReturn;
+	}
+
+	public static String getFileSeparator() {
+		return FileUtil.getFileSeparator();
+	}
+
+	public void storeState() {
+		propertyList.store();
+		Enumeration enum = this.resourceBundles.elements();
+		while (enum.hasMoreElements()) {
+			IWResourceBundle item = (IWResourceBundle) enum.nextElement();
+			item.storeState();
+		}
+		try {
+			getLocalizableStringsProperties().clear();
+			Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
+			while (keyIter.hasNext()) {
+				Object key = keyIter.next();
+				if (key != null) {
+					Object value = getLocalizableStringsMap().get(key);
+					if (value != null) {
+						getLocalizableStringsProperties().put(key, value);
+					}
+				}
+			}
+			getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()), null);
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public String getResourcesRealPath() {
+		return resourcesRealPath;
+	}
+
+	public String getResourcesURL(Locale locale) {
 		return getResourcesVirtualPath(locale);
-		//return this.getApplication().getTranslatedURIWithContext(getResourcesVirtualPath(locale));
-	}
-	public String getResourcesURL()
-	{
-		return getResourcesVirtualPath();
-		//return this.getApplication().getTranslatedURIWithContext(getResourcesVirtualPath());
-	
-	}
-	public String getResourcesVirtualPath(Locale locale)
-	{
-		//private String getLocaleDirectory(Locale locale){
-		//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-	
-		return this.getResourceBundle(locale).getResourcesURL();
-		//return this.getApplication().getTranslatedURIWithContext(this.getResourceBundle(locale).getResourcesURL());
 	}
 
-	public String getResourcesVirtualPath()
-	{
-		//private String getLocaleDirectory(Locale locale){
-		//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
-		//return resourcesVirtualPath;
+	public String getResourcesURL() {
+		return getResourcesVirtualPath();
+	}
+
+	public String getResourcesVirtualPath(Locale locale) {
+		return this.getResourceBundle(locale).getResourcesURL();
+	}
+
+	public String getResourcesVirtualPath() {
 		return getApplication().getTranslatedURIWithContext(resourcesVirtualPath);
 	}
 
-    public String getResourcesRealPath(Locale locale){
-      String path = (String)localeRealPaths.get(locale);
-      if (path==null){
-	path = getResourcesRealPath()+FileUtil.getFileSeparator()+locale.toString()+".locale";
-	localeRealPaths.put(locale,path);
-      }
-      return path;
-    }
-
-
-    public String getPropertiesRealPath(){
-      //return getRealRootPath()+File.pathSeparator+"properties";
-      return propertiesRealPath;
-    }
-
-    public static IWBundle getBundle(String bundleIdentifier , IWMainApplication application){
-      return application.getBundle(bundleIdentifier);
-    }
-
-
-    public void addLocale(Locale locale){
-      String LocalePath = getResourcesRealPath(locale);
-      File file = new File(LocalePath);
-      file.mkdirs();
-    }
-
-    protected void initializeStructure(){
-      String[] dirs = new String[5];
-      String resourcesDirectory = this.getResourcesRealPath();
-      dirs[0]=resourcesDirectory;
-      String propertiesDirectory = this.getPropertiesRealPath();
-      dirs[1]=propertiesDirectory;
-      String classesDirectory = this.getClassesRealPath();
-      dirs[2]=classesDirectory;
-      Locale english =  Locale.ENGLISH;
-      Locale icelandic = LocaleUtil.getIcelandicLocale();
-
-      String enLocalePath = getResourcesRealPath(english);
-      dirs[3]=enLocalePath;
-      String isLocalePath = getResourcesRealPath(icelandic);
-      dirs[4]=isLocalePath;
-      for (int i = 0; i < dirs.length; i++) {
-	File file = new File(dirs[i]);
-	file.mkdirs();
-      }
-    }
-
-    public String getBundleIdentifier(){
-      return identifier;
-    }
-
-    /**
-     * temp implementation
-     */
-    public String getBundleName(){
-      return this.getBundleIdentifier();
-    }
-
-
-    public Image getImage(String urlInBundle){
-      return new Image(getResourcesURL()+slash+urlInBundle);
-    }
-
-    public Image getImage(String urlInBundle, int width, int height){
-      return getImage(urlInBundle, "", width, height);
-    }
-
-    public Image getImageButton(String text){
-     return this.getApplication().getImageFactory().createButton(text,this);
-    }
-
-    public Image getImageTab(String text, boolean flip){
-     return this.getApplication().getImageFactory().createTab(text,this,flip);
-    }
-
-    public Image getImage(String urlInBundle, String name, int width, int height){
-      return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
-    }
-
-    public Image getSharedImage(String urlInBundle, String name){
-      return new Image(getResourcesURL()+slash+shared+slash+urlInBundle,name);
-    }
-
-    public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){
-      Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
-	returnImage.setWidth(width);
-	returnImage.setHeight(height);
-      return returnImage;
-    }
-
-     public Image getImage(String urlInBundle, String overUrlInBundle, String name){
-      Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
-      return returnImage;
-    }
-
-    public Image getImage(String urlInBundle, String name){
-      return new Image(getResourcesURL()+slash+urlInBundle,name);
-    }
-
-    /**
-     * Returns the ICObjects associated with this bundle
-     * Returns an empty list if nothing found
-     */
-    public List getICObjectsList() throws IDOFinderException{
-      List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier());
-      return l;
-    }
-
-
-    /**
-     * Returns the ICObjects associated with this bundle
-     * Returns null if there is an exception
-     * @deprecated Replaced with getICObjectsList()
-     */
-    public ICObject[] getICObjects(){
-      try{
-	List l = getICObjectsList();
-	return (ICObject[]) l.toArray(new ICObject[0]);
-      }
-      catch(Exception e){
-	return null;
-      }
-    }
-
-
-
-    /**
-     * Returns the ICObjects associated with this bundle and of the specified componentType
-     * Returns null if there is an exception
-     */
-    public List getICObjectsList(String componentType)throws IDOFinderException{
-	List l = EntityFinder.getInstance().findAllByColumn(ICObject.class,com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
-	//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
-	return l;
-    }
-
-
-    /**
-     * Returns the ICObjects associated with this bundle and of the specified componentType
-     * Returns null if there is an exception
-     * @deprecated replaced with getICObjectsList(componentType);
-     */
-    public ICObject[] getICObjects(String componentType){
-      try{
-	//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
-	List l = getICObjectsList(componentType);
-	return (ICObject[]) l.toArray(new ICObject[0]);
-      }
-      catch(Exception e){
-	return null;
-      }
-    }
-
-
-    private IWPropertyList getPropertyList(){
-      return this.propertyList;
-    }
-
-    public static List getAvailableComponentTypes(){
-      return com.idega.core.data.ICObjectBMPBean.getAvailableComponentTypes();
-    }
-
-
-    public IWPropertyList getComponentList(){
-      IWPropertyList list = getPropertyList().getPropertyList(COMPONENTLIST_KEY);
-      if(list==null){
-	  list = getPropertyList().getNewPropertyList(COMPONENTLIST_KEY);
-      }
-      return list;
-    }
-
-    public void addComponent(String className,String componentType){
-      addComponent(className,componentType,className.substring(className.lastIndexOf(".")+1));
-    }
-
-    public void addComponent(String className,String componentType,String componentName){
-      //getComponentList().setProperty(className,componentName,componentType);
-      IWProperty prop = getComponentList().getNewProperty();
-      prop.setName(className);
-      setComponentProperty(prop,COMPONENT_NAME_PROPERTY,componentName);
-      setComponentProperty(prop,COMPONENT_TYPE_PROPERTY,componentType);
-      addComponentToDatabase(className,componentType,componentName);
-    }
-
-
-    private void addComponentToDatabase(String className,String componentType,String componentName){
-	ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
-	if(ico==null){
-	  try{
-	    ico = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
-      Class c = Class.forName(className);
-	    ico.setObjectClass(c);
-	    ico.setName(componentName);
-	    ico.setObjectType(componentType);
-	    ico.setBundle(this);
-	    ico.insert();
-	    if(componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)){
-	      com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
-        if(componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)){
-          registerBlockPermissionKeys(c);
-        }
-
-	    }
-	  }
-	  catch(Exception e){
-	    e.printStackTrace();
-	  }
+	public String getResourcesRealPath(Locale locale) {
+		String path = (String) localeRealPaths.get(locale);
+		if (path == null) {
+			path = getResourcesRealPath() + FileUtil.getFileSeparator() + locale.toString() + ".locale";
+			localeRealPaths.put(locale, path);
+		}
+		return path;
 	}
-    }
 
-    public void setComponentProperty(String className,String propertyName,String propertyValue){
-      IWProperty prop = getComponentList().getIWProperty(className);
-      if(prop!=null){
-	setComponentProperty(prop,propertyName,propertyValue);
-      }
-    }
+	public String getPropertiesRealPath() {
+		return propertiesRealPath;
+	}
 
-    public void setComponentProperty(IWProperty component,String propertyName,String propertyValue){
-      IWPropertyList list = component.getPropertyList();
-      if(list==null){
-	list = component.getNewPropertyList();
-      }
-      list.setProperty(propertyName,propertyValue);
-    }
+	public static IWBundle getBundle(String bundleIdentifier, IWMainApplication application) {
+		return application.getBundle(bundleIdentifier);
+	}
 
-    public String getComponentProperty(String className,String property){
-      try{
-	return getComponentList().getIWProperty(className).getPropertyList().getProperty(property);
-      }
-      catch(NullPointerException e){
-	return null;
-      }
-    }
+	public void addLocale(Locale locale) {
+		String LocalePath = getResourcesRealPath(locale);
+		File file = new File(LocalePath);
+		file.mkdirs();
+	}
 
-    public String getComponentName(Class componentClass){
-      return getComponentName(componentClass.getName());
-    }
+	protected void initializeStructure() {
+		String[] dirs = new String[5];
+		String resourcesDirectory = this.getResourcesRealPath();
+		dirs[0] = resourcesDirectory;
+		String propertiesDirectory = this.getPropertiesRealPath();
+		dirs[1] = propertiesDirectory;
+		String classesDirectory = this.getClassesRealPath();
+		dirs[2] = classesDirectory;
+		Locale english = Locale.ENGLISH;
+		Locale icelandic = LocaleUtil.getIcelandicLocale();
 
-    public String getComponentName(String className){
-      return getComponentProperty(className,COMPONENT_NAME_PROPERTY);
-    }
+		String enLocalePath = getResourcesRealPath(english);
+		dirs[3] = enLocalePath;
+		String isLocalePath = getResourcesRealPath(icelandic);
+		dirs[4] = isLocalePath;
+		for (int i = 0; i < dirs.length; i++) {
+			File file = new File(dirs[i]);
+			file.mkdirs();
+		}
+	}
 
-    public String getComponentType(Class componentClass){
-      return getComponentType(componentClass.getName());
-    }
+	public String getBundleIdentifier() {
+		return identifier;
+	}
 
-    public String getComponentType(String className){
-      return getComponentProperty(className,COMPONENT_TYPE_PROPERTY);
-    }
+	/**
+	 * temp implementation
+	 */
+	public String getBundleName() {
+		return this.getBundleIdentifier();
+	}
 
-    /**
-     * Returns getComponentName(componentClass) if localized name not found
-     */
-    public String getComponentName(Class componentClass,Locale locale){
-      return getComponentName(componentClass.getName(),locale);
-    }
+	public Image getImage(String urlInBundle) {
+		return new Image(getResourcesURL() + slash + urlInBundle);
+	}
 
-    /**
-     * Returns getComponentName(className) if localized name not found
-     */
-    public String getComponentName(String className,Locale locale){
-      return getComponentName(className,locale,getComponentName(className));
-    }
+	public Image getImage(String urlInBundle, int width, int height) {
+		return getImage(urlInBundle, "", width, height);
+	}
 
-    public void setComponentName(Class componentClass,Locale locale,String sName){
-      setComponentName(componentClass.getName(),locale,sName);
-    }
+	public Image getImageButton(String text) {
+		return this.getApplication().getImageFactory().createButton(text, this);
+	}
 
-    public String getComponentName(Class componentClass,Locale locale,String returnIfNameNotLocalized){
-      return getComponentName(componentClass.getName(),locale,returnIfNameNotLocalized);
-    }
+	public Image getImageTab(String text, boolean flip) {
+		return this.getApplication().getImageFactory().createTab(text, this, flip);
+	}
 
-    public String getComponentName(String className,Locale locale,String returnIfNameNotLocalized){
-      /*System.out.println("className = " + className);
-      System.out.println("Locale = " + locale.toString());
-      System.out.println("Default = " + returnIfNameNotLocalized);*/
-      return this.getResourceBundle(locale).getLocalizedString("iw.component."+className+".name",returnIfNameNotLocalized);
-    }
+	public Image getImage(String urlInBundle, String name, int width, int height) {
+		return new Image(getResourcesURL() + slash + urlInBundle, name, width, height);
+	}
 
-    public void setComponentName(String className,Locale locale,String sName){
-      this.getResourceBundle(locale).setString("iw.component."+className+".name",sName);
-    }
+	public Image getSharedImage(String urlInBundle, String name) {
+		return new Image(getResourcesURL() + slash + shared + slash + urlInBundle, name);
+	}
 
-    public void removeComponent(String className){
-      getComponentList().removeProperty(className);
-      com.idega.core.data.ICObjectBMPBean.removeICObject(className);
-    }
+	public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height) {
+		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
+		returnImage.setWidth(width);
+		returnImage.setHeight(height);
+		return returnImage;
+	}
 
-    public List getComponentKeys(){
-      return getComponentList().getKeys();
-    }
+	public Image getImage(String urlInBundle, String overUrlInBundle, String name) {
+		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
+		return returnImage;
+	}
 
+	public Image getImage(String urlInBundle, String name) {
+		return new Image(getResourcesURL() + slash + urlInBundle, name);
+	}
 
-    public int compareTo(Object o){
-      IWBundle bundle = (IWBundle)o;
-      return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
-    }
+	/**
+	 * Returns the ICObjects associated with this bundle
+	 * Returns an empty list if nothing found
+	 */
+	public List getICObjectsList() throws IDOFinderException {
+		List l = EntityFinder.getInstance().findAllByColumn(ICObject.class, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
+		return l;
+	}
 
-    public void addLocalizableString(String key, String value) {
-      getLocalizableStringsMap().put(key,value);
-      storeState();
-    }
+	/**
+	 * Returns the ICObjects associated with this bundle
+	 * Returns null if there is an exception
+	 * @deprecated Replaced with getICObjectsList()
+	 */
+	public ICObject[] getICObjects() {
+		try {
+			List l = getICObjectsList();
+			return (ICObject[]) l.toArray(new ICObject[0]);
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
 
-    public boolean containsLocalizedString(String key) {
-      return(getLocalizableStringsMap().containsKey(key));
-    }
+	/**
+	 * Returns the ICObjects associated with this bundle and of the specified componentType
+	 * Returns null if there is an exception
+	 */
+	public List getICObjectsList(String componentType) throws IDOFinderException {
+		List l = EntityFinder.getInstance().findAllByColumn(ICObject.class, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier(), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), componentType);
+		//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
+		return l;
+	}
+
+	/**
+	 * Returns the ICObjects associated with this bundle and of the specified componentType
+	 * Returns null if there is an exception
+	 * @deprecated replaced with getICObjectsList(componentType);
+	 */
+	public ICObject[] getICObjects(String componentType) {
+		try {
+			//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
+			List l = getICObjectsList(componentType);
+			return (ICObject[]) l.toArray(new ICObject[0]);
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
+	private IWPropertyList getPropertyList() {
+		return this.propertyList;
+	}
+
+	public static List getAvailableComponentTypes() {
+		return com.idega.core.data.ICObjectBMPBean.getAvailableComponentTypes();
+	}
+
+	public IWPropertyList getComponentList() {
+		IWPropertyList list = getPropertyList().getPropertyList(COMPONENTLIST_KEY);
+		if (list == null) {
+			list = getPropertyList().getNewPropertyList(COMPONENTLIST_KEY);
+		}
+		return list;
+	}
+
+	public void addComponent(String className, String componentType) {
+		addComponent(className, componentType, className.substring(className.lastIndexOf(".") + 1));
+	}
+
+	public void addComponent(String className, String componentType, String componentName) {
+		IWProperty prop = getComponentList().getNewProperty();
+		prop.setName(className);
+		setComponentProperty(prop, COMPONENT_NAME_PROPERTY, componentName);
+		setComponentProperty(prop, COMPONENT_TYPE_PROPERTY, componentType);
+		addComponentToDatabase(className, componentType, componentName);
+	}
+
+	private void addComponentToDatabase(String className, String componentType, String componentName) {
+		ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
+		if (ico == null) {
+			try {
+				ico = ((com.idega.core.data.ICObjectHome) com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
+				Class c = Class.forName(className);
+				ico.setObjectClass(c);
+				ico.setName(componentName);
+				ico.setObjectType(componentType);
+				ico.setBundle(this);
+				ico.insert();
+				if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
+					com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
+					if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
+						registerBlockPermissionKeys(c);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void setComponentProperty(String className, String propertyName, String propertyValue) {
+		IWProperty prop = getComponentList().getIWProperty(className);
+		if (prop != null) {
+			setComponentProperty(prop, propertyName, propertyValue);
+		}
+	}
+
+	public void setComponentProperty(IWProperty component, String propertyName, String propertyValue) {
+		IWPropertyList list = component.getPropertyList();
+		if (list == null) {
+			list = component.getNewPropertyList();
+		}
+		list.setProperty(propertyName, propertyValue);
+	}
+
+	public String getComponentProperty(String className, String property) {
+		try {
+			return getComponentList().getIWProperty(className).getPropertyList().getProperty(property);
+		}
+		catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	public String getComponentName(Class componentClass) {
+		return getComponentName(componentClass.getName());
+	}
+
+	public String getComponentName(String className) {
+		return getComponentProperty(className, COMPONENT_NAME_PROPERTY);
+	}
+
+	public String getComponentType(Class componentClass) {
+		return getComponentType(componentClass.getName());
+	}
+
+	public String getComponentType(String className) {
+		return getComponentProperty(className, COMPONENT_TYPE_PROPERTY);
+	}
+
+	/**
+	 * Returns getComponentName(componentClass) if localized name not found
+	 */
+	public String getComponentName(Class componentClass, Locale locale) {
+		return getComponentName(componentClass.getName(), locale);
+	}
+
+	/**
+	 * Returns getComponentName(className) if localized name not found
+	 */
+	public String getComponentName(String className, Locale locale) {
+		return getComponentName(className, locale, getComponentName(className));
+	}
+
+	public void setComponentName(Class componentClass, Locale locale, String sName) {
+		setComponentName(componentClass.getName(), locale, sName);
+	}
+
+	public String getComponentName(Class componentClass, Locale locale, String returnIfNameNotLocalized) {
+		return getComponentName(componentClass.getName(), locale, returnIfNameNotLocalized);
+	}
+
+	public String getComponentName(String className, Locale locale, String returnIfNameNotLocalized) {
+		return this.getResourceBundle(locale).getLocalizedString("iw.component." + className + ".name", returnIfNameNotLocalized);
+	}
+
+	public void setComponentName(String className, Locale locale, String sName) {
+		this.getResourceBundle(locale).setString("iw.component." + className + ".name", sName);
+	}
+
+	public void removeComponent(String className) {
+		getComponentList().removeProperty(className);
+		com.idega.core.data.ICObjectBMPBean.removeICObject(className);
+	}
+
+	public List getComponentKeys() {
+		return getComponentList().getKeys();
+	}
+
+	public int compareTo(Object o) {
+		IWBundle bundle = (IWBundle) o;
+		return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
+	}
+
+	public void addLocalizableString(String key, String value) {
+		getLocalizableStringsMap().put(key, value);
+		storeState();
+	}
+
+	public boolean containsLocalizedString(String key) {
+		return (getLocalizableStringsMap().containsKey(key));
+	}
 }

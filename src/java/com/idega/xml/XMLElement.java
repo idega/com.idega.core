@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.4 2002/12/09 18:10:51 palli Exp $
+ * $Id: XMLElement.java,v 1.5 2002/12/11 18:59:05 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -136,7 +136,7 @@ public class XMLElement {
   public String getTextTrim() {
     if (_element != null)
       return(_element.getTextTrim());
-
+      
     return(null);
   }
 
@@ -237,7 +237,7 @@ public class XMLElement {
 				ret.add(data);
 			}
 			else if (obj instanceof Text) {
-				String text = ((Text)obj).getValue();
+				String text = ((Text)obj).getText();
 				ret.add(text);				
 			}
 		}
