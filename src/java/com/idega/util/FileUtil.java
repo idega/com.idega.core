@@ -110,36 +110,36 @@ public class FileUtil {
 */
   public static void streamToFile( InputStream input, String filePath, String fileName){
     try{
-      File file = getFileAndCreateIfNotExists(filePath,fileName);
-      FileOutputStream fileOut = new FileOutputStream(file);
-
-      byte buffer[]= new byte[1024];
-      int	noRead	= 0;
-
       if(input!=null){
-        noRead = input.read( buffer, 0, 1024 );
+        input.available();//this casts an ioexception if the stream is null
+        File file = getFileAndCreateIfNotExists(filePath,fileName);
+        FileOutputStream fileOut = new FileOutputStream(file);
 
+        byte buffer[]= new byte[1024];
+        int	noRead	= 0;
+
+        noRead = input.read( buffer, 0, 1024 );
         //Write out the stream to the file
         while ( noRead != -1 ){
           fileOut.write( buffer, 0, noRead );
           noRead = input.read( buffer, 0, 1024 );
         }
+
         fileOut.flush();
         fileOut.close();
       }
-      else System.err.println("FileUtil : InputStream is null!");
 
     }
     catch(IOException e){
-      e.printStackTrace(System.err);
-      System.err.println("FileUtil : Error writing to file!");
+      //e.printStackTrace(System.err);
+      System.err.println("FileUtil : Error or skipping (for folders) writing to file");
     }
     finally{
       try{
         if(input!=null) input.close();
       }
       catch(IOException e){
-        e.printStackTrace(System.err);
+        //e.printStackTrace(System.err);
         System.err.println("FileUtil : Error closing the inputstream");
       }
     }
