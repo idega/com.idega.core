@@ -16,7 +16,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 
 	public static final String COLUMN_META_KEY = "metadata_name";
 	public static final String COLUMN_META_VALUE = "metadata_value";
-	public static final String COLUMN_META_TYPE = "metadata_type";
+	public static final String COLUMN_META_TYPE = "meta_data_type";
 	
   protected MetaDataBMPBean() {
     super();
