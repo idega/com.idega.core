@@ -472,7 +472,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		return getAttribute(columnName);
 	}
-	protected EntityAttribute getAttribute(String attributeName)
+	public EntityAttribute getAttribute(String attributeName)
 	{
 		//return (EntityAttribute) columns.get(columnName.toLowerCase());
 		EntityAttribute theReturn = null;
