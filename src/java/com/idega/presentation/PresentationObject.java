@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.92 2004/06/10 19:55:02 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.93 2004/06/22 17:43:23 thomas Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -2181,42 +2181,4 @@ implements Cloneable, PresentationObjectType
 	 public boolean isContainer() {
 	 	return false;
 	 }
-
-
-	 //END STANDARD LOGGING METHODS
-	 
-	 //METHODS OF DPT PAGES
-	 /**
-	  * @return Returns the DPT page relation group 
-	  * @see com.idega.presentation.Page#getDPTPageRelationGroup(IWUserContext)
-	  */
-	 public Object getDPTPageRelationGroup(IWUserContext iwuc) {
-	 	Page parentPage = getParentPage();
-	 	if(parentPage!=null) {
-	 		return parentPage.getDPTPageRelationGroup(iwuc);
-	 	}
-	 	return null;
-	 }
-	 
-	 public void setCurrentUserHasRelationToContainingDPTPage(Boolean value) {
-	 	Page page = getParentPage();
-	 	if (page != null) {
-		 	getParentPage().setCurrentUserHasRelationToContainingDPTPage(value);
-	 	}
-	 }
-	 
-	 /**
-	  * 
-	  * @return returns null if it has not been checked and set yet. It is set in the Accesscontrol class.
-	  */
-	 public Boolean hasCurrentUserRelationToContainingDPTPage() {
-	 	Page page = getParentPage();
-	 	if (page != null) {
-	 		return page.hasCurrentUserRelationToContainingDPTPage();
-	 	} else {
-	 		return Boolean.FALSE;
-	 	}
-	 }
-
-	 //METHODS FOR DPT PAGES END
 }
