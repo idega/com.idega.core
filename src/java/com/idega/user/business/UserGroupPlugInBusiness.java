@@ -49,4 +49,5 @@ public interface UserGroupPlugInBusiness extends IBOService {
      * Returns a Collection of Group Objects
      */
     public Collection findGroupsByFields(Collection listViewerFields,Collection finderOperators,Collection listViewerFieldValues)throws RemoteException;
+    public boolean isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
 }
