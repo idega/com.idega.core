@@ -34,7 +34,7 @@ public class Email extends GenericEntity {
     return "ic_email";
   }
 
-  public static String getColumnNameAddress(){return "email_address";}
+  public static String getColumnNameAddress(){return "ADDRESS";}
   public static String getColumnNameEmailTypeId(){return "ic_email_type_id";}
 
   public void setEmailAddress(String address){
