@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pxml>
+  <map>
+    <key>
+      <name>component_name</name>
+      <type>java.lang.String</type>
+      <value>Applet</value>
+    </key>
+    <key>
+      <name>component_type</name>
+      <type>java.lang.String</type>
+      <value>iw.element</value>
+    </key>
+    <key>
+      <name>iw_component_methods</name>
+      <value>
+        <map>
+          <key>
+            <name>:method:1:implied:void:setAppletClass:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Applet Class</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setWidth:int:</name>
+            <type>java.lang.String</type>
+            <value>Width</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setHeight:int:</name>
+            <type>java.lang.String</type>
+            <value>Height</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setBackgroundColor:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Background Color</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setCodebase:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Codebase</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setAlignment:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Alignment</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setCodeArchive:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Codearchive</value>
+          </key>
+        </map>
+      </value>
+      <type>map</type>
+    </key>
+  </map>
+</pxml>
+

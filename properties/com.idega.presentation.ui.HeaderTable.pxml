@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pxml>
+  <map>
+    <key>
+      <name>component_name</name>
+      <type>java.lang.String</type>
+      <value>HeaderTable</value>
+    </key>
+    <key>
+      <name>component_type</name>
+      <type>java.lang.String</type>
+      <value>iw.element</value>
+    </key>
+    <key>
+      <name>iw_component_methods</name>
+      <value>
+        <map>
+          <key>
+            <name>:method:1:implied:void:setColor:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Color</value>
+          </key>
+        </map>
+      </value>
+      <type>map</type>
+    </key>
+  </map>
+</pxml>
+

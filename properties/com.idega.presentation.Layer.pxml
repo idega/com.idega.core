@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pxml>
+  <map>
+    <key>
+      <name>component_name</name>
+      <type>java.lang.String</type>
+      <value>Layer</value>
+    </key>
+    <key>
+      <name>component_type</name>
+      <type>java.lang.String</type>
+      <value>iw.element</value>
+    </key>
+    <key>
+      <name>iw_component_methods</name>
+      <value>
+        <map>
+          <key>
+            <name>:method:1:implied:void:setHeight:int:</name>
+            <type>java.lang.String</type>
+            <value>Height</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setWidth:int:</name>
+            <type>java.lang.String</type>
+            <value>Width</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setLeftPosition:int:</name>
+            <type>java.lang.String</type>
+            <value>Xpos</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setTopPosition:int:</name>
+            <type>java.lang.String</type>
+            <value>Ypos</value>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setZIndex:int:</name>
+            <type>java.lang.String</type>
+            <value>Z-index</value>
+          </key>
+        </map>
+      </value>
+      <type>map</type>
+    </key>
+  </map>
+</pxml>
+
