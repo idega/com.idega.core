@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -203,8 +204,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * The method invoked when the login presentation module sends a login to this class
 	 */
 	public boolean actionPerformed(IWContext iwc) throws IWException {
-		//System.out.println("LoginBusiness.actionPerformed");
-		try {
+		try { 
 			if (isLoggedOn(iwc)) {
 				if (isLogOffAction(iwc)) {
 					//logOut(iwc);
@@ -468,11 +468,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 					failedAttempts++;
 					loginInfo.setFailedAttemptCount(failedAttempts);
 					if(failedAttempts==maxFailedLogginAttempts-1) {
+						System.out.println("login failed, disabled next time");
 						returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
 					} else if(failedAttempts>=maxFailedLogginAttempts) {
 						System.out.println("Maximum loggin attemps, disabling account " + login);
 						loginInfo.setAccountEnabled(false);
 						loginInfo.setFailedAttemptCount(0);
+					} else {
+						System.out.println("Login failed, #" + failedAttempts);
 					}
 					loginInfo.store();
 				}
@@ -514,6 +517,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return returner;
 	}
 	protected void logOut(IWContext iwc) throws Exception {
+		HttpSession session = iwc.getSession();
+		Enumeration enum = session.getAttributeNames();
+		while(enum.hasMoreElements()) {
+			session.removeAttribute((String) enum.nextElement());
+		}
+		enum = iwc.getParameterNames();
+		while(enum.hasMoreElements()) {
+			iwc.removeAttribute((String) enum.nextElement());
+		}
 		
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
@@ -532,7 +544,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 
 			iwc.removeSessionAttribute(LoginAttributeParameter);
-
 		}
 	}
 
