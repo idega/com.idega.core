@@ -74,6 +74,14 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       System.out.println("----------------");
       return super.idoFindIDsBySQL(sql);
     }
+    
+    public Integer ejbFindByLoginID(int loginID)throws FinderException{
+      Collection loginRecords = idoFindAllIDsByColumnOrderedBySQL(this.getColumnLoginId(),loginID);
+      if(!loginRecords.isEmpty()){
+        return (Integer)loginRecords.iterator().next();
+      }
+      else throw new FinderException("File was not found");
+  }
 
 
 }
