@@ -208,6 +208,17 @@ public class IWResourceBundle extends ResourceBundle {
       return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
     }
 
+    public Image getImage(String urlInBundle, String overUrlInBundle, String imageName, String overImageName){
+      return new Image(imageName,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
+    }
+
+    public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){
+      Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
+        returnImage.setWidth(width);
+        returnImage.setHeight(height);
+      return returnImage;
+    }
+
     public Image getImage(String urlInBundle, String name){
       return new Image(getResourcesURL()+slash+urlInBundle,name);
     }
