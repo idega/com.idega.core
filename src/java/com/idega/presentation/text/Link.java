@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.119 2004/06/30 21:50:40 jonas Exp $
+ * $Id: Link.java,v 1.120 2004/06/30 23:58:25 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -405,6 +405,10 @@ public class Link extends Text {
 	 *
 	 */
 	public void main(IWContext iwc) throws Exception {
+		String hostname = iwc.getParameter("CL_DM");
+		if(hostname!=null && hostname.length()>0) {
+			_hostname = hostname;
+		}
 		if (fileId != -1){
 			ICFileSystem fsystem = getICFileSystem(iwc);
 			String fileURL = fsystem.getFileURI(fileId);
