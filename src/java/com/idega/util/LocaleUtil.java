@@ -14,7 +14,8 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 
 public class LocaleUtil {
 
-  private static Locale icelandicLocale = new Locale("is","IS");
+  	private static Locale icelandicLocale;
+	private static Locale swedishLocale;
 
   private static final String ICELANDIC_IDENTIFIER="is_IS";
   private static final String ENGLISH_IDENTIFIER="en";
@@ -26,7 +27,17 @@ public class LocaleUtil {
   }
 
   public static Locale getIcelandicLocale(){
+  	if(icelandicLocale==null){
+  		icelandicLocale=new Locale("is","IS");
+  	}
     return icelandicLocale;
+  }
+  
+  public static Locale getSwedishLocale(){
+  	if(swedishLocale==null){
+  		swedishLocale=new Locale("sv","SE");
+  	}
+    return swedishLocale;
   }
 
   public static Locale getLocale(String localeIdentifier){
