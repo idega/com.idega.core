@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.85 2003/12/01 04:59:33 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.86 2003/12/03 00:37:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1198,12 +1199,14 @@ public abstract class DatastoreInterface {
 				//setColumn(columnName.toLowerCase(),new Double(theDouble));
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
-			if (RS.getTimestamp(columnName) != null) {
-				entity.setColumn(columnName, RS.getTimestamp(columnName));
+			Timestamp ts = RS.getTimestamp(columnName);
+			if (ts != null) {
+				entity.setColumn(columnName, ts);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_DATE) {
-			if (RS.getDate(columnName) != null) {
-				entity.setColumn(columnName, RS.getDate(columnName));
+			Date date = RS.getDate(columnName);
+			if (date!= null) {
+				entity.setColumn(columnName, date);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIME) {
 			java.sql.Date date = RS.getDate(columnName);
