@@ -232,33 +232,45 @@ public class ImageFactory {
 	
 		if(iwb.getProperty(GENERATED_FILL_COLOR)!=null)
 			button.setFillColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FILL_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_FILL_COLOR,IWColor.getHexColorString(button.fillColor))!=null)
-			button.setFillColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_FILL_COLOR)));
+		else{
+			String fillColor = coreBundle.getProperty(GENERATED_FILL_COLOR,IWColor.getHexColorString(button.fillColor));
+			button.setFillColor(IWColor.getAWTColorFromHex(fillColor));
+		}
 		
 		if(iwb.getProperty(GENERATED_BORDER_COLOR)!=null)
 			button.setBorderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_BORDER_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_BORDER_COLOR,IWColor.getHexColorString(button.borderColor))!=null)
-			button.setBorderColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_BORDER_COLOR)));
-					
+		else{
+			String borderColor = coreBundle.getProperty(GENERATED_BORDER_COLOR,IWColor.getHexColorString(button.borderColor));
+			button.setBorderColor(IWColor.getAWTColorFromHex(borderColor));
+		}
+		
 		if(iwb.getProperty(GENERATED_OVER_COLOR)!=null)
 			button.setOverColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_OVER_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_OVER_COLOR,IWColor.getHexColorString(button.overColor))!=null)
-			button.setOverColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_OVER_COLOR)));
-					
+		else{
+			String overColor = coreBundle.getProperty(GENERATED_OVER_COLOR,IWColor.getHexColorString(button.overColor));
+			button.setOverColor(IWColor.getAWTColorFromHex(overColor));
+		}
+		
 		if(iwb.getProperty(GENERATED_UNDER_COLOR)!=null)
 			button.setUnderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_UNDER_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_UNDER_COLOR,IWColor.getHexColorString(button.underColor))!=null)
-			button.setUnderColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_UNDER_COLOR)));
+		else {
+			String underColor = coreBundle.getProperty(GENERATED_UNDER_COLOR,IWColor.getHexColorString(button.underColor));
+			button.setUnderColor(IWColor.getAWTColorFromHex(underColor));
+		}
 					
 		if(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)!=null)
 			button.setHighlightColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR,IWColor.getHexColorString(button.highlightColor))!=null)
-			button.setHighlightColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR)));
+		else{
+			String highlightColor = coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR,IWColor.getHexColorString(button.highlightColor));
+			button.setHighlightColor(IWColor.getAWTColorFromHex(highlightColor));
+		}
 					
 		if(iwb.getProperty(GENERATED_FONT_COLOR)!=null)
 			button.setFontColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FONT_COLOR)));
-		else if(coreBundle.getProperty(GENERATED_FONT_COLOR,IWColor.getHexColorString(button.fontColor))!=null)
-			button.setFontColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_FONT_COLOR)));
+		else{
+			String fontColor = coreBundle.getProperty(GENERATED_FONT_COLOR,IWColor.getHexColorString(button.fontColor));
+			button.setFontColor(IWColor.getAWTColorFromHex(fontColor));
+		}
 					
 		String fontStr = "dialog-plain-10";
 		Font btnFont = button.getFont();
@@ -275,8 +287,11 @@ public class ImageFactory {
 		}
 		if(iwb.getProperty(GENERATED_FONT)!=null)
 			button.setFont(Font.decode(iwb.getProperty(GENERATED_FONT)));
-		else if(coreBundle.getProperty(GENERATED_FONT,fontStr)!=null)
-			button.setFont(Font.decode(coreBundle.getProperty(GENERATED_FONT)));
+		else{
+			String font = coreBundle.getProperty(GENERATED_FONT,fontStr);
+			button.setFont(Font.decode(font));
+		}
+		
 	}
 
 }
