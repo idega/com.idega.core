@@ -30,7 +30,7 @@ public class IDOUtil {
 	 */
 	public String convertListToCommaseparatedString(Collection list) {
 		StringBuffer sList = new StringBuffer();
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			//String sGroupList = "";
 			Iterator iter = list.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
@@ -38,11 +38,11 @@ public class IDOUtil {
 				if (g > 0) {
 					sList.append(COMMA_AND_SPACE);
 				}
-				//try {
+				
+				if(item!=null) {
 					sList.append(item.getPrimaryKey());
-				//} catch (RemoteException rme) {
-				//	rme.printStackTrace();
-				//}
+				}
+				
 			}
 		}
 		return sList.toString();
@@ -173,7 +173,7 @@ public class IDOUtil {
 
 	public String convertListToCommaseparatedString(Collection coll, boolean whithSimpleQuoteMarks) {
 		StringBuffer sList = new StringBuffer();
-		if (coll != null && coll.size() > 0) {
+		if (coll != null && !coll.isEmpty()) {
 			//String sGroupList = "";
 			Iterator iter = coll.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
@@ -183,11 +183,9 @@ public class IDOUtil {
 				}
 				
 				Object sPK = null;
-				//try {
-				sPK = item.getPrimaryKey();
-				//} catch (RemoteException rme) {
-				//	rme.printStackTrace();
-				//}
+				if(item!=null) {
+					sPK = item.getPrimaryKey();
+				}
 				
 				if (sPK != null) {
 					if (whithSimpleQuoteMarks) {
