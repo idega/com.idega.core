@@ -26,6 +26,7 @@ public class LocaleSwitcher implements IWEventListener{
 
 
 
+
   public void actionPerformed(ModuleInfo modinfo){
     String localeValue = modinfo.getParameter(languageParameterString);
     if(localeValue!=null){
