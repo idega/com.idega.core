@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.11 2003/10/03 01:41:58 tryggvil Exp $
+ * $Id: IWProperty.java,v 1.12 2004/01/27 12:36:55 laddi Exp $
 
  *
 
@@ -16,6 +16,8 @@
 
  */
 package com.idega.idegaweb;
+import java.text.Collator;
+
 import com.idega.xml.XMLElement;
 /**
 
@@ -24,7 +26,7 @@ import com.idega.xml.XMLElement;
  * @version 0.8 - Under development
 
  */
-public class IWProperty
+public class IWProperty implements Comparable
 {
 	private XMLElement propertyElement;
 	private IWPropertyList parentList;
@@ -473,5 +475,20 @@ public class IWProperty
 	public String toString()
 	{
 		return getValue();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object o) {
+		int returner = 0;
+		if (o instanceof IWProperty) {
+			IWProperty object = (IWProperty) o;
+			returner = Collator.getInstance().compare(this.getName(), object.getName());
+			if (returner == 0) {
+				returner = Collator.getInstance().compare(this.getValue(), object.getValue());
+			}
+		}
+		return returner;
 	}
 }
