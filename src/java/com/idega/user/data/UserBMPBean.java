@@ -1108,7 +1108,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		query.append(" ( ");
 		//name	
-		if(firstName!=null || middleName!=null || lastName!=null ){
+		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
 			query.append(" ( ")
 			.append(getUserNameSearchString(firstName,middleName,lastName,operator))
 			.append(" ) ");
