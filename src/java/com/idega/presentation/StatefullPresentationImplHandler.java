@@ -74,9 +74,6 @@ public class StatefullPresentationImplHandler {
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
       }
-      catch (SQLException sql) {
-        throw new RuntimeException(sql.getMessage());
-      }
     }
     return _presentationState;
   }
