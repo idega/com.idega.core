@@ -12,6 +12,8 @@ import java.util.logging.LogManager;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -40,13 +42,22 @@ import com.idega.util.database.PoolManager;
  * Copyright: Copyright (c) 2002-2004 idega software
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
-public class IWMainApplicationStarter {
+public class IWMainApplicationStarter implements ServletContextListener  {
 	
 	IWMainApplication iwma;
 	
+	public IWMainApplicationStarter(){
+	    
+	}
 	
 	public IWMainApplicationStarter(ServletContext context){
-	    AppServer appServer = AppServerDetector.setAppServerForApplication(context);
+	    initialize(context);
+	}
+	/**
+     * @param context
+     */
+    private void initialize(ServletContext context) {
+        AppServer appServer = AppServerDetector.setAppServerForApplication(context);
 		IWMainApplication _iwma = new IWMainApplication(context,appServer);
 		_iwma.setApplicationServer(appServer);
 		iwma=_iwma;
@@ -67,8 +78,25 @@ public class IWMainApplicationStarter {
 		    sendStartMessage("WARNING! This Application Server ("+serverInfo+") is not officially supported by idegaWeb");
 		}
 		startup();
-	}
-	//debug
+    }
+    
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     */
+    public void contextInitialized(ServletContextEvent event) {
+        initialize(event.getServletContext());
+    }
+    
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     */
+    public void contextDestroyed(ServletContextEvent event) {
+        sendShutdownMessage("Destroying IdegaWebStarterServlet");
+        shutdown();
+        sendShutdownMessage("Destroyed IdegaWebStarterServlet");
+    }
+    
+    //debug
 	private static String propertiesfile;
 	//public PoolManager poolMgr;
 	public void startup() {
@@ -238,59 +266,63 @@ public class IWMainApplicationStarter {
 	}
 
 	protected void setApplicationVariables(IWMainApplication application){
+	    if (application.getSettings().getIfUsePreparedStatement()) {
+			application.getSettings().setUsePreparedStatement(true);
+			sendStartMessage("Using prepared statements");
+	    }
 		if (application.getSettings().getIfDebug()) {
-					application.getSettings().setDebug(true);
-					sendStartMessage("Debug mode is active");
-				}
-				if (application.getSettings().getIfAutoCreateStrings()) {
-					application.getSettings().setAutoCreateStrings(true);
-					sendStartMessage("AutoCreateLocalizedStrings is active");
-				}
-				if (application.getSettings().getIfAutoCreateProperties()) {
-					application.getSettings().setAutoCreateProperties(true);
-					sendStartMessage("AutoCreateProperties is active");
-				}
-				if (application.getSettings().getIfEntityBeanCaching()) {
-					IDOContainer.getInstance().setBeanCaching(true);
-					sendStartMessage("EntityBeanCaching Active");
-				}
-				if (application.getSettings().getIfEntityQueryCaching()) {
-					IDOContainer.getInstance().setQueryCaching(true);
-					sendStartMessage("EntityQueryCaching Active");
-				}
-				if (application.getSettings().getIfEntityAutoCreate()) {
-					EntityControl.setAutoCreationOfEntities(true);
-					sendStartMessage("EntityAutoCreation Active");
-				}
-				else {
-					sendStartMessage("EntityAutoCreation Not Active");
-				}
-				String userSystem = iwma.getSettings().getProperty("IW_USER_SYSTEM");
-				if(userSystem!=null){
-					if(userSystem.equalsIgnoreCase("OLD")){
-						sendStartMessage("Using Old idegaWeb User System");
-						LoginBusinessBean.USING_OLD_USER_SYSTEM=true;
-						IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);	
-					}
-				}
-				String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
-				if (accControlType != null) {
-					com.idega.presentation.Block.usingNewAcessControlSystem = true;
-				}
-				String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
-				if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
-					com.idega.presentation.text.Link.usingEventSystem = true;
-				}
-				String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
-				if (usingNewURLStructure != null && !"false".equalsIgnoreCase(usingNewURLStructure)) {
-					sendStartMessage("Using new URL Scheme");
-					IWMainApplication.USE_NEW_URL_SCHEME=true;
-				}
-				String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
-				if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
-					sendStartMessage("Using JSF rendering");
-					PresentationObject.USE_JSF_RENDERING=true;
-				}
+			application.getSettings().setDebug(true);
+			sendStartMessage("Debug mode is active");
+		}
+		if (application.getSettings().getIfAutoCreateStrings()) {
+			application.getSettings().setAutoCreateStrings(true);
+			sendStartMessage("AutoCreateLocalizedStrings is active");
+		}
+		if (application.getSettings().getIfAutoCreateProperties()) {
+			application.getSettings().setAutoCreateProperties(true);
+			sendStartMessage("AutoCreateProperties is active");
+		}
+		if (application.getSettings().getIfEntityBeanCaching()) {
+			IDOContainer.getInstance().setBeanCaching(true);
+			sendStartMessage("EntityBeanCaching Active");
+		}
+		if (application.getSettings().getIfEntityQueryCaching()) {
+			IDOContainer.getInstance().setQueryCaching(true);
+			sendStartMessage("EntityQueryCaching Active");
+		}
+		if (application.getSettings().getIfEntityAutoCreate()) {
+			EntityControl.setAutoCreationOfEntities(true);
+			sendStartMessage("EntityAutoCreation Active");
+		}
+		else {
+			sendStartMessage("EntityAutoCreation Not Active");
+		}
+		String userSystem = iwma.getSettings().getProperty("IW_USER_SYSTEM");
+		if(userSystem!=null){
+			if(userSystem.equalsIgnoreCase("OLD")){
+				sendStartMessage("Using Old idegaWeb User System");
+				LoginBusinessBean.USING_OLD_USER_SYSTEM=true;
+				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);	
+			}
+		}
+		String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
+		if (accControlType != null) {
+			com.idega.presentation.Block.usingNewAcessControlSystem = true;
+		}
+		String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
+		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
+			com.idega.presentation.text.Link.usingEventSystem = true;
+		}
+		String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
+		if (usingNewURLStructure != null && !"false".equalsIgnoreCase(usingNewURLStructure)) {
+			sendStartMessage("Using new URL Scheme");
+			IWMainApplication.USE_NEW_URL_SCHEME=true;
+		}
+		String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
+		if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
+			sendStartMessage("Using JSF rendering");
+			PresentationObject.USE_JSF_RENDERING=true;
+		}
 	}
 	
 	
@@ -362,7 +394,7 @@ public class IWMainApplicationStarter {
 		rfregistry.registerRefactoredClass("com.idega.core.data.PhoneType","com.idega.core.contact.data.PhoneType");
 		rfregistry.registerRefactoredClass("com.idega.core.data.CountryCode","com.idega.core.contact.data.CountryCode");
 
-		rfregistry.registerRefactoredClass("com.idega.core.data.ICLanaguage","com.idega.core.localisation.data.ICLanaguage");
+		rfregistry.registerRefactoredClass("com.idega.core.data.ICLanguage","com.idega.core.localisation.data.ICLanguage");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICLocale","com.idega.core.localisation.data.ICLocale");
 
 		rfregistry.registerRefactoredClass("com.idega.core.data.Address","com.idega.core.location.data.Address");

@@ -210,6 +210,21 @@ public class IWMainApplicationSettings extends IWPropertyList {
 			return Boolean.valueOf(value).booleanValue();
 		}
 	}
+	public void setUsePreparedStatement(boolean usage) {
+		this.setProperty("PreparedStatement", usage);
+		com.idega.data.DatastoreInterface.usePreparedStatement = usage;
+	}
+	public boolean getIfUsePreparedStatement() {
+		String value = getProperty("PreparedStatement");
+		boolean ret = false;
+		if (value == null) {
+			ret =  false;
+		} else {
+			ret = Boolean.valueOf(value).booleanValue();
+		}
+		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
+		return ret;
+	}
 	public static void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
 		com.idega.data.EntityFinder.debug = debugFlag;
