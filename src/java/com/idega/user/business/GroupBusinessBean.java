@@ -1091,7 +1091,8 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   		//TODO update the group
   		group.setName(name);
   		group.setDescription(description);
-  		group.setGroupType(type);
+  		//don't overwrite the type
+  		//group.setGroupType(type);
   		group.setAbbrevation(abbr);
   		if(uniqueID!=null){
   			group.setUniqueId(uniqueID);
@@ -2441,10 +2442,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/25 18:30:21 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/01/13 19:51:23 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.88 $
+	 * @version $Revision: 1.89 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
