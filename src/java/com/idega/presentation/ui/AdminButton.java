@@ -20,16 +20,19 @@ public class AdminButton extends GenericButton{
 //private Image defaultImage;
 //private Image onMouseOverImage;
 //private Image onClickImage;
-private String adminWindowPage=IWMainApplication.windowOpenerURL;
+//private String adminWindowPage=IWMainApplication.windowOpenerURL;
+private String adminWindowPage;
 private String sessionStorageName=IWMainApplication.windowOpenerParameter;
 
 private GenericButton button;
 private Link link;
 private JModuleAdminWindow windowStored;
-/*public AdminButton(){
-}*/
+public AdminButton(){
+  adminWindowPage = IWContext.getInstance().getApplication().getWindowOpenerURI();
+}
 
 public AdminButton(String displayText,JModuleAdminWindow adminWindow){
+        this();
         windowStored=adminWindow;
         adminWindow.setURL(adminWindowPage);
         button = new GenericButton("",displayText);
@@ -38,6 +41,7 @@ public AdminButton(String displayText,JModuleAdminWindow adminWindow){
 }
 
 public AdminButton(Image defaultImage,JModuleAdminWindow adminWindow){
+        this();
         windowStored=adminWindow;
         adminWindow.setURL(adminWindowPage);
         link = new Link(defaultImage,adminWindow);
@@ -46,6 +50,7 @@ public AdminButton(Image defaultImage,JModuleAdminWindow adminWindow){
 
 
 public AdminButton(String adminClassName){
+        this();
   try{
         JModuleAdminWindow adminWindow = (JModuleAdminWindow)Class.forName(adminClassName).newInstance();
         windowStored=adminWindow;
@@ -67,6 +72,7 @@ public AdminButton(String adminClassName){
 }
 
 public AdminButton(String displayText,String adminClassName){
+  this();
   try{
         JModuleAdminWindow adminWindow = (JModuleAdminWindow)Class.forName(adminClassName).newInstance();
         windowStored=adminWindow;
