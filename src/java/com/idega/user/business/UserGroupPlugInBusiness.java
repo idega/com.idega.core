@@ -49,5 +49,13 @@ public interface UserGroupPlugInBusiness extends IBOService {
      * Returns a Collection of Group Objects
      */
     public Collection findGroupsByFields(Collection listViewerFields,Collection finderOperators,Collection listViewerFieldValues)throws RemoteException;
-    public boolean isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
+   
+   /** Checks if the user is assignable from the specified source to the specified target.
+   * 
+   * @param user the user that should be moved.
+   * @param sourceGroup source, the user should belong to the source
+   * @param targetGroup target, where the user should be moved to.
+   * @return a message that says what is wrong else null.
+   */
+    public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
 }

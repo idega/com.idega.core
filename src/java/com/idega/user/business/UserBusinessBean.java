@@ -1663,8 +1663,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return resultGroups;
 	}
 
-  public Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
-    Collection notMovedUsers = new ArrayList();
+  public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
+    Map result = new HashMap();
     GroupBusiness groupBiz = null;
     Group targetGroup = null;
     try {
@@ -1679,47 +1679,95 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     Iterator iterator = userIds.iterator();
     while (iterator.hasNext()) {
-      String userId = (String) iterator.next();
-      User user = getUser(new Integer(userId));
-      boolean successfull = moveUser(user, parentGroup, targetGroup, currentUser);
-      if (! successfull)  {
-        notMovedUsers.add(user);
-      }
+      String userIdAsString = (String) iterator.next();
+      Integer userId = new Integer(userIdAsString); 
+      User user = getUser(userId);
+      String message = moveUser(user, parentGroup, targetGroup, currentUser);
+      // if the user was sucessfully moved the message is null
+      result.put(userId, message);
     }
-    return notMovedUsers;
+    return result;
   }
 
-  public Map moveUsers(Group parentGroup, int targetGroupId, User currentUser) {
-    Collection notMovedUsers = new ArrayList();
-    GroupBusiness groupBiz = null;
-    Group targetGroup = null;
+  public Map moveUsers(Collection groupIds, User currentUser) {
+    Map groupIdGroup = new HashMap();
+    Map userParentGroup = new HashMap();
+    Map userTargetGroup = new HashMap();
+    // get all groups 
     try {
+      GroupBusiness groupBiz = null;
       groupBiz = getGroupBusiness();
-      targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
-    }
-    catch (FinderException ex)  {
-      throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    Collection usersTemp =  getUsersInGroup(parentGroup);
-    // we need remove all
-    Collection users = new ArrayList();
-    users.addAll(usersTemp);
-    Iterator iterator = users.iterator();
-    while (iterator.hasNext()) {
-      User user = (User) iterator.next();
-      boolean successfull = moveUser(user, parentGroup, targetGroup, currentUser);
-      if (! successfull)  {
-        notMovedUsers.add(user);
+      Iterator groupIdsIterator = groupIds.iterator();
+      while (groupIdsIterator.hasNext())  {
+        String groupId = (String) groupIdsIterator.next();
+        int id = Integer.parseInt(groupId);
+        Group group = groupBiz.getGroupByGroupID(id);
+        groupIdGroup.put(groupId, group);
       }
     }
-    users.removeAll(notMovedUsers);
-    Map map = new HashMap();
-    map.put("moved",users);
-    map.put("not_moved",notMovedUsers);    
-    return map;
+    // Finder and RemoteException
+    catch (Exception ex)  {
+      throw new EJBException("Error getting group. Message: "+ex.getMessage());
+    }  
+    // iterate over all users
+    Iterator groupIdsIterator = groupIds.iterator();
+    // iterate over groups
+    while (groupIdsIterator.hasNext())  {
+      String parentGroupId = (String) groupIdsIterator.next();
+      Group parentGroup = (Group) groupIdGroup.get(parentGroupId); 
+      Collection userInGroup = getUsersInGroup(parentGroup);
+      Iterator userIterator = userInGroup.iterator();
+      // iterate over users within a group
+      while (userIterator.hasNext())  {
+        Group possibleTarget= null;
+        boolean possibleTargetAlreadySet = false;
+        User user = (User) userIterator.next();
+        // test if the user is assignable to one and only one group
+        Iterator targetGroupIds = groupIds.iterator();
+        while (targetGroupIds.hasNext())  {
+          String targetGroupId = (String) targetGroupIds.next(); 
+          // skip the own group
+          if (! targetGroupId.equals(parentGroupId)) {
+            Group targetGroup = (Group) groupIdGroup.get(targetGroupId);
+            if (isUserAssignableToGroup(user, parentGroup, targetGroup) == null) {
+              if (! possibleTargetAlreadySet) {
+                possibleTarget = targetGroup;
+                possibleTargetAlreadySet = true;
+              }
+              else {
+                possibleTarget = null;
+              }
+            }
+          }
+        }
+        userParentGroup.put(user, parentGroup);
+        userTargetGroup.put(user, possibleTarget); 
+      }
+    }
+    
+    // perform moving
+    Map result = new HashMap();
+    Iterator userIterator = userTargetGroup.entrySet().iterator();
+    while (userIterator.hasNext())  {
+      Map.Entry entry = (Map.Entry) userIterator.next();
+      User user = (User) entry.getKey();
+      Group target = (Group) entry.getValue();
+      Group source = (Group) userParentGroup.get(user);
+      String sourceId = ((Integer) source.getPrimaryKey()).toString();
+      Map map = (Map) result.get(sourceId);
+      if (map == null)  {
+        map = new HashMap();
+        result.put(sourceId, map);
+      } 
+      if (target != null) {        
+        moveUser(user, source, target, currentUser);
+        map.put(( (Integer) user.getPrimaryKey()).toString(), null);
+      }
+      else {
+        map.put(( (Integer) user.getPrimaryKey()).toString(), "");
+      }
+    }
+    return result;
   }
 
 
@@ -1730,18 +1778,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   /**
    * @param currentUser user that is responsible for the action
    */ 
-  private boolean moveUser(User user, Group parentGroup, Group targetGroup, User currentUser)  {
+  private String moveUser(User user, Group parentGroup, Group targetGroup, User currentUser)  {
     int userId = ((Integer) user.getPrimaryKey()).intValue();
     int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
-    int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
-    // target and source are the same do nothing
-    if (parentGroupId == targetGroupId) {
-      return false;
-    }
     // it is allowed to add this user to the group?
-    // check age and gender
-    if (! isUserAssignableToGroup(user, parentGroup, targetGroup)) {
-      return false;
+    // check age and gender, check if source and target are the same
+    String message;
+    if ((message = isUserAssignableToGroup(user, parentGroup, targetGroup)) != null) {
+      return message;
     }
     int primaryGroupId = user.getPrimaryGroupID();
     // Transaction starts
@@ -1752,6 +1796,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       boolean targetIsSetAsPrimaryGroup;
       if (targetIsSetAsPrimaryGroup = (parentGroupId == primaryGroupId))  {
         user.setPrimaryGroup(targetGroup);
+        user.store();
       }
       // remove user from parent group
       // IMPORTANT
@@ -1784,27 +1829,29 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       catch (javax.transaction.SystemException sy) {
         sy.printStackTrace(System.err);
       }
-      return false;
+      // this is an unusual error therefore localization is it not necessary 
+      return "Transaction failed";
     }
-    return true;
+    return null;
   }
 
-  private boolean isUserAssignableToGroup(User user, Group parentGroup, Group targetGroup) {
+  private String isUserAssignableToGroup(User user, Group parentGroup, Group targetGroup) {
     try {
       Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
       Iterator iter = plugins.iterator();
       while (iter.hasNext()) {
         UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
         UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
-        if (! pluginBiz.isUserAssignableFromGroupToGroup(user, parentGroup, targetGroup)) {  
-          return false;
+        String message;
+        if ((message = pluginBiz.isUserAssignableFromGroupToGroup(user, parentGroup, targetGroup)) != null) {  
+          return message;
         }    
       }
     }
     catch (Exception ex)  {
       throw new RuntimeException(ex.getMessage());
     }
-    return true;
+    return null;
   }
     
     
