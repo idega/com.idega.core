@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.48 2004/04/16 10:39:22 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.49 2004/05/11 18:04:35 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -8,24 +8,23 @@
  */
 package com.idega.presentation.ui;
 
-import com.idega.business.InputHandler;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-
-import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Script;
-
-import com.idega.util.IWTimestamp;
-import com.idega.util.text.TextSoap;
-
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import com.idega.business.InputHandler;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
+import com.idega.util.IWTimestamp;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -61,16 +60,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
   
   final static int SYSTEM_LAUNCH_YEAR = 2004;
   
-  // added by thomas
-  // Flag that indicates if the drop down menus are up to date or not
-  // This flag is set to true if and only if 
-  // the method initilizeValues was called.
-  // The flag is set to false if one of the methods 
-  // setDay, setMonth, setYear and setYearRange is called.
-  // Within the print method the flag is checked. If it is false 
-  // the method initilizeValues is invoked. The problem is that
-  // TabbedPropertyWindow seems not to call the main method. 
-  private boolean dropDownMenusUpToDate = true;
   // added by thomas
   // Flag that indicates if the dropdown menu should contain the null value (no date) or not.
   // Caution: If this flag is set to true it is not possible to choose not a date.
@@ -276,7 +265,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
   }
 
   public void setYear(int year) {
-    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     // Gimmi 13.10.2002
@@ -314,7 +302,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
 	 * @param month
 	 */
   public void setMonth(String month) {
-    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     if (month.length() > 1) {
@@ -329,7 +316,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
   }
 
   public void setDay(String day) {
-    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     if (day.length() > 1) {
@@ -356,7 +342,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
   }
 
   public void setYearRange(int _fromYear, int _toYear) {
-    dropDownMenusUpToDate = false;
     this._fromYear = _fromYear;
     this._toYear = _toYear;
   }
@@ -403,7 +388,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
   }
 
   private void initilizeValues() {
-    dropDownMenusUpToDate = true; // because this method was called
     if (_setMonth != null) {
       _theMonth.setSelectedElement(_setMonth);
     }
@@ -661,46 +645,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
     }
   }
 
-  /*public void print(IWContext iwc) throws Exception {
-    if (!dropDownMenusUpToDate)
-      setSetValues();
-    if (_keepStatusOnAction)
-    	handleKeepStatus(iwc); 
-      
-    super.print(iwc);
-
-    if (_isDisabled) {
-      _theYear.setDisabled(_isDisabled);
-      _theMonth.setDisabled(_isDisabled);
-      _theDay.setDisabled(_isDisabled);
-    }
-
-    if (_displayDayLast) {
-      if (this._showYear) {
-        _theYear._print(iwc);
-      }
-
-      _theMonth._print(iwc);
-
-      if (_isShowDay) {
-        _theDay._print(iwc);
-      }
-    } else {
-      if (_isShowDay) {
-        _theDay._print(iwc);
-      }
-
-      _theMonth._print(iwc);
-
-      if (this._showYear) {
-        _theYear._print(iwc);
-      }
-    }
-
-    _theWholeDate._print(iwc);
-    _script._print(iwc);
-  }*/
-
   /**
    * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
    */
@@ -795,4 +739,16 @@ public class DateInput extends InterfaceObject implements InputHandler{
 		else
 			return null;
 	}
+	
+	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
+		String value = (String) Collections.min(values);
+		return getHandlerObject(name, value, iwc);
+	}
+
+
+	public Object convertSingleResultingObjectToType(Object value, String className) {
+		return value;
+	}
+	
 }
+

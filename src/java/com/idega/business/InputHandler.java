@@ -1,5 +1,7 @@
 package com.idega.business;
 
+import java.util.Collection;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 
@@ -18,16 +20,18 @@ public interface InputHandler {
 	 * @return Returns an instance of the GUI Widget that handles the input and is responsible for creating the request
 	 * parameters that are used for the method getResultingObject after the form is sent.
 	 */
-	public PresentationObject getHandlerObject(String name,String stringValue,IWContext iwc);
-
+	PresentationObject getHandlerObject(String name,String value,IWContext iwc);
+	
+	PresentationObject getHandlerObject(String name, Collection values, IWContext iwc);
+	
 	/**
 	 * This method is called when the request is made and is given the String[] values from the request that your
 	 * handlerobject should have created for the form. Valid return objects are Strings,Integers,IDOEntities
 	 * and collection of those types.
 	 * @return Creates object of the expected datatype from the string value and returns it as an Object
 	 */
-	public Object getResultingObject(String[] value, IWContext iwc) throws Exception;
-	
+	Object getResultingObject(String[] value, IWContext iwc) throws Exception;
+
 	/**
 	 * This method is supplied with the resulting object from the method getResultingObject and should create a
 	 * string representation of that data. This string is then displayed to the user.
@@ -35,5 +39,8 @@ public interface InputHandler {
 	 * @param iwc
 	 * @return a string representation for the resulting object
 	 */
-	public String getDisplayForResultingObject(Object value, IWContext iwc);
+	String getDisplayForResultingObject(Object value, IWContext iwc);
+
+	Object convertSingleResultingObjectToType(Object value, String className);
+	
 }
