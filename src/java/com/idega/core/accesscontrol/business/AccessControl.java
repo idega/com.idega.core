@@ -1380,14 +1380,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   public void setCurrentUserAsOwner(IBPage page, IWUserContext iwc)throws Exception {
     User user = iwc.getUser();
-    System.out.println("User = "+ user);
+//    System.out.println("User = "+ user);
     if(user != null){
       int groupId = -1;
       groupId = user.getPrimaryGroupID();
       if(groupId == -1){
         groupId = user.getGroupID();
       }
-      System.out.println("Group = "+ groupId);
+//      System.out.println("Group = "+ groupId);
       if(groupId != -1){
           setAsOwner(page,groupId,iwc);
 //        setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_EDIT,Boolean.TRUE);

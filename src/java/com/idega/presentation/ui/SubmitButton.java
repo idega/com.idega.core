@@ -30,28 +30,27 @@ private String headerText;
 private static final String emptyString = "";
 
 public SubmitButton(){
-	this(emptyString,"Submit");
-	setName(getDefaultName());
+  this(emptyString,"Submit");
+  setName(getDefaultName());
 }
 
 public SubmitButton(Image defaultImage){
-	this(defaultImage,"default");
-	setName(getDefaultName());
+  this(defaultImage,"default");
+  setName(getDefaultName());
   this.parameterName=getDefaultName();
 }
 
 public SubmitButton(Image defaultImage, String name){
-	this(name,"default");
-	this.setButtonImage(defaultImage);
+  this(defaultImage, name, "");
 }
 
 public SubmitButton(Image defaultImage, String name, String value){
-	this(name,value);
-	this.setButtonImage(defaultImage);
+  this(name,value);
+  this.setButtonImage(defaultImage);
   this.setName(this.getID());
-        this.parameterName=name;
-        this.parameterValue=value;
-        usingControlParameter=true;
+  this.parameterName=name;
+  this.parameterValue=value;
+  usingControlParameter=true;
 }
 
 /**

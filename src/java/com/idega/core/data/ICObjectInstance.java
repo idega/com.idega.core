@@ -28,7 +28,7 @@ import com.idega.core.business.ICObjectBusiness;
 
 */
 
-public class ICObjectInstance extends TreeableEntity {
+public class ICObjectInstance extends GenericEntity {
 
 
 
@@ -41,7 +41,7 @@ public class ICObjectInstance extends TreeableEntity {
   }
 
   public static final String IBPAGEID = "ib_page_id";
-
+  public static final String COLUMNNAME_PARENTID = "dpt_parent_id";
 
 
   public void initializeAttributes(){
@@ -49,6 +49,7 @@ public class ICObjectInstance extends TreeableEntity {
     addAttribute(getIDColumnName());
     addManyToOneRelationship("ic_object_id","Module",ICObject.class);
     addManyToOneRelationship(IBPAGEID,"Page",com.idega.builder.data.IBPage.class);
+    addManyToOneRelationship(COLUMNNAME_PARENTID,"parentId",ICObjectInstance.class);
   }
 
 
@@ -91,12 +92,20 @@ public class ICObjectInstance extends TreeableEntity {
 
         }
 
-  public int getIBPageID(int id){
+  public int getIBPageID(){
     return getIntColumnValue(IBPAGEID);
   }
 
   public void setIBPageID(int id){
     this.setColumn(IBPAGEID,id);
+  }
+
+  public int getParentInstanceID(){
+    return getIntColumnValue(COLUMNNAME_PARENTID);
+  }
+
+  public void setParentInstanceID(int id){
+    this.setColumn(COLUMNNAME_PARENTID,id);
   }
 
 
@@ -297,7 +306,7 @@ public class ICObjectInstance extends TreeableEntity {
           this.setIBPageID(id);
         }
         catch(NumberFormatException e){
-
+          System.err.println(e.getMessage());
         }
       }
 }
