@@ -121,7 +121,11 @@ class BundleLocalizationMap implements Map {
 	}
 
 	public Object put(Object key, Object value) {
-		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
+		//throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
+		Object oldValue = get(key);
+		((IWResourceBundle) getResourceBundle()).setLocalizedString((String)key,(String)value);
+		
+		return oldValue;
 	}
 
 	public void clear() {
