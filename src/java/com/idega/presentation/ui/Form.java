@@ -228,7 +228,7 @@ public class Form extends InterfaceObjectContainer {
 	/**
 	 * Converts the set action POST/GET to an HTTPS url
 	 **/
-	private void contvertActionToHTTPS(IWContext iwc) {
+	private void convertActionToHTTPS(IWContext iwc) {
 		String action = getAction();
 		if (action != null) {
 			if (action.startsWith(HTTP)) {
@@ -421,7 +421,7 @@ public class Form extends InterfaceObjectContainer {
 			setAction(getIdegaSpecialRequestURI(iwc));
 		}
 		if (sendToHTTPS) {
-			contvertActionToHTTPS(iwc);
+			convertActionToHTTPS(iwc);
 		}
 
 		if (getLanguage().equals("HTML")) {
