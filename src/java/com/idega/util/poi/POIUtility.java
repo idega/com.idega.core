@@ -86,7 +86,7 @@ public class POIUtility {
 			InputStream inStream = new FileInputStream(file);
 			ICFile icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
 			icFile.setFileValue(inStream);
-			icFile.setMimeType("application/x-msexcel");
+			icFile.setMimeType("application/vnd.ms-excel");
 			icFile.setName(fileName);
 			icFile.store();
 			
