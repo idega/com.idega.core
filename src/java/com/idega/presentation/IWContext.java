@@ -130,6 +130,15 @@ public boolean isIE(){
   }
 }
 
+public boolean isOpera(){
+  if (getUserAgent().indexOf("Opera") != -1){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
 public boolean isSearchEngine(){
   if (getUserAgent().indexOf("Ultraseek") != -1){
     return true;

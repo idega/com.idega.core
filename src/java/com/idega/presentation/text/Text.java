@@ -173,8 +173,16 @@ public void setItalic(){
 	italic=true;
 }
 
+public void setItalic(boolean italic) {
+  this.italic=italic;
+}
+
 public void setUnderline(){
 	underline=true;
+}
+
+public void setUnderline(boolean underline) {
+  this.underline=underline;
 }
 
 public String getText(){
