@@ -76,9 +76,8 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 		}
 		else{
-			theReturn = "CLOB";
+			theReturn = "LONGVARCHAR("+maxlength+")";
 		}
-
     }
     else if (javaClassName.equals("java.lang.Boolean")){
       theReturn = "CHAR(1)";
@@ -162,7 +161,10 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
-      deleteTrigger(entity);
+      /**
+       * @todo change
+       */
+      //deleteTrigger(entity);
       deleteSequence(entity);
       deleteTable(entity);
 
