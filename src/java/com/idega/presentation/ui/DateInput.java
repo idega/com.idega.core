@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.31 2003/05/27 19:57:54 laddi Exp $
+ * $Id: DateInput.java,v 1.32 2003/08/07 16:03:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -549,7 +549,7 @@ public class DateInput extends InterfaceObjectContainer {
 				if (script.getFunction("checkSubmit") == null) {
 					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
 				}
-				script.addToFunction("checkSubmit", "if (checkLatestDate (findObj('" + getName() + "'),"+_earliestDate.getTime()+", '"+_earliestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
+				script.addToFunction("checkSubmit", "if (checkLatestDate (findObj('" + getName() + "'),"+_latestDate.getTime()+", '"+_latestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
 				
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function checkLatestDate(input, date, warnMsg) {").append("\n\t");
