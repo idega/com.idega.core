@@ -6,6 +6,8 @@ package com.idega.util.text;
 import java.util.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+
+import com.ibm.icu.text.UnicodeToHexTransliterator;
 //@todo use regular expressions such as import com.stevesoft.pat.*;
 
 /**
@@ -822,186 +824,86 @@ public class TextSoap {
 	 * @return String
 	 */
 	public static String convertSpecialCharacters(String stringToConvert) {
+		UnicodeToHexTransliterator transliterator = new UnicodeToHexTransliterator();
 		StringBuffer sb = new StringBuffer();
 		int n = stringToConvert.length();
 		for (int i = 0; i < n; i++) {
 			char c = stringToConvert.charAt(i);
-			switch (c) {
-				case '<' :
-					sb.append("&lt;");
-					break;
-				case '>' :
-					sb.append("&gt;");
-					break;
-				case '&' :
-					sb.append("&amp;");
-					break;
-				case 'á' :
-					sb.append("&aacute;");
-					break;
-				case 'Á' :
-					sb.append("&Aacute;");
-					break;
-				case 'à' :
-					sb.append("&agrave;");
-					break;
-				case 'À' :
-					sb.append("&Agrave;");
-					break;
-				case 'â' :
-					sb.append("&acirc;");
-					break;
-				case 'Â' :
-					sb.append("&Acirc;");
-					break;
-				case 'ä' :
-					sb.append("&auml;");
-					break;
-				case 'Ä' :
-					sb.append("&Auml;");
-					break;
-				case 'å' :
-					sb.append("&aring;");
-					break;
-				case 'Å' :
-					sb.append("&Aring;");
-					break;
-				case '›' :
-					sb.append("&eth;");
-					break;
-				case '‹' :
-					sb.append("&ETH;");
-					break;
-				case 'ç' :
-					sb.append("&ccedil;");
-					break;
-				case 'Ç' :
-					sb.append("&Ccedil;");
-					break;
-				case 'é' :
-					sb.append("&eacute;");
-					break;
-				case 'É' :
-					sb.append("&Eacute;");
-					break;
-				case 'è' :
-					sb.append("&egrave;");
-					break;
-				case 'È' :
-					sb.append("&Egrave;");
-					break;
-				case 'ê' :
-					sb.append("&ecirc;");
-					break;
-				case 'Ê' :
-					sb.append("&Ecirc;");
-					break;
-				case 'ë' :
-					sb.append("&euml;");
-					break;
-				case 'Ë' :
-					sb.append("&Euml;");
-					break;
-				case 'ï' :
-					sb.append("&iuml;");
-					break;
-				case 'Ï' :
-					sb.append("&Iuml;");
-					break;
-				case 'í' :
-					sb.append("&iacute;");
-					break;
-				case 'Í' :
-					sb.append("&Iacute;");
-					break;
-				case 'ó' :
-					sb.append("&oacute;");
-					break;
-				case 'Ó' :
-					sb.append("&Oacute;");
-					break;
-				case 'ô' :
-					sb.append("&ocirc;");
-					break;
-				case 'Ô' :
-					sb.append("&Ocirc;");
-					break;
-				case 'ø' :
-					sb.append("&oslash;");
-					break;
-				case 'Ø' :
-					sb.append("&Oslash;");
-					break;
-				case 'ß' :
-					sb.append("&szlig;");
-					break;
-				case 'ú' :
-					sb.append("&uacute;");
-					break;
-				case 'Ú' :
-					sb.append("&Uacute;");
-					break;
-				case 'ù' :
-					sb.append("&ugrave;");
-					break;
-				case 'Ù' :
-					sb.append("&Ugrave;");
-					break;
-				case 'û' :
-					sb.append("&ucirc;");
-					break;
-				case 'Û' :
-					sb.append("&Ucirc;");
-					break;
-				case 'ü' :
-					sb.append("&uuml;");
-					break;
-				case 'Ü' :
-					sb.append("&Uuml;");
-					break;
-				case '‡' :
-					sb.append("&yacute;");
-					break;
-				case '†' :
-					sb.append("&Yacute;");
-					break;
-				case 'ﬂ' :
-					sb.append("&thorn;");
-					break;
-				case 'ﬁ' :
-					sb.append("&THORN;");
-					break;
-				case 'æ' :
-					sb.append("&aelig;");
-					break;
-				case 'Æ' :
-					sb.append("&AElig;");
-					break;
-				case 'ö' :
-					sb.append("&ouml;");
-					break;
-				case 'Ö' :
-					sb.append("&Ouml;");
-					break;
-				case '®' :
-					sb.append("&reg;");
-					break;
-				case '©' :
-					sb.append("&copy;");
-					break;
-				case '€' :
-					sb.append("&euro;");
-					break;
-				case ' ' :
-					sb.append("&nbsp;");
-					break;
-				case '\"' :
-					sb.append("&quot;");
-					break;
-				default :
-					sb.append(c);
-					break;
-			}
+			String unicode = transliterator.transliterate(String.valueOf(c));
+			System.out.println(c+": "+unicode);
+			
+			if (unicode.equalsIgnoreCase("\\u003C"))
+				sb.append("&lt;");
+			else if (unicode.equals("\\u003E"))
+				sb.append("&gt;");
+			else if (unicode.equals("\\u0026"))
+				sb.append("&amp;");
+			else if (unicode.equals("\\u00E1"))
+				sb.append("&aacute;");
+			else if (unicode.equals("\\u00C1"))
+				sb.append("&Aacute;");
+			else if (unicode.equals("\\u00F0"))
+				sb.append("&eth;");
+			else if (unicode.equals("\\u00D0"))
+				sb.append("&ETH;");
+			else if (unicode.equals("\\u00E4"))
+				sb.append("&auml;");
+			else if (unicode.equals("\\u00C4"))
+				sb.append("&Auml;");
+			else if (unicode.equals("\\u00E5"))
+				sb.append("&aring;");
+			else if (unicode.equals("\\u00C5"))
+				sb.append("&Aring;");
+			else if (unicode.equals("\\u00E9"))
+				sb.append("&eacute;");
+			else if (unicode.equals("\\u00C9"))
+				sb.append("&Eacute;");
+			else if (unicode.equals("\\u00ED"))
+				sb.append("&iacute;");
+			else if (unicode.equals("\\u00CD"))
+				sb.append("&Iacute;");
+			else if (unicode.equals("\\u00F3"))
+				sb.append("&oacute;");
+			else if (unicode.equals("\\u00D3"))
+				sb.append("&Oacute;");
+			else if (unicode.equals("\\u00F8"))
+				sb.append("&oslash;");
+			else if (unicode.equals("\\u00D8"))
+				sb.append("&Oslash;");
+			else if (unicode.equals("\\u00DF"))
+				sb.append("&szlig;");
+			else if (unicode.equals("\\u00FA"))
+				sb.append("&uacute;");
+			else if (unicode.equals("\\u00DA"))
+				sb.append("&Uacute;");
+			else if (unicode.equals("\\u00FC"))
+				sb.append("&uuml;");
+			else if (unicode.equals("\\u00DC"))
+				sb.append("&Uuml;");
+			else if (unicode.equals("\\u00FD"))
+				sb.append("&yacute;");
+			else if (unicode.equals("\\u00DD"))
+				sb.append("&Yacute;");
+			else if (unicode.equals("\\u00FE"))
+				sb.append("&thorn;");
+			else if (unicode.equals("\\u00DE"))
+				sb.append("&THORN;");
+			else if (unicode.equals("\\u00E6"))
+				sb.append("&aelig;");
+			else if (unicode.equals("\\u00C6"))
+				sb.append("&AElig;");
+			else if (unicode.equals("\\u00F6"))
+				sb.append("&ouml;");
+			else if (unicode.equals("\\u00D6"))
+				sb.append("&Ouml;");
+			//else if (unicode.equals("\\u0020"))
+				//sb.append("&nbsp;");
+			else if (unicode.equals("\\u0022"))
+				sb.append("&quot;");
+			else if (unicode.equals("\\u0027"))
+				sb.append("&apos;");
+			else
+				sb.append(c);
 		}
 		return sb.toString();
 	}
