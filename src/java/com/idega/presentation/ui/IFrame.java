@@ -141,7 +141,10 @@ public IFrame(String name,String URL,int width,int height){
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
       print("<iframe name=\""+getName()+"\""+getAttributeString()+" >");
-      print(super.getContent());
+      String content = super.getContent();
+      if(content!=null){
+        print(content);
+      }
       print("</iframe>");
     }
   }
