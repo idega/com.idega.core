@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.55 2002/11/21 15:57:45 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.56 2002/12/20 16:06:14 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,15 +27,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.Gender;
 import com.idega.util.database.ConnectionBroker;
 /**
-
  * A class to serve as an abstraction of the underlying datastore
-
  *
-
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
  * @version 1.3
-
   */
 public abstract class DatastoreInterface {
 	private static Hashtable interfacesHashtable;
