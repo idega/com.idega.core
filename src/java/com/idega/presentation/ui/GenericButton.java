@@ -34,6 +34,7 @@ public class GenericButton extends GenericInput {
 	
 	private boolean _onClickConfirm = false;
 	private String _confirmMessage;
+	private int _parentPageID = -1;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -80,7 +81,11 @@ public class GenericButton extends GenericInput {
 				addFunction = true;
 			}
 			if (_pageID != -1) {
-				buffer.append("window.location='"+getURLString(iwc, false)+"';").append("\n");
+				buffer.append("window.location='"+getURLString(iwc, _pageID, false)+"';").append("\n");
+				addFunction = true;
+			}
+			if (_parentPageID != -1) {
+				buffer.append("window.location='"+getURLString(iwc, _parentPageID, false)+"';").append("\n");
 				addFunction = true;
 			}
 			if (_fileID != -1) {
@@ -109,7 +114,10 @@ public class GenericButton extends GenericInput {
 					setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 				}
 				if (_pageID != -1) {
-					setOnClick("javascript:window.location='"+getURLString(iwc, true)+"';");
+					setOnClick("javascript:window.location='"+getURLString(iwc, _pageID, true)+"';");
+				}
+				if (_parentPageID != -1) {
+					setOnClick("javascript:window.opener.location='"+getURLString(iwc, _parentPageID, true)+"';window.close();");
 				}
 				if (_fileID != -1) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
@@ -184,6 +192,15 @@ public class GenericButton extends GenericInput {
 			setPageToOpen(page.getID());
 	}
 	
+	public void setParentPageToOpen(int pageID) {
+		_parentPageID = pageID;
+	}
+	
+	public void setParentPageToOpen(ICPage page) {
+		if (page != null && page.getID() != -1)
+			setParentPageToOpen(page.getID());
+	}
+	
 	public void addParameterToWindow(String name, String value) {
 		if (parameterMap == null)
 			parameterMap = new HashMap();
@@ -222,9 +239,9 @@ public class GenericButton extends GenericInput {
 		return TextSoap.convertSpecialCharacters(returnString.toString());
 	}
 	
-	private String getURLString(IWContext iwc, boolean convert) throws Exception{
+	private String getURLString(IWContext iwc, int pageID, boolean convert) throws Exception{
 		BuilderService bservice = getBuilderService(iwc);
-		URLUtil url = new URLUtil(bservice.getPageURI(_pageID), convert);
+		URLUtil url = new URLUtil(bservice.getPageURI(pageID), convert);
 		if (parameterMap != null) {
 			Iterator iter = parameterMap.keySet().iterator();
 			while (iter.hasNext()) {
