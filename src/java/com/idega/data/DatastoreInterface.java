@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.107 2004/08/23 17:21:24 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.108 2004/08/27 19:27:07 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -630,6 +630,7 @@ public abstract class DatastoreInterface {
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey((Integer) ids.get(delete.elementAt(i)));
 						//data.setID();
+						entity.idoRemoveFrom(data);
 						data.remove();
 					}
 				}
