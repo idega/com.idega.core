@@ -108,6 +108,10 @@ public String getUserAgent(){
 	return Request.getHeader("User-agent");
 }
 
+public String getReferrer(){
+	return Request.getHeader("Referer");
+}
+
 public boolean isNetscape(){
 	if (getUserAgent().indexOf("Mozilla") != -1){
 		//if not Internet Explorer then Netscape :)
