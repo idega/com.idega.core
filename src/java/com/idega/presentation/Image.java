@@ -14,7 +14,7 @@ import com.idega.presentation.ui.*;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.util.caching.Cache;
 import com.idega.block.media.servlet.MediaServlet;
-import com.idega.block.media.data.ImageEntity;
+import com.idega.block.image.data.ImageEntity;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 
 
@@ -79,15 +79,15 @@ public Image(String name,String url, String overImageUrl){
 
   this.overImageUrl=overImageUrl;
 
-  setAttribute("onMouseOut","swapImgRestore()");
-  setAttribute("onMouseOver","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
+  setOnMouseOut("swapImgRestore()");
+  setOnMouseOver("swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
 
 public Image(String name,String url, String overImageUrl, String downImageUrl){
   this(name,url,overImageUrl);
 
   this.downImageUrl=downImageUrl;
-  setAttribute("onMouseDown","swapImage('"+getName()+"','','"+downImageUrl+"',1)");
+  setOnMouseDown("swapImage('"+getName()+"','','"+downImageUrl+"',1)");
   //setAttribute("onMouseUp","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
 
@@ -338,9 +338,21 @@ public void setOnClick(String action){
   setAttribute("onClick",action);
 }
 
+public void setOnMouseOver(String action){
+  setAttribute("onMouseOver",action);
+}
+
+public void setOnMouseOut(String action){
+  setAttribute("onMouseOut",action);
+}
+
+public void setOnMouseDown(String action){
+  setAttribute("onMouseDown",action);
+}
+
 public void setOnClickImageURL(String clickImageURL){
   overImageUrl = clickImageURL;
-  setAttribute("onClick","swapImgRestore(); swapImage('"+getName()+"','','"+clickImageURL+"',1)");
+  setOnClick("swapImgRestore(); swapImage('"+getName()+"','','"+clickImageURL+"',1)");
 }
 
 public void setOnClickImage(Image image) {
@@ -353,9 +365,10 @@ public void setOverImageURL(String overImageURL){
 
 public void setOverImage(Image image){
   this.overImageUrl =image.getMediaServletString();
-  setAttribute("onMouseOut","swapImgRestore()");
-  setAttribute("onMouseOver","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
+  setOnMouseOut("swapImgRestore()");
+  setOnMouseOver("swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
+
 
 
 public String getOverImageURL(){

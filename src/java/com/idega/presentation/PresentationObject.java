@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.29 2002/02/25 18:07:20 gummi Exp $
+ * $Id: PresentationObject.java,v 1.30 2002/03/02 17:50:20 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -195,6 +195,14 @@ public class PresentationObject extends Object implements Cloneable {
     }
 
     this.attributes.put((Object) attributeName,(Object) attributeValue);
+  }
+
+  public void removeAttribute(String attributeName){
+    if( attributeName!=null ){
+      if (this.attributes != null) {
+        this.attributes.remove(attributeName);
+      }
+    }
   }
 
   public void setAttribute(String attributeName,boolean attributeValue) {

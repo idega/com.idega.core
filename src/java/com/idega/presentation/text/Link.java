@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.47 2002/02/19 13:06:18 tryggvil Exp $
+ * $Id: Link.java,v 1.48 2002/03/02 17:50:34 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -324,6 +324,7 @@ public class Link extends Text{
     }
   }
 
+
   /**
    *
    */
@@ -381,6 +382,12 @@ public class Link extends Text{
       }
       else{
         setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(text,flip));
+      }
+    }
+
+    if(isImageTab||isImageButton ){
+      if( isSetToSubmitForm() ){
+         ((Image)_obj).removeAttribute("onMouseDown");//so that it doesn't interfere with the link onclick event
       }
     }
 
@@ -902,6 +909,11 @@ public class Link extends Text{
       }
     }
     return false;
+  }
+
+  public boolean isSetToSubmitForm(){
+    if( this._formToSubmit!= null ) return true;
+    else return false;
   }
 
   /**
@@ -1577,11 +1589,10 @@ public class Link extends Text{
     setFinalUrl(HASH);
     if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
        //setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
-      setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value='"+this.getID()+"';document."+form.getID()+".submit();");
-
+      setOnClick("document.forms['"+form.getID()+"']."+IWMainApplication.IWEventSessionAddressParameter+".value='"+this.getID()+"';document.forms['"+form.getID()+"'].submit();");
     }
     else {
-      setOnClick("document."+form.getID()+".submit()");
+      setOnClick("document.forms['"+form.getID()+"'].submit()");
     }
   }
 
