@@ -3892,12 +3892,38 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			throw new IDORemoveRelationshipException(ex, this);
 		}
 	}
+	
+	/**
+	 **Default insert behavior with a many-to-many relationship
+	 *
+	 * * @throws IDOAddRelationshipException if there is no relationship with the given entity or there is an error accessing it
+	 **/	protected void idoAddTo(Class entityToAddTo, Object primaryKey) throws IDOAddRelationshipException {
+		try {
+			IDOEntity entity = IDOLookup.instanciateEntity(entityToAddTo);
+			idoAddTo(getNameOfMiddleTable(entity, this), entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), primaryKey);
+		} catch (Exception e) {
+			throw new IDOAddRelationshipException(e, this);
+		}
+	}
+	/**
+	 **Default insert behavior with a many-to-many relationship
+	 *
+	 * * @throws IDOAddRelationshipException if there is no relationship with the given entity or there is an error accessing it
+	 **/
+	protected void idoAddTo(IDOEntity entity) throws IDOAddRelationshipException {
+
+		try {
+			idoAddTo(getNameOfMiddleTable(entity, this), entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), entity.getPrimaryKey());
+		} catch (Exception e) {
+			throw new IDOAddRelationshipException(e, this);
+		}
+	}	
 	/**
 	**Default insert behavior with a many-to-many relationship
 	*
 	* * @throws IDOAddRelationshipException if there is no relationship with the given entity or there is an error accessing it
 	**/
-	protected void idoAddTo(IDOEntity entity) throws IDOAddRelationshipException {
+	private void idoAddTo(String middleTableName, String sqlFieldName, Object primaryKey) throws IDOAddRelationshipException {
 		/**
 		 * @todo Change implementation
 		 */
@@ -3911,7 +3937,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				String sql = null;
 				//try
 				//{
-				sql = "insert into " + getNameOfMiddleTable(entity, this) + "(" + getIDColumnName() + "," + entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + getKeyValueSQLString(entity.getPrimaryKey()) + ")";
+				sql = "insert into " + middleTableName + "(" + getIDColumnName() + "," + sqlFieldName + ") values(" + getPrimaryKeyValueSQLString() + "," + getKeyValueSQLString(primaryKey) + ")";
 				/*}
 				catch (RemoteException rme)
 				{
