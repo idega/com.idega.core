@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.64 2002/11/05 08:07:58 laddi Exp $
+ *  $Id: Page.java,v 1.65 2002/11/13 11:49:17 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -186,7 +186,7 @@ public class Page extends PresentationObjectContainer {
 			Iterator iter = _styleSheets.iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				buffer.append("<link href=\"" + URL + "\" rel=\"stylesheet\">\n");
+				buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\">\n");
 			}
 			return buffer.toString();
 		}
