@@ -32,7 +32,14 @@ public abstract class TabbedPropertyWindow extends Window {
 
   public void _main(IWContext iwc) throws Exception {
     this.empty();
-    panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
+		if(disposeOfPanel(iwc)){
+			//temp solution
+			panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
+			panel.dispose(iwc);
+		}
+		
+		panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
+    
     if(panel.justConstructed()){
       panel.setAlignment("center");
       panel.setVerticalAlignment("middle");
@@ -63,6 +70,10 @@ public abstract class TabbedPropertyWindow extends Window {
   public abstract String getSessionAddressString();
 
   public abstract void initializePanel( IWContext iwc, TabbedPropertyPanel panel);
+  
+  public boolean disposeOfPanel(IWContext iwc){
+  	return false;
+  }
 
 
 

@@ -98,6 +98,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   }
 
   public void dispose(IWContext iwc){
+  	//this method should also be called if someone presses the "x" close button on a window
+  	//todo implement by adding a frame around the panel and do a javascript onunload to call this method via an url
     iwc.getSession().removeAttribute(attributeString);
     tpane.dispose(iwc);
     ok.endEvent(iwc);
