@@ -145,6 +145,7 @@ public class XMLData {
       inputStream = xmlFile.getFileValue();
       document = parser.parse(inputStream);
       inputStream.close();
+      inputStream = null;
       xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
     }
     catch (Exception ex)  {
