@@ -1,0 +1,218 @@
+/*
+ * Created on 3.6.2004
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package com.idega.util;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+/**
+ * @author tryggvil
+ *
+ * A class to rewrite relative URLs in HTML code and rewrite them to an absolute http:// URL.
+ */
+public class HtmlReferenceRewriter {
+
+	private Reader input;
+	private Writer output;
+	private String urlPrefix;
+	private List patterns;
+	private boolean rewriteOptionValues=false;
+	private static String SLASH="/";
+	
+	/**
+	 * @return Returns the rewriteOptionValues.
+	 */
+	public boolean isRewriteOptionValues() {
+		return rewriteOptionValues;
+	}
+	/**
+	 * Sets if to treat option values (in a select tag) as URLs and rewrite them also
+	 * @param rewriteOptionValues The rewriteOptionValues to set.
+	 */
+	public void setRewriteOptionValues(boolean rewriteOptionValues) {
+		this.rewriteOptionValues = rewriteOptionValues;
+	}
+	/**
+	 * @return Returns the patterns.
+	 */
+	public List getPatterns() {
+		if(patterns==null){
+			patterns = new ArrayList();
+			Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p1);
+			Pattern p2 = Pattern.compile("(<link[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p2);
+			Pattern p3 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p3);
+			Pattern p4 = Pattern.compile("(<script[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p4);
+			Pattern p5 = Pattern.compile("(<input[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p5);
+			Pattern p6 = Pattern.compile("(<form[^>]+action=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p6);
+			if(this.isRewriteOptionValues()){
+				Pattern p7 = Pattern.compile("(<option[^>]+value=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+				patterns.add(p7);
+			}
+		}
+		return patterns;
+	}
+	/**
+	 * @param patterns The patterns to set.
+	 */
+	public void setPatterns(List patterns) {
+		this.patterns = patterns;
+	}
+	public static void main(String[] args) throws Exception{
+		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
+		String fromFile = "/Users/tryggvil/Documents/Reykjavik/rrvk-dtemplate.html";
+		String toFile = "/Users/tryggvil/Documents/Reykjavik/rvktest.html";
+		String urlPrefix = "http://www.rvk.is/";
+		FileReader input = new FileReader(fromFile);
+		Reader r = new BufferedReader(input);
+		FileWriter output = new FileWriter(toFile);
+		Writer w = new BufferedWriter(output);
+		instance.setInput(input);
+		instance.setOutput(output);
+		instance.setUrlPrefix(urlPrefix);
+		instance.setRewriteOptionValues(true);
+		instance.process();
+	}
+
+
+	/**
+	 * Execute the processing. Read the input, search/replace and write to the output.
+	 * This method should be called last, after all set methods are called.
+	 */
+	public void process() {
+		
+		Reader reader = getInput();
+		StringBuffer sb = new StringBuffer();
+		int buffersize = 1000;
+		char[] buffer = new char[buffersize];
+		try {
+			int read = reader.read(buffer);
+			while(read!=-1){
+				sb.append(buffer,0,read);
+				read = reader.read(buffer);
+			}
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		StringBuffer outString = null;
+		Iterator patternIter = getPatterns().iterator();
+		StringBuffer replaceBuffer = sb;
+		while (patternIter.hasNext()) {
+			outString = new StringBuffer();
+			Pattern p = (Pattern) patternIter.next();
+			Matcher m = p.matcher(replaceBuffer);
+			while (m.find()) {
+				// this pattern matches.
+				int groupCount = m.groupCount();
+				for(int i=0;i<=	groupCount;i++){
+					String s = m.group(i);
+					System.out.println(s);
+				}
+				String url = m.group(2);
+				if(getIfRewriteURL(url)){
+					//if this is a relative url:
+					m.appendReplacement(outString,"$1"+getRewrittenURL(url)+"$3");
+				}				
+				else{
+					//Do not replace the url
+					m.appendReplacement(outString,"$0");
+				}
+
+			}
+			m.appendTail(outString);
+			replaceBuffer=new StringBuffer(outString.toString());
+		}
+		PrintWriter out = new PrintWriter(getOutput());
+		out.write(outString.toString());
+		out.close();
+	}
+	/**
+	 * Gets the rewritten URL. this can be overridden
+	 */
+	public String getRewrittenURL(String relativeURL){
+		String urlPrefix = getUrlPrefix();
+		if(relativeURL.startsWith(SLASH)&&urlPrefix.endsWith(SLASH)){
+			return urlPrefix+relativeURL.substring(1,relativeURL.length());
+		}
+		else{
+			return this.urlPrefix+relativeURL;
+		}
+	}
+	
+	/**
+	 * Gets if th URL is appropriate to be rewritten<br>
+	 * e.g. if it does not contain http:, javascript:,mailto: or # prefixes
+	 * @param url the found url in the source
+	 * @return
+	 */
+	public boolean getIfRewriteURL(String url){
+		// not if it starts with these prefixes::
+		return !(url.startsWith("http:")||url.startsWith("javascript:")||url.startsWith("mailto:")||url.startsWith("#"));
+	}
+	
+	/**
+	 * @return Returns the input.
+	 */
+	public Reader getInput() {
+		return input;
+	}
+	/**
+	 * Set the Input (file or stream)
+	 * @param input The input to set.
+	 */
+	public void setInput(Reader input) {
+		this.input = input;
+	}
+	/**
+	 * @return Returns the output.
+	 */
+	public Writer getOutput() {
+		return output;
+	}
+	/**
+	 * Set the Output (file or stream) to write the rewritten HTML to.
+	 * @param output The output to set.
+	 */
+	public void setOutput(Writer output) {
+		this.output = output;
+	}
+	/**
+	 * Returns the set URLPrefix and appends a "/" to the end if it is not set.
+	 * @return Returns the urlPrefix.
+	 */
+	public String getUrlPrefix() {
+		if(!urlPrefix.endsWith(SLASH)){
+			return urlPrefix+SLASH;
+		}
+		return urlPrefix;
+	}
+	/**
+	 * @param urlPrefix The urlPrefix to set.
+	 */
+	public void setUrlPrefix(String urlPrefix) {
+		this.urlPrefix = urlPrefix;
+	}
+}

@@ -1,7 +1,7 @@
 /*
- *  $Id: Page.java,v 1.108 2004/06/08 01:37:40 gummi Exp $
+ *  $Id: Page.java,v 1.109 2004/06/09 16:12:58 tryggvil Exp $
  *
- *  Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
  *  This software is the proprietary information of Idega hf.
  *  Use is subject to license terms.
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -44,8 +45,14 @@ import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
 
 /**
+ * An instance of this class is always a top level object in UIComponent tree in an HTML presentation in idegaWeb.
+ * This object maps to and renders the 
+ * <code><pre>
+ * <HTML><HEAD>...</HEAD> <BODY>... </BODY></HTML>
+ * </pre></code>
+ * tags in HTML and renders the children inside the body tags.
+ * 
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- *@created    15. mars 2002
  *@version    1.2
  */
 public class Page extends PresentationObjectContainer {
@@ -234,17 +241,39 @@ public class Page extends PresentationObjectContainer {
 		_javascripts.put(URL,URL);
 	}
 
-	private String getJavascriptURL() {
-		if (_javascripts != null && !_javascripts.isEmpty()) {
+	protected String getJavascriptURLs(IWContext iwc) {
+		if (addGlobalScript) {
 			StringBuffer buffer = new StringBuffer();
-			Iterator iter = _javascripts.values().iterator();
-			while (iter.hasNext()) {
-				String URL = (String) iter.next();
-				buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
+			//Print a reference to the global .js script file
+			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
+			ICDomain d = iwc.getDomain();
+
+			if (d.getURL() != null) {
+				if (src.startsWith("/")) {
+					String protocol;
+					/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
+					if (iwc.getRequest().isSecure()) {
+						protocol = "https://";
+					}
+					else {
+						protocol = "http://";
+					}
+					src = protocol + d.getURL() + src;
+				}
+			}
+			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
+			buffer.append("</script>");
+			if (_javascripts != null && !_javascripts.isEmpty()) {
+				Iterator iter = _javascripts.values().iterator();
+				while (iter.hasNext()) {
+					String URL = (String) iter.next();
+					buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
+				}
 			}
 			return buffer.toString();
 		}
 		return "";
+		
 	}
 
 	/**
@@ -1109,16 +1138,55 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	/**
-	 *@param  iwc            Description of the Parameter
-	 *@exception  Exception  Description of the Exception
+	 * <code>Gets the contents inside the Head <head> </head> tags with the exception of the title and
+	 * the "associated script.</code>
+	 * @param iwc
+	 * @return
 	 */
-	public void print(IWContext iwc) throws Exception {
+	protected String getHeadContents(IWContext iwc){
+		IWMainApplicationSettings settings = iwc.getApplicationSettings();
+		String characterEncoding = settings.getCharacterEncoding(); 
+		String markup = iwc.getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
+		return getHeadContents(markup,characterEncoding,iwc);
+	}
+	
+	/**
+	 * <code>Gets the contents inside the Head <head> </head> tags with the exception of the title and
+	 * the "associated script.</code>
+	 * @param iwc
+	 * @return
+	 */
+	protected String getHeadContents(String markup,String characterEncoding,IWContext iwc){
+		StringBuffer buf = new StringBuffer();
+		
+		buf.append(getPrintableSchortCutIconURL(iwc));
+		
+		buf.append(getMetaInformation(markup, characterEncoding));
+		buf.append(getMetaTags(markup));
+		buf.append(getJavascriptURLs(iwc));
+		buf.append(getStyleSheetURL(markup));
+		buf.append(getStyleDefinition());	
+		return buf.toString();
+	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
+	 */
+	public void initVariables(IWContext iwc) throws IOException {
+		super.initVariables(iwc);
 		if (this._styleSheetURL == null)
 			_styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
 
 		setDefaultValues();
 		setDefaultAttributes(iwc);
+	}
+	/**
+	 *@param  iwc            Description of the Parameter
+	 *@exception  Exception  Description of the Exception
+	 */
+	public void print(IWContext iwc) throws Exception {
 
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
@@ -1139,43 +1207,23 @@ public class Page extends PresentationObjectContainer {
 				
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
-//				shortcut icon
+				/*
+				//shortcut icon
 				println(getPrintableSchortCutIconURL(iwc));
-				
 				print(getMetaInformation(markup, characterEncoding));
 				print(getMetaTags(markup));
-
-				if (addGlobalScript) {
-					//Print a reference to the global .js script file
-					String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-					ICDomain d = iwc.getDomain();
-
-					if (d.getURL() != null) {
-						if (src.startsWith("/")) {
-							String protocol;
-							/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
-							if (iwc.getRequest().isSecure()) {
-								protocol = "https://";
-							}
-							else {
-								protocol = "http://";
-							}
-							src = protocol + d.getURL() + src;
-						}
-					}
-
-					print("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
-					println("</script>");
-					print(getJavascriptURL());
-				}
-
+				print(getJavascriptURLs(iwc));
 				if (getAssociatedScript() != null) {
 					getAssociatedScript()._print(iwc);
 				}
-
-				
 				print(getStyleSheetURL(markup));
 				print(getStyleDefinition());
+				*/
+
+				print(getHeadContents(markup,characterEncoding,iwc));
+				if (getAssociatedScript() != null) {
+					getAssociatedScript()._print(iwc);
+				}
 
 				//Laddi: Made obsolete with default style sheet
 				/*if (_addStyleSheet) {
@@ -1195,7 +1243,7 @@ public class Page extends PresentationObjectContainer {
 				super.print(iwc);
 			}
 			catch (Exception ex) {
-				println("<h1>Villa var&eth;!</h1>");
+				println("<h1>An Error Occurred!</h1>");
 				println("IW Error");
 				println("<pre>");
 				println(ex.getMessage());
@@ -1665,11 +1713,16 @@ public class Page extends PresentationObjectContainer {
 		_shortCutIconURL = url;
 	}
 	
-	private String getPrintableSchortCutIconURL(IWContext iwc)throws Exception{
+	private String getPrintableSchortCutIconURL(IWContext iwc){
 		String url = null;
 		if(getShortCutIconID()>0){
-			ICFileSystem fsystem = getICFileSystem(iwc);
-			url =  fsystem.getFileURI(getShortCutIconID());
+			ICFileSystem fsystem;
+			try {
+				fsystem = getICFileSystem(iwc);
+				url =  fsystem.getFileURI(getShortCutIconID());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 		else if(getShortCutIconURL()!=null){
 			url = getShortCutIconURL();

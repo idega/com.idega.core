@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.58 2004/06/09 14:23:28 jonas Exp $
+ * $Id: IWPresentationServlet.java,v 1.59 2004/06/09 16:12:58 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -247,6 +247,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 				throw (javax.servlet.ServletException)ex;
 			}
 			else{
+				ex.printStackTrace();
 				throw new javax.servlet.ServletException(ex);
 				/*writer.println("<H2>IWError</H2>");
 				writer.println("<pre>");

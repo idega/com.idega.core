@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.89 2004/05/10 07:49:58 gimmi Exp $
+ * $Id: PresentationObject.java,v 1.90 2004/06/09 16:12:58 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -127,8 +127,11 @@ implements Cloneable{//,UIComponent{
 	private String formerCompoundId = null;
 	
 	private TextStyler _styler;
+	private boolean goneThroughRenderPhase=false;	
 	private String _objTemplateID = null;
 	private PresentationObject _templateObject =null;
+	//This is a temporary solution should be removed when JSF implementation is done:
+	private static boolean USE_JSF_RENDERING=false;
 
 	/**
 	 * Default constructor
@@ -144,7 +147,7 @@ implements Cloneable{//,UIComponent{
 	{
 		return (PresentationObject)getParent();
 	}
-	public String generateID()
+	protected String generateID()
 	{
 		int hashCode = hashCode();
 		String code;
@@ -155,7 +158,7 @@ implements Cloneable{//,UIComponent{
 		code = "id" + hashCode;
 		return code;
 	}
-	public void setID()
+	protected void setID()
 	{
 		setID(generateID());
 	}
@@ -1891,12 +1894,19 @@ implements Cloneable{//,UIComponent{
 		super.processValidators(arg0);
 	}
 
-	public void encodeBegin(FacesContext fc)throws IOException{
+	/**
+	 * Bridging method to call the old idegaWeb print(IWContext method) to work inside JavaServerFaces.
+	 * This is usually done from encodeBegin(FacesContext) or encodeChildren(FacesContext)
+	 * @param fc
+	 * @throws IOException
+	 */
+	protected void callPrint(FacesContext fc)throws IOException{
 		try {
-			IWContext iwc = castToIWContext(fc);
-			initVariables(iwc);
-			this.out = iwc.getWriter();
-			this.print(iwc);
+			if(!goneThroughRenderPhase()){
+				IWContext iwc = castToIWContext(fc);
+				initVariables(iwc);
+				this.print(iwc);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -1904,9 +1914,64 @@ implements Cloneable{//,UIComponent{
 				throw (IOException)e;
 			}
 			else{
-				throw new IOException(e.getMessage());
+				e.printStackTrace();
+				//throw new IOException(e.getMessage());
 			}
 		}
+	}
+
+	public void encodeBegin(FacesContext fc)throws IOException{
+		callPrint(fc);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
+	 */
+	public void encodeChildren(FacesContext context) throws IOException {
+		if(!goneThroughRenderPhase()){
+			Iterator children = this.getChildren().iterator();
+			while (children.hasNext()) {
+				UIComponent element = (UIComponent) children.next();
+				renderChild(context,element);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Renders a child component for the current component. This operation is handy when implementing
+	 * renderes that perform child rendering themselves (eg. a layout renderer/grid renderer/ etc..).
+	 * Passes on any IOExceptions thrown by the child/child renderer.
+	 * 
+	 * @param context the current FacesContext
+	 * @param child which child to render
+	 */
+	protected void renderChild(FacesContext context, UIComponent child) throws IOException {
+		if(child!=null){
+			if(USE_JSF_RENDERING){
+				child.encodeBegin(context);
+				if(child.getRendersChildren()){
+					child.encodeChildren(context);
+				}
+				child.encodeEnd(context);
+			}
+			else{
+				IWContext iwc = this.castToIWContext(context);
+				try {
+					((PresentationObject)child)._print(iwc);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
+	 */
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		super.encodeEnd(arg0);
+		this.setRenderedPhaseDone();
 	}
 	 
 	protected IWContext castToIWContext(FacesContext fc){
@@ -1944,7 +2009,18 @@ implements Cloneable{//,UIComponent{
 		}
 		return "iwroot";
 	}
+
+	protected void setRenderedPhaseDone(){
+		goneThroughRenderPhase=true;
+	}
 	
+	protected void setRenderedPhaseNotDone(){
+		goneThroughRenderPhase=false;
+	}	
+	
+	protected boolean goneThroughRenderPhase(){
+		return goneThroughRenderPhase;
+	}
 	
 	/*
 	 * END JSF METHODS

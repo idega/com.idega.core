@@ -44,4 +44,8 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity
  public int getTreeOrder();
  public boolean isCategory();
  public void setIsCategory(boolean isCategory);
+	public void setFormat(String format);
+	public String getFormat();
+	public boolean getIsFormattedInIBXML();
+	public boolean getIsFormattedInHTML();
 }

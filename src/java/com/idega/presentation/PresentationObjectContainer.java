@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.31 2004/05/24 23:54:30 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.32 2004/06/09 16:12:58 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -38,8 +38,8 @@ public class PresentationObjectContainer extends PresentationObject
 	public List getChildren(){
 		if (this.children == null)
 		{
-			//this.children = new PresentationObjectList(this);
-			this.children=new ArrayList();
+			this.children = new PresentationObjectList(this);
+			//this.children=new ArrayList();
 		}
 		return this.children;
 	}
@@ -372,29 +372,37 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			try
 			{
+				//Try to interpret the objectInstanceID as an integer
 				return (getContainedObject(Integer.parseInt(objectInstanceID)));
 			}
-			catch (NumberFormatException e)
+			catch (NumberFormatException nfe)
 			{
-				int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0, objectInstanceID.indexOf(".")));
-				String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
-				if (index.indexOf(".") == -1)
-				{
-					return (((PresentationObjectContainer) getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
-				}
-				else
-				{
-					int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
-					int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
-					try {
-						return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
-					} catch (ClassCastException e1) {
-						System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
-						e1.printStackTrace();
-						System.out.println(getContainedObject(objectInstanceIDInt).getClassName()+": "+getContainedObject(objectInstanceIDInt));
-						return (null);
+				try{
+					//Try to assume that the objectInstanceID is in format 1234.2.2 (icobjectinstanceid.xpox.ypos)
+					int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0, objectInstanceID.indexOf(".")));
+					String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
+					if (index.indexOf(".") == -1)
+					{
+						return (((PresentationObjectContainer) getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
+					}
+					else
+					{
+						int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
+						int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
+						try {
+							return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
+						} catch (ClassCastException e1) {
+							System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
+							e1.printStackTrace();
+							System.out.println(getContainedObject(objectInstanceIDInt).getClassName()+": "+getContainedObject(objectInstanceIDInt));
+							return (null);
+						}
 					}
 				}
+				catch(StringIndexOutOfBoundsException se){
+					return null;
+				}
+			
 			}
 		}
 		catch (NullPointerException ex)
@@ -559,6 +567,10 @@ public class PresentationObjectContainer extends PresentationObject
 				//obj.setObjects((Vector)this.theObjects.clone());
 				ArrayList alChildren = (ArrayList)this.getChildren();
 				List clonedChildren = (List)alChildren.clone();
+				if(clonedChildren instanceof PresentationObjectList){
+					PresentationObjectList pList = (PresentationObjectList)clonedChildren;
+					pList.setParent(obj);
+				}
 				obj.setChildren(clonedChildren);
 				//obj.setChildren((List)((ArrayList) this.getChildren()).clone());
 				ListIterator iter = obj.getChildren().listIterator();
@@ -739,6 +751,12 @@ public class PresentationObjectContainer extends PresentationObject
 			UIComponent comp = (UIComponent)child;
 			comp.setParent(pContainer);
 			return super.set(index,child);
+		}
+		public void setParent(UIComponent parent){
+			pContainer=parent;
+		}
+		public UIComponent getParent(){
+			return pContainer;
 		}
 	}
 
