@@ -21,8 +21,12 @@ public class IWConstants{
   public final static String BOTTOM_ALIGNMENT="bottom";
   public final static String MIDDLE_ALIGNMENT="middle";
 
-  public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#D4D0C8";
-  public final static String DEFAULT_DARK_INTERFACE_COLOR="gray";
+  //public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#D4D0C8";
+  //public final static String DEFAULT_DARK_INTERFACE_COLOR="gray";
+
+  public final static String DEFAULT_INTERFACE_COLOR="#B0B29D";
+  public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#FFFFFF";
+  public final static String DEFAULT_DARK_INTERFACE_COLOR="#74858D";
 
   public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";

@@ -25,6 +25,8 @@ public class IWApplicationComponent extends Page {
   private static Image bottom;
   private static Image left;
   private static Image right;
+  private String _lightColor = "#FFFFFF";
+  private String _darkColor = "#999999";
 
   private Table iwacTable;
 
@@ -45,10 +47,11 @@ public class IWApplicationComponent extends Page {
       iwacTable.setWidth("100%");
       iwacTable.setCellpadding(0);
       iwacTable.setCellspacing(0);
-      iwacTable.setHeight(1,"2");
-      iwacTable.setHeight(3,"2");
-      iwacTable.setWidth(1,"2");
-      iwacTable.setWidth(3,"2");
+      iwacTable.setHeight(1,"1");
+      iwacTable.setHeight(3,"1");
+      iwacTable.setWidth(2,"100%");
+      iwacTable.setWidth(1,"1");
+      iwacTable.setWidth(3,"1");
     }
     return iwacTable;
   }
@@ -62,31 +65,40 @@ public class IWApplicationComponent extends Page {
     if(!imagesSet){
       IWBundle iwb = this.getBundle(iwc);
 
-        topleft = iwb.getImage("iwapplication/component_topleft.gif");
+        /*topleft = iwb.getImage("iwapplication/component_topleft.gif");
         topright =iwb.getImage("iwapplication/component_topright.gif");
         bottomleft =iwb.getImage("iwapplication/component_bottomleft.gif");
         bottomright =iwb.getImage("iwapplication/component_bottomright.gif");
         top=iwb.getImage("iwapplication/component_toptiler.gif");
         bottom=iwb.getImage("iwapplication/component_bottomtiler.gif");
         left=iwb.getImage("iwapplication/component_lefttiler.gif");
-        right=iwb.getImage("iwapplication/component_righttiler.gif");
+        right=iwb.getImage("iwapplication/component_righttiler.gif");*/
 
       imagesSet=true;
     }
         Image emptyCell = Table.getTransparentCell(iwc);
-          emptyCell.setWidth(2);
-          emptyCell.setHeight(2);
+          emptyCell.setWidth(1);
+          emptyCell.setHeight(1);
         Image tilerCell = (Image) emptyCell.clone();
           tilerCell.setHeight("100%");
 
-        iwacTable.setBackgroundImage(1,1,topleft);
+        /*iwacTable.setBackgroundImage(1,1,topleft);
         iwacTable.setBackgroundImage(3,1,topright);
         iwacTable.setBackgroundImage(1,3,bottomleft);
         iwacTable.setBackgroundImage(3,3,bottomright);
         iwacTable.setBackgroundImage(2,1,top);
         iwacTable.setBackgroundImage(2,3,bottom);
         iwacTable.setBackgroundImage(1,2,left);
-        iwacTable.setBackgroundImage(3,2,right);
+        iwacTable.setBackgroundImage(3,2,right);*/
+
+        iwacTable.setColor(1,1,_lightColor);
+        iwacTable.setColor(3,1,_lightColor);
+        iwacTable.setColor(1,3,_lightColor);
+        iwacTable.setColor(3,3,_darkColor);
+        iwacTable.setColor(2,1,_lightColor);
+        iwacTable.setColor(2,3,_darkColor);
+        iwacTable.setColor(1,2,_lightColor);
+        iwacTable.setColor(3,2,_darkColor);
 
         iwacTable.add(emptyCell,1,1);
         iwacTable.add(emptyCell,2,1);
@@ -104,6 +116,14 @@ public class IWApplicationComponent extends Page {
 
   public void setVerticalAlignment(String alignment) {
     iwacTable.setVerticalAlignment(2,2,alignment);
+  }
+
+  public void setLightShadowColor(String color) {
+    _lightColor = color;
+  }
+
+  public void setDarkShadowColor(String color) {
+    _darkColor = color;
   }
 
   static IWApplicationComponent getAppCompInstance(Class componentClass,IWContext iwc){
