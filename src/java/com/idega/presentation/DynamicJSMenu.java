@@ -69,11 +69,11 @@ public class DynamicJSMenu extends PresentationObject {
 	private String[] levelValues = {"110","25","\"clLevel0\"","\"clLevel0over\"","1","1","\"clLevel0border\"","0","0","0","0","0","0","\"bottom\""};
 	private MenuElement menuElement;
 	private String menuPlacement = " ";
-	private String[] menuProps = {"frames","pxBetween","fromLeft","fromTop","rows","menuPlacement","offlineRoot","onlineRoot","resizeCheck","wait",
+	private String[] menuProps = {"frames","pxBetween","rows","menuPlacement","offlineRoot","onlineRoot","resizeCheck","wait",
                                   "zIndex","useBar","barWidth","barHeight","barClass","barX","barY","barBorderX","barBorderY","barBorderClass"};
 	private String menuStyleScript = "coolStyle.css";
 	private String menuStyleSrc;
-	private String[] menuValues = {"0","30","20","0","1","\"center\"","\"file:///idegaweb/daddara/\"","","1","1000","0","1","\"100%\"",
+	private String[] menuValues = {"0","30","1","\"center\"","\"file:///idegaweb/daddara/\"","","1","1000","0","1","\"100%\"",
                                    "\"menu\"","\"clBar\"","0","0","0","0","\"\""};
 	private String offlineRoot = " ";
 	private String onlineRoot = " ";
@@ -730,7 +730,7 @@ public class DynamicJSMenu extends PresentationObject {
         .append("<ilayer id=\""+layerMenuName+"\"><div id=\""+divMenuName+"\">\n")
         .append("<img src=\"")
         .append(Table.getTransparentCell(iwc).getURL())
-        .append("\" width=\"120\" height=\"322\" alt=\"\" border=\"0\">\n")
+        .append("\" width=\"100%\" height=\"20\" alt=\"\" border=\"0\">\n")
         .append("</div></ilayer>\n")
         .append("<!-- END -->\n")
         .append("</td></tr></table>");
