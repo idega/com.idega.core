@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.12 2001/05/18 15:18:15 palli Exp $
+ * $Id: GenericEntity.java,v 1.13 2001/05/18 15:20:00 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -74,11 +74,7 @@ public abstract class GenericEntity implements java.io.Serializable {
     //First store a static instance of this class
     String className = this.getClass().getName();
     try {
-System.out.println("x1");
       this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
-System.out.println("x2");
-
-System.out.println("x3");
     }
     catch(Exception ex) {
       ex.printStackTrace();
@@ -1606,24 +1602,17 @@ System.out.println("x3");
         protected boolean hasLobColumn()throws Exception{
           String lobColumnName = this.getStaticInstance().lobColumnName;
           if(lobColumnName==null){
-System.out.println("false");
             return false;
           }
-System.out.println("true");
           return true;
         }
 
 
         private void setLobColumnName(){
-System.out.println("1");
           if( this.getStaticInstance().lobColumnName == null ) {
             String[] columnNames = this.getColumnNames();
-System.out.println("Number of columns: " + columnNames.length);
             for (int i = 0; i < columnNames.length; i++) {
-System.out.println("ColumnName["+i+"] = " + columnNames[i]);
-System.out.println("ColumnType["+i+"] = " + getStorageClassType(columnNames[i]));
               if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
-System.out.println("Setting loaColumnName");
                 this.getStaticInstance().lobColumnName = columnNames[i];
               }
             }

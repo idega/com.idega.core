@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.6 2001/05/18 15:18:15 palli Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.7 2001/05/18 15:20:00 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -234,11 +234,6 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
       Conn.setAutoCommit(false);
 
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-
-      if (wrapper == null)
-        System.out.println("Wrapper = null");
-      else
-        System.out.println("Wrapper = " + wrapper.getInputStreamForBlobWrite().toString());
 
       BufferedInputStream bin = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
       PreparedStatement PS = Conn.prepareStatement(statement);
