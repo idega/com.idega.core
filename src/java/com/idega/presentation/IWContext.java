@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.114 2004/12/29 02:35:49 eiki Exp $
+ * $Id: IWContext.java,v 1.115 2004/12/31 02:25:20 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -59,6 +59,7 @@ import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
+import com.idega.util.FacesUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
 
 /**
@@ -73,10 +74,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/29 02:35:49 $ by $Author: eiki $
+ * Last modified: $Date: 2004/12/31 02:25:20 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.114 $
+ * @version $Revision: 1.115 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -495,7 +496,18 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	public String getRequestURI() {
-		return getRequest().getRequestURI();
+		if(IWMainApplication.USE_JSF){
+			FacesContext facesContext = getRealFacesContext();
+			if(facesContext!=null){
+				return FacesUtil.getRequestUri(facesContext);
+			}
+			else{
+				return getRequest().getRequestURI();
+			}
+		}
+		else{
+			return getRequest().getRequestURI();
+		}
 	}
 	public String getServerName() {
 		return getRequest().getServerName();
