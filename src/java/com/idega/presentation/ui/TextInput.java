@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.36 2005/03/08 12:18:50 tryggvil Exp $
+ * $Id: TextInput.java,v 1.37 2005/03/15 08:12:01 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -10,9 +10,10 @@
 package com.idega.presentation.ui;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 import javax.faces.context.FacesContext;
-
 import com.idega.presentation.IWContext;
+import com.idega.util.LocaleUtil;
 import com.idega.util.text.TextSoap;
 
 
@@ -21,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2005/03/08 12:18:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/15 08:12:01 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -404,7 +405,7 @@ public class TextInput extends GenericInput {
     /**
      * Sets the text input so that it must contain a valid Icelandic social
      * security number, displays an alert with the given error message if the
-     * "error" occurs. Uses Javascript. Uses Javascript.
+     * "error" occurs. Uses Javascript.
      * 
      * @param errorMessage
      *            The error message to display.
@@ -412,6 +413,20 @@ public class TextInput extends GenericInput {
     public void setAsIcelandicSSNumber(String errorMessage) {
         isSetAsIcelandicSSNumber = true;
         icelandicSSNumberErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+    }
+
+    /**
+     * Sets the text input so that it must contain a valid personal ID for
+     * the Locale given, displays an alert with the given error message if the
+     * "error" occurs. Uses Javascript.
+     * 
+     * @param errorMessage
+     *            The error message to display.
+     */
+    public void setAsPersonalID(Locale locale, String errorMessage) {
+			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
+				setAsIcelandicSSNumber(errorMessage);
+			}
     }
 
     /**
