@@ -27,6 +27,6 @@ public class IWConstants{
   public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";
 
-
+  public final static String SERVLET_WINDOWOPENER_URL = IWMainApplication.windowOpenerURL;
 
 }
