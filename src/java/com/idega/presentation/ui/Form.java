@@ -240,7 +240,6 @@ public class Form extends InterfaceObject {
 			}
 		}
 		
-		getScript().addToFunction("checkSubmit", "return true;");
 	}
 
 	/**
@@ -453,6 +452,9 @@ public class Form extends InterfaceObject {
 
 	public void print(IWContext iwc) throws Exception {
 
+		if (getScript().doesFunctionExist("checkSubmit")) {
+			getScript().addToFunction("checkSubmit", "return true;");
+		}
 		//if ( doPrint(iwc) ){
 
 		addTheMaintainedParameters(iwc);
