@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.45 2003/09/17 12:31:19 laddi Exp $
+ * $Id: Table.java,v 1.46 2003/09/21 21:15:41 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -172,10 +172,6 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	
-	/**
-	*Add an object inside this Table in cell with coordinates x,y from top right - same as the add() function
-	*@deprecated replaced by the add function
-	*/
 	/*public void addObject(PresentationObject modObject, int xpos, int ypos) {
 		add(modObject, xpos, ypos);
 	}*/
@@ -908,7 +904,7 @@ public class Table extends PresentationObjectContainer {
 	 * xindex lies from [0,xlength-1],yindex lies from [0,ylength-1]
 	 */
 	public Object set(int xindex, int yindex, PresentationObject o) {
-		return set(xindex, 0, 0, o);
+		return set(xindex, yindex, 0, o);
 	}
 
 	/**

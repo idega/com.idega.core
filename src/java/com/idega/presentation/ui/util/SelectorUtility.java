@@ -10,9 +10,7 @@ import java.util.Iterator;
 import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ui.GenericSelect;
-import com.idega.presentation.ui.SelectDropdown;
 import com.idega.presentation.ui.SelectOption;
-import com.idega.presentation.ui.SelectPanel;
 import com.idega.util.reflect.MethodInvoker;
 
 /**
