@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.80 2002/09/04 12:49:21 eiki Exp $
+ * $Id: Link.java,v 1.81 2002/09/05 14:08:30 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1560,9 +1560,8 @@ public class Link extends Text{
       String attr = getAttribute(HREF_ATTRIBUTE);
       if (attr.startsWith("/")) {
         if( (protocol == null) || protocol.equals("") ){
-          protocol = iwc.getRequest().getProtocol();
 //@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-          if( protocol.indexOf("HTTPS")!=-1  ){
+          if( iwc.getRequest().isSecure()  ){
             protocol = "https://";
           }
           else{

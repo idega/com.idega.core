@@ -197,11 +197,9 @@ public class PageIncluder extends PresentationObject implements Index{
     html = findAndReplaceStrings(html);
 
     //Make images from this server (idegaweb) always follow the protocol being used http/https
-    String protocol = iwc.getRequest().getProtocol();
     //@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-    if( protocol.indexOf("HTTPS")!=-1  ){
-      protocol = "https://";
-      html = TextSoap.findAndReplace(html,"src=\"http://"+serverName,"src=\""+protocol+serverName);
+    if( iwc.getRequest().isSecure()  ){
+      html = TextSoap.findAndReplace(html,"src=\"http://"+serverName,"src=\"https://"+serverName);
     }
 
 

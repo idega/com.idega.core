@@ -203,9 +203,9 @@ private void printButton(IWContext iwc) throws IOException{
 		IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
 		if (d.getURL() != null) {
 		  if (URL.startsWith("/")) {
-                    String protocol = iwc.getRequest().getProtocol();
-//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-                    if( protocol.indexOf("HTTPS")!=-1  ){
+                    String protocol;
+//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder, Page
+                    if( iwc.getRequest().isSecure() ){
                       protocol = "https://";
                     }
                     else{
