@@ -281,7 +281,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   
 	public String ejbHomeGetFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int groupId, String relationType){
 		StringBuffer sql = new StringBuffer();
-		sql.append("select ").append(RELATED_GROUP_ID_COLUMN).append(" as "+GROUP_ID_COLUMN).append(" from ")
+		sql.append("select ").append(RELATED_GROUP_ID_COLUMN).append(" from ")
 		.append(this.getEntityName())
 		.append(" where ")
 		.append(GROUP_ID_COLUMN).append("=").append(groupId)
