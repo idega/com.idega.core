@@ -791,9 +791,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    */
   private static String[] getPermissionGroupFilter(){
     //filter begin
-    String[] groupsToReturn = new String[2];
+//    String[] groupsToReturn = new String[2];
+//    groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
+//    groupsToReturn[1] = is.idega.idegaweb.project.data.IPParticipantGroup.getStaticGroupInstance().getGroupTypeValue();
+    String[] groupsToReturn = new String[1];
     groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
-    groupsToReturn[1] = is.idega.idegaweb.project.data.IPParticipantGroup.getStaticGroupInstance().getGroupTypeValue();
+
     //filter end
     return groupsToReturn;
   }
