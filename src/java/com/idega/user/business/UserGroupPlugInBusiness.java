@@ -83,11 +83,12 @@ public interface UserGroupPlugInBusiness extends IBOService {
 
     /**
      * Checks if it is allowed to create a child (sub) group under the supplied group.
-     * @param group
+     * @param parent group
+     * @param the group type of the child group
      * @return Should return null by default but a string (explanation) if the plugin doesn't allow subgroups
      * @throws RemoteException
      */
-    public String canCreateSubGroup(Group group) throws RemoteException;
+    public String canCreateSubGroup(Group parentGroup, String groupTypeOfSubGroup) throws RemoteException;
     
     
 }
