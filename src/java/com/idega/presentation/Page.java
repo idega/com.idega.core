@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.25 2001/12/11 14:06:43 laddi Exp $
+ * $Id: Page.java,v 1.26 2002/01/12 14:44:47 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -129,7 +129,7 @@ public class Page extends PresentationObjectContainer {
     _styleDefinitions.put(styleName,styleAttribute);
   }
 
-  protected void setMetaTag(String tagName, String tagValue) {
+  public void setMetaTag(String tagName, String tagValue) {
     if (_metaTags == null) {
       _metaTags = new Hashtable();
     }
