@@ -295,9 +295,12 @@ public class IWMainApplicationStarter {
 	
 	
 	private void startTemporaryBundleStarters() {
+		// start these bundle starters explicitly because some old application have not registered these bundles and
+		// therefore these bundle starters will not start automatically
 		startTemporaryBundleStarter("com.idega.block.category.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
+		startTemporaryBundleStarter("se.cubecon.bun24.viewpoint.IWBundleStarter");
 	}
 	
 	
