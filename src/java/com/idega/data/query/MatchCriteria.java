@@ -39,13 +39,39 @@ public class MatchCriteria extends Criteria {
 			this.matchType = IS;
 		}
 
+		/**
+		 * Adds a null value to the given <code>Column</code> (...AND columnName IS NULL...)
+		 * @param column
+		 */
+		public MatchCriteria(Column column, boolean notNull) {
+			this.column = column;
+			this.value = NULL;
+			if (notNull) {
+				this.matchType = ISNOT;
+			}
+			else {
+				this.matchType = IS;
+			}
+		}
+
 		public MatchCriteria(Column column, String matchType, String value) {
         this.column = column;
         this.value = quote(value);
         this.matchType = matchType;
     }
 
-    public MatchCriteria(Column column, String matchType, float value) {
+		public MatchCriteria(Column column, String matchType, String value, boolean addQuotes) {
+      this.column = column;
+      if (addQuotes) {
+      		this.value = quote(value);
+      }
+      else {
+      		this.value = value;
+      }
+      this.matchType = matchType;
+		}
+		
+		public MatchCriteria(Column column, String matchType, float value) {
         this.column = column;
         this.value = "" + value;
         this.matchType = matchType;
