@@ -44,6 +44,15 @@ public abstract class IDOFactory implements IDOHome{
     return idoFindByPrimaryKey(entityInterfaceClass,id.intValue());
   }
 
+  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
+    if(pk instanceof Integer){
+      return idoFindByPrimaryKey(entityInterfaceClass,(Integer)pk);
+    }
+    else{
+      throw new RuntimeException("[idoFactory] : Primarykey other than type Integer not supported");
+    }
+  }
+
   public IDOEntity idoCreate() throws CreateException{
     return idoCreate(getEntityInterfaceClass());
   }
@@ -53,6 +62,10 @@ public abstract class IDOFactory implements IDOHome{
   }
 
   public IDOEntity idoFindByPrimaryKey(Integer primaryKey) throws FinderException{
+    return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
+  }
+
+  public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
 
