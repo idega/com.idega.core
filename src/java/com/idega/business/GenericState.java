@@ -136,7 +136,7 @@ public class GenericState extends Object implements Cloneable {
   }
 
   protected void parseStateString(String stateString){
-    //System.err.println(this+" string to parse: "+stateString);
+    System.err.println(this+" string to parse: "+stateString);
     StringTokenizer stoken = new StringTokenizer(stateString,STATESTRING_VALUE_SEPERATOR);
     state = new Vector();
     while (stoken.hasMoreTokens()) {
@@ -198,7 +198,7 @@ public class GenericState extends Object implements Cloneable {
         }
       }
     }
-    //System.err.println(this+" statestring: "+str);
+    System.err.println(this+" statestring: "+str);
     return str;
   }
 
