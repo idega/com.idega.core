@@ -3,6 +3,7 @@ package com.idega.util;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -27,6 +28,36 @@ import com.idega.util.text.TextSoap;
  */
 public class IWTimestamp implements Comparable {
 	
+	/**
+	 * A type setting for use with getLocaleDate.<br>
+	 * getLocaleDate: SHORT is completely numeric, such as 12.13.52 or 3:30pm.<br>
+	 * getDayName/getMonthName: SHORT is abbreviated name, such as Jan or Dec.
+	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
+	 */
+	public static final int SHORT = DateFormat.SHORT;
+
+	/**
+	 * A type setting for use with getLocaleDate.<br>
+	 * MEDIUM is longer, such as Jan 12, 1952
+	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
+	 */
+	public static final int MEDIUM = DateFormat.MEDIUM;
+
+	/**
+	 * A type setting for use with getLocaleDate.<br>
+	 * getLocaleDate: LONG is longer, such as January 12, 1952 or 3:30:32pm<br>
+	 * getDayName/getMonthName: LONG is full name, such as January or December.
+	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
+	 */
+	public static final int LONG = DateFormat.LONG;
+
+	/**
+	 * A type setting for use with getLocaleDate.<br>
+	 * FULL is pretty completely specified, such as Tuesday, April 12, 1952 AD or 3:30:42pm PST.
+	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
+	 */
+	public static final int FULL = DateFormat.FULL;
+
 	/**
 	 * A time string representing the time at the first second of a day.
 	 */
@@ -688,8 +719,9 @@ public class IWTimestamp implements Comparable {
 	}
 	
 	/**
-	 * Get a date string for the current locale. Will be deprecated soon , this method uses IWCalendar.getLocaleDate().
-	 * @see IWCalendar#getLocaleDate()
+	 * Get a date string for the current locale. Will be deprecated soon).
+	 * @param iwc		The <code>IWContext</code> to get the current locale from.
+	 * @return String
 	 */
 	public String getLocaleDate(IWContext iwc) {
 		Locale currentLocale = iwc.getCurrentLocale();
@@ -697,12 +729,23 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
- 	* Get a date string for the locale. Will be deprecated soon , this method uses IWCalendar.getLocaleDate().
-	 * @see IWCalendar#getLocaleDate()
+ 	 * Get a date string for the locale.
+	 * @param locale		The locale to use to format the current date
+	 * @return String
 	 */
 	public String getLocaleDate(Locale locale) {
-		IWCalendar iwCalendar = new IWCalendar(locale, calendar);
-		return iwCalendar.getLocaleDate();
+		return getLocaleDate(locale, LONG);
+	}
+
+	/**
+	 * Get a date string for the locale
+	 * @param locale		The locale to use to format the current date
+	 * @param format		The format of the date string
+	 * @return String
+	 */
+	public String getLocaleDate(Locale locale, int format) {
+		DateFormat dateFormat = DateFormat.getDateInstance(format, locale);
+		return dateFormat.format(getTime());
 	}
 
 	/**
