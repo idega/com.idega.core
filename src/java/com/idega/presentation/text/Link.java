@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.57 2002/03/22 14:34:31 eiki Exp $
+ * $Id: Link.java,v 1.58 2002/03/22 15:18:07 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -338,7 +338,7 @@ public class Link extends Text{
     if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
     //Builder edit mode
     if(iwc.isInEditMode()){
-     addParameter("view","builder");
+     addParameter("view","builder");/**@todo this doesn't update all the frames**/
 
     }
 
