@@ -25,6 +25,8 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.0.7.jar">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-components-1.0.7.jar">
+  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-9.2.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
@@ -40,6 +42,8 @@
   <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.3.jar">
   </classpathentry>
