@@ -1,5 +1,5 @@
 /*
- * $Id: UserHomeLink.java,v 1.3 2004/11/02 14:10:34 laddi Exp $
+ * $Id: UserHomeLink.java,v 1.4 2004/11/10 13:01:00 laddi Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.user.business.UserBusiness;
  * Last modified: 1.11.2004 17:07:07 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class UserHomeLink extends PresentationObjectContainer {
 	
@@ -65,7 +65,6 @@ public class UserHomeLink extends PresentationObjectContainer {
 				
 				this.empty();
 				add(link);
-				super.print(iwc);
 			}
 			catch (RemoteException re) {
 				log(re);
@@ -87,8 +86,8 @@ public class UserHomeLink extends PresentationObjectContainer {
 				}
 			}
 
-			super.print(iwc);
 		}
+		super.print(iwc);
 	}
 	
 	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
