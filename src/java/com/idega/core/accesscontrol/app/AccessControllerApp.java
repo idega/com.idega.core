@@ -169,7 +169,7 @@ public class AccessControllerApp extends IWApplication {
         bundleLinkTemplate = new Link("",IBPermissionFrame.class,AppMainFrame._FRAME_NAME_2);
 
         bundleLinkTemplate.addParameter(IBPermissionFrame._PARAMETER_DISPOSE,"true");
-        bundleLinkTemplate.addParameter(IBPermissionFrame._PARAMETERSTRING_PERMISSION_CATEGORY,AccessController._CATEGORY_BUNDLE);
+        bundleLinkTemplate.addParameter(IBPermissionFrame._PARAMETERSTRING_PERMISSION_CATEGORY,AccessController.CATEGORY_BUNDLE);
       }
 
       public List tranceformBundleListToLinkList(List iwBundleList){
@@ -194,7 +194,7 @@ public class AccessControllerApp extends IWApplication {
       public void initICObjectLinkTemplate(){
         ICObjectLinkTemplate = new Link("",IBPermissionFrame.class,AppMainFrame._FRAME_NAME_2);
         ICObjectLinkTemplate.addParameter(IBPermissionFrame._PARAMETER_DISPOSE,"true");
-        ICObjectLinkTemplate.addParameter(IBPermissionFrame._PARAMETERSTRING_PERMISSION_CATEGORY,AccessController._CATEGORY_OBJECT);
+        ICObjectLinkTemplate.addParameter(IBPermissionFrame._PARAMETERSTRING_PERMISSION_CATEGORY,AccessController.CATEGORY_OBJECT);
       }
 
       public List tranceformICObjectListToLinkList(List ICObjectList){
@@ -364,24 +364,24 @@ public class AccessControllerApp extends IWApplication {
 
           Class objectClass = null;
           switch (intPermissionCategory) {
-            case AccessControl._CATEGORY_OBJECT_INSTANCE :
+            case AccessControl.CATEGORY_OBJECT_INSTANCE :
               objectClass = ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier));
               keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessControl._CATEGORY_OBJECT :
+            case AccessControl.CATEGORY_OBJECT :
               objectClass = ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier));
               keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessControl._CATEGORY_BUNDLE :
+            case AccessControl.CATEGORY_BUNDLE :
               keys = iwc.getAccessController().getBundlePermissionKeys(identifier);
               break;
-            case AccessControl._CATEGORY_PAGE_INSTANCE :
+            case AccessControl.CATEGORY_PAGE_INSTANCE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessControl._CATEGORY_PAGE :
+            case AccessControl.CATEGORY_PAGE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessControl._CATEGORY_JSP_PAGE :
+            case AccessControl.CATEGORY_JSP_PAGE :
               keys = new String[0];
               break;
           }
