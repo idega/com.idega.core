@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.22 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: DropdownMenu.java,v 1.23 2004/01/08 02:57:21 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -71,6 +71,10 @@ public class DropdownMenu extends GenericSelect {
 	}
 
 	public void addMenuElement(int value, String displayString) {
+		addOption(new SelectOption(displayString, value));
+	}
+	
+	public void addMenuElement(char value, String displayString) {
 		addOption(new SelectOption(displayString, value));
 	}
 

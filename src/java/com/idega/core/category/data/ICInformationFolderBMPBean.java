@@ -418,5 +418,11 @@ public class ICInformationFolderBMPBean extends com.idega.data.CacheableEntityBM
 	private void setDeletedWhen(Timestamp when) {
 		setColumn(getColumnDeletedWhen(), when);
 	}
+	/* (non-Javadoc)
+	 * @see com.idega.core.category.data.InformationFolder#getEntity()
+	 */
+	public ICInformationFolder getEntity() {
+		return this;
+	}
 
 }

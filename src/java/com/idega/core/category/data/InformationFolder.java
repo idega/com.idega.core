@@ -97,5 +97,8 @@ public interface InformationFolder {
      *@return    The deletedWhen value
      */
     public Timestamp getDeletedWhen();
+    
+    
+    public ICInformationFolder getEntity();
 }
 

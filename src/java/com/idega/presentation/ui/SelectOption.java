@@ -18,6 +18,10 @@ public class SelectOption extends InterfaceObject {
 	public SelectOption(String name, int value) {
 		this(name, String.valueOf(value));	
 	}
+	
+	public SelectOption(String name, char value) {
+		this(name, String.valueOf(value));	
+	}
 
 	public SelectOption(String name, String value) {
 		super();
