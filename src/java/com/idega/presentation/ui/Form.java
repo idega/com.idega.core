@@ -659,6 +659,26 @@ public class Form extends InterfaceObject {
 	public void setPageToSubmitTo(ICPage page) {
 		setPageToSubmitTo(((Integer)page.getPrimaryKey()).intValue());
 	}
+	
+	public void setPadding(int padding) {
+		setMarkupAttribute("padding", padding);
+	}
+
+	public void setPaddingLeft(int padding) {
+		setMarkupAttribute("padding-left", padding);
+	}
+
+	public void setPaddingRight(int padding) {
+		setMarkupAttribute("padding-right", padding);
+	}
+
+	public void setPaddingTop(int padding) {
+		setMarkupAttribute("padding-top", padding);
+	}
+
+	public void setPaddingBottom(int padding) {
+		setMarkupAttribute("padding-bottom", padding);
+	}
 
 	public void setClassToInstanciateAndSendTo(Class presentationObjectClass) {
 		this.classToInstanciateAndSubmitTo = presentationObjectClass;
