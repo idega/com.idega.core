@@ -188,7 +188,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 			commune.setIsValid(true);
 			commune.store();
 		}
-		return commune;
+		return commune.getPrimaryKey();
 	}
 	
 	public void remove() {
