@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.47 2003/05/02 19:22:51 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.48 2003/05/03 16:30:54 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -39,10 +39,8 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.UploadFile;
-import com.idega.presentation.ErrorPage;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.IWPageInitializationException;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
