@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.69 2002/04/10 09:33:23 laddi Exp $
+ * $Id: Link.java,v 1.70 2002/04/10 09:58:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -581,10 +581,11 @@ public class Link extends Text{
     }
   }
 
-  public void setToMaintainParameter(String name) {
+  public void setToMaintainParameter(String name, boolean maintain) {
     if ( this.maintainedParameters == null )
       maintainedParameters = new Vector();
-    maintainedParameters.add(name);
+    if ( maintain )
+      maintainedParameters.add(name);
   }
 
   /*
