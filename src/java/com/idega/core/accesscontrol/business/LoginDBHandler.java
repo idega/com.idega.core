@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.51 2004/06/15 19:47:33 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.52 2004/06/15 20:07:50 aron Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -620,12 +620,12 @@ public class LoginDBHandler {
 			e1.printStackTrace();
 		}
 
-		userNameList.addAll(generatePossibleUserNames(firstName, middleName, lastName, 8));
+		userNameList.addAll(generatePossibleUserNames(firstName, middleName, lastName, 8,(Integer)user.getPrimaryKey()));
 		userNameList.add(finalPossibility);
 		return userNameList;
 	}
 
-	public static List generatePossibleUserNames(String first, String middle, String last, int userNameLength) {
+	public static List generatePossibleUserNames(String first, String middle, String last, int userNameLength,Integer userid) {
 		int namelength = userNameLength;
 		char[][] array = new char[196][namelength];
 		String alfabet = first + last + middle;
@@ -646,7 +646,8 @@ public class LoginDBHandler {
 		int startlettercount = startletters.length();
 		java.util.ArrayList list = new java.util.ArrayList(196);
 		Random random = new Random();
-		for (int row = 0; row < array.length; row++) {
+		boolean breakit = false;
+		for (int row = 0; row < array.length && !breakit; row++) {
 			int col = 0;
 			// add first part of name
 			for (int j = 0; j < count1 && index1 + j < alfalength && col < namelength; j++) {
@@ -701,7 +702,7 @@ public class LoginDBHandler {
 					if ((first.length() + 1) <= namelength) count1--;
 
 					startlettercount--;
-				}
+				}/*
 				else if (!rand) {
 					rand = true;
 					startlettercount = startletters.length();
@@ -709,10 +710,11 @@ public class LoginDBHandler {
 					count1 = first.length();
 					index2 = first.length();
 
-				}
+				}*/
 				else {// lets break this
+					list.add("u"+userid.toString());
 					//System.out.println(row);
-					continue;
+					breakit = true;
 
 				}
 			}
@@ -726,7 +728,7 @@ public class LoginDBHandler {
 	}
 
 	public static void main(String[] args) {
-		java.util.List list = generatePossibleUserNames("jon", "skafti", "sigurdsson", 8);
+		java.util.List list = generatePossibleUserNames("jon", "skafti", "sigurdsson", 8,new Integer(9999));
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			System.out.println(element);
