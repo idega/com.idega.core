@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.18 2001/11/03 12:30:35 tryggvil Exp $
+ * $Id: Link.java,v 1.19 2001/11/03 13:40:15 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -804,14 +804,20 @@ public class Link extends Text {
    */
   private void addTheMaintainedParameters(IWContext iwc) {
     List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
+    System.out.println("--------------------------------------");
+    System.out.println("builderPrm");
     if (list != null) {
       Iterator iter = list.iterator();
       while(iter.hasNext()) {
         String parameterName = (String)iter.next();
         String parameterValue = iwc.getParameter(parameterName);
+        System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
         if (parameterValue != null) {
           if(!this.isParameterSet(parameterName)){
+            System.out.println("false");
             addParameter(parameterName,parameterValue);
+          } else {
+            System.out.println("true");
           }
         }
       }
