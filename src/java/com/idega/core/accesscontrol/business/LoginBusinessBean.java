@@ -517,7 +517,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (loginType != null && !loginType.equals("")) {
 			lInfo.setLoginType(loginType);
 		}
-		getLoggedOnInfoList(iwc).add(lInfo);
+		
+		List l = getLoggedOnInfoList(iwc);
+		l.remove(lInfo);
+		l.add(lInfo);
+		
+		//getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, iwc);
 		
 	}
@@ -693,6 +698,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			e.printStackTrace();
 		}
 
+		
 		if (context != null) {
 			loggedOnList = (List)context.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		}
