@@ -1615,7 +1615,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return found;
 	}
 	
-	public boolean hasUserApplicationPermission(User user, IWUserContext iwuc) {
+	public boolean hasTopNodes(User user, IWUserContext iwuc) {
 		try {
 			Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
 			return !topNodes.isEmpty();
