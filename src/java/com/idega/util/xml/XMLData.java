@@ -406,4 +406,10 @@ public class XMLData implements Storable {
   public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
   	return reader.read(this, iwc);
   }
+  
+  public void addFirst(XMLData data) {
+  	XMLElement dataRootElement = data.getDocument().getRootElement();
+  	dataRootElement = dataRootElement.detach();
+  	getDocument().getRootElement().addContent(dataRootElement);  	
+  }
 }
