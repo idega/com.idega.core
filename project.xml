@@ -2,7 +2,7 @@
     <extend>base-project.xml</extend>
     <name>idegaWeb Core</name>
     <artifactId>com.idega.core</artifactId>
-    <currentVersion>2.0</currentVersion>
+    <currentVersion>1.9</currentVersion>
     <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
     <versions/>
     <branches/>
@@ -86,7 +86,9 @@
             <version>b9-rc2</version>
             <type>jar</type>
             <url>http://www.jdom.org/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>servletapi</groupId>
@@ -102,7 +104,9 @@
             <version>2.0</version>
             <type>jar</type>
             <url>http://java.sun.com/products/ejb/docs.html</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jta</groupId>
@@ -110,13 +114,16 @@
             <version>spec1_0_1</version>
             <type>jar</type>
             <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jimi</groupId>
             <artifactId>jimi</artifactId>
             <version>1.0</version>
             <type>jar</type>
+            <idegaweb.bundle.include>true</idegaweb.bundle.include>
             <url>http://java.sun.com/products/jimi/</url>
             <properties/>
         </dependency>
@@ -126,7 +133,9 @@
             <version>1.0</version>
             <type>jar</type>
             <url>http://java.sun.com/products/java-media/jai/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jai</groupId>
@@ -134,7 +143,9 @@
             <version>1.0</version>
             <type>jar</type>
             <url>http://java.sun.com/products/java-media/jai/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>javamail</groupId>
@@ -142,7 +153,9 @@
             <version>1.3</version>
             <type>jar</type>
             <url>http://java.sun.com/products/javamail/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jaf</groupId>
@@ -150,7 +163,9 @@
             <version>1.0.2</version>
             <type>jar</type>
             <url>http://java.sun.com/products/javabeans/glasgow/jaf.html</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>cos</groupId>
@@ -158,7 +173,9 @@
             <version>05Nov2002</version>
             <type>jar</type>
             <url>http://www.servlets.com/cos/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>icu4j</groupId>
@@ -166,7 +183,9 @@
             <version>2.4</version>
             <type>jar</type>
             <url>http://oss.software.ibm.com/icu4j/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>itext</groupId>
@@ -174,13 +193,16 @@
             <version>0.99</version>
             <type>jar</type>
             <url>http://itext.sourceforge.net/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jsf</groupId>
             <artifactId>jsf-api</artifactId>
             <version>1.0</version>
             <type>jar</type>
+            <idegaweb.bundle.include>true</idegaweb.bundle.include>
             <url>http://java.sun.com/j2ee/javaserverfaces/</url>
             <properties/>
         </dependency>
@@ -206,7 +228,9 @@
             <version>1.8.0-dev-20020919</version>
             <type>jar</type>
             <url>http://jakarta.apache.org/poi/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>
         <dependency>
             <groupId>jug</groupId>
@@ -214,7 +238,9 @@
             <version>1.1</version>
             <type>jar</type>
             <url>http://www.doomdark.org/doomdark/proj/jug/</url>
-            <properties/>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
         </dependency>       
     </dependencies>
     <build>
