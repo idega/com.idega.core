@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.62 2003/03/07 12:52:54 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.63 2003/03/25 13:08:19 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -491,7 +491,7 @@ public abstract class DatastoreInterface {
 			//else       System.out.println("insert is null");
 			if (update != null) {
 				length = update.size();
-				System.out.println("update size: " + length);
+//				System.out.println("update size: " + length);
 				for (int i = 0; i < length; i++) {
 					//System.out.println("updating: "+i);
 					data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
