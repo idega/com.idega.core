@@ -1652,9 +1652,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.data.Group#store()
-	 */
+	 *//*
 	public void store() {
+		this.store();
+		super.store();
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 }
