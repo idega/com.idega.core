@@ -25,6 +25,8 @@ private String title;
 private int width;
 private int height;
 private String url;
+private String xlocation = "0";
+private String ylocation = "0";
 //private boolean newURL;
 //private Script theAssociatedScript;
 private static String emptyString="";
