@@ -20,6 +20,7 @@ import com.idega.core.user.data.User;
 import com.idega.core.data.ICObject;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.builder.business.BuilderLogic;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 
 
 /**
@@ -699,6 +700,11 @@ public Locale getCurrentLocale(){
   }
   return theReturn;
 }
+
+public int getCurrentLocaleId(){
+ return ICLocaleBusiness.getLocaleId(getCurrentLocale());
+}
+
 
 public void setCurrentLocale(Locale locale){
   this.setSessionAttribute(LOCALE_ATTRIBUTE,locale);
