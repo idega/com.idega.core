@@ -136,7 +136,7 @@ irt    return theReturn;
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-                        String seqCreate = "create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 0 MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
+                        String seqCreate = "create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 1 MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
                         int i = Stmt.executeUpdate(seqCreate);
 		}
 		finally{
