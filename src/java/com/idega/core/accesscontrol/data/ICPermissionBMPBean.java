@@ -226,6 +226,17 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 	
 	
+	public Collection ejbFindAllPermissionsByTypeAndContextValueAndPermissionString(String contextType, String contextValue, String permissionString) throws FinderException{
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this)
+		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
+		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
+		
+		return super.idoFindPKsByQuery(sql);
+	}
+	
 	public Collection ejbFindAllPermissionsByContextTypeAndContextValueAndPermissionGroupOrdered(String contextType, String contextValue, Group permissionGroup) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)

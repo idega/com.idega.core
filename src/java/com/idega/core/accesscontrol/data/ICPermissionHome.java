@@ -14,7 +14,8 @@ public interface ICPermissionHome extends com.idega.data.IDOHome
  public java.util.Collection findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(com.idega.user.data.Group p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
  public java.util.Collection findAllPermissionsByTypeAndPermissionGroupOrderedByContextValue(java.lang.String p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException;
  public java.util.Collection findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException;
-		
+ public java.util.Collection findAllPermissionsByTypeAndContextValueAndPermissionString(java.lang.String p0,java.lang.String p1,String p3)throws javax.ejb.FinderException;
+ 	
  //needed for now
  public ICPermission createLegacy();
  public ICPermission findByPrimaryKey(int id) throws javax.ejb.FinderException;

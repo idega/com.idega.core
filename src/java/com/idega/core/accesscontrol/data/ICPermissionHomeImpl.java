@@ -57,6 +57,13 @@ public java.util.Collection findAllPermissionsByTypeAndContextValue(java.lang.St
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findAllPermissionsByTypeAndContextValueAndPermissionString(java.lang.String p0,java.lang.String p1,String p2)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllPermissionsByTypeAndContextValueAndPermissionString(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(com.idega.user.data.Group p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(p0,p1,p2);
