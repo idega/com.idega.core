@@ -31,11 +31,11 @@ public class DynamicTemplateServlet extends PageJSPModule{
         //where storeObject("idega_moduleinfo",moduleinfo) is called
         //in IWPresentationServlet
             ModuleInfo modinfo = getModuleInfo();
-            String templateClassName=modinfo.getParameter("idegaweb_template_class");
+            String templateClassName=modinfo.getParameter(IWMainApplication.templateClassParameter);
             if(templateClassName!=null){
               setTemplateClassName(templateClassName);
             }
-            String templateName=modinfo.getParameter("idegaweb_template");
+            String templateName=modinfo.getParameter(IWMainApplication.templateParameter);
             if(templateName!=null){
               //Properties prop = getDefaultProperties();
               //setTemplateClassName(prop.getProperty("idegaweb.template."+templateName+".classname"));
