@@ -138,4 +138,6 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public com.idega.core.data.PhoneHome getPhoneHome();
   
   public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException;
+
+  public boolean isGroupRemovable(Group group); 
 }

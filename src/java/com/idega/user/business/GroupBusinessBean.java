@@ -34,6 +34,7 @@ import com.idega.core.data.PhoneHome;
 import com.idega.core.data.PostalCode;
 import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
@@ -63,7 +64,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
   private UserHome userHome;
   private GroupHome groupHome;
-  private UserGroupRepresentativeHome userRepHome;
+  private UserGroupRepresentativeHome userRepHome; 
   private GroupHome permGroupHome;
   private AddressHome addressHome;
   private EmailHome emailHome;
@@ -1312,6 +1313,34 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
  
  
+  /** Group is removeable if the group is either an alias or 
+   *  has not any children.
+   *  Childrens are other groups or users.
+   * @param group
+   * @return boolean 
+   */
+  public boolean isGroupRemovable(Group group)  { 
+    try {
+      return ( (group.getGroupType().equals("alias"))
+          // childCount checks only groups as children
+          || (group.getChildCount() <= 0 && 
+             ( getUserBusiness().getUsersInGroup(group).isEmpty())));
+    }
+    catch (java.rmi.RemoteException rme) {
+      throw new RuntimeException(rme.getMessage());
+    } 
+  }
+ 
+ 
+  private UserBusiness getUserBusiness() {
+    IWApplicationContext context = getIWApplicationContext();
+    try {
+      return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(context, UserBusiness.class);
+    }
+    catch (java.rmi.RemoteException rme) {
+      throw new RuntimeException(rme.getMessage());
+    }
+  } 
  
 } // Class
 
