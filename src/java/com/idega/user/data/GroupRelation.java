@@ -31,6 +31,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public boolean isPassivePending();
  public boolean isPending();
  public void removeBy(com.idega.user.data.User p0)throws javax.ejb.RemoveException;
+ public void removeBy(com.idega.user.data.User p0,java.sql.Timestamp p1)throws javax.ejb.RemoveException;
  public void setActive();
  public void setActivePending();
  public void setGroup(int p0);

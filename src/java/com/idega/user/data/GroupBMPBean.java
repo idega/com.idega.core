@@ -697,6 +697,33 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void addGroup(Group groupToAdd) throws EJBException {
 		this.addGroup(this.getGroupIDFromGroup(groupToAdd));
 	}
+	
+	/**
+	 * Adds the group by id groupToAdd under this group 
+	 * @see com.idega.user.data.Group#addGroup(Group)
+	 */
+	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException {
+		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time);
+	}
+	
+	/**
+	 * Adds the group by id groupId under this group 
+	 * @see com.idega.core.data.GenericGroup#addGroup(int,time)
+	 */
+	public void addGroup(int groupId,Timestamp time) throws EJBException {
+		try {
+			//GroupRelation rel = this.getGroupRelationHome().create();
+			//rel.setGroup(this);
+			//rel.setRelatedGroup(groupId);
+			//rel.store();
+			addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT,time);
+
+		}
+		catch (Exception e) {
+			throw new EJBException(e.getMessage());
+		}
+	}
+	
 	/**
 	 * Adds the group by id groupId under this group 
 	 * @see com.idega.core.data.GenericGroup#addGroup(int)
@@ -714,6 +741,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			throw new EJBException(e.getMessage());
 		}
 	}
+	
 	public void addRelation(Group groupToAdd, String relationType) throws CreateException {
 		this.addRelation(this.getGroupIDFromGroup(groupToAdd), relationType);
 	}
@@ -742,7 +770,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException {
+	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
 		//try{
 		if (!hasRelationTo(relatedGroupId, relationType)) {
 			//System.out.println("hasRelationTo("+relatedGroupId+","+relationType+") IS FALSE");
@@ -750,6 +778,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			rel.setGroup(this);
 			rel.setRelatedGroup(relatedGroupId);
 			rel.setRelationshipType(relationType);
+			if(time != null){
+				rel.setInitiationDate(time);			
+			}
 			rel.store();
 		}
 		//}
@@ -757,6 +788,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		//  throw new EJBException(e.getMessage());
 		//}
 	}
+
+	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException {
+		addUniqueRelation(relatedGroupId, relationType, null);
+	}
+
 
 	/**
 		 * Only adds a relation if one does not exist already
@@ -896,6 +932,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		// former: user.getGroupId() but this method is deprecated therefore: user.getId()
 		this.removeGroup(user.getID(), currentUser, false);
 	}
+	
+	public void removeUser(User user, User currentUser, Timestamp time) {
+		// former: user.getGroupId() but this method is deprecated therefore: user.getId()
+		this.removeGroup(user.getID(), currentUser, false, time);
+	}
+
 	//        public Group findGroup(String groupName) throws SQLException{
 	//
 	//          List group = EntityFinder.findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(this.getClass().getName()),getNameColumnName(),groupName,getGroupTypeColumnName(),this.getGroupTypeValue());
@@ -1285,7 +1327,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void removeGroup(User currentUser) throws EJBException {
 		this.removeGroup(-1, currentUser, true);
 	}
-	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
 		try {
 			Collection rels = null;
 			if (AllEntries) {
@@ -1297,13 +1339,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			Iterator iter = rels.iterator();
 			while (iter.hasNext()) {
 				GroupRelation item = (GroupRelation)iter.next();
-				item.removeBy(currentUser);
+				item.removeBy(currentUser,time);
 			}
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
 		}
 	}
+	
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
+		removeGroup(relatedGroupId,currentUser,AllEntries,IWTimestamp.getTimestampRightNow());
+	}
+	
 	protected GroupRelationHome getGroupRelationHome() {
 		try {
 			return ((GroupRelationHome)IDOLookup.getHome(GroupRelation.class));

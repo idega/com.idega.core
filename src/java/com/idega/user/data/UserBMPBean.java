@@ -805,10 +805,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	   //return equals((Object)this);
 	   return this.getGeneralGroup().equals(p0);
 	 }*/
+	public void addGroup(Group p0,java.sql.Timestamp p1) throws EJBException{
+		/**@todo: Implement this com.idega.user.data.Group method*/
+		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
+	}
 	public void addGroup(Group p0) throws EJBException{
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
+	
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
@@ -1636,4 +1641,20 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   public void removeUser(User user, User currentUser) {
     throw new UnsupportedOperationException();
   }
+
+  /**
+   * Unsupported.
+   * 
+   */ 
+  public void removeUser(User user, User currentUse, Timestamp time) {
+	throw new UnsupportedOperationException();
+  }
+
+	/* (non-Javadoc)
+	 * @see com.idega.user.data.Group#store()
+	 */
+	public void store() {
+		// TODO Auto-generated method stub
+		
+	}
 }

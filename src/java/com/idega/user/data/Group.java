@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import java.sql.Timestamp;
+
 
 public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode,com.idega.data.MetaDataCapable
 {
@@ -60,6 +62,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void removeRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.RemoveException;
  public void removeRelation(int p0,java.lang.String p1)throws javax.ejb.RemoveException;
  public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1);
+ public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1, java.sql.Timestamp p2);
  public void setAbbrevation(java.lang.String p0);
  public void setAlias(com.idega.user.data.Group p0);
  public void setAliasID(int p0);
@@ -75,4 +78,5 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setName(java.lang.String p0);
  public void setShortName(java.lang.String p0);
  public void store();
+ public void addGroup(com.idega.user.data.Group p0, Timestamp time);
 }

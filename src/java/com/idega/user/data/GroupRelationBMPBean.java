@@ -379,12 +379,20 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * 
    */
   public void removeBy(User currentUser) throws RemoveException{
-    int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
-    this.setPassive();
-    this.setTerminationDate(IWTimestamp.getTimestampRightNow());
-    setPassiveBy(userId);
-    store();
+    this.removeBy(currentUser,IWTimestamp.getTimestampRightNow());
+
   }
+  
+	/**
+	 * 
+	 */
+	public void removeBy(User currentUser, Timestamp time) throws RemoveException{
+		int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
+		this.setPassive();
+		this.setTerminationDate(time);
+		setPassiveBy(userId);
+		store();
+	}
   
   
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
