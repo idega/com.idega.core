@@ -1,5 +1,5 @@
 /*
- * $Id: ListItem.java,v 1.1 2005/02/17 11:12:12 tryggvil Exp $
+ * $Id: ListItem.java,v 1.2 2005/03/08 19:48:15 tryggvil Exp $
  * Created on 16.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,12 +21,16 @@ import com.idega.presentation.PresentationObjectContainer;
  * An item to render out a "ListItem" or <code>li</code> html tag.
  * This class is used by the Lists class.
  * </p>
- *  Last modified: $Date: 2005/02/17 11:12:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 19:48:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ListItem extends PresentationObjectContainer {
+	
+	public ListItem(){
+		setTransient(false);
+	}
 	
 	
 	public void print(IWContext iwc) throws Exception {
