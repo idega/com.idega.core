@@ -633,7 +633,7 @@ public class IWMainApplication{//implements ServletContext{
   
   private void initCryptoUsage(){
   	String isUsed = getSettings().getProperty(USE_CRYPTO_PROPERTIES);
-  	isCryptoUsed = "true".equals(isUsed);
+  	isCryptoUsed = !"false".equals(isUsed);
   }
 
   private void loadCryptoProperties(){
