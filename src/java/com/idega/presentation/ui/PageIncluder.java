@@ -33,7 +33,6 @@ public class PageIncluder extends PresentationObject implements Index{
   private String _sendURLTo = null;
   private IBPage _sendToPage = null;
   private String _sendToPageIfSet = null;
-  private String currentPageParameterAndValue = null;
 
   private String sessionId = null;
   private String sessionURL = null;
@@ -45,8 +44,11 @@ public class PageIncluder extends PresentationObject implements Index{
 
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
   private static final String PAGE_INCLUDER_SESSION_NAME="iw_session_token";
+  private String pageIncluderFinalParamName = null;
   private int instanceId;
   private boolean forceFrame = false;
+
+  private boolean changeURL = false;
 
   public PageIncluder(){
     super();
@@ -97,19 +99,24 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
   public void main(IWContext iwc) throws Exception {
-    if (_sendToPage != null) {
-      if (_sendToPageIfSet == null){
-        forwardToIBPage(_sendToPage,iwc);
-      }
-      else {
-        if (iwc.isParameterSet(_sendToPageIfSet)){
+    changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+
+    if( changeURL ){
+      if (_sendToPage != null) {
+        if (_sendToPageIfSet == null){
           forwardToIBPage(_sendToPage,iwc);
+        }
+        else {
+          if (iwc.isParameterSet(_sendToPageIfSet)){
+            forwardToIBPage(_sendToPage,iwc);
+          }
         }
       }
     }
     else{
       if (out==null) sortAndProcess(iwc);
     }
+
   }
 
   public void print(IWContext iwc)throws IOException{
@@ -124,6 +131,9 @@ public class PageIncluder extends PresentationObject implements Index{
   protected void process(IWContext iwc)throws IOException{
         StringBuffer location = new StringBuffer();
         StringBuffer queryBuf = new StringBuffer();
+
+
+
         String query = null;
         instanceId=getICObjectInstanceID();
 
@@ -175,7 +185,9 @@ public class PageIncluder extends PresentationObject implements Index{
          pageIncluderPrefix ="";
         }
 
-        if (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) {//after clicking a link og submitting a form
+        //after clicking a link and submitting a form
+        // check if the action is for this page includer
+        if ( changeURL ) {
           //get all parameters even from post actions
           Enumeration enum = iwc.getParameterNames();
           while (enum.hasMoreElements()) {
@@ -183,62 +195,24 @@ public class PageIncluder extends PresentationObject implements Index{
             //debug(param+" : "+iwc.getParameter(param));
             if (param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label) ){
              URL = decodeQueryString(iwc.getParameter(param));
-             TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+             //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
              location.append(URL);
             }
-            else if(!param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
+            else if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
+              URL = decodeQueryString(iwc.getParameter(param));
+              //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+_label,PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+              //if (_sendURLTo != null)
+              //TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
+              debug(URL);
+              location.append(URL);
+            }
+            else{
               if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
                 queryBuf.append(param);
                 queryBuf.append("=");
                 queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
                 queryBuf.append("&");
               }
-            }
-          }//while ends
-
-          query = queryBuf.toString();
-
-          if( !query.equals("") ){
-            if(URL.endsWith("/")){//check if the url ends with a slash
-              location.append("?");
-            }
-            else{//no slash at end
-              if( URL.indexOf("?")==-1 ){//check if the url contains a ?
-                if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
-                  location.append("?");
-                }
-                else{
-                  location.append("/?");
-                }
-              }
-              else{//just add to the parameters
-                location.append("&");
-              }
-            }
-            //add the extra parameters
-            location.append(query);
-          }
-        }
-        else if(iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
-          //get all parameters even from post actions
-          Enumeration enum = iwc.getParameterNames();
-          while (enum.hasMoreElements()) {
-            String param = (String) enum.nextElement();
-            //debug(param+" : "+iwc.getParameter(param));
-            /**@todo use a post method to get the page or stringbuffer this URL  encode?**/
-            if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
-             URL = decodeQueryString(iwc.getParameter(param));
-             if (_sendURLTo != null)
-               TextSoap.findAndReplace(URL,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo);
-             location.append(URL);
-            }
-            else{
-//              if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
-                queryBuf.append(param);
-                queryBuf.append("=");
-                queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
-                queryBuf.append("&");
-//              }
             }
           }//while ends
 
