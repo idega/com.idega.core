@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -399,7 +400,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	Collection groups = aGroup.getParentGroups(cachedParents, cachedGroups);
 	
 	if (groups != null && groups.size() > 0){
-	  Map GroupsContained = new Hashtable();
+	  Map GroupsContained = new LinkedHashMap();
 	
 	  String key = "";
 	  Iterator iter = groups.iterator();
@@ -2313,10 +2314,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/28 16:31:57 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/09/29 18:39:53 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.74 $
+	 * @version $Revision: 1.75 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
