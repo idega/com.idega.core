@@ -1,13 +1,19 @@
 package com.idega.core.data;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.FinderException;
 
 import com.idega.core.business.Category;
+import com.idega.core.business.ICObjectBusiness;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDORelationshipException;
 import com.idega.data.SimpleQuerier;
 public class ICCategoryBMPBean
 	extends com.idega.data.TreeableEntityBMPBean
@@ -139,6 +145,26 @@ public class ICCategoryBMPBean
 	public void setDefaultValues() {
 		setType(getCategoryType());
 	}
+	
+	public String getName(Locale locale){
+		try{
+			return getCategoryTranslation(locale).getName();
+		}catch(RemoteException e){
+			
+		}
+		return getName();
+	}
+	
+	public String getDescription(Locale locale){
+		try{
+			return getCategoryTranslation(locale).getDescription();
+		}catch(RemoteException e){
+			
+		}
+		return getDescription();
+		
+	}
+	
 	public List ejbHomeGetListOfCategoryForObjectInstance(ICObjectInstance obj, boolean order) throws FinderException {
 		StringBuffer sql = new StringBuffer();
 		sql
@@ -210,5 +236,28 @@ public class ICCategoryBMPBean
 		sql.append(" from ").append(getEntityTableName()).append("_tree )");
 		//System.err.println(sql.toString());
 		return super.idoFindPKsBySQL(sql.toString());
+	}
+	
+	public Collection ejbFindAllByObjectInstance(int iObjectInstanceID)throws FinderException{
+		ICObjectInstance obj = ICObjectBusiness.getInstance().getICObjectInstance(iObjectInstanceID);
+		return ejbFindAllByObjectInstance(obj);
+	}
+	
+	public Collection ejbFindAllByObjectInstance(ICObjectInstance instance)throws FinderException{
+		try{
+			return idoGetRelatedEntities(instance);
+		}
+		catch(IDORelationshipException ex){throw new FinderException(ex.getMessage());
+		}
+	}
+	
+	public ICCategoryTranslation getCategoryTranslation(Locale locale)throws RemoteException{
+		try{
+			ICCategoryTranslationHome home = (ICCategoryTranslationHome) IDOLookup.getHome(ICCategoryTranslation.class);
+			return home.findByCategoryAndLocale(((Integer)this.getPrimaryKey()).intValue(),ICLocaleBusiness.getLocaleId(locale));
+		}
+		catch(FinderException ex){
+			throw new RemoteException(ex.getMessage());
+		}
 	}
 }

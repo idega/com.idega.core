@@ -1,5 +1,7 @@
 package com.idega.core.data;
 
+import java.rmi.RemoteException;
+import java.util.Locale;
 import javax.ejb.*;
 
 public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core.business.Category
@@ -22,4 +24,7 @@ public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core
  public int getLocaleId();
  public void setParentId(int p0);
  public void setCreated(java.sql.Timestamp p0);
+ public String getName(Locale locale) ;
+ public String getDescription(Locale locale);
+ public ICCategoryTranslation getCategoryTranslation(Locale locale)throws RemoteException;
 }
