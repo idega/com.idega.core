@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.112 2004/06/22 17:51:15 thomas Exp $
+ *  $Id: Page.java,v 1.113 2004/06/23 17:14:49 palli Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1018,13 +1018,18 @@ public class Page extends PresentationObjectContainer {
 			obj._addStyleSheet = _addStyleSheet;
 			obj._ibPageID = _ibPageID;
 			obj.styleFile = styleFile;
-			if (_javascripts != null)
+			if (_javascripts != null) {
 				obj._javascripts = _javascripts;
-			if (_styleSheets != null)
+			}
+			if (_styleSheets != null) {
 				obj._styleSheets = _styleSheets;
-			if (_styleDefinitions != null)
+			}
+			if (_styleDefinitions != null) {
 				obj._styleDefinitions = _styleDefinitions;
-			obj.dynamicPageTrigger = (ICDynamicPageTrigger) dynamicPageTrigger.clone(); 
+			}
+			if (dynamicPageTrigger != null) {
+			    obj.dynamicPageTrigger = (ICDynamicPageTrigger) dynamicPageTrigger.clone();
+			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
