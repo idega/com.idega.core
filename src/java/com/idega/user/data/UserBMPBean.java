@@ -1211,7 +1211,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	private String getUserStatusSearchString(int statusId) {
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append("select distinct(ic_user_id) from ic_user_status where status_id = ")
+		sql.append("select distinct(ic_user_id) from ic_usergroup_status where status_id = ")
 		.append(statusId);
 
 		return sql.toString();
