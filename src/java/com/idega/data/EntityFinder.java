@@ -165,7 +165,7 @@ public class EntityFinder{
 	}
 
 	public static List findAllByColumn(GenericEntity fromEntity,String columnName, int toFind)throws SQLException{
-		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" like '"+toFind+"'");
+		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+"="+toFind+"");
 	}
 
 
