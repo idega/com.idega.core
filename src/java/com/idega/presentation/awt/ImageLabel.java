@@ -309,7 +309,7 @@ public class ImageLabel extends Canvas {
   public Dimension preferredSize() {
     if (!doneLoading)
       waitForImage(false);
-    return(super.preferredSize());
+    return(super.getPreferredSize());
     //return(super.getPreferredSize());
 //  return new Dimension(width,height);
   }
@@ -335,7 +335,7 @@ public class ImageLabel extends Canvas {
    public Dimension minimumSize() {
      if (!doneLoading)
        waitForImage(false);
-     return(super.minimumSize());
+     return(super.getMinimumSize());
 //  return new Dimension(width,height);
    }
 
@@ -376,8 +376,8 @@ public class ImageLabel extends Canvas {
       if (height > 0)
         explicitHeight=height;
     }
-    super.resize(width, height);
-//    super.setSize(width, height);
+//    super.resize(width, height);
+    super.setSize(width, height);
   }
 
   /** Resizes the ImageLabel. If you don't resize the
