@@ -27,6 +27,10 @@ import com.idega.core.data.AddressHome;
 import com.idega.core.data.AddressType;
 import com.idega.core.data.Country;
 import com.idega.core.data.CountryHome;
+import com.idega.core.data.Email;
+import com.idega.core.data.EmailHome;
+import com.idega.core.data.Phone;
+import com.idega.core.data.PhoneHome;
 import com.idega.core.data.PostalCode;
 import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
@@ -55,13 +59,15 @@ import com.idega.util.ListUtil;
   */
 
 
-public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness{
+public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
   private UserHome userHome;
   private GroupHome groupHome;
   private UserGroupRepresentativeHome userRepHome;
   private GroupHome permGroupHome;
   private AddressHome addressHome;
+  private EmailHome emailHome;
+  private PhoneHome phoneHome;
 
 
   public GroupBusinessBean() {
@@ -1180,8 +1186,133 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     return addressHome;
   }
   
+  public  Phone[] getGroupPhones(Group group)throws RemoteException{
+    try {
+      Collection phones = group.getPhones();
+//    if(phones != null){
+        return (Phone[])phones.toArray(new Phone[phones.size()]);
+//    }
+      //return (Phone[]) ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
+    }
+    catch (EJBException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public  Email getGroupEmail(Group group) {
+    try {
+      Collection L = group.getEmails();
+      if(L != null){
+        if ( ! L.isEmpty() )
+          return (Email)L.iterator().next();
+      }
+      return null;
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+  
+  public void updateGroupMail(Group group, String email) throws CreateException,RemoteException {
+    Email mail = getGroupEmail(group);
+    boolean insert = false;
+    if ( mail == null ) {
+      mail = this.getEmailHome().create();
+      insert = true;
+    }
+
+    if ( email != null ) {
+      mail.setEmailAddress(email);
+    }
+    mail.store();
+    if(insert){
+      //((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
+      try{
+       group.addEmail(mail);
+      }
+      catch(Exception e){
+        throw new RemoteException(e.getMessage());
+      }
+    }
+
+  }
+
+  public EmailHome getEmailHome(){
+    if(emailHome==null){
+      try{
+        emailHome = (EmailHome)IDOLookup.getHome(Email.class);
+      }
+      catch(RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return emailHome;
+  }
+
+  public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
+    try{
+    Phone phone = getGroupPhone(group,phoneTypeId);
+    boolean insert = false;
+    if ( phone == null ) {
+      phone = this.getPhoneHome().create();
+      phone.setPhoneTypeId(phoneTypeId);
+      insert = true;
+    }
+
+    if ( phoneNumber != null ) {
+      phone.setNumber(phoneNumber);
+    }
+
+    phone.store();
+    if(insert){
+      //((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(phone);
+      group.addPhone(phone);
+    }
+
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      throw new EJBException(e.getMessage());
+    }
 
 
+  }
+  
+  public  Phone getGroupPhone(Group group, int phoneTypeId)throws RemoteException{
+    try {
+      Phone[] result = this.getGroupPhones(group);
+      //IDOLegacyEntity[] result = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
+      if(result != null){
+        for (int i = 0; i < result.length; i++) {
+          if(((Phone)result[i]).getPhoneTypeId() == phoneTypeId){
+            return (Phone)result[i];
+          }
+        }
+      }
+      return null;
+    }
+    catch (EJBException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }  
+
+  public PhoneHome getPhoneHome(){
+    if(phoneHome==null){
+      try{
+        phoneHome = (PhoneHome)IDOLookup.getHome(Phone.class);
+      }
+      catch(RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return phoneHome;
+  }
+ 
+ 
+ 
 } // Class
 
 /**

@@ -128,4 +128,14 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public com.idega.core.data.Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws javax.ejb.CreateException,java.rmi.RemoteException;
 
   public com.idega.core.data.Address getGroupMainAddress(Group group) throws RemoteException;
+  
+  public  com.idega.core.data.Phone[] getGroupPhones(Group group)throws RemoteException;
+  
+  public com.idega.core.data.Email getGroupEmail(Group group)throws NoEmailFoundException;
+  
+  public void updateGroupMail(Group group, String email) throws CreateException,RemoteException;
+  
+  public com.idega.core.data.PhoneHome getPhoneHome();
+  
+  public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException;
 }
