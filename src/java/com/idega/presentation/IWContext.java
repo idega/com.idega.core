@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.110 2004/12/03 18:35:51 tryggvil Exp $
+ * $Id: IWContext.java,v 1.111 2004/12/13 11:51:48 gummi Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -8,6 +8,7 @@
  * Use is subject to license terms.
  */
 package com.idega.presentation;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -58,6 +59,7 @@ import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
 import com.idega.util.datastructures.HashtableMultivalued;
+
 /**
  * This class is a context information that lives through each user request in an idegaWeb application. 
  * The role of this class is very similar to that of FacesContext in a JSF application. <br>
@@ -70,10 +72,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/03 18:35:51 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/13 11:51:48 $ by $Author: gummi $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -206,6 +208,20 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return isMac;
 	}
+	
+	public boolean isWebDavClient() {
+		boolean isDav = false;
+		if (getUserAgent().indexOf("DAV") != -1) {
+			isDav = true;
+		} else if (getUserAgent().indexOf("dav") != -1) {
+			isDav = true;
+		} if (getUserAgent().indexOf("Dav") != -1) {
+			isDav = true;
+		}
+		
+		return isDav;
+	}
+	
 	public boolean isNetscape() {
 		if (getUserAgent().indexOf("Mozilla") != -1) {
 			//if not Internet Explorer then Netscape :)
@@ -1143,6 +1159,15 @@ implements IWUserContext, IWApplicationContext {
 	 **/
 	private void setRealFacesContext(FacesContext fc){
 		this.realFacesContext=fc;
+	}
+	
+	/**
+	 * This method gets the header value for the attribute "Authorization" which is
+	 * used e.g. for getting username and password in BASIC Authorization/Authentication request
+	 * @return Returns the header value for "Authorization" attribute
+	 */
+	public String getAuthorizationHeader(){
+		return getRequest().getHeader("Authorization");
 	}
 
 }
