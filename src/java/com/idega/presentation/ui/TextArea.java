@@ -69,10 +69,21 @@ public void setAsNotEditable(){
 	editable=false;
 }
 
+public void setValue(String value){
+  setContent(value);
+}
+
+public void setValue(int value){
+  setValue(Integer.toString(value));
+}
+
 public void setContent(String s){
 	content=s;
 }
 
+public String getValue(){
+  return getContent();
+}
 
 public void setWrap(boolean wrapping){
   this.wrap=wrapping;
