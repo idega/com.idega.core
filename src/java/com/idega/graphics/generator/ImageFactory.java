@@ -57,7 +57,17 @@ public class ImageFactory {
 
 
       fontbase = Font.createFont(Font.TRUETYPE_FONT,fis);
-      defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
+
+      String OS = System.getProperty("os.name","Windows");
+      /**
+       * Special check for point sizing on MacOS
+       */
+      if(OS.startsWith("Mac")){
+        defaultFont = fontbase.deriveFont(Font.PLAIN,10);
+      }
+      else{
+        defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
+      }
     }
     catch (Exception ex) {
       System.err.println("ImageFactory : default font is missing using default java font instead");
