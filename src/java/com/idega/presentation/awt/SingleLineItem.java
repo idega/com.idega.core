@@ -156,7 +156,7 @@ public class SingleLineItem extends Panel {
         isSelected = true;
 
         setBackground(Color.blue);
-        setForeground(Color.black);
+        setForeground(Color.white);
 
         openWindow();
       }
