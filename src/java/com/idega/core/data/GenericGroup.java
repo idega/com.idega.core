@@ -10,6 +10,7 @@ import java.sql.*;
 import com.idega.data.*;
 import java.util.Vector;
 import com.idega.core.user.data.User;
+import java.util.List;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -54,7 +55,7 @@ public class GenericGroup extends GenericEntity{
          * overwrite in extended classes
          */
         public static String getClassName(){
-          return "com.idega.core.data.GenericGroup";
+          return GenericGroup.class.getName();
         }
 
         /*  ColumNames begin   */
@@ -205,6 +206,16 @@ public class GenericGroup extends GenericEntity{
 
         public void addUser(User user)throws SQLException{
           user.addTo(this);
+        }
+
+
+        public GenericGroup findGroup(String groupName) throws SQLException{
+          List group = EntityFinder.findAllByColumn(GenericEntity.getStaticInstance(this.getClass().getName()),getNameColumnName(),groupName,getGroupTypeColumnName(),this.getGroupTypeValue());
+          if(group != null){
+            return (GenericGroup)group.get(0);
+          }else{
+            return null;
+          }
         }
 
 

@@ -8,6 +8,9 @@ import java.sql.*;
 import com.idega.data.*;
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.core.data.GenericGroup;
 import java.util.List;
 import com.idega.util.EncryptionType;
 
@@ -53,6 +56,16 @@ public class LoginTable extends GenericEntity implements EncryptionType{
             System.err.println(ex.getMessage());
             ex.printStackTrace();
             throw new SQLException("Login Not created");
+          }
+
+          AccessControl control = new AccessControl();
+          GenericGroup group = PermissionGroup.getStaticPermissionGroupInstance().findGroup(AccessControl.getAdministratorGroupName());
+          if(group != null){
+            control.addUserToPermissionGroup((PermissionGroup)group,adminUser.getID());
+          }else{
+            int[] userId = new int[1];
+            userId[0] = adminUser.getID();
+            control.createPermissionGroup(AccessControl.getAdministratorGroupName(),null,null,userId,null);
           }
         }
 
