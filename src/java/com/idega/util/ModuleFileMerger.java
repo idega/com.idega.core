@@ -4,7 +4,6 @@
  */
 package com.idega.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,10 +11,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -27,7 +31,7 @@ import java.util.List;
  * The file generates markers around what it merges and can use that to re-merge if changes occur.<br>
  * The merged file will look something like this:<br>
  * <br>
- * <!-- Generated file by idegaWeb please don't modify markers -->
+ * <!-- Generated file by idegaWeb please don't modify module markers -->
  * <rootxml>
  * <!-- MODULE:BEGIN com.idega.core 1.0 -->
  *	<somexmltag>... </somexmltag>
@@ -42,10 +46,12 @@ public class ModuleFileMerger {
 	private Writer output;
 	private File outputFile;
 	private String rootXMLElement="web-app";
-	private List patterns;
 	//Sources of input Files:
 	private List sources;
 	private static String SLASH="/";
+	private Map moduleMap;
+	private String fileHeader;
+	private boolean removeOlderModules=true;
 	
 	/**
 	 * @return Returns the rootXMLElement.
@@ -83,10 +89,23 @@ public class ModuleFileMerger {
 		return outputFile;
 	}
 	/**
+	 * Sets the outputFile. This method creates the file if it does not already exist.
+	 * If input (setInput()) is not set it sets the input file the same as the output file if it exists.
 	 * @param outputFile The outputFile to set.
 	 */
 	public void setOutputFile(File outputFile) {
 		try {
+			if(!outputFile.exists()){
+				outputFile.createNewFile();
+			}
+			else{
+				if(this.input==null){
+					//Read the contents of the outputFile (because it exists) to the input Reader
+					StringBuffer fileAsStringBuffer = readIntoBuffer(new FileReader(outputFile));
+					Reader input = new StringReader(fileAsStringBuffer.toString());
+					setInput(input);
+				}
+			}
 			setOutput(new FileWriter(outputFile));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -96,7 +115,7 @@ public class ModuleFileMerger {
 	/**
 	 * @return Returns the sources.
 	 */
-	public List getSources() {
+	public List getMergeInSources() {
 		if(sources==null){
 			sources = new ArrayList();
 		}
@@ -105,100 +124,39 @@ public class ModuleFileMerger {
 	/**
 	 * @param sources The sources to set.
 	 */
-	public void setSources(List sources) {
+	public void setMergeInSources(List sources) {
 		this.sources = sources;
 	}
 	
-	public void addSourceFile(File sourceFile,String moduleIdentifier){
-		getSources().add(new ModuleFile(getRootXMLElement(),sourceFile,moduleIdentifier));
+	public void addMergeInSourceFile(File sourceFile,String moduleIdentifier){
+		getMergeInSources().add(new ModuleFile(getRootXMLElement(),sourceFile,moduleIdentifier));
 	}
 	
-	public void addSourceFile(File sourceFile,String moduleIdentifier,String moduleVersion){
-		getSources().add(new ModuleFile(this.getRootXMLElement(),sourceFile,moduleIdentifier,moduleVersion));
-	}	
-		
-	
-	/*
-	 * 
-	public List getPatterns() {
-		if(patterns==null){
-			patterns = new ArrayList();
-			Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p1);
-			Pattern p2 = Pattern.compile("(<link[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p2);
-			Pattern p3 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p3);
-			Pattern p4 = Pattern.compile("(<script[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p4);
-			Pattern p5 = Pattern.compile("(<input[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p5);
-			Pattern p6 = Pattern.compile("(<form[^>]+action=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p6);
-			Pattern p7 = Pattern.compile("(<embed[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p7);
-
-		}
-		return patterns;
+	public void addMergeInSourceFile(File sourceFile,String moduleIdentifier,String moduleVersion){
+		getMergeInSources().add(new ModuleFile(this.getRootXMLElement(),sourceFile,moduleIdentifier,moduleVersion));
 	}
-	*/
+	
 	/**
-	 * @param patterns The patterns to set.
+	 * Read the contents of the Reader to a StringBuffer
+	 * @param reader a reader (from file e.g.)
+	 * @return the contents read from the reader in a StringBuffer
 	 */
-	public void setPatterns(List patterns) {
-		this.patterns = patterns;
-	}
-	public static void main(String[] args) throws Exception{
-		performWebXmlsTest();
-	}
-
-	
-	public static void performWebXmlsTest()throws Exception{
-		
-		ModuleFileMerger instance = new ModuleFileMerger();
-		
-		String sBundlesDir = "/idega/eclipse/maven/bundles";
-		File bundlesDir = new File(sBundlesDir);
-		
-		File[] bundles = bundlesDir.listFiles();
-		for (int i = 0; i < bundles.length; i++) {
-			File bundle = bundles[i];
-			String path = bundle.getAbsolutePath();
-			String sWebXml =path+"/WEB-INF/web.xml";
-			File webXml = new File(sWebXml);
-			if(webXml.exists()){
-				String bundleFolderName = bundle.getName();
-				String bundleId = null;
-				if(bundleFolderName.endsWith(".bundle")){
-					bundleId = bundleFolderName.substring(0,bundleFolderName.indexOf(".bundle"));
-				}
-				else{
-					bundleId=bundleFolderName;
-				}
-				instance.addSourceFile(webXml,bundleId);
+	protected StringBuffer readIntoBuffer(Reader reader){
+		StringBuffer outString = new StringBuffer();
+		int buffersize = 1000;
+		char[] buffer = new char[buffersize];
+		try {
+			int read = reader.read(buffer);
+			while(read!=-1){
+				outString.append(buffer,0,read);
+				read = reader.read(buffer);
 			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		
-		String sFromFile = "/tmp/web.xml";
-		String sToFile = "/tmp/web.xml";
-		File toFile = new File(sToFile);
-		if(!toFile.exists()){
-			toFile.createNewFile();
-		}
-		File fromFile = new File(sFromFile);
-		if(fromFile.exists()){
-			FileReader reader = new FileReader(fromFile);
-			Reader input = new BufferedReader(reader);
-			instance.setInput(input);
-		}
-		
-		FileWriter output = new FileWriter(toFile);
-		
-		instance.setOutput(output);
-		instance.process();
+		return outString;
 	}
-	
 
 	/**
 	 * Execute the processing. Read the input, search/replace and write to the output.
@@ -206,53 +164,162 @@ public class ModuleFileMerger {
 	 */
 	public void process() {
 		
-		Reader reader = getInput();
-		StringBuffer sb = new StringBuffer();
-		int buffersize = 1000;
-		char[] buffer = new char[buffersize];
-		try {
-			int read = reader.read(buffer);
-			while(read!=-1){
-				sb.append(buffer,0,read);
-				read = reader.read(buffer);
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		buildMapfromModules();
 		StringBuffer outString = new StringBuffer();
-		Iterator moduleIter = getSources().iterator();
-		//StringBuffer replaceBuffer = sb;
+		StringBuffer inString = new StringBuffer();
 		
-		outString.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		outString.append("<!DOCTYPE web-app\n");
-		outString.append("\tPUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\"\n");
-		outString.append("\thttp://java.sun.com/dtd/web-app_2_3.dtd\">\n");
+		Reader reader = getInput();
+		if(reader!=null){
+			inString = readIntoBuffer(reader);
+			processContents(inString,outString);
+		}
+		else{
+			String fileHeader = getFileHeader();
+			if(fileHeader!=null){
+				outString.append(fileHeader);
+			}
+			outString.append("<"+getRootXMLElement()+">\n");
+		}
 		
-		outString.append("<"+getRootXMLElement()+">\n");
 		
-		
+		Iterator moduleIter = getMergeInSources().iterator();
 		while (moduleIter.hasNext()) {
 			ModuleFile module = (ModuleFile)moduleIter.next();
-			String moduleId = module.getModuleIdentifier();
-			String moduleVersion = module.getModuleVersion();
-			File inputFile = module.getSourcefile();
-			
-			String modulePartBegin = "<!-- MODULE:BEGIN "+moduleId+" "+moduleVersion+" -->\n";
-			String modulePartEnd = "<!-- MODULE:END "+moduleId+" "+moduleVersion+" -->\n";
-			
-			String moduleContents = module.getContentsWithinRootElement();
-			
-			outString.append(modulePartBegin);
-			outString.append(moduleContents);
-			outString.append(modulePartEnd);
+			//Not include the module part again
+			if(!module.isHasBeenProcessed()){
+				appendModulePartWithComments(module,outString);
+			}
 			
 			//replaceBuffer=new StringBuffer(outString.toString());
 		}
 		outString.append("\n</"+getRootXMLElement()+">");
+		
 		PrintWriter out = new PrintWriter(getOutput());
 		out.write(outString.toString());
 		out.close();
+	}
+	
+	protected void appendModulePartWithComments(ModuleFile module,StringBuffer outString){
+		String moduleId = module.getModuleIdentifier();
+		String moduleVersion = module.getModuleVersion();
+		File inputFile = module.getSourcefile();
+		
+		String modulePartBegin = "<!-- MODULE:BEGIN "+moduleId+" "+moduleVersion+" -->\n";
+		String modulePartEnd = "<!-- MODULE:END "+moduleId+" "+moduleVersion+" -->\n";
+		
+		String moduleContents = module.getContentsWithinRootElement();
+		
+		outString.append(modulePartBegin);
+		outString.append(moduleContents);
+		outString.append(modulePartEnd);
+		
+		module.setHasBeenProcessed(true);
+	}
+	
+	/**
+	 * Process contents in the out source file (already existing and older module tags)
+	 * @param inString
+	 * @param outString
+	 */
+	private void processContents(StringBuffer inString, StringBuffer outString) {
+		//outString = new StringBuffer();
+		StringBuffer semiOutBuffer = new StringBuffer();
+		Pattern moduleBeginPattern = (Pattern) Pattern.compile("<!-- MODULE:BEGIN ([\\S]+)\\s([\\S]+)\\s[^\\n\\r]+",Pattern.CASE_INSENSITIVE);
+		Matcher moduleBeginMatcher = moduleBeginPattern.matcher(inString);
+
+		//StringBuffer remainder = new StringBuffer();
+		//remainder.append(inString);
+		StringBuffer remainder = null;
+		
+		while (moduleBeginMatcher.find()) {
+			// this pattern matches.
+			String moduleId = moduleBeginMatcher.group(1);
+			String version = moduleBeginMatcher.group(2);
+			StringBuffer oldModuleContents = new StringBuffer();
+			oldModuleContents.append(moduleBeginMatcher.group(0));
+			moduleBeginMatcher.appendReplacement(semiOutBuffer,"");
+			
+			remainder = new StringBuffer();
+			moduleBeginMatcher.appendTail(remainder);
+			
+			String regexString = "<!-- MODULE:END "+getRegExEscaped(moduleId)+" "+getRegExEscaped(version)+"[^\\n\\r]+";
+			Pattern moduleEndPattern = (Pattern) Pattern.compile(regexString,Pattern.CASE_INSENSITIVE);
+			Matcher moduleEndMatcher = moduleEndPattern.matcher(remainder);
+			
+			
+			
+			ModuleFile module = (ModuleFile) this.getModuleMap().get(moduleId);
+			
+			moduleEndMatcher.find();
+			//This must work, i.e. find() must return a result, otherwise the file is corrupt
+			moduleEndMatcher.appendReplacement(oldModuleContents,"$0");
+			//Remainder is only whats left after the MODULE:END tag
+			remainder = new StringBuffer();
+			moduleEndMatcher.appendTail(remainder);
+			//Begin from where the last module tag ended for the next iteration:
+			moduleBeginMatcher = moduleBeginPattern.matcher(remainder);
+			
+			if(module!=null){
+				appendModulePartWithComments(module,semiOutBuffer);
+			}
+			else{
+				//Module not found in new sources
+				if(getIfRemoveOlderModules()){
+					//Do nothing
+				}
+				else{
+					semiOutBuffer.append(oldModuleContents);
+				}
+			}
+
+
+		}
+		moduleBeginMatcher.appendTail(semiOutBuffer);
+		//Cut </web-app> off the ending:
+		//replaceBuffer=new StringBuffer(outString.toString());
+		String out = semiOutBuffer.toString();
+		
+		outString.append(out.substring(0,out.lastIndexOf("</"+getRootXMLElement()+">")));
+	}
+	/**
+	 * Gets if to remove older module parts found 
+	 * in the source file but not found in the sources.
+	 * Default is true.
+	 * @return
+	 */
+	private boolean getIfRemoveOlderModules() {
+		// TODO Auto-generated method stub
+		return removeOlderModules;
+	}
+	/**
+	 * Sets if to remove older module parts found 
+	 * in the source file but not found in the sources.
+	 * @return
+	 */
+	public void setIfRemoveOlderModules(boolean value){
+		this.removeOlderModules=value;
+	}
+	/**
+	 * 
+	 */
+	private void buildMapfromModules() {
+		Iterator moduleIter = getMergeInSources().iterator();
+		
+		while (moduleIter.hasNext()) {
+			ModuleFile module = (ModuleFile)moduleIter.next();
+			String moduleId = module.getModuleIdentifier();			
+			Map moduleMap = getModuleMap();
+			moduleMap.put(moduleId,module);
+		}
+	}
+	/**
+	 * @return
+	 */
+	private Map getModuleMap() {
+		if(moduleMap==null){
+			moduleMap=new HashMap();
+		}
+		return moduleMap;
 	}
 	/**
 	 * @return Returns the input.
@@ -280,10 +347,65 @@ public class ModuleFileMerger {
 	public void setOutput(Writer output) {
 		this.output = output;
 	}
+	
+	/**
+	 * Gets the file Header (doctype) if it is generated
+	 * @return
+	 */
+	public String getFileHeader(){
+		return fileHeader;
+	}
+	
+	public void setFileHeader(String fileHeader){
+		this.fileHeader=fileHeader;
+	}
 
+	/**
+	 * Escapes characters from the string that are reserved in regular expressions (with backslashes)
+	 * @param inString
+	 * @return
+	 */
+	public String getRegExEscaped(String inString){
+		StringBuffer out = new StringBuffer();
+		char[] charArray = inString.toCharArray();
+		for (int i = 0; i < charArray.length; i++) {
+			char character = charArray[i];
+			//TODO: Handle more special regex characters
+			switch (character) {
+			case '.':
+				out.append("\\.");
+				break;
+			case '$':
+				out.append("\\$");
+				break;
+			case '[':
+				out.append("\\[");
+				break;
+			case ']':
+				out.append("\\]");
+				break;
+			case '(':
+				out.append("\\(");
+				break;
+			case ')':
+				out.append("\\)");
+				break;
+			default:
+				out.append(character);
+				break;
+			}
+		}
+		return out.toString();
+	}	
 	
 	
 	private class ModuleFile{
+		private Reader reader;
+		private String moduleIdentifier;
+		private String moduleVersion="1.0";
+		private String rootXmlElement;
+		private File sourcefile;
+		private boolean hasBeenProcessed=false;
 		/**
 		 * @param sourceFile2
 		 * @param moduleIdentifier2
@@ -304,7 +426,6 @@ public class ModuleFileMerger {
 			setModuleIdentifier(moduleIdentifier2);
 			setModuleVersion(moduleVersion2);
 		}
-		private File sourcefile;
 		/**
 		 * @return Returns the moduleIdentifier.
 		 */
@@ -359,10 +480,6 @@ public class ModuleFileMerger {
 			}
 			this.sourcefile = sourcefile;
 		}
-		private Reader reader;
-		private String moduleIdentifier;
-		private String moduleVersion="1.0";
-		private String rootXmlElement;
 		
 		/**
 		 * @return Returns the rootXmlElement.
@@ -406,5 +523,18 @@ public class ModuleFileMerger {
 			//Matcher m = p.matcher(replaceBuffer);
 			return contents;
 		}
+		/**
+		 * @return Returns the hasBeenProcessed.
+		 */
+		public boolean isHasBeenProcessed() {
+			return hasBeenProcessed;
+		}
+		/**
+		 * @param hasBeenProcessed The hasBeenProcessed to set.
+		 */
+		public void setHasBeenProcessed(boolean hasBeenProcessed) {
+			this.hasBeenProcessed = hasBeenProcessed;
+		}
+		
 	}
 }
