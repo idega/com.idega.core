@@ -1,6 +1,7 @@
 package com.idega.data;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -108,6 +109,12 @@ public class IDOQuery {
 
 	public IDOQuery append(Date date){
 		IWTimestamp stamp = new IWTimestamp(date);
+		this.appendWithinSingleQuotes(stamp.toSQLString());
+		return this;
+	}
+
+	public IDOQuery append(Timestamp timestamp){
+		IWTimestamp stamp = new IWTimestamp(timestamp);
 		this.appendWithinSingleQuotes(stamp.toSQLString());
 		return this;
 	}
