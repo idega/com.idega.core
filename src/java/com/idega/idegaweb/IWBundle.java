@@ -401,20 +401,20 @@ public class IWBundle implements java.lang.Comparable{
     //
     //}
 
-    protected String getResourcesRealPath(){
+    public String getResourcesRealPath(){
           return resourcesRealPath;
          //return resourcesPath+"/"+modinfo.getCurrentLocale().toString();
     }
 
-    protected String getResourcesURL(Locale locale){
+    public String getResourcesURL(Locale locale){
       return getResourcesVirtualPath(locale);
     }
 
-    protected String getResourcesURL(){
+    public String getResourcesURL(){
       return getResourcesVirtualPath();
     }
 
-    protected String getResourcesVirtualPath(Locale locale){
+    public String getResourcesVirtualPath(Locale locale){
     //private String getLocaleDirectory(Locale locale){
         //return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
         return this.getResourceBundle(locale).getResourcesURL();
@@ -427,7 +427,7 @@ public class IWBundle implements java.lang.Comparable{
     }
 
 
-    protected String getResourcesRealPath(Locale locale){
+    public String getResourcesRealPath(Locale locale){
       String path = (String)localeRealPaths.get(locale);
       if (path==null){
         path = getResourcesRealPath()+FileUtil.getFileSeparator()+locale.toString()+".locale";
@@ -482,6 +482,18 @@ public class IWBundle implements java.lang.Comparable{
 
     public Image getImage(String urlInBundle, String name, int width, int height){
       return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
+    }
+
+    public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height){
+      Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
+        returnImage.setWidth(width);
+        returnImage.setHeight(height);
+      return returnImage;
+    }
+
+     public Image getImage(String urlInBundle, String overUrlInBundle, String name){
+      Image returnImage = new Image(name,getResourcesURL()+slash+urlInBundle,getResourcesURL()+slash+overUrlInBundle);
+      return returnImage;
     }
 
     public Image getImage(String urlInBundle, String name){
