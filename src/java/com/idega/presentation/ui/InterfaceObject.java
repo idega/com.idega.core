@@ -320,6 +320,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 	
 	public void _main(IWContext iwc) throws Exception {
+		super._main(iwc);
 		if (isEnclosedByForm()) {
 			if (_checkObject) {
 				getScript().addFunction("checkObject", "function checkObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].checked=eval(value);\n	}");
