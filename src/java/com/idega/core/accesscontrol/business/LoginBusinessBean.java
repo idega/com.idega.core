@@ -67,8 +67,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM=false;
 	
-	private static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
-	private static final String LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST = "LOGIN_BY_UUID_AUTHORIZED_HOSTS";
+	public static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
+	public static final String LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST = "LOGIN_BY_UUID_AUTHORIZED_HOSTS";
 
 	
 	public LoginBusinessBean() {
