@@ -132,8 +132,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//            return "ic_group_user";
 	//        }
 	public void setDefaultValues() {
-		setGroupType(getGroupTypeValue());
-		setCreated(IWTimestamp.getTimestampRightNow());
+		//DO NOT USE setColumn
+		initializeColumnValue(COLUMN_GROUP_TYPE, getGroupTypeValue());
+		initializeColumnValue(COLUMN_CREATED,IWTimestamp.getTimestampRightNow());
 	}
 	//  public void insertStartData(){
 	//    try {
