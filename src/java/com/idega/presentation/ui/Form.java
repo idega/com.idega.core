@@ -781,13 +781,13 @@ public class Form extends InterfaceObject {
 	 * @return Script
 	 */
 	public Script getAssociatedFormScript() {
-		return getScript();
+		if (associatedScript == null) {
+			setAssociatedFormScript(new Script());
+		}
+		return associatedScript;
 	}
 
 	protected Script getScript() {
-		if (getAssociatedFormScript() == null) {
-			setAssociatedFormScript(new Script());
-		}
 		return getAssociatedFormScript();
 	}
 	
