@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.127 2004/11/14 23:20:47 tryggvil Exp $
+ *  $Id: Page.java,v 1.128 2004/11/23 14:57:28 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -141,6 +141,7 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public Page(String s) {
 		super();
+		setTransient(false);
 		setTitle(s);
 	}
 
