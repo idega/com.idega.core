@@ -5,9 +5,13 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+
 import com.idega.business.IBOLookup;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
+import com.idega.data.IDOLookupException;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
@@ -281,17 +285,28 @@ public class IWMainApplicationStarter {
 		 * @todo Move this to a more appropriate place
 		 **/
 		try {
-			GroupRelationTypeHome grtHome =
-				(GroupRelationTypeHome) com.idega.data.IDOLookup.getHome(GroupRelationType.class);
-			GroupRelationType grType = grtHome.create();
-			grType.setType(groupRelationType);
-			grType.store();
-			sendStartMessage("Registered Group relation type: '" + groupRelationType + "'");
+			GroupRelationTypeHome grtHome = (GroupRelationTypeHome) com.idega.data.IDOLookup.getHome(GroupRelationType.class);
+			GroupRelationType grType;
+			try {
+				grType = grtHome.findByPrimaryKey(groupRelationType);
+			}
+			catch (FinderException fe) {
+				try {
+					grType = grtHome.create();
+					grType.setType(groupRelationType);
+					grType.store();
+					sendStartMessage("Registered Group relation type: '" + groupRelationType + "'");
+				}
+				catch (CreateException ce) {
+					ce.printStackTrace();
+				}
+			}
 		}
-		catch (Exception e) {
-			//sendStartMessage("Failed Registering Group relation type: '"+groupRelationType+"'");
+		catch (IDOLookupException ile) {
+			ile.printStackTrace();
 		}
 	}
+	
 	/**
 	 * Not Implemented fully
 	 */
