@@ -64,12 +64,12 @@ public class StatefullPresentationImplHandler {
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        if(obj.getICObjectInstanceID() == 0){
+        //if(obj.getICObjectInstanceID() == 0){
           _presentationState = stateMachine.getStateFor(obj.getCompoundId(), _class);
          // _presentationState = stateMachine.getStateFor(obj.getLocation(),_class);
-        } else {
-          _presentationState = stateMachine.getStateFor(obj.getICObjectInstance());
-        }
+        //} else {
+        //  _presentationState = stateMachine.getStateFor(obj.getICObjectInstance());
+        //}
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
