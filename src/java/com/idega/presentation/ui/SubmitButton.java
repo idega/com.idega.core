@@ -176,8 +176,8 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void setAsImageButton(boolean asImageButton) {
 		super.setAsImageButton(asImageButton);
-		setInputType(INPUT_TYPE_IMAGE);
-		setOnClick("this.form.submit();");
+		if (asImageButton)
+			setInputType(INPUT_TYPE_IMAGE);
 	}
 	
 	public void setSubmitConfirm(String confirmMessage) {
