@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.78 2004/02/03 14:03:30 laddi Exp $
+ * $Id: PresentationObject.java,v 1.79 2004/02/05 20:59:40 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -315,6 +315,13 @@ implements Cloneable,UIComponent{
 			_styler = new TextStyler();
 		}
 		_styler.parseStyleString(style);
+		setMarkupAttribute("style", _styler.getStyleString());
+	}
+	public void setStyleAttribute(String attribute, String value) {
+		if (_styler == null) {
+			_styler = new TextStyler();
+		}
+		_styler.setStyleValue(attribute, value);
 		setMarkupAttribute("style", _styler.getStyleString());
 	}
 	public String getStyleAttribute()
