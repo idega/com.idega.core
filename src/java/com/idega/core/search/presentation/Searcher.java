@@ -1,5 +1,5 @@
 /*
- * $Id: Searcher.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
+ * $Id: Searcher.java,v 1.2 2005/01/19 10:06:13 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,23 +21,23 @@ import com.idega.presentation.ui.TextInput;
 
 
 /**
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/01/19 10:06:13 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up the search form (simple by default or advanced).<br>
  * To view the actual search results you must have a SearchResults block on the page you want to display the results.<br>
  * Use setInputParameterName if you want to have different searches on the same page, remember to set the same parameter<br>
  * for the SearchResults object.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Searcher extends Block {
 
-	public static final String DEFAULT_STYLE_CLASS = "iw_search";
-	public static final String DEFAULT_INPUT_STYLE_CLASS = "iw_search_input";
-	public static final String DEFAULT_BUTTON_STYLE_CLASS = "iw_search_button";
+	public static final String DEFAULT_STYLE_CLASS = "iw_searcher";
+	public static final String DEFAULT_INPUT_STYLE_CLASS = "iw_searcher_input";
+	public static final String DEFAULT_BUTTON_STYLE_CLASS = "iw_searcher_button";
 	public static final String DEFAULT_SEARCH_PARAMETER_NAME = "iw_search";
 	public static final String DEFAULT_ADVANCED_SEARCH_PARAMETER_NAME = "iw_search_adv";
-	public static final String BUTTON_LOCALIZATION_KEY = "Search.button";
+	public static final String BUTTON_LOCALIZATION_KEY = "searcher.button";
 	
 	private String styleClass = DEFAULT_STYLE_CLASS;
 	private String inputStyleClass = DEFAULT_INPUT_STYLE_CLASS;
