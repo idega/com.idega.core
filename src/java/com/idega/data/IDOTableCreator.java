@@ -514,7 +514,7 @@ public class IDOTableCreator{
           }
         }
         catch(Exception e){
-          e.printStackTrace();
+          //e.printStackTrace();
         }
       }
     }
