@@ -1781,6 +1781,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return returnCol;
 		 
 		}
+		
+		public static Collection getAllGroupDeletePermissions(Group group){
+				Collection returnCol = null;
+				try{
+					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
+				}
+				catch(FinderException ex){
+					returnCol =  new Vector();//empty
+				}
+				catch(RemoteException x){
+					x.printStackTrace();
+					returnCol =  new Vector();//empty
+				}
+		
+				return returnCol;
+		 
+			}
 	
     public static Collection getAllGroupEditPermissions(Group group){
         Collection returnCol = null;
@@ -1798,5 +1815,98 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         return returnCol;
      
       }
+      
+		public static Collection getAllGroupCreatePermissions(Group group){
+				Collection returnCol = null;
+				try{
+					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
+				}
+				catch(FinderException ex){
+					returnCol =  new Vector();//empty
+				}
+				catch(RemoteException x){
+					x.printStackTrace();
+					returnCol =  new Vector();//empty
+				}
+    
+				return returnCol;
+     
+			}
+
+		/**
+		 * @param groups
+		 * @return all ICPermissions owned by these groups
+		 */
+		public static Collection getAllGroupEditPermissions(Collection groups) {
+			Collection returnCol = null;
+			 try{
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_EDIT,AccessControl.CATEGORY_STRING_GROUP_ID);
+			 }
+			 catch(FinderException ex){
+				 returnCol =  new Vector();//empty
+			 }
+			 catch(RemoteException x){
+				 x.printStackTrace();
+				 returnCol =  new Vector();//empty
+			 }
+			 return returnCol;
+		}
+		
+		/**
+		 * @param groups
+		 * @return all ICPermissions owned by these groups
+		 */
+		public static Collection getAllGroupViewPermissions(Collection groups) {
+			Collection returnCol = null;
+			 try{
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
+			 }
+			 catch(FinderException ex){
+				 returnCol =  new Vector();//empty
+			 }
+			 catch(RemoteException x){
+				 x.printStackTrace();
+				 returnCol =  new Vector();//empty
+			 }
+			 return returnCol;
+		}
+		
+		/**
+		 * @param groups
+		 * @return all ICPermissions owned by these groups
+		 */
+		public static Collection getAllGroupCreatePermissions(Collection groups) {
+			Collection returnCol = null;
+			 try{
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
+			 }
+			 catch(FinderException ex){
+				 returnCol =  new Vector();//empty
+			 }
+			 catch(RemoteException x){
+				 x.printStackTrace();
+				 returnCol =  new Vector();//empty
+			 }
+			 return returnCol;
+		}
+		
+		/**
+		 * @param groups
+		 * @return all ICPermissions owned by these groups
+		 */
+		public static Collection getAllGroupDeletePermissions(Collection groups) {
+			Collection returnCol = null;
+			 try{
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
+			 }
+			 catch(FinderException ex){
+				 returnCol =  new Vector();//empty
+			 }
+			 catch(RemoteException x){
+				 x.printStackTrace();
+				 returnCol =  new Vector();//empty
+			 }
+			 return returnCol;
+		}
 
 } // Class AccessControl
