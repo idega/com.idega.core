@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.118 2004/12/23 21:34:31 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.119 2004/12/27 15:11:57 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
@@ -26,6 +27,7 @@ import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -45,6 +47,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
+import com.idega.event.OldEventSystemHelperBridge;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -66,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/23 21:34:31 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/27 15:11:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.118 $
+ * @version $Revision: 1.119 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1676,6 +1679,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			try
 			{
 				IWEventMachine machine = (IWEventMachine) IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
+				// register the machine as ApplicationEventListener using the helper bridge
+				iwuc.getApplicationContext().getIWMainApplication().addApplicationEventListener(OldEventSystemHelperBridge.class);
 				return machine.getListenersForCompoundId(getCompoundId());
 			}
 			catch (RemoteException ex)
