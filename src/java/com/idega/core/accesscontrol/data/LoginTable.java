@@ -17,6 +17,7 @@ import com.idega.util.EncryptionType;
 public class LoginTable extends GenericEntity implements EncryptionType{
 
         public static String className = LoginTable.class.getName();
+        public static String _COLUMN_PASSWORD = "usr_password";
 
 	public LoginTable(){
 		super();
@@ -28,14 +29,41 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
 	public void initializeAttributes(){
           addAttribute(this.getIDColumnName());
-          addAttribute(User.getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
+          addAttribute(getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
           addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
-          addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
+          addAttribute(getNewUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
+          //deprecated column
+          //addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
+
 	}
 
 	public String getEntityName(){
 		return "ic_login";
 	}
+
+        public static String getUserLoginColumnName(){
+          return "user_login";
+        }
+
+        public static String getOldUserPasswordColumnName(){
+          return "user_password";
+        }
+
+        public static String getNewUserPasswordColumnName(){
+          return _COLUMN_PASSWORD;
+        }
+
+        public static String getUserPasswordColumnName(){
+          System.out.println("LoginTable - getUserPassordColumnName()");
+          System.out.println("caution: not save because of changes in entity");
+          Exception e = new Exception();
+          e.printStackTrace();
+          return _COLUMN_PASSWORD;
+        }
+
+        public static String getColumnNameUserID(){
+          return User.getColumnNameUserID();
+        }
 
 /*        public void insertStartData() throws SQLException {
           LoginTable login = new LoginTable();
@@ -82,30 +110,70 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           return (LoginTable)LoginTable.getStaticInstance(LoginTable.class);
         }
 
-        public static String getUserLoginColumnName(){
-          return "user_login";
-        }
 
-        public static String getUserPasswordColumnName(){
-          return "user_password";
-        }
 
 	public String getUserPassword(){
-          String str = getStringColumnValue(getUserPasswordColumnName());
-          char[] pass = new char[str.length()/2];
-
+          String str = null;
           try {
-
-            for (int i = 0; i < pass.length; i++) {
-              pass[i] = (char)Integer.decode("0x"+str.charAt(i*2)+str.charAt((i*2)+1)).intValue();
-            }
-
-            return String.valueOf(pass);
+            str = getStringColumnValue(getNewUserPasswordColumnName());
           }
           catch (Exception ex) {
             ex.printStackTrace();
-            return str;
+            // str = null;
           }
+
+
+          if(str == null){
+            try {
+              String oldPass = getStringColumnValue(getOldUserPasswordColumnName());
+              if(oldPass != null){
+
+                char[] pass = new char[oldPass.length()/2];
+
+                try {
+
+                  for (int i = 0; i < pass.length; i++) {
+                    pass[i] = (char)Integer.decode("0x"+oldPass.charAt(i*2)+oldPass.charAt((i*2)+1)).intValue();
+                  }
+
+                  oldPass = String.valueOf(pass);
+                }
+                catch (Exception ex) {
+                  ex.printStackTrace();
+                  // oldPass = oldPass;
+                }
+
+                LoginTable table = new LoginTable(this.getID());
+                table.setUserPassword(oldPass);
+                table.update();
+                this.setUserPassword(oldPass);
+                return oldPass;
+                //this.setColumnAsNull(getOldUserPasswordColumnName());
+              }
+            }
+            catch (Exception ex) {
+              ex.printStackTrace();
+              return getStringColumnValue(getOldUserPasswordColumnName());
+            }
+          }
+          if(str != null){
+            char[] pass = new char[str.length()/2];
+
+            try {
+
+              for (int i = 0; i < pass.length; i++) {
+                pass[i] = (char)Integer.decode("0x"+str.charAt(i*2)+str.charAt((i*2)+1)).intValue();
+              }
+
+              return String.valueOf(pass);
+            }
+            catch (Exception ex) {
+              ex.printStackTrace();
+              return str;
+            }
+          }
+
+          return str;
 
 	}
 
@@ -128,11 +196,11 @@ public class LoginTable extends GenericEntity implements EncryptionType{
               str = null;
             }
 
-            setColumn(getUserPasswordColumnName(), str);
+            setColumn(getNewUserPasswordColumnName(), str);
           }
           catch (Exception ex) {
             ex.printStackTrace();
-            setColumn(getUserPasswordColumnName(), userPassword);
+            setColumn(getNewUserPasswordColumnName(), userPassword);
           }
 
 
