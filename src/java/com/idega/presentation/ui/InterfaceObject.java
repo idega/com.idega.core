@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.33 2005/03/08 18:35:41 tryggvil Exp $
+ * $Id: InterfaceObject.java,v 1.34 2005/03/08 20:46:25 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -17,14 +17,14 @@ import com.idega.presentation.Script;
 
 /**
  * <p>
- * This is a base class for Form type input elements.<br>
- * In JSF there is now a more recent javax.facex.compoent.UIInput that serves the same 
- * purpose and is recommended to use in newer pure JSF applications.
+ * This is a base class for Form type (input) elements.<br>
+ * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
+ * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/03/08 18:35:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 20:46:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
