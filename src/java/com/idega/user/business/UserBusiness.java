@@ -20,6 +20,7 @@ import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.user.data.Gender;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -84,7 +85,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.contact.data.Phone getUsersHomePhone(com.idega.user.data.User p0)throws com.idega.user.business.NoPhoneFoundException, java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getUsersInGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
- public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.user.data.User createUser(String firstname, String middlename, String lastname,String personalID)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.contact.data.Phone getUsersMobilePhone(com.idega.user.data.User p0)throws com.idega.user.business.NoPhoneFoundException, java.rmi.RemoteException;
  public com.idega.user.data.User getUser(java.lang.Integer p0) throws java.rmi.RemoteException;
  public com.idega.user.data.User createUserByPersonalIDIfDoesNotExist(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4,com.idega.util.IWTimestamp p5)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
@@ -104,11 +105,11 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.business.GroupBusiness getGroupBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setPermissionGroup(com.idega.user.data.User p0,java.lang.Integer p1)throws com.idega.data.IDOStoreException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection listOfUserGroups(int p0) throws java.rmi.RemoteException;
- public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,int p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.user.data.User createUser(String firstName, String middleName, String lastName, int primary_groupID)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(int p0)throws javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getUserGroupsDirectlyRelated(int p0) throws java.rmi.RemoteException;
- public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4,com.idega.util.IWTimestamp p5,com.idega.user.data.Group p6)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,com.idega.user.data.Group p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.user.data.User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimestamp dateOfBirth,Group primaryGroup)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.user.data.User createUser(String firstName, String middleName, String lastName, Group primary_group)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getAllUsersOrderedByFirstName()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.GroupHome getGroupHome() throws java.rmi.RemoteException;
 
