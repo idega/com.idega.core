@@ -341,10 +341,10 @@ public void setResponse(HttpServletResponse response){
 public void setLanguage(String language){
 	this.language = language;
 	if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)){
-		this.getResponse().setContentType("text/vnd.wap.wml");
+		setContentType("text/vnd.wap.wml");
 	}
 	if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)){
-		this.getResponse().setContentType("text/html");
+		setContentType("text/html");
 	}
 
 }
@@ -845,7 +845,7 @@ private Map getWeakHashMap(){
 }
 
 public void setContentType(String contentType){
-  getResponse().setContentType(contentType);
+  //getResponse().setContentType(contentType);
 }
 
 void setCacheing(boolean ifCacheing){
