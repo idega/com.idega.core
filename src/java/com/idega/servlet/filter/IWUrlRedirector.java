@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.5 2005/01/12 14:16:20 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.6 2005/01/13 23:54:44 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/01/12 14:16:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/13 23:54:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -44,6 +44,8 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
+		
+		setApplicationServletContextPath(request);
 		
 		boolean doRedirect = getIfDoRedirect(request);
 		if(doRedirect){
@@ -62,7 +64,10 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 	String getNewRedirectURL(HttpServletRequest request) {
 		//TODO: Make this logic support regular expressions
 		String requestUri = getURLMinusContextPath(request);
-		if(requestUri.startsWith(OLD_BUILDER_SERVLET_URI) || requestUri.equals(OLD_BUILDER_INDEX_JSP_URI)){
+		if(getIWMainApplication(request).isInSetupMode()){
+			return getSetupUri(request);
+		}
+		else if(requestUri.startsWith(OLD_BUILDER_SERVLET_URI) || requestUri.equals(OLD_BUILDER_INDEX_JSP_URI)){
 			String pageId = request.getParameter(OLD_BUILDER_PAGE_PARAMETER);
 			IWMainApplication iwma = getIWMainApplication(request);
 			BuilderService bs;
@@ -96,7 +101,14 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		if(IWMainApplication.USE_NEW_URL_SCHEME){
 			String requestUri = getURLMinusContextPath(request);
 			String oldIdegaWebUriWithSlash = OLD_IDEGAWEB_LOGIN_WITHSLASH;
-				
+			
+			if(getIWMainApplication(request).isInSetupMode()){
+				String fullRequestUri = request.getRequestURI();
+				if(!fullRequestUri.equals(getSetupUri(request))){
+					return true;
+				}
+			}
+			
 			if(requestUri.startsWith(OLD_BUILDER_SERVLET_URI)){
 				return true;
 			}

@@ -36,7 +36,7 @@ import com.idega.util.CypherText;
  * 
  *  
  */
-public class IWAuthenticator implements Filter {
+public class IWAuthenticator extends BaseFilter {
 
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
@@ -95,7 +95,7 @@ public class IWAuthenticator implements Filter {
 			if(!iwc.isLoggedOn()){
 				getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc);
 			}
-			setServletContextPath(iwc);
+			setApplicationServletContextPath(request);
 			
 			tryRegularLogin(iwc);
 			
@@ -123,27 +123,12 @@ public class IWAuthenticator implements Filter {
 	}
 
 	public String userIDCookieName = "iwrbusid";
-	private static boolean CHECKED_CURRENT_APPCONTEXT=false;
 
 	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
 	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
 
 	
-	/**
-	 * This should propably move to another servlet filter.
-	 * @param iwc
-	 */
-	public void setServletContextPath(IWContext iwc ){
-		if (!hasCheckedCurrentAppContext()) {
-			String contextPath = iwc.getRequest().getContextPath();
-			iwc.getIWMainApplication().setApplicationContextURI(contextPath);
-			CHECKED_CURRENT_APPCONTEXT=true;
-		}
-	}
-	
-	private boolean hasCheckedCurrentAppContext(){
-		return CHECKED_CURRENT_APPCONTEXT;
-	}
+
 	
 	public void tryRegularLogin(IWContext iwc){
 		try {
