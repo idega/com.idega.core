@@ -2027,7 +2027,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						time.start();
 
 						//searchForTopNodesFromTop=3000; //some suitable value
-						if (allViewAndOwnerPermissionGroups.size() > this.searchForTopNodesFromTop) {
+						    if (false) {//(allViewAndOwnerPermissionGroups.size() > this.searchForTopNodesFromTop) {
 							log("[UserBusinessBean]: using search from the top");
 							try {
 								topNodes = searchForTopNodesFromTheTop(allViewAndOwnerPermissionGroups);
