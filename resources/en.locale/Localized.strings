@@ -1,4 +1,3 @@
-#Fri Oct 24 09:44:56 CEST 2003
 =
 Adm.\ anordnare=Adm. anordnare
 Admin\ BUN\ 24=
@@ -29,6 +28,7 @@ case_code_key.SYMEBRV=
 case_status_key.FLYT=
 categories=Categories
 category=Category
+choose=Choose
 close=Close
 create_child_category_under=
 create_root_category=
