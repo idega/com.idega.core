@@ -101,7 +101,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
 		addAttribute(getClassNameColumnName(),"Class Name",true,true,java.lang.String.class);
 
-                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,"one-to-many", ICObjectType.class);
+                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,32,"one-to-many", ICObjectType.class);
 
                 addAttribute(getBundleColumnName(),"Bundle",true,true,java.lang.String.class,1000);
 
