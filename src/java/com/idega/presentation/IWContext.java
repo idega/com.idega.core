@@ -17,6 +17,7 @@ import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
 import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
+import com.idega.core.data.ICObject;
 import com.idega.core.accesscontrol.business.AccessController;
 
 
@@ -770,6 +771,27 @@ public void setCacheWriter(PrintWriter writer){
     }
   }
 
+  public boolean hasFilePermission(String permissionKey, int id){
+    try {
+      return this.getAccessController().hasFilePermission(permissionKey, id , this);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
+  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId){
+    try {
+      return this.getAccessController().hasDataPermission(permissionKey,obj,entityRecordId,this);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
+
   public boolean hasViewPermission(List groupIds, PresentationObject obj){
     return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_VIEW,obj);
   }
@@ -777,6 +799,7 @@ public void setCacheWriter(PrintWriter writer){
   public boolean hasEditPermission(List groupIds, PresentationObject obj){
     return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT,obj);
   }
+
 
   public boolean isSuperAdmin(){
     try {

@@ -1,6 +1,8 @@
 package com.idega.core.accesscontrol.business;
 
 import com.idega.core.user.data.User;
+import com.idega.core.data.ICFile;
+import com.idega.core.data.ICObject;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -17,13 +19,16 @@ import java.util.List;
 
 public interface AccessController extends com.idega.idegaweb.IWService{
 
-
   public static final String _CATEYGORYSTRING_OBJECT_INSTATNCE_ID = "ic_object_instance_id";
   public static final String _CATEYGORYSTRING_OBJECT_ID = "ic_object_id";
   public static final String _CATEYGORYSTRING_BUNDLE_IDENTIFIER = "iw_bundle_identifier";
   public static final String _CATEYGORYSTRING_PAGE_ID = "page_id";
   public static final String _CATEYGORYSTRING_PAGE = "page";
   public static final String _CATEYGORYSTRING_JSP_PAGE = "jsp_page";
+
+  public static final String _CATEYGORYSTRING_FILE_ID = "ic_file_id";
+  public static final String _CATEYGORYSTRING_ENTITY = _CATEYGORYSTRING_OBJECT_ID; //?
+  public static final String _CATEYGORYSTRING_ENTITY_RECORD_ID = "ic_entity_record_id";
 
   public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
   public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
@@ -44,10 +49,26 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public PermissionGroup getPermissionGroupEveryOne() throws Exception ;
   public PermissionGroup getPermissionGroupUsers() throws Exception ;
   public PermissionGroup getPermissionGroupAdministrator() throws Exception ;
+
   public boolean isAdmin(IWContext iwc)throws Exception;
   public boolean isOwner(PresentationObject obj , IWContext iwc) throws Exception ;
-  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
-//  public boolean hasPermission(String permissionType, ICObject obj,IWContext iwc) throws Exception;
+  public boolean isOwner(ICFile file, IWContext iwc)throws Exception;
+  public boolean isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception;
+
+  public void setAsOwner(PresentationObject obj , IWContext iwc) throws Exception ;
+  public void setAsOwner(ICFile file, IWContext iwc)throws Exception;
+  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception;
+
+
+  public boolean hasPermission(String permissionKey, PresentationObject obj,IWContext iwc) throws Exception;
+  public boolean hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception;
+  public boolean hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception;
+  //temp public boolean hasDataPermission(String permissionKey, Class entity, int entityRecordId, IWContext iwc)throws Exception;
+  //temp public boolean hasDataPermission(String permissionKey, Class entity, IWContext iwc)throws Exception;
+  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWContext iwc) throws Exception;
+
+  //public boolean hasPermission(Class someClass, int id, IWContext iwc) throws Exception;
+
   public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
 //  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception;
 //  public boolean hasViewPermission(PresentationObject obj,IWContext iwc);
@@ -63,6 +84,8 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public List getStandardGroups() throws Exception ;
   public User getAdministratorUser()throws Exception;
   public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception;
+
+
 
   public String[] getICObjectPermissionKeys(Class ICObject);
   public String[] getBundlePermissionKeys(Class ICObject);

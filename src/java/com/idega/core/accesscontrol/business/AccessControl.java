@@ -1107,8 +1107,72 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
+  /**
+   * @todo implement hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception
+   * temp implementation
+   */
+  public boolean hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception{
+    PresentationObject pObj = (PresentationObject)Class.forName(obj.getClassName()).newInstance();
+    pObj.setICObject(obj);
+    return this.hasPermission(permissionKey,(PresentationObject)pObj,iwc);
+  }
+
+  /**
+   * @todo implement hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception
+   */
+  public boolean hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception{
+    return true;
+  }
+
+  /**
+   * @todo implement hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWContext iwc)
+   */
+  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWContext iwc) throws Exception{
+    return true;
+  }
 
 
+
+/*
+  public boolean hasPermission(Class someClass, int id, IWContext iwc) throws Exception{
+    if(someClass.equals(ICFile.class)){
+      return true;
+    }else if(someClass.equals(ICObject.class)){
+      return true;
+    }else {
+      return true;
+    }
+  }
+*/
+  /**
+   * @todo implement isOwner(ICFile file, IWContext iwc)throws Exception
+   */
+
+  public boolean isOwner(ICFile file, IWContext iwc)throws Exception{
+    return false;
+  }
+
+  /**
+   * @todo implement isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
+   */
+  public boolean isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception{
+    return false;
+  }
+
+  /**
+   * @todo implement setAsOwner(PresentationObject obj , IWContext iwc) throws Exception
+   */
+  public void setAsOwner(PresentationObject obj , IWContext iwc) throws Exception {}
+
+  /**
+   * @todo implement setAsOwner(ICFile file, IWContext iwc)throws Exception
+   */
+  public void setAsOwner(ICFile file, IWContext iwc)throws Exception {}
+
+  /**
+   * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
+   */
+   public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {}
 
 
 
