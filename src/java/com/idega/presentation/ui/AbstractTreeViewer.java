@@ -620,11 +620,11 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     frameTable.setWidth(s);
   }
 
-  public void setExtraColumnHorizontalAlignemnt(int col, String alignment){
+  public void setExtraColumnHorizontalAlignment(int col, String alignment){
       frameTable.setColumnAlignment(col+1,alignment);
   }
 
-  public void setExtraColumnVerticalAlignemnt(int col, String alignment){
+  public void setExtraColumnVerticalAlignment(int col, String alignment){
       frameTable.setColumnVerticalAlignment(col+1,alignment);
   }
 
