@@ -27,8 +27,10 @@ public class TextFormat{
 
 
   public static TextFormat getInstance(){
-    if(format == null)
+    if(format == null){
       format = new TextFormat();
+      format.load();
+    }
     return format;
   }
 
@@ -63,6 +65,7 @@ public class TextFormat{
   }
 
   private void store(){
+
 
   }
 
