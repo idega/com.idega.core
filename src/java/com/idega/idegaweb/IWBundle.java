@@ -37,7 +37,8 @@ public class IWBundle{
 
   private Hashtable localePaths;
   private Hashtable resourceBundles;
-  private boolean autoCreate=true;
+  //debug
+  private boolean autoCreate=false;
 
   private Hashtable handlers;
   //private static Hashtable instances;
@@ -190,6 +191,12 @@ public class IWBundle{
     private void setClassesRealPath(){
       classesRealPath=this.getRootRealPath()+FileUtil.getFileSeparator()+"classes";
     }
+
+
+    public String[] getAvailableProperties(){
+      return ( (String[]) ((Vector)propertyList.getKeys()).toArray(new String[0]) );
+    }
+
 
     public String[] getLocalizableStrings(){
       return (String[])getLocalizableStringsProperties().keySet().toArray(new String[0]);

@@ -286,40 +286,33 @@ public class IWMainApplication{//implements ServletContext{
    * Returns the real path to the WebApplication
    */
   public String getApplicationRealPath(){
-        //debug
-    System.out.println("getApplicationRealPath : "+application.getRealPath(FileUtil.getFileSeparator()));
-
     return application.getRealPath(FileUtil.getFileSeparator());
   }
 
 
   public String getApplicationSpecialRealPath(){
-
-    System.out.println("getApplicationSpecialRealPath : "+this.getApplicationRealPath()+getApplicationSpecialVirtualPath());
-
     return this.getApplicationRealPath()+getApplicationSpecialVirtualPath();
   }
 
   public String getApplicationSpecialVirtualPath(){
-     System.out.println("getApplicationSpecialVirtualPath : idegaweb");
-
-   // return FileUtil.getFileSeparator()+"idegaweb";
    return "idegaweb";
   }
 
   private String getBundleVirtualPath(String bundleIdentifier){
-     //debug
-    System.out.println("getBundleVirtualPath "+getApplicationSpecialVirtualPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier));
-     String path = "/"+getApplicationSpecialVirtualPath()+"/"+TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");
+    String path = "/"+getApplicationSpecialVirtualPath()+"/"+TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");
     return path;
   }
 
 
   private String getBundleRealPath(String bundleIdentifier){
-    //debug
-    System.out.println("getBundleRealPath "+getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier));
+    String sBundle;
+    if( FileUtil.getFileSeparator().equals("/") )
+      sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");//unix
+    else sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"/","\\");//windows
+  //debug
+    System.out.println("IWMainApplication : sBundle = "+sBundle);
 
-      return getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier);
+    return getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+sBundle;
   }
 
   public IWBundle getBundle(String bundleIdentifier){

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.3 2001/05/18 19:48:06 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.4 2001/05/23 11:12:27 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package com.idega.idegaweb;
 
 import java.util.List;
+import java.util.Vector;
 import java.util.Iterator;
 import java.io.IOException;
 import java.io.File;
@@ -241,6 +242,20 @@ public class IWPropertyList {
     return null;
   }
 
+// added by Eirikur Hrafnsson eiki@idega.is
+  protected Vector getKeys() {
+    List list = dict.getChildren();
+    Iterator iter = list.iterator();
+    Vector keys = new Vector();
+
+    while(iter.hasNext()) {
+      Element keyElement = (Element)iter.next();
+      Element nameElement = keyElement.getChild(nameTag);
+      keys.addElement( nameElement.getText() );
+    }
+
+    return keys;
+  }
 
   public void load(String path) {
     File file =new File(path);
