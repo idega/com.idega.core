@@ -149,6 +149,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			}
 
 			addManyToManyJoin(srcTable, destTable);
+			return;
 		}
 		throw new IDORelationshipException("No relation found between tables!");
 	}
