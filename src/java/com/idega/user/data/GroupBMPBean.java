@@ -126,7 +126,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public String getGroupType() {
 		//try {
-			return (String) ((GroupType) getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
+		//was going to the database everytime!! I kill you tryggvi/gummi (eiki)
+		
+		//return (String) ((GroupType) getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
+		return getStringColumnValue(getGroupTypeColumnName());
+		
+		
 		//} catch (RemoteException ex) {
 		//	throw new EJBException(ex);
 		//}
