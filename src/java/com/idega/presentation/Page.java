@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.91 2004/01/18 13:25:59 laddi Exp $
+ *  $Id: Page.java,v 1.92 2004/01/19 13:25:13 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1093,7 +1093,7 @@ public class Page extends PresentationObjectContainer {
 
 				if (_windowToOpenOnLoad != null) {
 					URLUtil url = new URLUtil(iwc, _windowToOpenOnLoad);
-					setOnLoad("javascript:"+Window.getCallingScript(url.toString(), _windowWidth, _windowHeight));	
+					setOnLoad("javascript:"+Window.getWindowCallingScript(url.toString(), "Window", false, false, false, false, false, true, true, true, false, _windowWidth, _windowHeight));	
 				}
 				
 				println("<head>");
