@@ -27,8 +27,11 @@ public class XMLData {
   
   private final String DEFAULT_ROOT = "default_root";
   
+  public final String DEFAULT_NAME = "xml_data";
+  
   private XMLDocument document = null;
   private int xmlFileId = -1;
+  private String name = null;
   
   public static XMLData getInstanceForFile(int xmlFileId) {
     XMLData data = new XMLData();
@@ -46,8 +49,13 @@ public class XMLData {
     XMLData data = new XMLData();
     return data;
   } 
-    
   
+  public static XMLData getInstanceWithoutExistingFile(String name) {
+    XMLData data = XMLData.getInstanceWithoutExistingFile();
+    data.setName(name);
+    return data;
+  }
+ 
   public void initialize(int xmlFileId) {
     ICFile xmlFile = getXMLFile(xmlFileId);
     initialize(xmlFile);
@@ -57,9 +65,16 @@ public class XMLData {
     // force to initialize with an instance of XMLFile
     initialize(xmlFile);
   }
-  
-
     
+  public String getName()  {
+    return (name == null || name.length() == 0) ? DEFAULT_NAME : name;
+  }   
+
+  
+  public void setName(String name)  {
+    this.name = name;
+  }
+   
   public XMLDocument getDocument()  {
     if (document == null)  {
       // create an empty document
@@ -76,6 +91,7 @@ public class XMLData {
   public ICFile store() throws IOException  {
     // create or fetch existing file
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    xmlFile.setName(getName());
     xmlFile.setMimeType("text/xml");
     OutputStream output = xmlFile.getFileValueForWrite();
     XMLOutput xmlOutput = new XMLOutput("  ", true);
@@ -106,6 +122,7 @@ public class XMLData {
   }
  
   private void initialize(ICFile xmlFile) {
+    name = xmlFile.getName();
     XMLParser parser = new XMLParser();
     InputStream inputStream = null;
     try {
@@ -150,20 +167,22 @@ public class XMLData {
     catch (Exception ex)  {
       throw new RuntimeException("[XMLData]: Message was: " + ex.getMessage());
     }
-  }    
+    
+  }
+  
 
-/**
- * @return
- */
-public int getXmlFileId() {
-	return xmlFileId;
-}
+  /**
+  * @return
+  */
+  public int getXmlFileId() {
+	 return xmlFileId;
+  }
 
-/**
- * @param i
- */
-public void setXmlFileId(int i) {
-	xmlFileId = i;
-}
+  /**
+  * @param i
+  */
+  public void setXmlFileId(int i) {
+	 xmlFileId = i;
+  }
 
 }
