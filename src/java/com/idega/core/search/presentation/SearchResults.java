@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.5 2005/01/20 00:18:12 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.6 2005/01/25 17:42:16 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,6 +22,7 @@ import com.idega.core.search.data.AdvancedSearchQuery;
 import com.idega.core.search.data.SimpleSearchQuery;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
+import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
@@ -29,7 +30,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/01/20 00:18:12 $ by $Author: eiki $
+ * Last modified: $Date: 2005/01/25 17:42:16 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -39,7 +40,7 @@ import com.idega.presentation.text.Text;
  * Do not change core_iw.css, rather add your own custom stylesheet after the iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class SearchResults extends Block {
 
@@ -150,6 +151,8 @@ public class SearchResults extends Block {
 		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
 		
 		if (iwc.isParameterSet(getSearchParameterName())) {
+			CSSSpacer spacer = new CSSSpacer();
+			
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
 			
@@ -242,6 +245,9 @@ public class SearchResults extends Block {
 								}
 								//add an extra optional style with the search type suffix
 								addSearchResultTypeStyleClass(rowContainer, type);
+								//adding spacer to force the row container around all floating elements, another one is added at the end
+								rowContainer.add(spacer.clone());
+								
 								
 								//add an optional icon, use a background image in the style
 								Layer icon = (Layer) iconPrototype.clone();
@@ -276,7 +282,8 @@ public class SearchResults extends Block {
 									rowContainer.add(abstractT);
 								}
 								
-								
+								//adding spacer to force the row container around all floating elements
+								rowContainer.add(spacer.clone());
 								
 								container.add(rowContainer);
 								row++;
