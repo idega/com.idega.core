@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.117 2004/06/28 17:07:02 thomas Exp $
+ * $Id: Link.java,v 1.118 2004/06/30 21:16:30 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -95,6 +95,7 @@ public class Link extends Text {
 	private boolean _addSessionId = true;
 	private boolean _maintainAllParameters = false;
 	private int _imageId;
+	private String _hostname = null;
 	
 	private int _onMouseOverImageId;
 	private int _onClickImageId;
@@ -360,6 +361,23 @@ public class Link extends Text {
 		if (_obj == null) {
 			setText(_myWindow.getName());
 		}
+	}
+	
+	/**
+	 * sets the hostname in the links URL
+	 * @param hostname the hostname
+	 */
+	public void setHostname(String hostname) {
+		_hostname = hostname;
+	}
+	
+	/**
+	 * 
+	 * Gets the hostname of the URL
+	 * @return the hostname
+	 */
+	public String getHostname() {
+		return _hostname;
 	}
 
 	/**
@@ -1681,8 +1699,11 @@ public class Link extends Text {
 							protocol = "http://";
 						}
 					}
-					setMarkupAttribute(HREF_ATTRIBUTE, protocol + d.getURL() + attr);
-
+					String strD = d.getURL();
+					if(_hostname!=null && _hostname.length()>0) {
+						strD = _hostname;
+					}
+					setMarkupAttribute(HREF_ATTRIBUTE, protocol + strD + attr);
 				}
 			}
 
