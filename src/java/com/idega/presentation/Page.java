@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.61 2002/09/18 13:23:33 laddi Exp $
+ *  $Id: Page.java,v 1.62 2002/09/18 19:39:44 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,7 +51,7 @@ public class Page extends PresentationObjectContainer {
 	private String _pageStyleFont = Text.FONT_FACE_ARIAL;
 	private String _pageStyleFontSize = Text.FONT_SIZE_10_STYLE_TAG;
 	private String _pageStyleFontStyle = Text.FONT_FACE_STYLE_NORMAL;
-	private String _styleSheetURL = "/style/style.css";
+	private String _styleSheetURL = IWStyleManager.STYLE_URL;
 	private boolean _addStyleSheet = false;
 	private boolean _addBody = true;
 	private Hashtable _frameProperties;
