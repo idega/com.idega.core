@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.86 2003/03/14 17:16:34 thomas Exp $
+ * $Id: Link.java,v 1.87 2003/03/20 14:21:23 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1387,13 +1387,13 @@ public class Link extends Text {
 						if (URL.indexOf("?") != -1) {
 							_parameterString.append("&idega_session_id=");
 							_parameterString.append(iwc.getSession().getId());
-							return (_parameterString.toString());
+							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
 							//the case where the URL is etc. http://www.idega.is
 							_parameterString.append("/?idega_session_id=");
 							_parameterString.append(iwc.getSession().getId());
-							return (_parameterString.toString());
+							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else {
 							if (URL.indexOf("/") != -1) {
@@ -1401,26 +1401,26 @@ public class Link extends Text {
 								if (URL.lastIndexOf("/") == (URL.length() - 1)) {
 									_parameterString.append("?idega_session_id=");
 									_parameterString.append(iwc.getSession().getId());
-									return (_parameterString.toString());
+									return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									//There is a dot after the last "/" interpreted as a file not a directory
 									if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
 										_parameterString.append("?idega_session_id=");
 										_parameterString.append(iwc.getSession().getId());
-										return (_parameterString.toString());
+										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 									else {
 										_parameterString.append("/?idega_session_id=");
 										_parameterString.append(iwc.getSession().getId());
-										return (_parameterString.toString());
+										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
 							}
 							else {
 								_parameterString.append("?idega_session_id=");
 								_parameterString.append(iwc.getSession().getId());
-								return (_parameterString.toString());
+								return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 						}
 					}
@@ -1461,11 +1461,11 @@ public class Link extends Text {
 						}
 					}
 				}
-				return (_parameterString.toString());
+				return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
 		if (_parameterString != null) {
-			return (_parameterString.toString());
+			return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 		}
 		else {
 			return ("");
