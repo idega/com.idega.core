@@ -401,18 +401,18 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		script.append("//		 tooltips \n");
 		script.append("Calendar._TT = {};\n");
 		script.append("Calendar._TT[\"TOGGLE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.toggle_first_day_of_week","Toggle first day of week")+"\";\n");
-		script.append("Calendar._TT[\"PREV_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Prev. year (hold for menu)")+"\";\n");
-		script.append("Calendar._TT[\"PREV_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Prev. month (hold for menu)")+"\";\n");
-		script.append("Calendar._TT[\"GO_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Go Today")+"\";\n");
-		script.append("Calendar._TT[\"NEXT_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Next month (hold for menu)")+"\";\n");
-		script.append("Calendar._TT[\"NEXT_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Next year (hold for menu)")+"\";\n");
-		script.append("Calendar._TT[\"SEL_DATE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Select date")+"\";\n");
-		script.append("Calendar._TT[\"DRAG_TO_MOVE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Drag to move")+"\";\n");
-		script.append("Calendar._TT[\"PART_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","(today)")+"\";\n");
-		script.append("Calendar._TT[\"MON_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Display Monday first")+"\";\n");
-		script.append("Calendar._TT[\"SUN_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Display Sunday first")+"\";\n");
-		script.append("Calendar._TT[\"CLOSE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Close")+"\";\n");
-		script.append("Calendar._TT[\"TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Today")+"\";\n");
+		script.append("Calendar._TT[\"PREV_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.prev_year","Prev. year (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"PREV_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.prev_month","Prev. month (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"GO_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.go_today","Go Today")+"\";\n");
+		script.append("Calendar._TT[\"NEXT_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.next_month","Next month (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"NEXT_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.next_year","Next year (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"SEL_DATE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.select_date","Select date")+"\";\n");
+		script.append("Calendar._TT[\"DRAG_TO_MOVE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.drag_to_move","Drag to move")+"\";\n");
+		script.append("Calendar._TT[\"PART_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.today_in_parentheses","(today)")+"\";\n");
+		script.append("Calendar._TT[\"MON_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.display_monday_first","Display Monday first")+"\";\n");
+		script.append("Calendar._TT[\"SUN_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.display_sunday_first","Display Sunday first")+"\";\n");
+		script.append("Calendar._TT[\"CLOSE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.close","Close")+"\";\n");
+		script.append("Calendar._TT[\"TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.today","Today")+"\";\n");
 		return script.toString();
     }
 
