@@ -26,6 +26,9 @@ public class IDOCopier {
 	private List entityRelationshipInfos = new ArrayList();
 	//private List copiedEntityClasses=new Vector();
 	private List copiedEntites = new ArrayList();
+	private boolean copySameTableOnlyOnce = false;
+	
+	
 	protected IDOCopier() {
 	}
 	private IDOCopier(IDOLegacyEntity entity) {
@@ -405,6 +408,18 @@ public class IDOCopier {
 		return isTableAlreadyCopied(info);
 	}
 	protected boolean isTableAlreadyCopied(IDOEntityCopyInfo cInfo) {
-		return copiedEntites.contains(cInfo);
+		if(copySameTableOnlyOnce){
+			for (Iterator iterator = copiedEntites.iterator(); iterator.hasNext();) {
+				IDOEntityCopyInfo element = (IDOEntityCopyInfo) iterator.next();
+				if(element.equals(cInfo)){
+					return true;	
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void setToTryCopyingSameTableOnlyOnce(boolean setValue){
+		copySameTableOnlyOnce=setValue;
 	}
 }
