@@ -184,10 +184,16 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
     		countryName = country.getName();
     }*/
     
-    fullAddress.append(streetNameAndNumber).append(", ")
-	.append(postalCode).append(", ")
-	.append(country);
-  	
+    fullAddress.append(streetNameAndNumber);
+    if(postalCode!=null){
+    		fullAddress.append(", ");
+    		fullAddress.append(postalCode);	
+    }
+    
+    if(country!=null){
+    		fullAddress.append(", ");
+		fullAddress.append(country);
+    }
   	return fullAddress.toString();
   }
 
