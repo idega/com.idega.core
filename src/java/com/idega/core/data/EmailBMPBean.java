@@ -5,6 +5,7 @@ package com.idega.core.data;
 import com.idega.core.business.EmailDataView;
 
 import com.idega.data.*;
+import com.idega.user.data.UserBMPBean;
 
 import java.sql.SQLException;
 import javax.ejb.FinderException;
@@ -27,7 +28,7 @@ import com.idega.core.user.data.User;
 
  * Company:      idega.is
 
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
 
  * @version 1.0
 
@@ -37,7 +38,9 @@ import com.idega.core.user.data.User;
 
 public class EmailBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.Email,com.idega.core.business.EmailDataView {
 
-
+	public final static String SQL_TABLE_NAME="IC_EMAIL";
+	public final static String SQL_COLUMN_EMAIL = "ADDRESS";
+	public final static String SQL_COLUMN_TYPE = "IC_EMAIL_TYPE_ID";
 
   public EmailBMPBean(){
 
@@ -73,15 +76,15 @@ public class EmailBMPBean extends com.idega.data.GenericEntity implements com.id
 
   public String getEntityName() {
 
-    return "ic_email";
+    return SQL_TABLE_NAME;
 
   }
 
 
 
-  public static String getColumnNameAddress(){return "ADDRESS";}
+  public static String getColumnNameAddress(){return SQL_COLUMN_EMAIL;}
 
-  public static String getColumnNameEmailTypeId(){return "ic_email_type_id";}
+  public static String getColumnNameEmailTypeId(){return SQL_COLUMN_TYPE;}
 
 
 
@@ -118,9 +121,9 @@ public class EmailBMPBean extends com.idega.data.GenericEntity implements com.id
 
   public Collection ejbFindEmailsForUser(int iUserId)throws FinderException{
     StringBuffer sql = new StringBuffer("select ie.* ");
-    sql.append("from ic_email ie,ic_user_email iue ");
-    sql.append("where ie.ic_email_id = iue.ic_email_address ");
-    sql.append(" and iue.ic_user_id = ");
+    sql.append("from").append(getTableName()).append(" ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
+    sql.append("where ie.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID");
+    sql.append(" and iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = ");
     sql.append(iUserId);
     return super.idoFindIDsBySQL(sql.toString());
   }
