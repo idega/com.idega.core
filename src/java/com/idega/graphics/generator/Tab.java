@@ -33,6 +33,7 @@ public class Tab extends Button {
   protected boolean drawBorder = false;
   protected boolean firstRun = true;
   protected int height = 15;
+  protected Color backgroundColor=Color.white;
   private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
   private boolean flip = false;
 
@@ -90,7 +91,7 @@ public class Tab extends Button {
       //defaultUnderColor= gray
       //defaultBorderColor= dark gray
 
-      g.setColor(overColor);// delete this when transparencies are supported
+      g.setColor(backgroundColor);// delete this when transparencies are supported
       g.fillRect(0,0,width,height);
 
       if(effect==BUTTON_OVER) {
@@ -106,9 +107,9 @@ public class Tab extends Button {
       g.fillRect(1,2,1,height-2);
 
       g.setColor(overColor);
-      g.fillRect(0,2,0,height-3);
-      g.fillRect(1,1,0,0);
-      g.fillRect(2,0,width-5,0);
+      g.fillRect(0,2,1,height-2);
+      g.fillRect(1,1,1,1);
+      g.fillRect(2,0,width-4,1);
 
       g.setColor(underColor);
       g.fillRect(width-2,2,1,height-2);
@@ -175,6 +176,10 @@ public class Tab extends Button {
 
   public void flip(boolean flip){
    this.flip = flip;
+  }
+
+  public void setBackgroundColor(Color color){
+    this.backgroundColor=color;
   }
 
 }
