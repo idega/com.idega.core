@@ -21,8 +21,6 @@ import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.PresentationObject;
 import com.idega.block.media.business.MediaBundleStarter;
 
-import com.idega.util.CrossSum;
-
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
