@@ -25,6 +25,17 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 */
 public class Image extends PresentationObject{
 
+public static final String ALIGNMENT_BOTTOM = "bottom";
+public static final String ALIGNMENT_MIDDLE = "middle";
+public static final String ALIGNMENT_LEFT = "left";
+public static final String ALIGNMENT_RIGHT = "right";
+public static final String ALIGNMENT_TOP = "top";
+
+public static final String ALIGNMENT_ABSOLUTE_MIDDLE = "absmiddle";
+public static final String ALIGNMENT_ABSOLUTE_BOTTOM = "absbottom";
+public static final String ALIGNMENT_BASELINE = "baseline";
+public static final String ALIGNMENT_TEXT_TOP = "texttop";
+
 private Script theAssociatedScript;
 private String overImageUrl;
 private String downImageUrl;
