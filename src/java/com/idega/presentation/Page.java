@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.67 2002/11/25 16:07:02 laddi Exp $
+ *  $Id: Page.java,v 1.68 2002/12/10 18:33:31 palli Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -560,7 +560,7 @@ public class Page extends PresentationObjectContainer {
 	 *@return    The title value
 	 */
 	public String getTitle() {
-		return getName();
+		return _title;
 	}
 
 	/**
