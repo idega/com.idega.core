@@ -1,6 +1,7 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -3157,5 +3158,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return user;
+	}
+
+	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) {
+	    try {
+            return getUserHome().ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(groups, userStatuses, yearOfBirthFrom, yearOfBirthTo, gender);
+        } catch (FinderException e) {
+            return ListUtil.getEmptyList();
+        }
 	}
 } // Class UserBusiness

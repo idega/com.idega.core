@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.82 2004/12/16 09:47:26 sigtryggur Exp $
+ * $Id: UserBusiness.java,v 1.83 2005/02/01 14:24:25 sigtryggur Exp $
  * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -52,10 +52,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/16 09:47:26 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/02/01 14:24:25 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.82 $
+ * @version $Revision: 1.83 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -528,6 +528,11 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 */
 	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalID, String first_name, String last_name) throws FinderException,
 			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#findUsersBySpecificGroupsUserstatusDateOfBirthAndGender
+	 */
+	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInNoGroup
