@@ -359,7 +359,7 @@ public class SetIterator implements ListIterator  {
     firstIndexOfCurrentSet += diff;
     // is the new value within the range?
     if (firstIndexOfCurrentSet > this.lastIndex)  {
-      this.firstIndexOfCurrentSet = lastIndex;
+      this.firstIndexOfCurrentSet = this.lastIndex;
     }
     else  {
       this.firstIndexOfCurrentSet = firstIndexOfCurrentSet;
