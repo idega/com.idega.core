@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.130 2004/12/23 21:34:32 tryggvil Exp $
+ *  $Id: Page.java,v 1.131 2004/12/27 15:10:25 thomas Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1319,7 +1319,7 @@ public class Page extends PresentationObjectContainer {
 
 	
 	public void encodeBegin(FacesContext context) throws IOException{
-		callMain(context);
+		//callMain(context);
 		this.printBegin(IWContext.getIWContext(context));
 	}
 	
