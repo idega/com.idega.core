@@ -1,0 +1,19 @@
+package com.idega.core;
+
+import java.util.Iterator;
+
+/**
+ * An abstract data model for implementing Tree structures.
+*@author <a href="mailto:aron@idega.is">Aron Birkir</a>
+*@version 1.0
+*/
+
+public interface ICTreeNodeAddable extends ICTreeNode {
+		
+	/**
+ 	*  Adds a child to this nodes children.
+ 	*/
+	public void addChild(ICTreeNodeAddable child);
+	
+	public void setParent(ICTreeNode parent);
+}
