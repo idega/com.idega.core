@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.48 2003/05/03 16:30:54 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.49 2003/05/27 20:36:22 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -35,6 +35,7 @@ import com.idega.event.IWModuleEvent;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
@@ -56,7 +57,7 @@ import com.oreilly.servlet.multipart.Part;
 */
 public class IWPresentationServlet extends IWCoreServlet {
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
-	private static final String IW_MODULEINFO_KEY = "idegaweb_iwc";
+	protected static final String IW_CONTEXT_KEY = "idegaweb_iwc";
 	private Boolean checkedCurrentAppContext = null;
 	/*
 	public void init(ServletConfig config)
@@ -87,7 +88,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 			return true;
 		}
 	}
-	private void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//TODO: Find a better solution for this
 		IWContext iwc = null;
 		if (!hasCheckedCurrentAppContext()) {
@@ -115,7 +116,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		if (markup != null) {
 			iwc.setLanguage(markup);
 		}
-		storeObject(IW_MODULEINFO_KEY, iwc);
+		storeObject(IW_CONTEXT_KEY, iwc);
 	}
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		__main(servReq, servRes);
@@ -244,7 +245,11 @@ public class IWPresentationServlet extends IWCoreServlet {
 			}*/
 			__print(iwc);
 			long time2 = System.currentTimeMillis();
-			writer.println("<!--" + (time2 - time1) + " ms-->");
+			
+			//writer.println("<!--" + (time2 - time1) + " ms-->");
+			
+			//done
+			finished(iwc);
 			/*
 			writer.println("<!--");
 			writer.println("---------- Session Attributes -----------");
@@ -287,6 +292,13 @@ public class IWPresentationServlet extends IWCoreServlet {
 			}
 		}
 	}
+	/**
+	 * This method is called after everything is done
+	 * @param iwc
+	 */
+	protected void finished(IWContext iwc) {
+	}
+	
 	public void __theService(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 	}
@@ -310,7 +322,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		return Page.getPage(getIWContext());
 	}
 	public static IWContext getIWContext() {
-		return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
+		return (IWContext) retrieveObject(IW_CONTEXT_KEY);
 	}
 	/**
 	 * @deprecated
@@ -368,11 +380,15 @@ public class IWPresentationServlet extends IWCoreServlet {
 		//System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 	public void __print(IWContext iwc) throws Exception {
-		if (iwc.getLanguage().equals("HTML")) {
+		String language = iwc.getLanguage();
+		if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			iwc.setContentType("text/html");
 		}
-		else if (iwc.getLanguage().equals("WML")) {
+		else if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			iwc.setContentType("text/vnd.wap.wml");
+		}
+		else if (language.equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
+			iwc.setContentType("application/pdf");
 		}
 		//getPage()._print(iwc);
 		getPage()._initPrinting(iwc);
