@@ -1,10 +1,8 @@
 package com.idega.idegaweb.browser.app;
 
-import com.idega.event.NoSuchEventException;
+import com.idega.event.*;
 import com.idega.idegaweb.IWException;
 import com.idega.presentation.IWContext;
-import com.idega.business.IWEventListener;
-import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.browser.event.*;
 
 /**
@@ -89,15 +87,12 @@ public class IWBrowserPresentationState implements IWPresentationState, IWEventL
     return _showMenuFrame;
   }
 
-  public boolean actionPerformed(IWContext iwc)throws IWException{
+  public boolean actionPerformed(IWPresentationEvent e)throws IWException{
     boolean refresh = false;
-    try {
-      IWBrowseEvent event = new IWBrowseEvent(iwc);
+    if(e instanceof IWBrowseEvent){
+
 
       refresh = true;
-    }
-    catch (NoSuchEventException ex) {
-      //
     }
 
 

@@ -52,6 +52,10 @@ import com.idega.idegaweb.IWUserContext;
       }
     }
 
+    public String getLocation(){
+      return getName();
+    }
+
     public void setNameProperty(int name){
       this.setNameProperty(Integer.toString(name));
     }

@@ -5,12 +5,18 @@
 
 package com.idega.presentation.ui;
 
-import com.idega.event.IWEventModel;
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
-import com.idega.idegaweb.*;
-import com.idega.idegaweb.IWURL;
+import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 
 /**
@@ -558,7 +564,7 @@ public void setEventListener(String eventListenerClassName){
   }
 
 
-  public void addEventModel(IWEventModel model){
+  public void addEventModel(IWPresentationEvent model){
     Iterator iter = model.getParameters();
     while (iter.hasNext()) {
       Parameter prm = (Parameter)iter.next();

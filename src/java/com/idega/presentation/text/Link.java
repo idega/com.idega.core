@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.73 2002/05/28 17:22:27 gummi Exp $
+ * $Id: Link.java,v 1.74 2002/05/30 19:06:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,18 +9,35 @@
  */
 package com.idega.presentation.text;
 
-import com.idega.block.media.business.*;
-import com.idega.builder.business.*;
-import com.idega.builder.data.*;
-import com.idega.core.data.*;
-import com.idega.core.localisation.business.*;
-import com.idega.event.*;
-import com.idega.idegaweb.*;
-import com.idega.presentation.*;
-import com.idega.presentation.ui.*;
-import com.idega.util.text.*;
-import java.net.*;
-import java.util.*;
+import com.idega.block.media.business.MediaBusiness;
+import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBPage;
+import com.idega.core.data.ICFile;
+import com.idega.core.data.ICObjectInstance;
+import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.localisation.business.LocaleSwitcher;
+import com.idega.event.IWLinkEvent;
+import com.idega.event.IWLinkListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.Parameter;
+import com.idega.presentation.ui.Window;
+import com.idega.util.text.TextSoap;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -1982,7 +1999,7 @@ public class Link extends Text{
   }
 
 
-  public void addEventModel(IWEventModel model){
+  public void addEventModel(IWPresentationEvent model){
     Iterator iter = model.getParameters();
     while (iter.hasNext()) {
       Parameter prm = (Parameter)iter.next();

@@ -1,7 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
-import com.idega.event.IWEventModel;
-import com.idega.presentation.ui.Parameter;
-import com.idega.business.IWEventListener;
+import com.idega.event.IWEventListener;
+import com.idega.event.IWPresentationEvent;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -17,7 +16,7 @@ public interface IWBrowserView extends IWBrowserCompliant{
   public IWEventListener getListener();
   public void setControlTarget(String target);
 
-  public void setControlEventModel(IWEventModel model);
+  public void setControlEventModel(IWPresentationEvent model);
 
 
 

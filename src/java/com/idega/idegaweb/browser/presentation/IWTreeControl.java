@@ -1,12 +1,11 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.event.IWEventModel;
-import com.idega.presentation.ui.AbstractTreeViewer;
-import com.idega.presentation.ui.Parameter;
-import com.idega.business.IWEventListener;
-import com.idega.presentation.PresentationObject;
+import com.idega.event.IWEventListener;
 import com.idega.core.ICTreeNode;
+import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.AbstractTreeViewer;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -20,7 +19,7 @@ import com.idega.presentation.IWContext;
 public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
 
   private String _controlTarget = null;
-  private IWEventModel _contolEvent = null;
+  private IWPresentationEvent _contolEvent = null;
 
   public IWTreeControl() {
   }
@@ -30,7 +29,7 @@ public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
     _controlTarget = controlTarget;
   }
 
-  public void setControlEventModel(IWEventModel model){
+  public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
   }
 

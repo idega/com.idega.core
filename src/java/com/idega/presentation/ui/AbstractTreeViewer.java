@@ -1,5 +1,7 @@
 package com.idega.presentation.ui;
 
+import com.idega.event.NoSuchEventException;
+import com.idega.presentation.event.TreeViewerEvent;
 import java.util.*;
 import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
@@ -76,9 +78,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   Link openCloseLink = new Link();
 
   List openNodes = new Vector();
-  public static final String PRM_OPEN_TREENODES = "ic_opn_trnds";
-  public static final String PRM_TREENODE_TO_CLOSE = "ic_cls_trnd";
-  public static final String PRM_TREE_CHANGED = "ic_tw_ch";
+//  public static final String PRM_OPEN_TREENODES = "ic_opn_trnds";
+//  public static final String PRM_TREENODE_TO_CLOSE = "ic_cls_trnd";
+  //public static final String PRM_TREE_CHANGED = "ic_tw_ch";
 
   private boolean _showSuperRootNode = false;
   private String _superRootNodeName = "Root";
@@ -86,6 +88,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private boolean _showTreeIcons = true;
   private boolean _showTreeIcons_changed = false;
   private boolean _showHeaderRow = false;
+
+  private TreeViewerEvent _eventModel = null;
 
   public AbstractTreeViewer() {
     super();
@@ -450,6 +454,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     if(defaultOpenLevel > 0){
       setInitOpenLevel(iter,1);
     }
+    TreeViewerEvent event = new TreeViewerEvent();
+    event.setOpenNodes(openNodes);
+    _eventModel = event;
   }
 
   private void setInitOpenLevel(Iterator iter, int level){
@@ -469,21 +476,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
   public void updateOpenNodes(IWContext iwc){
-    openNodes.clear();
-    String[] open = iwc.getParameterValues(PRM_OPEN_TREENODES);
-    if(open != null){
-      for (int i = 0; i < open.length; i++) {
-	openNodes.add(open[i]);
-      }
-    } else if(iwc.getParameter(PRM_TREE_CHANGED) == null){ // set init Open level
+    try {
+      TreeViewerEvent event = new TreeViewerEvent(iwc);
+      this.setOpenNodes(event.getOpenNodeList());
+      _eventModel = event;
+    }
+    catch (NoSuchEventException ex) {
+      openNodes.clear();
       setInitOpenLevel();
     }
-
-    String close = iwc.getParameter(PRM_TREENODE_TO_CLOSE);
-    if(close != null){
-      openNodes.remove(close);
-    }
-
   }
 
   public void main(IWContext iwc) throws Exception {
@@ -602,25 +603,20 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
 
   public Link setLinkToMaintainOpenAndClosedNodes(Link l){
-    int size = openNodes.size();
-    for (int i = 0; i < size; i++) {
-      l.addParameter(PRM_OPEN_TREENODES,(String)openNodes.get(i));
-    }
-    l.addParameter(PRM_TREE_CHANGED,"t");
+    l.addEventModel(_eventModel);
     return l;
   }
 
   public Link setLinkToOpenOrCloseNode(Link l, ICTreeNode node, boolean nodeIsOpen){
-    this.setLinkToMaintainOpenAndClosedNodes(l);
-
+    TreeViewerEvent event = (TreeViewerEvent)_eventModel.clone();
     if(nodeIsOpen){
-      l.addParameter(PRM_TREENODE_TO_CLOSE,node.getNodeID());
+      event.setToCloseNode(node);
     } else {
-      l.addParameter(PRM_OPEN_TREENODES,node.getNodeID());
+      event.setToOpenNode(node);
     }
 
+    l.addEventModel(event);
     return l;
-
   }
 
 

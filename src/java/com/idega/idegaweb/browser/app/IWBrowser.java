@@ -1,15 +1,17 @@
 package com.idega.idegaweb.browser.app;
 
-import com.idega.event.*;
-import com.idega.idegaweb.browser.presentation.*;
-import java.rmi.RemoteException;
 import com.idega.business.IWFrameBusiness;
-import com.idega.presentation.ui.Parameter;
+import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.presentation.*;
-import com.idega.presentation.app.IWApplication;
-import com.idega.presentation.ui.Window;
-import com.idega.idegaweb.browser.event.*;
+import com.idega.idegaweb.browser.event.IWBrowseEvent;
+import com.idega.idegaweb.browser.presentation.IWBrowserCompliant;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.Frame;
+import com.idega.presentation.FrameTable;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import java.rmi.RemoteException;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -206,9 +208,9 @@ public class IWBrowser extends FrameTable {
         ((IWBrowserView)obj).setControlTarget(this.getControlframeTarget());
 
         IWBrowseEvent model = new IWBrowseEvent();
-        model.setApplicationIdentifier(fb.getFrameSetIdentifier(this));
+        model.setApplicationIdentifier(this,fb);
         model.setControlFrameTarget(getControlframeTarget());
-        model.setSource(frame.getName());
+        model.setSourceTarget(frame);
 
         ((IWBrowserView)obj).setControlEventModel(model);
 

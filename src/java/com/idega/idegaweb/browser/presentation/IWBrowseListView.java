@@ -1,8 +1,7 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.event.IWEventModel;
-import com.idega.presentation.ui.Parameter;
-import com.idega.business.IWEventListener;
+import com.idega.event.IWEventListener;
+import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.Block;
 
 /**
@@ -17,7 +16,7 @@ import com.idega.presentation.Block;
 public class IWBrowseListView extends Block implements IWBrowserView {
 
   private String _controlTarget = null;
-  private IWEventModel _contolEvent = null;
+  private IWPresentationEvent _contolEvent = null;
 
   public IWBrowseListView() {
   }
@@ -28,7 +27,7 @@ public class IWBrowseListView extends Block implements IWBrowserView {
     _controlTarget = controlTarget;
   }
 
-  public void setControlEventModel(IWEventModel model){
+  public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
   }
 

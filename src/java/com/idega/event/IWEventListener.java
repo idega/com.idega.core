@@ -1,4 +1,5 @@
 package com.idega.event;
+import com.idega.idegaweb.IWException;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -10,5 +11,5 @@ package com.idega.event;
  */
 
 public interface IWEventListener{
-  public void actionPerformed(IWPresentationEvent e);
+  public boolean actionPerformed(IWPresentationEvent e) throws IWException;
 }
