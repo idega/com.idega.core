@@ -431,7 +431,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		* Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
 		*/
 	 public Collection ejbFindAllPendingGroupRelationships()throws FinderException{
-		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE_PENDING+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"'");
+		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.STATUS_COLUMN+" in ('"+STATUS_ACTIVE_PENDING+"','"+STATUS_PASSIVE_PENDING+"')");
 	 }
 	 
 	 /**
