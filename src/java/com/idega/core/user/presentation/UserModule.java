@@ -102,7 +102,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(tLink12,1,3);
 
-			Link tLink11 = new Link(iwb.getImage("group.gif"));
+			Link tLink11 = new Link(iwb.getImage("user.gif"));
       tLink11.setWindowToOpen(CreateUser.class);
       tb.add(Text.getNonBrakingSpace(),2,3);
       tb.add(Text.getNonBrakingSpace(),2,3);
