@@ -98,5 +98,13 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
     }
     else throw new FinderException("Country was not found");
   }
+  
+ public Integer ejbFindByCountryName(String name)throws FinderException,RemoteException{
+    Collection countries = idoFindAllIDsByColumnBySQL(this.getColumnNameName(),name);
+    if(!countries.isEmpty()){
+      return (Integer)countries.iterator().next();
+    }
+    else throw new FinderException("Country was not found");
+  }
 
 }

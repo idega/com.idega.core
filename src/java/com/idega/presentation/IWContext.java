@@ -60,7 +60,6 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
-	private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 	//private HttpSession session;
 	private String language; //Variable to set the language i.e. HTML
 	private String interfaceStyle; //Variable to enable multiple interface looks
@@ -834,26 +833,8 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return _clientIsHandHeld;
 	}
-	public IBDomain getDomain() throws RemoteException {
-		try {
-			String id = (String) this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
-			int domainID = 1;
-			if (id != null) {
-				try {
-					domainID = Integer.parseInt(id);
-				} catch (NumberFormatException nfe) {
-				}
-			}
-			return com.idega.builder.data.IBDomainBMPBean.getDomain(domainID);
-			/**
-			 * @todo: Comment in when EntityBeanCaching is default on:
-			 */
-			//IBDomainHome domainHome = (IBDomainHome)IDOLookup.getHome(IBDomain.class);
-			//return domainHome.findByPrimaryKey(domainID);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
-		}
+	public IBDomain getDomain() {
+		return getApplication().getIWApplicationContext().getDomain();
 	}
 	public void forwardToIBPage(Page fromPage, IBPage page) {
 		/**@todo temporary workaround find out why this doesn't work

@@ -16,6 +16,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
+import com.idega.presentation.IWContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -98,7 +99,7 @@ public class IWMainApplication{//implements ServletContext{
 	private static String SLASH="/";
 	private boolean checkedAppContext;
 	private String cacheDirURI;
-
+	private IWApplicationContext iwappContext;
 
   public static boolean DEBUG_FLAG = false;
 
@@ -666,6 +667,8 @@ public class IWMainApplication{//implements ServletContext{
 	private String SYSTEM_PROPERTIES_STORAGE_PARAMETER = "idegaweb_system_properties";
 
 
+
+
   private void loadCryptoProperties(){
     cryptoProps = new Properties();
     sendStartupMessage("Loading Cryptonium");
@@ -764,6 +767,14 @@ public class IWMainApplication{//implements ServletContext{
    */
   public String getContextURL(){
     return (String)this.getAttribute(CONTEXT_PATH_KEY);
+  }
+  
+  public IWApplicationContext getIWApplicationContext(){
+  	//IWContext iwc = new IWContext(
+  	if(iwappContext==null){
+  		iwappContext = new IWApplicationContextImpl(this);
+  	}
+  	return iwappContext;
   }
 
   void setContextURL(String contextURL){

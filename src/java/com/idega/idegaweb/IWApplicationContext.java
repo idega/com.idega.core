@@ -26,6 +26,6 @@ public interface IWApplicationContext extends java.io.Serializable{
   /**
    * Gets the Domain which this idegaWeb Application is running under
    */
-  public IBDomain getDomain()throws RemoteException;
+  public IBDomain getDomain();
 
 }
