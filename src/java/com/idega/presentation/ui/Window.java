@@ -51,7 +51,7 @@ public class Window extends Page{
   private boolean autoPosition =false;
   private int autoXCoordinateOffset = 0;
   private int autoYCoordinateOffset = 0;
-
+  
   private static Map allOpenedWindowClasses = new Hashtable();
 
   //If this window is constructed to open an instance of an object in a new Window via ObjectInstanciator
@@ -63,6 +63,18 @@ public Window(){
 	this(emptyString);
 	String className = this.getClass().getName();
 	setTitle(className.substring(className.lastIndexOf(".")+1));
+}
+
+/**
+ * Opens a window displaying only 1 image
+ * @param image Image to be displayed in the window
+ */
+public Window(Image image) {
+	image.setID("onlyImage");
+	this.setName(image.getName());
+	this.setAllMargins(0);
+	add(image);
+	this.setOnLoad("window.resizeTo(document.onlyImage.width +10, document.onlyImage.height +22)");
 }
 
 
