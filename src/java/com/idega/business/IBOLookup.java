@@ -421,9 +421,7 @@ public class IBOLookup
 
 
 
-  public static void registerImplementationForBean(String interfaceClassName,String beanClassName)throws ClassNotFoundException{
-  	Class interfaceClass = Class.forName(interfaceClassName);
-  	Class beanClass = Class.forName(beanClassName);
+  public static void registerImplementationForBean(Class interfaceClass, Class beanClass) {
   	beanClasses.put(interfaceClass,beanClass);
 	interfaceClasses.put(beanClass,interfaceClass);
   }
