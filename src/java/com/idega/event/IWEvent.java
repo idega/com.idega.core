@@ -2,8 +2,8 @@ package com.idega.event;
 
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
-import com.idega.jmodule.object.ModuleObject;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        IW Event
@@ -18,7 +18,7 @@ public class IWEvent extends AWTEvent implements ActiveEvent, IWModuleEvent{
 
   public static final int IWEVENT_RESERVED_ID_MAX = AWTEvent.RESERVED_ID_MAX + 1000;
 
-  public ModuleInfo myModinfo = null;
+  public IWContext myModinfo = null;
 
 
   public IWEvent(Object source, int id) {
@@ -35,18 +35,18 @@ public class IWEvent extends AWTEvent implements ActiveEvent, IWModuleEvent{
 */
   }
 
-  public void setModuleInfo(ModuleInfo modinfo){
-    myModinfo = modinfo;
+  public void setIWContext(IWContext iwc){
+    myModinfo = iwc;
   }
 
-  public ModuleInfo getModuleInfo(){
+  public IWContext getIWContext(){
     return myModinfo;
   }
 
   public void dispatch(){
     Object obj = getSource();
-    if(obj instanceof ModuleObject){
-      ((ModuleObject)obj).dispatchEvent(this);
+    if(obj instanceof PresentationObject){
+      ((PresentationObject)obj).dispatchEvent(this);
     }else{
       System.err.println("unable to dispatch event: " + this);
     }

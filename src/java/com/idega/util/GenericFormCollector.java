@@ -1,11 +1,11 @@
 package com.idega.util;
 
-import com.idega.jmodule.object.ModuleObjectContainer;
+import com.idega.presentation.PresentationObjectContainer;
 import javax.swing.DefaultSingleSelectionModel;
 import java.util.Vector;
 import javax.swing.event.ChangeListener;
 import com.idega.util.datastructures.Collectable;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        IWTabbedPane
@@ -33,13 +33,13 @@ public class GenericFormCollector {
   }
 
 
-  public void setSelectedIndex(int index, ModuleInfo modinfo, boolean collect, boolean store){
+  public void setSelectedIndex(int index, IWContext iwc, boolean collect, boolean store){
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
       if(collect && selectedIndex != index ){
-        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(modinfo);
+        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
       }
       if(store && selectedIndex != index ){
-        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(modinfo);
+        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(iwc);
       }
     }
     this.selectedIndex = index;
@@ -49,16 +49,16 @@ public class GenericFormCollector {
    * collect : true <br>
    * store : false
    */
-  public void setSelectedIndex(int index, ModuleInfo modinfo){
-    this.setSelectedIndex(index,modinfo,true,false);
+  public void setSelectedIndex(int index, IWContext iwc){
+    this.setSelectedIndex(index,iwc,true,false);
   }
 
 /*
-  public boolean collectAll(ModuleInfo modinfo){
+  public boolean collectAll(IWContext iwc){
     boolean collected = true;
     boolean returned = true;
     for (int i = 0; i < this.addedCollectableObjects.size(); i++) {
-      collected = ((Collectable)this.addedCollectableObjects.get(i)).collect(modinfo);
+      collected = ((Collectable)this.addedCollectableObjects.get(i)).collect(iwc);
       if(!collected){
         returned = false;
       }
@@ -67,17 +67,17 @@ public class GenericFormCollector {
   }
 */
 
-  public boolean storeAll(ModuleInfo modinfo){
+  public boolean storeAll(IWContext iwc){
     boolean stored = true;
     boolean returned = true;
 
     // collect current object
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
-      ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(modinfo);
+      ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
     }
     // storeAll
     for (int i = 0; i < this.addedCollectableObjects.size(); i++) {
-      stored = ((Collectable)this.addedCollectableObjects.get(i)).store(modinfo);
+      stored = ((Collectable)this.addedCollectableObjects.get(i)).store(iwc);
       if(!stored){
         returned = false;
       }

@@ -7,8 +7,8 @@ package com.idega.core;
 
 
 import java.util.*;
-import com.idega.jmodule.object.Image;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.Image;
+import com.idega.presentation.IWContext;
 import java.io.*;
 
 
@@ -40,18 +40,18 @@ public class ICBundle{
   /**
   * Beta implementation
   */
-   private ICBundle(ICComponent component,ModuleInfo modinfo){
+   private ICBundle(ICComponent component,IWContext iwc){
       this("/idegaweb/bundles/"+component.getName()+".bundle");
    }
 
   /**
    * Beta implementation
    */
-   public static ICBundle getInstance(ICComponent component,ModuleInfo modinfo){
+   public static ICBundle getInstance(ICComponent component,IWContext iwc){
       Class componentClass = component.getClass();
       ICBundle instance = (ICBundle) instances.get(componentClass);
       if (instance==null){
-        instance = new ICBundle(component,modinfo);
+        instance = new ICBundle(component,iwc);
         instances.put(componentClass,instance);
       }
       return instance;
@@ -89,20 +89,20 @@ public class ICBundle{
     }
 
 
-    public Image getLocalizedImage(String name,ModuleInfo modinfo){
-        return new Image(getResourcesPath(modinfo)+"/"+name);
+    public Image getLocalizedImage(String name,IWContext iwc){
+        return new Image(getResourcesPath(iwc)+"/"+name);
     }
 
 
-    public String getLocalizedString(String name,ModuleInfo modinfo){
-      return getICLocalizedStringHandler(modinfo).getString(name);
+    public String getLocalizedString(String name,IWContext iwc){
+      return getICLocalizedStringHandler(iwc).getString(name);
     }
 
-    public String getResourcesPath(ModuleInfo modinfo){
-        return resourcesPath+"/"+modinfo.getCurrentLocale().toString();
+    public String getResourcesPath(IWContext iwc){
+        return resourcesPath+"/"+iwc.getCurrentLocale().toString();
     }
 
-    //public String getResourcePath(String resourceType,ModuleInfo modinfo){
+    //public String getResourcePath(String resourceType,IWContext iwc){
     //  return null;
     //}
 
@@ -111,11 +111,11 @@ public class ICBundle{
     }
 
 
-    public ICLocalizedStringHandler getICLocalizedStringHandler(ModuleInfo modinfo){
-      Locale locale = modinfo.getCurrentLocale();
+    public ICLocalizedStringHandler getICLocalizedStringHandler(IWContext iwc){
+      Locale locale = iwc.getCurrentLocale();
       ICLocalizedStringHandler handler = (ICLocalizedStringHandler) handlers.get(locale);
       if (handler==null){
-        handler = new ICLocalizedStringHandler(this,getResourcesPath(modinfo)+"/Localized.strings",locale);
+        handler = new ICLocalizedStringHandler(this,getResourcesPath(iwc)+"/Localized.strings",locale);
         handlers.put(locale,handler);
       }
       return handler;

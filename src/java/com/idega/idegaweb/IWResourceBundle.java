@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import com.idega.jmodule.object.Image;
+import com.idega.presentation.Image;
 import java.io.FileNotFoundException;
 import java.util.MissingResourceException;
 import java.util.TreeMap;

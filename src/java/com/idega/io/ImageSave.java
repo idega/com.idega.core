@@ -2,7 +2,7 @@ package com.idega.io;
 
 import java.io.*;
 import java.sql.*;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 import com.idega.util.idegaTimestamp;
 import oracle.sql.*;
 import oracle.jdbc.driver.*;

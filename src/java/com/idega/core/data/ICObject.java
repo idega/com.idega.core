@@ -7,7 +7,7 @@ package com.idega.core.data;
 //import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.block.news.presentation.NewsReader;
 import com.idega.block.text.presentation.TextReader;
 import com.idega.block.login.presentation.Login;
@@ -108,7 +108,7 @@ public class ICObject extends GenericEntity{
 
           obj = new ICObject();
           obj.setName("Image");
-          obj.setObjectClass(com.idega.jmodule.object.Image.class);
+          obj.setObjectClass(com.idega.presentation.Image.class);
           obj.setObjectType("iw.element");
           obj.insert();
 
@@ -167,8 +167,8 @@ public class ICObject extends GenericEntity{
           setClassName(c.getName());
         }
 
-	public ModuleObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
-		return (ModuleObject)getObjectClass().newInstance();
+	public PresentationObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
+		return (PresentationObject)getObjectClass().newInstance();
 	}
 
 

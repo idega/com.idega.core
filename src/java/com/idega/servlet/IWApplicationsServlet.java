@@ -2,17 +2,17 @@ package com.idega.servlet;
 
 import com.idega.block.login.presentation.Login;
 
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.Image;
-import com.idega.jmodule.object.interfaceobject.Form;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.ui.Form;
 import com.idega.development.presentation.Localizer;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
-import com.idega.jmodule.object.textObject.Text;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.text.Text;
 
 import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.jmodule.object.app.IWControlCenter;
+import com.idega.presentation.app.IWControlCenter;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWBundle;
 
@@ -45,9 +45,9 @@ private IWResourceBundle iwrb;
     public IWASPage(){
     }
 
-    public void main(ModuleInfo modinfo){
-      iwb = this.getBundle(modinfo);
-      iwrb = this.getResourceBundle(modinfo);
+    public void main(IWContext iwc){
+      iwb = this.getBundle(iwc);
+      iwrb = this.getResourceBundle(iwc);
 
       Page thePage = this;
       thePage.setBackgroundColor(backgroundColor);
@@ -99,7 +99,7 @@ private IWResourceBundle iwrb;
 
       boolean isAdministrator = false;
       try{
-        isAdministrator = AccessControl.isAdmin(modinfo);
+        isAdministrator = AccessControl.isAdmin(iwc);
       }
       catch(Exception e){
         isAdministrator = false;
@@ -156,7 +156,7 @@ private IWResourceBundle iwrb;
 
         Form myForm = new Form();
           myForm.setEventListener(com.idega.core.localisation.business.LocaleSwitcher.class.getName());
-        DropdownMenu dropdown = Localizer.getAvailableLocalesDropdown(modinfo);
+        DropdownMenu dropdown = Localizer.getAvailableLocalesDropdown(iwc);
           dropdown.setAttribute("style","font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
           myForm.add(dropdown);
           dropdownTable.add(myForm);

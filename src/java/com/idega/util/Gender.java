@@ -5,7 +5,7 @@
 package com.idega.util;
 
 import java.util.GregorianCalendar;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import java.util.Calendar;
 import java.sql.*;
 

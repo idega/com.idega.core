@@ -8,7 +8,7 @@ package com.idega.servlet;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 
 
 /**
@@ -26,7 +26,7 @@ HttpServletResponse response;
 		this.response=response;
 	}
 	
-	public boolean equals(ModuleObject modobj){
+	public boolean equals(PresentationObject modobj){
 		if (modobj != null){
 			if(request.getParameter(modobj.getName()) != null){
 				return true;

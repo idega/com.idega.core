@@ -1,13 +1,13 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.TextArea;
-import com.idega.jmodule.object.interfaceobject.DateInput;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
-import com.idega.jmodule.object.interfaceobject.FramePane;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Text;
+import com.idega.presentation.Table;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.DateInput;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.FramePane;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Text;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -196,15 +196,15 @@ public class AddressInfoTab extends UserTab{
   }
 
 
-  public boolean collect(ModuleInfo modinfo){
+  public boolean collect(IWContext iwc){
 
-    if(modinfo != null){
-      String street = modinfo.getParameter(this.streetFieldName);
-      String city = modinfo.getParameter(this.cityFieldName);
-      String province = modinfo.getParameter(this.provinceFieldName);
-      String postal = modinfo.getParameter(this.postalCodeFieldName);
-      String country = modinfo.getParameter(this.countryFieldName);
-      String poBox = modinfo.getParameter(this.poBoxFieldName);
+    if(iwc != null){
+      String street = iwc.getParameter(this.streetFieldName);
+      String city = iwc.getParameter(this.cityFieldName);
+      String province = iwc.getParameter(this.provinceFieldName);
+      String postal = iwc.getParameter(this.postalCodeFieldName);
+      String country = iwc.getParameter(this.countryFieldName);
+      String poBox = iwc.getParameter(this.poBoxFieldName);
 
       if(street != null){
         fieldValues.put(this.streetFieldName,street);
@@ -232,7 +232,7 @@ public class AddressInfoTab extends UserTab{
     return false;
   }
 
-  public boolean store(ModuleInfo modinfo){
+  public boolean store(IWContext iwc){
 
     try{
       StringTokenizer tok = new StringTokenizer((String)fieldValues.get(this.streetFieldName));

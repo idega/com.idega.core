@@ -1,7 +1,7 @@
 
 package com.idega.idegaweb.template;
 
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.jmodule.login.business.AccessControl;
 
 /**
@@ -21,69 +21,69 @@ public class TemplatePage extends Page {
  /**
    * <H2>Unimplemented</H2>
    */
-  public void add1(ModuleObject obj){}
+  public void add1(PresentationObject obj){}
 
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add2(ModuleObject obj){}
+  public void add2(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add3(ModuleObject obj){}
+  public void add3(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add4(ModuleObject obj){}
+  public void add4(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add5(ModuleObject obj){}
+  public void add5(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add6(ModuleObject obj){}
+  public void add6(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add7(ModuleObject obj){}
+  public void add7(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add8(ModuleObject obj){}
+  public void add8(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public void add9(ModuleObject obj){}
+  public void add9(PresentationObject obj){}
   /**
    * <H2>Unimplemented</H2>
    */
-  public boolean isAdministrator(ModuleInfo modinfo)throws Exception{
-    return AccessControl.isAdmin(modinfo);
+  public boolean isAdministrator(IWContext iwc)throws Exception{
+    return AccessControl.isAdmin(iwc);
   }
   /**
    * <H2>Unimplemented</H2>
    */
-  public boolean isDeveloper(ModuleInfo modinfo)throws Exception{
+  public boolean isDeveloper(IWContext iwc)throws Exception{
     return false;
   }
   /**
    * <H2>Unimplemented</H2>
    */
-  public boolean isUser(ModuleInfo modinfo)throws Exception{
+  public boolean isUser(IWContext iwc)throws Exception{
     return false;
   }
   /**
    * <H2>Unimplemented</H2>
    */
-  public boolean isMemberOf(ModuleInfo modinfo,String groupName)throws Exception{
+  public boolean isMemberOf(IWContext iwc,String groupName)throws Exception{
     return false;
   }
   /**
    * <H2>Unimplemented</H2>
    */
-  public boolean hasPermission(String permissionType,ModuleInfo modinfo,ModuleObject obj)throws Exception{
-  //  return AccessControl.hasPermission(permissionType,modinfo,obj);
+  public boolean hasPermission(String permissionType,IWContext iwc,PresentationObject obj)throws Exception{
+  //  return AccessControl.hasPermission(permissionType,iwc,obj);
     return false;
   }
 

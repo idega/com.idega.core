@@ -1,16 +1,16 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.TextArea;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.RadioGroup;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.interfaceobject.HiddenInput;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.interfaceobject.FramePane;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Text;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.RadioGroup;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.Table;
+import com.idega.presentation.ui.FramePane;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Text;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
@@ -191,13 +191,13 @@ public class CreateUserGroup extends Window {
 
 
 
-  public void commitCreation(ModuleInfo modinfo) throws Exception{
+  public void commitCreation(IWContext iwc) throws Exception{
 
     GenericGroup newGroup;
 
-    String name = modinfo.getParameter(this.groupNameFieldParameterName);
-    String description = modinfo.getParameter(this.descriptionFieldParameterName);
-    String type = modinfo.getParameter(this.groupTypeFieldParameterName);
+    String name = iwc.getParameter(this.groupNameFieldParameterName);
+    String description = iwc.getParameter(this.descriptionFieldParameterName);
+    String type = iwc.getParameter(this.groupTypeFieldParameterName);
 
     if(type == null){
       throw new Exception("no group_type selected");
@@ -213,11 +213,11 @@ public class CreateUserGroup extends Window {
   }
 
 
-  public void main(ModuleInfo modinfo) throws Exception {
-    String submit = modinfo.getParameter("submit");
+  public void main(IWContext iwc) throws Exception {
+    String submit = iwc.getParameter("submit");
     if(submit != null){
       if(submit.equals("ok")){
-        this.commitCreation(modinfo);
+        this.commitCreation(iwc);
         this.close();
         this.setParentToReload();
       }else if(submit.equals("cancel")){

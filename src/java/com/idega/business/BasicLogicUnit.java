@@ -9,7 +9,7 @@ import java.sql.*;
 import javax.naming.*;
 import javax.sql.*;
 import java.util.Hashtable;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IdegaWebException;
 import com.idega.util.InheritableStaticPropertyHandler;
 
@@ -29,7 +29,7 @@ public class BasicLogicUnit implements IdegaWebEventListener{
       }
 
 
-      public void actionPerformed(ModuleInfo modinfo)throws IdegaWebException{
+      public void actionPerformed(IWContext iwc)throws IdegaWebException{
 
       }
 
@@ -39,12 +39,12 @@ public class BasicLogicUnit implements IdegaWebEventListener{
       }
 
 
-      public static void internalSetState(ModuleInfo modinfo,String state){
-        modinfo.setSessionAttribute(getControlParameter(),state);
+      public static void internalSetState(IWContext iwc,String state){
+        iwc.setSessionAttribute(getControlParameter(),state);
       }
 
-      public static String internalGetState(ModuleInfo modinfo){
-        return (String) modinfo.getSessionAttribute(getControlParameter());
+      public static String internalGetState(IWContext iwc){
+        return (String) iwc.getSessionAttribute(getControlParameter());
       }
 
 

@@ -5,8 +5,8 @@
 
 package com.idega.idegaweb;
 
-import com.idega.jmodule.object.ModuleObject;
-import com.idega.jmodule.object.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Image;
 import java.io.*;
 import java.util.*;
 

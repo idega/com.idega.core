@@ -7,7 +7,7 @@ package com.idega.core.data;
 //import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 
 
 /**
@@ -57,7 +57,7 @@ public class ICObjectInstance extends GenericEntity{
 		return (ICObject) getColumnValue("ic_object_id");
 	}
 
-	public ModuleObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
+	public PresentationObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
 		return getObject().getNewInstance();
 	}
 

@@ -8,8 +8,8 @@ package com.idega.util;
  * @author
  * @version 1.0
  */
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.Page;
+import com.idega.presentation.IWContext;
 
   public class FrameStorageInfo{
 

@@ -10,7 +10,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.idegaweb.*;
 import com.idega.idegaweb.template.*;
 import com.idega.jmodule.*;
@@ -28,14 +28,14 @@ public class DynamicTemplateServlet extends PageJSPModule{
   public void initializePage(){
     try{
         //Not a good enough implementation, is dependent upon
-        //where storeObject("idega_moduleinfo",moduleinfo) is called
+        //where storeObject("idega_iwc",iwc) is called
         //in IWPresentationServlet
-            ModuleInfo modinfo = getModuleInfo();
-            String templateClassName=modinfo.getParameter(IWMainApplication.templateClassParameter);
+            IWContext iwc = getIWContext();
+            String templateClassName=iwc.getParameter(IWMainApplication.templateClassParameter);
             if(templateClassName!=null){
               setTemplateClassName(templateClassName);
             }
-            String templateName=modinfo.getParameter(IWMainApplication.templateParameter);
+            String templateName=iwc.getParameter(IWMainApplication.templateParameter);
             if(templateName!=null){
               //Properties prop = getDefaultProperties();
               //setTemplateClassName(prop.getProperty("idegaweb.template."+templateName+".classname"));
@@ -61,7 +61,7 @@ public class DynamicTemplateServlet extends PageJSPModule{
 	throws ServletException,IOException{
 
                 try{
-	        main(getModuleInfo());
+	        main(getIWContext());
                 }
                 catch(Exception ex){
                   ex.printStackTrace(response.getWriter());
@@ -72,7 +72,7 @@ public class DynamicTemplateServlet extends PageJSPModule{
         }
 
         //TEMPORARY IMPLEMENTATION
-        public void main(ModuleInfo modinfo)throws Exception{
+        public void main(IWContext iwc)throws Exception{
         };
 
         /*public void setFirstTemplatePage(Page page){
@@ -106,8 +106,8 @@ public class DynamicTemplateServlet extends PageJSPModule{
           return (String)getServletContext().getAttribute("idegaweb_template_class");
         }
 
-        public Page getFirstTemplatePage(ModuleInfo modinfo)throws Exception{
-          //Properties prop = getDefaultProperties(modinfo);
+        public Page getFirstTemplatePage(IWContext iwc)throws Exception{
+          //Properties prop = getDefaultProperties(iwc);
           //Properties prop = getDefaultProperties();
           //String className = prop.getProperty("idegaweb.default.templatepage.classname");
           String className = getApplicationSettings().getDefaultTemplateClass();
@@ -124,7 +124,7 @@ public class DynamicTemplateServlet extends PageJSPModule{
           if(className==null){
             className = getFirstTemplatePageClass();
             if(className==null){
-              className="com.idega.jmodule.object.Page";
+              className="com.idega.presentation.Page";
             }
             setTemplateClassName(className);
           }
@@ -138,11 +138,11 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
 /*
 
-        public Page getTemplatePage(ModuleInfo modinfo)throws Exception{
-          Page page = (Page)modinfo.getServletContext().getAttribute("idega_template_page");
+        public Page getTemplatePage(IWContext iwc)throws Exception{
+          Page page = (Page)iwc.getServletContext().getAttribute("idega_template_page");
           if(page==null){
-            page = getFirstTemplatePage(modinfo);
-            modinfo.getServletContext().setAttribute("idega_template_page",page);
+            page = getFirstTemplatePage(iwc);
+            iwc.getServletContext().setAttribute("idega_template_page",page);
           }
           return (Page)page.clone();
         }
@@ -151,7 +151,7 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
 /*        public Page getPage(){
           try{
-            return getTemplatePage(getModuleInfo());
+            return getTemplatePage(getIWContext());
           }
           catch(Exception ex){
             ex.printStackTrace(System.err);
@@ -162,12 +162,12 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
 
 /*
-        protected Properties getDefaultProperties(ModuleInfo modinfo)throws IOException{
-          IdegawebProperties properties = (IdegawebProperties)modinfo.getServletContext().getAttribute("idegaweb_default_properties");
+        protected Properties getDefaultProperties(IWContext iwc)throws IOException{
+          IdegawebProperties properties = (IdegawebProperties)iwc.getServletContext().getAttribute("idegaweb_default_properties");
 	  if (properties==null){
             properties = new IdegawebProperties(getServletContext());
           }
-          modinfo.getServletContext().setAttribute("idegaweb_default_properties",properties);
+          iwc.getServletContext().setAttribute("idegaweb_default_properties",properties);
           return properties;
         }
 
@@ -195,56 +195,56 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
 
 
-  public void add2(ModuleObject obj){
+  public void add2(PresentationObject obj){
     getTemplatePage().add2(obj);
   }
 
-  public void add3(ModuleObject obj){
+  public void add3(PresentationObject obj){
     getTemplatePage().add3(obj);
   }
 
-  public void add4(ModuleObject obj){
+  public void add4(PresentationObject obj){
     getTemplatePage().add4(obj);
   }
 
-  public void add5(ModuleObject obj){
+  public void add5(PresentationObject obj){
   getTemplatePage().add5(obj);
   }
 
-  public void add6(ModuleObject obj){
+  public void add6(PresentationObject obj){
     getTemplatePage().add6(obj);
   }
 
-  public void add7(ModuleObject obj){
+  public void add7(PresentationObject obj){
     getTemplatePage().add7(obj);
   }
 
-  public void add8(ModuleObject obj){
+  public void add8(PresentationObject obj){
     getTemplatePage().add8(obj);
   }
 
-  public void add9(ModuleObject obj){
+  public void add9(PresentationObject obj){
     getTemplatePage().add9(obj);
   }
 
-  public boolean isAdministrator(ModuleInfo modinfo)throws Exception{
-    return this.getTemplatePage().isAdministrator(modinfo);
+  public boolean isAdministrator(IWContext iwc)throws Exception{
+    return this.getTemplatePage().isAdministrator(iwc);
   }
 
-  public boolean isDeveloper(ModuleInfo modinfo)throws Exception{
-    return this.getTemplatePage().isDeveloper(modinfo);
+  public boolean isDeveloper(IWContext iwc)throws Exception{
+    return this.getTemplatePage().isDeveloper(iwc);
   }
 
-  public boolean isUser(ModuleInfo modinfo)throws Exception{
-    return this.getTemplatePage().isUser(modinfo);
+  public boolean isUser(IWContext iwc)throws Exception{
+    return this.getTemplatePage().isUser(iwc);
   }
 
-  public boolean isMemberOf(ModuleInfo modinfo,String groupName)throws Exception{
-    return this.getTemplatePage().isMemberOf(modinfo, groupName);
+  public boolean isMemberOf(IWContext iwc,String groupName)throws Exception{
+    return this.getTemplatePage().isMemberOf(iwc, groupName);
   }
 
-  public boolean hasPermission(String permissionType,ModuleInfo modinfo,ModuleObject obj)throws Exception{
-    return this.getTemplatePage().hasPermission(permissionType, modinfo, obj);
+  public boolean hasPermission(String permissionType,IWContext iwc,PresentationObject obj)throws Exception{
+    return this.getTemplatePage().hasPermission(permissionType, iwc, obj);
   }
 
 

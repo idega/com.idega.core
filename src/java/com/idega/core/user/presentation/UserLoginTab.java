@@ -1,11 +1,11 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.PasswordInput;
-import com.idega.jmodule.object.interfaceobject.CheckBox;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.Table;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.PasswordInput;
+import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
 
 
 /**
@@ -85,7 +85,7 @@ public class UserLoginTab extends UserTab {
     passwordNeverExpiresText = new Text("Password never expires");
     disableAccountText = new Text("Account is disabled");
   }
-  public boolean store(ModuleInfo modinfo) {
+  public boolean store(IWContext iwc) {
     return true;
   }
 
@@ -138,7 +138,7 @@ public class UserLoginTab extends UserTab {
     this.add(frameTable);
 
   }
-  public boolean collect(ModuleInfo modinfo) {
+  public boolean collect(IWContext iwc) {
     return true;
   }
   public void initializeFieldNames() {

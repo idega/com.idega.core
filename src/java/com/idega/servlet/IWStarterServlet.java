@@ -109,7 +109,7 @@ public class IWStarterServlet extends GenericServlet
             }
             String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
             if(accControlType!=null){
-                com.idega.jmodule.object.JModuleObject.usingNewAcessControlSystem=true;
+                com.idega.presentation.Block.usingNewAcessControlSystem=true;
             }
             startDatabasePool();
             application.loadBundles();

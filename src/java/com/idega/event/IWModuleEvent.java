@@ -1,6 +1,6 @@
 package com.idega.event;
 
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        IW Event
@@ -12,6 +12,6 @@ import com.idega.jmodule.object.ModuleInfo;
  */
 
 public interface IWModuleEvent {
-  public void setModuleInfo(ModuleInfo modinfo);
-  public ModuleInfo getModuleInfo();
+  public void setIWContext(IWContext iwc);
+  public IWContext getIWContext();
 }

@@ -2,7 +2,7 @@ package com.idega.core.localisation.presentation;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.data.ICLocale;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
+import com.idega.presentation.ui.DropdownMenu;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Locale;

@@ -1,7 +1,7 @@
 package com.idega.event;
 
 import java.awt.AWTEvent;
-import com.idega.jmodule.object.textObject.Link;
+import com.idega.presentation.text.Link;
 
 /**
  * Title:        IW Event

@@ -9,10 +9,10 @@ package com.idega.idegaweb;
  * @version 1.0
  */
 
-import com.idega.jmodule.object.interfaceobject.Parameter;
+import com.idega.presentation.ui.Parameter;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.Page;
+import com.idega.presentation.IWContext;
 
 import java.util.List;
 import java.util.Vector;
@@ -101,8 +101,8 @@ public class IWURL {
     addParameter(name,value);
   }
 
-  public void maintainParameter(String parameterName, ModuleInfo modinfo){
-    String value = modinfo.getParameter(parameterName);
+  public void maintainParameter(String parameterName, IWContext iwc){
+    String value = iwc.getParameter(parameterName);
     if(value!=null){
       addParameter(parameterName,value);
     }
@@ -181,7 +181,7 @@ public class IWURL {
     }
   }
 
-  public static List getGloballyMaintainedParameters(ModuleInfo modinfo){
+  public static List getGloballyMaintainedParameters(IWContext iwc){
     return globalMaintainedParameters;
   }
 

@@ -1,15 +1,15 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.CheckBox;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.interfaceobject.PasswordInput;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.PasswordInput;
+import com.idega.presentation.Table;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
@@ -294,20 +294,20 @@ public class CreateUser extends Window {
 
 
 
-  public void commitCreation(ModuleInfo modinfo) throws Exception{
+  public void commitCreation(IWContext iwc) throws Exception{
 
     User newUser;
 
-    String login = modinfo.getParameter(this.userLoginFieldParameterName);
-    String passw = modinfo.getParameter(this.passwordFieldParameterName);
-    String cfPassw = modinfo.getParameter(this.confirmPasswordFieldParameterName);
+    String login = iwc.getParameter(this.userLoginFieldParameterName);
+    String passw = iwc.getParameter(this.passwordFieldParameterName);
+    String cfPassw = iwc.getParameter(this.confirmPasswordFieldParameterName);
     String password = null;
 
-    String mustChage = modinfo.getParameter(this.mustChangePasswordFieldParameterName);
-    String cannotchangePassw = modinfo.getParameter(this.cannotChangePasswordFieldParameterName);
-    String passwNeverExpires = modinfo.getParameter(this.passwordNeverExpiresFieldParameterName);
-    String disabledAccount = modinfo.getParameter(this.disableAccountFieldParameterName);
-    String primaryGroup = modinfo.getParameter(this.primaryGroupFieldParameterName);
+    String mustChage = iwc.getParameter(this.mustChangePasswordFieldParameterName);
+    String cannotchangePassw = iwc.getParameter(this.cannotChangePasswordFieldParameterName);
+    String passwNeverExpires = iwc.getParameter(this.passwordNeverExpiresFieldParameterName);
+    String disabledAccount = iwc.getParameter(this.disableAccountFieldParameterName);
+    String primaryGroup = iwc.getParameter(this.primaryGroupFieldParameterName);
 
     Boolean bMustChage;
     Boolean bAllowedToChangePassw;
@@ -354,9 +354,9 @@ public class CreateUser extends Window {
     TransactionManager transaction = IdegaTransactionManager.getInstance();
     try{
       transaction.begin();
-      newUser = business.insertUser(modinfo.getParameter(firstNameFieldParameterName),
-                                   modinfo.getParameter(middleNameFieldParameterName),
-                                   modinfo.getParameter(lastNameFieldParameterName),
+      newUser = business.insertUser(iwc.getParameter(firstNameFieldParameterName),
+                                   iwc.getParameter(middleNameFieldParameterName),
+                                   iwc.getParameter(lastNameFieldParameterName),
                                    null,null,null,null,primaryGroupId);
 
 
@@ -372,11 +372,11 @@ public class CreateUser extends Window {
   }
 
 
-  public void main(ModuleInfo modinfo) throws Exception {
-    String submit = modinfo.getParameter("submit");
+  public void main(IWContext iwc) throws Exception {
+    String submit = iwc.getParameter("submit");
     if(submit != null){
       if(submit.equals("ok")){
-        this.commitCreation(modinfo);
+        this.commitCreation(iwc);
         this.close();
         this.setParentToReload();
       }else if(submit.equals("cancel")){

@@ -1,9 +1,9 @@
 package com.idega.idegaweb.presentation;
 
 
-import com.idega.jmodule.object.textObject.*;
-import com.idega.jmodule.object.*;
-import com.idega.jmodule.object.interfaceobject.*;
+import com.idega.presentation.text.*;
+import com.idega.presentation.*;
+import com.idega.presentation.ui.*;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 
@@ -28,10 +28,10 @@ private String method = "post";
   public IWAdminWindow() {
   }
 
-  public void _main(ModuleInfo modinfo)throws Exception{
-    iwb = getBundle(modinfo);
-    iwrb = getResourceBundle(modinfo);
-    iwbCore = modinfo.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+  public void _main(IWContext iwc)throws Exception{
+    iwb = getBundle(iwc);
+    iwrb = getResourceBundle(iwc);
+    iwbCore = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
     makeTables();
     setAllMargins(0);
 
@@ -40,10 +40,10 @@ private String method = "post";
     else
       super.add(adminForm);
 
-    super._main(modinfo);
+    super._main(iwc);
   }
 
-  public void main(ModuleInfo modinfo)throws Exception{
+  public void main(IWContext iwc)throws Exception{
   }
 
   private void makeTables() {
@@ -99,7 +99,7 @@ private String method = "post";
     adminTable.add(text,1,2);
   }
 
-  public void add(ModuleObject obj) {
+  public void add(PresentationObject obj) {
     if(adminTable==null){
       adminTable=new Table();
       super.add(adminTable);
@@ -107,7 +107,7 @@ private String method = "post";
     adminTable.add(obj,1,2);
   }
 
-  public void addBottom(ModuleObject obj) {
+  public void addBottom(PresentationObject obj) {
     adminTable.add(obj,1,2);
   }
 
@@ -120,11 +120,11 @@ private String method = "post";
     leftTable.add(formatText(text),1,rows);
   }
 
-  public void addLeft(ModuleObject obj) {
+  public void addLeft(PresentationObject obj) {
     addLeft(obj,true);
   }
 
-  public void addLeft(ModuleObject obj,boolean useStyle) {
+  public void addLeft(PresentationObject obj,boolean useStyle) {
     int rows = leftTable.getRows();
     if ( !leftTable.isEmpty(1,rows) ) {
       rows++;
@@ -137,11 +137,11 @@ private String method = "post";
     leftTable.add(obj,1,rows);
   }
 
-  public void addLeft(String text,ModuleObject obj,boolean hasBreak) {
+  public void addLeft(String text,PresentationObject obj,boolean hasBreak) {
     addLeft(text,obj,hasBreak,true);
   }
 
-  public void addLeft(String text,ModuleObject obj,boolean hasBreak,boolean useStyle) {
+  public void addLeft(String text,PresentationObject obj,boolean hasBreak,boolean useStyle) {
     int rows = leftTable.getRows();
     if ( !leftTable.isEmpty(1,rows) ) {
       rows++;
@@ -179,11 +179,11 @@ private String method = "post";
     rightTable.add(formatText(text),1,rows);
   }
 
-  public void addRight(String text,ModuleObject obj,boolean hasBreak) {
+  public void addRight(String text,PresentationObject obj,boolean hasBreak) {
     addRight(text,obj,hasBreak,true);
   }
 
-  public void addRight(String text,ModuleObject obj,boolean hasBreak,boolean useStyle) {
+  public void addRight(String text,PresentationObject obj,boolean hasBreak,boolean useStyle) {
     int rows = rightTable.getRows();
     if ( !rightTable.isEmpty(1,rows) ) {
       rows++;
@@ -232,7 +232,7 @@ private String method = "post";
     headerTable.add(adminTitle,2,1);
   }
 
-  public void addHeaderObject(ModuleObject obj) {
+  public void addHeaderObject(PresentationObject obj) {
     int rows = headerTable.getRows()+1;
     headerTable.mergeCells(1,rows,2,rows);
     headerTable.setAlignment(1,rows,"center");
@@ -270,11 +270,11 @@ private String method = "post";
     return T;
   }
 
-  public void setStyle(ModuleObject obj){
+  public void setStyle(PresentationObject obj){
     obj.setAttribute("style",STYLE);
   }
 
-  public void setStyle(ModuleObject obj,String style){
+  public void setStyle(PresentationObject obj,String style){
     obj.setAttribute("style",style);
   }
 

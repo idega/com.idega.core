@@ -1,7 +1,7 @@
 package com.idega.core.business;
 
 import com.idega.core.data.*;
-import com.idega.jmodule.object.ModuleObject;
+import com.idega.presentation.PresentationObject;
 import java.sql.SQLException;
 
 /**
@@ -48,10 +48,10 @@ public class ICObjectBusiness {
     }
   }
 
-  public static ModuleObject getNewObjectInstance(Class icObjectClass){
-      ModuleObject inst = null;
+  public static PresentationObject getNewObjectInstance(Class icObjectClass){
+      PresentationObject inst = null;
       try{
-        inst = (ModuleObject)icObjectClass.newInstance();
+        inst = (PresentationObject)icObjectClass.newInstance();
       }
       catch(Exception e){
         e.printStackTrace();
@@ -59,8 +59,8 @@ public class ICObjectBusiness {
       return inst;
   }
 
-  public static ModuleObject getNewObjectInstance(String icObjectClassName){
-      ModuleObject inst = null;
+  public static PresentationObject getNewObjectInstance(String icObjectClassName){
+      PresentationObject inst = null;
       try{
         inst = getNewObjectInstance(Class.forName(icObjectClassName));
       }
@@ -70,8 +70,8 @@ public class ICObjectBusiness {
       return inst;
   }
 
-  public static ModuleObject getNewObjectInstance(int icObjectInstanceID){
-      ModuleObject inst = null;
+  public static PresentationObject getNewObjectInstance(int icObjectInstanceID){
+      PresentationObject inst = null;
       try{
         ICObjectInstance ico = new ICObjectInstance(icObjectInstanceID);
         inst = ico.getNewInstance();

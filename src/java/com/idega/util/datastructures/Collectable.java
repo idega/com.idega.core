@@ -1,6 +1,6 @@
 package com.idega.util.datastructures;
 
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        IWTabbedPane
@@ -13,7 +13,7 @@ import com.idega.jmodule.object.ModuleInfo;
 
 public interface Collectable {
 
-  public boolean collect(ModuleInfo modinfo);
-  public boolean store(ModuleInfo modinfo);
+  public boolean collect(IWContext iwc);
+  public boolean store(IWContext iwc);
 
 }

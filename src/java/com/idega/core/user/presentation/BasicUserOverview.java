@@ -1,12 +1,12 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.ModuleObjectContainer;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.textObject.Link;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.Page;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.Page;
 import com.idega.core.user.data.User;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.data.EntityFinder;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
 import com.idega.core.user.presentation.UserPropertyWindow;
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.CloseButton;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.business.UserGroupBusiness;
 
@@ -33,16 +33,16 @@ public class BasicUserOverview extends Page {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
 
-  public BasicUserOverview(ModuleInfo modinfo) throws Exception {
+  public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
-    //this.add(this.getUsers(modinfo));
+    //this.add(this.getUsers(iwc));
   }
   public BasicUserOverview(){
     super();
   }
 
 
-  public Table getUsers(ModuleInfo modinfo) throws Exception{
+  public Table getUsers(IWContext iwc) throws Exception{
     List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
     Table userTable = null;
     List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(AccessControl.getPermissionGroupAdministrator());
@@ -80,10 +80,10 @@ public class BasicUserOverview extends Page {
 
 
 
-  public void main(ModuleInfo modinfo) throws Exception {
+  public void main(IWContext iwc) throws Exception {
 
     this.empty();
-    this.add(this.getUsers(modinfo));
+    this.add(this.getUsers(iwc));
     this.getParentPage().setAllMargins(0);
     this.getParentPage().setBackgroundColor("#d4d0c8");
   }
@@ -170,8 +170,8 @@ public class BasicUserOverview extends Page {
     }
 
     /*abstract*/
-    public void actionPerformed(ModuleInfo modinfo)throws Exception{
-      String userDelId = modinfo.getParameter(BasicUserOverview.PARAMETER_DELETE_USER);
+    public void actionPerformed(IWContext iwc)throws Exception{
+      String userDelId = iwc.getParameter(BasicUserOverview.PARAMETER_DELETE_USER);
 
       if(userDelId != null){
         UserBusiness.deleteUser(Integer.parseInt(userDelId));
@@ -179,17 +179,17 @@ public class BasicUserOverview extends Page {
     }
 
 
-    public void _main(ModuleInfo modinfo) throws Exception {
+    public void _main(IWContext iwc) throws Exception {
       Iterator iter = parameters.iterator();
       while (iter.hasNext()) {
         String item = (String)iter.next();
         myForm.maintainParameter(item);
       }
 
-      String confirmThis = modinfo.getParameter(ConfirmWindow.PARAMETER_CONFIRM);
+      String confirmThis = iwc.getParameter(ConfirmWindow.PARAMETER_CONFIRM);
 
       if(confirmThis != null){
-        this.actionPerformed(modinfo);
+        this.actionPerformed(iwc);
         this.setParentToReload();
         this.close();
       } else{
@@ -199,7 +199,7 @@ public class BasicUserOverview extends Page {
         }
         this.add(myForm);
       }
-      super._main(modinfo);
+      super._main(iwc);
     }
 
   }

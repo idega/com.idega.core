@@ -2,10 +2,10 @@ package com.idega.core.user.presentation;
 
 
 
-import com.idega.jmodule.object.*;
-import com.idega.jmodule.object.interfaceobject.*;
-import com.idega.jmodule.object.textObject.*;
-import com.idega.jmodule.object.app.*;
+import com.idega.presentation.*;
+import com.idega.presentation.ui.*;
+import com.idega.presentation.text.*;
+import com.idega.presentation.app.*;
 import com.idega.idegaweb.IWConstants;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.accesscontrol.data.PermissionGroup;
@@ -20,7 +20,7 @@ import com.idega.core.accesscontrol.data.PermissionGroup;
  * @version 1.0
  */
 
-public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {//com.idega.jmodule.object.app.IWApplication {
+public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {//com.idega.presentation.app.IWApplication {
 
   boolean justConstructed = true;
 
@@ -35,8 +35,8 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
     super.setHeight(303);
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
-    super.main(modinfo);
+  public void main(IWContext iwc) throws Exception {
+    super.main(iwc);
     if(justConstructed){
       add(new UserModule.UserModulePage());
       justConstructed = false;
@@ -62,7 +62,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       super.setAlignment(1,1,"center");
     }
 
-    public void main(ModuleInfo modinfo)throws Exception{
+    public void main(IWContext iwc)throws Exception{
 
 
 

@@ -1,6 +1,6 @@
 package com.idega.util;
 
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 /**
  * Title:
  * Description:
@@ -11,5 +11,5 @@ import com.idega.jmodule.object.ModuleInfo;
  */
 
 public interface Disposable {
-  public void dispose(ModuleInfo modinfo);
+  public void dispose(IWContext iwc);
 }

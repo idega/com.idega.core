@@ -5,7 +5,7 @@ package com.idega.io;
 */
 
 import java.io.*;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 import com.oreilly.servlet.multipart.*;
 
 public class FileSaver {
@@ -14,11 +14,11 @@ public class FileSaver {
 
   }
 
-  static public void SaveFileToDir(ModuleInfo modinfo)throws IOException {
+  static public void SaveFileToDir(IWContext iwc)throws IOException {
     File dir = null;
 
     try {
-      MultipartParser mp = new MultipartParser(modinfo.getRequest(), 10*1024*1024); // 10MB
+      MultipartParser mp = new MultipartParser(iwc.getRequest(), 10*1024*1024); // 10MB
       Part part;
       while ((part = mp.readNextPart()) != null) {
         if(part.isParam() && part.getName().equalsIgnoreCase(FileSaver.getUploadDirParameterName())){
@@ -41,11 +41,11 @@ public class FileSaver {
     }
   }
 
-  static public File FileToDir(ModuleInfo modinfo)throws IOException {
+  static public File FileToDir(IWContext iwc)throws IOException {
     File dir = null;
 
     try {
-      MultipartParser mp = new MultipartParser(modinfo.getRequest(), 10*1024*1024); // 10MB
+      MultipartParser mp = new MultipartParser(iwc.getRequest(), 10*1024*1024); // 10MB
       Part part;
       while ((part = mp.readNextPart()) != null) {
         if(part.isParam() && part.getName().equalsIgnoreCase(FileSaver.getUploadDirParameterName())){
@@ -69,7 +69,7 @@ public class FileSaver {
     return dir;
   }
 /*
-   static public void SaveFileToOutPutStream(ModuleInfo modinfo,OutPutStream out)throws IOException {
+   static public void SaveFileToOutPutStream(IWContext iwc,OutPutStream out)throws IOException {
     File dir;
     String dirName = sDirName;
     if (dirName == null) {
@@ -78,7 +78,7 @@ public class FileSaver {
     dir = new File(dirName);
 
     try {
-      MultipartParser mp = new MultipartParser(modinfo.getRequest(), 10*1024*1024); // 10MB
+      MultipartParser mp = new MultipartParser(iwc.getRequest(), 10*1024*1024); // 10MB
       Part part;
       while ((part = mp.readNextPart()) != null) {
         if (part.isFile()) {
@@ -105,13 +105,13 @@ public class FileSaver {
     return "FileSaverUploadDir";
   }
 
-  static public String getUploadDir(ModuleInfo modinfo){
-    String s = (String) modinfo.getSession().getAttribute(getUploadDirParameterName());
+  static public String getUploadDir(IWContext iwc){
+    String s = (String) iwc.getSession().getAttribute(getUploadDirParameterName());
     return s;
   }
 
-  static public void setUploadDir(ModuleInfo modinfo,String sFilePath){
-    modinfo.getSession().setAttribute(getUploadDirParameterName(),sFilePath);
+  static public void setUploadDir(IWContext iwc,String sFilePath){
+    iwc.getSession().setAttribute(getUploadDirParameterName(),sFilePath);
   }
 }
 

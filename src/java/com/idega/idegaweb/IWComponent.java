@@ -6,8 +6,8 @@
 package com.idega.idegaweb;
 
 
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.Image;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.core.ICComponent;
 
 /**
@@ -17,7 +17,7 @@ import com.idega.core.ICComponent;
 */
 public interface IWComponent extends ICComponent{
 
-    public IWMainApplication getIWMainApplication(ModuleInfo modinfo);
+    public IWMainApplication getIWMainApplication(IWContext iwc);
 
     public Image getImageIcon();
 

@@ -1,10 +1,10 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Text;
+import com.idega.presentation.Table;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Text;
 import com.idega.core.user.business.UserBusiness;
 //import com.idega.block.staff.data.StaffInfo;
 import com.idega.util.idegaTimestamp;
@@ -199,18 +199,18 @@ public class UserPhoneTab extends UserTab{
   }
 
 
-  public boolean collect(ModuleInfo modinfo){
-    if(modinfo != null){
+  public boolean collect(IWContext iwc){
+    if(iwc != null){
 
-      String homePhone = modinfo.getParameter(this.homePhoneFieldName);
-      String workPhone = modinfo.getParameter(this.workPhoneFieldName);
-      String mobilePhone = modinfo.getParameter(this.mobilePhoneFieldName);
-      String faxPhone = modinfo.getParameter(this.faxPhoneFieldName);
-      String homePhoneType = modinfo.getParameter(this.homePhoneMenuName);
-      String workPhoneType = modinfo.getParameter(this.workPhoneMenuName);
-      String mobilePhoneType = modinfo.getParameter(this.mobilePhoneMenuName);
-      String faxPhoneType = modinfo.getParameter(this.faxPhoneMenuName);
-      String email = modinfo.getParameter(this.emailFieldName);
+      String homePhone = iwc.getParameter(this.homePhoneFieldName);
+      String workPhone = iwc.getParameter(this.workPhoneFieldName);
+      String mobilePhone = iwc.getParameter(this.mobilePhoneFieldName);
+      String faxPhone = iwc.getParameter(this.faxPhoneFieldName);
+      String homePhoneType = iwc.getParameter(this.homePhoneMenuName);
+      String workPhoneType = iwc.getParameter(this.workPhoneMenuName);
+      String mobilePhoneType = iwc.getParameter(this.mobilePhoneMenuName);
+      String faxPhoneType = iwc.getParameter(this.faxPhoneMenuName);
+      String email = iwc.getParameter(this.emailFieldName);
 
       if(homePhone != null){
         fieldValues.put(this.homePhoneFieldName,homePhone);
@@ -247,7 +247,7 @@ public class UserPhoneTab extends UserTab{
     return false;
   }
 
-  public boolean store(ModuleInfo modinfo){
+  public boolean store(IWContext iwc){
     try{
       if(getUserId() > -1){
         String[] phoneString = { (String)fieldValues.get(this.homePhoneFieldName),(String)fieldValues.get(this.workPhoneFieldName),(String)fieldValues.get(this.mobilePhoneFieldName),(String)fieldValues.get(this.faxPhoneFieldName) };

@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.Enumeration;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.block.login.business.*;
 import com.idega.core.data.*;
 import com.idega.core.user.data.User;
@@ -134,25 +134,25 @@ public class AccessControl{
     return AdministratorPermissionGroup;
   }
 
-  public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
+  public static boolean isAdmin(IWContext iwc)throws SQLException{
     try {
-      Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), modinfo);
+      Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), iwc);
       if(ob != null){
         return ((Boolean)ob).booleanValue();
       }else{
-        List groups = LoginBusiness.getPermissionGroups(modinfo);
+        List groups = LoginBusiness.getPermissionGroups(iwc);
         if (groups != null){
           Iterator iter = groups.iterator();
           while (iter.hasNext()) {
             GenericGroup item = (GenericGroup)iter.next();
             if (getAdministratorGroupName().equals(item.getName())){
-              LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,modinfo);
+              LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
               return true;
             }
           }
         }
       }
-      LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,modinfo);
+      LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,iwc);
       return false;
     }
     catch (NotLoggedOnException ex) {
@@ -163,8 +163,8 @@ public class AccessControl{
   /**
    * @todo page ownership
    */
-  public static boolean isOwner(ModuleObject obj , ModuleInfo modinfo) throws SQLException {
-    User user = LoginBusiness.getUser(modinfo);
+  public static boolean isOwner(PresentationObject obj , IWContext iwc) throws SQLException {
+    User user = LoginBusiness.getUser(iwc);
     if(user == null){
       return false;
     }
@@ -173,13 +173,13 @@ public class AccessControl{
     List permissionGroup = new Vector();
     permissionGroup.add(Integer.toString(user.getGroupID()));
     if (obj == null){ // JSP page
-      myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionGroup);
+      myPermission = PermissionCacher.hasPermissionForJSPPage(obj,iwc,permissionType,permissionGroup);
     } else { // if (obj != null)
       if(obj instanceof Page){
-        myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionGroup);
+        myPermission = PermissionCacher.hasPermissionForPage(obj,iwc,permissionType,permissionGroup);
       }else{
         //instance
-        myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionGroup);
+        myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,iwc,permissionType,permissionGroup);
         //instance
       }
       if(myPermission != null){
@@ -200,7 +200,7 @@ public class AccessControl{
 
 
 
-  public static boolean hasPermission(String permissionType, ModuleObject obj,ModuleInfo modinfo) throws SQLException{
+  public static boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -210,16 +210,16 @@ public class AccessControl{
       // then do nothing
       // else true
       // => view hashtable for obj, ...  has object
-      if(!PermissionCacher.somePermissionSet( obj, modinfo, permissionType)){
+      if(!PermissionCacher.somePermissionSet( obj, iwc, permissionType)){
         return true;
       }
     }
 
-    if (isAdmin(modinfo)){
+    if (isAdmin(iwc)){
       return true;
     }
 
-    User user = LoginBusiness.getUser(modinfo);
+    User user = LoginBusiness.getUser(iwc);
     ICPermission permission = ICPermission.getStaticInstance();
     ICPermission[] Permissions = null;
     List groups = null;
@@ -232,8 +232,8 @@ public class AccessControl{
       permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
     } else {
 
-      groups = LoginBusiness.getPermissionGroups(modinfo);
-      GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(modinfo);
+      groups = LoginBusiness.getPermissionGroups(iwc);
+      GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(iwc);
 
       if (groups != null && groups.size() > 0){
         if(primaryGroup != null){
@@ -260,7 +260,7 @@ public class AccessControl{
         // Everyone, user, primaryGroup, otherGroups
     }
     for (int i = 0; i < permissionOrder.length; i++) {
-      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, modinfo);
+      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, iwc);
       if(myPermission != null){
         return myPermission.booleanValue();
       }
@@ -270,7 +270,7 @@ public class AccessControl{
 
 
 
-  public static boolean hasPermission(List groupIds,String permissionType, ModuleObject obj,ModuleInfo modinfo) throws SQLException{
+  public static boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -280,7 +280,7 @@ public class AccessControl{
       // then do nothing
       // else true
       // => view hashtable for obj, ...  has object
-      if(!PermissionCacher.somePermissionSet( obj, modinfo, permissionType)){
+      if(!PermissionCacher.somePermissionSet( obj, iwc, permissionType)){
         return true;
       }
     }
@@ -327,7 +327,7 @@ public class AccessControl{
         return false;
     }
     for (int i = 0; i < permissionOrder.length; i++) {
-      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, modinfo);
+      myPermission = checkForPermission(permissionOrder[i], obj, permissionType, iwc);
       if(myPermission != null){
         return myPermission.booleanValue();
       }
@@ -338,34 +338,34 @@ public class AccessControl{
 
 
 
-  private static Boolean checkForPermission(List permissionGroups, ModuleObject obj, String permissionType, ModuleInfo modinfo ) throws SQLException {
+  private static Boolean checkForPermission(List permissionGroups, PresentationObject obj, String permissionType, IWContext iwc ) throws SQLException {
     Boolean myPermission = null;
 
     if (obj == null){ // JSP page
-      myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionGroups);
+      myPermission = PermissionCacher.hasPermissionForJSPPage(obj,iwc,permissionType,permissionGroups);
 
       return myPermission;
     } else { // if (obj != null)
 
       if(obj instanceof Page){
-        myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionGroups);
+        myPermission = PermissionCacher.hasPermissionForPage(obj,iwc,permissionType,permissionGroups);
 
         return myPermission;
       }else{
         //instance
-        myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionGroups);
+        myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,iwc,permissionType,permissionGroups);
         //instance
 
         // Global - (object)
         if (myPermission == null){
-          myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionGroups);
+          myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionType,permissionGroups);
         }else{
           return myPermission;
         } // Global - (object)
 
         // Bundle
         if (myPermission == null){
-          myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionGroups);
+          myPermission = PermissionCacher.hasPermissionForBundle(obj,iwc,permissionType,permissionGroups);
         }else{
           return myPermission;
         }// Bundle
@@ -437,8 +437,8 @@ public class AccessControl{
     return "edit";
   }
 
-  public static boolean hasEditPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getEditPermissionString() , obj, modinfo);
+  public static boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getEditPermissionString() , obj, iwc);
   }
 
 
@@ -446,8 +446,8 @@ public class AccessControl{
     return "delete";
   }
 
-  public static boolean hasDeletePermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getDeletePermissionString(), obj, modinfo);
+  public static boolean hasDeletePermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getDeletePermissionString(), obj, iwc);
   }
 
 
@@ -455,8 +455,8 @@ public class AccessControl{
     return "insert";
   }
 
-  public static boolean hasInsertPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getInsertPermissionString(), obj, modinfo);
+  public static boolean hasInsertPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getInsertPermissionString(), obj, iwc);
   }
 
 
@@ -464,26 +464,26 @@ public class AccessControl{
     return "view";
   }
 
-  public static boolean hasViewPermission(ModuleObject obj,ModuleInfo modinfo){
+  public static boolean hasViewPermission(PresentationObject obj,IWContext iwc){
     try {
-      /*boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
+      /*boolean permission = hasPermission( getViewPermissionString(), obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
-      return hasPermission( getViewPermissionString(), obj, modinfo);
+      return hasPermission( getViewPermissionString(), obj, iwc);
     }
     catch (SQLException ex) {
       return false;
     }
   }
 
-  public static boolean hasViewPermission(List groupIds, ModuleObject obj,ModuleInfo modinfo){
+  public static boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc){
     try {
-      /*boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
+      /*boolean permission = hasPermission( getViewPermissionString(), obj, iwc);
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
-      return hasPermission(groupIds, getViewPermissionString(), obj, modinfo);
+      return hasPermission(groupIds, getViewPermissionString(), obj, iwc);
     }
     catch (SQLException ex) {
       return false;
@@ -495,16 +495,16 @@ public class AccessControl{
     return "admin";
   }
 
-  public static boolean hasAdminPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getAdminPermissionString(), obj, modinfo);
+  public static boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getAdminPermissionString(), obj, iwc);
   }
 
   public static String getIdegaAdminPermissionString(){
     return "idega_admin";
   }
 
-  public static boolean hasIdegaAdminPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getIdegaAdminPermissionString(), obj, modinfo);
+  public static boolean hasIdegaAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getIdegaAdminPermissionString(), obj, iwc);
   }
 
 
@@ -512,11 +512,11 @@ public class AccessControl{
     return "owner";
   }
 
-  public static boolean hasOwnerPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-    return hasPermission( getOwnerPemissionString(), obj, modinfo);
+  public static boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+    return hasPermission( getOwnerPemissionString(), obj, iwc);
   }
 
-/*  public static ICObjectPermission[] getPermissionTypes(ModuleObject obj)throws SQLException{
+/*  public static ICObjectPermission[] getPermissionTypes(PresentationObject obj)throws SQLException{
     int arobjID = obj.getICObject().getID();
     List permissions =  EntityFinder.findAllByColumn(ICObjectPermission.getStaticInstance(), ICObjectPermission.getPermissionTypeColumnName(), arobjID);
     if (permissions != null){
@@ -528,7 +528,7 @@ public class AccessControl{
 */
 
 
-  public void setJSPPagePermission(ModuleInfo modinfo, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -541,7 +541,7 @@ public class AccessControl{
 
     if(!update){
       permission.setContextType(AccessControl.getJSPPageString());
-      // use 'ICJspHandler.getJspPageInstanceID(modinfo)' on the current page and send in as PageContextValue
+      // use 'ICJspHandler.getJspPageInstanceID(iwc)' on the current page and send in as PageContextValue
       permission.setContextValue(PageContextValue);
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
@@ -552,10 +552,10 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateJSPPagePermissions(PageContextValue,permissionType,modinfo);
+    PermissionCacher.updateJSPPagePermissions(PageContextValue,permissionType,iwc);
   }
 
-  public void setObjectPermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -578,11 +578,11 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,modinfo);
+    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,iwc);
   }
 
 
-  public void setBundlePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -605,16 +605,16 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,modinfo);
+    PermissionCacher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,iwc);
   }
 
 
 
-  public void setObjectInstacePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
-    setObjectInstacePermission(modinfo,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(modinfo).getID()),permissionType,permissionValue);
+  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+    setObjectInstacePermission(iwc,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(iwc).getID()),permissionType,permissionValue);
   }
 
-  public static boolean removeICObjectInstancePermissionRecords(ModuleInfo modinfo, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+  public static boolean removeICObjectInstancePermissionRecords(IWContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
     String sGroupList = "";
     if (groupsToRemove != null && groupsToRemove.length > 0){
       for(int g = 0; g < groupsToRemove.length; g++){
@@ -627,7 +627,7 @@ public class AccessControl{
       try {
         boolean done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
         if(done){
-          PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,modinfo);
+          PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,iwc);
         }
         return done;
       }
@@ -641,7 +641,7 @@ public class AccessControl{
   }
 
 
-  public static boolean removePermissionRecords(int permissionCategory, ModuleInfo modinfo, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+  public static boolean removePermissionRecords(int permissionCategory, IWContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
     String sGroupList = "";
     if (groupsToRemove != null && groupsToRemove.length > 0){
       for(int g = 0; g < groupsToRemove.length; g++){
@@ -675,7 +675,7 @@ public class AccessControl{
             break;
         }
 
-        PermissionCacher.updatePermissions(permissionCategory,ObjectInstanceId,permissionKey,modinfo);
+        PermissionCacher.updatePermissions(permissionCategory,ObjectInstanceId,permissionKey,iwc);
 
         return true;
       }
@@ -690,7 +690,7 @@ public class AccessControl{
 
 
 
-  public static void setPermission(int permissionCategory, ModuleInfo modinfo, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
+  public static void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -754,11 +754,11 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updatePermissions(permissionCategory, identifier, permissionKey, modinfo);
+    PermissionCacher.updatePermissions(permissionCategory, identifier, permissionKey, iwc);
   }
 
 
-  public static void setObjectInstacePermission(ModuleInfo modinfo, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
+  public static void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -781,7 +781,7 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionType,modinfo);
+    PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionType,iwc);
   }
 
 

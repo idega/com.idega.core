@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.20 2001/10/04 18:59:56 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.21 2001/10/05 08:02:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,8 +13,8 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
-import com.idega.jmodule.object.*;
-import com.idega.jmodule.object.textObject.*;
+import com.idega.presentation.*;
+import com.idega.presentation.text.*;
 import com.idega.idegaweb.*;
 import com.idega.business.IWEventListener;
 import com.idega.event.*;
@@ -33,7 +33,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
-  private static final String IW_MODULEINFO_KEY="idegaweb_moduleinfo";
+  private static final String IW_MODULEINFO_KEY="idegaweb_iwc";
 	/*
 	public void init(ServletConfig config)
           throws ServletException{
@@ -52,27 +52,27 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	private void __initialize(HttpServletRequest request, HttpServletResponse response) throws Exception {
           //TODO
           //Find a better solution for this:
-          ModuleInfo moduleinfo = null;
-          //ModuleInfo moduleinfo = (ModuleInfo)request.getSession().getAttribute("idega_special_moduleinfo");
+          IWContext iwc = null;
+          //IWContext iwc = (IWContext)request.getSession().getAttribute("idega_special_iwc");
 
-          if (moduleinfo == null) {
-            moduleinfo = new ModuleInfo(request,response);
-            moduleinfo.setServletContext(getServletContext());
-            request.getSession().setAttribute("idega_special_moduleinfo",moduleinfo);
+          if (iwc == null) {
+            iwc = new IWContext(request,response);
+            iwc.setServletContext(getServletContext());
+            request.getSession().setAttribute("idega_special_iwc",iwc);
           }
           else {
-            moduleinfo.setRequest(request);
-            moduleinfo.setResponse(response);
+            iwc.setRequest(request);
+            iwc.setResponse(response);
           }
 
-          String markup = moduleinfo.getParameter("idega_special_markup");
+          String markup = iwc.getParameter("idega_special_markup");
           if(markup != null) {
-            moduleinfo.setLanguage(markup);
+            iwc.setLanguage(markup);
           }
 
 
-          storeObject(IW_MODULEINFO_KEY,moduleinfo);
-          processBusinessEvent(moduleinfo);
+          storeObject(IW_MODULEINFO_KEY,iwc);
+          processBusinessEvent(iwc);
           initializePage();
 	}
 
@@ -84,12 +84,12 @@ public  class IWPresentationServlet extends IWCoreServlet{
 		__main(servReq,servRes);
 	}
 
-        public void processBusinessEvent(ModuleInfo moduleinfo)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
-          String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
+        public void processBusinessEvent(IWContext iwc)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+          String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
           String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
           if (eventClass != null) {
             IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
-            listener.actionPerformed(moduleinfo);
+            listener.actionPerformed(iwc);
           }
         }
 
@@ -99,26 +99,26 @@ public  class IWPresentationServlet extends IWCoreServlet{
 long time1 = System.currentTimeMillis();
 //com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
             __initialize(request,response);
-            ModuleInfo moduleinfo = getModuleInfo();
+            IWContext iwc = getIWContext();
 
             //added by gummi@idega.is
             //begin
             boolean theServiceDone = false;
-            String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
+            String sessionAddress = iwc.getParameter(IWMainApplication.IWEventSessionAddressParameter);
 
             if (sessionAddress != null && !"".equals(sessionAddress)){
-              Object obj = moduleinfo.getSessionAttribute(sessionAddress);
+              Object obj = iwc.getSessionAttribute(sessionAddress);
               if(obj != null) {
                 if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
 
-                    if(Page.isRequestingTopPage(moduleinfo)){
+                    if(Page.isRequestingTopPage(iwc)){
                       __theService(request,response);
                     }
                   theServiceDone = true;
                   if(obj instanceof IWModuleEvent){
-                    ((IWModuleEvent)obj).setModuleInfo(moduleinfo);
+                    ((IWModuleEvent)obj).setIWContext(iwc);
                   }else{
-                    this.getPage()._setModuleInfo(moduleinfo);
+                    this.getPage()._setIWContext(iwc);
                   }
                   ((ActiveEvent)obj).dispatch();
                 /* Kommentað út þar til kerfið ræður við þræði
@@ -133,23 +133,23 @@ long time1 = System.currentTimeMillis();
 
             //if (isActionPerformed(request,response)){
                     //actionPerformed(new ModuleEvent(request,response));
-                    //actionPerformed(new ModuleEvent(moduleinfo));
+                    //actionPerformed(new ModuleEvent(iwc));
             //}
             //else{
                   if(!theServiceDone) //gummi@idega.is
                   {
-                    if(Page.isRequestingTopPage(moduleinfo)){
+                    if(Page.isRequestingTopPage(iwc)){
                       __theService(request,response);
                     }
                   }
             //}
       //      response.getWriter().println("\n");
-            _main(moduleinfo);
+            _main(iwc);
 
-            __print(moduleinfo);
+            __print(iwc);
 
 long time2 = System.currentTimeMillis();
-PrintWriter writer = moduleinfo.getWriter();
+PrintWriter writer = iwc.getWriter();
 writer.println("<!-- --------------------------------------- -->");
 writer.println("<!-- Printing page: "+ (time2 - time1 )+ " ms -->");
 //writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
@@ -182,7 +182,7 @@ writer.println("<!-- --------------------------------------- -->");
   public void initializePage(){
     //String servletName = this.getServletConfig().getServletName();
     //System.out.println("Inside initializePage for "+servletName);
-    setPage(Page.loadPage(getModuleInfo()));
+    setPage(Page.loadPage(getIWContext()));
   }
 
   public void setPage(Page myPage){
@@ -199,11 +199,11 @@ writer.println("<!-- --------------------------------------- -->");
   }
 
     public Page getPage(){
-      return Page.getPage(getModuleInfo());
+      return Page.getPage(getIWContext());
     }
 
-    public ModuleInfo getModuleInfo(){
-          return (ModuleInfo) retrieveObject(IW_MODULEINFO_KEY);
+    public IWContext getIWContext(){
+          return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
     }
 
 
@@ -211,21 +211,21 @@ writer.println("<!-- --------------------------------------- -->");
          * @deprecated
          */
       	public HttpServletRequest getRequest(){
-		return getModuleInfo().getRequest();
+		return getIWContext().getRequest();
 	}
 
         /**
          * @deprecated
          */
 	public HttpSession getSession(){
-		return getModuleInfo().getSession();
+		return getIWContext().getSession();
 	}
 
         /**
          * @deprecated
          */
 	public HttpServletResponse getResponse(){
-		return getModuleInfo().getResponse();
+		return getIWContext().getResponse();
 	}
 
 	public String getParameter(String parameterName){
@@ -249,7 +249,7 @@ writer.println("<!-- --------------------------------------- -->");
 	}
 
 
- 	public void add(ModuleObject objectToAdd){
+ 	public void add(PresentationObject objectToAdd){
 	  getPage().add(objectToAdd);
 	}
 
@@ -258,35 +258,35 @@ writer.println("<!-- --------------------------------------- -->");
 	}
 
 
-	public void addToTemplate(ModuleObject obj){
+	public void addToTemplate(PresentationObject obj){
 
 	}
 
-	public void _main(ModuleInfo modinfo)throws Exception{
+	public void _main(IWContext iwc)throws Exception{
                 //getPage().setTreeID("0");
                 //getPage().updateTreeIDs();
-                //String node = modinfo.getParameter("idega_special_tree_node");
+                //String node = iwc.getParameter("idega_special_tree_node");
                 //if( node != null){
-                //  ModuleObject obj = getPage().getContainedObject(node);
-                  //modinfo.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
+                //  PresentationObject obj = getPage().getContainedObject(node);
+                  //iwc.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
                 //  if(obj!=null){
-               //     obj._main(modinfo);
+               //     obj._main(iwc);
                 //  }
                 //}
 
-		getPage()._main(modinfo);
+		getPage()._main(iwc);
                //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 
 	}
 
-	public void __print(ModuleInfo modinfo)throws Exception{
+	public void __print(IWContext iwc)throws Exception{
 
 
-		if (modinfo.getLanguage().equals("WML")){
+		if (iwc.getLanguage().equals("WML")){
 			getResponse().setContentType("text/vnd.wap.wml");
 		}
 
-		getPage()._print(modinfo);
+		getPage()._print(iwc);
                 //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 
@@ -318,7 +318,7 @@ writer.println("<!-- --------------------------------------- -->");
 
         public void debug(String debugString){
           try{
-            getModuleInfo().getWriter().println(debugString);
+            getIWContext().getWriter().println(debugString);
           }
           catch(Exception ex){
             System.err.println("Error in IWPresentationServlet.debug() : "+ex.getMessage());
@@ -352,21 +352,21 @@ writer.println("<!-- --------------------------------------- -->");
   }
 
 
-  public IWBundle getBundle(ModuleInfo modinfo){
-    IWMainApplication iwma = modinfo.getApplication();
+  public IWBundle getBundle(IWContext iwc){
+    IWMainApplication iwma = iwc.getApplication();
     return iwma.getBundle(getBundleIdentifier());
   }
 
-  public IWResourceBundle getResourceBundle(ModuleInfo modinfo){
-    IWBundle bundle = getBundle(modinfo);
+  public IWResourceBundle getResourceBundle(IWContext iwc){
+    IWBundle bundle = getBundle(iwc);
     if(bundle!=null){
-      return bundle.getResourceBundle(modinfo.getCurrentLocale());
+      return bundle.getResourceBundle(iwc.getCurrentLocale());
     }
     return null;
   }
 
-  public String getLocalizedString(String key,ModuleInfo modinfo){
-    IWResourceBundle bundle = getResourceBundle(modinfo);
+  public String getLocalizedString(String key,IWContext iwc){
+    IWResourceBundle bundle = getResourceBundle(iwc);
     if(bundle!=null){
       return bundle.getLocalizedString(key);
     }

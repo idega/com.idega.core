@@ -1,9 +1,9 @@
 // idega 2000 - laddi
 package com.idega.idegaweb.service;
 
-import com.idega.jmodule.object.interfaceobject.*;
-import com.idega.jmodule.object.textObject.*;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.ui.*;
+import com.idega.presentation.text.*;
+import com.idega.presentation.*;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.util.text.TextSoap;
 import com.idega.idegaweb.IWResourceBundle;
@@ -18,16 +18,16 @@ public HelpWindow() {
   setHeight(300);
 }
 
-	public void main(ModuleInfo modinfo) {
-    iwrb = getResourceBundle(modinfo);
+	public void main(IWContext iwc) {
+    iwrb = getResourceBundle(iwc);
 
     boolean hasImage = false;
-    String headline = modinfo.getParameter(HelpButton.PARAMETERSTRING_HEADLINE);
-    String text = modinfo.getParameter(HelpButton.PARAMETERSTRING_TEXT);
+    String headline = iwc.getParameter(HelpButton.PARAMETERSTRING_HEADLINE);
+    String text = iwc.getParameter(HelpButton.PARAMETERSTRING_TEXT);
       if ( text != null && text.length() > 0 ) {
         text = TextSoap.findAndReplace(text,"\r\n\r\n","<br><br>");
       }
-    String url = modinfo.getParameter(HelpButton.PARAMETERSTRING_URL);
+    String url = iwc.getParameter(HelpButton.PARAMETERSTRING_URL);
       if ( url != null ) {
         if ( url.length() > 0 ) {
           hasImage = true;
@@ -35,7 +35,7 @@ public HelpWindow() {
       }
 
     try {
-      super.main(modinfo);
+      super.main(iwc);
       if ( headline.length() > 0 )
         setTitle(headline);
       else

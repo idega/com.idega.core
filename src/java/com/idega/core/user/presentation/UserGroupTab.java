@@ -1,8 +1,8 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Text;
+import com.idega.presentation.Table;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Text;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
@@ -53,8 +53,8 @@ public abstract class UserGroupTab extends Table implements Collectable {
   public abstract void initializeTexts();
   public abstract void lineUpFields();
 
-  public abstract boolean collect(ModuleInfo modinfo);
-  public abstract boolean store(ModuleInfo modinfo);
+  public abstract boolean collect(IWContext iwc);
+  public abstract boolean store(IWContext iwc);
   public abstract void initFieldContents();
 
   private void initProxyText(){

@@ -1,7 +1,7 @@
 package com.idega.event;
 
 import java.awt.AWTEvent;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
+import com.idega.presentation.ui.SubmitButton;
 
 /**
  * Title:        IW Event

@@ -1,6 +1,6 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 
 
 /**
@@ -26,19 +26,19 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
     return "ic_group_property_window";
   }
 
-  public void initializePanel( ModuleInfo modinfo, TabbedPropertyPanel panel){
-    panel.addTab(new GeneralGroupInfoTab(),0,modinfo);
-    panel.addTab(new GroupMembershipTab(),1,modinfo);
-    //panel.addTab(new ExtendedGroupMembershipTab(),2,modinfo);
+  public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
+    panel.addTab(new GeneralGroupInfoTab(),0,iwc);
+    panel.addTab(new GroupMembershipTab(),1,iwc);
+    //panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
-    String id = modinfo.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
+  public void main(IWContext iwc) throws Exception {
+    String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
     if(id != null){
       int newId = Integer.parseInt(id);
-      ModuleObject[] obj = this.getAddedTabs();
+      PresentationObject[] obj = this.getAddedTabs();
       for (int i = 0; i < obj.length; i++) {
-        ModuleObject mo = obj[i];
+        PresentationObject mo = obj[i];
         if( mo instanceof UserGroupTab && ((UserGroupTab)mo).getGroupId() != newId){
           ((UserGroupTab)mo).setGroupId(newId);
         }

@@ -5,7 +5,7 @@
 
 package com.idega.business;
 
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.idegaweb.IWException;
 
 /**
@@ -15,6 +15,6 @@ import com.idega.idegaweb.IWException;
 */
 public interface IWEventListener{
 
-      public void actionPerformed(ModuleInfo modinfo)throws IWException;
+      public void actionPerformed(IWContext iwc)throws IWException;
 
 }

@@ -1,17 +1,17 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.IFrame;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Link;
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.SelectionDoubleBox;
-import com.idega.jmodule.object.interfaceobject.SelectionBox;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
+import com.idega.presentation.ui.IFrame;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.data.User;
@@ -91,7 +91,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
   }
 
   public void actionPerformed(IWLinkEvent e){
-    this.collect(e.getModuleInfo());
+    this.collect(e.getIWContext());
   }
 
   public void initializeTexts() {
@@ -101,7 +101,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     primaryGroupText = this.getTextObject();
     primaryGroupText.setText("Primarygroup");
   }
-  public boolean store(ModuleInfo modinfo) {
+  public boolean store(IWContext iwc) {
     try {
       String pr = (String)this.fieldValues.get(this.primaryGroupFieldName);
       UserBusiness.setPermissionGroup(new User(this.getUserId()), ("".equals(pr))?null:new Integer(pr));
@@ -131,8 +131,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
     this.add(addLink,1,4);
   }
-  public boolean collect(ModuleInfo modinfo) {
-    String prgroup = modinfo.getParameter(primaryGroupFieldName);
+  public boolean collect(IWContext iwc) {
+    String prgroup = iwc.getParameter(primaryGroupFieldName);
     if(prgroup != null){
       fieldValues.put(primaryGroupFieldName,prgroup);
     }
@@ -146,12 +146,12 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     this.updateFieldsDisplayStatus();
   }
 
-  public void dispose(ModuleInfo modinfo){
-    modinfo.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-    modinfo.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+  public void dispose(IWContext iwc){
+    iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+    iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
+  public void main(IWContext iwc) throws Exception {
     primaryGroupField.removeElements();
     primaryGroupField.addSeparator();
     List userGroups = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
@@ -167,16 +167,16 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
     Object obj = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
     if(obj != null){
-      modinfo.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
+      iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
     }else{
-      modinfo.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
     Object ob = UserBusiness.getUserGroupsNotDirectlyRelated(this.getUserId());
     if(ob != null){
-      modinfo.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
+      iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
-      modinfo.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
     }
   }
 
@@ -189,10 +189,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       super();
     }
 
-    public Table getGroupTable(ModuleInfo modinfo){
+    public Table getGroupTable(IWContext iwc){
 
-      List direct = (List)modinfo.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)modinfo.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+      List direct = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+      List notDirect = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
       Iterator iter = null;
@@ -237,9 +237,9 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       return table;
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
       this.getParentPage().setAllMargins(0);
-      Table tb = getGroupTable(modinfo);
+      Table tb = getGroupTable(iwc);
       if(tb != null){
         this.add(tb);
       }
@@ -263,7 +263,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     }
 
 
-    private void LineUpElements(ModuleInfo modinfo){
+    private void LineUpElements(IWContext iwc){
 
       Form form = new Form();
 
@@ -286,7 +286,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 
 
-      String stringUserId = modinfo.getParameter(UserGroupList.PARAMETER_USER_ID);
+      String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
       int userId = Integer.parseInt(stringUserId);
       form.addParameter(UserGroupList.PARAMETER_USER_ID,stringUserId);
 
@@ -319,15 +319,15 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       this.add(form);
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
 
 
-      String save = modinfo.getParameter("save");
+      String save = iwc.getParameter("save");
       if(save != null){
-        String stringUserId = modinfo.getParameter(UserGroupList.PARAMETER_USER_ID);
+        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
         int userId = Integer.parseInt(stringUserId);
 
-        String[] related = modinfo.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
+        String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
         User user = new User(userId);
         List currentRelationShip = UserBusiness.getUserGroupsDirectlyRelated(user);
@@ -371,11 +371,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
         this.close();
         this.setParentToReload();
       } else {
-        LineUpElements(modinfo);
+        LineUpElements(iwc);
       }
 
 /*
-      Enumeration enum = modinfo.getParameterNames();
+      Enumeration enum = iwc.getParameterNames();
        System.err.println("--------------------------------------------------");
       if(enum != null){
         while (enum.hasMoreElements()) {
@@ -383,7 +383,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
           if(item.equals("save")){
             this.close();
           }
-          String val[] = modinfo.getParameterValues((String)item);
+          String val[] = iwc.getParameterValues((String)item);
           System.err.print(item+" = ");
           if(val != null){
             for (int i = 0; i < val.length; i++) {

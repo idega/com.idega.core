@@ -1,7 +1,7 @@
 package com.idega.util;
 
 import java.util.GregorianCalendar;
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import java.util.Calendar;
 import java.sql.*;
 import java.util.Locale;
@@ -346,8 +346,8 @@ public class idegaCalendar{
             return manudurnafn;
 	}
 
-	public String getNameOfMonth(int month, ModuleInfo modinfo){
-            Locale currentLocale = modinfo.getCurrentLocale();
+	public String getNameOfMonth(int month, IWContext iwc){
+            Locale currentLocale = iwc.getCurrentLocale();
             String returner = "";
 
             if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
@@ -477,8 +477,8 @@ public class idegaCalendar{
 		return manudurnafn;
 	}
 
-	public String getShortNameOfMonth(int month, ModuleInfo modinfo){
-            Locale currentLocale = modinfo.getCurrentLocale();
+	public String getShortNameOfMonth(int month, IWContext iwc){
+            Locale currentLocale = iwc.getCurrentLocale();
             String returner = "";
 
             if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
@@ -595,8 +595,8 @@ public class idegaCalendar{
             return getNameOfDay(dagur);
         }
 
-	public String getNameOfDay(int day, ModuleInfo modinfo) {
-            Locale currentLocale = modinfo.getCurrentLocale();
+	public String getNameOfDay(int day, IWContext iwc) {
+            Locale currentLocale = iwc.getCurrentLocale();
             String returner = "";
 
             if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){

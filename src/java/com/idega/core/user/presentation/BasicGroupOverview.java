@@ -1,20 +1,20 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.ModuleObjectContainer;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.textObject.Link;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.Page;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.Page;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import java.util.List;
 import com.idega.core.user.presentation.UserPropertyWindow;
 import com.idega.core.data.GenericGroup;
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.CloseButton;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.core.business.UserGroupBusiness;
 import java.util.Iterator;
 import java.util.Vector;
@@ -41,7 +41,7 @@ public class BasicGroupOverview extends Page {
   }
 
 
-  public Table getGroups(ModuleInfo modinfo) throws Exception{
+  public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
     types[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     List groups = GenericGroup.getAllGroups(types,false);
@@ -85,9 +85,9 @@ public class BasicGroupOverview extends Page {
 
 
 
-  public void main(ModuleInfo modinfo) throws Exception {
+  public void main(IWContext iwc) throws Exception {
     this.empty();
-    this.add(this.getGroups(modinfo));
+    this.add(this.getGroups(iwc));
     this.getParentPage().setAllMargins(0);
     this.getParentPage().setBackgroundColor("#d4d0c8");
   }
@@ -175,8 +175,8 @@ public class BasicGroupOverview extends Page {
     }
 
     /*abstract*/
-    public void actionPerformed(ModuleInfo modinfo)throws Exception{
-      String groupDelId = modinfo.getParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP);
+    public void actionPerformed(IWContext iwc)throws Exception{
+      String groupDelId = iwc.getParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP);
 
       if(groupDelId != null){
         UserGroupBusiness.deleteGroup(Integer.parseInt(groupDelId));
@@ -184,17 +184,17 @@ public class BasicGroupOverview extends Page {
     }
 
 
-    public void _main(ModuleInfo modinfo) throws Exception {
+    public void _main(IWContext iwc) throws Exception {
       Iterator iter = parameters.iterator();
       while (iter.hasNext()) {
         String item = (String)iter.next();
         myForm.maintainParameter(item);
       }
 
-      String confirmThis = modinfo.getParameter(ConfirmWindowBGO.PARAMETER_CONFIRM);
+      String confirmThis = iwc.getParameter(ConfirmWindowBGO.PARAMETER_CONFIRM);
 
       if(confirmThis != null){
-        this.actionPerformed(modinfo);
+        this.actionPerformed(iwc);
         this.setParentToReload();
         this.close();
       } else{
@@ -204,7 +204,7 @@ public class BasicGroupOverview extends Page {
         }
         this.add(myForm);
       }
-      super._main(modinfo);
+      super._main(iwc);
     }
 
   }

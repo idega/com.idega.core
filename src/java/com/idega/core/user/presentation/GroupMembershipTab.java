@@ -1,16 +1,16 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.IFrame;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Link;
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.SelectionDoubleBox;
-import com.idega.jmodule.object.interfaceobject.SelectionBox;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.Form;
+import com.idega.presentation.ui.IFrame;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Form;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
@@ -76,7 +76,7 @@ public class GroupMembershipTab extends UserGroupTab {
     userMembers = this.getTextObject();
     userMembers.setText("Users :");
   }
-  public boolean store(ModuleInfo modinfo) {
+  public boolean store(IWContext iwc) {
     return true;
   }
   public void lineUpFields() {
@@ -93,7 +93,7 @@ public class GroupMembershipTab extends UserGroupTab {
 
     //this.add(addLink,1,3);
   }
-  public boolean collect(ModuleInfo modinfo) {
+  public boolean collect(IWContext iwc) {
     return true;
   }
   public void initializeFieldNames() {
@@ -103,31 +103,31 @@ public class GroupMembershipTab extends UserGroupTab {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }
 
-  public void dispose(ModuleInfo modinfo){
-    modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-    modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+  public void dispose(IWContext iwc){
+    iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+    iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
+  public void main(IWContext iwc) throws Exception {
     Object obj = UserGroupBusiness.getGroupsContainedDirectlyRelated(this.getGroupId());
     if(obj != null){
-      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
+      iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
     }else{
-      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
     Object ob = UserGroupBusiness.getGroupsContainedNotDirectlyRelated(this.getGroupId());
     if(ob != null){
-      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
+      iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
-      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
     }
 
     Object obju = UserGroupBusiness.getUsersContainedDirectlyRelated(this.getGroupId());
     if(obju != null){
-      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED,obju);
+      iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED,obju);
     }else{
-      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
     }
 
 
@@ -136,9 +136,9 @@ public class GroupMembershipTab extends UserGroupTab {
      */
     Object obu = UserGroupBusiness.getUsersContainedNotDirectlyRelated(this.getGroupId());
     if(obu != null){
-      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED,obu);
+      iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED,obu);
     }else{
-      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
     }
 
   }
@@ -152,10 +152,10 @@ public class GroupMembershipTab extends UserGroupTab {
       super();
     }
 
-    public Table getGroupTable(ModuleInfo modinfo){
+    public Table getGroupTable(IWContext iwc){
 
-      List direct = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+      List direct = (List)iwc.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+      List notDirect = (List)iwc.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
       Iterator iter = null;
@@ -200,9 +200,9 @@ public class GroupMembershipTab extends UserGroupTab {
       return table;
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
       this.getParentPage().setAllMargins(0);
-      Table tb = getGroupTable(modinfo);
+      Table tb = getGroupTable(iwc);
       if(tb != null){
         this.add(tb);
       }
@@ -221,10 +221,10 @@ public class GroupMembershipTab extends UserGroupTab {
       super();
     }
 
-    public Table getUserTable(ModuleInfo modinfo){
+    public Table getUserTable(IWContext iwc){
 
-      List direct = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
-      List notDirect = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
+      List direct = (List)iwc.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
+      List notDirect = (List)iwc.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
       Iterator iter = null;
@@ -269,9 +269,9 @@ public class GroupMembershipTab extends UserGroupTab {
       return table;
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
       this.getParentPage().setAllMargins(0);
-      Table tb = getUserTable(modinfo);
+      Table tb = getUserTable(iwc);
       if(tb != null){
         this.add(tb);
       }
@@ -295,7 +295,7 @@ public class GroupMembershipTab extends UserGroupTab {
     }
 
 
-    private void LineUpElements(ModuleInfo modinfo){
+    private void LineUpElements(IWContext iwc){
 
       Form form = new Form();
 
@@ -318,7 +318,7 @@ public class GroupMembershipTab extends UserGroupTab {
 
 
 
-      String stringUserId = modinfo.getParameter(GroupMembershipTab.PARAMETER_GROUP_ID);
+      String stringUserId = iwc.getParameter(GroupMembershipTab.PARAMETER_GROUP_ID);
       int userId = Integer.parseInt(stringUserId);
       form.addParameter(GroupMembershipTab.PARAMETER_GROUP_ID,stringUserId);
 
@@ -351,15 +351,15 @@ public class GroupMembershipTab extends UserGroupTab {
       this.add(form);
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
 
 
-      String save = modinfo.getParameter("save");
+      String save = iwc.getParameter("save");
       if(save != null){
-        String stringUserId = modinfo.getParameter(GroupMembershipTab.PARAMETER_GROUP_ID);
+        String stringUserId = iwc.getParameter(GroupMembershipTab.PARAMETER_GROUP_ID);
         int userId = Integer.parseInt(stringUserId);
 
-        String[] related = modinfo.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
+        String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
         User user = new User(userId);
         List currentRelationShip = UserBusiness.getUserGroupsDirectlyRelated(user);
@@ -403,11 +403,11 @@ public class GroupMembershipTab extends UserGroupTab {
         this.close();
         this.setParentToReload();
       } else {
-        LineUpElements(modinfo);
+        LineUpElements(iwc);
       }
 */
 /*
-      Enumeration enum = modinfo.getParameterNames();
+      Enumeration enum = iwc.getParameterNames();
        System.err.println("--------------------------------------------------");
       if(enum != null){
         while (enum.hasMoreElements()) {
@@ -415,7 +415,7 @@ public class GroupMembershipTab extends UserGroupTab {
           if(item.equals("save")){
             this.close();
           }
-          String val[] = modinfo.getParameterValues((String)item);
+          String val[] = iwc.getParameterValues((String)item);
           System.err.print(item+" = ");
           if(val != null){
             for (int i = 0; i < val.length; i++) {

@@ -1,18 +1,18 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.IFrame;
-import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.textObject.Link;
-import com.idega.jmodule.object.Page;
-import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.textObject.Text;
-import com.idega.jmodule.object.interfaceobject.Window;
-import com.idega.jmodule.object.interfaceobject.SelectionDoubleBox;
-import com.idega.jmodule.object.interfaceobject.SelectionBox;
-import com.idega.jmodule.object.interfaceobject.SubmitButton;
-import com.idega.jmodule.object.interfaceobject.Form;
-import com.idega.jmodule.object.interfaceobject.TextArea;
-import com.idega.jmodule.object.interfaceobject.TextInput;
+import com.idega.presentation.ui.IFrame;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.TextInput;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
 import java.util.List;
@@ -108,7 +108,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
 
   }
-  public boolean store(ModuleInfo modinfo) {
+  public boolean store(IWContext iwc) {
     try{
       if(getGroupId() > -1){
 
@@ -157,11 +157,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     this.add(addLink,1,5);
   }
 
-  public boolean collect(ModuleInfo modinfo) {
-    if(modinfo != null){
+  public boolean collect(IWContext iwc) {
+    if(iwc != null){
 
-      String gname = modinfo.getParameter(this.nameFieldName);
-      String desc = modinfo.getParameter(this.descriptionFieldName);
+      String gname = iwc.getParameter(this.nameFieldName);
+      String desc = iwc.getParameter(this.descriptionFieldName);
 
       if(gname != null){
         fieldValues.put(this.nameFieldName,gname);
@@ -189,24 +189,24 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     this.updateFieldsDisplayStatus();
   }
 
-  public void dispose(ModuleInfo modinfo){
-    modinfo.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
-    modinfo.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
+  public void dispose(IWContext iwc){
+    iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
+    iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
+  public void main(IWContext iwc) throws Exception {
     Object obj = UserGroupBusiness.getGroupsContainingDirectlyRelated(this.getGroupId());
     if(obj != null){
-      modinfo.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED,obj);
+      iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED,obj);
     }else{
-      modinfo.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
     }
 
     Object ob = UserGroupBusiness.getGroupsContainingNotDirectlyRelated(this.getGroupId());
     if(ob != null){
-      modinfo.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED,ob);
+      iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
-      modinfo.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
+      iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
     }
   }
 
@@ -219,10 +219,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       super();
     }
 
-    public Table getGroupTable(ModuleInfo modinfo){
+    public Table getGroupTable(IWContext iwc){
 
-      List direct = (List)modinfo.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)modinfo.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
+      List direct = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
+      List notDirect = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
       Iterator iter = null;
@@ -267,9 +267,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       return table;
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
       this.getParentPage().setAllMargins(0);
-      Table tb = getGroupTable(modinfo);
+      Table tb = getGroupTable(iwc);
       if(tb != null){
         this.add(tb);
       }
@@ -293,7 +293,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     }
 
 
-    private void LineUpElements(ModuleInfo modinfo){
+    private void LineUpElements(IWContext iwc){
 
       Form form = new Form();
 
@@ -316,7 +316,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
 
 
-      String stringGroupId = modinfo.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
+      String stringGroupId = iwc.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
       int groupId = Integer.parseInt(stringGroupId);
       form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
 
@@ -351,15 +351,15 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       this.add(form);
     }
 
-    public void main(ModuleInfo modinfo) throws Exception {
+    public void main(IWContext iwc) throws Exception {
 
 
-      String save = modinfo.getParameter("save");
+      String save = iwc.getParameter("save");
       if(save != null){
-        String stringGroupId = modinfo.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
+        String stringGroupId = iwc.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
         int groupId = Integer.parseInt(stringGroupId);
 
-        String[] related = modinfo.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
+        String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
         GenericGroup group = new GenericGroup(groupId);
         List currentRelationShip = group.getListOfAllGroupsContainingThis();
@@ -399,11 +399,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
         this.close();
         this.setParentToReload();
       } else {
-        LineUpElements(modinfo);
+        LineUpElements(iwc);
       }
 
 /*
-      Enumeration enum = modinfo.getParameterNames();
+      Enumeration enum = iwc.getParameterNames();
        System.err.println("--------------------------------------------------");
       if(enum != null){
         while (enum.hasMoreElements()) {
@@ -411,7 +411,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
           if(item.equals("save")){
             this.close();
           }
-          String val[] = modinfo.getParameterValues((String)item);
+          String val[] = iwc.getParameterValues((String)item);
           System.err.print(item+" = ");
           if(val != null){
             for (int i = 0; i < val.length; i++) {

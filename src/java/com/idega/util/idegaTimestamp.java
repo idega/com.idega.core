@@ -13,7 +13,7 @@ import java.util.*;
 import java.lang.*;
 import java.sql.*;
 import java.io.*;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 import java.text.DateFormat;
 
 public class idegaTimestamp{
@@ -484,8 +484,8 @@ public class idegaTimestamp{
     Calendar.add(Calendar.YEAR, num_of_years );
   }
 
-  public String getLocaleDate(ModuleInfo modinfo) {
-    Locale currentLocale = modinfo.getCurrentLocale();
+  public String getLocaleDate(IWContext iwc) {
+    Locale currentLocale = iwc.getCurrentLocale();
     return getLocaleDate(currentLocale);
   }
 

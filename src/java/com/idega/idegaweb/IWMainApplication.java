@@ -13,7 +13,7 @@ import com.idega.util.*;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 import com.idega.util.Executer;
-import com.idega.jmodule.object.Page;
+import com.idega.presentation.Page;
 import com.idega.util.caching.BlobCacher;
 import com.idega.exception.IWBundleDoesNotExist;
 

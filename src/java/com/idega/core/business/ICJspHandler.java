@@ -1,6 +1,6 @@
 package com.idega.core.business;
 
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.core.data.*;
 import com.idega.builder.data.*;
 import java.lang.*;
@@ -31,11 +31,11 @@ public class ICJspHandler {
   }
 
 
-  public static void setJspPageInstanceID(ModuleInfo modinfo, String AttributeName, String AttributeValue) throws SQLException{
+  public static void setJspPageInstanceID(IWContext iwc, String AttributeName, String AttributeValue) throws SQLException{
 
     ICJspHandler.ICJspHandlerVariables variables;
-    Object SessionObject = modinfo.getSession().getAttribute("ICJspHandlerVariables");
-    String Url = modinfo.getRequest().getRequestURI();
+    Object SessionObject = iwc.getSession().getAttribute("ICJspHandlerVariables");
+    String Url = iwc.getRequest().getRequestURI();
 
     if (SessionObject == null){
       variables = (new ICJspHandler()).new ICJspHandlerVariables();
@@ -49,25 +49,25 @@ public class ICJspHandler {
       IBJspPage Pages[] = (IBJspPage[])page.findAll("SELECT * FROM " + page.getEntityName() + " WHERE " + page.getUrlColumnName() + " = " + Url + " AND " + page.getAttributeNameColumnName() + " = " + AttributeName + " AND " + page.getAttributeValueColumnName() + " = " + AttributeValue );
 
       if (Pages == null){
-        modinfo.setSessionAttribute("JspPageInstanceID", new Integer(setICJspPage(Url, AttributeName, AttributeValue)));
+        iwc.setSessionAttribute("JspPageInstanceID", new Integer(setICJspPage(Url, AttributeName, AttributeValue)));
       }else{
-        modinfo.setSessionAttribute("JspPageInstanceID", new Integer(Pages[0].getID()));
+        iwc.setSessionAttribute("JspPageInstanceID", new Integer(Pages[0].getID()));
       }
       variables.setUrl(Url);
       variables.setAttributeName(AttributeName);
       variables.setAttributeValue(AttributeValue);
-      modinfo.getSession().setAttribute("ICJspHandlerVariables",variables);
+      iwc.getSession().setAttribute("ICJspHandlerVariables",variables);
     }
 
   }
 
 
-  public static int getJspPageInstanceID(ModuleInfo modinfo){
-    return ((Integer)modinfo.getSessionAttribute("JspPageInstanceID")).intValue();
+  public static int getJspPageInstanceID(IWContext iwc){
+    return ((Integer)iwc.getSessionAttribute("JspPageInstanceID")).intValue();
   }
 
-  public static IBJspPage getIBJspPage(ModuleInfo modinfo) throws SQLException{
-    return new IBJspPage(getJspPageInstanceID(modinfo));
+  public static IBJspPage getIBJspPage(IWContext iwc) throws SQLException{
+    return new IBJspPage(getJspPageInstanceID(iwc));
   }
 
 

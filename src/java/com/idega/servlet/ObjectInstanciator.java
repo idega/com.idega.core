@@ -13,8 +13,8 @@ import java.sql.*;
 import com.idega.util.database.*;
 import javax.sql.*;
 import com.idega.jmodule.*;
-import com.idega.jmodule.object.*;
-import com.idega.jmodule.object.interfaceobject.*;
+import com.idega.presentation.*;
+import com.idega.presentation.ui.*;
 import com.idega.idegaweb.*;
 
 /**
@@ -24,9 +24,9 @@ import com.idega.idegaweb.*;
 public class ObjectInstanciator extends DynamicTemplateServlet
 {
       //TEMPORARY IMPLEMENTATION - See DynamicTemplateServlet
-      public void main(ModuleInfo modinfo)throws Exception{
-        String className = IWMainApplication.decryptClassName(modinfo.getParameter(IWMainApplication.classToInstanciateParameter));
-        ModuleObject obj = (ModuleObject)Class.forName(className).newInstance();
+      public void main(IWContext iwc)throws Exception{
+        String className = IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
+        PresentationObject obj = (PresentationObject)Class.forName(className).newInstance();
         add(obj);
       }
 }

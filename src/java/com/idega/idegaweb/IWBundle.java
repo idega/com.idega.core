@@ -7,8 +7,8 @@ package com.idega.idegaweb;
 
 
 import java.util.*;
-import com.idega.jmodule.object.Image;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.Image;
+import com.idega.presentation.IWContext;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
@@ -83,7 +83,7 @@ public class IWBundle implements java.lang.Comparable{
   /**
   * Beta implementation
   *
-   private IWBundle(IWComponent component,ModuleInfo modinfo){
+   private IWBundle(IWComponent component,IWContext iwc){
       this("/idegaweb/bundles/"+component.getName()+".bundle");
    }
   */
@@ -91,11 +91,11 @@ public class IWBundle implements java.lang.Comparable{
   /**
    * Beta implementation
 
-   public static IWBundle getInstance(IWComponent component,ModuleInfo modinfo){
+   public static IWBundle getInstance(IWComponent component,IWContext iwc){
       Class componentClass = component.getClass();
       IWBundle instance = (IWBundle) instances.get(componentClass);
       if (instance==null){
-        instance = new IWBundle(component,modinfo);
+        instance = new IWBundle(component,iwc);
         instances.put(componentClass,instance);
       }
       return instance;
@@ -253,11 +253,11 @@ public class IWBundle implements java.lang.Comparable{
       return getResourceBundle(locale).getString(name);
     }
 
-    //public String getResourcesPath(ModuleInfo modinfo){
-    //    return resourcesPath+"/"+modinfo.getCurrentLocale().toString();
+    //public String getResourcesPath(IWContext iwc){
+    //    return resourcesPath+"/"+iwc.getCurrentLocale().toString();
     //}
 
-    //public String getResourcePath(String resourceType,ModuleInfo modinfo){
+    //public String getResourcePath(String resourceType,IWContext iwc){
     //  return null;
     //}
 
@@ -323,8 +323,8 @@ public class IWBundle implements java.lang.Comparable{
         return localizableStringsFile;
     }
 
-    public IWResourceBundle getResourceBundle(ModuleInfo modinfo){
-      return getResourceBundle(modinfo.getCurrentLocale());
+    public IWResourceBundle getResourceBundle(IWContext iwc){
+      return getResourceBundle(iwc.getCurrentLocale());
     }
 
     public IWResourceBundle getResourceBundle(Locale locale){
@@ -403,7 +403,7 @@ public class IWBundle implements java.lang.Comparable{
 
     public String getResourcesRealPath(){
           return resourcesRealPath;
-         //return resourcesPath+"/"+modinfo.getCurrentLocale().toString();
+         //return resourcesPath+"/"+iwc.getCurrentLocale().toString();
     }
 
     public String getResourcesURL(Locale locale){

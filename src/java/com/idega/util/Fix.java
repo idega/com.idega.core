@@ -1,6 +1,6 @@
 package com.idega.util;
 
-import com.idega.jmodule.object.*;
+import com.idega.presentation.*;
 import com.idega.projects.golf.entity.*;
 import java.sql.*;
 import java.io.*;
@@ -14,11 +14,11 @@ import java.io.*;
  * @version 1.0
  */
 
-public class Fix extends JModuleObject {
+public class Fix extends Block {
 
 
   boolean copy;
-  ModuleInfo modinfo;
+  IWContext iwc;
 //  int min;
 //  int max;
 
@@ -130,8 +130,8 @@ public class Fix extends JModuleObject {
   }
   */
 /*
-  public void main(ModuleInfo modinfo2)throws Exception{
-  this.modinfo = modinfo2;
+  public void main(IWContext iwc2)throws Exception{
+  this.iwc = iwc2;
   if(copy)
     copy_from_Member_To_UnionMemberInfo();
   }

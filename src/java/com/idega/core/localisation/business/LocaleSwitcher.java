@@ -1,7 +1,7 @@
 package com.idega.core.localisation.business;
 
 import com.idega.business.IWEventListener;
-import com.idega.jmodule.object.ModuleInfo;
+import com.idega.presentation.IWContext;
 import java.util.Locale;
 import com.idega.util.LocaleUtil;
 
@@ -27,12 +27,12 @@ public class LocaleSwitcher implements IWEventListener{
 
 
 
-  public void actionPerformed(ModuleInfo modinfo){
-    String localeValue = modinfo.getParameter(languageParameterString);
+  public void actionPerformed(IWContext iwc){
+    String localeValue = iwc.getParameter(languageParameterString);
     if(localeValue!=null){
       Locale locale = LocaleUtil.getLocale(localeValue);
       if(locale!=null){
-        modinfo.setCurrentLocale(locale);
+        iwc.setCurrentLocale(locale);
       }
     }
   }
