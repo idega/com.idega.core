@@ -43,11 +43,12 @@ import com.idega.util.LogWriter;
  * [poolname]. refreshminutes
  * The number of minutes for the pool to refresh itself and load new
  * connections<br>
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ *<br>
+ * This software is the proprietary information of Idega hf. Use is subject
+ *to license terms.
  * 
- *@author <a href="http://www.wrox.com">wrox</a> modified by <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@author Originally <a href="http://www.wrox.com">wrox</a> modified by <a
+ *href="mailto: tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.3
  */
 public class ConnectionPool
