@@ -636,8 +636,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	public char getCharColumnValue(String columnName) {
-		Character tempChar = (Character)getColumnValue(columnName);
-		return tempChar.charValue();
+		String tempString = (String)getColumnValue(columnName);
+		if(tempString!=null && tempString.length()>0){
+			return tempString.charAt(0);
+		}
+		return ' ';
 	}
 	public float getFloatColumnValue(String columnName) {
 		Float tempFloat = (Float)getColumnValue(columnName);
