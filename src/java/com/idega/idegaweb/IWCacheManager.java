@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
+import java.util.logging.Logger;
 import com.idega.data.CacheableEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
@@ -30,6 +30,7 @@ public class IWCacheManager {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
   public static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
+  private Logger log = Logger.getLogger(IWCacheManager.class.getName());
 
   //private static IWCacheManager instance;
   private Map objectsMap;
@@ -441,6 +442,7 @@ private boolean isBlobCached(Cache cache){
    * Clears all caching in for all objects
    */
   public void clearAllCaches(){
+  	log.info("Clearing all IWCacheManager cache");
   	this._keysMap=null;
   	this.entityMaps=null;
   	this.entityMapsKeys=null;
