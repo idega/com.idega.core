@@ -3,7 +3,6 @@ package com.idega.core.accesscontrol.business;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -113,7 +112,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		//log out!
 		String name = _user.getName();
-		boolean success = LoginBusiness.logOutUserOnSessionTimeout(event.getSession(),this);
+		boolean success = LoginBusinessBean.logOutUserOnSessionTimeout(event.getSession(),this);
 		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
 		
 	}

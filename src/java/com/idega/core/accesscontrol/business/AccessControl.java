@@ -11,7 +11,6 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
-import com.idega.block.login.business.LoginBusiness;
 import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
@@ -123,27 +122,27 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   public boolean isAdmin(IWUserContext iwc)throws Exception{
     try {
-      Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), iwc);
+      Object ob = LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
       if(ob != null){
         return ((Boolean)ob).booleanValue();
       }else{
-        if(getAdministratorUser().equals(LoginBusiness.getUser(iwc))){
-          LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
+        if(getAdministratorUser().equals(LoginBusinessBean.getUser(iwc))){
+          LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
           return true;
         }
-        List groups = LoginBusiness.getPermissionGroups(iwc);
+        List groups = LoginBusinessBean.getPermissionGroups(iwc);
         if (groups != null){
           Iterator iter = groups.iterator();
           while (iter.hasNext()) {
             GenericGroup item = (GenericGroup)iter.next();
             if (getAdministratorGroupName().equals(item.getName())){
-              LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
+              LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,iwc);
               return true;
             }
           }
         }
       }
-      LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,iwc);
+      LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,iwc);
       return false;
     }
     catch (NotLoggedOnException ex) {
@@ -242,7 +241,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       return true;
     }
 
-    User user = LoginBusiness.getUser(iwc);
+    User user = LoginBusinessBean.getUser(iwc);
 
     List groups = null;
     List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
@@ -253,8 +252,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
     } else {
 
-      groups = LoginBusiness.getPermissionGroups(iwc);
-      GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(iwc);
+      groups = LoginBusinessBean.getPermissionGroups(iwc);
+      GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwc);
 
       if (groups != null && groups.size() > 0){
         if(primaryGroup != null){
@@ -415,7 +414,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       return true;
     }
 
-    User user = LoginBusiness.getUser(iwc);
+    User user = LoginBusinessBean.getUser(iwc);
 
     List groups = null;
 //The order that is checked for : Everyone Group, Logged on users group, user, primaryGroup, otherGroups
@@ -430,8 +429,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     } 
     else {//user check
 
-      groups = LoginBusiness.getPermissionGroups(iwc);
-      GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(iwc);
+      groups = LoginBusinessBean.getPermissionGroups(iwc);
+      GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwc);
 
       if (groups != null && groups.size() > 0){
         if(primaryGroup != null){

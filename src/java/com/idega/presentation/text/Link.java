@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.90 2003/04/15 08:15:13 eiki Exp $
+ * $Id: Link.java,v 1.91 2003/05/03 02:19:48 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1529,7 +1529,7 @@ public class Link extends Text {
 		/**
 		 * @todo: Is this the right solution? - If the user is not logged on then do not add a session id to the link
 		 */
-		if (!com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)) {
+		if (!com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(iwc)) {
 			setSessionId(false);
 		}
 

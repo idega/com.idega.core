@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.idega.block.login.business.LoginBusiness;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.data.ICObject;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
@@ -623,7 +623,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
   	return getApplication().getSystemProperties();
   }
   public UserProperties getUserProperties() {
-  	return (UserProperties) this.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
+  	return (UserProperties) this.getSessionAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER);
   }
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
@@ -673,7 +673,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
    	* @deprecated Replaced with getCurrentUser()
    	**/
 	public User getUser() {
-		return (LoginBusiness.getUser(this));
+		return (LoginBusinessBean.getUser(this));
 	}
 	public int getUserId() {
 		User usr = getUser();
@@ -753,7 +753,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		return false;
 	}
 	public boolean isLoggedOn() {
-		return com.idega.block.login.business.LoginBusiness.isLoggedOn(this);
+		return com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(this);
 	}
 	/**
 	 * Expensive method, not recommended to use frequently

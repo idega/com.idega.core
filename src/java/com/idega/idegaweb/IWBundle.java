@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.56 2002/12/11 18:59:04 palli Exp $
+ * $Id: IWBundle.java,v 1.57 2003/05/03 02:19:48 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -9,7 +9,7 @@
  */
 package com.idega.idegaweb;
 
-import com.idega.block.login.business.LoginBusiness;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.data.ICObject;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOFinderException;
@@ -378,7 +378,7 @@ public class IWBundle implements java.lang.Comparable {
 	}
 
 	public IWPropertyList getUserProperties(IWUserContext iwuc) {
-		UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
+		UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER);
 		if (properties != null)
 			return properties.getProperties(this.getBundleName());
 		return null;

@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.11 2003/04/03 20:36:55 laddi Exp $
+ * $Id: LinkContainer.java,v 1.12 2003/05/03 02:19:48 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -432,7 +432,7 @@ public class LinkContainer extends PresentationObjectContainer {
 		boolean addParameters = true;
 		String oldURL = getURL();
 
-		if (!com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)) {
+		if (!com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(iwc)) {
 			setSessionId(false);
 		}
 
