@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.45 2001/09/21 15:50:38 laddi Exp $
+ * $Id: GenericEntity.java,v 1.46 2001/09/26 01:21:22 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1307,8 +1307,8 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
-
-                        if (!RS.next())
+                      //eiki added null check
+                        if (( RS==null) || !RS.next())
                           throw new SQLException("Record with id="+id+" not found");
 
 			String[] columnNames = getColumnNames();
@@ -1340,7 +1340,7 @@ public abstract class GenericEntity implements java.io.Serializable {
                                 }
 
 			}
-			RS.close();
+                        if( RS != null ) RS.close();
 
 		}
 		finally{
