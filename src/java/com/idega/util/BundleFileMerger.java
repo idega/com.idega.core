@@ -15,71 +15,25 @@ import java.io.File;
  */
 public class BundleFileMerger extends ModuleFileMerger {
 	
+	private String bundleFilePath;
 	
 	
 	public BundleFileMerger(){
-		String webXmlHeader = 
-			"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
-			+"<!DOCTYPE web-app\n"	
-			+"\tPUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\"\n"
-			+"\thttp://java.sun.com/dtd/web-app_2_3.dtd\">\n"
-			+"<!-- Generated file by idegaWeb please don't modify the module markers -->";
-		
-		setFileHeader(webXmlHeader);
 	}
-	
+
 	/**
-	 * Test method
-	 * @param args
-	 * @throws Exception
+	 * Sets the relative path to the file in the bundle to merge from.
+	 * e.g. "/WEB-INF/web.xml"
+	 *
 	 */
-	public static void main(String[] args) throws Exception{
-		performWebXmlsTest();
+	public void setBundleFilePath(String filePath){
+		this.bundleFilePath = filePath;
 	}
 	
-	/**
-	 * Test method
-	 * @throws Exception
-	 */
-	public static void performWebXmlsTest()throws Exception{
-		
-		BundleFileMerger instance = new BundleFileMerger();
-
-		//doTag: bundlesFolder = /Users/tryggvil/idega/eclipse/maven/applications/base/target/com.idega.idegaweb.base/idegaweb/bundles
-		//doTag: toFile = /Users/tryggvil/idega/eclipse/maven/applications/base/target/com.idega.idegaweb.base/WEB-INF/web.xml
-
-		//String sBundlesDir = "/idega/eclipse/maven/bundles";
-		String sBundlesDir = "/Users/tryggvil/idega/eclipse/maven/applications/base/target/com.idega.idegaweb.base/idegaweb/bundles";
-		//String sFromFile = "/tmp/web.xml";
-		//String sFromFile = "/Users/tryggvil/idega/eclipse/maven/applications/base/WEB-INF/web.xml";
-		//String sToFile = "/tmp/web.xml";
-		String sToFile = "/Users/tryggvil/idega/eclipse/maven/applications/base/target/com.idega.idegaweb.base/WEB-INF/web.xml";
-		
-		File bundlesDir = new File(sBundlesDir);
-		
-		instance.setBundlesFolder(bundlesDir);
-		
-		
-
-		File toFile = new File(sToFile);
-		if(!toFile.exists()){
-			toFile.createNewFile();
-		}
-		/*File fromFile = new File(sFromFile);
-		if(fromFile.exists()){
-			FileReader reader = new FileReader(fromFile);
-			Reader input = new BufferedReader(reader);
-			instance.setInput(input);
-		}*/
-		
-		//FileWriter output = new FileWriter(toFile);
-		
-		instance.setOutputFile(toFile);
-		instance.process();
+	public String getBundleFilePath(){
+		return bundleFilePath;
 	}
 	
-
-
 	
 	/**
 	 * Sets the folder where the bundles are stored (e.g. /home/idegaweb/webapps/webapp1/idegaweb/bundles)
@@ -91,7 +45,7 @@ public class BundleFileMerger extends ModuleFileMerger {
 		for (int i = 0; i < bundles.length; i++) {
 			File bundle = bundles[i];
 			String path = bundle.getAbsolutePath();
-			String sWebXml =path+"/WEB-INF/web.xml";
+			String sWebXml =path+getBundleFilePath();
 			File webXml = new File(sWebXml);
 			if(webXml.exists()){
 				String bundleFolderName = bundle.getName();
