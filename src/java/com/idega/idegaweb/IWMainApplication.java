@@ -102,6 +102,7 @@ public class IWMainApplication{//implements ServletContext{
     this.setPropertiesRealPath();
     IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
     setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
+    loadCryptoProperties();
     System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
 
@@ -327,6 +328,7 @@ public class IWMainApplication{//implements ServletContext{
   public void unload(){
     System.out.println("idegaWeb : shutdown : Storing application state and deleting cached/generated content");
     storeStatus();
+    storeCryptoProperties();
     IWCacheManager.deleteCachedBlobs(this);
     getImageFactory().deleteGeneratedImages(this);
   }
@@ -563,7 +565,38 @@ public class IWMainApplication{//implements ServletContext{
 
   // hashcode referencing
   private static Hashtable hashClasses = null;
-  private static Hashtable hashCodes = null;
+  private static Properties cryptoCodes = null;
+  private static Properties cryptoProps = null;
+
+
+  private void loadCryptoProperties(){
+    cryptoProps = new Properties();
+    System.err.println("Loading Cryptonium");
+    String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
+    try{
+      cryptoProps.load(new FileInputStream(file));
+      cryptoCodes = new Properties();
+      if(cryptoProps.size() > 0){
+        Iterator iter = cryptoCodes.entrySet().iterator();
+        while(iter.hasNext()){
+          Map.Entry me = (Map.Entry) iter.next();
+          cryptoCodes.put(me.getValue(),me.getKey());
+        }
+      }
+    }
+    catch(Exception ex){}
+  }
+
+   private void storeCryptoProperties(){
+    if(cryptoProps!=null){
+      System.err.println("Storing Cryptonium");
+      try{
+      String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
+      cryptoProps.store(new FileOutputStream(file),"Cryptonium");
+      }
+      catch(Exception ex){}
+    }
+  }
 
   public static String getHashCode(String className){
     try{
@@ -578,22 +611,23 @@ public class IWMainApplication{//implements ServletContext{
   public static String getHashCode(Class classObject){
     String hashcode = Integer.toString(classObject.hashCode());
     //System.err.println(classObject.getName()+" "+hashcode);
-    if(hashClasses==null)
-      hashClasses = new Hashtable();
-    if(!hashClasses.containsKey(hashcode) ){
-      hashClasses.put(hashcode,classObject.getName());
+    if(cryptoProps==null)
+      cryptoProps = new Properties();
+
+    if(!cryptoProps.containsKey(hashcode) ){
+      cryptoProps.put(hashcode,classObject.getName());
     }
-    if(hashCodes == null)
-      hashCodes = new Hashtable();
-    if(!hashCodes.containsKey(classObject.getName())){
-      hashCodes.put(classObject.getName(),hashcode);
+    if(cryptoCodes == null)
+      cryptoCodes = new Properties();
+    if(!cryptoCodes.containsKey(classObject.getName())){
+      cryptoCodes.put(classObject.getName(),hashcode);
     }
     return hashcode;
   }
 
   public static String getHashCodedClassName(String hashcode){
-    if(hashClasses!=null && hashcode!=null && hashClasses.containsKey(hashcode))
-     return (String)hashClasses.get(hashcode);
+    if(cryptoProps!=null && hashcode!=null && cryptoProps.containsKey(hashcode))
+     return (String)cryptoProps.get(hashcode);
     else
      return hashcode;
   }
