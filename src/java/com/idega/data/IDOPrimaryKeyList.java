@@ -239,7 +239,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					debug("[IDOPrimaryKeyList - Initialize - modified query]: "+ initialQuery.toString());
 					debug("[IDOPrimaryKeyList - Initialize - load query base]: "+ _loadQueryBase.toString());
 				}
-				List placeHolderValues = initialQuery.getPlaceHolderValues();
+				List placeHolderValues = initialQuery.getValues();
 			    if(placeHolderValues==null || placeHolderValues.isEmpty()){
 				    Stmt = conn.createStatement();
 				    RS = Stmt.executeQuery(initialQuery.toString());
@@ -396,13 +396,27 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		Statement Stmt = null;
 		try {
 			conn = proxyEntity.getConnection(_dataSource);
-			Stmt = conn.createStatement();
+			Stmt = null;
+			//conn.createStatement();
 			
 			if (_entity.isDebugActive())
 			{
 				debug("[IDOPrimaryKeyList - Load index "+firstIndex+" to "+(firstIndex+listOfPrimaryKeys.size())+"]: "+ subsetQuery);
 			}
-		    ResultSet RS=Stmt.executeQuery(subsetQuery.toString());
+		    //ResultSet RS=Stmt.executeQuery(subsetQuery.toString());
+			ResultSet RS = null;
+		    List placeHolderValues = subsetQuery.getValues();
+		    if(placeHolderValues==null || placeHolderValues.isEmpty()){
+			    Stmt = conn.createStatement();
+			    RS = Stmt.executeQuery(subsetQuery.toString());
+			}
+			// use PreparedStatement
+			else{
+			    Stmt = conn.prepareStatement(subsetQuery.toString());
+			    DatastoreInterface dsi = DatastoreInterface.getInstance(_entity);
+			    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
+			    	RS = ((PreparedStatement)Stmt).executeQuery();
+			}
 		    
 		    int total = 0;
 		    int no = 0;

@@ -4508,7 +4508,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
-		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getPlaceHolderValues());
+		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getValues());
 	}
 
 	/**
@@ -4526,7 +4526,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByQuery(SelectQuery query) throws FinderException {
-		return idoFindOnePKBySQL(query.toString(),query.getPlaceHolderValues());
+		return idoFindOnePKBySQL(query.toString(),query.getValues());
 	}
 	
 	/**
