@@ -7,7 +7,6 @@ public class GroupBusinessHomeImpl extends com.idega.business.IBOHomeImpl implem
   return GroupBusiness.class;
  }
 
-
  public GroupBusiness create() throws javax.ejb.CreateException{
   return (GroupBusiness) super.createIBO();
  }

@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+import com.idega.presentation.PresentationObject;
 import com.idega.user.data.*;
 import com.idega.user.presentation.*;
 
@@ -27,9 +28,12 @@ public interface UserGroupPlugInBusiness extends IBOService {
     public void afterGroupCreate(Group group)throws CreateException,RemoteException;
 
     public Class getPresentationObjectClass()throws RemoteException;
-    //public UserGroupPlugInPresentable instantiatePresentation(Group group)throws RemoteException;
-    public UserGroupPlugInPresentable instantiateEditor(Group group)throws RemoteException;
-    public UserGroupPlugInPresentable instantiateViewer(Group group)throws RemoteException;
+    /*
+    public UserGroupPlugInPresentable instanciateEditor(Group group)throws RemoteException;
+    public UserGroupPlugInPresentable instanciateViewer(Group group)throws RemoteException;
+	*/
+	public PresentationObject instanciateEditor(Group group)throws RemoteException;
+    public PresentationObject instanciateViewer(Group group)throws RemoteException;
 
     /**
      * Returns a Collection of ListViewerField Objects

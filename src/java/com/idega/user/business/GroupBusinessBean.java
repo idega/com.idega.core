@@ -5,6 +5,8 @@ import javax.ejb.*;
 import com.idega.user.data.*;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDORelationshipException;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.util.ListUtil;
 import java.rmi.RemoteException;
@@ -705,7 +707,46 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   public String getGroupType(Class groupClass)throws RemoteException{
     return ((GroupHome)IDOLookup.getHome(groupClass)).getGroupType();
   }
+  
+  public GroupType getGroupTypeFromString(String type) throws RemoteException, FinderException{
+  	return getGroupTypeHome().findByPrimaryKey(type);
+  }
+  
+/**
+ * Method getUserGroupPluginsForGroupType.
+ * @param groupType
+ * @return Collection of plugins or null if no found or error occured
+ */
+  public Collection getUserGroupPluginsForGroupTypeString(String groupType){
+  	try {
+		return getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType);
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+  }
 
+/**
+ * Method getUserGroupPluginsForGroupType.
+ * @param groupType
+ * @return Collection of plugins or null if no found or error occured
+ */
+  public Collection getUserGroupPluginsForGroupType(GroupType groupType){
+  	try {
+		return getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType);
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+  }
+  
+  public GroupTypeHome getGroupTypeHome() throws RemoteException{
+  	return  (GroupTypeHome) this.getIDOHome(GroupType.class);
+  }
+  	
+  public UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException{
+  	return  (UserGroupPlugInHome) this.getIDOHome(UserGroupPlugIn.class);
+  }
 
 
   public void addGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{

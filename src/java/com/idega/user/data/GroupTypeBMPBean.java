@@ -35,8 +35,8 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
 //    this.setUnique(getIDColumnName(),true);
     this.setAsPrimaryKey(getIDColumnName(),true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
-//    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500);
-    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);
+//    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500); this is handled with plugins
+ //   this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);
     this.addAttribute(COLUMN_IS_VISIBLE,"is Visible",Boolean.class);
   }
 
@@ -127,7 +127,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
     return String.class;
   }
 
-  public Class getHandlerClass() throws ClassNotFoundException {
+ /* public Class getHandlerClass() throws ClassNotFoundException {
     ICObject obj = (ICObject)this.getColumn(COLUMN_HANDLER_CLASS);
     if(obj != null){
       return obj.getObjectClass();
@@ -141,7 +141,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   public void setHandlerClass(ICObject obj){
     setColumn(COLUMN_HANDLER_CLASS,obj);
   }
-
+*/
 
   public String getGeneralGroupTypeString(){
     return TYPE_GENERAL_GROUP;

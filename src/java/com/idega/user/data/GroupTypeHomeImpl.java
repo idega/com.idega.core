@@ -32,7 +32,7 @@ public java.util.Collection findVisibleGroupTypes()throws javax.ejb.FinderExcept
  }
 
 
-public int getNumberOfVisibleGroupTypes()throws com.idega.data.IDOException,javax.ejb.FinderException{
+public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetNumberOfVisibleGroupTypes();
 	this.idoCheckInPooledEntity(entity);
