@@ -15,12 +15,19 @@ import com.idega.presentation.*;
 */
 public class CloseButton extends GenericButton {
 
+	/**
+	 * Constructs a new <code>CloseButton</code> with the the default display label.
+	 */
 	public CloseButton() {
 		setAsImageButton(true);
 		setOnClick("top.window.close()");
 		setValue("close");
 	}
 
+	/**
+	 * Constructs a new <code>CloseButton</code> with the display string specified
+	 * @param displayString	The string to display on the button.
+	 */
 	public CloseButton(String displayString) {
 		super();
 		setName("");
@@ -29,6 +36,10 @@ public class CloseButton extends GenericButton {
 		setOnClick("top.window.close()");
 	}
 
+	/**
+	 * Constructs a new <code>CloseButton</code> with the image specified.
+	 * @param defaultImage	The image to use as the close button.
+	 */
 	public CloseButton(Image image) {
 		super();
 		setButtonImage(image);
