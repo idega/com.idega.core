@@ -2771,10 +2771,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			this.debug("[MetadataQuery]: "+query);
 			ResultSet RS = Stmt.executeQuery(query);
 			while (RS.next()) {
-				_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
-				_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
-				if (RS.getString("meta_data_type") != null)
+				if(RS.getString("metadata_value")!=null) {
+					_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
+					_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
+				}				
+				if (RS.getString("meta_data_type") != null) {
 					_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
+				}
 			}
 			RS.close();
 		} catch (SQLException ex) {
