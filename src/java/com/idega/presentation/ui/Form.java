@@ -217,7 +217,7 @@ public class Form extends InterfaceObject {
 		//Chech if there is some class set
 		setActionToInstanciatedClass(iwc);
 
-		if (this._submitToPage != -1 && !IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getMarkupLanguage())) {
+		if (this._submitToPage != -1) {
 			//Set a builder page as the action
 			BuilderService bservice = getBuilderService(iwc);
 			this.setAction(bservice.getPageURI(_submitToPage));
@@ -485,7 +485,7 @@ public class Form extends InterfaceObject {
 				print("</form>");
 		}
 		else if (getMarkupLanguage().equals("WML")) {
-			if (getAction() == null) {
+			if (getAction() == null || _submitToPage != -1) {
 				//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 				setAction(getIdegaSpecialRequestURI(iwc));
 			}
