@@ -1,10 +1,17 @@
 package com.idega.presentation;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import com.idega.presentation.ui.Form;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.idega.util.GenericFormCollector;
 import com.idega.util.datastructures.Collectable;
+import com.idega.business.IBOLookup;
+import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.presentation.ui.SubmitButton;
@@ -51,6 +58,19 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 //    frameTable.setBorder(1);  // temp
     tpane = IWTabbedPane.getInstance(key,iwc);
     tpane.addChangeListener(this);
+    // add all change listeners
+    Collection changeListeners;
+    try {
+      IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+      changeListeners = stateMachine.getAllChangeListeners();
+    }
+    catch (RemoteException e) {
+      changeListeners = new ArrayList();
+    }
+    Iterator iterator = changeListeners.iterator();
+    while (iterator.hasNext())  {
+      tpane.addChangeListener((ChangeListener) iterator.next());
+    }
     tpane.setTabsToFormSubmit(this);
     this.add(frameTable);
     initializeLayout();
@@ -144,7 +164,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
       }
       this.cancelClicked = false;
       this.applyClicked = false;
-
+   
     }else if(e.getSource() == apply){
       boolean success = collector.storeAll(e.getIWContext());
       this.okClicked = false;
