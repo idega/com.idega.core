@@ -71,7 +71,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public String getName() {
-		String streetName = getStreetName();
+		/*String streetName = getStreetName();
 		String streetNumber = getStreetNumber();
 
 		StringBuffer address = new StringBuffer("");
@@ -83,7 +83,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 			}
 		}
 
-		return address.toString();
+		return address.toString();*/
+		return getStreetAddress();
 	}
 
 	public String getStreetName() {
