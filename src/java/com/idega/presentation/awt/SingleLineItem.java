@@ -16,7 +16,7 @@ import java.util.Vector;
  * @version 1.0
  */
 
-public class SingleLineItem extends Component {
+public class SingleLineItem extends Container {
   private int height = 16;
   private int width = 100;
   private int componentOffset = 5;
@@ -78,8 +78,7 @@ public class SingleLineItem extends Component {
         if( components!= null){
           int length = components.size();
           for (int i = 0; i < length; i++) {
-            if( components.elementAt(i) instanceof Component) ((Component)components.elementAt(i)).paint(g);
-            else if( components.elementAt(i) instanceof Image) g.drawImage((Image)components.elementAt(i),2,2,this);
+           ((Component)components.elementAt(i)).paint(g);
           }
         }
 
