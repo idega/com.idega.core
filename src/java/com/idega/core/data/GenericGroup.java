@@ -319,7 +319,10 @@ public class GenericGroup extends GenericEntity{
           try{
             conn = getConnection(getDatasource());
             Stmt = conn.createStatement();
-            int i = Stmt.executeUpdate("insert into IC_GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupId+")");
+            String sql = "insert into IC_GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupId+")";
+            //System.err.println(sql);
+            int i = Stmt.executeUpdate(sql);
+            //System.err.println(sql);
           }catch (Exception ex) {
             ex.printStackTrace(System.out);
           }finally{
