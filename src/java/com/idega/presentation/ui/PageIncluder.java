@@ -30,7 +30,7 @@ public class PageIncluder extends PresentationObject implements Index{
   private String RELATIVEURL = null;
   private String pageIncluderPrefix = null;
   private String _label = null;
-  private String _sendURLTo = null;
+  private String _sendToLabel = null;
   private IBPage _sendToPage = null;
   private String _sendToPageIfSet = null;
 
@@ -121,7 +121,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected void process(IWContext iwc)throws IOException{
-    changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+    changeURL = ((iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId))) && !iwc.isParameterSet(_sendToPageIfSet);
 
 	StringBuffer location = new StringBuffer();
 	StringBuffer queryBuf = new StringBuffer();
@@ -136,11 +136,11 @@ public class PageIncluder extends PresentationObject implements Index{
 	  if( _sendToPage!=null ){
 
 
-	    if ( (_sendURLTo != null) && (_sendToPageIfSet==null) ){
+	    if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
 	      buf.append(getSendToPageURLString());
 	      buf.append('&');
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(_sendURLTo);
+	      buf.append(_sendToLabel);
 	      buf.append('=');
 	    }
 	    else{
@@ -155,9 +155,9 @@ public class PageIncluder extends PresentationObject implements Index{
 	    buf.append(getCurrentIBPageIDToURLString(iwc));
 	    buf.append('&');
 
-	    if ( (_sendURLTo != null) && (_sendToPageIfSet==null) ){
+	    if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(_sendURLTo);
+	      buf.append(_sendToLabel);
 	      buf.append('=');
 	    }
 	    else{
@@ -256,7 +256,7 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
 
-	//if(loc!=null && !loc.equals("") ){
+	if(loc!=null && !loc.equals("") ){
 	  out = FileUtil.getStringFromURL(loc);
 
 	  URL url = new URL(loc);
@@ -277,7 +277,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	  out = changeAHrefAttributes(out);
 	  out = changeFormActionAttributes(out);
 	  out = postProcess(out);
-	//}
+	}
   }
 
 
@@ -403,7 +403,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = symbolReplace(html,"oslash;");
     html = symbolReplace(html,"Oslash;");
 
-    html = TextSoap.findAndReplace(html," ## "," & ");
+    html = TextSoap.findAndReplace(html," "+symbol+" "," & ");
 
 //islenskir broddstafir
     html = symbolReplace(html,"aacute;");
@@ -419,7 +419,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = symbolReplace(html,"yacute;");
     html = symbolReplace(html,"Yacute;");
 
-  //  html = TextSoap.findAndReplace(html,"##iacute;","&iacute;");
+
   return html;
   }
 
@@ -488,7 +488,7 @@ public class PageIncluder extends PresentationObject implements Index{
    * @param label The label of the PageIncluder which we want to redirect to.
    */
   public void setRedirectTo(String label) {
-    _sendURLTo = label;
+    _sendToLabel = label;
   }
 
   public String getLabel() {
@@ -496,7 +496,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   public String getRedirectTo() {
-    return _sendURLTo;
+    return _sendToLabel;
   }
 
   public void setSendToPage(IBPage page) {
@@ -515,4 +515,19 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToPageIfSet;
   }
 
+  public void forwardToIBPage(Page fromPage ,IBPage page){
+    StringBuffer URL = new StringBuffer();
+    URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+    URL.append('&');
+    String query = getRequest().getQueryString();
+    if( _sendToLabel != null ){
+      query = TextSoap.findAndReplace(query,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendToLabel);
+    }
+    URL.append(query);
+
+    fromPage.setToRedirect(URL.toString());
+    fromPage.empty();
+
+
+   }
 }
