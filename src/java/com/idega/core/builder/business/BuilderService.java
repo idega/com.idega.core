@@ -10,6 +10,7 @@ import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 
 /**
  * BuilderService: This is the interface to the iW Builder functions in idegaWeb
@@ -45,7 +46,14 @@ public interface BuilderService extends IBOService
 	 * @return The string that is the URI to the requested page on this webserver
 	 * @throws RemoteException
 	 */	
-	public String getPageURI(ICPage page)throws RemoteException;	
+	public String getPageURI(ICPage page)throws RemoteException;
+	/**
+	 * Gets a Page on this webserver
+	 * @param pageID an id for the Page to get
+	 * @return The Page on this webserver
+	 * @throws RemoteException
+	 */	
+	public Page getPage(String pageID)throws RemoteException;
 	/**
 	 * Gets the id of the Root page for the current application
 	 * @return the id of an IBPage
