@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.100 2004/03/22 21:37:25 tryggvil Exp $
+ *  $Id: Page.java,v 1.101 2004/03/23 09:39:49 gimmi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
