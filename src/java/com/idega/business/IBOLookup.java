@@ -144,7 +144,7 @@ public class IBOLookup
 		Class homeClass = home.getClass();
 		Method m = (Method)map.get(homeClass);
 		if(m==null){
-			m = MethodFinder.getInstance().getMethodsWithNameAndNoParameters(homeClass,"create");
+			m = MethodFinder.getInstance().getMethodWithNameAndNoParameters(homeClass,"create");
 			map.put(homeClass,m);
 		}
 		return m;

@@ -480,7 +480,7 @@ public class LoginBusinessBean implements IWEventListener {
 		ServletContext context = null;
 
 		try {
-			Method method = finder.getMethodsWithNameAndNoParameters(HttpSession.class, "getServletContext");
+			Method method = finder.getMethodWithNameAndNoParameters(HttpSession.class, "getServletContext");
 			try {
 				context = (ServletContext)method.invoke(session, null);
 			} catch (IllegalArgumentException e1) {
