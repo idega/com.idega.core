@@ -62,13 +62,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   int treeTableIndex = 1;
 
 
-  Image folderAndFileIcons[] = null;
-  String folderAndFileIconNames[]={"treeviewer_folder_closed.gif","treeviewer_folder_open.gif","treeviewer_file.gif"};
-
-  private static final int FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED = 0;
-  private static final int FOLDERANDFILE_ICONINDEX_FOLDER_OPEN = 1;
-  private static final int FOLDERANDFILE_ICONINDEX_FILE = 2;
-
   Link openCloseLink = new Link();
 
   List openNodes = new Vector();
@@ -81,7 +74,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     super();
     defaultRoot = new DefaultTreeNode("root",-1);
     icons = new Image[14];
-    folderAndFileIcons = new Image[3];
     nodeTable = new Table(3,1);
     nodeTable.setCellpadding(0);
     nodeTable.setCellspacing(0);
