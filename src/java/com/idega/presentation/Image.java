@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.79 2005/03/08 17:23:51 tryggvil Exp $
+ * $Id: Image.java,v 1.80 2005/03/08 17:45:41 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/03/08 17:23:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 17:45:41 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.79 $
+ * @version $Revision: 1.80 $
  */
 public class Image extends PresentationObject
 {
@@ -76,7 +76,7 @@ public class Image extends PresentationObject
 	private int maxImageWidth = 140;
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[6];
+		Object values[] = new Object[16];
 		values[0] = super.saveState(ctx);
 		values[1] = overImageUrl;
 		values[2] = downImageUrl;
