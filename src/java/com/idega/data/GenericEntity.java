@@ -524,18 +524,36 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			wrapper = new BlobWrapper(this, columnName);
 			setColumn(columnName, wrapper);
 		}
+    else {
+      this.flagColumnUpdate(columnName);
+      if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+        setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+      } 
+      else {
+        this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+      }
+    }
 		return wrapper.getOutputStreamForBlobWrite();
 	}
+  
 	public void setColumn(String columnName, InputStream streamForBlobWrite) {
 		BlobWrapper wrapper = getBlobColumnValue(columnName);
 		if (wrapper != null) {
 			wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
+      this.flagColumnUpdate(columnName);
+      if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+        setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+      } 
+      else {
+        this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+      }
 		} else {
 			wrapper = new BlobWrapper(this, columnName);
 			wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
 			setColumn(columnName, wrapper);
 		}
 	}
+  
 	public BlobWrapper getBlobColumnValue(String columnName) {
 		BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
 		if (wrapper == null) {
