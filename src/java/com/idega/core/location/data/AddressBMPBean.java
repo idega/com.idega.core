@@ -157,6 +157,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		setColumn(getColumnNameCommuneID(), communeId);
 	}
 	
+	public void setCommune(Commune commune) {
+		setColumn(getColumnNameCommuneID(), commune);
+	}	
+	
 	public Object getCommune() {
 		return getColumn(getColumnNameCommuneID());
 	}

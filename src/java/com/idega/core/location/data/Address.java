@@ -43,4 +43,9 @@ public interface Address extends com.idega.data.IDOLegacyEntity
      */
  public String getPostalAddress();
 
+ /**
+  * Sets the Commune (Municipality) for this address
+  * @param commune
+  */
+ public void setCommune(Commune commune);
 }
