@@ -816,9 +816,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
+		  return updateUsersMainAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
+	}	
+	
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
     AddressType mainAddressType = getAddressHome().getAddressType1();
-    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, mainAddressType);
+    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
   }
     
   /**
@@ -836,11 +841,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * @throws RemoteException
    */
   public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException,RemoteException {
+  		return updateUsersCoAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
+  }	
+  public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException,RemoteException {
     AddressType mainAddressType = getAddressHome().getAddressType2();
-    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, mainAddressType);
+    return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
   }    
     
-  private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, AddressType addressType) throws CreateException,RemoteException {  
+  private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException,RemoteException {  
      Address address = null;
       if( streetNameAndNumber!=null && userId!=null ){
       	try{
@@ -884,6 +892,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	        else{
 	        	// Fix when entering unnumbered addresses (Aron )
 	        	address.setStreetNumber("");
+	        }
+	        
+	        if (communeID != null) {
+	        	address.setCommuneID(communeID.intValue());
 	        }
 	
 	        address.store();
