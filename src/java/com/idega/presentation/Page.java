@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.123 2004/08/31 02:43:00 eiki Exp $
+ *  $Id: Page.java,v 1.124 2004/08/31 15:56:11 aron Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -59,6 +59,7 @@ public class Page extends PresentationObjectContainer {
 	private int _ibPageID;
 	private String _title;
 	private Script _theAssociatedScript;
+	private Script associatedBodyScript = null;
 	private Script _theSourceScript;
 	private boolean _zeroWait = false;
 	private int _redirectSecondInterval = -1;
@@ -774,6 +775,18 @@ public class Page extends PresentationObjectContainer {
 	public void close() {
 		setOnLoad("window.close()");
 	}
+	
+	/**
+	 * Sets the window to close immediately when page is loaded
+	 * and the focus on its parent ( opener ) if exists
+	 * @param focusOnparent
+	 */
+	public void close(boolean focusOnParent){
+	   if(focusOnParent)
+	       setOnLoad( "if(window.opener && window.opener.focus){ window.opener.focus(); } window.close()");
+	   else
+	       close();
+	}
 
 	/**
 	 *  Sets the window to maintain focus when it is blurred
@@ -1329,6 +1342,9 @@ public class Page extends PresentationObjectContainer {
 
 				if (_addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
+					if (getAssociatedBodyScript() != null) {
+						getAssociatedBodyScript()._print(iwc);
+					}
 				}
 				//added by Eiki for frameSet in a page support
 
@@ -1840,6 +1856,25 @@ public class Page extends PresentationObjectContainer {
 			}
 		}
 		return dynamicPageTrigger;
+	}
+	
+	/**
+	 * Returns the associatedBodyScript.
+	 * @return Script
+	 */
+	public Script getAssociatedBodyScript() {
+		if (associatedBodyScript == null) {
+			setAssociatedBodyScript(new Script());
+		}
+		return associatedBodyScript;
+	}
+	
+	/**
+	 * Sets the associatedScript.
+	 * @param associatedScript The associatedScript to set
+	 */
+	public void setAssociatedBodyScript(Script script) {
+		this.associatedBodyScript = script;
 	}
 	
 }
