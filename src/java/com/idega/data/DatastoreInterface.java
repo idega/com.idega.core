@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.82 2003/10/09 18:31:42 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.83 2003/10/10 09:05:24 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -277,7 +277,8 @@ public abstract class DatastoreInterface {
 			conn = entity.getConnection();
 			//conn.commit();
 			Stmt = conn.createStatement();
-			System.out.println(SQLCommand);
+			if(isDebugActive())
+				System.out.println(SQLCommand);
 			theReturn = Stmt.executeUpdate(SQLCommand);
 		} finally {
 			if (Stmt != null) {
@@ -781,7 +782,7 @@ public abstract class DatastoreInterface {
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
-			if (isDebugActive())
+			//if (isDebugActive())
 				debug(statement.toString());
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
@@ -944,7 +945,7 @@ public abstract class DatastoreInterface {
 		return returnString;
 	}
 	boolean isValidColumnForUpdateList(GenericEntity entity, String columnName) {
-		boolean isIDColumn = entity.getIDColumnName().equalsIgnoreCase(columnName);
+		boolean isIDColumn = entity.isPrimaryKeyColumn(columnName);
 		if (isIDColumn) {
 			return false;
 		} else {
@@ -1239,17 +1240,32 @@ public abstract class DatastoreInterface {
 	}
 	void appendPrimaryKeyWhereClause(GenericEntity entity, StringBuffer bufferToAppendTo) {
 		//try {
+		IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+		Object primaryKey = entity.getPrimaryKey();
+		Object value;
 		
 		bufferToAppendTo.append(" where ");
-		bufferToAppendTo.append(entity.getIDColumnName());
-		bufferToAppendTo.append("=");
-		if(entity.getPrimaryKeyClass()==Integer.class){
-			bufferToAppendTo.append(entity.getPrimaryKey());
-		} else {
-			bufferToAppendTo.append("'");
-			bufferToAppendTo.append(entity.getPrimaryKey());
-			bufferToAppendTo.append("'");
+		for (int i = 0; i < fields.length; i++) {
+			if (primaryKey instanceof IDOPrimaryKey) {
+				value = ((IDOPrimaryKey) primaryKey).getPrimaryKeyValue(fields[i].getSQLFieldName());
+			}
+			else {
+				value = entity.getValue(fields[i].getSQLFieldName());
+			}
+			bufferToAppendTo.append(fields[i].getSQLFieldName());
+			bufferToAppendTo.append("=");
+			if(fields[0].getDataTypeClass() == Integer.class){
+				bufferToAppendTo.append(value);
+			}
+			else {
+				bufferToAppendTo.append("'");
+				bufferToAppendTo.append(value);
+				bufferToAppendTo.append("'");
+			}
+			if ((i + 1) < fields.length)
+				bufferToAppendTo.append(" and ");
 		}
+		//System.out.println(bufferToAppendTo.toString());
 
 		//} catch (java.rmi.RemoteException rme) {
 		//	throw new RuntimeException(rme.getMessage());
