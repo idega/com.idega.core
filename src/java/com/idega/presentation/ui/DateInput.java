@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.3 2001/12/19 10:58:17 tryggvil Exp $
+ * $Id: DateInput.java,v 1.4 2001/12/19 12:13:02 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -166,7 +166,7 @@ private void doSomeShit(){
 	theMonth.addMenuElement("12","des");
         */
 
-
+        theMonth.addMenuElement("00");
 	theMonth.addMenuElement("01");
 	theMonth.addMenuElement("02");
 	theMonth.addMenuElement("03");
@@ -180,7 +180,7 @@ private void doSomeShit(){
 	theMonth.addMenuElement("11");
 	theMonth.addMenuElement("12");
 
-	//theDay.addMenuElement("",strDay);
+	theDay.addMenuElement("00","D");
 	theDay.addMenuElement("01","1");
 	theDay.addMenuElement("02","2");
 	theDay.addMenuElement("03","3");
@@ -216,6 +216,8 @@ private void doSomeShit(){
 	theDay.addMenuElement("30","30");
 	theDay.addMenuElement("31","31");
 
+
+        theDay.addMenuElement("YY");
 
         getScript().addFunction("populateDays","function populateDays(yearInput,monthInput,dayInput) {\r	timeA = new Date(yearInput.options[yearInput.selectedIndex].text, monthInput.options[monthInput.selectedIndex].value,1);\r	timeDifference = timeA - 86400000;\r	timeB = new Date(timeDifference);\r	\r	var oldSelectedDay = dayInput.selectedIndex;\r	\r	var daysInMonth = timeB.getDate();\r	for (var i = 0; i < dayInput.length; i++) {\r		dayInput.options[0] = null;\r		dayInput.options[0] = new Option('Dagur','');\r	}\r	for (var i = 1; i <= daysInMonth; i++) {\r		if (i<10){\r			dayInput.options[i] = new Option(i,'0'+i);\r		}\r		else{\r			dayInput.options[i] = new Option(i,i);\r		}\r	}\r	\r	dayInput.options[oldSelectedDay].selected = true;\r	\r}");
         getScript().addFunction("setValueOfHiddenDate","function setValueOfHiddenDate(yearInput,monthInput,dayInput,hiddenInput){\r\r	var yearValue='2000';\r	var monthValue='01';\r	var dayValue='01';\r\r	if(yearInput.selectedIndex != 0){\r		yearValue=yearInput.options[yearInput.selectedIndex].value;\r	}\r	if(monthInput.selectedIndex != 0){\r		monthValue=monthInput.options[monthInput.selectedIndex].value;\r	}\r	if(dayInput.selectedIndex != 0){\r		dayValue=dayInput.options[dayInput.selectedIndex].value;\r	}\r\r	if ((yearInput.selectedIndex == 0) || (monthInput.selectedIndex == 0) || (dayInput.selectedIndex == 0)){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = yearValue+'-'+monthValue+'-'+dayValue+'';\r	}\r}");
@@ -441,10 +443,15 @@ public void main(IWContext iwc)throws Exception{
       }
 
 
+      theDay.setMenuElementDisplayString("00",dayString);
+      theDay.setMenuElementDisplayString("00",monthString);
+      theYear.setMenuElementDisplayString("YY",yearString);
+
+      /*
       theDay.addMenuElementFirst("",dayString);
       theMonth.addMenuElementFirst("",monthString);
       theYear.addMenuElementFirst("",yearString);
-
+      */
 
       if(this.inShort){
 
