@@ -78,7 +78,12 @@ public class DN implements Name
             {
                 for (int i=0; i<copyMe.size(); i++)
                 {
-                    add(new String(copyMe.get(i)));
+                    try {
+						add(new String(copyMe.get(i).getBytes(),"UTF-8"));
+					}
+					catch (UnsupportedEncodingException e1) {
+						e1.printStackTrace();
+					}
                 }
             }
         }
