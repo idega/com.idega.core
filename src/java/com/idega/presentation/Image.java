@@ -374,7 +374,7 @@ public void setOnClickImageURL(String clickImageURL){
 }
 
 public void setOnClickImage(Image image) {
-  setOnClickImageURL(image.getURL());
+  setOnClickImageURL(image.getMediaURL());
 }
 
 public void setOverImageURL(String overImageURL){
