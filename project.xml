@@ -196,6 +196,16 @@
       </properties>
     </dependency>
     <dependency>
+      <groupId>myfaces</groupId>
+      <artifactId>myfaces-components</artifactId>
+      <version>1.0.7</version>
+      <type>jar</type>
+      <url>http://www.myfaces.org/</url>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
+    <dependency>
       <groupId>oracle_jdbc</groupId>
       <artifactId>oracle_jdbc</artifactId>
       <version>9.2</version>
@@ -281,9 +291,6 @@
       <version>1.0</version>
       <type>jar</type>
       <url>http://jakarta.apache.org/commons/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
     </dependency>
     <dependency>
         <groupId>javaldap</groupId>
