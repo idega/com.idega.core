@@ -621,7 +621,7 @@ public abstract class DatastoreInterface{
                   //Stmt = conn.createStatement();
                   //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
                   String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
-                  System.out.println(statement);
+                  //System.out.println(statement);
                   Stmt = conn.prepareStatement (statement);
                   setForPreparedStatement(Stmt,entity);
                   Stmt.execute();
@@ -813,7 +813,7 @@ public abstract class DatastoreInterface{
       ResultSet RS = null;
       try {
         String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
-        System.out.println(statement);
+        //System.out.println(statement);
         Stmt = conn.prepareStatement (statement);
         setForPreparedStatement(Stmt,entity);
         Stmt.execute();
