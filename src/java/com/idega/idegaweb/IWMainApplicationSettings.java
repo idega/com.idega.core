@@ -225,11 +225,11 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
 		return ret;
 	}
-	public static void setDebugMode(boolean debugFlag) {
+	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
 		com.idega.data.EntityFinder.debug = debugFlag;
 	}
-	public static boolean isDebugActive() {
+	public boolean isDebugActive() {
 		return DEBUG_FLAG;
 	}
 	public void setAutoCreateStrings(boolean ifAutoCreate) {
@@ -276,10 +276,10 @@ public class IWMainApplicationSettings extends IWPropertyList {
 			return Boolean.valueOf(value).booleanValue();
 		}
 	}
-	public static void setAutoCreatePropertiesMode(boolean ifAutoCreate) {
+	public void setAutoCreatePropertiesMode(boolean ifAutoCreate) {
 		CREATE_PROPERTIES = ifAutoCreate;
 	}
-	public static boolean isAutoCreatePropertiesActive() {
+	public boolean isAutoCreatePropertiesActive() {
 		return CREATE_PROPERTIES;
 	}
 	

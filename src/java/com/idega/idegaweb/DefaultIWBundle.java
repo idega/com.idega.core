@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.9 2004/11/14 23:27:24 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.10 2004/12/03 01:06:56 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,9 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.ejb.FinderException;
-
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
@@ -55,14 +54,23 @@ import com.idega.xml.XMLElement;
  */
 public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 {
+	//Static final constants:
 	private static final String DOT = "."; 
-	
-	//TODO: Tryggvi: Change to true
-	private boolean autoMoveComponentPropertiesToFile = true;
-	
-	private HashMap componentPropertyListMap;
+	static final String propertyFileName = "bundle" + IWPropertyList.DEFAULT_FILE_ENDING;
+	static final String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
+	static final String COMPONENTLIST_KEY = "iw_components";
+	private final static String COMPONENT_NAME_PROPERTY = "component_name";
+	private final static String COMPONENT_TYPE_PROPERTY = "component_type";
+	private final static String COMPONENT_ICON_PROPERTY = "component_icon";
+	private final static String COMPONENT_CLASS_PROPERTY = "component_class";
+	private final static String COMPONENT_PROPERTY_FILE = "component_property_file";
+	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 	private static final String slash = "/";
 	private static final String shared = "shared";
+	
+	//Member variables:
+	private boolean autoMoveComponentPropertiesToFile = true;
+	private HashMap componentPropertyListMap;
 	private String identifier;
 	private String rootVirtualPath;
 	private String rootRealPath;
@@ -81,16 +89,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private Properties localizableStringsProperties;
 	private File localizableStringsFile;
 	private IWPropertyList propertyList;
-	static final String propertyFileName = "bundle" + IWPropertyList.DEFAULT_FILE_ENDING;
-	final static String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
-	final static String COMPONENTLIST_KEY = "iw_components";
-	private final static String COMPONENT_NAME_PROPERTY = "component_name";
-	private final static String COMPONENT_TYPE_PROPERTY = "component_type";
-	private final static String COMPONENT_ICON_PROPERTY = "component_icon";
-	private final static String COMPONENT_CLASS_PROPERTY = "component_class";
-	private final static String COMPONENT_PROPERTY_FILE = "component_property_file";
-	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
-	private IWBundleStartable starter;
+	private List bundleStarters;
+	
 	protected DefaultIWBundle(String rootRealPath, String bundleIdentifier, IWMainApplication superApplication)
 	{
 		this(rootRealPath, rootRealPath, bundleIdentifier, superApplication);
@@ -251,15 +251,20 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		// call the default start first because this starter might register some classes that are used by 
 		// the other starters
 		// 
-		startDefaultBundleStarter();
+		IWBundleStartable defaultStarter = getNewDefaultBundleStarterInstance();
+		if(defaultStarter!=null){
+			defaultStarter.start(this);
+			getBundleStartersList().add(defaultStarter);
+		}
 		// starting starter defined in bundle property
 		String starterClassName = this.getProperty(BUNDLE_STARTER_CLASS);
 		if (starterClassName != null)
 		{
 			try
 			{
-				starter = (IWBundleStartable) Class.forName(starterClassName).newInstance();
+				IWBundleStartable starter = (IWBundleStartable) Class.forName(starterClassName).newInstance();
 				starter.start(this);
+				getBundleStartersList().add(starter);
 			}
 			catch (Exception e)
 			{
@@ -268,22 +273,16 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 
 	}
-	
-	private void startDefaultBundleStarter() {
-		IWBundleStartable bundleStarter = getDefaultBundleStarter();
-		if (bundleStarter != null) {
-			bundleStarter.start(this);
+
+	protected List getBundleStartersList(){
+		if(bundleStarters==null){
+			bundleStarters=new ArrayList();
 		}
+		return bundleStarters;
 	}
 	
-	private void stopDefaultBundleStarter() {
-		IWBundleStartable bundleStarter = getDefaultBundleStarter();
-		if (bundleStarter != null) {
-			bundleStarter.stop(this);
-		}
-	}
 	
-	private IWBundleStartable getDefaultBundleStarter() {
+	private IWBundleStartable getNewDefaultBundleStarterInstance() {
 		StringBuffer buffer = new StringBuffer(getBundleName());
 		buffer.append(DOT);
 		buffer.append(IWBundleStartable.DEFAULT_STARTER_CLASS);
@@ -307,7 +306,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
-	public void unload()
+	public synchronized void unload()
 	{
 		unload(true);
 	}
@@ -315,7 +314,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 *Unloads all resources for this bundle and stores the state of this bundle if storeState==true
 	 *@param storeState to say if to store the state (call storeState)
 	 */
-	public void unload(boolean storeState){
+	public synchronized void unload(boolean storeState){
 		//resourceBundles.clear();
 		resourceBundlesLookup=null;
 		localizableStringsProperties = null;
@@ -324,17 +323,32 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		if(storeState){
 			storeState();
 		}
-		stopStartClass();
-	}
-	private void stopStartClass()
-	{
-		// stopping of starter defined in bundle property
-		if (starter != null)
+		stopBundleStarters();
+		localePathsLookup=null;
+		resourceBundlesLookup=null;
+		localeRealPathsLookup=null;
+		localizableStringsProperties=null;
+		Iterator valueIter = getComponentPropertiesListMap().values().iterator();
+		while (valueIter.hasNext())
 		{
+			IWPropertyList element = (IWPropertyList) valueIter.next();
+			element.unload();
+		}
+		this.componentPropertyListMap=null;
+		if(propertyList!=null){
+			propertyList.unload();
+			propertyList=null;
+		}
+
+	}
+	private synchronized void stopBundleStarters()
+	{
+		List l = getBundleStartersList();
+		for (Iterator iter = l.iterator(); iter.hasNext();) {
+			IWBundleStartable starter = (IWBundleStartable) iter.next();
 			starter.stop(this);
 		}
-		// stopping of default bundle starter
-		stopDefaultBundleStarter();
+		bundleStarters=null;
 	}
 	private void installComponents()
 	{
@@ -901,7 +915,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		IWProperty prop = getComponentList().getNewProperty();
 		prop.setName(className);
 		String componentPropertyFileName = getDefaultComponentPropertyFileName(className);
-		prop.getNewPropertyList().setProperty(this.COMPONENT_PROPERTY_FILE, componentPropertyFileName);
+		prop.getNewPropertyList().setProperty(COMPONENT_PROPERTY_FILE, componentPropertyFileName);
 		IWPropertyList pl = initializeComponentPropertyList(className, componentPropertyFileName);
 		pl.setProperty(COMPONENT_NAME_PROPERTY, componentName);
 		pl.setProperty(COMPONENT_TYPE_PROPERTY, componentType);

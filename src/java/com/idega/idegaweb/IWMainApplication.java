@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.102 2004/11/14 23:28:59 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.103 2004/12/03 01:06:56 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -24,18 +24,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.WeakHashMap;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.view.ViewManager;
+import com.idega.data.IDOContainer;
+import com.idega.data.IDOLookup;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
@@ -51,47 +55,22 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/11/14 23:28:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 01:06:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.102 $
+ * @version $Revision: 1.103 $
  */
 public class IWMainApplication {//implements ServletContext{
 
-    public static String IdegaEventListenerClassParameter = "idegaweb_event_classname";
-    public static String ApplicationEventListenersParameter = "idegaweb_application_events";
-    public static String IWEventSessionAddressParameter = "iw_event_address"; // added
-    
-    protected static IWMainApplication defaultIWMainApplication;
-                                                                              // gummi@idega.is
-    public static final String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
-    
-    private static String windowOpenerURL = "/servlet/WindowOpener";
-    private static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
-    public static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
-    public static String FILE_SERVLET_URL = "/servlet/FileServlet/";
-    private static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
-    private static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
-    private static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
-    private static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
-    
-    public static String templateParameter = "idegaweb_template";
-    public static String templateClassParameter = "idegaweb_template_class";
+	//Static final Contstants:
+    public static final String IdegaEventListenerClassParameter = "idegaweb_event_classname";
+    public static final String ApplicationEventListenersParameter = "idegaweb_application_events";
+    public static final String IWEventSessionAddressParameter = "iw_event_address"; // added
+	public static final String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
+    private static final String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
+    public static final String templateParameter = "idegaweb_template";
+    public static final String templateClassParameter = "idegaweb_template_class";
     public static String classToInstanciateParameter = "idegaweb_instance_class";
-
-    private static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
-    
-    public static boolean USE_NEW_URL_SCHEME=false;
-    
-    private static String NEW_WINDOW_URL="/window/";
-    private static String NEW_BUILDER_PAGE_URL="/pages/";
-
-    	
-    private Map loadedBundles;
-    private Properties bundlesFile;
-    private File bundlesFileFile;
-    private String propertiesRealPath;
-    private String bundlesRealPath;
     private final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
     private final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
     private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
@@ -101,30 +80,52 @@ public class IWMainApplication {//implements ServletContext{
     public final static String IW_ACCESSCONTROL_TYPE_PROPERTY = "iw_accesscontrol_type";
     public final static String _PROPERTY_USING_EVENTSYSTEM = "using_eventsystem";
     public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
-    public static final String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
-    private static String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
-    private static String bundlesFileName = "bundles.properties";
-    private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
-    private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;
-    public static String ApplicationStorageParameterName = "idegaweb_application";
-    //public static String
-    // DefaultPropertiesStorageParameterName="idegaweb_default_properties";
-    private ServletContext application;
-    private LogWriter lw;
-    private static IWCacheManager cacheManager;
-    private static boolean alreadyUnLoaded = false;//for restartApplication
+    public final static String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
+    private final static String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
+    private final static String bundlesFileName = "bundles.properties";
+    public final static String ApplicationStorageParameterName = "idegaweb_application";
     private static final String APACHE_RESTART_PARAMETER = "restart_apache";
     private static final String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
-    private String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
+	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
+	public static final String PROPERTY_JSF_RENDERING = "jsf_rendering";
+    private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
+    private static final String SLASH = "/";
+    private final static String windowOpenerURL = "/servlet/WindowOpener";
+    private final static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
+    public final static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
+    public final static String FILE_SERVLET_URL = "/servlet/FileServlet/";
+    private final static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
+    private final static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
+    private final static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
+    private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
+    private static final String NEW_WINDOW_URL="/window/";
+    private static final String NEW_BUILDER_PAGE_URL="/pages/";
+    
+    
+    //Static variables:
+    protected static IWMainApplication defaultIWMainApplication;
+    public static boolean USE_NEW_URL_SCHEME=false;
+    private static IWCacheManager cacheManager;
+    private static boolean alreadyUnLoaded = false;//for restartApplication
+    public static boolean DEBUG_FLAG = false;
+    
+    //Member variables:
+    private Map loadedBundles;
+    private Properties bundlesFile;
+    private File bundlesFileFile;
+    private ServletContext application;
+    private String propertiesRealPath;
+    private String bundlesRealPath;
+    private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
+    private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;    
+    private LogWriter lw;
     private String appContext;
-    private static String SLASH = "/";
     private boolean checkedAppContext;
     private String cacheDirURI;
     private IWApplicationContext iwappContext;
-    public static boolean DEBUG_FLAG = false;
-	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
-	public static final String PROPERTY_JSF_RENDERING = "jsf_rendering";
 	private AppServer applicationServer;
+	//Holds a map of Window classes to know its dimensions etc.
+    private Map windowClassesStaticInstances;
 
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -432,7 +433,7 @@ public class IWMainApplication {//implements ServletContext{
         return lw;
     }
 
-    public void unload() {
+    public synchronized void unload() {
         if (!alreadyUnLoaded) {
             log("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
             storeStatus();
@@ -445,11 +446,28 @@ public class IWMainApplication {//implements ServletContext{
                 IWBundle bundle = (IWBundle) loadedBundles.get(key);
                 bundle.unload();
             }
-
+            loadedBundles=null;
+            bundlesFile=null;
+            
+            if(cacheManager!=null){
+            		cacheManager.unload(this);
+            }
+            cacheManager=null;
+            windowClassesStaticInstances=null;
+            shutdownApplicationServices();
+            application.removeAttribute(ApplicationStorageParameterName);
+            application=null;
+            defaultIWMainApplication=null;
             alreadyUnLoaded = true;
         }
     }
 
+    public void shutdownApplicationServices(){
+    		IDOContainer.unload();
+    		IBOLookup.unload();
+    		IDOLookup.unload();
+    }
+    
     public void storeStatus() {
         getSettings().store();
         getSystemProperties().store();
@@ -1203,10 +1221,22 @@ public class IWMainApplication {//implements ServletContext{
     }
     
     /**
+     * Returns the AppServer instance detected for this application
      * @param appServer
      */
     public AppServer getApplicationServer(){
         return this.applicationServer;
     }
 
+    /**
+     * Returns a Map used to store temporary instances of Window classes, to use to remember their instance attributes.<br>
+     * This method should only be used by the com.idega.presentation.ui.Window class
+     * @return
+     */
+    public Map getStaticWindowInstances(){
+    		if(this.windowClassesStaticInstances==null){
+    			windowClassesStaticInstances=new WeakHashMap();
+    		}
+    		return windowClassesStaticInstances;
+    }
 }
