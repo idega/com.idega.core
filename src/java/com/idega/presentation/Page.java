@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.30 2002/02/11 13:42:50 eiki Exp $
+ * $Id: Page.java,v 1.31 2002/02/12 09:47:49 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -820,7 +820,7 @@ public class Page extends PresentationObjectContainer {
     }
     else if(classKey!=null){
       try{
-      String className = IWMainApplication.getHashCodedClassName(classKey);
+      String className = IWMainApplication.decryptClassName(classKey);
       Page page = (Page)Class.forName(className).newInstance();
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
       try {

@@ -593,7 +593,8 @@ public class IWMainApplication{//implements ServletContext{
   public static String getHashCodedClassName(String hashcode){
     if(hashClasses!=null && hashcode!=null && hashClasses.containsKey(hashcode))
      return (String)hashClasses.get(hashcode);
-    return null;
+    else
+     return hashcode;
   }
 
 }
