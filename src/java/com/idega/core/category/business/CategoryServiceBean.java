@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -308,17 +309,17 @@ public class CategoryServiceBean extends  IBOServiceBean implements CategoryServ
 		}
 	}
 	
-	public Hashtable getInheritedMetaData(ICCategory category) {
+	public java.util.Map getInheritedMetaData(ICCategory category) {
 		return getInheritedMetaData(null, category);
 	}
 	
-	public Hashtable getInheritedMetaData(Hashtable table, ICCategory category) {
+	public java.util.Map getInheritedMetaData(java.util.Map table, ICCategory category) {
 		if (table == null)
 			table = new Hashtable();
 			
 		ICCategory parent = (ICCategory) category.getParentNode();
 		if (parent != null) {
-			Hashtable attributes = parent.getMetaDataAttributes();
+			Map attributes = parent.getMetaDataAttributes();
 			if (attributes != null)
 				table.putAll(attributes);
 			return getInheritedMetaData(table, parent);
@@ -327,23 +328,23 @@ public class CategoryServiceBean extends  IBOServiceBean implements CategoryServ
 		return table;
 	}
 	
-	public Hashtable getInheritedMetaDataTypes(ICCategory category) {
+	public java.util.Map getInheritedMetaDataTypes(ICCategory category) {
 		return getInheritedMetaDataTypes(null, category);
 	}
 	
-	public Hashtable getInheritedMetaDataTypes(Hashtable table, ICCategory category) {
-		if (table == null)
-			table = new Hashtable();
+	public java.util.Map getInheritedMetaDataTypes(java.util.Map metadata, ICCategory category) {
+		if (metadata == null)
+			metadata = new Hashtable();
 			
 		ICCategory parent = (ICCategory) category.getParentNode();
 		if (parent != null) {
-			Hashtable attributes = parent.getMetaDataTypes();
+			Map attributes = parent.getMetaDataTypes();
 			if (attributes != null)
-				table.putAll(attributes);
-			return getInheritedMetaDataTypes(table, parent);
+				metadata.putAll(attributes);
+			return getInheritedMetaDataTypes(metadata, parent);
 		}
 			
-		return table;
+		return metadata;
 	}
 	
 	public void storeCategoryTranslation(int iCategoryId,String name, String info,int localeID)throws RemoteException{

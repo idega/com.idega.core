@@ -1,5 +1,7 @@
 package com.idega.core.category.business;
 
+import java.util.Map;
+
 
 public interface CategoryService extends com.idega.business.IBOService
 {
@@ -22,8 +24,8 @@ public interface CategoryService extends com.idega.business.IBOService
  public void storeRelatedCategories(int p0,int[] p1) throws java.rmi.RemoteException;
  public boolean updateCategory(int p0,java.lang.String p1,java.lang.String p2,int p3)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean updateCategory(int p0,java.lang.String p1,java.lang.String p2,int p3,int p4,int p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Hashtable getInheritedMetaData(com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
- public java.util.Hashtable getInheritedMetaData(java.util.Hashtable table, com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
- public java.util.Hashtable getInheritedMetaDataTypes(com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
- public java.util.Hashtable getInheritedMetaDataTypes(java.util.Hashtable table, com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
+ public java.util.Map getInheritedMetaData(com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
+ public java.util.Map getInheritedMetaData(java.util.Map table, com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
+ public java.util.Map getInheritedMetaDataTypes(com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
+ public java.util.Map getInheritedMetaDataTypes(java.util.Map metadata, com.idega.core.category.data.ICCategory category) throws java.rmi.RemoteException;
 }

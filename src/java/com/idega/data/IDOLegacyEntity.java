@@ -1,6 +1,7 @@
 package com.idega.data;
 
 import java.sql.*;
+import java.util.Map;
 
 /**
  *
@@ -12,7 +13,7 @@ import java.sql.*;
  * @version 1.0
  */
 
-public interface IDOLegacyEntity extends IDOEntity {
+public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 
 	/**
 	 * @deprecated this is a legacy field an should not be used in new code
@@ -68,10 +69,6 @@ public interface IDOLegacyEntity extends IDOEntity {
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
 	public boolean equals(com.idega.data.IDOLegacyEntity p0);
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public void setMetaDataAttributes(java.util.Hashtable p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
@@ -479,14 +476,6 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public void setMetaData(java.lang.String p0, java.lang.String p1);
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public void setMetaData(java.lang.String p0, java.lang.String p1, java.lang.String p2);
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
 	public void removeFrom(com.idega.data.IDOLegacyEntity[] p0) throws java.sql.SQLException;
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
@@ -520,18 +509,6 @@ public interface IDOLegacyEntity extends IDOEntity {
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
 	public boolean metaDataHasChanged();
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public java.util.Hashtable getMetaDataAttributes();
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public java.util.Hashtable getMetaDataTypes();
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public java.lang.String getMetaData(java.lang.String p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/

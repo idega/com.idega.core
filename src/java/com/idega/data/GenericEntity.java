@@ -2867,10 +2867,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			getMetaData(); //get all meta data first if null
 		return (String)_theMetaDataAttributes.get(metaDataKey);
 	}
-	public void setMetaDataAttributes(Hashtable metaDataAttribs) {
+	public void setMetaDataAttributes(java.util.Map metaDataAttribs) {
 		String metaDataKey;
-		for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();) {
-			metaDataKey = (String)e.nextElement();
+		//for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();) {
+		for(Iterator iterator = metaDataAttribs.keySet().iterator();iterator.hasNext();){
+			metaDataKey = (String)iterator.next();
 			addMetaData(metaDataKey, (String)metaDataAttribs.get(metaDataKey));
 		}
 	}
@@ -2986,7 +2987,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		_theMetaDataTypes = null;
 	}
 
-	public Hashtable getMetaDataAttributes() {
+	public java.util.Map getMetaDataAttributes() {
 		if (_theMetaDataAttributes == null)
 			getMetaData();
 		return _theMetaDataAttributes;
@@ -2994,7 +2995,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public Hashtable getMetaDataIds() {
 		return _theMetaDataIds;
 	}
-	public Hashtable getMetaDataTypes() {
+	public java.util.Map getMetaDataTypes() {
 		if (_theMetaDataTypes == null)
 			getMetaData();
 		return _theMetaDataTypes;

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.88 2004/01/05 16:35:49 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.89 2004/01/12 13:32:29 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -516,9 +516,9 @@ public abstract class DatastoreInterface {
 		if (entity.metaDataHasChanged()) { //else do nothing
 			int length;
 			MetaData data;
-			Hashtable metadata = entity.getMetaDataAttributes();
+			Map metadata = entity.getMetaDataAttributes();
 			Hashtable ids = entity.getMetaDataIds();
-			Hashtable types = entity.getMetaDataTypes();
+			Map types = entity.getMetaDataTypes();
 			Vector insert = entity.getMetaDataInsertVector();
 			Vector delete = entity.getMetaDataDeleteVector();
 			Vector update = entity.getMetaDataUpdateVector();

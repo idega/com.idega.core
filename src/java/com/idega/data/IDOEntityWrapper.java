@@ -9,6 +9,7 @@ package com.idega.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -367,7 +368,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	/* (non-Javadoc)
 	 * @see com.idega.data.MetadataRelation#setMetaDataAttributes(java.util.Hashtable)
 	 */
-	public void setMetaDataAttributes(Hashtable metaDataAttribs) {
+	public void setMetaDataAttributes(java.util.Map metaDataAttribs) {
 		((MetaDataCapable)this.getCurrentOpenVersionEntity()).setMetaDataAttributes(metaDataAttribs);
 	}
 
@@ -395,14 +396,14 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	/* (non-Javadoc)
 	 * @see com.idega.data.MetadataRelation#getMetaDataAttributes()
 	 */
-	public Hashtable getMetaDataAttributes() {
+	public java.util.Map getMetaDataAttributes() {
 		return ((MetaDataCapable)this.getCurrentOpenVersionEntity()).getMetaDataAttributes();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.MetadataRelation#getMetaDataTypes()
 	 */
-	public Hashtable getMetaDataTypes() {
+	public java.util.Map getMetaDataTypes() {
 		return ((MetaDataCapable)this.getCurrentOpenVersionEntity()).getMetaDataTypes();
 	}
 
