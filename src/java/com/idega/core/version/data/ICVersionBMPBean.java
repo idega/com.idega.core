@@ -35,7 +35,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	private final static String COLUMNNAME_PARENT_VERSION_ID = "parent_version_id";
 	private final static String COLUMNNAME_PARENT_HISTORY_ID = "parent_history_id";
 	private final static String COLUMNNAME_NAME = "name";
-	private final static String COLUMNNAME_NUMBER = "number";
+	private final static String COLUMNNAME_NUMBER = "version_number";
 	private final static String COLUMNNAME_DESCRIPTION = "description";
 	private final static String COLUMNNAME_CREATED_TIMESTAMP = "created_timestamp";
 	private final static String COLUMNNAME_CREATED_BY_USER = "created_by_user";
