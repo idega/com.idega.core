@@ -616,7 +616,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
   public  Collection getUsersDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
   	//TODO GET USERS DIRECTLY
-    Collection result = group.getChildGroups();
+    Collection result = group.getChildGroups(this.getUserRepresentativeGroupTypeStringArray(),true);
     return getUsersForUserRepresentativeGroups(result);
   }
 
