@@ -89,6 +89,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
     addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
     addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
+    
+	//adds a unique id string column to this entity that is set when the entity is first stored.
+	addUniqueIDColumn();
+	
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
 		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.file.data.ICFile.class);
 		/**
@@ -754,15 +758,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	appendIsNotDeleted(countQuery);
 		//	  return this.idoFindPKsBySQL(query.toString());
 				
-		try {
-			//this could be tuned
-			int loadBalancePrefetchSize = 1000;
-			return this.idoFindPKsByQueryUsingLoadBalance(query, countQuery, loadBalancePrefetchSize);
-		}
-		catch (IDOException ex) {
-			throw new EJBException(ex);
-		}
-		
+		//this could be tuned
+		int loadBalancePrefetchSize = 1000;
+		return this.idoFindPKsByQueryUsingLoadBalance(query, countQuery, loadBalancePrefetchSize);
+	
 		}
 		else{
 			System.err.println("UserBMPBean: ejbFindUsersForUserRepresentativeGroups : groupList is NULL or empty!!");
@@ -860,13 +859,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     appendIsNotDeleted(countQuery);
 
 		//	  return super.idoFindPKsBySQL(query.toString());
-		try {
-			int loadBalancePrefetchSize = 1000;
-			return super.idoFindPKsByQueryUsingLoadBalance(query, countQuery,loadBalancePrefetchSize);
-		}
-		catch (IDOException ex) {
-			throw new EJBException(ex);
-		}
+		
+		int loadBalancePrefetchSize = 1000;
+		return super.idoFindPKsByQueryUsingLoadBalance(query, countQuery,loadBalancePrefetchSize);
+	
 
 		//      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
 	}
@@ -1355,15 +1351,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//return this.idoFindIDsBySQL(query.toString());
 		//to benefit from the IDOEntityList features
 		
-		try {
-			int loadBalancePrefetchSize = 200;
-			return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
-		} catch (IDOException e) {	
-				throw new EJBException(e);
-		}
-		
-		
-		
+		int loadBalancePrefetchSize = 100;
+		return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
+
 	}
 	
 	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
