@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.105 2004/12/03 03:22:44 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.106 2004/12/03 03:50:38 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -49,6 +49,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
 import com.idega.util.LogWriter;
+import com.idega.util.ThreadContext;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -57,10 +58,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 03:22:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 03:50:38 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.105 $
+ * @version $Revision: 1.106 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -473,6 +474,7 @@ public class IWMainApplication {//implements ServletContext{
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		ThreadContext.getInstance().unload();
     		IDOContainer.unload();
     		IDOLookup.unload();
     		IBOLookup.unload();
