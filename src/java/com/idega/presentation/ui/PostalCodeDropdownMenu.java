@@ -30,12 +30,15 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 			country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);			
 		}
 		
-		Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
-		Iterator iter = postals.iterator();
-		while (iter.hasNext()) {
-			PostalCode element = (PostalCode) iter.next();
-			addMenuElement(((Integer)element.getPrimaryKey()).intValue(),element.getPostalCode());						
+		if( country!=null ){
+			Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
+			Iterator iter = postals.iterator();
+			while (iter.hasNext()) {
+				PostalCode element = (PostalCode) iter.next();
+				addMenuElement(((Integer)element.getPrimaryKey()).intValue(),element.getPostalCode());						
+			}
 		}
+		else addMenuElement("No country selected");
 				
 	}
 	
