@@ -249,9 +249,7 @@ public class Form extends InterfaceObject {
 //		 temporary not allowing when event handler used
 		
 		if(showLoadingLayerOnSubmit && getTarget()==null){//&& !("iw_event_frame").equals(target)){
-		    if(getParentPage().getAssociatedBodyScript().getFunction("calculateWindowSize")==null)
-		        getParentPage().getAssociatedScript().addFunction("calculateWindowSize",getWindowSizeScript());
-		   
+		    
 		    if(getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer")==null)
 		        getParentPage().getAssociatedScript().addFunction("showLoadingLayer",getShowLoadingLayerScript(iwc));
 			
@@ -263,7 +261,7 @@ public class Form extends InterfaceObject {
 			if(!manager.isStyleSet("DIV.LoadLayer"))
 			IWStyleManager.getInstance().setStyle("DIV.LoadLayer","visibility:hidden;position:absolute;font-family: arial;" +
 					"font-size: 9pt;font-weight: bold; background: #ffffff; border-style: ridge;border-color: #cbcbcb;"+
-					"border-width: 2px;padding-top: 4px;padding-left: 8px;padding-right: 12px;padding-bottom:4px");
+					"border-width: 2px;padding-top: 4px;padding-left: 8px;padding-right: 12px;padding-bottom:4px; top:48%;left:45%;");
 			//setOnClick("this.disabled=true;showLoadingLayer();this.form.submit();");
 			//getForm().setOnSubmit("showLoadingLayer();");
 			//setOnSubmitFunction("displayLoadingLayer","function displayLoadingLayer(theInput,message){ \n\t showLoadingLayer();\n\t return true;\n}","");
@@ -271,20 +269,6 @@ public class Form extends InterfaceObject {
 			setOnSubmit("showLoadingLayer();");
 		}
 		
-	}
-	
-	private String getWindowSizeScript(){
-	    StringBuffer script = new StringBuffer();
-	    script.append("function window_getSizeWidthAndHeight( oFrame ) { ").append("\n");
-	    script.append("if( !oFrame ) { oFrame = window; } var myWidth = 0, myHeight = 0; ").append("\n");
-	    script.append("if( typeof( oFrame.innerWidth ) == 'number' ) { myWidth = oFrame.innerWidth; myHeight = oFrame.innerHeight; } ").append("\n");
-	    script.append("else if( oFrame.document.documentElement && ( oFrame.document.documentElement.clientWidth || oFrame.document.documentElement.clientHeight ) ) { ").append("\n");
-	    script.append("		myWidth = oFrame.document.documentElement.clientWidth; myHeight = oFrame.document.documentElement.clientHeight; } ").append("\n");
-	    script.append("	else if( oFrame.document.body && ( oFrame.document.body.clientWidth || oFrame.document.body.clientHeight ) ) { ").append("\n");
-	    script.append("myWidth = oFrame.document.body.clientWidth; myHeight = oFrame.document.body.clientHeight; } ").append("\n");
-	    script.append("	return [myWidth,myHeight]; ").append("\n");
-	    script.append("} ").append("\n");
-	    return script.toString();
 	}
 	
 	private String getShowLoadingLayerScript(IWContext iwc){
@@ -304,30 +288,11 @@ public class Form extends InterfaceObject {
 	        //script.append(" window.status='target found';");
 	        
 	    }
-	    script.append("    var theWinDimension = window_getSizeWidthAndHeight(); ").append("\n");
-	    //script.append("    var busyImage = new Image(); ").append("\n");
-	    //script.append("    busyImage.src = \""+imageUrl+"\"; ").append("\n");
-	    script.append("    var imWidth = theDiv.width?theDiv.width:0;").append("\n");
-	    script.append("    var imHeight = theDiv.height?theDiv.height:0; ").append("\n");
-	    script.append("    var psLeft = (theWinDimension[0]-imWidth)/2; ").append("\n");
-	    script.append("    var psTop = (theWinDimension[1]-imHeight)/2; ").append("\n");
 	    script.append("    if( theDiv.style ) { ").append("\n");
 	    script.append("      theDiv.style.visibility = 'visible';").append("\n");
-	    script.append("      theDiv.style.zindex = 999999;").append("\n");
-	    script.append("      theDiv.style.position = 'absolute';").append("\n");
-	    //script.append("theDiv.style.width = imWidth;").append("\n");
-	    //script.append("theDiv.style.height = imHeight;").append("\n");
-	    script.append("      theDiv.style.left = psLeft+'px';").append("\n");
-	    script.append("      theDiv.style.top = psTop+'px';").append("\n");
 	    script.append("    } else {").append("\n");          
 	    script.append("      theDiv.visibility = 'show' ;").append("\n"); 
-	    script.append("      theDiv.visibility = 'visible';").append("\n");
-	    script.append("      theDiv.zindex = 999999;").append("\n");
-	    script.append("      theDiv.position = 'absolute';").append("\n");
-	    //script.append("theDiv.width = imWidth;").append("\n");
-	    //script.append("theDiv.height = imHeight;").append("\n");
-	    script.append("      theDiv.left = psLeft+'px';").append("\n");
-	    script.append("      theDiv.top = psTop+'px';").append("\n");
+	   // script.append("      theDiv.visibility = 'visible';").append("\n");
 	    script.append("    }").append("\n");
 	    
 	    if(target!=null){
