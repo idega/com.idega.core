@@ -563,7 +563,7 @@ public class TextSoap {
 			text_body = "";
 		}
 
-		text_body = findAndReplace(text_body, "*", "<li>");
+		//text_body = findAndReplace(text_body, "*", "<li>");
 		text_body = findAndReplace(text_body, ".\r\n", ".<br><br>");
 		text_body = findAndReplace(text_body, "?\r\n", "?<br><br>");
 		text_body = findAndReplace(text_body, "!\r\n", "!<br><br>");
