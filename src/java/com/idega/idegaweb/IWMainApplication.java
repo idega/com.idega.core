@@ -24,6 +24,7 @@ import com.idega.block.media.business.MediaBundleStarter;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
+*
 *Class to serve as a base center for an IdegaWeb WebApplication
 */
 public class IWMainApplication{//implements ServletContext{
@@ -75,6 +76,12 @@ public class IWMainApplication{//implements ServletContext{
   private static boolean alreadyUnLoaded = false;//for restartApplication
 
   private static final String APACHE_RESTART_PARAMETER = "restart_apache";
+
+  private static final String CONTEXT_PATH_KEY="IW_CONTEXT_PATH";
+
+  public static boolean DEBUG_FLAG = false;
+
+
 
   public IWMainApplication(ServletContext application){
     this.application=application;
@@ -677,9 +684,54 @@ public class IWMainApplication{//implements ServletContext{
      return hashcode;
   }
 
+
+  /**
+   * Returns the part of the URL that is the context path for this application
+   */
+  public String getContextURL(){
+    return (String)this.getAttribute(CONTEXT_PATH_KEY);
+  }
+
+  void setContextURL(String contextURL){
+    this.setAttribute(CONTEXT_PATH_KEY,contextURL);
+  }
+
+  public static void setDebugMode(boolean debugFlag){
+    DEBUG_FLAG = debugFlag;
+  }
+
+  public static boolean isDebugActive(){
+    return DEBUG_FLAG;
+  }
+
   public void createMediaTables(){
     MediaBundleStarter starter = new MediaBundleStarter();
     starter.start(this);
+
+  }
+
+
+  protected String getTranslatedURLWithContext(String url){
+    /**
+     * @todo: implement
+     */
+    return url;
+  }
+
+  public String getObjectInstanciatorURL(){
+    return getTranslatedURLWithContext(objectInstanciatorURL);
+  }
+
+  public String getMediaServletURL(){
+    return getTranslatedURLWithContext(this.MEDIA_SERVLET_URL);
+  }
+
+  public String getBuilderServletURL(){
+    return getTranslatedURLWithContext(this.BUILDER_SERVLET_URL);
+  }
+
+  public String getIFrameContentURL(){
+    return getTranslatedURLWithContext(this._IFRAME_CONTENT_URL);
   }
 
 }
