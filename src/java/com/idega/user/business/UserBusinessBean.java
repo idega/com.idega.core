@@ -1726,17 +1726,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         Iterator targetGroupIds = groupIds.iterator();
         while (targetGroupIds.hasNext())  {
           String targetGroupId = (String) targetGroupIds.next(); 
+          Group targetGroup = (Group) groupIdGroup.get(targetGroupId);
+          boolean result;
           // skip the own group
-          if (! targetGroupId.equals(parentGroupId)) {
-            Group targetGroup = (Group) groupIdGroup.get(targetGroupId);
-            if (isUserAssignableToGroup(user, parentGroup, targetGroup) == null) {
-              if (! possibleTargetAlreadySet) {
-                possibleTarget = targetGroup;
-                possibleTargetAlreadySet = true;
-              }
-              else {
-                possibleTarget = null;
-              }
+          if (targetGroupId.equals(parentGroupId)) {
+            result = (isUserSuitedForGroup(user, targetGroup) == null);
+          }
+          else {
+            result = (isUserAssignableToGroup(user, parentGroup, targetGroup) == null);
+          }
+          if (result) {
+            if (! possibleTargetAlreadySet) {
+              possibleTarget = targetGroup;
+              possibleTargetAlreadySet = true;
+            }
+            else {
+              possibleTarget = null;
             }
           }
         }
@@ -1753,18 +1758,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       User user = (User) entry.getKey();
       Group target = (Group) entry.getValue();
       Group source = (Group) userParentGroup.get(user);
-      String sourceId = ((Integer) source.getPrimaryKey()).toString();
+      Integer sourceId = (Integer) source.getPrimaryKey();
       Map map = (Map) result.get(sourceId);
       if (map == null)  {
         map = new HashMap();
         result.put(sourceId, map);
       } 
-      if (target != null) {        
-        moveUser(user, source, target, currentUser);
-        map.put(( (Integer) user.getPrimaryKey()).toString(), null);
+      if (target != null) {  
+        int source_id = ((Integer) source.getPrimaryKey()).intValue();  
+        int target_id = ((Integer) target.getPrimaryKey()).intValue();
+        if (source_id != target_id) {
+          String message = moveUserWithoutTest(user, source, target, currentUser);
+          // if there is not a transaction error the message is null!
+          map.put(user.getPrimaryKey(), message);
+        }
+        else {
+          map.put(user.getPrimaryKey(), null);
+        }
       }
       else {
-        map.put(( (Integer) user.getPrimaryKey()).toString(), "");
+        map.put(user.getPrimaryKey(), "");
       }
     }
     return result;
@@ -1779,13 +1792,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * @param currentUser user that is responsible for the action
    */ 
   private String moveUser(User user, Group parentGroup, Group targetGroup, User currentUser)  {
-    int userId = ((Integer) user.getPrimaryKey()).intValue();
-    int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
+ 
     // it is allowed to add this user to the group?
     // check age and gender, check if source and target are the same
     String message;
     if ((message = isUserAssignableToGroup(user, parentGroup, targetGroup)) != null) {
       return message;
+    }
+    return moveUserWithoutTest(user, parentGroup, targetGroup, currentUser);
+  }
+    
+    
+  private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser) {
+    int userId = ((Integer) user.getPrimaryKey()).intValue();
+    int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();  
+    int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
+    if (parentGroupId == targetGroupId) {
+      // there was a previous test therefore localization is it not necessary
+      return "source and target are the same";
     }
     int primaryGroupId = user.getPrimaryGroupID();
     // Transaction starts
@@ -1853,7 +1877,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return null;
   }
-    
+
+  private String isUserSuitedForGroup(User user, Group targetGroup) {
+    try {
+      Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
+      Iterator iter = plugins.iterator();
+      while (iter.hasNext()) {
+        UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+        UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
+        String message;
+        if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {  
+          return message;
+        }    
+      }
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    return null;
+  }    
     
 
 } // Class UserBusiness

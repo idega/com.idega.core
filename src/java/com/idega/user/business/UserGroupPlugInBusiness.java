@@ -58,4 +58,12 @@ public interface UserGroupPlugInBusiness extends IBOService {
    * @return a message that says what is wrong else null.
    */
     public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
+    
+   /** Checks if the user is suited for the specified target.
+   * 
+   * @param user the user 
+   * @param targetGroup target
+   * @return a message that says what is wrong else null.
+   */
+    public String isUserSuitedForGroup(User user, Group targetGroup);
 }
