@@ -32,8 +32,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";
-	private final static String STATUS_PASSIVE_PENDING="ST_PASSIVE_PENDING";
-	private final static String STATUS_ACTIVE_PENDING="ST_ACTIVE_PENDING";
+	private final static String STATUS_PASSIVE_PENDING="PASS_PEND";
+	private final static String STATUS_ACTIVE_PENDING="ACT_PEND";
 	
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
@@ -41,7 +41,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addManyToOneRelationship(GROUP_ID_COLUMN,"Type",Group.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
     this.addAttribute(RELATIONSHIP_TYPE_COLUMN,"Type",true,true,String.class,15,MANY_TO_ONE,GroupRelationType.class);
-    this.addAttribute(STATUS_COLUMN,"Status",String.class,10);
+    this.addAttribute(STATUS_COLUMN,"Status",String.class,30);
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
     this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
