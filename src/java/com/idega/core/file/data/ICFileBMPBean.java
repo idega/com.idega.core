@@ -35,8 +35,9 @@ import com.idega.util.IWTimestamp;
 
 public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity,MetaDataCapable {
 
-  private static final String FILE_VALUE = "file_value";
-  public static String IC_ROOT_FOLDER_CACHE_KEY = "ic_root_folder";
+  private static final String ENTITY_NAME = "IC_FILE";
+private static final String FILE_VALUE = "FILE_VALUE";
+  public static String IC_ROOT_FOLDER_CACHE_KEY = "IC_ROOT_FOLDER";
   public static String IC_ROOT_FOLDER_NAME = "ICROOT";
 
   public final static String DELETED = "Y";
@@ -83,7 +84,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
   }
 
   public String getEntityName() {
-    return("ic_file");
+    return(ENTITY_NAME);
   }
 
   public static String getEntityTableName(){ return "IC_FILE";}
