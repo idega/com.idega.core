@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.127 2005/01/14 00:27:53 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.128 2005/01/14 16:51:31 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/14 00:27:53 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/14 16:51:31 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.127 $
+ * @version $Revision: 1.128 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -862,7 +862,7 @@ public class IWMainApplication //{//implements ServletContext{
      */
     public List getRegisteredBundles() {
         List vector = new ArrayList();
-        Iterator iter = bundlesFile.keySet().iterator();
+        Iterator iter = getBundlesFile().keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
             vector.add(getBundle(key));
