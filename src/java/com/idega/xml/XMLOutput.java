@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.3 2002/12/09 18:10:51 palli Exp $
+ * $Id: XMLOutput.java,v 1.4 2003/06/30 14:01:58 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,6 +13,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -57,6 +58,11 @@ public class XMLOutput {
   public void output(XMLDocument document, OutputStream stream) throws IOException {
     if (_output != null)
       _output.output(document.getDocument(),stream);
+  }
+  
+  public void output(XMLDocument document, Writer writer) throws IOException {
+    if (_output != null)
+      _output.output(document.getDocument(), writer);
   }
 
   public String outputString(XMLElement element) {
