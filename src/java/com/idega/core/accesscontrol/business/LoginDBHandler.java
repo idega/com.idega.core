@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.36 2002/11/21 15:57:45 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.37 2002/12/21 00:43:07 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,8 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import com.idega.core.accesscontrol.data.LoginInfo;
@@ -679,26 +681,29 @@ public class LoginDBHandler
 	 */
 	public static int recordLogin(int iLoginId, String IPAddress)
 	{
-		//try
-		//{
-			LoginRecord inRec =
-				((com.idega.core.accesscontrol.data.LoginRecordHome) com
-					.idega
-					.data
-					.IDOLookup
-					.getHomeLegacy(LoginRecord.class))
-					.createLegacy();
+		try
+		{
+			
+      
+      LoginRecordHome lHome = (LoginRecordHome)com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
+
+      LoginRecord inRec = lHome.create();
 			inRec.setIPAdress(IPAddress);
 			inRec.setLoginId(iLoginId);
 			inRec.setLogInStamp(IWTimestamp.getTimestampRightNow());
 			inRec.store();
 			Integer id = (Integer) inRec.getPrimaryKey();
 			return id.intValue();
-		//}
-		//catch (RemoteException ex)
-		//{
-		//	return (-1);
-		//}
+		}
+    catch (CreateException ce)
+    {
+      ce.printStackTrace();
+      return (-1);
+    }
+		catch (RemoteException ex)
+		{
+			return (-1);
+		}
 	}
 	/**
 	 *  Records a logout record, returns true if succeeds
@@ -709,7 +714,7 @@ public class LoginDBHandler
 		{
 			LoginRecord lr =
 				((LoginRecordHome) com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).findByPrimaryKey(
-					iLoginRecordId);
+					new Integer(iLoginRecordId));
 			lr.setLogOutStamp(IWTimestamp.getTimestampRightNow());
 			lr.store();
 			return true;
