@@ -280,7 +280,7 @@ public class ImageSlideShow extends Block
 	}
 	private String getCallingScript(String name, int step)
 	{
-		return "javascript: slide_" + name + "('" + step + "')";
+		return "javascript:slide_" + name + "('" + step + "');";
 	}
 	private Script getDelayScript(String name)
 	{
@@ -292,32 +292,43 @@ public class ImageSlideShow extends Block
 	}
 	private String getSlideScript(String name, List urls)
 	{
-		String sCurrent = "Current_" + name;
-		String sPicArray = "Pics_" + name;
-		String sAddPic = "addPic" + name;
+		String sCurrent = "current_" + name;
+		String sPicArray = "picsources" + name;
+		String sPreloadArray = "picPreload" + name;
 		String sSlide = "slide_" + name;
 		StringBuffer addPics = new StringBuffer();
 		//addPics.append("var ").append(sDelay).append(" = 0;\n");
 		addPics.append("var ").append(sCurrent).append(" = ").append(delay).append(";\n");
-		addPics.append("var ").append(sPicArray).append(" = new Array();\n");
-		addPics.append("function ").append(sAddPic).append("(_p) {\n\t");
-		addPics.append(sPicArray).append("[").append(sPicArray).append(".length?");
-		addPics.append(sPicArray).append(".length:0] = new Image();\n\t");
-		addPics.append(sPicArray).append("[").append(sPicArray).append(".length-1]=_p;\n}\n");
-		if (urls != null)
-		{
-			for (int i = 0; i < urls.size(); i++)
+		addPics.append("var ").append(sPicArray).append(" = new Array(");
+		int size = urls.size();
+		for (int i = 0; i < size; i++)
 			{
 				String url = (String) urls.get(i);
-				addPics.append(sAddPic).append("(\"").append(url).append("\");\n");
+				//if not last one
+				if(i!=(size-1) ){
+					addPics.append("\"").append(url).append("\",");
+				}
+				else{
+					addPics.append("\"").append(url).append("\");\n");
+				}
+				
 			}
-		}
-		addPics.append("\n");
-		addPics.append("function ").append(sSlide).append("(val) {\n\t");
-		addPics.append(sCurrent).append(" = Math.abs((").append(sCurrent).append("+parseInt(val))%");
-		addPics.append(sPicArray).append(".length);\n\t");
-		addPics.append("document.").append(name).append(".src = ");
-		addPics.append(sPicArray).append("[").append(sCurrent).append("];\n");
+
+		addPics.append("var ").append(sPreloadArray).append(" = new Array();\n")
+		.append("for (i=0;i<").append(sPicArray).append(".length;i++){\n")
+		.append("\t").append(sPreloadArray).append("[i]=new Image();\n")
+		.append("\t").append(sPreloadArray).append("[i].src=").append(sPicArray).append("[i];\n}\n");
+			
+		
+		addPics.append("function ").append(sSlide).append("(val) {\n\t")
+		.append(sCurrent).append(" =").append(sCurrent).append("+parseInt(val);\n")
+		.append("\t").append("if(").append(sCurrent).append(">=").append(sPicArray).append(".length){\n")
+		.append("\t").append(sCurrent).append("=0;\n\t}")
+		.append("else if(").append(sCurrent).append("<").append("0){\n")
+		.append("\t\t").append(sCurrent).append("=").append(sPicArray).append(".length-1;\n\t}\n");
+		
+		addPics.append("\tdocument.images.").append(name).append(".src = ");
+		addPics.append(sPreloadArray).append("[").append(sCurrent).append("].src;\n");
 		addPics.append("}\n");
 		return addPics.toString();
 	}
