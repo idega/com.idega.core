@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.39 2003/05/27 20:47:51 eiki Exp $
+ * $Id: Table.java,v 1.40 2003/05/30 17:04:57 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -989,7 +989,7 @@ public class Table extends PresentationObjectContainer {
 		//    for(int x=1;x<=cols;){
 		//println("\n<td "+"height="+this.lineHeight+" colspan="+cols+" "+COLOR_ATTRIBUTE+"="+this.lineColor+" >");
 		print(LINE_BREAK);
-		print(getCellStartTag(iwc) + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
+		print(getCellStartTag(iwc) + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + ((lineColor!=null)? (COLOR_ATTRIBUTE + "=\"" + this.lineColor):"") + "\" >");
 		//if(!iwc.isOpera()){
 		transparentcell._print(iwc);
 		print(getCellEndTag(iwc));
@@ -1004,7 +1004,7 @@ public class Table extends PresentationObjectContainer {
 
 	protected void printVerticalLine(IWContext iwc) throws Exception {
 		print(LINE_BREAK);
-		println(getCellStartTag(iwc)+" width=\"" + this.lineWidth + "\" " + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" "+TAG_END);
+		println(getCellStartTag(iwc)+" width=\"" + this.lineWidth + "\" " + ((lineColor!=null)? (COLOR_ATTRIBUTE + "=\"" + this.lineColor):"") + "\" "+TAG_END);
 		if (!iwc.isOpera()) {
 			transparentcell._print(iwc);
 			println(getCellEndTag(iwc));
@@ -1622,6 +1622,13 @@ public class Table extends PresentationObjectContainer {
 		// done
 		lineCols[lineCols.length - 1] = column;
 	}
-
+	
+	public void removeLineColor(boolean value){
+		if(value){
+			this.lineColor = null;	
+		} else {
+			this.lineColor = "#000000";
+		}
+	}
 
 }
