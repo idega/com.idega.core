@@ -6,10 +6,13 @@
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
-package com.idega.idegaweb;
+package com.idega.idegaweb.include;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
@@ -47,6 +50,11 @@ public class GlobalIncludeManager implements Singleton {
 		return (GlobalIncludeManager) SingletonRepository.getRepository().getInstance(GlobalIncludeManager.class, instantiator);
 	  }
 	
+	
+	/**
+	 * Returns a list of StylesheetLink objects
+	 * @return
+	 */
 	public List getStyleSheets(){
 		if(styleSheets==null){
 			styleSheets=new ArrayList();
@@ -59,7 +67,20 @@ public class GlobalIncludeManager implements Singleton {
 	 * @param url
 	 */
 	public void addStyleSheet(String url){
-		getStyleSheets().add(url);
+		StyleSheetLink link = new StyleSheetLink(url);
+		getStyleSheets().add(link);
+	}
+	
+	
+	public boolean containsStyleSheet(String url){
+		Iterator iterator = getStyleSheets().iterator();
+		while (iterator.hasNext()) {
+			StyleSheetLink link = (StyleSheetLink) iterator.next();
+			if(link.getUrl().equals(url)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -71,8 +92,8 @@ public class GlobalIncludeManager implements Singleton {
 		IWBundle iwb = getIWMainApplication().getBundle(bundleIdentifier);
 		String resourcesUrl = iwb.getResourcesVirtualPath();
 		String cssRealUrl = resourcesUrl+url;
-		if (cssRealUrl != null && !getStyleSheets().contains(cssRealUrl)) {
-			getStyleSheets().add(cssRealUrl);
+		if (cssRealUrl != null && !containsStyleSheet(cssRealUrl)) {
+			addStyleSheet(cssRealUrl);
 		}
 	}
 	

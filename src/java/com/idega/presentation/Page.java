@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.140 2005/03/05 21:57:30 tryggvil Exp $
+ *  $Id: Page.java,v 1.141 2005/03/06 13:17:37 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -30,12 +30,13 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
 import com.idega.data.IDONoDatastoreError;
 import com.idega.event.IWFrameBusiness;
-import com.idega.idegaweb.GlobalIncludeManager;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.include.GlobalIncludeManager;
+import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
@@ -218,7 +219,8 @@ public class Page extends PresentationObjectContainer {
 		//The default style sheet MUST come first so we can override it in latter sheets!
 		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
 		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
-			String url = (String) iter.next();
+			StyleSheetLink sheet = (StyleSheetLink)iter.next();
+			String url = (String) sheet.getUrl();
 			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
 			map.put(styleSheetURL, styleSheetURL);
 //			this.addStyleSheetURL(styleSheetURL);
