@@ -26,7 +26,7 @@ public class IWStarterServlet extends GenericServlet
 	//public PoolManager poolMgr;
 
 	public void init() throws ServletException{
-              System.out.println("Initializing IdegaWebStarter");
+              sendStartMessage("Initializing IdegaWebStarter");
               startIdegaWebApplication();
 	}
 
@@ -40,7 +40,7 @@ public class IWStarterServlet extends GenericServlet
 	public void destroy(){
 		//poolMgr.release();
 
-		System.out.println("destroying IdegaWebStarter");
+		sendShutdownMessage("Destroying IdegaWebStarter");
                       endIdegaWebApplication();
 
 		//super.destroy();
@@ -50,28 +50,31 @@ public class IWStarterServlet extends GenericServlet
         public void startDatabasePool(){
                 String separator = FileUtil.getFileSeparator();
                 String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
-                System.out.println("Reading Databases from file: "+file);
+                sendStartMessage("Reading Databases from file: "+file);
                 PoolManager poolMgr;
+                sendStartMessage("Starting Datastore ConnectionPool");
                 poolMgr = PoolManager.getInstance(file);
-  		System.out.println("Starting pool");
         }
 
         public void endDatabasePool(){
-          System.out.println("Stopping Database Pool");
+          sendShutdownMessage("Stopping Database Pool");
           PoolManager.getInstance().release();
         }
 
         public void startIdegaWebApplication(){
             IWMainApplication application = new IWMainApplication(this.getServletContext());
-            startDatabasePool();
             if(application.getSettings().getIfEntityAutoCreate()){
               EntityControl.setAutoCreationOfEntities(true);
-              System.out.println("EntityAutoCreation Engine activated");
+              sendStartMessage("EntityAutoCreation Active");
             }
             else{
-              System.out.println("EntityAutoCreation Engine not activated");
+              sendStartMessage("EntityAutoCreation Not Active");
             }
+            startDatabasePool();
+            application.loadBundles();
+
             executeServices(application);
+            sendStartMessage("Completed");
         }
 
         /**
@@ -101,9 +104,17 @@ public class IWStarterServlet extends GenericServlet
             IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
             application.unload();
             endDatabasePool();
+            sendShutdownMessage("Completed");
         }
 
 
+        public void sendStartMessage(String message){
+          System.out.println("idegaWeb : startup : "+message);
+        }
+
+        public void sendShutdownMessage(String message){
+          System.out.println("idegaWeb : shutdown : "+message);
+        }
 
 }
 
