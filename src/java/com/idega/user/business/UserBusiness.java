@@ -160,8 +160,8 @@ public interface UserBusiness extends com.idega.business.IBOService
   public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException;
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc);
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc);
-  public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser);
-  public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser);
+  public Map moveUsers(IWUserContext iwuc,Collection userIds, Group parentGroup, int targetGroupId);
+  public Map moveUsers(IWUserContext iwuc, Collection groupIds, String parentGroupType);
   
 	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException;
   /**

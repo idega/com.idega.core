@@ -1826,7 +1826,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return resultGroups;
 	}
 
-  public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
+  public Map moveUsers(IWUserContext iwuc,Collection userIds, Group parentGroup, int targetGroupId) {
     IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
@@ -1856,6 +1856,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    try {
      groupBiz = getGroupBusiness();
      targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
+     
+     //check if we have editpermissions for the targetgroup
+     if( !getAccessController().hasEditPermissionFor(targetGroup,iwuc) ) {
+//       fill the result map
+         Iterator iterator = userIds.iterator();
+         while (iterator.hasNext())  {
+           String userIdAsString = (String) iterator.next();
+           Integer userId = new Integer(userIdAsString);
+           result.put(userId, iwrb.getLocalizedString("no_edit_permission_for_target_group", "You do not have edit permission for the target group"));
+         }
+         return result;   
+     }
+     
+     
+     
    }
    catch (FinderException ex)  {
      throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
@@ -1884,7 +1899,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
       // if there aren't any problems the message is null
       if (message == null)  {
-        message = moveUserWithoutTest(user, parentGroup, targetGroup, currentUser);
+        message = moveUserWithoutTest(user, parentGroup, targetGroup, iwuc.getCurrentUser());
       }
       // if the user was sucessfully moved the message is null
       result.put(userId, message);
@@ -1892,7 +1907,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return result;
   }
 
-  public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser) {
+  public Map moveUsers(IWUserContext iwuc, Collection groupIds, String parentGroupType) {
     IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
@@ -2004,7 +2019,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         int source_id = ((Integer) source.getPrimaryKey()).intValue();  
         int target_id = ((Integer) target.getPrimaryKey()).intValue();
         if (source_id != target_id) {
-          String message = moveUserWithoutTest(user, source, target, currentUser);
+          String message = moveUserWithoutTest(user, source, target, iwuc.getCurrentUser());
           // if there is not a transaction error the message is null!
           map.put(user.getPrimaryKey(), message);
         }
