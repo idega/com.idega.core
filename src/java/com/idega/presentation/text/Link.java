@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.17 2001/11/03 04:07:07 aron Exp $
+ * $Id: Link.java,v 1.18 2001/11/03 12:30:35 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -342,27 +342,32 @@ public class Link extends Text {
         return true;
       }
       String prmString = _parameterString.toString();
-      if((prmString.charAt(0) == '?') && (prmString.length()>1)){
-        prmString = prmString.substring(1,prmString.length());
-      }
-      if((prmString.charAt(0) == '&') && (prmString.length()>1)){
-        prmString = prmString.substring(1,prmString.length());
-      }
-      StringTokenizer token = new StringTokenizer(prmString,"&=",false);
-      int index = 0;
-      while (token.hasMoreTokens()) {
-        String st = token.nextToken();
-        String value = token.nextToken();
-        if(prmName.equals(st)){
-          return true;
-          //System.out.println("token "+index+" : "+st+" / true");
-          //System.err.println("token "+index+" : "+st+" / true");
+      if(prmString.length()>0){
+        if((prmString.charAt(0) == '?') && (prmString.length()>1)){
+          prmString = prmString.substring(1,prmString.length());
         }
-        //else{
-          //System.out.println("token "+index+" : "+st+" / false");
-          //System.err.println("token "+index+" : "+st+" / false");
-        //}
-        index++;
+        if((prmString.charAt(0) == '&') && (prmString.length()>1)){
+          prmString = prmString.substring(1,prmString.length());
+        }
+        StringTokenizer token = new StringTokenizer(prmString,"&=",false);
+        int index = 0;
+        while (token.hasMoreTokens()) {
+          String st = token.nextToken();
+          String value = token.nextToken();
+          if(prmName.equals(st)){
+            return true;
+            //System.out.println("token "+index+" : "+st+" / true");
+            //System.err.println("token "+index+" : "+st+" / true");
+          }
+          //else{
+            //System.out.println("token "+index+" : "+st+" / false");
+            //System.err.println("token "+index+" : "+st+" / false");
+          //}
+          index++;
+        }
+      }
+      else{
+        return false;
       }
     }
     return false; // false
