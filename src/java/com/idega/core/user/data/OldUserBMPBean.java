@@ -278,4 +278,23 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 		else
 			throw new javax.ejb.FinderException("No user found");
 	}
+	
+	
+	public boolean equals(Object o ){
+		if(o instanceof com.idega.core.user.data.User){
+			com.idega.core.user.data.User user = (com.idega.core.user.data.User)o;
+			Object thisPK = this.getPrimaryKey();
+			if(thisPK!=null){
+				return thisPK.equals(user.getPrimaryKey());
+			}
+		}
+		else if(o instanceof com.idega.user.data.User){
+			com.idega.user.data.User user = (com.idega.user.data.User)o;
+			Object thisPK = this.getPrimaryKey();
+			if(thisPK!=null){
+				return thisPK.equals(user.getPrimaryKey());
+			}
+		}
+		return false;
+	}
 }
