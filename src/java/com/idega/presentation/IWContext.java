@@ -976,6 +976,15 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return null;
   }
+  
+  
+  /**
+   * TODO reimplement
+   * @return
+   */
+  public int getCurrentIBPageID(){
+	return BuilderLogic.getInstance().getCurrentIBPageID(this);
+  }
 
 	public boolean isSecure(){
 		return getRequest().isSecure();
