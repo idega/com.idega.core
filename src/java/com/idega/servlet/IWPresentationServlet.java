@@ -104,14 +104,19 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
                   //added by gummi@idega.is
                   //begin
+                  boolean theServiceDone = false;
                   String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-                  if (sessionAddress != null)
+                  System.out.println("EventAddress: " + sessionAddress);
+                  if (sessionAddress != null && !"".equals(sessionAddress))
                   {
                     Object obj = moduleinfo.getSessionAttribute(sessionAddress);
                     if(obj != null)
                     {
                       if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
                       {
+                        __theService(request,response);
+                        theServiceDone = true;
+                        this.getPage()._setModuleInfo(moduleinfo);
                         ((ActiveEvent)obj).dispatch();
                       /* Kommentað út þar til kerfið ræður við þræði
                         EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
@@ -122,15 +127,6 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
                   }
 
-/* old
-                  String eventAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-                  if(eventAddress != null){
-                    ModuleObject someModuleObj = (ModuleObject)moduleinfo.getSessionAttribute(eventAddress);
-                    if( someModuleObj != null){
-                      someModuleObj.postIWActionEvent();
-                    }
-                  }
-*/
                   //end
 
                   //if (isActionPerformed(request,response)){
@@ -138,6 +134,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
                           //actionPerformed(new ModuleEvent(moduleinfo));
                   //}
                   //else{
+                        if(!theServiceDone) //gummi@idega.is
                           __theService(request,response);
                   //}
                   response.getWriter().println("\n");
