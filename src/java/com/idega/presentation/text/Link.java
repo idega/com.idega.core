@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.75 2002/06/12 18:28:22 laddi Exp $
+ * $Id: Link.java,v 1.76 2002/07/10 14:37:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1662,6 +1662,12 @@ public class Link extends Text{
    */
   public void setToFormSubmit(Form form) {
     setToFormSubmit(form,false);
+  }
+
+  public void setImageToOpenInPopUp(Image image) {
+    this.setOnClick("img_wnd=window.open('','','width=100,height=100,left='+((screen.width/2)-50)+',top='+((screen.height/2)-50)+',resizable=yes,scrollbars=no'); doopen('"+image.getMediaURL()+"'); return true;");
+    setFinalUrl("javascript:void(0)");
+    setTarget(TARGET_SELF_WINDOW);
   }
 
   /**
