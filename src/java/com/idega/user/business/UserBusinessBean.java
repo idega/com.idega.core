@@ -13,7 +13,9 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.text.Name;
 
 import java.util.Collection;
+import com.idega.core.data.*;
 import com.idega.core.data.Email;
+import com.idega.data.*;
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.presentation.DataEmailer;
 
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
+import com.idega.data.*;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 import com.idega.block.staff.business.StaffBusiness;
@@ -209,11 +212,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     try{
       User userToAdd = getUserHome().create();
 
-       /**
-       * @todo Using setFullName in stead
-       * is this ok and should it be done also in updateUser (I don?t think so)?
-       * @modified by Eirikur Hrafnsson
-       */
 
       StringBuffer fullName = new StringBuffer();
 
@@ -225,17 +223,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
       userToAdd.setFullName(fullName.toString());
 
-      /*if(firstname != null){
-        userToAdd.setFirstName(firstname);
-      }
-      if(middlename != null){
-        userToAdd.setMiddleName(middlename);
-      }
-      if(lastname != null){
-        userToAdd.setLastName(lastname);
-      }*/
-
-
+      
+      /*userToAdd.setFirstName(firstName);
+      userToAdd.setMiddleName(middleName);
+      userToAdd.setLastName(lastName);*/
+      
       if(displayname != null){
         userToAdd.setDisplayName(displayname);
       }
@@ -381,6 +373,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
   }
 
+
 /*
   public User getUser(int userGroupRepresentativeID) throws SQLException {
     List l = EntityFinder.findAllByColumn(com.idega.user.data.UserBMPBean.getStaticInstance(User.class),com.idega.user.data.UserBMPBean._COLUMNNAME_USER_GROUP_ID,userGroupRepresentativeID);
@@ -399,46 +392,42 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 */
 
+/**
+ * This methods remoces this useer from all groups and deletes his login.
+ */
   public  void deleteUser(int userId) throws RemoveException {
       try{
       User delUser = getUser(userId);
 
       /**
-       * @todo: Reenable
+       * @todo: consider this method.
        */
-      //StaffBusiness.delete(userId);
 
-      //delUser.removeFrom(com.idega.user.data.GroupBMPBean.getStaticInstance());
-      int groupId =delUser.getGroupID();
-      /*try {
-        delUser.removeFrom((Address)com.idega.core.data.AddressBMPBean.getStaticInstance(Address.class));
-      }
-      catch (SQLException e) {
-        e.printStackTrace();
-      }
-      try {
-        delUser.removeFrom((Email)com.idega.core.data.EmailBMPBean.getStaticInstance(Email.class));
-      }
-      catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-      try {
-        delUser.removeFrom((Phone)com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
-      }
-      catch (SQLException exc) {
-        exc.printStackTrace();
-      }*/
-      delUser.removeAllAddresses();
-      delUser.removeAllEmails();
-      delUser.removeAllPhones();
+			Collection groups = getGroupBusiness().getParentGroups(delUser);
+			
+			if( groups!=null && !groups.isEmpty() ){
+				Iterator iter = groups.iterator();
+				while (iter.hasNext()) {
+				Group group = (Group) iter.next();
+				group.removeUser(delUser);
+				}
+			}
+			
+			LoginDBHandler.deleteUserLogin(userId);
+			
+      //delUser.removeAllAddresses();
+      //delUser.removeAllEmails();
+      //delUser.removeAllPhones();
 
-      LoginDBHandler.deleteUserLogin(userId);
-      delUser.remove();
-			try {
+      
+      
+			/*try {
       	this.getGroupBusiness().deleteGroup(groupId);
 			}catch (FinderException fe) {
 				System.out.println("[UserBusinessBean] : cannot find group to delete with user");	
 			}
+			
+			delUser.remove();*/
     }
     catch(Exception e){
   		//e.printStackTrace(System.err);
