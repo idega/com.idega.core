@@ -1444,29 +1444,29 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
    */
   protected Collection getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(Collection plugins) {
 
-  	if(plugins!=null && !plugins.isEmpty()){
-  	  	ArrayList list = new ArrayList();
-  		Iterator iter = plugins.iterator();
-  		while (iter.hasNext()) {
-  			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-  			UserGroupPlugInBusiness pluginBiz;
-  			try {
-  				pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(Class.forName(element.getBusinessICObject().getClassName()) );
-  				list.add(pluginBiz);
-  			}
-  			catch (IBOLookupException e) {
-  				e.printStackTrace();
-  			}
-  			catch (RemoteException e) {
-  				e.printStackTrace();
-  			}
-  			catch (ClassNotFoundException e) {
-  				e.printStackTrace();
-  			}
-  		}
+  	if(plugins == null || plugins.isEmpty()) {
+  	  	return ListUtil.getEmptyList();
   	}
-
-  	return ListUtil.getEmptyList();
+  	ArrayList list = new ArrayList();
+	Iterator iter = plugins.iterator();
+	while (iter.hasNext()) {
+		UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+		UserGroupPlugInBusiness pluginBiz;
+		try {
+			pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(Class.forName(element.getBusinessICObject().getClassName()) );
+			list.add(pluginBiz);
+		}
+		catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	return list;
   }
 
   
@@ -2397,10 +2397,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/10/20 10:54:06 $ by $Author: thomas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.80 $
+	 * @version $Revision: 1.81 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
