@@ -364,6 +364,9 @@ public class IWMainApplicationStarter {
 
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICNetwork","com.idega.core.net.data.ICNetwork");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICProtocol","com.idega.core.net.data.ICProtocol");
+		
+		// perhaps this entry is not neccessary (by thomas)
+		rfregistry.registerRefactoredClass("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class.getName());
 	}
 
 	private void updateClassReferencesInDatabase() {
