@@ -108,7 +108,7 @@ public String getUserAgent(){
 	return Request.getHeader("User-agent");
 }
 
-public String getReferrer(){
+public String getReferer(){
 	return Request.getHeader("Referer");
 }
 
