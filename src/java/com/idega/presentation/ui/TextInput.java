@@ -22,6 +22,7 @@ public class TextInput extends GenericInput {
 	private boolean isSetAsNotEmpty;
 	private boolean isSetAsIcelandicSSNumber;
 	private boolean isSetAsCreditCardNumber;
+	private boolean isSetMinimumLength;
 
 	private String integersErrorMessage;
 	private String floatErrorMessage;
@@ -30,6 +31,9 @@ public class TextInput extends GenericInput {
 	private String notEmptyErrorMessage;
 	private String icelandicSSNumberErrorMessage;
 	private String notCreditCardErrorMessage;
+	private String minimumLengthErrorMessage;
+
+	private int minimumLength;
 
 	/**
 	 * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -107,6 +111,19 @@ public class TextInput extends GenericInput {
 	public void setAsNotEmpty(String errorMessage) {
 		isSetAsNotEmpty = true;
 		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
+
+	/**
+	 * Sets the text input so that its contents's length can not have less
+	 * characters than specified, displays an alert with the given error message
+	 * if the "error" occurs.  Uses Javascript.
+	 * @param length				The minimum length of the content.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setMininumLength(int length, String errorMessage) {
+		isSetMinimumLength = true;
+		minimumLength = length;
+		minimumLengthErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -241,6 +258,10 @@ public class TextInput extends GenericInput {
 		if (isSetAsFloat) {
 			setOnSubmitFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg) {\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) { return true;\n	}\n	if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}", floatErrorMessage);
 			setOnBlur("return checkSubmit(this)");
+		}
+		
+		if (isSetMinimumLength) {
+			setOnSubmitFunction("warnIfNotMinimumLength", "function warnIfNotMinimumLength(inputbox,warnMsg) {\n\tif (inputbox.value.length < "+minimumLength+") {\n\t\talert(warnMsg);\n\t\treturn false;\n\t}\n\treturn true;\n}", minimumLengthErrorMessage);
 		}
 
 		if (isSetAsAlphabetical)
