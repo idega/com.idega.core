@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.18 2001/06/20 04:38:10 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.19 2001/06/20 18:33:54 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -319,7 +319,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
 			columns.put(columnName.toLowerCase(),columnValue);
-		        this.setState(this.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+		        this.setEntityState(this.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
                 }
 	}
 
@@ -1734,16 +1734,16 @@ public abstract class GenericEntity implements java.io.Serializable {
             addManyToManyRelationShip(relationShipTableName);
       }
 
-      public int getState(){
+      protected int getEntityState(){
         return this.state;
       }
 
-      protected void setState(int state){
+      protected void setEntityState(int state){
         this.state=state;
       }
 
       public boolean isInSynchWithDatastore(){
-        return (getState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
+        return (getEntityState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
 }

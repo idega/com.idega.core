@@ -638,7 +638,7 @@ public abstract class DatastoreInterface{
 			}
 		}
             this.executeAfterInsert(entity);
-            entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+            entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
         }
 
 	/**
@@ -787,7 +787,7 @@ public abstract class DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
-                entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+                entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
 	public void update(GenericEntity entity, Connection conn)throws Exception{
@@ -803,7 +803,7 @@ public abstract class DatastoreInterface{
 				Stmt.close();
 			}
 		}
-                entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+                entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
   public void insert(GenericEntity entity, Connection conn) throws Exception {
@@ -827,7 +827,7 @@ public abstract class DatastoreInterface{
               }
       }
       executeAfterInsert(entity);
-      entity.setState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+      entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
     }
 
 }
