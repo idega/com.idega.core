@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.133 2005/02/01 17:30:38 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.134 2005/02/03 11:27:37 eiki Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -58,7 +58,6 @@ import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.search.business.SearchPluginManager;
-import com.idega.core.uri.URIManager;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityFinder;
@@ -88,10 +87,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/02/01 17:30:38 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/03 11:27:37 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.133 $
+ * @version $Revision: 1.134 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
