@@ -25,6 +25,7 @@ import java.util.Set;
 public class QueueMap extends HashMap implements Map {
 	
 	private QueueSet _keySet = new QueueSet();
+	private List keyList = new ArrayList();
 	private List _valueList = new ArrayList();
 	
 	/**
@@ -57,12 +58,16 @@ public class QueueMap extends HashMap implements Map {
 	}
 	
 	public Object put(Object key, Object value){
+		removeKey(key);
+		keyList.add(key);
 		_keySet.add(key);
 		_valueList.add(value);
 		return super.put(key,value);
 	}
 	
 	public Object putAtBeginning(Object key, Object value){
+		removeKey(key);
+		keyList.add(0,key);
 		_keySet.addAtBeginning(key);
 		_valueList.add(0,value);
 		return super.put(key,value);
@@ -70,8 +75,7 @@ public class QueueMap extends HashMap implements Map {
 
 	public Object remove(Object key){
 		Object val = super.remove(key);
-		_keySet.remove(key);
-		_valueList.remove(val);
+		removeKey(key);
 		return val;		
 	}
 	
@@ -85,6 +89,15 @@ public class QueueMap extends HashMap implements Map {
 	
 	public Iterator iterator() {
 		return _valueList.iterator();
+	}
+	
+	private void removeKey(Object key) {
+		int oldKeyIndex = keyList.indexOf(key);
+		if (oldKeyIndex > -1) {
+			_valueList.remove(oldKeyIndex);
+			keyList.remove(key);
+			_keySet.remove(key);
+		}
 	}
 	
 }
