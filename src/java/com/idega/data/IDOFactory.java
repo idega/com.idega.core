@@ -95,7 +95,7 @@ public abstract class IDOFactory implements IDOHome{
         entity.remove();
       }
       else{
-        throw new javax.ejb.EJBException("Primary Keys other than java.lang.Integer not supported");
+        throw new javax.ejb.EJBException("[idoFactory] : Primary Keys other than java.lang.Integer not supported");
       }
     }
     catch(Exception e){
