@@ -24,7 +24,7 @@ import java.util.List;
 
 public class TreeViewer extends AbstractTreeViewer {
 
-  private static final String TREEVIEW_PREFIX = "treeviewer/";
+  private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
   Image folderAndFileIcons[] = null;
   String folderAndFileIconNames[]={"treeviewer_node_closed.gif","treeviewer_node_open.gif","treeviewer_node_leaf.gif"};
@@ -136,7 +136,7 @@ public class TreeViewer extends AbstractTreeViewer {
     IWBundle bundle = getBundle(iwc);
     for (int i = 0; i < folderAndFileIcons.length; i++) {
       if(folderAndFileIcons[i] == null){
-        folderAndFileIcons[i] = bundle.getImage(TREEVIEW_PREFIX+folderAndFileIconNames[i]);
+        folderAndFileIcons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+folderAndFileIconNames[i]);
       }
     }
 
