@@ -32,7 +32,6 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
-import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
@@ -439,7 +438,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		 * @todo Move to user plugin system
 		 **/
 		//Temporary Fix to make sure GroupRelation table exists:
-		GroupRelation rel = new GroupRelationBMPBean();
+		new GroupRelationBMPBean();
 		try {
 			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
 			home.updateStartData();
