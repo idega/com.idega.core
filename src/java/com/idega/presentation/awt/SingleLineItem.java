@@ -120,7 +120,7 @@ public class SingleLineItem extends Container {
       gbc.gridy = nextYpos; //Set at position 0,0
       gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
       gbc.anchor = gbc.WEST;
-      gbc.fill = GridBagConstraints.VERTICAL;
+      gbc.fill = GridBagConstraints.BOTH;
       /*
       gbc.fill = GridBagConstraints.NONE;
       gbc.weightx = gbc.weighty = 1.0; //we want component to get all extra space
