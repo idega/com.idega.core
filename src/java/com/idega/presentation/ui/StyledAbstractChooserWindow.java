@@ -6,7 +6,6 @@ package com.idega.presentation.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
