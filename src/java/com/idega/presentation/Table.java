@@ -1,7 +1,7 @@
 /*
- * $Id: Table.java,v 1.60 2004/04/28 14:53:09 laddi Exp $
+ * $Id: Table.java,v 1.61 2004/06/04 17:54:16 tryggvil Exp $
  *
- * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -28,7 +28,13 @@ import com.idega.util.text.TextStyler;
  *
  *   Note: xpos is in [1:cols]
  *    ,ypos is in [1:rows]
- *
+
+ * This object maps to and renders the 
+ * <code><pre>
+ * <TABLE><TR><TD>...</TD></TR></TABLEL>
+ * </pre></code>
+ * tabs in HTML> and renders the children inside the <code><pre><TD>...</TD></pre></code>
+ * tags for each cell.
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */
@@ -1166,7 +1172,7 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		this.transparentcell = getTransparentCell(iwc);
+		transparentcell = getTransparentCell(iwc);
 		//if( doPrint(iwc)){
 		markupLanguage = iwc.getLanguage();
 		if ( IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage) ||  IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage) ) {
