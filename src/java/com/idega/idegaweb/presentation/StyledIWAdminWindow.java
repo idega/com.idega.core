@@ -94,7 +94,6 @@ private Image helpImage = null;
 		adminForm.setMethod(method);
 
 		headerTable = new Table();
-		headerTable.setVerticalAlignment("top");
 		headerTable.setCellpadding(0);
 		headerTable.setCellspacing(0);
 		headerTable.setStyleClass(bannerTableStyle);
@@ -108,7 +107,6 @@ private Image helpImage = null;
 		mainTable = new Table();
 		mainTable.setStyleClass(backTableStyle);
 		mainTable.setCellpadding(_cellPadding);
-		mainTable.setAlignment("center");
 		mainTable.setWidth("100%");
 		mainTable.setHeight("100%");
 		mainTable.setCellspacing(0);
