@@ -83,7 +83,9 @@ public class IWMainApplicationSettings extends IWPropertyList{
       String localeIdentifier = getProperty(DEFAULT_LOCALE);
       Locale locale = null;
       if(localeIdentifier==null){
-          localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
+          //localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
+          //Set default to International English
+          localeIdentifier="en";
           locale = LocaleUtil.getLocale(localeIdentifier);
           setDefaultLocale(locale);
       }
