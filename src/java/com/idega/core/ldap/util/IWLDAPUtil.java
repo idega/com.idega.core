@@ -3,11 +3,11 @@
  */
 package com.idega.core.ldap.util;
 
-import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.core.ldap.client.naming.DN;
+import com.idega.util.text.TextSoap;
 
 /**
  * A singleton helper class for all sorts of LDAP stuff.
@@ -40,20 +40,19 @@ public class IWLDAPUtil implements IWLDAPConstants{
 	 * @return
 	 */
 	public String getSingleValueOfAttributeByAttributeKey(String attributeKey, Attributes attributes){
-	  	Attribute attr = attributes.get(attributeKey);
-	  	
-	  	
-	  	if(attr!=null){
-	  		try {
+		try {
+			Attribute attr = attributes.get(attributeKey);
+			if(attr!=null){
+				
 				Object obj = attr.get();
 				return (String) obj;
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-	  		return null;
-	  	}
-	  	else return null;
+		} catch (Exception e) {
+			System.out.println("[IWLDAPUtil] No UUID defined in attributes");
+		}
+		
+		return null;
+		
 	}
 	
 	/**
@@ -156,5 +155,33 @@ public class IWLDAPUtil implements IWLDAPConstants{
 	  	}
 	  	
 	  	return name;
+	}
+	
+	/**
+	 *  A naming convention, such as that for the LDAP or the file system, typically has meta characters. For example, in the LDAP, if one of the following characters appears in the name, then it must be preceded by the escape character, the backslash character ("\"):<br>
+		 		<li>A space or "#" character occurring at the beginning of the string
+		 		<li>A space character occurring at the end of the string
+		 		<li>One of the characters ",", "+", """, "\", "<", ">" or ";"
+	This method escapes those characters	 		
+		 
+	 * @param directoryString Exmaple DN: ou=Group of people aged 13+,dc=idega,dc=com
+	 * @return
+	 */
+	public String getEscapedLDAPString(String directoryString){
+//		if(directoryString.startsWith(" ")){
+//			directoryString.replaceFirst(" ","\\ ");
+//		}
+//		else if(directoryString.startsWith("#")){
+//			directoryString.replaceFirst("#","\\#");
+//		}
+//		directoryString.replaceAll("\\+","\\+");
+//		directoryString.replaceAll("\\\"","\\\"");
+//		directoryString.replaceAll("\\>","\\>");
+//		directoryString.replaceAll("\\<","\\<");
+//		directoryString.replaceAll("\\;","\\;");
+//		directoryString.replaceAll("\\\\","\\\\");
+		
+		directoryString = TextSoap.findAndReplace(directoryString,"+","\\+");
+		return directoryString;
 	}
 }
