@@ -25,6 +25,11 @@ public class AnchorLink extends Link {
     this.anchorName = anchorname;
   }
 
+  public AnchorLink(PresentationObject object, String anchorname) {
+    super(object);
+    this.anchorName = anchorname;
+  }
+
   public void setAnchorName(String anchorName){
    this.anchorName = anchorName;
   }
