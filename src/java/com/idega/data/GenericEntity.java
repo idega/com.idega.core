@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.64 2001/10/26 16:58:24 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.65 2001/10/31 15:13:11 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,6 +22,7 @@ import com.idega.util.Gender;
 import com.idega.util.StringHandler;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -1434,6 +1435,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return findRelated(entity, "", "");
   }
 
+  public int[] findRelatedIDs(GenericEntity entity)throws SQLException{
+    return findRelatedIDs(entity, "", "");
+  }
+
   public GenericEntity[] findRelated(GenericEntity entity, String entityColumnName, String entityColumnValue)throws SQLException{
 		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
                 StringBuffer buffer=new StringBuffer();
@@ -1525,6 +1530,100 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			return null;
 		}
 	}
+
+
+          public int[] findRelatedIDs(GenericEntity entity, String entityColumnName, String entityColumnValue)throws SQLException{
+		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
+                StringBuffer buffer=new StringBuffer();
+                buffer.append("select e.* from ");
+                buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
+                buffer.append(" where ");
+                buffer.append("middle."+this.getIDColumnName());
+                buffer.append("=");
+                buffer.append(this.getID());
+                buffer.append(" and ");
+                buffer.append("middle."+entity.getIDColumnName());
+                buffer.append("=");
+                buffer.append("e."+entity.getIDColumnName());
+                if ( entity.getID() != -1 ) {
+                  buffer.append(" and ");
+                  buffer.append("middle."+entity.getIDColumnName());
+                  buffer.append("=");
+                  buffer.append(entity.getID());
+                }
+                if (entityColumnName != null)
+                if (!entityColumnName.equals("")) {
+                  buffer.append(" and ");
+                  buffer.append("e."+entityColumnName);
+                  if (entityColumnValue != null) {
+                    buffer.append(" = ");
+                    buffer.append("'"+entityColumnValue+"'");
+                  }else {
+                    buffer.append(" is null");
+                  }
+                }
+                String SQLString=buffer.toString();
+
+                return findRelatedIDs(entity,SQLString);
+	}
+
+
+        protected int[] findRelatedIDs(GenericEntity entity,String SQLString)throws SQLException{
+		Connection conn= null;
+		Statement Stmt= null;
+		int[] toReturn = null;
+                int length;
+                Vector vector = new Vector();
+		String tableToSelectFrom = "";
+		if (entity.getEntityName().endsWith("_")){
+			tableToSelectFrom = entity.getEntityName()+this.getEntityName();
+		}
+		else{
+			tableToSelectFrom = entity.getEntityName()+"_"+this.getEntityName();
+		}
+
+		try {
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			ResultSet RS = Stmt.executeQuery(SQLString);
+                        length = 0;
+                        while (RS.next()){
+				try{
+				  vector.addElement(RS.getObject(entity.getIDColumnName()));
+                                  length++;
+				}
+				catch(Exception ex){
+					System.err.println("There was an error in GenericEntity.findRelatedIDs(GenericEntity entity,String SQLString): "+ex.getMessage());
+
+				}
+			}
+			RS.close();
+
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+                if(length > 0){
+                  toReturn = new int[length];
+                  Iterator iter = vector.iterator();
+                  int index = 0;
+                  while (iter.hasNext()) {
+                    Integer item = (Integer)iter.next();
+                    toReturn[index++] = item.intValue();
+                  }
+                } else {
+                  toReturn = new int[0];
+                }
+
+		return toReturn;
+	}
+
 
 	/**
 	*Finds all instances of the current object in the otherEntity
