@@ -1417,6 +1417,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			dsi.appendPrimaryKeyWhereClause(this,buffer);
 			
 			String sql = buffer.toString();
+			debug(sql);
 			ResultSet RS = Stmt.executeQuery(sql);
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
