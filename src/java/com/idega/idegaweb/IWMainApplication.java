@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.120 2004/12/21 12:56:16 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.121 2005/01/05 01:21:58 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/21 12:56:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/05 01:21:58 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.120 $
+ * @version $Revision: 1.121 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -96,6 +96,7 @@ public class IWMainApplication //{//implements ServletContext{
     public static String classToInstanciateParameter = "idegaweb_instance_class";
     private final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
     private final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
+    private final static String IDEGAWEB_PRIVATE_DIRECTORY = "WEB-INF/idegaweb";
     private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
     public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
@@ -151,6 +152,7 @@ public class IWMainApplication //{//implements ServletContext{
 	//Holds a map of Window classes to know its dimensions etc.
     private Map windowClassesStaticInstances;
     private Application realJSFApplication;
+    private ApplicationProductInfo applicationProductInfo;
     
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -167,21 +169,34 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getVersion() {
-        String theReturn = this.getSettings().getProperty("version");
+        /*String theReturn = this.getSettings().getProperty("version");
         if (theReturn == null) {
             theReturn = "1.4.3";
         }
-        return theReturn;
+        return theReturn;*/
+    		return getProductInfo().getVersion();
     }
 
     public String getBuildNumber() {
-        String theReturn = this.getSettings().getProperty("iw_build_num");
+        /*String theReturn = this.getSettings().getProperty("iw_build_num");
         if (theReturn == null) {
             theReturn = "220b";
         }
-        return theReturn;
+        return theReturn;*/
+    		return getProductInfo().getBuildId();
     }
 
+    /**
+     * Gets information about the installed application.
+     * @return
+     */
+    public ApplicationProductInfo getProductInfo(){
+    		if(applicationProductInfo==null){
+    			applicationProductInfo = new ApplicationProductInfo(this);
+    		}
+    		return applicationProductInfo;
+    }
+    
     private void load() {
         lw = new LogWriter(this.getApplicationRealPath(), LogWriter.INFO);
         this.setPropertiesRealPath();
@@ -190,8 +205,10 @@ public class IWMainApplication //{//implements ServletContext{
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
         IWSystemProperties systemProperties = new IWSystemProperties(this);
         setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER, systemProperties);
-        log("Starting the idegaWeb Application Framework - Version "
-                + this.getVersion());        
+        // log("Starting the idegaWeb Application Framework - Version "
+        //        + this.getVersion());
+        sendStartupMessage("Starting "+getProductInfo().getFullProductName()+" - Version "
+                + this.getVersion());
         loadCryptoProperties();
     }
 
@@ -598,10 +615,21 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     private void setPropertiesRealPath() {
-        this.propertiesRealPath = this.getApplicationSpecialRealPath()
+    	
+    		String privatePath = this.getApplicationPrivateRealPath()
+            + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
+    		File privateFile = new File(privatePath+FileUtil.getFileSeparator()+"idegaweb.pxml");
+    		if(privateFile.exists()){
+        		//Setting to the private path if it exists:
+    			this.propertiesRealPath = privatePath;
+    		}
+    		else{
+    			//Setting it to the public path to remain backwards compatible
+    			this.propertiesRealPath = this.getApplicationSpecialRealPath()
                 + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
+    		}    
         //debug
-        //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
+        sendStartupMessage("setting propertyRealPath to : "+propertiesRealPath);
     }
 
     
@@ -629,13 +657,36 @@ public class IWMainApplication //{//implements ServletContext{
         return application.getRealPath(FileUtil.getFileSeparator());
     }
 
+    /**
+     * Gets the full canonical path to the open application path, e.g. /home/idegaweb/idegawebapp1/idegaweb
+     * @return
+     */
     public String getApplicationSpecialRealPath() {
         return this.getApplicationRealPath()
                 + getApplicationSpecialVirtualPath();
     }
+    /**
+     * Gets the full canonical path to the private application path, e.g. /home/idegaweb/idegawebapp1/WEB-INF/idegaweb
+     * @return
+     */
+    public String getApplicationPrivateRealPath() {
+        return this.getApplicationRealPath()
+                + getApplicationPrivateVirtualPath();
+    }
 
+    /**
+     * Gets the open application directctory undier /idegaweb/ under the webapp root
+     * @return
+     */
     public String getApplicationSpecialVirtualPath() {
         return IDEGAWEB_SPECIAL_DIRECTORY;
+    }
+    /**
+     * Gets the private application directctory under /WEB-INF/idegaweb/ under the webapp root
+     * @return
+     */    
+    public String getApplicationPrivateVirtualPath() {
+        return IDEGAWEB_PRIVATE_DIRECTORY;
     }
 
     private String getBundleVirtualPath(String bundleIdentifier) {
@@ -1118,11 +1169,15 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public void sendStartupMessage(String message) {
-        System.out.println("[idegaWebApp] : " + message);
+    		String newString = "[idegaWeb] : startup : " + message;
+    		log(newString);
+    		System.out.println(newString);
     }
 
     public void sendShutdownMessage(String message) {
-        System.out.println("[idegaWebApp] : " + message);
+    		String newString = "[idegaWeb] : shutdown : " + message;
+    		log(newString);
+    		System.out.println(newString);
     }
 
     /**
