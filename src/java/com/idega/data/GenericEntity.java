@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.50 2001/10/04 18:45:44 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.51 2001/10/05 15:24:13 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1397,19 +1397,38 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
   public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{
+    return findRelated(entity, "", "");
+  }
+
+  public GenericEntity[] findRelated(GenericEntity entity, String entityColumnName, String entityColumnValue)throws SQLException{
 		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
                 StringBuffer buffer=new StringBuffer();
-                buffer.append("select * from ");
-                buffer.append(tableToSelectFrom);
+                buffer.append("select e.* from ");
+                buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
                 buffer.append(" where ");
-                buffer.append(this.getIDColumnName());
+                buffer.append("middle."+this.getIDColumnName());
                 buffer.append("=");
                 buffer.append(this.getID());
+                buffer.append(" and ");
+                buffer.append("middle."+entity.getIDColumnName());
+                buffer.append("=");
+                buffer.append("e."+entity.getIDColumnName());
                 if ( entity.getID() != -1 ) {
                   buffer.append(" and ");
-                  buffer.append(entity.getIDColumnName());
+                  buffer.append("middle."+entity.getIDColumnName());
                   buffer.append("=");
                   buffer.append(entity.getID());
+                }
+                if (entityColumnName != null)
+                if (!entityColumnName.equals("")) {
+                  buffer.append(" and ");
+                  buffer.append("e."+entityColumnName);
+                  if (entityColumnValue != null) {
+                    buffer.append(" = ");
+                    buffer.append("'"+entityColumnValue+"'");
+                  }else {
+                    buffer.append(" is null");
+                  }
                 }
                 String SQLString=buffer.toString();
 
