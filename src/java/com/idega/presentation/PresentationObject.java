@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.35 2002/03/07 12:13:45 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.36 2002/03/09 00:52:00 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,26 +9,19 @@
  */
 package com.idega.presentation;
 
+import com.idega.idegaweb.*;
 import java.io.*;
 import java.util.*;
 import javax.servlet.http.*;
 import java.sql.*;
 import com.idega.util.database.*;
 import com.idega.core.data.*;
-import com.idega.idegaweb.IWException;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWConstants;
 import javax.swing.event.EventListenerList;
 import com.idega.event.IWEvent;
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.event.IWSubmitListener;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.data.EntityFinder;
 import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.presentation.ui.Form;
@@ -204,7 +197,7 @@ public class PresentationObject extends Object implements Cloneable {
   public void removeAttribute(String attributeName){
     if( attributeName!=null ){
       if (this.attributes != null) {
-        this.attributes.remove(attributeName);
+	this.attributes.remove(attributeName);
       }
     }
   }
@@ -585,7 +578,7 @@ public class PresentationObject extends Object implements Cloneable {
     if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
 	//return this.clone(iwc,askForPermission);
-        return this.clone();
+	return this.clone();
       } else {
 	return NULL_CLONE_OBJECT;
       }
@@ -1084,7 +1077,7 @@ public class PresentationObject extends Object implements Cloneable {
     * "debug" is set to "TRUE"
     */
    public void debug(String outputString){
-    if( IWMainApplication.isDebugActive() ){
+    if( IWMainApplicationSettings.isDebugActive() ){
       System.out.println("[DEBUG] \""+outputString+"\" : "+this.getClassName());
     }
    }

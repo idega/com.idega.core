@@ -192,7 +192,7 @@ private String getRightLanguage(HttpServletRequest Request,HttpServletResponse R
 		else if(user_agent.toLowerCase().indexOf("symbian") != -1){
 			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
-                else if(user_agent.toLowerCase().indexOf("wapman") != -1){
+		else if(user_agent.toLowerCase().indexOf("wapman") != -1){
 			return IWConstants.MARKUP_LANGUAGE_WML;
 		}
 		else
@@ -310,6 +310,26 @@ public void addCookies(Cookie cookie) {
   this.getResponse().addCookie(cookie);
 }
 
+  public boolean isCookieSet(String cookieName) {
+    Cookie[] cookies = (Cookie[]) this.getCookies();
+    boolean returner = true;
+
+    if (cookies != null) {
+      if (cookies.length > 0) {
+	for (int i = 0 ; i < cookies.length ; i++) {
+	  if ( cookies[i].getName().equals(cookieName) ) {
+	    returner = false;
+	    continue;
+	  }
+	}
+      }
+    }
+
+    return returner;
+  }
+
+
+
 public String getParameter(String parameterName){
   return getRequest().getParameter(parameterName);
 }
@@ -360,8 +380,8 @@ public String getLanguage(){
 }
 
 public String getSpokenLanguage(){
-        if (this.spokenLanguage == null)
-          this.setSpokenLanguage("IS");
+	if (this.spokenLanguage == null)
+	  this.setSpokenLanguage("IS");
 
 	return this.spokenLanguage;
 }
@@ -656,10 +676,10 @@ public PrintWriter getWriter()throws IOException{
     }
     else{
       if(this.isCacheing()){
-        return cacheWriter;
+	return cacheWriter;
       }
       else{
-        return getResponse().getWriter();
+	return getResponse().getWriter();
       }
 
     }
@@ -845,7 +865,7 @@ public void setCacheWriter(PrintWriter writer){
   public boolean isSuperAdmin(){
     try {
       if(this.isLoggedOn())
-        return this.getUser().equals(this.getAccessController().getAdministratorUser());
+	return this.getUser().equals(this.getAccessController().getAdministratorUser());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -889,12 +909,12 @@ public void setCacheWriter(PrintWriter writer){
 
       //List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
       if(historyList != null && historyList.contains(historyId)){
-        int index = historyList.indexOf(historyId);
-        //System.err.println("current state historyIndex = "+index + " for instance " + instanceId);
-        Object ob = ((Hashtable)historyList.get(index+1)).get(Integer.toString(instanceId));
-        //System.err.println("current state = "+ob);
-        //System.err.println("iwc.getCurrentState() ends");
-        return (String)ob;
+	int index = historyList.indexOf(historyId);
+	//System.err.println("current state historyIndex = "+index + " for instance " + instanceId);
+	Object ob = ((Hashtable)historyList.get(index+1)).get(Integer.toString(instanceId));
+	//System.err.println("current state = "+ob);
+	//System.err.println("iwc.getCurrentState() ends");
+	return (String)ob;
       }
     }
     //System.err.println("iwc.getCurrentState() ends");
@@ -910,9 +930,9 @@ public void setCacheWriter(PrintWriter writer){
     boolean preview = false;
     if (isParameterSet("view")) {
       if (BuilderLogic.getInstance().isBuilderApplicationRunning(this)) {
-        String view = getParameter("view");
-        if (view.equals("preview"))
-          preview=true;
+	String view = getParameter("view");
+	if (view.equals("preview"))
+	  preview=true;
       }
     }
 
