@@ -356,7 +356,7 @@ public class IDOCopier {
   protected IDOLegacyEntity createEntityInstance(Class entityInterfaceOrBeanClass){
     try{
     Class interfaceClass = IDOLookup.getInterfaceClassFor(entityInterfaceOrBeanClass);
-    return (IDOLegacyEntity)IDOLookup.getHome(interfaceClass).idoCreate();
+    return (IDOLegacyEntity)IDOLookup.getHome(interfaceClass).createIDO();
     }
     catch(Exception e){
       throw new RuntimeException("[idoCopier] : Error creating entity "+entityInterfaceOrBeanClass.getName()+" Message: "+e.getMessage());

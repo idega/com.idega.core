@@ -2968,7 +2968,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       while (iter.hasNext()) {
         try{
           Object pk = iter.next();
-          IDOEntity entityToAdd = home.idoFindByPrimaryKey(pk);
+          IDOEntity entityToAdd = home.findByPrimaryKeyIDO(pk);
           vector.addElement(entityToAdd);
         }
         catch(Exception e){

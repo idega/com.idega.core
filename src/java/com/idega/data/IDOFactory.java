@@ -62,8 +62,16 @@ public abstract class IDOFactory implements IDOHome{
     }*/
   }
 
-  public IDOEntity idoCreate() throws CreateException{
+
+  public IDOEntity createIDO() throws CreateException{
     return idoCreate(getEntityInterfaceClass());
+  }
+
+  /**
+   * @deprecated
+   */
+  public IDOEntity idoCreate() throws CreateException{
+    return createIDO();
   }
 
   public IDOEntity idoFindByPrimaryKey(int primaryKey) throws FinderException{
@@ -74,7 +82,14 @@ public abstract class IDOFactory implements IDOHome{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
 
+  /**
+   * @deprecated
+   */
   public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
+    return findByPrimaryKeyIDO(primaryKey);
+  }
+
+  public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
 
@@ -111,6 +126,24 @@ public abstract class IDOFactory implements IDOHome{
 
   protected Class getEntityBeanClass(){
     return IDOLookup.getBeanClassFor(getEntityInterfaceClass());
+  }
+
+
+  /**
+   *
+   * @param setOfPrimaryKeys
+   * @return Set of IDOEntity objects for this Factory
+   * @throws FinderException
+   */
+  protected Set getEntitySetForPrimaryKeys(Set setOfPrimaryKeys)throws FinderException{
+    Set theReturn = new java.util.HashSet();
+    Iterator iter = setOfPrimaryKeys.iterator();
+    while (iter.hasNext()) {
+      Object pk = iter.next();
+      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+      theReturn.add(entityObject);
+    }
+    return theReturn;
   }
 
   /**

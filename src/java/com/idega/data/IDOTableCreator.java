@@ -491,7 +491,7 @@ public class IDOTableCreator{
             //String table1=entity.getTableName();
 
             Class intefaceClass = IDOLookup.getInterfaceClassFor(relationShipClass);
-            IDOLegacyEntity entityToReference = (IDOLegacyEntity)IDOLookup.getHome(intefaceClass).idoCreate();
+            IDOLegacyEntity entityToReference = (IDOLegacyEntity)IDOLookup.getHome(intefaceClass).createIDO();
             //IDOLegacyEntity entityToReference = (IDOLegacyEntity)relationShipClass.newInstance();
             //String tableToReference=entityToReference.getTableName();
             //if(!doesTableExist(entity,tableToReference)){

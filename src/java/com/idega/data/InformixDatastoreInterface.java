@@ -86,7 +86,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
             theReturn = "LVARCHAR";
         }
         else{
-            theReturn = "TEXT";
+            theReturn = "CLOB";
         }
     }
 
@@ -760,132 +760,79 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-  //public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
-
-  //  IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
-
-  //  infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
-
-  //}
+  public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
+    IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
+    infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
+  }
 
 
 
 
 
   public boolean supportsBlobInUpdate(){
-
     return true;
-
   }
 
 
-
   private String getBlobTableName(){
-
     return "iw_blobs_temp";
-
   }
 
 
 
   /*protected void insertBlob(IDOLegacyEntity entity)throws Exception{
-
     checkBlobTable();
-
     int id = insertIntoBlobTable(entity);
-
     System.out.print("id from blob = "+id);
-
     //this.updateRealTable(id,entity);
-
   }*/
 
 
 
   private int insertIntoBlobTable(IDOLegacyEntity entity)throws Exception{
 
-
-
     String statement ;
-
     Connection Conn = null;
-
     int returnInt = -1;
-
-
 
     try{
 
-
-
       statement = "insert into "+this.getBlobTableName()+"(blob_value) values(?)";
-
       System.out.println(statement);
-
       //System.out.println("In insertBlob() in DatastoreInterface");
-
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-
       if(wrapper!=null){
-
         //System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
-
         //Conn.setAutoCommit(false);
-
         InputStream instream = wrapper.getInputStreamForBlobWrite();
-
         if(instream!=null){
-
           //System.out.println("In insertBlob() in DatastoreInterface instream != null");
-
           Conn = entity.getConnection();
-
           //if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
-
           //BufferedInputStream bin = new BufferedInputStream(instream);
-
           PreparedStatement PS = Conn.prepareStatement(statement);
-
           //System.out.println("bin.available(): "+bin.available());
-
           //PS.setBinaryStream(1, bin, 0 );
-
           PS.setBinaryStream(1, instream, instream.available() );
-
           PS.executeUpdate();
-
           com.informix.jdbc.IfxStatement ifxStatement = (com.informix.jdbc.IfxStatement)PS;
-
           returnInt = ifxStatement.getSerial();
-
           PS.close();
 
-
-
           //System.out.println("bin.available(): "+bin.available());
-
           instream.close();
-
          // bin.close();
-
         }
-
         //Conn.commit();
-
         //Conn.setAutoCommit(true);
-
       }
 
     }
 
     catch(SQLException ex){ex.printStackTrace(); System.err.println( "error uploading blob to db for "+entity.getClass().getName());}
-
     catch(Exception ex){ex.printStackTrace();}
-
     finally{
-
       if(Conn != null) entity.freeConnection(Conn);
-
     }
 
     return returnInt;
@@ -897,81 +844,47 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
   private void updateRealTable(int blobID,IDOLegacyEntity entity)throws Exception{
-
       String blobColumn= entity.getLobColumnName();
-
       super.executeUpdate(entity,"update "+entity.getTableName()+" n set "+blobColumn+"xxx where "+this.getBlobTableName()+".id="+blobID);
-
   }
 
 
 
   private void checkBlobTable(){
-
     if(!this.checkedBlobTable){
-
       createBlobTable();
-
     }
-
     checkedBlobTable=true;
-
   }
 
 
 
   private void createBlobTable(){
 
-
-
     Connection conn = null;
-
     Statement stmt = null;
-
     try{
-
       conn = ConnectionBroker.getConnection();
-
       stmt = conn.createStatement();
-
       stmt.executeUpdate("create table "+this.getBlobTableName()+" (id serial,blob_value byte)");
-
       stmt.close();
-
       System.out.println("Created blob table");
-
     }
-
     catch(SQLException e){
-
       System.out.println("Did not create blob table");
-
     }
-
     finally{
-
       try{
-
       if(stmt!=null){
-
         stmt.close();
-
       }
-
       }
-
       catch(SQLException sql){}
-
       if(conn!=null){
-
         ConnectionBroker.freeConnection(conn);
-
       }
-
     }
-
   }
-
 
 
 
@@ -979,33 +892,43 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
   protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
-
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
-
       executeUpdate(entity,SQLCommand);
-
   }
 
 
 
   protected String getCreatePrimaryKeyStatementBeginning(String tableName){
-
     return "alter table "+tableName+" add constraint primary key (";
-
   }
 
 
 
   protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,IDOLegacyEntity entity)throws SQLException{
-    int maxlength = entity.getMaxLength(columnName);
-    if(maxlength<=2000){
-      statement.setString(index,entity.getStringColumnValue(columnName));
+    try{
+      int maxlength = entity.getMaxLength(columnName);
+      if(maxlength<=2000){
+        statement.setString(index,entity.getStringColumnValue(columnName));
+      }
+      else{
+        String stringValue = entity.getStringColumnValue(columnName);
+        InputStream stream = new IDOInformixStringStream(stringValue);
+        statement.setAsciiStream(index,stream,stringValue.length());
+
+        /*if(stringValue!=null){
+          Reader reader = new StringReader(stringValue);
+          com.informix.jdbc.IfxPreparedStatement ifxStatement = (com.informix.jdbc.IfxPreparedStatement)statement;
+          ifxStatement.setCharacterStream(index,reader,stringValue.length(),com.informix.lang.IfxTypes.IFX_TYPE_CLOB);
+          //statement.setCharacterStream(index,reader,stringValue.length());
+
+        }
+        else{
+          statement.setCharacterStream(index,null,0);
+        }*/
+      }
     }
-    else{
-      String stringValue = entity.getStringColumnValue(columnName);
-      //java.io.InputStream stream = new java.io.StringBufferInputStream(stringValue);
-      InputStream stream = new IDOInformixStringStream(stringValue);
-      statement.setAsciiStream(index,stream,stringValue.length());
+    catch(Exception e){
+      e.printStackTrace();
     }
   }
 
@@ -1060,7 +983,8 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
   protected void fillStringColumn(IDOLegacyEntity entity,String columnName,ResultSet rs)throws SQLException{
     int maxlength = entity.getMaxLength(columnName);
-    if(maxlength<=2000){
+    if(true){
+    //if(maxlength<=2000){
         //System.out.println("Informix: Filling column for varchar field:"+columnName);
         String string = rs.getString(columnName);
         if (string != null){
@@ -1069,8 +993,10 @@ public class InformixDatastoreInterface extends DatastoreInterface{
     }
     else{
         try{
-          //System.out.println("Informix: 1 Filling column for clob field:"+columnName);
+          System.out.println("Informix: 1 Filling column for clob field:"+columnName);
+          //com.informix.jdbc.IfmxResultSet ifrs;
           //Clob clob = rs.getClob(columnName);
+          //Reader reader = clob.getCharacterStream();
           //if(!(clob==null||rs.wasNull())){
           //Reader reader = rs.getCharacterStream(columnName);
           InputStream stream = rs.getAsciiStream(columnName);
@@ -1079,7 +1005,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
           //if(!(reader==null||rs.wasNull())){
             StringBuffer sbuffer = new StringBuffer();
             //InputStream stream = clob.getAsciiStream();
-            //System.out.println("clob field was not empty");
+            System.out.println("clob field was not empty");
             int buffersize = 1000;
             /*char[] charArray = new char[buffersize];
             while (reader.ready()) {
@@ -1098,11 +1024,15 @@ public class InformixDatastoreInterface extends DatastoreInterface{
             entity.setColumn(columnName,sbuffer.toString());
           }
           else{
-            //System.out.println("clob field was empty");
+            System.out.println("clob field was empty");
           }
         }
         catch(IOException io){
           throw new SQLException("IOException: "+io.getMessage());
+        }
+
+        catch(Exception e){
+          e.printStackTrace();
         }
     }
   }
