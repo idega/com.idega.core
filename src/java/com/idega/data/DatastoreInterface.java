@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.87 2003/12/09 15:07:52 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.88 2004/01/05 16:35:49 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.Gender;
+import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 /**
@@ -1514,5 +1515,26 @@ public abstract class DatastoreInterface {
 	  		System.out.println("[DEBUG] \"" + outputString + "\" : DatastoreInterface");
 	  	}
 	  }*/
+	  
+	  /**
+	   * Formats the date to a string for use as is in a SQL query
+	   * quotes and casting included
+	    * @param date
+	   * @return
+	   */
+	  public String format(java.sql.Date date){
+	  	IWTimestamp stamp = new IWTimestamp(date);
+	  	return " '"+(stamp.toSQLString())+"' ";
+	  }
+	  /**
+	   * Formats the date to a string for use as is in a SQL query
+	   * quotes and casting included
+	   * @param timestamp
+	   * @return
+	   */
+	  public String format(java.sql.Timestamp timestamp){
+	  	IWTimestamp stamp = new IWTimestamp(timestamp);
+	  	return " '"+(stamp.toSQLString())+"' ";
+	  }
 	  
 }
