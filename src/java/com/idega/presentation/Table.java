@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.82 2004/12/10 13:37:33 tryggvil Exp $
+ * $Id: Table.java,v 1.83 2004/12/12 23:27:19 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -166,8 +166,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * @return true if Facets are used
 	 */
 	private boolean useFacetBasedCells(){
-		//return PresentationObject.USE_JSF_RENDERING;
-		return false;
+		return PresentationObject.USE_JSF_RENDERING;
+		//return false;
 	}
 	
 	/**
