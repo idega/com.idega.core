@@ -33,7 +33,7 @@ public class Tab extends Button {
   protected boolean drawBorder = false;
   protected boolean firstRun = true;
   protected int height = 15;
-  protected Color backgroundColor=Color.white;
+
   private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
   private boolean flip = false;
 

@@ -20,6 +20,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
 import com.idega.util.FileUtil;
 import com.idega.graphics.GIFEncoder;
+import com.idega.graphics.encoder.gif.Gif89Encoder;
 import com.idega.util.text.TextSoap;
 import java.awt.RenderingHints;
 import java.net.URLEncoder;
@@ -53,6 +54,9 @@ public class Button {
   protected Color borderColor = defaultBorderColor;
   protected Color fontColor = defaultFontColor;
   protected Color highlightColor = defaultHightlightColor;
+
+  //Used for the transparancy
+  protected Color backgroundColor=Color.cyan;
 
   protected int borderSize = defaultBorderSize;
 
@@ -317,7 +321,11 @@ public class Button {
 
   public void encode(Image image, String path, String effect){
    try {
-      GIFEncoder encode = new GIFEncoder(image);
+      //GIFEncoder encode = new GIFEncoder(image);
+      //net.jmge.gif.Gif89Encoder gif89aEncoder = new net.jmge.gif.Gif89Encoder(image);
+      Gif89Encoder gif89aEncoder = new Gif89Encoder(image);
+      //gif89aEncoder.setTransparentIndex(0);
+      gif89aEncoder.setTransparentColor(this.backgroundColor);
       String sName = null;
 
       if( name==null ){
@@ -357,7 +365,8 @@ public class Button {
       //FileUtil.delete(path); why???
       OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
 
-      encode.Write(output);
+      //encode.Write(output);
+      gif89aEncoder.encode(output);
       output.close();
     }
     catch (Exception e) {
