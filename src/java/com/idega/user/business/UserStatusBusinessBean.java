@@ -37,10 +37,14 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	public final static String STATUS_DECEASED = "deceased"; 
 	
 	public boolean removeUserFromGroup(int user_id, int group_id) {
-		return setUserGroupStatus(user_id,group_id,-1);
+		return setUserGroupStatus(user_id,group_id,-1,-1);
 	}
 	
-	public boolean setUserGroupStatus(int user_id, int group_id, int status_id) {
+	public boolean setUserGroupStatus(int user_id, int group_id, int status_id){
+	    return setUserGroupStatus(user_id,group_id,status_id,-1);
+	}
+	
+	public boolean setUserGroupStatus(int user_id, int group_id, int status_id,int doneByUserId) {
 		try {
 			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(user_id,group_id);
 			
@@ -62,6 +66,8 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 				uStatus.setGroupId(group_id);
 				uStatus.setDateFrom(now.getTimestamp());
 				uStatus.setStatusId(status_id);
+				if(doneByUserId>0)
+				   uStatus.setCreatedBy(doneByUserId);
 				uStatus.store();
 			}
 		}
