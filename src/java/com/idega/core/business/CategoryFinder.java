@@ -475,7 +475,7 @@ public class CategoryFinder {
    * @param  ObjectInstanceId     Description of the Parameter
    * @return                      Description of the Return Value
    */
-  public Collection listOfCategoryEntityByInstanceId(Class categoryEntityClass, int ObjectInstanceId) {
+  public List listOfCategoryEntityByInstanceId(Class categoryEntityClass, int ObjectInstanceId) {
     if (categoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
 
       try {
@@ -536,5 +536,9 @@ public class CategoryFinder {
    */
   public Map getMapOfCategoriesById(int instanceId) {
     return EntityFinder.getInstance().getMapOfEntity(listOfCategoryForObjectInstanceId(instanceId), ICCategory.getStaticInstance(ICCategory.class).getIDColumnName());
+  }
+
+  public String getInstanceManyToManyRelationShipName(){
+    return EntityControl.getManyToManyRelationShipTableName(ICCategory.class,ICObjectInstance.class);
   }
 }
