@@ -767,8 +767,9 @@ public void print(IWContext iwc)throws IOException{
 	 */
 	protected void initInMain(IWContext iwc) throws Exception {
 		
-		if( !isChildOfOtherPage() && !isInFrameSet()) {
+		if( isFocusAllowedOnLoad() && !isChildOfOtherPage() && !isInFrameSet()) {
 			setOnLoad("focus()");
+			
 		} 
 		/*
 		if(autoResize){
@@ -825,5 +826,15 @@ public void print(IWContext iwc)throws IOException{
 		return script.toString();
 	}
 	*/
+	
+	/**
+	 * Flag allowing window to get the focus on load, 
+	 * when not a child of another page or 
+	 * To be overwritten in subclasses
+	 * @return true by default
+	 */
+	protected boolean isFocusAllowedOnLoad(){
+	    return true;
+	}
 
 }//End class
