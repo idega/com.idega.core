@@ -1546,6 +1546,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
 						Map parents = new HashMap();
 						Map groupMap = new HashMap();
+						ArrayList aliasList = new ArrayList();
+						
 						IDOUtil idoUtil = IDOUtil.getInstance();
 						GroupBusiness groupBiz = getGroupBusiness();
 						
@@ -1586,10 +1588,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								
 								if( !groupMap.containsKey(primaryKey) ){
 									Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
+									
 									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup);
 									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
 									parents.put(primaryKey,parentMap);
 									groupMap.put(primaryKey,permissionGroup);
+									//if it's an alias we don't need the original group and make a list of those groups to filter out later
+									if(permissionGroup.getAliasID()!=-1){
+										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
+										if(!aliasList.contains(originalGroupID)){
+											aliasList.add(originalGroupID);
+										}
+									}
 								}
 						
 							}
@@ -1608,22 +1618,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						Iterator iter = keys.iterator();
 						while (iter.hasNext()) {
 							Integer myGroup = (Integer) iter.next();
-						
-							Iterator iter2 = parents.keySet().iterator();
-							while (iter2.hasNext()) {
-								Integer myGroup2 = (Integer) iter2.next();
-								if(myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
-								
-								Map theParents = (Map) (parents.get(myGroup2));
-								
-								if(theParents!=null && theParents.containsKey(myGroup)){
-									skipThese.put(myGroup2,null); 
-									groupMap.remove(myGroup2);
+							//we already have a shortcut to this group use that instead so skip this one
+							if(aliasList.contains(myGroup)) continue;
+							else{
+								Iterator iter2 = parents.keySet().iterator();
+								while (iter2.hasNext()) {
+									Integer myGroup2 = (Integer) iter2.next();
+									if(myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
 									
-								}//remove if this group is a child group of myGroup
+									Map theParents = (Map) (parents.get(myGroup2));
 									
-							}//inner while ends
-							
+									if(theParents!=null && theParents.containsKey(myGroup)){
+										skipThese.put(myGroup2,null); 
+										groupMap.remove(myGroup2);
+										
+									}//remove if this group is a child group of myGroup
+										
+								}//inner while ends
+							}
 						}//outer while ends
 						
 						topNodes = groupMap.values();
