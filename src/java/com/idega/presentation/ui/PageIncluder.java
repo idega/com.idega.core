@@ -506,13 +506,15 @@ public class PageIncluder extends PresentationObject implements Index{
     StringBuffer location = new StringBuffer();
     String query = null;
     StringBuffer queryBuf = new StringBuffer();
+    String instanceParam = PAGE_INCLUDER_PARAMETER_NAME+instanceId;
+    String labelParam = PAGE_INCLUDER_PARAMETER_NAME+_label;
 
     //get all parameters even from post actions
     Enumeration enum = iwc.getParameterNames();
     while (enum.hasMoreElements()) {
       String param = (String) enum.nextElement();
       //debug(param+" : "+iwc.getParameter(param));
-      if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
+      if ( param.equals(instanceParam) || param.equals(labelParam)  ){
         URL = decodeQueryString(iwc.getParameter(param));
         //System.out.println("Changing location to:"+location.toString());
       }
