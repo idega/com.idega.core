@@ -8,6 +8,7 @@ package com.idega.data;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -195,6 +196,30 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 	public String getCreateTableCommand(String tableName){
 		return "CREATE CACHED TABLE "+tableName;
 	}
+	
+	
+	/**
+	 * Override in subclasses
+	 **/
+	public void onConnectionCreate(Connection newConn) {
+		try {
+			Statement stmt = newConn.createStatement();
+			stmt.execute("SET PROPERTY \"hsqldb.first_identity\" 1");
+			stmt.close();
+			System.out.println("HSQLDatastoreInterface: Setting first_identity property to 1 for HSQLDB");
+		/*	
+		 This parameter is set for the OCI driver in a shell script usually but could be set here also
+			stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_LANG='.AL32UTF8'");
+			stmt.close();
+			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to NLS_LANG=.UTF8 for Unicode support.");
+		*/
+		}
+		catch (SQLException sqle) {
+			System.err.println("HSQLDatastoreInterface: Error when changing property: " + sqle.getMessage());
+			sqle.printStackTrace();
+		}
+	}	
 	
 
 }
