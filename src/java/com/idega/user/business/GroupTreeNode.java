@@ -18,7 +18,6 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
-import com.idega.user.event.CreateGroupEvent;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -40,8 +39,8 @@ public class GroupTreeNode implements ICTreeNode {
 	private List _children = null;
 	private IWApplicationContext _iwc = null;
 	
-	public static final int TYPE_DOMAIN = CreateGroupEvent.TYPE_DOMAIN;
-	public static final int TYPE_GROUP = CreateGroupEvent.TYPE_GROUP;
+	public static final int TYPE_DOMAIN = 0;
+	public static final int TYPE_GROUP = 1;
 
 	public GroupTreeNode(ICDomain domain,  IWApplicationContext iwc) {
 		_iwc = iwc;
