@@ -517,16 +517,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return returner;
 	}
 	protected void logOut(IWContext iwc) throws Exception {
-		HttpSession session = iwc.getSession();
-		Enumeration enum = session.getAttributeNames();
-		while(enum.hasMoreElements()) {
-			session.removeAttribute((String) enum.nextElement());
-		}
-		enum = iwc.getParameterNames();
-		while(enum.hasMoreElements()) {
-			iwc.removeAttribute((String) enum.nextElement());
-		}
-		
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 			
@@ -545,6 +535,22 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 			iwc.removeSessionAttribute(LoginAttributeParameter);
 		}
+		
+		/*HttpSession session = iwc.getSession();
+		Enumeration enum = session.getAttributeNames();
+		while(enum.hasMoreElements()) {
+			String attName = (String) enum.nextElement();
+			//boolean dontRemove = LoginAttributeParameter.equals(attName) || LoginStateParameter.equals(attName) ||
+			//                     LoginStateMsgParameter.equals(attName) || UserAttributeParameter.equals(attName); // don't remove these or logout doesn't work
+			//if(!dontRemove) {
+				session.removeAttribute(attName);
+			//}
+		}
+		enum = iwc.getParameterNames();
+		while(enum.hasMoreElements()) {
+			iwc.removeAttribute((String) enum.nextElement());
+		}*/
+		
 	}
 
 	/**
