@@ -25,6 +25,7 @@ import java.util.Vector;
 
 public class IWStyleManager {
 
+	private static IWStyleManager _instance = null;
 	public static final String STYLE_URL = "/idegaweb/style/style.css";
 	
 	public IWStyleManager(IWMainApplication application) {
@@ -39,6 +40,18 @@ public class IWStyleManager {
 	public static HashMap map;
 	public static File file;
 	public static final String[] defaultStyles = { "A", "A:hover", "body", "table", "form" };
+
+	/**
+	 * A method to get an instance of this class.
+	 * 
+	 * @return An instance of the IWStyleManager class.
+	 */	
+	public static IWStyleManager getInstance() {
+		if (_instance == null)
+			_instance = new IWStyleManager();
+			
+		return _instance;
+	}
 
 	public void getStyleSheet() {
 		if ( application != null ) {
