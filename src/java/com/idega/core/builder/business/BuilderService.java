@@ -40,6 +40,13 @@ public interface BuilderService extends IBOService
 	 */	
 	public String getPageURI(String pageID)throws RemoteException;
 	/**
+	 * Gets the URI to a page on this webserver
+	 * @param page a page to get the URI to
+	 * @return The string that is the URI to the requested page on this webserver
+	 * @throws RemoteException
+	 */	
+	public String getPageURI(ICPage page)throws RemoteException;	
+	/**
 	 * Gets the id of the Root page for the current application
 	 * @return the id of an IBPage
 	 * @throws RemoteException
