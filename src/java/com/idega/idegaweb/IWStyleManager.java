@@ -26,7 +26,6 @@ import java.util.Vector;
 public class IWStyleManager {
 
 	private static IWStyleManager _instance = null;
-	public static String STYLE_URL;
 	
 	public IWStyleManager(IWMainApplication application) {
 		this.application = application;
@@ -57,7 +56,6 @@ public class IWStyleManager {
 		if ( application != null ) {
 			boolean createNew = false;
 			String URL = application.getApplicationRealPath() + FileUtil.getFileSeparator() + "idegaweb" + FileUtil.getFileSeparator() + "style" + FileUtil.getFileSeparator() + "style.css";
-			STYLE_URL = application.getTranslatedURIWithContext("/idegaweb/style/style.css");
 			Vector vector = null;
 	
 			try {
