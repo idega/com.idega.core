@@ -29,6 +29,7 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
@@ -2918,10 +2919,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String middleName = name.getMiddleName();
 		String lastName = name.getLastName();
 		String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION, attributes);
-		String uniqueID = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,
-				attributes);
-		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,
-				attributes);
+		String uniqueID = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
+		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
+		String userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID,attributes);
+		String userPassword = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_USER_PASSWORD,attributes);
 		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL, attributes);
 		//String homePhone =
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
@@ -2929,6 +2930,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_FAX_NUMBER,attributes);
 		//String mobile =
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_MOBILE_NUMBER,attributes);
+//		TODO eiki handle addresses
+		//String address =
+		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
 		String gender = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GENDER, attributes);
 		int genderId = -1;
 		if (gender != null) {
@@ -2939,9 +2943,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				e.printStackTrace();
 			}
 		}
-		//TODO eiki handle addresses
-		//String address =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+		
+		//find the user
 		User user = null;
 		if (uniqueID != null) {
 			try {
@@ -2951,6 +2954,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				System.out.println("UserBusiness: User not found by unique id:" + uniqueID);
 			}
 		}
+		
 		if (user == null && personalId != null) {
 			try {
 				user = getUser(personalId);
@@ -2959,9 +2963,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				System.out.println("UserBusiness: User not found by personal id:" + personalId);
 			}
 		}
+		
 		if (user == null) {
 			user = getUserByDirectoryString(distinguishedName.toString());
 		}
+		
 		if (user == null && firstName != null) {
 			try {
 				Collection users = getUserHome().findUsersByConditions(firstName, middleName, lastName, null, null,
@@ -2975,42 +2981,75 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				System.out.println("UserBusiness: last try...user not found by firstname,middlename,lastname");
 			}
 		}
+		
 		//could not find the person create it
 		if (user == null) {
 			user = createUser(firstName, middleName, lastName, personalId);
-			if (uniqueID != null) {
-				user.setUniqueId(uniqueID);
-			}
-			if (genderId > 0) {
-				user.setGender(genderId);
-			}
-			//TODO Eiki make a method updatePhones(home,fax,mobile) DO in
-			// update also
-			//getPhoneHome().findUsersFaxPhone();
-			user.setDescription(description);
 			user.store();
-			updateUserMail(user, email);
-			//	  		updateUsersMainAddressOrCreateIfDoesNotExist()
-			//	  		String address =
-			// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
-			//			String phone =
-			// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
-			//	  		
 		}
-		else {
-			//found the person! update if needed
-			if (uniqueID != null) {
-				user.setUniqueId(uniqueID);
-			}
-			user.setDescription(description);
-			if (genderId > 0) {
-				user.setGender(genderId);
-			}
-			user.store();
-			updateUserMail(user, email);
+		
+		//update stuff
+		//the unique id
+		if (uniqueID != null) {
+			user.setUniqueId(uniqueID);
 		}
+		
+		//the gender id
+		if (genderId > 0) {
+			user.setGender(genderId);
+		}
+		
+		//the description
+		user.setDescription(description);
+		
+		//the email
+		updateUserMail(user, email);
+		
+		//the login
+		if(userName!=null && userPassword!=null){
+			//remove the encryption e.g. {md5} prefix
+			userPassword = userPassword.substring(userPassword.indexOf("}")+1);
+			try {
+				int userId = ((Integer)user.getPrimaryKey()).intValue();
+				LoginTable login = LoginDBHandler.getUserLogin(genderId);
+				if(login!=null){
+					login.setUserLogin(userName);
+					login.setUserPassword(userPassword);
+					login.setLastChanged(IWTimestamp.getTimestampRightNow());
+					login.store();
+				}
+				else{
+					//no login create one
+					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
+					login.setUserId(userId);
+					login.setUserLogin(userName);
+					login.setUserPassword(userPassword);
+					login.setLastChanged(IWTimestamp.getTimestampRightNow());
+					login.store();
+				}
+			}
+			catch (IDOStoreException e) {
+				e.printStackTrace();
+			}
+			catch (EJBException e) {
+				e.printStackTrace();
+			}
+		}
+			
 		//set all the attributes as metadata also
 		setMetaDataFromLDAPAttributes(user, distinguishedName, attributes);
+		user.store();
+			
+		
+//			TODO Eiki make a method updatePhones(home,fax,mobile) DO in
+			// update also
+			//getPhoneHome().findUsersFaxPhone();
+		//	  		updateUsersMainAddressOrCreateIfDoesNotExist()
+		//	  		String address =
+		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+		//			String phone =
+		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);  		
+		
 		return user;
 	}
 
