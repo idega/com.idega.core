@@ -173,7 +173,7 @@ public void print(IWContext iwc)throws IOException{
 
     //get parameters and change the pageincluders url if needed
     String loc = getLocation(iwc);
-    //System.out.println("Loc = "+loc);
+    //System.out.println("Loc before = "+loc);
 
     //get a session id from a session creating page
   if( (sessionURL!=null) && (token!=null) ){
@@ -655,10 +655,7 @@ private void setPrefixes(IWContext iwc)throws Exception{
     if (forceFrame ) {
       StringBuffer buf = new StringBuffer();
       String uri = iwc.getRequestURI();
-      if( useSecureLinks ){
-        buf.append("https://");
-        buf.append(iwc.getServerName());
-      }
+
       buf.append(uri);
       buf.append('?');
 
@@ -698,7 +695,14 @@ private void setPrefixes(IWContext iwc)throws Exception{
 
       pageIncluderPrefix = buf.toString();
 
+      if( useSecureLinks ){
+        buf.append("https://");
+        buf.append(iwc.getServerName());
+      }
+      
+      
       StringBuffer buf2 = new StringBuffer();
+      
       buf2.append("http://").append(serverName).append(pageIncluderPrefix);
       //.append("http://");
       httpPrefix = buf2.toString();
