@@ -440,7 +440,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		String baseDNString = entryDN.toString();
 		
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchBaseEntry(baseDNString, LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", 0, 0,null);
+			searchResults = jndiOps.searchBaseEntry(baseDNString, LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", maxEntrylimit, searchTimeLimit,null);
 		}
 		else{
 			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", maxEntrylimit, searchTimeLimit,null);
@@ -801,19 +801,27 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		try {
 			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
 			replicatorConnectionsMap.put(repNum, jndiOps);
+			DN baseDN = new DN(baseRDN);
 			if(replicateBaseRDN){
-				Group updatedParent = replicateOneGroupEntry(new DN(baseRDN), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit);
+				Group updatedParent = replicateOneGroupEntry((DN)baseDN.clone(), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit);
 				if(updatedParent!=null){
-					if(baseUniqueId==null){
-						replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,updatedParent.getUniqueId(), maxEntrylimit, searchTimeLimit);
+					if(baseUniqueId==null || "".equals(baseUniqueId)){
+						try {
+							setReplicationProperty(PROPS_REPLICATOR_BASE_UNIQUE_ID, repNum.intValue(), updatedParent.getUniqueId());
+						}
+						catch (IOException e2) {
+							e2.printStackTrace();
+						}
+						
+						replicateChildEntriesRecursively((DN)baseDN.clone(), jndiOps,updatedParent,updatedParent.getUniqueId(), maxEntrylimit, searchTimeLimit);
 					}
 					else{
-						replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,baseUniqueId, maxEntrylimit, searchTimeLimit);
+						replicateChildEntriesRecursively(baseDN, jndiOps,updatedParent,baseUniqueId, maxEntrylimit, searchTimeLimit);
 					}
 				}				
 			}
 			else{
-				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps, parentGroup,baseUniqueId, maxEntrylimit, searchTimeLimit);
+				replicateChildEntriesRecursively(baseDN, jndiOps, parentGroup,baseUniqueId, maxEntrylimit, searchTimeLimit);
 			}
 			
 			try {
