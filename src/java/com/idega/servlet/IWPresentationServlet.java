@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.31 2002/04/30 10:47:25 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.32 2002/05/22 15:05:12 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -179,11 +179,13 @@ long time1 = System.currentTimeMillis();
 
           }
           catch(IWPageInitializationException iwe){
+                    iwe.printStackTrace();
                     ErrorPage errorPage = new ErrorPage();
                     errorPage.setErrorMessage(iwe.getMessage());
                     this.setPage(errorPage);
           }
           catch(Exception e){
+                    e.printStackTrace();
                     ErrorPage errorPage = new ErrorPage();
                     errorPage.setErrorMessage("There was an error, your session is probably expired");
                     this.setPage(errorPage);

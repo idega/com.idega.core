@@ -30,6 +30,8 @@ import com.idega.idegaweb.IWBundle;
 
 import com.idega.block.media.business.MediaBusiness;
 
+import com.idega.idegaweb.IWUserContext;
+
 
 
 public class ImageSlideShow extends Block {
@@ -622,7 +624,7 @@ private PresentationObject leftObject,rightObject;
 
 
 
-  public Object clone(IWContext iwc){
+  public Object clone(IWUserContext iwc){
 
     ImageSlideShow obj = null;
 

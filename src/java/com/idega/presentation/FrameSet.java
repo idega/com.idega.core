@@ -45,17 +45,35 @@ public class FrameSet extends Window{
   }
 
   public void add(String frameURL){
-      setPage(frameURL);
+    numberOfFrames++;
+    setPage(numberOfFrames, frameURL);
   }
 
   public void add(Class pageClass){
-      setPage(pageClass);
+    numberOfFrames++;
+    setPage(numberOfFrames, pageClass);
+  }
+
+  public void add(Class pageClass, String frameName ){
+    numberOfFrames++;
+    setPage(numberOfFrames, pageClass);
+    this.setFrameName(numberOfFrames, frameName);
+  }
+
+  private void setPage(int frameIndex, Class pageClass){
+    this.getFramesMap().put(new Integer(frameIndex),new HashMap());
+    this.getFramesPropertyMap(frameIndex).put(CLASS_PROPERTY,pageClass);
   }
 
   private void setPage(Class pageClass){
     numberOfFrames++;
     this.getFramesMap().put(new Integer(numberOfFrames),new HashMap());
     this.getFramesPropertyMap(numberOfFrames).put(CLASS_PROPERTY,pageClass);
+  }
+
+  private void setPage(int frameIndex, String url){
+    this.getFramesMap().put(new Integer(frameIndex),new HashMap());
+    setFrameSource(frameIndex,url);
   }
 
   private void setPage(String url){
@@ -84,7 +102,7 @@ public class FrameSet extends Window{
   /**
    * Does nothing
    */
-  public void add(Object moduleObject) {
+  public void add(Object presentationObject) {
   }
 
   /**
@@ -217,6 +235,8 @@ public class FrameSet extends Window{
       if( !isInAWindow ){
         buf.append(getEndTag());
       }
+
+      System.out.println("FrameSet - in print()\n"+ buf.toString());
       print(buf.toString());
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.11 2002/03/07 12:13:45 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.12 2002/05/22 15:05:12 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.presentation;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
+import com.idega.idegaweb.IWUserContext;
 
 /**
  * A base class for Containers of PresentationObjects
@@ -488,8 +489,8 @@ public class PresentationObjectContainer extends PresentationObject {
   }
 
 
-public synchronized Object _clone(IWContext iwc, boolean askForPermission){
-    if(askForPermission||iwc!=null){
+public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
+    if(askForPermission){
       if(iwc.hasViewPermission(this)){
 	return this.clone(iwc,askForPermission);
       } else {
@@ -504,7 +505,7 @@ public synchronized Object _clone(IWContext iwc, boolean askForPermission){
     return this.clone(null,false);
   }
 
- public synchronized Object clone(IWContext iwc, boolean askForPermission) {
+ public synchronized Object clone(IWUserContext iwc, boolean askForPermission) {
     PresentationObjectContainer obj = null;
     try {
       obj = (PresentationObjectContainer)super.clone();

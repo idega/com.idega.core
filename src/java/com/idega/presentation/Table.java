@@ -1,6 +1,6 @@
 /*
 
- * $Id: Table.java,v 1.22 2002/05/06 13:02:23 gummi Exp $
+ * $Id: Table.java,v 1.23 2002/05/22 15:05:12 gummi Exp $
 
  *
 
@@ -35,6 +35,8 @@ import com.idega.idegaweb.IWMainApplication;
 
 
 import java.util.Iterator;
+
+import com.idega.idegaweb.IWUserContext;
 
 
 
@@ -2410,7 +2412,7 @@ public boolean isEmpty(int x, int y){
 
 
 
-  public Object clone(IWContext iwc, boolean askForPermission) {
+  public Object clone(IWUserContext iwc, boolean askForPermission) {
 
     Table obj = null;
 

@@ -15,6 +15,7 @@ import java.io.*;
 import com.idega.core.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.block.IWBlock;
+import com.idega.idegaweb.IWUserContext;
 
 /**
  *
@@ -500,7 +501,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
 
 
-  public synchronized Object _clone(IWContext iwc, boolean askForPermission){
+  public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
     if(askForPermission){
       if(iwc.hasViewPermission(this)){
         return this.clone();

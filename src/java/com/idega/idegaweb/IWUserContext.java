@@ -8,6 +8,11 @@ import java.util.Locale;
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.business.AccessController;
 
+
+import com.idega.presentation.PresentationObject;
+import java.util.List;
+import com.idega.core.data.ICObject;
+
 /**
  * Title:        idegaclasses
  * Description:
@@ -28,5 +33,21 @@ public interface IWUserContext extends java.io.Serializable{
   public User getUser();
   public AccessController getAccessController();
   public IWApplicationContext getApplicationContext();
+
+
+
+
+  //temp
+  public boolean hasPermission(String permissionKey, PresentationObject obj);
+  public boolean hasViewPermission(PresentationObject obj);
+  public boolean hasEditPermission(PresentationObject obj);
+  public boolean hasPermission(List groupIds, String permissionKey, PresentationObject obj);
+  public boolean hasFilePermission(String permissionKey, int id);
+  public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId);
+  public boolean hasViewPermission(List groupIds, PresentationObject obj);
+  public boolean hasEditPermission(List groupIds, PresentationObject obj);
+  public boolean isSuperAdmin();
+  public boolean isLoggedOn();
+
 
 }

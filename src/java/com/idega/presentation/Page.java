@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.52 2002/05/13 13:07:18 palli Exp $
+ *  $Id: Page.java,v 1.53 2002/05/22 15:05:11 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,8 @@
  */
 package com.idega.presentation;
 
+import com.idega.idegaweb.browser.presentation.IWBrowseControl;
+import com.idega.business.*;
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.core.data.ICFile;
@@ -21,9 +23,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import com.idega.idegaweb.IWMainApplication;
-
+import com.idega.idegaweb.IWUserContext;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.business.IBXMLPage;
+import com.idega.idegaweb.IWApplicationContext;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -69,13 +72,6 @@ public class Page extends PresentationObjectContainer {
 
   private ICFile styleFile = null;
 
-  static {
-    Text pageNotFound = new Text("No permission", true, false, false);
-    pageNotFound.setFontSize(4);
-    NULL_CLONE_PAGE.add(pageNotFound);
-
-  }
-
   /**
    *  Description of the Field
    */
@@ -93,6 +89,10 @@ public class Page extends PresentationObjectContainer {
    *  Description of the Field
    */
   public final static String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
+
+  public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
+  public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
+  public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
 
 // private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
 
@@ -744,29 +744,46 @@ public class Page extends PresentationObjectContainer {
    *@param  askForPermission  Description of the Parameter
    *@return                   Description of the Return Value
    */
-  public Object _clone(IWContext iwc, boolean askForPermission) {
+
+  public Object _clone(IWUserContext iwuc, boolean askForPermission) {
+
+
     //return this.clone(iwc,true);
-    if (iwc.hasViewPermission(this)) {
-      return this.clone(iwc, askForPermission);
-    } else {
-      if (!NULL_CLONE_PAGE_INITIALIZED) {
+    if(askForPermission){
+      if ( iwuc.hasViewPermission(this)) {
 
-	int pageId = 1;
-	String page = null;
-	// getProperty  //iwc.getParameter(_PRM_PAGE_ID);
-	if (page != null) {
-	  try {
-	    pageId = Integer.parseInt(page);
-	  } catch (NumberFormatException ex) {
-	    pageId = BuilderLogic.getStartPageId(iwc);
-	  }
+        return this.clone(iwuc, askForPermission);
 
-	} else {
-	  pageId = BuilderLogic.getStartPageId(iwc);
-	}
-	NULL_CLONE_PAGE.setOnLoad("document.location='" + BuilderLogic.getInstance().getIBPageURL(iwc, pageId) + "'");
+
+      } else {
+        if (!NULL_CLONE_PAGE_INITIALIZED) {
+
+          Text pageNotFound = new Text("No permission", true, false, false);
+          pageNotFound.setFontSize(4);
+          NULL_CLONE_PAGE.add(pageNotFound);
+
+          IWContext iwc = IWContext.getInstance();
+          if(iwc != null){
+            int pageId = 1;
+            String page = null;
+            // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
+            if (page != null ) {
+              try {
+                pageId = Integer.parseInt(page);
+              } catch (NumberFormatException ex) {
+                pageId = BuilderLogic.getStartPageId(iwc);
+              }
+            } else {
+              pageId = BuilderLogic.getStartPageId(iwc);
+            }
+            NULL_CLONE_PAGE.setOnLoad("document.location='" + BuilderLogic.getInstance().getIBPageURL(iwc, pageId) + "'");
+          }
+          NULL_CLONE_PAGE_INITIALIZED = true;
+        }
+        return NULL_CLONE_PAGE;
       }
-      return NULL_CLONE_PAGE;
+    } else {
+      return this.clone();
     }
 
   }
@@ -777,7 +794,7 @@ public class Page extends PresentationObjectContainer {
    *@param  askForPermission  Description of the Parameter
    *@return                   Description of the Return Value
    */
-  public Object clone(IWContext iwc, boolean askForPermission) {
+  public Object clone(IWUserContext iwc, boolean askForPermission) {
     Page obj = null;
     try {
       obj = (Page) super.clone(iwc, askForPermission);
@@ -1039,8 +1056,34 @@ public class Page extends PresentationObjectContainer {
   public static Page loadPage(IWContext iwc) throws Exception {
     String classKey = iwc.getParameter(IW_FRAME_CLASS_PARAMETER);
     String frameKey = iwc.getParameter(IW_FRAME_STORAGE_PARMETER);
+    String framePathKey = iwc.getParameter(IW_FRAMESET_PAGE_PARAMETER);
+    String frameNameKey = iwc.getParameter(IW_FRAME_NAME_PARAMETER);
 
-    if (frameKey != null) {
+
+
+    if(framePathKey != null && frameNameKey != null){
+      /**
+       * @todo EJB create
+       */
+      IWFrameBusiness fb = (IWFrameBusiness)IBOLookup.getSessionInstance(iwc,IWFrameBusiness.class);
+      Page pg = fb.getFrame(framePathKey,frameNameKey);
+      if(pg != null){
+        if( iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE) != null && pg instanceof IWBrowseControl){
+          //System.out.println("dispatchEvent(iwc)");
+          ((IWBrowseControl)pg).dispatchEvent(iwc);
+        }
+//        else {
+//          System.out.println("!dispatchEvent(iwc)");
+//        }
+        return pg;
+      } else {
+        Page defaultPage = new Page();
+        //defaultPage.setBackgroundColor("#FF0000");
+        System.err.println("Frame "+frameNameKey+": page is null");
+        return defaultPage;
+      }
+
+    } else if (frameKey != null) {
       Page page = getPage(getFrameStorageInfo(iwc), iwc);
       System.out.println("com.idega.presentation.Page: Trying to get page stored in session");
       return page;
@@ -1051,6 +1094,7 @@ public class Page extends PresentationObjectContainer {
       try {
 	page = (Page) Class.forName(className).newInstance();
       } catch (ClassNotFoundException e) {
+        e.printStackTrace();
 	throw new IWPageInitializationException("There was an error, your session is probably expired");
       }
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);

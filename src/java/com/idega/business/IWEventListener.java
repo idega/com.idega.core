@@ -5,6 +5,7 @@
 
 package com.idega.business;
 
+import java.util.EventListener;
 import com.idega.presentation.*;
 import com.idega.idegaweb.IWException;
 
@@ -14,7 +15,7 @@ import com.idega.idegaweb.IWException;
 *Interface that defines classes that handle events in IdegaWeb
 */
 
-public interface IWEventListener{
-      public void actionPerformed(IWContext iwc)throws IWException;
+public interface IWEventListener extends EventListener {
+  public void actionPerformed(IWContext iwc)throws IWException;
 }
 
