@@ -130,6 +130,10 @@ public void addMenuElement(String Value, String DisplayString){
 	theElements.addElement( new MenuElement(DisplayString,Value));
 }
 
+public void setMenuElement(String value, String displayString) {
+  addMenuElement(value,displayString);
+}
+
 public void addMenuElement(int value,String DisplayString){
 	addMenuElement(Integer.toString(value),DisplayString);
 }
