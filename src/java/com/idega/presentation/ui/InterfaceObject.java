@@ -432,6 +432,23 @@ public abstract class InterfaceObject extends PresentationObject {
 		setValueOnAction(ACTION_ON_CLICK, objectName, value);
 	}
 	
+	/**
+	 * Sets the value of the given interface object when this object changes value.
+	 * @param objectToChange	The interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnChange(InterfaceObject objectToChange, String value) {
+		setValueOnAction(ACTION_ON_CHANGE, objectToChange.getName(), value);
+	}
+	
+	/**
+	 * Sets the value of the interface object with the given name when this object changes value.
+	 * @param objectName	The name of the interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnChange(String objectName, String value) {
+		setValueOnAction(ACTION_ON_CHANGE, objectName, value);
+	}
 	
 	/**
 	 * Sets the given interface object as selected when this object receives the action 
