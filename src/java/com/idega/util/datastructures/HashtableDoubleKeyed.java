@@ -45,6 +45,10 @@ public class HashtableDoubleKeyed{
       return table.keys();
   }
 
+  public Enumeration elements(){
+      return table.elements();
+  }
+
   /**
    * Returns a list of objects put for this key
    */

@@ -78,9 +78,9 @@ public class BlobCacher  {
     HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )app.getAttribute(applicationObject);
     if ( cache != null ) {
       String realPath = app.getApplicationRealPath();
-      Enumeration enum = cache.keys();
+      Enumeration enum = cache.elements();
       while( enum.hasMoreElements() ){
-        String pathAndFile = realPath + TextSoap.findAndReplace((String)enum.nextElement() ,"/",FileUtil.getFileSeparator());
+        String pathAndFile = realPath + TextSoap.findAndReplace( (String)enum.nextElement() ,"/",FileUtil.getFileSeparator());
         System.out.println(pathAndFile);
         FileUtil.delete( pathAndFile );
       }
