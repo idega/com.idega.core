@@ -183,5 +183,19 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
     	return "";
     }
     
+    /**
+     * Gets the street name together with the number
+     */
+    public String getStreetNameAndNumber(){
+    	String streetName = getStreetName();
+    	String streetNumber = getStreetNumber();
+    	if(streetNumber!=null){
+    		return streetName + " " + getStreetNumber();
+    	}
+    	else{
+    		return streetName;	
+    	}
+    }
+    
   
 }
