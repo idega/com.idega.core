@@ -8,13 +8,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
@@ -738,6 +736,18 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginContext loginContext = new LoginContext(user, login.getUserLogin(), password);
 		return loginContext;
 	}
+	
+	public static LoginContext getLoginContext(User user) {
+		LoginTable login = LoginDBHandler.getUserLogin(user.getID());
+		if(login!=null){
+			LoginContext loginContext = new LoginContext(user, login.getUserLogin(), login.getUserPassword());
+			return loginContext;
+		}
+		else{
+			return null;
+		}
+	}
+
 	public static LoginContext createNewUser(String fullName, String email, String preferredUserName, String preferredPassword) {
 		UserBusiness ub = new UserBusiness();
 		StringTokenizer tok = new StringTokenizer(fullName);
