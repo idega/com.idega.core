@@ -417,15 +417,18 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   private  void putGroupsContaining(Group group, Map GroupsContained ) {
   	try{
 	    Collection pGroups = group.getParentGroups();
-	    if (pGroups != null){
+	    if (pGroups != null ){
 	      String key = "";
 	      Iterator iter = pGroups.iterator();
 	      while (iter.hasNext()) {
 	        Group item = (Group)iter.next();
-	        key = item.getPrimaryKey().toString();
-	        if(!GroupsContained.containsKey(key)){
-	          GroupsContained.put(key,item);
-	          putGroupsContaining(item, GroupsContained);
+	        if(item!=null){
+		        key = item.getPrimaryKey().toString();
+		        
+		        if(!GroupsContained.containsKey(key)){
+		          GroupsContained.put(key,item);
+		          putGroupsContaining(item, GroupsContained);
+		        }
 	        }
 	      }
 	    }
