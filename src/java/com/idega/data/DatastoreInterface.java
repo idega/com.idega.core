@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.78 2003/07/25 17:06:59 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.79 2003/07/28 17:28:12 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -229,12 +229,12 @@ public abstract class DatastoreInterface {
 		}
 		return theReturn;
 	}
-	protected int executeUpdate(IDOEntity entity, String SQLCommand) throws Exception {
+	protected int executeUpdate(GenericEntity entity, String SQLCommand) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		int theReturn = 0;
 		try {
-			conn = ((GenericEntity)entity).getConnection();
+			conn = entity.getConnection();
 			//conn.commit();
 			Stmt = conn.createStatement();
 			System.out.println(SQLCommand);
@@ -244,7 +244,7 @@ public abstract class DatastoreInterface {
 				Stmt.close();
 			}
 			if (conn != null) {
-				((GenericEntity)entity).freeConnection(conn);
+				entity.freeConnection(conn);
 			}
 		}
 		return theReturn;
@@ -1121,7 +1121,7 @@ public abstract class DatastoreInterface {
 		}
 		return returnString.toString();
 	}
-	protected void createForeignKey(IDOEntity entity, String baseTableName, String columnName, String refrencingTableName, String referencingColumnName) throws Exception {
+	protected void createForeignKey(GenericEntity entity, String baseTableName, String columnName, String refrencingTableName, String referencingColumnName) throws Exception {
 		String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
 		executeUpdate(entity, SQLCommand);
 	}
