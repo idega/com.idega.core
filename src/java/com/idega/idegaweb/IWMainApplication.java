@@ -133,6 +133,8 @@ public class IWMainApplication{//implements ServletContext{
     this.setPropertiesRealPath();
     IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
     setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
+    IWSystemProperties systemProperties = new IWSystemProperties(this);
+    setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER,systemProperties);
     loadCryptoProperties();
     System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
@@ -344,6 +346,11 @@ public class IWMainApplication{//implements ServletContext{
     return settings;
   }
 
+  public IWSystemProperties getSystemProperties(){
+    IWSystemProperties settings = (IWSystemProperties)application.getAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER);
+    return settings;
+  }
+
   //public IWBundleList getBundlesRegistered(){
    //
   //}
@@ -370,6 +377,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public void storeStatus(){
       getSettings().store();
+      getSystemProperties().store();
       try{
       getBundlesFile().store(new FileOutputStream(bundlesFileFile),null);
       }
@@ -655,6 +663,8 @@ public class IWMainApplication{//implements ServletContext{
   private static Properties cryptoCodes = null;
   private static Properties cryptoProps = null;
 
+	private String SYSTEM_PROPERTIES_STORAGE_PARAMETER = "idegaweb_system_properties";
+
 
   private void loadCryptoProperties(){
     cryptoProps = new Properties();
@@ -935,6 +945,4 @@ public class IWMainApplication{//implements ServletContext{
       eventListeners = new Vector();
     return eventListeners;
   }
-
-
 }
