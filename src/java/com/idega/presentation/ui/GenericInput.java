@@ -72,6 +72,10 @@ public abstract class GenericInput extends InterfaceObject {
 			print("text");
 		}
 		print("\" name=\"" + getName() + "\" ");
+		String value = getValueAsString();
+		if(value !=null && !"".equals(value)){
+			print(" value=\"" + value + "\" ");
+		}
 		for (int i = 0; i < definedAttributes.length; i++) {
 			if(isMarkupAttributeSet(definedAttributes[i])) {
 				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");

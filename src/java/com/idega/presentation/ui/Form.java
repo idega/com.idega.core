@@ -490,8 +490,8 @@ public class Form extends InterfaceObject {
 				//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 				setAction(getIdegaSpecialRequestURI(iwc));
 			}
-			print("<onevent type=\"onenterforward\" >");
-			print("<refresh>");
+//			print("<onevent type=\"onenterforward\" >");
+//			print("<refresh>");
 			
 			
 			InterfaceObject[] allInterfaceObjects = findAllInterfaceObjects();
@@ -504,12 +504,12 @@ public class Form extends InterfaceObject {
 				if(!(allInterfaceObjects[j] instanceof Parameter) && !(allInterfaceObjects[j] instanceof GenericButton)) {
 					String name = allInterfaceObjects[j].getName();
 					if(name != null && !"null".equals(name)) {
-						print("<setvar name=\"" + name);
+//						print("<setvar name=\"" + name);
 						String value = allInterfaceObjects[j].getValueAsString();
 						if(value!=null){
-							print("\" value=\""+value+"\" />");
+//							print("\" value=\""+value+"\" />");
 						}else {
-							print("\" value=\"\" />");
+//							print("\" value=\"\" />");
 						}
 						postFields.append("<postfield name=\"" + name + "\" value=\"$" + name + "\" />");
 					}
@@ -522,14 +522,14 @@ public class Form extends InterfaceObject {
 				
 				
 			}
-			print("</refresh>");
-			print("</onevent>");
+//			print("</refresh>");
+//			print("</onevent>");
 			print("<p><fieldset>");
 			super.print(iwc);
 			print("</fieldset></p>");
 			
-			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
-			print("<p><do>"+theButton.getContent());
+			print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
+			//print("<p><anchor>"+theButton.getContent());
 			print("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
 
 			print(postFields.toString());
@@ -539,8 +539,8 @@ public class Form extends InterfaceObject {
 				child.printWML(iwc);
 			}
 			print("</go>");
-			print("</do></p>");
-			//print("</do>");
+			//print("</anchor></p>");
+			print("</do>");
 			
 		}
 		//};
