@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.38 2003/05/27 20:35:18 eiki Exp $
+ * $Id: Table.java,v 1.39 2003/05/27 20:47:51 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,7 +19,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
 import com.idega.util.text.TextStyler;
-import com.inet.pool.i;
 
 /**
  * A class to use for presentation of 2 dimensional (grid) layout.
