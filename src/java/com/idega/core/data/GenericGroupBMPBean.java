@@ -16,6 +16,7 @@ import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.SimpleQuerier;
 import com.idega.util.ListUtil;
+import com.idega.util.database.ConnectionBroker;
 /**
  * 
  * Title:        IW Core
@@ -188,12 +189,13 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		String SQLString = buffer.toString();
 		Connection conn = null;
 		Statement Stmt = null;
+		ResultSet RS = null;
 		Vector vector = new Vector();
 		try
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			ResultSet RS = Stmt.executeQuery(SQLString);
+			RS = Stmt.executeQuery(SQLString);
 			while (RS.next())
 			{
 				IDOLegacyEntity tempobj = null;
@@ -209,19 +211,32 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 				}
 				vector.addElement(tempobj);
 			}
-			RS.close();
 		}
-		finally
-		{
-			if (Stmt != null)
-			{
-				Stmt.close();
-			}
-			if (conn != null)
-			{
-				freeConnection(getDatasource(), conn);
-			}
-		}
+	    finally {
+	    	// do not hide an existing exception
+	    	try { 
+	    		if (RS != null) {
+	    			RS.close();
+		      	}
+	    	}
+		    catch (SQLException resultCloseEx) {
+		    	System.err.println("[GenericGroup] result set could not be closed");
+		     	resultCloseEx.printStackTrace(System.err);
+		    }
+		    // do not hide an existing exception
+		    try {
+		    	if (Stmt != null)  {
+		    		Stmt.close();
+					if (conn != null)
+						ConnectionBroker.freeConnection(getDatasource(), conn);
+		    	}
+		    }
+	 	    catch (SQLException statementCloseEx) {
+		     	System.err.println("[GenericGroup] statement could not be closed");
+		     	statementCloseEx.printStackTrace(System.err);
+		    }
+	    }
+
 		if (vector != null)
 		{
 			vector.trimToSize();
@@ -292,12 +307,13 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		String SQLString = buffer.toString();
 		Connection conn = null;
 		Statement Stmt = null;
+		ResultSet RS = null;
 		Vector vector = new Vector();
 		try
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			ResultSet RS = Stmt.executeQuery(SQLString);
+			RS = Stmt.executeQuery(SQLString);
 			while (RS.next())
 			{
 				IDOLegacyEntity tempobj = null;
@@ -313,19 +329,31 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 				}
 				vector.addElement(tempobj);
 			}
-			RS.close();
 		}
-		finally
-		{
-			if (Stmt != null)
-			{
-				Stmt.close();
-			}
-			if (conn != null)
-			{
-				freeConnection(getDatasource(), conn);
-			}
-		}
+	    finally {
+	    	// do not hide an existing exception
+	    	try { 
+	    		if (RS != null) {
+	    			RS.close();
+		      	}
+	    	}
+		    catch (SQLException resultCloseEx) {
+		    	System.err.println("[GenericGroup] result set could not be closed");
+		     	resultCloseEx.printStackTrace(System.err);
+		    }
+		    // do not hide an existing exception
+		    try {
+		    	if (Stmt != null)  {
+		    		Stmt.close();
+					if (conn != null)
+						ConnectionBroker.freeConnection(getDatasource(), conn);
+		    	}
+		    }
+	 	    catch (SQLException statementCloseEx) {
+		     	System.err.println("[GenericGroup] statement could not be closed");
+		     	statementCloseEx.printStackTrace(System.err);
+		    }
+	    }
 		if (vector != null)
 		{
 			vector.trimToSize();
