@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -529,6 +530,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * @return Collection of Groups found recursively down the tree
  * @throws EJBException If an error occured
  */
+//nothing recursive here!!
   public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
   //public Collection getGroupsContained(Group groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
   try{
@@ -537,8 +539,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	   */
 	    Collection groups = aGroup.getChildGroups();
 	
-	    if (groups != null && groups.size() > 0){
-	      Map GroupsContained = new Hashtable();
+	    if (groups != null && !groups.isEmpty() ){
+	      Map GroupsContained = new HashMap();
 	
 	      String key = "";
 	      Iterator iter = groups.iterator();
@@ -546,54 +548,57 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	        Group item = (Group)iter.next();
 	        if(item!=null){
 		        key = item.getPrimaryKey().toString();
-		        if(!GroupsContained.containsKey(key)){
+		        if(!GroupsContained.containsKey(key)){// isn't this slow? why not just put the value
 		          GroupsContained.put(key,item);
 		          putGroupsContained( item, GroupsContained );
 		        }
 	        }
 	      }
 	
-	      List specifiedGroups = new ArrayList();
-	      List notSpecifiedGroups = new ArrayList();
+	      List returnGroups = new ArrayList();
+
 	      int j = 0;
 	      int k = 0;
 	      Iterator iter2 = GroupsContained.values().iterator();
 	      if(groupTypes != null && groupTypes.length > 0){
-	        boolean specified = false;
+	    
 	        while (iter2.hasNext()) {
 	          Group tempObj = (Group)iter2.next();
 	          try {
 	
-	            String tempObjGroupType = tempObj.getGroupType();
-	
-	            for (int i = 0; i < groupTypes.length; i++) {
-	              if (groupTypes[i].equals(tempObjGroupType)){
-	                specifiedGroups.add(j++, tempObj);
-	                specified = true;
-	              }
+	            String tempObjGroupType = tempObj.getGroupType();//This generates a database find!! why not simply select the correct groups right away
+	            
+							boolean sameType = false;
+	            for (int i = 0; (i < groupTypes.length) && !sameType ; i++) {
+	            	 sameType = groupTypes[i].equals(tempObjGroupType);
 	            }
-	            if(!specified) {
-	              notSpecifiedGroups.add(k++, tempObj);
-	            } else {
-	              specified = false;
-	            }
+	            
+              if ( sameType && returnSpecifiedGroupTypes){
+                returnGroups.add(j++, tempObj);
+              }
+              else if(!sameType && !returnSpecifiedGroupTypes){
+								returnGroups.add(j++, tempObj);
+              }
+	              
+	            
 	          }
 	          catch (Exception ex) {
 	            ex.printStackTrace();
 	          }
 	        }
-	        notSpecifiedGroups.remove(aGroup);
-	        specifiedGroups.remove(aGroup);
-	      } else {
+	    
+	      } else {//athuga vel
 	        while (iter2.hasNext()) {
 	          Group tempObj = (Group)iter2.next();
-	          notSpecifiedGroups.add(j++, tempObj);
+	          returnGroups.add(j++, tempObj);
 	        }
-	        notSpecifiedGroups.remove(aGroup);
+					
 	        returnSpecifiedGroupTypes = false;
 	      }
+	      
+				returnGroups.remove(aGroup);
 	
-	      return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+	      return returnGroups;
 	    }else{
 	      return null;
 	    }
