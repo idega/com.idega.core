@@ -27,6 +27,7 @@ import com.idega.builder.business.BuilderLogic;
 public class PageIncluder extends PresentationObject implements Index{
   private String URL = null;
   private String BASEURL = null;
+  private String BASEURLHTTPS = null;
   private String RELATIVEURL = null;
   private String pageIncluderPrefix = null;
   private String _label = null;
@@ -39,6 +40,8 @@ public class PageIncluder extends PresentationObject implements Index{
   private String token = null;
   private String tokenReplacer = null;
   private String serverName = null;
+  private String httpPrefix = null;
+  private String httpsPrefix = null;
 
   private String out;
   private int index = 1000;
@@ -176,7 +179,20 @@ public class PageIncluder extends PresentationObject implements Index{
 	  }
 
 	  pageIncluderPrefix = buf.toString();
-	  System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+
+          StringBuffer buf2 = new StringBuffer();
+          buf2.append("http://").append(serverName).append(pageIncluderPrefix).append("http://");
+          httpPrefix = buf2.toString();
+
+          //System.out.println("httpPrefix"+httpPrefix);
+
+          httpsPrefix = "https://"+httpPrefix.substring(7,httpPrefix.length());
+
+          //System.out.println("httpSPrefix"+httpsPrefix);
+
+
+
+	  //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
       }
       else {
 	pageIncluderPrefix ="";
@@ -204,7 +220,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	        for (int i = 0; i < values.length; i++) {
                   queryBuf.append(param);
 		  queryBuf.append("=");
-		  queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
+		  queryBuf.append(URLEncoder.encode(values[i]));
 		  queryBuf.append("&");
                 }
 	      }
@@ -273,7 +289,10 @@ public class PageIncluder extends PresentationObject implements Index{
 
 	  URL url = new URL(loc);
 	  BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
-	  if(loc.lastIndexOf("/")==6) loc+="/";
+
+          BASEURLHTTPS = "https://"+url.getHost()+"/";
+
+          if(loc.lastIndexOf("/")==6) loc+="/";
 	  RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
 
 	  /**
@@ -294,12 +313,12 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
   protected String preProcess(String html){
-    html = TextSoap.findAndReplace(html,"href=\"javascript","IW_PREPROCESSED");
+    html = TextSoap.findAndReplace(html,"href=\"javascript","httpIW_PREPROCESSED");
     return html;
   }
 
   protected String postProcess(String html){
-    html = TextSoap.findAndReplace(html,"IW_PREPROCESSED","href=\"javascript");
+    html = TextSoap.findAndReplace(html,"httpIW_PREPROCESSED","href=\"javascript");
     return html;
   }
 
@@ -334,27 +353,48 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected String insertPageIncludeInTag(String tag,String html){
-    StringBuffer buf = new StringBuffer();
-    buf.append(tag).append("=\"").append(pageIncluderPrefix).append("http://");
-    String prefix = buf.toString();
+//do NOT change the order of replacements!
+// "logic" is as follows
+/* prefix of url to replace -> what changes to
+
+  1.
+  nothing -> http+relativeurl = baseurl
+  // -> baseurl
+  / ->  baseurl
+  http -> donothing = baseurl
+  https -> donothing = httpsbaseurl
+  http to another server -> do nothing
+
+  2. force in frame addon
+  baseurl -> httpprefix+baseurl
+
+
+  2b.
+  httpprefix+baseurl -> nothing
+  httpsbaseurl -> httpsprefix+httpsbaseurl
+
+*/
 
     tag = tag+"=\"";
+    String prefixHttp= tag+httpPrefix;
+    String prefixHttps= tag+httpsPrefix;
 
-    html = TextSoap.findAndReplace(html,tag+"//",prefix);// the // case
-    html = TextSoap.findAndReplace(html,tag+"http://",prefix);// the http:// case
+
+
+    html = TextSoap.findAndReplace(html,tag+"//",tag+BASEURL);// the // case
+    html = TextSoap.findAndReplace(html,tag+"/",tag+BASEURL);
+    html = TextSoap.findAndReplace(html,tag,"http",tag+RELATIVEURL);//does not work for other protocols :(
+
+    //System.out.println("tag+BASEURL"+tag+BASEURL);
+    //System.out.println("tag+RELATIVEURL"+tag+RELATIVEURL);
+
 
     if(forceFrame){
-      html = TextSoap.findAndReplace(html,tag+"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"/",tag+pageIncluderPrefix+BASEURL );// the / case
-      /**@todo make this a boolean choice
-       * special case. changes https to http
-       */
-      html = TextSoap.findAndReplace(html,tag+"https://",tag+"https://"+serverName+pageIncluderPrefix+"http://");// the http:// case
-      html = TextSoap.findAndReplace(html,tag,pageIncluderPrefix,tag+pageIncluderPrefix+RELATIVEURL);
+      html = TextSoap.findAndReplace(html,tag+BASEURL,prefixHttp+BASEURL);// the http://baseurl case skipped the tailing /
+      html = TextSoap.findAndReplace(html,tag+BASEURLHTTPS,prefixHttps+BASEURL);// the https:// case
     }
-    else{
-      html = TextSoap.findAndReplace(html,tag+"/",tag+BASEURL);
-      html = TextSoap.findAndReplace(html,tag,"http://",tag+RELATIVEURL);
-    }
+
+
     return html;
   }
 
