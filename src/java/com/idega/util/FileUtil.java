@@ -183,12 +183,14 @@ public class FileUtil {
    * deletes entire contents of a folder. Returns true if deletion successful, false otherwise
    */
   public static boolean deleteAllFilesInDirectory(String path){
-    File folder = new File(path);
-    if(folder.exists()){
+   	File folder = new File(path);
+    if(folder!=null && folder.exists() && folder.isDirectory()){
       File[] files = folder.listFiles();
-      for (int i = 0; i < files.length; i++) {
-       files[i].delete();
-      }
+      if(files!=null){
+	      for (int i = 0; i < files.length; i++) {
+	       files[i].delete();
+	      }
+	  }
       return true;
     }
     else{
