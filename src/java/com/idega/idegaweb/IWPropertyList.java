@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.6 2001/06/18 16:25:38 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.7 2001/06/26 19:22:51 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -278,6 +278,13 @@ public class IWPropertyList {
     xmlFile = file;
     try {
       xmlDocument = builder.build(xmlFile);
+
+      rootElement = xmlDocument.getRootElement();
+      dict = rootElement.getChild(dictTag);
+      if(dict==null){
+        dict = new Element(dictTag);
+        rootElement.addContent(dict);
+      }
     }
     catch(JDOMException e) {
       e.printStackTrace();
@@ -285,12 +292,7 @@ public class IWPropertyList {
     catch(Throwable e) {
       e.printStackTrace();
     }
-    rootElement = xmlDocument.getRootElement();
-    dict = rootElement.getChild(dictTag);
-    if(dict==null){
-      dict = new Element(dictTag);
-      rootElement.addContent(dict);
-    }
+
   }
 
   public void removeProperty(String key){

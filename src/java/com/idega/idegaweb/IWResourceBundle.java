@@ -44,8 +44,13 @@ public class IWResourceBundle extends ResourceBundle {
         setIWBundleParent(parent);
         setLocale(locale);
         this.file = file;
-        lookup.load(new FileInputStream(file));
-        setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");
+        try{
+          lookup.load(new FileInputStream(file));
+          setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");
+        }
+        catch(FileNotFoundException e){
+          e.printStackTrace(System.err);
+        }
     }
 
     /**
