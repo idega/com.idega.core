@@ -22,6 +22,7 @@ public class IDOQuery {
 
 	private static final String SELECT_ALL_FROM = "SELECT * FROM ";
 	private static final String SELECT_COUNT_FROM = "SELECT COUNT(*) FROM ";
+	private static final String SELECT_COUNT = "SELECT COUNT(*) ";
 	private static final String SELECT = "SELECT ";
 	private static final String FROM = " FROM ";
 	private static final String SUM = "SUM";
@@ -492,6 +493,11 @@ public class IDOQuery {
 	public IDOQuery appendSelectCountFrom() {
 		return this.append(SELECT_COUNT_FROM);
 	}
+	
+	public IDOQuery appendSelectCount() {
+		return this.append(SELECT_COUNT);
+	}
+	
 	public IDOQuery appendSelectCountFrom(IDOEntity entity) {
 		return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
 		//return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
