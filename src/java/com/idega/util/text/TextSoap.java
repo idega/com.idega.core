@@ -322,7 +322,8 @@ public class TextSoap {
   public static String findAndReplace(String text, String stringToFind, String stringToReplace) {
    // Regex r = new Regex(stringToFind,stringReplace);
     //return r.replaceAll(text);
-    StringBuffer buf = new StringBuffer();
+    StringBuffer buf = new StringBuffer("");
+    String returnString;
     int index = text.indexOf(stringToFind);
     int index2 = 0;
     int length1 = stringToReplace.length();
@@ -341,7 +342,14 @@ public class TextSoap {
         buf.append(text.substring(index2 + length1, text.length()));
       }
     }
-    return buf.toString();
+
+    returnString = buf.toString();
+
+    if(returnString.equals("")){
+      returnString = text;
+    }
+
+    return returnString;
   }
 
 
@@ -382,6 +390,7 @@ public class TextSoap {
    */
   public static String findAndInsertBefore(String text,String stringToFind,String stringInsert) {
     StringBuffer buf = new StringBuffer();
+    String returnString;
     int index = text.indexOf(stringToFind);
     int index2 = 0;
     int toInsertlength = stringInsert.length();
@@ -400,7 +409,13 @@ public class TextSoap {
         buf.append(text.substring(index2 + toFindLength, text.length()));
       }
     }
-    return buf.toString();
+    returnString = buf.toString();
+
+    if(returnString.equals("")){
+      returnString = text;
+    }
+
+    return returnString;
   }
 
 
