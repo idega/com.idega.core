@@ -172,11 +172,27 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public Country getCountry() {
-		return (Country) getColumnValue(IC_COUNTRY_ID);
+		Country country = (Country) getColumnValue(IC_COUNTRY_ID);
+		if(country==null){
+			PostalCode code = getPostalCode();
+			if(code!=null){
+				return code.getCountry();
+			}
+		}
+		
+		return country;
 	}
 
 	public int getCountryId() {
-		return getIntColumnValue(IC_COUNTRY_ID);
+		int id = getIntColumnValue(IC_COUNTRY_ID);
+		if(id==-1){
+			Country country = getCountry();
+			if(country!=null){
+				id = ((Integer)country.getPrimaryKey()).intValue();
+			}
+		}
+		
+		return id;
 	}
 
 	public void setCountry(Country country) {
