@@ -499,7 +499,7 @@ public class ImageLabel extends Canvas {
   //----------------------------------------------------
   /** Gets the border width. */
 
-  public int getBorder() {
+  public int getTheBorder() {
     return(border);
   }
 

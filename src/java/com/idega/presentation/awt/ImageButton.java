@@ -129,7 +129,7 @@ public class ImageButton extends ImageLabel {
   public boolean mouseDown(Event event, int x, int y) {
     mouseIsDown = true;
     Graphics g = getGraphics();
-    int border = getBorder();
+    int border = getTheBorder();
     if (hasExplicitSize())
       g.drawImage(grayImage, border, border,
                   getWidth()-2*border,
@@ -238,7 +238,7 @@ public class ImageButton extends ImageLabel {
     int top = 0;
     int width = getWidth();
     int height = getHeight();
-    int border = getBorder();
+    int border = getTheBorder();
     for(int i=0; i<border; i++) {
       g.draw3DRect(left, top, width, height, isUp);
       left++;
@@ -267,7 +267,7 @@ public class ImageButton extends ImageLabel {
       new FilteredImageSource(getImage().getSource(),
                               filter);
     grayImage = createImage(producer);
-    int border = getBorder();
+    int border = getTheBorder();
     if (hasExplicitSize())
       prepareImage(grayImage, getWidth()-2*border,
                    getHeight()-2*border, this);
