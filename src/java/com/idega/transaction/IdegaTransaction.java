@@ -169,20 +169,20 @@ public Connection getConnection(){
 }
 
 public void freeConnection(Connection conn){
-  try{
-    this.conn.setAutoCommit(true);
+  if(conn!=null){
+    try{
+      conn.setAutoCommit(true);
+    }
+    catch(SQLException ex){
+      ex.printStackTrace(System.err);
+    }
+    ConnectionBroker.freeConnection(conn,false);
   }
-  catch(SQLException ex){
-    ex.printStackTrace(System.err);
-  }
-  ConnectionBroker.freeConnection(conn,false);
-  this.conn=null;
 }
 
 protected void end(){
-  if(this.conn!=null){
     freeConnection(this.conn);
-  }
+    this.conn=null;
 }
 
 }
