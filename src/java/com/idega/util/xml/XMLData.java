@@ -10,19 +10,19 @@ import java.io.IOException;
 import java.io.InputStream;
 //import java.io.OutputStream;
 
-import com.idega.block.media.business.MediaBusiness;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.io.MemoryFileBuffer;
-import com.idega.io.MemoryInputStream;
+
 //import com.idega.io.MemoryOutputStream;
+import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
+import com.idega.xml.XMLException;
 import com.idega.xml.XMLOutput;
 import com.idega.xml.XMLParser;
 
@@ -323,33 +323,129 @@ public class XMLData {
 //    return null;
 //  }  
   
-
   private void initialize(ICFile xmlFile) {
-    InputStream inputStream = null;
     try {
       name = xmlFile.getName();
-      XMLParser parser = new XMLParser();
-      //inputStream = xmlFile.getFileValue();
-      MemoryFileBuffer buffer = MediaBusiness.getMediaBuffer(xmlFile);
-      inputStream = new MemoryInputStream(buffer);
-      document = parser.parse(inputStream);
-      inputStream.close();
       xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
-    }
-    catch (Exception ex)  {
-      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
-      ex.printStackTrace(System.err);
-      document = null;
-      xmlFileId = -1;
-      try { 
+      // use auxiliary file
+      String separator = FileUtil.getFileSeparator();
+      IWMainApplication mainApp = IWContext.getInstance().getApplication();
+      StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
+      path.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY)
+        .append(separator)
+        .append(AUXILIARY_FOLDER);
+      // check if the folder exists create it if necessary
+      // usually the folder should be already be there.
+      // the folder is never deleted by this class
+      FileUtil.createFolder(path.toString());
+      // set name of auxiliary file
+      path.append(separator).append(AUXILIARY_FILE).append(xmlFileId).append("read").append(XML_EXTENSION);
+      BufferedOutputStream outputStream = null;
+      File auxiliaryFile = null;
+      try {
+        auxiliaryFile = new File(path.toString());
+        outputStream = new BufferedOutputStream(new FileOutputStream(auxiliaryFile));
+      }
+      catch (FileNotFoundException ex)  {
+        System.err.println("[XMLData] problem creating file. Message is: "+ex.getMessage());
+        ex.printStackTrace(System.err);
+        throw new IOException("xml file could not be stored");
+      }
+      // now we have an output stream of the auxiliary file
+      // write to the xml file
+      InputStream input = xmlFile.getFileValue();
+      byte buffer[]= new byte[1024];
+      int noRead  = 0;
+
+      noRead = input.read( buffer, 0, 1024 );
+      //Write out the stream to the file
+      while ( noRead != -1 ){
+        outputStream.write( buffer, 0, noRead );
+        noRead = input.read( buffer, 0, 1024 );
+      }
+      outputStream.flush();
+      outputStream.close();
+      // read file 
+      BufferedInputStream inputStream = null;
+      try {
+        inputStream = new BufferedInputStream(new FileInputStream(auxiliaryFile));
+       }
+      catch (FileNotFoundException ex)  {
+        System.err.println("[XMLData] problem reading file. Message is: "+ex.getMessage());
+        ex.printStackTrace(System.err);
+        throw new IOException("xml file could not be stored");
+      }
+      // now we have an input stream of the auxiliary file
+      XMLParser parser = new XMLParser();
+      try {
+        document = parser.parse(inputStream);
         inputStream.close();
       }
-      catch (IOException ioEx)  {
-        System.err.println("[XMLData]: input stream could not be closed. Message was: "+ ex.getMessage());
-        ioEx.printStackTrace(System.err);
+      catch (XMLException ex) {
+        System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
+        ex.printStackTrace(System.err);
+        document = null;
+        xmlFileId = -1;
+        inputStream.close();
       }
-    }      
-  } 
+    }
+    catch(IOException ioEx) {
+      System.err.println("[XMLData]: initialization failed. Message was: "+ ioEx.getMessage());
+      ioEx.printStackTrace(System.err);
+    }
+  }
+
+
+      
+      
+      
+      
+//    }
+//    catch (Exception ex)  {
+//      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
+//      ex.printStackTrace(System.err);
+//      document = null;
+//      xmlFileId = -1;
+//      try { 
+//        inputStream.close();
+//      }
+//      catch (IOException ioEx)  {
+//        System.err.println("[XMLData]: input stream could not be closed. Message was: "+ ex.getMessage());
+//        ioEx.printStackTrace(System.err);
+//      }
+//    }      
+//  } 
+
+
+
+
+
+//  private void initialize(ICFile xmlFile) {
+//    InputStream inputStream = null;
+//    try {
+//      name = xmlFile.getName();
+//      XMLParser parser = new XMLParser();
+//      //inputStream = xmlFile.getFileValue();
+//      MemoryFileBuffer buffer = MediaBusiness.getMediaBuffer(xmlFile);
+//      inputStream = new MemoryInputStream(buffer);
+//      document = parser.parse(inputStream);
+//      inputStream.close();
+//      xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
+//    }
+//    catch (Exception ex)  {
+//      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
+//      ex.printStackTrace(System.err);
+//      document = null;
+//      xmlFileId = -1;
+//      try { 
+//        inputStream.close();
+//      }
+//      catch (IOException ioEx)  {
+//        System.err.println("[XMLData]: input stream could not be closed. Message was: "+ ex.getMessage());
+//        ioEx.printStackTrace(System.err);
+//      }
+//    }      
+//  } 
     
     
   private ICFile getXMLFile(int fileId)  {
