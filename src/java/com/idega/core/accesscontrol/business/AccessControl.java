@@ -1323,7 +1323,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    */
   public void setAsOwner(IBPage page, IWUserContext iwc)throws Exception {
     int groupId = iwc.getUser().getPrimaryGroupID();
-    //setPermission(AccessController._CATEYGORYSTRING_PAGE_ID,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+    setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+    setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_EDIT,Boolean.TRUE);
+    setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_VIEW,Boolean.TRUE);
   }
 
   /**

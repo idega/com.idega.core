@@ -6,6 +6,8 @@ import com.idega.builder.data.*;
 import java.lang.*;
 import java.sql.*;
 
+import com.idega.idegaweb.IWUserContext;
+
 /**
  * Title:        IC
  * Description:
@@ -62,11 +64,11 @@ public class ICJspHandler {
   }
 
 
-  public static int getJspPageInstanceID(IWContext iwc){
+  public static int getJspPageInstanceID(IWUserContext iwc){
     return ((Integer)iwc.getSessionAttribute("JspPageInstanceID")).intValue();
   }
 
-  public static IBJspPage getIBJspPage(IWContext iwc) throws SQLException{
+  public static IBJspPage getIBJspPage(IWUserContext iwc) throws SQLException{
     return new IBJspPage(getJspPageInstanceID(iwc));
   }
 

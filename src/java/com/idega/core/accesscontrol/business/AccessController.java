@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.business;
 import com.idega.core.user.data.User;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICObject;
+import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -62,6 +63,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public void setAsOwner(PresentationObject obj, int groupId, IWUserContext iwc) throws Exception ;
   public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception;
   public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWUserContext iwc)throws Exception;
+  public void setAsOwner(IBPage page,IWUserContext iwc)throws Exception;
 
 
   public boolean hasPermission(String permissionKey, PresentationObject obj,IWUserContext iwc) throws Exception;
