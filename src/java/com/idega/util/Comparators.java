@@ -74,8 +74,8 @@ public class Comparators{
     public int compare(Object parm1, Object parm2) {
         Method method1 = (Method)parm1;
         Method method2 = (Method)parm2;
-        String s1 = method1.toString();
-        String s2 = method2.toString();
+        String s1 = method1.getName();
+        String s2 = method2.getName();
         return s1.compareTo(s2);
     }
   }
