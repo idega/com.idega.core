@@ -21,8 +21,6 @@ public class IWBrowseListView extends Block implements IWBrowserView {
   public IWBrowseListView() {
   }
 
-  public IWActionListener getListener(){return null;}
-
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
   }

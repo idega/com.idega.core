@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 
+import com.idega.builder.data.IBDomain;
 import com.idega.data.*;
 import com.idega.core.data.*;
 
@@ -54,6 +55,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
                 this.addManyToManyRelationShip(ICNetwork.class,"ic_group_network");
                 this.addManyToManyRelationShip(ICProtocol.class,"ic_group_protocol");
+                this.addManyToManyRelationShip(IBDomain.class);
+
 
 	}
 
@@ -206,6 +209,17 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
           catch(Exception e){
             throw new EJBException(e.getMessage());
           }
+        }
+
+        public Integer ejbCreateGroup() throws CreateException {
+          return (Integer)this.ejbCreate();
+        }
+
+        public void ejbPostCreateGroup() throws CreateException {
+        }
+
+        public Integer ejbFindGroupByPrimaryKey(Object pk) throws FinderException {
+          return (Integer)this.ejbFindByPrimaryKey(pk);
         }
 
         private List getListOfAllGroupsContainingLegacy(int group_id)throws EJBException{
@@ -589,13 +603,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
         public Collection ejbFindAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
-          String typeList = "";
+//          String typeList = "";
           if (groupTypes != null && groupTypes.length > 0){
-            for(int g = 0; g < groupTypes.length; g++){
-              if(g>0){ typeList += ", "; }
-              typeList += "'"+groupTypes[g]+"'";
-            }
-            Group gr = (Group)com.idega.user.data.GroupBMPBean.getStaticInstance();
+//            for(int g = 0; g < groupTypes.length; g++){
+//              if(g>0){ typeList += ", "; }
+//              typeList += "'"+groupTypes[g]+"'";
+//            }
+            String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes,true);
 
             return super.idoFindIDsBySQL("select * from "+getEntityName()+" where "+getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?" in (":" not in (")+typeList+") order by "+getNameColumnName());
           }
@@ -707,6 +721,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
             return -1;
         }
 
+
+
   private GroupHome getGroupHome(){
     return ((GroupHome)this.getEJBHome());
   }
@@ -780,7 +796,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return node.getNodeID();
   }
   public ICTreeNode getParentNode() {
-    ICTreeNode parent = null;;
+    ICTreeNode parent = null;
     try{
       parent = (ICTreeNode)this.getListOfAllGroupsContainingThis().iterator().next();
     }
@@ -788,7 +804,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return parent;
   }
   public boolean isLeaf() {
-    return getChildren().hasNext();
+    /**
+     * @todo reimplement
+     */
+    return !getChildren().hasNext();
   }
   public String getNodeName() {
     return this.getName();
@@ -799,5 +818,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   public int getSiblingCount() {
     return getParentNode().getChildCount();
   }
+
+
 }   // Class Group
 

@@ -16,31 +16,41 @@ import com.idega.presentation.ui.AbstractTreeViewer;
  * @version 1.0
  */
 
-public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
+public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
 
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
 
   public IWTreeControl() {
+    getStateHandler().setPresentationStateClass(IWTreeControlPS.class);
   }
 
 
   public void setControlTarget(String controlTarget){
+    this.setOpenCloseLinkTarget(controlTarget);
     _controlTarget = controlTarget;
   }
 
   public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
+    this.addEventModel(model);
+  }
+
+  public IWPresentationEvent getControlEventModel(){
+    return _contolEvent;
+  }
+
+  public String getControlTarget(){
+    return _controlTarget;
   }
 
 
 
-  public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
-    /**@todo: implement this com.idega.presentation.ui.AbstractTreeViewer abstract method*/
-    return PresentationObject.NULL_CLONE_OBJECT;
+//  public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
+//    /**@todo: implement this com.idega.presentation.ui.AbstractTreeViewer abstract method*/
+//    return PresentationObject.NULL_CLONE_OBJECT;
+//
+//  }
 
-  }
-
-  public IWActionListener getListener(){return null;}
 
 }

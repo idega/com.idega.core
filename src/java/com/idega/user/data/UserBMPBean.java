@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import com.idega.util.ListUtil;
 import com.idega.data.*;
 import com.idega.core.data.*;
 import com.idega.core.accesscontrol.data.PermissionGroup;
@@ -317,7 +318,10 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
     /*  Finders begin   */
 
     public Collection ejbFindUsersForUserRepresentativeGroups(Collection groupList)throws FinderException{
+//      System.out.println("[UserBMPBean]: groupList = "+groupList);
       String sGroupList = IDOUtil.getInstance().convertListToCommaseparatedString(groupList);
+//      System.out.println("[UserBMPBean]: sGroupList = "+sGroupList);
+//      System.out.println("[UserBMPBean]: "+"select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
       return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
     }
 

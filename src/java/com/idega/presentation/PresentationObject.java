@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.52 2002/06/13 14:06:21 eiki Exp $
+ * $Id: PresentationObject.java,v 1.53 2002/06/20 19:18:41 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1232,22 +1232,42 @@ public class PresentationObject extends Object implements Cloneable {
       return _listenerList;
     } else {
       try {
-	IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
-	System.out.println();
+//<<<<<<< PresentationObject.java
+        IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
+//        System.out.println();
+//=======
+//	IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
+//	System.out.println();
+//>>>>>>> 1.52
 //        System.out.println("getEventListenerList: machine = "+ machine);
 //        System.out.println("getEventListenerList: location = "+this.getLocation());
-	System.out.println();
-	if(this.getICObjectInstanceID() == 0){
-	  if(this.getLocation() != null){
-	    _listenerList = machine.getListenersFor(this.getLocation());
-	    return _listenerList;
-	  } else {
-	    throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
-	  }
-	} else {
-	  _listenerList = machine.getListenersFor(this.getICObjectInstance());
-	  return _listenerList;
-	}
+//<<<<<<< PresentationObject.java
+//        System.out.println();
+        if(this.getICObjectInstanceID() == 0){
+          if(this.getLocation() != null){
+            _listenerList = machine.getListenersFor(this.getLocation());
+            return _listenerList;
+          } else {
+            throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
+          }
+        } else {
+          _listenerList = machine.getListenersFor(this.getICObjectInstance());
+          return _listenerList;
+        }
+//=======
+//	System.out.println();
+//	if(this.getICObjectInstanceID() == 0){
+//	  if(this.getLocation() != null){
+//	    _listenerList = machine.getListenersFor(this.getLocation());
+//	    return _listenerList;
+//	  } else {
+//	    throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
+//	  }
+//	} else {
+//	  _listenerList = machine.getListenersFor(this.getICObjectInstance());
+//	  return _listenerList;
+//	}
+//>>>>>>> 1.52
       }
       catch (RemoteException ex) {
 	throw new RuntimeException(ex.getMessage());
@@ -1285,6 +1305,19 @@ public class PresentationObject extends Object implements Cloneable {
 
   public void removeIWActionListener(IWActionListener l){
     getEventListenerList(this.getIWUserContext()).remove(IWActionListener.class,l);
+  }
+
+
+  public void debugEventListanerList(IWContext iwc){
+    System.out.println("--[DEBUG: "+this+"]: listenerList values:");
+    EventListenerList list = this.getEventListenerList(iwc);
+    Object[] listeners = (Object[])list.getListenerList();
+    if(listeners != null ){
+      for (int i = 0; i < listeners.length; i++) {
+        System.out.println(listeners[i]);
+      }
+    }
+    System.out.println("--[DEBUG: "+this+"]: listenerList: DONE");
   }
 
 }

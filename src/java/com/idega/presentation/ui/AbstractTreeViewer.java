@@ -87,13 +87,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
   private TreeViewerEvent _eventModel = null;
 
-  private StatefullPresentationImplHandler stateHandler = null;
+  private StatefullPresentationImplHandler _stateHandler = null;
 
   public AbstractTreeViewer() {
     super();
 
-    stateHandler = new StatefullPresentationImplHandler();
-    stateHandler.setPresentationStateClass(TreeViewerPS.class);
+    _stateHandler = new StatefullPresentationImplHandler();
+    _stateHandler.setPresentationStateClass(TreeViewerPS.class);
 
     defaultRoot = new DefaultTreeNode("root",-1);
     icons = new Image[14];
@@ -180,6 +180,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
   public void drawTree(IWContext iwc){
     this.empty();
+    frameTable.empty();
+    frameTable.resize(1,1);
     this.add(frameTable);
     //frameTable.empty();
     treeTableIndex = ((!_showHeaderRow)?1:2);
@@ -754,15 +756,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 
   public Class getPresentationStateClass(){
-    return stateHandler.getPresentationStateClass();
+    return _stateHandler.getPresentationStateClass();
   }
 
   public IWPresentationState getPresentationState(IWUserContext iwuc){
-    return stateHandler.getPresentationState(this,iwuc);
+    return _stateHandler.getPresentationState(this,iwuc);
   }
 
   public StatefullPresentationImplHandler getStateHandler(){
-    return stateHandler;
+    return _stateHandler;
   }
 
 
@@ -898,6 +900,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
   }
 
+
+  public void addEventModel(IWPresentationEvent model){
+    openCloseLink.addEventModel(model);
+  }
+
+  public void setOpenCloseLinkTarget(String target){
+
+    openCloseLink.setTarget(target);
+  }
 
 
 }

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.56 2002/06/12 18:28:22 laddi Exp $
+ *  $Id: Page.java,v 1.57 2002/06/20 19:18:41 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1124,7 +1124,7 @@ public class Page extends PresentationObjectContainer {
       } else {
 	Page defaultPage = new Page();
 	//defaultPage.setBackgroundColor("#FF0000");
-	System.err.println("Frame "+frameNameKey+": page is null");
+	System.err.println("["+Page.class+"]: Frame "+frameNameKey+": page is null");
 	return defaultPage;
       }
 

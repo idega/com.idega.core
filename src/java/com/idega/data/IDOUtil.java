@@ -60,12 +60,24 @@ public class IDOUtil {
    *
    * @returns a String with comma separated list of primary keys for the IDOEntities
    */
+
   public String convertArrayToCommaseparatedString(String[] sArray){
+    return convertArrayToCommaseparatedString(sArray, false);
+  }
+
+
+
+
+  public String convertArrayToCommaseparatedString(String[] sArray, boolean whithSimpleQuoteMarks ){
     String sList = "";
     if (sArray != null && sArray.length > 0){
       for(int g = 0; g < sArray.length; g++){
         if(g>0){ sList += ", "; }
-        sList += sArray[g];
+        if(whithSimpleQuoteMarks){
+          sList += "'"+sArray[g]+"'";
+        } else {
+          sList += sArray[g];
+        }
       }
     }
     return sList;

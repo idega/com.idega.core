@@ -28,10 +28,10 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
   }
 
   public void reset(){
-    this.listenerList = new EventListenerList();
-    this._stateHasChanged = false;
+//    this.listenerList = new EventListenerList();
+//    this._stateHasChanged = false;
     this.changeEvent = null;
-    this._location = new IWPresentationLocation();
+//    this._location = new IWPresentationLocation();
   }
 
 //  public abstract void setStateValue(String stateName, Object value);

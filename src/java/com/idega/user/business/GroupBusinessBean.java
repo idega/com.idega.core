@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+import com.idega.data.IDOHome;
 import com.idega.business.IBOServiceBean;
 import java.util.Locale;
 import com.idega.idegaweb.IWApplicationContext;

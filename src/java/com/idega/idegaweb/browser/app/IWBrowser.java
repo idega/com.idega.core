@@ -200,11 +200,11 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 
 
   public void modifyFrameObject(IWContext iwc, IWFrameBusiness fb, Frame frame) throws RemoteException {
-      //System.out.println("IWBrowser.modifyFrameObject");
+//      System.out.println("IWBrowser.modifyFrameObject");
 
     //if(frame.getFrameType() == Frame.OBJ || frame.getFrameType() == Frame.FRAMESET ){
       PresentationObject obj = frame.getPresentationObject();
-      //System.out.println("frame.getPresentationObject() = "+obj);
+//      System.out.println("frame.getPresentationObject() = "+obj);
       if(obj instanceof IWBrowserView){
         ((IWBrowserView)obj).setControlTarget(this.getControlframeTarget());
 
@@ -367,8 +367,6 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
       this.add(this.getMainFrame());
     }
 
-    super._main(iwc);
-
 
 //    System.out.println("IWBrowser: addChangeListener ...");
     Frame ctrlFrame = this.getControlframe();
@@ -399,7 +397,7 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     }
 
 
-
+    super._main(iwc);
 
   }
 

@@ -13,7 +13,6 @@ import com.idega.event.IWPresentationEvent;
 
 public interface IWBrowserView extends IWBrowserCompliant{
 
-  public IWActionListener getListener();
   public void setControlTarget(String target);
 
   public void setControlEventModel(IWPresentationEvent model);

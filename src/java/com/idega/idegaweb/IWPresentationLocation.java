@@ -21,6 +21,7 @@ public class IWPresentationLocation implements IWLocation {
   protected boolean _inPopUpWindow = false;
   protected String _applicationClass = null;
   protected int _id = 0;
+  protected int _subID = 0;
 
   public IWPresentationLocation() {
   }
@@ -76,6 +77,14 @@ public class IWPresentationLocation implements IWLocation {
 
   public void setICObjectInstanceID(int id){
     _id = id;
+  }
+
+  public int getSubID(){
+    return _subID;
+  }
+
+  public void setSubID(int id){
+    _subID = id;
   }
 
 
@@ -201,6 +210,8 @@ public class IWPresentationLocation implements IWLocation {
       obj._inFrameset = this._inFrameset;
       obj._inPopUpWindow = this._inPopUpWindow;
       obj._applicationClass = this._applicationClass;
+      obj._id = this._id;
+      obj._subID = this._subID;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
@@ -225,6 +236,8 @@ public class IWPresentationLocation implements IWLocation {
     buffer.append(((_inFrameset)?1:0));
     buffer.append(SEPARATOR);
     buffer.append(((_inPopUpWindow)?1:0));
+    buffer.append(SEPARATOR);
+    buffer.append(_subID);
 
 //    try {
 //      throw new Exception(buffer.toString());
@@ -249,6 +262,7 @@ public class IWPresentationLocation implements IWLocation {
         String topPage = tokenizer.nextToken();
         String inFrameset = tokenizer.nextToken();
         String inPopUpWindow = tokenizer.nextToken();
+        String subID = tokenizer.nextToken();
 
         if(target.equals("null")){
           target = DEFAULT_TARGET;
@@ -258,6 +272,8 @@ public class IWPresentationLocation implements IWLocation {
         if(!applicationClassName.equals("null")){
           location._applicationClass = IWMainApplication.decryptClassName(applicationClassName);
         }
+        location._subID = Integer.parseInt(subID);
+
 //        System.err.println("IWPresentationLocation.location: "+location.getLocationString());
         return location;
       } else {

@@ -1,28 +1,21 @@
 package com.idega.user.business;
 
-import java.sql.SQLException;
-import com.idega.core.data.*;
 import com.idega.user.data.*;
-import com.idega.data.EntityFinder;
-import java.util.List;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Iterator;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.user.data.User;
-import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.presentation.IWContext;
 import com.idega.core.accesscontrol.data.PermissionGroup;
-import com.idega.core.accesscontrol.data.PermissionGroupHome;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collection;
-
-import javax.ejb.*;
+import com.idega.data.IDOLookup;
+import com.idega.presentation.IWContext;
+import com.idega.util.ListUtil;
 import java.rmi.RemoteException;
-import com.idega.data.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 /**
  * Title:        User
@@ -128,7 +121,9 @@ public class UserGroupBusinessBean extends com.idega.business.IBOServiceBean imp
   }
 
   public  Collection getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws Exception {
-    Collection result = com.idega.user.data.GroupBMPBean.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
+    Collection result = getGroupHome().findAllGroups(groupTypes,returnSepcifiedGroupTypes);
+
+//    com.idega.user.data.GroupBMPBean.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
       result.removeAll(iwc.getAccessController().getStandardGroups());
     }
@@ -452,7 +447,11 @@ public class UserGroupBusinessBean extends com.idega.business.IBOServiceBean imp
     //filter end
 
     Collection list = getGroupsContained(group,groupsNotToReturn,true);
-    return getUsersForUserRepresentativeGroups(list);
+    if(list != null && !list.isEmpty()){
+      return getUsersForUserRepresentativeGroups(list);
+    } else {
+      return ListUtil.getEmptyList();
+    }
   }
 
   /**
@@ -570,7 +569,13 @@ public class UserGroupBusinessBean extends com.idega.business.IBOServiceBean imp
 
 
   public Collection getUsersForUserRepresentativeGroups(Collection groups)throws FinderException,RemoteException{
-    return this.getUserHome().findUsersForUserRepresentativeGroups(groups);
+    try {
+      return this.getUserHome().findUsersForUserRepresentativeGroups(groups);
+    }
+    catch (FinderException ex) {
+      System.err.println(ex.getMessage());
+      return new Vector(0);
+    }
   }
 
 

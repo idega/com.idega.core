@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import com.idega.presentation.event.ResetPresentationEvent;
 import java.util.*;
 import com.idega.presentation.event.TreeViewerEvent;
 import com.idega.idegaweb.IWException;
@@ -24,6 +25,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 
   public void reset() {
     _openNodes.clear();
+    _initLevel = true;
   }
 
   public List getOpenNodeList(){
@@ -67,6 +69,12 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 
 
   public void actionPerformed(IWPresentationEvent e)throws IWException{
+
+    if(e instanceof ResetPresentationEvent){
+      this.reset();
+      this.fireStateChanged();
+    }
+
     _initLevel = false;
     if(e instanceof TreeViewerEvent){
       String open = ((TreeViewerEvent)e).getOpenNodeAction();
@@ -86,13 +94,13 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
         this.fireStateChanged();
       }
 //      System.out.println("TreeViewerPS: initLevel: " + _initLevel);
-//      Iterator iter = _openNodes.iterator();
-//      int counter = 1;
-//      while (iter.hasNext()) {
-//        Object item = iter.next();
+      Iterator iter = _openNodes.iterator();
+      int counter = 1;
+      while (iter.hasNext()) {
+        Object item = iter.next();
 //        System.out.println("TreeViewerPS: openItem"+counter+": "+item);
-//        counter++;
-//      }
+        counter++;
+      }
 
 
     }

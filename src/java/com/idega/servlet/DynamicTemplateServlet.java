@@ -129,6 +129,7 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet{
                 catch(Exception ex){
 
                   ex.printStackTrace(response.getWriter());
+                  ex.printStackTrace(System.err);
 
                   ServletException exception = new ServletException(ex.getMessage());
 

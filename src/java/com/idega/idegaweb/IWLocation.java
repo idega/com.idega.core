@@ -24,9 +24,10 @@ public interface IWLocation extends Cloneable{
 
   public int getICObjectInstanceID();
 
-
-
   public void setICObjectInstanceID(int id);
+
+  public void setSubID(int id);
+  public int getSubID();
 
   public void setTarget(String target);
 
