@@ -232,6 +232,7 @@ public abstract class InterfaceObject extends PresentationObject {
 		_checkObject = true;
 //		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+Boolean.toString(check)+"')");
 		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+String.valueOf( check )+"')");
+
 	}
 	
 	/**
