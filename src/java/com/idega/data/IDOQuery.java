@@ -456,8 +456,8 @@ public class IDOQuery {
 		return this.append(SELECT_ALL_FROM);
 	}
 	public IDOQuery appendSelectAllFrom(IDOEntity entity) {
-		return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
-		//return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
+		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
+		return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
 	}
 	public IDOQuery appendSelectAllFrom(String entityName) {
 		this.append(SELECT_ALL_FROM);
@@ -465,11 +465,11 @@ public class IDOQuery {
 		return this;
 	}
 
-	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) {
+	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) throws IDOCompositPrimaryKeyException {
 		this.appendSelect();
-		this.append(((IDOLegacyEntity)entity).getIDColumnName());
+		this.append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
 		this.appendFrom();
-		this.append(((IDOLegacyEntity)entity).getTableName());
+		this.append(entity.getEntityDefinition().getSQLTableName());
 
 		return this;
 
@@ -481,7 +481,7 @@ public class IDOQuery {
 		return this.append(SELECT_COUNT_FROM);
 	}
 	public IDOQuery appendSelectCountFrom(IDOEntity entity) {
-		return this.appendSelectCountFrom(((IDOLegacyEntity)entity).getTableName());
+		return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
 		//return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
 
 	}
