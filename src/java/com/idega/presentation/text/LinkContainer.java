@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.21 2004/11/01 18:43:29 laddi Exp $
+ * $Id: LinkContainer.java,v 1.22 2004/12/29 15:48:19 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -511,7 +511,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				Iterator iter = theObjects.iterator();
 				while (iter.hasNext()) {
 					PresentationObject item = (PresentationObject) iter.next();
-					item._print(iwc);
+					renderChild(iwc,item);
 				}
 			}
 
@@ -531,7 +531,7 @@ public class LinkContainer extends PresentationObjectContainer {
 					Iterator iter = theObjects.iterator();
 					while (iter.hasNext()) {
 						PresentationObject item = (PresentationObject) iter.next();
-						item._print(iwc);
+						renderChild(iwc,item);
 					}
 				}
 
