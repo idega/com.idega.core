@@ -23,9 +23,7 @@ public class BlobInputStream extends InputStream {
 	private GenericEntity entity;
 	private ResultSet RS;
 	private Statement Stmt;
-	private int status; //not used
 	private String columnName;
-	private String tableName;
 	private String dataSource;
 	private boolean readFromEntityBlob=false;
 	private boolean isClosed=true;
@@ -134,11 +132,7 @@ public class BlobInputStream extends InputStream {
 			return -1;
 		//else throw new IOException("BlobInputStream: skip() inputstream is null!");
 	}
-	private void ensureOpen() throws IOException {
-		InputStream in = getInternalInputStream();
-		if (in == null)
-			throw new IOException("BlobInputStream: ensureOpen() InputStream is closed(null)!");
-	}
+
 	public synchronized void reset() throws IOException {
 		InputStream in = getInternalInputStream();
 		if (in != null)
@@ -197,24 +191,14 @@ public class BlobInputStream extends InputStream {
 	public GenericEntity getEntity() {
 		return entity;
 	}
-	public void setStatus(int status) {
-		this.status = status;
+	
+	public boolean isClosed() {
+		return isClosed;
 	}
-	public int getStatus() {
-		return status;
-	}
+	
 	private String getTableColumnName() {
 		return this.columnName;
 	}
-	private void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-	private String getTableName() {
-		return this.tableName;
-	}
-	//private void initConnection(){
-	//	conn = ConnectionBroker.getConnection(getDataSource());
-	//}
 	
 	private Connection getConnection(){
 		if(connection==null){
