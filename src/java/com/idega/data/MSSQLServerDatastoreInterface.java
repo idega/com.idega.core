@@ -8,7 +8,11 @@ package com.idega.data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+
+import com.idega.util.database.ConnectionBroker;
 /**
  * Title:        MSSQLServerDatastoreInterface
  * Description:  A class to handle Microsoft SQL Server specific jdbc implementations.
@@ -319,4 +323,61 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 */
+	
+	public HashMap getTableIndexes(String dataSourceName, String tableName) {
+		Connection conn = null;
+		ResultSet rs = null;
+		Statement Stmt = null;
+		HashMap hm = new HashMap();
+		try {
+			conn = ConnectionBroker.getConnection(dataSourceName);
+			Stmt = conn.createStatement();
+
+			rs = Stmt.executeQuery("select i.name as INDEX_NAME, c.name as COLUMN_NAME from sysobjects o,  sysindexkeys ik, sysindexes i, syscolumns c  where i.indid = ik.indid and ik.id = i.id AND ik.colid = c.colid AND c.id = i.id and i.id = o.id and o.name = '"+tableName.toUpperCase()+"' order by i.name");
+			//			Check for upper case
+			handleIndexRS(rs, hm);
+			rs.close();
+
+			//			Check for lower case
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select i.name as INDEX_NAME, c.name as COLUMN_NAME from sysobjects o,  sysindexkeys ik, sysindexes i, syscolumns c  where i.indid = ik.indid and ik.id = i.id AND ik.colid = c.colid AND c.id = i.id and i.id = o.id and o.name = '"+tableName.toLowerCase()+"' order by i.name");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+			//			Check without any case manipulating, this can be removed if we always
+			// force uppercase
+			if (hm.isEmpty()) {
+				rs = Stmt.executeQuery("select i.name as INDEX_NAME, c.name as COLUMN_NAME from sysobjects o,  sysindexkeys ik, sysindexes i, syscolumns c  where i.indid = ik.indid and ik.id = i.id AND ik.colid = c.colid AND c.id = i.id and i.id = o.id and o.name = '"+tableName+"' order by i.name");
+				handleIndexRS(rs, hm);
+				rs.close();
+			}
+
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (Stmt != null) {
+					Stmt.close();
+				}
+			} catch (Exception e) {
+				logError("Failed to close ResultSet or Statement ("+e.getMessage()+")");
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+
+		return hm;
+		/*
+		 * if(v!=null && !v.isEmpty()) return (String[])v.toArray(new String[0]);
+		 * return null;
+		 */
+	}	
+	
 }
