@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.59 2002/03/26 16:43:08 tryggvil Exp $
+ * $Id: Link.java,v 1.60 2002/03/26 17:13:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,6 +92,9 @@ public class Link extends Text{
   private int _onClickImageId;
   private Image _onMouseOverImage = null;
   private Image _onClickImage = null;
+  private Class classToInstanciate;
+  private Class templatePageClass;
+  private String templateForObjectInstanciation;
 
   private List listenerInstances = null;
 
@@ -100,6 +103,7 @@ public class Link extends Text{
   private int dptTemplateId = 0;
   private ICFile file = null;
   private int fileId = -1;
+
 
 
   private final static String DEFAULT_TEXT_STRING = "No text";
@@ -238,7 +242,9 @@ public class Link extends Text{
    *
    */
   public Link(PresentationObject mo, Class classToInstanciate) {
-    this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    //this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    this.setPresentationObject(mo);
+    setClassToInstanciate(classToInstanciate);
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -250,14 +256,17 @@ public class Link extends Text{
    *
    */
   public Link(PresentationObject mo, Class classToInstanciate, Class templatePageClass) {
-    this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
+    //this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
+    this.setPresentationObject(mo);
+    this.setClassToInstanciate(classToInstanciate,templatePageClass);
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
   }
 
   public Link(Class classToInstanciate) {
-    this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    //this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    this(Link.DEFAULT_TEXT_STRING);
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -268,7 +277,14 @@ public class Link extends Text{
    *
    */
   public Link(PresentationObject mo, String classToInstanciate, String template) {
-    this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+    //this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+    this.setPresentationObject(mo);
+    try{
+      this.setClassToInstanciate(Class.forName(classToInstanciate),template);
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.toString()+e.getMessage());
+    }
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -279,7 +295,9 @@ public class Link extends Text{
    * in the same window.
    */
   public Link(String displayText, Class classToInstanciate) {
-    this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    //this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    this.setText(displayText);
+    this.setClassToInstanciate(classToInstanciate);
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -290,7 +308,9 @@ public class Link extends Text{
    * in the window of target specified by "target"
    */
   public Link(String displayText, Class classToInstanciate, String target) {
-    this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    //this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+    this.setText(displayText);
+    this.setClassToInstanciate(classToInstanciate);
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -302,7 +322,14 @@ public class Link extends Text{
    * in the same window with the template of name templateName
    */
   public Link(String displayText, String classToInstanciate, String templateName) {
-    this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templateName));
+    //this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templateName));
+    this.setText(displayText);
+    try{
+      this.setClassToInstanciate(Class.forName(classToInstanciate),templateName);
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.toString()+e.getMessage());
+    }
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -347,6 +374,17 @@ public class Link extends Text{
    */
   public void main(IWContext iwc)throws Exception {
     if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
+    if(this.classToInstanciate!=null){
+      if(this.templatePageClass!=null){
+        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate,templatePageClass));
+      }
+      else if(this.templateForObjectInstanciation!=null){
+        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate,templateForObjectInstanciation));
+      }
+      else{
+        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate));
+      }
+    }
     //Builder edit mode
     if(iwc.isInEditMode()){
      addParameter("view","builder");/**@todo this doesn't update all the frames**/
@@ -1878,5 +1916,20 @@ public class Link extends Text{
       return "javascript:"+windowOpenerJavascriptString;
     }
 
+  }
+
+
+  public void setClassToInstanciate(Class presentationObjectClass){
+    this.classToInstanciate=presentationObjectClass;
+  }
+
+  public void setClassToInstanciate(Class presentationObjectClass,Class pageTemplateClass){
+    setClassToInstanciate(presentationObjectClass);
+    this.templatePageClass=pageTemplateClass;
+  }
+
+  public void setClassToInstanciate(Class presentationObjectClass,String template){
+    setClassToInstanciate(presentationObjectClass);
+    this.templateForObjectInstanciation=template;
   }
 }
