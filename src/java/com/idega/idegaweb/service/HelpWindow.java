@@ -6,8 +6,12 @@ import com.idega.jmodule.object.textObject.*;
 import com.idega.jmodule.object.*;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.util.text.TextSoap;
+import com.idega.idegaweb.IWResourceBundle;
 
 public class HelpWindow extends IWAdminWindow {
+
+private final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
+private IWResourceBundle iwrb;
 
 public HelpWindow() {
   setWidth(300);
@@ -15,6 +19,8 @@ public HelpWindow() {
 }
 
 	public void main(ModuleInfo modinfo) {
+    iwrb = getResourceBundle(modinfo);
+
     boolean hasImage = false;
     String headline = modinfo.getParameter(HelpButton.PARAMETERSTRING_HEADLINE);
     String text = modinfo.getParameter(HelpButton.PARAMETERSTRING_TEXT);
@@ -64,7 +70,7 @@ public HelpWindow() {
         helpTable.add(formatText(text,false),1,1);
       }
 
-      helpTable.add(new CloseButton(iwbCore.getImage("close")),1,3);
+      helpTable.add(new CloseButton(iwrb.getImage("close.gif")),1,3);
 
       add(helpTable);
     }
@@ -73,4 +79,7 @@ public HelpWindow() {
     }
 	}
 
+  public String getBundleIdentifier(){
+    return IW_BUNDLE_IDENTIFIER;
+  }
 }
