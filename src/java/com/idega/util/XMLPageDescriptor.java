@@ -1,5 +1,5 @@
 /*
- * $Id: XMLPageDescriptor.java,v 1.2 2001/05/16 18:58:06 palli Exp $
+ * $Id: XMLPageDescriptor.java,v 1.3 2001/07/04 20:02:51 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,6 +17,8 @@ import org.jdom.input.SAXBuilder;
 
 import java.util.List;
 import java.util.Iterator;
+
+import java.io.InputStream;
 
 import com.idega.exception.PageDescriptionDoesNotExists;
 
@@ -55,6 +57,27 @@ public class XMLPageDescriptor {
       throw new PageDescriptionDoesNotExists();
     }
   }
+
+
+
+  /**
+   * Sets the ...
+   *
+   * @param stream Stream to the file containing the XML description of the page.
+   *
+   * @throws com.idega.exception.PageDescriptionDoesNotExists The given XML file does not exists.
+   */
+  public void setXMLPageDescriptionFile(InputStream stream) throws PageDescriptionDoesNotExists {
+    try {
+      xmlDocument = builder.build(stream);
+      rootElement = xmlDocument.getRootElement();
+    }
+    catch(org.jdom.JDOMException e) {
+      System.err.println("JDOM Exception: " + e.getMessage());
+      throw new PageDescriptionDoesNotExists();
+    }
+  }
+
 
   /**
    * A function that returns the root element for the given page description file.
