@@ -1827,7 +1827,6 @@ public static String findAndReplaceOnPrefixCondition(String text, String stringT
 		char chars[] = string.toCharArray();
 		if (chars.length > 0)
 			chars[0] = Character.toUpperCase(chars[0]);
-		System.out.println(new String(chars));
 		return new String(chars);
 	}
 
