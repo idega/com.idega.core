@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.28 2001/07/17 19:14:22 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.29 2001/07/17 19:24:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -179,11 +179,16 @@ public abstract class GenericEntity implements java.io.Serializable {
 	 * @deprecated Replaced with addAttribute()
 	 */
 	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName) {
-		addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName);
-	}
+                addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName);
+        }
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName) {
-          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName));
+          try{
+            addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName));
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
         }
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass) {
@@ -200,7 +205,12 @@ public abstract class GenericEntity implements java.io.Serializable {
 	 *
 	 */
        public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
-          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength);
+          try{
+            addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength);
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
        }
 
 
@@ -223,7 +233,12 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
+          try{
             addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),relationShipType,Class.forName(relationShipClassName));
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
         }
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,String relationShipType,Class relationShipClass) {
@@ -238,7 +253,12 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName){
-          addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength,relationShipType,Class.forName(relationShipClassName));
+          try{
+            addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength,relationShipType,Class.forName(relationShipClassName));
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
         }
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass){
@@ -287,11 +307,16 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
-		EntityAttribute attribute = new EntityAttribute();
+          try{
+                EntityAttribute attribute = new EntityAttribute();
 		attribute.setName(relationshipName);
 		attribute.setAttributeType("relationship");
 		attribute.setRelationShipClass(Class.forName(relationshipClassName));
 		addAttribute(attribute);
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
 	}
 
 	/**
@@ -570,7 +595,12 @@ public abstract class GenericEntity implements java.io.Serializable {
          * @deprecated replaced with setStorageClassType
          */
 	public void setStorageClassName(String columnName,String className){
+            try{
 		getColumn(columnName).setStorageClass(Class.forName(className));
+            }
+            catch(ClassNotFoundException e){
+              throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+            }
 	}
 
         public void setStorageClassType(String columnName,int classType){
@@ -602,7 +632,12 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public void setRelationShipClassName(String columnName,String className){
+          try{
 		getColumn(columnName).setRelationShipClass(Class.forName(className));
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
 	}
 
 
