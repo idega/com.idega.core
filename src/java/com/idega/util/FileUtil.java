@@ -81,4 +81,13 @@ public class FileUtil {
       return file;
   }
 
+  /**
+   * Deletes a File Object.
+   */
+  public static File delete(File file){
+    file.delete();
+    return file;
+  }
+
+
 }
