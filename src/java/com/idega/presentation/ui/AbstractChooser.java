@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.22 2004/06/24 20:12:25 tryggvil Exp $
+ * $Id: AbstractChooser.java,v 1.23 2004/07/22 13:38:43 thomas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -94,7 +94,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 	}
 
-	protected void setChooserValue(String displayString, String valueString) {
+	public void setChooserValue(String displayString, String valueString) {
 		this._stringValue = valueString;
 		this._stringDisplay = displayString;
 	}
