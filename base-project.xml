@@ -81,6 +81,14 @@
 	  <version>2.5</version>
 	  <type>plugin</type>
 	</dependency>
+	<!--This is only needed for the taglib report -->
+	<dependency>
+		<groupId>maven-taglib</groupId>
+		<artifactId>maven-taglib-plugin</artifactId>
+		<version>1.2.2</version>
+		<type>plugin</type>
+		<url>http://maven-taglib.sourceforge.net</url>
+	</dependency>
   </dependencies>
   
   <reports>
@@ -95,5 +103,6 @@
     <report>maven-javadoc-plugin</report>
     <report>maven-jxr-plugin</report>
     <report>maven-statcvs-plugin</report>
+    <report>taglib</report>
   </reports>
 </project>
