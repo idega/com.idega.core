@@ -125,10 +125,12 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public Iterator getChildrenIterator() {
-	    if (getChildren() == null) {
-	        return null;
+	    Iterator it = null;
+	    Collection children = getChildren();
+	    if (children != null) {
+	        it = children.iterator();
 	    }
-	    return getChildren().iterator();
+	    return it;
 	}
 	
 	public Collection getChildren() {

@@ -1488,8 +1488,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	public Iterator getChildrenIterator() {
 		Iterator it = null;
-		if (getChildren() != null) {
-		    it = getChildren().iterator();
+		Collection children = getChildren();
+		if (children != null) {
+		    it = children.iterator();
 		}
 	    return it;
 	}

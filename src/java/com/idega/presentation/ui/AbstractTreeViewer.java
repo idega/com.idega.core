@@ -914,7 +914,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		 * Returns the children of the reciever as an Iterator.
 		 */
 		public Iterator getChildrenIterator() {
-			return getChildren().iterator();
+		    Iterator it = null;
+		    Collection children = getChildren();
+		    if (children != null) {
+		        it = children.iterator();
+		    }
+		    return it;
 		}
 
 		/**

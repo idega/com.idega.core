@@ -70,8 +70,9 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	}
 	public Iterator getChildrenIterator(String orderBy) {
 	    Iterator it = null;
-	    if (getChildren(orderBy) != null) {
-	        it = getChildren(orderBy).iterator();
+	    Collection children = getChildren(orderBy);
+	    if (children != null) {
+	        it = children.iterator();
 	    }
 	    return it; 
 	}
