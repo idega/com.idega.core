@@ -1141,7 +1141,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
   
   public GroupType getGroupTypeFromString(String type) throws RemoteException, FinderException{
-  	return getGroupTypeHome().findByPrimaryKey(type);
+  	return getGroupTypeHome().findGroupTypeByGroupTypeString(type);
   }
   
 /**
