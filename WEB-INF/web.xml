@@ -16,7 +16,7 @@
         <url-pattern>/window/*</url-pattern>
     </servlet-mapping>
 
-    <--! idegaWeb event listeners -->
+    <!-- idegaWeb event listeners -->
     <listener>
         <listener-class>com.idega.faces.IWApplicationListener</listener-class>
     </listener>
