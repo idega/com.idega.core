@@ -17,22 +17,13 @@
  */
 
 package com.idega.util;
-
-
-
 import java.util.*;
-
 import java.lang.*;
-
 import java.sql.*;
-
 import java.io.*;
-
 import com.idega.presentation.IWContext;
-
 import java.text.DateFormat;
-
-
+import java.text.DateFormatSymbols;
 
 public class idegaTimestamp{
 
@@ -2055,7 +2046,26 @@ public class idegaTimestamp{
     }
   }
 
+  public String getDateString(boolean withYear, IWContext modinfo){
+    String spacer = " ";
+    if (withYear)
+      return getDate()+"." + spacer + getNameOfMonth(getMonth(),modinfo) + spacer + getYear();
+    else
+      return getDate()+"." + spacer + getNameOfMonth(getMonth(),modinfo);
+  }
 
+  public String getNameOfMonth(int month, IWContext modinfo){
+      Locale currentLocale = modinfo.getCurrentLocale();
+      String returner = "";
+
+      DateFormatSymbols dfs = new DateFormatSymbols(modinfo.getCurrentLocale());
+      String[] months = dfs.getMonths();
+      if ( months != null ) {
+        returner = months[month-1];
+      }
+
+      return returner;
+  }
 
 }   // class idegaTimestamp
 
