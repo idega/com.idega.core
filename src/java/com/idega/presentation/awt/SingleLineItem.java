@@ -155,6 +155,8 @@ public class SingleLineItem extends Panel {
 
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
+      doLayout();
+      repaint();
       return component;
   }
 
