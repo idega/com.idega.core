@@ -334,6 +334,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					
 					entry = new TimerEntry(Integer.parseInt(minute),Integer.parseInt(hour),Integer.parseInt(dayOfMonth),Integer.parseInt(month),Integer.parseInt(dayOfWeek),Integer.parseInt(year), new TimerListener() {
 						public void handleTimer(TimerEntry entry) {
+							log("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" "+host+" "+baseRDN+ " "+baseUniqueId);
+							
 							try {
 								setReplicationProperty(PROPS_REPLICATOR_LAST_REPLICATED,replicatorNumber,IWTimestamp.getTimestampRightNow().toString());
 							}
@@ -341,6 +343,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 								e1.printStackTrace();
 							}
 							replicate(replicatorNumber, repNum, host, port, userName, password, baseRDN,replicateBase, baseUniqueId, parentGroup, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit, entry);
+							
+							log("[LDAPReplication] " + new Date() + " - Stopping replicator nr: "+ repNum+" "+host+" "+baseRDN+ " "+baseUniqueId);
+							
+							
 							//todo figure out the next replication date
 							//probably from the entry.get...
 //							try {
@@ -364,6 +370,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				entry = new TimerEntry(interval,repeat, new TimerListener() {
 	
 					public void handleTimer(TimerEntry entry) {
+						log("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" "+host+" "+baseRDN+ " "+baseUniqueId);
 						try {
 							setReplicationProperty(PROPS_REPLICATOR_LAST_REPLICATED,replicatorNumber,IWTimestamp.getTimestampRightNow().toString());
 						}
@@ -381,6 +388,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 						catch (IOException e1) {
 							e1.printStackTrace();
 						}
+						log("[LDAPReplication] " + new Date() + " - Stopping replicator nr: "+ repNum+" "+host+" "+baseRDN+ " "+baseUniqueId);
+						
 					}
 				});
 					
