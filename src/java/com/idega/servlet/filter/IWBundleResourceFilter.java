@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.3 2005/01/31 12:11:23 laddi Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.4 2005/02/01 00:55:03 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.IWBundle;
 import com.idega.util.FileUtil;
 
@@ -32,10 +33,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/01/31 12:11:23 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/02/01 00:55:03 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -105,33 +106,43 @@ public class IWBundleResourceFilter extends BaseFilter {
 	
 	private static String SVG="svg";
 	private static String JSP="jsp";
+	private static String PSVG="psvg";
 	/**
 	 * @param realFile
 	 */
 	private boolean speciallyHandleFile(HttpServletRequest request,String bundleIdentifier,String filePathInBundle,File file) {
 		String fileEnding = getFileEnding(file);
-		if(fileEnding.equalsIgnoreCase(SVG)){
-			IWBundle iwb = getIWMainApplication(request).getBundle(bundleIdentifier);
-			String bundleRealPath = iwb.getBundleBaseRealPath();
-			File realBundleDir = new File(bundleRealPath);
-			File realBundleFile = new File(realBundleDir,filePathInBundle);
-			try {
-				FileUtil.copyFile(file,realBundleFile);
-			}
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			
+		
+		if(fileEnding.equalsIgnoreCase(PSVG)){
+			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
+			return true;
+		}
+		else if(fileEnding.equalsIgnoreCase(SVG)){
+			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
 			return true;
 		}
 		else if(fileEnding.equalsIgnoreCase(JSP)){
+			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
 			return true;
 			
 		}
 		return false;
+	}
+	
+	protected void copyFileToBundle(HttpServletRequest request,String bundleIdentifier,String filePathInBundle,File file) {
+		IWBundle iwb = getIWMainApplication(request).getBundle(bundleIdentifier);
+		String bundleRealPath = iwb.getBundleBaseRealPath();
+		File realBundleDir = new File(bundleRealPath);
+		File realBundleFile = new File(realBundleDir,filePathInBundle);
+		try {
+			FileUtil.copyFile(file,realBundleFile);
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private String getFileEnding(File realFile) {
@@ -150,6 +161,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 	private void feedOutFile(HttpServletResponse response, File realFile) {
 		FileInputStream fis;
 		try {
+			//First set and guess the mime type
+			setContentType(response,realFile);
+			
 			fis = new FileInputStream(realFile);
 			OutputStream out = response.getOutputStream();
 			int buffer = 1000;
@@ -170,7 +184,19 @@ public class IWBundleResourceFilter extends BaseFilter {
 			e.printStackTrace();
 		}
 	}
+	
+	protected void setContentType(HttpServletResponse response, File realFile) {
+		String mimeType = getMimeType(realFile);
+		if(mimeType!=null){
+			response.setContentType(mimeType);
+		}
+	}
 
+	protected String getMimeType(File realFile){
+		String mimeType = FileIconSupplier.getInstance().guessMimeTypeFromFileName(realFile.getName());
+		return mimeType;
+	}
+	
 	private File getSetBundlesDirectory(){
 		if(fBundlesDirectory==null){
 			fBundlesDirectory=new File(getSetBundlesDirectoryAsString());
