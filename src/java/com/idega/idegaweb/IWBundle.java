@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.67 2003/10/29 09:24:39 laddi Exp $
+ * $Id: IWBundle.java,v 1.68 2003/10/31 00:53:46 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -64,12 +64,12 @@ public class IWBundle implements java.lang.Comparable
 	private String propertiesRealPath;
 	private String classesRealPath;
 	private IWMainApplication superApplication;
-	private Map localePaths;
-	private Map resourceBundles;
+	private Map localePathsLookup;
+	private Map resourceBundlesLookup;
 	private boolean autoCreateLocalizedResources = true;
 	private boolean autoCreate = false;
-	private Map handlers;
-	private Map localeRealPaths;
+	//private Map handlers;
+	private Map localeRealPathsLookup;
 	private SortedMap localizableStringsMap;
 	private Properties localizableStringsProperties;
 	private File localizableStringsFile;
@@ -102,9 +102,9 @@ public class IWBundle implements java.lang.Comparable
 		this.autoCreate = autoCreate;
 		this.superApplication = superApplication;
 		this.identifier = bundleIdentifier;
-		handlers = new HashMap();
-		localeRealPaths = new HashMap();
-		resourceBundles = new HashMap();
+		//handlers = new HashMap();
+		//localeRealPaths = new HashMap();
+		//resourceBundles = new HashMap();
 		setRootRealPath(rootRealPath);
 		setRootVirtualPath(rootVirtualPath);
 		try
@@ -117,13 +117,26 @@ public class IWBundle implements java.lang.Comparable
 		}
 		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
+	/**
+	 * Discards all unsaved changes to this bundle and loads it up again 
+	 */
 	public void reloadBundle()
 	{
-		loadBundle();
-		resourceBundles.clear();
-		localizableStringsProperties = null;
+		reloadBundle(false);
 	}
-	private void loadBundle()
+	/**
+	 *Reloads all resources for this bundle and stores the state of this bundle first if storeState==true
+	 *@param storeState to say if to store the state (call storeState) before the bundle is loaded again
+	 */
+	public void reloadBundle(boolean storeState)
+	{
+		this.unload(storeState);
+		loadBundle();
+	}
+	/**
+	 *Loads all necessary resources for this bundle
+	 */
+	protected void loadBundle()
 	{
 		setResourcesVirtualPath(getRootVirtualPath() + "/" + "resources");
 		setResourcesRealPath(getRootRealPath() + FileUtil.getFileSeparator() + "resources");
@@ -240,9 +253,26 @@ public class IWBundle implements java.lang.Comparable
 			}
 		}
 	}
+	/**
+	 *Stores this bundle and unloads all resources;
+	 */
 	public void unload()
 	{
-		storeState();
+		unload(true);
+	}
+	/**
+	 *Unloads all resources for this bundle and stores the state of this bundle if storeState==true
+	 *@param storeState to say if to store the state (call storeState)
+	 */
+	public void unload(boolean storeState){
+		//resourceBundles.clear();
+		resourceBundlesLookup=null;
+		localizableStringsProperties = null;
+		this.localePathsLookup=null;
+		this.localeRealPathsLookup=null;
+		if(storeState){
+			storeState();
+		}
 		stopStartClass();
 	}
 	private void stopStartClass()
@@ -369,7 +399,7 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public boolean removeLocalizableString(String key)
 	{
-		Iterator iter = this.resourceBundles.values().iterator();
+		Iterator iter = getResourceBundles().values().iterator();
 		while (iter.hasNext())
 		{
 			IWResourceBundle item = (IWResourceBundle) iter.next();
@@ -431,7 +461,7 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
-		IWResourceBundle theReturn = (IWResourceBundle) resourceBundles.get(locale);
+		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
 		try
 		{
 			if (theReturn == null)
@@ -449,7 +479,7 @@ public class IWBundle implements java.lang.Comparable
 					file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + "Localized.strings");
 				}
 				theReturn = new IWResourceBundle(this, file, locale);
-				resourceBundles.put(locale, theReturn);
+				getResourceBundles().put(locale, theReturn);
 			}
 		}
 		catch (Exception ex)
@@ -458,6 +488,18 @@ public class IWBundle implements java.lang.Comparable
 		}
 		return theReturn;
 	}
+	
+	/**
+	 * Returns a Map of all loaded resourcebundles
+	 * @return
+	 */
+	public Map getResourceBundles(){
+		if(this.resourceBundlesLookup==null){
+			resourceBundlesLookup=new HashMap();
+		}
+		return resourceBundlesLookup;
+	}
+	
 	public String getVersion()
 	{
 		String theReturn = getProperty("version");
@@ -480,19 +522,37 @@ public class IWBundle implements java.lang.Comparable
 	{
 		return FileUtil.getFileSeparator();
 	}
-	public void storeState()
+	public synchronized void storeState()
 	{
 		if (isDebugActive())
 		{
 			debug("Storing State");
 		}
 		propertyList.store();
-		Iterator iter = this.resourceBundles.values().iterator();
-		while (iter.hasNext())
-		{
-			IWResourceBundle item = (IWResourceBundle) iter.next();
-			item.storeState();
+		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
+		if(storeResourcesOnStore){
+			this.storeLocalizableStrings();
+			this.storeResourceBundles();
 		}
+		Iterator valueIter = getComponentPropertiesListMap().values().iterator();
+		while (valueIter.hasNext())
+		{
+			IWPropertyList element = (IWPropertyList) valueIter.next();
+			element.store();
+		}
+
+	}
+	
+	/**
+	 * Gets if to store the resoures in the storeState() method
+	 * @return
+	 */
+	protected boolean getIfStoreResourcesOnStore()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	synchronized boolean storeLocalizableStrings(){
 		try
 		{
 			getLocalizableStringsProperties().clear();
@@ -510,18 +570,24 @@ public class IWBundle implements java.lang.Comparable
 				}
 			}
 			getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()), null);
-			Iterator valueIter = getComponentPropertiesListMap().values().iterator();
-			while (valueIter.hasNext())
-			{
-				IWPropertyList element = (IWPropertyList) valueIter.next();
-				element.store();
-			}
 		}
 		catch (IOException ex)
 		{
 			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	synchronized void storeResourceBundles(){
+		Iterator iter = getResourceBundles().values().iterator();
+		while (iter.hasNext())
+		{
+			IWResourceBundle item = (IWResourceBundle) iter.next();
+			item.storeState();
 		}
 	}
+	
 	public String getResourcesRealPath()
 	{
 		return resourcesRealPath;
@@ -544,13 +610,19 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public String getResourcesRealPath(Locale locale)
 	{
-		String path = (String) localeRealPaths.get(locale);
+		String path = (String) getLocaleRealPaths().get(locale);
 		if (path == null)
 		{
 			path = getResourcesRealPath() + FileUtil.getFileSeparator() + locale.toString() + ".locale";
-			localeRealPaths.put(locale, path);
+			getLocaleRealPaths().put(locale, path);
 		}
 		return path;
+	}
+	protected Map getLocaleRealPaths(){
+		if(this.localeRealPathsLookup==null){
+			localeRealPathsLookup=new HashMap();
+		}
+		return localeRealPathsLookup;
 	}
 	public String getPropertiesRealPath()
 	{

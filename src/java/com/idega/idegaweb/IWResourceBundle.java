@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.27 2003/10/28 15:56:44 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.28 2003/10/31 00:53:46 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -240,16 +240,16 @@ public class IWResourceBundle extends ResourceBundle {
 	 */
 	public void setString(String key, String value) {
 		lookup.put(key, value);
-		String string = (String) this.iwBundleParent.getLocalizableStringsMap().get(key);
-		if (string == null) {
-			this.iwBundleParent.getLocalizableStringsMap().put(key, value);
-			iwBundleParent.storeState();
-		}
+		checkBundleLocalizedString(key,value);
 		this.storeState();
 	}
 
 	public boolean removeString(String key) {
-		return (String) lookup.remove(key) != null ? true : false;
+		if((String) lookup.remove(key) != null ){
+			this.storeState();
+			return true;
+		}
+		return false;
 	}
 
 	private void setIWBundleParent(IWBundle parent) {
@@ -310,15 +310,16 @@ public class IWResourceBundle extends ResourceBundle {
 	 *
 	 */
 	public void setLocalizedString(String key, String value) {
-		checkBundleLocalizedString(key, value);
-		lookup.put(key, value);
-		storeState();
+		this.setString(key,value);
 	}
 
-	private void checkBundleLocalizedString(String key, String value) {
+	protected boolean checkBundleLocalizedString(String key, String value) {
 		IWBundle bundle = getIWBundleParent();
 		if (!bundle.containsLocalizedString(key)) {
 			bundle.addLocalizableString(key, value);
+			bundle.storeLocalizableStrings();
+			return true;
 		}
+		return false;
 	}
 }
