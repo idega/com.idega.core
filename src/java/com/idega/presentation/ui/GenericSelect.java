@@ -90,6 +90,15 @@ public class GenericSelect extends InterfaceObject {
 		if (option.getSelected())
 			setSelectedOption(option.getValue());
 	}
+	
+	/**
+	 * @deprecated Use getOptionCount() instead.
+	 * Returns the number of <code>SelectOption</code> objects added to this <code>GenericSelect</code>.
+	 * @return
+	 */
+	public int getOptionCount() {
+		return theElements.size();
+	}
 
 	/**
 	 * Adds a disabled <code>SelectOption</code> to the select object.
@@ -146,7 +155,7 @@ public class GenericSelect extends InterfaceObject {
 	 * @param value	The value of the <code>SelectOption</code>.
 	 * @return SelectOption
 	 */
-	protected SelectOption getOption(String value) {
+	public SelectOption getOption(String value) {
 		SelectOption theReturn = new SelectOption();
 		Iterator iter = theElements.iterator();
 		while (iter.hasNext()) {
@@ -273,6 +282,11 @@ public class GenericSelect extends InterfaceObject {
 		}
 	}
 
+	/**
+	 * @deprecated Use getOptionCount() instead.
+	 * Returns the number of <code>SelectOption</code> objects added to this <code>GenericSelect</code>.
+	 * @return
+	 */
 	public int getNumberOfElemetent() {
 		if (theElements != null) {
 			return theElements.size();
@@ -281,7 +295,11 @@ public class GenericSelect extends InterfaceObject {
 		}
 	}
 
-	protected List getOptions() {
+	/**
+	 * Returns a <code>List</code> of <code>SelectOption</code> objects added to this <code>GenericSelect</code>.
+	 * @return
+	 */
+	public List getOptions() {
 		return theElements;
 	}
 
