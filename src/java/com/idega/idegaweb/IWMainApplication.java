@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.131 2005/01/24 18:27:18 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.132 2005/01/28 11:05:36 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/24 18:27:18 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/01/28 11:05:36 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.131 $
+ * @version $Revision: 1.132 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -576,8 +576,8 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public void shutdownApplicationServices(){
-    		ICLocaleBusiness.unload();
-    		ImageFactory.getStaticInstance(this).unload();
+    	ICLocaleBusiness.unload();
+    	ImageFactory.unload();
     		try {
 			BuilderServiceFactory.getBuilderService(this.getIWApplicationContext()).unload();
 		}
@@ -586,12 +586,13 @@ public class IWMainApplication //{//implements ServletContext{
 			e.printStackTrace();
 		}
 		ThreadContext.getInstance().unload();
-    		IDOContainer.unload();
-    		IDOLookup.unload();
-    		IBOLookup.unload();
-    		SQLSchemaAdapter.unload();
-    		IWWelcomeFilter.unload();
-    		BaseFilter.unload();
+		IDOContainer.unload();
+		IDOLookup.unload();
+		IBOLookup.unload();
+		ViewManager.unload();
+		SQLSchemaAdapter.unload();
+		IWWelcomeFilter.unload();
+		BaseFilter.unload();
     		
     }
     
