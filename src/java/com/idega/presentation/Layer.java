@@ -20,6 +20,7 @@ public static String ABSOLUTE = "absolute";
 public static String DIV = "div";
 public static String SPAN = "span";
 
+String onMouseOut;
 String absoluteOrRelative;
 String layerType;
 
@@ -118,6 +119,17 @@ public void setBackgroundImage(Image image){
   setBackgroundImage(image.getURL());
 }
 
+public void setOnMouseOut(String action) {
+  onMouseOut=action;
+}
+
+private String getOnMouseOut() {
+  if ( onMouseOut != null ) {
+    return "onMouseOut=\""+onMouseOut+"\"";
+  }
+  return "";
+}
+
 
 public void print(IWContext iwc) throws Exception{
   initVariables(iwc);
@@ -127,7 +139,7 @@ public void print(IWContext iwc) throws Exception{
                   //if (getInterfaceStyle().equals("something")){
                   //}
                   //else{
-                          println("<"+layerType+" id=\""+getID()+"\" style=\""+getAttributeString()+"\" >");
+                          println("<"+layerType+" id=\""+getID()+"\" style=\""+getAttributeString()+"\" "+getOnMouseOut()+">");
 
                           super.print(iwc);
 
