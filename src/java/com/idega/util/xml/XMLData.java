@@ -112,14 +112,7 @@ public class XMLData {
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
     xmlFile.setName(getName());
-    MemoryFileBuffer buffer = null;
-    try {
-      buffer = MediaBusiness.getMediaBuffer(xmlFile);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    OutputStream output = new MemoryOutputStream(buffer);
-    //OutputStream output = xmlFile.getFileValueForWrite();
+    OutputStream output = xmlFile.getFileValueForWrite();
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
