@@ -44,7 +44,7 @@ import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
-import com.idega.data.IDORelationshipException;
+//import com.idega.data.IDORelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWBundle;
