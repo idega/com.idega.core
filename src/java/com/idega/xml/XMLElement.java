@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.15 2004/10/19 12:07:17 gummi Exp $
+ * $Id: XMLElement.java,v 1.16 2004/10/29 12:47:23 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,7 +10,6 @@
 package com.idega.xml;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
