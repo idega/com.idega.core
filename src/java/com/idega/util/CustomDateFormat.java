@@ -28,13 +28,13 @@ public class CustomDateFormat {
 	 * @return A formatted version of the date with time
 	 **/
 	public static String formatDateTime(Date date, Locale locale) {
-		return getDateTimeFormatIntance(locale).format(date);
+		return getDateTimeInstance(locale).format(date);
 	}
 	/**
 	 * Accepts an input Locale
 	 * @return A default DateFormat instance for the locale
 	 **/
-	public static DateFormat getDateTimeFormatIntance(Locale locale){
+	public static DateFormat getDateTimeInstance(Locale locale){
 		if (locale.equals(LocaleUtil.getSwedishLocale())) {
 			return getSwedishDateTimeFormat();
 		}
