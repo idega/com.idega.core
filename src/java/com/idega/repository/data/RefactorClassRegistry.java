@@ -5,6 +5,7 @@ package com.idega.repository.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.idega.util.StringHandler;
 
 /**
  * A class to hold a registry over classes that have been moved between packages or renamed (refactored)
@@ -29,6 +30,7 @@ public class RefactorClassRegistry
 	}
 		
 	private Map refactoredClassNamesMap;
+	private Map refactoredPackageNamesMap;
 	
 	/**
 	 * @return
@@ -41,12 +43,38 @@ public class RefactorClassRegistry
 		}
 		return refactoredClassNamesMap;
 	}
+	
+	public Map getRefactoredPackageNames() {
+		if (refactoredPackageNamesMap == null) {
+			refactoredPackageNamesMap = new HashMap();
+		}
+		return refactoredPackageNamesMap;
+	}
+	
 	/**
 	 * @return
 	 */
 	public String getRefactoredClassName(String oldClassName)
 	{
-		return (String)getRefactoredClassNames().get(oldClassName);
+		String result = (String)getRefactoredClassNames().get(oldClassName);
+		if (result == null) {
+			String[] packageClass = StringHandler.splitOffPackageFromClassName(oldClassName);
+			String newPackage = (String) getRefactoredPackageNames().get(packageClass[0]);
+			if (newPackage != null) {
+				StringBuffer buffer = new StringBuffer(newPackage);
+				buffer.append(".").append(packageClass[1]);
+				return buffer.toString();
+			}
+		}
+		return result;
+	}
+	
+	public void registerRefactoredPackage(String oldPackageName, Package validPackage) {
+		registerRefactoredPackage(oldPackageName, validPackage.getName());
+	}
+	
+	public void registerRefactoredPackage(String oldPackageName, String validPackageName) {
+		getRefactoredPackageNames().put(oldPackageName, validPackageName);
 	}
 	
 	public void registerRefactoredClass(String oldClassName, Class validClass) {
