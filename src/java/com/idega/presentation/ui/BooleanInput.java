@@ -33,8 +33,8 @@ public class BooleanInput extends DropdownMenu {
 		if (_showSelectOption) {
 			this.addMenuElementFirst("", iwrb.getLocalizedString(SELECT_KEY, "Select:"));
 		}
-		setMenuElementDisplayString("N", iwrb.getLocalizedString(NO_KEY));
-		setMenuElementDisplayString("Y", iwrb.getLocalizedString(YES_KEY));
+		setMenuElementDisplayString("N", iwrb.getLocalizedString(NO_KEY,"No"));
+		setMenuElementDisplayString("Y", iwrb.getLocalizedString(YES_KEY,"Yes"));
 	}
 	public void setSelected(boolean selected) {
 		if (selected) {
