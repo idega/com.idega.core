@@ -74,7 +74,7 @@ public class IWMainApplication{//implements ServletContext{
   private static IWCacheManager cacheManager;
   private static boolean alreadyUnLoaded = false;//for restartApplication
 
-  private static final String RESTART_PARAMETER = "execute_on_restart";
+  private static final String APACHE_RESTART_PARAMETER = "restart_apache";
 
   public IWMainApplication(ServletContext application){
     this.application=application;
@@ -509,7 +509,14 @@ public class IWMainApplication{//implements ServletContext{
    * Only works when running on Tomcat
    */
   public boolean restartApplication(){
-    String restartString = this.getSettings().getProperty(RESTART_PARAMETER);//restart string
+    String apache = this.getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart string
+    String restartScript = "/idega/bin/apache_restart.sh";
+
+    boolean restartApacheAlso = false;
+
+    if( apache != null ){
+      restartApacheAlso = Boolean.valueOf(apache.toLowerCase()).booleanValue();
+    }
 
     unload();
 
@@ -518,22 +525,22 @@ public class IWMainApplication{//implements ServletContext{
 
     try{//windows
       if(System.getProperty("os.name").toLowerCase().indexOf("win")!=-1){
-        if(restartString==null){
+        if(!restartApacheAlso){
           String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat"};
           Executer.executeInAnotherVM(array);
         }
         else{
-          String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat",restartString};
+          String[] array = {prePath+"\\shutdown.bat",prePath+"\\startup.bat",restartScript};
           Executer.executeInAnotherVM(array);
         }
       }
       else{//unix
-        if(restartString==null){
+        if(!restartApacheAlso){
           String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh"};
           Executer.executeInAnotherVM(array);
         }
         else{
-          String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh",restartString};
+          String[] array = {prePath+"/shutdown.sh",prePath+"/startup.sh",restartScript};
           Executer.executeInAnotherVM(array);
         }
 
