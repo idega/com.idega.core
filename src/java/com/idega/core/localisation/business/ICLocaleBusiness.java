@@ -290,22 +290,25 @@ public class ICLocaleBusiness {
       //return Locale.getDefault();
   }
 
-  public static Locale getLocale(int iLocaleId){
-    try {
-      if(LocaleHashById == null )
+  public static Locale getLocaleReturnIcelandicLocaleIfNotFound(int iLocaleId) {
+  	Locale icelandicLocale =  new Locale("is","IS");
+  	return getLocale(iLocaleId, icelandicLocale);
+  }
+  
+  public static Locale getLocale(int iLocaleId) {
+  	return getLocale(iLocaleId, null);
+  }
+  
+  public static Locale getLocale(int iLocaleId, Locale returnValueIfNotFound){
+  	if(LocaleHashById == null ) {
         reload();
-      Integer i = new Integer(iLocaleId);
-      if(LocaleHashById != null && LocaleHashById.containsKey(i)){
-        ICLocale ICL = (ICLocale) LocaleHashById.get(i);
+  	}
+    Integer i = new Integer(iLocaleId);
+     if(LocaleHashById != null && LocaleHashById.containsKey(i)){
+     	ICLocale ICL = (ICLocale) LocaleHashById.get(i);
         return getLocaleFromLocaleString(ICL.getLocale());
-      }
-      else return null;
-    }
-    catch(Exception ex){
-      ex.printStackTrace();
-      return null;
-
-    }
+     }
+     return returnValueIfNotFound;
   }
 
   public static void makeLocalesInUse(List listOfStringIds){
