@@ -417,6 +417,9 @@ public class idegaTimestamp{
    return Calendar.get(Calendar.SECOND);
   }
 
+  public int getDayOfWeek() {
+    return Calendar.get(Calendar.DAY_OF_WEEK);
+  }
 
   public void setYear( int year ){
     Calendar = new GregorianCalendar( year, getMonth(), getDate(), getHour(), getMinute(), getSecond());
