@@ -1135,8 +1135,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     try {
       groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
       // super admin: return all group types
-      if (iwuc.isSuperAdmin())
-        return groupTypeHome.findVisibleGroupTypes();
+      
+      if (iwuc.isSuperAdmin()){
+      	try {
+			if(groupTypeHome.getNumberOfVisibleGroupTypes()<=0)
+			  	((com.idega.data.GenericEntity)com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+      	return groupTypeHome.findVisibleGroupTypes();
+      }
       // try to get the corresponding group type
       if (group != null)  {       
         groupTypeString = group.getGroupType();
