@@ -142,7 +142,6 @@ public class SingleLineItem extends Panel {
 
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
-
       return component;
   }
 
@@ -173,11 +172,19 @@ public class SingleLineItem extends Panel {
         }
       }
 
+      Component[] comps = getComponents();
+      for (int i = 0; i < comps.length; i++) {
+        comps[i].repaint();
+      }
+
+
       layout();
       repaint();
       notifyAll();
       parentContainer.layout();
       parentContainer.repaint();
+
+
 
 
     }
