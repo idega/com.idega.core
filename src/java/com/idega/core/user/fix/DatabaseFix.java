@@ -63,11 +63,17 @@ public class DatabaseFix {
           ex.printStackTrace();
         }
       }
-      System.err.println("done");
+      System.err.println("user done");
     } else {
       System.err.println("no Users");
     }
+    com.idega.data.SimpleQuerier.execute("update IC_GROUP set group_type = 'ic_permission' where group_type = 'permission'");
+    System.err.println("group_type done");
+    System.err.println("All done");
   }
+
+
+
 }
 
 
