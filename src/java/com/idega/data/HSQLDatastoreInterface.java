@@ -42,7 +42,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		} else if (javaClassName.equals("java.lang.Double")) {
 			theReturn = "REAL";
 		} else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "DATE";
+			theReturn = "TIMESTAMP";
 		} else if (javaClassName.equals("java.sql.Date")
 				|| javaClassName.equals("java.util.Date")) {
 			theReturn = "DATE";
