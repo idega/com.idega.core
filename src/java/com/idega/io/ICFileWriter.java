@@ -29,16 +29,26 @@ public class ICFileWriter {
 	protected static final char DOT = '.';
 	
 	private IWApplicationContext iwac = null;
+	protected Storable storable = null;
 	
 	public ICFileWriter(IWApplicationContext iwac) {
 		this.iwac = iwac;
 	}
+	
+	public ICFileWriter(Storable storable, IWApplicationContext iwac) {
+		this(iwac);
+		setSource(storable);
+	}
+	
+	public void setSource(Storable storable) {
+		this.storable = storable;
+	}
 		
-	public String createContainer(Object file) throws IOException {
+	public String createContainer() throws IOException {
 		//String mimeType = ((ICFile) file).getMimeType();
 		
 		long folderIdentifier = System.currentTimeMillis();
-		String name = ((ICFile) file).getName();
+		String name = ((ICFile) storable).getName();
 		String path = getRealPathToFile(name, null, folderIdentifier);
 		
 		File realFile = new File(path);
@@ -52,7 +62,7 @@ public class ICFileWriter {
 			throw new IOException("Folder could not be found");
 		}
 		try {
-			writeData(file, destination);
+			writeData(destination);
 		}
 		finally {
 			close(destination);
@@ -71,8 +81,8 @@ public class ICFileWriter {
   	}
   }
 
-  public String getName(Object file) {
-  	return ((ICFile)file).getName();
+  public String getName() {
+  	return ((ICFile) storable).getName();
   }
 
   public String getRealPathToFile(String fileName, String extension, long folderIdentifier) {
@@ -132,8 +142,8 @@ public class ICFileWriter {
     return uri.toString();
   }  
   
-	public void writeData(Object file, OutputStream destination) throws IOException {
-		InputStream source = ((ICFile) file).getFileValue();
+	public void writeData(OutputStream destination) throws IOException {
+		InputStream source = ((ICFile) storable).getFileValue();
 		try {
 			writeFromStreamToStream(source, destination);
 		}

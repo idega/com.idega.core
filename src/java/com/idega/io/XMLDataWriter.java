@@ -25,14 +25,14 @@ public class XMLDataWriter extends ICFileWriter {
 	
 	private static final String XML_EXTENSION = "xml";
 	
-	public XMLDataWriter(IWApplicationContext iwac) {
-		super(iwac);
+	public XMLDataWriter(Storable storable, IWApplicationContext iwac) {
+		super(storable, iwac);
 	}
 	
-	public  String createContainer(Object xmlData) throws IOException {
+	public  String createContainer() throws IOException {
 			// get path
 		long folderIdentifier = System.currentTimeMillis();
-		String name = ((XMLData) xmlData).getName();
+		String name = ((XMLData) storable).getName();
 		String path = getRealPathToFile(name, XML_EXTENSION, folderIdentifier);
     OutputStream destination = null;
     File auxiliaryFile = null;
@@ -48,7 +48,7 @@ public class XMLDataWriter extends ICFileWriter {
     // now we have an output stream of the auxiliary file
     // write to the xml file
     try {
-    	writeData(xmlData, destination);
+    	writeData(destination);
     }
     finally {
    		close(destination);
@@ -56,18 +56,17 @@ public class XMLDataWriter extends ICFileWriter {
     return getURLToFile(name, XML_EXTENSION, folderIdentifier);
 	}
 	
-	
-	public String getName(Object data) {
-		return ((XMLData) data).getName();
+	public String getName() {
+		return ((XMLData) storable).getName();
 	}
 	
-	public void writeData(Object xmlData, OutputStream destination) throws IOException {  
+	public void writeData(OutputStream destination) throws IOException {  
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
     xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
-    XMLDocument myDocument = ((XMLData) xmlData).getDocument();
+    XMLDocument myDocument = ((XMLData) storable).getDocument();
     xmlOutput.output(myDocument, destination);
 	}
 
