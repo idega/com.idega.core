@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.56 2002/03/21 00:03:13 eiki Exp $
+ * $Id: Link.java,v 1.57 2002/03/22 14:34:31 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -336,6 +336,11 @@ public class Link extends Text{
    */
   public void main(IWContext iwc)throws Exception {
     if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
+    //Builder edit mode
+    if(iwc.isInEditMode()){
+     addParameter("view","builder");
+
+    }
 
 
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
