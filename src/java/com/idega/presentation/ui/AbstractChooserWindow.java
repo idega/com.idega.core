@@ -43,9 +43,14 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
     Script script = this.getAssociatedScript();
     String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
     String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
-    String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
 
+    String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
     String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
+
+    if( prefix == null ) prefix = "";
+    if( suffix == null ) suffix = "";
+    if( displayString == null ) displayString = "";
+    if( valueString == null ) valueString = "";
 
     HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
     HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
