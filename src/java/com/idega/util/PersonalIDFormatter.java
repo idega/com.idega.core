@@ -49,18 +49,6 @@ public class PersonalIDFormatter {
 		return originalString;
 	}
 	
-	public static Date getDateFromPersonalID(String personalID) {
-  	if ( personalID.length() == 12 ) {
-      int year = Integer.parseInt(personalID.substring(0, 4));
-      int month = Integer.parseInt(personalID.substring(4, 6));
-      int day = Integer.parseInt(personalID.substring(6, 8));
-				
-			IWTimestamp stamp = new IWTimestamp(day,month,year);
-			return stamp.getDate();
-  	}
-  	return null;
-	}
-
 	public static void main(String[] args){
 			test(args);
 	}
