@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.51 2001/10/05 15:24:13 gimmi Exp $
+ * $Id: GenericEntity.java,v 1.52 2001/10/08 10:29:04 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2075,10 +2075,13 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
           }
       }
 
+
       public void addManyToManyRelationShip(String relatingEntityClassName){
             String relationShipTableName;
             try{
-              String tableName1 = ((GenericEntity)getClass().newInstance()).getEntityName();
+
+
+              String tableName1 = this.getEntityName();
               String tableName2 = ((GenericEntity)Class.forName(relatingEntityClassName).newInstance()).getEntityName();
 
               relationShipTableName = StringHandler.concatAlphabetically(tableName1,tableName2,"_");

@@ -108,7 +108,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
   }
 
   public String getSequenceTableName(GenericEntity entity){
-    return entity.getTableName()+"_seq";
+    return "seq_"+entity.getTableName();
   }
 
 
