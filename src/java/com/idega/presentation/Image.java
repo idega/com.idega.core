@@ -80,6 +80,7 @@ public class Image extends PresentationObject
 	public Image(String url, String name)
 	{
 		super();
+		setTransient(false);
 		if ("".equalsIgnoreCase(name))
 			name = this.generateID();
 		setName(name);
@@ -827,4 +828,12 @@ public class Image extends PresentationObject
 	public void setName(String name) {
 		super.setID(name);
 	}
+	
+	
+	 /**
+	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
+	  */
+	 protected boolean resetGoneThroughMainInRestore(){
+	 	return true;
+	 }
 }
