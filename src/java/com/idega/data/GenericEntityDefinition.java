@@ -182,7 +182,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 
 	public IDOEntityField findFieldByUniqueName(String name){
 		for (int i = 0; i < _fields.length; i++) {
-			if(_fields[i].getUniqueFieldName().equals(name)){
+			if(_fields[i].getUniqueFieldName().equalsIgnoreCase(name)){
 				return 	_fields[i];
 			}
 		}

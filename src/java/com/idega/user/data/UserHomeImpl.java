@@ -202,4 +202,12 @@ public Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date 
 }
 
 
+public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByGroupRelationInitiationTimeAndStatus(relatedGroup,firstInitiationDateInPeriode,lastInitiationDateInPeriode,relationStatus);
+	this.idoCheckInPooledEntity(entity);
+	//return this.getEntityCollectionForPrimaryKeys(ids);
+	return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
 }
