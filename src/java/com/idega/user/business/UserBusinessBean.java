@@ -1758,9 +1758,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
 		Collection topNodes = new ArrayList();
 		if( user != null ){
-			//topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
-			topNodes = getStoredTopNodeGroups(user);
+			topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
 			if(topNodes != null && !topNodes.isEmpty()){ 
+			    return topNodes;
+			}
+			topNodes = getStoredTopNodeGroups(user);
+			if(topNodes != null && !topNodes.isEmpty()){
+				iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
 			    return topNodes;
 			}else{
 				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
@@ -2053,7 +2057,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 			}
 			
-			//iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
+			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
 			storeUserTopGroupNodes(user,topNodes,null);
 		}
 		return topNodes;
