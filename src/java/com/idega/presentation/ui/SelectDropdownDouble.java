@@ -136,14 +136,16 @@ public class SelectDropdownDouble extends InterfaceObject {
 				column = 0;
 				String key = (String) iter.next();
 				Map map = (Map) _secondaryMap.get(key);
-				s.append("\n\t").append("dropdownValues[\""+key+"\"] = new Array();").append("\n\t");
-				
-				Iterator iterator = map.keySet().iterator();
-				while (iterator.hasNext()) {
-					Object element = iterator.next();
-					String secondKey = getKey(iwc, element);
-					String value = getValue(iwc, map.get(element));
-					s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+secondKey+"');").append("\n\t");
+				if(map!=null){
+					s.append("\n\t").append("dropdownValues[\""+key+"\"] = new Array();").append("\n\t");
+					
+					Iterator iterator = map.keySet().iterator();
+					while (iterator.hasNext()) {
+						Object element = iterator.next();
+						String secondKey = getKey(iwc, element);
+						String value = getValue(iwc, map.get(element));
+						s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+secondKey+"');").append("\n\t");
+					}
 				}
 			}
 		}
