@@ -67,7 +67,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "DATE";
     }
     else if (javaClassName.equals("java.sql.Blob")){
-      theReturn = "BLOB";
+      theReturn = "BYTE";
     }
     else if (javaClassName.equals("java.sql.Time")){
       theReturn = "DATETIME HOUR TO FRACTION";
@@ -76,7 +76,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "VARCHAR(1)";
     }
     else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-      theReturn = "BYTE";
+      theReturn = "BLOB";
     }
     else{
       theReturn = "";
@@ -386,10 +386,10 @@ public class InformixDatastoreInterface extends DatastoreInterface{
         }
 */
 
-  //public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
-  //  IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
-  //  infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
-  //}
+  public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
+    IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
+    infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
+  }
 
 
   public boolean supportsBlobInUpdate(){
