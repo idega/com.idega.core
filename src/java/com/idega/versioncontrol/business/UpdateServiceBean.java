@@ -7,9 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.util.LocaleUtil;
 
 /**
  * UpdateServiceBean //TODO: tryggvil Describe class
@@ -36,10 +39,39 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		return false;
 	}
 	
+	public boolean commitLocalizationFile(String bundleIdentifier,String localeString){
+		IWBundle bundle = this.getIWApplicationContext().getApplication().getBundle(bundleIdentifier);
+		Locale locale = LocaleUtil.getLocale(localeString);
+		return commitLocalizationFile(bundle,locale);
+	}
+	
+	public boolean commitLocalizationFile(IWBundle bundle,Locale locale){
+		String resourcesBundleDir = bundle.getResourcesRealPath();
+		String localizableStrings = "Localizable.strings";
+		
+		//IWResourceBundle iwrb = bundle.getResourceBundle(locale);
+		String localeResourcesBundleDir = resourcesBundleDir+File.separator+locale+".locale";
+		String localizedStrings = "Localized.strings";
+		
+		String comment = "commitLocalizationFile";
+		
+		executeCVSCommit(resourcesBundleDir,localizableStrings,comment);
+		executeCVSCommit(localeResourcesBundleDir,localizedStrings,comment);
+		
+		return true;
+	}	
+
 	private boolean executeCVSUpdate(String directory){
+		return executeCVSUpdate(directory,false);
+	}
+	
+	private boolean executeCVSUpdate(String directory,boolean cleanCopy){
 		try
 		{
 			String command = "update -P -A -d";
+			if(cleanCopy){
+				command+=" -C";
+			}
 			int exit = executeCVSCommand(command,directory);
 			if(exit==0){
 				return true;
