@@ -22,6 +22,8 @@ public class SetIterator implements ListIterator  {
 
   public final static String SET_ITERATOR_STATE_KEY = "set_iterator_state_key";
   
+  public final static String SET_ITERATOR_LIST_ID_KEY = "set_iterator_list_id_key";
+  
   private final static String STATE_STRING_DELIMITER = ":";
   
   private List list = null; 
@@ -209,8 +211,9 @@ public class SetIterator implements ListIterator  {
     return new HiddenInput(SET_ITERATOR_STATE_KEY + Integer.toString(id), storeStateIntoString());
   }
   
-  public void storeStateInSession(IWUserContext iwuc, int id) {
-    iwuc.setSessionAttribute(SET_ITERATOR_STATE_KEY + Integer.toString(id), storeStateIntoString());
+  public void storeStateInSession(IWUserContext iwuc, String listId, String id) {
+    iwuc.setSessionAttribute(SET_ITERATOR_STATE_KEY + id, storeStateIntoString());
+    iwuc.setSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id, listId);
   }
   
   
@@ -225,10 +228,16 @@ public class SetIterator implements ListIterator  {
   }
  
   
-  public boolean retrieveStateFromSession(IWUserContext iwuc, int id)  {
-    String stateString = (String) iwuc.getSessionAttribute(SET_ITERATOR_STATE_KEY + Integer.toString(id));
-    if (stateString == null)
+  public boolean retrieveStateFromSession(IWUserContext iwuc, String listId, String id)  {
+    String stateString = (String) iwuc.getSessionAttribute(SET_ITERATOR_STATE_KEY + id);
+    String listIdString = (String) iwuc.getSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
+    if (stateString == null || listIdString == null || (! listIdString.equals(listId))) {
+      if (stateString != null)
+        iwuc.removeSessionAttribute(SET_ITERATOR_STATE_KEY + id);
+      if (listIdString != null)
+        iwuc.removeSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
       return false;  
+    }
     return retrieveStateFromString(stateString);             
   }
 
