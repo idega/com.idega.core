@@ -25,6 +25,7 @@ import com.idega.util.text.TextSoap;
 */
 public class Image extends PresentationObject
 {
+	//static variables:
 	public static final String ALIGNMENT_BOTTOM = "bottom";
 	public static final String ALIGNMENT_MIDDLE = "middle";
 	public static final String ALIGNMENT_LEFT = "left";
@@ -34,22 +35,16 @@ public class Image extends PresentationObject
 	public static final String ALIGNMENT_ABSOLUTE_BOTTOM = "absbottom";
 	public static final String ALIGNMENT_BASELINE = "baseline";
 	public static final String ALIGNMENT_TEXT_TOP = "texttop";
-
-	/**
-	 * 
-	 * @uml.property name="theAssociatedScript"
-	 * @uml.associationEnd multiplicity="(0 1)"
-	 */
+	private static String PARAM_IMAGE_ID = FileSystemConstants.PARAM_FILE_ID;
+	private static final String BORDER_COLOR_DEFAULT = "#000000";
+	private static final String BORDER_STYLE_DEFAULT = StyleConstants.BORDER_SOLID;
+	private static final int BORDER_WIDTH_DEFAULT = 0;
+	
+	//member variables:
 	private Script theAssociatedScript;
-
 	private String overImageUrl;
 	private String downImageUrl;
 
-	/**
-	 * 
-	 * @uml.property name="_ImageLocalizationMap"
-	 * @uml.associationEnd multiplicity="(0 1)" qualifier="locale:java.util.Locale new:java.lang.Integer"
-	 */
 	private Map _ImageLocalizationMap;
 	private Map _overImageLocalizationMap;
 
@@ -59,14 +54,7 @@ public class Image extends PresentationObject
 	private boolean linkOnImage = true;
 	protected boolean useCaching = true;
 	private String align;
-
-	/**
-	 * 
-	 * @uml.property name="zoomLink"
-	 * @uml.associationEnd multiplicity="(0 1)" inverse="_onClickImage:com.idega.presentation.text.Link"
-	 */
 	private Link zoomLink;
-
 	private String zoomImageID;
 	private String zoomPageID;
 	private String zoomImageWidth;
@@ -77,12 +65,7 @@ public class Image extends PresentationObject
 	//private com.idega.jmodule.image.data.ImageEntity image2;
 	private int maxImageWidth = 140;
 	//private boolean usesOldImageTables = false;
-	private static String PARAM_IMAGE_ID = FileSystemConstants.PARAM_FILE_ID;
 	
-	private static final String BORDER_COLOR_DEFAULT = "#000000";
-	private static final String BORDER_STYLE_DEFAULT = StyleConstants.BORDER_SOLID;
-	private static final int BORDER_WIDTH_DEFAULT = 0;
-
 	
 	public Image()
 	{
