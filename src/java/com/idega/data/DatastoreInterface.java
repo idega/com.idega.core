@@ -1,7 +1,7 @@
 
 
 /*
- * $Id: DatastoreInterface.java,v 1.49 2002/06/14 18:12:06 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.50 2002/06/26 15:34:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -323,9 +323,9 @@ public abstract class DatastoreInterface{
 
 
 
-
-
-
+  public String getSQLType(Class javaClass,int maxlength){
+    return getSQLType(javaClass.getName(),maxlength);
+  }
 
   public abstract String getSQLType(String javaClassName,int maxlength);
 

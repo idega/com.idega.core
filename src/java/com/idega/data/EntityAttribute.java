@@ -341,6 +341,9 @@ public static final int TYPE_JAVA_UTIL_DATE=11;
 
 	public void setAsPrimaryKey(boolean primaryKey){
 		isPrimaryKey= primaryKey;
+                if(primaryKey){
+                  this.setNullable(false);
+                }
 	}
 
 	public boolean isPrimaryKey(){

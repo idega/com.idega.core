@@ -155,7 +155,7 @@ public class IDOTableCreator{
       //String message = se.getMessage();
       //if(message.toLowerCase().indexOf("table")!=-1){
         theReturner=false;
-        System.out.println("Table: "+tableName+" does not exist, exception:"+se.getClass().getName());
+        //System.out.println("Table: "+tableName+" does not exist, exception:"+se.getClass().getName());
       //}
       //else{
         //se.printStackTrace();
@@ -375,7 +375,8 @@ public class IDOTableCreator{
             while (tempIter.hasNext() && doCreateMiddleTable) {
               String column = (String)tempIter.next();
               Class relClass = (Class)relMap.get(column);
-              IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
+              //IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
+              IDOLegacyEntity entity1 = (IDOLegacyEntity)IDOContainer.getInstance().instanciateBean(relClass);
               String referencingTableName = entity1.getTableName();
               doCreateMiddleTable = doesTableExist(entity,referencingTableName);
             }
@@ -402,7 +403,12 @@ public class IDOTableCreator{
                 primaryKeyStatement += ",";
               }
               String column = (String)iter.next();
-              creationStatement += column + " INTEGER NOT NULL";
+              Class relClass = (Class)relMap.get(column);
+              //IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
+              IDOLegacyEntity entity1 = (IDOLegacyEntity)IDOContainer.getInstance().instanciateBean(relClass);
+
+              //creationStatement += column + " INTEGER NOT NULL";
+              creationStatement += column+this.getPrimaryKeyReferenceForManyToManyRelationship(entity1,column,entity1.getIDColumnName());
               primaryKeyStatement +=column;
               mayAddComma = true;
             }
@@ -656,6 +662,23 @@ public class IDOTableCreator{
 
   private boolean doesColumnHaveRelationship(String columnName,IDOLegacyEntity entity){
     return (entity.getRelationShipClass(columnName)!=null);
+  }
+
+  protected String getPrimaryKeyReferenceForManyToManyRelationship(IDOLegacyEntity entity,String column,String referencingColumn){
+    try{
+      EntityAttribute attr = entity.getColumn(referencingColumn);
+      Class storageClass = attr.getStorageClass();
+      int maxLength = attr.getMaxLength();
+      String sqlType = this._dsi.getSQLType(storageClass,maxLength);
+      return " "+sqlType + " NOT NULL";
+    }
+    catch(NullPointerException ne){
+      ne.printStackTrace();
+      System.err.println("---");
+      System.err.println("Nullpointer where entity="+entity.getClass().getName()+" and column="+column);
+      System.err.println("---");
+      return " INTEGER NOT NULL";
+    }
   }
 
 
