@@ -35,6 +35,19 @@ import java.util.*;
     }
 
     public String getName() {
+	    	if(fullName==null){
+	    		StringBuffer fullNameBuffer = new StringBuffer();
+
+	    		  firstName = (firstName==null) ? "" : firstName;
+	    		  middleName = (middleName==null) ? "" : middleName;
+	    		  lastName = (lastName==null) ? "" : lastName;
+	    		
+	    		 
+	    		  fullNameBuffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+	    		  
+	    		  fullName = fullNameBuffer.toString();
+	    		  fullName = TextSoap.findAndReplace(fullName,"  "," ");
+	    	}
         return this.fullName;
     }
 
@@ -52,14 +65,17 @@ import java.util.*;
 
     public void setMiddleName(String middleName) {
       this.middleName = middleName;
+      fullName = null;
     }
 
     public void setFirstName(String firstName) {
-    	this.firstName = firstName;
+    		this.firstName = firstName;
+        fullName = null;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        fullName = null;
     }
 
     public void setName(String name) {
