@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.10 2001/10/24 17:55:37 eiki Exp $
+ * $Id: Link.java,v 1.11 2001/10/24 17:57:50 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -740,6 +740,8 @@ public class Link extends Text {
       linkObj.text = text;
       linkObj.isImageButton = isImageButton;
       linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
+      linkObj.isImageTab = isImageTab;
+      linkObj.flip = flip;
 
       if (_parameterString != null) {
         linkObj._parameterString = new StringBuffer(_parameterString.toString());
