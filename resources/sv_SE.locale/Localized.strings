@@ -1,4 +1,4 @@
-#Fri Sep 12 14:04:49 CEST 2003
+#Fri Oct 24 11:46:24 CEST 2003
 =
 Adm.\ anordnare=Adm. anordnare
 Admin\ BUN\ 24=Admin BUN 24
@@ -115,7 +115,6 @@ iw.component.com.idega.presentation.ui.SubmitButton.name=Skickningsknapp
 iw.component.com.idega.presentation.ui.TextArea.name=Textarea
 iw.component.com.idega.presentation.ui.TextInput.name=Textf\u00E4lt
 iw.component.se.idega.idegaweb.commune.block.importer.presentation.Importer.name=
-iw.component.se.idega.idegaweb.commune.school.presentation.SchoolNameText.name=
 moderator=Moderator
 name=Namn
 new=Ny
