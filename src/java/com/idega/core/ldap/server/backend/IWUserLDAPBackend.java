@@ -143,18 +143,6 @@ LDAPReplicationConstants {
 	public EntrySet get(DirectoryString base, int scope, Filter filter, boolean typesOnly, List attributes) throws DirectoryException {
 		EntrySet results = null;
 		List entries = new ArrayList();
-		String uniqueId = null;
-		
-		if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
-			DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
-			DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
-			String type = matchType.toString();
-			String value = matchVal.toString();
-			//TODO search for each type separately
-			if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
-				uniqueId = value;
-			}
-		}
 		
 		if (scope == SearchRequestEnum.WHOLESUBTREE) {
 		//TODO Eiki implement for all scopes
@@ -209,6 +197,7 @@ LDAPReplicationConstants {
 					SubstringFilterSeqOfChoice choice = (SubstringFilterSeqOfChoice) filters.next();
 					String type = new DirectoryString(filter.substrings.type).toString();
 					if(exactIndexes.contains(type)){
+						//todo this should be handled differently, initial is %string any is %string% and final is string% 
 						byte[] bytes = choice.initial;
 						if(bytes==null){
 							bytes = choice.any;
@@ -238,6 +227,8 @@ LDAPReplicationConstants {
 				String type = matchType.toString();
 				String value = matchVal.toString();
 				//TODO search for each type separately
+				String uniqueId = null;
+				//todo handle uniqueid in search
 				if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
 					uniqueId = value;
 				}
@@ -263,6 +254,19 @@ LDAPReplicationConstants {
 			}
 		}
 		else if (scope == SearchRequestEnum.SINGLELEVEL) {
+			//get children of a group
+			
+			String uniqueId = null;
+			if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
+				DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
+				DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+				String type = matchType.toString();
+				String value = matchVal.toString();
+				//TODO search for each type separately
+				if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
+					uniqueId = value;
+				}
+			}
 		
 			try {
 				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
@@ -321,13 +325,50 @@ LDAPReplicationConstants {
 		else if (scope == SearchRequestEnum.BASEOBJECT) {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
+				String uniqueId = null;
+				boolean isGroupSearch = false;
+				//TODO eiki the searching is kind of messed up,lots of code being copied. must refactor and make it work for all levels (SearchRequestEnum)
+				if (filter.choiceId == Filter.AND_CID) {
+					Iterator filters = filter.and.values().iterator();
+					while(filters.hasNext()){
+						//todo only fill the returning entries, that would be much faster and more memory efficient
+						Filter subFilter = (Filter) filters.next();
+						if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
+							DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
+							DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+							String type = matchType.toString();
+							String value = matchVal.toString();
+							
+							if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
+								uniqueId = value;
+							}
+							else if(LDAP_ATTRIBUTE_OBJECT_CLASS.equals(type)){
+								if(LDAP_SCHEMA_ORGANIZATIONAL_UNIT.equalsIgnoreCase(value)){
+									isGroupSearch = true;
+								}
+							}
+							
+						}
+					}
+				}
+				else if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
+					DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
+					DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+					String type = matchType.toString();
+					String value = matchVal.toString();
+					//TODO search for each type separately
+					if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
+						uniqueId = value;
+						isGroupSearch = false;
+					}
+				}
 
 				if (base.getDirectoryString().equals(baseDN) && uniqueId==null) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
 				else {
-					Entry entry = getEntry(base, attributes, uniqueId);
+					Entry entry = getEntry(base, attributes, uniqueId, isGroupSearch);
 					entries.add(entry);
 				}
 			}
@@ -399,7 +440,7 @@ LDAPReplicationConstants {
 		try {
 			//this may seem strange but is needed so the DN is converted to the current encoding
 			//DirectoryString converted = getDirectoryStringForIdentifier(dn.getDirectoryString());
-			return getEntry(dn, null, null);
+			return getEntry(dn, null, null,false);
 		}
 		catch (Exception e) {
 			throw new DirectoryException(e.getMessage());
@@ -468,11 +509,11 @@ LDAPReplicationConstants {
 		return super.rename(oldname, newname);
 	}
 	
-	public Entry getEntry(DirectoryString base, List attributes, String uniqueId) throws InvalidDNException,RemoteException {
+	public Entry getEntry(DirectoryString base, List attributes, String uniqueId, boolean isGroupSearch) throws InvalidDNException,RemoteException {
 		
 		Entry entry = new Entry(base);
 		
-		if (ldapUtil.isUser(base)) {
+		if (!isGroupSearch && ldapUtil.isUser(base)) {
 			User user = getUser(base, uniqueId);
 			if (user == null) {
 				System.err.println("[IWUserLDAPBackend] No user found for DN : " + base.toString());
@@ -482,7 +523,7 @@ LDAPReplicationConstants {
 				fillUserEntry(user, entry);
 			}
 		}
-		else if (ldapUtil.isGroup(base)) {
+		else if (isGroupSearch || ldapUtil.isGroup(base)) {
 			Group group = getGroup(base, uniqueId);
 			if (group == null) {
 				System.err.println("[IWUserLDAPBackend] No group found for DN : " + base.toString());
@@ -546,6 +587,7 @@ LDAPReplicationConstants {
 	}
 	
 	private String getUserIdentifier(User user, DirectoryString base) {
+		//ADD THE UNIQUE ID?
 		String identifier = "cn=";
 		String fullName = user.getName();
 		String personalId = user.getPersonalID();
@@ -554,6 +596,7 @@ LDAPReplicationConstants {
 	}
 	
 	private String getGroupIdentifier(Group group, DirectoryString base) {
+		//ADD THE UNIQUE ID?
 		String identifier = "ou=";
 		String name = getGroupName(group);
 		identifier = identifier + name + "," + base.getDirectoryString();

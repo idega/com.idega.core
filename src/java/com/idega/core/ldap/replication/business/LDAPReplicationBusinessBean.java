@@ -435,14 +435,14 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			searchResults = jndiOps.searchBaseEntry(baseDNString, "objectClass=*", 0, 0);
 		}
 		else{
-			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")(objectClass=organizationalUnit))", 0, 0);
+			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", 0, 0);
 		}
 		
 		if (searchResults != null) {
 			while (searchResults.hasMore()) {
 				SearchResult result = (SearchResult) searchResults.next();
 				
-				//				get the attributes for this DN
+				//get the attributes for this DN
 				Attributes attribs = result.getAttributes();
 				
 				logDebug(entryDN.toString());
@@ -484,10 +484,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		NamingEnumeration searchResults = null;
 		String baseDNString = entryDN.toString();
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchOneLevel(baseDNString, "objectClass=*", 0, 0);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", 0, 0);
 		}
 		else{
-			searchResults = jndiOps.searchOneLevel(baseDNString, LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, 0, 0);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, 0, 0);
 		}
 		
 		//NamingEnumeration searchResults = basicOps.searchBaseObject(new
