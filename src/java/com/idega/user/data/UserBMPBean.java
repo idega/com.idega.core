@@ -953,7 +953,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		try{
 			List l = getGeneralGroup().getParentGroups();
 			Group primaryGroup = this.getPrimaryGroup();
-			if(!l.contains(primaryGroup)){
+			if(primaryGroup!=null && !l.contains(primaryGroup)){
 				l.add(primaryGroup);
 			}
 			return l;
