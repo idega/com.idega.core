@@ -2,6 +2,8 @@ package com.idega.util.text;
 
 import java.util.*;
 
+import com.idega.util.LocaleUtil;
+
 /**
  * Title: com.idega.util.text.Name
  * Description: A helper class for splitting up a fullname into first,middle and lastnames.
@@ -49,6 +51,27 @@ import java.util.*;
 	    		  fullName = TextSoap.findAndReplace(fullName,"  "," ");
 	    	}
         return this.fullName;
+    }
+    
+    public String getName(Locale locale) {
+    		return getName(locale, false);
+    }
+    
+    public String getName(Locale locale, boolean commaSeperated) {
+    		if (fullName == null) {
+    			StringBuffer buffer = new StringBuffer();
+    			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
+    				buffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+    			}
+    			else {
+    				buffer.append(lastName);
+    				if (commaSeperated) {
+    					buffer.append(",");
+    				}
+    				buffer.append(" ").append(firstName).append(" ").append(middleName);
+    			}
+    		}
+    		return fullName;
     }
 
     public String getFirstName() {
