@@ -168,6 +168,14 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery append(IDOEntity entity) {
+		Object pk = entity.getPrimaryKey();
+		if (pk instanceof Integer)
+			return this.append(pk);
+		else
+			return this.appendWithinSingleQuotes(pk);
+	}
+
 	/**
 	 * @see java.lang.StringBuffer#capacity()
 	 */
@@ -653,6 +661,19 @@ public class IDOQuery {
 	 * @param columnValue the value
 	 * @return IDOQuery this Object
 	 */
+	public IDOQuery appendWhereEquals(String columnName, IDOEntity entity) {
+		appendWhere(columnName);
+		this.appendEqualSign();
+		this.append(entity);
+		return this;
+	}
+
+	/**
+	 * Appends a where (where columnName=columnValue) without quotemarks
+	 * @param columnName the name of the field
+	 * @param columnValue the value
+	 * @return IDOQuery this Object
+	 */
 	public IDOQuery appendWhereEquals(String columnName, int columnValue) {
 		return appendWhereEquals(columnName, Integer.toString(columnValue));
 	}
@@ -700,6 +721,14 @@ public class IDOQuery {
 		this.append(columnName);
 		this.appendEqualSign();
 		this.append(columnValue);
+		return this;
+	}
+
+	public IDOQuery appendEquals(String columnName, IDOEntity entity) {
+		this.append(WHITE_SPACE);
+		this.append(columnName);
+		this.appendEqualSign();
+		this.append(entity);
 		return this;
 	}
 
@@ -751,6 +780,14 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery appendAndEquals(String columnName, IDOEntity entity) {
+		appendAnd();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(entity);
+		return this;
+	}
+
 	public IDOQuery appendOrEqualsQuoted(String columnName, String columnValue) {
 		appendOr();
 		append(columnName);
@@ -775,6 +812,14 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery appendOrEquals(String columnName, boolean columnValue) {
+		appendOr();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
 	public IDOQuery appendOrEquals(String columnName, String columnValue) {
 		appendOr();
 		append(columnName);
@@ -788,6 +833,14 @@ public class IDOQuery {
 		append(columnName);
 		this.appendEqualSign();
 		this.append(columnValue);
+		return this;
+	}
+
+	public IDOQuery appendOrEquals(String columnName, IDOEntity entity) {
+		appendOr();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(entity);
 		return this;
 	}
 
