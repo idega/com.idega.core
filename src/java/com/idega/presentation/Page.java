@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.7 2001/10/24 13:22:38 gummi Exp $
+ * $Id: Page.java,v 1.8 2001/11/01 18:51:12 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,6 +17,9 @@ import com.idega.util.FrameStorageInfo;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import com.idega.idegaweb.IWMainApplication;
+
+import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.business.IBXMLPage;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -239,6 +242,7 @@ public class Page extends PresentationObjectContainer {
    *
    */
   public void setTitle(String title) {
+    _title = title;
     setName(title);
   }
 
@@ -540,6 +544,14 @@ public class Page extends PresentationObjectContainer {
         setToRedirect(iwc.getRequestURI());
         iwc.getSession().setAttribute("idega_special_reload","true");
       }
+
+
+    }
+
+    if (_title != null) {
+      BuilderLogic instance = BuilderLogic.getInstance();
+      instance.updateName(_title,iwc);
+//      instance.updateTemplate(this._te);
     }
   }
 
