@@ -614,7 +614,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
   }
   public UserProperties getUserProperties() {
   	return (UserProperties) this.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
-  }	
+  }
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
@@ -658,7 +658,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public void setCacheWriter(PrintWriter writer) {
 		this.cacheWriter = writer;
 	}
-	
+
 	/**
    	* @deprecated Replaced with getCurrentUser()
    	**/
@@ -889,14 +889,20 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
   public com.idega.user.data.User getCurrentUser(){
 		com.idega.core.user.data.User user = getUser();
 		if(user!=null){
-			com.idega.user.data.User newUser = (com.idega.user.data.User) getSessionAttribute(IWC_SESSION_ATTR_NEW_USER_KEY);
-			if(newUser==null){
-				newUser = Converter.convertToNewUser(user);
-				setSessionAttribute(IWC_SESSION_ATTR_NEW_USER_KEY,newUser);
+			try{
+				String sessKey = IWC_SESSION_ATTR_NEW_USER_KEY+user.getPrimaryKey().toString();
+				com.idega.user.data.User newUser = (com.idega.user.data.User) getSessionAttribute(sessKey);
+				if(newUser==null){
+					newUser = Converter.convertToNewUser(user);
+					setSessionAttribute(sessKey,newUser);
+				}
+				return newUser;
 			}
-			return newUser;
+			catch(Exception e){
+				throw new RuntimeException("IWContext.getCurrentUser(): Error getting primary key of user. Exception was: "+e.getClass().getName()+" : "+e.getMessage());
+			}
 		}
-		return null;	
+		return null;
   }
 
 }
