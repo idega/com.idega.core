@@ -334,7 +334,7 @@ public class Form extends InterfaceObjectContainer {
 		  }
 		}*/
 
-		setEventListener(LocaleSwitcher.class.getName());
+		//setEventListener(LocaleSwitcher.class.getName());
 		addParameter(LocaleSwitcher.languageParameterString, iwc.getCurrentLocale().toString());
 
 		

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.84 2002/12/27 12:20:30 laddi Exp $
+ * $Id: Link.java,v 1.85 2003/01/02 16:50:43 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -938,7 +938,7 @@ public class Link extends Text {
 	 *
 	 */
 	public void setLocale(String languageString) {
-		setEventListener(LocaleSwitcher.class.getName());
+		//setEventListener(LocaleSwitcher.class.getName());
 		addParameter(LocaleSwitcher.languageParameterString, languageString);
 	}
 

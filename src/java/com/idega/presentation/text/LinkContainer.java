@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.7 2002/06/12 18:28:22 laddi Exp $
+ * $Id: LinkContainer.java,v 1.8 2003/01/02 16:50:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -192,7 +192,7 @@ public class LinkContainer extends PresentationObjectContainer {
    *
    */
   public void setLocale(String languageString) {
-    setEventListener(LocaleSwitcher.class.getName());
+    //setEventListener(LocaleSwitcher.class.getName());
     addParameter(LocaleSwitcher.languageParameterString,languageString);
   }
 
