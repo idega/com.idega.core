@@ -85,5 +85,5 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public Group getPermissionControllingGroup();
  public void setIsPermissionControllingGroup(boolean isControlling);
   public boolean isPermissionControllingGroup();
-  
+  public boolean isAlias();
 }

@@ -211,6 +211,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Group)getColumnValue(COLUMN_ALIAS_TO_GROUP);
 	}
 	
+	public boolean isAlias() {
+	    return ("alias".equals(getGroupType()) &&  ( getAliasID()>0 ));
+	}
+	
 	public void setPermissionControllingGroupID(int id) {
 		setColumn(COLUMN_PERMISSION_CONTROLLING_GROUP, id);
 	}
