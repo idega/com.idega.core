@@ -96,7 +96,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		String lang = currentLocale.getISO3Language();
 		Locale locale;
 		List smallCountries = new Vector();
-		CountryHome countryHome = getAddressBusiness(iwc).getCountryHome();
+		//CountryHome countryHome = getAddressBusiness(iwc).getCountryHome();
 		while (iter.hasNext()) {
 			//Locale locale = (Locale) iter.next();
 			

@@ -1,6 +1,5 @@
 package com.idega.presentation;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;

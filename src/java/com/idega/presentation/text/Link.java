@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.96 2003/10/03 01:42:00 tryggvil Exp $
+ * $Id: Link.java,v 1.97 2003/10/06 13:01:25 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,8 +10,17 @@
 package com.idega.presentation.text;
 
 
-import com.idega.core.builder.data.ICDomain;
-import com.idega.core.builder.data.ICPage;
+import java.net.URLDecoder;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -33,18 +42,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
-import com.idega.util.caching.Cache;
 import com.idega.util.text.TextSoap;
-import java.net.URLDecoder;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

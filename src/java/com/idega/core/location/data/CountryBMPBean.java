@@ -1,6 +1,5 @@
 package com.idega.core.location.data;
 
-import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Locale;
