@@ -162,6 +162,14 @@ public class IWResourceBundle extends ResourceBundle {
       return new Image(getResourcesURL()+slash+name);
     }
 
+    public Image getImage(String name, String alt){
+      return new Image(getResourcesURL()+slash+name,alt);
+    }
+
+    public Image getImage(String name, String key, String defaultKeyValue){
+      return new Image(getResourcesURL()+slash+name,getLocalizedString(key,defaultKeyValue));
+    }
+
     private void setResourcesURL(String url){
       resourcesURL=url;
     }
