@@ -21,12 +21,10 @@ public class CacheableEntity extends GenericEntity {
 
   public CacheableEntity() {
     super();
-    IWMainApplication.getIWCacheManager().cacheTable(this);
   }
 
   public CacheableEntity(int id) throws SQLException{
     super(id);
-    IWMainApplication.getIWCacheManager().cacheTable(this);
   }
 
   /** implemented in subclasses*/
@@ -42,7 +40,8 @@ public class CacheableEntity extends GenericEntity {
   */
   public void insert()throws SQLException{
     super.insert();
-  //  IWMainApplication.getIWCacheManager().cacheTable(this);
+    IWMainApplication.getIWCacheManager().cacheTable(this);
+    IWMainApplication.getIWCacheManager().insertIntoCachedTable(this);
   }
 
   /**
@@ -50,7 +49,8 @@ public class CacheableEntity extends GenericEntity {
   */
   public void delete()throws SQLException{
     super.delete();
-
+    IWMainApplication.getIWCacheManager().cacheTable(this);
+    IWMainApplication.getIWCacheManager().deleteFromCachedTable(this);
   }
 
   /**
@@ -58,6 +58,8 @@ public class CacheableEntity extends GenericEntity {
   */
   public void update()throws SQLException{
     super.update();
+    IWMainApplication.getIWCacheManager().cacheTable(this);
+    IWMainApplication.getIWCacheManager().updateFromCachedTable(this);
   }
 
   /**
@@ -70,10 +72,14 @@ public class CacheableEntity extends GenericEntity {
   *and cacheTable(GenericEntity entity, String columnNameForKey,String columnNameForSecondKey)
   */
   public void cacheEntity(){
-    IWMainApplication.getIWCacheManager().cacheTable(this);
+    IWMainApplication.getIWCacheManager().cacheTable(this,getCacheKey());
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1);
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1,key2);
 
+  }
+
+  public String getCacheKey(){
+    return getIDColumnName();
   }
 
 

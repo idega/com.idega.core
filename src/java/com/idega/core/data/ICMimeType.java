@@ -3,7 +3,7 @@ package com.idega.core.data;
 import java.lang.String;
 import java.lang.Integer;
 import java.sql.SQLException;
-import com.idega.data.GenericEntity;
+import com.idega.data.CacheableEntity;
 
 
 /**
@@ -15,7 +15,10 @@ import com.idega.data.GenericEntity;
  * @version 1.0
  */
 
-public class ICMimeType extends GenericEntity {
+public class ICMimeType extends CacheableEntity {
+
+  public static String IC_MIME_TYPE_FOLDER = "ic_folder";
+  public static String IC_MIME_TYPE_XML = "text/xml";
 
 
   public ICMimeType() {
@@ -28,7 +31,9 @@ public class ICMimeType extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName(),"Mime type",true,true, String.class,100);
+    addAttribute(getColumnNameDescription(),"Description",true,true, String.class,255);
     addAttribute(getColumnNameFileType(),"File type",true,true, Integer.class,"many-to-one",ICFileType.class);
+
     setAsPrimaryKey(getIDColumnName(),true);
     setNullable(getIDColumnName(),false);
   }
@@ -39,6 +44,8 @@ public class ICMimeType extends GenericEntity {
 
   public static String getColumnNameMimeType(){return "MIME_TYPE";}
   public static String getColumnNameFileType(){return "IC_FILE_TYPE_ID";}
+  public static String getColumnNameDescription(){return "DESCRIPTION";}
+
 
 
   public String getMimeType(){
@@ -47,6 +54,14 @@ public class ICMimeType extends GenericEntity {
 
   public void setMimeType(String mimeType){
     setColumn(getColumnNameMimeType(), mimeType);
+  }
+
+  public String getDescription(){
+    return (String) getColumnValue(getColumnNameDescription());
+  }
+
+  public void setDescription(String description){
+    setColumn(getColumnNameDescription(), description);
   }
 
   public int getFileTypeID(){
@@ -61,5 +76,27 @@ public class ICMimeType extends GenericEntity {
    return  getColumnNameMimeType();
   }
 
+  public void insertStartData() {
+    try {
+      ICMimeType type;
+// idegaweb specific types
+      type = new ICMimeType();
+      type.setMimeType(this.IC_MIME_TYPE_FOLDER);
+      type.setDescription("A Folder");
+      //type.setFileTypeId( );
+      type.insert();
+
+      type = new ICMimeType();
+      type.setMimeType(this.IC_MIME_TYPE_XML);
+      type.setDescription("A xml document such as .ibxml");
+      //type.setFileTypeId( );
+      type.insert();
+
+    }
+    catch (SQLException sql) {
+      sql.printStackTrace(System.err);
+    }
+  }
 
 }
+

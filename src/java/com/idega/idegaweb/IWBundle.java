@@ -138,13 +138,15 @@ public class IWBundle implements java.lang.Comparable{
       System.setProperty("java.class.path",newClassPath);
 
       installComponents();
-      runStartClass();
       try{
         createDataRecords();
       }
       catch(Exception e){
         e.printStackTrace();
       }
+
+      runStartClass();
+
    }
 
    private void createDataRecords()throws Exception{

@@ -157,4 +157,53 @@ public class ICFile extends TreeableEntity {
     this.setModificationDate(com.idega.util.idegaTimestamp.getTimestampRightNow());
     super.update();
   }
+
+
+
+        /*
+      file = new ICFile();
+      file.setName("Audio");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for audio and music");
+      file.insert();
+
+      file = new ICFile();
+      file.setName("Documents");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for documents");
+      file.insert();
+
+
+      file = new ICFile();
+      file.setName("Flash");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for flash movies");
+      file.insert();
+
+      file = new ICFile();
+      file.setName("Applications");
+      //file.setMimeType(ICFile.);
+      file.setDescription("The default folder for applications");
+      file.insert();
+      file.addTo(cat);
+
+
+      file = new ICFile();
+      file.setName("Images");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for images");
+      file.insert();
+
+
+      file = new ICFile();
+      file.setName("Movies");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for movies");
+      file.insert();
+
+*/
+
+
+
+
 }

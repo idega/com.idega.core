@@ -256,7 +256,7 @@ public class IWCacheManager {
       if( entityMap != null ){
        entity = (GenericEntity) entityMap.get(value);
       }
-    }
+    }//else System.out.println("IWCacheManager entityMaps is null!");
 
     return entity;
   }
@@ -269,7 +269,7 @@ public class IWCacheManager {
     Map entityMap = null;
     if( entityMaps != null ){
       entityMap = (Map) entityMaps.get(entityClass);
-    }
+    }//else System.out.println("IWCacheManager entityMaps is null!");
     return entityMap;
   }
 
@@ -282,29 +282,34 @@ public class IWCacheManager {
   }
 
 
-  public void updateCachedTable(GenericEntity entity){
-/*    Vector keys = getEntityKeyVector(entity.getClass());
+  public void updateFromCachedTable(GenericEntity entity){
+    Vector keys = getEntityKeyVector(entity.getClass());
     if( keys!=null ){
       int length = keys.size();
       if(length==2){
-        //getFromCachedTable(entity.getClass(),entity.getStringColumnValue(entity.getIDColumnName()));
-         getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
+        getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
       }
       else{
-         getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
-
+         getEntityMap(entity.getClass()).put(entity.getStringColumnValue((String) keys.elementAt(0)),entity);
       }
-
     }
-  */
   }
 
   public void deleteFromCachedTable(GenericEntity entity){
-
+    Vector keys = getEntityKeyVector(entity.getClass());
+    if( keys!=null ){
+      int length = keys.size();
+      if(length==2){
+         getEntityMap(entity.getClass()).remove(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))));
+      }
+      else{
+         getEntityMap(entity.getClass()).remove(entity.getStringColumnValue((String) keys.elementAt(0)));
+      }
+    }
   }
 
   public void insertIntoCachedTable(GenericEntity entity){
-    updateCachedTable(entity);
+    updateFromCachedTable(entity);
   }
 
 }
