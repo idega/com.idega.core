@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.60 2003/07/01 14:07:17 gummi Exp $
+ * $Id: IWBundle.java,v 1.61 2003/07/21 10:49:09 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -10,9 +10,9 @@
 package com.idega.idegaweb;
 
 import com.idega.core.data.ICObject;
-import com.idega.data.EntityFinder;
-import com.idega.data.IDOFinderException;
+import com.idega.core.data.ICObjectHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -35,6 +37,8 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
+
+import javax.ejb.FinderException;
 
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.
@@ -109,12 +113,14 @@ public class IWBundle implements java.lang.Comparable {
 		resourceBundles = new Hashtable();
 		setRootRealPath(rootRealPath);
 		setRootVirtualPath(rootVirtualPath);
-		try {
-			loadBundle();
-		}
-		catch (Exception e) {
-			throw new com.idega.exception.IWBundleDoesNotExist(bundleIdentifier);
-		}
+		
+			try {
+				loadBundle();
+			}
+			catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+	
 		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
 
@@ -145,54 +151,75 @@ public class IWBundle implements java.lang.Comparable {
 		System.setProperty("java.class.path", SystemClassPath.toString());
 
 		installComponents();
-		try {
-			createDataRecords();
-			registerBlockPermisionKeys();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+			try {
+				createDataRecords();
+				registerBlockPermisionKeys();
+			}
+			catch (IDOLookupException e) {
+				e.printStackTrace();
+			}
+			catch (FinderException e) {
+				logMessage("No bundle components found for "+getBundleIdentifier());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 
 		runStartClass();
 
 	}
 
 	private void createDataRecords() throws Exception {
+		
 		List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_DATA, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
 		if (entities != null) {
 			Iterator iter = entities.iterator();
 			while (iter.hasNext()) {
 				ICObject ico = (ICObject) iter.next();
-				try {
-					Class c = ico.getObjectClass();
-					IDOLookup.instanciateEntity(c);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
+				
+					try {
+						Class c = ico.getObjectClass();
+						IDOLookup.instanciateEntity(c);
+					}
+					catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				
 			}
 		}
 	}
 
-	private void registerBlockPermissionKeys(Class blockClass) throws Exception {
+	private void registerBlockPermissionKeys(Class blockClass) throws InstantiationException,IllegalAccessException {
 		Object o = blockClass.newInstance();
 		if (o instanceof Block)
 			 ((Block) o).registerPermissionKeys();
 	}
 
-	private void registerBlockPermisionKeys() throws Exception {
-		List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
-		if (entities != null) {
-			Iterator iter = entities.iterator();
+	private void registerBlockPermisionKeys() throws IDOLookupException,FinderException  {
+		ICObjectHome icObjectHome =(ICObjectHome) IDOLookup.getHome(ICObject.class);
+		Collection objects = icObjectHome.findAllBlocksByBundle(this.getBundleIdentifier());
+		if (objects != null) {
+			Iterator iter = objects.iterator();
 			while (iter.hasNext()) {
 				ICObject ico = (ICObject) iter.next();
-				try {
-					Class c = ico.getObjectClass();
-					registerBlockPermissionKeys(c);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
+				
+					try {
+						Class c = ico.getObjectClass();
+						registerBlockPermissionKeys(c);
+					}
+					catch (ClassNotFoundException e) {
+						logMessage("Class not found for Block: "+ico.getName());
+						//e.printStackTrace();
+					}
+					catch (InstantiationException e) {
+						e.printStackTrace();
+					}
+					catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				
 			}
 		}
 	}
@@ -594,9 +621,8 @@ public class IWBundle implements java.lang.Comparable {
 	 * Returns the ICObjects associated with this bundle
 	 * Returns an empty list if nothing found
 	 */
-	public List getICObjectsList() throws IDOFinderException {
-		List l = EntityFinder.getInstance().findAllByColumn(ICObject.class, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
-		return l;
+	public Collection getICObjectsList() throws FinderException,IDOLookupException {
+		return getICObjectHome().findAllByBundle(this.getBundleIdentifier());
 	}
 
 	/**
@@ -606,7 +632,7 @@ public class IWBundle implements java.lang.Comparable {
 	 */
 	public ICObject[] getICObjects() {
 		try {
-			List l = getICObjectsList();
+			Collection l = getICObjectsList();
 			return (ICObject[]) l.toArray(new ICObject[0]);
 		}
 		catch (Exception e) {
@@ -618,10 +644,8 @@ public class IWBundle implements java.lang.Comparable {
 	 * Returns the ICObjects associated with this bundle and of the specified componentType
 	 * Returns null if there is an exception
 	 */
-	public List getICObjectsList(String componentType) throws IDOFinderException {
-		List l = EntityFinder.getInstance().findAllByColumn(ICObject.class, com.idega.core.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier(), com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(), componentType);
-		//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
-		return l;
+	public Collection getICObjectsList(String componentType) throws FinderException,IDOLookupException {
+		return getICObjectHome().findAllByObjectTypeAndBundle(componentType,this.getBundleIdentifier());
 	}
 
 	/**
@@ -632,7 +656,7 @@ public class IWBundle implements java.lang.Comparable {
 	public ICObject[] getICObjects(String componentType) {
 		try {
 			//return (ICObject[])(((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy()).findAllByColumn(com.idega.core.data.ICObjectBMPBean.getBundleColumnName(),this.getBundleIdentifier(),com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),componentType);
-			List l = getICObjectsList(componentType);
+			Collection l = getICObjectsList(componentType);
 			return (ICObject[]) l.toArray(new ICObject[0]);
 		}
 		catch (Exception e) {
@@ -671,24 +695,39 @@ public class IWBundle implements java.lang.Comparable {
 	private void addComponentToDatabase(String className, String componentType, String componentName) {
 		ICObject ico = com.idega.core.data.ICObjectBMPBean.getICObject(className);
 		if (ico == null) {
-			try {
-				ico = ((com.idega.core.data.ICObjectHome) com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
-				Class c = Class.forName(className);
-				ico.setObjectClass(c);
-				ico.setName(componentName);
-				ico.setObjectType(componentType);
-				ico.setBundle(this);
-				ico.insert();
-				if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
-					com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
-					if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
-						registerBlockPermissionKeys(c);
+			
+				try {
+					ico = ((com.idega.core.data.ICObjectHome) com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
+					Class c = Class.forName(className);
+					ico.setObjectClass(c);
+					ico.setName(componentName);
+					ico.setObjectType(componentType);
+					ico.setBundle(this);
+					ico.insert();
+					if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
+						com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
+						if (componentType.equals(com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
+							registerBlockPermissionKeys(c);
+						}
 					}
 				}
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+				catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				catch (SQLException e) {
+					e.printStackTrace();
+				}
+				catch (InstantiationException e) {
+					e.printStackTrace();
+				}
+				catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			
+		
 		}
 	}
 
@@ -784,4 +823,13 @@ public class IWBundle implements java.lang.Comparable {
 	public boolean containsLocalizedString(String key) {
 		return (getLocalizableStringsMap().containsKey(key));
 	}
+	
+	private ICObjectHome getICObjectHome()throws IDOLookupException{
+		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
+	}
+	
+	private void logMessage(String message){
+		if(getApplication().isDebugActive())
+			System.out.println("[IWBundle] : "+getBundleIdentifier()+" : "+message);
+	 }
 }
