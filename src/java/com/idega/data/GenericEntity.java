@@ -1458,9 +1458,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return findRelatedIDs(entity, "", "");
   }
 
-  public IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue)throws SQLException{
+  private String getFindRelatedSQLQuery(IDOLegacyEntity entity,String entityColumnName,String entityColumnValue){
 		String tableToSelectFrom = getNameOfMiddleTable(entity,this);
-		StringBuffer buffer=new StringBuffer();
+        StringBuffer buffer=new StringBuffer();
 		buffer.append("select e.* from ");
 		buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
 		buffer.append(" where ");
@@ -1489,10 +1489,47 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		  }
 		}
 		String SQLString=buffer.toString();
+        return SQLString;
+  }
 
+  public IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue)throws SQLException{
+		/*String tableToSelectFrom = getNameOfMiddleTable(entity,this);
+		StringBuffer buffer=new StringBuffer();
+		buffer.append("select e.* from ");
+		buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
+		buffer.append(" where ");
+		buffer.append("middle."+this.getIDColumnName());
+		buffer.append("=");
+		buffer.append(this.getID());
+		buffer.append(" and ");
+		buffer.append("middle."+entity.getIDColumnName());
+		buffer.append("=");
+		buffer.append("e."+entity.getIDColumnName());
+		if ( entity.getID() != -1 ) {
+		  buffer.append(" and ");
+		  buffer.append("middle."+entity.getIDColumnName());
+		  buffer.append("=");
+		  buffer.append(entity.getID());
+		}
+		if (entityColumnName != null)
+		if (!entityColumnName.equals("")) {
+		  buffer.append(" and ");
+		  buffer.append("e."+entityColumnName);
+		  if (entityColumnValue != null) {
+		    buffer.append(" = ");
+		    buffer.append("'"+entityColumnValue+"'");
+		  }else {
+		    buffer.append(" is null");
+		  }
+		}
+		String SQLString=buffer.toString();*/
+        String SQLString = this.getFindRelatedSQLQuery(entity,entityColumnName,entityColumnValue);
 		return findRelated(entity,SQLString);
 	}
 
+    /**
+     * @deprecated
+     */
 	public IDOLegacyEntity[] findReverseRelated(IDOLegacyEntity entity)throws SQLException{
 		return findRelated(entity);
 	}
@@ -2867,4 +2904,113 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return vector;
 
   }
+
+  /**
+   * Returns a collection of returningEntity instances
+   */
+  protected Collection idoGetRelatedEntities(IDOLegacyEntity returningEntity)throws EJBException{
+    Vector vector = new Vector();
+    Collection ids = idoGetRelatedEntityIDs(returningEntity);
+    Iterator iter = ids.iterator();
+    try{
+      IDOHome home = (IDOHome)returningEntity.getEJBHome();
+      while (iter.hasNext()) {
+        try{
+          Object pk = iter.next();
+          IDOEntity entityToAdd = home.idoFindByPrimaryKey(pk);
+          vector.addElement(entityToAdd);
+        }
+        catch(Exception e){
+          throw new EJBException(e.getMessage());
+        }
+      }
+    }
+    catch(Exception e){
+      throw new EJBException("Error in idoGetRelatedEntities()"+e.getMessage());
+    }
+    return vector;
+  }
+
+  /**
+   * Returns a collection of returningEntity primary keys
+   */
+  protected Collection idoGetRelatedEntityIDs(IDOLegacyEntity returningEntity)throws EJBException{
+        String sqlQuery = this.getFindRelatedSQLQuery(returningEntity,"","");
+		Connection conn= null;
+		Statement Stmt= null;
+		int length;
+		Vector vector = new Vector();
+		try {
+            IDOHome home = (IDOHome)returningEntity.getEJBHome();
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			ResultSet RS = Stmt.executeQuery(sqlQuery);
+			while (RS.next()){
+              Integer pk = (Integer)RS.getObject(returningEntity.getIDColumnName());
+              //IDOEntity entityToAdd = home.idoFindByPrimaryKey(pk);
+			  //vector.addElement(entityToAdd);
+			  vector.add(pk);
+            }
+			RS.close();
+
+		}
+                catch(Exception sqle){
+                  throw new EJBException(sqle);
+                }
+		finally{
+			if(Stmt != null){
+                              try{
+				Stmt.close();
+			    }
+                            catch(SQLException e){
+                              e.printStackTrace();
+                            }
+                        }
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+		return vector;
+    }
+
+
+	protected Collection idoFindAllIDsBySQL()throws FinderException{
+		return this.idoFindIDsBySQL("select * from "+getTableName());
+	}
+
+
+    protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords)throws FinderException{
+      Collection coll = this.idoFindIDsBySQL(SQLString);
+      Collection returningColl = new Vector();
+      Iterator iter = returningColl.iterator();
+      int counter = 1;
+      while (iter.hasNext() && counter<=returningNumberOfRecords) {
+        Integer item = (Integer)iter.next();
+        returningColl.add(item);
+        counter++;
+      }
+      return returningColl;
+    }
+
+	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind)throws FinderException{
+		return idoFindIDsBySQL("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"'");
+	}
+
+	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind, String orderByColumnName)throws FinderException{
+		return idoFindIDsBySQL("select * from "+getTableName()+" where "+columnName+" = "+toFind+" order by "+orderByColumnName);
+	}
+
+	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind, String orderByColumnName)throws FinderException{
+		return idoFindAllIDsByColumnOrderedBySQL(columnName,Integer.toString(toFind),columnName);
+	}
+
+	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind)throws FinderException{
+		return idoFindAllIDsByColumnOrderedBySQL(columnName,toFind,columnName);
+	}
+
+	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind)throws FinderException{
+		return idoFindAllIDsByColumnOrderedBySQL(columnName,Integer.toString(toFind),columnName);
+	}
+
+
 }
