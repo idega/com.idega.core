@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.4 2001/10/10 12:34:10 gummi Exp $
+ * $Id: Link.java,v 1.5 2001/10/18 18:38:18 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -286,6 +286,13 @@ public class Link extends Text {
    */
   public void addParameter(Parameter parameter) {
     addParameter(parameter.getName(),parameter.getValue());
+  }
+
+  /**
+   *
+   */
+  public void addParameter(String parameterName,Class theClass) {
+    addParameter(parameterName,IWMainApplication.getEncryptedClassName(theClass));
   }
 
   /**
@@ -1053,7 +1060,7 @@ public class Link extends Text {
     _objectType=OBJECT_TYPE_WINDOW;
     _windowClass=windowClass;
     setURL(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
   }
 
   public void setWindowToOpen(Class windowClass, int instanceId) {
