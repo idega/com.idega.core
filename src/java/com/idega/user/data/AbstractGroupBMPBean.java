@@ -177,6 +177,42 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	public String getShortName() {
+		try {
+			return getGeneralGroup().getShortName();
+		}
+		catch (Exception ex) {
+			throw new EJBException(ex);
+		}
+	}
+
+	public void setShortName(String shortName) {
+		try {
+			getGeneralGroup().setShortName(shortName);
+		}
+		catch (Exception ex) {
+			throw new EJBException(ex);
+		}
+	}
+
+	public String getAbbrevation() {
+		try {
+			return getGeneralGroup().getAbbrevation();
+		}
+		catch (Exception ex) {
+			throw new EJBException(ex);
+		}
+	}
+
+	public void setAbbrevation(String abbr) {
+		try {
+			getGeneralGroup().setAbbrevation(abbr);
+		}
+		catch (Exception ex) {
+			throw new EJBException(ex);
+		}
+	}
+
 	public String getGroupType(){
 		return getGeneralGroup().getGroupType();
 	}

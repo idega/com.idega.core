@@ -35,6 +35,8 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public int getHomePageID();
  public int getIndex(com.idega.core.ICTreeNode p0);
  public java.lang.String getName();
+ public java.lang.String getShortName();
+ public java.lang.String getAbbrevation();
  public int getNodeID();
  public java.lang.String getNodeName();
  public java.util.List getParentGroups()throws javax.ejb.EJBException;
@@ -67,5 +69,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setHomePageID(int p0);
  public void setHomePageID(java.lang.Integer p0);
  public void setName(java.lang.String p0);
+ public void setShortName(java.lang.String p0);
+ public void setAbbrevation(java.lang.String p0);
  public void store();
 }
