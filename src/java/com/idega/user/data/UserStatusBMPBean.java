@@ -8,6 +8,7 @@
  */
 package com.idega.user.data;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -49,8 +50,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		addManyToOneRelationship(IC_USER,User.class);
 		addManyToOneRelationship(IC_GROUP,Group.class);
 		
-		addAttribute(DATE_FROM,"Date from",true,true,java.sql.Date.class);
-		addAttribute(DATE_TO,"Date to",true,true,java.sql.Date.class);
+		addAttribute(DATE_FROM,"Date from",true,true,java.sql.Timestamp.class);
+		addAttribute(DATE_TO,"Date to",true,true,java.sql.Timestamp.class);
 	}
 
 	public int getStatusId() {
@@ -101,6 +102,22 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		setColumn(IC_GROUP, group);
 	}	
 	
+	public void setDateFrom(Timestamp from) {
+		setColumn(DATE_FROM,from);
+	}
+	
+	public Timestamp getDateFrom() {
+		return (Timestamp) getColumnValue(DATE_FROM);
+	}
+	
+	public void setDateTo(Timestamp to) {
+		setColumn(DATE_TO,to);
+	}
+	
+	public Timestamp getDateTo() {
+		return (Timestamp) getColumnValue(DATE_TO);
+	}
+
 	public Collection ejbFindAll() throws FinderException {
 		return super.idoFindAllIDsBySQL();
 	}
