@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.109 2004/11/15 22:24:01 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.110 2004/11/19 01:27:27 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,10 +64,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/15 22:24:01 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/19 01:27:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.109 $
+ * @version $Revision: 1.110 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -886,7 +886,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			if (markupAttributes != null)
 			{
 				if(markupAttributes instanceof Hashtable){
-					obj.setMarkupAttributes((Map) ((Hashtable) markupAttributes).clone());
+					//obj.setMarkupAttributes((Map) ((Hashtable) markupAttributes).clone());
+					obj.attributes = ((Hashtable) ((Hashtable) markupAttributes).clone());
 				}
 				else{
 					for (Iterator iter = markupAttributes.keySet().iterator(); iter.hasNext();) {
