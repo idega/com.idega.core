@@ -30,6 +30,7 @@ public class IWStyleManager implements Singleton {
 
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWStyleManager();}};
 	
+	private static String PROPERTY_WRITE_FILE = "IW_STYLEMANAGER_WRITEFILE";
 
 	
 	public IWStyleManager() {
@@ -162,42 +163,58 @@ public class IWStyleManager implements Singleton {
 		}
 	}
 
+	/**
+	 * Gets if the stylesheet file should be written down - this is disabled in some new systems.
+	 * @return
+	 */
+	public boolean shouldWriteDownFile(){
+		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+		if(iwma.getSettings().getProperty(PROPERTY_WRITE_FILE)!=null){
+			return iwma.getSettings().getBooleanProperty(PROPERTY_WRITE_FILE);
+		}
+		else{
+			return true;
+		}
+	}
+	
 	public void writeStyleSheet() {
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			Iterator iter = getStyleMap().keySet().iterator();
-			while (iter.hasNext()) {
-				String name = (String) iter.next();
-				String style = getStyle(name);
-				if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
-					name = "." + name;
-				}
-				
-				String writeString = name + " {";
-				writer.write(writeString, 0, writeString.length());
-				writer.newLine();
-				
-				if (style != null && style.length() > 0 ) {
-					StringTokenizer tokens = new StringTokenizer(style, ";");
-					while (tokens.hasMoreTokens()) {
-						writeString = "\t" + tokens.nextToken() + ";";
-						writer.write(writeString, 0, writeString.length());
+		if(shouldWriteDownFile()){
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+				Iterator iter = getStyleMap().keySet().iterator();
+				while (iter.hasNext()) {
+					String name = (String) iter.next();
+					String style = getStyle(name);
+					if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
+						name = "." + name;
+					}
+					
+					String writeString = name + " {";
+					writer.write(writeString, 0, writeString.length());
+					writer.newLine();
+					
+					if (style != null && style.length() > 0 ) {
+						StringTokenizer tokens = new StringTokenizer(style, ";");
+						while (tokens.hasMoreTokens()) {
+							writeString = "\t" + tokens.nextToken() + ";";
+							writer.write(writeString, 0, writeString.length());
+							writer.newLine();
+						}
+					}
+	
+					writeString = "}";
+					writer.write(writeString, 0, writeString.length());
+					writer.newLine();
+					if (iter.hasNext()) {
 						writer.newLine();
 					}
 				}
-
-				writeString = "}";
-				writer.write(writeString, 0, writeString.length());
-				writer.newLine();
-				if (iter.hasNext()) {
-					writer.newLine();
-				}
+				writer.flush();
+				writer.close();
 			}
-			writer.flush();
-			writer.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace(System.err);
+			catch (Exception e) {
+				e.printStackTrace(System.err);
+			}
 		}
 	}
 
