@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.5 2001/04/30 16:40:41 palli Exp $
+ * $Id: IWPresentationServlet.java,v 1.6 2001/05/02 14:01:07 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -86,29 +86,20 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
 		try {
-System.out.println("1");
       __initialize(request,response);
-System.out.println("2");
       ModuleInfo moduleinfo = getModuleInfo();
-System.out.println("3");
       String eventClassEncr = moduleinfo.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
-System.out.println("4");
       String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
-System.out.println("5");
       if (eventClass != null) {
         IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
         listener.actionPerformed(moduleinfo);
       }
 
-System.out.println("6");
       //added by gummi@idega.is
       //begin
       boolean theServiceDone = false;
-System.out.println("7");
       String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-System.out.println("8");
       System.out.println("EventAddress: " + sessionAddress);
-System.out.println("9");
       if (sessionAddress != null && !"".equals(sessionAddress))
       {
         Object obj = moduleinfo.getSessionAttribute(sessionAddress);
