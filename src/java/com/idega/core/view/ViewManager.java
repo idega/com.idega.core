@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.4 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.5 2004/12/31 02:21:07 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,18 +11,18 @@ package com.idega.core.view;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.FacesUtil;
 
 
 /**
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/31 02:21:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ViewManager {
 	
@@ -175,8 +175,8 @@ public class ViewManager {
 	 * @param ctx
 	 * @return
 	 */
-	public String getRequestUrl(FacesContext ctx) {
-		HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
+	public String getRequestUriWithoutContext(FacesContext ctx) {
+		/*HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
 		//String contextPath = request.getContextPath();
 		//String fullRequestUri = request.getRequestURI();
 		String contextPath = "/";
@@ -187,12 +187,13 @@ public class ViewManager {
 		else{
 			String subPath = fullRequestUri.substring(contextPath.length());
 			return subPath;
-		}
+		}*/
+		return FacesUtil.getRequestUri(ctx,false);
 	}
 	
 	
 	public ViewNode getViewNodeForContext(FacesContext context){
-		String url = getRequestUrl(context);
+		String url = getRequestUriWithoutContext(context);
 		return this.getViewNodeForUrl(url);
 	}
 	
