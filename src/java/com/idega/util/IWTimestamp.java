@@ -945,6 +945,32 @@ public class IWTimestamp implements Comparable {
 	public void setMilliSecond(int millisecond) {
 		calendar.set(calendar.MILLISECOND, millisecond);
 	}
+	
+	/**
+		 * Sets the time of the time setting. If the IWTimestamp is a date setting it will not longer be set.
+		 * @param hour		The hour to set
+		 * @param minute	The minute to set
+		 * @param second The second to set
+		 * @param millisecond	The millisecond to set
+		 */
+	public void setTime(int hour,int minute,int second,int millisecond) {
+		if(isDate())
+			isDate = false;
+		calendar.set(calendar.HOUR_OF_DAY, hour);
+		calendar.set(calendar.MINUTE, minute);
+		calendar.set(calendar.SECOND, second);
+		calendar.set(calendar.MILLISECOND, millisecond);
+	}
+	
+	/**
+		 * Sets the time of the time setting. If the IWTimestamp is a date setting it will not longer be set.
+		 * @param hour		The hour to set
+		 * @param minute	The minute to set
+		 * @param second The second to set
+		*/
+	public void setTime(int hour,int minute,int second) {
+		setTime(hour,minute,second,0);
+	}
 
 	/**
 	 * Returns an SQL string for the given date and time settings.
