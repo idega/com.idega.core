@@ -4,6 +4,7 @@ import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.core.ICTreeNode;
+import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.presentation.Image;
 import com.idega.presentation.IWContext;
@@ -156,8 +157,19 @@ public class TreeViewer extends AbstractTreeViewer {
   }
 */
 
+	private void addScript() {
+		Script script = getParentPage().getAssociatedScript();
+		script.addFunction("save", "function save(URL,target) {   args['href']=URL; args['target']=target; window.returnValue = args; window.close(); }");
+		getParentPage().setAssociatedScript(script);
+	}
+
   public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode){
     //System.out.println("adding into column "+ colIndex + " for node " + node);
+    boolean fromEditor = false;
+    if ( iwc.isParameterSet("from_editor") ) {
+    	fromEditor = true;
+    	addScript();
+    }
 
     switch (colIndex) {
       case 1:
@@ -198,7 +210,10 @@ public class TreeViewer extends AbstractTreeViewer {
         if(_usesOnClick){
           String nodeName = node.getNodeName();
           l.setURL("#");
-          l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
+          if ( fromEditor )
+          	l.setOnClick("save('http://localhost:8005/servlet/IBMainServlet?ib_page="+node.getNodeID()+"','_self')");
+          else
+          	l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
         } else if(nodeActionPrm != null){
           l.addParameter(nodeActionPrm,node.getNodeID());
         }
