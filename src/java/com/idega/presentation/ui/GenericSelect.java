@@ -191,8 +191,8 @@ public class GenericSelect extends InterfaceObject {
 			if (isSetAsNotEmpty) {
 				getParentForm().setOnSubmit("return checkSubmit(this)");
 				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfDropdownEmpty (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == '"+emptyValue+"' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
+				getScript().addToFunction("checkSubmit", "if (warnIfDropdownEmpty (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "', '"+emptyValue+"') == false ){\nreturn false;\n}\n");
+				getScript().addFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
 			}
 		}
 	}
