@@ -478,9 +478,11 @@ public class IWBundle implements java.lang.Comparable {
         Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
         while (keyIter.hasNext()) {
           Object key = keyIter.next();
-          Object value = getLocalizableStringsMap().get(key);
-          if(key!=null && value != null){
-            getLocalizableStringsProperties().put(key,value);
+          if(key!=null){
+            Object value = getLocalizableStringsMap().get(key);
+            if(value != null){
+              getLocalizableStringsProperties().put(key,value);
+            }
           }
         }
         getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
