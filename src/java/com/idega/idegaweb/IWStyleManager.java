@@ -171,11 +171,11 @@ public class IWStyleManager {
 			Iterator iter = getStyleMap().keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
+				String style = getStyle(name);
 				if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
 					name = "." + name;
 				}
 				
-				String style = getStyle(name);
 				String writeString = name + " {";
 				writer.write(writeString, 0, writeString.length());
 				writer.newLine();
