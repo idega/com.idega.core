@@ -49,8 +49,11 @@ public class IWCoreServlet extends HttpServlet
 	 */
 	public void service(HttpServletRequest _req, HttpServletResponse _res)
 	throws ServletException, IOException{
+	    
+	    //þetta þyrfti að skila object sem að er síðan syncað á í stað this t.d. IBPage
+	    //sami hlutur og er geymdur fyrir checkið. hafa áfram impl. í þessum klasa bara með this
 		if(getIfSyncronizeAccess(_req,_res)){
-			synchronized(this){
+			synchronized(getObjectToSynchronizeOn(_req,_res)){
 				unSynchronizedService(_req,_res);
 				unSetSyncronizedAccess(_req,_res);
 			}
@@ -61,6 +64,17 @@ public class IWCoreServlet extends HttpServlet
 	}
 	
 	/**
+	 * When loading a page for the first time it is synchonized for caching and performance reasons.
+	 * Overrid this method if you do not want the whole instance of your servlet to be synchronized.
+     * @param request
+     * @param response
+     * @return
+     */
+    protected Object getObjectToSynchronizeOn(HttpServletRequest request, HttpServletResponse response) {
+        return this;
+    }
+
+    /**
 	 * The real service method implementation besides synchronization
 	 */
 	protected void unSynchronizedService(HttpServletRequest _req, HttpServletResponse _res)
