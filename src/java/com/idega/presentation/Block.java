@@ -375,8 +375,18 @@ public class Block extends PresentationObjectContainer implements IWBlock {
 		boolean edit = hasEditPermission();
 		String locale = iwc.getCurrentLocale().toString();
 		boolean isSecure = iwc.getRequest().isSecure();
-
-		return (instanceID + locale + edit + isSecure);
+		String[] addedPermissionKeys= getPermissionKeys();
+		String addPerm = "";
+		if(addedPermissionKeys!=null){
+			StringWriter permissions = new StringWriter(addedPermissionKeys.length);
+			for (int i = 0; i < addedPermissionKeys.length; i++) {
+				boolean perm = iwc.hasPermission(addedPermissionKeys[i],this);
+				permissions.write(perm?"1":"0");
+			}
+			addPerm = permissions.toString();
+		}
+		
+		return (instanceID + locale + edit + isSecure+addPerm);
 	}
 
 	protected boolean isCacheable() {
