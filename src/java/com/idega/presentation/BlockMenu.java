@@ -38,6 +38,7 @@ public class BlockMenu extends Block {
   private String prmObjectClass = "obj_clss";
   private Class defaultClass = null;
   private String fontStyle = "color:#000000;font-size:8pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
+  private String fontStyle2 = "color:#942829;font-size:9pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
 
   protected void control(IWContext iwc){
     iwrb = getResourceBundle(iwc);
@@ -118,9 +119,11 @@ public class BlockMenu extends Block {
           col++;
           java.util.Iterator I = objects.iterator();
           Block obj;
+          boolean highlight;
           while(I.hasNext()){
             obj = (Block) I.next();
-            frame.add(getLink(obj.getClass(),formatText(obj.getLocalizedName(iwc))),col,row);
+            highlight = obj.getClassName().equals(currentClassName);
+            frame.add(getLink(obj.getClass(),formatText(obj.getLocalizedName(iwc)),highlight),col,row);
             col++;
             frame.add(formatText("|"),col,row);
             col++;
@@ -149,6 +152,25 @@ public class BlockMenu extends Block {
     }
     L.setFontSize(1);
     L.setFontColor(Edit.colorDark);
+    L.setFontStyle(fontStyle);
+    return L;
+  }
+
+  public Link getLink(Class cl,Text name,boolean highlighted){
+    Link L = new Link(name);
+    L.addParameter(getObjectParameter(cl));
+    if(paramtersToMainTain !=null){
+      java.util.Iterator I = paramtersToMainTain.iterator();
+      while(I.hasNext()){
+        L.addParameter((Parameter) I.next());
+      }
+    }
+    L.setFontSize(1);
+    L.setFontColor(Edit.colorDark);
+    if(highlighted)
+      L.setFontStyle(fontStyle2);
+    else
+      L.setFontStyle(fontStyle);
     return L;
   }
 
