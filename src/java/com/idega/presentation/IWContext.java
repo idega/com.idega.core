@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.105 2004/11/01 21:17:12 tryggvil Exp $
+ * $Id: IWContext.java,v 1.106 2004/11/12 16:30:00 aron Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -48,6 +48,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
+import com.idega.event.IWEventProcessor;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
@@ -74,10 +75,10 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/11/01 21:17:12 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/12 16:30:00 $ by $Author: aron $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.105 $
+ * @version $Revision: 1.106 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -187,6 +188,12 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	public UploadFile getUploadedFile() {
+	    if(isMultipartFormData() && _uploadedFile==null)
+            try {
+                IWEventProcessor.getInstance().handleMultipartFormData(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 		return _uploadedFile;
 	}
 	public void setUploadedFile(UploadFile file) {
@@ -846,7 +853,9 @@ implements IWUserContext, IWApplicationContext {
 		return _clientIsHandHeld;
 	}
 	public ICDomain getDomain() {
-		return getIWMainApplication().getIWApplicationContext().getDomain();
+	    ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
+	    domain.setServerName(getServerURL());
+		return domain;
 	}
 	
 	public ICDomain getDomainByServerName(String serverName) {
