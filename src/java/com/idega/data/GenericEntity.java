@@ -4783,5 +4783,43 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		else return false;
 	}
 	
+      	/**
+		*@return IDOQuery With a prefixed select statement from this entity record.
+		*/
+		protected IDOQuery idoQueryGetSelect(){
+               IDOQuery query = new IDOQuery();
+               query.appendSelectAllFrom(this.getEntityName());
+               return query;
+       }
+ 
+       /**
+        * @return IDOQuery With a prefixed select count statement from this entity record.
+        */
+       protected IDOQuery idoQueryGetSelectCount(){
+               IDOQuery query = new IDOQuery();
+               query.appendSelectCountFrom(this.getEntityName());
+               return query;
+       }
+       /**
+        * Method idoFindPKsByQuery. Gets the result of the query.
+        * @param query an IDOQuery for this entity.
+        * @return Collection of Primary keys which is a result from the query.
+        * @throws FinderException if there is an error with the query.
+        */
+       protected Collection idoFindPKsByQuery(IDOQuery query)throws FinderException
+       {
+               return idoFindPKsBySQL(query.toString());
+       }
+ 
+       /**
+        * Method idoFindOnePKByQuery. Gets the one primary key of the query or the first result if there are many results.* @param query an IDOQuery for this entity.
+        * @return Object which is the primary key of the object found from the query.
+        * @throws FinderException if nothing found or there is an error with the query.
+        */
+       protected Object idoFindOnePKByQuery(IDOQuery query)throws FinderException
+       {
+               return idoFindOnePKBySQL(query.toString());
+       }
+	
 	
 }
