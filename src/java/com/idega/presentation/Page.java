@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.62 2002/09/18 19:39:44 laddi Exp $
+ *  $Id: Page.java,v 1.63 2002/10/16 07:46:18 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -648,6 +648,14 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setOnLoad(String action) {
 		setAttributeMultivalued("onLoad", action);
+	}
+	
+	/**
+	 * Sets an alert that is displayed on page load,
+	 * @param alert	The alert to display.
+	 */
+	public void setAlertOnLoad(String alert) {
+		setOnLoad("alert('"+alert+"');");	
 	}
 
 	/**
