@@ -220,10 +220,18 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt = newConn.createStatement();
 			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 			stmt.close();
-			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle: ");
+			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
+		/*	
+		 This parameter is set for the OCI driver in a shell script usually but could be set here also
+			stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_LANG='.AL32UTF8'");
+			stmt.close();
+			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to NLS_LANG=.UTF8 for Unicode support.");
+		*/
 		}
 		catch (SQLException sqle) {
-			System.err.println("OracleDatastoreInterface: Error setting date format environment variable for Oracle: " + sqle.getMessage());
+			System.err.println("OracleDatastoreInterface: Error when changing environment variable: " + sqle.getMessage());
+			sqle.printStackTrace();
 		}
 	}
 
