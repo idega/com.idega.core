@@ -1136,8 +1136,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public int ejbHomeGetUserCount() throws IDOException {
 		//    String sqlQuery = "select count(*) from "+ this.getEntityName();
-		return super.idoGetNumberOfRecords();
-	}
+    IDOQuery query = idoQueryGetSelectCount();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    return idoGetNumberOfRecords(query.toString());
+  }
 
 	//      public boolean equals(Object obj){
 	//        System.out.println("UserBMPBean: "+this+".equals(Object "+obj+")");
