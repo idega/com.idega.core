@@ -35,12 +35,17 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		addManyToOneRelationship("postal_code_id", "PostalCode", PostalCode.class);
 		addManyToOneRelationship("ic_country_id", "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
+		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
 	}
 
 	public static String getColumnNameAddressTypeId() {
 		return "ic_address_type_id";
 	}
 
+	public static String getColumnNameCommuneID() {
+		return "ic_commune_id";
+	}
+	
 	public String getEntityName() {
 		return "ic_address";
 	}
@@ -143,6 +148,19 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void setCountryId(int country_id) {
 		setColumn("ic_country_id", country_id);
 	}
+	
+	public int getCommuneID() {
+		return getIntColumnValue(getColumnNameCommuneID());
+	}
+	
+	public void setCommuneID(int communeId) {
+		setColumn(getColumnNameCommuneID(), communeId);
+	}
+	
+	public Object getCommune() {
+		return getColumn(getColumnNameCommuneID());
+	}
+	
 	public AddressTypeHome getAddressTypeHome() throws RemoteException {
 		if (addressTypeHome == null) {
 			addressTypeHome = (AddressTypeHome) IDOLookup.getHome(AddressType.class);
