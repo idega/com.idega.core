@@ -16,7 +16,10 @@ import java.util.Vector;
 
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.io.DownloadWriter;
+import com.idega.io.MediaWritable;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -475,8 +478,13 @@ public class FileManager extends Block {
 			return l;
 	    }
 	    else{
+	        Link l = new Link(file.getName(),iwc.getIWMainApplication().getMediaServletURI());
+	        l.addParameter(MediaWritable.PRM_WRITABLE_CLASS,IWMainApplication.getEncryptedClassName(DownloadWriter.class));
+	        l.addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,file.getAbsolutePath());
+	        /*
 	        Link l = new Link(getText(file.getName()),getCurrentFileUrl(iwc,file.getAbsolutePath()));
 	        l.setTarget(Link.TARGET_BLANK_WINDOW);
+	        */
 	        return l;
 	    }
 		
@@ -725,8 +733,9 @@ public class FileManager extends Block {
         this.displayFilesInFrame = displayFilesInFrame;
     }
     
-    public void setDisplayFilesInNewWindow(boolean display){
+    public void setDownloadFiles(boolean display){
         this.displayFilesInFrame = !display;
     }
     
+   
 }
