@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.34 2005/03/01 23:25:00 tryggvil Exp $ Created on
+ * $Id: StringHandler.java,v 1.35 2005/04/05 16:13:54 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2005/03/01 23:25:00 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/04/05 16:13:54 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class StringHandler {
 
@@ -298,6 +298,35 @@ public class StringHandler {
 		return true;
 	}
 
+	
+	/**
+	 * 
+	 * <p>
+	 * Returns only the first token corresponding to the specified 
+	 * delimiters.
+	 * </p>
+	 * <p>
+	 * e.g. getFirstToken("hello_wo.rld", "_.") returns "hello" <br>
+	 * e.g. getFirstToken("hello.world_txt", "_.") returns "hello" <br>
+	 * e.g. getFirstToken("helloWorld", "_.") returns "helloWorld"
+	 * </p>
+	 * @param str
+	 * @param delim
+	 * @return
+	 */
+	public static String getFirstToken(String str, String delim) {
+		char[] delimChars = delim.toCharArray();
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (Arrays.binarySearch(delimChars, c) >= 0) {
+				// found 
+				return str.substring(0, i);
+			}
+		}
+		return str;
+	}
+	
+	
 	/**
 	 * Returns the package name and the name of the specified className.
 	 * Example: "com.idega.util.StringHandler" returns {"com.idega.util",
