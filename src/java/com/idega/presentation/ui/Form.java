@@ -532,7 +532,8 @@ public class Form extends InterfaceObject {
 				print("</fieldset></p>");
 			}
 			
-			print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
+			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
+			print("<p><strong><anchor>"+theButton.getContent());
 			String url = getAction();
 			// @TODO temp sysouts, session stuff not fully tested
 			System.out.println("Url before encoding " + url);
@@ -546,8 +547,8 @@ public class Form extends InterfaceObject {
 				child.printWML(iwc);
 			}
 			print("</go>");
-			//print("</anchor></p>");
-			print("</do>");
+			print("</anchor></strong></p>");
+			//print("</do>");
 			
 		}
 		//};

@@ -12,6 +12,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
@@ -179,6 +180,11 @@ public class GenericButton extends GenericInput {
 				}
 				else
 					print("<img " + defaultImage.getMarkupAttributesString() + " >");
+			}
+		} 
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+			if(normalPrintSequence()) {
+				printWML(iwc);
 			}
 		}
 	}

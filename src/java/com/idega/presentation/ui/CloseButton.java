@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
 /**
@@ -43,5 +44,10 @@ public class CloseButton extends GenericButton {
 		setButtonImage(image);
 		setOnClick("top.window.close()");
 	}
+	
+	public void printWML(IWContext main) {
+
+	}
+
 
 }

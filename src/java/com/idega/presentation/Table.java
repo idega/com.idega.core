@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.66 2004/07/02 01:59:51 tryggvil Exp $
+ * $Id: Table.java,v 1.67 2004/07/09 01:28:44 gummi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -67,6 +67,13 @@ public class Table extends PresentationObjectContainer {
 	protected static final String HTML_TR_START = "<tr>";
 	protected static final String HTML_TR_END = "</tr>";
 	
+	protected static final String WML_TABLE_TAG_START = "<table ";
+	protected static final String WML_TABLE_TAG_END = "</table>";
+	protected static final String WML_CELL_TAG_START = "<td ";
+	protected static final String WML_CELL_TAG_END = "</td>";
+	protected static final String WML_TR_START = "<tr>";
+	protected static final String WML_TR_END = "</tr>";
+	
 	protected static final String PDF_XML_TABLE_TAG_START = "<table ";
 	protected static final String PDF_XML_TABLE_TAG_END = "</table>";
 	protected static final String PDF_XML_CELL_TAG_START = "<cell ";
@@ -83,6 +90,8 @@ public class Table extends PresentationObjectContainer {
 	protected int cols = 0;
 	protected int rows = 0;
 
+	protected boolean forceToRenderAsTableInWML = false;
+	
 	/**
 	 * 
 	 * @uml.property name="beginMergedxpos"
@@ -1426,16 +1435,43 @@ public class Table extends PresentationObjectContainer {
 			}
 		}
 		else if (IWConstants.MARKUP_LANGUAGE_WML.equals(markupLanguage) ){
+			
+			String tableTagStart = "";
+			String tableTagEnd = "";
+			String cellTagStart = "";
+			String cellTabEnd = "";
+			String trStart = "";
+			String trEnd = "";
+			
+			if(forceToRenderAsTableInWML){
+				tableTagStart = WML_TABLE_TAG_START;
+				tableTagEnd = WML_TABLE_TAG_END;
+				cellTagStart = WML_CELL_TAG_START+TAG_END;
+				cellTabEnd = WML_CELL_TAG_END;
+				trStart = WML_TR_START;
+				trEnd = WML_TR_END;
+				if(rows>0){
+					print(tableTagStart+" columns=\""+cols+"\""+TAG_END);
+				}
+			}
+			
 			for (int y = 1; y <= rows;) {
+				print(trStart);
 				for (int x = 1; x <= cols;) {
+					print(cellTagStart);
 					if (theCells[x - 1][y - 1] != null) {
 						UIComponent child = theCells[x - 1][y - 1];
 						renderChild(iwc,child);
 						//theObjects[x - 1][y - 1]._print(iwc);
 					}
+					print(cellTabEnd);
 					x++;
 				}
+				print(trEnd);
 				y++;
+			}
+			if(rows>0){
+				print(tableTagEnd);
 			}
 		} //end if (getLanguage(...
 		else {
@@ -1942,4 +1978,10 @@ public class Table extends PresentationObjectContainer {
 	 * End JSF SPECIFIC IMPLEMENTAION METHODS
 	 */	
 
+	/**
+	 * @param forceToRenderAsTableInWML The forceToRenderAsTableInWML to set.
+	 */
+	public void setToForceToRenderAsTableInWML(boolean forceToRenderAsTableInWML) {
+		this.forceToRenderAsTableInWML = forceToRenderAsTableInWML;
+	}
 }

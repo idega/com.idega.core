@@ -73,7 +73,8 @@ public class BackButton extends GenericButton {
 	
 	
 	public void printWML(IWContext main) {	
-		print("<do type=\"prev\" label=\""+getContent()+"\"><prev/></do>");
+		//print("<do type=\"prev\" label=\""+getContent()+"\"><prev/></do>");
+		print("<anchor>"+getContent()+"<prev/></anchor>");
 	}
 
 }
