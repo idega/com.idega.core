@@ -13,13 +13,6 @@
   </servlet>
 
   <servlet>
-    <servlet-name>IWStarterServlet</servlet-name>
-    <display-name>IWStarterServlet</display-name>
-    <servlet-class>com.idega.servlet.IWStarterServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-
-  <servlet>
     <servlet-name>ObjectInstanciator</servlet-name>
     <display-name>ObjectInstanciator</display-name>
     <servlet-class>com.idega.servlet.ObjectInstanciator</servlet-class>
