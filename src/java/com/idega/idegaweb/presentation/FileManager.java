@@ -257,7 +257,6 @@ public class FileManager extends Block {
 		fileTable.setWidth(2, "1%");
 		fileTable.setWidth(3, "1%");
 		fileTable.setWidth(4, "1%");
-		fileTable.setAlignment("right");
 		fileTable.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
 		fileTable.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
 		fileTable.setRowColor(1, "black");
@@ -265,6 +264,7 @@ public class FileManager extends Block {
 		fileTable.setNoWrap();
 		fileTable.setColumnAlignment(2, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.add(getHeaderTable(iwc, dir), 1, 1);
+		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.add(fileTable, 1, 2);
 		table.add(getFooterTable(iwc, dir, numberOfFiles), 1, 3);
 		add( table);

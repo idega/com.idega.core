@@ -169,14 +169,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 //    frameTable.setHeight(500);
   }
 
-  public void setAlignment(String align){
-    frameTable.setAlignment(align);
-  }
-
-  public void setVerticalAlignment(String vAlign){
-    frameTable.setVerticalAlignment(vAlign);
-  }
-
   public void stateChanged(ChangeEvent e){
     if(useCollector && !first){
       stateChanged = true;

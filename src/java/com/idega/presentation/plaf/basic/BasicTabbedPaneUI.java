@@ -208,7 +208,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 					this.setStyleClass(styleName); 
 					this.resize(1,1);
 					this.add(Text.emptyString(),1,1);
-					this.setAlignment("left");
         }
         
         public void initilizeTab(){

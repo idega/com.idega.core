@@ -48,8 +48,6 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
 		panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
     
     if(panel.justConstructed()){
-      panel.setAlignment("left");
-      panel.setVerticalAlignment("top");
       initializePanel(iwc, panel);
     }
 
