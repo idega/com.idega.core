@@ -1084,6 +1084,64 @@ public class IDOQuery {
 		return this;
 	}
 	
+	/**
+	 * Append condition for periods columns overlapping provided start and end date
+	 * where the following criterions on a entry period are used:
+	 * 
+	 * 1. Starts before start date and ends befor end date
+	 *	2. Starts before start date and ends after end date
+	 *	3. Starts after start date and ends before end date
+	 *	4. Starts after start date and 2ends after end date
+	 *
+	 * @param validFromColumnName
+	 * @param validToColumnName
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public IDOQuery appendOverlapPeriod(String validFromColumnName,String validToColumnName,Date start,Date end){
+		String before = this.LESS_THAN_OR_EQUAL_SIGN;
+		String after = this.GREATER_THAN_OR_EQUAL_SIGN;
+		/*
+		 * 1) starts before selected period, but end within
+		 	2) start  before selected period, but end afterwards
+		 	3) starts and end within selected period
+		 	4) starts witin selected period, but end afterwards
+		 		 
+		 		 validFrom <= start && validTo <= end
+		 		 validFrom <= start && validTo >= end
+		 		 validFrom >= start && validTo <= end
+		 		 validFrom >= start && validTo >= end 
+		 */
+	
+		append("(");
+			append("(");
+				append(validFromColumnName).append(before).append(start);
+				appendAnd();
+				append(validToColumnName).append(before).append(end);
+				append(")");
+		appendOr();
+			append("(");
+				append(validFromColumnName).append(before).append(start);
+				appendAnd();
+				append(validToColumnName).append(after).append(end);
+			append(")");
+		appendOr();
+			append("(");
+				append(validFromColumnName).append(after).append(start);
+				appendAnd();
+				append(validToColumnName).append(before).append(end);
+			append(")");
+		appendOr();
+			append("(");
+				append(validFromColumnName).append(after).append(start);
+				appendAnd();
+				append(validToColumnName).append(after).append(end);
+			append(")");
+		append(")");	 
+		return this;
+	}
+	
 	public void setToCount() {
 		if (_buffer != null) {
 			int index = _buffer.indexOf(" from ");
