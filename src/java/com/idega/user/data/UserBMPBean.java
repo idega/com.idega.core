@@ -217,14 +217,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		if (middleName == null) {
 			middleName = "";
 		}
-		else {
+		else if (!middleName.equals("")) {
 			middleName = " " + middleName;
 		}
 
 		if (lastName == null) {
 			lastName = "";
 		}
-		else {
+		else if (!lastName.equals("")){
 			lastName = " " + lastName;
 		}
 		return firstName + middleName + lastName;
