@@ -27,6 +27,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	int defaultOpenLevel = 1;
 	int _cols = 1;
 	int _extracols = 1;
+	boolean _nowrap = false;
 
 	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
@@ -223,6 +224,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 					PresentationObject obj = this.getObjectToAddToColumn(k, item, iwc, isOpen, hasChild, isRoot);
 					if (obj != null) {
 						treeColumns.add(obj, k + 1, 1);
+						if (_nowrap) {
+							treeColumns.setNoWrap(k + 1, 1);
+						}
 					}
 				}
 
@@ -892,6 +896,14 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public void setOpenCloseLinkTarget(String target) {
 
 		openCloseLink.setTarget(target);
+	}
+
+	/**
+	 * Sets the nowrap.
+	 * @param nowrap The nowrap to set
+	 */
+	public void setNowrap(boolean nowrap) {
+		_nowrap = nowrap;
 	}
 
 }
