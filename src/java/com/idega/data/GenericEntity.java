@@ -1143,7 +1143,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 			if (ex instanceof SQLException) {
 				//ex.printStackTrace();
-				throw (SQLException)ex.fillInStackTrace();
+				//throw (SQLException)ex.fillInStackTrace();
+				throw (SQLException)ex;
 			} else {
 				ex.printStackTrace();
 				throw new SQLException("Exception rethrown: " + ex.getClass().getName() + " - " + ex.getMessage());
