@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.46 2004/02/13 17:04:15 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.47 2004/02/13 18:07:36 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -922,7 +922,7 @@ public class LoginDBHandler
 			userNameList.add(  StringHandler.getRandomString(8));
 		}
 		
-		userNameList.add(generatePossibleUserNames(firstName,middleName,lastName,8));
+		userNameList.addAll(generatePossibleUserNames(firstName,middleName,lastName,8));
 		userNameList.add( finalPossibility);
 		return userNameList;
 	}
