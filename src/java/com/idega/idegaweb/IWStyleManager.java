@@ -128,6 +128,7 @@ public class IWStyleManager {
 			
 			if (index != -1) {
 				String styleName = style.substring(0, index).trim();
+				styleName = TextSoap.findAndCut(styleName, ".");
 				String styleParameter = "";
 				
 				if (style.indexOf(";") != -1) {
