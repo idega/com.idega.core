@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.63 2002/03/27 01:52:10 tryggvil Exp $
+ * $Id: Link.java,v 1.64 2002/03/27 15:47:58 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -170,20 +170,23 @@ public class Link extends Text{
    *
    */
   public Link(PresentationObject mo, String url) {
-    _obj = mo;
+    /*_obj = mo;
     setURL(url);
     _obj.setParentObject(this);
     _objectType = OBJECT_TYPE_MODULEOBJECT;
-
+    */
+    this.setPresentationObject(mo);
+    this.setURL(url);
   }
 
   /**
    *
    */
   public Link(Text text, String url) {
-    text.setFontColor("");
+//    text.setFontColor("");
     this.text = text.getText();
-    _obj = (PresentationObject)text;
+    this.setText(text);
+//    _obj = (PresentationObject)text;
 //    System.err.println("setUrl"+url);
     setURL(url);
 /*    System.err.println("getUrl"+this.getURL());
@@ -248,9 +251,9 @@ public class Link extends Text{
     //this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
     this.setPresentationObject(mo);
     setClassToInstanciate(classToInstanciate);
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
 
   }
 
@@ -262,18 +265,18 @@ public class Link extends Text{
     //this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
     this.setPresentationObject(mo);
     this.setClassToInstanciate(classToInstanciate,templatePageClass);
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
   }
 
   public Link(Class classToInstanciate) {
     //this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
     this(Link.DEFAULT_TEXT_STRING);
     this.setClassToInstanciate(classToInstanciate);
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
   }
 
 
@@ -289,9 +292,9 @@ public class Link extends Text{
     catch(Exception e){
       throw new RuntimeException(e.toString()+e.getMessage());
     }
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
   }
 
   /**
@@ -302,9 +305,9 @@ public class Link extends Text{
     //this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
     this.setText(displayText);
     this.setClassToInstanciate(classToInstanciate);
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
   }
 
   /**
@@ -315,9 +318,9 @@ public class Link extends Text{
     //this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
     this.setText(displayText);
     this.setClassToInstanciate(classToInstanciate);
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
     setTarget(target);
   }
 
@@ -334,9 +337,9 @@ public class Link extends Text{
     catch(Exception e){
       throw new RuntimeException(e.toString()+e.getMessage());
     }
-    if(_parameterString == null){
+    /*if(_parameterString == null){
       _parameterString = new StringBuffer();
-    }
+    }*/
   }
 
   /**
