@@ -327,6 +327,19 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
+	 * Returns true if this <code>IWTimestamp</code> object is between to the given 
+	 * <code>IWTimestamp</code> objects.
+	 * @param stampBefore	The first IWTimestamp to compare with this object.
+	 * @param stampAfter		The second IWTimestamp to compare with this object.
+	 * @return boolean	True if this object is between the given objects, false otherwise.
+	 */
+	public boolean isBetween(IWTimestamp stampBefore, IWTimestamp stampAfter) {
+		if (this.isLaterThanOrEquals(stampBefore) && this.isEarlierThan(stampAfter))
+			return true;
+		return false;
+	}
+
+	/**
 	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
