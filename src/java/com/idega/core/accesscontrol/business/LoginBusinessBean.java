@@ -60,6 +60,8 @@ public class LoginBusinessBean implements IWEventListener {
 
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
 
+	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
+
 	public static final int STATE_NO_STATE = 0;
 	public static final int STATE_LOGGED_ON = 1;
 	public static final int STATE_LOGGED_OUT = 2;
@@ -234,6 +236,7 @@ public class LoginBusinessBean implements IWEventListener {
 							
 							if(iwc.isParameterSet(LoginFailedRedirectPageParameter)){
 								BuilderLogic.getInstance().setCurrentPriorityPageID(iwc, iwc.getParameter(LoginFailedRedirectPageParameter));
+								iwc.setSessionAttribute(SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN,username);
 							}
 							onLoginFailed(iwc, canLogin);
 						}
