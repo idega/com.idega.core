@@ -141,6 +141,8 @@ public interface IWBundle {
 	public abstract String getBundleName();
 
 	public abstract Image getImage(String urlInBundle);
+	
+	public abstract String getImageURI(String urlInBundle);
 
 	public abstract String getVirtualPathWithFileNameString(String filename);
 

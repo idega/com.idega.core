@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.5 2004/08/13 17:33:38 eiki Exp $
+ * $Id: DefaultIWBundle.java,v 1.6 2004/09/01 20:53:10 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -762,9 +762,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return this.getBundleIdentifier();
 	}
+	
+	public String getImageURI(String urlInBundle){
+	    return getResourcesURL() + slash + urlInBundle;
+	}
 	public Image getImage(String urlInBundle)
 	{
-		return new Image(getResourcesURL() + slash + urlInBundle);
+		return new Image(getImageURI(urlInBundle));
 	}
 	public String getVirtualPathWithFileNameString(String filename)
 	{
