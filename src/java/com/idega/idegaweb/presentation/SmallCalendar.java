@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import com.ibm.icu.text.SimpleDateFormat;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -227,7 +229,7 @@ public class SmallCalendar extends Block {
 		Link theLink;
 		String dayColor = null;
 		DateFormat df = DateFormat.getDateInstance(displayFormat,iwc.getCurrentLocale());
-		
+		SimpleDateFormat dateValueFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		while (n <= daycount) {
 			t = new Text(String.valueOf(n));
@@ -287,7 +289,8 @@ public class SmallCalendar extends Block {
 				if(onClickMessageFormat!=null){
 					String[] s = new String[2];
 					IWTimestamp timeStamp = new IWTimestamp(n,stamp.getMonth(),stamp.getYear());
-					s[0]="'"+timeStamp.getTimestamp().toString()+"'";
+					
+					s[0]="'"+dateValueFormat.format(timeStamp.getDate())+"'";
 					//s[1]="'"+timeStamp.getTimestamp().toString()+"'";
 					s[1] = "'"+df.format(timeStamp.getDate())+"'";
 					String onClickString = java.text.MessageFormat.format(onClickMessageFormat,s);
