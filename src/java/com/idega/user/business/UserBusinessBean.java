@@ -825,7 +825,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   public Collection getUsersInGroup(int iGroupId) {
     try{
     	//EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
-    	Collection groupList = this.getGroupBusiness().getUsersContained(iGroupId);
+    	Collection groupList = this.getGroupBusiness().getUsers(iGroupId);
       	return castUserGroupsToUsers(groupList);
     }
     catch (Exception ex) {

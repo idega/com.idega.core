@@ -436,10 +436,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
 
 
-  public  Collection getUsersContained(int groupId) throws EJBException,FinderException{
+  public  Collection getUsers(int groupId) throws EJBException,FinderException{
   	try{
 	    Group group = this.getGroupByGroupID(groupId);
-	    return getUsersContained(group);
+	    return getUsers(group);
   	}
   	catch(RemoteException e){
   		throw new IBORuntimeException(e,this);
@@ -448,10 +448,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
 
 
-  public  Collection getUsersContainedDirectlyRelated(int groupId) throws EJBException,FinderException{
+  public  Collection getUsersDirectlyRelated(int groupId) throws EJBException,FinderException{
   	try{
 	    Group group = this.getGroupByGroupID(groupId);
-	    return getUsersContainedDirectlyRelated(group);
+	    return getUsersDirectlyRelated(group);
   	}
   	catch(RemoteException e){
   		throw new IBORuntimeException(e,this);
@@ -460,10 +460,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
 
 
-  public  Collection getUsersContainedNotDirectlyRelated(int groupId) throws EJBException,FinderException{
+  public  Collection getUsersNotDirectlyRelated(int groupId) throws EJBException,FinderException{
   	try{
 	    Group group = this.getGroupByGroupID(groupId);
-	    return getUsersContainedNotDirectlyRelated(group);
+	    return getUsersNotDirectlyRelated(group);
   	}
   	catch(RemoteException e){
   		throw new IBORuntimeException(e,this);
@@ -529,7 +529,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * @return Collection of Groups found recursively down the tree
  * @throws EJBException If an error occured
  */
-  public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException{
+  public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
   //public Collection getGroupsContained(Group groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
   try{
 	  /**
@@ -590,10 +590,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	          notSpecifiedGroups.add(j++, tempObj);
 	        }
 	        notSpecifiedGroups.remove(aGroup);
-	        returnSepcifiedGroupTypes = false;
+	        returnSpecifiedGroupTypes = false;
 	      }
 	
-	      return (returnSepcifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+	      return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
 	    }else{
 	      return null;
 	    }
@@ -605,15 +605,18 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   }
 
 
-  public Collection getUsersContained(Group group) throws FinderException{
+/**
+ * Return all the user directly under(related to) this group.
+ * 
+ * @see com.idega.user.business.GroupBusiness#getUsersContained(Group)
+ */
+  public Collection getUsers(Group group) throws FinderException{
 	try{
 	    //filter
-	    String[] groupsNotToReturn = new String[1];
-	    groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-	    //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-	    //filter end
+	    String[] groupTypeToReturn = new String[1];
+	    groupTypeToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
 	
-	    Collection list = getChildGroupsRecursive(group,groupsNotToReturn,true);
+	    Collection list = group.getChildGroups(groupTypeToReturn,true);
 	    if(list != null && !list.isEmpty()){
 	      return getUsersForUserRepresentativeGroups(list);
 	    } else {
@@ -625,6 +628,45 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	}
   }
   
+  /**
+ * Return all the user under(related to) this group and any contained group recursively!
+ * 
+ * @see com.idega.user.business.GroupBusiness#getUsersContainedRecursive(Group)
+ */
+  public Collection getUsersContainedRecursive(Group group) throws FinderException{
+	try{
+	    //filter
+	    String[] groupTypeToReturn = new String[1];
+	    groupTypeToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
+	
+	    Collection list = getChildGroupsRecursive(group,groupTypeToReturn,true);
+	    if(list != null && !list.isEmpty()){
+	      return getUsersForUserRepresentativeGroups(list);
+	    } else {
+	      return ListUtil.getEmptyList();
+	    }
+	}
+	catch(RemoteException e){
+		throw new IBORuntimeException(e,this);	
+	}
+  }
+  
+    /**
+ * Return all the user under(related to) this group and any contained group recursively!
+ * 
+ * @see com.idega.user.business.GroupBusiness#getUsersContainedRecursive(Group)
+ */
+  public Collection getUsersContainedRecursive(int groupId) throws FinderException{
+  	try{
+	    Group group = this.getGroupByGroupID(groupId);
+	    return getUsersContainedRecursive(group);
+  	}
+  	catch(RemoteException e){
+  		throw new IBORuntimeException(e,this);
+  	}
+  }	
+		
+ 
 /**
  * Returns all the groups that are direct children groups of group with id groupId.
  * @param groupId an id of a Group to find children groups for
@@ -669,7 +711,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   /**
    * @todo filter out UserGroupRepresentative groups ? time
    */
-  public  Collection getUsersContainedDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
+  public  Collection getUsersDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
     Collection result = group.getChildGroups();
     return getUsersForUserRepresentativeGroups(result);
   }
@@ -727,10 +769,10 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     }
   }
 
-  public  Collection getUsersContainedNotDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
+  public  Collection getUsersNotDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
 
-    Collection DirectUsers = getUsersContainedDirectlyRelated(group);
-    Collection notDirectUsers = getUsersContained(group);
+    Collection DirectUsers = getUsersDirectlyRelated(group);
+    Collection notDirectUsers = getUsers(group);
 
     if(notDirectUsers != null){
       if(DirectUsers != null){
@@ -794,7 +836,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     if(groupId != -1){
       Group group = this.getGroupByGroupID(groupId);
       //System.out.println("before");
-      Collection lDirect = getUsersContainedDirectlyRelated(groupId);
+      Collection lDirect = getUsersDirectlyRelated(groupId);
       Set direct = new HashSet();
       if(lDirect != null){
         Iterator iter = lDirect.iterator();
