@@ -11,6 +11,7 @@ import java.util.Locale;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.IWTimestamp;
 
 /**
  * DatePicker is a chooser object used to choose a date from a 
@@ -99,14 +100,15 @@ public class DatePicker extends AbstractChooser {
 	 * @param date
 	 */
 	public void setDate(Date date){
-		String value = date.toString();
+		String display = date.toString();
+		String value =new IWTimestamp(date.getTime()).getTimestamp().toString();
 		if(locale !=null){
-			value = DateFormat.getDateInstance(dateFormatStyle,locale).format(date);
+			display = DateFormat.getDateInstance(dateFormatStyle,locale).format(date);
 		}
 		else{
-			value = DateFormat.getDateInstance(dateFormatStyle).format(date);
+			display = DateFormat.getDateInstance(dateFormatStyle).format(date);
 		}
-		setChooserValue(value,String.valueOf(date.getTime()));
+		setChooserValue(display,value);
 	}
 	
 	/**
@@ -116,8 +118,10 @@ public class DatePicker extends AbstractChooser {
 	 * @param locale
 	 */
 	public void setDate(Date date,Locale locale){
-		DateFormat df = DateFormat.getDateInstance(dateFormatStyle,locale);
-		setChooserValue(df.format(date),String.valueOf(date.getTime()));
+		//DateFormat df = DateFormat.getDateInstance(dateFormatStyle,locale);
+		//setChooserValue(df.format(date),String.valueOf(date.getTime()));
+		this.locale =locale;
+		setDate(date);
 	}
 	
 	/**
