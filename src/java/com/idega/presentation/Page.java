@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.46 2002/03/15 14:14:12 laddi Exp $
+ *  $Id: Page.java,v 1.47 2002/03/15 15:15:29 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.core.data.ICFile;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.text.Link;
@@ -181,7 +182,8 @@ public class Page extends PresentationObjectContainer {
    *@param  style  The new pageStyle value
    */
   public void setPageStyle(String style) {
-    setStyleDefinition("A", style);
+    setStyleDefinition("body", style);
+    setStyleDefinition("table", style);
   }
 
   /**
@@ -242,16 +244,16 @@ public class Page extends PresentationObjectContainer {
    */
   private void setDefaultValues() {
     if (getStyleAttribute("A") == null) {
-      setStyleDefinition("A", "color:" + _linkColor + "; font-size: " + _pageStyleFontSize + "; text-decoration:" + _textDecoration + ";");
+      setStyleDefinition("A",IWConstants.LINK_STYLE);
     }
     if (getStyleAttribute("A:hover") == null) {
-      setStyleDefinition("A:hover", "color:" + _hoverColor + "; font-size: " + _pageStyleFontSize + "; text-decoration:" + _hoverDecoration + ";");
+      setStyleDefinition("A:hover",IWConstants.LINK_HOVER_STYLE);
     }
     if (getStyleAttribute("body") == null) {
-      setStyleDefinition("body", "font-family:" + _pageStyleFont + ";font-size:" + _pageStyleFontSize + ";");
+      setStyleDefinition("body",IWConstants.BODY_STYLE);
     }
     if (getStyleAttribute("table") == null) {
-      setStyleDefinition("table", "font-family:" + _pageStyleFont + ";font-size:" + _pageStyleFontSize + ";");
+      setStyleDefinition("table",IWConstants.BODY_STYLE);
     }
     getAssociatedScript().addFunction("windowopen", Window.windowScript());
   }
