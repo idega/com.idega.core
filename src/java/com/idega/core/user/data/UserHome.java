@@ -8,6 +8,6 @@ public interface UserHome extends com.idega.data.IDOHome
  public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
  public User findByPrimaryKey(int id) throws javax.ejb.FinderException;
  public User findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
- public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException;
+ public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
 
 }

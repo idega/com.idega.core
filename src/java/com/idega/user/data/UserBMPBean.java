@@ -8,6 +8,7 @@ import com.idega.core.data.Phone;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOUtil;
+import com.idega.data.IDOFinderException;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -527,8 +528,19 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     }
 
     public Integer ejbFindUserForUserGroup(int userGroupID)throws FinderException{
-      return (Integer)super.idoFindOnePKBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+"='"+userGroupID+"'");
-    }
+		/** @todo Remove backwards compatability  */
+			Integer pk;
+			try {
+				pk = (Integer)super.idoFindOnePKBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+"='"+userGroupID+"'");
+			}
+			catch (FinderException ex) {
+				pk = new Integer(userGroupID);
+			}
+			catch (Exception ex) {
+				throw new IDOFinderException(ex);
+			}
+			return pk;
+	  }
 
     public Integer ejbFindUserForUserGroup(Group userGroup)throws FinderException,RemoteException{
       int groupID = ((Integer)userGroup.getPrimaryKey()).intValue();

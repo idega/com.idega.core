@@ -24,7 +24,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
  }
 
 
-public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException{
+public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserFromEmail(p0);
 	this.idoCheckInPooledEntity(entity);
