@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.122 2004/08/08 16:00:38 laddi Exp $
+ *  $Id: Page.java,v 1.123 2004/08/31 02:43:00 eiki Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -88,6 +88,8 @@ public class Page extends PresentationObjectContainer {
 	private Hashtable _metaTags;
 	private QueueMap _styleSheets;
 	private QueueMap _javascripts;
+	private QueueMap _javascriptStringsBeforeJSUrls;
+	private QueueMap _javascriptStringsAfterJSUrls;
 	private Hashtable _HTTPEquivs;
 	protected Map _localizationMap;
 
@@ -146,6 +148,7 @@ public class Page extends PresentationObjectContainer {
 	private int _windowHeight = 600;
 	
 	private ICPage forwardPage;
+
 
 	/**
 	 */
@@ -1176,14 +1179,93 @@ public class Page extends PresentationObjectContainer {
 		
 		buf.append(getMetaInformation(markup, characterEncoding));
 		buf.append(getMetaTags(markup));
+		buf.append(getJavaScriptBeforeJavascriptURLs(iwc));
 		buf.append(getJavascriptURLs(iwc));
+		buf.append(getJavaScriptAfterJavascriptURLs(iwc));
 		buf.append(getStyleSheetURL(markup));
 		buf.append(getStyleDefinition());	
 		return buf.toString();
 	}
 
 	
+	/**
+	 * <code>Adds the script string to the <head> of the page before javascript.js files are loaded, the added string are printed in the same order as they come in</code>
+	 * @param script
+	 */
+	public void addJavaScriptBeforeJavaScriptURLs(String keyInMap, String script){
+		if( _javascriptStringsBeforeJSUrls == null ){
+			_javascriptStringsBeforeJSUrls = new QueueMap();
+		}
+		_javascriptStringsBeforeJSUrls.put(keyInMap,script);
+	}
 	
+	/**
+	 * <code>Adds the script string to the <head> of the page after javascript.js files are loaded, the added string are printed in the same order as they come in</code>
+	 * @param script
+	 */
+	public void addJavaScriptAfterJavaScriptURLs(String keyInMap, String script){
+		if( _javascriptStringsAfterJSUrls == null ){
+			_javascriptStringsAfterJSUrls = new QueueMap();
+		}
+		_javascriptStringsAfterJSUrls.put(keyInMap,script);
+		
+	}
+	
+	public void removeJavaScriptFromJavascriptBeforeJavaScriptsUrlsMap(String key){
+		if(_javascriptStringsBeforeJSUrls!=null){
+			_javascriptStringsBeforeJSUrls.remove(key);
+		}
+	}
+	
+	public void removeJavaScriptFromJavascriptAfterJavaScriptsUrlsMap(String key){
+		if(_javascriptStringsAfterJSUrls!=null){
+			_javascriptStringsAfterJSUrls.remove(key);
+		}
+	}
+	
+	
+	/**
+	 * Gets a block of free form javascript (just strings) to insert BEFORE importing some javascript.js files
+	 * @param iwc
+	 * @return a javascript block
+	 */
+	private String getJavaScriptBeforeJavascriptURLs(IWContext iwc) {
+		StringBuffer buffer = new StringBuffer();
+		if (_javascriptStringsBeforeJSUrls != null && !_javascriptStringsBeforeJSUrls.isEmpty()) {
+			buffer.append("<script type=\"text/javascript\">\n");
+
+			Iterator iter = _javascriptStringsBeforeJSUrls.values().iterator();
+			while (iter.hasNext()) {
+				String value = (String) iter.next();
+				buffer.append(value).append("\n");
+			}
+			
+			buffer.append("</script>\n");
+		}
+		return buffer.toString();
+	}
+	
+	/**
+	 * Gets a block of free form javascript (just strings) to insert AFTER importing some javascript.js files
+	 * @param iwc
+	 * @return a javascript block
+	 */
+	private String getJavaScriptAfterJavascriptURLs(IWContext iwc) {
+		StringBuffer buffer = new StringBuffer();
+		if (_javascriptStringsAfterJSUrls != null && !_javascriptStringsAfterJSUrls.isEmpty()) {
+			buffer.append("<script type=\"text/javascript\">\n");
+			
+			Iterator iter = _javascriptStringsAfterJSUrls.values().iterator();
+			while (iter.hasNext()) {
+				String value = (String) iter.next();
+				buffer.append(value).append("\n");
+			}
+			
+			buffer.append("</script>\n");
+		}
+		return buffer.toString();
+	}
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
