@@ -88,7 +88,7 @@ import java.util.*;
             return;
         StringTokenizer token = new StringTokenizer(name);
         setFirstName(((String)token.nextElement()));
-        int count = token.countTokens()-1;
+        int count = token.countTokens()-2;
         for(int i = 0; i < count; i++) {
             setMiddleName(((String) token.nextElement()));;
         }
