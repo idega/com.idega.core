@@ -129,6 +129,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addIndex("IDX_IC_USER_3", getColumnNameFirstName());
     addIndex("IDX_IC_USER_4", getColumnNamePersonalID());
     addIndex("IDX_IC_USER_5", _COLUMNNAME_USER_GROUP_ID);
+    addIndex("IDX_IC_USER_6", getUniqueIdColumnName());
 
 	}
 
