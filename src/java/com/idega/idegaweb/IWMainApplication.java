@@ -73,7 +73,6 @@ public class IWMainApplication{//implements ServletContext{
   private LogWriter lw;
   private static IWCacheManager cacheManager;
 
-  public static boolean DEBUG_FLAG = false;
 
   public IWMainApplication(ServletContext application){
     this.application=application;
@@ -157,11 +156,11 @@ public class IWMainApplication{//implements ServletContext{
       System.err.println("max "+max);
 
       for (int i = 0; i < characters.length; i++) {
-        int ch = (int)characters[i];
-        encryptedChars[i] = ((char)((ch+11)%max));
-        System.err.println();
-        System.err.println(characters[i]+ " -> "+ ((char)((ch+5)%max)));
-        System.err.println(ch + " -> "+ ((ch+11)%max));
+	int ch = (int)characters[i];
+	encryptedChars[i] = ((char)((ch+11)%max));
+	System.err.println();
+	System.err.println(characters[i]+ " -> "+ ((char)((ch+5)%max)));
+	System.err.println(ch + " -> "+ ((ch+11)%max));
       }
 
       return String.valueOf(encryptedChars);
@@ -179,22 +178,22 @@ public class IWMainApplication{//implements ServletContext{
   public static String decryptClassName(String encryptedClassName){
 /*
       if(encryptedClassName != null){
-        System.err.println("encryptedClassName "+encryptedClassName);
-        char[] characters = encryptedClassName.toCharArray();
+	System.err.println("encryptedClassName "+encryptedClassName);
+	char[] characters = encryptedClassName.toCharArray();
 
-        int max = 255;
+	int max = 255;
 
-        for (int i = 0; i < characters.length; i++) {
-          int ch = (int)characters[i];
-          int ch2 = (char)(ch-11);
-          if(ch2 < 0){
-            ch2 = max - ch2;
-          }
-          characters[i] = (char)ch2;
-        }
+	for (int i = 0; i < characters.length; i++) {
+	  int ch = (int)characters[i];
+	  int ch2 = (char)(ch-11);
+	  if(ch2 < 0){
+	    ch2 = max - ch2;
+	  }
+	  characters[i] = (char)ch2;
+	}
 
-        System.err.println("String.valueOf(characters)"+String.valueOf(characters));
-        return String.valueOf(characters);
+	System.err.println("String.valueOf(characters)"+String.valueOf(characters));
+	return String.valueOf(characters);
     }else{*/
     //  return encryptedClassName;
     //}
@@ -342,12 +341,12 @@ public class IWMainApplication{//implements ServletContext{
       getBundlesFile().store(new FileOutputStream(bundlesFileFile),null);
       }
       catch(Exception ex){
-          ex.printStackTrace();
+	  ex.printStackTrace();
       }
       for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
-        Object key = enum.nextElement();
-        IWBundle bundle = (IWBundle)loadedBundles.get(key);
-        bundle.storeState();
+	Object key = enum.nextElement();
+	IWBundle bundle = (IWBundle)loadedBundles.get(key);
+	bundle.storeState();
       }
   }
 
@@ -400,7 +399,7 @@ public class IWMainApplication{//implements ServletContext{
     String sBundle = getInternalBundeVirtualPath(bundleIdentifier);
     if( sBundle!=null){
       if( FileUtil.getFileSeparator().equals("/") )
-        sBundle = TextSoap.findAndReplace(sBundle,"\\","/");//unix
+	sBundle = TextSoap.findAndReplace(sBundle,"\\","/");//unix
       else sBundle = TextSoap.findAndReplace(sBundle,"/","\\");//windows
     }
     //debug
@@ -414,16 +413,16 @@ public class IWMainApplication{//implements ServletContext{
       File theRoot = new File(this.getApplicationSpecialRealPath(),BUNDLES_STANDARD_DIRECTORY);
       File[] bundles = theRoot.listFiles();
       for (int i = 0; i < bundles.length; i++) {
-        if(bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)){
-          File properties = new File(bundles[i],"properties");
-          File propertiesFile = new File(properties,IWBundle.propertyFileName);
-          IWPropertyList list = new IWPropertyList(propertiesFile);
-            String bundleIdentifier = list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
-            if(bundleIdentifier!=null){
-              String bundleDir = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
-              this.registerBundle(bundleIdentifier,bundleDir);
-            }
-        }
+	if(bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)){
+	  File properties = new File(bundles[i],"properties");
+	  File propertiesFile = new File(properties,IWBundle.propertyFileName);
+	  IWPropertyList list = new IWPropertyList(propertiesFile);
+	    String bundleIdentifier = list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+	    if(bundleIdentifier!=null){
+	      String bundleDir = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
+	      this.registerBundle(bundleIdentifier,bundleDir);
+	    }
+	}
       }
   }
 
@@ -433,21 +432,21 @@ public class IWMainApplication{//implements ServletContext{
       File theRoot = new File(this.getApplicationSpecialRealPath(),BUNDLES_STANDARD_DIRECTORY);
       File[] bundles = theRoot.listFiles();
       for (int i = 0; i < bundles.length; i++) {
-        if(bundles[i].isDirectory()){
-          File properties = new File(bundles[i],"properties");
-          File propertiesFile = new File(properties,IWBundle.propertyFileName);
-          try{
-          IWPropertyList list = new IWPropertyList(propertiesFile);
-          if(list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(bundleIdentifier)){
-            tryString = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
-            this.registerBundle(bundleIdentifier,tryString);
-            return tryString;
-          }
-          }
-          catch(Exception e){
-            throw new IWBundleDoesNotExist(bundleIdentifier);
-          }
-        }
+	if(bundles[i].isDirectory()){
+	  File properties = new File(bundles[i],"properties");
+	  File propertiesFile = new File(properties,IWBundle.propertyFileName);
+	  try{
+	  IWPropertyList list = new IWPropertyList(propertiesFile);
+	  if(list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(bundleIdentifier)){
+	    tryString = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
+	    this.registerBundle(bundleIdentifier,tryString);
+	    return tryString;
+	  }
+	  }
+	  catch(Exception e){
+	    throw new IWBundleDoesNotExist(bundleIdentifier);
+	  }
+	}
       }
     }
     return tryString;
@@ -481,8 +480,8 @@ public class IWMainApplication{//implements ServletContext{
       Vector vector = new Vector();
       Iterator iter = bundlesFile.keySet().iterator();
       while (iter.hasNext()) {
-        String key = (String)iter.next();
-        vector.add(getBundle(key));
+	String key = (String)iter.next();
+	vector.add(getBundle(key));
       }
       return vector;
   }
@@ -505,14 +504,14 @@ public class IWMainApplication{//implements ServletContext{
     String prePath = System.getProperty("tomcat.home");
     try{
       if(System.getProperty("os.name").toLowerCase().indexOf("win")==-1){
-        //Runtime.getRuntime().exec(prePath+"/bin/restart");
-        String[] array = {prePath+"/bin/restart"};
-        Executer.executeInAnotherVM(array);
+	//Runtime.getRuntime().exec(prePath+"/bin/restart");
+	String[] array = {prePath+"/bin/restart"};
+	Executer.executeInAnotherVM(array);
       }
       else{
-        //Runtime.getRuntime().exec(prePath+"\\bin\\restart.bat");
-        String[] array = {prePath+"\\bin\\restart.bat"};
-        Executer.executeInAnotherVM(array);
+	//Runtime.getRuntime().exec(prePath+"\\bin\\restart.bat");
+	String[] array = {prePath+"\\bin\\restart.bat"};
+	Executer.executeInAnotherVM(array);
       }
       return true;
     }
@@ -579,11 +578,11 @@ public class IWMainApplication{//implements ServletContext{
       cryptoProps.load(new FileInputStream(file));
       cryptoCodes = new Properties();
       if(cryptoProps.size() > 0){
-        Iterator iter = cryptoCodes.entrySet().iterator();
-        while(iter.hasNext()){
-          Map.Entry me = (Map.Entry) iter.next();
-          cryptoCodes.put(me.getValue(),me.getKey());
-        }
+	Iterator iter = cryptoCodes.entrySet().iterator();
+	while(iter.hasNext()){
+	  Map.Entry me = (Map.Entry) iter.next();
+	  cryptoCodes.put(me.getValue(),me.getKey());
+	}
       }
     }
     catch(Exception ex){}
@@ -638,14 +637,6 @@ public class IWMainApplication{//implements ServletContext{
      return (String)cryptoProps.get(hashcode);
     else
      return hashcode;
-  }
-
-  public static void setDebugMode(boolean debugFlag){
-    DEBUG_FLAG = debugFlag;
-  }
-
-  public static boolean isDebugActive(){
-    return DEBUG_FLAG;
   }
 
   public void createMediaTables(){

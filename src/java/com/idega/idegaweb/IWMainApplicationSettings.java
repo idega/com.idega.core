@@ -31,6 +31,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
   private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
 
   public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
+  public static boolean DEBUG_FLAG = false;
 
 
   public IWMainApplicationSettings(IWMainApplication application){
@@ -68,11 +69,11 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
 
     /*public void setDefaultLocale(Locale locale){
-        setProperty(DEFAULT_LOCALE,locale.toString());
+	setProperty(DEFAULT_LOCALE,locale.toString());
     }*/
 
     public void setDefaultLocale(Locale locale){
-        setProperty(DEFAULT_LOCALE,locale.toString());
+	setProperty(DEFAULT_LOCALE,locale.toString());
     }
 
     /*public Locale getDefaultLocale(){
@@ -83,11 +84,11 @@ public class IWMainApplicationSettings extends IWPropertyList{
       String localeIdentifier = getProperty(DEFAULT_LOCALE);
       Locale locale = null;
       if(localeIdentifier==null){
-          //localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
-          //Set default to International English
-          localeIdentifier="en";
-          locale = LocaleUtil.getLocale(localeIdentifier);
-          setDefaultLocale(locale);
+	  //localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
+	  //Set default to International English
+	  localeIdentifier="en";
+	  locale = LocaleUtil.getLocale(localeIdentifier);
+	  setDefaultLocale(locale);
       }
       locale = LocaleUtil.getLocale(localeIdentifier);
       return locale;
@@ -101,7 +102,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
      * Returns false if the removing fails
      */
     public boolean removeIWService(Class serviceClass){
-        return false;
+	return false;
     }
 
     /**
@@ -118,19 +119,19 @@ public class IWMainApplicationSettings extends IWPropertyList{
       //return null;
       IWPropertyList plist = getIWPropertyList(_SERVICE_CLASSES_KEY);
       if(plist!=null){
-        List l = new Vector();
-        Iterator iter = plist.iterator();
-        while (iter.hasNext()) {
-          IWProperty item = (IWProperty)iter.next();
-          String serviceClass = item.getValue();
-          try {
-            l.add(Class.forName(serviceClass));
-          }
-          catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        }
-        return l;
+	List l = new Vector();
+	Iterator iter = plist.iterator();
+	while (iter.hasNext()) {
+	  IWProperty item = (IWProperty)iter.next();
+	  String serviceClass = item.getValue();
+	  try {
+	    l.add(Class.forName(serviceClass));
+	  }
+	  catch (Exception ex) {
+	    ex.printStackTrace();
+	  }
+	}
+	return l;
       }
       return null;
     }
@@ -144,22 +145,35 @@ public class IWMainApplicationSettings extends IWPropertyList{
     public boolean getIfEntityAutoCreate(){
       String value = getProperty("entity-auto-create");
       if(value==null){
-        return false;
+	return false;
       }
       else{
-        return Boolean.valueOf(value).booleanValue();
+	return Boolean.valueOf(value).booleanValue();
       }
+    }
+
+    public void setDebug(boolean ifDebug){
+      this.setProperty("debug",ifDebug);
+      setDebugMode(ifDebug);
     }
 
     public boolean getIfDebug(){
       String value = getProperty("debug");
       if(value==null){
-        return false;
+	return false;
       }
       else{
-        return Boolean.valueOf(value).booleanValue();
+	return Boolean.valueOf(value).booleanValue();
       }
     }
+
+  public static void setDebugMode(boolean debugFlag){
+    DEBUG_FLAG = debugFlag;
+  }
+
+  public static boolean isDebugActive(){
+    return DEBUG_FLAG;
+  }
 
 
 }

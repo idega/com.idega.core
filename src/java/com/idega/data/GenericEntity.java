@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.82 2002/03/07 11:50:49 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.83 2002/03/09 00:34:28 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.data;
 
+import com.idega.idegaweb.IWMainApplicationSettings;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -216,11 +217,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public void addAttribute(String attributeName) {
-            EntityAttribute attribute;
-            attribute = new EntityAttribute(attributeName);
-            attribute.setAsPrimaryKey(true);
-            attribute.setNullable(false);
-            addAttribute(attribute);
+	    EntityAttribute attribute;
+	    attribute = new EntityAttribute(attributeName);
+	    attribute.setAsPrimaryKey(true);
+	    attribute.setNullable(false);
+	    addAttribute(attribute);
 	}
 
 	/**
@@ -426,29 +427,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
-            //_columns.put(columnName.toLowerCase(),columnValue);
+	    //_columns.put(columnName.toLowerCase(),columnValue);
 			_columns.put(columnName.toUpperCase(),columnValue);
-            this.flagColumnUpdate(columnName);
-                        if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
-                          setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-                        }
-                        else{
-		          this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-                        }
-                }
+	    this.flagColumnUpdate(columnName);
+			if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+			  setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
+			else{
+			  this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
+		}
 
 	}
 
 	protected Object getValue(String columnName){
-        //return _columns.get(columnName.toLowerCase());
+	//return _columns.get(columnName.toLowerCase());
 		return _columns.get(columnName.toUpperCase());
 	}
 
 
-        public void removeFromColumn(String columnName){
-          //_columns.remove(columnName.toLowerCase());
-          _columns.remove(columnName.toUpperCase());
-        }
+	public void removeFromColumn(String columnName){
+	  //_columns.remove(columnName.toLowerCase());
+	  _columns.remove(columnName.toUpperCase());
+	}
 
 
 	public void setColumn(String columnName,Object columnValue){
@@ -847,15 +848,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	*/
 
 	public String getIDColumnName(){
-          String entityName = getEntityName();
-          if (entityName.endsWith("_")){
-                  return entityName+"ID";
-                  //return entityName+"id";
-          }
-          else{
-                  return entityName+"_ID";
-                  //return entityName+"_id";
-          }
+	  String entityName = getEntityName();
+	  if (entityName.endsWith("_")){
+		  return entityName+"ID";
+		  //return entityName+"id";
+	  }
+	  else{
+		  return entityName+"_ID";
+		  //return entityName+"_id";
+	  }
 	}
 
 	public static String getLanguageIDColumnName(){
@@ -871,11 +872,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		//for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
 		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();i++){
 			EntityAttribute temp = (EntityAttribute)e.nextElement();
-                        if (temp.getAttributeType().equals("column")){
-                          //vector.addElement(temp.getColumnName().toLowerCase());
-		                vector.addElement(temp.getColumnName());
-                }
-                }
+			if (temp.getAttributeType().equals("column")){
+			  //vector.addElement(temp.getColumnName().toLowerCase());
+				vector.addElement(temp.getColumnName());
+		}
+		}
 
 		if (vector != null){
 			vector.trimToSize();
@@ -939,13 +940,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 */
 
-                //if (_columns.get(columnName.toLowerCase())== null){
-                if (_columns.get(columnName.toUpperCase())== null){
-                  return true;
-                }
-                else{
-                  return false;
-                }
+		//if (_columns.get(columnName.toLowerCase())== null){
+		if (_columns.get(columnName.toUpperCase())== null){
+		  return true;
+		}
+		else{
+		  return false;
+		}
 
 
 	}
@@ -1204,12 +1205,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
 			//if (RS.getInt(columnName) != -1){
-                        int theInt = RS.getInt(columnName);
-                        boolean wasNull = RS.wasNull();
-                        if(!wasNull){
-                            setColumn(columnName,new Integer(theInt));
-                            //setColumn(columnName.toLowerCase(),new Integer(theInt));
-                        }
+			int theInt = RS.getInt(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    setColumn(columnName,new Integer(theInt));
+			    //setColumn(columnName.toLowerCase(),new Integer(theInt));
+			}
 
 			//}
 		}
@@ -1231,21 +1232,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
-                        float theFloat = RS.getFloat(columnName);
-                        boolean wasNull = RS.wasNull();
-                        if(!wasNull){
-                            setColumn(columnName,new Float(theFloat));
-                            //setColumn(columnName.toLowerCase(),new Float(theFloat));
-                        }
+			float theFloat = RS.getFloat(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    setColumn(columnName,new Float(theFloat));
+			    //setColumn(columnName.toLowerCase(),new Float(theFloat));
+			}
 
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
-                        double theDouble = RS.getFloat(columnName);
-                        boolean wasNull = RS.wasNull();
-                        if(!wasNull){
-                            setColumn(columnName,new Double(theDouble));
-                            //setColumn(columnName.toLowerCase(),new Double(theDouble));
-                        }
+			double theDouble = RS.getFloat(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    setColumn(columnName,new Double(theDouble));
+			    //setColumn(columnName.toLowerCase(),new Double(theDouble));
+			}
 
 			double doble = RS.getDouble(columnName);
 		}
@@ -1261,24 +1262,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME){
 			java.sql.Date date = RS.getDate(columnName);
-                        if (date != null){
+			if (date != null){
 				setColumn(columnName,date);
-                //setColumn(columnName.toLowerCase(),date);
+		//setColumn(columnName.toLowerCase(),date);
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
 			/*if (RS.getDate(columnName) != null){
 				setColumn(columnName.toLowerCase(),RS.getTime(columnName));
 			}*/
-                        setColumn(columnName,getEmptyBlob(columnName));
-                        //setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
+			setColumn(columnName,getEmptyBlob(columnName));
+			//setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
 
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
 			String gender = RS.getString(columnName);
-                        if (gender != null){
+			if (gender != null){
 				setColumn(columnName,new Gender(gender));
-                //setColumn(columnName.toLowerCase(),new Gender(gender));
+		//setColumn(columnName.toLowerCase(),new Gender(gender));
 
 			}
 		}
@@ -1311,38 +1312,38 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       //ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
     //eiki added null check
       if (( RS==null) || !RS.next())
-        throw new SQLException("Record with id="+id+" not found");
+	throw new SQLException("Record with id="+id+" not found");
 
       String[] columnNames = getColumnNames();
       for (int i = 0; i < columnNames.length; i++){
-        try{
-          //if (RS.getString(columnNames[i]) != null){
-          fillColumn(columnNames[i],RS);
-        //}
-        }
-        catch(Exception ex){
-        /*//NOCATH
-          try{
-          //if (RS.getString(columnNames[i].toUpperCase()) != null){
-                  fillColumn(columnNames[i],RS);
-          //}
-          }
-          catch(SQLException exe){
-            try{
-                    //if (RS.getString(columnNames[i].toLowerCase()) != null){
-            fillColumn(columnNames[i],RS);
-            //}
-            }
-            catch(SQLException exep){
+	try{
+	  //if (RS.getString(columnNames[i]) != null){
+	  fillColumn(columnNames[i],RS);
+	//}
+	}
+	catch(Exception ex){
+	/*//NOCATH
+	  try{
+	  //if (RS.getString(columnNames[i].toUpperCase()) != null){
+		  fillColumn(columnNames[i],RS);
+	  //}
+	  }
+	  catch(SQLException exe){
+	    try{
+		    //if (RS.getString(columnNames[i].toLowerCase()) != null){
+	    fillColumn(columnNames[i],RS);
+	    //}
+	    }
+	    catch(SQLException exep){
 
-             System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
-                    //exep.printStackTrace(System.err);
-            }
-          }*/
-          System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+ex.getMessage());
-          if(!(ex instanceof NullPointerException))
-            ex.printStackTrace(System.err);
-        }
+	     System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
+		    //exep.printStackTrace(System.err);
+	    }
+	  }*/
+	  System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+ex.getMessage());
+	  if(!(ex instanceof NullPointerException))
+	    ex.printStackTrace(System.err);
+	}
 
       }
 
@@ -1351,10 +1352,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     finally{
       if(Stmt != null){
-        Stmt.close();
+	Stmt.close();
       }
       if (conn != null){
-        freeConnection(getDatasource(),conn);
+	freeConnection(getDatasource(),conn);
       }
     }
   }
@@ -2631,7 +2632,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     * "debug" is set to "TRUE"
     */
    public void debug(String outputString){
-    if( com.idega.idegaweb.IWMainApplication.isDebugActive() ){
+    if( IWMainApplicationSettings.isDebugActive() ){
       System.out.println("[DEBUG] \""+outputString+"\" : "+this.getEntityName());
 
     }
