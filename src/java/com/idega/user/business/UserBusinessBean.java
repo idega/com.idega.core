@@ -873,7 +873,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
+	/**
+	 * 	 * @deprecated Replaced with getAllGroupsNotDirectlyRelated(int iUserId)	 */
   public  Collection getAllGroupsNotDirectlyRelated(int iUserId,IWContext iwc){
+  	return 	getAllGroupsNotDirectlyRelated(iUserId);
+  }
+
+  public  Collection getAllGroupsNotDirectlyRelated(int iUserId){
     try {
 
       User user = getUser(iUserId);
@@ -894,7 +900,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return null;
       }
       */
-      return getGroupBusiness().getAllGroupsNotDirectlyRelated(user.getGroupID(),iwc);
+      return getGroupBusiness().getAllGroupsNotDirectlyRelated(user.getGroupID());
     }
     catch (Exception ex) {
       ex.printStackTrace();

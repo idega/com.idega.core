@@ -89,13 +89,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   }
 
   public Collection getAllGroups(IWContext iwc) {
+  	return getAllGroups();		
+  }
+
+  /**
+   *    * @return Collection With all grops in the system that are not UserRepresentative gropus   */
+  public Collection getAllGroups() {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
       groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
       //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
-      return getGroups(groupsNotToReturn,false,iwc);
+      return getGroups(groupsNotToReturn,false);
       //return EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
     }
     catch (Exception ex) {
@@ -105,6 +111,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   }
 
   public  Collection getRegisteredGroups(IWContext iwc){
+  	return getRegisteredGroups();
+  }
+
+  public  Collection getRegisteredGroups(){
     try {
       //filter
       String[] groupsNotToReturn = new String[2];
@@ -113,20 +123,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
       groupsNotToReturn[1] = this.getPermissionGroupHome().getGroupType();
       //groupsNotToReturn[0] = ((PermissionGroup)com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getInstance(PermissionGroup.class)).getGroupTypeValue();
       //filter end
-      return getGroups(groupsNotToReturn,true,iwc);
+      return getGroups(groupsNotToReturn,true);
     }
     catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
   }
-
+	/**	 * @deprecated Replaced with getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes)	 */
   public  Collection getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws Exception {
-    Collection result = getGroupHome().findAllGroups(groupTypes,returnSepcifiedGroupTypes);
+  		return getGroups(groupTypes,returnSepcifiedGroupTypes);
+  }
 
+  public  Collection getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws Exception {
+    Collection result = getGroupHome().findAllGroups(groupTypes,returnSepcifiedGroupTypes);
+	
 //    com.idega.user.data.GroupBMPBean.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
-      result.removeAll(iwc.getAccessController().getStandardGroups());
+      result.removeAll(getAccessController().getStandardGroups());
     }
     return result;
   }
@@ -175,11 +189,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
     }
   }
 
+
+/** * @deprecated Replaced with getAllGroupsNotDirectlyRelated(int uGroupId) */
   public  Collection getAllGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
+  	return 	getAllGroupsNotDirectlyRelated(uGroupId);
+  }
+
+  public  Collection getAllGroupsNotDirectlyRelated(int uGroupId){
     try {
       Group group = this.getGroupByGroupID(uGroupId);
       Collection isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      Collection AllGroups =  getAllGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
+      Collection AllGroups =  getAllGroups();// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -203,10 +223,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   }
 
   public  Collection getRegisteredGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
+  	return getRegisteredGroupsNotDirectlyRelated(uGroupId);
+  }
+
+  public  Collection getRegisteredGroupsNotDirectlyRelated(int uGroupId){
     try {
       Group group = this.getGroupByGroupID(uGroupId);
       Collection isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      Collection AllGroups =  getRegisteredGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
+      Collection AllGroups =  getRegisteredGroups();// Filters out userrepresentative groups //  EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
