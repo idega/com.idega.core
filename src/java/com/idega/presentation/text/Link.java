@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.133 2004/08/11 09:02:11 laddi Exp $
+ * $Id: Link.java,v 1.134 2004/08/27 15:28:00 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -610,6 +610,19 @@ public class Link extends Text {
 		return false; // false
 	}
 
+	public void setParameter(Map parameterMap) {
+		if (parameterMap != null) {
+			Iterator parameters = parameterMap.entrySet().iterator();
+			while (parameters.hasNext()) {
+				Map.Entry entry = (Map.Entry) parameters.next();
+				String key = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				setParameter(key, value);
+			}
+		}
+	}
+	
+	
 	public void setParameter(String parameterName, String parameterValue) {
 		addParameter(parameterName, parameterValue);
 	}
