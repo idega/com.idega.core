@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.io.IOException;
+import com.idega.core.data.ICFile;
+import com.idega.idegaweb.IWMainApplication;
 
 public class GenericPlugin extends PresentationObject{
 
@@ -175,6 +177,26 @@ public void print(IWContext iwc)throws IOException{
     }
   }
 }
+
+/**
+ * TODO CHANGE TO CACHED FILE!!!
+ */
+
+
+  public void setFile(ICFile file) {
+    if( (file!=null) && (file.getID()!=-1) ){
+      StringBuffer url = new StringBuffer();
+      url.append(IWMainApplication.MEDIA_SERVLET_URL);
+      url.append('/');
+      url.append(file.getID());
+      url.append("media");
+      url.append('?');
+      url.append(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME);
+      url.append('=');
+      url.append(file.getID());
+      setURL(url.toString());
+    }
+  }
 
   public synchronized Object clone() {
    GenericPlugin obj = null;
