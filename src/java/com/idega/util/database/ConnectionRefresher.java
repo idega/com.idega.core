@@ -5,6 +5,9 @@
 
 */
 package com.idega.util.database;
+
+import com.idega.data.IDONoDatastoreError;
+
 /**
 
  *
@@ -21,10 +24,12 @@ public class ConnectionRefresher implements Runnable
 	private Thread refresher;
 	private ConnectionPool pool;
 	private long refreshIntervalMillis;
+	private long lastRun;
 	protected ConnectionRefresher(ConnectionPool pool, long refreshIntervalMillis)
 	{
 		this.pool = pool;
 		this.refreshIntervalMillis = refreshIntervalMillis;
+		lastRun=System.currentTimeMillis();
 		refresher = new Thread(this);
 		refresher.setPriority(Thread.MIN_PRIORITY);
 		refresher.start();
@@ -37,14 +42,34 @@ public class ConnectionRefresher implements Runnable
 			try
 			{
 				refresher.sleep(this.refreshIntervalMillis + Math.round((this.refreshIntervalMillis / 2) * Math.random()));
-				pool.refresh();
+				runRefresh();
 			}
 			catch (InterruptedException ex)
 			{
-				System.err.println("There was an error in ConnectionRefresher.run() The error was: " + ex.getMessage());
+				System.err.println("There was an InterruptedException in ConnectionRefresher.run() The error was: " + ex.getMessage());
 			}
 		}
 	}
+	
+	
+	public synchronized void runRefresh()
+	{
+			refresher.interrupt();
+			try
+			{
+				//refresher.sleep(this.refreshIntervalMillis + Math.round((this.refreshIntervalMillis / 2) * Math.random()));
+				pool.refresh();
+			}
+			catch (Exception ex)
+			{
+				System.err.println("There was an Exception in ConnectionRefresher.run() The error was: " + ex.getMessage());
+			}
+			catch (IDONoDatastoreError ex)
+			{
+				System.err.println("There was an IDONoDatastoreError in ConnectionRefresher.run() The error was: " + ex.getMessage());
+			}
+	}
+	
 	public void stop()
 	{
 		refresher = null;
