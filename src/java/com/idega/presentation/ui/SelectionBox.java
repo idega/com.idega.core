@@ -430,8 +430,6 @@ public class SelectionBox extends InterfaceObject
 						setSelectedElements(selectedValues);
 					}
 				}
-				if (getInterfaceStyle().equals("default"))
-				{
 					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + multipleString + " >");
 					Iterator iter = theElements.iterator();
 					while (iter.hasNext())
@@ -442,7 +440,6 @@ public class SelectionBox extends InterfaceObject
 						tempobj._print(iwc);
 					}
 					println("</select>");
-				}
 			} else if (getLanguage().equals("WML"))
 			{
 				if (this.keepStatus == true)
@@ -452,8 +449,6 @@ public class SelectionBox extends InterfaceObject
 						setSelectedElement(iwc.getParameter(getName()));
 					}
 				}
-				if (getInterfaceStyle().equals("default"))
-				{
 					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 					Iterator iter = theElements.iterator();
 					while (iter.hasNext())
@@ -464,7 +459,6 @@ public class SelectionBox extends InterfaceObject
 						tempobj._print(iwc);
 					}
 					println("</select>");
-				}
 			}
 			//}
 		}

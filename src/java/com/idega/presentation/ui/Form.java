@@ -481,11 +481,9 @@ public class Form extends InterfaceObject {
 			if (getAssociatedFormScript() != null)
 				add(getAssociatedFormScript());
 
-			if (getInterfaceStyle().equals("default")) {
 				println("<form " + (markup.equals(Page.HTML) ? "name=\""+getName()+"\"" : "") + getMarkupAttributesString() + " >");
 				super.print(iwc);
 				print("</form>");
-			}
 		}
 		else if (getLanguage().equals("WML")) {
 			//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
