@@ -139,7 +139,9 @@ public class IWStarterServlet extends GenericServlet
 	      application.getSettings().setDebug(true);
 	      sendStartMessage("Debug mode is active");
 	    }
-
+	    if(application.getSettings().getIfAutoCreateStrings()){
+	      sendStartMessage("AutoCreateLocalizedStrings is active");
+	    }
 	    if(application.getSettings().getIfEntityAutoCreate()){
 	      EntityControl.setAutoCreationOfEntities(true);
 	      sendStartMessage("EntityAutoCreation Active");

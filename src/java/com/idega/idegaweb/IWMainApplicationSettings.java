@@ -32,6 +32,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
   public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
   public static boolean DEBUG_FLAG = false;
+  public static boolean CREATE_STRINGS = false;
 
 
   public IWMainApplicationSettings(IWMainApplication application){
@@ -173,6 +174,25 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
   public static boolean isDebugActive(){
     return DEBUG_FLAG;
+  }
+
+    public void setAutoCreateStrings(boolean ifAutoCreate){
+      this.setProperty("auto-create-localized-strings",ifAutoCreate);
+      CREATE_STRINGS = ifAutoCreate;
+    }
+
+    public boolean getIfAutoCreateStrings() {
+      String value = getProperty("auto-create-localized-strings");
+      if(value==null){
+	return false;
+      }
+      else{
+	return Boolean.valueOf(value).booleanValue();
+      }
+    }
+
+  public static boolean isAutoCreateStringsActive(){
+    return CREATE_STRINGS;
   }
 
 

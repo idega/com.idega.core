@@ -167,7 +167,10 @@ public class IWResourceBundle extends ResourceBundle {
     public String getLocalizedString(String key, String returnValueIfNull){
       String returnString = getLocalizedString(key);
       if (returnString == null) {
-	setLocalizedString(key,returnValueIfNull);
+	if ( getIWBundleParent().getApplication().getSettings().isAutoCreateStringsActive() ) {
+	  System.out.println("Storing localized string: "+key);
+	  setLocalizedString(key,returnValueIfNull);
+	}
 	return returnValueIfNull;
       }
       else return returnString;
@@ -309,7 +312,8 @@ public class IWResourceBundle extends ResourceBundle {
 
   private void checkBundleLocalizedString(String key, String value) {
     IWBundle bundle = getIWBundleParent();
-    if (!bundle.containsLocalizedString(key))
+    if (!bundle.containsLocalizedString(key)) {
       bundle.addLocalizableString(key,value);
+    }
   }
 }
