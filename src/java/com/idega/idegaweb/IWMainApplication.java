@@ -178,64 +178,16 @@ public class IWMainApplication{//implements ServletContext{
    * @todo: Change this so it encrypts the classToInstanciateName
    */
   public static String getEncryptedClassName(String classToInstanciate){
-/*      System.err.println("classToInstanciate "+classToInstanciate);
-      if(classToInstanciate != null){
-      char[] characters = classToInstanciate.toCharArray();
-
-      int max = 255;
-
-      char[] encryptedChars = new char[characters.length];
-
-      System.err.println("max "+max);
-
-      for (int i = 0; i < characters.length; i++) {
-	int ch = (int)characters[i];
-	encryptedChars[i] = ((char)((ch+11)%max));
-	System.err.println();
-	System.err.println(characters[i]+ " -> "+ ((char)((ch+5)%max)));
-	System.err.println(ch + " -> "+ ((ch+11)%max));
-      }
-
-      return String.valueOf(encryptedChars);
-      }else{*/
-  //      return classToInstanciate;
-//      }
     return getHashCode(classToInstanciate);
   }
 
   public static String getEncryptedClassName(Class classToInstanciate){
-      //return getEncryptedClassName(classToInstanciate.getName());
-      return getHashCode(classToInstanciate);
+      return getHashCode(classToInstanciate,0);
   }
 
   public static String decryptClassName(String encryptedClassName){
-/*
-      if(encryptedClassName != null){
-	System.err.println("encryptedClassName "+encryptedClassName);
-	char[] characters = encryptedClassName.toCharArray();
-
-	int max = 255;
-
-	for (int i = 0; i < characters.length; i++) {
-	  int ch = (int)characters[i];
-	  int ch2 = (char)(ch-11);
-	  if(ch2 < 0){
-	    ch2 = max - ch2;
-	  }
-	  characters[i] = (char)ch2;
-	}
-
-	System.err.println("String.valueOf(characters)"+String.valueOf(characters));
-	return String.valueOf(characters);
-    }else{*/
-    //  return encryptedClassName;
-    //}
-
     return getHashCodedClassName(encryptedClassName);
   }
-
-
-
 
   //public ServletContext getContext(String p0){
   //  return application.getContext(p0);
@@ -707,7 +659,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public static String getHashCode(String className){
     try{
-      return getHashCode(Class.forName(className));
+      return getHashCode(Class.forName(className),0);
     }
     catch(ClassNotFoundException ex){
 
@@ -715,7 +667,13 @@ public class IWMainApplication{//implements ServletContext{
     return String.valueOf(className.hashCode());
   }
 
-  public static String getHashCode(Class classObject){
+/**
+ * Method getHashCode. Used to get the encrypted classname of a class.
+ * @param classObject
+ * @param addon an integer to that is added to the number calculate() makes to avoid two different classes having the same code
+ * @return String
+ */
+  public static String getHashCode(Class classObject,int addon){
 
     if(cryptoCodes == null)
       cryptoCodes = new Properties();
@@ -728,7 +686,13 @@ public class IWMainApplication{//implements ServletContext{
       crypto = (String) cryptoCodes.get(classObject.getName());
     }
     else{
-      crypto = Long.toString(calculate(classObject.getName()));
+      long iCrypto = calculate(classObject.getName());
+      iCrypto += addon;
+      crypto = Long.toString(iCrypto);
+      if( cryptoProps.containsKey(crypto) ){//if this was made before for a different class get me a new number
+      	crypto = getHashCode(classObject,++addon);
+      }
+      
       cryptoCodes.put(classObject.getName(),crypto);
     }
 
@@ -879,12 +843,12 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public  String getWindowOpenerURI(Class windowToOpen){
-    String url = getWindowOpenerURI();
-    url+="?";
-    url+=PARAM_IW_FRAME_CLASS_PARAMETER;
-    url+="=";
-    url+=getEncryptedClassName(windowToOpen);
-    return url;
+  	StringBuffer url = new StringBuffer();
+  	url.append(getWindowOpenerURI()).append('?')
+  	.append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=')
+  	.append(getEncryptedClassName(windowToOpen));
+
+    return url.toString();
     //return getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
   }
 
