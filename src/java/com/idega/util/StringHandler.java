@@ -687,6 +687,15 @@ public class StringHandler {
     return SUBSTITUTION[i];
 	}
 	
+
+	public static String shortenToLength(CharSequence sequence, int length) {
+		int tempLength = sequence.length();
+		if (tempLength >= length) {
+			return sequence.toString();
+		}
+		return sequence.subSequence(0, length).toString();
+	}
+
 	/**
 	 * Returns a string or dash if there is no string. If the string is either
 	 * null or an empty string a dash (-) is returned else it returns the input
@@ -698,14 +707,10 @@ public class StringHandler {
 		if(str==null){
 			return DASH;
 		}
-		else{
-			if(str.equals(EMPTY_STRING)){
-				return DASH;
-			}
-			else{
-				return str;
-			}
+		if(str.equals(EMPTY_STRING)){
+			return DASH;
 		}
+		return str;
 	}
 	
 	
