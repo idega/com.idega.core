@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -150,9 +151,13 @@ public class IDOTableCreator{
     boolean theReturner=true;
     try{
     	long start = System.currentTimeMillis();
-        executeQuery(entity,"select * from "+tableName);
+    	/**
+    	 * @todo: Change to doTableCheckDatabaseMetadata()
+    	 **/
+    	doTableCheckSelectStar(entity,tableName);
+        //doTableCheckDatabaseMetadata(entity,tableName);
         long end = System.currentTimeMillis();
-        System.err.println("[idoTableCreator] select took "+((end-start))+" milliseconds"+"  ("+tableName+")");
+        System.err.println("[idoTableCreator] doesTableExist() check took "+((end-start))+" milliseconds"+"  ("+tableName+")");
     }
     catch(Exception se){
       //String message = se.getMessage();
@@ -164,9 +169,58 @@ public class IDOTableCreator{
         //se.printStackTrace();
       //}
     }
-
     return theReturner;
   }
+  
+  
+  private void doTableCheckSelectStar(IDOLegacyEntity entity,String tableName)throws Exception{
+    	String checkQuery = "select * from "+tableName;
+        executeQuery(entity,checkQuery);  	
+  }
+
+
+	
+	private void doTableCheckDatabaseMetadata(IDOLegacyEntity entity,String tableName)throws Exception{
+		/**
+		 * @todo: Finish implementation
+		 **/
+	    Connection conn = null;
+	    ResultSet rs = null;
+	    boolean tableExists = false;
+	    try{
+	      conn = entity.getConnection();
+	      List v = new ArrayList();
+	      java.sql.DatabaseMetaData metadata = conn.getMetaData();
+	      rs = metadata.getTables("","",tableName.toLowerCase(),null);
+	      //System.out.println("Table: "+tableName+" has the following columns:");
+	      while (rs.next()) {
+	        String table = rs.getString("TABLE_NAME");
+	        v.add(table);
+	        tableExists=true;
+	        //System.out.println("\t\t"+column);
+	      }
+	      rs.close();
+	      if(v.isEmpty()){
+	        rs = metadata.getTables("","",tableName.toUpperCase(),null);
+	        //System.out.println("Table: "+tableName+" has the following columns:");
+	        while (rs.next()) {
+		        String table = rs.getString("TABLE_NAME");
+		        v.add(table);
+		        tableExists=true;
+	        }
+	        rs.close();
+	      }
+	     
+	    }
+	    finally{
+	    	if(conn!=null){
+	    		entity.freeConnection(conn);
+	    	}
+	    }
+	    if(tableExists==false){
+	    	throw new Exception("Table "+tableName+" does not exist");	
+	    }
+	}
 
   /**
    * Creates an entity record (table) that represents the entity in the datastore
