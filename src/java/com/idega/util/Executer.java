@@ -61,8 +61,7 @@ public class Executer {
       //@todo update this to reflect other versions of application servers classpath
       String classPath = null;
       classPath = System.getProperty("tc_path_add");//tomcat 3.3
-      //System.getProperty("java.class.path");
-      //tomcat classpath
+      if(classPath==null) classPath = System.getProperty("java.class.path");
 
       //put together the string
       StringBuffer exec = new StringBuffer();
