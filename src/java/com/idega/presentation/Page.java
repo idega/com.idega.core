@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.87 2003/10/30 16:03:04 tryggvil Exp $
+ *  $Id: Page.java,v 1.88 2003/10/30 16:06:05 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -745,6 +745,14 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setParentPageFormToSubmitOnUnLoad(int formIndex) {
 		setOnUnLoad("window.opener.document.forms["+formIndex+"].submit()");
+	}
+	
+	/**
+	 *  Sets the parent (caller) window to submit the form with the given name if there is one, on unload of this page.
+	 * @param formIndex index of the form in the parent page
+	 */
+	public void setParentPageFormToSubmitOnUnLoad(String formName) {
+		setOnUnLoad("window.opener.document.forms." + formName + ".submit()");
 	}
 	
 	/**
