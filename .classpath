@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/com.idega.core"/>
 	<classpathentry kind="src" path="/com.idega.builder"/>
-	<classpathentry sourcepath="MyFaces/myfaces" kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-1.0.7.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/smile/jars/smile-0.3.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
