@@ -365,6 +365,8 @@ public class SortedProperties extends Properties implements SortedMap
 	 * with a preceding slash
 	 */
 	private String saveConvert(String theString, boolean escapeSpace) {
+		if(theString == null) {theString="";}
+		
 		int len = theString.length();
 		StringBuffer outBuffer = new StringBuffer(len*2);
 
