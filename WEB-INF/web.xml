@@ -83,7 +83,17 @@
     <url-pattern>/servlet/WindowOpener/*</url-pattern>
   </servlet-mapping>
 
+    <!-- The IWEncodingFilter Filter , MUST be the first filter -->
+    <filter>
+        <filter-name>IWEncodingFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWEncodingFilter</filter-class>
+    </filter>
 
+    <filter-mapping>
+        <filter-name>IWEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
     <!-- IWBlockFilter Filter blocks certain sensitive URLs -->
     <filter>
         <filter-name>IWBlockFilter</filter-name>
@@ -98,18 +108,6 @@
         <url-pattern>*.pxml</url-pattern>
     </filter-mapping>
 
-
-    <!-- The IWEncodingFilter Filter , MUST be the first filter -->
-    <filter>
-        <filter-name>IWEncodingFilter</filter-name>
-        <filter-class>com.idega.servlet.filter.IWEncodingFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>IWEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    
     <!-- The IWUrlRedirector Filter -->
     <filter>
         <filter-name>IWUrlRedirector</filter-name>
@@ -169,7 +167,8 @@
     <filter>
         <filter-name>multipartFilter</filter-name>
         <filter-class>net.sourceforge.myfaces.custom.fileupload.MultipartFilter</filter-class>
-         <init-param>
+         <!-- 
+         	<init-param>
             <param-name>maxFileSize</param-name>
             <param-value>100m</param-value>
             <description>Set the size limit for uploaded files.
@@ -178,6 +177,7 @@
                         10m - 10 MB
             </description>
         </init-param>        
+		-->
     </filter>
     
     <filter-mapping>
@@ -187,6 +187,58 @@
     
     <!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
     
+    <!-- The IWActionHandlerFilter that redirects "action" urls like "/idegaweb/action/edit/files/cms/article/1.xml"-->
+    <filter>
+        <filter-name>iwActionURI</filter-name>
+        <filter-class>com.idega.servlet.filter.IWActionURIHandlerFilter</filter-class>  
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>iwActionURI</filter-name>
+        <url-pattern>/idegaweb/action/*</url-pattern>
+    </filter-mapping>
+    
+    
+    
+    <!-- DISABLED The GZIPFilter that compressed output to the client
+    <filter>
+        <filter-name>compress</filter-name>
+        <filter-class>com.idega.servlet.filter.GZIPFilter</filter-class>  
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>compress</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>compress</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+    
+        <filter-mapping>
+        <filter-name>compress</filter-name>
+        <url-pattern>*.htm</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>compress</filter-name>
+        <url-pattern>/pages/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>compress</filter-name>
+        <url-pattern>/servlet/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+    <filter-name>compress</filter-name>
+    <url-pattern>/workspace/*</url-pattern>
+    
+    </filter-mapping>
+    
+    -->
+   <!-- End of GZIPFilter -->
     
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
