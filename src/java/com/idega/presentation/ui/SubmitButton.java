@@ -25,6 +25,9 @@ public class SubmitButton extends GenericButton {
 	private boolean asImageButton = false;
 	private boolean encloseByForm = true;
 
+	private boolean _confirmSubmit = false;
+	private String _confirmMessage;
+
 	/**
 	 * Constructs a new <code>SubmitButton</code> with the default name set and value set
 	 * as "Submit".
@@ -129,10 +132,19 @@ public class SubmitButton extends GenericButton {
 				setValueOnClick(parameterName, parameterValue);
 			}
 		}
+		if (isEnclosedByForm()) {
+			if (_confirmSubmit) {
+				getScript().addFunction("confirmSubmit", "function confirmSubmit(input) {\n submit = confirm('"+_confirmMessage+"');\n	if (submit==true)\n		\tinput.form.submit();\n}");
+				setOnClick("confirmSubmit(this);");
+			}
+		}
 	}
 
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
+			if (_confirmSubmit)
+				setInputType(INPUT_TYPE_BUTTON);
+			
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
 					super.print(iwc);
@@ -166,5 +178,10 @@ public class SubmitButton extends GenericButton {
 		super.setAsImageButton(asImageButton);
 		setInputType(INPUT_TYPE_IMAGE);
 		setOnClick("this.form.submit();");
+	}
+	
+	public void setSubmitConfirm(String confirmMessage) {
+		_confirmSubmit = true;
+		_confirmMessage = confirmMessage;
 	}
 }
