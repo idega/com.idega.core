@@ -104,9 +104,14 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 					if (iter.hasNext()) {
 						toReturn = (ICDomain)iter.next();
 						domainMap.put(serverUrl,toReturn);
+						return toReturn;
+					} else {
+						System.out.println("Couldn't find domain record for serverURL : "+ serverUrl);
+						cachDefaultDomainForThisServerURL=true;
 					}
+				} else {
+					return toReturn;
 				}
-				return toReturn;
 			}
 		} catch (IDOLookupException e1) {
 			e1.printStackTrace();
