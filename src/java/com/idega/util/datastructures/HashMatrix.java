@@ -36,6 +36,15 @@ public class HashMatrix {
     return getYDimension(xKey).get(yKey);
   }
   
+  public Object remove(Object xKey, Object yKey) {
+    Map yMap = getYDimension(xKey);
+    Object oldObject = yMap.remove(yKey);
+    if (yMap.isEmpty()) {
+      xDimension.remove(xKey);
+    }
+    return oldObject;
+  }
+  
   public Map get(Object xKey)  {
     return getYDimension(xKey);
   }
