@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.6 2005/01/27 14:17:05 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.7 2005/02/01 18:01:28 thomas Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,24 +12,26 @@ package com.idega.servlet.filter;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.MutableClass;
 import com.idega.util.RequestUtil;
+
 
 
 /**
  *  Class that holds basic functionality used by many filters.<br>
  * 
- *  Last modified: $Date: 2005/01/27 14:17:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/01 18:01:28 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public abstract class BaseFilter implements Filter{
+public abstract class BaseFilter implements Filter, MutableClass {
 	
-	private static boolean DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT = false;
-	private static boolean CHECKED_CURRENT_APPCONTEXT = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT;
+	private static final boolean DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT = false;
+	private static boolean checkedCurrentApplicationContext = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT;
 
 	public static void unload()	{
-		CHECKED_CURRENT_APPCONTEXT = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT; 
+		checkedCurrentApplicationContext = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT; 
 	}
 
 	protected static String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
@@ -78,12 +80,12 @@ public abstract class BaseFilter implements Filter{
 		if (!hasCheckedCurrentAppContext()) {
 			String contextPath = request.getContextPath();
 			getIWMainApplication(request).setApplicationContextURI(contextPath);
-			CHECKED_CURRENT_APPCONTEXT=true;
+			checkedCurrentApplicationContext=true;
 		}
 	}
 	
 	private boolean hasCheckedCurrentAppContext(){
-		return CHECKED_CURRENT_APPCONTEXT;
+		return checkedCurrentApplicationContext;
 	}
 	
 	protected IWMainApplication getIWMainApplication(HttpServletRequest request) {

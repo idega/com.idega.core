@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.8 2005/01/24 18:24:45 thomas Exp $
+ * $Id: IWWelcomeFilter.java,v 1.9 2005/02/01 18:02:04 thomas Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/01/24 18:24:45 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/01 18:02:04 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -40,16 +40,16 @@ public class IWWelcomeFilter extends BaseFilter {
 	private static boolean isInit= DEFAULT_VALUE_IS_INIT;
 	
 	private static final boolean DEFAULT_VALUE_START_ON_WORKSPACE = true;
-	private static boolean START_ON_WORKSPACE= DEFAULT_VALUE_START_ON_WORKSPACE;
+	private static boolean startOnWorkspace= DEFAULT_VALUE_START_ON_WORKSPACE;
 	
 	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
-	private static boolean START_ON_PAGES= DEFAULT_VALUE_START_ON_PAGES;
+	private static boolean startOnPages= DEFAULT_VALUE_START_ON_PAGES;
 	
 	
 	public static void unload() {
 		isInit = DEFAULT_VALUE_IS_INIT;
-		START_ON_WORKSPACE = DEFAULT_VALUE_START_ON_WORKSPACE;
-		START_ON_PAGES = DEFAULT_VALUE_START_ON_PAGES;
+		startOnWorkspace = DEFAULT_VALUE_START_ON_WORKSPACE;
+		startOnPages = DEFAULT_VALUE_START_ON_PAGES;
 	}
 	
 	
@@ -88,11 +88,11 @@ public class IWWelcomeFilter extends BaseFilter {
 		}
 		
 		if(requestUri.equals(appUri)){
-			if(START_ON_WORKSPACE){
+			if(startOnWorkspace){
 				//request.getRequestDispatcher("/workspace/").forward(request,response);
 				response.sendRedirect(getNewWorkspaceUri(request));
 			}
-			else if(START_ON_PAGES){
+			else if(startOnPages){
 				request.getRequestDispatcher(PAGES_URI).forward(request,response);
 			}
 		}
@@ -115,8 +115,8 @@ public class IWWelcomeFilter extends BaseFilter {
 			ICPage rootPage = bService.getRootPage();
 			if(rootPage.getChildCount()>0){
 				//set the filter to forward to /pages if there are any subpages
-				START_ON_PAGES=true;
-				START_ON_WORKSPACE=false;
+				startOnPages=true;
+				startOnWorkspace=false;
 			}
 			/*String serverName = request.getServerName();
 			int port = request.getLocalPort();
