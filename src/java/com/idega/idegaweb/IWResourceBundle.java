@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.21 2002/12/11 18:59:05 palli Exp $
+ * $Id: IWResourceBundle.java,v 1.22 2003/03/03 13:32:58 eiki Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -179,7 +179,7 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public String getLocalizedString(String key, String returnValueIfNull) {
 		String returnString = getLocalizedString(key);
-		if (returnString == null) {
+		if ( (returnString == null) || "".equals(returnString) ) {
 			if (getIWBundleParent().getApplication().getSettings().isAutoCreateStringsActive()) {
 				if (getIWBundleParent().getApplication().getSettings().isDebugActive())
 					System.out.println("Storing localized string: " + key);
