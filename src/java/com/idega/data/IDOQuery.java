@@ -1000,7 +1000,8 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	public IDOQuery appendInCollection(Collection coll) {
-		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll));
+		return this.appendIn().append(PARENTHESIS_LEFT).appendCommaDelimited(coll).append(PARENTHESIS_RIGHT);
+		//return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll));
 	}
 	
 	public IDOQuery appendInCollectionWithSingleQuotes(Collection coll) {
