@@ -391,7 +391,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
 
           return myPermission;
-      }
+          
+			 case AccessController.CATEGORY_GROUP_ID:
+			 		for (int i = 0; i < arrayLength; i++) {
+						 myPermission = PermissionCacher.hasPermissionForGroup(identifier,iwc,permissionKey,permissionGroupLists[i]);
+						 if(myPermission != null){
+							 return myPermission;
+						 }
+					 }
+      }//switch ends
     }
     return myPermission;
   }

@@ -229,6 +229,9 @@ public class PermissionCacher {
     return hasPermission(PERMISSION_MAP_FILE,identifier,iwc,permissionKey,groups);
   }
 
+	public static Boolean hasPermissionForGroup(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+		return hasPermission(PERMISSION_MAP_GROUP,identifier,iwc,permissionKey,groups);
+	}
 
   //public static Boolean hasPermission()
 
