@@ -318,7 +318,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       return userToAdd;
     }
     catch(Exception e){
-      throw new IDOCreateException(e);
+    		getLogger().warning("Error creating user with personalID="+personalID+", firstName="+firstName+", lastName"+lastName);
+    		throw new IDOCreateException(e);
     }
 
   }
