@@ -1,5 +1,7 @@
 package com.idega.core.builder.data;
 
+import java.util.Locale;
+
 import com.idega.data.IDOLegacyEntity;
 
 
@@ -13,6 +15,7 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity
  public com.idega.core.file.data.ICFile getFile();
  public int getLockedBy();
  public java.lang.String getName();
+ public java.lang.String getName(Locale locale);
  public java.io.InputStream getPageValue();
  public java.io.OutputStream getPageValueForWrite();
  public java.lang.String getSubType();
