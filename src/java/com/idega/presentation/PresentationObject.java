@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.99 2004/07/02 01:07:36 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.100 2004/07/02 01:59:51 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -214,7 +214,7 @@ implements Cloneable, PresentationObjectType
 	{
 		this._request = iwc.getRequest();
 		this._response = iwc.getResponse();
-		this.language = iwc.getLanguage();
+		this.language = iwc.getMarkupLanguage();
 		if (language == null)
 		{
 			language = IWConstants.MARKUP_LANGUAGE_HTML;
@@ -550,7 +550,7 @@ implements Cloneable, PresentationObjectType
 	 */
 	public void print(IWContext iwc) throws Exception
 	{
-		if (iwc.getLanguage().equals("WML"))
+		if (iwc.getMarkupLanguage().equals("WML"))
 		{
 			iwc.setContentType("text/vnd.wap.wml");
 		}

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.60 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.61 2004/07/02 01:59:51 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,7 +92,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 			//          }
 			String markup = iwc.getParameter("idega_special_markup");
 			if (markup != null) {
-				iwc.setLanguage(markup);
+				iwc.setMarkupLanguage(markup);
 			}
 			storeObject(IW_CONTEXT_KEY, iwc);
 		}
@@ -337,7 +337,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		//System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 	public void executeRender(IWContext iwc) throws Exception {
-		String language = iwc.getLanguage();
+		String language = iwc.getMarkupLanguage();
 		if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			iwc.setContentType("text/html");
 		}

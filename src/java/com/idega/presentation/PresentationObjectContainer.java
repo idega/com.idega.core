@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.34 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.35 2004/07/02 01:59:51 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -340,7 +340,7 @@ public class PresentationObjectContainer extends PresentationObject
 		//Workaround for JRun - JRun has hardcoded content type text/html in
 		// JSP pages
 		//if(this.doPrint(iwc)){
-		if (iwc.getLanguage().equals("WML"))
+		if (iwc.getMarkupLanguage().equals("WML"))
 		{
 			iwc.setContentType("text/vnd.wap.wml");
 		}

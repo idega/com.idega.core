@@ -79,7 +79,7 @@ implements IWUserContext, IWApplicationContext {
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
-	private String language; //Variable to set the language i.e. HTML
+	private String markupLanguage; //Variable to set the language i.e. HTML
 	private String spokenLanguage;
 	private ServletContext servletContext;
 	private boolean _doneHandHeldCheck = false;
@@ -122,7 +122,7 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		setLanguage(getDetectedClientMarkupLanguage(request));
+		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
@@ -335,8 +335,8 @@ implements IWUserContext, IWApplicationContext {
 	protected void setResponse(HttpServletResponse response) {
 		this._response = response;
 	}
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setMarkupLanguage(String language) {
+		this.markupLanguage = language;
 		if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			setContentType("text/html");
 		}
@@ -426,8 +426,8 @@ implements IWUserContext, IWApplicationContext {
 	public void removeSessionAttribute(String attributeName) {
 		getSession().removeAttribute(attributeName);
 	}
-	public String getLanguage() {
-		return this.language;
+	public String getMarkupLanguage() {
+		return this.markupLanguage;
 	}
 	public String getSpokenLanguage() {
 		if (this.spokenLanguage == null)

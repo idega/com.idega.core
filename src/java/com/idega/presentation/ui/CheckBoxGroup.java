@@ -123,7 +123,7 @@ public class CheckBoxGroup extends InterfaceObject
 
 	
 	public void print(IWContext iwc) throws Exception {
-		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getLanguage())) {
+		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getMarkupLanguage())) {
 			print("<select multiple=\"true\">");
 			super.print(iwc);
 			print("</select>");

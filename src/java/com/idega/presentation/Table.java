@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.65 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: Table.java,v 1.66 2004/07/02 01:59:51 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1208,7 +1208,7 @@ public class Table extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 		transparentcell = getTransparentCell(iwc);
 		//if( doPrint(iwc)){
-		markupLanguage = iwc.getLanguage();
+		markupLanguage = iwc.getMarkupLanguage();
 		if ( IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage) ||  IWConstants.MARKUP_LANGUAGE_PDF_XML.equals(markupLanguage) ) {
 			String theErrorMessage = getErrorMessage();
 			if (theErrorMessage == null) {
@@ -1463,7 +1463,7 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	protected String getCellEndTag(IWContext iwc) {
-		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		if(markupLanguage == null) markupLanguage = iwc.getMarkupLanguage();
 		
 		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
 			return HTML_CELL_TAG_END;
@@ -1483,7 +1483,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	protected String getCellStartTag(IWContext iwc) {
-		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		if(markupLanguage == null) markupLanguage = iwc.getMarkupLanguage();
 		
 		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
 			return HTML_CELL_TAG_START;
@@ -1510,7 +1510,7 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	protected  String getRowStartTag(IWContext iwc) {
-		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		if(markupLanguage == null) markupLanguage = iwc.getMarkupLanguage();
 		
 		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
 			return HTML_TR_START;
@@ -1524,7 +1524,7 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	protected  String getRowEndTag(IWContext iwc) {
-		if(markupLanguage == null) markupLanguage = iwc.getLanguage();
+		if(markupLanguage == null) markupLanguage = iwc.getMarkupLanguage();
 		
 		if(IWConstants.MARKUP_LANGUAGE_HTML.equals(markupLanguage)){
 			return HTML_TR_END;
