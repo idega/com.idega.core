@@ -4,7 +4,10 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package com.idega.presentation;
+package com.idega.presentation.ui;
+
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 
 
 /**
@@ -26,5 +29,9 @@ public class Legend extends PresentationObject {
 		if (getLanguage().equals("HTML")) {
 			print("<legend " + getMarkupAttributesString() + ">" + _legend + "</legend>");
 		}
+	}
+	
+	public void setLegend(String legend) {
+		setName(legend);
 	}
 }
