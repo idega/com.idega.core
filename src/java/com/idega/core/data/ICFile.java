@@ -30,14 +30,14 @@ public class ICFile extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute("ic_language_id","ic_tungumála_id",true,true, "java.lang.Integer","many-to-one","com.idega.core.data.Language");
-    addAttribute("mime_type","stöðlun",true,true, "java.lang.String",20);
-    addAttribute("name","nafn",true,true, "java.lang.String", 20);
-    addAttribute("description","lýsing",true,true, "java.lang.String", 1000);
-    addAttribute("file_value","skráar-gildi",true,true, "com.idega.data.BlobWrapper");
-    addAttribute("creation_date","stofn_tími",true,true, "java.sql.Timestamp");
-    addAttribute("modification_date","tími_breytingar",true,true, "java.sql.Timestamp");
-    addAttribute("parent_id","föður_id",true,true, "java.lang.Integer","many-to-one","com.idega.core.data.ICFile");
+    addAttribute("ic_language_id","ic_tungumála_id",true,true, Integer.class,"many-to-one",ICLanguage.class);
+    addAttribute("mime_type","stöðlun",true,true, String.class,20);
+    addAttribute("name","nafn",true,true, String.class, 20);
+    addAttribute("description","lýsing",true,true, String.class, 1000);
+    addAttribute("file_value","skráar-gildi",true,true, com.idega.data.BlobWrapper.class);
+    addAttribute("creation_date","stofn_tími",true,true, java.sql.Timestamp.class);
+    addAttribute("modification_date","tími_breytingar",true,true, java.sql.Timestamp.class);
+    addAttribute("parent_id","föður_id",true,true, Integer.class,"many-to-one",ICFile.class);
   }
 
   public String getEntityName() {
