@@ -72,6 +72,44 @@ public class FileUtil {
   }
 
   /**
+   * 	 Creates a file or folder if not existent. 
+   * 	 If true is returned the file exists else something went wrong.
+   * 	
+   * @param file
+   * @return true if everything is fine else false
+   * @author thomas 
+   */
+  public static boolean createFileIfNotExistent(File file) {
+  	if (file.exists()) {
+  		// nothing to do
+  		return true;
+  	}
+  	// create parent directories (or the folder itself) if necessary
+  	boolean isDirectory = file.isDirectory();   
+	File parentFile = (isDirectory) ? file : file.getParentFile();
+	if (! parentFile.exists()) {
+		if (! parentFile.mkdirs()) {
+			return false;
+		}
+	}
+	// create file (if it is not a directory)
+	if (! isDirectory) {
+		try {
+			file.createNewFile();
+		}
+		catch (IOException ex) {
+			return false;
+		}
+	}
+	if (file.isDirectory()) {
+		System.out.println("Weser");
+	}
+	// everything is okay
+	return true;
+  }
+  
+  
+  /**
    * Gets the System wide path separator
    */
   public static String getFileSeparator(){
