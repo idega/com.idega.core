@@ -1,7 +1,12 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
+ * $Id: InterfaceObject.java,v 1.31 2005/03/08 18:33:48 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
 import java.io.IOException;
@@ -11,9 +16,15 @@ import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * This is a base class for Form type elements.<br>
+ * In JSF there is now a more recent javax.facex.compoent.UIInput that serves the same purpose and is recommended to use in newer
+ * </p>
+ *  Last modified: $Date: 2005/03/08 18:33:48 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.31 $
+ */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
 	protected boolean keepStatus = false;
