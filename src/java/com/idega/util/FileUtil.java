@@ -385,7 +385,6 @@ public class FileUtil {
    */
   public static void createFileFromURL(String uri,File file){
   	try {
-  		BufferedInputStream bin;
   		URL url = new URL(uri);
   		BufferedInputStream input = new BufferedInputStream(url.openStream());
   		
