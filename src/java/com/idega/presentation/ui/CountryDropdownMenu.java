@@ -1,9 +1,11 @@
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -47,6 +49,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		
 		Country country = null;
 		String countryDisplayName = null;
+		Map countries = new HashMap();
 		
 		while (iter.hasNext()) {
 			Locale locale = (Locale) iter.next();
@@ -54,7 +57,8 @@ public class CountryDropdownMenu extends DropdownMenu {
 				countryDisplayName = locale.getDisplayCountry(currentLocale);
 				country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(locale.getCountry());	
 				
-				if( countryDisplayName!=null && country!=null){
+				if( countryDisplayName!=null && country!=null && !countries.containsKey(country.getPrimaryKey())){
+					countries.put(country.getPrimaryKey(),country);//cache
 					addMenuElement(((Integer)country.getPrimaryKey()).intValue(),countryDisplayName);
 				}
 			}
@@ -65,7 +69,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 				e1.printStackTrace();
 			}
 			catch (FinderException e1) {
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			}
 		}
 		
