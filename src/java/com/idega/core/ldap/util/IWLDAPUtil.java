@@ -53,6 +53,10 @@ public class IWLDAPUtil implements IWLDAPConstants{
 			if(attr!=null){
 				
 				Object obj = attr.get();
+				if(obj instanceof byte[]){
+					return new String((byte[])obj);
+				}
+				
 				return (String) obj;
 			}
 		} catch (Exception e) {
