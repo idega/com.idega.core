@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import com.idega.data.GenericEntity;
 import com.idega.data.BlobWrapper;
 import com.idega.core.data.ICLanguage;
 import java.sql.Timestamp;
@@ -9,6 +8,7 @@ import java.lang.Integer;
 import java.sql.SQLException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import com.idega.data.TreeableEntity;
 
 
 /**
@@ -16,13 +16,13 @@ import java.io.OutputStream;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="bjarni@idega.is">Bjarni Viljhalmsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author <a href="bjarni@idega.is">Bjarni Vilhjalmsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
-public class ICFile extends GenericEntity {
+public class ICFile extends TreeableEntity {
 
-  private static final String file_value = "file_value";
+  private static final String FILE_VALUE = "file_value";
 
   public ICFile() {
     super();
@@ -41,9 +41,8 @@ public class ICFile extends GenericEntity {
     addAttribute(getColumnFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
-    addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFile.class);
+    addAttribute("size","file size in bytes",true,true,java.lang.Long.class);
 
-    setNullable("parent_id",true);
     addMetaDataRelationship();//can have extra info in the ic_metadata table
 
     addManyToManyRelationShip(ICFileCategory.class,"ic_file_file_category");
@@ -55,7 +54,7 @@ public class ICFile extends GenericEntity {
   }
 
   public static String getColumnFileValue(){
-    return file_value;
+    return FILE_VALUE;
   }
 
   public int getLanguage(){
@@ -91,6 +90,9 @@ public class ICFile extends GenericEntity {
     return (Timestamp) getColumnValue("modification_date");
   }
 
+  public Long getFileSize(){
+    return (Long) getColumnValue("size");
+  }
 
   public void setLanguage(int language){
     setColumn("ic_language_id", new Integer(language));
@@ -106,6 +108,10 @@ public class ICFile extends GenericEntity {
 
   public void setDescription(String description){
     setColumn("description", description);
+  }
+
+  public void setFileSize(Long fileSize){
+    setColumn("size", fileSize);
   }
 /*
   public void setFileValue(BlobWrapper fileValue){
@@ -126,13 +132,5 @@ public class ICFile extends GenericEntity {
 
   public void setModificationDate(Timestamp modificationDate){
     setColumn("modification_date", modificationDate);
-  }
-
-  public void setParentID(int parentID){
-    setColumn("parent_id", new Integer(parentID));
-  }
-
-  public int getParentID(){
-    return getIntColumnValue("parent_id");
   }
 }
