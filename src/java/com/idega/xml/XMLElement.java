@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.12 2004/04/28 13:31:50 thomas Exp $
+ * $Id: XMLElement.java,v 1.13 2004/10/11 14:39:00 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import org.jdom.Attribute;
 import org.jdom.CDATA;
+import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
 
@@ -312,14 +313,14 @@ public class XMLElement {
 
   public boolean removeChildren() {
     if (_element != null) {
-      return(_element.removeChildren());
+      return(_element.removeContent()) != null;
     }
     return(false);
   }
   
   public boolean removeParent() {
 	if (_element != null) {
-		Element parent = _element.getParent();
+		Element parent = _element.getParentElement();
 		if(parent!=null){
 			return parent.removeChild(_element.getName());
 		}
@@ -340,7 +341,7 @@ public class XMLElement {
           res.add(el);
         }
 
-        _element.setChildren(res);
+        _element.setContent(res);
       }
     }
 
@@ -364,7 +365,7 @@ public class XMLElement {
   	if (_element == null) {
   		return null;
   	}
-  	Element parent = _element.getParent();
+  	Element parent = _element.getParentElement();
   	return (parent == null) ? null : new XMLElement(parent);
   }
   
@@ -420,7 +421,7 @@ public class XMLElement {
    */
   public XMLElement detach()	{
   	if (_element != null)	{
-  		return new XMLElement(_element.detach());
+  		return new XMLElement((Element)_element.detach());
   	}
   	return null;
   }

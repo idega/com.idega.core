@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.5 2003/06/30 17:00:29 thomas Exp $
+ * $Id: XMLOutput.java,v 1.6 2004/10/11 14:39:00 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package com.idega.xml;
 
 import org.jdom.Element;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -32,23 +33,34 @@ public class XMLOutput {
    *
    */
   public XMLOutput(String indent, boolean newlines) {
-    _output = new XMLOutputter(indent,newlines);
+  	Format f = (newlines)?Format.getPrettyFormat():Format.getCompactFormat();
+  	f.setIndent(indent);
+    _output = new XMLOutputter(f);
   }
 
   /**
    *
    */
   public void setLineSeparator(String seperator) {
-    if (_output != null)
-      _output.setLineSeparator(seperator);
+    if (_output != null){
+    	  Format f = _output.getFormat();
+    	  if(f!=null){
+    	  	f.setLineSeparator(seperator);
+    	  	_output.setFormat(f);
+    	  }
+    }
   }
 
   /**
    *
    */
   public void setTextNormalize(boolean normalize) {
-    if (_output != null)
-      _output.setTextNormalize(normalize);
+    if (_output != null && normalize){
+      Format f = _output.getFormat();
+      if(f!=null){
+      	f.setTextMode(Format.TextMode.NORMALIZE);
+      }
+    }
   }
 
   /**
@@ -73,11 +85,11 @@ public class XMLOutput {
   
   public void setEncoding(String encoding) {
   	if (_output != null)
-  		_output.setEncoding(encoding);
+  		_output.getFormat().setEncoding(encoding);
   }
   
   public void setSkipEncoding(boolean skip) {
   	if (_output != null)
-  		_output.setOmitEncoding(skip);
+  		_output.getFormat().setOmitEncoding(skip);
   }
 }
