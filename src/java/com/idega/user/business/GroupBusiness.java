@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.ejb.*;
 
+import com.idega.core.builder.data.ICDomain;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
 
@@ -150,5 +151,33 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted) throws java.rmi.RemoteException;
   public Collection getUsersFromGroupRecursive(Group group) ;
   public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean complementSetWanted);
+  /**
+   * Adds a group direcly under the domain (right in top under the domain in the group tree).
+   * This adds the group with GroupRelationType Top to the domain.
+   * @param domain
+   * @param group
+   * @throws CreateException
+   * @throws RemoteException
+   */
+  public void addGroupUnderDomainRoot(ICDomain domain, Group group) throws CreateException,RemoteException;
+  /**
+	 * Creates a group and adds it under the default Domain (IBDomain)<br>
+	 * If createUnderDomainRoot is true it is added under the root (directly under in the group tree) of the domain.
+   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
+   */
+	public Group createGroup(String name,String description,String type,boolean createUnderDomainRoot)throws CreateException,RemoteException;
+	/**
+	   * Creates a group and adds it under the default Domain (IBDomain) and under the group parentGroup.
+	 */
+	  public Group createGroupUnder(String name,String description,String type,Group parentGroup)throws CreateException,RemoteException;
+	/**
+	 * Creates a group and adds it under the the default Domain (ICDomain) and under the group parentGroup.
+	 */
+	public Group createGroupUnder(String name,String description,String type,int homePageID,int aliasID,Group parentGroup)throws CreateException,RemoteException;
+	/**
+	   * Creates a general group and adds it under the default Domain (IBDomain) and under the group parentGroup.
+	 */
+	  public Group createGroupUnder(String name,String description,Group parentGroup)throws CreateException,RemoteException;
+
 
 }

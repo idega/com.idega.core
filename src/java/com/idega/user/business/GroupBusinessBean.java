@@ -38,6 +38,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
+import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
@@ -941,7 +942,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	 }
 	 
 /**
-   * Creates a group with the general grouptype and adds it under the default Domain (IBDomain)
+   * Creates a general group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
  * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
  */
   public Group createGroup(String name)throws CreateException,RemoteException{
@@ -950,7 +951,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 /**
-   * Creates a group with the general grouptype and adds it under the default Domain (IBDomain)
+   * Creates a general group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
  * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
  */
   public Group createGroup(String name,String description)throws CreateException,RemoteException{
@@ -960,18 +961,59 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 
 
 /**
-   * Creates a group and adds it under the default Domain (IBDomain) * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String) */
+   * Creates a group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain) * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String) */
   public Group createGroup(String name,String description,String type)throws CreateException,RemoteException{
   	return createGroup(name,description,type,-1);
   }
   
   /**
-   * Creates a group and adds it under the default Domain (IBDomain)   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String, int)   */
+	 * Creates a group and adds it under the default Domain (ICDomain)<br>
+	 * If createUnderDomainRoot is true it is added under the root (directly under in the group tree) of the domain.
+   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
+   */
+	public Group createGroup(String name,String description,String type,boolean createUnderDomainRoot)throws CreateException,RemoteException{
+	  return createGroup(name,description,type,-1,-1,createUnderDomainRoot,null);
+	}
+	
+	/**
+	   * Creates a group and adds it under the default Domain (IBDomain) and under the group parentGroup.
+	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
+	 */
+	  public Group createGroupUnder(String name,String description,String type,Group parentGroup)throws CreateException,RemoteException{
+		return createGroup(name,description,type,-1,-1,false,parentGroup);
+	  }
+	  
+	/**
+	   * Creates a general group and adds it under the default Domain (IBDomain) and under the group parentGroup.
+	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
+	 */
+	  public Group createGroupUnder(String name,String description,Group parentGroup)throws CreateException,RemoteException{
+		String generaltype = getGroupHome().getGroupType();
+	  	return createGroup(name,description,generaltype,-1,-1,false,parentGroup);
+	  }
+  
+  /**
+   * Creates a group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String, int)   */
   public Group createGroup(String name,String description,String type,int homePageID)throws CreateException,RemoteException{
 		return createGroup(name,description,type,-1,-1);
   }
-  
+  /**
+   * Creates a group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
+   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String, int)
+   */
   public Group createGroup(String name,String description,String type,int homePageID,int aliasID)throws CreateException,RemoteException{
+  	return createGroup(name,description,type,homePageID,aliasID,true,null);
+  }
+  
+  /**
+   * Creates a group and adds it under the the default Domain (ICDomain) and under the group parentGroup.
+   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String, int)
+   */
+  public Group createGroupUnder(String name,String description,String type,int homePageID,int aliasID,Group parentGroup)throws CreateException,RemoteException{
+	return createGroup(name,description,type,homePageID,aliasID,false,parentGroup);
+  }  
+  
+  protected Group createGroup(String name,String description,String type,int homePageID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException{
 		Group newGroup;
 		newGroup = getGroupHome().create();
 		newGroup.setName(name);
@@ -985,7 +1027,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		}
 		newGroup.store(); 
 		
-		addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+		if(createUnderDomainRoot){
+			addGroupUnderDomainRoot(this.getIWApplicationContext().getDomain(),newGroup);
+		}
+		else{
+			addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+		}
+		if(parentGroup!=null){
+			parentGroup.addGroup(newGroup);
+		}
+		
 		return newGroup;
   }
   
@@ -1127,6 +1178,26 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   	return  (UserGroupPlugInHome) this.getIDOHome(UserGroupPlugIn.class);
   }
 
+  /**
+   * Adds a group direcly under the domain (right in top under the domain in the group tree).
+   * This adds the group with GroupRelationType Top to the domain.
+   * @param domain
+   * @param group
+   * @throws CreateException
+   * @throws RemoteException
+   */
+  public void addGroupUnderDomainRoot(ICDomain domain, Group group) throws CreateException,RemoteException{
+	GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)getIDOHome(GroupDomainRelationType.class);
+	GroupDomainRelationType domRelType;
+	try {
+		domRelType = gdrHome.getTopNodeRelationType();
+		addGroupUnderDomain(domain,group,domRelType);
+	}
+	catch (FinderException e) {
+		logWarning("Error finding GroupRelationType=TOP when adding group under domain");
+		log(e);
+	}
+  }
 
   public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
     GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
@@ -1421,7 +1492,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   
   private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {  
     try {
-      GroupType type = home.findByPrimaryKey(aGroupType.getAliasGroupTypeString());
+      GroupType type = home.findByPrimaryKey(home.getAliasGroupTypeString());
       return type;
     }
     catch (FinderException findEx)  {
@@ -1439,7 +1510,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 
   private GroupType findOrCreateGeneralGroupType(GroupType aGroupType, GroupTypeHome home) {  
     try {
-      GroupType type = home.findByPrimaryKey(aGroupType.getGeneralGroupTypeString());
+      GroupType type = home.findByPrimaryKey(home.getGeneralGroupTypeString());
       return type;
     }
     catch (FinderException findEx)  {
