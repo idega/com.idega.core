@@ -345,7 +345,7 @@ public class TextSoap{
 
 
 
-	private static String formatText(String text_body) {
+	public static String formatText(String text_body) {
 
 		//Búa til töflu
 		if (text_body==null || text_body.equals("")){
