@@ -16,6 +16,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
+import com.idega.presentation.TableType;
 import com.idega.util.IWColor;
 
 
@@ -25,7 +26,7 @@ import com.idega.util.IWColor;
  * ScrollTable displays the table content in a predefined size (width and height)
  * with scrollbars to browse the whole content
  */
-public class ScrollTable extends Block {
+public class ScrollTable extends Block implements TableType {
 	
 	private int scrollLayerHeaderRowThickness = -23;
 	private int scrollLayerWidthPadding = 15;
@@ -929,5 +930,9 @@ public class ScrollTable extends Block {
 	 */
 	public void setWidth(int xpos, String width) {
 		theTable.setWidth(xpos, width);
+	}
+
+	public void setAlignment(int xpos, int ypos, String alignment) {
+		theTable.setAlignment(xpos, ypos, alignment);
 	}
 }

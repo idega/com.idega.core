@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.74 2004/09/16 16:38:52 gimmi Exp $
+ * $Id: Table.java,v 1.75 2004/09/24 13:50:44 thomas Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ import com.idega.util.text.TextStyler;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */
-public class Table extends PresentationObjectContainer {
+public class Table extends PresentationObjectContainer implements TableType{
 
 	public static final String FRAME_VOID = "void";
 	public static final String FRAME_ABOVE = "above";
