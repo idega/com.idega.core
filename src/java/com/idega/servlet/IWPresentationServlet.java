@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.63 2004/12/05 09:46:07 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.64 2004/12/09 14:01:03 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,15 +12,14 @@ import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
 import java.io.IOException;
 import java.rmi.RemoteException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.idega.business.IBOLookup;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWEventProcessor;
+import com.idega.event.IWModuleEvent;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -124,10 +123,10 @@ public class IWPresentationServlet extends IWCoreServlet {
 						__theService(request, response);
 					}
 					//theServiceDone = true;
-					/*if (obj instanceof IWModuleEvent) {
+					if (obj instanceof IWModuleEvent) {
 						((IWModuleEvent) obj).setIWContext(iwc);
 					}
-					else {
+					/*else {
 						this.getPage()._setIWContext(iwc);
 					}*/
 					((ActiveEvent) obj).dispatch();
