@@ -58,12 +58,12 @@ public class Image extends PresentationObject
 	public Image()
 	{
 		this("");
-		setBorder(0);
+		//setBorder(0);
 	}
 	public Image(String url)
 	{
 		this(url, "");
-		setBorder(0);
+		//setBorder(0);
 	}
 	public Image(String url, String name)
 	{
@@ -73,7 +73,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		setBorder(0);
+		//setBorder(0);
 	}
 	public Image(String name, String url, String overImageUrl)
 	{
@@ -81,7 +81,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		setBorder(0);
+		//setBorder(0);
 		this.overImageUrl = overImageUrl;
 		setOnMouseOut("swapImgRestore()");
 		setOnMouseOver("swapImage('" + getName() + "','','" + overImageUrl + "',1)");
@@ -101,7 +101,7 @@ public class Image extends PresentationObject
 		setURL(url);
 		setWidth(width);
 		setHeight(height);
-		setBorder(0);
+		//setBorder(0);
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
@@ -110,7 +110,7 @@ public class Image extends PresentationObject
 	{
 		super();
 		this.imageId = imageId;
-		setBorder(0);
+		//setBorder(0);
 		setName(this.generateID());
 	}
 	public Image(int imageId, String name) throws SQLException
@@ -239,7 +239,7 @@ public class Image extends PresentationObject
 	}
 	public void setBorder(String size)
 	{
-		setMarkupAttribute("border", size);
+		setStyleAttribute("border-size", size+"px");
 	}
 	public void setBorderColor(String color)
 	{
@@ -500,7 +500,8 @@ public class Image extends PresentationObject
 		{
 			sPrint.append(" align=\"" + align + "\" ");
 		}
-		sPrint.append(" />");
+		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+		sPrint.append(" "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		return sPrint.toString();
 	}
 	public static String getNoImageSource()
@@ -568,7 +569,6 @@ public class Image extends PresentationObject
 					Table imageTable = new Table(1, 2);
 					imageTable.setAlignment(1, 1, "center");
 					imageTable.setAlignment(1, 2, "left");
-					imageTable.setVerticalAlignment("top");
 					//imageTable.setCellpadding(0);
 					//imageTable.setCellspacing(0);
 					imageTable.setColor(1, 2, textBgColor);
