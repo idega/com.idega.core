@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.37 2004/12/03 01:04:50 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.38 2004/12/12 23:30:21 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -25,10 +25,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/03 01:04:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/12 23:30:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -383,10 +383,11 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public PresentationObject getContainedObject(int objectInstanceID)
 	{
-		List list = this.getChildren();
-		if (list != null)
-		{
-			Iterator iter = list.iterator();
+		//List list = this.getChildren();
+		//if (list != null)
+		//{
+		Iterator iter = this.getFacetsAndChildren();
+			//Iterator iter = list.iterator();
 			while (iter.hasNext())
 			{
 				PresentationObject item = (PresentationObject) iter.next();
@@ -403,7 +404,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-		}
+		//}
 		return null;
 	}
 	/**
@@ -458,10 +459,11 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public PresentationObject getContainedLabeledObject(String label)
 	{
-		List list = getChildren();
-		if (list != null)
-		{
-			Iterator iter = list.iterator();
+		//List list = getChildren();
+		//if (list != null)
+		//{
+			//Iterator iter = list.iterator();
+			Iterator iter = this.getFacetsAndChildren();
 			while (iter.hasNext())
 			{
 				PresentationObject item = (PresentationObject) iter.next();
@@ -478,7 +480,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-		}
+		//}
 		return (null);
 	}
 	/*
@@ -743,10 +745,11 @@ public class PresentationObjectContainer extends PresentationObject
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
 		super.setLocation(location, iwuc);
-		List l = this.getChildren();
-		if (l != null)
-		{
-			Iterator iter = l.iterator();
+		//List l = this.getChildren();
+		//if (l != null)
+		//{
+			Iterator iter = this.getFacetsAndChildren();
+			//Iterator iter = l.iterator();
 			while (iter.hasNext())
 			{
 				Object item = iter.next();
@@ -763,7 +766,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-		}
+		//}
 	}
 	
 	/*
