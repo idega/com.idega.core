@@ -49,6 +49,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setNullable(getColumnNameHomePageID(), true);
 		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
 		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+    addMetaDataRelationship();//can have extra info in the ic_metadata table
 	}
 	public final String getEntityName() {
 		return "ic_group";
