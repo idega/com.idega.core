@@ -177,5 +177,7 @@ public GenericEntity[] findAllByColumn(String columnName, String toFind, String 
 public GenericEntity[] findAllByColumn(String columnName1, String toFind1, char condition1, String columnName2, String toFind2, char condition2)throws SQLException;
 public int[] findRelatedIDs(GenericEntity entity, String entityColumnName, String entityColumnValue)throws SQLException;
 public int[] findRelatedIDs(GenericEntity entity)throws SQLException;
+public void removeFrom(Class classToRemoveFrom,int idToRemoveFrom)throws SQLException;
+public GenericEntity[] findAllByColumnOrdered  (java.lang.String columnName1,java.lang.String toFind1,java.lang.String columnName2,java.lang.String toFind2)throws SQLException;
 
 }
