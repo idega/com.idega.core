@@ -210,14 +210,14 @@ public class UserBusiness {
 
   public static Email getUserMail(User user) {
     try {
-      GenericEntity[] result = user.findRelated(Email.getStaticInstance(Email.class));
-      if(result != null){
-        if ( result.length > 0 )
-          return (Email)result[0];
+      List L = EntityFinder.getInstance().findRelated(user,Email.class);
+      if(L != null){
+        if ( L.size() > 0 )
+          return (Email)L.get(0);
       }
       return null;
     }
-    catch (SQLException ex) {
+    catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
@@ -378,8 +378,9 @@ public class UserBusiness {
       return com.idega.data.EntityFinder.findAll(eEmail,sql.toString());
     }
     catch (SQLException ex) {
-      return null;
+
     }
+    return null;
   }
   public static void addNewUserEmail(int iUserId,String sNewEmailAddress){
     Connection conn= null;
@@ -403,9 +404,9 @@ public class UserBusiness {
 
   public static Email lookupEmail(String EmailAddress){
     try {
-      EntityFinder.debug = true;
+      //EntityFinder.debug = true;
       java.util.List c = EntityFinder.getInstance().findAllByColumn(Email.class,Email.getColumnNameAddress(),EmailAddress);
-      EntityFinder.debug = false;
+      //EntityFinder.debug = false;
       if(c!=null && c.size() > 0)
         return (Email) c.get(0);
     }
