@@ -32,6 +32,7 @@ import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
@@ -613,10 +614,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       return null;
     }
   }
+  
+  public void updateUserHomePhone(User user, String phoneNumber) throws EJBException {
+  		updateUserPhone(user, PhoneBMPBean.getHomeNumberID(), phoneNumber);
+  }
+
+  public void updateUserWorkPhone(User user, String phoneNumber) throws EJBException {
+		updateUserPhone(user, PhoneBMPBean.getWorkNumberID(), phoneNumber);
+  }
+
+  public void updateUserMobilePhone(User user, String phoneNumber) throws EJBException {
+		updateUserPhone(user, PhoneBMPBean.getHomeNumberID(), phoneNumber);
+  }
 
   public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws EJBException {
+  		updateUserPhone(getUser(userId), phoneTypeId, phoneNumber);
+  }
+  
+  	public void updateUserPhone(User user, int phoneTypeId, String phoneNumber) throws EJBException {
     try{
-    Phone phone = getUserPhone(userId,phoneTypeId);
+    Phone phone = getUserPhone(((Integer) user.getPrimaryKey()).intValue(),phoneTypeId);
     boolean insert = false;
     if ( phone == null ) {
       phone = this.getPhoneHome().create();
@@ -631,7 +648,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     phone.store();
     if(insert){
       //((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(phone);
-      this.getUser(userId).addPhone(phone);
+      user.addPhone(phone);
     }
 
     }
@@ -644,7 +661,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   public void updateUserMail(int userId, String email) throws CreateException,RemoteException {
-    Email mail = getUserMail(userId);
+  		updateUserMail(getUser(userId), email);
+  }
+  
+  public void updateUserMail(User user, String email) throws CreateException,RemoteException {
+    Email mail = getUserMail(((Integer) user.getPrimaryKey()).intValue());
     boolean insert = false;
     if ( mail == null ) {
       mail = this.getEmailHome().create();
@@ -658,7 +679,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     if(insert){
       //((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
       try{
-       this.getUser(userId).addEmail(mail);
+       user.addEmail(mail);
       }
       catch(Exception e){
         throw new RemoteException(e.getMessage());

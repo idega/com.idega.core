@@ -33,6 +33,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getParentGroupsInDirectForUser(int p0) throws java.rmi.RemoteException;
  
  public void updateUserMail(int p0,java.lang.String p1)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public void updateUserMail(com.idega.user.data.User p0,java.lang.String p1)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUserJob(int p0,java.lang.String p1);
  public void updateUserWorkPlace(int p0,java.lang.String p1);
  public java.util.Collection listOfUserEmails(int p0) throws java.rmi.RemoteException;
@@ -69,6 +70,10 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUserWithLogin(String firstname, String middlename, String lastname, String SSN,String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType,String fullName)throws javax.ejb.CreateException, java.rmi.RemoteException;
  public com.idega.core.contact.data.Email getUserMail(com.idega.user.data.User p0) throws java.rmi.RemoteException;
  public void updateUserPhone(int p0,int p1,java.lang.String p2)throws javax.ejb.EJBException, java.rmi.RemoteException;
+ public void updateUserPhone(com.idega.user.data.User p0,int p1,java.lang.String p2)throws javax.ejb.EJBException, java.rmi.RemoteException;
+ public void updateUserHomePhone(com.idega.user.data.User p0,java.lang.String p1)throws javax.ejb.EJBException, java.rmi.RemoteException;
+ public void updateUserWorkPhone(com.idega.user.data.User p0,java.lang.String p1)throws javax.ejb.EJBException, java.rmi.RemoteException;
+ public void updateUserMobilePhone(com.idega.user.data.User p0,java.lang.String p1)throws javax.ejb.EJBException, java.rmi.RemoteException;
  public com.idega.core.contact.data.EmailHome getEmailHome() throws java.rmi.RemoteException;
  public com.idega.core.location.data.Address getUsersMainAddress(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.location.data.Address getUsersCoAddress(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
