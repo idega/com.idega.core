@@ -61,6 +61,8 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	private int parentPageId = -1;
 	private int parentTemplateId = -1;
 
+	private boolean performValidation = true;
+	private List missingModules = null;
 	
 	
 	public IBExportImportDataReader(IWApplicationContext iwac) {
@@ -71,9 +73,10 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		super(storable, iwac);
 	}
 	
-	public IBExportImportDataReader(Storable storable, IWApplicationContext iwac, IWUserContext iwuc) {
+	public IBExportImportDataReader(Storable storable, boolean performValidation, IWApplicationContext iwac, IWUserContext iwuc) {
 		super(storable, iwac);
 		this.iwuc = iwuc;
+		this.performValidation = performValidation;
 	}
 
 	public void openContainer(File file) throws IOException {
@@ -87,6 +90,9 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	
 	private void readData(File sourceFile) throws IOException {
 		readMetadata(sourceFile);
+		if (performValidation && ! ((IBExportImportData) storable).isValid()) {
+			return;
+		}
 		// create external data first
 		entryNameHolder = new HashMap();
 		sourceNameHolder = new HashMatrix();
@@ -474,6 +480,10 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	}
 	public void setParentTemplateForImportedTemplates(int parentTemplateId) {
 		this.parentTemplateId = parentTemplateId;
+	}
+	
+	public List getMissingModules() {
+		return missingModules;
 	}
 	
   protected void closeEntry(ZipInputStream input) {
