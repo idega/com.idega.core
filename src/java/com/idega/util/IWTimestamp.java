@@ -24,7 +24,7 @@ import com.idega.presentation.IWContext;
  * @author idega 2002 - idega team
  * @version 1.1
  */
-public class IWTimestamp implements Comparable {
+public class IWTimestamp implements Comparable,Cloneable {
 	
 	/**
 	 * This field sets if the toString and toSQLString methods should cut off their milliseconds part in the returned String.
@@ -548,6 +548,8 @@ public class IWTimestamp implements Comparable {
 	 */
 	public IWTimestamp(IWTimestamp time) {
 		calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
+		isDate=time.isDate;
+		isTime=time.isTime;
 	}
 
 	/**
@@ -1134,6 +1136,19 @@ public class IWTimestamp implements Comparable {
 		}
 		else{
 			return theString;
+		}
+	}
+	
+	public Object clone(){
+		try {
+			IWTimestamp obj = (IWTimestamp)super.clone();
+			obj.calendar = (GregorianCalendar) getGregorianCalendar().clone();
+			obj.isDate=isDate;
+			obj.isTime=isTime;
+			return obj;
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
