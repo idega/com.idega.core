@@ -152,11 +152,10 @@ public class IDOContainer {
       try{
       IDOEntity entity=null;
       IDOBeanCache cache = null;
-      if(dataSourceName==null){
-        if(beanCachingActive(entityInterfaceClass)){
-          cache = this.getBeanCache(entityInterfaceClass);
-          entity = cache.getCachedEntity(pk);
-        }
+      boolean useBeanCaching = (dataSourceName==null) && beanCachingActive(entityInterfaceClass);
+      if(useBeanCaching){
+        cache = this.getBeanCache(entityInterfaceClass);
+        entity = cache.getCachedEntity(pk);
       }
       if(entity==null){
         entity = this.instanciateBean(entityInterfaceClass);
@@ -178,12 +177,13 @@ public class IDOContainer {
          ((IDOEntityBean)entity).ejbLoad();
       }
       ((IDOEntityBean)entity).setEJBHome(home);
-      if(this.beanCachingActive(entityInterfaceClass)){
+      if(useBeanCaching){
         cache.putCachedEntity(pk,entity);
       }
       return entity;
     }
     catch(Exception e){
+      //e.printStackTrace();
       throw new FinderException(e.getMessage());
     }
   }
