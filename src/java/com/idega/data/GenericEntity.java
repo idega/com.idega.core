@@ -900,16 +900,36 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	  }
 	}
 	*/
+	public boolean isPrimaryKeyColumn(String columnName) {
+		IDOEntityField[] fields = getEntityDefinition().getPrimaryKeyDefinition().getFields();
+		for (int i = 0; i < fields.length; i++) {
+			if (fields[i].getSQLFieldName().equalsIgnoreCase(columnName))
+				return true;
+		}
+		return false;
+	}
+	
 	public String getIDColumnName() {
-		String entityName = getEntityName();
-		if (entityName.endsWith("_")) {
-			return entityName + "ID";
-			//return entityName+"id";
-		} else {
-			return entityName + "_ID";
-			//return entityName+"_id";
+		IDOPrimaryKeyDefinition pkd = this.getEntityDefinition().getPrimaryKeyDefinition();
+		if (pkd == null || pkd.getFields().length == 0) {
+	 		String entityName = getEntityName();
+			if (entityName.endsWith("_")) {
+				return entityName + "ID";
+			}
+			else {
+				return entityName + "_ID";
+			}
+		}
+		else {
+			try {
+				return pkd.getField().getSQLFieldName();
+			}
+			catch (IDOCompositPrimaryKeyException e) {
+				return pkd.getFields()[0].getSQLFieldName();
+			}
 		}
 	}
+	
 	public static String getLanguageIDColumnName() {
 		return "language_id";
 	}
@@ -1401,6 +1421,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 			}
 		} catch (SQLException e) {
+			//e.printStackTrace();
 			throw new EJBException(e.getMessage());
 		}
 	}
@@ -1501,16 +1522,37 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 	Object getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
+		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+		Class primaryKeyClass = getPrimaryKeyClass();
 		Object theReturn = null;
-		if (this.getPrimaryKeyClass() == Integer.class) {
+
+		if (primaryKeyClass == Integer.class) {
 			theReturn = new Integer(rs.getInt(this.getIDColumnName()));
 		}
-		if (this.getPrimaryKeyClass() == String.class) {
-			theReturn = rs.getString(this.getIDColumnName());
-		} else {
-			/**
-			 * @todo implement
-			 */
+		else {
+			try {
+				theReturn = getPrimaryKeyClass().newInstance();
+			}
+			catch (InstantiationException e1) {
+				e1.printStackTrace();
+			}
+			catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+
+			if (theReturn instanceof String) {
+				theReturn = rs.getString(getIDColumnName());
+			}
+			else {
+				if (theReturn instanceof IDOPrimaryKey) {
+					IDOPrimaryKey primaryKey = (IDOPrimaryKey) theReturn;
+					for (int i = 0; i < fields.length; i++) {
+						Object value = rs.getObject(fields[i].getSQLFieldName());
+						primaryKey.setPrimaryKeyValue(fields[i].getSQLFieldName(), value);
+					}
+					return primaryKey;
+				}
+			}
 		}
 		if (rs.wasNull()) {
 			return null;
@@ -3080,8 +3122,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this.setPrimaryKey(id);
 	}
 	protected void setPrimaryKey(Object pk) {
-		if (pk instanceof Integer) {
-			setColumn(getIDColumnName(), (Integer)pk);
+		if (pk instanceof IDOPrimaryKey) {
+			IDOEntityField[] fields = this.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+			IDOPrimaryKey primaryKey = (IDOPrimaryKey) pk;
+			for (int i = 0; i < fields.length; i++) {
+				setColumn(fields[i].getSQLFieldName(), primaryKey.getPrimaryKeyValue(fields[i].getSQLFieldName().toUpperCase()));
+			}
+		}
+		else {
+			setColumn(getIDColumnName(), pk);
 		}
 		this._primaryKey = pk;
 	}
@@ -3642,9 +3691,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public Class getPrimaryKeyClass() {
 		return Integer.class;
 	}
+	
 	private String[] getPrimaryKeyColumns() {
-		String s = getIDColumnName();
-		String[] theReturn = { s };
+		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+		String[] theReturn = new String[fields.length];
+		for (int i = 0; i < theReturn.length; i++) {
+			theReturn[i] = fields[i].getSQLFieldName();
+		}
 		return theReturn;
 	}
 	/**
