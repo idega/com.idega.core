@@ -3548,7 +3548,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String relationShipTableName;
 		try{
 			//relationShipTableName = EntityControl.getMiddleTableString(this,instanciateEntity(relatingEntityClassName) );
-			addManyToManyRelationShip(this.getClass().getName(),relatingEntityClassName);
+			//addManyToManyRelationShip(this.getClass().getName(),relatingEntityClassName);
+			EntityControl.addManyToManyRelationShip(this.getClass().getName(),relatingEntityClassName);
 		}
 		catch (Exception ex)
 		{
