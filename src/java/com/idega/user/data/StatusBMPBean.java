@@ -21,10 +21,10 @@ import com.idega.data.GenericEntity;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class StatusBMPBean extends GenericEntity implements Status {
-	private static final String ENTITY_NAME = "ic_user_status";
+	protected static final String ENTITY_NAME = "ic_user_status";
 
-	private static final String STATUS_LOC_KEY = "status_key";
-	private static final String PARENT_STATUS = "parent_id";
+	protected static final String STATUS_LOC_KEY = "status_key";
+	protected static final String PARENT_STATUS = "parent_id";
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOLegacyEntity#getEntityName()
