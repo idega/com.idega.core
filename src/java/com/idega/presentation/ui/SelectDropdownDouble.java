@@ -3,11 +3,9 @@
  */
 package com.idega.presentation.ui;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
@@ -29,7 +27,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 	private String secondaryName = "secondary";
 	private DropdownMenu primary = null;
 	private DropdownMenu secondary = null;
-	private Collection _primaryCollection;
+	//private Collection _primaryCollection;
 	protected Map _secondaryMap;
 	
 	private int _spaceBetween = 3;
@@ -42,6 +40,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 	private Text primaryLabel = null;
 	private Text secondaryLabel = null;
 	
+	
 	public SelectDropdownDouble() {
 	}
 	
@@ -51,12 +50,14 @@ public class SelectDropdownDouble extends InterfaceObject {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+	    boolean addPrimary = getPrimaryDropdown().getParent()==null;
+	    boolean addSecondary = getSecondaryDropdown().getParent()==null;
 		if (getStyleAttribute() != null) {
 			getPrimaryDropdown().setStyleAttribute(getStyleAttribute());
 			getSecondaryDropdown().setStyleAttribute(getStyleAttribute());
 		}
 		
-		addElementsToPrimary();
+		//addElementsToPrimary();
 		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'), -1);");
 		if (_objectToDisable != null) {
 			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getPrimaryName(), _disableValue);
@@ -66,31 +67,38 @@ public class SelectDropdownDouble extends InterfaceObject {
 		getPrimaryDropdown().setDisabled(_disabled);
 		getSecondaryDropdown().setDisabled(_disabled);
 
-		Table table = new Table();
-		table.setCellpadding(0);
-		table.setCellspacing(0);
-		add(table);
-		
-		// Layout:
-		if(layout!=LAYOUT_VERTICAL){
-			int column = 1;
-			table.add(getPrimaryDropdown(), column++, 1);
-			if (_spaceBetween > 0)
-				table.setWidth(column++, _spaceBetween);
-			table.add(getSecondaryDropdown(), column, 1);
-		}
-		else {
-			if(primaryLabel!=null)
-				table.add(primaryLabel,1,1);
-			if(secondaryLabel!=null)
-				table.add(secondaryLabel,1,3);
-			if(verticalSpaceBetween>0)
-				table.setHeight(2,verticalSpaceBetween);
-			if (_spaceBetween > 0)
-				table.setWidth(2, _spaceBetween);
-			table.add(getPrimaryDropdown(),3,1);
-			table.add(getSecondaryDropdown(),3,3);
-		
+		if(addPrimary || addSecondary){
+			Table table = new Table();
+			table.setCellpadding(0);
+			table.setCellspacing(0);
+			add(table);
+			
+			// Layout:
+			if(layout!=LAYOUT_VERTICAL){
+				int column = 1;
+				if(addPrimary){
+				    table.add(getPrimaryDropdown(), column++, 1);
+				    if (_spaceBetween > 0)
+				        table.setWidth(column++, _spaceBetween);
+				}
+				if(addSecondary)
+				    table.add(getSecondaryDropdown(), column, 1);
+			}
+			else {
+				if(addPrimary && primaryLabel!=null)
+					table.add(primaryLabel,1,1);
+				if(addSecondary && secondaryLabel!=null)
+					table.add(secondaryLabel,1,3);
+				if(verticalSpaceBetween>0)
+					table.setHeight(2,verticalSpaceBetween);
+				if (_spaceBetween > 0)
+					table.setWidth(2, _spaceBetween);
+				if(addPrimary)
+				    table.add(getPrimaryDropdown(),3,1);
+				if(addSecondary)
+				    table.add(getSecondaryDropdown(),3,3);
+			
+			}
 		}
 		
 		if (_styleClass != null) {
@@ -106,7 +114,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 			_secondarySelected = "-1";
 		getParentPage().setOnLoad("setDropdownOptions(findObj('"+primaryName+"'),findObj('"+secondaryName+"'), '"+_secondarySelected+"')");
 	}
-	
+	/*
 	private void addElementsToPrimary() {
 		if (_primaryCollection != null) {
 			Iterator iter = _primaryCollection.iterator();
@@ -122,7 +130,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 			if (_primarySelected != null)
 				getPrimaryDropdown().setSelectedElement(_primarySelected);
 		}
-	}
+	}*/
 
 	private String getSelectorScript(IWContext iwc) {
 		StringBuffer s = new StringBuffer();
@@ -175,12 +183,13 @@ public class SelectDropdownDouble extends InterfaceObject {
 	}
 	
 	public void addMenuElement(String value, String name, Map values) {
-		if (_primaryCollection == null)
-			_primaryCollection = new Vector();
+		//if (_primaryCollection == null)
+		//	_primaryCollection = new Vector();
 		if (_secondaryMap == null)
 			_secondaryMap = new HashMap();
 		
-		_primaryCollection.add(new SelectOption(name, value));
+		//_primaryCollection.add(new SelectOption(name, value));
+		getPrimaryDropdown().addOption(new SelectOption(name, value));
 		_secondaryMap.put(value, values);
 	}
 	
@@ -190,16 +199,16 @@ public class SelectDropdownDouble extends InterfaceObject {
 		addMenuElement("-1", primaryDisplayString, map);
 	}
 	
-	public DropdownMenu getPrimaryDropdown() {
-		if( primary == null )
+	public DropdownMenu getPrimaryDropdown(){
+	    if( primary == null )
 			primary = new DropdownMenu(primaryName);
-		return primary;		
+		return primary;
 	}
-
-	public DropdownMenu getSecondaryDropdown() {
-		if( secondary == null )
+	
+	public DropdownMenu getSecondaryDropdown(){
+	    if( secondary == null )
 			secondary = new DropdownMenu(secondaryName);
-		return secondary;		
+		return secondary;	
 	}
 
 	/**
@@ -239,6 +248,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 
 	public void setSelectedValues(String primaryValue, String secondaryValue) {
 		_primarySelected = primaryValue;
+		getPrimaryDropdown().setSelectedElement(_primarySelected);
 		_secondarySelected = secondaryValue;
 	}
 	
