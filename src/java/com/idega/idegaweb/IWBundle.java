@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.76 2004/02/28 15:52:00 eiki Exp $
+ * $Id: IWBundle.java,v 1.77 2004/06/10 18:36:21 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -108,7 +108,7 @@ public class IWBundle implements java.lang.Comparable
 		//handlers = new HashMap();
 		//localeRealPaths = new HashMap();
 		//resourceBundles = new HashMap();
-		setRootRealPath(rootRealPath);
+		setBundleBaseRealPath(rootRealPath);
 		setRootVirtualPath(rootVirtualPath);
 		try
 		{
@@ -142,8 +142,8 @@ public class IWBundle implements java.lang.Comparable
 	protected void loadBundle()
 	{
 		setResourcesVirtualPath(getRootVirtualPath() + "/" + "resources");
-		setResourcesRealPath(getRootRealPath() + FileUtil.getFileSeparator() + "resources");
-		setPropertiesRealPath(getRootRealPath() + FileUtil.getFileSeparator() + "properties");
+		setResourcesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "resources");
+		setPropertiesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "properties");
 		setClassesRealPath();
 		if (autoCreate)
 		{
@@ -302,7 +302,11 @@ public class IWBundle implements java.lang.Comparable
 			
 		}
 	}
-	protected String getRootRealPath()
+	/**
+	 * gets the base path of this bundle.<br>
+	 * e.g. /home/idegaweb/webapp/iw1/idegaweb/bundles/com.idega.core.bundle
+	 */	
+	public String getBundleBaseRealPath()
 	{
 		return rootRealPath;
 	}
@@ -393,7 +397,12 @@ public class IWBundle implements java.lang.Comparable
 	{
 		propertiesRealPath = path;
 	}
-	private void setRootRealPath(String path)
+	/**
+	 * Sets the base path of this bundle.<br>
+	 * e.g. /home/idegaweb/webapp/iw1/idegaweb/bundles/com.idega.core.bundle
+	 * @param path
+	 */
+	protected void setBundleBaseRealPath(String path)
 	{
 		rootRealPath = path;
 	}
@@ -418,7 +427,7 @@ public class IWBundle implements java.lang.Comparable
 	}
 	private void setClassesRealPath()
 	{
-		classesRealPath = this.getRootRealPath() + FileUtil.getFileSeparator() + "classes";
+		classesRealPath = this.getBundleBaseRealPath() + FileUtil.getFileSeparator() + "classes";
 	}
 	public String[] getAvailableProperties()
 	{
