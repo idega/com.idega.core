@@ -344,8 +344,110 @@ public class StringHandler {
 		return getElements(string, words);
 	}
 	
+	/** Gets the substring that is enclosed by the specified strings.
+	 * If one of the parameters is null null is returned.
+	 * Examples:
+	 * substring("caterpillar","cat", "a") returns "erpill"
+	 * substring("caterpillar","we", "a") returns null
+	 * substring ("caterpillar","","a") returns "caterpill"
+	 * substring("caterpillar", "", "") returns "caterpillar"
+	 * substring("caterpillar","a", "l") returns "terpil"
+	 * substring("","","") returns ""
+	 * substring(null, "cat", "we") returns null
+	 * substring("caterpillar", null, "we") returns null
+	 * @param string
+	 * @param start
+	 * @param end
+	 * @return sunbstring
+	 * @author thomas
+	 */ 
+	public static String substringEnclosedBy(String string, String start, String end) {
+		if (string == null || start == null || end == null) {
+			return null;
+		}
+		int startIndex = string.indexOf(start);
+		if (startIndex == -1) {
+			return null;
+		}
+		int endIndex = string.lastIndexOf(end);
+		if (endIndex == -1) {
+			return null;
+		}
+		startIndex += start.length();
+		return string.substring(startIndex, endIndex);
+	}
 	
-	
+	/** Returns a string with an added or increased counter depending on the 
+	 * specified token. Null strings are handled like empty strings. 
+	 * Examples: 
+	 * addOrIncreaseCounter("fileName_13", "_") returns "fileName_14"
+	 * addOrIncreaseCounter("fileName", "_") returns "fileName_1"
+	 * addOrIncreaseCounter("fileName_12_13", "_") returns "fileName_12_14"
+	 * addOrIncreaseCounter("", "_") returns "_1"
+	 * addOrIncreaseCounter("", "") returns "1"
+	 * addOrIncreaseCounter("fileName_13", "") returns "fileName_131"
+	 * addOrIncreaseCounter("fileName_13",  null) returns "fileName_131"
+	 * @param string
+	 * @param token
+	 * @return string with added or increased counter.
+	 */
+	public static String addOrIncreaseCounter(String string, String token) {
+		if (string == null) {
+			string = "";
+		}
+		if (token == null) {
+			token = "";
+		}
+		// is there an existing counter?
+		int endIndex = string.lastIndexOf(token);
+		if (endIndex > -1) {
+			String number = string.substring(endIndex + token.length());
+			if (StringHandler.isNaturalNumber(number)) {
+				int counter = Integer.parseInt(number);
+				String newNumber = Integer.toString(++counter);
+				String newString = string.substring(0, endIndex);
+				StringBuffer buffer = new StringBuffer(newString);
+				buffer.append(token).append(newNumber);
+				return buffer.toString();
+			}
+		}
+		// string hasn't a counter add a counter
+		StringBuffer buffer = new StringBuffer(string);
+		buffer.append(token);
+		buffer.append("1");
+		return buffer.toString();
+	}
+			
+		
+	/** Returns true if the specified string is a natural number.
+	 *  Zero is considered as a natural number.
+	 *  Examples:
+	 * isNaturalNumber("-12") returns false
+	 * isNaturalNumber("0") returns true;
+	 * isNaturalNumber("12") returns true;
+	 * isNaturalNumber("f1") returns false;
+	 * isNaturalNumber("+12") returns false
+	 * isNaturalNumber(null) returns false;
+	 * @param string
+	 * @return true if the specified string is a natural number else false
+	 * @author thomas
+	 */		
+	public static boolean isNaturalNumber(String string) {
+		if (string == null) {
+			return false;
+		}
+		int length = string.length();
+		if (length == 0) {
+			return false;
+		}
+		for (int i =0; i < length; i++) {
+			char letter = string.charAt(i);
+			if (! Character.isDigit(letter)) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	
 	/** Gets the words that are contained in a string corresponding to a list of allowed words.
