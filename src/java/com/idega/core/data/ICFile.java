@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.lang.String;
 import java.lang.Integer;
 import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**
@@ -14,11 +16,13 @@ import java.sql.SQLException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="bjarni@idega.is">Bjarni Viljhalmsson</a>
+ * @author <a href="bjarni@idega.is">Bjarni Viljhalmsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
 public class ICFile extends GenericEntity {
+
+  private static final String file_value = "file_value";
 
   public ICFile() {
     super();
@@ -34,15 +38,19 @@ public class ICFile extends GenericEntity {
     addAttribute("mime_type","Type of file",true,true, String.class,20);
     addAttribute("name","File name",true,true, String.class, 20);
     addAttribute("description","Description",true,true, String.class, 1000);
-    addAttribute("file_value","The file value",true,true, com.idega.data.BlobWrapper.class);
+    addAttribute(getColumnFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
     addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFile.class);
-    setNullable("parent_id",false);
+    setNullable("parent_id",true);
   }
 
   public String getEntityName() {
     return("ic_file");
+  }
+
+  public static String getColumnFileValue(){
+    return file_value;
   }
 
   public int getLanguage(){
@@ -60,9 +68,14 @@ public class ICFile extends GenericEntity {
   public String getDescription(){
     return (String) getColumnValue("description");
   }
-
+/*
   public BlobWrapper getFileValue(){
     return (BlobWrapper) getColumnValue("file_value");
+  }
+*/
+
+  public InputStream getFileValue()throws Exception{
+    return getInputStreamColumnValue(getColumnFileValue());
   }
 
   public Timestamp getCreationDate(){
@@ -93,9 +106,17 @@ public class ICFile extends GenericEntity {
   public void setDescription(String description){
     setColumn("description", description);
   }
-
+/*
   public void setFileValue(BlobWrapper fileValue){
     setColumn("file_value", fileValue);
+  }
+*/
+  public void setFileValue(InputStream fileValue){
+    setColumn(getColumnFileValue(), fileValue);
+  }
+
+  public OutputStream getFileValueForWrite(){
+    return getColumnOutputStream(getColumnFileValue());
   }
 
   public void setCreationDate(Timestamp creationDate){
