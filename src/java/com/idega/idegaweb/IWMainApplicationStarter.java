@@ -314,14 +314,11 @@ public class IWMainApplicationStarter {
             starter = (IWBundleStartable) Class.forName(starterName).newInstance();
             starter.start(null);
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	sendStartMessage("Info: "+starterName + " could not be instanciated (probably corresponding bundle is not loaded)");
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	sendStartMessage("Info: Constructor of "+starterName + " could not be accessed (probably corresponding bundle is not loaded)");
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            sendStartMessage("Info: "+starterName + "could not be found (probably corresponding bundle is not loaded)");
         }
 	}
 	
