@@ -167,7 +167,7 @@ public class IWResourceBundle extends ResourceBundle {
     }
 
     public Image getImage(String urlInBundle, String name, int width, int height){
-      return new Image(urlInBundle,name, width, height);
+      return new Image(getResourcesURL()+slash+urlInBundle,name, width, height);
     }
 
     public Image getImage(String urlInBundle, String name){
