@@ -35,6 +35,11 @@ public class GenericButton extends GenericInput {
 	private boolean _onClickConfirm = false;
 	private String _confirmMessage;
 	private int _parentPageID = -1;
+	
+	private Class classToInstanciate;
+	private Class templatePageClass;
+	private String templateForObjectInstanciation;
+
 
 	public GenericButton() {
 		this("untitled", "");
@@ -46,6 +51,12 @@ public class GenericButton extends GenericInput {
 		setValue(value);
 		setInputType(INPUT_TYPE_BUTTON);
 	}
+	
+	public GenericButton(String content) {
+		this();
+		setContent(content);
+	}
+
 
 	public void setAsImageButton(boolean asImageButton) {
 		this.asImageButton = asImageButton;
@@ -93,6 +104,10 @@ public class GenericButton extends GenericInput {
 				buffer.append(Window.getCallingScript(fsystem.getFileURI(_fileID))).append(";\n");
 				addFunction = true;
 			}
+			if(classToInstanciate!=null){
+				buffer.append("location='"+getURIToClassToInstanciate(iwc)+"';").append("\n");
+				addFunction = true;
+			}
 
 			buffer.append("}");
 			if (addFunction) {
@@ -122,6 +137,9 @@ public class GenericButton extends GenericInput {
 				if (_fileID != -1) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
 					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(_fileID)));	
+				}
+				if (classToInstanciate != null) {
+					setOnClick("javascript:location='"+getURIToClassToInstanciate(iwc)+"';");
 				}
 			}
 			
@@ -202,24 +220,46 @@ public class GenericButton extends GenericInput {
 			setParentPageToOpen(page.getID());
 	}
 	
+	public void addParameter(String name, String value) {
+		if (parameterMap == null)
+			parameterMap = new HashMap();
+		parameterMap.put(name, value);
+	}
+	
+	public void addParameter(String name, int value) {
+		addParameter(name, String.valueOf(value));
+	}
+	/**
+	 * @soon_deprecated replaced by addParameter(...)
+	 * @param name
+	 * @param value
+	 */
 	public void addParameterToWindow(String name, String value) {
-		if (parameterMap == null)
-			parameterMap = new HashMap();
-		parameterMap.put(name, value);
+		addParameter(name,value);
 	}
-	
+	/**
+	 * @soon_deprecated replaced by addParameter(...)
+	 * @param name
+	 * @param value
+	 */
 	public void addParameterToWindow(String name, int value) {
-		addParameterToWindow(name, String.valueOf(value));
+		addParameter(name,value);
 	}
-	
+	/**
+	 * @soon_deprecated replaced by addParameter(...)
+	 * @param name
+	 * @param value
+	 */
 	public void addParameterToPage(String name, String value) {
-		if (parameterMap == null)
-			parameterMap = new HashMap();
-		parameterMap.put(name, value);
+		addParameter(name,value);
 	}
-	
+	/**
+	 * @soon_deprecated replaced by addParameter(...)
+	 * @param name
+	 * @param value
+	 */
 	public void addParameterToPage(String name, int value) {
-		addParameterToPage(name, String.valueOf(value));
+		addParameter(name,value);
 	}
 	
 	private String getParameters() {
@@ -269,4 +309,35 @@ public class GenericButton extends GenericInput {
 		_onClickConfirm = true;
 		_confirmMessage = confirmMessage;
 	}
+	
+	private String getURIToClassToInstanciate(IWContext iwc) {
+		if (this.classToInstanciate != null) {
+			if (this.templatePageClass != null) {
+				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass))+getParameters();
+			}
+			else if (this.templateForObjectInstanciation != null) {
+				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation))+getParameters();
+			}
+			else {
+				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate))+getParameters();
+			}
+		}
+		return "";
+	}
+	
+	public void setClassToInstanciate(Class presentationObjectClass) {
+		this.classToInstanciate = presentationObjectClass;
+	}
+
+	public void setClassToInstanciate(Class presentationObjectClass, Class pageTemplateClass) {
+		setClassToInstanciate(presentationObjectClass);
+		this.templatePageClass = pageTemplateClass;
+	}
+
+	public void setClassToInstanciate(Class presentationObjectClass, String template) {
+		setClassToInstanciate(presentationObjectClass);
+		this.templateForObjectInstanciation = template;
+	}
+
+
 }
