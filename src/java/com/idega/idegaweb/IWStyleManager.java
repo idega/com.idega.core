@@ -74,7 +74,8 @@ public static final String[] defaultStyles = { "A","body","table" };
     while (iter.hasNext()) {
       tokenizer = new StringTokenizer((String) iter.next(),"{");
       while ( tokenizer.hasMoreTokens() ) {
-	addStyleParameter(tokenizer.nextToken().replaceAll(" ",""),tokenizer.nextToken().replaceAll("}","").replaceAll(" ",""));
+        /** @todo  not working in jdk 1.3.1 : */
+	//addStyleParameter(tokenizer.nextToken().replaceAll(" ",""),tokenizer.nextToken().replaceAll("}","").replaceAll(" ",""));
       }
     }
   }
