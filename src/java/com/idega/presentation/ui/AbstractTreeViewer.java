@@ -111,11 +111,11 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     iconWidth = width;
     iconHeight = Height;
     if(initializedInMain){
-      updateIconDimansions();
+      updateIconDimensions();
     }
   }
 
-  protected void updateIconDimansions(){
+  protected void updateIconDimensions(){
     for (int i = 0; i < icons.length; i++) {
       Image tmp = icons[i];
       if(tmp != null){
@@ -143,7 +143,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
       }
     }
     _showTreeIcons_changed = false;
-    updateIconDimansions();
+    updateIconDimensions();
   }
 
   public void setToShowTreeIcons(boolean value){

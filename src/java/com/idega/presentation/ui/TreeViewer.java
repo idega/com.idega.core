@@ -118,8 +118,8 @@ public class TreeViewer extends AbstractTreeViewer {
   }
 */
 
-  protected void updateIconDimansions(){
-    super.updateIconDimansions();
+  protected void updateIconDimensions(){
+    super.updateIconDimensions();
     for (int i = 0; i < folderAndFileIcons.length; i++) {
       Image tmp = folderAndFileIcons[i];
       if(tmp != null){
@@ -141,7 +141,7 @@ public class TreeViewer extends AbstractTreeViewer {
       }
     }
 
-    updateIconDimansions();
+    updateIconDimensions();
   }
 
 
