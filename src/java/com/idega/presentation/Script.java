@@ -25,7 +25,6 @@ public Script(){
 
 public Script(String scriptLanguage){
 	super();
-	setScriptLanguage(scriptLanguage);
 	setType();
 	scriptCode = new Hashtable();
 }
@@ -40,10 +39,6 @@ protected void setType(){
 
 protected void setType(String type){
   setMarkupAttribute("type",type);
-}
-
-public void setScriptLanguage(String scriptLanguage){
-	setMarkupAttribute("language",scriptLanguage);
 }
 
 public void setScriptSource(String sourceURL){
