@@ -189,4 +189,19 @@ public class TextArea extends InterfaceObject {
 		isSetAsNotEmpty = true;
 		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
+	
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#setValue(java.lang.String)
+	 */
+	public void setValue(String value) {
+		setContent(value);
+	}
+
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#setValue(int)
+	 */
+	public void setValue(int value) {
+		setContent(String.valueOf(value));
+	}
+
 }
