@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.component.business.ICObjectBusiness;
@@ -290,8 +288,6 @@ public class AccessControllerApp extends IWApplication {
 
 
     public static class IBPermissionFrame extends IWApplicationComponent {
-
-      private static final String ic_object_id_parameter = BuilderConstants.IC_OBJECT_INSTANCE_ID_PARAMETER;
 
       public static final String _PARAMETERSTRING_IDENTIFIER = AccessController._PARAMETERSTRING_IDENTIFIER;
       public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = AccessController._PARAMETERSTRING_PERMISSION_CATEGORY;
