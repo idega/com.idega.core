@@ -13,6 +13,7 @@ import com.idega.idegaweb.IWBundle;
 
 public class ImageRotater extends Block {
 
+private static final String IMAGE_ROTATER = "image_rotater";
 private ICFile _imageFile;
 private String _width;
 private String _height;
@@ -21,37 +22,41 @@ private String _alt;
   public void main(IWContext iwc) {
     if ( _imageFile != null ) {
       boolean folder = true;
-      Vector imageVector = new Vector();
+      int icObjectInstanceID = getICObjectInstanceID();
+      Vector imageVector = (Vector) iwc.getApplicationAttribute(IMAGE_ROTATER+"_"+Integer.toString(icObjectInstanceID));
 
-
-      if ( _imageFile.getChildCount() > 0 && _imageFile.getChildren() != null ) {
-        Iterator iter = _imageFile.getChildren();
-        while (iter.hasNext()) {
-          imageVector.add((ICFile)iter.next());
-        }
+      if ( imageVector == null ) {
+	imageVector = new Vector();
+	if ( _imageFile.getChildCount() > 0 && _imageFile.getChildren() != null ) {
+	  Iterator iter = _imageFile.getChildren();
+	  while (iter.hasNext()) {
+	    imageVector.add((ICFile)iter.next());
+	  }
+	}
+	else
+	  folder = false;
+	iwc.setApplicationAttribute(IMAGE_ROTATER+"_"+Integer.toString(icObjectInstanceID),imageVector);
       }
-      else
-        folder = false;
 
       int num = (int) (Math.random() * imageVector.size());
 
       Image image = null;
 
       try {
-        if ( folder )
-          image = new Image(((ICFile)(imageVector.elementAt(num))).getID());
-        else
-          image = new Image(_imageFile.getID());
+	if ( folder )
+	  image = new Image(((ICFile)(imageVector.elementAt(num))).getID());
+	else
+	  image = new Image(_imageFile.getID());
       }
       catch (SQLException e) {
-        e.printStackTrace(System.err);
+	e.printStackTrace(System.err);
       }
 
       if ( image != null ) {
-        if ( _width != null ) image.setWidth(_width);
-        if ( _height != null ) image.setHeight(_height);
-        if ( _alt != null ) image.setName(_alt);
-        add(image);
+	if ( _width != null ) image.setWidth(_width);
+	if ( _height != null ) image.setHeight(_height);
+	if ( _alt != null ) image.setName(_alt);
+	add(image);
       }
     }
   }
