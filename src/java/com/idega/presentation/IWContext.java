@@ -656,6 +656,15 @@ public PrintWriter getWriter()throws IOException{
 }
 
 
+public void sendRedirect(String URL){
+  try {
+    getResponse().sendRedirect(URL);
+  }
+  catch (IOException e) {
+    e.printStackTrace(System.err);
+  }
+}
+
 public void setApplicationAttribute(String attributeName,Object attributeValue){
   getApplication().setAttribute(attributeName,attributeValue);
 }
