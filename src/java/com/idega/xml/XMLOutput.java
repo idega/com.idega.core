@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.7 2005/01/25 00:38:17 tryggvil Exp $
+ * $Id: XMLOutput.java,v 1.8 2005/02/15 17:14:43 joakim Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,12 +9,13 @@
  */
 package com.idega.xml;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import java.io.OutputStream;
-import java.io.IOException;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -83,7 +84,15 @@ public class XMLOutput {
     else
       return(null);
   }
-  
+
+	public String outputString(XMLDocument document) throws IOException {
+		StringWriter writer = new StringWriter();
+		Document doc = (Document)document.getDocument();
+		XMLOutputter outputter = new XMLOutputter();
+		outputter.output(doc, writer);
+		return writer.toString();
+	}
+ 
   public void setEncoding(String encoding) {
   	if (_output != null)
   		_output.getFormat().setEncoding(encoding);
