@@ -22,17 +22,17 @@ import com.idega.util.IWTimestamp;
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
 
 
-	private static final String  TABLE_NAME="IC_GROUP_RELATION";
-	private static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
-	private static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
-	private static final String  RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE";
-	private static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
-	private static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
-	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
-  private static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
+	protected static final String  TABLE_NAME="IC_GROUP_RELATION";
+	protected static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
+	protected static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
+	protected static final String  RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE";
+	protected static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
+	protected static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
+	protected static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+  protected static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
   
-  private static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
-  private static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
+  protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
+  protected static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";
@@ -329,7 +329,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     +" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
   
-  protected String getRelationTypeWhereClause(String value){
+  protected static String getRelationTypeWhereClause(String value){
   	if(value==null){
   		return RELATIONSHIP_TYPE_COLUMN+" is null";
   	}

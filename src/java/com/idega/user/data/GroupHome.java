@@ -1,7 +1,5 @@
 package com.idega.user.data;
 
-import javax.ejb.FinderException;
-
 
 public interface GroupHome extends com.idega.data.IDOHome
 {
@@ -10,12 +8,16 @@ public interface GroupHome extends com.idega.data.IDOHome
  public Group createGroup()throws javax.ejb.CreateException;
  public java.util.Collection findAll()throws javax.ejb.FinderException;
  public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.FinderException;
+ public Group findByHomePageID(int p0)throws javax.ejb.FinderException;
  public Group findByName(java.lang.String p0)throws javax.ejb.FinderException;
  public Group findGroupByPrimaryKey(java.lang.Object p0)throws javax.ejb.FinderException;
+ public Group findGroupByUniqueId(java.lang.String p0)throws javax.ejb.FinderException;
  public java.util.Collection findGroups(java.lang.String[] p0)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsByMetaData(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsContained(com.idega.user.data.Group p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException;
+ public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
+ public java.util.Collection findParentGroups(int p0)throws javax.ejb.FinderException;
  public Group findSystemUsersGroup()throws javax.ejb.FinderException;
  public java.util.Collection findTopNodeGroupsContained(com.idega.core.builder.data.ICDomain p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException;
  public java.util.Collection findTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException;
@@ -25,6 +27,5 @@ public interface GroupHome extends com.idega.data.IDOHome
  public int getNumberOfTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getNumberOfVisibleGroupsContained(com.idega.user.data.Group p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public java.lang.String getRelationTypeGroupParent();
- public Group findByHomePageID(int p0)throws javax.ejb.FinderException;
- public Group findUserByUniqueId(String uniqueIdString) throws FinderException;
+
 }

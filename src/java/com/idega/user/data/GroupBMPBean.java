@@ -354,42 +354,27 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
 		List theReturn = new ArrayList();
 		try {
-			Collection relations = null;
+			Group parent = null;
 			if (cachedParents!=null) {
 				if (cachedParents.containsKey(this.getPrimaryKey()))
-					relations = (Collection)cachedParents.get(this.getPrimaryKey());
+					parent = (Group)cachedParents.get(this.getPrimaryKey());
 				else
 				{	
-					relations = getChildGroupRelationships();
-					cachedParents.put(this.getPrimaryKey(), relations);
-				}
-			}
-			else 
-				relations = getChildGroupRelationships();
-			Iterator iter = relations.iterator();
-			while (iter.hasNext()) {
-				GroupRelation item = (GroupRelation)iter.next();
-				//Group parent = item.getRelatedGroup();
-				
-				Group parent = null;
-				if (cachedGroups!=null) {
-					if (cachedGroups.containsKey(new Integer(item.getGroupID())))
-						parent = (Group) cachedGroups.get(new Integer(item.getGroupID()));
-					else {	
-						parent = item.getGroup();
-						cachedGroups.put(new Integer(item.getGroupID()), parent);
+					parent = getParentFromParentCollection(cachedGroups);
+					cachedParents.put(this.getPrimaryKey(), parent);
+					if (cachedGroups != null && parent!= null) {
+						cachedGroups.put(parent.getPrimaryKey(), parent);
 					}
 				}
-				else 
-					parent = item.getGroup();
-				
-				if (!theReturn.contains(parent)) {
-					theReturn.add(parent);
-				}
 			}
+			else {
+				parent = getParentFromParentCollection();
+			}	
+			theReturn.add(parent);
+			
 			if (isUser()) {
 				User user = getUserForGroup();
-				Group parent = user.getPrimaryGroup();
+				parent = user.getPrimaryGroup();
 				if (!theReturn.contains(parent)) {
 					theReturn.add(parent);
 				}
@@ -401,6 +386,34 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return theReturn;
 	}
+
+	private Group getParentFromParentCollection() throws FinderException {		
+		return getParentFromParentCollection(null);
+	}
+
+	private Group getParentFromParentCollection(Map cachedGroups) throws FinderException {		
+		Collection col = ejbFindParentGroups(this.getID());
+		Group parent = null;
+		Integer parentID = null;
+		Iterator iter = col.iterator();
+		if (iter.hasNext()) {
+			parentID = (Integer)iter.next();
+			if (cachedGroups != null) {
+				if (cachedGroups.containsKey(parentID))
+					parent = (Group)cachedGroups.get(parentID);
+				else
+				{	
+					parent = getGroupHome().findByPrimaryKey(parentID);
+					cachedGroups.put(parentID, parent);
+				}
+			}
+			else {
+				parent = getGroupHome().findByPrimaryKey(parentID);
+			}
+		}
+		return parent;
+	}
+
 	/**
 	 * Returns the User instance representing the Group if the Group is of type UserGroupRepresentative
 	 **/
@@ -421,15 +434,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	protected Collection getParentalGroupRelationships() throws FinderException {
 		//null type is included as relation type for backwards compatability.
 		return this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), RELATION_TYPE_GROUP_PARENT, null);
-	}
-
-	/**
-	 * Finds all the GroupRelations that point to groups that "this" group is a direct child of
-	 * @return Collection of GroupRelation
-	 */
-	protected Collection getChildGroupRelationships() throws FinderException {
-		//null type is included as relation type for backwards compatability.
-		return this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(this.getID(), RELATION_TYPE_GROUP_PARENT, null);
 	}
 
 	/**
@@ -1225,6 +1229,20 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return null;
 	}
+
+	  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType,String orRelationType)throws FinderException{
+	    String firstRelationTypeClause = GroupRelationBMPBean.getRelationTypeWhereClause(relationType);
+	    String secondRelationTypeClause = GroupRelationBMPBean.getRelationTypeWhereClause(orRelationType);
+	    String sql = "select * from "+GroupRelationBMPBean.TABLE_NAME+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
+	    +" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_PASSIVE_PENDING+"' ) ";
+	    return this.idoFindPKsBySQL(sql);
+	  }
+
+	  public Collection ejbFindParentGroups(int groupID)throws FinderException{
+	    String sql = "select * from "+GroupRelationBMPBean.TABLE_NAME+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
+	    +" and ("+GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+"='GROUP_PARENT' OR "+ GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+" is null) and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_PASSIVE_PENDING+"' ) ";
+	    return this.idoFindPKsBySQL(sql);
+	  }
 
 	private UserHome getUserHome() {
 

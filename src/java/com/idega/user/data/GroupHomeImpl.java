@@ -1,7 +1,5 @@
 package com.idega.user.data;
 
-import javax.ejb.FinderException;
-
 
 public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHome
 {
@@ -45,6 +43,13 @@ public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throw
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public Group findByHomePageID(int p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((GroupBMPBean)entity).ejbFindByHomePageID(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
 public Group findByName(java.lang.String p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((GroupBMPBean)entity).ejbFindByName(p0);
@@ -55,6 +60,13 @@ public Group findByName(java.lang.String p0)throws javax.ejb.FinderException{
 public Group findGroupByPrimaryKey(java.lang.Object p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((GroupBMPBean)entity).ejbFindGroupByPrimaryKey(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
+public Group findGroupByUniqueId(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((GroupBMPBean)entity).ejbFindGroupByUniqueId(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.findByPrimaryKey(pk);
 }
@@ -83,6 +95,20 @@ public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ej
 public java.util.Collection findGroupsContained(com.idega.user.data.Group p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsContained(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsRelationshipsByRelatedGroup(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findParentGroups(int p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindParentGroups(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -153,21 +179,6 @@ public java.lang.String getRelationTypeGroupParent(){
 	java.lang.String theReturn = ((GroupBMPBean)entity).ejbHomeGetRelationTypeGroupParent();
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
-}
-
-
-public Group findByHomePageID(int p0)throws javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	Object pk = ((GroupBMPBean)entity).ejbFindByHomePageID(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.findByPrimaryKey(pk);
-}
-
-public Group findUserByUniqueId(String uniqueIdString) throws FinderException {
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	Object pk = ((GroupBMPBean)entity).ejbFindGroupByUniqueId(uniqueIdString);
-	this.idoCheckInPooledEntity(entity);
-	return this.findByPrimaryKey(pk);	
 }
 
 
