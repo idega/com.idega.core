@@ -64,8 +64,6 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public java.lang.String getExtraInfo();
  public java.lang.String getPersonalID();
  public void setPersonalID(java.lang.String p0);
- public java.lang.String getFamilyID();
- public void setFamilyID(java.lang.String p0);
  public void setPrimaryGroupID(int p0);
  public java.lang.String getNodeName();
  public void setHomePageID(java.lang.Integer p0);

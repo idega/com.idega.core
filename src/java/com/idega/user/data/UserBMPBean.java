@@ -99,7 +99,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
     addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
     addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
-    	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
+//    	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     
 	//adds a unique id string column to this entity that is set when the entity is first stored.
 	addUniqueIDColumn();
@@ -221,9 +221,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return "IC_LANGUAGE_ID";
 	}
 	
-	public static String getColumnNameFamilyID() {
-		return "FAMILY_ID";
-	}
+//	public static String getColumnNameFamilyID() {
+//		return "FAMILY_ID";
+//	}
 
 	/**
 	 * @depricated
@@ -291,9 +291,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
-	public String getFamilyID() {
-		return getStringColumnValue(getColumnNameFamilyID());
-	}
+//	public String getFamilyID() {
+//		return getStringColumnValue(getColumnNameFamilyID());
+//	}
 
 	public String getName() {
 		String firstName = this.getFirstName();
@@ -514,9 +514,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
 	
-	public void setFamilyID(String familyId) {
-		setColumn(getColumnNameFamilyID(), familyId);
-	}
+//	public void setFamilyID(String familyId) {
+//		setColumn(getColumnNameFamilyID(), familyId);
+//	}
 
 	public void setPrimaryGroup(Group group)
 	{
