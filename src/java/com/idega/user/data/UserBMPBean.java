@@ -819,7 +819,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     // use where not because DELETED = NULL means also not deleted
     // select * from ic_user where deleted != 'Y'
 		SelectQuery query = idoSelectQuery();
-		query.addCriteria(new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.NOTEQUALS,GenericEntity.COLUMN_VALUE_FALSE,true));
+		MatchCriteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.NOTEQUALS,GenericEntity.COLUMN_VALUE_FALSE,true);
+		MatchCriteria c2 = new MatchCriteria(new Column(idoQueryTable(),getColumnNameDeleted()), false);
+		query.addCriteria(new OR(c1, c2));
 		
 		return idoFindPKsByQueryUsingLoadBalance(query,10000);
 	}
