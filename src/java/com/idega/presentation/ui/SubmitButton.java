@@ -27,8 +27,10 @@ public class SubmitButton extends GenericButton {
 
 	private boolean _enabledWhenChecked = false;
 	private boolean _confirmSubmit = false;
+	private boolean _confirmSingleSubmit = false;
 	private String _checkedObjectName;
 	private String _confirmMessage;
+	private String _confirmSingleMessage;
 
 
 	/**
@@ -143,6 +145,9 @@ public class SubmitButton extends GenericButton {
 				getScript().addFunction("confirmSubmit", "function confirmSubmit(message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tfindObj('"+getForm().getName()+"').submit();\n}");
 				setOnClick("confirmSubmit('"+_confirmMessage+"');");
 			}
+			if (_confirmSingleSubmit) {
+				this.setOnSubmitFunction("confirmSingleSubmit", "function confirmSingleSubmit(input,message) {\n	return confirm(message);\n}", _confirmSingleMessage);
+			}
 			if (_enabledWhenChecked) {
 				getScript().addFunction("enableButton","function enableButton(inputs,button) {\n	\tif (validateInputs(inputs)) \n	\t\tbutton.disabled=eval('false');\n	\telse\n	\t\tbutton.disabled=eval('true');\n }");
 				getScript().addFunction("validateInputs","function validateInputs(inputs) {\n	if (inputs.length > 1) {\n	\tfor (var a = 0; a < inputs.length; a++) {\n	\t\tif (inputs[a].checked == true)\n	\t\t\treturn true;\n	\t}\n	}\n	else {\n	\tif(inputs.checked == true)\n	\t\treturn true;\n	}\n	return false;\n }");
@@ -156,8 +161,8 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			if (_confirmSubmit)
-				setInputType(INPUT_TYPE_BUTTON);
+			/*if (_confirmSubmit)
+				setInputType(INPUT_TYPE_BUTTON);*/
 			
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
@@ -202,6 +207,16 @@ public class SubmitButton extends GenericButton {
 	public void setSubmitConfirm(String confirmMessage) {
 		_confirmSubmit = true;
 		_confirmMessage = confirmMessage;
+	}
+	
+	/**
+	 * Sets to bring up a confirm window when button is pressed.  Only when 'OK' is pressed
+	 * in the confirm window is the parent <code>Form</code> submitted.  Only works when one submit button is set on the form.
+	 * @param confirmMessage	The message to display in the confirm window.
+	 */
+	public void setSingleSubmitConfirm(String confirmMessage) {
+		_confirmSingleSubmit = true;
+		_confirmSingleMessage = confirmMessage;
 	}
 	
 	/**
