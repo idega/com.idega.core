@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.27 2002/11/01 14:20:04 laddi Exp $
+ * $Id: Table.java,v 1.28 2002/11/02 21:33:18 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -823,10 +823,10 @@ public class Table extends PresentationObjectContainer {
 		println(this.getRowStartTag(iwc));
 		//    for(int x=1;x<=cols;){
 		//println("\n<td "+"height="+this.lineHeight+" colspan="+cols+" "+COLOR_ATTRIBUTE+"="+this.lineColor+" >");
-		println("\n<td " + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
+		print("\n<td " + "height=\"" + this.lineHeight + ((lineColspan > 1) ? ("\" colspan=\"" + lineColspan + "\" ") : ("\" ")) + COLOR_ATTRIBUTE + "=\"" + this.lineColor + "\" >");
 		//if(!iwc.isOpera()){
 		transparentcell._print(iwc);
-		println("</td>");
+		print("</td>");
 		//} else {
 		//println("</td>");  // ?????
 		//}
@@ -900,15 +900,15 @@ public class Table extends PresentationObjectContainer {
 								printString.append("\n<td ");
 								printString.append(theObjects[x - 1][y - 1].getAttributeString());
 								printString.append(" >");
-								println(printString.toString());
+								print(printString.toString());
 								theObjects[x - 1][y - 1]._print(iwc);
 								printNbsp(iwc, x, y);
 							}
 							else {
-								println("\n<td>");
+								print("\n<td>");
 								printNbsp(iwc, x, y);
 							}
-							println("</td>");
+							print("</td>");
 							if ((addLineRight && x == cols) || (addVerticalLinesBetween && x != cols)) {
 								printVerticalLine(iwc);
 							}
@@ -965,10 +965,10 @@ public class Table extends PresentationObjectContainer {
 									printString.append("\" rowspan=\"");
 									printString.append(getHeightOfMergedCell(x, y));
 									printString.append("\" >");
-									println(printString.toString());
+									print(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
-									println("</td>");
+									print("</td>");
 								}
 							}
 							else {
@@ -982,15 +982,15 @@ public class Table extends PresentationObjectContainer {
 									printString.append("\n<td ");
 									printString.append(theObjects[x - 1][y - 1].getAttributeString());
 									printString.append(" >");
-									println(printString.toString());
+									print(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
 								}
 								else {
-									println("\n<td>");
+									print("\n<td>");
 									printNbsp(iwc, x, y);
 								}
-								println("</td>");
+								print("</td>");
 							}
 							x++;
 						}
