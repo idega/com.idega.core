@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.35 2002/01/29 12:55:25 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.36 2002/01/29 22:26:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -908,7 +908,7 @@ public abstract class DatastoreInterface{
 
 
   boolean isValidColumnForUpdateList(GenericEntity entity,String columnName){
-    boolean isIDColumn = entity.getIDColumnName().equals(columnName);
+    boolean isIDColumn = entity.getIDColumnName().equalsIgnoreCase(columnName);
     if(isIDColumn){
       return false;
     }
