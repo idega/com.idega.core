@@ -43,6 +43,7 @@ public class User extends GenericEntity {
       addAttribute(getColumnNameDateOfBirth(),"Fæðingardagur",true,true,"java.sql.Date");
       addAttribute(getColumnNameGender(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
       addAttribute(getColumnNameSystemImage(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
+      addAttribute(COLUMN_NAME_MAIN_USER_GROUP_ID,"Aðal notendahópur",true,true,Integer.class,"one-to-one",GenericGroup.class);
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
@@ -84,7 +85,7 @@ public class User extends GenericEntity {
     public static String getColumnNameDateOfBirth(){return "date_of_birth";}
     public static String getColumnNameGender(){return "ic_gender_id";}
     public static String getColumnNameSystemImage(){return "system_image_id";}
-
+    public static final String COLUMN_NAME_MAIN_USER_GROUP_ID = "ic_group_id";
     /*  ColumNames end   */
 
 
@@ -120,6 +121,10 @@ public class User extends GenericEntity {
 
     public int getSystemImageID(){
       return getIntColumnValue(getColumnNameSystemImage());
+    }
+
+    public int getGroupID(){
+      return getIntColumnValue(COLUMN_NAME_MAIN_USER_GROUP_ID);
     }
 
     public String getName(){
@@ -190,36 +195,12 @@ public class User extends GenericEntity {
       setColumn(getColumnNameSystemImage(),fileID);
     }
 
+    public void setGroupID(int icGroupId){
+      setColumn(COLUMN_NAME_MAIN_USER_GROUP_ID,icGroupId);
+    }
+
+
     /*  Setters end   */
-
-
-    /*  relationship begin  */
-    /**
-     * @deprecated wrong implementaticon
-     */
-    public List getAllGroups() throws SQLException{
-      return EntityFinder.findRelated(this,GenericGroup.getStaticInstance());
-    }
-/*
-    public List getPermissionGroups() throws SQLException{
-      return EntityFinder.findRelated(this,PermissionGroup.getStaticPermissionGroupInstance());
-    }
-*/
-    /* relationship end */
-
-
-
-
-
-    /*  OLD   */
-
-
-    public GenericGroup[] getGenericGroups()throws SQLException{
-      GenericGroup group = new GenericGroup();
-      return (GenericGroup[]) findRelated(group);
-    }
-
-
 
 
 }

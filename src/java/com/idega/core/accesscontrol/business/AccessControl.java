@@ -34,6 +34,8 @@ public class AccessControl{
 
     private static PermissionGroup AdministratorPermissionGroup = null;
 
+
+
     static{
       try {
         initAdministratorPermissionGroup();
@@ -69,9 +71,10 @@ public class AccessControl{
           PermissionGroup[] groups = LoginBusiness.getPermissionGroups(modinfo);
           if (groups != null){
             for(int i = 0; i < groups.length ; i++){
-              if (getAdministratorGroupName().equals(groups[i].getName()))
+              if (getAdministratorGroupName().equals(groups[i].getName())){
                 LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,modinfo);
                 return true;
+              }
             }
           }
         }
@@ -96,90 +99,76 @@ public class AccessControl{
 
     public static boolean hasPermission(String permissionType, ModuleObject obj,ModuleInfo modinfo) throws SQLException{
       Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
+      int place = 1;
 
       if (isAdmin(modinfo)){
         return true;
+      }
+
+      User user = LoginBusiness.getUser(modinfo);
+      if (user == null){
+        return false;
+      }
+
+      ICPermission permission = ICPermission.getStaticInstance();
+      ICPermission[] Permissions = null;
+      PermissionGroup[] groups = getPermissionGroups(user);
+      String sGroupList = "";
+
+      List tempGroupList = new Vector();
+      if (groups != null && groups.length > 0){
+        for(int g = 0; g < groups.length; g++){
+          if(g>0){ sGroupList += ", "; }
+          tempGroupList.add(new Integer(groups[g].getID()));
+          sGroupList += Integer.toString(groups[g].getID());
+        }
       } else {
+        return false;
+      }
 
-        User user = LoginBusiness.getUser(modinfo);
-        if (user == null){
-          return false;
-        }
-
-        ICPermission permission = ICPermission.getStaticInstance();
-        ICPermission[] Permissions = null;
-        PermissionGroup[] groups = getPermissionGroups(user);
-        String sGroupList = "";
-
-        if (groups != null && groups.length > 0){
-          for(int g = 0; g < groups.length; g++){
-            if(g>0){ sGroupList += ", "; }
-            sGroupList += Integer.toString(groups[g].getID());
+      if (obj == null){ // JSP page
+        Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICJspHandler.getJspPageInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")");
+        if (Permissions != null){
+          for (int i = 0; i < Permissions.length; i++){
+            if (Permissions[i].getPermissionValue())
+              return true;
           }
-        } else {
-          return false;
         }
+      } else { // if (obj != null)
 
-        if (obj == null){ // JSP page
-          Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICJspHandler.getJspPageInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")");
-          if (Permissions != null){
-            for (int i = 0; i < Permissions.length; i++){
-              if (Permissions[i].getPermissionValue() == true )
-                return true;
-            }
-          }
-        } else { // if (obj != null)
-
-
-
-          // instance
-          Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")" );
-          if (Permissions != null){
-            for(int j = 0; j < Permissions.length; j++){
-                if (myPermission.equals(Boolean.TRUE) ){
-                  return true;
-                }else{
-                  myPermission = Boolean.FALSE;
-                }
-            } // for
-          } // instance
-
+        if(obj instanceof Page){
+          myPermission = PermissionCasher.hasPermissionForPage(obj,modinfo,permissionType,tempGroupList);
+        }else{
+          //instance
+          myPermission = PermissionCasher.hasPermissionForObjectInstance(obj,modinfo,permissionType,tempGroupList);
+          //instance
 
           // Bundle
           if (myPermission == null){
-            Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getBundleIdentifier() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")" );
-            for (int k = 0; k < Permissions.length; k++) {
-              if (Permissions != null){
-                  if (Permissions[k].getPermissionValue() == true )
-                    return true;
-              }
-            }
+            myPermission = PermissionCasher.hasPermissionForBundle(obj,modinfo,permissionType,tempGroupList);
           }else{
             return myPermission.booleanValue();
           } // Bundle
 
 
-          // Global
+          // Global - (object)
           if (myPermission == null){
-            Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getID() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")" );
-            for (int k = 0; k < Permissions.length; k++) {
-              if (Permissions != null){
-                  if (Permissions[k].getPermissionValue() == true )
-                    return true;
-              }
-            }
+            myPermission = PermissionCasher.hasPermissionForObject(obj,modinfo,permissionType,tempGroupList);
           }else{
             return myPermission.booleanValue();
-          } // Global
-
-
+          } // Global - (object)
         }
 
+        if(myPermission != null){
+          return myPermission.booleanValue();
+        }
       }
-
       return false;
 
     } // method hasPermission
+
+
+
 
     /**
      * use this method when writing to database to avoid errors in database.
@@ -211,8 +200,16 @@ public class AccessControl{
      * use this method when writing to database to avoid errors in database.
      * If the name-string changes this will be the only method to change.
      */
-    public static String getPageString(){
+    public static String getPageIdString(){
       return "page";
+    }
+
+    /**
+     * use this method when writing to database to avoid errors in database.
+     * If the name-string changes this will be the only method to change.
+     */
+    public static String getJSPPageString(){
+      return "jsp_page";
     }
 
 
@@ -252,8 +249,16 @@ public class AccessControl{
       return "view";
     }
 
-    public static boolean hasViewPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
-      return hasPermission( getViewPermissionString(), obj, modinfo);
+    public static boolean hasViewPermission(ModuleObject obj,ModuleInfo modinfo){
+      try {
+        boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
+        System.err.println(obj.getClass().getName()+" has permission: " + permission);
+        return permission;
+        //return hasPermission( getViewPermissionString(), obj, modinfo);
+      }
+      catch (SQLException ex) {
+        return false;
+      }
     }
 
 
@@ -295,11 +300,11 @@ public class AccessControl{
 */
 
 
-    public void setPagePermission(ModuleInfo modinfo, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
+    public void setJSPPagePermission(ModuleInfo modinfo, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
-        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getJSPPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
       }
       catch (Exception ex) {
         permission = new ICPermission();
@@ -307,7 +312,7 @@ public class AccessControl{
       }
 
       if(!update){
-        permission.setContextType(AccessControl.getPageString());
+        permission.setContextType(AccessControl.getJSPPageString());
         // use 'ICJspHandler.getJspPageInstanceID(modinfo)' on the current page and send in as PageContextValue
         permission.setContextValue(PageContextValue);
         permission.setGroupID(new Integer(group.getID()));
@@ -319,7 +324,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
-
+      PermissionCasher.updateJSPPagePermissions(PageContextValue,permissionType,modinfo);
     }
 
     public void setObjectPermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
@@ -345,6 +350,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
+      PermissionCasher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,modinfo);
     }
 
 
@@ -371,15 +377,16 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
+      PermissionCasher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,modinfo);
     }
 
 
 
     public void setObjectInstacePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
-      setObjectInstacePermission(Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(modinfo).getID()),permissionType,permissionValue);
+      setObjectInstacePermission(modinfo,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(modinfo).getID()),permissionType,permissionValue);
     }
 
-    public static boolean removeICObjectInstancePermissionRecords(String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
+    public static boolean removeICObjectInstancePermissionRecords(ModuleInfo modinfo, String ObjectInstanceId, String permissionKey, String[] groupsToRemove){
       String sGroupList = "";
       if (groupsToRemove != null && groupsToRemove.length > 0){
         for(int g = 0; g < groupsToRemove.length; g++){
@@ -390,7 +397,11 @@ public class AccessControl{
       if(!sGroupList.equals("")){
         ICPermission permission = ICPermission.getStaticInstance();
         try {
-          return SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          boolean done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          if(done){
+            PermissionCasher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,modinfo);
+          }
+          return done;
         }
         catch (Exception ex) {
           return false;
@@ -401,7 +412,7 @@ public class AccessControl{
 
     }
 
-    public static void setObjectInstacePermission( String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
+    public static void setObjectInstacePermission(ModuleInfo modinfo, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
@@ -424,6 +435,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
+      PermissionCasher.updateObjectInstancePermissions(ObjectInstanceId,permissionType,modinfo);
     }
 
 

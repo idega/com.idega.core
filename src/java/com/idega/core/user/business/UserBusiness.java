@@ -62,9 +62,18 @@ public class UserBusiness {
 
 
 
-
     userToAdd.insert();
 
+    /*
+    UserGroupRepresentative group = new UserGroupRepresentative();
+    group.setName(userToAdd.getName());
+    group.setDescription("User representive in table ic_group");
+    group.insert();
+
+    userToAdd.setGroupID(group.getID());
+
+    userToAdd.update();
+*/
     return userToAdd;
 
   }
