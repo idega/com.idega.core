@@ -80,8 +80,7 @@ public class BlobInputStream extends InputStream{
     }
     finally{
       if (conn!= null){
-       // ConnectionBroker.freeConnection(conn);
-        PoolManager.getInstance().freeConnection(conn);
+       ConnectionBroker.freeConnection(conn);
       }
     }
   }
@@ -158,8 +157,7 @@ public class BlobInputStream extends InputStream{
   }
 
   private void initConnection() throws SQLException{
-    //  conn = ConnectionBroker.getConnection();
-    conn = PoolManager.getInstance().getConnection();
+    conn = ConnectionBroker.getConnection();
   }
 /*
   protected void finalize()throws Throwable{
