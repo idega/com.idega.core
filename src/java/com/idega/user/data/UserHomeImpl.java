@@ -48,6 +48,13 @@ public User findUserFromEmail(java.lang.String p0)throws java.rmi.RemoteExceptio
 	return this.findByPrimaryKey(pk);
 }
 
+public User findByPersonalID(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((UserBMPBean)entity).ejbFindByPersonalID(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
  public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (User) super.findByPrimaryKeyIDO(pk);
  }

@@ -8,6 +8,7 @@ public interface User extends com.idega.data.IDOEntity
  public void setDateOfBirth(java.sql.Date p0) throws java.rmi.RemoteException;
  public java.util.Collection getEmails() throws java.rmi.RemoteException;
  public void setSystemImageID(int p0) throws java.rmi.RemoteException;
+ public java.lang.String getPersonalID() throws java.rmi.RemoteException;
  public void setGroupID(int p0) throws java.rmi.RemoteException;
  public com.idega.user.data.Group getUserGroup() throws java.rmi.RemoteException;
  public void setFirstName(java.lang.String p0) throws java.rmi.RemoteException;
@@ -24,6 +25,7 @@ public interface User extends com.idega.data.IDOEntity
  public void setPrimaryGroupID(java.lang.Integer p0) throws java.rmi.RemoteException;
  public void addPhone(com.idega.core.data.Phone p0)throws com.idega.data.IDOAddRelationshipException, java.rmi.RemoteException;
  public void setSystemImageID(java.lang.Integer p0) throws java.rmi.RemoteException;
+ public void setPersonalID(java.lang.String p0) throws java.rmi.RemoteException;
  public void removeAllEmails()throws com.idega.data.IDORemoveRelationshipException, java.rmi.RemoteException;
  public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
  public int getSystemImageID() throws java.rmi.RemoteException;

@@ -44,6 +44,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       addAttribute(getColumnNameDisplayName(),"Display name",true,true,java.lang.String.class);
       addAttribute(getColumnNameDescription(),"Description",true,true,java.lang.String.class);
       addAttribute(getColumnNameDateOfBirth(),"Birth date",true,true,java.sql.Date.class);
+      addAttribute(getColumnNamePersonalID(),"Personal ID",true,true,String.class,20);
       addManyToOneRelationship(getColumnNameGender(),"Gender",com.idega.user.data.Gender.class);
       addOneToOneRelationship(getColumnNameSystemImage(),"Image",com.idega.core.data.ICFile.class);
       addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",Group.class);
@@ -53,6 +54,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
       this.setNullable(getColumnNameSystemImage(),true);
       this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
+      this.setUnique(getColumnNamePersonalID(),true);
       //temp
       this.addManyToManyRelationShip(Group.class,"ic_group_user");
     }
@@ -92,10 +94,15 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
     public static String getColumnNameSystemImage(){return "system_image_id";}
     public static final String _COLUMNNAME_USER_GROUP_ID = "user_representative";
     public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "primary_group";
+    public static String getColumnNamePersonalID(){return "PERSONAL_ID";}
     /*  ColumNames end   */
 
 
     /*  Getters begin   */
+
+    public String getPersonalID(){
+      return getStringColumnValue(getColumnNamePersonalID());
+    }
 
     public String getFirstName() {
       return (String) getColumnValue(getColumnNameFirstName());
@@ -176,6 +183,10 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
 
 
     /*  Setters begin   */
+
+    public void setPersonalID(String personalId){
+      setColumn(getColumnNamePersonalID(),personalId);
+    }
 
     public void setFirstName(String fName) {
       if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
@@ -332,6 +343,14 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       Collection coll =  super.idoFindIDsBySQL(sql.toString());
       if(!coll.isEmpty())
         return (Integer)coll.iterator().next();
+      else
+        throw new FinderException("No user found");
+    }
+
+    public Integer ejbFindByPersonalID(String personalId)throws FinderException,RemoteException{
+      Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(),personalId);
+      if(!users.isEmpty())
+        return (Integer)users.iterator().next();
       else
         throw new FinderException("No user found");
     }
