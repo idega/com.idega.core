@@ -279,18 +279,9 @@ public class SelectionBox extends InterfaceObject
 			this.getParentForm().setOnSubmit("selectAllInSelectionBox(this." + this.getName() + ")");
 		}
 		if (isSetAsNotEmpty) {
-			getParentForm().setOnSubmit("return checkSubmit(this)");
-			setCheckSubmit();
-			getScript().addToFunction("checkSubmit", "if (warnIfNonSelected (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "') == false ){\nreturn false;\n}\n");
-			getScript().addFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
+			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
 		}
 
-	}
-
-	private void setCheckSubmit() {
-		if (getScript().getFunction("checkSubmit") == null) {
-			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
-		}
 	}
 
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue)

@@ -26,6 +26,7 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 	}
 	
 	public void main(IWContext iwc) throws Exception{
+		super.main(iwc);
 		if( countryName!=null && country == null) {
 			country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);			
 		}
