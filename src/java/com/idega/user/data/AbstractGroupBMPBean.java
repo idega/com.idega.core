@@ -243,6 +243,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public void addRelation(Group groupToAdd, String relationType) throws CreateException, RemoteException {
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
 	}
+	
+	public Collection getReverseRelatedBy(String relationType) throws FinderException, RemoteException {
+		return this.getGeneralGroup().getReverseRelatedBy(relationType);
+	}
 
 	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException, RemoteException {
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
