@@ -131,7 +131,7 @@ public class IWBundle{
     }
 
     public String getProperty(String propertyName, String returnValueIfNull){
-      String prop = propertyList.getProperty(propertyName);
+      String prop = getProperty(propertyName);
       if( prop == null ) return returnValueIfNull;
       else return prop;
     }

@@ -120,12 +120,19 @@ public class IWResourceBundle extends ResourceBundle {
      * Uses getString but returns null if resource is not found
      */
     public String getLocalizedString(String key){
+
       try{
         return super.getString(key);
       }
       catch(MissingResourceException e){
         return null;
       }
+    }
+
+    public String getLocalizedString(String key, String returnValueIfNull){
+      String returnString = getLocalizedString(key);
+      if (returnString == null) return returnValueIfNull;
+      else return returnString;
     }
 
     /**
