@@ -63,6 +63,7 @@ public class Button {
   private String text;
   private Font font;
   private BufferedImage image;
+  private Graphics2D g;
 
 
   public Button() {
@@ -157,8 +158,7 @@ public class Button {
   public void generate(String folderPath) {
 
     image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-    //AffineTransform trans = new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
-    Graphics2D g = null;
+
     g = image.createGraphics();
 
     g.setBackground(borderColor);
@@ -191,6 +191,7 @@ public class Button {
       width = tWidth+8;
       image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
       g = image.createGraphics();
+      if( font!= null ) g.setFont(font);
     }
     textXPos = (width-tWidth)/2;
     textYPos = (height+tHeight)/2;
