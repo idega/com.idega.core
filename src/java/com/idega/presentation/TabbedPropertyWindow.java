@@ -1,9 +1,14 @@
 package com.idega.presentation;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+
+import com.idega.business.IBOLookup;
+import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.ui.Window;
-import com.idega.presentation.FrameSet;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.text.Text;
 
 
@@ -47,8 +52,15 @@ public abstract class TabbedPropertyWindow extends Window {
     }
 
     if(panel.clickedCancel() || panel.clickedOk()){
-      if(panel.clickedOk()){
-        this.setParentToReload();
+      if(panel.clickedOk() || panel.clickedApply()){
+        iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
+        iwc.getApplicationContext().removeApplicationAttribute("group_tree");    
+        setOnLoad(iwc);
+        //this.setParentToReload();
+      }
+      else {
+        // cancel was clicked
+        clearOnLoad(iwc);
       }
       this.close();
       panel.dispose(iwc);
@@ -75,6 +87,42 @@ public abstract class TabbedPropertyWindow extends Window {
   	return false;
   }
 
+  private void setOnLoad(IWContext iwc)  {
+		Iterator iterator = getControllerIterator(iwc);
+    while (iterator.hasNext())  {
+      IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
+      Set onLoadSet = state.getOnLoadSet();
+      Iterator iter = onLoadSet.iterator();
+      while (iter.hasNext()) {
+        // this is a pop up window therefore add window.opener as prefix
+        StringBuffer buffer = new StringBuffer("window.opener.");
+        buffer.append((String) iter.next());
+        this.setOnLoad(buffer.toString());
+      }
+      state.clearOnLoad();
+    }
+  }
 
+	private Iterator getControllerIterator(IWContext iwc) {
+		IWStateMachine stateMachine;
+		Collection controllers;   
+		try {
+		  stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwc,IWStateMachine.class);
+		  controllers = stateMachine.getAllControllers();
+		}
+		catch (RemoteException re) {
+		  throw new RuntimeException(re.getMessage());
+		}
+		Iterator iterator = controllers.iterator();
+		return iterator;
+	}
+
+  private void clearOnLoad(IWContext iwc)  {
+    Iterator iterator = getControllerIterator(iwc);
+    while (iterator.hasNext())  {
+      IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
+      state.clearOnLoad();
+    }
+  }
 
 }
