@@ -22,9 +22,9 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public void setInitiationDate(java.sql.Timestamp p0);
  public void setPassive();
  public void setPassiveBy(int p0);
- public void setRelatedGroup(com.idega.user.data.Group p0)throws java.rmi.RemoteException;
- public void setRelatedGroup(int p0)throws java.rmi.RemoteException;
- public void setRelatedUser(com.idega.user.data.User p0)throws java.rmi.RemoteException;
+ public void setRelatedGroup(com.idega.user.data.Group p0);
+ public void setRelatedGroup(int p0);
+ public void setRelatedUser(com.idega.user.data.User p0);
  public void setRelationship(com.idega.user.data.GroupRelationType p0);
  public void setRelationshipType(java.lang.String p0);
  public void setStatus(java.lang.String p0);

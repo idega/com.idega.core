@@ -491,12 +491,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   
   public void removeUserFromGroup(User user, Group group, User currentUser)  {
-    try {
-      group.removeUser(user, currentUser);
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
+    group.removeUser(user, currentUser);
   }
 
   public  void setPermissionGroup(User user, Integer primaryGroupId) throws IDOStoreException,RemoteException {

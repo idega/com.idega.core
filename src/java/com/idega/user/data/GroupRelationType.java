@@ -3,10 +3,10 @@ package com.idega.user.data;
 
 public interface GroupRelationType extends com.idega.data.IDOEntity
 {
- public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
- public java.lang.String getDescription() throws java.rmi.RemoteException;
- public java.lang.Class getPrimaryKeyClass() throws java.rmi.RemoteException;
- public java.lang.String getIDColumnName() throws java.rmi.RemoteException;
- public java.lang.String getType() throws java.rmi.RemoteException;
- public void setType(java.lang.String p0) throws java.rmi.RemoteException;
+ public void setDescription(java.lang.String p0);
+ public java.lang.String getDescription();
+ public java.lang.Class getPrimaryKeyClass();
+ public java.lang.String getIDColumnName();
+ public java.lang.String getType();
+ public void setType(java.lang.String p0);
 }

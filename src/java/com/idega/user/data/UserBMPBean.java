@@ -291,30 +291,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public int getHomePageID() {
-		try {
 			return getGeneralGroup().getHomePageID();
-		}
-		catch (RemoteException e) {
-			return -1;
-		}
 	}
 
 	public IBPage getHomePage() {
-		try {
-			return getGeneralGroup().getHomePage();
-		}
-		catch (RemoteException e) {
-			return null;
-		}
+		return getGeneralGroup().getHomePage();
 	}
 	
 	public Timestamp getCreated() {
-		try {
-			return getGeneralGroup().getCreated();
-		}
-		catch (RemoteException e) {
-			return null;
-		}
+		return getGeneralGroup().getCreated();
 	}
   
   public boolean getDeleted() {
@@ -1047,15 +1032,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @deprecated
 	 */
 	public Group getUserGroup() {
-		try {
-			return getGeneralGroup();
-		}
-		catch (RemoteException ex) {
-			throw new EJBException(ex);
-		}
+		return getGeneralGroup();
 	}
 
-	protected Group getGeneralGroup() throws RemoteException {
+	protected Group getGeneralGroup() {
 		if (_group == null) {
 			try {
 				Integer groupID;

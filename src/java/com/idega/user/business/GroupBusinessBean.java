@@ -325,18 +325,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * Returns recursively up the group tree parents of group aGroup * @param aGroup The Group to be found parents recursively for. * @return Collection of Groups found recursively up the tree
  * @throws EJBException If an error occured */
 	public  Collection getParentGroupsRecursive(Group aGroup) throws EJBException {
-		try{
-		  //public  Collection getGroupsContaining(Group group) throws EJBException,RemoteException {
-		    //filter
-		    String[] groupsNotToReturn = new String[1];
-		    //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-		    groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-		    //filter end
-		    return getParentGroupsRecursive(aGroup,groupsNotToReturn,false);
-		}
-		catch(IOException ex){
-      		throw new IBORuntimeException(ex);
-		}
+		String[] groupsNotToReturn = new String[1];
+		//groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+		groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
+		//filter end
+		return getParentGroupsRecursive(aGroup,groupsNotToReturn,false);
   }
 
 
@@ -359,87 +352,77 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	/**
    * @todo change implementation: create method getGroupsContaining(List groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
    */
-	try{
-    Collection groups = aGroup.getParentGroups();
-
-    if (groups != null && groups.size() > 0){
-      Map GroupsContained = new Hashtable();
-
-      String key = "";
-      Iterator iter = groups.iterator();
-      while (iter.hasNext()) {
-        Group item = (Group)iter.next();
-        key = item.getPrimaryKey().toString();
-        if(!GroupsContained.containsKey(key)){
-          GroupsContained.put(key,item);
-          putGroupsContaining( item, GroupsContained );
-        }
-      }
-
-      List specifiedGroups = new ArrayList();
-      List notSpecifiedGroups = new ArrayList();
-      int j = 0;
-      int k = 0;
-      Iterator iter2 = GroupsContained.values().iterator();
-      if(groupTypes != null && groupTypes.length > 0){
-        boolean specified = false;
-        while (iter2.hasNext()) {
-          Group tempObj = (Group)iter2.next();
-          for (int i = 0; i < groupTypes.length; i++) {
-            if (tempObj.getGroupType().equals(groupTypes[i])){
-              specifiedGroups.add(j++, tempObj);
-              specified = true;
-            }
-          }
-          if(!specified){
-            notSpecifiedGroups.add(k++, tempObj);
-          }else{
-            specified = false;
-          }
-        }
-        notSpecifiedGroups.remove(aGroup);
-        specifiedGroups.remove(aGroup);
-      } else {
-        while (iter2.hasNext()) {
-          Group tempObj = (Group)iter2.next();
-          notSpecifiedGroups.add(j++, tempObj);
-        }
-        notSpecifiedGroups.remove(aGroup);
-        returnSpecifiedGroupTypes = false;
-      }
-
-      return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
-    }else{
-      return null;
-    }
-	}
-	catch(IOException io){
-		throw new IBORuntimeException(io,this);
+	Collection groups = aGroup.getParentGroups();
+	
+	if (groups != null && groups.size() > 0){
+	  Map GroupsContained = new Hashtable();
+	
+	  String key = "";
+	  Iterator iter = groups.iterator();
+	  while (iter.hasNext()) {
+	    Group item = (Group)iter.next();
+	    key = item.getPrimaryKey().toString();
+	    if(!GroupsContained.containsKey(key)){
+	      GroupsContained.put(key,item);
+	      putGroupsContaining( item, GroupsContained );
+	    }
+	  }
+	
+	  List specifiedGroups = new ArrayList();
+	  List notSpecifiedGroups = new ArrayList();
+	  int j = 0;
+	  int k = 0;
+	  Iterator iter2 = GroupsContained.values().iterator();
+	  if(groupTypes != null && groupTypes.length > 0){
+	    boolean specified = false;
+	    while (iter2.hasNext()) {
+	      Group tempObj = (Group)iter2.next();
+	      for (int i = 0; i < groupTypes.length; i++) {
+	        if (tempObj.getGroupType().equals(groupTypes[i])){
+	          specifiedGroups.add(j++, tempObj);
+	          specified = true;
+	        }
+	      }
+	      if(!specified){
+	        notSpecifiedGroups.add(k++, tempObj);
+	      }else{
+	        specified = false;
+	      }
+	    }
+	    notSpecifiedGroups.remove(aGroup);
+	    specifiedGroups.remove(aGroup);
+	  } else {
+	    while (iter2.hasNext()) {
+	      Group tempObj = (Group)iter2.next();
+	      notSpecifiedGroups.add(j++, tempObj);
+	    }
+	    notSpecifiedGroups.remove(aGroup);
+	    returnSpecifiedGroupTypes = false;
+	  }
+	
+	  return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+	}else{
+	  return null;
 	}
   }
 
   private  void putGroupsContaining(Group group, Map GroupsContained ) {
-  	try{
-	    Collection pGroups = group.getParentGroups();
-	    if (pGroups != null ){
-	      String key = "";
-	      Iterator iter = pGroups.iterator();
-	      while (iter.hasNext()) {
-	        Group item = (Group)iter.next();
-	        if(item!=null){
-		        key = item.getPrimaryKey().toString();
-		        
-		        if(!GroupsContained.containsKey(key)){
-		          GroupsContained.put(key,item);
-		          putGroupsContaining(item, GroupsContained);
-		        }
-	        }
-	      }
-	    }
-  	}
-  	catch(RemoteException e){
-  		throw new IBORuntimeException(e,this);
-  	}
+  	Collection pGroups = group.getParentGroups();
+		if (pGroups != null ){
+		  String key = "";
+		  Iterator iter = pGroups.iterator();
+		  while (iter.hasNext()) {
+		    Group item = (Group)iter.next();
+		    if(item!=null){
+		      key = item.getPrimaryKey().toString();
+		      
+		      if(!GroupsContained.containsKey(key)){
+		        GroupsContained.put(key,item);
+		        putGroupsContaining(item, GroupsContained);
+		      }
+		    }
+		  }
+		}
   }
 
 
@@ -503,17 +486,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  */
    public  Collection getChildGroupsRecursive(Group aGroup) throws EJBException{
   //public  Collection getGroupsContained(Group group) throws EJBException,RemoteException{
-  	try{
-	    //filter
-	    String[] groupsNotToReturn = new String[1];
-	    groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-	    //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-	    //filter end
-	    return getChildGroupsRecursive(aGroup,groupsNotToReturn,false);
-  	}
-  	catch(IOException e){
-  		throw new IBORuntimeException(e,this);
-  	}
+  	String[] groupsNotToReturn = new String[1];
+		groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
+		//groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+		//filter end
+		return getChildGroupsRecursive(aGroup,groupsNotToReturn,false);
   }
 
 
@@ -1396,19 +1373,14 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   public String getNameOfGroupWithParentName(Group group) {
     StringBuffer buffer = new StringBuffer();    
     Collection parents = getParentGroups(group);
-    try {
-			buffer.append(group.getName()).append(" ");
-      if(parents!=null && !parents.isEmpty()) {
-        Iterator par = parents.iterator();
-        Group parent = (Group) par.next();
-        buffer.append("(").append(parent.getName()).append(") ");
-      }
-      
-      return buffer.toString();
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
+    buffer.append(group.getName()).append(" ");
+		if(parents!=null && !parents.isEmpty()) {
+		  Iterator par = parents.iterator();
+		  Group parent = (Group) par.next();
+		  buffer.append("(").append(parent.getName()).append(") ");
+		}
+		
+		return buffer.toString();
   }
 
 

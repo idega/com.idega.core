@@ -18,7 +18,7 @@ public class GroupDomainRelationTypeHomeImpl extends com.idega.data.IDOFactory i
  }
 
 
-public com.idega.user.data.GroupDomainRelationType getTopNodeRelationType()throws javax.ejb.FinderException,java.rmi.RemoteException{
+public com.idega.user.data.GroupDomainRelationType getTopNodeRelationType()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	com.idega.user.data.GroupDomainRelationType theReturn = ((GroupDomainRelationTypeBMPBean)entity).ejbHomeGetTopNodeRelationType();
 	this.idoCheckInPooledEntity(entity);

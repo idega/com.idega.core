@@ -8,6 +8,7 @@ import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 
 
 /**
@@ -87,8 +88,14 @@ public class GroupDomainRelationTypeBMPBean extends GenericEntity implements Gro
     return String.class;
   }
 
-  public GroupDomainRelationType ejbHomeGetTopNodeRelationType() throws RemoteException, FinderException {
-    return ((GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class)).findByPrimaryKey(RELATION_TYPE_TOP_NODE);
+  public GroupDomainRelationType ejbHomeGetTopNodeRelationType() throws FinderException {
+    try {
+			return ((GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class)).findByPrimaryKey(RELATION_TYPE_TOP_NODE);
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
   }
 
 //  public String ejbHomeGetPrimaryKeyForCreationLocationRelation(){

@@ -1,14 +1,14 @@
 package com.idega.user.data;
 
-import com.idega.data.*;
-import com.idega.presentation.IWContext;
-import com.idega.util.IWTimestamp;
-
-//import java.util.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.rmi.RemoteException;
-import javax.ejb.*;
+
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+
+import com.idega.data.GenericEntity;
+import com.idega.presentation.IWContext;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:
@@ -67,15 +67,15 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return (Group)getColumnValue(GROUP_ID_COLUMN);
   }
 
-  public void setRelatedGroup(Group group)throws RemoteException{
+  public void setRelatedGroup(Group group){
     this.setColumn(RELATED_GROUP_ID_COLUMN,group);
   }
 
-  public void setRelatedGroup(int groupID)throws RemoteException{
+  public void setRelatedGroup(int groupID){
     this.setColumn(RELATED_GROUP_ID_COLUMN,groupID);
   }
 
-  public void setRelatedUser(User user)throws RemoteException{
+  public void setRelatedUser(User user){
     setRelatedGroup(user);
   }
 
@@ -162,40 +162,40 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   /**Finders begin**/
 
-  public Collection ejbFindGroupsRelationshipsUnder(Group group)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsUnder(Group group)throws FinderException{
     return this.idoFindAllIDsByColumnOrderedBySQL(this.GROUP_ID_COLUMN,group.getPrimaryKey().toString());
   }
 
-  public Collection ejbFindGroupsRelationshipsContaining(Group group)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(Group group)throws FinderException{
     return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,group.getPrimaryKey().toString());
   }
 
-  public Collection ejbFindGroupsRelationshipsContaining(Group group,Group relatedGroup)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(Group group,Group relatedGroup)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+this.GROUP_ID_COLUMN+"="+group.getPrimaryKey().toString());
   }
 
-  public Collection ejbFindGroupsRelationshipsUnder(int groupID)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsUnder(int groupID)throws FinderException{
     return this.idoFindAllIDsByColumnOrderedBySQL(this.GROUP_ID_COLUMN,groupID);
   }
 
   /**
    * Finds all active relationships specified only in one direction with groupID as specified
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType as specified
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
   
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType,String orRelationType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType,String orRelationType)throws FinderException{
     String firstRelationTypeClause = getRelationTypeWhereClause(relationType);
     String secondRelationTypeClause = getRelationTypeWhereClause(orRelationType);
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
@@ -206,14 +206,14 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType as specified
    */
-  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
   
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
    */
-  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType,String orRelationType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType,String orRelationType)throws FinderException{
     String firstRelationTypeClause = getRelationTypeWhereClause(relationType);
     String secondRelationTypeClause = getRelationTypeWhereClause(orRelationType);
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
@@ -232,42 +232,42 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
     return ejbFindGroupsRelationshipsContainingUniDirectional(groupID,relatedGroupID,relationshipType);
   }
 
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID as specified
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID)throws FinderException{
     return ejbFindGroupsRelationshipsContainingUniDirectional(groupID,relatedGroupID);
   }
 
   /**
    * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID as specified
    */
-  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ( ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") ) and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**
    * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID and relationshipType as specified
    */
-  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ( ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") ) and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID as specified
    */
-  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
    */
-  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 

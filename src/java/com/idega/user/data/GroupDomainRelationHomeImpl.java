@@ -13,49 +13,49 @@ public class GroupDomainRelationHomeImpl extends com.idega.data.IDOFactory imple
  }
 
 
-public java.util.Collection findDomainsRelationshipsContaining(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findDomainsRelationshipsContaining(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindDomainsRelationshipsContaining(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findDomainsRelationshipsContaining(com.idega.builder.data.IBDomain p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findDomainsRelationshipsContaining(com.idega.builder.data.IBDomain p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindDomainsRelationshipsContaining(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findDomainsRelationshipsContaining(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findDomainsRelationshipsContaining(int p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindDomainsRelationshipsContaining(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
 	this.idoCheckInPooledEntity(entity);

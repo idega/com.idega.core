@@ -62,7 +62,6 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	}
 
 	public Object ejbCreate() throws CreateException {
-		try {
 			_group = this.getGroupHome().create();
 			_group.setGroupType(this.getGroupTypeKey());
 			_group.setName(this.getName() + "");
@@ -70,10 +69,6 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			this.setPrimaryKey(_group.getPrimaryKey());
 
 			return super.ejbCreate();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
 	}
 
 	public String ejbHomeGetGroupType() {
@@ -81,12 +76,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	}
 
 	public void setDefaultValues() {
-		try {
 			setGroupType(getGroupTypeKey());
-		}
-		catch (RemoteException e) {
-			throw new EJBException(e.getMessage());
-		}
 	}
 
 	public void insertStartData() {
@@ -127,7 +117,6 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	  }
 	*/
 	public void store() throws IDOStoreException {
-		try {
 			if (this.getGroupType() == null) { // || getGroupHome().getGroupType().equals(this.getGroupType())
 				this.setGroupType(this.getGroupTypeKey());
 			}
@@ -135,27 +124,26 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			//      System.out.println("User before/st primaryKey = " + this.getPrimaryKey());
 			super.store();
 			//      System.out.println("User after/st primaryKey = " + this.getPrimaryKey());
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
 	}
 
-	public void remove() throws RemoveException {
-		try {
+	public void remove() throws RemoveException{
 			super.remove();
 			getGeneralGroup().remove();
-		}
-		catch (RemoteException rme) {
-			throw new RemoveException(rme.getMessage());
-		}
 	}
 
-	protected GroupHome getGroupHome() throws RemoteException {
-		return (GroupHome) com.idega.data.IDOLookup.getHome(Group.class);
+	protected GroupHome getGroupHome(){
+		GroupHome home = null;
+		try {
+		 home = (GroupHome) com.idega.data.IDOLookup.getHome(Group.class);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		return home;
 	}
 
-	protected Group getGeneralGroup() throws RemoteException {
+	protected Group getGeneralGroup(){
 		if (_group == null) {
 			try {
 				_group = getGroupHome().findByPrimaryKey(this.getPrimaryKey());
@@ -189,35 +177,35 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
-	public String getGroupType() throws java.rmi.RemoteException {
+	public String getGroupType(){
 		return getGeneralGroup().getGroupType();
 	}
 
-	public void setGroupType(String type) throws java.rmi.RemoteException {
+	public void setGroupType(String type){
 		getGeneralGroup().setGroupType(type);
 	}
 
-	public String getDescription() throws java.rmi.RemoteException {
+	public String getDescription(){
 		return getGeneralGroup().getDescription();
 	}
 
-	public void setDescription(String description) throws java.rmi.RemoteException {
+	public void setDescription(String description){
 		getGeneralGroup().setDescription(description);
 	}
 
-	public String getExtraInfo() throws java.rmi.RemoteException {
+	public String getExtraInfo(){
 		return getGeneralGroup().getExtraInfo();
 	}
 
-	public void setExtraInfo(String extraInfo) throws java.rmi.RemoteException {
+	public void setExtraInfo(String extraInfo){
 		getGeneralGroup().setExtraInfo(extraInfo);
 	}
 
-	public Timestamp getCreated() throws java.rmi.RemoteException {
+	public Timestamp getCreated(){
 		return getGeneralGroup().getCreated();
 	}
 
-	public void setCreated(Timestamp created) throws java.rmi.RemoteException {
+	public void setCreated(Timestamp created){
 		getGeneralGroup().setCreated(created);
 	}
 
@@ -232,99 +220,94 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	/**
 	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
-	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException, RemoteException {
+	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException{
 		return this.getGeneralGroup().getRelatedBy(relationType);
 	}
 
 	/**
 	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
-	public Collection getRelatedBy(String relationType) throws FinderException, RemoteException {
+	public Collection getRelatedBy(String relationType) throws FinderException{
 		return this.getGeneralGroup().getRelatedBy(relationType);
 	}
 
-	public void addRelation(Group groupToAdd, String relationType) throws CreateException, RemoteException {
+	public void addRelation(Group groupToAdd, String relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
 	}
 	
-	public Collection getReverseRelatedBy(String relationType) throws FinderException, RemoteException {
+	public Collection getReverseRelatedBy(String relationType) throws FinderException{
 		return this.getGeneralGroup().getReverseRelatedBy(relationType);
 	}
 
-	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException, RemoteException {
+	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
 	}
 
-	public void addRelation(int relatedGroupId, GroupRelationType relationType) throws CreateException, RemoteException {
+	public void addRelation(int relatedGroupId, GroupRelationType relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(relatedGroupId, relationType);
 	}
 	
-	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
+	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException{
 		this.getGeneralGroup().addUniqueRelation(relatedGroupId, relationType);
 	}
 	
-	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException, RemoteException {
+	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException{
 		this.getGeneralGroup().addUniqueRelation(relatedGroup, relationType);
 	}
 
-	public void addRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
+	public void addRelation(int relatedGroupId, String relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(relatedGroupId, relationType);
 	}
 
-	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException, RemoteException {
+	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroup, relationType);
 	}
 
-	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException, RemoteException {
+	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroupId, relationType);
 	}
 
-	public java.util.List getParentGroups() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public java.util.List getParentGroups() throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getParentGroups();
 	}
 
-	public void addGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+	public void addGroup(com.idega.user.data.Group p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
 
-	public java.util.List getChildGroups(java.lang.String[] p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public java.util.List getChildGroups(java.lang.String[] p0, boolean p1) throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups(p0, p1);
 	}
 
-	public void addGroup(int p0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public void addGroup(int p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
 
-	public java.util.List getChildGroups() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public java.util.List getChildGroups() throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups();
 	}
 
 	public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)
-		throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+		throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getAllGroupsContainingUser(p0);
 	}
 
-	public java.lang.String getGroupTypeValue() throws java.rmi.RemoteException {
+	public java.lang.String getGroupTypeValue(){
 		return this.getGroupTypeKey();
 	}
 
-	public boolean hasRelationTo(Group group) throws java.rmi.RemoteException {
+	public boolean hasRelationTo(Group group){
 		return this.getGeneralGroup().hasRelationTo(group);
 	}
 	
-	public boolean hasRelationTo(int groupId, String relationType) throws RemoteException {
+	public boolean hasRelationTo(int groupId, String relationType) {
 		return this.getGeneralGroup().hasRelationTo(groupId, relationType);
 	}
 
 	protected boolean equals(com.idega.user.data.Group group) {
 		//System.out.println("AbstractPratyBMPBean in equals(com.idega.user.data.Group p0)");
 		if (group instanceof AbstractGroupBMPBean) {
-			try {
-				return this.getGeneralGroup().equals(((AbstractGroupBMPBean) group).getGeneralGroup());
-			}
-			catch (RemoteException ex) {
-				throw new EJBException(ex);
-			}
+			return this.getGeneralGroup().equals(((AbstractGroupBMPBean) group).getGeneralGroup());
 		}
 		else {
 			try {
@@ -340,12 +323,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public boolean equals(Object obj) {
 		//    System.out.println("AbstractPratyBMPBean in equals(Object obj)");
 		if (obj instanceof AbstractGroupBMPBean) {
-			try {
-				return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
-			}
-			catch (RemoteException ex) {
-				throw new EJBException(ex);
-			}
+			return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
 		}
 		else if (obj instanceof Group) {
 			//return super.equals((Group)obj);
@@ -358,12 +336,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 
 	public boolean equals(IDOEntity obj) {
 		if (obj instanceof AbstractGroupBMPBean) {
-			try {
-				return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
-			}
-			catch (RemoteException ex) {
-				throw new EJBException(ex);
-			}
+			return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
 		}
 		else if (obj instanceof Group) {
 			return super.equals((Group) obj);
@@ -391,85 +364,35 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	 */
 
 	public Iterator getChildren() {
-		try {
-			return this.getGeneralGroup().getChildren();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getChildren();
 	}
 
 	public boolean getAllowsChildren() {
-		try {
-			return this.getGeneralGroup().getAllowsChildren();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getAllowsChildren();
 	}
 	public ICTreeNode getChildAtIndex(int childIndex) {
-		try {
-			return this.getGeneralGroup().getChildAtIndex(childIndex);
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getChildAtIndex(childIndex);
 	}
 	public int getChildCount() {
-		try {
-			return this.getGeneralGroup().getChildCount();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getChildCount();
 	}
 	public int getIndex(ICTreeNode node) {
-		try {
-			return this.getGeneralGroup().getIndex(node);
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getIndex(node);
 	}
 	public ICTreeNode getParentNode() {
-		try {
-			return this.getGeneralGroup().getParentNode();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getParentNode();
 	}
 	public boolean isLeaf() {
-		try {
-			return this.getGeneralGroup().isLeaf();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().isLeaf();
 	}
 	public String getNodeName() {
-		try {
-			return this.getGeneralGroup().getNodeName();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getNodeName();
 	}
 	public int getNodeID() {
-		try {
-			return this.getGeneralGroup().getNodeID();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getNodeID();
 	}
 	public int getSiblingCount() {
-		try {
-			return this.getGeneralGroup().getSiblingCount();
-		}
-		catch (RemoteException rme) {
-			throw new EJBException(rme.getMessage());
-		}
+		return this.getGeneralGroup().getSiblingCount();
 	}
 
 	/**
