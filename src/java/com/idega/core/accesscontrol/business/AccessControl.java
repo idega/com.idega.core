@@ -205,6 +205,18 @@ public class AccessControl{
   public static boolean hasPermission(String permissionType, ModuleObject obj,ModuleInfo modinfo) throws SQLException{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
+    // Default permission: view == true if not Page, else false
+    // If no permission set, view = true for all objects other than Page objects
+    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
+      // if some view permission for object, bundle, ... are set
+      // then do nothing
+      // else true
+      // => view hashtable for obj, ...  has object
+      if(!PermissionCacher.permissionSet( obj, modinfo, permissionType)){
+        return true;
+      }
+    }
+
     if (isAdmin(modinfo)){
       return true;
     }
@@ -282,24 +294,6 @@ public class AccessControl{
           return myPermission.booleanValue();
         }
       }
-    }
-
-    // Default permission: view == true if not Page, else false
-    // If no permission set, view = true for all objects other than Page objects
-    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
-      // if some view permission for object, bundle, ... are set
-      // then false
-      // else true
-      // => view hashtable for obj, ...  has object
-      return !PermissionCacher.permissionSet( obj, modinfo, permissionType);
-      /*
-      if(permissionSet( obj, modinfo, permissionType)){
-        return false;
-      }
-      else{
-        return true;
-      }
-      */
     }
 
     return false;
