@@ -15,6 +15,10 @@ import java.sql.Statement;
 public class SapDBDatastoreInterface extends DatastoreInterface{
 
 
+  SapDBDatastoreInterface(){
+    super.useTransactionsInEntityCreation=false;
+  }
+
   public String getSQLType(String javaClassName,int maxlength){
     String theReturn;
     if (javaClassName.equals("java.lang.Integer")){
