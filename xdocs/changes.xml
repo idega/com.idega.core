@@ -1,0 +1,28 @@
+<document>
+  <properties>
+    <title>Core changes</title>
+    <author email="tryggvi@idega.com">Tryggvi Larusson</author>
+  </properties>
+  <body>
+
+    <release version="2.0.0" date="2005-01-13">
+      <action dev="tryggvil" type="update">
+        Declaration of version for use in old style systems before a 3.0 release is declared.
+      </action>              
+    </release>
+
+    <release version="1.9" date="2004-09-07">
+      <action dev="tryggvil" type="update">
+        Declaring a 1.9 version before much of the maven refactoring is done.
+      </action>
+      <!--     
+      <action dev="tryggvil" type="fix" issue="JIRA-XXX">
+        Corrected bug blah blah.
+      </action>              
+      <action dev="vmassol" type="remove" due-to="John Doe" due-to-email="john@doe.com">
+        Removed blah blah.
+      </action>
+      -->
+    </release>
+  </body>
+</document>
