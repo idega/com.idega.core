@@ -69,6 +69,7 @@ public class ConnectionRefresher implements Runnable {
 			// !!!! Do not change this code. If this thread never dies the application will not restart proper !!!
 			// 
 			if (th instanceof ThreadDeath) {
+				System.out.println("Killing thread....");
 				throw (Error) th;
 			}
 		}
@@ -82,6 +83,7 @@ public class ConnectionRefresher implements Runnable {
 	}
 	
 	public void stop() {
+		System.out.println("Stopping ConnectionRefresher");
 		isRunning = false;
 		refresher.interrupt();
 		refresher = null;
