@@ -3,7 +3,6 @@ package com.idega.data;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.business.IBOLookup;
 
 
