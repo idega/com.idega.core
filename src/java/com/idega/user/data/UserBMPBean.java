@@ -2009,17 +2009,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
    * @param query
    */  
   private void appendIsNotDeleted(IDOQuery query) {
-    query
-			.append(getColumnNameDeleted()).appendNOTEqual().appendQuoted(GenericEntity.COLUMN_VALUE_TRUE);
-
-		/*
-		.appendLeftParenthesis()
-	  .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
-	  .appendOr()
-	  .append(getColumnNameDeleted())
-	  .append(" IS NULL ")
-	  .appendRightParenthesis();
-	  	*/
+    query      
+//			.append(getColumnNameDeleted()).appendNOTEqual().appendQuoted(GenericEntity.COLUMN_VALUE_TRUE);
+      .appendLeftParenthesis()
+      .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
+      .appendOr()
+      .append(getColumnNameDeleted())
+      .append(" IS NULL ")
+      .appendRightParenthesis();
   }
   
   
