@@ -1,0 +1,104 @@
+package com.idega.data;
+
+import java.util.Map;
+import java.util.Hashtable;
+import java.rmi.RemoteException;
+
+
+/**
+ * Title:        idegaclasses
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega
+ * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.0
+ */
+
+public class IDOLookup{
+
+  private static final String FACTORY_SUFFIX = "Factory";
+  private static final String BEAN_SUFFIX = "Bean";
+
+  private static Map homes = new Hashtable();
+
+
+  private IDOLookup() {
+  }
+
+  private static Class getFactoryClassFor(Class entityInterfaceClass)throws Exception{
+    String className = entityInterfaceClass.getName();
+    String homeClassName = className + FACTORY_SUFFIX;
+    return Class.forName(homeClassName);
+  }
+
+  static Class getBeanClassFor(Class entityInterfaceClass){
+    try{
+      String className = entityInterfaceClass.getName();
+      String homeClassName = className + BEAN_SUFFIX;
+      return Class.forName(homeClassName);
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  public static IDOHome getHome(Class entityInterfaceClass)throws RemoteException{
+    IDOHome home = (IDOHome)homes.get(entityInterfaceClass);
+    if(home==null){
+      try{
+        Class factoryClass = getFactoryClassFor(entityInterfaceClass);
+        home = (IDOHome)factoryClass.newInstance();
+        homes.put(entityInterfaceClass,home);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+    return home;
+  }
+
+  public static IDOEntity create(Class entityInterfaceClass)throws RemoteException,javax.ejb.CreateException{
+    return getHome(entityInterfaceClass).idoCreate();
+  }
+
+  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,int id)throws RemoteException,javax.ejb.FinderException{
+    return getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+  }
+
+  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,Integer id)throws RemoteException,javax.ejb.FinderException{
+    return getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+  }
+
+
+
+
+  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass)throws java.sql.SQLException{
+    try{
+      return (IDOLegacyEntity)getHome(entityInterfaceClass).idoCreate();
+    }
+    catch(Exception e){
+      throw new java.sql.SQLException(e.getMessage());
+    }
+  }
+
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id)throws java.sql.SQLException{
+    try{
+      return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+    }
+    catch(Exception e){
+      throw new java.sql.SQLException(e.getMessage());
+    }
+  }
+
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id)throws java.sql.SQLException{
+    try{
+      return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+    }
+    catch(Exception e){
+      throw new java.sql.SQLException(e.getMessage());
+    }
+  }
+
+
+}

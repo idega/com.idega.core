@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.49 2001/09/29 15:10:31 laddi Exp $
+ * $Id: GenericEntity.java,v 1.50 2001/10/04 18:45:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,7 +23,7 @@ import java.io.OutputStream;
 *@version 1.4
 *@modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
 */
-public abstract class GenericEntity implements java.io.Serializable {
+public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEntity,javax.ejb.EntityBean {
 
   private String dataStoreType;
   public Hashtable columns=new Hashtable();
@@ -42,14 +42,14 @@ public abstract class GenericEntity implements java.io.Serializable {
   private static String defaultString="default";
   private String cachedColumnNameList;
   private String lobColumnName;
-  private static boolean useEntityCacher=false;
 
   private int state;
 
   protected static int STATE_NEW=0;
   protected static int STATE_IN_SYNCH_WITH_DATASTORE=1;
   protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE=2;
-  protected static int STATE_DELETED=3;
+  protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE=3;
+  protected static int STATE_DELETED=4;
 
 
   public GenericEntity() {
@@ -382,7 +382,12 @@ public abstract class GenericEntity implements java.io.Serializable {
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
 			columns.put(columnName.toLowerCase(),columnValue);
-		        this.setEntityState(this.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+                        if((state==STATE_NEW)||(state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+                          setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+                        }
+                        else{
+		          this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+                        }
                 }
 	}
 
@@ -2286,4 +2291,80 @@ public abstract class GenericEntity implements java.io.Serializable {
   public void metaDataHasChanged(boolean metaDataHasChanged){
     this.metaDataHasChanged = metaDataHasChanged;
   }
+
+  /**
+   * not implemented
+   * @todo: implement
+   */
+  public javax.ejb.EJBHome getEJBHome(){
+    return null;
+  }
+
+  /**
+   * Not implemented
+   * @todo: implement
+   */
+  public javax.ejb.Handle getHandle(){
+    return null;
+  }
+
+  public Object getPrimaryKey(){
+    return new Integer(getID());
+  }
+
+  public boolean isIdentical(javax.ejb.EJBObject ejbo){
+    if(ejbo!=null){
+      try{
+        return ejbo.getPrimaryKey().equals(this.getPrimaryKey());
+      }
+      catch(java.rmi.RemoteException rme){
+        rme.printStackTrace();
+      }
+    }
+    return false;
+  }
+
+  public void remove(){
+    try{
+      delete();
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      throw new javax.ejb.EJBException(e.getMessage());
+    }
+  }
+
+
+  public void store(){
+    try{
+      if((state==STATE_NEW)||(state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+        insert();
+      }
+      else if(state==STATE_NOT_IN_SYNCH_WITH_DATASTORE){
+        update();
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      throw new javax.ejb.EJBException(e.getMessage());
+    }
+  }
+
+  public void ejbActivate(){}
+
+  public void ejbLoad(){}
+
+  public void ejbPassivate(){
+    if(columns!=null){
+      columns.clear();
+    }
+  }
+
+  public void ejbRemove(){remove();}
+
+  public void ejbStore(){store();}
+
+  public void setEntityContext(javax.ejb.EntityContext ctx){}
+
+  public void unsetEntityContext(){}
 }
