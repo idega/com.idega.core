@@ -18,11 +18,11 @@ public class ConnectionRefresher implements Runnable{
 
   private Thread refresher;
   private ConnectionPool pool;
-  private long interval;
+  private long refreshIntervalMillis;
 
-  protected ConnectionRefresher(ConnectionPool pool,long interval){
+  protected ConnectionRefresher(ConnectionPool pool,long refreshIntervalMillis){
     this.pool = pool;
-    this.interval = interval;
+    this.refreshIntervalMillis = refreshIntervalMillis;
     refresher=new Thread(this);
     refresher.setPriority(Thread.MIN_PRIORITY);
     refresher.start();
@@ -32,7 +32,7 @@ public class ConnectionRefresher implements Runnable{
     Thread thisThread = Thread.currentThread();
     while(refresher == thisThread){
       try{
-        refresher.sleep(this.interval+Math.round((this.interval/2)*Math.random()));
+        refresher.sleep(this.refreshIntervalMillis+Math.round((this.refreshIntervalMillis/2)*Math.random()));
         pool.refresh();
       }
       catch(InterruptedException ex){

@@ -244,10 +244,10 @@ public class PoolManager
    public synchronized void release()
    {
       // Wait until called by the last client
-      if (--clients != 0)
-      {
-         return;
-      }
+      //if (--clients != 0)
+      //{
+      //   return;
+      //}
 
       Enumeration allPools = pools.elements();
       while (allPools.hasMoreElements())

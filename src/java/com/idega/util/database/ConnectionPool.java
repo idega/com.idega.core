@@ -25,7 +25,7 @@ public class ConnectionPool
    private LogWriter logWriter;
 
    //private long lastRefresh;
-   private final long interval=1000000;
+   private final long refreshIntervalMillis=1000000;
    private ConnectionRefresher refresher;
 
    private int checkedOut;
@@ -59,15 +59,23 @@ public class ConnectionPool
       logWriter.log(getStats(), LogWriter.DEBUG);
    }
 
-   public void initializeRefresher(long interval){
-      refresher = new ConnectionRefresher(this,interval);
+   public void initializeRefresher(long refreshIntervalMillis){
+      refresher = new ConnectionRefresher(this,refreshIntervalMillis);
    }
 
    protected synchronized void refresh(){
       int size = freeConnections.size();
-      for(int i=0;i < minConns;i++){
+      int conns = this.checkedOut+this.freeConnections.size();
+      for(int i=0;i < conns;i++){
           try{
             Connection conn = getConnection();
+            try{
+              conn.commit();
+            }
+            catch(Exception ex){
+              System.err.println("Commit failed for connection in ConnectionPool.refresh()");
+              ex.printStackTrace();
+            }
             conn.close();
           }
           catch(SQLException ex){
@@ -91,7 +99,7 @@ public class ConnectionPool
    {
     //debug still active for now
      // lastRefresh = System.currentTimeMillis();
-    initializeRefresher(interval);
+    initializeRefresher(refreshIntervalMillis);
 
       //
       for (int i = 0; i < initConns; i++)
