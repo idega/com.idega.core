@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.103 2004/10/19 10:59:20 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.104 2004/10/25 14:41:48 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
@@ -55,6 +56,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.ui.Form;
 import com.idega.util.RenderUtils;
+import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.text.TextStyler;
 /**
@@ -523,7 +525,18 @@ implements Cloneable, PresentationObjectType
 	 */
 	public void print(String string)
 	{
-		out.print(string);
+		if(USE_JSF_RENDERING){
+			try {
+				FacesContext.getCurrentInstance().getResponseWriter().write(string);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else{
+			out.print(string);
+		}
 	}
 	/**
 	 * Uses the default PrintWriter object to print out a string with the
@@ -531,7 +544,20 @@ implements Cloneable, PresentationObjectType
 	 */
 	public void println(String string)
 	{
-		out.println(string);
+		if(USE_JSF_RENDERING){
+			try {
+				ResponseWriter writer = FacesContext.getCurrentInstance().getResponseWriter();
+				writer.write(string);
+				writer.write(StringHandler.NEWLINE);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else{
+			out.println(string);
+		}
 	}
 	public void renderComponent(IWContext iwc) throws Exception
 	{
