@@ -130,6 +130,12 @@ public class IWBundle{
       return propertyList.getProperty(propertyName);
     }
 
+    public String getProperty(String propertyName, String returnValueIfNull){
+      String prop = propertyList.getProperty(propertyName);
+      if( prop == null ) return returnValueIfNull;
+      else return prop;
+    }
+
     public void setProperty(String propertyName,String propertyValue){
       propertyList.setProperty(propertyName,propertyValue);
     }
