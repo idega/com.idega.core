@@ -23,12 +23,17 @@ public class SingleLineItem extends Component {
   private ActionListener actionListener = null;
   private boolean isSelected = false;
   private Window window;
+  private Vector components;
 
 
   public SingleLineItem() {
     addMouseListener(new ClickAdapter());
     setSize(getPreferredSize());
-    Panel panel = new Panel();
+  //  Panel panel = new Panel();
+  java.net.URL url = SingleLineItem.class.getResource("face_in.gif");
+  Image img=Toolkit.getDefaultToolkit().getImage(url);
+  add(new ImageLabel(img));
+
   }
 
   public void setComponentOffset(int componentOffset){
@@ -74,6 +79,13 @@ public class SingleLineItem extends Component {
           g.drawString("OFF",10,10);
         }
 
+        if( components!= null){
+          int length = components.size();
+          for (int i = 0; i < length; i++) {
+            ((Component)components.elementAt(i)).paint(g);
+          }
+        }
+
        /* if (isEnabled()) {
             if (pressed) {
 
@@ -108,6 +120,11 @@ public class SingleLineItem extends Component {
 
   private void openWindow(){
     if(window!=null) window.setVisible(true);
+  }
+
+  public void add(Component component){
+    if( components == null ) components = new Vector();
+    components.add(component);
   }
 
   /*public Image getGrayImage() {
