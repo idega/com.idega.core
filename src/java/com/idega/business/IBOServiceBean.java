@@ -6,8 +6,12 @@ import javax.ejb.Handle;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionBean;
+import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.data.IDOHome;
+import com.idega.data.IDOLookup;
 
 /**
  * Title:        idega Business Objects
@@ -81,6 +85,27 @@ public class IBOServiceBean implements IBOService, SessionBean {
 
   public IWApplicationContext getIWApplicationContext(){
     return this.iwac;
+  }
+
+  /**
+   * Get an instance of the service bean specified by serviceClass
+   */
+  protected IBOService getServiceInstance(Class serviceClass)throws RemoteException{
+    return IBOLookup.getServiceInstance(this.getIWApplicationContext(),serviceClass);
+  }
+
+  /**
+   * Get an instance of the session bean specified by serviceClass
+   */
+  protected IBOService getSessionInstance(IWUserContext iwuc,Class sessionClass)throws RemoteException{
+    return IBOLookup.getSessionInstance(iwuc,sessionClass);
+  }
+
+  /**
+   * Get an instance of the home interface for the IDO bean specified identified by beanClass
+   */
+    protected IDOHome getIDOHome(Class beanClass)throws RemoteException{
+    return IDOLookup.getHome(beanClass);
   }
 
 }
