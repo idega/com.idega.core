@@ -597,9 +597,10 @@ public class FileUtil {
     return tokens;
   }
 
+   
    /**
     * Copies the specified sourcefile (source folder) to a backup file (backup folder), creates always a new 
-    * backup file without destroying the old backup file 
+    * backup file without destroying an existing old backup file 
     * by adding a number to the suffix if necessary.
     * e.g. hello.txt -> hello.txt.backup~
     * e.g. hello.txt -> hello.txt.1_backup~
@@ -610,11 +611,38 @@ public class FileUtil {
     * @author thomas
     */
    public static void backup(File sourceFile) throws FileNotFoundException, IOException {
+   		FileUtil.backupToFolder(sourceFile, null);
+   }
+   	
+   	
+   	
+   /**
+    * Copies the specified sourcefile (source folder) to a backup file (backup folder) into the specified backup folder, 
+    * creates always a new 
+    * backup file without destroying an existing old backup file 
+    * by adding a number to the suffix if necessary.
+    * e.g. hello.txt -> hello.txt.backup~
+    * e.g. hello.txt -> hello.txt.1_backup~
+    * 
+    * @param sourceFile
+    * @param destination
+    * @throws IOException
+    * @throws FileNotFoundException
+    * @author thomas
+    */   	
+   public static void backupToFolder(File sourceFile, File destination) throws FileNotFoundException, IOException {
    	String name = sourceFile.getName();
-   	File parent = sourceFile.getParentFile();
-   	if (parent == null) {
-   		// can not copy the root
-   		throw new IOException("[FileUtil] Can not backup root");
+   	if (destination == null) {
+   		destination = sourceFile.getParentFile();
+   		if (destination == null) {
+   			// can not copy the root
+   			throw new IOException("[FileUtil] Can not backup root");
+   		}
+   	}
+   	else if (! destination.exists()) {
+   		if (! destination.mkdirs()) {
+   			throw new IOException("[FileUtil] Can not create backup destination folder: " + destination.getAbsolutePath());
+   		}
    	}
    	StringBuffer buffer = null;
    	File backupFile = null;
@@ -626,7 +654,7 @@ public class FileUtil {
    			buffer.append(i).append("_");
    		}
    		buffer.append(BACKUP_SUFFIX);
-   		backupFile = new File(parent, buffer.toString());
+   		backupFile = new File(destination, buffer.toString());
    		i++;
    	}
    	while (backupFile.exists());
@@ -715,10 +743,6 @@ public class FileUtil {
         tempOutFile = new File(outputDirectory,name);
         if(inputFile.isDirectory()){
           copyDirectoryRecursively(inputFile,tempOutFile,  keepTimestamp);
-          if (keepTimestamp) {
-          	long oldTimestamp = inputFile.lastModified();
-          	tempOutFile.setLastModified(oldTimestamp);
-          }
         }
         else if (keepTimestamp) {
           FileUtil.copyFileKeepTimestamp(inputFile,tempOutFile);
@@ -727,7 +751,10 @@ public class FileUtil {
         	FileUtil.copyFile(inputFile, tempOutFile);
         }
       }
-
+      if (keepTimestamp) {
+      	long oldTimestamp = inputDirectory.lastModified();
+      	outputDirectory.setLastModified(oldTimestamp);
+      }
     }
     else{
       throw new IOException(inputDirectory.toString()+" is not a directory");
