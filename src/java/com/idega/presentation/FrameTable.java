@@ -14,7 +14,6 @@ import java.util.Map;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.IWLocation;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWURL;
 import com.idega.idegaweb.IWUserContext;

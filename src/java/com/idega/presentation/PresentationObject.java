@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.95 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.96 2004/06/25 13:53:26 jonas Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -44,7 +44,6 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
-import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWURL;
 import com.idega.presentation.ui.Window;
 
