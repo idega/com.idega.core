@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.16 2004/10/29 12:47:23 laddi Exp $
+ * $Id: XMLElement.java,v 1.17 2004/11/25 16:59:07 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Element;
 import org.jdom.Text;
+import org.jdom.filter.Filter;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -165,6 +166,30 @@ public class XMLElement {
     return(null);
   }
 
+  public List getChildrenRecursive(final String name) {
+  	if (_element != null) {
+  		Filter filter = new Filter() {
+			public boolean matches(Object object) {
+				if (object instanceof Element) {
+					String elementName = ((Element) object).getName();
+					return name.equals(elementName);
+				}
+				return false;
+			}
+  		};
+  		List list = new ArrayList();
+  		Iterator iterator = _element.getDescendants(filter);
+  		while (iterator.hasNext()) {
+  			Element el = (Element) iterator.next();
+  			XMLElement element = new XMLElement(el);
+  			list.add(element);
+  		}
+  		return list;
+  	}
+  	return null;
+  }
+  
+  
   public List getChildren(String name) {
     if (_element != null) {
       List li = _element.getChildren(name);
@@ -326,7 +351,7 @@ public class XMLElement {
 	}
 	return(false);
   }
-
+  
   public XMLElement setChildren(List children) {
     if (_element != null) {
       if (children != null) {
