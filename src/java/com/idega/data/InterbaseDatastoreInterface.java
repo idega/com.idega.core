@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.30 2004/03/01 17:04:09 thomas Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.31 2004/03/12 12:29:44 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -316,6 +316,15 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	    }
 	  }
 	*/
+	protected void createForeignKey(GenericEntity entity, String baseTableName, String columnName, String refrencingTableName, String referencingColumnName) throws Exception {
+		try {
+			super.createForeignKey(entity, baseTableName, columnName, refrencingTableName, referencingColumnName);
+	  }
+	  catch(Exception e){
+	  	log("IDOTableCreator : Error caught trying to createForeignKey in for table "+baseTableName+" in InterbaseDatastoreInterface ("+e.getMessage()+")");
+	  }
+	}
+	
 	private static String getInterbaseGeneratorName(GenericEntity entity)
 	{
 		String entityName = entity.getTableName();
