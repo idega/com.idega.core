@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.33 2003/10/06 15:21:17 eiki Exp $
+ * $Id: DateInput.java,v 1.34 2003/10/08 13:57:49 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -409,7 +409,10 @@ public class DateInput extends InterfaceObjectContainer {
       if (this._showYear) {
       	//hack to avoid duplicate values
       	_theYear.removeElements();
-        if (_fromYear < _toYear) {
+				if (showNullValue) {
+				 _theYear.addMenuElement("YY");
+				}
+       if (_fromYear < _toYear) {
           for (int i = _fromYear; i <= _toYear; i++) {
           
             _theYear.addMenuElement(Integer.toString(i));
