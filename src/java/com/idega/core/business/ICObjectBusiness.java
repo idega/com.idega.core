@@ -1,6 +1,7 @@
 package com.idega.core.business;
 
 import com.idega.core.data.*;
+import com.idega.jmodule.object.ModuleObject;
 import java.sql.SQLException;
 
 /**
@@ -11,6 +12,7 @@ import java.sql.SQLException;
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
+
 
 public class ICObjectBusiness {
 
@@ -44,6 +46,41 @@ public class ICObjectBusiness {
     } else {
       return null;
     }
+  }
+
+  public static ModuleObject getNewObjectInstance(Class icObjectClass){
+      ModuleObject inst = null;
+      try{
+        inst = (ModuleObject)icObjectClass.newInstance();
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+      return inst;
+  }
+
+  public static ModuleObject getNewObjectInstance(String icObjectClassName){
+      ModuleObject inst = null;
+      try{
+        inst = getNewObjectInstance(Class.forName(icObjectClassName));
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+      return inst;
+  }
+
+  public static ModuleObject getNewObjectInstance(int icObjectInstanceID){
+      ModuleObject inst = null;
+      try{
+        ICObjectInstance ico = new ICObjectInstance(icObjectInstanceID);
+        inst = ico.getNewInstance();
+        inst.setICObjectInstance(ico);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+      return inst;
   }
 
 
