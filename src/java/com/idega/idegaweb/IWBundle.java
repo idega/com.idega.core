@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.79 2004/06/14 13:52:49 palli Exp $
+ * $Id: IWBundle.java,v 1.80 2004/06/22 17:52:19 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -34,12 +34,12 @@ import com.idega.data.IDOLookupException;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserProperties;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.logging.LoggingHelper;
-import com.idega.util.refactor.RefactorClassRegistry;
 import com.idega.xml.XMLElement;
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.

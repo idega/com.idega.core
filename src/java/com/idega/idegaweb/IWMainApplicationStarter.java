@@ -17,11 +17,11 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookupException;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
-import com.idega.util.refactor.RefactorClassRegistry;
 
 
 /**
