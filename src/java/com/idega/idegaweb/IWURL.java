@@ -1,20 +1,20 @@
 package com.idega.idegaweb;
 
 /**
- * Title:        idegaclasses
- * Description:
+ * A utilityclass for normalizing URL's, multy value parameters are stored under the same map key like so: <br>
+ * key = value1&key=value2&key=value3. GetFullURL will return the url with the parameters in alphabetical key order.
  * Copyright:    Copyright (c) 2001
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.presentation.IWContext;
@@ -63,7 +63,7 @@ public class IWURL {
   private void breakUp(String parametersAndValues){
     int ampersandIndex = parametersAndValues.indexOf(ampersand);
     if(ampersandIndex!=-1){
-      StringTokenizer token = new StringTokenizer(ampersand);
+      StringTokenizer token = new StringTokenizer(parametersAndValues,ampersand);
       while(token.hasMoreTokens()){
         String parameter = token.nextToken();
         int equalsIndex = parameter.indexOf(equalsMark);
@@ -95,7 +95,23 @@ public class IWURL {
   }
 
   public void addParameter(String parameterName,String parameterValue){
-    getParametersMap().put(parameterName,parameterValue);
+  	String value = (String) getParametersMap().get(parameterName);
+  	//multivalue handling
+  	if(value!=null){
+  		
+  		if(!value.equals(parameterValue)){
+  		//it is multivalued!
+  			value = value+ampersand+parameterName+equalsMark+parameterValue;
+  			getParametersMap().put(parameterName,value);
+  		}
+  		
+  	}
+  	else{
+  		getParametersMap().put(parameterName,parameterValue);
+  	}
+  	
+  	
+    
   }
 
 
@@ -114,7 +130,7 @@ public class IWURL {
 
   private Map getParametersMap(){
     if(parametersMap == null){
-      parametersMap = new Hashtable();
+      parametersMap = new TreeMap();
     }
     return parametersMap;
   }
@@ -147,11 +163,19 @@ public class IWURL {
       String theReturn = baseURL+questionMark;
       Map map = getParametersMap();
       Set keySet = map.keySet();
+      int last = keySet.size();
+      int counter = 0;
       Iterator iter = keySet.iterator();
       while (iter.hasNext()) {
+      	counter++;
         String key = (String)iter.next();
         String value = (String)map.get(key);
-        theReturn += key+equalsMark+value+ampersand;
+        if(counter<last){
+        		theReturn += key+equalsMark+value+ampersand;
+        }
+        else{
+        		theReturn += key+equalsMark+value;
+        }
       }
       return theReturn;
     }
@@ -161,7 +185,7 @@ public class IWURL {
   }
 
   public boolean hasParameters(){
-    return (parametersMap!=null);
+    return (parametersMap!=null && !parametersMap.isEmpty());
   }
 
   /**
