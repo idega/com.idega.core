@@ -1624,7 +1624,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								Iterator iter2 = parents.keySet().iterator();
 								while (iter2.hasNext()) {
 									Integer myGroup2 = (Integer) iter2.next();
-									if(myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
+									if( aliasList.contains(myGroup2) || myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
 									
 									Map theParents = (Map) (parents.get(myGroup2));
 									
