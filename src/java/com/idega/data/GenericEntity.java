@@ -1059,10 +1059,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void insert()throws SQLException{
     try{
       DatastoreInterface.getInstance(this).insert(this);
+      if(IDOContainer.getInstance().beanCachingActive(getInterfaceClass())){
+        IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).putCachedEntity(getPrimaryKey(),this);
+      }
+      flushQueryCache();
     }
     catch(Exception ex){
       if(ex instanceof SQLException){
-	    ex.printStackTrace();
+	    //ex.printStackTrace();
 	    throw (SQLException)ex.fillInStackTrace();
       }
       else{
@@ -1118,6 +1122,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void insert(Connection c)throws SQLException{
     try{
       DatastoreInterface.getInstance(c).insert(this,c);
+      flushQueryCache();
     }
     catch(Exception ex){
       if(ex instanceof SQLException){
@@ -1137,7 +1142,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	*/
   public synchronized void update()throws SQLException{
       try{
-	DatastoreInterface.getInstance(this).update(this);
+	    DatastoreInterface.getInstance(this).update(this);
+        flushQueryCache();
       }
       catch(Exception ex){
 	if(ex instanceof SQLException){
@@ -1153,6 +1159,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void update(Connection c) throws SQLException {
     try {
       DatastoreInterface.getInstance(c).update(this,c);
+      flushQueryCache();
+      if(IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())){
+        IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
+      }
+      this.empty();
     }
     catch(Exception ex) {
       if(ex instanceof SQLException) {
@@ -1166,6 +1177,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void delete()throws SQLException{
     try {
       DatastoreInterface.getInstance(this).delete(this);
+      flushQueryCache();
+      if(IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())){
+        IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
+      }
+      this.empty();
     }
     catch(Exception ex) {
       if(ex instanceof SQLException) {
@@ -1178,6 +1194,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void delete(Connection c) throws SQLException {
     try {
       DatastoreInterface.getInstance(c).delete(this,c);
+      flushQueryCache();
     }
     catch(Exception ex) {
       if(ex instanceof SQLException) {
@@ -1950,6 +1967,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		   " set " + getIDColumnName() + " = " + getID() +
 		   " where " + getIDColumnName() + " = " + entityFrom.getID();
 			int i = Stmt.executeUpdate(sql);
+
 		}
 		finally {
 			if (Stmt != null) {
@@ -2783,11 +2801,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public Object ejbPostCreate(){return getPrimaryKey();}
 
-  public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
+  /*public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
 
   public Object ejbPostCreate(Object primaryKey){return primaryKey;}
-
-  public Object ejbFindByPrimaryKey(Object pk){return getPrimaryKey();}
+*/
+  public Object ejbFindByPrimaryKey(Object pk){this.setPrimaryKey(pk); return getPrimaryKey();}
 
 
 
@@ -2869,7 +2887,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
 
-  protected Collection idoFindIDsBySQL(String sqlQuery)throws FinderException{
+  Collection idoFindIDsBySQL(String sqlQuery)throws FinderException{
+    Collection pkColl=null;
+    Class interfaceClass = this.getInterfaceClass();
+    boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
+    if(queryCachingActive){
+         pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
+    }
+    if(pkColl==null){
+      pkColl = this.idoFindIDsBySQLIgnoringCache(sqlQuery);
+      if(queryCachingActive){
+        IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery,pkColl);
+      }
+    }
+    return pkColl;
+  }
+
+  private Collection idoFindIDsBySQLIgnoringCache(String sqlQuery)throws FinderException{
 		Connection conn= null;
 		Statement Stmt= null;
 		int length;
@@ -2981,15 +3015,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
     protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords)throws FinderException{
       Collection coll = this.idoFindIDsBySQL(SQLString);
-      Collection returningColl = new Vector();
-      Iterator iter = returningColl.iterator();
-      int counter = 1;
-      while (iter.hasNext() && counter<=returningNumberOfRecords) {
-        Integer item = (Integer)iter.next();
-        returningColl.add(item);
-        counter++;
+      if(returningNumberOfRecords==-1){
+        return coll;
       }
-      return returningColl;
+      else{
+        Collection returningColl = new Vector();
+        Iterator iter = returningColl.iterator();
+        int counter = 1;
+        while (iter.hasNext() && (counter<=returningNumberOfRecords)) {
+          Integer item = (Integer)iter.next();
+          returningColl.add(item);
+          counter++;
+        }
+        return returningColl;
+      }
     }
 
 	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind)throws FinderException{
@@ -3012,5 +3051,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return idoFindAllIDsByColumnOrderedBySQL(columnName,Integer.toString(toFind),columnName);
 	}
 
+    protected Class getInterfaceClass(){
+      return IDOLookup.getInterfaceClassFor(this.getClass());
+    }
 
+    private void flushQueryCache(){
+      Class interfaceClass = this.getInterfaceClass();
+      boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
+      if(queryCachingActive){
+           IDOContainer.getInstance().getBeanCache(interfaceClass).flushAllQueryCache();
+      }
+    }
 }

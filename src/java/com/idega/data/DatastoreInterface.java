@@ -2,7 +2,7 @@
 
 /*
 
- * $Id: DatastoreInterface.java,v 1.46 2002/04/06 19:07:43 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.47 2002/04/15 12:57:29 tryggvil Exp $
 
  *
 
@@ -718,33 +718,19 @@ public abstract class DatastoreInterface{
 		try{
 
                   conn = entity.getConnection();
-
                   //Stmt = conn.createStatement();
-
                   //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
-
                   StringBuffer statement = new StringBuffer("");
-
                   statement.append("insert into ");
-
                   statement.append(entity.getTableName());
-
                   statement.append("(");
-
                   statement.append(getCommaDelimitedColumnNames(entity));
-
                   statement.append(") values (");
-
                   statement.append(getQuestionmarksForColumns(entity));
-
                   statement.append(")");
-
                   //System.out.println(statement);
-
                   Stmt = conn.prepareStatement (statement.toString());
-
                   setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
-
                   Stmt.execute();
 
 		}

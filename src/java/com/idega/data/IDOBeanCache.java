@@ -10,7 +10,7 @@ import java.util.Collection;
  * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -54,6 +54,10 @@ public class IDOBeanCache {
     getCacheMap().put(pk,entity);
   }
 
+  void removeCachedEntity(Object pk){
+    getCacheMap().remove(pk);
+  }
+
   void putCachedFindQuery(String querySQL,Collection pkColl){
       getFindQueryCacheMap().put(querySQL,pkColl);
   }
@@ -85,6 +89,11 @@ public class IDOBeanCache {
   void flushAllFindQueryCache(){
     findQueryCacheMap=null;
   }
+
+  void flushAllBeanCache(){
+    cacheMap=null;
+  }
+
 
   void flushAllQueryCache(){
     flushAllFindQueryCache();

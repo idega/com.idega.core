@@ -15,26 +15,17 @@ package com.idega.data;
 
 
 import java.sql.SQLException;
-
 import java.sql.Connection;
-
 import java.sql.ResultSet;
-
 import java.sql.Statement;
-
 import java.sql.ResultSetMetaData;
-
 import java.util.List;
-
 import java.util.Vector;
-
 import java.util.HashMap;
-
 import java.util.Collection;
-
 import java.util.Map;
 
-
+import javax.ejb.FinderException;
 
 
 
@@ -91,9 +82,7 @@ public class EntityFinder{
          */
 
 	public static List findAll(IDOLegacyEntity entity)throws SQLException{
-
 		return findAll(entity,"select * from "+entity.getTableName());
-
 	}
 
 
@@ -176,8 +165,48 @@ public class EntityFinder{
 
     }
 
+  public static List findAll(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
+    if(debug){
+        System.err.println("EntityFinder sql query for class :"+entity.getClass().getName()+":");
+        System.err.println(SQLString );
+    }
+    Class interfaceClass = IDOLookup.getInterfaceClassFor(entity.getClass());
+    if(IDOContainer.getInstance().queryCachingActive(interfaceClass)){
+      try{
+        Collection c = findAllUsingIDO(interfaceClass,SQLString,returningNumberOfRecords);
+        int size = c.size();
+        //System.out.println("CollectionSize="+size);
+        if(size>0){
+          return (List)c;
+        }
+        else{
+          return null;
+        }
+      }
+      catch(FinderException fe){
+        throw new SQLException("EntityFinder.findAll(): "+fe.getMessage());
+      }
+    }
+    else{
+      return findAllLegacy(entity,SQLString,returningNumberOfRecords);
+    }
+  }
 
 
+
+  static Collection findAllUsingIDO(Class entityInterfaceClass, String SQLString,int returningNumberOfRecords)throws FinderException{
+    //return null;
+    try{
+      IDOFactory factory = (IDOFactory)IDOLookup.getHome(entityInterfaceClass);
+      GenericEntity entityInstance = (GenericEntity)factory.idoCheckOutPooledEntity();
+      Collection pks = entityInstance.idoFindIDsBySQL(SQLString,returningNumberOfRecords);
+      factory.idoCheckInPooledEntity(entityInstance);
+      return factory.getEntityCollectionForPrimaryKeys(pks);
+    }
+    catch(java.rmi.RemoteException rme){
+      throw new IDOFinderException(rme);
+    }
+  }
 
 
 
@@ -188,19 +217,7 @@ public class EntityFinder{
 
          */
 
-	public static List findAll(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
-
-		if(debug){
-
-                  System.err.println("EntityFinder sql query :");
-
-                  System.err.println(SQLString );
-
-		}
-
-
-
-
+	public static List findAllLegacy(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
 
                 Connection conn= null;
 

@@ -2,7 +2,9 @@ package com.idega.core.localisation.business;
 
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOFinderException;
+import com.idega.data.IDOLookup;
 import com.idega.core.data.ICLocale;
+import com.idega.core.data.ICLocaleHome;
 import com.idega.util.LocaleUtil;
 import com.idega.util.idegaTimestamp;
 import com.idega.idegaweb.IWMainApplication;
@@ -297,7 +299,30 @@ public class ICLocaleBusiness {
       StringBuffer ids = new StringBuffer();
       Iterator I = listOfStringIds.iterator();
       String id;
-      if(I.hasNext()){
+      try{
+        ICLocaleHome home = (ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class);
+        List currentLocales = listOfICLocalesInUse();
+        List oldCurrentLocales = new Vector();
+        oldCurrentLocales.addAll(currentLocales);
+        while (I.hasNext()) {
+          ICLocale locale = home.findByPrimaryKey(Integer.parseInt((String)I.next()));
+          locale.setInUse(true);
+          locale.store();
+          oldCurrentLocales.remove(locale);
+        }
+
+        Iterator iter = oldCurrentLocales.iterator();
+        while (iter.hasNext()) {
+          ICLocale locale = (ICLocale)iter.next();
+          locale.setInUse(false);
+          locale.store();
+        }
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+
+      /*if(I.hasNext()){
         id = (String) I.next();
         ids.append(id);
       }
@@ -316,7 +341,7 @@ public class ICLocaleBusiness {
       }
       catch (Exception ex) {
         ex.printStackTrace();
-      }
+      }*/
       reload();
     }
   }

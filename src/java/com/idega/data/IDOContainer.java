@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.List;
+import java.util.Iterator;
 
 import javax.ejb.*;
 
@@ -20,6 +21,7 @@ public class IDOContainer {
 
   private static IDOContainer instance;
   private boolean beanCachingActive=false;
+  private boolean queryCachingActive=false;
 
   private Map emptyBeanInstances;
   private Map beanCacheMap;
@@ -53,6 +55,7 @@ public class IDOContainer {
     IDOBeanCache idobc = (IDOBeanCache)getBeanCacheMap().get(entityInterfaceClass);
     if(idobc==null){
       idobc = new IDOBeanCache(entityInterfaceClass);
+      getBeanCacheMap().put(entityInterfaceClass,idobc);
     }
     return idobc;
   }
@@ -99,11 +102,11 @@ public class IDOContainer {
 
 
 
-  public IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.CreateException{
+  public IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
     try{
       IDOEntity entity=null;
       IDOBeanCache cache = null;
-      if(beancachingActive(entityInterfaceClass)){
+      if(beanCachingActive(entityInterfaceClass)){
         cache = this.getBeanCache(entityInterfaceClass);
         entity = cache.getCachedEntity(pk);
       }
@@ -112,31 +115,73 @@ public class IDOContainer {
         /**
          *@todo
          */
-         ((IDOEntityBean)entity).ejbCreate(pk);
+         ((IDOEntityBean)entity).ejbFindByPrimaryKey(pk);
          ((IDOEntityBean)entity).ejbLoad();
       }
 
-      if(beancachingActive(entityInterfaceClass)){
+      if(queryCachingActive(entityInterfaceClass)){
         cache.putCachedEntity(pk,entity);
       }
       return entity;
     }
     catch(Exception e){
-      throw new CreateException(e.getMessage());
+      throw new FinderException(e.getMessage());
     }
   }
 
   public void setBeanCaching(boolean onOrOff){
     this.beanCachingActive=onOrOff;
+    if(!onOrOff){
+      this.flushAllBeanCache();
+    }
   }
 
-  protected boolean beancachingActive(Class entityInterfaceClass){
+  protected boolean beanCachingActive(Class entityInterfaceClass){
     return this.beanCachingActive;
+  }
+
+  public void setQueryCaching(boolean onOrOff){
+    this.queryCachingActive=onOrOff;
+    if(!onOrOff){
+      this.flushAllQueryCache();
+    }
+  }
+
+  protected boolean queryCachingActive(Class entityInterfaceClass){
+    return this.queryCachingActive;
   }
 
   IDOEntity getPooledInstance(Class entityInterfaceClass){
     return null;
   }
 
+  synchronized void flushAllCache(){
+    this.flushAllBeanCache();
+    this.flushAllQueryCache();
+  }
+
+
+  synchronized void flushAllBeanCache(){
+    if(this.beanCachingActive){
+      Iterator iter = getBeanCacheMap().keySet().iterator();
+      while (iter.hasNext()) {
+        Class interfaceClass = (Class)iter.next();
+        this.getBeanCache(interfaceClass).flushAllBeanCache();
+      }
+      System.out.println("[idoContainer] Flushing all Bean Cache");
+    }
+  }
+
+
+  synchronized void flushAllQueryCache(){
+    if(this.queryCachingActive){
+      Iterator iter = getBeanCacheMap().keySet().iterator();
+      while (iter.hasNext()) {
+        Class interfaceClass = (Class)iter.next();
+        this.getBeanCache(interfaceClass).flushAllQueryCache();
+      }
+      System.out.println("[idoContainer] Flushing all Query Cache");
+    }
+  }
 
 }

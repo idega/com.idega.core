@@ -25,6 +25,7 @@ import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
 
 import com.idega.data.EntityControl;
+import com.idega.data.IDOContainer;
 
 import com.idega.builder.data.IBDomain;
 
@@ -313,11 +314,18 @@ public class IWStarterServlet extends GenericServlet
 	    }
 
 	    if(application.getSettings().getIfEntityAutoCreate()){
-
 	      EntityControl.setAutoCreationOfEntities(true);
-
 	      sendStartMessage("EntityAutoCreation Active");
+	    }
 
+	    if(application.getSettings().getIfEntityBeanCaching()){
+	      IDOContainer.getInstance().setBeanCaching(true);
+	      sendStartMessage("EntityBeanCaching Active");
+	    }
+
+	    if(application.getSettings().getIfEntityQueryCaching()){
+	      IDOContainer.getInstance().setQueryCaching(true);
+	      sendStartMessage("EntityQueryCaching Active");
 	    }
 
 	    else{

@@ -60,7 +60,8 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
   private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
 
-
+  private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
+  private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
 
   public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
 
@@ -281,34 +282,41 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
 
     public void setEntityAutoCreation(boolean ifAutoCreate){
-
       this.setProperty("entity-auto-create",ifAutoCreate);
-
       EntityControl.setAutoCreationOfEntities(ifAutoCreate);
-
     }
 
 
 
     public boolean getIfEntityAutoCreate(){
-
       String value = getProperty("entity-auto-create");
-
       if(value==null){
-
-	return false;
-
+        return false;
       }
-
       else{
-
-	return Boolean.valueOf(value).booleanValue();
-
+        return Boolean.valueOf(value).booleanValue();
       }
-
     }
 
+    public boolean getIfEntityBeanCaching(){
+      String value = getProperty("ido_entity_bean_caching");
+      if(value==null){
+        return false;
+      }
+      else{
+        return Boolean.valueOf(value).booleanValue();
+      }
+    }
 
+    public boolean getIfEntityQueryCaching(){
+      String value = getProperty("ido_entity_query_caching");
+      if(value==null){
+        return false;
+      }
+      else{
+        return Boolean.valueOf(value).booleanValue();
+      }
+    }
 
     public void setDebug(boolean ifDebug){
 
@@ -400,6 +408,22 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
   }
 
+
+    public void setEntityBeanCaching(boolean onOrOff){
+      this.setProperty(this.IDO_ENTITY_BEAN_CACHING_KEY,onOrOff);
+      com.idega.data.IDOContainer.getInstance().setBeanCaching(onOrOff);
+      if(!onOrOff){
+        setEntityQueryCaching(false);
+      }
+    }
+
+    public void setEntityQueryCaching(boolean onOrOff){
+      this.setProperty(this.IDO_ENTITY_QUERY_CACHING_KEY,onOrOff);
+      com.idega.data.IDOContainer.getInstance().setQueryCaching(onOrOff);
+      if(onOrOff){
+        setEntityBeanCaching(true);
+      }
+    }
 
 
     public void setAutoCreateProperties(boolean ifAutoCreate){

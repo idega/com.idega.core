@@ -21,7 +21,7 @@ public interface IDOEntityBean extends EntityBean{
   public void removeFrom(IDOEntity entity) throws RemoteException;
   */
   public Object ejbCreate() throws CreateException;
-  public Object ejbCreate(Object pk) throws CreateException;
+  //public Object ejbCreate(Object pk) throws CreateException;
   public Object ejbFindByPrimaryKey(Object pk) throws FinderException;
   public void setEJBHome(javax.ejb.EJBHome ejbHome);
 

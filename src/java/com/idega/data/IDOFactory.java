@@ -33,27 +33,33 @@ public abstract class IDOFactory implements IDOHome{
   }
 
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,int id)throws javax.ejb.FinderException{
-    try{
+    return this.idoFindByPrimaryKey(entityInterfaceClass,new Integer(id));
+    /*try{
       IDOEntity theReturn = idoCreate(entityInterfaceClass);
       ((IDOLegacyEntity)theReturn).findByPrimaryKey(id);
       return theReturn;
     }
     catch(Exception e){
       throw new javax.ejb.FinderException(e.getMessage());
-    }
+    }*/
   }
 
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Integer id)throws javax.ejb.FinderException{
-    return idoFindByPrimaryKey(entityInterfaceClass,id.intValue());
+    //return idoFindByPrimaryKey(entityInterfaceClass,id.intValue());
+        return idoFindByPrimaryKey(entityInterfaceClass,(Object)id);
   }
 
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
-    if(pk instanceof Integer){
+      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk);
+      ((IDOEntityBean)theReturn).setEJBHome(this);
+      return theReturn;
+
+    /*if(pk instanceof Integer){
       return idoFindByPrimaryKey(entityInterfaceClass,(Integer)pk);
     }
     else{
       throw new IDOFinderException("[idoFactory] : Primarykey other than type Integer not supported");
-    }
+    }*/
   }
 
   public IDOEntity idoCreate() throws CreateException{
@@ -93,13 +99,8 @@ public abstract class IDOFactory implements IDOHome{
 
   public void remove(Object primaryKey){
     try{
-      if(primaryKey instanceof Integer){
-        IDOEntity entity = idoFindByPrimaryKey((Integer)primaryKey);
-        entity.remove();
-      }
-      else{
-        throw new javax.ejb.EJBException("[idoFactory] : Primary Keys other than java.lang.Integer not supported");
-      }
+      IDOEntity entity = idoFindByPrimaryKey(primaryKey);
+      entity.remove();
     }
     catch(Exception e){
       throw new javax.ejb.EJBException(e.getMessage());
@@ -118,7 +119,7 @@ public abstract class IDOFactory implements IDOHome{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+  Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
     Collection theReturn = new Vector();
     Iterator iter = collectionOfPrimaryKeys.iterator();
     while (iter.hasNext()) {
