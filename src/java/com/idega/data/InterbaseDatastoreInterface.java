@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.21 2003/02/28 12:12:10 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.22 2003/02/28 12:22:14 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -156,57 +156,30 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 	}
 	/* public void createForeignKeys(IDOLegacyEntity entity) throws Exception {
-	
 	   Connection conn = null;
-	
 	   Statement Stmt = null;
-	
 	   try {
-	
 	     conn = entity.getConnection();
-	
 	     conn.commit();
-	
-	
-	
 	     String[] names = entity.getColumnNames();
-	
 	     for (int i = 0; i < names.length; i++) {
-	
 	       if (!entity.getRelationShipClassName(names[i]).equals("")) {
-	
 	         Stmt = conn.createStatement();
-	
 	         int n = Stmt.executeUpdate("ALTER TABLE " + entity.getTableName() + " ADD FOREIGN KEY (" + names[i] + ") REFERENCES " + ((IDOLegacyEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName() + " ");
-	
 	         if (Stmt != null) {
-	
 	           Stmt.close();
-	
 	         }
-	
 	       }
-	
 	     }
-	
 	   }
-	
 	   finally {
-	
 	     if (Stmt != null) {
-	
 	       Stmt.close();
-	
 	     }
-	
 	     if (conn != null) {
-	
 	       entity.freeConnection(conn);
-	
 	     }
-	
 	   }
-	
 	 }*/
 	protected void deleteTrigger(IDOLegacyEntity entity) throws Exception
 	{
