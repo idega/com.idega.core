@@ -396,48 +396,48 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
   protected String encodeQueryStrings(String html){
-    html = TextSoap.findAndReplace(html,"&","#");
+    html = TextSoap.findAndReplace(html,"&","##");
     //fixing this should be done with a HTMLEditor object OR
     //make a single general expression fix
-    html = TextSoap.findAndReplace(html,"#eth;","&eth;");
-    html = TextSoap.findAndReplace(html,"#ETH;","&ETH;");
-    html = TextSoap.findAndReplace(html,"#thorn;","&thorn;");
-    html = TextSoap.findAndReplace(html,"#THORN;","&THORN;");
-    html = TextSoap.findAndReplace(html,"#aelig;","&aelig;");
-    html = TextSoap.findAndReplace(html,"#AELIG;","&AELIG;");
-    html = TextSoap.findAndReplace(html,"#ouml;","&ouml;");
-    html = TextSoap.findAndReplace(html,"#Ouml;","&Ouml;");
-    html = TextSoap.findAndReplace(html,"#nbsp;","&nbsp;");
-    html = TextSoap.findAndReplace(html,"#amp;","&amp;");
-    html = TextSoap.findAndReplace(html,"#quot;","&quot;");
-    html = TextSoap.findAndReplace(html,"#middot","&middot");
-    html = TextSoap.findAndReplace(html,"#raquo;","&raquo;");
-    html = TextSoap.findAndReplace(html,"##149;","&#149;");
-    html = TextSoap.findAndReplace(html,"##039;","&#039;");
-    html = TextSoap.findAndReplace(html,"##169;","&#169;");
-    html = TextSoap.findAndReplace(html,"#gt;","&gt;");
-    html = TextSoap.findAndReplace(html," # "," & ");
+    html = TextSoap.findAndReplace(html,"##eth;","&eth;");
+    html = TextSoap.findAndReplace(html,"##ETH;","&ETH;");
+    html = TextSoap.findAndReplace(html,"##thorn;","&thorn;");
+    html = TextSoap.findAndReplace(html,"##THORN;","&THORN;");
+    html = TextSoap.findAndReplace(html,"##aelig;","&aelig;");
+    html = TextSoap.findAndReplace(html,"##AELIG;","&AELIG;");
+    html = TextSoap.findAndReplace(html,"##ouml;","&ouml;");
+    html = TextSoap.findAndReplace(html,"##Ouml;","&Ouml;");
+    html = TextSoap.findAndReplace(html,"##nbsp;","&nbsp;");
+    html = TextSoap.findAndReplace(html,"##amp;","&amp;");
+    html = TextSoap.findAndReplace(html,"##quot;","&quot;");
+    html = TextSoap.findAndReplace(html,"##middot","&middot");
+    html = TextSoap.findAndReplace(html,"##raquo;","&raquo;");
+    html = TextSoap.findAndReplace(html,"###149;","&#149;");
+    html = TextSoap.findAndReplace(html,"###039;","&#039;");
+    html = TextSoap.findAndReplace(html,"###169;","&#169;");
+    html = TextSoap.findAndReplace(html,"##gt;","&gt;");
+    html = TextSoap.findAndReplace(html," ## "," & ");
 
 //islenskir broddstafir
-    html = TextSoap.findAndReplace(html,"#aacute;","&aacute;");
-    html = TextSoap.findAndReplace(html,"#Aacute;","&Aacute;");
-    html = TextSoap.findAndReplace(html,"#eacute;","&eacute;");
-    html = TextSoap.findAndReplace(html,"#Eacute;","&Eacute;");
-    html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
-    html = TextSoap.findAndReplace(html,"#Iacute;","&Iacute;");
-    html = TextSoap.findAndReplace(html,"#uacute;","&uacute;");
-    html = TextSoap.findAndReplace(html,"#Uacute;","&Uacute;");
-    html = TextSoap.findAndReplace(html,"#oacute;","&oacute;");
-    html = TextSoap.findAndReplace(html,"#Oacute;","&Oacute;");
-    html = TextSoap.findAndReplace(html,"#yacute;","&yacute;");
-    html = TextSoap.findAndReplace(html,"#Yacute;","&Yacute;");
+    html = TextSoap.findAndReplace(html,"##aacute;","&aacute;");
+    html = TextSoap.findAndReplace(html,"##Aacute;","&Aacute;");
+    html = TextSoap.findAndReplace(html,"##eacute;","&eacute;");
+    html = TextSoap.findAndReplace(html,"##Eacute;","&Eacute;");
+    html = TextSoap.findAndReplace(html,"##iacute;","&iacute;");
+    html = TextSoap.findAndReplace(html,"##Iacute;","&Iacute;");
+    html = TextSoap.findAndReplace(html,"##uacute;","&uacute;");
+    html = TextSoap.findAndReplace(html,"##Uacute;","&Uacute;");
+    html = TextSoap.findAndReplace(html,"##oacute;","&oacute;");
+    html = TextSoap.findAndReplace(html,"##Oacute;","&Oacute;");
+    html = TextSoap.findAndReplace(html,"##yacute;","&yacute;");
+    html = TextSoap.findAndReplace(html,"##Yacute;","&Yacute;");
 
-  //  html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
+  //  html = TextSoap.findAndReplace(html,"##iacute;","&iacute;");
   return html;
   }
 
   protected String decodeQueryString(String query){
-   return TextSoap.findAndReplace(query,"#","&");
+   return TextSoap.findAndReplace(query,"##","&");
   }
 
   protected String copyJavaScript(String html,IWContext iwc){
