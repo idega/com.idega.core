@@ -162,10 +162,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
-      /**
-       * @todo change
-       */
-      //deleteTrigger(entity);
+      deleteTrigger(entity);
       deleteSequence(entity);
       deleteTable(entity);
 
