@@ -47,7 +47,7 @@ private String style = "";
   public void addToList(PresentationObject obj, Image displayImage) {
     int rows = listTable.getRows();
       if ( !listTable.isEmpty(1,rows) ) {
-        rows++;
+	rows++;
       }
 
     if ( displayImage != null ) {
@@ -68,13 +68,15 @@ private String style = "";
   }
 
   public void addToList(Class classToAdd, Image displayImage, String displayString, String target) {
-    Link link = new Link(displayString,classToAdd);
+    Text text = new Text(displayString);
+      text.setFontStyle(style);
+
+    Link link = new Link(text,classToAdd);
       link.setTarget(target);
-      link.setFontStyle(style);
 
     int rows = listTable.getRows();
       if ( !listTable.isEmpty(1,rows) ) {
-        rows++;
+	rows++;
       }
 
     if ( displayImage != null ) {
