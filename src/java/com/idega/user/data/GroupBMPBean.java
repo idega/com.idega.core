@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBPage;
 import com.idega.util.ListUtil;
 import com.idega.data.*;
 import javax.ejb.*;
@@ -51,6 +52,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     private static final String COLUMN_DESCRIPTION = "description";
     private static final String COLUMN_EXTRA_INFO = "extra_info";
     private static final String COLUMN_CREATED = "CREATED";
+    private static final String COLUMN_HOME_PAGE_ID = "home_page_id";
 
 
   public final void initializeAttributes(){
@@ -60,6 +62,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     addAttribute(getGroupDescriptionColumnName(),"Description", true, true, "java.lang.String");
     addAttribute(getExtraInfoColumnName(),"Extra information", true, true, "java.lang.String");
     addAttribute(COLUMN_CREATED,"Created when",Timestamp.class);
+      addAttribute(getColumnNameHomePageID(),"Home page ID",true,true,Integer.class,"many-to-one",IBPage.class);
+      setNullable(getColumnNameHomePageID(),true);
 
     this.addManyToManyRelationShip(ICNetwork.class,"ic_group_network");
     this.addManyToManyRelationShip(ICProtocol.class,"ic_group_protocol");
@@ -144,6 +148,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return COLUMN_EXTRA_INFO;
   }
 
+    public static String getColumnNameHomePageID(){
+    	return COLUMN_HOME_PAGE_ID;
+    }
+    
   /*  ColumNames end   */
 
 
@@ -200,6 +208,26 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   public void setCreated(Timestamp created) {
     setColumn(this.COLUMN_CREATED,created);
   }
+
+    public int getHomePageID() {
+      return getIntColumnValue(getColumnNameHomePageID());
+    }
+
+    public IBPage getHomePage(){
+      return (IBPage)getColumnValue(getColumnNameHomePageID());
+    }
+
+    public void setHomePageID(int pageID){
+      setColumn(getColumnNameHomePageID(),pageID);
+    }
+
+    public void setHomePageID(Integer pageID){
+      setColumn(getColumnNameHomePageID(),pageID);
+    }
+
+    public void setHomePage(IBPage page) throws java.rmi.RemoteException {
+      setHomePageID((Integer)page.getPrimaryKey());
+    }
 
 
 //        public static Group getStaticInstance(){

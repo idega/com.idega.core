@@ -682,20 +682,26 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
     return groupHome;
   }
 
-
   public Group createGroup(String name,String description,String type)throws CreateException,RemoteException{
+  	return createGroup(name,description,type,-1);
+  }
+  
+  public Group createGroup(String name,String description,String type,int homePageID)throws CreateException,RemoteException{
     Group newGroup;
     newGroup = getGroupHome().create();
     newGroup.setName(name);
     newGroup.setDescription(description);
     newGroup.setGroupType(type);
+    if ( homePageID != -1 ) {
+	    newGroup.setHomePageID(homePageID);
+    }
     newGroup.store();
 
     addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
 
     return newGroup;
   }
-
+  
   public String getGroupType(Class groupClass)throws RemoteException{
     return ((GroupHome)IDOLookup.getHome(groupClass)).getGroupType();
   }

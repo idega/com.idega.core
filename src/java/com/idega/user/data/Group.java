@@ -60,4 +60,10 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
   public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
   public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
   public boolean hasRelationTo(Group group) throws  java.rmi.RemoteException;
- }
+
+ public com.idega.builder.data.IBPage getHomePage() throws java.rmi.RemoteException;
+ public int getHomePageID() throws java.rmi.RemoteException;
+ public void setHomePage(com.idega.builder.data.IBPage p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void setHomePageID(int p0) throws java.rmi.RemoteException;
+ public void setHomePageID(java.lang.Integer p0) throws java.rmi.RemoteException;
+  }
