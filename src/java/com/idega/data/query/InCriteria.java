@@ -1,5 +1,6 @@
 package com.idega.data.query;
 
+import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
 
 import java.util.Collection;
@@ -24,7 +25,17 @@ public class InCriteria extends Criteria {
             hasNext = i.hasNext();
             if (curr instanceof Number) {
                 v.append(curr);
-            } else {
+            }
+            else if (curr instanceof IDOEntity) {
+            	Object primaryKey = ((IDOEntity) curr).getPrimaryKey();
+            	if (primaryKey instanceof Number) {
+            		v.append(primaryKey.toString());
+            	}
+            	else {
+            		v.append(quote(primaryKey.toString()));
+            	}
+            }
+            else {
                 v.append(quote(curr.toString()));
             }
             if (hasNext) v.append(',');
