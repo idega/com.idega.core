@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.63 2003/03/30 23:24:34 thomas Exp $
+ * $Id: PresentationObject.java,v 1.64 2003/04/01 17:35:12 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -94,7 +94,7 @@ public class PresentationObject extends Object implements Cloneable {
   private GenericState defaultState = null;
   
   // constant for compoundId 
-  public static String COMPOUNDID_COMPONENT_DELIMITER = "/";
+  public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
   // constant for compoundId
   public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
   // artificial prefix compound_id
