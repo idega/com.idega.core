@@ -122,6 +122,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 
     for (int i = 0; i < events.length; i++) {
       events[i].setPage(page);
+	  events[i].setIWContext(iwc);
     }
 
     Object id = IWPresentationEvent.getSource(iwc);

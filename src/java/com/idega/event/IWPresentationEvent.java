@@ -28,10 +28,19 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 //  private final static String SEPARATOR = "|";
   private List _parameters = new Vector();
   private Page _page = null;
+  private IWContext _iwc = null;
 
 
   public IWPresentationEvent(){
     this(PresentationObject.NULL_CLONE_OBJECT);
+  }
+
+  public void setIWContext(IWContext iwc){
+    _iwc = iwc;
+  }
+
+  public IWContext getIWContext(){
+    return _iwc;
   }
 
   public Page getPage(){
