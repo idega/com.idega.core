@@ -1,5 +1,9 @@
 package com.idega.presentation.ui;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.idega.core.ICTreeNode;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -31,6 +35,10 @@ public class TreeViewerSelection extends TreeViewer {
   public static final String SELECTION_KEY = "selection_key"; 
     
   private int selectedNodeId = -1;
+  
+  private String selectionKey = SELECTION_KEY;
+  
+  private Map maintainParameterMap = new HashMap();
         
   private Text textProxyForSelectedNode;
     
@@ -41,19 +49,36 @@ public class TreeViewerSelection extends TreeViewer {
   public void setTextProxyForSelection(Text textProxyForSelectedNode) {
     this.textProxyForSelectedNode = textProxyForSelectedNode;
   }
+  
+  /** Use this method if you use more than one instance at the same time */
+  public void setSelectionKey(String selectionKey)  {
+    this.selectionKey = ( selectionKey == null || selectionKey.length() == 0) ? SELECTION_KEY : selectionKey;
+  } 
+  
+  /** This method uses a copy of the specified map */
+  public void maintainParameters(Map maintainParameters) {
+    this.maintainParameterMap.putAll(maintainParameters);
+  }
+  
     
   public void main(IWContext iwc) throws Exception {
-    setNodeActionParameter(SELECTION_KEY);
-    if (iwc.isParameterSet(SELECTION_KEY))  {
+    setNodeActionParameter(selectionKey);
+    if (iwc.isParameterSet(selectionKey))  {
       try {
-        selectedNodeId = Integer.parseInt(iwc.getParameter(SELECTION_KEY));
+        selectedNodeId = Integer.parseInt(iwc.getParameter(selectionKey));
       }
       catch (NumberFormatException ex)  {
         selectedNodeId = -1;
       }
     }
     if (selectedNodeId != -1)  {
-      addOpenCloseParameter(SELECTION_KEY, Integer.toString(selectedNodeId));
+      addOpenCloseParameter(selectionKey, Integer.toString(selectedNodeId));
+    }
+    // add maintain parameters
+    Iterator iterator = maintainParameterMap.entrySet().iterator();
+    while (iterator.hasNext())  {
+      Map.Entry entry = (Map.Entry) iterator.next();
+      addOpenCloseParameter((String) entry.getKey(), entry.getValue().toString());
     }
     super.main(iwc);
   }
@@ -63,6 +88,12 @@ public class TreeViewerSelection extends TreeViewer {
    */
   public PresentationObject getSecondColumnObject(ICTreeNode node, IWContext iwc, boolean fromEditor) {
     Link link = (Link) super.getSecondColumnObject( node, iwc, fromEditor);
+    // add maintain parameters
+    Iterator iterator = maintainParameterMap.entrySet().iterator();
+    while (iterator.hasNext())  {
+      Map.Entry entry = (Map.Entry) iterator.next();
+      link.addParameter((String) entry.getKey(), entry.getValue().toString());
+    }
     if ( selectedNodeId == node.getNodeID()) {
       String name = node.getNodeName();
       Text text = getProxyForSelectedNode();
