@@ -4,7 +4,9 @@
 package com.idega.event;
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,6 +29,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
+import com.oreilly.servlet.MultipartWrapper;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
@@ -301,20 +304,20 @@ public class IWEventProcessor {
 		FileUtil.createFolder(pathToFile.toString());
 		int maxSize = iwc.getRequest().getContentLength();
 		System.out.println("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
-		MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
-		/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/ 
-		Part part;
-		while ((part = mp.readNextPart()) != null) {
-			if (part.isParam()) {
-				ParamPart paramPart = (ParamPart) part;
-				iwc.setMultipartParameter(paramPart.getName(), paramPart.getStringValue());
-				//System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
-			}
-			else if (part.isFile()) {
-				// it's a file part
-				FilePart filePart = (FilePart) part;
-				String fileName = filePart.getFileName();
-				if (fileName != null) {
+		
+		if(iwc.getRequest() instanceof MultipartWrapper){
+		    // Cast the request to a MultipartWrapper
+	        MultipartWrapper multi = (MultipartWrapper) iwc.getRequest();
+
+	        // Show which files we received
+	        Enumeration files = multi.getFileNames();
+	        while (files.hasMoreElements()) {
+	          String name = (String)files.nextElement();
+	          String fileName = multi.getFilesystemName(name);
+	          String mimetype = multi.getContentType(name);
+	          File f = multi.getFile(name);
+	          
+	          if (fileName != null) {
 					pathToFile.append(fileName);
 					String filePath = pathToFile.toString();
 					StringBuffer webPath = new StringBuffer();
@@ -325,16 +328,56 @@ public class IWEventProcessor {
 					webPath.append('/');
 					webPath.append(fileName);
 					// Opera mimetype fix ( aron@idega.is )
-					String mimetype = filePart.getContentType();
 					if (mimetype != null) {
 						StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
 						if (tokenizer.hasMoreTokens())
 							mimetype = tokenizer.nextToken();
 					}
 					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
-					long size = filePart.writeTo(file);
+				    FileUtil.copyFile(f,file);
+					long size = f.length();
 					file.setSize(size);
 					iwc.setUploadedFile(file);
+				}
+	        }
+		}
+		else{
+		
+			MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
+			/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/ 
+			Part part;
+			while ((part = mp.readNextPart()) != null) {
+				if (part.isParam()) {
+					ParamPart paramPart = (ParamPart) part;
+					iwc.setMultipartParameter(paramPart.getName(), paramPart.getStringValue());
+					//System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
+				}
+				else if (part.isFile()) {
+					// it's a file part
+					FilePart filePart = (FilePart) part;
+					String fileName = filePart.getFileName();
+					if (fileName != null) {
+						pathToFile.append(fileName);
+						String filePath = pathToFile.toString();
+						StringBuffer webPath = new StringBuffer();
+						webPath.append('/');
+						webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+						webPath.append('/');
+						webPath.append("upload");
+						webPath.append('/');
+						webPath.append(fileName);
+						// Opera mimetype fix ( aron@idega.is )
+						String mimetype = filePart.getContentType();
+						if (mimetype != null) {
+							StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
+							if (tokenizer.hasMoreTokens())
+								mimetype = tokenizer.nextToken();
+						}
+						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+						long size = filePart.writeTo(file);
+						file.setSize(size);
+						iwc.setUploadedFile(file);
+					}
 				}
 			}
 		}
