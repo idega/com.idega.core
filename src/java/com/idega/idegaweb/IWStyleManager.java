@@ -58,7 +58,7 @@ public class IWStyleManager {
 			String lines = null;
 	
 			try {
-				file = FileUtil.getFileAndCreateIfNotExists(URL);
+				file = FileUtil.getFileAndCreateRecursiveIfNotExists(URL);
 			}
 			catch (IOException e) {
 				file = null;
