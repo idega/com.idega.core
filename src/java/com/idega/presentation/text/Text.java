@@ -58,7 +58,7 @@ public static String FONT_SIZE_34_STYLE_TAG = "34pt";
 public static String NON_BREAKING_SPACE = "&nbsp;";
 public static String BREAK = "<br>";
 
-
+public static final String EMPTY_TEXT_STRING = "No text";
 
 
 
@@ -67,7 +67,7 @@ public static String BREAK = "<br>";
 **/
 
 public Text(){
-	this("");
+	this(EMPTY_TEXT_STRING);
 }
 
 public Text(String text){
