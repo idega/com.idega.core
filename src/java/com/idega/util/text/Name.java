@@ -3,97 +3,97 @@ package com.idega.util.text;
 import java.util.*;
 
 /**
- * Title:
- * Description:
- * Copyright:    Copyright (c) 2001
+ * Title: com.idega.util.text.Name
+ * Description: A helper class for splitting up a fullname into first,middle and lastnames.
+ * Copyright:    Copyright (c) 2002
  * Company:
- * @author       Ægir
- * @version 1.0
+ * @author  Eirikur Hrafnsson
+ * @version 1.1
  */
 
  public class Name {
 
-    private StringBuffer firstName = new StringBuffer("");
-    private StringBuffer middleName = new StringBuffer("");
-    private StringBuffer lastName = new StringBuffer("");
-    private StringBuffer fullName = new StringBuffer("");
+    private String firstName = null;
+    private String middleName = null;
+    private String lastName = null;
+    private String fullName = null;
 
     public Name() {
     }
 
     public Name(String first, String middle, String last) {
         if(first != null)
-            firstName.append(first);
+            firstName = first;
         if(middle != null)
-            middleName.append(middle);
+            middleName = middle;
         if(last != null)
-            lastName.append(last);
+            lastName = last;
     }
 
-    public Name(String name) {
-        setName(name);
-    }
-
-    public static void main(String[] args) {
-        Name name = new Name("Ægir Laufdal  travis gravis   Traustason");
-        System.out.println(name.getName());
-        System.out.println(name.getFirstName());
-        System.out.println(name.getMiddleName());
-        System.out.println(name.getLastName());
+    public Name(String fullName) {
+        setName(fullName);
     }
 
     public String getName() {
-        fullName.append(firstName.toString());
-        if(middleName.length() != 0) {
-            fullName.append(" ");
-            fullName.append(middleName.toString());
-        }
-        fullName.append(" ");
-        fullName.append(lastName.toString());
-        return fullName.toString();
+        return this.fullName;
     }
 
     public String getFirstName() {
-        return this.firstName.toString();
+        return this.firstName;
     }
 
     public String getMiddleName() {
-        return this.middleName.toString();
+        return this.middleName;
     }
 
     public String getLastName() {
-        return this.lastName.toString();
+        return this.lastName;
     }
 
-    public void setMiddleName(String middle) {
-        if(middle != null) {
-            if(middleName.length() > 0)
-                middleName.append(" ");
-            middleName.append(middle);
-        }
+    public void setMiddleName(String middleName) {
+      this.middleName = middleName;
     }
 
     public void setFirstName(String firstName) {
-        if(firstName != null)
-            this.firstName.append(firstName);
+    	this.firstName = firstName;
     }
 
     public void setLastName(String lastName) {
-        if(lastName != null)
-            this.lastName.append(lastName);
+        this.lastName = lastName;
     }
 
     public void setName(String name) {
-        if(name.length() < 1)
-            return;
-        StringTokenizer token = new StringTokenizer(name);
-        setFirstName(((String)token.nextElement()));
-        int count = token.countTokens()-2;
-        for(int i = 0; i < count; i++) {
-            setMiddleName(((String) token.nextElement()));;
-        }
-        if(token.countTokens() > 0)
-            setLastName(((String)token.nextElement()));
+		if ((name != null) && (name.length() > 0)) {
+			StringTokenizer token = new StringTokenizer(name);
+			int countWithoutFirstAndLast = token.countTokens() - 2;
+
+			firstName = (((String) token.nextElement()));
+
+			if (countWithoutFirstAndLast >= 1) {
+				StringBuffer middleName = new StringBuffer();
+
+				for (int i = 0; i < countWithoutFirstAndLast; i++) {
+					middleName.append((String) token.nextElement());
+
+					if (i != (countWithoutFirstAndLast - 1))
+						middleName.append(" ");
+
+				}
+
+				this.middleName = middleName.toString());
+			}
+			else { //set middle name == null
+				this.middleName = null;
+			}
+
+			if (countWithoutFirstAndLast >= 0) {
+				lastName = (String) token.nextElement();
+			}
+			else { //remove last name
+				this.lastName = null;
+			}
+		}
+	}
     }
 
   }
