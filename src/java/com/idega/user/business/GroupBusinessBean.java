@@ -491,7 +491,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	    
 	    Collection groups = aGroup.getChildGroups(groupTypes,returnSpecifiedGroupTypes);
 	    
-			int j = 0;
+			//int j = 0;
 			
 	    if (groups != null && !groups.isEmpty() ){
 	
