@@ -184,7 +184,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
-		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextType)
+		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
 		
 		return super.idoFindPKsByQuery(sql);
