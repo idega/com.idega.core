@@ -30,4 +30,17 @@ public interface MetaDataCapable
 	 * Gets the metadata set for the key metaDataKey
 	 */
 	public String getMetaData(String metaDataKey);
+	
+	/**
+	 * @deprecated legacy
+	 * @param metaDataKey
+	 * @return
+	 */
+	public boolean removeMetaData(String metaDataKey);
+	
+	/**
+	 * @deprecated legacy
+	 * @throws java.sql.SQLException
+	 */
+	public void updateMetaData() throws java.sql.SQLException;
 }
