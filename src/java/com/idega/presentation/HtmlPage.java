@@ -295,7 +295,7 @@ public class HtmlPage extends Page {
 			}
 			out.write("<body " + getMarkupAttributesString() + " >\n");
 			
-			body = body.substring(body.indexOf(">" + 1));
+			body = body.substring(body.indexOf(">") + 1);
 			
 			//Process the template regions:			
 			String[] parts = body.split("<!-- TemplateBeginEditable");
