@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.49 2002/03/10 19:57:18 gimmi Exp $
+ * $Id: Link.java,v 1.50 2002/03/11 14:57:22 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -54,6 +54,7 @@ public class Link extends Text{
   private StringBuffer _parameterString;
   //private String displayString;
   private String _objectType;
+  private String windowOpenerJavascriptString=null;
 
   private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
   public static final String HASH = "#";
@@ -1439,11 +1440,12 @@ public class Link extends Text{
       if(openInNewWindow){
       //if (_objectType==(OBJECT_TYPE_WINDOW)) {
        // openInNewWindow=true;
-	if (_windowClass == null) {
+	/*if (_windowClass == null) {
 	  setFinalUrl("javascript:"+_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
 	} else {
 	  setFinalUrl("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
-	}
+	}*/
+        setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
 	//setFinalUrl(HASH);
       }
       else{
@@ -1672,7 +1674,7 @@ public class Link extends Text{
   }
 
   private boolean isOpeningInNewWindow(){
-    if(_myWindow!=null  || this._windowClass!=null){
+    if(_myWindow!=null  || this._windowClass!=null || this.windowOpenerJavascriptString != null){
       return true;
     }
     return false;
@@ -1821,5 +1823,23 @@ public class Link extends Text{
       _parameterString = newBuffer;
       return;
     }
+  }
+
+  public void setWindowToOpenScript(String scriptString){
+    this.windowOpenerJavascriptString=scriptString;
+  }
+
+  private String getWindowOpenerJavascriptString(IWContext iwc){
+    if(windowOpenerJavascriptString==null){
+	if (_windowClass == null) {
+	   return ("javascript:"+_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
+	} else {
+	  return ("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
+	}
+    }
+    else{
+      return "javascript:"+windowOpenerJavascriptString;
+    }
+
   }
 }
