@@ -37,6 +37,7 @@ public class PageIncluder extends PresentationObject{
 
         if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME) ){
           query = TextSoap.findAndCut(decodeQueryString(query),PAGE_INCLUDER_PARAMETER_NAME+"=");
+          URL = query;
         }
 
         location.append(URL);
@@ -99,6 +100,7 @@ public class PageIncluder extends PresentationObject{
     html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
     html = TextSoap.findAndReplace(html,"#uacute;","&uacute;");
     html = TextSoap.findAndReplace(html,"#ouml;","&ouml;");
+    html = TextSoap.findAndReplace(html,"#nbsp;","&nbsp;");
   //  html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
   return html;
   }
