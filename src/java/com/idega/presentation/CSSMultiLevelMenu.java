@@ -26,14 +26,14 @@ import com.idega.presentation.text.Text;
 		//add as a top menu
 		menuBar.add(level0101);
 		//insert items
-		level0101.add(new Text("Item one"));
-		level0101.add(new Text("Item two"));
-		level0101.add(new Text("Item three"));
+		level0101.add("Item one");
+		level0101.add("Item two");
+		level0101.add("Item three");
 		//insert item that is a submenu
 		CSSMenu level010103 = menuBar.createCSSMenu("Item three submenu");
 		level0101.add(level010103);
-		level010103.add(new Text("Item one in submenu"));
-		level010103.add(new Text("Item two in submenu"));
+		level010103.add("Item one in submenu");
+		level010103.add(new Link("Item two in submenu","#"));
 		//one last item
 		level0101.add(new Text("Item four"));
 		
@@ -53,6 +53,8 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     private static String prefix = "<div id=\"menu\">\n\t<ul id=\"menuList\">\n";
     private static String suffix = "\t</ul>\n</div>";
     private static String CSS_FILE_PATH = "cssmenu/CSSMultiLevelMenu.css";
+    private boolean addTestData = false;
+    
     
     /**
      * 
@@ -110,28 +112,29 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
 		String pathToMenuCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_FILE_PATH);
 		parentPage.addStyleSheetURL(pathToMenuCSS);
 		
-		//A little test code, should be commented 
-		//create a menu
-		CSSMenu level0101 = createCSSMenu("First top menu");
-		//add as a top menu
-		this.add(level0101);
-		//insert items
-		level0101.add(new Link("Item one","#"));
-		level0101.add(new Link("Item two","#"));
 		
-		//insert item that is a submenu
-		CSSMenu level010103 = createCSSMenu("Item three submenu");
-		level0101.add(level010103);
-		level010103.add(new Link("Item one in submenu","#"));
-		level010103.add(new Link("Item two in submenu","#"));
-		//one last item
-		level0101.add(new Link("Item four","#"));
-		
-		//create and add an empty top menu
-		CSSMenu level0102 = createCSSMenu("Second empty top menu");
-		this.add(level0102);
-		
-		
+		if(addTestData) {
+			//A little test code, 
+			//create a menu
+			CSSMenu level0101 = createCSSMenu("First top menu");
+			//add as a top menu
+			this.add(level0101);
+			//insert items
+			level0101.add(new Link("Item one","#"));
+			level0101.add(new Link("Item two","#"));
+			
+			//insert item that is a submenu
+			CSSMenu level010103 = createCSSMenu("Item three submenu");
+			level0101.add(level010103);
+			level010103.add(new Link("Item one in submenu","#"));
+			level010103.add(new Link("Item two in submenu","#"));
+			//one last item
+			level0101.add(new Link("Item four","#"));
+			
+			//create and add an empty top menu
+			CSSMenu level0102 = createCSSMenu("Second empty top menu");
+			this.add(level0102);
+		}
 		
     }
     
@@ -149,6 +152,11 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
 	        		print(suffix);
 	        }
         }
+    }
+    
+    
+    public void setToAddTestData(boolean addTestData) {
+        this.addTestData = addTestData;
     }
     
     
@@ -265,5 +273,12 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
             this.menuName = menuName;
         }
 
+    }
+    /* (non-Javadoc)
+     * @see com.idega.presentation.PresentationObject#isContainer()
+     */
+    public boolean isContainer() {
+        //not allowed to add to this module in the Builder yet!
+        return false;
     }
 }
