@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.79 2002/08/01 13:45:10 aron Exp $
+ * $Id: Link.java,v 1.80 2002/09/04 12:49:21 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -571,9 +571,9 @@ public class Link extends Text{
   }
 
   public void setParameter(String parameterName, String parameterValue) {
- 	addParameter(parameterName,parameterValue);	
+ 	addParameter(parameterName,parameterValue);
   }
-  
+
   /**
    *
    */
@@ -1559,7 +1559,18 @@ public class Link extends Text{
     if (d.getURL() != null) {
       String attr = getAttribute(HREF_ATTRIBUTE);
       if (attr.startsWith("/")) {
-	setAttribute(HREF_ATTRIBUTE,d.getURL()+attr);
+        if( (protocol == null) || protocol.equals("") ){
+          protocol = iwc.getRequest().getProtocol();
+//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
+          if( protocol.indexOf("HTTPS")!=-1  ){
+            protocol = "https://";
+          }
+          else{
+            protocol = "http://";
+          }
+        }
+        setAttribute(HREF_ATTRIBUTE,protocol+d.getURL()+attr);
+
       }
     }
 
@@ -1697,7 +1708,7 @@ public class Link extends Text{
     String action = "";
     if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
        //setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
-     
+
      action = ("document.forms['"+form.getID()+"']."+IWMainApplication.IWEventSessionAddressParameter+".value='"+this.getID()+"';document.forms['"+form.getID()+"'].submit();");
     }
     else {
@@ -2038,5 +2049,10 @@ public class Link extends Text{
   public void setProtocol(String protocol){
     this.protocol = protocol;
   }
+
+  public String getProtocol(){
+    return this.protocol;
+  }
+
 
 }

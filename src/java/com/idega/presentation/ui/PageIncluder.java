@@ -158,9 +158,6 @@ public class PageIncluder extends PresentationObject implements Index{
 
   //System.out.println("Location url is: "+loc+" and index is: "+index);
 
-
-
-
   if(loc!=null && !loc.equals("") ){
     out = FileUtil.getStringFromURL(loc);
 
@@ -177,26 +174,38 @@ public class PageIncluder extends PresentationObject implements Index{
      * **/
 
     out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
-    out = preProcess(out);
+    out = preProcess(out,iwc);
     if( forceFrame ){
       out = encodeQueryStrings(out);
     }
-    out = changeSrcAttributes(out);
     out = changeAHrefAttributes(out);
     out = changeFormActionAttributes(out);
-    out = postProcess(out);
+    out = changeSrcAttributes(out);
+
+    out = postProcess(out,iwc);
   }
   }
 
 
-  protected String preProcess(String html){
+  protected String preProcess(String html,IWContext iwc){
     html = TextSoap.findAndReplace(html,"href=\"javascript","httpIW_PREPROCESSED");
     return html;
   }
 
-  protected String postProcess(String html){
+  protected String postProcess(String html,IWContext iwc){
     html = TextSoap.findAndReplace(html,"httpIW_PREPROCESSED","href=\"javascript");
     html = findAndReplaceStrings(html);
+
+    //Make images from this server (idegaweb) always follow the protocol being used http/https
+    String protocol = iwc.getRequest().getProtocol();
+    //@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
+    if( protocol.indexOf("HTTPS")!=-1  ){
+      protocol = "https://";
+      html = TextSoap.findAndReplace(html,"src=\"http://"+serverName,"src=\""+protocol+serverName);
+    }
+
+
+
     return html;
   }
 
@@ -331,6 +340,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = TextSoap.findAndReplace(html,"&","&",symbol);
     //fixing this should be done with a HTMLEditor object OR
     //make a single general expression fix
+    //by getting all between (textSoap) changing them and then use a find replace on the originals
     html = symbolReplace(html,"eth;");
     html = symbolReplace(html,"ETH;");
     html = symbolReplace(html,"thorn;");
