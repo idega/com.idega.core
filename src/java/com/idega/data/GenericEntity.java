@@ -556,7 +556,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	public BlobWrapper getBlobColumnValue(String columnName) {
 		BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
-    wrapper = null;
 		if (wrapper == null) {
 			wrapper = new BlobWrapper(this, columnName);
 			this.setColumn(columnName, wrapper);
