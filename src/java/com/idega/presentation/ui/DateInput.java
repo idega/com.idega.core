@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.30 2003/05/05 18:33:16 thomas Exp $
+ * $Id: DateInput.java,v 1.31 2003/05/27 19:57:54 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -72,6 +72,8 @@ public class DateInput extends InterfaceObjectContainer {
 	private String notEmptyErrorMessage;
 	private Date _earliestDate;
 	private String _earliestDateErrorMessage;
+	private Date _latestDate;
+	private String _latestDateErrorMessage;
 	private String _styleClass;
 	
   /**
@@ -536,6 +538,39 @@ public class DateInput extends InterfaceObjectContainer {
 				form.setAssociatedFormScript(script);
 			}
 		}
+		if (_latestDate != null) {
+			if (getParentForm() != null) {
+				Form form = getParentForm();
+				form.setOnSubmit("return checkSubmit(this)");
+				Script script = form.getAssociatedFormScript();
+				if (script == null)
+					script = new Script();
+
+				if (script.getFunction("checkSubmit") == null) {
+					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+				}
+				script.addToFunction("checkSubmit", "if (checkLatestDate (findObj('" + getName() + "'),"+_earliestDate.getTime()+", '"+_earliestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
+				
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("function checkLatestDate(input, date, warnMsg) {").append("\n\t");
+				buffer.append("var returnBoolean = true;").append("\n\t");
+				buffer.append("var dateString = input.value;").append("\n\t");
+				buffer.append("if (dateString.length > 0) {").append("\n\t\t");
+				buffer.append("var oldDate = new Date(date);").append("\n\t\t");
+				buffer.append("var month = dateString.substring(5,7) - 1;").append("\n\t\t");
+				buffer.append("var newDate = new Date(dateString.substring(0,4),month,dateString.substring(8,10));").append("\n\t\t");
+				buffer.append("var difference = newDate - oldDate;").append("\n\t\t");
+				buffer.append("if (difference > 0)").append("\n\t\t\t");
+				buffer.append("returnBoolean = false;").append("\n\t");
+				buffer.append("}").append("\n\n\t");
+				buffer.append("if (!returnBoolean)").append("\n\t\t");
+				buffer.append("alert(warnMsg);").append("\n\t");
+				buffer.append("return returnBoolean;").append("\n}");
+				script.addFunction("checkLatestDate", buffer.toString());
+				
+				form.setAssociatedFormScript(script);
+			}
+		}
   }
 
 	public void setAsNotEmpty(String errorMessage) {
@@ -546,6 +581,11 @@ public class DateInput extends InterfaceObjectContainer {
 	public void setEarliestPossibleDate(Date date, String errorMessage) {
 		_earliestDate = date;
 		_earliestDateErrorMessage = errorMessage;
+	}
+
+	public void setLatestPossibleDate(Date date, String errorMessage) {
+		_latestDate = date;
+		_latestDateErrorMessage = errorMessage;
 	}
 
   private void addLocalized(IWContext iwc) {
