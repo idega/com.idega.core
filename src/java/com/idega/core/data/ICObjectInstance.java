@@ -29,7 +29,8 @@ public class ICObjectInstance extends GenericEntity{
 		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
 
 		addAttribute(getIDColumnName());
-		addAttribute("ic_object_id","Module",true,true,"java.lang.Integer","many-to-one","com.idega.core.data.ICObject");
+		addAttribute("ic_object_id","Module",true,true,Integer.class,"many-to-one",ICObject.class);
+                addAttribute("ib_page_id","Page",true,true,Integer.class,"many-to-one",com.idega.builder.data.IBPage.class);
 
 	}
 
