@@ -53,6 +53,13 @@ public java.lang.String getGeneralGroupTypeString(){
 	return theReturn;
 }
 
+public int getNumberOfGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetNumberOfGroupTypes();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetNumberOfVisibleGroupTypes();

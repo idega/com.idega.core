@@ -274,6 +274,10 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
     return this.idoFindPKsBySQL(query.toString());
 //    return super.idoFindIDsBySQL("select * from "+getEntityName()+" where "+ COLUMN_IS_VISIBLE + "!='"+super.COLUMN_VALUE_FALSE+"'");
   }
+  
+  public int ejbHomeGetNumberOfGroupTypes()throws FinderException,IDOException{
+  	return idoGetNumberOfRecords();
+  }
 
   public int ejbHomeGetNumberOfVisibleGroupTypes() throws FinderException, IDOException {
     IDOQuery query = idoQuery();
