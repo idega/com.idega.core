@@ -27,8 +27,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final String _CATEYGORYSTRING_JSP_PAGE = "jsp_page";
 
   public static final String _CATEYGORYSTRING_FILE_ID = "ic_file_id";
-  public static final String _CATEYGORYSTRING_ENTITY = _CATEYGORYSTRING_OBJECT_ID; //?
-  public static final String _CATEYGORYSTRING_ENTITY_RECORD_ID = "ic_entity_record_id";
+  //public static final String _CATEYGORYSTRING_ENTITY_RECORD_ID = "ic_entity_record_id";
 
   public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
   public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
@@ -45,6 +44,10 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final int _CATEGORY_PAGE = 4;
   public static final int _CATEGORY_JSP_PAGE = 5;
 
+  public static final int _CATEGORY_FILE_ID = 6;
+  //public static final int _CATEGORY_ENTITY_RECORD_ID = 7;
+
+
 
   public PermissionGroup getPermissionGroupEveryOne() throws Exception ;
   public PermissionGroup getPermissionGroupUsers() throws Exception ;
@@ -55,9 +58,9 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean isOwner(ICFile file, IWContext iwc)throws Exception;
   public boolean isOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception;
 
-  public void setAsOwner(PresentationObject obj , IWContext iwc) throws Exception ;
-  public void setAsOwner(ICFile file, IWContext iwc)throws Exception;
-  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception;
+  public void setAsOwner(PresentationObject obj, int groupId, IWContext iwc) throws Exception ;
+  public void setAsOwner(ICFile file, int groupId, IWContext iwc)throws Exception;
+  public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWContext iwc)throws Exception;
 
 
   public boolean hasPermission(String permissionKey, PresentationObject obj,IWContext iwc) throws Exception;

@@ -25,11 +25,17 @@ import java.sql.SQLException;
 
 public class PermissionCacher {
 
+
+/**
+ * @todo depricate APPLICATION_ADDRESS_-constants, use categoryconstants from Accesscorntroller with prefix
+ */
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT = "ic_permissionmap_object";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE = "ic_permissionmap_object_instance";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE = "ic_permissionmap_bundle";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE = "ic_permissionmap_page_instance";
   private static final String APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE = "ic_permissionmap_jsp_page";
+  public static final String APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID = "ic_permissionmap_file_id";
+
   private static final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";
 
   public PermissionCacher() {
@@ -72,6 +78,10 @@ public class PermissionCacher {
 
   public static boolean anyInstancePerissionsDefinedForPage( String identifier, IWContext iwc, String permissionKey) throws SQLException{
     return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE);
+  }
+
+  public static boolean anyInstancePerissionsDefinedForFile( String identifier, IWContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID);
   }
 
 
@@ -213,6 +223,11 @@ public class PermissionCacher {
   public static Boolean hasPermissionForPage(String identifier, IWContext iwc, String permissionKey, List groups) throws SQLException {
     return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,identifier,iwc,permissionKey,groups);
   }
+
+  public static Boolean hasPermissionForFile(String identifier, IWContext iwc, String permissionKey, List groups) throws SQLException {
+    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID,identifier,iwc,permissionKey,groups);
+  }
+
 
   //public static Boolean hasPermission()
 
@@ -383,6 +398,10 @@ public class PermissionCacher {
     updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,jspPageId,permissionKey,iwc);
   }
 
+  public static void updateFilePermissions(String fileId, String permissionKey, IWContext iwc) throws SQLException{
+    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID,fileId,permissionKey,iwc);
+  }
+
 
   public static void updatePermissions(int permissionCategory, String identifier, String permissionKey, IWContext iwc) throws SQLException{
     switch (permissionCategory) {
@@ -425,13 +444,14 @@ public class PermissionCacher {
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_PAGE_ID,ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
           permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_JSP_PAGE,ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID)){
+          permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_FILE_ID,ICPermission.getContextValueColumnName(),identifier,ICPermission.getPermissionStringColumnName(),permissionKey);
       }
     }
     //
 
     if(permissions != null){
       Iterator iter = permissions.iterator();
-      String oldPermissionKey = "";
       boolean first = true;
       Map mapToPutTo = new Hashtable();
       while (iter.hasNext()) {

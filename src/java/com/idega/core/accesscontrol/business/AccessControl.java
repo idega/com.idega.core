@@ -56,6 +56,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   //temp
   private static ICObject staticPageICObject = null;
+  private static ICObject staticFileICObject = null;
+
 
 
 
@@ -234,32 +236,83 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     Boolean myPermission = null;
     if(permissionGroupLists != null){
       int arrayLength = permissionGroupLists.length;
-      if (category == AccessController._CATEGORY_JSP_PAGE){ // JSP page
-        for (int i = 0; i < arrayLength; i++) {
-          myPermission = PermissionCacher.hasPermissionForJSPPage(identifier,iwc,permissionType,permissionGroupLists[i]);
-          if(myPermission != null){
+      switch (category) {
+        case AccessController._CATEGORY_OBJECT_INSTANCE:
+        case AccessController._CATEGORY_OBJECT:
+        case AccessController._CATEGORY_BUNDLE :
+        case AccessController._CATEGORY_PAGE_INSTANCE:
+        case AccessController._CATEGORY_PAGE:
+          //PageInstance
+          if(category == AccessController._CATEGORY_PAGE_INSTANCE &&  !identifier.equals(Integer.toString(_notBuilderPageID)) ){
+            for (int i = 0; i < arrayLength; i++) {
+              myPermission = PermissionCacher.hasPermissionForPage(identifier,iwc,permissionType,permissionGroupLists[i]);
+              if(myPermission != null){
+                return myPermission;
+              }
+            }
+
+            // Global - (Page)
+            if(!PermissionCacher.anyInstancePerissionsDefinedForPage(identifier,iwc,permissionType)){
+              ICObject page = getStaticPageICObject();
+              if(page != null){
+                for (int i = 0; i < arrayLength; i++) {
+                  myPermission = PermissionCacher.hasPermission(page,iwc,permissionType,permissionGroupLists[i]);
+                  if(myPermission != null){
+                    return myPermission;
+                  }
+                }
+              }
+            }
+            // Global - (Page)
+
+
+            return myPermission;
+          }else{
+            //instance
+            for (int i = 0; i < arrayLength; i++) {
+              myPermission = PermissionCacher.hasPermissionForObjectInstance(identifier,iwc,permissionType,permissionGroupLists[i]);
+              if(myPermission != null){
+                return myPermission;
+              }
+            }
+            //instance
+
+            // Global - (object)
+            if(!PermissionCacher.anyInstancePerissionsDefinedForObject(identifier,iwc,permissionType)){
+              for (int i = 0; i < arrayLength; i++) {
+                myPermission = PermissionCacher.hasPermissionForObject(identifier,iwc,permissionType,permissionGroupLists[i]);
+                if(myPermission != null){
+                  return myPermission;
+                }
+              }
+            }
+            // Global - (object)
+
             return myPermission;
           }
-        }
-
-        return myPermission;
-      } else { // if (obj != null)
-
-        //PageInstance
-        if(category == AccessController._CATEGORY_PAGE_INSTANCE &&  !identifier.equals(Integer.toString(_notBuilderPageID)) ){
+        case AccessController._CATEGORY_JSP_PAGE:
           for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForPage(identifier,iwc,permissionType,permissionGroupLists[i]);
+            myPermission = PermissionCacher.hasPermissionForJSPPage(identifier,iwc,permissionType,permissionGroupLists[i]);
+            if(myPermission != null){
+              return myPermission;
+            }
+          }
+
+          return myPermission;
+        case AccessController._CATEGORY_FILE_ID:
+          for (int i = 0; i < arrayLength; i++) {
+            myPermission = PermissionCacher.hasPermissionForFile(identifier,iwc,permissionType,permissionGroupLists[i]);
             if(myPermission != null){
               return myPermission;
             }
           }
 
           // Global - (Page)
-          if(!PermissionCacher.anyInstancePerissionsDefinedForPage(identifier,iwc,permissionType)){
-            ICObject page = getStaticPageICObject();
-            if(page != null){
+          if(!PermissionCacher.anyInstancePerissionsDefinedForFile(identifier,iwc,permissionType)){
+            ICObject file = getStaticFileICObject();
+            if(file != null){
               for (int i = 0; i < arrayLength; i++) {
-                myPermission = PermissionCacher.hasPermission(page,iwc,permissionType,permissionGroupLists[i]);
+                myPermission = PermissionCacher.hasPermission(file,iwc,permissionType,permissionGroupLists[i]);
                 if(myPermission != null){
                   return myPermission;
                 }
@@ -268,31 +321,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
           // Global - (Page)
 
-
           return myPermission;
-        }else{
-          //instance
-          for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForObjectInstance(identifier,iwc,permissionType,permissionGroupLists[i]);
-            if(myPermission != null){
-              return myPermission;
-            }
-          }
-          //instance
-
-          // Global - (object)
-          if(!PermissionCacher.anyInstancePerissionsDefinedForObject(identifier,iwc,permissionType)){
-            for (int i = 0; i < arrayLength; i++) {
-              myPermission = PermissionCacher.hasPermissionForObject(identifier,iwc,permissionType,permissionGroupLists[i]);
-              if(myPermission != null){
-                return myPermission;
-              }
-            }
-          }
-          // Global - (object)
-
-          return myPermission;
-        }
       }
     }
     return myPermission;
@@ -503,6 +532,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return staticPageICObject;
   }
 
+  //temp
+  private static ICObject getStaticFileICObject(){
+    if(staticFileICObject == null){
+      try {
+        staticPageICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)ICObject.getStaticInstance(ICObject.class),ICObject.getClassNameColumnName(),ICFile.class.getName()).get(0);
+      }
+      catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+    return staticFileICObject;
+  }
 
 //  /**
 //   * use this method when writing to database to avoid errors in database.
@@ -794,6 +835,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         case AccessControl._CATEGORY_JSP_PAGE :
           permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
+        case AccessControl._CATEGORY_FILE_ID :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_FILE_ID + "' AND " + permission.getContextValueColumnName() + " = '" + identifier + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + permission.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+          break;
+
       }
 
     }
@@ -822,6 +867,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           break;
         case AccessControl._CATEGORY_JSP_PAGE :
           permission.setContextType(AccessControl._CATEYGORYSTRING_JSP_PAGE);
+          break;
+        case AccessControl._CATEGORY_FILE_ID :
+          permission.setContextType(AccessControl._CATEYGORYSTRING_FILE_ID);
           break;
       }
 
@@ -1258,7 +1306,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    */
 
   public boolean isOwner(ICFile file, IWContext iwc)throws Exception{
-    return false;
+    return hasPermission(AccessControl._PERMISSIONKEY_OWNER, AccessController._CATEGORY_FILE_ID, Integer.toString(file.getID()),iwc);
   }
 
   /**
@@ -1271,17 +1319,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo implement setAsOwner(PresentationObject obj , IWContext iwc) throws Exception
    */
-  public void setAsOwner(PresentationObject obj , IWContext iwc) throws Exception {}
+  public void setAsOwner(PresentationObject obj, int groupId, IWContext iwc) throws Exception {}
 
   /**
    * @todo implement setAsOwner(ICFile file, IWContext iwc)throws Exception
    */
-  public void setAsOwner(ICFile file, IWContext iwc)throws Exception {}
+  public void setAsOwner(ICFile file, int groupId, IWContext iwc)throws Exception {
+    setPermission(AccessController._CATEGORY_FILE_ID,iwc,Integer.toString(groupId),Integer.toString(file.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+  }
 
   /**
    * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
    */
-  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {
+  public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWContext iwc)throws Exception {
     throw new Exception(this.getClass().getName()+".setAsOwner(...) : not implemented");
   }
 
