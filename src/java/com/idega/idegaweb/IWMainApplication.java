@@ -182,7 +182,7 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public static String getEncryptedClassName(Class classToInstanciate){
-      return getHashCode(classToInstanciate,0);
+      return getHashCode(classToInstanciate);
   }
 
   public static String decryptClassName(String encryptedClassName){
@@ -320,7 +320,6 @@ public class IWMainApplication{//implements ServletContext{
     if( !alreadyUnLoaded ){
       System.out.println("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
       storeStatus();
-      storeCryptoProperties();
       //IWCacheManager.deleteCachedBlobs(this);
 //      getImageFactory(true).deleteGeneratedImages(this);
       for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
@@ -337,6 +336,7 @@ public class IWMainApplication{//implements ServletContext{
   public void storeStatus(){
       getSettings().store();
       getSystemProperties().store();
+      storeCryptoProperties();
       try{
       getBundlesFile().store(new FileOutputStream(bundlesFileFile),null);
       }
@@ -620,28 +620,39 @@ public class IWMainApplication{//implements ServletContext{
   // hashcode referencing
   private static Hashtable hashClasses = null;
   private static Properties cryptoCodes = null;
-  private static Properties cryptoProps = null;
+  private static Properties cryptoProperties = null;
+  protected static String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
+  private static boolean isCryptoUsed = true;
 
 	private String SYSTEM_PROPERTIES_STORAGE_PARAMETER = "idegaweb_system_properties";
 
 
-
+  private static boolean isUsingCryptoProperties(){
+  	return isCryptoUsed;
+  }
+  
+  private void initCryptoUsage(){
+  	String isUsed = getSettings().getProperty(USE_CRYPTO_PROPERTIES);
+  	isCryptoUsed = "true".equals(isUsed);
+  }
 
   private void loadCryptoProperties(){
-    cryptoProps = new Properties();
+  	initCryptoUsage();
+  	if(isUsingCryptoProperties()){
+    cryptoProperties = new Properties();
     sendStartupMessage("Loading Cryptonium");
     String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
     try{
-      cryptoProps.load(new FileInputStream(file));
+      cryptoProperties.load(new FileInputStream(file));
       // temporary property cleaning
-      String clean = cryptoProps.getProperty("clean");
+      String clean = cryptoProperties.getProperty("clean");
       if(clean == null){
-        cryptoProps.clear();
-        cryptoProps.setProperty("clean","true");
+        cryptoProperties.clear();
+        cryptoProperties.setProperty("clean","true");
       }
       /////////////////////////////
       cryptoCodes = new Properties();
-      if(cryptoProps.size() > 0){
+      if(cryptoProperties.size() > 0){
         Iterator iter = cryptoCodes.entrySet().iterator();
         while(iter.hasNext()){
           Map.Entry me = (Map.Entry) iter.next();
@@ -650,25 +661,27 @@ public class IWMainApplication{//implements ServletContext{
       }
     }
     catch(Exception ex){}
+  	}
   }
 
    private void storeCryptoProperties(){
-    if(cryptoProps!=null){
+    if(isUsingCryptoProperties() && cryptoProperties!=null){
       sendShutdownMessage("Storing Cryptonium");
       
       try{
       String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
-      cryptoProps.store(new FileOutputStream(file),"Cryptonium");
+      cryptoProperties.store(new FileOutputStream(file),"Cryptonium");
       }
       catch(Exception ex){
       	ex.printStackTrace();
       }
     }
+    initCryptoUsage();
   }
 
   public static String getHashCode(String className){
     try{
-      return getHashCode(Class.forName(className),0);
+      return getHashCode(Class.forName(className));
     }
     catch(ClassNotFoundException ex){
 
@@ -682,38 +695,38 @@ public class IWMainApplication{//implements ServletContext{
  * @param addon an integer to that is added to the number calculate() makes to avoid two different classes having the same code
  * @return String
  */
-  public static String getHashCode(Class classObject,int addon){
-
+  public static String getHashCode(Class classObject){
+	if(isUsingCryptoProperties()){
     if(cryptoCodes == null)
       cryptoCodes = new Properties();
 
-    if(cryptoProps == null)
-      cryptoProps =new Properties();
+    if(cryptoProperties == null)
+      cryptoProperties =new Properties();
 
     String crypto;
+    // crypto code fort this class has already been created
     if(cryptoCodes.containsKey(classObject.getName())){
       crypto = (String) cryptoCodes.get(classObject.getName());
     }
+    // crypto code fort this class has not been created
     else{
       int iCrypto = calculate(classObject.getName());
-      iCrypto += addon;
-      crypto = Integer.toString(iCrypto);
-      if( cryptoProps.containsKey(crypto) ){//if this was made before for a different class get me a new number
-      	crypto = getHashCode(classObject,++addon);
+      while(! cryptoProperties.contains(String.valueOf(iCrypto))){
+      	iCrypto++;
       }
-      
+      crypto = Integer.toString(iCrypto);
       cryptoCodes.put(classObject.getName(),crypto);
+      cryptoProperties.put(crypto,classObject.getName());
     }
-
-    cryptoProps.put(crypto,classObject.getName());
-
-
     return crypto;
+	}
+	else
+	return classObject.getName();
   }
 
   public static String getHashCodedClassName(String crypto){
-    if(cryptoProps!=null && crypto!=null && cryptoProps.containsKey(crypto))
-     return (String)cryptoProps.get(crypto);
+    if(cryptoProperties!=null && crypto!=null && cryptoProperties.containsKey(crypto))
+     return (String)cryptoProperties.get(crypto);
     else
      return crypto;
   }
