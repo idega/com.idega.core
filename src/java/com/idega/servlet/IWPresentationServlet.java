@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.44 2003/01/07 11:44:55 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.45 2003/03/07 12:53:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -91,8 +91,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		}
 	}
 	private void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		//TODO
-		//Find a better solution for this:
+		//TODO: Find a better solution for this
 		IWContext iwc = null;
 		if (!hasCheckedCurrentAppContext()) {
 			this.getApplication().setApplicationContextURI(request.getContextPath());
