@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.35 2002/06/12 18:29:34 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.36 2002/06/13 13:31:21 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -367,10 +367,10 @@ writer.println("-->");
 
 
 	  if( iwc.getLanguage().equals("HTML") ){
-	    getResponse().setContentType("text/html");
+	    iwc.setContentType("text/html");
 	  }
 	  else if (iwc.getLanguage().equals("WML")){
-	    getResponse().setContentType("text/vnd.wap.wml");
+	    iwc.setContentType("text/vnd.wap.wml");
 	  }
 
 	  //getPage()._print(iwc);
@@ -406,7 +406,8 @@ writer.println("-->");
 
   public void debug(String debugString){
     try{
-      getIWContext().getWriter().println(debugString);
+      //eiki commented out for testing
+      //getIWContext().getWriter().println(debugString);
     }
     catch(Exception ex){
       System.err.println("Error in IWPresentationServlet.debug() : "+ex.getMessage());
