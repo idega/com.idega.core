@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.50 2002/03/11 14:57:22 gimmi Exp $
+ * $Id: Link.java,v 1.51 2002/03/11 16:08:38 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,8 @@
  */
 package com.idega.presentation.text;
 
+import java.net.URLDecoder;
+import com.idega.util.text.TextSoap;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
@@ -1838,6 +1840,22 @@ public class Link extends Text{
 	}
     }
     else{
+
+      windowOpenerJavascriptString = URLDecoder.decode(windowOpenerJavascriptString);
+      List between = TextSoap.FindAllBetween(windowOpenerJavascriptString, "openwindow('", "'");
+      String theUrl = "";
+      if (between != null && between.size() > 0) {
+        theUrl = (String) between.get(0);
+      }
+
+      String paramString = this.getParameterString(iwc, this.getURL(iwc));
+      if (theUrl.indexOf("?") != -1) {
+        paramString = TextSoap.findAndReplace(paramString, "?","&");
+      }
+
+      if (!paramString.equals("") || !theUrl.equals(""))
+      windowOpenerJavascriptString = TextSoap.findAndInsertAfter(windowOpenerJavascriptString, theUrl, paramString);
+
       return "javascript:"+windowOpenerJavascriptString;
     }
 
