@@ -615,7 +615,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @return
 	 * @throws FinderException
 	 */
-	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+	public Collection ejbFindGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
 	    Table groupTable = new Table(ENTITY_NAME, "g");
 	    Table groupRelTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
 	    SelectQuery query = new SelectQuery(groupTable);
@@ -636,6 +636,33 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());
 	}
+	
+	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+
+		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+
+		SelectQuery query = idoSelectQuery();
+		Criteria theCriteria = null;
+		if (groupTypes != null && !groupTypes.isEmpty()) {
+			theCriteria = new InCriteria(idoQueryTable(),COLUMN_GROUP_TYPE,groupTypes,!returnTypes);
+		}
+		
+		
+		Criteria inCr = new InCriteria(idoQueryTable(),COLUMN_GROUP_ID,findGroupRelationsSQL);
+			
+		if(theCriteria==null){
+			theCriteria = inCr;
+		} else {
+			theCriteria = new AND(theCriteria,inCr);
+		}
+		
+		query.addCriteria(theCriteria);
+		query.addOrder(idoQueryTable(),this.COLUMN_NAME,true);
+		
+		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
+		//return idoFindPKsBySQL(query.toString());
+	}
+
 	
 	/**
 	 * Gets the children of the containingGroup
