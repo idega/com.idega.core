@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimeInput.java,v 1.3 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: TimeInput.java,v 1.4 2002/05/05 16:09:05 laddi Exp $
 
  *
 
@@ -474,7 +474,7 @@ public void setMinute(int minute){
 
 	//theMinute.setSelectedElement(Integer.toString(minute));
 
-        setMinute(Integer.toString(minute));
+	setMinute(Integer.toString(minute));
 
 }
 
@@ -650,6 +650,11 @@ public void keepStatusOnAction(){
 
 }
 
+
+public void setStyleAttribute(String style) {
+  theHour.setStyleAttribute(style);
+  theMinute.setStyleAttribute(style);
+}
 
 
 /**
