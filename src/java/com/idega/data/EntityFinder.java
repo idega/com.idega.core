@@ -226,7 +226,9 @@ public class EntityFinder{
 					tempobj.findByPrimaryKey(RS.getInt(returningEntity.getIDColumnName()));
 				}
 				catch(Exception ex){
+
 					System.err.println("There was an error in GenericEntity.findRelated(GenericEntity returningEntity,String SQLString): "+ex.getMessage());
+					ex.printStackTrace();
 
 				}
                                 if(vector==null){
