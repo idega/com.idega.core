@@ -1,9 +1,8 @@
 package com.idega.presentation.texteditor;
 
+import com.idega.presentation.ui.*;
 import com.idega.util.text.TextSoap;
-import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.*;
-import com.idega.presentation.ui.TextArea;
 
 public class TextEditor extends PresentationObject {
   public static final String DEFAULT_HIDDEN_TEXTEDITOR_INPUT_NAME = "myTextEditor";
@@ -72,24 +71,19 @@ public class TextEditor extends PresentationObject {
     this.text = text;
   }
 
+  public String getMarkupLanguage(IWContext iwc){
+     if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
+      return "HTML";
+     }
+     else return null;
+  }
+
   public void print(IWContext iwc)throws Exception{
     initVariables(iwc);
 
     if (getLanguage().equals("HTML")){
 
       if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
-
-        /*
-        var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
-
-        HiddenInput editor = new HiddenInput("iw_editor","off");  Dont know what enabling this does
-        editor.print(iwc);
-        println("");
-        HiddenInput editor2 = new HiddenInput("iw_editor[Text#autobr]","off");
-        editor2.print(iwc);
-        //HiddenInput html = new HiddenInput("iw_editor2[Text]",""); this is the original name for the hidden html field
-        */
-
 
         Layer source = new Layer();
         source.setZIndex(1);
@@ -109,15 +103,29 @@ public class TextEditor extends PresentationObject {
         StringBuffer buf = new StringBuffer();
         buf.append("<script language=\"JavaScript1.2\">");
         buf.append("new DHTMLEdit(\"").append(inputName).append("\",").append(width).append(",").append(height)
-            .append(",\"\",").append(menu).append(",\"").append(color).append("\");");
+            .append(",\"\",").append(menu).append(",\"").append(color).append("\"")
+            .append(",\"").append(Window.getWindowURL(com.idega.builder.presentation.IBColorChooserWindow.class,iwc)+"&from_editor=true").append("\"")
+            .append(",\"").append(Window.getWindowURL(com.idega.builder.presentation.IBPageChooserWindow.class,iwc)+"&from_editor=true").append("\");");
+
         buf.append("</script>");
 
         source.print(iwc);
         println(buf.toString());
+        /*
+        var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
+
+        HiddenInput editor = new HiddenInput("iw_editor","off");  Dont know what enabling this does if anything
+        editor.print(iwc);
+        println("");
+        HiddenInput editor2 = new HiddenInput("iw_editor[Text#autobr]","off");
+        editor2.print(iwc);
+        //HiddenInput html = new HiddenInput("iw_editor2[Text]",""); this is the original name for the editor
+        */
 
       }
       else{
        TextArea area = new TextArea(inputName,45,20);
+       text = TextSoap.findAndReplace(text, "<br>","\r\n");
        area.setContent(text);
        area.print(iwc);
       }
