@@ -187,26 +187,26 @@ public void _main(IWContext iwc)throws Exception{
 		if (isSetAsNotEmpty){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfEmpty (inputs."+getName()+",'"+notEmptyErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfEmpty (findObj('"+getName()+"'),'"+notEmptyErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfEmpty","function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
 		}
 
 		if (isSetAsIntegers){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotIntegers (inputs."+getName()+",'"+integersErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotIntegers (findObj('"+getName()+"'),'"+integersErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotIntegers","function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}");
 		}
 		if(isSetAsIcelandicSSNumber){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotIcelandicSSNumber (inputs."+getName()+",'"+icelandicSSNumberErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotIcelandicSSNumber (findObj('"+getName()+"'),'"+icelandicSSNumberErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotIcelandicSSNumber","function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 10){ \n       sum = inputbox.value.charAt(0)*3 + inputbox.value.charAt(1)*2 + inputbox.value.charAt(2)*7 + inputbox.value.charAt(3)*6 + inputbox.value.charAt(4)*5 + inputbox.value.charAt(5)*4 + inputbox.value.charAt(6)*3 + inputbox.value.charAt(7)*2; \n      if ((inputbox.value.charAt(8) == 11 - (sum % 11)) && ((inputbox.value.charAt(9) == 0) || (inputbox.value.charAt(9) == 8) || (inputbox.value.charAt(9) == 9))){	\n        return true; \n     }\n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }");
 		}
 		if (isSetAsCreditCardNumber){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotCreditCardNumber (inputs."+getName()+",'"+notCreditCardErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotCreditCardNumber (findObj('"+getName()+"'),'"+notCreditCardErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotCreditCardNumber","function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }");
 			//not fully implemented such as maybe a checksum check could be added??
 
@@ -218,14 +218,14 @@ public void _main(IWContext iwc)throws Exception{
 		else if(isSetAsAlphabetical){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotAlphabetical (inputs."+getName()+",'"+alphabetErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotAlphabetical (findObj('"+getName()+"'),'"+alphabetErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotAlphabetical","function warnIfNotAlphabetical (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if ((inputbox.value.charAt(i) > '0') && (inputbox.value.charAt(i) < '9')){	\n alert ( warnMsg );\n		return false; \n	}  \n } \n  return true;\n\n}");
 		}
 
 		else if(isSetAsEmail){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotEmail (inputs."+getName()+") == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotEmail (findObj('"+getName()+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotEmail","function warnIfNotEmail (inputbox) { \n\n	var emailVal = inputbox.value; \n\n	var atI = emailVal.indexOf (\"@\"); \n\n	var dotI = emailVal.indexOf (\".\"); \n\n	var warnMsg = \""+emailErrorMessage+"\\n\";\n\n	if (  atI && dotI ){\n		return true;\n	}\n	else{\n		alert(warnMsg);\n		return false;\n	}\n}");
 			//Not finished  yet
 		}
