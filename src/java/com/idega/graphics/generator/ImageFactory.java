@@ -23,6 +23,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.Image;
 import com.idega.util.FileUtil;
+import com.idega.util.IWColor;
 
 public class ImageFactory {
 	private static IWMainApplication iwma;
@@ -36,6 +37,14 @@ public class ImageFactory {
 	private static String TAB_SUFFIX = "_tab";
 
 	private static String GENERATED_IMAGES_FOLDER = "iw_generated";
+	
+	public final static String GENERATED_FILL_COLOR = "iw_generated_fill_color";
+	public final static String GENERATED_BORDER_COLOR = "iw_generated_border_color";
+	public final static String GENERATED_FONT = "iw_generated_font";
+	public final static String GENERATED_FONT_COLOR = "iw_generated_font_color";
+	public final static String GENERATED_OVER_COLOR = "iw_generated_over_color";
+	public final static String GENERATED_UNDER_COLOR = "iw_generated_under_color";
+	public final static String GENERATED_HIGHLIGHT_COLOR = "iw_generated_highligth_color";
 
 	ImageFactory(IWMainApplication iwma) {
 		this.iwma = iwma;
@@ -100,6 +109,7 @@ public class ImageFactory {
 		FileUtil.createFolder(filePath);
 
 		Button button = new Button(textOnButton, defaultFont);
+		setButtonAttributesFromBundleProperties(iwb,button);
 		button.generate(filePath);
 
 		if (iwb.getApplication().getSettings().getIfDebug())
@@ -150,6 +160,7 @@ public class ImageFactory {
 		tabFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 
 		Tab tab = new Tab(textOnTab, tabFont);
+		setButtonAttributesFromBundleProperties(iwb,tab);
 		tab.flip(flip);
 		tab.generate(filePath);
 
@@ -215,6 +226,57 @@ public class ImageFactory {
 			//defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
 			return 8.5f;
 		}
+	}
+	
+	private void setButtonAttributesFromBundleProperties(IWBundle iwb, Button button){
+	
+		if(iwb.getProperty(GENERATED_FILL_COLOR)!=null)
+			button.setFillColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FILL_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_FILL_COLOR,IWColor.getHexColorString(button.fillColor))!=null)
+			button.setFillColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_FILL_COLOR)));
+		
+		if(iwb.getProperty(GENERATED_BORDER_COLOR)!=null)
+			button.setBorderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_BORDER_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_BORDER_COLOR,IWColor.getHexColorString(button.borderColor))!=null)
+			button.setBorderColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_BORDER_COLOR)));
+					
+		if(iwb.getProperty(GENERATED_OVER_COLOR)!=null)
+			button.setOverColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_OVER_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_OVER_COLOR,IWColor.getHexColorString(button.overColor))!=null)
+			button.setOverColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_OVER_COLOR)));
+					
+		if(iwb.getProperty(GENERATED_UNDER_COLOR)!=null)
+			button.setUnderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_UNDER_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_UNDER_COLOR,IWColor.getHexColorString(button.underColor))!=null)
+			button.setUnderColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_UNDER_COLOR)));
+					
+		if(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)!=null)
+			button.setHighlightColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR,IWColor.getHexColorString(button.highlightColor))!=null)
+			button.setHighlightColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR)));
+					
+		if(iwb.getProperty(GENERATED_FONT_COLOR)!=null)
+			button.setFontColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FONT_COLOR)));
+		else if(coreBundle.getProperty(GENERATED_FONT_COLOR,IWColor.getHexColorString(button.fontColor))!=null)
+			button.setFontColor(IWColor.getAWTColorFromHex(coreBundle.getProperty(GENERATED_FONT_COLOR)));
+					
+		String fontStr = "dialog-plain-10";
+		Font btnFont = button.getFont();
+		if(btnFont !=null){
+			String styleStr = "plain";
+			if(btnFont.isBold() && btnFont.isItalic())
+				styleStr = "bold-italic";
+			else if(btnFont.isBold())
+					styleStr = "bold";
+			else if(btnFont.isItalic()) 
+				styleStr = "italic";
+				
+			fontStr = btnFont.getFamily()+"-"+styleStr+"-"+btnFont.getSize();
+		}
+		if(iwb.getProperty(GENERATED_FONT)!=null)
+			button.setFont(Font.decode(iwb.getProperty(GENERATED_FONT)));
+		else if(coreBundle.getProperty(GENERATED_FONT,fontStr)!=null)
+			button.setFont(Font.decode(coreBundle.getProperty(GENERATED_FONT)));
 	}
 
 }

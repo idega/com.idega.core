@@ -229,7 +229,7 @@ public class Button {
   }
 
   public void generate(String folderPath) {
-
+	
     image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
 
     g = image.createGraphics();
@@ -371,4 +371,11 @@ public class Button {
     }
 
   }
+/**
+ * @return
+ */
+public Font getFont() {
+	return font;
+}
+
 }
