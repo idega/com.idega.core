@@ -2491,7 +2491,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public boolean equals(Object obj) {
 		if (obj instanceof IDOLegacyEntity) {
 			return equals((IDOLegacyEntity)obj);
-		} else {
+		}
+		else if (obj instanceof IDOEntity) {
+			return equals((IDOEntity)obj);
+		}
+		else {
 			return super.equals(obj);
 		}
 	}
