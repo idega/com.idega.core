@@ -47,15 +47,27 @@
             <type>jar</type>
             <url>http://www.idega.com/</url>
             <properties><eclipse.dependency>true</eclipse.dependency></properties>
-        </dependency>        
-        <dependency>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>b9-rc2</version>
-            <type>jar</type>
-            <url>http://www.jdom.org/</url>
-            <properties/>
         </dependency>
+        <dependency>
+            <groupId>ejb</groupId>
+            <artifactId>ejb</artifactId>
+            <version>2.0</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/ejb/docs.html</url>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>jta</groupId>
+            <artifactId>jta</artifactId>
+            <version>spec1_0_1</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
+            <properties>
+            		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+            </properties>
+        </dependency>        
         <dependency>
             <groupId>servletapi</groupId>
             <artifactId>servletapi</artifactId>
@@ -65,35 +77,11 @@
             <properties/>
         </dependency>
         <dependency>
-            <groupId>ejb</groupId>
-            <artifactId>ejb</artifactId>
-            <version>2.0</version>
-            <type>jar</type>
-            <url>http://java.sun.com/products/ejb/docs.html</url>
-            <properties/>
-        </dependency>
-        <dependency>
-            <groupId>jta</groupId>
-            <artifactId>jta</artifactId>
-            <version>spec1_0_1</version>
-            <type>jar</type>
-            <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
-            <properties/>
-        </dependency>
-        <dependency>
             <groupId>cos</groupId>
             <artifactId>cos</artifactId>
             <version>05Nov2002</version>
             <type>jar</type>
             <url>http://www.servlets.com/cos/</url>
-            <properties/>
-        </dependency>
-        <dependency>
-            <groupId>icu4j</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>2.4</version>
-            <type>jar</type>
-            <url>http://oss.software.ibm.com/icu4j/</url>
             <properties/>
         </dependency>
         <dependency>
