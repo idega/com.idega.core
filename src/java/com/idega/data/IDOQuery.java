@@ -444,7 +444,8 @@ public class IDOQuery {
     return this.append(SELECT_ALL_FROM);
   }
   public IDOQuery appendSelectAllFrom(IDOEntity entity) throws RemoteException {
-    return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
+  	return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
+    //return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
   }
   public IDOQuery appendSelectAllFrom(String entityName){
     this.append(SELECT_ALL_FROM);
@@ -457,7 +458,9 @@ public class IDOQuery {
     return this.append(SELECT_COUNT_FROM);
   }
   public IDOQuery appendSelectCountFrom(IDOEntity entity) throws RemoteException {
-    return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
+    return this.appendSelectCountFrom(((IDOLegacyEntity)entity).getTableName());
+    //return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
+    
   }
   public IDOQuery appendSelectCountFrom(String entityName){
     this.append(SELECT_COUNT_FROM);
