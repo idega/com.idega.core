@@ -196,7 +196,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
     public void lineUpTabs(){
 
-      this.resize(this.getAddedTabs().size()+3, 2);
+      //this.resize(this.getAddedTabs().size()+3, 2);
 
       this.empty();
 
@@ -219,40 +219,54 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
         this.setSelectedIndex(0);
 
       }
+      
+      int row = 2;
+      int column = 2;
+      if ( this.getAddedTabs().size() > 5 )
+      	row = 4;
 
       for (int i = 0; i < this.getAddedTabs().size(); i++) {
 
         PresentationObject tempObj = this.getTab(i,(this.getSelectedIndex()==i));
 
-        this.add(tempObj,i+2,1);
+        this.add(tempObj,column,row-1);
 
-        this.add(Text.emptyString(),i+2,2);
+        this.add(Text.emptyString(),column,row);
 
 //        this.setWidth(i+2,tempObj.getWidth());
 
-        this.setWidth(i+2,"70");
+        this.setWidth(column,"70");
 
-        this.setColor(i+2, 2, (this.getSelectedIndex()==i) ? color : bright);
+        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);
+        
+        if ( i == 4 ) {
+        	row = 2;
+        	column = 2;
+        }
 
       }
 
+			int size = getAddedTabs().size();
+			if ( size > 5 ) {
+				size = 5;
+				row = 4;	
+			}
+
+      this.add(Text.emptyString(), 1, row-1);
+
+      this.add(Text.emptyString(), 1, row);
+
+      this.add(Text.emptyString(), size+2, row);
+
+      this.add(Text.emptyString(), size+3, row-1);
+
+      this.add(Text.emptyString(), size+3, row);
 
 
-      this.add(Text.emptyString(), 1, 1);
 
-      this.add(Text.emptyString(), 1, 2);
+      this.setWidth(size+3,"1");
 
-      this.add(Text.emptyString(), this.getAddedTabs().size()+2, 2);
-
-      this.add(Text.emptyString(), this.getAddedTabs().size()+3, 1);
-
-      this.add(Text.emptyString(), this.getAddedTabs().size()+3, 2);
-
-
-
-      this.setWidth(this.getAddedTabs().size()+3,"1");
-
-      this.setWidth(this.getAddedTabs().size()+2,"100%");
+      this.setWidth(size+2,"100%");
 
       this.setHeight(2,"1");
 
@@ -262,11 +276,11 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
 
 
-      this.setColor(1, 2, bright);
+      this.setColor(1, row, bright);
 
-      this.setColor(this.getAddedTabs().size()+2, 2, bright);
+      this.setColor(size+2, row, bright);
 
-      this.setColor(this.getAddedTabs().size()+3, 2, darkest);
+      this.setColor(size+3, row, darkest);
 
     }
 
