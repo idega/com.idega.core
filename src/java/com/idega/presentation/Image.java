@@ -42,14 +42,14 @@ public class Image extends PresentationObject
 	private boolean limitImageWidth = false;
 	private boolean zoomView = false;
 	private boolean linkOnImage = true;
-	private boolean useCaching = true;
+	protected boolean useCaching = true;
 	private String align;
 	private Link zoomLink;
 	private String zoomImageID;
 	private String zoomPageID;
 	private String zoomImageWidth;
 	private String zoomImageHeight;
-	private int imageId = -1;
+	protected int imageId = -1;
 	//private ImageEntity image;
 	//**@todo: remove this when no longer needed
 	//private com.idega.jmodule.image.data.ImageEntity image2;
@@ -137,7 +137,7 @@ public class Image extends PresentationObject
 		setWidth(width);
 		setHeight(height);
 	}
-	private void setImageURL(IWContext iwc) throws Exception
+	protected void setImageURL(IWContext iwc) throws Exception
 	{
 		//IWMainApplication iwma = iwc.getApplication();
 		//**@todo: remove this when no longer needed
