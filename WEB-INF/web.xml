@@ -7,39 +7,18 @@
 <web-app>
 
   <servlet>
-    <servlet-name>ClientServer</servlet-name>
-    <display-name>ClientServer</display-name>
-    <servlet-class>com.idega.block.messenger.servlet.ClientServer</servlet-class>
-  </servlet>
-  <servlet>
     <servlet-name>Excel</servlet-name>
     <display-name>Excel</display-name>
     <servlet-class>com.idega.io.ExcelOutput</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>IBIFrameServlet</servlet-name>
-    <display-name>IBIFrameServlet</display-name>
-    <servlet-class>com.idega.builder.servlet.IBIFrameServlet</servlet-class>
-    <load-on-startup>-1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>IBMainServlet</servlet-name>
-    <display-name>IBMainServlet</display-name>
-    <servlet-class>com.idega.builder.servlet.IBMainServlet</servlet-class>
-    <load-on-startup>-2</load-on-startup>
-  </servlet>
+
   <servlet>
     <servlet-name>IWStarterServlet</servlet-name>
     <display-name>IWStarterServlet</display-name>
     <servlet-class>com.idega.servlet.IWStarterServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <servlet>
-    <servlet-name>MediaServlet</servlet-name>
-    <display-name>MediaServlet</display-name>
-    <servlet-class>com.idega.block.media.servlet.MediaServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
+
   <servlet>
     <servlet-name>ObjectInstanciator</servlet-name>
     <display-name>ObjectInstanciator</display-name>
@@ -72,41 +51,8 @@
     <servlet-name>Excel</servlet-name>
     <url-pattern>/excel</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ClientServer</servlet-name>
-    <url-pattern>/servlet/ClientServer</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>IBIFrameServlet</servlet-name>
-    <url-pattern>/servlet/IBIFrameServlet</url-pattern>
-  </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/IBMainServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/IBMainServlet/</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/IBMainServlet/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>MediaServlet</servlet-name>
-    <url-pattern>/servlet/MediaServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>MediaServlet</servlet-name>
-    <url-pattern>/servlet/MediaServlet/</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>MediaServlet</servlet-name>
-    <url-pattern>/servlet/MediaServlet/*</url-pattern>
-  </servlet-mapping>
-
+  
   <servlet-mapping>
     <servlet-name>ObjectInstanciator</servlet-name>
     <url-pattern>/servlet/ObjectInstanciator</url-pattern>
@@ -136,19 +82,6 @@
   <servlet-mapping>
     <servlet-name>WindowOpener</servlet-name>
     <url-pattern>/servlet/WindowOpener/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/builder</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/builder/</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>IBMainServlet</servlet-name>
-    <url-pattern>/servlet/builder/*</url-pattern>
   </servlet-mapping>
 
   <welcome-file-list>
