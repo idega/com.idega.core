@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.68 2004/07/14 12:37:22 aron Exp $
+ * $Id: Table.java,v 1.69 2004/08/04 16:36:44 anna Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -527,6 +527,78 @@ public class Table extends PresentationObjectContainer {
 		setCellBorderWidth(column, row, borderWidth);
 		setCellBorderColor(column, row, borderColor);
 		setCellBorderStyle(column, row, borderStyle);
+	}
+	
+	public void setTopCellBorderWidth(int column, int row, int borderWidth) {
+		setStyle(column, row, "border-width-top", borderWidth+"px");
+	}
+	
+	public void setTopCellBorderColor(int column, int row, String borderColor) {
+		setStyle(column, row, "border-color-top", borderColor);
+	}
+	
+	public void setTopCellBorderStyle(int column, int row, String borderStyle) {
+		setStyle(column, row, "border-style-top", borderStyle);
+	}
+	
+	public void setTopCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
+		setTopCellBorderWidth(column, row, borderWidth);
+		setTopCellBorderColor(column, row, borderColor);
+		setTopCellBorderStyle(column, row, borderStyle);
+	}
+	
+	public void setBottomCellBorderWidth(int column, int row, int borderWidth) {
+		setStyle(column, row, "border-width-bottom", borderWidth+"px");
+	}
+	
+	public void setBottomCellBorderColor(int column, int row, String borderColor) {
+		setStyle(column, row, "border-color-bottom", borderColor);
+	}
+	
+	public void setBottomCellBorderStyle(int column, int row, String borderStyle) {
+		setStyle(column, row, "border-style-bottom", borderStyle);
+	}
+	
+	public void setBottomCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
+		setBottomCellBorderWidth(column, row, borderWidth);
+		setBottomCellBorderColor(column, row, borderColor);
+		setBottomCellBorderStyle(column, row, borderStyle);
+	}
+	
+	public void setLeftCellBorderWidth(int column, int row, int borderWidth) {
+		setStyle(column, row, "border-width-left", borderWidth+"px");
+	}
+	
+	public void setLeftCellBorderColor(int column, int row, String borderColor) {
+		setStyle(column, row, "border-color-left", borderColor);
+	}
+	
+	public void setLeftCellBorderStyle(int column, int row, String borderStyle) {
+		setStyle(column, row, "border-style-left", borderStyle);
+	}
+	
+	public void setLeftCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
+		setLeftCellBorderWidth(column, row, borderWidth);
+		setLeftCellBorderColor(column, row, borderColor);
+		setLeftCellBorderStyle(column, row, borderStyle);
+	}
+	
+	public void setRightCellBorderWidth(int column, int row, int borderWidth) {
+		setStyle(column, row, "border-width-right", borderWidth+"px");
+	}
+	
+	public void setRightCellBorderColor(int column, int row, String borderColor) {
+		setStyle(column, row, "border-color-right", borderColor);
+	}
+	
+	public void setRightCellBorderStyle(int column, int row, String borderStyle) {
+		setStyle(column, row, "border-style-right", borderStyle);
+	}
+	
+	public void setRightCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
+		setRightCellBorderWidth(column, row, borderWidth);
+		setRightCellBorderColor(column, row, borderColor);
+		setRightCellBorderStyle(column, row, borderStyle);
 	}
 	
 	/**
