@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.13 2004/10/11 14:39:00 gummi Exp $
+ * $Id: XMLElement.java,v 1.14 2004/10/11 18:35:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,7 +16,6 @@ import java.util.Vector;
 
 import org.jdom.Attribute;
 import org.jdom.CDATA;
-import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
 
