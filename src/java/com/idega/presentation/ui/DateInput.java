@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.42 2004/03/12 15:52:29 palli Exp $
+ * $Id: DateInput.java,v 1.43 2004/03/15 10:11:47 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -776,7 +776,7 @@ public class DateInput extends InterfaceObject implements InputHandler{
 	public Object getResultingObject(String[] value, IWContext iwc)	throws Exception {
 		if (value != null && value.length > 0) {
 			String dateString = value[0];
-			if (" ".equals(dateString)) {
+			if (" ".equals(dateString) || "".equals(dateString)) {
 				return null;
 			}
 			else {
