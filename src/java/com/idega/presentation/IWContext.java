@@ -913,13 +913,11 @@ public void setCacheWriter(PrintWriter writer){
 
 
   public boolean hasViewPermission(List groupIds, PresentationObject obj){
-    // return (view || owner)
-    return (this.hasPermission(groupIds, AccessController._PERMISSIONKEY_VIEW,obj) || this.hasPermission(groupIds, AccessController._PERMISSIONKEY_OWNER,obj));
+    return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_VIEW,obj);
   }
 
   public boolean hasEditPermission(List groupIds, PresentationObject obj){
-    // return (edit || owner)
-    return (this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT,obj) || this.hasPermission(groupIds, AccessController._PERMISSIONKEY_OWNER,obj));
+    return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT,obj);
   }
 
 

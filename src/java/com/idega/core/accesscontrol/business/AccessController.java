@@ -58,12 +58,14 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean isAdmin(IWUserContext iwc)throws Exception;
   public boolean isOwner(PresentationObject obj , IWUserContext iwc) throws Exception ;
   public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception;
+  public boolean isOwner(IBPage page, IWUserContext iwc)throws Exception;
   public boolean isOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception;
 
   public void setAsOwner(PresentationObject obj, int groupId, IWUserContext iwc) throws Exception ;
   public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception;
+  public void setAsOwner(IBPage page, int groupId, IWUserContext iwc)throws Exception;
   public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWUserContext iwc)throws Exception;
-  public void setAsOwner(IBPage page,IWUserContext iwc)throws Exception;
+  public void setCurrentUserAsOwner(IBPage page,IWUserContext iwc)throws Exception;
 
 
   public boolean hasPermission(String permissionKey, PresentationObject obj,IWUserContext iwc) throws Exception;
