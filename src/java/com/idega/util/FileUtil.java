@@ -250,6 +250,7 @@ public class FileUtil {
       //Put the contents in a string
       while ((line = in.readLine()) != null) {
         buffer.append(line);
+        buffer.append('\n');
       }
       in.close();
     }
