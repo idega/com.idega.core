@@ -76,6 +76,8 @@ public class HtmlReferenceRewriter {
 				Pattern p8 = Pattern.compile("(<option[^>]+value=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
 				patterns.add(p8);
 			}
+			Pattern p9 = Pattern.compile("(<div[^>]+url\\()([^#][^\\)]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p9);
 		}
 		return patterns;
 	}
@@ -86,7 +88,24 @@ public class HtmlReferenceRewriter {
 		this.patterns = patterns;
 	}
 	public static void main(String[] args) throws Exception{
-		performReykjavikNetworkTestToFile();
+//		performReykjavikNetworkTestToFile();
+		travelTest();
+	}
+
+	public static void travelTest()throws Exception{
+		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
+		
+		String fromFile = "/Users/gimmi/Desktop/explore/ExploreIceland.html";
+		String toFile = "/Users/gimmi/Desktop/explore/expTest.html";
+		String urlPrefix = "http://www.exploreiceland.is/";
+		FileReader reader = new FileReader(fromFile);
+		Reader input = new BufferedReader(reader);
+		FileWriter output = new FileWriter(toFile);
+		instance.setInput(input);
+		instance.setOutput(output);
+		instance.setUrlPrefix(urlPrefix);
+		instance.setRewriteOptionValues(true);
+		instance.process();
 	}
 
 	
