@@ -74,10 +74,10 @@ public static String HEADER_COLOR="#0E2456";
       setAllMargins(0);
 
       if ( merged ){
-        super.add(adminTable);
+	super.add(adminTable);
       }
       else{
-        super.add(adminForm);
+	super.add(adminForm);
       }
     }
 
@@ -101,11 +101,11 @@ public static String HEADER_COLOR="#0E2456";
       adminTable.setColor(1,1,HEADER_COLOR);
       adminTable.setColor(1,2,"#FFFFFF");
       if ( !merged ) {
-        adminTable.setColor(2,2,"#EFEFEF");
-        adminTable.setWidth(2,2,rightWidth);
+	adminTable.setColor(2,2,"#EFEFEF");
+	adminTable.setWidth(2,2,rightWidth);
       }
       else {
-        adminTable.mergeCells(1,2,2,2);
+	adminTable.mergeCells(1,2,2,2);
       }
       adminTable.setRowVerticalAlignment(2,"top");
       adminForm.add(adminTable);
@@ -124,7 +124,7 @@ public static String HEADER_COLOR="#0E2456";
       leftTable.setAlignment("center");
       leftTable.setWidth("100%");
       if ( !merged ) {
-        adminTable.add(leftTable,1,2);
+	adminTable.add(leftTable,1,2);
       }
 
     rightTable = new Table();
@@ -132,7 +132,7 @@ public static String HEADER_COLOR="#0E2456";
       rightTable.setAlignment("center");
       rightTable.setWidth("100%");
       if ( !merged ) {
-        adminTable.add(rightTable,2,2);
+	adminTable.add(rightTable,2,2);
       }
   }
 
@@ -143,8 +143,8 @@ public static String HEADER_COLOR="#0E2456";
   public void add(PresentationObject obj) {
     if( !displayEmpty ){
       if(adminTable==null){
-        adminTable=new Table();
-        super.add(adminTable);
+	adminTable=new Table();
+	super.add(adminTable);
       }
       adminTable.add(obj,1,2);
     }
@@ -277,6 +277,15 @@ public static String HEADER_COLOR="#0E2456";
     headerTable.add(adminTitle,2,1);
   }
 
+  public void addTitle(String title,String style) {
+    Text adminTitle = new Text(title+"&nbsp;&nbsp;");
+      adminTitle.setFontStyle(style);
+
+    super.setTitle(title);
+
+    headerTable.add(adminTitle,2,1);
+  }
+
   public void addHeaderObject(PresentationObject obj) {
     int rows = headerTable.getRows()+1;
     headerTable.mergeCells(1,rows,2,rows);
@@ -290,7 +299,7 @@ public static String HEADER_COLOR="#0E2456";
     if ( s != null ) {
       T= new Text(s);
       if ( bold )
-        T.setBold();
+	T.setBold();
       T.setFontColor("#000000");
       T.setFontSize(Text.FONT_SIZE_7_HTML_1);
       T.setFontFace(Text.FONT_FACE_VERDANA);
