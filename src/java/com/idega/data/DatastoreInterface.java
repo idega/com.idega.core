@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.115 2004/09/10 14:00:19 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.116 2004/09/10 15:27:08 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2246,7 +2246,7 @@ public abstract class DatastoreInterface {
 	}
 	
 	public boolean isUsingPreparedStatements(){
-	    return true;
+	    return false;
 	}
 	
 }
