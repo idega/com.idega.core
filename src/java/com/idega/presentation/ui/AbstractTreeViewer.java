@@ -61,6 +61,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	protected String iconWidth = "16";
 	protected String iconHeight = "16";
+	
+	protected String lightRowStyle;
+	protected String darkRowStyle;
 
 	Table frameTable = null;
 	Table treeTable = null;
@@ -186,6 +189,20 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		
 		if (defaultRoot.getChildCount() > 0) {
 			drawTree(defaultRoot.getChildren(), null, iwc);
+		}
+		
+		if (lightRowStyle != null && darkRowStyle != null) {
+			int startRow = ((!_showHeaderRow) ? 1 : 2);
+			int row = 1;
+			for (int a = startRow; a <= frameTable.getRows(); a++) {
+				if (row % 2 != 0) {
+					frameTable.setRowStyleClass(a, lightRowStyle);
+				}
+				else {
+					frameTable.setRowStyleClass(a, darkRowStyle);
+				}
+				row++;
+			}
 		}
 		
 		
