@@ -639,30 +639,30 @@ public class IWMainApplication{//implements ServletContext{
 
   private void loadCryptoProperties(){
   	initCryptoUsage();
-  	if(isUsingCryptoProperties()){
-    cryptoClassNamesPropertiesKeyedByCode = new Properties();
-    sendStartupMessage("Loading Cryptonium");
-    String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
-    try{
-      cryptoClassNamesPropertiesKeyedByCode.load(new FileInputStream(file));
-      // temporary property cleaning
-      String clean = cryptoClassNamesPropertiesKeyedByCode.getProperty("clean");
-      if(clean == null){
-        cryptoClassNamesPropertiesKeyedByCode.clear();
-        cryptoClassNamesPropertiesKeyedByCode.setProperty("clean","true");
-      }
-      /////////////////////////////
-      cryptoCodesPropertiesKeyedByClassName = new Properties();
-      if(cryptoClassNamesPropertiesKeyedByCode.size() > 0){
-        Iterator iter = cryptoCodesPropertiesKeyedByClassName.entrySet().iterator();
-        while(iter.hasNext()){
-          Map.Entry me = (Map.Entry) iter.next();
-          cryptoCodesPropertiesKeyedByClassName.put(me.getValue(),me.getKey());
-        }
-      }
-    }
-    catch(Exception ex){}
-  	}
+	  	if(isUsingCryptoProperties()){
+	    cryptoClassNamesPropertiesKeyedByCode = new Properties();
+	    sendStartupMessage("Loading Cryptonium");
+	    String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
+	    try{
+	      cryptoClassNamesPropertiesKeyedByCode.load(new FileInputStream(file));
+	      // temporary property cleaning
+	      String clean = cryptoClassNamesPropertiesKeyedByCode.getProperty("clean");
+	      if(clean == null){
+	        cryptoClassNamesPropertiesKeyedByCode.clear();
+	        cryptoClassNamesPropertiesKeyedByCode.setProperty("clean","true");
+	      }
+	      /////////////////////////////
+	      cryptoCodesPropertiesKeyedByClassName = new Properties();
+	      if(cryptoClassNamesPropertiesKeyedByCode.size() > 0){
+	        Iterator iter = cryptoClassNamesPropertiesKeyedByCode.entrySet().iterator();
+	        while(iter.hasNext()){
+	          Map.Entry me = (Map.Entry) iter.next();
+	          cryptoCodesPropertiesKeyedByClassName.put(me.getValue(),me.getKey());
+	        }
+	      }
+	    }
+	    catch(Exception ex){}
+	  	}
   }
 
    private void storeCryptoProperties(){
@@ -705,7 +705,7 @@ public class IWMainApplication{//implements ServletContext{
 		final String className = classObject.getName();
  
     // if crypto code for this class has already been created
-    if(cryptoCodesPropertiesKeyedByClassName.containsKey(className)){
+    if(cryptoCodesPropertiesKeyedByClassName.containsKey(className) ){
       return (String) cryptoCodesPropertiesKeyedByClassName.get(className);
     }
     else{// else crypto code for this class has NOT been created
@@ -717,23 +717,26 @@ public class IWMainApplication{//implements ServletContext{
   }
   
 	private synchronized static String createAndStoreCryptoName(String className){
-		if(cryptoCodesPropertiesKeyedByClassName.containsKey(className)){ //if someone else beat us to creating the key!
-			return (String) cryptoCodesPropertiesKeyedByClassName.get(className);
-		}
 		
-		String crypto;
-		int iCrypto = calculate(className);
-		crypto = Integer.toString(iCrypto);
+		String crypto = (String) cryptoCodesPropertiesKeyedByClassName.get(className);//if someone just beat us to creating it
 		
-		while(cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)){
-			crypto = Integer.toString(++iCrypto);
-			System.out.println("creating crypto number in loop: "+iCrypto);	
+		if(crypto!=null){
+			return crypto; 
 		}
-
-		 cryptoCodesPropertiesKeyedByClassName.put(className,crypto);
-		 cryptoClassNamesPropertiesKeyedByCode.put(crypto,className);
-		 
-		return crypto;
+		else{
+			int iCrypto = calculate(className);
+			crypto = Integer.toString(iCrypto);
+			
+			while(cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)){
+				crypto = Integer.toString(++iCrypto);
+				System.out.println("Conflicting cryptos: creating new crypto number : "+iCrypto);	
+			}
+	
+			 cryptoCodesPropertiesKeyedByClassName.put(className,crypto);
+			 cryptoClassNamesPropertiesKeyedByCode.put(crypto,className);
+			 
+			return crypto;
+		}
 		
 	}
 	
