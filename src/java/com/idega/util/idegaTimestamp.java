@@ -35,7 +35,7 @@ public class idegaTimestamp{
   }
 
   public idegaTimestamp(idegaTimestamp time) {
-    Calendar = time.getGregorianCalendar();
+    Calendar = (GregorianCalendar)time.getGregorianCalendar().clone();
   }
 
   /**
