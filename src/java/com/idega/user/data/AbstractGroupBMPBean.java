@@ -184,6 +184,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public void setGroupType(String type){
 		getGeneralGroup().setGroupType(type);
 	}
+	
+	public void setGroupType(GroupType type){
+		getGeneralGroup().setGroupType(type);
+	}
 
 	public String getDescription(){
 		return getGeneralGroup().getDescription();
@@ -298,6 +302,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 
 	public boolean hasRelationTo(Group group){
 		return this.getGeneralGroup().hasRelationTo(group);
+	}
+	
+	public boolean hasRelationTo(int id){
+		return this.getGeneralGroup().hasRelationTo(id);
 	}
 	
 	public boolean hasRelationTo(int groupId, String relationType) {

@@ -13,5 +13,7 @@ public interface GroupDomainRelationHome extends com.idega.data.IDOHome
  public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsUnderDomainByRelationshipType(int p0,java.lang.String p1)throws javax.ejb.FinderException;
+ public java.lang.String getFindGroupsDomainRelationshipsContainingSQL(int p0,java.lang.String p1);
+ public java.lang.String getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(int p0,java.lang.String p1);
 
 }

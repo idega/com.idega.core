@@ -99,6 +99,13 @@ public java.util.Collection findTopNodeGroupsContained(com.idega.builder.data.IB
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findTopNodeVisibleGroupsContained(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindTopNodeVisibleGroupsContained(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (Group) super.findByPrimaryKeyIDO(pk);
  }
@@ -121,6 +128,20 @@ public int getNumberOfGroupsContained(com.idega.user.data.Group p0,java.util.Col
 public int getNumberOfTopNodeGroupsContained(com.idega.builder.data.IBDomain p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException,com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((GroupBMPBean)entity).ejbHomeGetNumberOfTopNodeGroupsContained(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public int getNumberOfTopNodeVisibleGroupsContained(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException,com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((GroupBMPBean)entity).ejbHomeGetNumberOfTopNodeVisibleGroupsContained(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public int getNumberOfVisibleGroupsContained(com.idega.user.data.Group p0)throws javax.ejb.FinderException,com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((GroupBMPBean)entity).ejbHomeGetNumberOfVisibleGroupsContained(p0);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }

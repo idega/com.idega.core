@@ -97,6 +97,10 @@ public class GroupDomainRelationTypeBMPBean extends GenericEntity implements Gro
 		}
 		return null;
   }
+  
+	public String ejbHomeGetTopNodeRelationTypeString() {
+		return RELATION_TYPE_TOP_NODE;
+	}
 
 //  public String ejbHomeGetPrimaryKeyForCreationLocationRelation(){
 //    return RELATION_TYPE_CREATION_LOCATION;

@@ -435,14 +435,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws  FinderException, IDOException {
-		Collection relations = ((GroupBMPBean) containingGroup).getParentalGroupRelationships();
-    Iterator iter = relations.iterator();
-		Collection PKs = new ArrayList();
-		while (iter.hasNext()) {
-			GroupRelation item = (GroupRelation) iter.next();
-			PKs.add(item.getRelatedGroupPK());
-		}
-		if (groupTypes.size() > 0 && PKs.size() > 0) {
+		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(),RELATION_TYPE_GROUP_PARENT );
+		
+		
+		if (groupTypes!=null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectCountFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
@@ -456,25 +452,35 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = idoQuery();
-			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
-			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
+			query.appendIn(relatedSQL);
 			return this.idoGetNumberOfRecords(query.toString());
 		}
 		else {
+			System.err.println("ejbHomeGetNumberOfGroupsContained :NO GROUP TYPES SUPPLIED!");
 			return 0;
 		}
 	}
+	
+	public int ejbHomeGetNumberOfVisibleGroupsContained(Group containingGroup) throws  FinderException, IDOException {
+		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(),RELATION_TYPE_GROUP_PARENT );
+		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
+		
+			IDOQuery query = idoQuery();
+			query.appendSelectCountFrom(this.getEntityName());
+			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			query.appendIn(visibleGroupTypes);
+			query.appendAnd();
+			query.append(this.COLUMN_GROUP_ID);
+			query.appendIn(relatedSQL);
+			return this.idoGetNumberOfRecords(query.toString());
+
+	}
+	
+	
 	public Collection ejbFindTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes) throws  FinderException {
-		Collection relations = this.getGroupDomainRelationHome().findGroupsRelationshipsUnder(containingDomain, getGroupDomainRelationTypeHome().getTopNodeRelationType());
-		Iterator iter = relations.iterator();
-		Collection PKs = new ArrayList();
-		while (iter.hasNext()) {
-			GroupDomainRelation item = (GroupDomainRelation) iter.next();
-			PKs.add(item.getRelatedGroupPK());
-		}
-		if (groupTypes.size() > 0 && PKs.size() > 0) {
+		String relationsSQL = this.getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL( ((Integer)containingDomain.getPrimaryKey()).intValue() , getGroupDomainRelationTypeHome().getTopNodeRelationTypeString() );
+		
+		if (groupTypes!=null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
@@ -488,9 +494,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = idoQuery();
-			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
+			query.appendIn(relationsSQL);
 			query.appendOrderBy(this.COLUMN_NAME);
 			//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
 			return this.idoFindPKsBySQL(query.toString());
@@ -500,14 +504,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 	public int ejbHomeGetNumberOfTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes) throws  FinderException, IDOException {
-		Collection relations = this.getGroupDomainRelationHome().findGroupsRelationshipsUnder(containingDomain, getGroupDomainRelationTypeHome().getTopNodeRelationType());
-		Iterator iter = relations.iterator();
-		Collection PKs = new ArrayList();
-		while (iter.hasNext()) {
-			GroupDomainRelation item = (GroupDomainRelation) iter.next();
-			PKs.add(item.getRelatedGroupPK());
-		}
-		if (groupTypes.size() > 0 && PKs.size() > 0) {
+		String relationsSQL = getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL( ((Integer)containingDomain.getPrimaryKey()).intValue() , getGroupDomainRelationTypeHome().getTopNodeRelationTypeString() );
+		
+		if (groupTypes!=null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectCountFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
@@ -521,15 +520,45 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = idoQuery();
-			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
+			query.appendIn(relationsSQL);
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
 			return this.idoGetNumberOfRecords(query.toString());
 		}
 		else {
+			System.err.println("ejbHomeGetNumberOfTopNodeGroupsContained :NO GROUP TYPES SUPPLIED!");
 			return 0;
 		}
+	}
+	
+	public int ejbHomeGetNumberOfTopNodeVisibleGroupsContained(IBDomain containingDomain) throws  FinderException, IDOException {
+		String relatedSQL = getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL( ((Integer)containingDomain.getPrimaryKey()).intValue() , getGroupDomainRelationTypeHome().getTopNodeRelationTypeString() );
+		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
+		
+			IDOQuery query = idoQuery();
+			query.appendSelectCountFrom(this.getEntityName());
+			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			query.appendIn(visibleGroupTypes);
+			query.appendAnd();
+			query.append(this.COLUMN_GROUP_ID);
+			query.appendIn(relatedSQL);
+			return this.idoGetNumberOfRecords(query.toString());
+
+	}
+	
+	public Collection ejbFindTopNodeVisibleGroupsContained(IBDomain containingDomain) throws  FinderException {
+		String relationsSQL = this.getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL( ((Integer)containingDomain.getPrimaryKey()).intValue() , getGroupDomainRelationTypeHome().getTopNodeRelationTypeString() );
+		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
+		
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this.getEntityName());
+		query.appendWhere(this.COLUMN_GROUP_TYPE);
+		query.appendIn(visibleGroupTypes);
+		query.appendAnd();
+		query.append(this.COLUMN_GROUP_ID);
+		query.appendIn(relationsSQL);
+		query.appendOrderBy(this.COLUMN_NAME);
+
+		return this.idoFindPKsBySQL(query.toString());
 	}
 	/**
 	 * @todo change name to getGroupsContained();
@@ -913,7 +942,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//          }
 	//          return false;
 	//        }
-	public boolean equals(Group group) {
+	protected boolean equals(Group group) {
 		if (group != null) {
 			try {
 				if (group.getPrimaryKey().equals(this.getPrimaryKey())) {
@@ -1111,8 +1140,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		else {
 			try {
-				Collection types = this.getGroupTypeHome().findVisibleGroupTypes();
-				return this.getGroupHome().getNumberOfGroupsContained(this, types, true);
+				Collection types = this.getGroupTypeHome().findVisibleGroupTypes();//TODO optimize or cache
+				return this.getGroupHome().getNumberOfVisibleGroupsContained(this);
 			}
 			catch (FinderException e) {
 				throw new EJBException(e);

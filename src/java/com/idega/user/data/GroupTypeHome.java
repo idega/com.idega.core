@@ -8,5 +8,6 @@ public interface GroupTypeHome extends com.idega.data.IDOHome
  public java.util.Collection findAllGroupTypes()throws javax.ejb.FinderException;
  public java.util.Collection findVisibleGroupTypes()throws javax.ejb.FinderException;
  public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException;
+ public java.lang.String getVisibleGroupTypesSQLString();
 
 }

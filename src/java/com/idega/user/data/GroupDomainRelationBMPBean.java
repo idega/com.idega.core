@@ -197,4 +197,30 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     setPassiveBy(userId);
     store();
   }
+  
+	public String ejbHomeGetFindGroupsDomainRelationshipsContainingSQL(int domainId, String relationType){
+		StringBuffer sql = new StringBuffer();
+		sql.append("select * from ")
+		.append(this.getEntityName())
+		.append(" where ")
+		.append(DOMAIN_ID_COLUMN).append("=").append(domainId)
+		.append(" and ")
+		.append(RELATIONSHIP_TYPE_COLUMN).append("='").append(relationType).append("'")
+		.append(" and GROUP_RELATION_STATUS IS NULL");
+		
+		return sql.toString();
+	}
+  
+	public String ejbHomeGetFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(int domainId, String relationType){
+		StringBuffer sql = new StringBuffer();
+		sql.append("select ").append(RELATED_GROUP_ID_COLUMN).append(" from ")
+		.append(this.getEntityName())
+		.append(" where ")
+		.append(DOMAIN_ID_COLUMN).append("=").append(domainId)
+		.append(" and ")
+		.append(RELATIONSHIP_TYPE_COLUMN).append("='").append(relationType).append("'")
+		.append(" and GROUP_RELATION_STATUS IS NULL");
+  	
+		return sql.toString();
+	}
 }

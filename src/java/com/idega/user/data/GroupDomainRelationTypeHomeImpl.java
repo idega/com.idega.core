@@ -25,5 +25,12 @@ public com.idega.user.data.GroupDomainRelationType getTopNodeRelationType()throw
 	return theReturn;
 }
 
+public java.lang.String getTopNodeRelationTypeString(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupDomainRelationTypeBMPBean)entity).ejbHomeGetTopNodeRelationTypeString();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

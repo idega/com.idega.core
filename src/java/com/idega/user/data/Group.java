@@ -1,14 +1,12 @@
 package com.idega.user.data;
 
-import com.idega.data.MetaDataCapable;
 
-
-public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode,MetaDataCapable
+public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode,com.idega.data.MetaDataCapable
 {
  public void addAddress(com.idega.core.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
  public void addEmail(com.idega.core.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
- public void addGroup(int p0)throws javax.ejb.EJBException;
  public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
+ public void addGroup(int p0)throws javax.ejb.EJBException;
  public void addPhone(com.idega.core.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
  public void addRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
  public void addRelation(com.idega.user.data.Group p0,com.idega.user.data.GroupRelationType p1)throws javax.ejb.CreateException;
@@ -22,8 +20,8 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public boolean getAllowsChildren();
  public com.idega.core.ICTreeNode getChildAtIndex(int p0);
  public int getChildCount();
- public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
  public java.util.List getChildGroups()throws javax.ejb.EJBException;
+ public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
  public java.util.Iterator getChildren();
  public java.sql.Timestamp getCreated();
  public java.lang.String getDescription();
@@ -46,13 +44,14 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public java.util.Collection getRelatedBy(java.lang.String p0)throws javax.ejb.FinderException;
  public java.util.Collection getReverseRelatedBy(java.lang.String p0)throws javax.ejb.FinderException;
  public int getSiblingCount();
- public boolean hasRelationTo(int p0,java.lang.String p1);
+ public boolean hasRelationTo(int p0);
  public boolean hasRelationTo(com.idega.user.data.Group p0);
+ public boolean hasRelationTo(int p0,java.lang.String p1);
  public void initializeAttributes();
  public boolean isLeaf();
  public boolean isUser();
- public void removeGroup(com.idega.user.data.Group p0,com.idega.user.data.User p1)throws javax.ejb.EJBException;
  public void removeGroup(com.idega.user.data.User p0)throws javax.ejb.EJBException;
+ public void removeGroup(com.idega.user.data.Group p0,com.idega.user.data.User p1)throws javax.ejb.EJBException;
  public void removeGroup(int p0,com.idega.user.data.User p1,boolean p2)throws javax.ejb.EJBException;
  public void removeRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.RemoveException;
  public void removeRelation(int p0,java.lang.String p1)throws javax.ejb.RemoveException;
@@ -62,6 +61,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setCreated(java.sql.Timestamp p0);
  public void setDescription(java.lang.String p0);
  public void setExtraInfo(java.lang.String p0);
+ public void setGroupType(com.idega.user.data.GroupType p0);
  public void setGroupType(java.lang.String p0);
  public void setHomePage(com.idega.builder.data.IBPage p0);
  public void setHomePageID(int p0);

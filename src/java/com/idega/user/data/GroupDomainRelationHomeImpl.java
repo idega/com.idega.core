@@ -74,5 +74,19 @@ public java.util.Collection findGroupsRelationshipsUnderDomainByRelationshipType
  }
 
 
+public java.lang.String getFindGroupsDomainRelationshipsContainingSQL(int p0,java.lang.String p1){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupDomainRelationBMPBean)entity).ejbHomeGetFindGroupsDomainRelationshipsContainingSQL(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public java.lang.String getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(int p0,java.lang.String p1){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupDomainRelationBMPBean)entity).ejbHomeGetFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

@@ -278,6 +278,16 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 //    return super.idoGetNumberOfRecords("select count(*) from "+getEntityName()+" where "+ COLUMN_IS_VISIBLE + "!='"+super.COLUMN_VALUE_FALSE+"'");
   }
   
+	public String ejbHomeGetVisibleGroupTypesSQLString() {
+		IDOQuery query = idoQuery();
+		query.append("SELECT ").append(getIDColumnName()).appendFrom();
+		query.append(getEntityName());
+		query.appendWhere(COLUMN_IS_VISIBLE);
+		query.appendNOTEqual();
+		query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+		return query.toString();
+	}
+  
   public static GroupTypeBMPBean getStaticInstance() {
     return (GroupTypeBMPBean) com.idega.user.data.GroupTypeBMPBean.getStaticInstance(GroupType.class.getName());
   }

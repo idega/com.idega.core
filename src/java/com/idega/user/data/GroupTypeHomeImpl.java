@@ -39,5 +39,12 @@ public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.id
 	return theReturn;
 }
 
+public java.lang.String getVisibleGroupTypesSQLString(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetVisibleGroupTypesSQLString();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }
