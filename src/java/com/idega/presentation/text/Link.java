@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.25 2001/11/12 10:34:03 gummi Exp $
+ * $Id: Link.java,v 1.26 2001/11/18 17:15:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,6 +11,7 @@ package com.idega.presentation.text;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
@@ -25,6 +26,7 @@ import com.idega.event.IWLinkListener;
 import com.idega.builder.data.IBPage;
 import com.idega.core.data.ICFile;
 import com.idega.presentation.Image;
+import com.idega.core.localisation.business.LocaleSwitcher;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -708,6 +710,21 @@ public class Link extends Text {
     _objectType = OBJECT_TYPE_MODULEOBJECT;
 
         _obj.setParentObject(this);
+  }
+
+  /**
+   *
+   */
+  public void setLocale(String languageString) {
+    setEventListener(LocaleSwitcher.class.getName());
+    addParameter(LocaleSwitcher.languageParameterString,languageString);
+  }
+
+  /**
+   *
+   */
+  public void setLocale(Locale locale) {
+    setLocale(locale.toString());
   }
 
   /**
