@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.32 2002/01/23 22:53:06 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.33 2002/01/23 23:06:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -519,7 +519,7 @@ public abstract class DatastoreInterface{
           PS.setBinaryStream(1, instream, instream.available() );
           PS.executeUpdate();
           PS.close();
-        //  System.out.println("bin.available(): "+bin.available());
+          //System.out.println("bin.available(): "+bin.available());
           instream.close();
          // bin.close();
         }
