@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.26 2001/11/18 17:15:34 laddi Exp $
+ * $Id: Link.java,v 1.27 2001/11/26 16:55:37 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -76,7 +76,7 @@ public class Link extends Text {
   private Image _onMouseOverImage = null;
   private Image _onClickImage = null;
 
-
+  private boolean https = false;
 
   private final static String DEFAULT_TEXT_STRING = "No text";
 
@@ -352,8 +352,12 @@ public class Link extends Text {
   /**
    *
    */
-  public String getURL() {
-    return(getAttribute(HREF_ATTRIBUTE));
+  public String getURL(IWContext iwc) {
+    if (https) {
+      return "https://"+iwc.getServerName()+ getAttribute(HREF_ATTRIBUTE);
+    }else {
+      return(getAttribute(HREF_ATTRIBUTE));
+    }
   }
 
   /**
@@ -1066,7 +1070,7 @@ public class Link extends Text {
         return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
       }
       else {
-        return Window.getCallingScriptString(_windowClass,getURL()+getParameterString(iwc,getURL()),true);
+        return Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true);
       }
     }
     return "";
@@ -1078,7 +1082,7 @@ public class Link extends Text {
   public void print(IWContext iwc) throws Exception {
     initVariables(iwc);
     boolean addParameters = true;
-    String oldURL = getURL();
+    String oldURL = getURL(iwc);
 
     if (oldURL == null) {
       oldURL = iwc.getRequestURI();
@@ -1102,7 +1106,7 @@ public class Link extends Text {
           setOnClick(_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
         }
         else {
-          setOnClick(Window.getCallingScriptString(_windowClass,getURL()+getParameterString(iwc,getURL()),true));
+          setOnClick(Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
         }
         setURL(HASH);
         print("<a "+getAttributeString()+" >");
@@ -1340,6 +1344,10 @@ public class Link extends Text {
   public void setAsImageTab(boolean isImageTab, boolean useTextAsLocalizedTextKey, boolean flip){
     setAsImageTab(isImageTab,flip);
     setAsLocalizedImageTab(useTextAsLocalizedTextKey);
+  }
+
+  public void setHttps(boolean useHttps) {
+    this.https = useHttps;
   }
 }
 
