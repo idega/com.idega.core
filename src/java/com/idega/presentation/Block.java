@@ -251,10 +251,14 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
 
   private boolean isCacheValid(IWContext iwc){
-    if(getCacheKey(iwc)!=null){
-      return IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getCacheKey(iwc));
+    boolean valid = false;
+    if( cacheable ){
+      if(getCacheKey(iwc)!=null){
+        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getCacheKey(iwc));
+      }
     }
-    return false;
+
+    return valid;
   }
 
   private String getCacheKey(IWContext iwc){
@@ -282,6 +286,10 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   protected boolean isCacheable(){
     return this.cacheable;
+  }
+
+  public void setCacheable(boolean cacheable){
+    this.cacheable = cacheable;
   }
 
   /**
