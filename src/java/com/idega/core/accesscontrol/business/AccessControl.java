@@ -1,33 +1,38 @@
 package com.idega.core.accesscontrol.business;
 
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Enumeration;
-import com.idega.presentation.*;
-import com.idega.block.login.business.*;
-import com.idega.core.data.*;
-import com.idega.core.user.data.User;
-import com.idega.data.EntityFinder;
-import com.idega.core.accesscontrol.data.*;
-import com.idega.core.business.*;
-import com.idega.core.user.business.UserBusiness;
-import com.idega.util.IWTimestamp;
-import com.idega.data.SimpleQuerier;
-import com.idega.util.EncryptionType;
-import com.idega.idegaweb.IWServiceImpl;
-import com.idega.idegaweb.IWServiceNotStartedException;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.core.user.data.UserGroupRepresentative;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.builder.data.IBPage;
-import com.idega.user.data.Group;
-import com.idega.data.IDOLookup;
-
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
+
+import javax.ejb.FinderException;
+
+import com.idega.block.login.business.LoginBusiness;
+import com.idega.builder.data.IBPage;
+import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.accesscontrol.data.ICPermissionHome;
+import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.core.accesscontrol.data.PermissionGroupHome;
+import com.idega.core.business.UserGroupBusiness;
+import com.idega.core.data.GenericGroup;
+import com.idega.core.data.ICFile;
+import com.idega.core.data.ICObject;
+import com.idega.core.user.data.User;
+import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.data.EntityFinder;
+import com.idega.data.IDOLookup;
+import com.idega.data.SimpleQuerier;
+import com.idega.idegaweb.IWServiceImpl;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.user.data.Group;
+import com.idega.util.EncryptionType;
+import com.idega.util.IWTimestamp;
 
 
 
@@ -35,9 +40,10 @@ import java.util.Set;
 /**
  * Title:        AccessControl
  * Description:
- * Copyright:    Copyright (c) 2001 idega.is All Rights Reserved
- * Company:      idega margmiðlun
- * @author       <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * Copyright:    Copyright (c) 2001 Idega Software All Rights Reserved
+ * Company:      Idega Software
+ * @author       <a href="mailto:gummi@idega.is">Gudmundur Agust
+ * Saemundsson</a>, Eirikur Hrafnsson
  * @version 1.0
  */
 
@@ -66,8 +72,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   //temp
   private static ICObject staticPageICObject = null;
   private static ICObject staticFileICObject = null;
-
-
 
 
   private void initAdministratorPermissionGroup() throws Exception {
@@ -150,7 +154,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo page ownership
    */
-  public boolean isOwner(PresentationObject obj , IWUserContext iwc) throws Exception {
+  public boolean isOwner(Object obj , IWUserContext iwc) throws Exception {
     Boolean returnVal = Boolean.FALSE;
     User user = iwc.getUser();
     if(user != null){
@@ -160,7 +164,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permissionOrder[1] = new Vector();
       permissionOrder[1].add( Integer.toString(user.getPrimaryGroupID()) );
 
-      returnVal = checkForPermission(permissionOrder,obj,AccessControl._PERMISSIONKEY_OWNER,iwc);
+      returnVal = checkForPermission(permissionOrder,obj,AccessControl.PERMISSION_KEY_OWNER,iwc);
     }
 
     if(returnVal != null){
@@ -181,7 +185,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permissionOrder[1] = new Vector();
       permissionOrder[1].add( Integer.toString(user.getPrimaryGroupID()) );
 
-      returnVal = checkForPermission(permissionOrder,category, identifier,AccessControl._PERMISSIONKEY_OWNER,iwc);
+      returnVal = checkForPermission(permissionOrder,category, identifier,AccessControl.PERMISSION_KEY_OWNER,iwc);
     }
 
     if(returnVal != null){
@@ -191,11 +195,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
   }
 
-  public boolean isOwner(List groupIds, PresentationObject obj,IWUserContext iwc) throws Exception {
+  public boolean isOwner(List groupIds, Object obj,IWUserContext iwc) throws Exception {
     Boolean returnVal = Boolean.FALSE;
     List[] permissionOrder = new Vector[1];
     permissionOrder[0] = groupIds;
-    returnVal = checkForPermission(permissionOrder, obj, AccessControl._PERMISSIONKEY_OWNER,iwc);
+    returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER,iwc);
 
     if(returnVal != null){
       return returnVal.booleanValue();
@@ -205,11 +209,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception{
-    return isOwner(AccessController._CATEGORY_FILE_ID, Integer.toString(file.getID()),iwc);
+    return isOwner(AccessController.CATEGORY_FILE_ID, Integer.toString(file.getID()),iwc);
   }
+  
+	public boolean isOwner(Group group, IWUserContext iwc)throws Exception{
+		return isOwner(AccessController.CATEGORY_GROUP_ID, group.getPrimaryKey().toString(),iwc);
+	}
 
   public boolean isOwner(IBPage page, IWUserContext iwc)throws Exception{
-    return isOwner(AccessController._CATEGORY_PAGE_INSTANCE, Integer.toString(page.getID()),iwc);
+    return isOwner(AccessController.CATEGORY_PAGE_INSTANCE, Integer.toString(page.getID()),iwc);
   }
 
   /**
@@ -235,15 +243,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
     User user = LoginBusiness.getUser(iwc);
-    ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
-    ICPermission[] Permissions = null;
+
     List groups = null;
-    List tempGroupList = new Vector();
     List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
 
     if (user == null){
       permissionOrder = new List[1];
-      permissionOrder[0] = new Vector();
+      permissionOrder[0] = new ArrayList();
       permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
     } else {
 
@@ -254,7 +260,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         if(primaryGroup != null){
           groups.remove(primaryGroup);
         }
-        List groupIds = new Vector();
+        List groupIds = new ArrayList();
         Iterator iter = groups.iterator();
         while (iter.hasNext()) {
           groupIds.add(Integer.toString(((GenericGroup)iter.next()).getID()));
@@ -264,13 +270,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       } else {
         permissionOrder = new List[4];
       }
-        permissionOrder[0] = new Vector();
+        permissionOrder[0] = new ArrayList();
         permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
-        permissionOrder[1] = new Vector();
+        permissionOrder[1] = new ArrayList();
         permissionOrder[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
-        permissionOrder[2] = new Vector();
+        permissionOrder[2] = new ArrayList();
         permissionOrder[2].add( Integer.toString(user.getGroupID()) );
-        permissionOrder[3] = new Vector();
+        permissionOrder[3] = new ArrayList();
         permissionOrder[3].add( Integer.toString(user.getPrimaryGroupID()) );
         // Everyone, user, primaryGroup, otherGroups
     }
@@ -280,7 +286,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
 
-    if(permissionKey.equals(AccessControl._PERMISSIONKEY_EDIT) || permissionKey.equals(AccessControl._PERMISSIONKEY_VIEW)){
+    if(permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)){
       return isOwner(category, identifier, iwc);
     } else {
       return false;
@@ -294,13 +300,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     if(permissionGroupLists != null){
       int arrayLength = permissionGroupLists.length;
       switch (category) {
-        case AccessController._CATEGORY_OBJECT_INSTANCE:
-        case AccessController._CATEGORY_OBJECT:
-        case AccessController._CATEGORY_BUNDLE :
-        case AccessController._CATEGORY_PAGE_INSTANCE:
-        case AccessController._CATEGORY_PAGE:
+        case AccessController.CATEGORY_OBJECT_INSTANCE:
+        case AccessController.CATEGORY_OBJECT:
+        case AccessController.CATEGORY_BUNDLE :
+        case AccessController.CATEGORY_PAGE_INSTANCE:
+        case AccessController.CATEGORY_PAGE:
           //PageInstance
-          if(category == AccessController._CATEGORY_PAGE_INSTANCE &&  !identifier.equals(Integer.toString(_notBuilderPageID)) ){
+          if(category == AccessController.CATEGORY_PAGE_INSTANCE &&  !identifier.equals(Integer.toString(_notBuilderPageID)) ){
             for (int i = 0; i < arrayLength; i++) {
               myPermission = PermissionCacher.hasPermissionForPage(identifier,iwc,permissionKey,permissionGroupLists[i]);
               if(myPermission != null){
@@ -308,9 +314,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
               }
             }
 
-            if(!permissionKey.equals(AccessControl._PERMISSIONKEY_OWNER)){
+            if(!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)){
               // Global - (Page)
-              if(!PermissionCacher.anyInstancePerissionsDefinedForPage(identifier,iwc,permissionKey)){
+              if(!PermissionCacher.anyInstancePermissionsDefinedForPage(identifier,iwc,permissionKey)){
                 ICObject page = getStaticPageICObject();
                 if(page != null){
                   for (int i = 0; i < arrayLength; i++) {
@@ -336,9 +342,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
             }
             //instance
 
-            if(!permissionKey.equals(AccessControl._PERMISSIONKEY_OWNER)){
+            if(!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)){
               // Global - (object)
-              if(!PermissionCacher.anyInstancePerissionsDefinedForObject(identifier,iwc,permissionKey)){
+              if(!PermissionCacher.anyInstancePermissionsDefinedForObject(identifier,iwc,permissionKey)){
                 for (int i = 0; i < arrayLength; i++) {
                   myPermission = PermissionCacher.hasPermissionForObject(identifier,iwc,permissionKey,permissionGroupLists[i]);
                   if(myPermission != null){
@@ -351,7 +357,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
             return myPermission;
           }
-        case AccessController._CATEGORY_JSP_PAGE:
+        case AccessController.CATEGORY_JSP_PAGE:
           for (int i = 0; i < arrayLength; i++) {
             myPermission = PermissionCacher.hasPermissionForJSPPage(identifier,iwc,permissionKey,permissionGroupLists[i]);
             if(myPermission != null){
@@ -360,7 +366,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
 
           return myPermission;
-        case AccessController._CATEGORY_FILE_ID:
+        case AccessController.CATEGORY_FILE_ID:
           for (int i = 0; i < arrayLength; i++) {
             myPermission = PermissionCacher.hasPermissionForFile(identifier,iwc,permissionKey,permissionGroupLists[i]);
             if(myPermission != null){
@@ -368,9 +374,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
             }
           }
 
-          if(!permissionKey.equals(AccessControl._PERMISSIONKEY_OWNER)){
+          if(!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)){
             // Global - (File)
-            if(!PermissionCacher.anyInstancePerissionsDefinedForFile(identifier,iwc,permissionKey)){
+            if(!PermissionCacher.anyInstancePermissionsDefinedForFile(identifier,iwc,permissionKey)){
               ICObject file = getStaticFileICObject();
               if(file != null){
                 for (int i = 0; i < arrayLength; i++) {
@@ -390,26 +396,32 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return myPermission;
   }
 
-
-  public boolean hasPermission(String permissionKey, PresentationObject obj,IWUserContext iwc) throws Exception{
+/**
+ * The main hasPermission method all hasXYZPesmission methodscall this method.
+ * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(String, PresentationObject, IWUserContext)
+ */
+  public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
-    if (isAdmin(iwc)){
+    if (isAdmin(iwc)){//this is almost a security hole - eiki
       return true;
     }
 
     User user = LoginBusiness.getUser(iwc);
     ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
-    ICPermission[] Permissions = null;
-    List groups = null;
-    List tempGroupList = new Vector();
-    List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
 
-    if (user == null){
-      permissionOrder = new List[1];
-      permissionOrder[0] = new Vector();
-      permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
-    } else {
+    List groups = null;
+//The order that is checked for : Everyone Group, Logged on users group, user, primaryGroup, otherGroups
+//This is an ordered list to check against the permissions set in the database
+    List[] usersGroupsToCheckAgainstPermissions = null; 
+//
+    
+    if (user == null){//everyone group check
+      usersGroupsToCheckAgainstPermissions = new List[1];
+      usersGroupsToCheckAgainstPermissions[0] = new ArrayList();
+      usersGroupsToCheckAgainstPermissions[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+    } 
+    else {//user check
 
       groups = LoginBusiness.getPermissionGroups(iwc);
       GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(iwc);
@@ -423,27 +435,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         while (iter.hasNext()) {
           groupIds.add(Integer.toString(((GenericGroup)iter.next()).getID()));
         }
-        permissionOrder = new List[5];
-        permissionOrder[4] = groupIds;
+        usersGroupsToCheckAgainstPermissions = new List[5];
+        usersGroupsToCheckAgainstPermissions[4] = groupIds;
       } else {
-        permissionOrder = new List[4];
+        usersGroupsToCheckAgainstPermissions = new List[4];
       }
-        permissionOrder[0] = new Vector();
-        permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
-        permissionOrder[1] = new Vector();
-        permissionOrder[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
-        permissionOrder[2] = new Vector();
-        permissionOrder[2].add( Integer.toString(user.getGroupID()) );
-        permissionOrder[3] = new Vector();
-        permissionOrder[3].add( Integer.toString(user.getPrimaryGroupID()) );
+        usersGroupsToCheckAgainstPermissions[0] = new ArrayList();
+        usersGroupsToCheckAgainstPermissions[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+        usersGroupsToCheckAgainstPermissions[1] = new ArrayList();
+        usersGroupsToCheckAgainstPermissions[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
+        usersGroupsToCheckAgainstPermissions[2] = new ArrayList();
+        usersGroupsToCheckAgainstPermissions[2].add( Integer.toString(user.getGroupID()) );
+        usersGroupsToCheckAgainstPermissions[3] = new ArrayList();
+        usersGroupsToCheckAgainstPermissions[3].add( Integer.toString(user.getPrimaryGroupID()) );
         // Everyone, user, primaryGroup, otherGroups
     }
-    myPermission = checkForPermission(permissionOrder, obj, permissionKey, iwc);
+    
+    
+    myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey, iwc);
+    
+    
     if(myPermission != null){
       return myPermission.booleanValue();
     }
+    
+    //why is this check?
 
-    if(permissionKey.equals(AccessControl._PERMISSIONKEY_EDIT) || permissionKey.equals(AccessControl._PERMISSIONKEY_VIEW)){
+    if(permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)){
       return isOwner(obj,iwc);
     } else {
       return false;
@@ -453,11 +471,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public boolean hasPermission(List groupIds,String permissionKey, PresentationObject obj,IWUserContext iwc) throws Exception{
+/**
+ * Assembles the grouplist for this user to check agains the permission maps in
+ * memory.
+ * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(List, String, PresentationObject, IWUserContext)
+ */
+  public boolean hasPermission(List groupIds,String permissionKey, Object obj,IWUserContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
-    ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
-    ICPermission[] Permissions = null;
     List groups = null;
     List[] permissionOrder = null; // Everyone, users, (primaryGroup), otherGroups
 
@@ -504,7 +525,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-    if(permissionKey.equals(AccessControl._PERMISSIONKEY_EDIT) || permissionKey.equals(AccessControl._PERMISSIONKEY_VIEW)){
+    if(permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)){
       return isOwner(groupIds,obj,iwc);
     } else {
       return false;
@@ -515,39 +536,48 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  private static Boolean checkForPermission(List[] permissionGroupLists, PresentationObject obj, String permissionKey, IWUserContext iwc ) throws Exception {
-    Boolean myPermission = null;
+  private static Boolean checkForPermission(List[] permissionGroupLists, Object obj, String permissionKey, IWUserContext iwc ) throws Exception {
+    Boolean myPermission = Boolean.FALSE;
     if(permissionGroupLists != null){
       int arrayLength = permissionGroupLists.length;
-      if (obj == null){ // JSP page
+      
+      
+			//JSP PAGE
+      if (obj == null){ 
         for (int i = 0; i < arrayLength; i++) {
-          myPermission = PermissionCacher.hasPermissionForJSPPage(obj,iwc,permissionKey,permissionGroupLists[i]);
-          if(myPermission != null){
-            return myPermission;
-          }
+          myPermission = PermissionCacher.hasPermissionForJSPPage(iwc,permissionKey,permissionGroupLists[i]);
+					if(Boolean.TRUE.equals(myPermission)){
+						return myPermission;
+					}
         }
 
         return myPermission;
-      } else { // if (obj != null)
+      } 
+			//JSP PAGE ENDS
+      else { // if (obj != null)
 
+				//PAGE
         if(obj instanceof Page && ((Page)obj).getPageID() != _notBuilderPageID ){
           for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForPage(obj,iwc,permissionKey,permissionGroupLists[i]);
-            if(myPermission != null){
-              return myPermission;
-            }
+            myPermission = PermissionCacher.hasPermissionForPage((Page)obj,iwc,permissionKey,permissionGroupLists[i]);
+						if(Boolean.TRUE.equals(myPermission)){
+							return myPermission;
+						}
           }
 
-          if(!permissionKey.equals(AccessControl._PERMISSIONKEY_OWNER)){
+          if(!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)){
+          	
             // Global - (Page)
-            if(!PermissionCacher.anyInstancePerissionsDefinedForPage(obj,iwc,permissionKey)){
+            if(!PermissionCacher.anyInstancePermissionsDefinedForPage((Page)obj,iwc,permissionKey)){
               ICObject page = getStaticPageICObject();
               if(page != null){
                 for (int i = 0; i < arrayLength; i++) {
-                  myPermission = PermissionCacher.hasPermission(page,iwc,permissionKey,permissionGroupLists[i]);
-                  if(myPermission != null){
+                  myPermission = PermissionCacher.hasPermission(page,iwc,permissionKey,permissionGroupLists[i]);                  
+
+                  if(Boolean.TRUE.equals(myPermission)){
                     return myPermission;
                   }
+
                 }
               }
             }
@@ -556,13 +586,25 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
           return myPermission;
-        }else{
-          //instance
+          
+          
+        }//PAGE ENDS
+        else if( obj instanceof Group){
+					for (int i = 0; i < arrayLength; i++) {
+						 myPermission = PermissionCacher.hasPermissionForGroup((Group)obj,iwc,permissionKey,permissionGroupLists[i]);
+						if(Boolean.TRUE.equals(myPermission)){
+							return myPermission;
+						}
+					}
+        	
+        }
+        else{
+          //Object instance
           for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,iwc,permissionKey,permissionGroupLists[i]);
-            if(myPermission != null){
-              return myPermission;
-            }
+            myPermission = PermissionCacher.hasPermissionForObjectInstance((PresentationObject)obj,iwc,permissionKey,permissionGroupLists[i]);
+						if(Boolean.TRUE.equals(myPermission)){
+							return myPermission;
+						}
           }
 
           //instance
@@ -579,14 +621,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
           //page permission inheritance
 */
-          if(!permissionKey.equals(AccessControl._PERMISSIONKEY_OWNER)){
+          if(!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)){
             // Global - (object)
-            if(!PermissionCacher.anyInstancePerissionsDefinedForObject(obj,iwc,permissionKey)){
+            if(!PermissionCacher.anyInstancePermissionsDefinedForObject((PresentationObject) obj,iwc,permissionKey)){
               for (int i = 0; i < arrayLength; i++) {
-                myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionKey,permissionGroupLists[i]);
-                if(myPermission != null){
-                  return myPermission;
-                }
+                myPermission = PermissionCacher.hasPermissionForObject((PresentationObject) obj,iwc,permissionKey,permissionGroupLists[i]);
+								if(Boolean.TRUE.equals(myPermission)){
+									return myPermission;
+								}
               }
             }
             // Global - (object)
@@ -617,7 +659,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   private static ICObject getStaticFileICObject(){
     if(staticFileICObject == null){
       try {
-        staticPageICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getClassNameColumnName(),ICFile.class.getName()).get(0);
+				staticFileICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getClassNameColumnName(),ICFile.class.getName()).get(0);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -625,6 +667,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
     return staticFileICObject;
   }
+  
 
 //  /**
 //   * use this method when writing to database to avoid errors in database.
@@ -679,7 +722,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
   public boolean hasEditPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
-    return hasPermission( _PERMISSIONKEY_EDIT , obj, iwc);
+    return hasPermission( PERMISSION_KEY_EDIT , obj, iwc);
   }
 
 
@@ -689,7 +732,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
-      return hasPermission( _PERMISSIONKEY_VIEW, obj, iwc);
+      return hasPermission( PERMISSION_KEY_VIEW, obj, iwc);
     }
     catch (Exception ex) {
       return false;
@@ -702,39 +745,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       System.err.println(obj.getClass().getName()+" has permission: " + permission);
       return permission;
       */
-      return hasPermission(groupIds, _PERMISSIONKEY_VIEW, obj, iwc);
+      return hasPermission(groupIds, PERMISSION_KEY_VIEW, obj, iwc);
     }
     catch (Exception ex) {
       return false;
     }
   }
 
-
-  public boolean hasAdminPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
-    return hasPermission( _PERMISSIONKEY_ADMIN, obj, iwc);
-  }
-
-  public boolean hasOwnerPermission(PresentationObject obj,IWUserContext iwc)throws Exception{
-    return hasPermission( _PERMISSIONKEY_OWNER, obj, iwc);
-  }
-
-/*  public static ICObjectPermission[] getPermissionTypes(PresentationObject obj)throws Exception{
-    int arobjID = obj.getICObject().getID();
-    List permissions =  EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICObjectPermissionBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.ICObjectPermissionBMPBean.getPermissionTypeColumnName(), arobjID);
-    if (permissions != null){
-      return (ICObjectPermission[])permissions.toArray((Object[])new ICObjectPermission[0]);
-    }else{
-      return null;
-    }
-  }
-*/
-
-
   public void setJSPPagePermission(IWUserContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = getPermissionHome().create();
@@ -742,7 +764,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
     if(!update){
-      permission.setContextType(AccessControl._CATEYGORYSTRING_JSP_PAGE);
+      permission.setContextType(AccessControl.CATEGORY_STRING_JSP_PAGE);
       // use 'ICJspHandler.getJspPageInstanceID(iwc)' on the current page and send in as PageContextValue
       permission.setContextValue(PageContextValue);
       permission.setGroupID(new Integer(group.getID()));
@@ -761,7 +783,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getICObjectID() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_IC_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getICObjectID() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = getPermissionHome().create();
@@ -769,7 +791,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
     if(!update){
-      permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_ID);
+      permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
       permission.setContextValue(Integer.toString(obj.getICObjectID()));
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
@@ -788,7 +810,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getBundleIdentifier() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getBundleIdentifier() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = getPermissionHome().create();
@@ -796,7 +818,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
     if(!update){
-      permission.setContextType(AccessControl._CATEYGORYSTRING_BUNDLE_IDENTIFIER);
+      permission.setContextType(AccessControl.CATEGORY_STRING_BUNDLE_IDENTIFIER);
       permission.setContextValue(obj.getBundleIdentifier());
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
@@ -827,7 +849,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     if(!sGroupList.equals("")){
       ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
       try {
-        boolean done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+        boolean done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_OBJECT_INSTANCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
         if(done){
           PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,iwc);
         }
@@ -857,23 +879,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         boolean done = false;
 
         switch (permissionCategory) {
-          case AccessControl._CATEGORY_OBJECT_INSTANCE :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_OBJECT_INSTANCE :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_OBJECT_INSTANCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
-          case AccessControl._CATEGORY_OBJECT :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_OBJECT :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_IC_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
-          case AccessControl._CATEGORY_BUNDLE :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_BUNDLE :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
-          case AccessControl._CATEGORY_PAGE_INSTANCE :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_PAGE_INSTANCE :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
-          case AccessControl._CATEGORY_PAGE :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_PAGE :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
-          case AccessControl._CATEGORY_JSP_PAGE :
-            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
+          case AccessControl.CATEGORY_JSP_PAGE :
+            done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
             break;
         }
 
@@ -898,27 +920,31 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     boolean update = true;
     try {
       switch (permissionCategory) {
-        case AccessControl._CATEGORY_OBJECT_INSTANCE :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_OBJECT_INSTANCE :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_OBJECT_INSTANCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_OBJECT :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_OBJECT :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_IC_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_BUNDLE :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_BUNDLE :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_PAGE_INSTANCE :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_PAGE_INSTANCE :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_PAGE :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_PAGE :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_JSP_PAGE :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_JSP_PAGE :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
-        case AccessControl._CATEGORY_FILE_ID :
-          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_FILE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+        case AccessControl.CATEGORY_FILE_ID :
+          permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_FILE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
           break;
+				case AccessControl.CATEGORY_GROUP_ID :
+					permission = (ICPermission)EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_GROUP_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId).get(0);
+					break;
+									
 
       }
 
@@ -931,27 +957,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     if(!update){
 
       switch (permissionCategory) {
-        case AccessControl._CATEGORY_OBJECT_INSTANCE :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_INSTATNCE_ID);
+        case AccessControl.CATEGORY_OBJECT_INSTANCE :
+          permission.setContextType(AccessControl.CATEGORY_STRING_OBJECT_INSTANCE_ID);
           break;
-        case AccessControl._CATEGORY_OBJECT :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_ID);
+        case AccessControl.CATEGORY_OBJECT :
+          permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
           break;
-        case AccessControl._CATEGORY_BUNDLE :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_BUNDLE_IDENTIFIER);
+        case AccessControl.CATEGORY_BUNDLE :
+          permission.setContextType(AccessControl.CATEGORY_STRING_BUNDLE_IDENTIFIER);
           break;
-        case AccessControl._CATEGORY_PAGE_INSTANCE :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_PAGE_ID);
+        case AccessControl.CATEGORY_PAGE_INSTANCE :
+          permission.setContextType(AccessControl.CATEGORY_STRING_PAGE_ID);
           break;
-        case AccessControl._CATEGORY_PAGE :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_PAGE);
+        case AccessControl.CATEGORY_PAGE :
+          permission.setContextType(AccessControl.CATEGORY_STRING_PAGE);
           break;
-        case AccessControl._CATEGORY_JSP_PAGE :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_JSP_PAGE);
+        case AccessControl.CATEGORY_JSP_PAGE :
+          permission.setContextType(AccessControl.CATEGORY_STRING_JSP_PAGE);
           break;
-        case AccessControl._CATEGORY_FILE_ID :
-          permission.setContextType(AccessControl._CATEYGORYSTRING_FILE_ID);
+        case AccessControl.CATEGORY_FILE_ID :
+          permission.setContextType(AccessControl.CATEGORY_STRING_FILE_ID);
           break;
+				case AccessControl.CATEGORY_GROUP_ID :
+					permission.setContextType(AccessControl.CATEGORY_STRING_GROUP_ID);
+					break;
+          
+          
+        
       }
 
       permission.setContextValue(identifier);
@@ -972,7 +1004,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_OBJECT_INSTANCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId))[0];
     }
     catch (Exception ex) {
       permission = getPermissionHome().create();
@@ -980,7 +1012,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
 
     if(!update){
-      permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_INSTATNCE_ID);
+      permission.setContextType(AccessControl.CATEGORY_STRING_OBJECT_INSTANCE_ID);
       permission.setContextValue(ObjectInstanceId);
       permission.setGroupID(new Integer(permissionGroupId));
       permission.setPermissionString(permissionType);
@@ -1083,23 +1115,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     List permissions = null;
 
     switch (permissionCategory) {
-      case AccessControl._CATEGORY_OBJECT_INSTANCE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_OBJECT_INSTANCE :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_OBJECT_INSTANCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
-      case AccessControl._CATEGORY_OBJECT :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_OBJECT :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_IC_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
-      case AccessControl._CATEGORY_BUNDLE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_BUNDLE :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
-      case AccessControl._CATEGORY_PAGE_INSTANCE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_PAGE_INSTANCE :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
-      case AccessControl._CATEGORY_PAGE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_PAGE :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
-      case AccessControl._CATEGORY_JSP_PAGE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
+      case AccessControl.CATEGORY_JSP_PAGE :
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + CATEGORY_STRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + identifier + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName() +" = 'Y'");
         break;
     }
 
@@ -1266,8 +1298,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   public String[] getICObjectPermissionKeys(Class ICObject){
     String[] keys = new String[2];
 
-    keys[0] = _PERMISSIONKEY_VIEW;
-    keys[1] = _PERMISSIONKEY_EDIT;
+    keys[0] = PERMISSION_KEY_VIEW;
+    keys[1] = PERMISSION_KEY_EDIT;
     //keys[2] = _PERMISSIONKEY_DELETE;
 
     return keys;
@@ -1279,8 +1311,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   public String[] getBundlePermissionKeys(Class ICObject){
     String[] keys = new String[2];
 
-    keys[0] = _PERMISSIONKEY_VIEW;
-    keys[1] = _PERMISSIONKEY_EDIT;
+    keys[0] = PERMISSION_KEY_VIEW;
+    keys[1] = PERMISSION_KEY_EDIT;
     //keys[2] = _PERMISSIONKEY_DELETE;
 
     return keys;
@@ -1291,8 +1323,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   public String[] getBundlePermissionKeys(String BundleIdentifier){
     String[] keys = new String[2];
 
-    keys[0] = _PERMISSIONKEY_VIEW;
-    keys[1] = _PERMISSIONKEY_EDIT;
+    keys[0] = PERMISSION_KEY_VIEW;
+    keys[1] = PERMISSION_KEY_EDIT;
     //keys[2] = _PERMISSIONKEY_DELETE;
 
     return keys;
@@ -1303,8 +1335,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   public String[] getPagePermissionKeys(){
     String[] keys = new String[2];
 
-    keys[0] = _PERMISSIONKEY_VIEW;
-    keys[1] = _PERMISSIONKEY_EDIT;
+    keys[0] = PERMISSION_KEY_VIEW;
+    keys[1] = PERMISSION_KEY_EDIT;
     //keys[2] = _PERMISSIONKEY_DELETE;
 
     return keys;
@@ -1330,10 +1362,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       update = false;
     }*/
 
-    permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_ID);
+    permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
     permission.setContextValue(Integer.toString(obj.getID()));
     permission.setGroupID(new Integer(AccessControl._GROUP_ID_EVERYONE));
-    permission.setPermissionString(AccessControl._PERMISSIONKEY_VIEW);
+    permission.setPermissionString(AccessControl.PERMISSION_KEY_VIEW);
 //        permission.setPermissionStringValue();
     permission.setPermissionValue(Boolean.TRUE);
     permission.insert();
@@ -1345,18 +1377,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   }
 
-
-
-
-  /**
-   * @todo implement hasPermission(String permissionKey, ICObject obj, IWUserContext iwc) throws Exception
-   * temp implementation
-   */
-  public boolean hasPermission(String permissionKey, ICObject obj, IWUserContext iwc) throws Exception{
-    PresentationObject pObj = (PresentationObject)Class.forName(obj.getClassName()).newInstance();
-    pObj.setICObject(obj);
-    return this.hasPermission(permissionKey,(PresentationObject)pObj,iwc);
-  }
 
   /**
    * @todo implement hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception
@@ -1414,7 +1434,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
    */
   public void setAsOwner(IBPage page, int groupId, IWUserContext iwc)throws Exception {
-    setPermission(AccessController._CATEGORY_PAGE_INSTANCE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+    setPermission(AccessController.CATEGORY_PAGE_INSTANCE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
   }
 
 
@@ -1427,8 +1447,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
    */
   public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception {
-    setPermission(AccessController._CATEGORY_FILE_ID,iwc,Integer.toString(groupId),Integer.toString(file.getID()),AccessControl._PERMISSIONKEY_OWNER,Boolean.TRUE);
+    setPermission(AccessController.CATEGORY_FILE_ID,iwc,Integer.toString(groupId),Integer.toString(file.getID()),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
   }
+  
+	public void setAsOwner(Group group, int groupId, IWUserContext iwc)throws Exception {
+		setPermission(AccessController.CATEGORY_GROUP_ID,iwc,Integer.toString(groupId),group.getPrimaryKey().toString(),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
+	}
 
   /**
    * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception
@@ -1441,11 +1465,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
   public static void copyObjectInstancePermissions( String idToCopyFrom, String idToCopyTo) throws SQLException{
-    copyPermissions(AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,idToCopyFrom,idToCopyTo);
+    copyPermissions(AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID,idToCopyFrom,idToCopyTo);
   }
 
   public static void copyPagePermissions( String idToCopyFrom, String idToCopyTo) throws SQLException{
-    copyPermissions(AccessController._CATEYGORYSTRING_PAGE_ID,idToCopyFrom,idToCopyTo);
+    copyPermissions(AccessController.CATEGORY_STRING_PAGE_ID,idToCopyFrom,idToCopyTo);
   }
 
   public static List getGroupsPermissions(String category, GenericGroup group, Set identifiers) throws SQLException{
@@ -1504,16 +1528,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   public static List getGroupsPermissionsForInstances(GenericGroup group, Set instances) throws SQLException{
-    return getGroupsPermissions(AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,group, instances);
+    return getGroupsPermissions(AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID,group, instances);
   }
 
   public static List getGroupsPermissionsForPages(GenericGroup group, Set instances) throws SQLException{
-    return getGroupsPermissions(AccessController._CATEYGORYSTRING_PAGE_ID,group, instances);
+    return getGroupsPermissions(AccessController.CATEGORY_STRING_PAGE_ID,group, instances);
   }
 
   public static boolean replicatePermissionForNewGroup(ICPermission permission, GenericGroup group){
     try {
-      ICPermission p = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      ICPermission p = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHome(ICPermission.class)).create();
 
       String s = permission.getContextType();
       if(s != null){
@@ -1540,12 +1564,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       // groupID changes
       p.setGroupID(group.getID());
 
-      p.insert();
+      p.store();
 
       //PermissionCacher.updatePermissions(,p.getContextValue(),permissionType,iwc);
       return true;
     }
     catch (Exception ex) {
+    	ex.printStackTrace();
       System.err.println("AccessControl.replicatePermissionForNewGroup(..) did not succeed");
       return false;
     }
@@ -1558,7 +1583,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       Iterator iter = permissions.iterator();
       while (iter.hasNext()) {
         ICPermission item = (ICPermission)iter.next();
-        ICPermission perm = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+        ICPermission perm = (ICPermission) ((ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
         perm.setContextType(contextType);
         perm.setContextValue(identifierToCopyTo);
         perm.setGroupID(item.getGroupID());
@@ -1573,7 +1598,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         }
         perm.setPermissionValue(item.getPermissionValue());
 
-        perm.insert();
+        perm.store();
       }
     }
   }
@@ -1583,13 +1608,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
      * @todo: Implement
      */
     return true;
+    
+    
+    
   }
 
   public boolean hasViewPermissionFor(Group group,IWUserContext iwuc){
-    /**
-     * @todo: Implement
-     */
-    return true;
+    try{
+    
+    	return this.hasPermission(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
+    }
+    catch(Exception e){
+    	e.printStackTrace();
+    	return false;
+    }
+    
   }
 
 
@@ -1618,14 +1651,70 @@ public class AccessControl extends IWServiceImpl implements AccessController {
      */
   }
 
-  private PermissionGroupHome getPermissionGroupHome()throws RemoteException{
+  private static PermissionGroupHome getPermissionGroupHome()throws RemoteException{
     return (PermissionGroupHome)IDOLookup.getHome(PermissionGroup.class);
   }
 
-  private ICPermissionHome getPermissionHome()throws RemoteException{
+  private static ICPermissionHome getPermissionHome()throws RemoteException{
     return (ICPermissionHome)IDOLookup.getHome(ICPermission.class);
   }
 
 
+//Methods added after big changes by Eiki
+	public static Collection getAllPermissions(Group group, String contextType){
+		Collection returnCol = null;
+		try{
+			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType,group);
+		}
+		catch(FinderException ex){
+			returnCol =  new Vector();//empty
+		}
+		catch(RemoteException x){
+			x.printStackTrace();
+			returnCol =  new Vector();//empty
+		}
+		
+		return returnCol;
+		
+	}
+
+	public static Collection getAllGroupPermissionsForGroup(Group group){
+		return getAllPermissions(group,AccessControl.CATEGORY_STRING_GROUP_ID);
+	}
+	
+	public static Collection getAllPermissionsOwnedByGroup(Group group, String contextType){
+		Collection returnCol = null;
+		try{
+			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,contextType);
+		}
+		catch(FinderException ex){
+			returnCol =  new Vector();//empty
+		}
+		catch(RemoteException x){
+			x.printStackTrace();
+			returnCol =  new Vector();//empty
+		}
+		
+		return returnCol;
+		
+	}
+	
+	public static Collection getAllGroupPermissionsOwnedByGroup(Group group){
+		Collection returnCol = null;
+		try{
+			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,AccessControl.CATEGORY_STRING_GROUP_ID);
+		}
+		catch(FinderException ex){
+			returnCol =  new Vector();//empty
+		}
+		catch(RemoteException x){
+			x.printStackTrace();
+			returnCol =  new Vector();//empty
+		}
+		
+		return returnCol;
+		 
+	}
+	
 
 } // Class AccessControl

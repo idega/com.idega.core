@@ -2,6 +2,7 @@ package com.idega.core.accesscontrol.business;
 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.user.data.Group;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.data.ICObject;
 import com.idega.core.business.ICJspHandler;
@@ -20,24 +21,24 @@ import com.idega.idegaweb.IWUserContext;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version 1.0
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>,
+ * Eirikur Hrafnsson
+ * @version 1.1
  */
 
 public class PermissionCacher {
 
+	private static final String PERMISSION_MAP_PREFIX = "ic_permission_map_";
+  private static final String PERMISSION_MAP_OBJECT = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_OBJECT;
+  private static final String PERMISSION_MAP_OBJECT_INSTANCE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_OBJECT_INSTANCE;
+  private static final String PERMISSION_MAP_BUNDLE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_BUNDLE;
+  private static final String PERMISSION_MAP_PAGE_INSTANCE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_PAGE_INSTANCE;
+  private static final String PERMISSION_MAP_JSP_PAGE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_JSP_PAGE;
+  private static final String PERMISSION_MAP_FILE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_FILE_ID;
+	private static final String PERMISSION_MAP_GROUP = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_GROUP_ID;
+	
+  private static final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";//for performance (ask Gummi)
 
-/**
- * @todo depricate APPLICATION_ADDRESS_-constants, use categoryconstants from Accesscorntroller with prefix
- */
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT = "ic_permissionmap_object";
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE = "ic_permissionmap_object_instance";
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE = "ic_permissionmap_bundle";
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE = "ic_permissionmap_page_instance";
-  private static final String APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE = "ic_permissionmap_jsp_page";
-  public static final String APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID = "ic_permissionmap_file_id";
-
-  private static final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";
 
   public PermissionCacher() {
   }
@@ -45,44 +46,44 @@ public class PermissionCacher {
 
   // anyPermissionsDefined
 
-  public static boolean anyInstancePerissionsDefinedForObject( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
-    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE};
+  public static boolean anyInstancePermissionsDefinedForObject( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {PERMISSION_MAP_OBJECT_INSTANCE};
     return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
-  public static boolean anyPerissionsDefinedForObject( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
-    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT};
+  public static boolean anyPermissionsDefinedForObject( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {PERMISSION_MAP_OBJECT};
     return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
-  public static boolean anyPerissionsDefinedForPage( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPerissionsDefinedForObject(obj,iwc,permissionKey);
+  public static boolean anyPermissionsDefinedForPage( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefinedForObject(obj,iwc,permissionKey);
   }
 
-  public static boolean anyInstancePerissionsDefinedForPage( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException{
-    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE};
+  public static boolean anyInstancePermissionsDefinedForPage( Page obj, IWUserContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {PERMISSION_MAP_PAGE_INSTANCE};
     return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
 
-  public static boolean anyInstancePerissionsDefinedForObject( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE);
+  public static boolean anyInstancePermissionsDefinedForObject( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefined(identifier,iwc,permissionKey,PERMISSION_MAP_OBJECT_INSTANCE);
   }
 
-  public static boolean anyPerissionsDefinedForObject( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT);
+  public static boolean anyPermissionsDefinedForObject( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefined(identifier,iwc,permissionKey,PERMISSION_MAP_OBJECT);
   }
 
-  public static boolean anyPerissionsDefinedForPage( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPerissionsDefinedForObject(identifier,iwc,permissionKey);
+  public static boolean anyPermissionsDefinedForPage( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefinedForObject(identifier,iwc,permissionKey);
   }
 
-  public static boolean anyInstancePerissionsDefinedForPage( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE);
+  public static boolean anyInstancePermissionsDefinedForPage( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefined(identifier,iwc,permissionKey,PERMISSION_MAP_PAGE_INSTANCE);
   }
 
-  public static boolean anyInstancePerissionsDefinedForFile( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
-    return anyPermissionsDefined(identifier,iwc,permissionKey,APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID);
+  public static boolean anyInstancePermissionsDefinedForFile( String identifier, IWUserContext iwc, String permissionKey) throws SQLException{
+    return anyPermissionsDefined(identifier,iwc,permissionKey,PERMISSION_MAP_FILE);
   }
 
 
@@ -95,11 +96,11 @@ public class PermissionCacher {
 
     for (int i = 0; i < maps.length; i++) {
       String permissionMapKey = maps[i];
-      if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
+      if(permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)){
         identifier = Integer.toString(obj.getICObjectInstanceID());
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
+      } else if(permissionMapKey.equals(PERMISSION_MAP_OBJECT)){
           identifier = Integer.toString(obj.getICObjectID());
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
+      } else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
           identifier = Integer.toString(((Page)obj).getPageID());
       }
 
@@ -175,121 +176,111 @@ public class PermissionCacher {
    * Does not handle pages or jsp pages
    */
   public static boolean somePermissionSet( PresentationObject obj, IWUserContext iwc, String permissionKey) throws SQLException {
-    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE, APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT}; //, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
+    String[] maps = {PERMISSION_MAP_OBJECT_INSTANCE, PERMISSION_MAP_OBJECT}; //, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
     return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
 
-  // hasPermission
-
-
-  public static Boolean hasPermissionForJSPPage(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,obj,iwc,permissionKey,groups);
+  public static Boolean hasPermissionForJSPPage(IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+    return hasPermission(PERMISSION_MAP_JSP_PAGE,null,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForObjectInstance(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,obj,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE,obj,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForObject(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,obj,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_OBJECT,obj,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForBundle(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE,obj,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_BUNDLE,obj,iwc,permissionKey,groups);
   }
 
-  public static Boolean hasPermissionForPage(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,obj,iwc,permissionKey,groups);
+  public static Boolean hasPermissionForPage(Page obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+    return hasPermission(PERMISSION_MAP_PAGE_INSTANCE,obj,iwc,permissionKey,groups);
   }
-
-
+  
+	public static Boolean hasPermissionForGroup(Group group, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+		return hasPermission(PERMISSION_MAP_GROUP,group,iwc,permissionKey,groups);
+	}
 
   public static Boolean hasPermissionForJSPPage(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_JSP_PAGE,identifier,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForObjectInstance(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE,identifier,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForObject(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_OBJECT,identifier,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForBundle(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_BUNDLE,identifier,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForPage(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_PAGE_INSTANCE,identifier,iwc,permissionKey,groups);
   }
 
   public static Boolean hasPermissionForFile(String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    return hasPermission(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID,identifier,iwc,permissionKey,groups);
+    return hasPermission(PERMISSION_MAP_FILE,identifier,iwc,permissionKey,groups);
   }
 
 
   //public static Boolean hasPermission()
 
 
-  private static Boolean hasPermission(String permissionMapKey, PresentationObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    //
-    String identifier = null;
-    if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
-      identifier = Integer.toString(obj.getICObjectInstanceID());
-    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
-        identifier = Integer.toString(obj.getICObjectID());
-    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
-        identifier = obj.getBundleIdentifier();
-    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
-        identifier = Integer.toString(((Page)obj).getPageID());
-        //temp
-        //identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
-    } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
-        identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(iwc));
-    }
-    //
+  private static Boolean hasPermission(String permissionMapKey, Object obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
+    String identifier = getIdentifier(permissionMapKey, obj, iwc);
 
     return hasPermission(permissionMapKey,identifier,iwc,permissionKey,groups);
-/*
-    if(identifier != null){
-      PermissionMap permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
-      if(permissionMap == null){
-          updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
-          permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
-      }
-
-      List permissions = permissionMap.get(identifier,permissionKey,groups);
-
-
-      if(permissions == null){
-        updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
-        permissions = permissionMap.get(identifier,permissionKey,groups);
-      }
-
-      Boolean falseOrNull = null;
-      if (permissions != null){
-        Iterator iter = permissions.iterator();
-        while (iter.hasNext()) {
-          Boolean item = (Boolean)iter.next();
-          if (item != null){
-            if (item.equals(Boolean.FALSE)){
-              falseOrNull = Boolean.FALSE;
-            }else{
-              return Boolean.TRUE;
-            }
-          }
-        }
-      }
-      return falseOrNull;
-    } else {
-      return null;
-    }
-    */
   }
 
+	protected static String getIdentifier(String permissionMapKey, Object obj, IWUserContext iwc) {
+		String identifier = null;
+		if(permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)){
+		  identifier = Integer.toString( ((PresentationObject) obj).getICObjectInstanceID());
+		} 
+		else if(permissionMapKey.equals(PERMISSION_MAP_OBJECT)){
+		    identifier = Integer.toString( ((PresentationObject) obj).getICObjectID());//todo change to icobject?
+		} 
+		else if(permissionMapKey.equals(PERMISSION_MAP_BUNDLE)){
+		    identifier = ((PresentationObject) obj).getBundleIdentifier();//todo change to bundle?
+		} 
+		else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
+		    identifier = Integer.toString(((Page)obj).getPageID());
+		    //temp
+		    //identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
+		} 
+		else if(permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)){
+		    identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(iwc));
+		}
+		else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
+			identifier = ((Group) obj).getPrimaryKey().toString();
+		}
+		else{
+			System.err.println("ACCESSCONTROL: type not supported");
+		
+		}
+		
+		return identifier;
+	}
 
+
+/**
+ * The permissionchecking ends in this method.
+ * 
+ * @param permissionMapKey
+ * @param identifier
+ * @param iwc
+ * @param permissionKey
+ * @param groups
+ * @return Boolean
+ * @throws SQLException
+ */
 
   private static Boolean hasPermission(String permissionMapKey, String identifier, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
 
@@ -308,9 +299,12 @@ public class PermissionCacher {
         permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 
-      Boolean falseOrNull = null;
+      Boolean False = null;
       if (permissions != null){
-        Iterator iter = permissions.iterator();
+      	if( permissions.contains(Boolean.TRUE)){
+      		return Boolean.TRUE;
+      	}
+      /*  Iterator iter = permissions.iterator();
         while (iter.hasNext()) {
           Boolean item = (Boolean)iter.next();
           if (item != null){
@@ -320,18 +314,24 @@ public class PermissionCacher {
               return Boolean.TRUE;
             }
           }
-        }
+        }*/
+        
       }
-      return falseOrNull;
-    } else {
-      return null;
+      
+      
+      return Boolean.FALSE;
+    } 
+    else {
+      return Boolean.FALSE;
     }
+    
+    
   }
 
 
 
   public static Boolean hasPermission(ICObject obj, IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-    String permissionMapKey = APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT;
+    String permissionMapKey = PERMISSION_MAP_OBJECT;
     //
     String identifier = Integer.toString(obj.getID());
 
@@ -349,22 +349,28 @@ public class PermissionCacher {
         updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
         permissions = permissionMap.get(identifier,permissionKey,groups);
       }
+			
+			Boolean False = null;
+			if (permissions != null){
+				if( permissions.contains(Boolean.TRUE)){
+					return Boolean.TRUE;
+				}
+			/*  Iterator iter = permissions.iterator();
+				while (iter.hasNext()) {
+					Boolean item = (Boolean)iter.next();
+					if (item != null){
+						if (item.equals(Boolean.FALSE)){
+							falseOrNull = Boolean.FALSE;
+						}else{
+							return Boolean.TRUE;
+						}
+					}
+				}*/
+  
+			}
 
-      Boolean falseOrNull = null;
-      if (permissions != null){
-        Iterator iter = permissions.iterator();
-        while (iter.hasNext()) {
-          Boolean item = (Boolean)iter.next();
-          if (item != null){
-            if (item.equals(Boolean.FALSE)){
-              falseOrNull = Boolean.FALSE;
-            }else{
-              return Boolean.TRUE;
-            }
-          }
-        }
-      }
-      return falseOrNull;
+
+			return Boolean.FALSE;
     } else {
       return null;
     }
@@ -380,52 +386,52 @@ public class PermissionCacher {
   //Update
 
   public static void updateObjectInstancePermissions(String instanceId, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,instanceId,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE,instanceId,permissionKey,iwc);
   }
 
   public static void updateObjectPermissions(String objectId, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,objectId,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_OBJECT,objectId,permissionKey,iwc);
   }
 
   public static void updateBundlePermissions(String bundleIdentifier, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE,bundleIdentifier,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_BUNDLE,bundleIdentifier,permissionKey,iwc);
   }
 
   public static void updatePagePermissions(String pageId, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,pageId,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_PAGE_INSTANCE,pageId,permissionKey,iwc);
   }
 
   public static void updateJSPPagePermissions(String jspPageId, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,jspPageId,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_JSP_PAGE,jspPageId,permissionKey,iwc);
   }
 
   public static void updateFilePermissions(String fileId, String permissionKey, IWUserContext iwc) throws SQLException{
-    updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID,fileId,permissionKey,iwc);
+    updatePermissions(PERMISSION_MAP_FILE,fileId,permissionKey,iwc);
   }
 
 
   public static void updatePermissions(int permissionCategory, String identifier, String permissionKey, IWUserContext iwc) throws SQLException{
     switch (permissionCategory) {
-      case AccessControl._CATEGORY_OBJECT_INSTANCE :
-        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_OBJECT_INSTANCE :
+        updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE,identifier,permissionKey,iwc);
         break;
-      case AccessControl._CATEGORY_PAGE :
-      case AccessControl._CATEGORY_OBJECT :
-        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_PAGE :
+      case AccessControl.CATEGORY_OBJECT :
+        updatePermissions(PERMISSION_MAP_OBJECT,identifier,permissionKey,iwc);
         break;
-      case AccessControl._CATEGORY_BUNDLE :
-        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_BUNDLE :
+        updatePermissions(PERMISSION_MAP_BUNDLE,identifier,permissionKey,iwc);
         break;
-      case AccessControl._CATEGORY_PAGE_INSTANCE :
-        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_PAGE_INSTANCE :
+        updatePermissions(PERMISSION_MAP_PAGE_INSTANCE,identifier,permissionKey,iwc);
         break;
-      case AccessControl._CATEGORY_JSP_PAGE :
-        updatePermissions(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE,identifier,permissionKey,iwc);
+      case AccessControl.CATEGORY_JSP_PAGE :
+        updatePermissions(PERMISSION_MAP_JSP_PAGE,identifier,permissionKey,iwc);
         break;
     }
   }
 
-  private static void updatePermissions(String permissionMapKey, String identifier, String permissionKey, IWUserContext iwc) throws SQLException{
+  private synchronized static void updatePermissions(String permissionMapKey, String identifier, String permissionKey, IWUserContext iwc) throws SQLException{
     //PermissionMap permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
     PermissionMap permissionMap = (PermissionMap)iwc.getApplicationContext().getApplicationAttribute(permissionMapKey);
 
@@ -437,19 +443,22 @@ public class PermissionCacher {
     //
     List permissions = null;
     if(identifier != null){
-      if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
-        permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
-          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_OBJECT_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
-          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_BUNDLE_IDENTIFIER,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
-          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_PAGE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
-          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_JSP_PAGE,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_FILE_ID)){
-          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController._CATEYGORYSTRING_FILE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      if(permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)){
+        permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(PERMISSION_MAP_OBJECT)){
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_IC_OBJECT_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(PERMISSION_MAP_BUNDLE)){
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_PAGE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)){
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_JSP_PAGE,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+      } else if(permissionMapKey.equals(PERMISSION_MAP_FILE)){
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_FILE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       }
+			else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
+				permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_GROUP_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+			}
     }
     //
 
@@ -461,6 +470,8 @@ public class PermissionCacher {
         ICPermission item = (ICPermission)iter.next();
         mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
       }
+      
+      //??
       mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.TRUE);
       permissionMap.put(identifier, permissionKey,mapToPutTo);
     } else {
