@@ -13,4 +13,12 @@ public class IDOCreateException extends Exception {
 
   public IDOCreateException() {
   }
+
+  public IDOCreateException(String message){
+    super(message);
+  }
+
+  public IDOCreateException(Exception forwardException) {
+    this(forwardException.getMessage());
+  }
 }

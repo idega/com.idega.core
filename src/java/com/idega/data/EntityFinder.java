@@ -22,6 +22,20 @@ import java.util.Vector;
 */
 public class EntityFinder{
 
+
+    private static EntityFinder instance;
+
+    //The constructor should only be accessible to this class
+    private EntityFinder(){
+    }
+
+    public static EntityFinder getInstance(){
+      if(instance==null){
+        instance = new EntityFinder();
+      }
+      return instance;
+    }
+
         public static boolean debug = false;
 
         /**
@@ -31,12 +45,46 @@ public class EntityFinder{
 		return findAll(entity,"select * from "+entity.getTableName());
 	}
 
+
+    /**
+     * Returns an empty List if there was no match
+     */
+	public List findAll(Class entityClass)throws IDOFinderException{
+      try{
+    	List theReturn = findAll(GenericEntity.getStaticInstance(entityClass));
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
         /**
          * Returns null if there was no match
          */
          public static List findAll(GenericEntity entity,String SQLString)throws SQLException{
           return findAll(entity,SQLString,-1);
         }
+
+    /**
+     * Returns an empty List if there was no match
+     */
+	public List findAll(Class entityClass, String SQLString)throws IDOFinderException{
+      try{
+    	List theReturn = findAll(GenericEntity.getStaticInstance(entityClass),SQLString);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 
 
         /**
@@ -128,56 +176,270 @@ public class EntityFinder{
 		}
 	}
 
+    /**
+     * Returns an empty List if there was no match
+     */
+	public List findAll(Class entityClass, String SQLString,int returningNumberOfRecords)throws IDOFinderException{
+      try{
+    	List theReturn = findAll(GenericEntity.getStaticInstance(entityClass),SQLString,returningNumberOfRecords);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 	/**
-	*Finds all instances of the fromEntity in the otherEntity
+	*Finds all instances of the fromEntity in the otherEntity, returns null if no match
 	**/
 	public static List findAssociated(GenericEntity fromEntity,GenericEntity otherEntity)throws SQLException{
 		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"='"+fromEntity.getID()+"'");
 	}
 
+	/**
+	*Finds all instances of the fromEntity in the otherEntity, returns empty List if no match
+	**/
+	public List findAssociated(Class entityClass, Class otherEntityClass)throws IDOFinderException{
+      try{
+    	List theReturn = findAssociated(GenericEntity.getStaticInstance(entityClass),GenericEntity.getStaticInstance(otherEntityClass));
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 	public static List findAssociatedOrdered(GenericEntity fromEntity,GenericEntity otherEntity,String column_name)throws SQLException{
 		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"='"+fromEntity.getID()+"' order by "+column_name+"");
 	}
+
+	/**
+	*Finds all instances of the fromEntity in the otherEntity ordered by column "column_name", returns empty List if no match
+	**/
+	public List findAssociatedOrdered(Class entityClass, Class otherEntityClass, String column_name)throws IDOFinderException{
+      try{
+    	List theReturn = findAssociatedOrdered(GenericEntity.getStaticInstance(entityClass),GenericEntity.getStaticInstance(otherEntityClass),column_name);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
 
 	public static List findAllOrdered(GenericEntity fromEntity,String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" order by "+orderByColumnName);
 	}
 
+	/**
+	*Finds all instances of the entityClass ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllOrdered(Class entityClass,String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllOrdered(GenericEntity.getStaticInstance(entityClass),orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
 	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName, String toFind, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
+
+	/**
+	*Finds all instances of the entityClass ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllByColumnOrdered(Class entityClass,String columnName, String toFind, String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnOrdered(GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
 
 	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName, int toFind, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" = "+toFind+" order by "+orderByColumnName);
 	}
 
+	/**
+	*Finds all instances of the entityClass ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllByColumnOrdered(Class entityClass,String columnName, int toFind, String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnOrdered(GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
  	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 	}
+
+	/**
+	*Finds all instances of the entityClass ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllByColumnOrdered(Class entityClass,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnOrdered(GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 
  	public static List findAllByColumnOrdered(GenericEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2, String criteria, String returnColumn)throws SQLException{
 		return findAll(fromEntity,"select "+criteria+" "+returnColumn+" from "+fromEntity.getTableName()+" where "+columnName1+" "+condition1+" '"+toFind1+"' and "+columnName2+" "+condition2+" '"+toFind2+"' order by "+orderByColumnName);
 	}
 
+
+	/**
+	*Finds all instances of the entityClass ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllByColumnOrdered(Class entityClass,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2, String criteria, String returnColumn)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnOrdered(GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName,condition1,condition2,criteria,returnColumn);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 	public static List findAllByColumnDescendingOrdered(GenericEntity fromEntity,String columnName, String toFind, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName+" desc");
 	}
+
+	/**
+	*Finds all instances of the entityClass descending ordered by column "columnName", returns empty List if no match
+	**/
+	public List findAllByColumnDescendingOrdered(Class entityClass,String columnName, String toFind, String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnDescendingOrdered(GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
 
  	public static List findAllByColumnDescendingOrdered(GenericEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName+" desc");
 	}
 
+	/**
+	*Finds all instances of the entityClass descending ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllByColumnDescendingOrdered(Class entityClass,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumnDescendingOrdered(GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
  	public static List findAllDescendingOrdered(GenericEntity fromEntity,String orderByColumnName)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" order by "+orderByColumnName+" desc");
 	}
+
+	/**
+	*Finds all instances of the entityClass descending ordered by column "orderByColumnName", returns empty List if no match
+	**/
+	public List findAllDescendingOrdered(Class entityClass,String orderByColumnName)throws IDOFinderException{
+      try{
+    	List theReturn = findAllDescendingOrdered(GenericEntity.getStaticInstance(entityClass),orderByColumnName);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
 
 	public static List findAllByColumn(GenericEntity fromEntity,String columnName, String toFind)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+" like '"+toFind+"'");
 	}
 
+	/**
+	*Finds all instances of the entityClass where columnName==toFind, returns empty List if no match
+	**/
+	public List findAllByColumn(Class entityClass, String columnName, String toFind)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumn(GenericEntity.getStaticInstance(entityClass),columnName,toFind);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
 	public static List findAllByColumn(GenericEntity fromEntity,String columnName, int toFind)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName+"="+toFind+"");
 	}
+
+	/**
+	*Finds all instances of the entityClass where columnName==toFind, returns empty List if no match
+	**/
+	public List findAllByColumn(Class entityClass, String columnName, int toFind)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumn(GenericEntity.getStaticInstance(entityClass),columnName,toFind);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
 
 
 	public static List findAllByColumn(GenericEntity fromEntity,String columnName1, String toFind1,String columnName2, String toFind2)throws SQLException{
@@ -185,15 +447,52 @@ public class EntityFinder{
                 return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
 
-        public static List findAllByColumn(GenericEntity fromEntity,String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
+
+	/**
+	*Finds all instances of the entityClass where columnName1==toFind1 and columnName2==toFind2, returns empty List if no match
+	**/
+	public List findAllByColumn(Class entityClass,String columnName1, String toFind1,String columnName2, String toFind2)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumn(GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
+    public static List findAllByColumn(GenericEntity fromEntity,String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
 	}
 
-        public static List findReverseRelated(GenericEntity fromEntity,GenericEntity returningEntity)throws SQLException{
+
+	/**
+	*Finds all instances of the entityClass where columnName1==toFind1 and columnName2==toFind2, and columnName3==toFind3 returns empty List if no match
+	**/
+	public List findAllByColumn(Class entityClass,String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws IDOFinderException{
+      try{
+    	List theReturn = findAllByColumn(GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,columnName3,toFind3);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+    public static List findReverseRelated(GenericEntity fromEntity,GenericEntity returningEntity)throws SQLException{
 		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(fromEntity,returningEntity);
 		String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
 		return findRelated(fromEntity,returningEntity,SQLString);
 	}
+
+
 
 
         /**
@@ -286,9 +585,24 @@ public class EntityFinder{
     return findRelated(fromEntity,returningEntity,SQLString);
   }
 
-  public static List findRelated(GenericEntity fromEntity,Class returningEntity)throws SQLException{
-    return findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntity));
-  }
+
+	/**
+	*Finds all instances of the returningEntityClass where it is associated with the fromEntity, returns empty List if no match
+	**/
+	public List findRelated(GenericEntity fromEntity,Class returningEntityClass)throws IDOFinderException{
+      try{
+    	List theReturn = findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntityClass));
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
 
   public static List findNonRelated(GenericEntity fromEntity,GenericEntity returningEntity) {
 		try {
@@ -312,6 +626,25 @@ public class EntityFinder{
       return null;
     }
   }
+
+
+	/**
+	*Finds all instances of the returningEntityClass where it is has a relationship (n-to-n, where n=[1..x]) with the fromEntity, returns empty List if no match
+	**/
+	public List findNonRelated(GenericEntity fromEntity,Class returningEntityClass)throws IDOFinderException{
+      try{
+    	List theReturn = findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntityClass));
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
+
+
 
         /**
          * If ascending==true ordering is descending, else it is ascending
@@ -368,7 +701,22 @@ public class EntityFinder{
                 return findAll(returningEntity,SQLString);
 	}
 
-
+	/**
+	*Finds all instances of the returningEntityClass where it is has a relationship (n-to-n, where n=[1..x]) with the fromEntity
+    *ordered by column "returningEntityColumnToOrderBy" , if ascending==true ordering is descending, else it is ascending,  returns empty List if no match
+	**/
+	public List findRelatedOrdered(GenericEntity fromEntity,Class returningEntityClass,String returningEntityColumnToOrderBy,boolean ascending)throws IDOFinderException{
+      try{
+    	List theReturn = findRelatedOrdered(fromEntity,GenericEntity.getStaticInstance(returningEntityClass),returningEntityColumnToOrderBy,ascending);
+	    if(theReturn==null){
+          return com.idega.util.ListUtil.getEmptyList();
+        }
+        return theReturn;
+      }
+      catch(SQLException sql){
+        throw new IDOFinderException(sql);
+      }
+    }
 
 	public static GenericEntity findByPrimaryKey(String entityClassName,int primaryKeyID)throws Exception{
                GenericEntity entity = (GenericEntity)Class.forName(entityClassName).newInstance();
