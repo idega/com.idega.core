@@ -473,11 +473,17 @@ public class IWBundle implements java.lang.Comparable {
 	item.storeState();
       }
       try{
-	//System.out.println("localizableStringsFile:"+localizableStringsFile);
-
-	getLocalizableStringsProperties().clear();
-	getLocalizableStringsProperties().putAll(getLocalizableStringsMap());
-	getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
+        //System.out.println("localizableStringsFile:"+localizableStringsFile);
+        getLocalizableStringsProperties().clear();
+        Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
+        while (keyIter.hasNext()) {
+          Object key = keyIter.next();
+          Object value = getLocalizableStringsMap().get(key);
+          if(key!=null && value != null){
+            getLocalizableStringsProperties().put(key,value);
+          }
+        }
+        getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
       }
       catch(IOException ex){
 	ex.printStackTrace();
