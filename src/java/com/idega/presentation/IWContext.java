@@ -38,6 +38,7 @@ import javax.servlet.http.HttpSession;
 
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -1072,6 +1073,7 @@ implements IWUserContext, IWApplicationContext {
 	 * Gets the current user associated with this context
 	 * <br>This method is meant to replace getUser()
 	 * @return The current user if there is one associated with the current context. If there is none the method returns null.
+	 * @throws NotLoggedOnException if no user is logged on.
 	 **/
 	public com.idega.user.data.User getCurrentUser(){
 		com.idega.core.user.data.User user = getUser();
@@ -1089,20 +1091,23 @@ implements IWUserContext, IWApplicationContext {
 				throw new RuntimeException("IWContext.getCurrentUser(): Error getting primary key of user. Exception was: "+e.getClass().getName()+" : "+e.getMessage());
 			}
 		}
-		return null;
+		else{
+			throw new NotLoggedOnException();
+		}
+		//return null;
 	}
 
 	/**
 	 * Gets the Id of the current user associated with this context
 	 * <br>This method is meant to replace getUserId()
-	 * @return The Id of the current user. If there is one associated with the current context. If there is none the method returns -1.
+	 * @return The Id of the current user. If there is one associated with the current context.
+	 * @throws NotLoggedOnException if no user is logged on
 	 **/
 	public int getCurrentUserId(){
 		com.idega.user.data.User user = getCurrentUser();
-		if(user!=null){
+		//if(user!=null){
 			return ((Integer)user.getPrimaryKey()).intValue();
-		}
-		return -1;
+		//}
 	}
 	
 	/**
