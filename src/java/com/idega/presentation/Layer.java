@@ -23,11 +23,16 @@ public static final String LEFT = "left";
 public static final String TOP = "top";
 public static final String ZINDEX = "z-index";
 public static final String POSITION = "position";
+public static final String _ATTRIB_NOWRAP = "nowrap";
+
+public boolean _nowrap = false;
 
 String align;
 String onMouseOut;
 String absoluteOrRelative;
 String layerType;
+
+
 
 public Layer(){
   this(DIV);
@@ -65,6 +70,13 @@ public void setLeftPosition(int xpos){
   setLeftPosition(String.valueOf(xpos));
 }
 
+public void setNoWrap(){
+  _nowrap = true;
+}
+
+public void setNoWrap(boolean value){
+  _nowrap = value;
+}
 
 public void setTopPosition(String ypos){
   setAttribute(TOP,ypos);
@@ -158,6 +170,9 @@ public void print(IWContext iwc) throws Exception{
             boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
             print("<"+layerType+" id=\""+getID()+"\" ");
+            if(_nowrap){
+             print(_ATTRIB_NOWRAP + " ");
+            }
             if(alignSet){
               print("align=\""+getHorizontalAlignment()+"\" ");
               removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?

@@ -8,6 +8,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.Image;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Layer;
 
 import java.util.Vector;
 import java.util.Iterator;
@@ -41,6 +42,8 @@ public class TreeViewer extends AbstractTreeViewer {
   Link _linkPrototype = null;
   String _linkStyle = null;
   boolean _usesOnClick = false;
+  private boolean _nowrap = true;
+  private Layer _nowrapLayer = null;
 
   public static final String ONCLICK_FUNCTION_NAME = "treenodeselect";
   public static final String ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME = "iw_node_id";
@@ -200,9 +203,21 @@ public class TreeViewer extends AbstractTreeViewer {
           l.addParameter(nodeActionPrm,node.getNodeID());
         }
         this.setLinkToMaintainOpenAndClosedNodes(l);
-        return l;
+        if(_nowrap){
+          return getNoWrapLayerClone(l);
+        } else {
+          return l;
+        }
     }
     return null;
+  }
+
+  public void setWrap(){
+    _nowrap = false;
+  }
+
+  public void setWrap(boolean value){
+    _nowrap = value;
   }
 
   public void setNodeActionParameter(String prm){
@@ -241,6 +256,14 @@ public class TreeViewer extends AbstractTreeViewer {
     return _linkPrototype;
   }
 
+  public Layer getNoWrapLayer(){
+    if(_nowrapLayer == null){
+      _nowrapLayer = new Layer();
+      _nowrapLayer.setNoWrap();
+    }
+    return _nowrapLayer;
+  }
+
   private Link getLinkPrototypeClone(){
     return (Link)getLinkPrototype().clone();
   }
@@ -248,6 +271,17 @@ public class TreeViewer extends AbstractTreeViewer {
   private Link getLinkPrototypeClone(String text){
     Link l = (Link)getLinkPrototype().clone();
     l.setText(text);
+    return l;
+  }
+
+  private Layer getNoWrapLayerClone(){
+    Layer l = (Layer)getNoWrapLayer().clone();
+    return l;
+  }
+
+  private Layer getNoWrapLayerClone(PresentationObject obj){
+    Layer l = getNoWrapLayerClone();
+    l.add(obj);
     return l;
   }
 
