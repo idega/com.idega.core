@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.8 2001/10/24 13:22:38 gummi Exp $
+ * $Id: PresentationObject.java,v 1.9 2001/11/12 10:31:49 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -69,6 +69,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   private boolean _useBuilderObjectControl = true;
   private boolean _belongsToParent = false;
+  private boolean _keepInstanceIDOnInheritance = true;
 
   /**
    * Default constructor
@@ -851,5 +852,12 @@ public class PresentationObject extends Object implements Cloneable {
   public boolean getBelongsToParent() {
     return(_belongsToParent);
   }
-}
 
+  public boolean getKeepInstanceIDOnInheritance() {
+    return(_keepInstanceIDOnInheritance);
+  }
+
+  public void setKeepInstanceIDOnInheritance(boolean keep) {
+    _keepInstanceIDOnInheritance = keep;
+  }
+}
