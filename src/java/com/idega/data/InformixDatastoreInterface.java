@@ -86,7 +86,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
             theReturn = "LVARCHAR";
         }
         else{
-            theReturn = "CLOB";
+            theReturn = "TEXT";
         }
     }
 
