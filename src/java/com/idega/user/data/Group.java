@@ -19,6 +19,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public void addUniqueRelation(int p0,java.lang.String p1)throws javax.ejb.CreateException;
  public void addUniqueRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
  public java.lang.String getAbbrevation();
+ public java.util.Collection getAddresses(com.idega.core.location.data.AddressType p0) throws  com.idega.data.IDOLookupException, com.idega.data.IDOCompositePrimaryKeyException, com.idega.data.IDORelationshipException; 
  public com.idega.user.data.Group getAlias();
  public int getAliasID();
  public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;

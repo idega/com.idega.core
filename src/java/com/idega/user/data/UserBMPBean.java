@@ -18,6 +18,7 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressType;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
 import com.idega.core.contact.data.Phone;
@@ -30,6 +31,7 @@ import com.idega.data.IDOFinderException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
@@ -1777,6 +1779,34 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	throw new UnsupportedOperationException();
   }
 
+	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
+		String addressTypeTableName = addressType.getEntityName();
+		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+		
+		IDOEntityDefinition addressDefinition = IDOLookup.getEntityDefinitionForClass(Address.class);
+		String addressTableName = addressDefinition.getSQLTableName();
+		String addressPrimaryKeyColumn = addressDefinition.getPrimaryKeyDefinition().getField().getSQLFieldName();
+		String userAddressMiddleTableName = addressDefinition.getMiddleTableNameForRelation(getEntityName());
+		
+		IDOQuery query = idoQuery(); 
+		query.appendSelect().appendDistinct().append("a.*").appendFrom().append(addressTableName).append(" a, ");
+		query.append(userAddressMiddleTableName).append(" iua, ");
+		query.append(addressTypeTableName).append(" iat ").appendWhere();
+		
+		query.append("a.").append(addressPrimaryKeyColumn).appendEqualSign();
+		query.append("iua.").append(addressPrimaryKeyColumn);
+		
+		query.appendAnd().append("a.");
+		query.append(addressTypePrimaryKeyColumn).appendEqualSign();
+		query.append(addressType.getPrimaryKey());
+		
+		query.appendAnd().append("iua.");
+		query.append(getColumnNameUserID()).appendEqualSign().append(getPrimaryKey());
+
+		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
+	}
+
+  
 	/* (non-Javadoc)
 	 * @see com.idega.user.data.Group#store()
 	 *//*

@@ -19,13 +19,17 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressType;
 import com.idega.core.net.data.ICNetwork;
 import com.idega.core.net.data.ICProtocol;
 import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
@@ -1357,6 +1361,33 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		this.idoAddTo(address);
 	}
 
+	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
+		String addressTypeTableName = addressType.getEntityName();
+		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+		
+		IDOEntityDefinition addressDefinition = IDOLookup.getEntityDefinitionForClass(Address.class);
+		String addressTableName = addressDefinition.getSQLTableName();
+		String addressPrimaryKeyColumn = addressDefinition.getPrimaryKeyDefinition().getField().getSQLFieldName();
+		String groupAddressMiddleTableName = addressDefinition.getMiddleTableNameForRelation(getEntityName());
+		
+		IDOQuery query = idoQuery(); 
+		query.appendSelect().appendDistinct().append("a.*").appendFrom().append(addressTableName).append(" a, ");
+		query.append(groupAddressMiddleTableName).append(" iua, ");
+		query.append(addressTypeTableName).append(" iat ").appendWhere();
+		
+		query.append("a.").append(addressPrimaryKeyColumn).appendEqualSign();
+		query.append("iua.").append(addressPrimaryKeyColumn);
+		
+		query.appendAnd().append("a.");
+		query.append(addressTypePrimaryKeyColumn).appendEqualSign();
+		query.append(addressType.getPrimaryKey());
+		
+		query.appendAnd().append("iua.");
+		query.append(COLUMN_GROUP_ID).appendEqualSign().append(getPrimaryKey());
+
+		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
+	}
+	
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
