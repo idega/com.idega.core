@@ -3,6 +3,7 @@ package com.idega.core.business;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.ejb.CreateException;
@@ -303,6 +304,44 @@ public class CategoryServiceBean extends  IBOServiceBean implements CategoryServ
 		catch (SQLException sql) {
 			throw new RemoteException(sql.getMessage());
 		}
+	}
+	
+	public Hashtable getInheritedMetaData(ICCategory category) {
+		return getInheritedMetaData(null, category);
+	}
+	
+	public Hashtable getInheritedMetaData(Hashtable table, ICCategory category) {
+		if (table == null)
+			table = new Hashtable();
+			
+		ICCategory parent = (ICCategory) category.getParentNode();
+		if (parent != null) {
+			Hashtable attributes = parent.getMetaDataAttributes();
+			if (attributes != null)
+				table.putAll(attributes);
+			return getInheritedMetaData(table, parent);
+		}
+			
+		return table;
+	}
+	
+	public Hashtable getInheritedMetaDataTypes(ICCategory category) {
+		return getInheritedMetaDataTypes(null, category);
+	}
+	
+	public Hashtable getInheritedMetaDataTypes(Hashtable table, ICCategory category) {
+		if (table == null)
+			table = new Hashtable();
+			
+		ICCategory parent = (ICCategory) category.getParentNode();
+		if (parent != null) {
+			Hashtable attributes = parent.getMetaDataTypes();
+			if (attributes != null)
+				table.putAll(attributes);
+			return getInheritedMetaDataTypes(table, parent);
+		}
+			
+		return table;
 	}
 	
 	public void storeCategoryTranslation(int iCategoryId,String name, String info,int localeID)throws RemoteException{

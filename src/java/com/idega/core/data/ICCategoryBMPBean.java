@@ -1,4 +1,5 @@
 package com.idega.core.data;
+
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -16,29 +17,26 @@ import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.MetaDataCapable;
 import com.idega.data.SimpleQuerier;
-public class ICCategoryBMPBean
-	extends com.idega.data.TreeableEntityBMPBean
-	implements com.idega.core.data.ICCategory, com.idega.core.business.Category {
+
+public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean implements ICCategory, Category, MetaDataCapable {
+	
 	private String IC_CATEGORY_COLUMN_NAME = ICCategoryBMPBean.getEntityTableName() + "_ID";
 	private static String IC_OBJECT_INSTANCE_COLUMN_NAME = "IC_OBJECT_INSTANCE_ID";
 	private static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
+	
 	public ICCategoryBMPBean() {
 		super();
 	}
+	
 	public ICCategoryBMPBean(int id) throws SQLException {
 		super(id);
 	}
+	
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
-		addAttribute(
-			getColumnBusinessId(),
-			"Business id",
-			true,
-			true,
-			Integer.class,
-			MANY_TO_ONE,
-			com.idega.core.data.ICBusiness.class);
+		addAttribute(getColumnBusinessId(), "Business id", true, true, Integer.class, MANY_TO_ONE, com.idega.core.data.ICBusiness.class);
 		addAttribute(getColumnParentId(), "Parent id", true, true, Integer.class, MANY_TO_ONE, ICCategory.class);
 		addAttribute(getColumnLocaleId(), "Locale id", true, true, Integer.class, MANY_TO_ONE, ICLocale.class);
 		addAttribute(getColumnOwnerGroup(), "Owner group", true, true, Integer.class);
@@ -51,20 +49,21 @@ public class ICCategoryBMPBean
 		addManyToManyRelationShip(com.idega.core.data.ICObjectInstance.class);
 		// Gimmi 8.04.2003
 		addManyToManyRelationShip(com.idega.core.data.ICFile.class);
+		addMetaDataRelationship();
 	}
 
 	public static String getColumnInvalidationDate() {
 		return "INVALIDATED";
 	}
-	
+
 	public void insertStartData() {
-		String table =
-			com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
+		String table = com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
 		String sql = "ALTER TABLE " + table.toUpperCase() + " ADD " + TREE_ORDER_COLUMN_NAME + " INTEGER";
 		System.out.println(sql);
 		try {
 			idoExecuteTableUpdate(sql);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -143,14 +142,14 @@ public class ICCategoryBMPBean
 	public void setCreated(java.sql.Timestamp created) {
 		setColumn(getColumnCreated(), created);
 	}
-	
+
 	public java.sql.Timestamp getInvalidationDate() {
 		return (java.sql.Timestamp) getColumnValue(getColumnInvalidationDate());
 	}
 	public void setInvalidationDate(java.sql.Timestamp date) {
 		setColumn(getColumnInvalidationDate(), date);
 	}
-	
+
 	public String getType() {
 		return getStringColumnValue(getColumnType());
 	}
@@ -163,34 +162,31 @@ public class ICCategoryBMPBean
 	public void setDefaultValues() {
 		setType(getCategoryType());
 	}
-	
-	public String getName(Locale locale){
-		try{
+
+	public String getName(Locale locale) {
+		try {
 			return getCategoryTranslation(locale).getName();
-		}catch(RemoteException e){
-			
+		}
+		catch (RemoteException e) {
+
 		}
 		return getName();
 	}
-	
-	public String getDescription(Locale locale){
-		try{
+
+	public String getDescription(Locale locale) {
+		try {
 			return getCategoryTranslation(locale).getDescription();
-		}catch(RemoteException e){
-			
+		}
+		catch (RemoteException e) {
+
 		}
 		return getDescription();
-		
+
 	}
-	
+
 	public List ejbHomeGetListOfCategoryForObjectInstance(ICObjectInstance obj, boolean order) throws FinderException {
 		StringBuffer sql = new StringBuffer();
-		sql
-			.append("Select c.* from ")
-			.append(EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class))
-			.append(" mt, ")
-			.append(ICCategoryBMPBean.getEntityTableName())
-			.append(" c");
+		sql.append("Select c.* from ").append(EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)).append(" mt, ").append(ICCategoryBMPBean.getEntityTableName()).append(" c");
 		sql.append(" where mt.").append(IC_OBJECT_INSTANCE_COLUMN_NAME).append(" = ").append(obj.getID());
 		sql.append(" and mt.").append(IC_CATEGORY_COLUMN_NAME).append(" = c.").append(IC_CATEGORY_COLUMN_NAME);
 		if (order) {
@@ -200,47 +196,22 @@ public class ICCategoryBMPBean
 	}
 	public int ejbHomeGetOrderNumber(Category category, ICObjectInstance instance) throws javax.ejb.FinderException {
 		try {
-			String[] res =
-				SimpleQuerier.executeStringQuery(
-					"SELECT TREE_ORDER FROM "
-						+ EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)
-						+ " WHERE "
-						+ IC_OBJECT_INSTANCE_COLUMN_NAME
-						+ " = "
-						+ instance.getID()
-						+ " AND "
-						+ IC_CATEGORY_COLUMN_NAME
-						+ " = "
-						+ category.getID());
+			String[] res = SimpleQuerier.executeStringQuery("SELECT TREE_ORDER FROM " + EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class) + " WHERE " + IC_OBJECT_INSTANCE_COLUMN_NAME + " = " + instance.getID() + " AND " + IC_CATEGORY_COLUMN_NAME + " = " + category.getID());
 			if (res == null || res.length == 0 || res[0] == null) {
 				return 0;
 			}
 			return Integer.parseInt(res[0]);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new FinderException(e.getMessage());
 		}
 	}
-	public boolean ejbHomeSetOrderNumber(Category category, ICObjectInstance instance, int orderNumber)
-		throws com.idega.data.IDOException {
+	public boolean ejbHomeSetOrderNumber(Category category, ICObjectInstance instance, int orderNumber) throws com.idega.data.IDOException {
 		/** @todo laga thegar timi gefst */
 		//    if (orderNumber == 0) {
 		//      return this.idoExecuteTableUpdate("UPDATE "+EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)+" SET "+TREE_ORDER_COLUMN_NAME+" AS null WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
 		//    }else {
-		return this.idoExecuteTableUpdate(
-			"UPDATE "
-				+ EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class)
-				+ " SET "
-				+ TREE_ORDER_COLUMN_NAME
-				+ " = "
-				+ orderNumber
-				+ " WHERE "
-				+ IC_OBJECT_INSTANCE_COLUMN_NAME
-				+ " = "
-				+ instance.getID()
-				+ " AND "
-				+ IC_CATEGORY_COLUMN_NAME
-				+ " = "
-				+ category.getID());
+		return this.idoExecuteTableUpdate("UPDATE " + EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class) + " SET " + TREE_ORDER_COLUMN_NAME + " = " + orderNumber + " WHERE " + IC_OBJECT_INSTANCE_COLUMN_NAME + " = " + instance.getID() + " AND " + IC_CATEGORY_COLUMN_NAME + " = " + category.getID());
 		//    }
 	}
 	/**
@@ -249,8 +220,8 @@ public class ICCategoryBMPBean
 	 * @return Collection of category roots of the type
 	 * @throws FinderException
 	 */
-	public Collection ejbFindRootsByType(String type)throws FinderException{
-		
+	public Collection ejbFindRootsByType(String type) throws FinderException {
+
 		String sql = getRootsJoinedSQl(type);
 		// String sql = getRootsNestedSQL(type);
 		return super.idoFindPKsBySQL(sql);
@@ -265,7 +236,7 @@ public class ICCategoryBMPBean
 	 * @param type
 	 * @return
 	 */
-	private String getRootsJoinedSQl(String type){
+	private String getRootsJoinedSQl(String type) {
 		StringBuffer sql = new StringBuffer("SELECT cat.* FROM ");
 		sql.append(getEntityTableName()).append(" cat ");
 		sql.append(" LEFT JOIN ").append(getEntityTableName()).append("_tree tree ");
@@ -281,49 +252,50 @@ public class ICCategoryBMPBean
 	 * @param type
 	 * @return
 	 */
-	private String getRootsNestedSQL(String type){
-		StringBuffer sql = new StringBuffer("select * from " );
+	private String getRootsNestedSQL(String type) {
+		StringBuffer sql = new StringBuffer("select * from ");
 		sql.append(getEntityTableName());
-	
+
 		sql.append(" where ").append(getColumnType()).append("= '").append(type).append("' ");
 		sql.append(" and ").append(getIDColumnName()).append(" not in (");
 		sql.append(" select ").append("child_").append(getIDColumnName());
 		sql.append(" from ").append(getEntityTableName()).append("_tree )");
 		return sql.toString();
 	}
-	
-	public Collection ejbFindAllByObjectInstance(int iObjectInstanceID)throws FinderException{
+
+	public Collection ejbFindAllByObjectInstance(int iObjectInstanceID) throws FinderException {
 		ICObjectInstance obj = ICObjectBusiness.getInstance().getICObjectInstance(iObjectInstanceID);
 		return ejbFindAllByObjectInstance(obj);
 	}
-	
-	public Collection ejbFindAllByObjectInstance(ICObjectInstance instance)throws FinderException{
-		try{
+
+	public Collection ejbFindAllByObjectInstance(ICObjectInstance instance) throws FinderException {
+		try {
 			return idoGetRelatedEntities(instance);
 		}
-		catch(IDORelationshipException ex){throw new FinderException(ex.getMessage());
+		catch (IDORelationshipException ex) {
+			throw new FinderException(ex.getMessage());
 		}
 	}
-	
-	public ICCategoryTranslation getCategoryTranslation(Locale locale)throws RemoteException{
-		try{
+
+	public ICCategoryTranslation getCategoryTranslation(Locale locale) throws RemoteException {
+		try {
 			ICCategoryTranslationHome home = (ICCategoryTranslationHome) IDOLookup.getHome(ICCategoryTranslation.class);
-			return home.findByCategoryAndLocale(((Integer)this.getPrimaryKey()).intValue(),ICLocaleBusiness.getLocaleId(locale));
+			return home.findByCategoryAndLocale(((Integer) this.getPrimaryKey()).intValue(), ICLocaleBusiness.getLocaleId(locale));
 		}
-		catch(FinderException ex){
+		catch (FinderException ex) {
 			throw new RemoteException(ex.getMessage());
 		}
 	}
-	
+
 	/** Gimmi 8.04.2003*/
 	public void setOwnerGroupId(int ownerGroupId) {
-		this.setColumn(getColumnOwnerGroup(), ownerGroupId);	
+		this.setColumn(getColumnOwnerGroup(), ownerGroupId);
 	}
-	
+
 	public int getOwnerGroupId() {
-		return getIntColumnValue(getColumnOwnerGroup());	
+		return getIntColumnValue(getColumnOwnerGroup());
 	}
-	
+
 	public void addFile(ICFile file) throws IDOAddRelationshipException {
 		this.idoAddTo(file);
 	}
@@ -333,6 +305,6 @@ public class ICCategoryBMPBean
 	}
 
 	public Collection getFiles() throws IDORelationshipException {
-		return this.idoGetRelatedEntities(ICFile.class);	
+		return this.idoGetRelatedEntities(ICFile.class);
 	}
 }
