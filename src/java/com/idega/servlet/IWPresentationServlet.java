@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.42 2002/12/22 23:18:14 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.43 2003/01/02 16:48:10 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWEventListener;
+import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWModuleEvent;
 import com.idega.event.IWPresentationEvent;
@@ -46,6 +48,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.util.FileUtil;
+import com.idega.util.LocaleUtil;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
@@ -196,6 +199,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 			__initializeIWC(request, response);
 			IWContext iwc = getIWContext();
 			try {
+				handleLocaleParameter(iwc);
 				writer = iwc.getWriter(); //get the writer
 				processBusinessEvent(iwc);
 				processApplicationEvents(iwc);
@@ -452,6 +456,17 @@ public class IWPresentationServlet extends IWCoreServlet {
 			}
 		}
 	}
+	
+	private void handleLocaleParameter(IWContext iwc) {
+		Locale locale = iwc.getCurrentLocale();
+		String localeValue = iwc.getParameter(LocaleSwitcher.languageParameterString);
+		if(localeValue!=null){
+			Locale newLocale = LocaleUtil.getLocale(localeValue);
+			if(newLocale!=null && !newLocale.equals(locale))
+				iwc.setCurrentLocale(newLocale);
+		}
+	}
+	
 	public void handleEvent(IWContext iwc) {
 		try {
 			//    System.err.println("-------------------------------------");
