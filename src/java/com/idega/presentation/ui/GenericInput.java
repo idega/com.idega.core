@@ -45,9 +45,7 @@ public abstract class GenericInput extends InterfaceObject {
 			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		}
 		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
-			if(normalPrintSequence()) {
-				printWML(main);
-			}
+			printWML(main);
 		}
 	}
 
@@ -65,7 +63,13 @@ public abstract class GenericInput extends InterfaceObject {
 
 	public void printWML(IWContext main) {
 		String[] definedAttributes = getDefinedWmlAttributes();
-		print("<input type=\"text\" name=\"" + getName() + "\" ");
+		print("<input type=\"");
+		if(INPUT_TYPE_PASSWORD.equals(inputType)) {
+			print("password");
+		} else {
+			print("text");
+		}
+		print("\" name=\"" + getName() + "\" ");
 		for (int i = 0; i < definedAttributes.length; i++) {
 			if(isMarkupAttributeSet(definedAttributes[i])) {
 				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
