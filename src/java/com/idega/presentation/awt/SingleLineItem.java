@@ -174,6 +174,7 @@ public class SingleLineItem extends Container {
 
 
       repaint();
+      parentContainer.layout();
       parentContainer.repaint();
 
 
