@@ -233,6 +233,15 @@ public class TreeViewer extends AbstractTreeViewer {
 		_linkStyle = style;
 	}
 
+	/** Note: Do not forget to set the desired parameter 
+	 * in  <code>addOpenCloseParameter(String,String)</code>.
+	 * Example:
+	 * Link myLink = new Link();
+	 * myLink.addParameter("hello", "world");
+	 * tree.setLinkPrototype(myLink);
+	 * tree.addOpenCloseParameter("hello", "world") 
+	 */
+	// above comment added by Thomas
 	public void setLinkPrototype(Link link) {
 		_linkPrototype = link;
 	}
