@@ -27,7 +27,6 @@ import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.User;
-import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -95,7 +94,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		permission.setID(_GROUP_ID_USERS);
 		permission.setName("Users");
 		permission.setDescription("Permission if logged on");
-		permission.insert();
+		permission.store();
 		PermissionGroupUsers = permission;
 	}
 
@@ -1675,7 +1674,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (ExtraInfo != null)
 			newGroup.setExtraInfo(ExtraInfo);
 
-		newGroup.insert();
+		newGroup.store();
 
 		int newGroupID = newGroup.getID();
 
@@ -1969,19 +1968,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private User createAdministratorUser() throws Exception {
 		User adminUser = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).createLegacy();
 		adminUser.setColumn(com.idega.core.user.data.UserBMPBean.getColumnNameFirstName(), _ADMINISTRATOR_NAME);
-		adminUser.insert();
-
+		adminUser.store();
 		int adminUserID = adminUser.getID();
+//pretty weird, but I guess it is still needed since the super admin is not a role yet
 
-		UserGroupRepresentative ugr =
-			((com.idega.core.user.data.UserGroupRepresentativeHome) com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class))
-				.createLegacy();
-		ugr.setName("admin");
-		ugr.insert();
-
-		adminUser.setGroupID(ugr.getID());
+		adminUser.setGroupID(adminUserID);
 		adminUser.setPrimaryGroupID(this.getPermissionGroupAdministrator().getID());
-		adminUser.update();
+		adminUser.store();
 
 		//System.out.println("Creating login for user with id="+adminUserID);
 		LoginDBHandler.createLogin(
