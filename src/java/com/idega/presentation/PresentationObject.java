@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.40 2002/03/20 22:58:18 eiki Exp $
+ * $Id: PresentationObject.java,v 1.41 2002/03/26 10:04:23 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -45,8 +45,8 @@ public class PresentationObject extends Object implements Cloneable {
 
   protected static final String slash = "/";
 
-  private HttpServletRequest Request;
-  private HttpServletResponse Response;
+  private HttpServletRequest _request;
+  private HttpServletResponse _response;
   private PrintWriter out;
   private String interfaceStyle;
   private String language;
@@ -142,8 +142,8 @@ public class PresentationObject extends Object implements Cloneable {
    * Initializes variables contained in the IWContext object
    */
   public void initVariables(IWContext iwc) throws IOException {
-    this.Request = iwc.getRequest();
-    this.Response = iwc.getResponse();
+    this._request = iwc.getRequest();
+    this._response = iwc.getResponse();
     this.language = iwc.getLanguage();
     this.interfaceStyle = iwc.getInterfaceStyle();
     if (language == null) {
@@ -407,7 +407,7 @@ public class PresentationObject extends Object implements Cloneable {
    * @resturn The Response object for the page
    */
   public HttpServletRequest getRequest() {
-    return this.Request;
+    return this._request;
   }
 
   /**
@@ -415,7 +415,7 @@ public class PresentationObject extends Object implements Cloneable {
    * @return The Request object for the page
    */
   public HttpServletResponse getResponse() {
-    return this.Response;
+    return this._response;
   }
 
   /**
