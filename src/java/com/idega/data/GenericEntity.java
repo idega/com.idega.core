@@ -3693,16 +3693,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			addMetaData(metaDataKey, (String) metaDataAttribs.get(metaDataKey));
 		}
 	}
-	public void setMetaData(String metaDataKey, String metaDataValue)
-	{
-		addMetaData(metaDataKey, metaDataValue);
+	public void setMetaData(String metaDataKey, String metaDataValue)  {		
+    addMetaData(metaDataKey, metaDataValue);
 	}
+  
 	public void addMetaData(String metaDataKey, String metaDataValue)
 	{
 		if (_theMetaDataAttributes == null)
 			getMetaData(); //get all meta data first if null
 		if (metaDataValue != null)
 		{
+      // change state of the entity bean
+      if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+        setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+      }
+      else {
+        this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+      }
 			Object obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
 			metaDataHasChanged(true);
 			if (obj == null)
