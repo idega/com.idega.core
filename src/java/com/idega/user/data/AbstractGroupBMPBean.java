@@ -88,6 +88,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			_group.setName(this.getName() + "");
 			_group.store();
 			this.setPrimaryKey(_group.getPrimaryKey());
+			this.setUniqueId(_group.getUniqueId());
 
 			return super.ejbCreate();
 	}
