@@ -441,6 +441,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		 * return null;
 		 */
 	}
+	
+	public boolean isCabableOfRSScroll(){
+		return true;
+	}
 
 
 }
