@@ -62,7 +62,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 	private static Map _theAttributes = new Hashtable();
 	private static Map _allStaticClasses = new Hashtable();
-	private static String DEFAULT_DATASOURCE = "default";
+	static String DEFAULT_DATASOURCE = "default";
 	//private static NullColumnValue nullColumnValue = new NullColumnValue();
 	private String _dataStoreType;
 	private int _state = IDOLegacyEntity.STATE_NEW;
