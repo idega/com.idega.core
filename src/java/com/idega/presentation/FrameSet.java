@@ -8,7 +8,6 @@ package com.idega.presentation;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import com.idega.idegaweb.IWURL;
 import com.idega.presentation.ui.Window;
 
@@ -201,43 +200,52 @@ public class FrameSet extends Window{
     public void print(IWContext iwc) throws Exception{
       //goneThroughMain = false;
 
-      StringBuffer buf = new StringBuffer();
+    		printBegin(iwc);
+   
+    		printEnd(iwc);
+    }
+    
+    
+    public void printBegin(IWContext iwc){
+        StringBuffer buf = new StringBuffer();
 
-      if( !isInAWindow ){
-		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
-		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
-        buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
-        buf.append(getMetaInformation(markup, characterEncoding));
-        buf.append("<title>"+getTitle()+"</title>");
-      }
+        if( !isInAWindow ){
+  		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
+  		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+          buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
+          buf.append(getMetaInformation(markup, characterEncoding));
+          buf.append("<title>"+getTitle()+"</title>");
+        }
 
-
-
-      buf.append("\n<frameset ");
-      buf.append(getFrameSetPropertiesString());
-      buf.append(" >\n");
-
-
-      int counter = 1;
-      while(counter<=this.numberOfFrames){
-
-        buf.append("<frame ");
-        buf.append(getFramePropertiesString(counter));
+        buf.append("\n<frameset ");
+        buf.append(getFrameSetPropertiesString());
         buf.append(" >\n");
-        counter++;
-      }
-
-
-      buf.append("\n</frameset>\n");
-
-      if( !isInAWindow ){
-        buf.append(getEndTag());
-      }
-
-      //System.out.println("FrameSet - in print()\n"+ buf.toString());
-      print(buf.toString());
+        
+        print(buf.toString());
     }
 
+    public void printEnd(IWContext iwc){
+    		StringBuffer buf = new StringBuffer();
+
+		int counter = 1;
+		while(counter<=this.numberOfFrames){
+		
+		  buf.append("<frame ");
+		  buf.append(getFramePropertiesString(counter));
+		  buf.append(" >\n");
+		  counter++;
+		}        
+    		
+        buf.append("\n</frameset>\n");
+
+        if( !isInAWindow ){
+          buf.append(getEndTag());
+        }
+
+        //System.out.println("FrameSet - in print()\n"+ buf.toString());
+        print(buf.toString());
+    }
+    
     /*private String getFrameURI(Page page,IWContext iwc){
       String uri = iwc.getRequestURI()+"?"+this.IW_FRAME_STORAGE_PARMETER+"="+page.getID();
       return uri;
@@ -302,7 +310,7 @@ public class FrameSet extends Window{
      * Sets the span (in pixels) for each of the Frame Objects. frameIndex starts at 1.
      */
     public void setSpanAdaptive(int frameIndex){
-      setFrameProperty(frameIndex,ROWS_PROPERTY,this.star);
+      setFrameProperty(frameIndex,ROWS_PROPERTY,star);
     }
 
     private String getSpan(int frameIndex){
@@ -391,7 +399,7 @@ public class FrameSet extends Window{
 
     protected void setFrameProperty(int frameIndex,String propertyName){
       //getPage(frameIndex).setFrameProperty(propertyName);
-      this.getFramesPropertyMap(frameIndex).put(propertyName,this.slash);
+      this.getFramesPropertyMap(frameIndex).put(propertyName,slash);
     }
 
     protected String getFrameProperty(int frameIndex,String propertyName){

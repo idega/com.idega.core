@@ -5,11 +5,14 @@
 
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWFrameBusiness;
@@ -476,53 +479,9 @@ public class FrameTable extends Window{
       //goneThroughMain = false;
       //System.out.println("in print()");
 
-      StringBuffer buf = new StringBuffer();
-      boolean isInFrame = isInFrame();
-      if( !isInAWindow && !isInFrame ){
-		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
-		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
-        buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
-        buf.append(getMetaInformation(markup, characterEncoding));
-        buf.append("<title>"+getTitle()+"</title>");
-      }
-
-
-
-      buf.append("\n<frameset ");
-      buf.append(getFrameSetPropertiesString());
-      buf.append(" >\n");
-
-
-      //int counter = 1;
-      if(this.getChildren() != null){
-        Iterator iter = this.getChildren().iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          if(item instanceof Frame){
-            if(((Frame)item).getFrameType() == Frame.FRAMESET){
-              //System.out.println(buf.toString());
-              print(buf.toString());
-              buf = new StringBuffer();
-              ((Frame)item).getPresentationObject()._print(iwc);
-            } else {
-              buf.append("<frame ");
-              buf.append(getFramePropertiesString((Frame)item));
-              buf.append(" >\n");
-            }
-          }
-
-          //counter++;
-        }
-      }
-
-
-      buf.append("\n</frameset>\n");
-
-      if( !isInAWindow && !isInFrame ){
-        buf.append(getEndTag());
-      }
-      //System.out.println(buf.toString());
-      print(buf.toString());
+    		printBegin(iwc);
+    		printChildren(iwc);
+    		printEnd(iwc);
     }
 
     /*private String getFrameURI(Page page,IWContext iwc){
@@ -530,6 +489,76 @@ public class FrameTable extends Window{
       return uri;
     }*/
 
+    public void printBegin(IWContext iwc){
+
+        StringBuffer buf = new StringBuffer();
+        boolean isInFrame = isInFrame();
+        if( !isInAWindow && !isInFrame ){
+  		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
+  		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+          buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
+          buf.append(getMetaInformation(markup, characterEncoding));
+          buf.append("<title>"+getTitle()+"</title>");
+        }
+        
+        buf.append("\n<frameset ");
+        buf.append(getFrameSetPropertiesString());
+        buf.append(" >\n");
+
+        print(buf.toString());
+
+    }
+    
+    public void encodeChildren(FacesContext context) throws IOException{
+    		printChildren(IWContext.getIWContext(context));
+    }
+    
+    /**
+     * Bridging method for JSF:
+     * @param iwc
+     * @throws IOException
+     */
+    public void printChildren(IWContext iwc) throws IOException{
+    		StringBuffer buf = new StringBuffer();
+        //int counter = 1;
+        if(this.getChildren() != null){
+          Iterator iter = this.getChildren().iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            if(item instanceof Frame){
+              if(((Frame)item).getFrameType() == Frame.FRAMESET){
+                //System.out.println(buf.toString());
+                print(buf.toString());
+                buf = new StringBuffer();
+                UIComponent child = ((Frame)item).getPresentationObject();
+                //frame._print(iwc);
+                renderChild(iwc,child);
+              } else {
+                buf.append("<frame ");
+                buf.append(getFramePropertiesString((Frame)item));
+                buf.append(" >\n");
+              }
+            }
+
+            //counter++;
+          }
+        }
+        print(buf.toString());
+    }
+    
+    public void printEnd(IWContext iwc){
+    		StringBuffer buf = new StringBuffer();
+    		boolean isInFrame = isInFrame();
+    		
+         buf.append("\n</frameset>\n");
+
+        if( !isInAWindow && !isInFrame ){
+          buf.append(getEndTag());
+        }
+        //System.out.println(buf.toString());
+        print(buf.toString());
+    }
+    
     private static String getFrameURI(Class pageClass,IWContext iwc){
     		//String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
     		String uri = iwc.getIWMainApplication().getWindowOpenerURI(pageClass);

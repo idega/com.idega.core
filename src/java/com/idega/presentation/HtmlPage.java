@@ -198,6 +198,29 @@ public class HtmlPage extends Page {
 	}
 	
 	/**
+	 * Overrided from Page
+	 */
+	public void encodeBegin(FacesContext context)throws IOException{
+		//Does nothing here
+	}
+	
+	/**
+	 * Overrided from Page
+	 * @throws IOException
+	 */
+	public void encodeChildren(FacesContext context) throws IOException{
+		//Does just call the print(iwc) method below:
+		callPrint(context);
+	}
+	
+	/**
+	 * Overrided from Page
+	 */
+	public void encodeEnd(FacesContext context)throws IOException{
+		//Does nothing here
+	}
+	
+	/**
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
 	//public void encodeChildren(FacesContext ctx) throws IOException {
