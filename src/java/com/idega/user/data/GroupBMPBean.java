@@ -295,7 +295,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setColumn(COLUMN_HOME_FOLDER_ID, fileID);
 	}
 	public void setHomeFolder(ICFile file) {
-		setHomePageID((Integer)file.getPrimaryKey());
+		setHomeFolderID((Integer)file.getPrimaryKey());
 	}
 
 
