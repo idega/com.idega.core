@@ -405,10 +405,15 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	 /**
 		* Finds all relationships with null values in related_group_type column 
 		* That is a new column in ic_group_relation that is a duplicate of the value in group_type column in ic_group for the related group
-		* Created 9.7.2000 by Sigtryggur for optimising purposes
+		* Created 9.7.2004 by Sigtryggur for optimising purposes
 		*/
 	 public Collection ejbFindAllGroupsWithoutRelatedGroupType()throws FinderException{
-		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_TYPE_COLUMN+" is null");
+//		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_TYPE_COLUMN+" is null");
+		 IDOQuery query = idoQueryGetSelect().appendWhereIsNull(this.RELATED_GROUP_TYPE_COLUMN);
+		 if(this.isDebugActive()){
+		 	debug("["+this.getClass().getName()+"]: "+query);
+		 }
+		 return idoFindPKsByQueryUsingLoadBalance(query,2000);
 	 }
 
   /**Finders end**/
