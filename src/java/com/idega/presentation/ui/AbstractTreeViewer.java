@@ -9,6 +9,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.text.Text;
 
 import java.util.Vector;
 import java.util.Iterator;
@@ -73,6 +74,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   public static final String PRM_OPEN_TREENODES = "ic_opn_trnds";
   public static final String PRM_TREENODE_TO_CLOSE = "ic_cls_trnd";
   public static final String PRM_TREE_CHANGED = "ic_tw_ch";
+
+  private boolean _showSuperRootNode = false;
+  private String _superRootNodeName = "Root";
+  private Image _superRootNodeIcon = null;
 
 
   public AbstractTreeViewer() {
@@ -146,7 +151,34 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     this.add(treeTable);
     treeTable.empty();
     treeTableIndex = 1;
-    drawTree(defaultRoot.getChildren(),null,iwc);
+    if(_showSuperRootNode){
+      drawSuperRoot(iwc);
+    }else{
+      drawTree(defaultRoot.getChildren(),null,iwc);
+    }
+  }
+
+
+
+  private void drawSuperRoot(IWContext iwc){
+    Table nodeTable = new Table(3,1);
+    nodeTable.setCellpadding(0);
+    nodeTable.setCellspacing(0);
+
+    nodeTable.setWidth(1,"16");
+    nodeTable.setWidth(2,"3");
+
+    if(_superRootNodeIcon != null){
+      nodeTable.add(_superRootNodeIcon,1,1);
+    }
+
+    nodeTable.add(new Text(_superRootNodeName),3,1);
+
+
+    addNodeTableInTreeTable(nodeTable);
+    if(defaultRoot.getChildCount() > 0){
+      drawTree(defaultRoot.getChildren(),null, iwc);
+    }
   }
 
   private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc){
@@ -175,7 +207,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
           }
         }
         Image[] newCollectedIcons = null;
-        if(isRoot){
+        if(isRoot && !_showSuperRootNode){
           if(showRootNodeTreeIcons()){
             if(i == 0 && !iter.hasNext()){
               if(hasChild){
@@ -357,6 +389,18 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   public abstract PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode);
 
+
+  public void setToShowSuperRootNode(boolean value){
+    _showSuperRootNode = value;
+  }
+
+  public void setSuperRootNodeName(String name){
+    _superRootNodeName = name;
+  }
+
+  public void setSuperRootNodeIcon(Image image){
+    _superRootNodeIcon = image;
+  }
 
   public void setRootNode(ICTreeNode root){
     defaultRoot.clear();

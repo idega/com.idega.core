@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.34 2001/12/18 13:41:00 gummi Exp $
+ * $Id: Link.java,v 1.35 2001/12/20 19:16:09 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -82,6 +82,9 @@ public class Link extends Text {
   private List listenerInstances = null;
 
   private boolean https = false;
+
+  private int dptTemplateId = 0;
+
 
   private final static String DEFAULT_TEXT_STRING = "No text";
 
@@ -815,7 +818,7 @@ public class Link extends Text {
       url.append('=');
       url.append(page.getID());
       setURL(url.toString());*/
-      this.addParameter(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER,page.getID());
+      this.addParameter(BuilderLogic.IB_PAGE_PARAMETER,page.getID());
     }
   }
 
@@ -829,6 +832,60 @@ public class Link extends Text {
     }
     setPage(page);
   }
+
+  public int getPage(){
+    String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+    if(value != null && !value.equals("")){
+      return Integer.parseInt(value);
+    }else{
+      return 0;
+    }
+  }
+
+
+  public String getParameterValue(String prmName){
+    //System.out.println("isParameterSet("+prmName+")");
+    //System.err.println("isParameterSet("+prmName+")");
+    if(_parameterString != null){
+      if(!(prmName != null && prmName.endsWith(""))){
+        //System.out.println("return true;");
+        //System.err.println("return true;");
+        return null;
+      }
+      String prmString = _parameterString.toString();
+      if(prmString.length()>0){
+        if((prmString.charAt(0) == '?') && (prmString.length()>1)){
+          prmString = prmString.substring(1,prmString.length());
+        }
+        if((prmString.charAt(0) == '&') && (prmString.length()>1)){
+          prmString = prmString.substring(1,prmString.length());
+        }
+        StringTokenizer token = new StringTokenizer(prmString,"&=",false);
+        int index = 0;
+        while (token.hasMoreTokens()) {
+          String st = token.nextToken();
+          if(token.hasMoreTokens()){
+            String value = token.nextToken();
+            if(prmName.equals(st)){
+              return value;
+              //System.out.println("token "+index+" : "+st+" / true");
+              //System.err.println("token "+index+" : "+st+" / true");
+            }
+            //else{
+              //System.out.println("token "+index+" : "+st+" / false");
+              //System.err.println("token "+index+" : "+st+" / false");
+            //}
+            index++;
+          }
+        }
+      }
+      else{
+        return null;
+      }
+    }
+    return null;
+  }
+
 
   /**
    * method for adding a link to a file object
@@ -982,8 +1039,11 @@ public class Link extends Text {
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
-    //this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
-
+    /*
+    if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
+      this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
+    }
+    */
     if (_maintainBuilderParameters) {
       addTheMaintainedBuilderParameters(iwc);
     }
@@ -1458,6 +1518,25 @@ public class Link extends Text {
     setAttribute("onMouseOver","swapImage('"+image.getName()+"','','"+mouseOverImage.getMediaServletString()+"',1)");
     setAttribute("onMouseOut","swapImgRestore()");
   }
+
+
+
+  public void setDPTTemplateId(int id){
+    dptTemplateId = id;
+  }
+
+  public int getDPTTemplateId(){
+    return dptTemplateId;
+  }
+
+  public void setDPTTemplateId(IBPage page){
+    dptTemplateId = page.getID();
+  }
+
+
+
+
+
 
 }
 
