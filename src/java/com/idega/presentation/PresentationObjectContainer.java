@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.12 2002/05/22 15:05:12 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.13 2002/05/27 14:09:52 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,11 +36,11 @@ public class PresentationObjectContainer extends PresentationObject {
   protected void add(int index,PresentationObject modObject) {
     try {
       if (theObjects == null) {
-        this.theObjects = new Vector();
+	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
-        this.theObjects.add(index,modObject);
+	modObject.setParentObject(this);
+	this.theObjects.add(index,modObject);
       }
     }
     catch(Exception ex) {
@@ -54,11 +54,11 @@ public class PresentationObjectContainer extends PresentationObject {
   public void add(PresentationObject modObject) {
     try {
       if (theObjects == null) {
-        this.theObjects = new Vector();
+	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
-        this.theObjects.addElement(modObject);
+	modObject.setParentObject(this);
+	this.theObjects.addElement(modObject);
       }
     }
     catch(Exception ex) {
@@ -121,13 +121,13 @@ public class PresentationObjectContainer extends PresentationObject {
     Text text = new Text();
     if (format != null) {
       if (format.equals("bold")) {
-        text.setBold();
+	text.setBold();
       }
       else if (format.equals("italic")) {
-        text.setItalic();
+	text.setItalic();
       }
       else if (format.equals("underline")) {
-        text.setUnderline();
+	text.setUnderline();
       }
     }
     add(text);
@@ -145,23 +145,23 @@ public class PresentationObjectContainer extends PresentationObject {
     if(allObjects == null){
       List toReturn = null;
       if(theObjects != null){
-        toReturn = new Vector();
-        toReturn.containsAll(theObjects);
-        Iterator iter = theObjects.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          if(item instanceof PresentationObjectContainer){
-            toReturn.add(item);
-            //if(!toReturn.contains(item)){
-              List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
-              if(tmp != null){
-                toReturn.addAll(tmp);
-              }
-            //}
-          }else{
-            toReturn.add(item);
-          }
-        }
+	toReturn = new Vector();
+	toReturn.containsAll(theObjects);
+	Iterator iter = theObjects.iterator();
+	while (iter.hasNext()) {
+	  Object item = iter.next();
+	  if(item instanceof PresentationObjectContainer){
+	    toReturn.add(item);
+	    //if(!toReturn.contains(item)){
+	      List tmp = ((PresentationObjectContainer)item).getAllContainedObjectsRecursive();
+	      if(tmp != null){
+		toReturn.addAll(tmp);
+	      }
+	    //}
+	  }else{
+	    toReturn.add(item);
+	  }
+	}
       }
       allObjects = toReturn;
     }
@@ -190,27 +190,27 @@ public class PresentationObjectContainer extends PresentationObject {
     if (!goneThroughMain) {
       initVariables(iwc);
       try {
-        //super.main(iwc);
-        main(iwc);
+	//super.main(iwc);
+	main(iwc);
       }
       catch(Exception ex) {
-        add(new ExceptionWrapper(ex,this));
+	add(new ExceptionWrapper(ex,this));
       }
       if (!isEmpty()) {
-        for (int index = 0; index < numberOfObjects(); index++) {
-          PresentationObject tempobj = objectAt(index);
+	for (int index = 0; index < numberOfObjects(); index++) {
+	  PresentationObject tempobj = objectAt(index);
 
-          try {
-            if (tempobj != null) {
-              if (tempobj != this) {
-                tempobj._main(iwc);
-              }
-            }
-          }
-          catch(Exception ex) {
-            add(new ExceptionWrapper(ex,this));
-          }
-        }
+	  try {
+	    if (tempobj != null) {
+	      if (tempobj != this) {
+		tempobj._main(iwc);
+	      }
+	    }
+	  }
+	  catch(Exception ex) {
+	    add(new ExceptionWrapper(ex,this));
+	  }
+	}
       }
     }
     goneThroughMain = true;
@@ -234,8 +234,8 @@ public class PresentationObjectContainer extends PresentationObject {
   /*protected void prepareClone(PresentationObject newObjToCreate){
       int number = numberOfObjects();
       for (int i = 0; i < number; i++) {
-        PresentationObject tempObj = this.objectAt(i);
-        ((PresentationObjectContainer)newObjToCreate).add((PresentationObject)tempObj.clone());
+	PresentationObject tempObj = this.objectAt(i);
+	((PresentationObjectContainer)newObjToCreate).add((PresentationObject)tempObj.clone());
       }
 
      // if (this.theObjects!=null){
@@ -266,17 +266,17 @@ public class PresentationObjectContainer extends PresentationObject {
     if (!isEmpty()) {
       int numberofObjects = numberOfObjects();
       for (int index = 0; index < numberofObjects; index++) {
-        PresentationObject tempobj = objectAt(index);
-        try {
-          if (tempobj != null) {
-            tempobj._print(iwc);
-            flush();
-          }
-        }
-        catch(Exception ex) {
-          ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-          exep._print(iwc);
-        }
+	PresentationObject tempobj = objectAt(index);
+	try {
+	  if (tempobj != null) {
+	    tempobj._print(iwc);
+	    flush();
+	  }
+	}
+	catch(Exception ex) {
+	  ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+	  exep._print(iwc);
+	}
       }
     }
   }
@@ -289,16 +289,16 @@ public class PresentationObjectContainer extends PresentationObject {
     if (list != null) {
       Iterator iter = list.iterator();
       while (iter.hasNext()) {
-        PresentationObject item = (PresentationObject)iter.next();
-        if(item.getICObjectInstanceID()==objectInstanceID){
-          return item;
-        }
-        else if(item instanceof PresentationObjectContainer){
-          PresentationObject theReturn = ((PresentationObjectContainer)item).getContainedObject(objectInstanceID);
-          if(theReturn != null){
-            return theReturn;
-          }
-        }
+	PresentationObject item = (PresentationObject)iter.next();
+	if(item.getICObjectInstanceID()==objectInstanceID){
+	  return item;
+	}
+	else if(item instanceof PresentationObjectContainer){
+	  PresentationObject theReturn = ((PresentationObjectContainer)item).getContainedObject(objectInstanceID);
+	  if(theReturn != null){
+	    return theReturn;
+	  }
+	}
       }
     }
     return null;
@@ -310,21 +310,21 @@ public class PresentationObjectContainer extends PresentationObject {
   public PresentationObject getContainedObject(String objectInstanceID) {
     try {
       try {
-        return(getContainedObject(Integer.parseInt(objectInstanceID)));
+	return(getContainedObject(Integer.parseInt(objectInstanceID)));
       }
       catch(NumberFormatException e) {
-        int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0,objectInstanceID.indexOf(".")));
+	int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0,objectInstanceID.indexOf(".")));
 
-        String index = objectInstanceID.substring(objectInstanceID.indexOf(".")+1,objectInstanceID.length());
-        if (index.indexOf(".") == -1) {
-          return(((PresentationObjectContainer)getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
-        }
-        else {
-          int xindex = Integer.parseInt(index.substring(0,index.indexOf(".")));
-          int yindex = Integer.parseInt(index.substring(index.indexOf(".")+1,index.length()));
+	String index = objectInstanceID.substring(objectInstanceID.indexOf(".")+1,objectInstanceID.length());
+	if (index.indexOf(".") == -1) {
+	  return(((PresentationObjectContainer)getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
+	}
+	else {
+	  int xindex = Integer.parseInt(index.substring(0,index.indexOf(".")));
+	  int yindex = Integer.parseInt(index.substring(index.indexOf(".")+1,index.length()));
 
-          return(((Table)getContainedObject(objectInstanceIDInt)).containerAt(xindex,yindex));
-        }
+	  return(((Table)getContainedObject(objectInstanceIDInt)).containerAt(xindex,yindex));
+	}
       }
     }
     catch (NullPointerException ex) {
@@ -340,17 +340,17 @@ public class PresentationObjectContainer extends PresentationObject {
     if (list != null) {
       Iterator iter = list.iterator();
       while (iter.hasNext()) {
-        PresentationObject item = (PresentationObject)iter.next();
-        if (item instanceof PresentationObjectContainer) {
-          String itemLabel = ((PresentationObjectContainer)item).getLabel();
-          if (itemLabel != null)
-            if (itemLabel.equals(label))
-              return(item);
-          PresentationObject theReturn = ((PresentationObjectContainer)item).getContainedLabeledObject(label);
-          if (theReturn != null){
-            return(theReturn);
-          }
-        }
+	PresentationObject item = (PresentationObject)iter.next();
+	if (item instanceof PresentationObjectContainer) {
+	  String itemLabel = ((PresentationObjectContainer)item).getLabel();
+	  if (itemLabel != null)
+	    if (itemLabel.equals(label))
+	      return(item);
+	  PresentationObject theReturn = ((PresentationObjectContainer)item).getContainedLabeledObject(label);
+	  if (theReturn != null){
+	    return(theReturn);
+	  }
+	}
       }
     }
     return(null);
@@ -367,10 +367,10 @@ public class PresentationObjectContainer extends PresentationObject {
 
       PresentationObject obj = objectAt(Integer.parseInt(index));
       if (obj instanceof PresentationObjectContainer){
-        return ((PresentationObjectContainer)obj).getContainedObject(newString);
+	return ((PresentationObjectContainer)obj).getContainedObject(newString);
       }
       else {
-        return obj;
+	return obj;
       }
     }
   }*/
@@ -380,25 +380,25 @@ public class PresentationObjectContainer extends PresentationObject {
       String thisTreeID = this.getTreeID();
       int numberOfObjects = numberOfObjects();
       for(int index = 0; index < numberOfObjects; index++) {
-        PresentationObject tempobj = objectAt(index);
-        if (tempobj != null) {
-          if (tempobj != this) {
-            try {
-              if (thisTreeID == null) {
-                String treeID = Integer.toString(index);
-                tempobj.setTreeID(treeID);
-              }
-              else {
-                String treeID = thisTreeID + "." + index;
-                tempobj.setTreeID(treeID);
-              }
-            }
-            catch(Exception ex) {
-              ExceptionWrapper exep = new ExceptionWrapper(ex,this);
-              add(exep);
-            }
-          }
-        }
+	PresentationObject tempobj = objectAt(index);
+	if (tempobj != null) {
+	  if (tempobj != this) {
+	    try {
+	      if (thisTreeID == null) {
+		String treeID = Integer.toString(index);
+		tempobj.setTreeID(treeID);
+	      }
+	      else {
+		String treeID = thisTreeID + "." + index;
+		tempobj.setTreeID(treeID);
+	      }
+	    }
+	    catch(Exception ex) {
+	      ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+	      add(exep);
+	    }
+	  }
+	}
       }
     }
   }*/
@@ -439,11 +439,11 @@ public class PresentationObjectContainer extends PresentationObject {
   public void insertAt(PresentationObject modObject, int index) {
     try {
       if (theObjects == null) {
-        this.theObjects = new Vector();
+	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
-        theObjects.insertElementAt(modObject,index);
+	modObject.setParentObject(this);
+	theObjects.insertElementAt(modObject,index);
       }
     }
     catch(Exception ex) {
@@ -457,11 +457,11 @@ public class PresentationObjectContainer extends PresentationObject {
 /*  public void setAt(PresentationObject modObject, int index) {
     try {
       if (theObjects == null) {
-        this.theObjects = new Vector();
+	this.theObjects = new Vector();
       }
       if (modObject != null) {
-        modObject.setParentObject(this);
-        theObjects.setElementAt(modObject,index);
+	modObject.setParentObject(this);
+	theObjects.setElementAt(modObject,index);
       }
     }
     catch(Exception ex) {
@@ -478,19 +478,19 @@ public class PresentationObjectContainer extends PresentationObject {
     setIWContext(iwc);
     if ( ! isEmpty() ){
       for(int index=0;index<numberOfObjects();index++){
-        PresentationObject tempobj = objectAt(index);
-        if(tempobj!=null){
-          if(tempobj!=this){
-            tempobj._setIWContext(iwc);
-          }
-        }
+	PresentationObject tempobj = objectAt(index);
+	if(tempobj!=null){
+	  if(tempobj!=this){
+	    tempobj._setIWContext(iwc);
+	  }
+	}
       }
     }
   }
 
 
 public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
-    if(askForPermission){
+    if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
 	return this.clone(iwc,askForPermission);
       } else {
@@ -511,21 +511,21 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
       obj = (PresentationObjectContainer)super.clone();
       obj._locked = this._locked;
       //if(!(this instanceof Table)){
-        if (this.theObjects != null) {
-            //obj.setObjects((Vector)this.theObjects.clone());
-            obj.theObjects=(Vector)this.theObjects.clone();
-            ListIterator iter = obj.theObjects.listIterator();
-            while (iter.hasNext()) {
-              int index = iter.nextIndex();
-              Object item = iter.next();
-              //Object item = obj.theObjects.elementAt(index);
-              if(item instanceof PresentationObject){
-                PresentationObject newObject = (PresentationObject) ((PresentationObject)item)._clone(iwc,askForPermission);
-                newObject.setParentObject(obj);
-                obj.theObjects.set(index,newObject);
-              }
-            }
-        //}
+	if (this.theObjects != null) {
+	    //obj.setObjects((Vector)this.theObjects.clone());
+	    obj.theObjects=(Vector)this.theObjects.clone();
+	    ListIterator iter = obj.theObjects.listIterator();
+	    while (iter.hasNext()) {
+	      int index = iter.nextIndex();
+	      Object item = iter.next();
+	      //Object item = obj.theObjects.elementAt(index);
+	      if(item instanceof PresentationObject){
+		PresentationObject newObject = (PresentationObject) ((PresentationObject)item)._clone(iwc,askForPermission);
+		newObject.setParentObject(obj);
+		obj.theObjects.set(index,newObject);
+	      }
+	    }
+	//}
       }
     }
     catch(Exception ex) {
@@ -539,7 +539,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
   public boolean remove(PresentationObject obj){
     if(theObjects!=null){
       if(theObjects.remove(obj)){
-        return true;
+	return true;
       }
     }
     return false;
@@ -607,11 +607,11 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
     if(l!=null){
       Iterator iter = l.iterator();
       while (iter.hasNext()) {
-        Object item = iter.next();
+	Object item = iter.next();
 //        System.err.println("ObjectinstanceID = " +((PresentationObject)item).getICObjectInstanceID());
-        if(item instanceof PresentationObject && (((PresentationObject)item).getICObjectInstanceID()==id)){
-          return ((PresentationObject)item);
-        }
+	if(item instanceof PresentationObject && (((PresentationObject)item).getICObjectInstanceID()==id)){
+	  return ((PresentationObject)item);
+	}
       }
     }
     return null;
