@@ -83,6 +83,22 @@
     <url-pattern>/servlet/WindowOpener/*</url-pattern>
   </servlet-mapping>
 
+
+    <!-- IWBlockFilter Filter blocks certain sensitive URLs -->
+    <filter>
+        <filter-name>IWBlockFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWBlockFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>IWBlockFilter</filter-name>
+        <url-pattern>*.properties</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>IWBlockFilter</filter-name>
+        <url-pattern>*.pxml</url-pattern>
+    </filter-mapping>
+
+
     <!-- The IWEncodingFilter Filter , MUST be the first filter -->
     <filter>
         <filter-name>IWEncodingFilter</filter-name>
@@ -170,6 +186,7 @@
     </filter-mapping>
     
     <!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
+    
     
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
