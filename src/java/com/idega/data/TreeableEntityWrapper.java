@@ -14,6 +14,7 @@ import javax.ejb.FinderException;
 
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.localisation.data.ICLocale;
+import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * Title:		TreeableEntityWrapper
@@ -115,6 +116,13 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 	 */
 	public String getNodeName(Locale locale) {
 		return ((TreeableEntity)this.getMainEntity()).getNodeName(locale);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getNodeName()
+	 */
+	public String getNodeName(Locale locale, IWApplicationContext iwac) {
+		return ((TreeableEntity)this.getMainEntity()).getNodeName(locale, iwac);
 	}
 
 

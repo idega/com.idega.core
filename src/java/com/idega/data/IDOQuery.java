@@ -1007,12 +1007,24 @@ public class IDOQuery {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
 	}
 	
+	public IDOQuery appendNotInCollectionWithSingleQuotes(Collection coll) {
+		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
+	}
+	
 	public IDOQuery appendInForStringCollectionWithSingleQuotes(Collection coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfStringsToCommaseparatedString(coll));
 	}
 	
 	public IDOQuery appendInForIntegerCollectionWithSingleQuotes(Collection coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(coll));
+	}
+	
+	public IDOQuery appendNotInForStringCollectionWithSingleQuotes(Collection coll) {
+		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfStringsToCommaseparatedString(coll));
+	}
+	
+	public IDOQuery appendNotInForIntegerCollectionWithSingleQuotes(Collection coll) {
+		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(coll));
 	}
 
 

@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import com.idega.core.business.ICTreeNodeLeafComparator;
 import com.idega.core.data.ICTreeNode;
+import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * Title:        idegaclasses
@@ -51,6 +52,13 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public String getNodeName(Locale locale) {
 		return getNodeName();
+	}
+	
+	/**
+	 * Default implementation just calls getNodeName()
+	 */
+	public String getNodeName(Locale locale, IWApplicationContext iwac) {
+		return getNodeName(locale);
 	}
 
 	/**
@@ -216,6 +224,42 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			return (0);
 
 		return (parent.getChildCount() - 1);
+	}
+	
+	/**
+	 * @see com.idega.core.ICTreeNode#getNodeType()
+	 */
+	public int getNodeType(){
+		return -1;
+	}
+	
+
+	/**
+	 * @return
+	 */
+	public boolean leafsFirst() {
+		return _leafsFirst;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean sortLeafs() {
+		return _sortLeafs;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setLeafsFirst(boolean b) {
+		_leafsFirst = b;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setToSortLeafs(boolean b) {
+		_sortLeafs = b;
 	}
 
 }

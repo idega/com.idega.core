@@ -6,6 +6,8 @@ package com.idega.core.data;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.idega.idegaweb.IWApplicationContext;
+
 /**
  * An abstract data model for implementing Tree structures.
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -56,7 +58,12 @@ public interface ICTreeNode {
 	 *  Returns the name of the Node localized, if localization possible, else it returns getNodeName()
 	 */
 	public String getNodeName(Locale locale);
-
+	
+	/**
+	 *  Returns the name of the Node localized, if localization possible, else it returns getNodeName()
+	 */
+	public String getNodeName(Locale locale, IWApplicationContext iwac);
+	
 
 	/**
 	 * Returns the unique ID of the Node in the tree
@@ -67,5 +74,11 @@ public interface ICTreeNode {
 	 * @return the number of siblings this node has
 	 */
 	public int getSiblingCount();
+	
+//	/**
+//	 * @return returns an int identifier for the node type
+//	 * @deprecated
+//	 */
+//	public int getNodeType();
 
 }

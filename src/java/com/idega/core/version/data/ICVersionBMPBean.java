@@ -21,6 +21,7 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.data.User;
 
 /**
@@ -351,6 +352,10 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	 */
 	public String getNodeName(Locale locale) {
 		return this.getNodeName();
+	}
+	
+	public String getNodeName(Locale locale, IWApplicationContext iwac){
+		return this.getNodeName(locale);
 	}
 
 	/* (non-Javadoc)

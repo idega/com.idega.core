@@ -2,6 +2,8 @@ package com.idega.core.data;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import com.idega.idegaweb.IWApplicationContext;
 /**
  * 
  * <p>Company: idegaweb </p>
@@ -186,4 +188,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		return getNodeName();
 	}
 
+	public String getNodeName(Locale locale, IWApplicationContext iwac) {
+		return getNodeName(locale);
+	}
 }

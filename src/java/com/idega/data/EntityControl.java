@@ -534,7 +534,7 @@ public class EntityControl {
 			return null;
 		}
 	}
-	public static String getTreeRelationShipTableName(GenericEntity entity) {
+	public static String getTreeRelationShipTableName(IDOEntity entity) {
 		EntityRelationship rel = getManyToManyRelationShip(entity, entity);
 		if (rel != null) {
 			return rel.getTableName();
@@ -553,6 +553,9 @@ public class EntityControl {
 	}
 	public static String getTreeRelationShipChildColumnName(GenericEntity entity) {
 		return "child_" + entity.getIDColumnName();
+	}
+	public static String getTreeRelationShipChildColumnName(IDOEntity entity) throws IDOCompositePrimaryKeyException {
+		return "child_" + entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 	}
 	public static void addTreeRelationShip(GenericEntity entity) {
 		String relationShipTableName = createTreeRelationShipTableName(entity);

@@ -11,4 +11,9 @@ public interface TreeableEntity extends com.idega.data.IDOEntity,com.idega.core.
  public java.lang.String getTreeRelationshipTableName(com.idega.data.TreeableEntity p0);
  public void moveChildrenFrom(com.idega.data.TreeableEntity p0)throws java.sql.SQLException;
  public void removeChild(com.idega.data.TreeableEntity p0)throws java.sql.SQLException;
+ public boolean leafsFirst();
+ public boolean sortLeafs();
+ public void setLeafsFirst(boolean b);
+ public void setToSortLeafs(boolean b);
+
 }
