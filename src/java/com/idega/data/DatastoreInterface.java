@@ -528,11 +528,14 @@ public abstract class DatastoreInterface{
     String[] names = entity.getColumnNames();
     for (int i = 0; i < names.length; i++) {
         //try{
-          if (entity.getRelationShipClass(names[i])!=null) {
+          Class relationShipClass = entity.getRelationShipClass(names[i]);
+          if (relationShipClass!=null) {
             String table1=entity.getTableName();
-            String table2=((GenericEntity)entity.getRelationShipClass(names[i]).newInstance()).getTableName();
+            GenericEntity entityToReference = (GenericEntity)relationShipClass.newInstance();
+            String tableToReference=entityToReference.getTableName();
+            String columnInTableToReference=entityToReference.getIDColumnName();
             String columnName = names[i];
-            createForeignKey(entity,table1,columnName,table2);
+            createForeignKey(entity,table1,columnName,tableToReference,columnInTableToReference);
           }
         //}
         //catch(Exception ex){
