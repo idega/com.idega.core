@@ -38,6 +38,8 @@ public class IWCacheManager {
   private Map entityMaps;
   private Map entityMapsKeys;
   private Map _keysMap;
+  
+  private static final long CACHE_NEVER_EXPIRES = -1;
 
   private IWCacheManager() {
   }
@@ -69,12 +71,16 @@ public class IWCacheManager {
        //System.out.println("Current     : "+currentTime);
        //System.out.println("Invalidation: "+invalidation);
 
-      if( (currentTime > invalidation) && (invalidation!=0) ){//invalidation==0 cache forever or until app.server shuts down
+      if ( invalidation == CACHE_NEVER_EXPIRES ) {
+        //System.out.println(" cache never expires ");
+      		return true;
+      }
+      else if (currentTime > invalidation) {
         //System.out.println(" currentTime > invalidation ");
         return false;
       }
       else{
-        //System.out.println(" currentTime < invalidation ");
+        //System.out.println(" currentTime <= invalidation ");
         return true;
       }
     }
@@ -110,9 +116,12 @@ public class IWCacheManager {
   }
 
 
-  public synchronized void setObject(String key, Object object,long cacheInterval){
+  private synchronized void setObject(String key, Object object,long cacheInterval){
     getObjectsMap().put(key,object);
     getTimesMap().put(key,getCurrentTime());
+    if (cacheInterval < 1) {
+  			cacheInterval = CACHE_NEVER_EXPIRES;
+    }
     getIntervalsMap().put(key,new Long(cacheInterval));
   }
 
@@ -125,7 +134,13 @@ public class IWCacheManager {
   }
 
   private long getTimeOfInvalidation(String key){
-    return getTimeOfCacheing(key)+getCacheingInterval(key);
+  		long interval = getCacheingInterval(key);
+  		if (interval == CACHE_NEVER_EXPIRES) {
+  			return interval;
+  		}
+  		else {
+  			return getTimeOfCacheing(key)+interval;
+  		}
   }
 
   private long getTimeOfCacheing(String key){
