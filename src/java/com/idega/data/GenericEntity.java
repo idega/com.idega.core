@@ -2696,7 +2696,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			{
 				throw new SQLException("RemoteException in addTo, message: " + rme.getMessage());
 			}*/
-			//System.out.println("statement: "+sql);
+			
+			
+			//debug("statement: "+sql);
+			
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally
