@@ -4,6 +4,7 @@ package com.idega.core.file.data;
 
 public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable
 {
+ public final static String UFN_NAME = "NAME";
  public java.sql.Timestamp getCreationDate();
  public boolean getDeleted();
  public int getDeletedByUserId();

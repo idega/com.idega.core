@@ -9,5 +9,5 @@ public interface ICFileHome extends com.idega.data.IDOHome
  public ICFile findByFileName(java.lang.String p0)throws javax.ejb.FinderException;
  public ICFile findEntityOfSpecificVersion(com.idega.core.version.data.ICVersion p0)throws javax.ejb.FinderException;
  public ICFile findRootFolder()throws javax.ejb.FinderException;
-
+ public java.util.Collection findChildren(ICFile parent, java.util.Collection visibleMimeTypes, java.util.Collection hiddenMimeTypes, String orderBy) throws javax.ejb.FinderException;
 }

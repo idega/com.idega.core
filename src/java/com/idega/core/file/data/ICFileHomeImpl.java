@@ -45,6 +45,13 @@ public ICFile findRootFolder()throws javax.ejb.FinderException{
   return (ICFile) super.findByPrimaryKeyIDO(pk);
  }
 
+ public java.util.Collection findChildren(ICFile parent, java.util.Collection visibleMimeTypes, java.util.Collection hiddenMimeTypes, String orderBy) throws javax.ejb.FinderException{
+	 com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	 java.util.Collection ids = ((ICFileBMPBean)entity).ejbFindChildren(parent, visibleMimeTypes, hiddenMimeTypes,orderBy);
+	 this.idoCheckInPooledEntity(entity);
+	 return this.getEntityCollectionForPrimaryKeys(ids);
+	 
+ }
 
 
 }

@@ -375,4 +375,36 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 			return 0;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.TreeableEntity#leafsFirst()
+	 */
+	public boolean leafsFirst() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.TreeableEntity#sortLeafs()
+	 */
+	public boolean sortLeafs() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.TreeableEntity#setLeafsFirst(boolean)
+	 */
+	public void setLeafsFirst(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.TreeableEntity#setToSortLeafs(boolean)
+	 */
+	public void setToSortLeafs(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
 }
