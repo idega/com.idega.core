@@ -88,4 +88,11 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setPrimaryGroup(com.idega.user.data.Group p0);
  public java.lang.String getGroupTypeValue();
  public java.lang.String getIDColumnName();
+ public boolean getDeleted();
+ public void setDeleted(boolean isDeleted);
+ public int getDeletedBy();
+ public void setDeletedBy(int userId);
+ public java.sql.Timestamp getDeletedWhen();
+ public void setDeletedWhen(java.sql.Timestamp p0);
+ public void delete(int p0)throws java.sql.SQLException;
 }

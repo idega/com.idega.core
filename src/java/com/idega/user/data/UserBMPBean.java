@@ -6,6 +6,7 @@ import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.EmailBMPBean;
 import com.idega.core.data.Phone;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
@@ -19,6 +20,7 @@ import com.idega.util.text.TextSoap;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,7 +36,7 @@ import javax.ejb.FinderException;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
- * @version 1.0
+ * @version 1.0 
  */
 
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
@@ -70,6 +72,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		addAttribute(getColumnNameDescription(), "Description", true, true, java.lang.String.class);
 		addAttribute(getColumnNameDateOfBirth(), "Birth date", true, true, java.sql.Date.class);
 		addAttribute(getColumnNamePersonalID(), "Personal ID", true, true, String.class, 20);
+    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
+    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
+    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
 		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.data.ICFile.class);
 		/**
@@ -160,7 +165,19 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public static String getColumnNameHomePageID() {
 		return "HOME_PAGE_ID";
 	}
-
+  
+  public static String getColumnNameDeleted() {
+    return "DELETED";
+  }
+  
+  public static String getColumnNameDeletedBy() {
+    return "DELETED_BY";
+  }
+  
+  public static String getColumnNameDeletedWhen() {
+    return "DELETED_WHEN";
+  }
+  
 	/**
 	 * @depricated
 	 */
@@ -299,6 +316,19 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			return null;
 		}
 	}
+  
+  public boolean getDeleted() {
+    return getBooleanColumnValue(getColumnNameDeleted());
+  }
+  
+  public int getDeletedBy() {
+    return getIntColumnValue(getColumnNameDeleted());
+  }
+  
+  public Timestamp getDeletedWhen() {
+    return ((Timestamp) getColumnValue(getColumnNameDeletedWhen()));
+  }
+
 
 	/*  Getters end   */
 
@@ -478,6 +508,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			throw new IDORuntimeException(e,this);	
 		}
 	}
+  
+  public void setDeleted(boolean isDeleted) {
+    setColumn(getColumnNameDeleted(), isDeleted);
+  }
+  
+  public void setDeletedBy(int userId)  {
+    setColumn(getColumnNameDeletedBy(), userId);
+  }
+  
+  public void setDeletedWhen(Timestamp timestamp) {
+    setColumn(getColumnNameDeletedWhen(), timestamp);
+  }
 
 	/*  Setters end   */
 
@@ -548,6 +590,29 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public void addPhone(Phone phone) throws IDOAddRelationshipException {
 		this.idoAddTo(phone);
 	}
+  
+  /**
+   *
+   */
+  public void delete() throws SQLException {
+    throw new SQLException("Use delete(int userId) instead");
+  }
+
+  /**
+   * Delete this instance, store timestamp and theid of the user that causes the
+   * the erasure
+   * 
+   * @param userId id of the user that is responsible for the deletion
+   */
+  public void delete(int userId) throws SQLException {
+    setDeleted(true);
+    
+    setDeletedWhen(IWTimestamp.getTimestampRightNow());
+    setDeletedBy(userId);
+
+    super.update();
+  }  
+  
 
 	/*  Business methods end   */
 
@@ -579,12 +644,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//          }
 
 		query.appendIn(sGroupList);
+    query.appendAnd();
+    appendIsNotDeleted(query);
 		query.appendOrderBy(this.getColumnNameFirstName());
 
 		IDOQuery countQuery = idoQuery();
 		countQuery.appendSelectCountFrom(getEntityName());
 		countQuery.appendWhere(this.getIDColumnName());
 		countQuery.appendIn(sGroupList);
+    countQuery.appendAnd();
+    appendIsNotDeleted(countQuery);
 		//	  return this.idoFindPKsBySQL(query.toString());
 				
 		try {
@@ -602,7 +671,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//try{
 			String sGroupPK = userRepGroup.getPrimaryKey().toString();
 			IDOQuery query = idoQueryGetSelect();
-			query.appendWhereEqualsQuoted(this.getIDColumnName(),sGroupPK);
+			query
+        .appendWhereEqualsQuoted(this.getIDColumnName(),sGroupPK)
+        .appendAnd();
+      appendIsNotDeleted(query);
 			return (Integer)this.idoFindOnePKByQuery(query);
 		//}
 		//catch(RemoteException rme){
@@ -610,21 +682,54 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//}
 	}
 
+  /** Gets all users that are not marked as deleted 
+   * 
+   * @return Collection
+   * @throws FinderException
+   */
 	public Collection ejbFindAllUsers() throws FinderException {
-		return super.idoFindAllIDsBySQL();
+    // use where not because DELETED = NULL means also not deleted
+    // select * from ic_user where deleted != 'Y'
+    IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    return idoFindIDsBySQL(query.toString());
+   
 	}
 
+  /** Gets all users that are not marked as deleted and
+   *  that are members of the specified group
+   * 
+   * @param group
+   * @return Collection
+   * @throws FinderException
+   * @throws RemoteException
+   */
 	public Collection ejbFindUsersInPrimaryGroup(Group group) throws FinderException, RemoteException {
-		return super.idoFindAllIDsByColumnBySQL(_COLUMNNAME_PRIMARY_GROUP_ID, group.getPrimaryKey().toString());
-	}
+    IDOQuery query = idoQueryGetSelect();
+    query
+      .appendEqualsQuoted(_COLUMNNAME_PRIMARY_GROUP_ID, group.getPrimaryKey().toString())
+      .appendAnd();
+    appendIsNotDeleted(query);
+    return idoFindIDsBySQL(query.toString());
+  }
+  
+  /** Gets all users that are not marked as deleted ordered by first name.
+   * This query uses a LoadTracker if necessary.
+   * 
+   * @return Collection
+   * @throws FinderException
+   */
 
 	public Collection ejbFindAllUsersOrderedByFirstName() throws FinderException {
-		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this.getEntityName());
+		IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
 		query.appendOrderBy(this.getColumnNameFirstName() + "," + this.getColumnNameLastName() + "," + this.getColumnNameMiddleName());
 
-		IDOQuery countQuery = idoQuery();
-		countQuery.appendSelectCountFrom(this.getEntityName());
+		IDOQuery countQuery = idoQueryGetSelectCount();
+    countQuery.appendWhere();
+    appendIsNotDeleted(countQuery);
 
 		//	  return super.idoFindPKsBySQL(query.toString());
 		try {
@@ -776,7 +881,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		sql.append("iue.").append(getIDColumnName()).append(" = iu.").append(getIDColumnName());
 		sql.append(" and ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL).append(" = '");
 		sql.append(emailAddress).append("'");
-		return (Integer) super.idoFindOnePKBySQL(sql.toString());
+    // append is not deleted
+    sql
+      .append(" and iu.");
+    appendIsNotDeleted(sql);
+ 		return (Integer) super.idoFindOnePKBySQL(sql.toString());
 	}
 
 	public Collection ejbFindByNames(String first, String middle, String last) throws FinderException {
@@ -809,14 +918,25 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				sql.append("%' ");
 				isfirst = false;
 			}
-			System.err.println(sql.toString());
-			return super.idoFindPKsBySQL(sql.toString());
+      // append is deleted filter 
+      if (!isfirst)
+        sql.append(" and u.");
+      appendIsNotDeleted(sql);
+      			
+      return super.idoFindPKsBySQL(sql.toString());
 		}
 		throw new FinderException("No legal names provided");
 	}
 
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
-		Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(), personalId);
+    IDOQuery query = idoQueryGetSelect();
+    query
+      .appendEqualsQuoted(getColumnNamePersonalID(), personalId)
+      .appendAnd();
+    appendIsNotDeleted(query);
+    
+    Collection users = idoFindIDsBySQL(query.toString());
+
 		if (!users.isEmpty())
 			return (Integer) users.iterator().next();
 		else
@@ -834,7 +954,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		Integer pk;
 		//try {
 			IDOQuery query = idoQueryGetSelect();
-			query.appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID);
+			query
+        .appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID)
+        .appendAnd();
+      appendIsNotDeleted(query);
+     
 			pk = (Integer)this.idoFindOnePKByQuery(query);
 		
 			//pk = (Integer) super.idoFindOnePKBySQL("select * from " + getEntityName() + " where " + _COLUMNNAME_USER_GROUP_ID + "='" + userRepGroupID + "'");
@@ -974,6 +1098,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				}	
 				query.append(")");	
 			}
+      query.appendAnd();
+      appendIsNotDeleted(query);
 			
 			return this.idoFindIDsBySQL(query.toString());
 		}
@@ -1001,14 +1127,25 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
   public Collection ejbFindUsers(String[] userIDs) throws FinderException {
   	IDOQuery query = idoQuery();
-  	query.appendSelectAllFrom(this).appendWhere().append(getColumnNameUserID()).appendInArray(userIDs);
+  	query
+      .appendSelectAllFrom(this)
+      .appendWhere()
+      .append(getColumnNameUserID())
+      .appendInArray(userIDs)
+      .appendAnd();
+    appendIsNotDeleted(query);
   	
   	return super.idoFindPKsBySQL(query.toString());
   }
   
   public Collection ejbFindUsersInQuery(IDOQuery query) throws FinderException {
   	IDOQuery sqlQuery = idoQuery();
-		sqlQuery.appendSelectAllFrom(this).appendWhere(getColumnNameUserID()).appendIn(query);
+		sqlQuery
+      .appendSelectAllFrom(this)
+      .appendWhere(getColumnNameUserID())
+      .appendIn(query)
+      .appendAnd();
+    appendIsNotDeleted(sqlQuery);
 		return super.idoFindPKsByQuery(sqlQuery);
   }
   
@@ -1032,7 +1169,42 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		sql.append(getColumnNameDateOfBirth());
 		sql.append(" <= ");
 		sql.appendWithinSingleQuotes(maxStamp.toSQLDateString());
+    sql.appendAnd();
+    appendIsNotDeleted(sql);
         return idoFindIDsBySQL (sql.toString ());
     }
+  
+  /**
+   * add condition if column deleted equals 'N' or is null
+   * 
+   * @param query
+   */  
+  private void appendIsNotDeleted(IDOQuery query) {
+    query      
+      .appendLeftParenthesis()
+      .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
+      .appendOr()
+      .append(getColumnNameDeleted())
+      .append(" IS NULL ")
+      .appendRightParenthesis();
+  }  
+  
+  /**
+   * add condition if column deleted equals 'N' or is null
+   * 
+   * @param query
+  */    
+  private void appendIsNotDeleted(StringBuffer buffer)  {
+    buffer
+      .append('(')
+      .append(getColumnNameDeleted())
+      .append(" = '")
+      .append(GenericEntity.COLUMN_VALUE_FALSE)
+      .append("' OR ")
+      .append(getColumnNameDeleted())
+      .append(" IS NULL )");
+  }
+      
+   
 
 }
