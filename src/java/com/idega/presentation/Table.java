@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.48 2003/11/21 19:01:10 tryggvil Exp $
+ * $Id: Table.java,v 1.49 2004/01/13 15:51:47 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1088,23 +1088,27 @@ public class Table extends PresentationObjectContainer {
 				printString.append(" ");
 				printString.append(TAG_END);
 				println(printString.toString());
+				
+				//Lines initialization
+				lineColspan = cols;
+				if (addVerticalLinesBetween) {
+					lineColspan += (cols - 1);
+				}
+				else {
+					lineColspan += lineRows.length;
+				}
+				if (addLineLeft) {
+					lineColspan++;
+				}
+				if (addLineRight) {
+					lineColspan++;
+				}
+				if (addLineTop) {
+					printLine(iwc);
+				}
+
+				
 				if (!cellsAreMerged) {
-					lineColspan = cols;
-					if (addVerticalLinesBetween) {
-						lineColspan += (cols - 1);
-					}
-					else {
-						lineColspan += lineRows.length;
-					}
-					if (addLineLeft) {
-						lineColspan++;
-					}
-					if (addLineRight) {
-						lineColspan++;
-					}
-					if (addLineTop) {
-						printLine(iwc);
-					}
 					for (int y = 1; y <= rows;) {
 						//println("\n<tr>");
 						print(LINE_BREAK);
@@ -1180,6 +1184,9 @@ public class Table extends PresentationObjectContainer {
 						print(LINE_BREAK);
 						println(this.getRowStartTag(iwc));
 						for (int x = 1; x <= cols;) {
+							if (this.addLineLeft && x == 1) {
+								printVerticalLine(iwc);
+							}
 							if (isInMergedCell(x, y)) {
 								if (isTopLeftOfMergedCell(x, y)) {
 									if (theObjects[x - 1][y - 1] == null) {
@@ -1229,13 +1236,38 @@ public class Table extends PresentationObjectContainer {
 									printNbsp(iwc, x, y);
 								}
 								println(getCellEndTag(iwc,x,y));
+								if ((addLineRight && x == cols) || (addVerticalLinesBetween && x != cols)) {
+									printVerticalLine(iwc);
+								}
+								else {
+									for (int i = 0; i < lineCols.length; i++) {
+										if (x == lineCols[i]) {
+											printVerticalLine(iwc);
+											break;
+										}
+									}
+								}
 							}
 							x++;
 						}
 						print(LINE_BREAK);
 						println(this.getRowEndTag(iwc));
 						// println("\n</tr>");
+						if (this.addLinesBetween && y != rows) {
+							printLine(iwc);
+						}
+						else {
+							for (int i = 0; i < lineRows.length; i++) {
+								if (y == lineRows[i]) {
+									printLine(iwc);
+									break;
+								}
+							}
+						}
 						y++;
+					}
+					if (this.addLinesBottom) {
+						printLine(iwc);
 					}
 				}
 				print(LINE_BREAK);
