@@ -406,9 +406,16 @@ public class PageIncluder extends PresentationObject implements Index{
     html = TextSoap.findAndReplace(html,"##thorn;","&thorn;");
     html = TextSoap.findAndReplace(html,"##THORN;","&THORN;");
     html = TextSoap.findAndReplace(html,"##aelig;","&aelig;");
-    html = TextSoap.findAndReplace(html,"##AELIG;","&AELIG;");
+    html = TextSoap.findAndReplace(html,"##AElig;","&AElig;");
     html = TextSoap.findAndReplace(html,"##ouml;","&ouml;");
     html = TextSoap.findAndReplace(html,"##Ouml;","&Ouml;");
+    html = TextSoap.findAndReplace(html,"##auml;","&auml;");
+    html = TextSoap.findAndReplace(html,"##Auml;","&Auml;");
+    html = TextSoap.findAndReplace(html,"##euml;","&euml;");
+    html = TextSoap.findAndReplace(html,"##Euml;","&Euml;");
+    html = TextSoap.findAndReplace(html,"##uuml;","&uuml;");
+    html = TextSoap.findAndReplace(html,"##Uuml;","&Uuml;");
+
     html = TextSoap.findAndReplace(html,"##nbsp;","&nbsp;");
     html = TextSoap.findAndReplace(html,"##amp;","&amp;");
     html = TextSoap.findAndReplace(html,"##quot;","&quot;");
@@ -418,6 +425,16 @@ public class PageIncluder extends PresentationObject implements Index{
     html = TextSoap.findAndReplace(html,"###039;","&#039;");
     html = TextSoap.findAndReplace(html,"###169;","&#169;");
     html = TextSoap.findAndReplace(html,"##gt;","&gt;");
+    html = TextSoap.findAndReplace(html,"##pound;","&pound;");
+    html = TextSoap.findAndReplace(html,"##yen;","&yen;");
+    html = TextSoap.findAndReplace(html,"##copy;","&copy;");
+    html = TextSoap.findAndReplace(html,"##reg;","&reg;");
+    html = TextSoap.findAndReplace(html,"##szlig;","&szlig;");
+    html = TextSoap.findAndReplace(html,"##ccedil;","&ccedil;");
+    html = TextSoap.findAndReplace(html,"##Ccedil;","&Ccedil;");
+    html = TextSoap.findAndReplace(html,"##oslash;","&oslash;");
+    html = TextSoap.findAndReplace(html,"##Oslash;","&Oslash;");
+
     html = TextSoap.findAndReplace(html," ## "," & ");
 
 //islenskir broddstafir
