@@ -211,22 +211,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return user;
   }
   
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+		return createUser(firstName, middleName, lastName, displayname, personalID, description, gender, date_of_birth, primary_group,null);
+	}
 
 
-  public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+  public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group,String fullName) throws CreateException,RemoteException{
     try{
       User userToAdd = getUserHome().create();
 
+			if (fullName == null) {
+	      StringBuffer fullNameBuffer = new StringBuffer();
 
-      StringBuffer fullName = new StringBuffer();
+  	    firstName = (firstName==null) ? "" : firstName;
+    	  middleName = (middleName==null) ? "" : middleName;
+      	lastName = (lastName==null) ? "" : lastName;
 
-      firstName = (firstName==null) ? "" : firstName;
-      middleName = (middleName==null) ? "" : middleName;
-      lastName = (lastName==null) ? "" : lastName;
+	      fullNameBuffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+	      fullName = fullNameBuffer.toString();
+			}
 
-      fullName.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
-
-      userToAdd.setFullName(fullName.toString());
+      userToAdd.setFullName(fullName);
 
       
       /*userToAdd.setFirstName(firstName);
@@ -355,6 +360,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException {
+		return createUserWithLogin(firstname, middlename, lastname, SSN, displayname, description, gender, date_of_birth, primary_group, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw,changeNextTime,encryptionType,null);
+	}
+
+
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType,String fullName) throws CreateException {
 		UserTransaction transaction = this.getSessionContext().getUserTransaction();
 		try{
 			transaction.begin();
@@ -364,7 +374,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
         
 			//newUser = insertUser(firstname,middlename, lastname,null,null,null,null,primary_group);
-			newUser = createUser(firstname,middlename,lastname,displayname,SSN,description,gender,date_of_birth,primary_group);
+			newUser = createUser(firstname,middlename,lastname,displayname,SSN,description,gender,date_of_birth,primary_group,fullName);
 
 			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
 				LoginDBHandler.createLogin(newUser,userLogin,password,accountEnabled,modified,
@@ -374,6 +384,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return newUser;
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			try{
 				transaction.rollback();
 			}
