@@ -1,12 +1,10 @@
 package com.idega.data;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
 import com.idega.core.business.ICTreeNodeLeafComparator;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
@@ -175,7 +173,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey()+"'";
 		}
 		
-		List list;
+		//List list;
 		try {
 			//list = EntityFinder.findAll(this, sql);
 			String arr[] = SimpleQuerier.executeStringQuery(sql);
