@@ -253,7 +253,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public void unload(){
     storeStatus();
-    BlobCacher.deleteCache(this);
+    //BlobCacher.deleteCache(this);
   }
 
 
