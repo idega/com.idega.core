@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.77 2004/11/23 17:21:51 tryggvil Exp $
+ * $Id: Table.java,v 1.78 2004/11/24 22:55:15 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -190,7 +190,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	*Add an object inside this Table in cell with coordinates x,y from top right
 	*/
 	public void add(PresentationObject modObject, int xpos, int ypos) {
-		if (modObject != null) {
+		/*if (modObject != null) {
 			try {
 				if (isResizable) {
 					if (xpos > this.getColumns()) {
@@ -211,7 +211,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 			catch (Exception ex) {
 				add(new ExceptionWrapper(ex, this));
 			}
-		}
+		}*/
+		add((UIComponent)modObject,xpos,ypos);
 	}
 
 	/**
@@ -228,8 +229,12 @@ public class Table extends PresentationObjectContainer implements TableType{
 						setRows(ypos);
 					}
 				}
-				this.getCellAt(xpos,ypos).add(comp);
+				getCellAt(xpos,ypos).add(comp);
 				comp.setParent(this);
+				if(comp instanceof PresentationObject){
+					PresentationObject pObject = (PresentationObject)comp;
+					pObject.setLocation(this.getLocation());
+				}
 			}
 			catch (Exception ex) {
 				add(new ExceptionWrapper(ex, this));
