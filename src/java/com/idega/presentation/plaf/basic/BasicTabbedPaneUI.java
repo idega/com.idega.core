@@ -101,9 +101,9 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       //this.resize(this.getAddedTabs().size()+3, 2);
       this.empty();
       IWColor color = getColor();
-      IWColor dark = color.darker();
-      IWColor darker = dark.darker();
-      IWColor darkest = darker.darker();
+      //IWColor dark = color.darker();
+      //IWColor darker = dark.darker();
+      //IWColor darkest = darker.darker();
       IWColor bright = color.brighter();
       
       int tabSize = this.getAddedTabs().size();
