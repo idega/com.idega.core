@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.7 2001/06/26 19:22:51 eiki Exp $
+ * $Id: IWPropertyList.java,v 1.8 2001/07/04 18:12:07 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -368,8 +368,10 @@ public class IWPropertyList {
 
   public void store(OutputStream stream) {
     try {
+      //XMLOutputter outputter = new XMLOutputter();
       XMLOutputter outputter = new XMLOutputter("  ",true);
       outputter.setLineSeparator(System.getProperty("line.separator"));
+      outputter.setTrimText(true);
       outputter.output(xmlDocument,stream);
     }
     catch(IOException e) {

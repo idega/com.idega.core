@@ -77,7 +77,7 @@ public  class IWCoreServlet extends HttpServlet implements SingleThreadModel{
 		}
 	}*/
 
-	protected ThreadContext getThreadContext(){
+	protected static ThreadContext getThreadContext(){
 		//if (threadcontext == null){
 			//threadcontext = new ThreadContext();
 			//threadcontext = ThreadContext.getInstance();
@@ -86,12 +86,12 @@ public  class IWCoreServlet extends HttpServlet implements SingleThreadModel{
 	        return ThreadContext.getInstance();
         }
 
-	public void storeObject(String storeName , Object objectToStore){
+	public static void storeObject(String storeName , Object objectToStore){
 		getThreadContext().setAttribute(Thread.currentThread(),storeName,objectToStore);
 		//objects.put(storeName,objectToStore);
 	}
 
-	public Object retrieveObject(String storeName){
+	public static Object retrieveObject(String storeName){
 		return getThreadContext().getAttribute(Thread.currentThread(),storeName);
 		//return objects.get(storeName);
 	}

@@ -25,12 +25,12 @@ import com.idega.idegaweb.*;
 public class WindowOpener extends JSPModule
 {
 
-      public static int maxNumberOfWindows=4;
-      private static String windowsHashtableSessionStorageParameter="idega_special_windows_hashtable";
-      private static String windowsListSessionStorageParameter="idega_special_windows_list";
+      //public static int maxNumberOfWindows=4;
+      //private static String windowsHashtableSessionStorageParameter = "idega_special_windows_hashtable";
+      //private static String windowsListSessionStorageParameter = "idega_special_windows_list";
 
-      public Page getPage(){
-        Window theReturn =null;
+      /*public Page getPage(){
+        Window theReturn = null;
         ModuleInfo modinfo = getModuleInfo();
         try{
          theReturn = fetchWindow(modinfo);
@@ -44,7 +44,7 @@ public class WindowOpener extends JSPModule
         //String sessionStorageName = getModuleInfo().getParameter(IdegaWebApplication.windowOpenerParameter);
         //Page thePage = (Page)getModuleInfo().getSessionAttribute(sessionStorageName);
         //return thePage;
-      }
+      }*/
 
       public Window getWindow(){
         return (Window)getPage();
@@ -53,9 +53,9 @@ public class WindowOpener extends JSPModule
       public void initializePage(){
       }
 
-      public static String storeWindow(ModuleInfo modinfo,Window window){
+      /*public static String storeWindow(ModuleInfo modinfo,Window window){
         String parameter=window.getID();
-        Hashtable table = getHashtable(modinfo);
+        Map table = getHashtable(modinfo);
         LinkedList list = getLinkedList(table);
         if(list.size()>=maxNumberOfWindows){
             String s = (String)list.removeLast();
@@ -69,7 +69,7 @@ public class WindowOpener extends JSPModule
       }
 
 
-      private static Hashtable getHashtable(ModuleInfo modinfo){
+      private static Map getHashtable(ModuleInfo modinfo){
         Hashtable table = (Hashtable)modinfo.getSessionAttribute(windowsHashtableSessionStorageParameter);
         if(table==null){
           table = new Hashtable();
@@ -80,7 +80,7 @@ public class WindowOpener extends JSPModule
         return table;
       }
 
-      private static LinkedList getLinkedList(Hashtable table){
+      private static LinkedList getLinkedList(Map table){
           LinkedList list = (LinkedList)table.get(windowsListSessionStorageParameter);
           return list;
       }
@@ -88,10 +88,15 @@ public class WindowOpener extends JSPModule
 
       public static Window fetchWindow(ModuleInfo modinfo){
         String sessionStorageName = modinfo.getParameter(IWMainApplication.windowOpenerParameter);
-        Hashtable table = getHashtable(modinfo);
+        Map table = getHashtable(modinfo);
         return (Window)table.get(sessionStorageName);
         //Page thePage = (Page)getModuleInfo().getSessionAttribute(sessionStorageName);
         //return thePage;
+      }*/
+
+      public static String storeWindow(ModuleInfo modinfo,Window window){
+        Page.storePage(window,modinfo);
+        return window.getID();
       }
 
 

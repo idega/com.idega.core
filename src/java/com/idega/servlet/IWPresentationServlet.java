@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.10 2001/06/14 20:28:57 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.11 2001/07/04 18:12:16 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -33,7 +33,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
-
+  private static final String IW_MODULEINFO_KEY="idegaweb_moduleinfo";
 	/*
 	public void init(ServletConfig config)
           throws ServletException{
@@ -71,7 +71,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
     }
 
 
-		storeObject("idega_moduleinfo",moduleinfo);
+		storeObject(IW_MODULEINFO_KEY,moduleinfo);
 		initializePage();
 	}
 
@@ -103,7 +103,9 @@ public  class IWPresentationServlet extends IWCoreServlet{
         Object obj = moduleinfo.getSessionAttribute(sessionAddress);
         if(obj != null) {
           if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
-            __theService(request,response);
+              if(Page.isRequestingTopPage(moduleinfo)){
+                __theService(request,response);
+              }
             theServiceDone = true;
             this.getPage()._setModuleInfo(moduleinfo);
             ((ActiveEvent)obj).dispatch();
@@ -123,7 +125,11 @@ public  class IWPresentationServlet extends IWCoreServlet{
       //}
       //else{
             if(!theServiceDone) //gummi@idega.is
-              __theService(request,response);
+            {
+              if(Page.isRequestingTopPage(moduleinfo)){
+                __theService(request,response);
+              }
+            }
       //}
 //      response.getWriter().println("\n");
       _main(moduleinfo);
@@ -162,8 +168,9 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
   public void setPage(Page myPage){
                 //System.out.println("Inside setPage()");
-		//storeObject("idega_page",(Page)myPage.clone());
-                storeObject("idega_page",myPage);
+		//storeObject(Page.IW_PAGE_KEY,(Page)myPage.clone());
+                Page.setTopPage(myPage);
+                //storeObject(Page.IW_PAGE_KEY,myPage);
 		//this.page=page;
                 /*String servletName = this.getServletConfig().getServletName();
                 String attributeKey =servletName+"_idega_page";
@@ -173,22 +180,11 @@ public  class IWPresentationServlet extends IWCoreServlet{
   }
 
     public Page getPage(){
-
-      return (Page) retrieveObject("idega_page");
-    /*    Page page = (Page)retrieveObject("idega_page");
-        if (page==null){
-          String servletName = this.getServletConfig().getServletName();
-          String attributeKey =servletName+"_idega_page";
-          Page newPage = (Page)getServletContext().getAttribute(attributeKey);
-          //System.out.println("AttributeKey="+attributeKey+" for getPage()");
-          page = (Page)newPage.clone();
-          storeObject("idega_page",page);
-        }
-        return page;*/
+      return Page.getPage(getModuleInfo());
     }
 
     public ModuleInfo getModuleInfo(){
-          return (ModuleInfo) retrieveObject("idega_moduleinfo");
+          return (ModuleInfo) retrieveObject(IW_MODULEINFO_KEY);
     }
 
 
@@ -266,7 +262,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 	}
 
-	public void __print(ModuleInfo modinfo)throws IOException{
+	public void __print(ModuleInfo modinfo)throws Exception{
 
 
 		if (modinfo.getLanguage().equals("WML")){
@@ -308,7 +304,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
             getModuleInfo().getWriter().println(debugString);
           }
           catch(Exception ex){
-            System.err.println("Error in JPresentationModule.debug() : "+ex.getMessage());
+            System.err.println("Error in IWPresentationServlet.debug() : "+ex.getMessage());
             ex.printStackTrace(System.err);
           }
         }

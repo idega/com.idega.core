@@ -46,7 +46,9 @@ public class IWBundle{
   //private static Hashtable instances;
   private Hashtable localeRealPaths;
 
-  private Properties localizableStrings;
+  private SortedMap localizableStringsMap;
+  private Properties localizableStringsProperties;
+
   private File localizableStringsFile;
 
   private IWPropertyList propertyList;
@@ -95,7 +97,7 @@ public class IWBundle{
     public void reloadBundle(){
       loadBundle();
       resourceBundles.clear();
-      localizableStrings=null;
+      localizableStringsProperties=null;
     }
 
    private void loadBundle(){
@@ -214,21 +216,30 @@ public class IWBundle{
 
 
     public String[] getLocalizableStrings(){
-      return (String[])getLocalizableStringsProperties().keySet().toArray(new String[0]);
+      return (String[])getLocalizableStringsMap().keySet().toArray(new String[0]);
     }
 
     protected Properties getLocalizableStringsProperties(){
-      if(localizableStrings==null){
-        localizableStrings = new Properties();
+      initializePropertiesStrings();
+      return localizableStringsProperties;
+    }
+
+    protected Map getLocalizableStringsMap(){
+      initializePropertiesStrings();
+      return localizableStringsMap;
+    }
+
+    private void initializePropertiesStrings(){
+      if(localizableStringsProperties==null){
+        localizableStringsProperties = new Properties();
         try{
-          localizableStrings.load(new FileInputStream(getLocalizableStringsFile()));
+          localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
+          localizableStringsMap = new TreeMap(localizableStringsProperties);
         }
         catch(IOException ex){
           ex.printStackTrace();
         }
-
-      }
-      return localizableStrings;
+       }
     }
 
     private File getLocalizableStringsFile(){
@@ -307,7 +318,10 @@ public class IWBundle{
       }
       try{
       System.out.println(localizableStringsFile);
-      this.getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
+
+        getLocalizableStringsProperties().clear();
+        getLocalizableStringsProperties().putAll(localizableStringsMap);
+        getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
       }
       catch(IOException ex){
         ex.printStackTrace();

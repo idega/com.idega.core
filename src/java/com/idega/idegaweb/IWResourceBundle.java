@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import com.idega.jmodule.object.Image;
 import java.io.FileNotFoundException;
 import java.util.MissingResourceException;
+import java.util.TreeMap;
+import java.util.Iterator;
 
 /**
  * Title:        idega Framework
@@ -25,7 +27,8 @@ public class IWResourceBundle extends ResourceBundle {
 
     // ==================privates====================
 
-    private Properties lookup = new Properties();
+    private TreeMap lookup;
+    private Properties properties = new Properties();
     //private Properties lookup;
     private Locale locale;
     private File file;
@@ -44,10 +47,12 @@ public class IWResourceBundle extends ResourceBundle {
         setIWBundleParent(parent);
         setLocale(locale);
         this.file = file;
+
         try{
-          lookup.load(new FileInputStream(file));
-          setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");
-        }
+        //lookup.load(new FileInputStream(file));
+        properties.load(new FileInputStream(file));
+        lookup = new TreeMap(properties);
+        setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");        }
         catch(FileNotFoundException e){
           e.printStackTrace(System.err);
         }
@@ -67,7 +72,9 @@ public class IWResourceBundle extends ResourceBundle {
     public Enumeration getKeys() {
         Enumeration result = null;
         if (parent != null) {
-            final Enumeration myKeys = lookup.keys();
+            //final Enumeration myKeys = lookup.keys();
+            Iterator iter = lookup.keySet().iterator();
+            final Enumeration myKeys = new EnumerationIteratorWrapper(iter);
             final Enumeration parentKeys = parent.getKeys();
 
             result = new Enumeration() {
@@ -94,10 +101,16 @@ public class IWResourceBundle extends ResourceBundle {
 
                 Object temp = null;
             };
-        } else {
-            result = lookup.keys();
         }
+        else{
+          //result = lookup.keys();
+          Iterator iter = lookup.keySet().iterator();
+          result = new EnumerationIteratorWrapper(iter);
+        }
+
+
         return result;
+
     }
 
     public Locale getLocale(){
@@ -110,7 +123,10 @@ public class IWResourceBundle extends ResourceBundle {
 
     public void storeState(){
         try{
-          lookup.store(new FileOutputStream(file),null);
+          properties.clear();
+          properties.putAll(lookup);
+          properties.store(new FileOutputStream(file),null);
+          //lookup.store(new FileOutputStream(file),null);
         }
         catch(FileNotFoundException e){
             e.printStackTrace();
@@ -148,10 +164,11 @@ public class IWResourceBundle extends ResourceBundle {
     }
 
     public void setString(String key,String value){
-      lookup.setProperty(key,value);
-      String string = this.iwBundleParent.getLocalizableStringsProperties().getProperty(key);
+      //lookup.setProperty(key,value);
+      lookup.put(key,value);
+      String string = (String)this.iwBundleParent.getLocalizableStringsMap().get(key);
       if(string==null){
-        this.iwBundleParent.getLocalizableStringsProperties().setProperty(key,value);
+        this.iwBundleParent.getLocalizableStringsMap().put(key,value);
       }
     }
 
@@ -189,6 +206,23 @@ public class IWResourceBundle extends ResourceBundle {
 
     public String getResourcesURL(){
       return resourcesURL;
+    }
+
+
+    private class EnumerationIteratorWrapper implements Enumeration{
+      private Iterator iterator;
+
+      public EnumerationIteratorWrapper(Iterator iter){
+        this.iterator = iter;
+      }
+
+      public boolean hasMoreElements(){
+        return iterator.hasNext();
+      }
+
+      public Object nextElement(){
+        return iterator.next();
+      }
     }
 
 }
