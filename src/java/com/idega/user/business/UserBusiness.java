@@ -42,6 +42,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getUserGroups(com.idega.user.data.User p0,java.lang.String[] p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getAllUsersOrderedByFirstName()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public com.idega.user.data.GroupHome getGroupHome() throws java.rmi.RemoteException;
+ public com.idega.user.business.GroupBusiness getGroupBusiness()throws java.rmi.RemoteException;
  public java.lang.Integer getGenderId(java.lang.String p0)throws java.lang.Exception, java.rmi.RemoteException;
  public java.util.Collection getUserGroupsDirectlyRelated(int p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Phone getUserPhone(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
