@@ -32,6 +32,7 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public java.lang.String getProvince();
  public int getCommuneID();
  public void setCommuneID(int communeId);
+ public boolean isEqualTo(Address address);
  
      /**
      * Gets the street name together with the number

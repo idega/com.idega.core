@@ -249,6 +249,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		}
 		return "";
 	}
+	
+	
 
 	public Integer ejbFindPrimaryUserAddress(int userID) throws FinderException {
 		IDOQuery query = idoQuery();
@@ -296,4 +298,20 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 		return super.idoFindPKsBySQL(query.toString());
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.location.data.Address#isSame(com.idega.core.location.data.Address)
+	 */
+	public boolean isEqualTo(Address address) {
+		if(address!=null){
+			
+			return (this.getStreetName().equalsIgnoreCase(address.getStreetName())
+					&& this.getStreetNumber().equalsIgnoreCase(address.getStreetNumber())
+					&& this.getPostalCode().isEqualTo(address.getPostalCode())
+					&& this.getCountryId()== address.getCountryId());
+		}
+		return false;
+	}
+
 }

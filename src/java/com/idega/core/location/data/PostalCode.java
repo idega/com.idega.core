@@ -13,4 +13,5 @@ public interface PostalCode extends com.idega.data.IDOEntity
  public void setCountryID(int p0);
  public void setName(java.lang.String p0);
  public void setPostalCode(java.lang.String p0);
+ public boolean isEqualTo(PostalCode postal);
 }

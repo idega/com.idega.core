@@ -113,6 +113,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   public int getCountryID(){
     return getIntColumnValue(COLUMN_COUNTRY_ID);
   }
+  
+ 
 
   public Integer ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException,RemoteException{
     Collection codes = idoFindAllIDsByColumnsBySQL(COLUMN_POSTAL_CODE,code, COLUMN_COUNTRY_ID, Integer.toString(countryId));
@@ -180,5 +182,16 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	return this.idoFindPKsByQuery(query);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.location.data.PostalCode#isEqualTo(com.idega.core.location.data.PostalCode)
+	 */
+	public boolean isEqualTo(PostalCode postal) {
+		if(postal!=null){
+			return (this.getPostalCode().equalsIgnoreCase(postal.getPostalCode())
+			&& this.getName().equalsIgnoreCase(postal.getName()));
+		}
+		return false;
+	}
 
 }
