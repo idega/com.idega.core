@@ -11,6 +11,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -24,6 +25,8 @@ public class SmallCalendar extends Block {
 	private IWTimestamp stamp;
 	private IWCalendar cal = new IWCalendar();
 	private ICPage _page;
+	private Image iNextImage;
+	private Image iPreviousImage;
 
 	private boolean useNextAndPreviousLinks = true;
 	private boolean daysAreLinks = false;
@@ -46,6 +49,7 @@ public class SmallCalendar extends Block {
 	
 	private String textStyleClass;
 	private String highlightedTextStyleClass;
+	private String inactiveTextStyleClass;
 	private String headerTextStyleClass;
 	private String dayTextStyleClass;
 	private String dayCellStyle;
@@ -75,6 +79,8 @@ public class SmallCalendar extends Block {
 	public static final String PRM_SETTINGS = "settings";
 
 	public Table T;
+	
+	private int iCellpadding = 2;
 
 	public SmallCalendar() {
 		initialize();
@@ -130,7 +136,13 @@ public class SmallCalendar extends Block {
 		}
 		String sYear = String.valueOf(stamp.getYear());
 		Text tMonth = getHeaderText(sMonth + " " + sYear);
-		Link right = new Link(getLinkText(">"));
+		Link right = null;
+		if (iNextImage != null) {
+			right = new Link(iNextImage);
+		}
+		else {
+			right = new Link(getLinkText(">"));
+		}
 
 		for (int i = 0; i < parameterName.size(); i++) {
 			right.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
@@ -139,7 +151,13 @@ public class SmallCalendar extends Block {
 		this.addNextMonthPrm(right, stamp);
 		right.setTargetObjectInstance(this.getTargetObjectInstance());
 
-		Link left = new Link(getLinkText("<"));
+		Link left = null;
+		if (iPreviousImage != null) {
+			left = new Link(iPreviousImage);
+		}
+		else {
+			left = new Link(getLinkText("<"));
+		}
 		for (int i = 0; i < parameterName.size(); i++) {
 			left.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
 		}
@@ -147,13 +165,17 @@ public class SmallCalendar extends Block {
 		this.addLastMonthPrm(left, stamp);
 		setAsObjectInstanceTarget(left);
 
-		Table T2 = new Table(1, 2);
-		T2.setCellpadding(1);
+		Table T2 = new Table(3, 2);
+		T2.setCellpadding(0);
+		T2.mergeCells(1, 2, 3, 2);
 		T2.setCellspacing(0);
 		T2.setWidth(width);
 		T.setWidth(width);
 		T2.setHeight(height);
 		T.setHeight(height);
+		T2.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
+		T2.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
+		T2.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		
 		if (backgroundStyleClass != null) {
 			T2.setStyleClass(getStyleName(backgroundStyleClass));
@@ -168,12 +190,10 @@ public class SmallCalendar extends Block {
 
 		if (useNextAndPreviousLinks) {
 			T2.add(left, 1, 1);
-			T2.add(Text.getNonBrakingSpace(1), 1, 1);
 		}
-		T2.add(tMonth, 1, 1);
+		T2.add(tMonth, 2, 1);
 		if (useNextAndPreviousLinks) {
-			T2.add(Text.getNonBrakingSpace(1), 1, 1);
-			T2.add(right, 1, 1);
+			T2.add(right, 3, 1);
 		}
 
 		Text t;
@@ -270,19 +290,25 @@ public class SmallCalendar extends Block {
 
 			if (daysAreLinks) {
 				theLink = getLink();
-				theLink.setPresentationObject(t);
+				if (styleClass != null) {
+					theLink = new Link(String.valueOf(n));
+					theLink.setStyleClass(styleClass);
+				}
+				else {
+					theLink.setPresentationObject(t);
+				}
 				if (_page != null) {
 					theLink.setPage(_page);
 				}
 				theLink.addParameter(CalendarParameters.PARAMETER_DAY, n);
 				theLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
 				theLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
-				if (textStyleClass == null) {
+				/*if (textStyleClass == null) {
 					theLink.setFontColor(textColor);
 				} else {
 					theLink.setStyleClass(textStyleClass);
-				}
-				theLink.setFontSize(1);
+				}*/
+				//theLink.setFontSize(1);
 				for (int i = 0; i < parameterName.size(); i++) {
 					theLink.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
 				}
@@ -337,7 +363,7 @@ public class SmallCalendar extends Block {
 	public void initialize() {
 		today = new IWTimestamp();
 		T = new Table();
-		T.setCellpadding(2);
+		T.setCellpadding(iCellpadding);
 		T.setCellspacing(0);
 		T.setWidth(width);
 	}
@@ -444,12 +470,16 @@ public class SmallCalendar extends Block {
 	}
 	
 	private String getDayStyleClass(String dateString) {
+		String dayStyle = null;
 		if (dayStyleClass != null) {
 			if (dayStyleClass.get(dateString) != null) {
-				return (String) dayStyleClass.get(dateString);
+				dayStyle = (String) dayStyleClass.get(dateString);
 			}
 		}
-		return null;
+		if (dayStyle == null) {
+			dayStyle = inactiveTextStyleClass;
+		}
+		return dayStyle;
 	}
 	
 	public String getDayFontColor(String dateString) {
@@ -946,4 +976,17 @@ public class SmallCalendar extends Block {
 		this.selectedBackgroundStyleClass = style;
 	}
 
+	public void setNextImage(Image nextImage) {
+		iNextImage = nextImage;
+	}
+	
+	public void setPreviousImage(Image previousImage) {
+		iPreviousImage = previousImage;
+	}
+	public void setInactiveTextStyleClass(String inactiveTextStyleClass) {
+		this.inactiveTextStyleClass = inactiveTextStyleClass;
+	}
+	public void setCellpadding(int cellpadding) {
+		iCellpadding = cellpadding;
+	}
 }
