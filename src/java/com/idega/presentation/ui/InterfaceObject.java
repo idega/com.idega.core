@@ -524,7 +524,7 @@ public abstract class InterfaceObject extends PresentationObject {
 				getScript().addFunction("changeValue", "function changeValue (input,newValue) {\n	input.value=newValue;\n}");
 			}
 			if (_selectValues) {
-				getScript().addFunction("selectValues", "function selectValues (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].selected=eval(value);\n	\t}\n	else\n	\tinputs.selected=eval(value);\n}");
+				getScript().addFunction("selectValues", "function selectValues (inputs,value) {\n	if (inputs.length > 0) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].selected=eval(value);\n	}\n	}");
 			}
 		}
 		if (_inFocus && hasParentPage()) {
