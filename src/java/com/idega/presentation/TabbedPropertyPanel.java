@@ -61,16 +61,17 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         }
         
         Object  obj = iwc.getSessionAttribute(key+TabbedPropertyPanelAttributeString);
-        if(obj != null && obj instanceof TabbedPropertyPanel){
+        if (obj != null && obj instanceof TabbedPropertyPanel) {
             TabbedPropertyPanel TabPropPanelObj = (TabbedPropertyPanel)obj;
             TabPropPanelObj.justConstructed(false);
             if (reload) {
                 TabPropPanelObj.okClicked = true;
             }
             return TabPropPanelObj;
-        }else{
+        }
+        else {
             TabbedPropertyPanel tempTab;
-            if(panel!=null) {
+            if (panel!=null) {
                 tempTab = panel;
             }
             else {
