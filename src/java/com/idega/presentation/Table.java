@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.13 2002/02/04 10:59:00 eiki Exp $
+ * $Id: Table.java,v 1.14 2002/03/05 18:15:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -59,6 +59,10 @@ public class Table extends PresentationObjectContainer {
   private int lineColspan = 0;
   private int[] lineRows = new int[0];
   private int[] lineCols = new int[0];
+
+
+  private static final String HTML_TR_START="\n<tr>";
+  private static final String HTML_TR_END = "\n</tr>";
 
 
   /**
@@ -861,8 +865,9 @@ public class Table extends PresentationObjectContainer {
   }
 
   protected void printLine(IWContext iwc) throws Exception{
-    println("\n<tr>");
-//    for(int x=1;x<=cols;){
+    //println("\n<tr>");
+    println(this.getRowStartTag(iwc));
+    //    for(int x=1;x<=cols;){
       //println("\n<td "+"height="+this.lineHeight+" colspan="+cols+" "+COLOR_ATTRIBUTE+"="+this.lineColor+" >");
       println("\n<td "+"height=\""+this.lineHeight+((lineColspan > 1)?("\" colspan=\""+lineColspan+"\" "):("\" "))+COLOR_ATTRIBUTE+"=\""+this.lineColor+"\" >");
       //if(!iwc.isOpera()){
@@ -873,7 +878,8 @@ public class Table extends PresentationObjectContainer {
       //}
 
 //    }
-    println("</tr>");
+    //println("</tr>");
+    println(this.getRowEndTag(iwc));
   }
 
   protected void printVerticalLine(IWContext iwc) throws Exception{
@@ -919,7 +925,8 @@ public class Table extends PresentationObjectContainer {
               printLine(iwc);
             }
             for(int y=1;y<=rows;){
-              println("\n<tr>");
+              //println("\n<tr>");
+              println(this.getRowStartTag(iwc));
               for(int x=1;x<=cols;){
 
                 if(this.addLineLeft && x==1){
@@ -968,7 +975,8 @@ public class Table extends PresentationObjectContainer {
                 x++;
               }
 
-              println("\n</tr>");
+              //println("\n</tr>");
+              println(this.getRowEndTag(iwc));
 
               if(this.addLinesBetween && y!=rows){
                 printLine(iwc);
@@ -991,7 +999,8 @@ public class Table extends PresentationObjectContainer {
           else // if merged
           {
             for(int y=1;y<=rows;){
-              println("\n<tr>");
+              //println("\n<tr>");
+              println(this.getRowStartTag(iwc));
               for(int x=1;x<=cols;){
 
                 if(isInMergedCell(x,y)){
@@ -1047,7 +1056,8 @@ public class Table extends PresentationObjectContainer {
               x++;
               }
 
-              println("\n</tr>");
+              println(this.getRowEndTag(iwc));
+             // println("\n</tr>");
               y++;
             }
           }
@@ -1172,7 +1182,7 @@ public boolean isEmpty(int x, int y){
   }
 
 
-  public synchronized Object clone(IWContext iwc, boolean askForPermission) {
+  public Object clone(IWContext iwc, boolean askForPermission) {
     Table obj = null;
 
     try {
@@ -1184,7 +1194,7 @@ public boolean isEmpty(int x, int y){
                           if (this.theObjects[x][y] != null){
                             obj.theObjects[x][y]=(PresentationObjectContainer)((PresentationObjectContainer)this.theObjects[x][y]).clone(iwc,askForPermission); // not _clone(m,a) because moduleObject is cunstructed in table class
                             obj.theObjects[x][y].setParentObject(obj);
-                            obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
+                            //obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
                           }
                   }
           }
@@ -1410,6 +1420,25 @@ public boolean isEmpty(int x, int y){
     lineCols = newLines;
     // done
     lineCols[lineCols.length-1] = column;
+  }
+
+
+  protected String getRowStartTag(IWContext iwc,int numberOfRow){
+    return getRowStartTag(iwc);
+  }
+
+
+  protected String getRowEndTag(IWContext iwc,int numberOfRow){
+    return getRowEndTag(iwc);
+  }
+
+  protected String getRowStartTag(IWContext iwc){
+    return HTML_TR_START;
+  }
+
+
+  protected String getRowEndTag(IWContext iwc){
+    return HTML_TR_END;
   }
 
 }
