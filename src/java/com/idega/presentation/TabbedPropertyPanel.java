@@ -69,15 +69,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
   	collector = new GenericFormCollector();
-  	if (iwc.getSessionAttribute(TAB_STORE_WINDOW) != null) {
-  		boolean success = collector.storeAll(iwc);
-  		if(success){
-  			this.okClicked = true;
-  		}else{
-  			this.okClicked = false;
-  		}
-  		iwc.removeSessionAttribute(TAB_STORE_WINDOW);
-  	}
   	
   	setName(TAB_FORM_NAME);
     frameTable = new Table();
@@ -120,7 +111,13 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
 
   public static TabbedPropertyPanel getInstance(String key, IWContext iwc){
-    Object  obj = iwc.getSessionAttribute(key+TabbedPropertyPanelAttributeString);
+  	if (iwc.getSessionAttribute(TAB_STORE_WINDOW) != null) {
+			new GenericFormCollector().storeAll(iwc);
+			iwc.removeSessionAttribute(TAB_STORE_WINDOW);
+			iwc.removeSessionAttribute(key+TabbedPropertyPanelAttributeString);
+		}
+  	
+  	Object  obj = iwc.getSessionAttribute(key+TabbedPropertyPanelAttributeString);
     if(obj != null && obj instanceof TabbedPropertyPanel){
       TabbedPropertyPanel TabPropPanelObj = (TabbedPropertyPanel)obj;
       TabPropPanelObj.justConstructed(false);
