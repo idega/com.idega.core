@@ -40,6 +40,11 @@ public class GenericGroup extends GenericEntity{
 		return "ic_group";
 	}
 
+        public String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+            return "ic_group_user";
+
+        }
+
 
         public void setDefaultValues(){
           setGroupType(getGroupTypeValue());

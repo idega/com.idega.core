@@ -5,6 +5,8 @@ import com.idega.core.user.data.User;
 import com.idega.util.idegaTimestamp;
 import java.util.List;
 import com.idega.core.data.Email;
+import com.idega.core.data.GenericGroup;
+import com.idega.data.EntityFinder;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -126,6 +128,24 @@ public class UserBusiness {
       if (conn != null){
         com.idega.util.database.ConnectionBroker.freeConnection(conn);
       }
+    }
+  }
+
+  public static List listOfGroups(){
+    try {
+      return EntityFinder.findAll(new GenericGroup());
+    }
+    catch (SQLException ex) {
+      return null;
+    }
+  }
+
+  public static List listOfUserGroups(int iUserId){
+    try {
+      return new User(iUserId).getAllGroups();
+    }
+    catch (SQLException ex) {
+      return null;
     }
   }
 
