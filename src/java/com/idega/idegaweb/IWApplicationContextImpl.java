@@ -88,25 +88,25 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	 * @see com.idega.idegaweb.IWApplicationContext#getDomain()
 	 */	
 	public ICDomain getDomain(){
-		return getDomainByServerURL(null);
+		return getDomainByServerName(null);
 	}
 	
 
-	public ICDomain getDomainByServerURL(String serverUrl) {
+	public ICDomain getDomainByServerName(String serverName) {
 		boolean cachDefaultDomainForThisServerURL = false;
 		try {
-			if(serverUrl!=null && !"".equals(serverUrl)){
-				ICDomain toReturn = (ICDomain)domainMap.get(serverUrl);
+			if(serverName!=null && !"".equals(serverName)){
+				ICDomain toReturn = (ICDomain)domainMap.get(serverName);
 				if(toReturn==null){
 					ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
-					Collection coll = domainHome.findAllDomainsByServerURL(serverUrl);
+					Collection coll = domainHome.findAllDomainsByServerName(serverName);
 					Iterator iter = coll.iterator();
 					if (iter.hasNext()) {
 						toReturn = (ICDomain)iter.next();
-						domainMap.put(serverUrl,toReturn);
+						domainMap.put(serverName,toReturn);
 						return toReturn;
 					} else {
-						System.out.println("Couldn't find domain record for serverURL : "+ serverUrl);
+						System.out.println("Couldn't find domain record for ServerName : "+ serverName);
 						cachDefaultDomainForThisServerURL=true;
 					}
 				} else {
@@ -117,7 +117,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 			e1.printStackTrace();
 		} catch (FinderException e1) {
 			//e1.printStackTrace();
-			System.out.println("Couldn't find domain record for serverURL : "+ serverUrl);
+			System.out.println("Couldn't find domain record for ServerName : "+ serverName);
 			cachDefaultDomainForThisServerURL=true;
 		}
 		
@@ -136,7 +136,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 			}
 			
 			if(cachDefaultDomainForThisServerURL){
-				domainMap.put(serverUrl,domain);
+				domainMap.put(serverName,domain);
 			}
 			
 			return domain;

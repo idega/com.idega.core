@@ -840,8 +840,8 @@ implements IWUserContext, IWApplicationContext {
 		return getIWMainApplication().getIWApplicationContext().getDomain();
 	}
 	
-	public ICDomain getDomainByServerURL(String serverURL) {
-		return getIWMainApplication().getIWApplicationContext().getDomainByServerURL(serverURL);
+	public ICDomain getDomainByServerName(String serverName) {
+		return getIWMainApplication().getIWApplicationContext().getDomainByServerName(serverName);
 	}
 	
 	public void forwardToIBPage(Page fromPage, ICPage page){
