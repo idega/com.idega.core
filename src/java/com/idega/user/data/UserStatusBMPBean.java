@@ -25,6 +25,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	private static final String STATUS_ID = "status_id";
 	private static final String IC_USER = "ic_user_id";
 	private static final String IC_GROUP = "ic_group_id";
+	private static final String DATE_FROM = "date_from";
+	private static final String DATE_TO = "date_to";
 
 	public UserStatusBMPBean() {
 		super();
@@ -46,6 +48,9 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		addManyToOneRelationship(STATUS_ID,Status.class);
 		addManyToOneRelationship(IC_USER,User.class);
 		addManyToOneRelationship(IC_GROUP,Group.class);
+		
+		addAttribute(DATE_FROM,"Date from",true,true,java.sql.Date.class);
+		addAttribute(DATE_TO,"Date to",true,true,java.sql.Date.class);
 	}
 
 	public int getStatusId() {
