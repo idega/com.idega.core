@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.faces.context.FacesContext;
+import com.idega.data.IDONoDatastoreError;
 
 
 /**
@@ -230,15 +231,19 @@ public String getFunction(String functionName){
 public void print(IWContext iwc)throws Exception{
   if (doPrint(iwc)){
     if (getMarkupLanguage().equals("HTML")){
-      com.idega.core.builder.data.ICDomain d = iwc.getDomain();
-
-      if (d.getURL() != null) {
-	String src = getMarkupAttribute("src");
-	if (src != null && src.startsWith("/")) {
-	  setMarkupAttribute("src",d.getURL()+src);
-	}
-      }
-
+    	
+    		try{
+		      com.idega.core.builder.data.ICDomain d = iwc.getDomain();
+		      if (d.getURL() != null) {
+		      	String src = getMarkupAttribute("src");
+		      	if (src != null && src.startsWith("/")) {
+		      		setMarkupAttribute("src",d.getURL()+src);
+		      	}
+		      }
+    		}
+    		catch(IDONoDatastoreError de){
+    			//de.printStackTrace();
+    		}
 			//if (getInterfaceStyle().equals("something")){
 			//}
 			//else{

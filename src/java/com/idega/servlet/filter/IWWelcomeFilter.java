@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.6 2005/01/14 00:05:41 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.7 2005/01/14 01:47:56 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
+import com.idega.data.IDONoDatastoreError;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 
@@ -28,10 +29,10 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/01/14 00:05:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/14 01:47:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -117,6 +118,11 @@ public class IWWelcomeFilter extends BaseFilter {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		catch (IDONoDatastoreError de) {
+			if(!iwma.isInDatabaseLessMode()){
+				de.printStackTrace();
+			}
 		}
 	}
 

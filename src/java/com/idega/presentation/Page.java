@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.134 2005/01/12 10:46:24 gimmi Exp $
+ *  $Id: Page.java,v 1.135 2005/01/14 01:47:56 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -28,6 +28,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
+import com.idega.data.IDONoDatastoreError;
 import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.GlobalIncludeManager;
 import com.idega.idegaweb.IWConstants;
@@ -254,20 +255,25 @@ public class Page extends PresentationObjectContainer {
 			StringBuffer buffer = new StringBuffer();
 			//Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-			ICDomain d = iwc.getDomain();
-
-			if (d.getURL() != null) {
-				if (src.startsWith("/")) {
-					String protocol;
-					/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
-					if (iwc.getRequest().isSecure()) {
-						protocol = "https://";
+			try{
+				ICDomain d = iwc.getDomain();
+	
+				if (d.getURL() != null) {
+					if (src.startsWith("/")) {
+						String protocol;
+						/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
+						if (iwc.getRequest().isSecure()) {
+							protocol = "https://";
+						}
+						else {
+							protocol = "http://";
+						}
+						src = protocol + d.getURL() + src;
 					}
-					else {
-						protocol = "http://";
-					}
-					src = protocol + d.getURL() + src;
 				}
+			}
+			catch(IDONoDatastoreError de){
+				//de.printStackTrace();
 			}
 			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 			buffer.append("</script>");
@@ -638,10 +644,14 @@ public class Page extends PresentationObjectContainer {
 			}
 			
 		}
-		catch (RemoteException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 		}
+		catch (IDONoDatastoreError de) {
+			//de.printStackTrace();
+		}
 
+		
 		if (node != null) {
 			String locName = node.getNodeName(iwc.getCurrentLocale());
 			if (locName != null && !locName.equals("")) {
