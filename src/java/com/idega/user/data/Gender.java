@@ -1,0 +1,12 @@
+package com.idega.user.data;
+
+import javax.ejb.*;
+
+public interface Gender extends com.idega.data.IDOLegacyEntity
+{
+ public java.lang.String getDescription();
+ public java.lang.String getName();
+ public com.idega.user.data.Gender getStaticInstance();
+ public void setDescription(java.lang.String p0);
+ public void setName(java.lang.String p0);
+}

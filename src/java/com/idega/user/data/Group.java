@@ -1,0 +1,34 @@
+package com.idega.user.data;
+
+import javax.ejb.*;
+
+public interface Group extends com.idega.core.data.GenericGroup
+{
+ public void addGroup(int p0)throws java.sql.SQLException;
+ public void addGroup(com.idega.user.data.Group p0)throws java.sql.SQLException;
+ public void addUser(com.idega.user.data.User p0)throws java.sql.SQLException;
+ public boolean equals(com.idega.user.data.Group p0);
+ public boolean equals(com.idega.data.IDOLegacyEntity p0);
+// public com.idega.user.data.Group findGroup(java.lang.String p0)throws java.sql.SQLException;
+// public com.idega.user.data.Group[] getAllGroupsContained()throws java.sql.SQLException;
+// public com.idega.user.data.Group[] getAllGroupsContainingThis()throws java.sql.SQLException;
+ public java.util.List getAllGroupsContainingUser(com.idega.user.data.User p0)throws java.sql.SQLException;
+ public java.lang.String getDescription();
+ public java.lang.String getExtraInfo();
+ public java.lang.String getGroupType();
+ public java.lang.String getGroupTypeValue();
+ public java.util.List getGroupsContained(java.lang.String[] p0,boolean p1)throws java.sql.SQLException;
+ public java.util.List getListOfAllGroupsContained()throws java.sql.SQLException;
+ public java.util.List getListOfAllGroupsContaining(int p0)throws java.sql.SQLException;
+ public java.util.List getListOfAllGroupsContainingThis()throws java.sql.SQLException;
+ public java.lang.String getName();
+ public void removeGroup(com.idega.user.data.Group p0)throws java.sql.SQLException;
+ public void removeGroup()throws java.sql.SQLException;
+ public void removeGroup(int p0,boolean p1)throws java.sql.SQLException;
+ public void removeUser(com.idega.user.data.User p0)throws java.sql.SQLException;
+ public void setDefaultValues();
+ public void setDescription(java.lang.String p0);
+ public void setExtraInfo(java.lang.String p0);
+ public void setGroupType(java.lang.String p0);
+ public void setName(java.lang.String p0);
+}
