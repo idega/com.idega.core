@@ -27,6 +27,7 @@ public class IDOQuery {
 	private static final String STAR = " * ";
 	private static final String DISTINCT = " DISTINCT ";
 	private static final String ORDER_BY = " ORDER BY ";
+	private static final String GROUP_BY = " GROUP BY ";
 	private static final String WHERE = " WHERE ";
 	private static final String LIKE = " LIKE ";
 	private static final String NOT_LIKE = " NOT LIKE ";
@@ -56,6 +57,7 @@ public class IDOQuery {
 	private static final String AND = " AND ";
 	private static final String OR = " OR ";
 	private static final String IS_NULL = " IS NULL ";
+	private static final String IS_NOT_NULL = " IS NOT NULL ";
 	private static final String ASCENDING = " ASC ";
 	private static final String DESCENDING = " DESC ";
 	private static final String TRUE = "Y";
@@ -588,6 +590,12 @@ public class IDOQuery {
 		this.append(columnName);
 		return this;
 	}
+	
+	public IDOQuery appendGroupBy(String columnName) {
+		this.append(GROUP_BY);
+		this.append(columnName);
+		return this;
+	}
 
 	public IDOQuery appendOrderBy(String[] columnNames) {
 		this.append(ORDER_BY);
@@ -1001,6 +1009,26 @@ public class IDOQuery {
 		this.append(IS_NULL);
 		return this;
 	}
+	
+	public IDOQuery appendAndIsNotNull(String columnName) {
+		this.appendAnd();
+		this.append(columnName);
+		this.append(IS_NOT_NULL);
+		return this;
+	}
+
+	public IDOQuery appendOrIsNotNull(String columnName) {
+		this.appendOr();
+		this.append(columnName);
+		this.append(IS_NOT_NULL);
+		return this;
+	}
+	
+	public IDOQuery appendIsNotNull() {
+		this.append(IS_NOT_NULL);
+		return this;
+	}
+	
 	
 	/**
 	 * Appends a condition where date column specified is between the provided dates

@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.category.data.ICInformationCategory;
 import com.idega.core.category.data.ICInformationCategoryTranslation;
 import com.idega.core.component.data.ICObjectInstance;
@@ -15,6 +16,7 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.block.business.FolderBlockBusiness;
+import com.idega.idegaweb.block.business.FolderBlockBusinessBean;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -463,7 +465,7 @@ public class FolderBlockCategoryWindow extends IWAdminWindow {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		core = iwc.getApplication().getCoreBundle();
-		_folderblockBusiness = FolderBlockBusiness.getInstance(); //(FolderBlockBusiness)IBOLookup.getServiceInstance(iwc, FolderBlockBusiness.class);
+		_folderblockBusiness = (FolderBlockBusiness)IBOLookup.getServiceInstance(iwc, FolderBlockBusiness.class);
 		String title = iwrb.getLocalizedString("ic_category_editor", "Category Editor");
 		tree_image_M = core.getImage("/treeviewer/ui/win/treeviewer_M_line.gif");
 		tree_image_L = core.getImage("/treeviewer/ui/win/treeviewer_L_line.gif");

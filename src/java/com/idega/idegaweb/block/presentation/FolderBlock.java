@@ -1,13 +1,18 @@
 package com.idega.idegaweb.block.presentation;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.category.data.InformationCategory;
 import com.idega.core.category.data.InformationFolder;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.idegaweb.block.business.FolderBlockBusiness;
+import com.idega.idegaweb.block.business.FolderBlockBusinessBean;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
@@ -16,18 +21,18 @@ import com.idega.presentation.text.Link;
  *  <p>
  *  Title: idegaWeb</p> <p>
  *  Description: </p> <p>
- *  Copyright: Copyright (c) 2001</p> <p>
+ *  Copyright: Copyright (c) 2002</p> <p>
  *  Company: idega</p>
  *
- *@author     <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ *@author     <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  *@created    15. mars 2002
  *@version    1.0
  */
 public class FolderBlock extends Block {
 
 	private boolean _useLocalizedFolders = true;
-	private InformationFolder _workingFolder = null;
-	private InformationFolder[] _viewFolders = null;
+	private InformationFolder _workFolder = null;
+	private InformationFolder[] _visibleFolders = null;
 	private InformationCategory[] _categoriesForInstance = null;
 	private boolean _autocreate = true;
 	private String _contentLocaleIdentifier = null;
@@ -44,12 +49,13 @@ public class FolderBlock extends Block {
 	
 
 	/**
-	 *  Gets the workingFolderId attribute of the FolderBlock object
+	 *  Gets the workFolderId attribute of the FolderBlock object
 	 *
 	 *@return    The workingFolderId value
+	 *@deprecated rather use getWorkFolder()
 	 */
-	public int getWorkingFolderId() {
-		return _workingFolder.getID();
+	public int getWorkFolderID() {
+		return _workFolder.getID();
 	}
 
 	/**
@@ -57,8 +63,8 @@ public class FolderBlock extends Block {
 	 *
 	 *@return    The workingFolder value
 	 */
-	public InformationFolder getWorkingFolder() {
-		return _workingFolder;
+	public InformationFolder getWorkFolder() {
+		return _workFolder;
 	}
 
 	/*
@@ -77,12 +83,12 @@ public class FolderBlock extends Block {
 	}
 
 	/**
-	 *  Sets the folder attribute of the FolderBlock object
+	 *  Sets the work folder attribute of the FolderBlock object
 	 *
-	 *@param  folder  The new folder value
+	 *@param  folder  The new work folder value
 	 */
-	public void setFolder(InformationFolder folder) {
-		_workingFolder = folder;
+	public void setWorkFolder(InformationFolder folder) {
+		_workFolder = folder;
 	}
 
 	/**
@@ -127,7 +133,7 @@ public class FolderBlock extends Block {
 	 */
 	public void _main(IWContext iwc) throws Exception {
 		if (getICObjectInstanceID() > 0) {
-			FolderBlockBusiness business = FolderBlockBusiness.getInstance();
+			FolderBlockBusiness business = (FolderBlockBusiness) IBOLookup.getServiceInstance(iwc,FolderBlockBusiness.class);
 			int localeId = -1;
 			if (getContentLocaleIdentifier() != null) {
 				ICLocale locale = ICLocaleBusiness.getICLocale(getContentLocaleIdentifier());
@@ -142,9 +148,9 @@ public class FolderBlock extends Block {
 			InformationFolder folder = business.getInstanceWorkeFolder(getICObjectInstanceID(), getICObjectID(), localeId, _autocreate);
 			if (folder != null) {
 				if(_useLocalizedFolders){
-					setFolder(folder);
+					setWorkFolder(folder);
 				} else {
-					setFolder(folder.getParent());
+					setWorkFolder(folder.getParent());
 				}
 				
 			}
@@ -174,8 +180,8 @@ public class FolderBlock extends Block {
 		FolderBlock obj = null;
 		try {
 			obj = (FolderBlock)super.clone();
-			obj._workingFolder = this._workingFolder;
-			obj._viewFolders = this._viewFolders;
+			obj._workFolder = this._workFolder;
+			obj._visibleFolders = this._visibleFolders;
 			obj._categoriesForInstance = this._categoriesForInstance;
 			obj._autocreate = this._autocreate;
 		} catch (Exception ex) {
@@ -185,7 +191,30 @@ public class FolderBlock extends Block {
 	}
 
 	public boolean copyBlock(int newInstanceID) {
-		return FolderBlockBusiness.getInstance().copyCategoryAttachments(this.getICObjectInstanceID(), newInstanceID);
+		try {
+			return ((FolderBlockBusiness)IBOLookup.getServiceInstance(getIWApplicationContext(),FolderBlockBusiness.class)).copyCategoryAttachments(this.getICObjectInstanceID(), newInstanceID);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+			return false;
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean deleteBlock(int ICObjectInstanceId){
+		try {
+			return ((FolderBlockBusiness)IBOLookup.getServiceInstance(getIWApplicationContext(),FolderBlockBusiness.class)).detachWorkfolderFromObjectInstance(this.getICObjectInstance());
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+			return false;
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 
@@ -197,7 +226,7 @@ public class FolderBlock extends Block {
 		//L.addParameter(FolderBlockCategoryWindow.prmCategoryId,getCategoryId());
 		L.addParameter(FolderBlockCategoryWindow.prmObjInstId,getICObjectInstanceID());
 		L.addParameter(FolderBlockCategoryWindow.prmObjId,getICObjectID());
-		L.addParameter(FolderBlockCategoryWindow.prmWorkingFolder,this.getWorkingFolderId());
+		L.addParameter(FolderBlockCategoryWindow.prmWorkingFolder,this.getWorkFolderID());
 //		if(getMultible()) {
 			L.addParameter(FolderBlockCategoryWindow.prmMulti,"true");
 //		}
