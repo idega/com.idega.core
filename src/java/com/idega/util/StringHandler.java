@@ -115,9 +115,9 @@ public class StringHandler {
 			}
 			public void remove() {
 				/**
-				
+
 				 * Does Nothing
-				
+
 				 */
 			}
 		};
@@ -140,26 +140,63 @@ public class StringHandler {
 		 * @todo: Finish implementation
 		 */
 		switch (c) {
-			case '…' :
-				return 'O';
-			case 'š' :
-				return 'o';
-			case 'ƒ' :
+			case 'Ä' :
+				return 'A';
+			case 'ä' :
+				return 'a';
+			case 'Å' :
+				return 'A';
+			case 'å' :
+				return 'a';
+			case 'Á' :
+				return 'A';
+			case 'á' :
+				return 'a';
+			case 'É' :
 				return 'E';
-			case '' :
+			case 'é' :
 				return 'e';
-			case 'Š' :
-				return 'a';
-			case '€' :
-				return 'A';
-			case '' :
-				return 'A';
-			case 'Œ' :
-				return 'a';
-			case 'ç' :
-				return 'A';
-			case '‡' :
-				return 'a';
+			case 'Ë' :
+				return 'E';
+			case 'ë' :
+				return 'e';
+			case 'Ğ' :
+				return 'D';
+			case 'ğ' :
+				return 'd';
+			case 'Í' :
+				return 'I';
+			case 'í' :
+				return 'i';
+			case 'Ï' :
+				return 'I';
+			case 'ï' :
+				return 'i';
+			case 'Ö' :
+				return 'O';
+			case 'ö' :
+				return 'o';
+			case 'Ó' :
+				return 'O';
+			case 'ó' :
+				return 'o';
+			case 'Ü' :
+				return 'U';
+			case 'ü' :
+				return 'u';
+			case 'Ú' :
+				return 'U';
+			case 'ú' :
+				return 'u';
+			case 'İ' :
+				return 'Y';
+			case 'ı' :
+				return 'y';
+			case 'Ş' :
+				return 'T';
+			case 'ş' :
+				return 't';
+
 		}
 		return c;
 	}
