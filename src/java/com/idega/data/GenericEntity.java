@@ -3189,7 +3189,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
 	 */
 	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
-		try {
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		return idoGetRelatedEntities(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
+		/*try {
 			//return EntityFinder.getInstance().findRelated((IDOLegacyEntity)this, returningEntityInterfaceClass);
 
 			IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
@@ -3211,7 +3213,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			Connection conn = null;
 			Statement Stmt = null;
 			//Vector vector = new Vector();
-			Vector vector = null;
+			Vector vector = null;*/
 			/*String tableToSelectFrom = "";
 			if (returningEntity.getTableName().endsWith("_")){
 				tableToSelectFrom = returningEntity.getTableName()+fromEntity.getTableName();
@@ -3219,7 +3221,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			else{
 				tableToSelectFrom = returningEntity.getTableName()+"_"+fromEntity.getTableName();
 			}*/
-
+/*
 			try {
 				conn = this.getConnection();
 				Stmt = conn.createStatement();
@@ -3266,7 +3268,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		} catch (Exception e) {
 			throw new IDORelationshipException(e, this);
-		}
+		}*/
 	}
 	/**
 	 * Returns a collection of returningEntity instances
