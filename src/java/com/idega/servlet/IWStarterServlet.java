@@ -146,6 +146,10 @@ public class IWStarterServlet extends GenericServlet
             if(accControlType!=null){
                 com.idega.presentation.Block.usingNewAcessControlSystem=true;
             }
+            String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
+            if(usingEvent!=null && !"false".equalsIgnoreCase(usingEvent)){
+                com.idega.presentation.text.Link.usingEventSystem=true;
+            }
             String poolType = application.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
             if(poolType!=null){
               if(poolType.equalsIgnoreCase("poolman")){

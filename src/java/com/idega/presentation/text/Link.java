@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.40 2002/01/11 17:19:34 tryggvil Exp $
+ * $Id: Link.java,v 1.41 2002/01/15 16:08:30 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -96,6 +96,8 @@ public class Link extends Text {
 
 
   private final static String DEFAULT_TEXT_STRING = "No text";
+
+  public static boolean usingEventSystem = false;
 
   /**
    *
@@ -444,7 +446,7 @@ public class Link extends Text {
 
   public boolean isParameterSet(String prmName){
     if(_parameterString != null){
-      if(!(prmName != null && prmName.endsWith(""))){
+      if(!(prmName != null && !prmName.equals(""))){
         return true;
       }
       String prmString = _parameterString.toString();
@@ -1182,11 +1184,15 @@ public class Link extends Text {
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
-    /*
-    if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
+    if(usingEventSystem){
+    //if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
+      this.removeParameter(BuilderLogic.PRM_HISTORY_ID);
       this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
+      //this.addParameter(BuilderLogic.PRM_HISTORY_ID,"1000");
+    //}
     }
-    */
+
+
     if (_maintainBuilderParameters) {
       addTheMaintainedBuilderParameters(iwc);
     }
@@ -1696,8 +1702,14 @@ public class Link extends Text {
     if(listenerInstances == null){
       listenerInstances = new Vector();
     }
-    if(!listenerInstances.contains(page_instID)){
-      listenerInstances.add(page_instID);
+    if(page_instID != null){
+      StringTokenizer token = new StringTokenizer(page_instID,",",false);
+      while(token.hasMoreTokens()){
+        String pointer = token.nextToken();
+        if(!listenerInstances.contains(pointer)){
+          listenerInstances.add(pointer);
+        }
+      }
     }
   }
 
@@ -1732,7 +1744,7 @@ public class Link extends Text {
 
   public void removeParameter(String prmName){
     if(_parameterString != null){
-      if (!(prmName != null && prmName.endsWith(""))){
+      if (!(prmName != null && !prmName.equals(""))){
         return;
       }
 
@@ -1749,17 +1761,26 @@ public class Link extends Text {
           newBuffer.append("&");
         }
         StringTokenizer token = new StringTokenizer(prmString,"&",false);
+        boolean firstToken = true;
         while (token.hasMoreTokens()) {
           String st = token.nextToken();
           StringTokenizer token2 = new StringTokenizer(st,"=",false);
           if (token2.hasMoreTokens()) {
             String name = token2.nextToken();
             String value = token2.nextToken();
-            if (!name.equals(prmName))
-              newBuffer.append(name + "=" + value);
+            if (!name.equals(prmName)) {
+              if(!firstToken){
+                newBuffer.append("&");
+              }
+              newBuffer.append(name);
+              newBuffer.append("=");
+              newBuffer.append(value);
+            }
           }
-          else
+          /*else {
             newBuffer.append("&" + st);
+          }*/
+          firstToken = false;
         }
       }
       _parameterString = newBuffer;
