@@ -1,5 +1,5 @@
 /*
- * $Id: IWProperty.java,v 1.6 2001/12/03 16:20:17 palli Exp $
+ * $Id: IWProperty.java,v 1.7 2001/12/17 11:12:59 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -302,7 +302,6 @@ public class IWProperty{
   }
 
   static void addProperty(String key, Object value,String type,IWPropertyList plist) {
-  System.out.println("Adding property");
     XMLElement keyElement = createKeyElement(plist);
     addNewProperty(keyElement,key,value,type);
   }
