@@ -169,5 +169,8 @@ public class IDOLookup extends IBOLookup{
   }
 
 
+  public IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass)throws RemoteException{
+    return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
+  }
 
 }

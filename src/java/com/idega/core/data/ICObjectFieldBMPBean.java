@@ -19,7 +19,7 @@ public class ICObjectFieldBMPBean extends GenericEntity {
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
     addAttribute("FIELD_NAME","Description",String.class);
-    this.addManyToOneRelationship("IC_OBBJECT_ID",ICObject.class);
+    this.addManyToOneRelationship("IC_OBJECT_ID",ICObject.class);
     addAttribute(FIELD_IDENTIFIER,"Name",String.class);
     addAttribute(FIELD_METHOD,"Method",String.class);
   }

@@ -3429,4 +3429,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       throw new IDOCreateException(sqle);
     }
   }
+
+  public IDOEntityDefinition getEntityDefinition(){
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
 }

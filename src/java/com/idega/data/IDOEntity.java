@@ -22,5 +22,5 @@ public interface IDOEntity extends EJBObject{
   */
   public void store() throws IDOStoreException,RemoteException;
   public void remove() throws javax.ejb.RemoveException,RemoteException;
-
+  public IDOEntityDefinition getEntityDefinition() throws RemoteException;
 }
