@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.26 2003/09/11 16:33:19 aron Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.27 2003/10/14 11:22:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -403,8 +403,8 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		  //System.err.println(query.toString());
 		  //int count = entity.getNumberOfRecords(query.toString());
 		  //System.err.println("count was "+count);
-		  Object obj = executeQuery(dataSourceName,query.toString());
-		  return obj !=null;
+		  Integer obj = new Integer(executeQuery(dataSourceName,query.toString()).toString());
+		  return obj.intValue() > 0;
 	  }
 	  catch(Exception e){
 		  //e.printStackTrace();
