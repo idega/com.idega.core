@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.87 2004/05/07 14:55:43 gummi Exp $
+ * $Id: PresentationObject.java,v 1.88 2004/05/08 14:43:08 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -129,6 +129,7 @@ implements Cloneable{//,UIComponent{
 	private TextStyler _styler;
 	private String _objTemplateID = null;
 	private PresentationObject _templateObject =null;
+
 	/**
 	 * Default constructor
 	 */
@@ -2085,16 +2086,33 @@ implements Cloneable{//,UIComponent{
 	 	return false;
 	 }
 
+
+	 //END STANDARD LOGGING METHODS
 	 
-	 public Object getOwnerGroup(IWUserContext iwuc) {
+	 //METHODS OF DPT PAGES
+	 /**
+	  * @return Returns the DPT page relation group 
+	  * @see com.idega.presentation.Page#getDPTPageRelationGroup(IWUserContext)
+	  */
+	 public Object getDPTPageRelationGroup(IWUserContext iwuc) {
 	 	Page parentPage = getParentPage();
 	 	if(parentPage!=null) {
-	 		return parentPage.getOwnerGroup(iwuc);
+	 		return parentPage.getDPTPageRelationGroup(iwuc);
 	 	}
 	 	return null;
 	 }
+	 
+	 public void setCurrentUserHasRelationToContainingDPTPage(Boolean value) {
+	 	getParentPage().setCurrentUserHasRelationToContainingDPTPage(value);
+	 }
+	 
+	 /**
+	  * 
+	  * @return returns null if it has not been checked and set yet. It is set in the Accesscontrol class.
+	  */
+	 public Boolean hasCurrentUserRelationToContainingDPTPage() {
+	 	return getParentPage().hasCurrentUserRelationToContainingDPTPage();
+	 }
 
-
-	 //END STANDARD LOGGING METHODS
-
+	 //METHODS FOR DPT PAGES END
 }

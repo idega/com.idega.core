@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.105 2004/05/07 14:55:44 gummi Exp $
+ *  $Id: Page.java,v 1.106 2004/05/08 14:43:08 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -135,6 +135,13 @@ public class Page extends PresentationObjectContainer {
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
 	
+	/**
+	 * The variable _currentUserHasRelationToContainingDPTPage is set as null in the clone method 
+	 * because it should be set ones each time a DPT page is printed out.  It is used to speed up 
+	 * accesscontroling so its only necessary to go ones through the users groups for eash page rendering
+	 * to see if one of them matches the group attached to the DPT page tree (or root page).
+	 */
+	private Boolean _currentUserHasRelationToContainingDPTPage = null;
 	private Object dptOwnerGroup = null;
 
 	/**
@@ -996,6 +1003,7 @@ public class Page extends PresentationObjectContainer {
 			if (_styleDefinitions != null)
 				obj._styleDefinitions = _styleDefinitions;
 			obj.dptOwnerGroup=dptOwnerGroup;
+			_currentUserHasRelationToContainingDPTPage=null;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
@@ -1667,7 +1675,16 @@ public class Page extends PresentationObjectContainer {
 		//<link rel="shortcut icon" href="/favicon.ico">
 	}
 
-	 public Object getOwnerGroup(IWUserContext iwuc) {
+	 
+	 //METHODS FOR DPT PAGES
+	 /**
+	  * If a user is in the returned group, then he is elidgable to get the permissions on this page as they are set in the template.
+	  * To get inherited permission for object on a DPT page one has to have permission for the object in the template, just like 
+	  * on ordinary pages, and also have a relation to the group representing the current instance of the generated DPT page tree 
+	  * as stored in the com.idega.builder.dynamicpagetrigger.data.PageLink and returned by this method.
+	  * @return Returns the DPT page relation group 
+	  */
+	public Object getDPTPageRelationGroup(IWUserContext iwuc) {
 	 	if(dptOwnerGroup == null && getDPTRootPageID()!=-1) {
 	 		try {
 				Group gr = ((DPTTriggerBusiness)IBOLookup.getServiceInstance(iwuc.getApplicationContext(),DPTTriggerBusiness.class)).getOwnerGroupFromRootPageID(getDPTRootPageID());
@@ -1682,5 +1699,19 @@ public class Page extends PresentationObjectContainer {
 	 	}
 	 	return dptOwnerGroup;
 	 }
+	 
+	 public void setCurrentUserHasRelationToContainingDPTPage(Boolean value) {
+	 	_currentUserHasRelationToContainingDPTPage = value;
+	 }
+	 
+	 /**
+	  * 
+	  * @return returns null if it has not been checked and set yet. It is set in the Accesscontrol class.
+	  */
+	 public Boolean hasCurrentUserRelationToContainingDPTPage() {
+	 	return _currentUserHasRelationToContainingDPTPage;
+	 }
+
+	 //METHODS FOR DPT PAGES END
 	
 }
