@@ -21,13 +21,13 @@ import javax.ejb.*;
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation{
 
 
-  private static String TABLE_NAME="IC_GROUP_RELATION";
-  private static String GROUP_ID_COLUMN="IC_GROUP_ID";
-  private static String RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
-  private static String RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE";
-  private static String STATUS_COLUMN="GROUP_RELATION_STATUS";
-  private static String INITIATION_DATE_COLUMN="INITIATION_DATE";
-  private static String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+	private static final String  TABLE_NAME="IC_GROUP_RELATION";
+	private static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
+	private static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
+	private static final String  RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE";
+	private static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
+	private static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
+	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";

@@ -15,13 +15,13 @@ import java.sql.Date;
 
 public class GroupEventBMPBean extends GenericEntity implements GroupEvent{
 
-  private static String TABLE_NAME="IC_GROUP_EVENT";
-  private static String GROUP_ID_COLUMN="IC_GROUP_ID";
-  private static String EVENT_TYPE_COLUMN="EVENT_TYPE";
-  private static String DATE_OCCURED= "DATE_OCCURED";
-  private static String DATE_REGISTERED = "DATE_REGISTERED";
-  private static String EVENT_DESCRIPTION = "EVENT_DESCRIPTION";
-  private static String REGISTERED_BY_GROUP = "REGISTERED_BY_GROUP_ID";
+  private static final String TABLE_NAME="IC_GROUP_EVENT";
+	private static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
+	private static final String  EVENT_TYPE_COLUMN="EVENT_TYPE";
+	private static final String  DATE_OCCURED= "DATE_OCCURED";
+	private static final String  DATE_REGISTERED = "DATE_REGISTERED";
+	private static final String  EVENT_DESCRIPTION = "EVENT_DESCRIPTION";
+	private static final String  REGISTERED_BY_GROUP = "REGISTERED_BY_GROUP_ID";
 
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());

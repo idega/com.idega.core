@@ -17,9 +17,9 @@ import com.idega.data.*;
 
 public class GroupDomainRelationTypeBMPBean extends GenericEntity implements GroupDomainRelationType{
 
-  private static String TABLE_NAME="IC_GROUP_DOMAIN_REL_TYPE";
-  private static String TYPE_COLUMN="RELATION_TYPE";
-  private static String DESCRIPTION_COLUMN="DESCRIPTION";
+	private static final String  TABLE_NAME="IC_GROUP_DOMAIN_REL_TYPE";
+	private static final String  TYPE_COLUMN="RELATION_TYPE";
+	private static final String  DESCRIPTION_COLUMN="DESCRIPTION";
 
   private static final String RELATION_TYPE_TOP_NODE = "TOP_NODE";
 //  private static final String RELATION_TYPE_CREATION_LOCATION = "CREATION_LOCATION";

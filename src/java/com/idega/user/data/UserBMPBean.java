@@ -42,7 +42,7 @@ import javax.ejb.FinderException;
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
 	private static String sClassName = User.class.getName();
-	static String USER_GROUP_TYPE="ic_user_representative";
+	static final String USER_GROUP_TYPE="ic_user_representative";
 	
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
