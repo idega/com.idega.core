@@ -19,7 +19,10 @@ public static String RELATIVE = "relative";
 public static String ABSOLUTE = "absolute";
 public static String DIV = "div";
 public static String SPAN = "span";
+public static String LEFT = "left";
+public static String TOP = "top";
 
+String align;
 String onMouseOut;
 String absoluteOrRelative;
 String layerType;
@@ -48,15 +51,23 @@ public String getAttributeString(){
 
 
 
-public void setLeftPosition(int xpos){
-  setAttribute("left",Integer.toString(xpos)+"px");
+public void setLeftPosition(String xpos){
+  setAttribute("left",xpos+"px");
   if(absoluteOrRelative==null) setAttribute("position",ABSOLUTE);
 }
 
+public void setLeftPosition(int xpos){
+  setLeftPosition(String.valueOf(xpos));
+}
+
+
+public void setTopPosition(String ypos){
+  setAttribute("top",ypos+"px");
+  if(absoluteOrRelative==null) setAttribute("position",ABSOLUTE);
+}
 
 public void setTopPosition(int ypos){
-  setAttribute("top",Integer.toString(ypos)+"px");
-  if(absoluteOrRelative==null) setAttribute("position",ABSOLUTE);
+  setTopPosition(String.valueOf(ypos));
 }
 
 
@@ -130,20 +141,21 @@ private String getOnMouseOut() {
   return "";
 }
 
-
 public void print(IWContext iwc) throws Exception{
   initVariables(iwc);
   if( doPrint(iwc)){
           if (getLanguage().equals("HTML")){
 
-                  //if (getInterfaceStyle().equals("something")){
-                  //}
-                  //else{
-                          println("<"+layerType+" id=\""+getID()+"\" style=\""+getAttributeString()+"\" "+getOnMouseOut()+">");
+            boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
-                          super.print(iwc);
-
-                          println("\n</"+layerType+">");
+            print("<"+layerType+" id=\""+getID()+"\"");
+            if(alignSet){
+              print(" align=\""+getHorizontalAlignment()+"\" ");
+              removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+            }
+            println("style=\""+getAttributeString()+"\" "+getOnMouseOut()+">");
+            super.print(iwc);
+            println("\n</"+layerType+">");
 
           }//end if (getLanguage(...
   }
