@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.70 2004/08/04 17:02:11 anna Exp $
+ * $Id: Table.java,v 1.71 2004/08/08 21:11:01 laddi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -509,6 +509,10 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setBorder(int i) {
 		setBorder(Integer.toString(i));
+	}
+	
+	public void setCellID(int column, int row, String ID) {
+		getCellAt(column, row).setID(ID);
 	}
 	
 	public void setCellBorderWidth(int column, int row, int borderWidth) {
