@@ -354,35 +354,34 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
 		List theReturn = new ArrayList();
 		try {
+			Collection parents = null;
 			Group parent = null;
 			if (cachedParents!=null) {
 				if (cachedParents.containsKey(this.getPrimaryKey()))
-					parent = (Group)cachedParents.get(this.getPrimaryKey());
+					parents = (Collection)cachedParents.get(this.getPrimaryKey());
 				else
 				{	
-					parent = getParentFromParentCollection(cachedGroups);
-					cachedParents.put(this.getPrimaryKey(), parent);
-					if (parent != null){
-						if (cachedGroups != null && !cachedGroups.containsKey(parent.getPrimaryKey())) {
-							cachedGroups.put(parent.getPrimaryKey(), parent);
-						}
-					}
+					parents = getCollectionOfParents(cachedGroups);
+					cachedParents.put(this.getPrimaryKey(), parents);
 				}
 			}
 			else {
-				parent = getParentFromParentCollection();
+				parents = getCollectionOfParents();
 			}	
-			if (parent != null) {
-				theReturn.add(parent);
+			Iterator parIter = parents.iterator();
+			while (parIter.hasNext()) {
+				parent = (Group)parIter.next();
+				if (parent != null && !theReturn.contains(parent)) {
+					theReturn.add(parent);
+				}	
 			}
-			
 			if (isUser()) {
 				User user = getUserForGroup();
 				Group usersPrimaryGroup = user.getPrimaryGroup();
 				if (!theReturn.contains(usersPrimaryGroup)) {
 					theReturn.add(usersPrimaryGroup);
 				}
-			}
+			}	
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -391,16 +390,17 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return theReturn;
 	}
 
-	private Group getParentFromParentCollection() throws FinderException {		
-		return getParentFromParentCollection(null);
+	private Collection getCollectionOfParents() throws FinderException {		
+		return getCollectionOfParents(null);
 	}
 
-	private Group getParentFromParentCollection(Map cachedGroups) throws FinderException {		
+	private Collection getCollectionOfParents(Map cachedGroups) throws FinderException {		
 		Collection col = ejbFindParentGroups(this.getID());
+		Collection returnCol = new ArrayList();
 		Group parent = null;
 		Integer parentID = null;
 		Iterator iter = col.iterator();
-		if (iter.hasNext()) {
+		while (iter.hasNext()) {
 			parentID = (Integer)iter.next();
 			if (cachedGroups != null) {
 				if (cachedGroups.containsKey(parentID))
@@ -414,10 +414,17 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			else {
 				parent = getGroupHome().findByPrimaryKey(parentID);
 			}
+			returnCol.add(parent);
 		}
-		return parent;
+		return returnCol;
 	}
 
+	protected Collection getChildGroupRelationships() throws FinderException {
+		//null type is included as relation type for backwards compatability.
+		return this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(this.getID(), RELATION_TYPE_GROUP_PARENT, null);
+	}
+
+	
 	/**
 	 * Returns the User instance representing the Group if the Group is of type UserGroupRepresentative
 	 **/
