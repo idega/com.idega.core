@@ -1006,7 +1006,7 @@ public class CategoryFinder {
 
   public Collection getCategoryRelatedEntityFromInstanceId(Class CategoryEntityClass, Class EntityClass, String EntityColumn, int ObjectInstanceId) {
 
-    if (CategoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
+    //if (CategoryEntityClass.getSuperclass().equals(CategoryEntity.class)) {
 
       try {
 
@@ -1022,7 +1022,7 @@ public class CategoryFinder {
 
       }
 
-    }
+    //}
 
     return null;
 
