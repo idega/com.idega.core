@@ -39,7 +39,9 @@ private Connection conn;
     if(this.isRollBackOnly){
       //Do nothing
       //
-      throw new RollbackException("Transaction Rollback only");
+      this.rollback();
+      this.end();
+      throw new RollbackException("Transaction Rolled back");
       /**
        * @todo: Should this throw an exception?
        */
