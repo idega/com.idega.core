@@ -229,7 +229,7 @@ public class AccessControllerApp extends IWApplication {
         List blocks = EntityFinder.findAllByColumn(staticICO,ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_BLOCK);
         List blockLinks = tranceformICObjectListToLinkList(blocks);
 
-        List applications = EntityFinder.findAllByColumn(staticICO,staticICO.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_APPLICATION);
+        List applications = EntityFinder.findAllByColumn(staticICO,ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_APPLICATION);
         List applicationLinks = tranceformICObjectListToLinkList(applications);
 
 
