@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.36 2004/02/18 08:48:20 laddi Exp $
+ * $Id: DateInput.java,v 1.37 2004/02/18 14:19:05 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -522,7 +522,7 @@ public class DateInput extends InterfaceObjectContainer {
 				if (script.getFunction("checkSubmit") == null) {
 					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
 				}
-				script.addToFunction("checkSubmit", "if (checkEarliestDate (findObj('" + getName() + "'),"+_earliestDate.getTime()+", '"+_earliestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
+				script.addToBeginningOfFunction("checkSubmit", "if (checkEarliestDate (findObj('" + getName() + "'),"+_earliestDate.getTime()+", '"+_earliestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
 				
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function checkEarliestDate(input, date, warnMsg) {").append("\n\t");
