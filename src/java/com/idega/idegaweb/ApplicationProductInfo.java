@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.2 2005/01/05 01:23:44 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.3 2005/01/06 18:22:59 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,15 +15,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import com.idega.util.FileUtil;
+import com.idega.util.IWTimestamp;
 
 
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/01/05 01:23:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/06 18:22:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ApplicationProductInfo {
 	
@@ -171,5 +172,10 @@ public class ApplicationProductInfo {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	
+	
+	public String getCopyrightText(){
+		return "Copyright (c) "+getInceptionYear()+"-"+IWTimestamp.RightNow().getYear()+" "+getVendor()+" All rights reserved";
 	}
 }
