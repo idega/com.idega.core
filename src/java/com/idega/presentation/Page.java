@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.8 2001/11/01 18:51:12 palli Exp $
+ * $Id: Page.java,v 1.9 2001/11/01 23:08:28 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -544,15 +544,14 @@ public class Page extends PresentationObjectContainer {
         setToRedirect(iwc.getRequestURI());
         iwc.getSession().setAttribute("idega_special_reload","true");
       }
-
-
     }
 
-    if (_title != null) {
+    /*if (_title != null) {
       BuilderLogic instance = BuilderLogic.getInstance();
       instance.updateName(_title,iwc);
 //      instance.updateTemplate(this._te);
-    }
+    }*/
+
   }
 
   /*
