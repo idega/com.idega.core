@@ -25,7 +25,25 @@ public class ImageSave {
       else return saveImageToOracleDB(imageId,-1,in,ContentType,FileName,"-1","-1",NewImage);
     }
     else return -1;
+  }
+
+  public static int saveImageToDataBase(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
+    Connection Conn = null;
+    try{
+      Conn = GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").getConnection();
+      String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
+      if( !dataBaseType.equalsIgnoreCase("oracle")  ) return saveImageToDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
+      else return saveImageToOracleDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
     }
+    catch(SQLException e){
+      e.printStackTrace(System.err);
+      return -1;
+    }
+    finally{
+      if(Conn != null ) GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+    }
+
+  }
 
   public static int saveImageToDB(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
     int id = -1;
