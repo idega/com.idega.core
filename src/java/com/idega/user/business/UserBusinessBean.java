@@ -146,7 +146,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
   
   /**
- * Method createUserByPersonalIDIfDoesNotExist does what is says.
+ * Method createUserByPersonalIDIfDoesNotExist either created a new user or updates an old one.
  * @param fullName
  * @param personalID
  * @param gender
