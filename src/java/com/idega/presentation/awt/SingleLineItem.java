@@ -27,14 +27,16 @@ public class SingleLineItem extends Container {
   private Window window;
   private GridBagConstraints gbc = null;
   private Color bgColor = Color.white;
+  private Container parentContainer;
 
 
-  public SingleLineItem() {
+  public SingleLineItem(Container parent) {
     addMouseListener(new ClickAdapter());
     setSize(getPreferredSize());
     GridBagLayout grid = new GridBagLayout();
     setLayout(grid);
     setBackground(bgColor);
+    parentContainer = parent;
   }
 
   public void setComponentOffset(int componentOffset){
@@ -172,9 +174,11 @@ public class SingleLineItem extends Container {
 
 
       repaint();
+      parentContainer.repaint();
+
 
     }
-
+/*
     public void mouseReleased(MouseEvent e) {
        // isSelected = !isSelected;
         repaint();
@@ -183,7 +187,7 @@ public class SingleLineItem extends Container {
             actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, ""));
         }
 
-    }
+    }*/
 
   }
 
