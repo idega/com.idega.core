@@ -128,9 +128,8 @@ public class LocationInput extends InterfaceObject {
 				cityDrop.addMenuElement(city, city);
 			}
 		}
-		if (cities == null) {
-			cityDrop.addFirstOption(new SelectOption("Select a city", "-1"));
-		} 
+
+		cityDrop.addFirstOption(new SelectOption("Select a city", "-1"));
 		
 		if (usedCityName != null) {
 			postalCodes = pcHome.findByNameAndCountry(usedCityName,new Integer(usedCountryID));
@@ -138,9 +137,7 @@ public class LocationInput extends InterfaceObject {
 		}
 
 		zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(zipDrop, postalCodes, "getPostalAddress");
-		if (postalCodes == null) {
-			zipDrop.addFirstOption(new SelectOption("Select a postal code", "-1"));
-		}
+		zipDrop.addFirstOption(new SelectOption("Select a postal code", "-1"));
 		if (usedZipID != null) {
 			zipDrop.setSelectedElement(usedZipID);
 		}
