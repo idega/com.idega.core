@@ -275,6 +275,17 @@ public abstract class InterfaceObject extends PresentationObject {
 	public void setToCheckOnClick(String objectName, boolean check) {
 		setToCheckOnAction(ACTION_ON_CLICK, objectName, check, true);
 	}
+	
+	/**
+		 * Sets the interface object(s) with the given name to be checked/unchecked when this
+		 * object is clicked on. Convenient when using javascript function or property to provide the 
+		 * boolean value ( checkvalue)
+		 * @param objectName	The name of the interface object(s) to check.
+		 * @param check	Checks if boolean is true, unchecks otherwise.
+		 */
+		public void setToCheckOnClick(String objectName, String checkValue) {
+			setToCheckOnAction(ACTION_ON_CLICK, objectName, checkValue, true);
+		}
 
 	/**
 	 * Sets the given interface object(s) to be checked/unchecked when this object is 
@@ -285,6 +296,18 @@ public abstract class InterfaceObject extends PresentationObject {
 	public void setToCheckOnClick(InterfaceObject objectToCheck, boolean check) {
 		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), check, true);
 	}
+	
+	/**
+		 * Sets the given interface object(s) to be checked/unchecked when this object is 
+		 * clicked on. Convenient when using javascript function or property to provide the 
+		 * boolean value ( checkvalue)
+		 * @param objectToCheck	The interface object(s) to check.
+		 * @param checkValue	Checks if checkvalue is true, unchecks otherwise. 
+		 */
+	public void setToCheckOnClick(InterfaceObject objectToCheck, String checkValue) {
+		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), checkValue, true);
+	}	
+	
 
 	/**
 	 * Sets the interface object(s) with the given name to be checked/unchecked when this
@@ -295,13 +318,25 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param checkDisabled	If true checks all, otherwise not disabled objects.
 	 */
 	public void setToCheckOnAction(String action, String objectName, boolean check, boolean checkDisabled) {
-		_checkObject = true;
-		_checkDisabled = checkDisabled;
-		if (checkDisabled)
-			setOnAction(action, "checkAllObjects(findObj('" + objectName + "'),'" + String.valueOf(check) + "')");
-		else
-			setOnAction(action, "checkEnabledObjects(findObj('" + objectName + "'),'" + String.valueOf(check) + "')");
+		this.setToCheckOnAction(action,objectName,String.valueOf(check),checkDisabled);
 	}
+	
+	/**
+		 * Sets the interface object(s) with the given name to be checked/unchecked when this
+		 * object receives the action specified.
+		 * @param action	The action to perform on.
+		 * @param objectName	The name of the interface object(s) to check.
+		 * @param checkValue	Checks if boolean is true, unchecks otherwise.
+		 * @param checkDisabled	If true checks all, otherwise not disabled objects.
+		 */
+		public void setToCheckOnAction(String action, String objectName, String checkValue, boolean checkDisabled) {
+			_checkObject = true;
+			_checkDisabled = checkDisabled;
+			if (checkDisabled)
+				setOnAction(action, "checkAllObjects(findObj('" + objectName + "')," + checkValue + ")");
+			else
+				setOnAction(action, "checkEnabledObjects(findObj('" + objectName + "')," +checkValue + ")");
+		}
 
 	/**
 	 * Sets the interface object(s) with the given name to be checked/unchecked when this
