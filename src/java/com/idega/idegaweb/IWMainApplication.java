@@ -80,6 +80,10 @@ public class IWMainApplication{//implements ServletContext{
     this.setPropertiesRealPath();
     IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
     setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
+    System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
+  }
+
+  public void loadBundles(){
     bundlesFile = new Properties();
     loadedBundles = new Hashtable();
     try{
@@ -90,7 +94,6 @@ public class IWMainApplication{//implements ServletContext{
       e.printStackTrace();
     }
     checkForInstalledBundles();
-    System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
 
   public static String getObjectInstanciatorURL(Class className,String templateName){

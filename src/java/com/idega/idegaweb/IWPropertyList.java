@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.8 2001/07/04 18:12:07 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.9 2001/08/16 09:53:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -24,6 +24,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import com.idega.util.FileUtil;
+import com.idega.util.ListUtil;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -32,19 +33,25 @@ import com.idega.util.FileUtil;
 public class IWPropertyList {
   private Document xmlDocument;
   private File xmlFile;
-  private Element rootElement;
-  private Element dict;
-  private static String rootElementTag = "pxml";
-  private static String dictTag = "dict";
-  private static String nameTag = "name";
-  private static String arrayTag = "array";
-  private static String keyTag = "key";
-  private static String valueTag = "value";
-  private static String typeTag = "type";
-  private static String stringTag = "string";
-  private static String stringString = "java.lang.String";
+  private Element parentElement;
 
-  public IWPropertyList(){
+  private Element mapElement;
+  private static String rootElementTag = "pxml";
+   static String dictTag = "dict";
+   static String mapTag = "map";
+   static String nameTag = "name";
+   static String arrayTag = "array";
+   static String keyTag = "key";
+   static String valueTag = "value";
+   static String typeTag = "type";
+   static String stringTag = "string";
+   static String stringString = "java.lang.String";
+
+  IWPropertyList(){
+  }
+
+  IWPropertyList(Element parentElement){
+    this.parentElement=parentElement;
   }
 
   public IWPropertyList(String fileNameWithPath) {
@@ -86,6 +93,30 @@ public class IWPropertyList {
     load(file);
   }
 
+  Element getParentElement(){
+    return parentElement;
+  }
+
+  Element getMapElement(){
+    if(mapElement==null){
+      mapElement = parentElement.getChild(mapTag);
+      if(mapElement==null){
+        Element dictElement = parentElement.getChild(dictTag);
+        if(dictElement!=null){
+          mapElement = new Element(mapTag);
+          mapElement.setChildren(dictElement.getChildren());
+          parentElement.removeContent(dictElement);
+          parentElement.addContent(mapElement);
+        }
+      }
+      if(mapElement==null){
+        mapElement = new Element(mapTag);
+        parentElement.addContent(mapElement);
+      }
+    }
+    return mapElement;
+  }
+
   public void setProperty(String key, Object value) {
     setProperty(key,value.toString(),value.getClass().getName());
   }
@@ -103,33 +134,47 @@ public class IWPropertyList {
   }
 
   public void setProperty(String key,Object[] value){
-      //setProperty(key,value,"array");
     Element keyElement = findKeyElement(key);
-    if (keyElement == null) {
-      addProperty(key,value,arrayTag);
+    IWProperty.setProperty(keyElement,key,value,this);
+  }
+
+  public IWProperty getNewProperty(){
+    return new IWProperty(this);
+  }
+
+
+  /**
+   * Returns null if there is no IWProperty associated with the specific key
+   */
+  public IWProperty getIWProperty(String key){
+    Element el = this.findKeyElement(key);
+    if(el!=null){
+      return new IWProperty(el,this);
     }
-    else {
-      keyElement.removeChild(nameTag);
-      keyElement.removeChild(valueTag);
-      keyElement.removeChild(typeTag);
-      addNewProperty(keyElement,key,value,arrayTag);
+    return null;
+  }
+
+  /**
+   * Returns null if there is no IWPropertyList associated with the specific key
+   */
+  public IWPropertyList getPropertyList(String key){
+    Element keyElement = this.findKeyElement(key);
+    if(keyElement!=null){
+      return IWProperty.getPropertyList(keyElement);
     }
+    return null;
   }
 
-
-
-  private Element createValueElement(Element parent){
-    Element valueElement = new Element(valueTag);
-    parent.addContent(valueElement);
-    return valueElement;
+  /**
+   * Creates a new IWPropertyList associated with the specific key
+   */
+  public IWPropertyList getNewPropertyList(String key){
+    Element keyElement = this.findKeyElement(key);
+    if(keyElement==null){
+      keyElement = IWProperty.createKeyElement(this,key);
+    }
+    return IWProperty.getNewPropertyList(keyElement,this);
   }
-
-  private Element createArrayElement(Element valueElement){
-    Element arrayElement = new Element(arrayTag);
-    valueElement.addContent(arrayElement);
-    return arrayElement;
-  }
-
 
   /**
    * Use to set an array property with only one "String" value to begin with
@@ -139,23 +184,9 @@ public class IWPropertyList {
   }
 
 
-  private void setProperty(String key, Object value,String type) {
+  void setProperty(String key, Object value,String type) {
     Element keyElement = findKeyElement(key);
-    if (keyElement == null) {
-      addProperty(key,value,type);
-    }
-    else {
-      Element typeElement = keyElement.getChild(typeTag);
-      if(typeElement.getText().equals(arrayTag)){
-        Element valueElement = keyElement.getChild(valueTag);
-      }
-      else{
-        keyElement.removeChild(nameTag);
-        keyElement.removeChild(valueTag);
-        keyElement.removeChild(typeTag);
-        addNewProperty(keyElement,key,value,type);
-      }
-    }
+    IWProperty.setProperty(keyElement,key,value,type,this);
   }
 
   private void addProperty(String key, String value) {
@@ -170,58 +201,20 @@ public class IWPropertyList {
     addProperty(key,new Integer(value));
   }
 
-  private Element createKeyElement(){
-       Element keyElement = new Element(keyTag);
-       dict.addContent(keyElement);
-       return keyElement;
-  }
+
 
   private void addProperty(String key, Object value,String type) {
-    //Element property = new Element(dictTag);
-    Element keyElement = createKeyElement();
-    //keyElement.addContent(key);
-    addNewProperty(keyElement,key,value,type);
-    //rootElement.addContent(property);
+    IWProperty.addProperty(key,value,type,this);
   }
-
 
 
   private void addNewProperty(Element key, String keyName,Object value,String type) {
-    Element nameElement = new Element(nameTag);
-    nameElement.addContent(keyName);
-    Element typeElement = new Element(typeTag);
-    typeElement.addContent(type);
-    Element valueElement = new Element(valueTag);
-    if(type.equals(arrayTag)){
-      Element arrayElement = new Element(arrayTag);
-      valueElement.addContent(arrayElement);
-      try{
-        Object[] theArray = (Object[])value;
-        for (int i = 0; i < theArray.length; i++) {
-            Element newValueElement = new Element(valueTag);
-            setValue(newValueElement,theArray[i]);
-            arrayElement.addContent(newValueElement);
-        }
-      }
-      catch(ClassCastException ex){
-            Element newValueElement = new Element(valueTag);
-            setValue(newValueElement,value);
-            arrayElement.addContent(newValueElement);
-      }
-
-    }
-    else{
-
-    setValue(valueElement,value);
-
-    }
-    key.addContent(nameElement);
-    key.addContent(typeElement);
-    key.addContent(valueElement);
+    IWProperty.addNewProperty(key,keyName,value,type);
   }
 
+
   public String getPropertyType(String key) {
-    return findKeyElement(key).getChild(typeTag).getText();
+    return IWProperty.getPropertyType(this.findKeyElement(key));
   }
 
   /**
@@ -239,10 +232,9 @@ public class IWPropertyList {
   /**
    * @return null if no match
    */
-  private Element findKeyElement(String key) {
-    List list = dict.getChildren();
+  static Element findKeyElement(Element startElement,String key) {
+    List list = startElement.getChildren();
     Iterator iter = list.iterator();
-
     while(iter.hasNext()) {
       Element keyElement = (Element)iter.next();
       Element nameElement = keyElement.getChild(nameTag);
@@ -253,19 +245,31 @@ public class IWPropertyList {
     return null;
   }
 
+  /**
+   * @return null if no match
+   */
+  private Element findKeyElement(String key) {
+    return  findKeyElement(getMapElement(),key);
+  }
+
 // added by Eirikur Hrafnsson eiki@idega.is
-  protected Vector getKeys() {
-    List list = dict.getChildren();
-    Iterator iter = list.iterator();
-    Vector keys = new Vector();
+  protected List getKeys() {
+    Element mapElement = getMapElement();
+    if(mapElement!=null){
+      List list = mapElement.getChildren();
+      Iterator iter = list.iterator();
+      List keys = new Vector();
 
-    while(iter.hasNext()) {
-      Element keyElement = (Element)iter.next();
-      Element nameElement = keyElement.getChild(nameTag);
-      keys.addElement( nameElement.getText() );
+      while(iter.hasNext()) {
+        Element keyElement = (Element)iter.next();
+        Element nameElement = keyElement.getChild(nameTag);
+        keys.add( nameElement.getText() );
+      }
+      return keys;
     }
-
-    return keys;
+    else{
+      return ListUtil.getEmptyList();
+    }
   }
 
   public void load(String path) {
@@ -276,15 +280,11 @@ public class IWPropertyList {
   public void load(File file){
     SAXBuilder builder = new SAXBuilder(false);
     xmlFile = file;
-    try {
+    try{
       xmlDocument = builder.build(xmlFile);
+      parentElement = xmlDocument.getRootElement();
+      mapElement = getMapElement();
 
-      rootElement = xmlDocument.getRootElement();
-      dict = rootElement.getChild(dictTag);
-      if(dict==null){
-        dict = new Element(dictTag);
-        rootElement.addContent(dict);
-      }
     }
     catch(JDOMException e) {
       e.printStackTrace();
@@ -292,23 +292,18 @@ public class IWPropertyList {
     catch(Throwable e) {
       e.printStackTrace();
     }
-
   }
 
   public void removeProperty(String key){
     Element element = this.findKeyElement(key);
     if(element!=null){
-      dict.removeContent(element);
+      if(mapElement!=null){
+        mapElement.removeContent(element);
+      }
     }
   }
 
-  private boolean valueContains(Element valueElement,Object value){
-    return valueElement.getText().equals(value.toString());
-  }
 
-  private void setValue(Element valueElement,Object value){
-    valueElement.addContent(value.toString());
-  }
 
   /**
    * Returns null if no match
@@ -319,7 +314,7 @@ public class IWPropertyList {
     Iterator iter = arrayList.iterator();
     while (iter.hasNext()) {
       Element item = (Element)iter.next();
-      if (valueContains(item,value)){
+      if (IWProperty.valueContains(item,value)){
         return item;
       }
     }
@@ -332,6 +327,14 @@ public class IWPropertyList {
 
   public String getValueString(Element valueElement){
     return valueElement.getText();
+  }
+
+  public Iterator iterator(){
+    return getIWPropertyListIterator();
+  }
+
+  public IWPropertyListIterator getIWPropertyListIterator(){
+    return new IWPropertyListIterator(this.getKeys().iterator(),this);
   }
 
   public void removeProperty(String key, Object value){
@@ -351,7 +354,9 @@ public class IWPropertyList {
       }
       else{
         if(valueElement.getText().equals(value.toString())){
-          dict.removeContent(element);
+          if(mapElement!=null){
+            mapElement.removeContent(element);
+          }
         }
       }
     }
@@ -367,15 +372,16 @@ public class IWPropertyList {
   }
 
   public void store(OutputStream stream) {
-    try {
-      //XMLOutputter outputter = new XMLOutputter();
-      XMLOutputter outputter = new XMLOutputter("  ",true);
-      outputter.setLineSeparator(System.getProperty("line.separator"));
-      outputter.setTrimText(true);
-      outputter.output(xmlDocument,stream);
-    }
-    catch(IOException e) {
-      e.printStackTrace();
+    if(xmlDocument!=null){
+      try {
+        XMLOutputter outputter = new XMLOutputter("  ",true);
+        outputter.setLineSeparator(System.getProperty("line.separator"));
+        outputter.setTrimText(true);
+        outputter.output(xmlDocument,stream);
+      }
+      catch(IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 }

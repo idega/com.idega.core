@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.ResourceBundle;
 import com.idega.util.LocaleUtil;
 import com.idega.util.FileUtil;
+import com.idega.core.data.ICObject;
 
 
 /**
@@ -56,7 +57,12 @@ public class IWBundle{
   static final String propertyFileName = "bundle.pxml";
 
   final static String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
+  final static String COMPONENTLIST_KEY = "iw_components";
 
+  private final static String COMPONENT_NAME_PROPERTY="component_name";
+  private final static String COMPONENT_TYPE_PROPERTY="component_type";
+  private final static String COMPONENT_ICON_PROPERTY="component_icon";
+  private final static String COMPONENT_CLASS_PROPERTY="component_class";
 
    protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
         this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
@@ -128,7 +134,32 @@ public class IWBundle{
       String SystemClassPath = System.getProperty("java.class.path");
       String newClassPath = SystemClassPath+File.pathSeparator+this.getClassesRealPath();
       System.setProperty("java.class.path",newClassPath);
+
+      installComponents();
    }
+
+    private void installComponents(){
+      List list = this.getComponentKeys();
+      Iterator iter = list.iterator();
+      while (iter.hasNext()) {
+        String className = (String)iter.next();
+        ICObject ico = ICObject.getICObject(className);
+        if(ico==null){
+          try{
+            ico = new ICObject();
+            ico.setObjectClass(Class.forName(className));
+            ico.setName(this.getComponentName(className));
+            ico.setObjectType(this.getComponentType(className));
+            ico.setBundle(this);
+            ico.insert();
+          }
+          catch(Exception e){
+            e.printStackTrace();
+          }
+        }
+      }
+
+    }
 
    protected String getRootRealPath(){
     return rootRealPath;
@@ -433,6 +464,125 @@ public class IWBundle{
       return new Image(getResourcesURL()+slash+urlInBundle,name);
     }
 
+    /**
+     * Returns the ICObjects associated with this bundle
+     * Returns null if there is an exception
+     */
+    public ICObject[] getICObjects(){
+      try{
+        return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier());
+      }
+      catch(Exception e){
+        return null;
+      }
+    }
+
+    /**
+     * Returns the ICObjects associated with this bundle and of the specified componentType
+     * Returns null if there is an exception
+     */
+    public ICObject[] getICObjects(String componentType){
+      try{
+        return (ICObject[])(new ICObject()).findAllByColumn(ICObject.getBundleColumnName(),this.getBundleIdentifier(),ICObject.getObjectTypeColumnName(),componentType);
+      }
+      catch(Exception e){
+        return null;
+      }
+    }
+
+
+    private IWPropertyList getPropertyList(){
+      return this.propertyList;
+    }
+
+    public static List getAvailableComponentTypes(){
+      return ICObject.getAvailableComponentTypes();
+    }
+
+
+    public IWPropertyList getComponentList(){
+      IWPropertyList list = getPropertyList().getPropertyList(COMPONENTLIST_KEY);
+      if(list==null){
+          list = getPropertyList().getNewPropertyList(COMPONENTLIST_KEY);
+      }
+      return list;
+    }
+
+    public void addComponent(String className,String componentType){
+      addComponent(className,componentType,className.substring(className.lastIndexOf(".")+1));
+    }
+
+    public void addComponent(String className,String componentType,String componentName){
+      //getComponentList().setProperty(className,componentName,componentType);
+      IWProperty prop = getComponentList().getNewProperty();
+      prop.setName(className);
+      setComponentProperty(prop,COMPONENT_NAME_PROPERTY,componentName);
+      setComponentProperty(prop,COMPONENT_TYPE_PROPERTY,componentType);
+
+        ICObject ico = ICObject.getICObject(className);
+        if(ico==null){
+          try{
+            ico = new ICObject();
+            ico.setObjectClass(Class.forName(className));
+            ico.setName(componentName);
+            ico.setObjectType(componentType);
+            ico.setBundle(this);
+            ico.insert();
+          }
+          catch(Exception e){
+            e.printStackTrace();
+          }
+        }
+    }
+
+    public void setComponentProperty(String className,String propertyName,String propertyValue){
+      IWProperty prop = getComponentList().getIWProperty(className);
+      if(prop!=null){
+        setComponentProperty(prop,propertyName,propertyValue);
+      }
+    }
+
+    public void setComponentProperty(IWProperty component,String propertyName,String propertyValue){
+      IWPropertyList list = component.getPropertyList();
+      if(list==null){
+        list = component.getNewPropertyList();
+      }
+      list.setProperty(propertyName,propertyValue);
+    }
+
+    public String getComponentProperty(String className,String property){
+      try{
+        return getComponentList().getIWProperty(className).getPropertyList().getProperty(property);
+      }
+      catch(NullPointerException e){
+        return null;
+      }
+    }
+
+    public String getComponentType(String className){
+      return getComponentProperty(className,COMPONENT_TYPE_PROPERTY);
+    }
+
+    public String getComponentName(String className){
+      return getComponentProperty(className,COMPONENT_NAME_PROPERTY);
+    }
+
+    public String getComponentName(String className,Locale locale){
+      return this.getResourceBundle(locale).getLocalizedString("iw.component."+className,getComponentName(className));
+    }
+
+    public void setComponentName(String className,Locale locale,String sName){
+      this.getResourceBundle(locale).setString("iw.component."+className,sName);
+    }
+
+    public void removeComponent(String className){
+      getComponentList().removeProperty(className);
+      ICObject.removeICObject(className);
+    }
+
+    public List getComponentKeys(){
+      return getComponentList().getKeys();
+    }
 
 
 }
