@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.25 2002/02/22 13:22:42 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.26 2002/02/22 13:27:13 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -578,8 +578,8 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public  Object clone() {
-    //return this.clone(null, false);
-    return doRealClone();
+    return this.clone(null, false);
+    //return doRealClone();
   }
 
   private Object doRealClone(){
@@ -639,6 +639,7 @@ public class PresentationObject extends Object implements Cloneable {
   */
 
   public Object clone(IWContext iwc, boolean askForPermission) {
+
 /*    PresentationObject obj = null;
     try {
       //This is forbidden in clone i.e. "new":
@@ -668,7 +669,8 @@ public class PresentationObject extends Object implements Cloneable {
 
     return obj;
     */
-    return (PresentationObject)this.clone();
+    //return (PresentationObject)this.clone();
+    return this.doRealClone();
   }
 /*
   protected void initICObjectInstanceId(IWContext iwc){

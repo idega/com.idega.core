@@ -657,20 +657,50 @@ public class IWBundle implements java.lang.Comparable{
       }
     }
 
-    public String getComponentType(String className){
-      return getComponentProperty(className,COMPONENT_TYPE_PROPERTY);
+    public String getComponentName(Class componentClass){
+      return getComponentName(componentClass.getName());
     }
 
     public String getComponentName(String className){
       return getComponentProperty(className,COMPONENT_NAME_PROPERTY);
     }
 
+    public String getComponentType(Class componentClass){
+      return getComponentType(componentClass.getName());
+    }
+
+    public String getComponentType(String className){
+      return getComponentProperty(className,COMPONENT_TYPE_PROPERTY);
+    }
+
+    /**
+     * Returns getComponentName(componentClass) if localized name not found
+     */
+    public String getComponentName(Class componentClass,Locale locale){
+      return getComponentName(componentClass.getName(),locale);
+    }
+
+    /**
+     * Returns getComponentName(className) if localized name not found
+     */
     public String getComponentName(String className,Locale locale){
-      return this.getResourceBundle(locale).getLocalizedString("iw.component."+className,getComponentName(className));
+      return getComponentName(className,locale,getComponentName(className));
+    }
+
+    public void setComponentName(Class componentClass,Locale locale,String sName){
+      setComponentName(componentClass.getName(),locale,sName);
+    }
+
+    public String getComponentName(Class componentClass,Locale locale,String returnIfNameNotLocalized){
+      return getComponentName(componentClass.getName(),locale,returnIfNameNotLocalized);
+    }
+
+    public String getComponentName(String className,Locale locale,String returnIfNameNotLocalized){
+      return this.getResourceBundle(locale).getLocalizedString("iw.component."+className+".name",returnIfNameNotLocalized);
     }
 
     public void setComponentName(String className,Locale locale,String sName){
-      this.getResourceBundle(locale).setString("iw.component."+className,sName);
+      this.getResourceBundle(locale).setString("iw.component."+className+".name",sName);
     }
 
     public void removeComponent(String className){
