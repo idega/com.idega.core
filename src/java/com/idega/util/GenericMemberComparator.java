@@ -70,17 +70,23 @@ public class GenericMemberComparator implements Comparator {
       // check on first name first...
 
       //int result = p1.getFirstName().compareTo(p2.getFirstName());
-      int result = IsCollator.getIsCollator().compare(p1.getFirstName(),p2.getFirstName());
+      String one = p1.getFirstName()!=null?p1.getFirstName():"";
+      String two = p2.getFirstName()!=null?p2.getFirstName():"";
+      int result = IsCollator.getIsCollator().compare(one,two);
 
       // if equal, check last name...
       if (result == 0){
+          one = p1.getLastName()!=null?p1.getLastName():"";
+          two = p2.getLastName()!=null?p2.getLastName():"";
           //result = p1.getLastName().compareTo(p2.getLastName());
-          result = IsCollator.getIsCollator().compare(p1.getLastName(),p2.getLastName());
+          result = IsCollator.getIsCollator().compare(one,two);
       }
       // if equal, check middle name...
       if (result == 0){
+          one = p1.getMiddleName()!=null?p1.getMiddleName():"";
+          two = p2.getMiddleName()!=null?p2.getMiddleName():"";
           //result = p1.getMiddleName().compareTo(p2.getMiddleName());
-          result = IsCollator.getIsCollator().compare(p1.getMiddleName(),p2.getMiddleName());
+          result = IsCollator.getIsCollator().compare(one,two);
       }
       return result;
   }
@@ -93,16 +99,22 @@ public class GenericMemberComparator implements Comparator {
 
 
           //result = p1.getLastName().compareTo(p2.getLastName());
-      int result = IsCollator.getIsCollator().compare(p1.getLastName(),p2.getLastName());
+      String one = p1.getLastName()!=null?p1.getLastName():"";
+      String two = p2.getLastName()!=null?p2.getLastName():"";
+      int result = IsCollator.getIsCollator().compare(one,two);
 
       //int result = p1.getFirstName().compareTo(p2.getFirstName());
       if (result == 0){
-      result = IsCollator.getIsCollator().compare(p1.getFirstName(),p2.getFirstName());
+        one = p1.getFirstName()!=null?p1.getFirstName():"";
+        two = p2.getFirstName()!=null?p2.getFirstName():"";
+        result = IsCollator.getIsCollator().compare(one,two);
       }
       // if equal, check middle name...
       if (result == 0){
-          //result = p1.getMiddleName().compareTo(p2.getMiddleName());
-          result = IsCollator.getIsCollator().compare(p1.getMiddleName(),p2.getMiddleName());
+        //result = p1.getMiddleName().compareTo(p2.getMiddleName());
+        one = p1.getMiddleName()!=null?p1.getMiddleName():"";
+        two = p2.getMiddleName()!=null?p2.getMiddleName():"";
+        result = IsCollator.getIsCollator().compare(one,two);
       }
 
       return result;
@@ -114,20 +126,20 @@ public class GenericMemberComparator implements Comparator {
 
       // check on first name first...
 
-       //int result = p1.getFirstName().compareTo(p2.getFirstName());
-      int result = IsCollator.getIsCollator().compare(p1.getFirstName(),p2.getFirstName());
-
+      String one = p1.getFirstName()!=null?p1.getFirstName():"";
+      String two = p2.getFirstName()!=null?p2.getFirstName():"";
+      int result = IsCollator.getIsCollator().compare(one,two);
       // if equal, check middle name...
       if (result == 0){
-          //result = p1.getMiddleName().compareTo(p2.getMiddleName());
-          result = IsCollator.getIsCollator().compare(p1.getMiddleName(),p2.getMiddleName());
+        one = p1.getMiddleName()!=null?p1.getMiddleName():"";
+        two = p2.getMiddleName()!=null?p2.getMiddleName():"";
+        result = IsCollator.getIsCollator().compare(one,two);
       }
       if (result == 0){
-          //result = p1.getLastName().compareTo(p2.getLastName());
-          result = IsCollator.getIsCollator().compare(p1.getLastName(),p2.getLastName());
+        one = p1.getLastName()!=null?p1.getLastName():"";
+        two = p2.getLastName()!=null?p2.getLastName():"";
+        result = IsCollator.getIsCollator().compare(one,two);
       }
-
-
       return result;
   }
   public boolean equals(Object obj) {
