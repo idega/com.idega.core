@@ -1,5 +1,7 @@
 package com.idega.idegaweb.block.presentation;
 
+import com.idega.builder.dynamicpagetrigger.business.DPTCopySession;
+
 /**
  * An interface to declare certainn methods that are used by the Builder when manipulating Blocks.
  * This interface is optionally implemented by blocks.
@@ -15,7 +17,7 @@ public interface Builderaware {
 public final static String IW_CORE_BUNDLE_IDENTIFIER="com.idega.core";
 
   public boolean deleteBlock(int ICObjectInstanceId);
-  public boolean copyBlock(int newInstanceID);
+  public boolean copyBlock(int newInstanceID, DPTCopySession copySession);
   public String getBundleIdentifier();
   public String getLocalizedNameKey();
   public String getLocalizedNameValue();

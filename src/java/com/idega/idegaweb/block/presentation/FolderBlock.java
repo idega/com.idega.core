@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
+import com.idega.builder.dynamicpagetrigger.business.DPTCopySession;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.category.data.InformationCategory;
@@ -212,7 +213,7 @@ public class FolderBlock extends Block {
 		return obj;
 	}
 
-	public boolean copyBlock(int newInstanceID) {
+	public boolean copyBlock(int newInstanceID, DPTCopySession copySession) {
 		try {
 			return ((FolderBlockBusiness)IBOLookup.getServiceInstance(getIWApplicationContext(),FolderBlockBusiness.class)).copyCategoryAttachments(this.getBlockInstanceID(), newInstanceID);
 		} catch (IBOLookupException e) {

@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.block.presentation.Builderaware;
+import com.idega.builder.dynamicpagetrigger.business.DPTCopySession;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
@@ -120,7 +121,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return true;
 	}
 
-	public boolean copyBlock(int newInstanceID) {
+	public boolean copyBlock(int newInstanceID, DPTCopySession copySession) {
 		System.err.println("method copyBlock(int newInstanceID) not implemented in class " + this.getClass().getName());
 		return true;
 	}
