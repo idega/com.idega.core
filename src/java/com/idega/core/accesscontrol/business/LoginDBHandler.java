@@ -306,6 +306,17 @@ public class LoginDBHandler {
       deleteLogin(findUserLogin(userId));
   }
 
+  public static boolean isLoginInUse(String login){
+    try {
+      return (0 < LoginTable.getStaticInstance().getNumberOfRecords(LoginTable.getUserLoginColumnName(),login));
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return true;
+    }
+
+  }
+
   public static void deleteLogin(LoginTable login) throws SQLException {
     if(login != null){
       try {

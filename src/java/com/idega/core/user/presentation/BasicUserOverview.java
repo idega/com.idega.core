@@ -51,11 +51,15 @@ public class BasicUserOverview extends Page {
       if(adminUsers == null){
         adminUsers = new Vector(0);
       }
-      userTable = new Table(3,(users.size()>10)?users.size():10);
+      userTable = new Table(3,(users.size()>8)?users.size():8);
       userTable.setCellspacing(0);
       userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
       userTable.setWidth("100%");
-      userTable.setHeight("100%");
+      for (int i = 1; i <= userTable.getRows() ; i++) {
+        userTable.setHeight(i,"20");
+      }
+
+
       for (int i = 0; i < users.size(); i++) {
         User tempUser = (User)users.get(i);
         if(tempUser != null){

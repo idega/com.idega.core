@@ -134,15 +134,24 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   public void actionPerformed(IWSubmitEvent e){
     if(e.getSource() == ok){
-      this.okClicked = true;
+      boolean success = collector.storeAll(e.getIWContext());
+      if(success){
+        this.okClicked = true;
+      }else{
+        this.okClicked = false;
+      }
       this.cancelClicked = false;
       this.applyClicked = false;
-      collector.storeAll(e.getIWContext());
+
     }else if(e.getSource() == apply){
+      boolean success = collector.storeAll(e.getIWContext());
       this.okClicked = false;
       this.cancelClicked = false;
-      this.applyClicked = true;
-      collector.storeAll(e.getIWContext());
+      if(success){
+        this.applyClicked = true;
+      }else{
+        this.applyClicked = false;
+      }
     }else if(e.getSource() == cancel){
       this.okClicked = false;
       this.cancelClicked = true;
@@ -235,7 +244,11 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   public void main(IWContext iwc) {
 
     if(stateChanged){
-      collector.setSelectedIndex(tpane.getSelectedIndex(),iwc);
+
+      boolean success = collector.setSelectedIndex(tpane.getSelectedIndex(),iwc);
+      if(!success){
+        this.getIWTabbedPane().setSelectedIndex(collector.getSelectedIndex());
+      }
       stateChanged = false;
     }
 

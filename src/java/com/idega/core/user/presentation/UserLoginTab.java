@@ -9,6 +9,7 @@ import com.idega.presentation.Table;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.util.idegaTimestamp;
 
 
 /**
@@ -24,6 +25,9 @@ public class UserLoginTab extends UserTab {
 
   private Text userLoginText;
   private TextInput userLoginField;
+
+  private Table errorMessageTable;
+  private Text errorText;
 
   private Text passwordText;
   private Text confirmPasswordText;
@@ -55,6 +59,13 @@ public class UserLoginTab extends UserTab {
     super();
     super.setName("Login");
   }
+
+  public void init(){
+    errorMessageTable = new Table();
+    errorText = new Text();
+    errorText.setFontColor("red");
+  }
+
   public void initFieldContents() {
     try {
       LoginTable lTable = LoginDBHandler.getUserLogin(this.getUserId());
@@ -63,7 +74,7 @@ public class UserLoginTab extends UserTab {
       fieldValues.put(_PARAM_USER_LOGIN,lTable.getUserLogin());
 
       fieldValues.put(_PARAM_MUST_CHANGE_PASSWORD,new Boolean(lInfo.getChangeNextTime()));
-      fieldValues.put(_PARAM_CANNOT_CHANGE_PASSWORD,new Boolean(lInfo.getAllowedToChange()));
+      fieldValues.put(_PARAM_CANNOT_CHANGE_PASSWORD,new Boolean(!lInfo.getAllowedToChange()));
       fieldValues.put(_PARAM_PASSWORD_NEVER_EXPIRES,new Boolean(lInfo.getPasswordExpires()));
       fieldValues.put(_PARAM_DISABLE_ACCOUNT,new Boolean(!lInfo.getAccountEnabled()));
 
@@ -116,9 +127,77 @@ public class UserLoginTab extends UserTab {
     disableAccountText = new Text("Account is disabled");
   }
   public boolean store(IWContext iwc) {
-    return true;
-  }
+    boolean updateLoginTable = true;
+    String login = (String)fieldValues.get(_PARAM_USER_LOGIN);
 
+    String passw = ((String)fieldValues.get(_PARAM_PASSWORD));
+    String confirmedpassw = ((String)fieldValues.get(_PARAM_PASSWORD));
+
+
+    Boolean mustChangePassw = ((Boolean)fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD));//.booleanValue();
+    Boolean canChangePassw = ((Boolean)fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
+    Boolean passwExpires = ((Boolean)fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES));//.booleanValue();
+    Boolean accountEnabled = ((Boolean)fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
+
+    try {
+
+      if(((passw != null && !passw.equals(""))&&((confirmedpassw != null && !confirmedpassw.equals("")))) ){
+        if(login != null && !login.equals("")){
+          LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
+          String oldLogin = null;
+          if(userLoginTable != null){
+            oldLogin = userLoginTable.getUserLogin();
+          }
+          boolean inUse = LoginDBHandler.isLoginInUse(login);
+          if(oldLogin != null){
+            if(inUse && !oldLogin.equals(login)){
+              this.addErrorMessage("login in use");
+            } else {
+              fieldValues.put(this._PARAM_USER_LOGIN,login);
+            }
+          }else{
+            if(inUse){
+              this.addErrorMessage("login in use");
+            } else {
+              fieldValues.put(this._PARAM_USER_LOGIN,login);
+            }
+          }
+        } else {
+          this.addErrorMessage("login not valid");
+        }
+      }else{
+        updateLoginTable = false;
+      }
+
+    }
+    catch (Exception ex) {
+      this.addErrorMessage(ex.getMessage());
+    }
+
+    if(someErrors()){
+      presentErrorMessage(this.clearErrorMessages());
+      return false;
+    }else{
+      errorMessageTable.empty();
+      try {
+        LoginTable loginTable = LoginDBHandler.getUserLogin(this.getUserId());
+        if(loginTable != null){
+          if(updateLoginTable){
+            LoginDBHandler.updateLogin(this.getUserId(),login,passw);
+          }
+          LoginDBHandler.updateLoginInfo(loginTable.getID(),accountEnabled,idegaTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
+        } else if(updateLoginTable){
+          LoginDBHandler.createLogin(this.getUserId(),login,passw,accountEnabled,idegaTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
+        }
+        return true;
+      }
+      catch (Exception ex) {
+        this.addErrorMessage(ex.getMessage());
+        presentErrorMessage(this.clearErrorMessages());
+        return false;
+      }
+    }
+  }
 
   public void lineUpFields() {
     Table frameTable = new Table(2,1);
@@ -161,10 +240,17 @@ public class UserLoginTab extends UserTab {
     AccountPropertyTable.add(this.disableAccountText,2,4);
     // AccountPropertyTable end
 
+    errorMessageTable.setHeight(1);
+    errorMessageTable.setCellpadding(0);
+    errorMessageTable.setCellspacing(0);
+
+
     frameTable.add(Text.getBreak(),2,1);
     frameTable.add(loginTable,2,1);
     frameTable.add(Text.getBreak(),2,1);
     frameTable.add(AccountPropertyTable,2,1);
+    frameTable.add(errorMessageTable,2,1);
+
     this.add(frameTable);
 
   }
@@ -180,35 +266,96 @@ public class UserLoginTab extends UserTab {
       String passwExpires = iwc.getParameter(this._PARAM_PASSWORD_NEVER_EXPIRES);
       String accountDisabled = iwc.getParameter(this._PARAM_DISABLE_ACCOUNT);
 
+      if(((passw != null && !passw.equals(""))&&((confirmedpassw != null && !confirmedpassw.equals("")))) ){
+        if(login != null && !login.equals("")){
+          LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
+          String oldLogin = null;
+          if(userLoginTable != null){
+            oldLogin = userLoginTable.getUserLogin();
+          }
+          boolean inUse = LoginDBHandler.isLoginInUse(login);
+          if(oldLogin != null){
+            if(inUse && !oldLogin.equals(login)){
+              this.addErrorMessage("login in use");
+            } else {
+              fieldValues.put(this._PARAM_USER_LOGIN,login);
+            }
+          }else{
+            if(inUse){
+              this.addErrorMessage("login in use");
+            } else {
+              fieldValues.put(this._PARAM_USER_LOGIN,login);
+            }
+          }
+        } else {
+          this.addErrorMessage("login not valid");
+        }
 
-      if(login != null){
-        fieldValues.put(this._PARAM_USER_LOGIN,login);
+        if(passw != null && confirmedpassw != null && passw.equals(confirmedpassw)){
+          fieldValues.put(this._PARAM_PASSWORD,passw);
+        } else {
+          this.addErrorMessage("password and confirmed password not valid or not the same");
+        }
       }
-
-      if(passw != null && confirmedpassw != null && passw.equals(confirmedpassw)){
-        fieldValues.put(this._PARAM_PASSWORD,passw);
-      }
-
 
       if(mustChangePassw != null){
         fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
+      } else {
+        fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
       }
+
       if(cannotChangePassw != null){
         fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
+      }else {
+        fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
       }
+
       if(passwExpires != null){
         fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.TRUE);
+      }else {
+        fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
       }
+
       if(accountDisabled != null){
         fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.TRUE);
+      }else {
+        fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
       }
 
       this.updateFieldsDisplayStatus();
 
+      if(someErrors()){
+        presentErrorMessage(this.clearErrorMessages());
+        return false;
+      }else{
+        errorMessageTable.empty();
+        return true;
+      }
+    }
+    this.addErrorMessage("IWContext is null");
+    if(someErrors()){
+      presentErrorMessage(this.clearErrorMessages());
+      return false;
+    }else{
+      errorMessageTable.empty();
       return true;
     }
-    return false;
   }
+
+  public void presentErrorMessage(String[] messages){
+    errorMessageTable.empty();
+    if(messages != null){
+      for (int i = 0; i < messages.length; i++) {
+        Text message = (Text)errorText.clone();
+        message.setText("* "+messages[i]+Text.BREAK);
+
+        errorMessageTable.add(message);
+      }
+
+    }
+  }
+
+
   public void initializeFieldNames() {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }

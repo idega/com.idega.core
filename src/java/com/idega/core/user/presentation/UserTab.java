@@ -6,6 +6,9 @@ import com.idega.presentation.text.Text;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
+import java.util.Vector;
+import java.util.List;
+import java.util.Iterator;
 
 
 /**
@@ -19,6 +22,8 @@ import java.util.Hashtable;
 public abstract class UserTab extends Table implements Collectable{
 
   private int userId = -1;
+
+  private List errorStrings;
 
   protected String rowHeight = "37";
   /**
@@ -36,6 +41,7 @@ public abstract class UserTab extends Table implements Collectable{
 
   public UserTab() {
     super();
+    errorStrings = new Vector();
     business = new UserBusiness();
     fieldValues = new Hashtable();
     init();
@@ -88,5 +94,26 @@ public abstract class UserTab extends Table implements Collectable{
     return userId;
   }
 
+  public void addErrorMessage(String message){
+    errorStrings.add(message);
+  }
+
+
+  public String[] clearErrorMessages(){
+    String[] st = new String[errorStrings.size()];
+
+    Iterator iter = errorStrings.iterator();
+    int index = 0;
+    while (iter.hasNext()) {
+      st[index++] = (String)iter.next();
+    }
+    errorStrings.clear();
+
+    return st;
+  }
+
+  public boolean someErrors(){
+    return (0 < errorStrings.size());
+  }
 
 } // Class GeneralUserInfoTab

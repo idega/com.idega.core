@@ -32,25 +32,34 @@ public class GenericFormCollector {
     }
   }
 
+  public int getSelectedIndex(){
+    return selectedIndex;
+  }
 
-  public void setSelectedIndex(int index, IWContext iwc, boolean collect, boolean store){
+  public boolean setSelectedIndex(int index, IWContext iwc, boolean collect, boolean store){
+    boolean collected = true;
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
       if(collect && selectedIndex != index ){
-        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
+        collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
       }
       if(store && selectedIndex != index ){
-        ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(iwc);
+        collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(iwc);
       }
     }
-    this.selectedIndex = index;
+    if(collected){
+      this.selectedIndex = index;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
    * collect : true <br>
    * store : false
    */
-  public void setSelectedIndex(int index, IWContext iwc){
-    this.setSelectedIndex(index,iwc,true,false);
+  public boolean setSelectedIndex(int index, IWContext iwc){
+    return this.setSelectedIndex(index,iwc,true,false);
   }
 
 /*
@@ -70,10 +79,14 @@ public class GenericFormCollector {
   public boolean storeAll(IWContext iwc){
     boolean stored = true;
     boolean returned = true;
+    boolean collected = true;
 
     // collect current object
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
-      ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
+      collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
+      if(!collected){
+        return false;
+      }
     }
     // storeAll
     for (int i = 0; i < this.addedCollectableObjects.size(); i++) {
