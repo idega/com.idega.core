@@ -702,10 +702,10 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 	}
 	public boolean hasViewPermission(PresentationObject obj) {
-		return this.hasPermission(AccessController._PERMISSIONKEY_VIEW, obj);
+		return this.hasPermission(AccessController.PERMISSION_KEY_VIEW, obj);
 	}
 	public boolean hasEditPermission(PresentationObject obj) {
-		return this.hasPermission(AccessController._PERMISSIONKEY_EDIT, obj);
+		return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 	public boolean hasPermission(List groupIds, String permissionKey, PresentationObject obj) {
 		try {
@@ -732,11 +732,13 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 	}
 	public boolean hasViewPermission(List groupIds, PresentationObject obj) {
-		return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_VIEW, obj);
+		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_VIEW, obj);
 	}
 	public boolean hasEditPermission(List groupIds, PresentationObject obj) {
-		return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT, obj);
+		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_EDIT, obj);
 	}
+	
+	
 	public boolean isSuperAdmin() {
 		try {
 			if (this.isLoggedOn())

@@ -24,6 +24,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	private Vector _PKs;
 	private LoadTracker _tracker;
 	private int fetchSize = 1;
+	private int prefetchNumber=100;
+	
 
 	private IDOPrimaryKeyList() {
 	}
@@ -151,6 +153,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				ListIterator iter = setsToLoad.listIterator();
 				//JDBC 1.0
 				ResultSet RS = Stmt.executeQuery(_sqlQuery);
+				System.out.println("EIKI DEBUG: "+_sqlQuery);
 
 				int RSpos = -1;
 				while (iter.hasNext())
@@ -193,7 +196,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 						if (pk != null)
 						{
 							//Integer pk = new Integer(id);
-							_entity.prefetchBeanFromResultSet(pk, RS);
+							//_entity.prefetchBeanFromResultSet(pk, RS);
 							_PKs.set(RSpos,pk);
 						}
 					}
@@ -325,7 +328,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	}
 
   public Iterator iterator() {
-	try
+	/*try
 	{
 		this.loadSubset(0,_size);
 	}
@@ -333,11 +336,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	{
 		ex.printStackTrace();
 	}
-	return _PKs.iterator();
+	return _PKs.iterator();*/
+		return listIterator();
   }
 
   public ListIterator listIterator() {
-	try
+	/*try
 	{
 		this.loadSubset(0,_size);
 	}
@@ -345,11 +349,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	{
 		ex.printStackTrace();
 	}
-	return _PKs.listIterator();
+	return _PKs.listIterator();*/
+		return listIterator(0);
   }
 
   public ListIterator listIterator(int index) {
-	try
+	/*try
 	{
 		this.loadSubset(index,_size);
 	}
@@ -357,7 +362,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	{
 		ex.printStackTrace();
 	}
-	return _PKs.listIterator(index);
+	return _PKs.listIterator(index);*/
+		return new IDOPrimaryKeyListIterator(this,index);
   }
 
 	/**
@@ -397,7 +403,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	if(obj == null){
 		try
 		{
-			loadSubset(index,index);
+			loadSubset(index,index+prefetchNumber);
 		}
 		catch (Exception ex)
 		{
@@ -823,8 +829,97 @@ public class IDOPrimaryKeyList implements List, Runnable {
 
 		}
 
-
-
-
 	}  //LoadTracker Ends
+
+
+
+
+		public class IDOPrimaryKeyListIterator implements ListIterator{
+			private int _index;
+			private List _list;
+			private Object lastObject;
+			private boolean _hasPrevious=false;
+			
+			public IDOPrimaryKeyListIterator(IDOPrimaryKeyList list,int index){
+				_list=list;
+				_index=index;
+			}
+			
+					/**
+			 * @see java.util.ListIterator#add(java.lang.Object)
+			 */
+			public void add(Object o) {
+				_list.add(o);
+			}
+
+			/**
+			 * @see java.util.Iterator#hasNext()
+			 */
+			public boolean hasNext() {
+				return _list.size()>_index;
+			}
+
+			/**
+			 * @see java.util.ListIterator#hasPrevious()
+			 */
+			public boolean hasPrevious() {
+				return _hasPrevious;
+			}
+
+			/**
+			 * @see java.util.Iterator#next()
+			 */
+			public Object next() {
+				Object o =  _list.get(nextIndex());
+				_index++;
+				_hasPrevious=true;
+				return o;
+			}
+
+			/**
+			 * @see java.util.ListIterator#nextIndex()
+			 */
+			public int nextIndex() {
+				return _index;
+			}
+
+			/**
+			 * @see java.util.ListIterator#previous()
+			 */
+			public Object previous() {
+				Object o = _list.get(previousIndex());
+				_index=_index-1;
+				if(_index==0){
+					_hasPrevious=false;
+				}
+				return o;
+			}
+
+			/**
+			 * @see java.util.ListIterator#previousIndex()
+			 */
+			public int previousIndex() {
+				return _index-1;
+			}
+
+			/**
+			 * @see java.util.Iterator#remove()
+			 */
+			public void remove() {
+				_list.remove(previousIndex());
+			}
+
+			/**
+			 * @see java.util.ListIterator#set(java.lang.Object)
+			 */
+			public void set(Object o) {
+				_list.set(previousIndex(),o);
+			}
+
+}
+
+
+
+
+
 }
