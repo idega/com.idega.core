@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,21 +19,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ArrayList;
-
 import javax.servlet.ServletContext;
-
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
-import com.idega.util.LocaleUtil;
 import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
 
@@ -625,13 +623,10 @@ public class IWMainApplication {//implements ServletContext{
     }
 
     /**
-     * Returns a List of Locale Objects
+     * Returns a List of Locale Objects in use
      */
     public List getAvailableLocales() {
-        List vector = new ArrayList();
-        vector.add(LocaleUtil.getIcelandicLocale());
-        vector.add(Locale.ENGLISH);
-        return vector;
+        return ICLocaleBusiness.getListOfAllLocalesJAVA();
     }
 
     /**

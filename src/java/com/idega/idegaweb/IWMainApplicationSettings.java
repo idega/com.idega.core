@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
-
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.util.LocaleUtil;
 /**
@@ -87,15 +87,40 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public Locale getDefaultLocale() {
 		String localeIdentifier = getProperty(DEFAULT_LOCALE);
 		Locale locale = null;
+		boolean firstTimeSave = false;
+		Locale englishLocal = Locale.ENGLISH;
 		if (localeIdentifier == null) {
-			//localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
 			//Set default to International English
-			localeIdentifier = "en";
-			locale = LocaleUtil.getLocale(localeIdentifier);
-			setDefaultLocale(locale);
+			locale = englishLocal;
+			firstTimeSave = true;
 		}
-		locale = LocaleUtil.getLocale(localeIdentifier);
-		return locale;
+		else{
+			locale = LocaleUtil.getLocale(localeIdentifier);
+		}
+		
+		List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
+		
+		//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
+		if(localesInUse.contains(locale)){
+			if(firstTimeSave){
+				setDefaultLocale(locale);
+			}
+			return locale;
+		}
+		else{
+			if(localesInUse.contains(englishLocal)){
+				//try to use the english one
+				locale = englishLocal;
+			}
+			else{
+				//else just the first we find
+				locale = (Locale)localesInUse.iterator().next();
+			}
+			setDefaultLocale(locale);//to fix the default locale or set it for the first time
+			
+			return locale;
+		}
+		
 	}
 	public AccessController getDefaultAccessController() {
 		return (AccessController) new com
