@@ -512,8 +512,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 
 	}
-	
+
 	public Collection ejbFindChildren(ICFile parent, Collection visibleMimeTypes, Collection hiddenMimeTypes, String orderBy) throws FinderException {
+		return ejbFindChildren(parent, visibleMimeTypes, hiddenMimeTypes, orderBy, -1, -1);
+	}
+	
+	public Collection ejbFindChildren(ICFile parent, Collection visibleMimeTypes, Collection hiddenMimeTypes, String orderBy, int starting, int numberOfReturns) throws FinderException {
 		try {
 			String thisTable = parent.getEntityDefinition().getSQLTableName();
 			String treeTable = EntityControl.getTreeRelationShipTableName(parent);
@@ -541,7 +545,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
 			//System.out.println(buffer.toString());
-			return idoFindPKsBySQL( buffer.toString());
+			return idoFindPKsBySQL( buffer.toString(), numberOfReturns, starting);
 			
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace(System.err);
