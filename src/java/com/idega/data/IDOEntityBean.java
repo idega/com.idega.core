@@ -28,5 +28,9 @@ public interface IDOEntityBean extends EntityBean{
   //public void setEJBHome(javax.ejb.EJBHome ejbHome);
   public Class getPrimaryKeyClass();
 
+/**
+ * @return Set
+ */
+  public java.util.Collection getAttributes();
 
 }
