@@ -62,9 +62,14 @@ public class SingleLineItem extends Component {
         if( isSelected() ){
           g.setColor(Color.blue);
           g.fillRect(0,0,width,height);
+          g.setColor(Color.red);
+          g.drawString("ON",10,10);
+        }
+        else{
+          g.setColor(Color.white);
+          g.fillRect(0,0,width,height);
           g.setColor(Color.black);
-          g.drawString("test",5,5);
-
+          g.drawString("OFF",10,10);
         }
        /* if (isEnabled()) {
             if (pressed) {
