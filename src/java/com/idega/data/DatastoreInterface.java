@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.121 2004/10/13 16:31:35 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.122 2004/10/19 12:09:55 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -54,6 +54,18 @@ public abstract class DatastoreInterface {
 	private boolean useIndexes = true;
 	protected IDOTableCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
+	
+	
+	public final static String DBTYPE_ORACLE = "oracle";
+	public final static String DBTYPE_INTERBASE = "interbase";
+	public final static String DBTYPE_HSQL = "hsql";
+	public final static String DBTYPE_MAKOI = "mckoi";
+	public final static String DBTYPE_MYSQL = "mysql";
+	public final static String DBTYPE_SAPDB = "sapdb";
+	public final static String DBTYPE_DB2 = "db2";
+	public final static String DBTYPE_MSSQLSERVER = "mssqlserver";
+	public final static String DBTYPE_INFORMIX = "informix";
+	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
 
 	public static DatastoreInterface getInstance(String datastoreType) {
 		DatastoreInterface theReturn = null;
@@ -259,42 +271,42 @@ public abstract class DatastoreInterface {
 					checkString = connection.getClass().getName();
 				}
 				if (checkString.indexOf("oracle") != -1) {
-					dataStoreType = "oracle";
+					dataStoreType = DBTYPE_ORACLE;
 				}
 				else if (checkString.indexOf("interbase") != -1 || checkString.indexOf("firebird") != -1) {
-					dataStoreType = "interbase";
+					dataStoreType = DBTYPE_INTERBASE;
 				}
 				else if (checkString.indexOf("hsql") != -1 || checkString.indexOf("hypersonicsql") != -1) {
-					dataStoreType = "hsql";
+					dataStoreType = DBTYPE_HSQL;
 				}
 				else if (checkString.indexOf("mckoi") != -1) {
-					dataStoreType = "mckoi";
+					dataStoreType = DBTYPE_MAKOI;
 				}
 				else if (checkString.indexOf("mysql") != -1) {
-					dataStoreType = "mysql";
+					dataStoreType = DBTYPE_MYSQL;
 				}
 				else if (checkString.indexOf("sap") != -1) {
-					dataStoreType = "sapdb";
+					dataStoreType = DBTYPE_SAPDB;
 				}
 				else if (checkString.indexOf("db2") != -1) {
-					dataStoreType = "db2";
+					dataStoreType = DBTYPE_DB2;
 				}
 				else if (checkString.indexOf("microsoft sql") != -1 || checkString.indexOf("microsoftsql") != -1) {
-					dataStoreType = "mssqlserver";
+					dataStoreType = DBTYPE_MSSQLSERVER;
 				}
 				else if (checkString.indexOf("informix") != -1) {
-					dataStoreType = "informix";
+					dataStoreType = DBTYPE_INFORMIX;
 				}
 				else if (checkString.indexOf("idega") != -1) {
-					dataStoreType = "idega";
+					dataStoreType = DBTYPE_UNIMPLEMENTED;
 				}
 				else {
-					dataStoreType = "unimplemented";
+					dataStoreType = DBTYPE_UNIMPLEMENTED;
 				}
 			}
 		}
 		else {
-			dataStoreType = "";
+			dataStoreType = DBTYPE_UNIMPLEMENTED;
 		}
 		return dataStoreType;
 	}

@@ -491,6 +491,10 @@ private static String thePropertiesFileLocation;
 		}
 		return 0;
 	}
+	public int getMaximumConnectionCount()
+	{
+		return getMaximumConnectionCount(DEFAULT_DSN);
+	}
 	public int getMinimumConnectionCount(String datasourceName)
 	{
 		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
@@ -499,6 +503,10 @@ private static String thePropertiesFileLocation;
 			return pool.getMinimumConnectionCount();
 		}
 		return 0;
+	}
+	public int getMinimumConnectionCount()
+	{
+		return getMinimumConnectionCount(DEFAULT_DSN);
 	}
 	public int getTimeOut(String datasourceName)
 	{
