@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.37 2002/08/09 10:27:24 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.38 2002/08/19 17:52:20 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -128,12 +128,37 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	}
 
   public void processBusinessEvent(IWContext iwc)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+    String[] eventListeners  = iwc.getParameterValues(IWMainApplication.IdegaEventListenerClassParameter);
+    if(eventListeners!=null){
+      for (int i = 0; i < eventListeners.length; i++) {
+        processIWEventEncrypted(iwc,eventListeners[i]);
+      }
+    }
+    /*
     String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
-    String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
-    if (eventClass != null) {
-      System.out.println("IWEventListener: "+ eventClass);
-      IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
+    processIWEvent(iwc,eventClassEncr);
+    */
+  }
+
+  private void processIWEvent(IWContext iwc,String EventListenerClass)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+    if (EventListenerClass != null) {
+      System.out.println("IWEventListener: "+ EventListenerClass);
+      IWEventListener listener = (IWEventListener)Class.forName(EventListenerClass).newInstance();
       listener.actionPerformed(iwc);
+    }
+  }
+
+  private void processIWEventEncrypted(IWContext iwc,String EncryptedEventListenerClassName)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+    String eventClass = IWMainApplication.decryptClassName(EncryptedEventListenerClassName);
+    processIWEvent(iwc,eventClass);
+  }
+
+  private void processApplicationEvents(IWContext iwc) throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+    java.util.List eventListeners = iwc.getApplication().getApplicationEventListeners();
+    Iterator iter = eventListeners.iterator();
+    while(iter.hasNext()){
+      String className = (String) iter.next();
+      processIWEvent(iwc,className);
     }
   }
 
@@ -172,13 +197,14 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
 	  try {
 
-long time1 = System.currentTimeMillis();
-//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
+          long time1 = System.currentTimeMillis();
+          //com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
 	    __initializeIWC(request,response);
 	    IWContext iwc = getIWContext();
 	  try{
 
 	    processBusinessEvent(iwc);
+            processApplicationEvents(iwc);
 
 	    initializePage();
 

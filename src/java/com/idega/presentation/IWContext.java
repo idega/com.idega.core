@@ -516,19 +516,19 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	  }
 	  return sessionAttributes;
 	}
-	
+
 	public void setIdegaSessionAttribute(String attributeName,Object attributeValue){
 	  getSessionHashtable().put(attributeName,attributeValue);
 	}
-	
+
 	public Object getIdegaSessionAttribute(String attributeName){
 	  return getSessionHashtable().get(attributeName);
 	}
-	
+
 	public void removeIdegaSessionAttribute(String attributeName){
 	  getSessionHashtable().remove(attributeName);
 	}
-	
+
 	public void removeAllIdegaSessionAttributes(){
 	  getSessionHashtable().clear();
 	}*/
@@ -851,11 +851,11 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		catch(Exception e){
 		 e.printStackTrace(System.err);
 		}
-		
+
 		this does not work either
 		sendRedirect(URL.toString());
-		
-		
+
+
 		*/
 		StringBuffer URL = new StringBuffer();
 		URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(), ((Integer) page.getPrimaryKeyValue()).intValue()));
@@ -864,4 +864,24 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		fromPage.setToRedirect(URL.toString());
 		fromPage.empty();
 	}
+
+	/*
+	 *  Returns null if not found
+   */
+  public Cookie getCookie(String cookieName) {
+    Cookie[] cookies = (Cookie[]) this.getCookies();
+
+    if (cookies != null) {
+      if (cookies.length > 0) {
+				for (int i = 0 ; i < cookies.length ; i++) {
+					if ( cookies[i].getName().equals(cookieName) ) {
+						return cookies[i];
+					}
+				}
+      }
+    }
+
+    return null;
+  }
+
 }
