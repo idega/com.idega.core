@@ -962,7 +962,7 @@ implements IWUserContext, IWApplicationContext {
 				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
 			}
 			Object[] args = {this};
-			methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args);
+			return ((Boolean) methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args)).booleanValue();
 		}
 		catch(Throwable e){
 			e.printStackTrace();
