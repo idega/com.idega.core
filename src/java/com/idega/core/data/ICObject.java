@@ -19,6 +19,8 @@ import com.idega.block.login.presentation.Login;
 */
 public class ICObject extends GenericEntity{
 
+        private static final String object_type_column_name = "object_type";
+
 	public ICObject(){
 		super();
 	}
@@ -34,6 +36,7 @@ public class ICObject extends GenericEntity{
 		addAttribute(getIDColumnName());
 		addAttribute("object_name","Name",true,true,"java.lang.String");
 		addAttribute("class_name","Class Name",true,true,"java.lang.String");
+                addAttribute(getObjectTypeColumn(),"Class Name",true,true,"java.lang.String");
 		//addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sjálfur",true,true,"java.sql.Blob");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
@@ -41,30 +44,39 @@ public class ICObject extends GenericEntity{
 		//addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
 	}
 
+        public static String getObjectTypeColumn(){
+          return object_type_column_name;
+        }
+
         public void insertStartData()throws Exception{
           ICObject obj = new ICObject();
           obj.setName("Table");
           obj.setObjectClass(Table.class);
+          obj.setObjectType("iw.element");
           obj.insert();
 
           obj = new ICObject();
           obj.setName("Image");
           obj.setObjectClass(com.idega.jmodule.object.Image.class);
+          obj.setObjectType("iw.element");
           obj.insert();
 
           obj = new ICObject();
           obj.setName("NewsModule");
           obj.setObjectClass(NewsReader.class);
+          obj.setObjectType("iw.block");
           obj.insert();
 
           obj = new ICObject();
           obj.setName("TextModule");
           obj.setObjectClass(TextReader.class);
+          obj.setObjectType("iw.block");
           obj.insert();
 
           obj = new ICObject();
           obj.setName("LoginModule");
           obj.setObjectClass(Login.class);
+          obj.setObjectType("iw.block");
           obj.insert();
 
         }
@@ -76,6 +88,7 @@ public class ICObject extends GenericEntity{
 	public void setDefaultValues(){
 		//setColumn("image_id",1);
 //                setColumn("small_icon_image_id",1);
+            //setObjectType("iw.block");
 	}
 
 	public String getName(){
@@ -109,5 +122,15 @@ public class ICObject extends GenericEntity{
 	public ModuleObject getNewInstance()throws ClassNotFoundException,IllegalAccessException,InstantiationException{
 		return (ModuleObject)getObjectClass().newInstance();
 	}
+
+
+        public String getObjectType(){
+          return getStringColumnValue(getObjectTypeColumn());
+        }
+
+        public void setObjectType(String objectType){
+          setColumn(getObjectTypeColumn(),objectType);
+        }
+
 
 }
