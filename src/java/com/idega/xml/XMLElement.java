@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.1 2001/12/03 16:17:36 palli Exp $
+ * $Id: XMLElement.java,v 1.2 2002/01/09 16:18:32 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -235,5 +235,14 @@ public class XMLElement {
     }
 
     return(this);
+  }
+
+  public synchronized Object clone() {
+    if (_element == null)
+      return(null);
+
+    Element el = (Element)_element.clone();
+    XMLElement element = new XMLElement(el);
+    return(element);
   }
 }
