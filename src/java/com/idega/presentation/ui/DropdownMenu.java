@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.14 2003/04/02 10:48:36 laddi Exp $
+ * $Id: DropdownMenu.java,v 1.15 2003/04/02 17:56:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,7 +16,6 @@ import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 
 /**
- * @deprecated Replaced by <code>SelectDropdown</code>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
