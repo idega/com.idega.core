@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.9 2001/10/24 16:43:05 eiki Exp $
+ * $Id: Link.java,v 1.10 2001/10/24 17:55:37 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1148,6 +1148,7 @@ public class Link extends Text {
 
   public void setAsImageButton(boolean isImageButton){
    this.isImageButton = isImageButton;
+   this.isImageTab = false; //can't have both
   }
 
   public void setAsLocalizedImageButton( boolean useTextAsLocalizedTextKey ){
@@ -1162,17 +1163,17 @@ public class Link extends Text {
   public void setAsImageTab(boolean isImageTab, boolean flip){
    this.isImageTab = isImageTab;
    this.flip = flip;
+   this.isImageButton = false; //can't have both
+
   }
 
-  public void setAsLocalizedImageTab( boolean useTextAsLocalizedTextKey, boolean flip){
+  public void setAsLocalizedImageTab( boolean useTextAsLocalizedTextKey ){
     this.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
-    this.flip = flip;
   }
 
   public void setAsImageTab(boolean isImageTab, boolean useTextAsLocalizedTextKey, boolean flip){
     setAsImageTab(isImageTab,flip);
-    setAsLocalizedImageTab(useTextAsLocalizedTextKey,flip);
-    this.flip = flip;
+    setAsLocalizedImageTab(useTextAsLocalizedTextKey);
   }
 }
 

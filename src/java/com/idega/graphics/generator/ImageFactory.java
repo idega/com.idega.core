@@ -144,6 +144,7 @@ public class ImageFactory {
 
   /** delete all generated images in bundles and the (webroot)/iw_generated folder*/
   public static void deleteGeneratedImages(IWMainApplication iwma){
+
     FileUtil.deleteAllFilesInDirectory(iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
 
     List bundles = iwma.getRegisteredBundles();
@@ -156,17 +157,11 @@ public class ImageFactory {
       String resourcePath = bundle.getResourcesRealPath();
       FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
 
-
-      System.out.println(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-
       Iterator iter2 = locales.iterator();
       while (iter2.hasNext()) {
         Locale item = (Locale)iter2.next();
         resourcePath = bundle.getResourcesRealPath(item);
         FileUtil.deleteAllFilesInDirectory(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-
-       System.out.println(resourcePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator());
-
       }
     }
   }

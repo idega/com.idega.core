@@ -316,6 +316,7 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public void unload(){
+    System.out.println("idegaWeb : shutdown : Storing application state and deleting cached/generated content");
     storeStatus();
     IWCacheManager.deleteCachedBlobs(this);
     getImageFactory().deleteGeneratedImages(this);
