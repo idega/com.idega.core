@@ -3321,20 +3321,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * This method should generally never be called manually
 	 * @param uniqueId
 	 */
-	protected void setUniqueId(String uniqueId){
+	public void setUniqueId(String uniqueId){
 		setColumn(getUniqueIdColumnName(),uniqueId);
 	}
 
-	/**
-	 * Gets the value of the unique Id column
-	 * @return
-	 */
-	public String getUniqueId(){
-		if(hasUniqueIDColumn()){
-			return getStringColumnValue(getUniqueIdColumnName());
-		}
-		return null;
-	}
 	/**
 	 * @return true if this entity has called addUniqueIdColumn() to add a unique id column to its table
 	 */
@@ -4586,6 +4576,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected void addUniqueIDColumn() {
 		addAttribute(getUniqueIdColumnName(),"A generated unique id do not change manually!",String.class,36);
 		_hasUniqueIDColumn = true;
+	}
+	
+	/**
+	 * A convenience method that you can use if your entity has the UniqueID column.<br>
+	 * If you make your IDO interface extend the UniqueIDCapable interface you get this method added to your bean.
+	 * @return The unique id string of the entity if it has it, otherwise null
+	 */
+	public String getUniqueId(){
+		if(hasUniqueIDColumn()){
+			return getStringColumnValue(getUniqueIdColumnName());
+		}
+		return null;
 	}
 
 }
