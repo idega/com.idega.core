@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.135 2005/02/03 14:25:04 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.136 2005/02/10 10:41:49 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -63,6 +63,7 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
@@ -81,13 +82,12 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/02/03 14:25:04 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/02/10 10:41:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.135 $
+ * @version $Revision: 1.136 $
  */
-public class IWMainApplication //{//implements ServletContext{
-	extends Application{
+public class IWMainApplication	extends Application  implements MutableClass {
 
 	//Static final Contstants:
 	/**
@@ -96,18 +96,23 @@ public class IWMainApplication //{//implements ServletContext{
 	 */
 	public final static String APPLICATION_BEAN_ID = "idegaweb_application";
 	
-    public static final String IdegaEventListenerClassParameter = "idegaweb_event_classname";
-    public static final String ApplicationEventListenersParameter = "idegaweb_application_events";
-    public static final String IWEventSessionAddressParameter = "iw_event_address"; // added
-	public static final String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
-    private static final String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
-    public static final String templateParameter = "idegaweb_template";
-    public static final String templateClassParameter = "idegaweb_template_class";
-    public static String classToInstanciateParameter = "idegaweb_instance_class";
+    public final static String IdegaEventListenerClassParameter = "idegaweb_event_classname";
+    public final static String ApplicationEventListenersParameter = "idegaweb_application_events";
+    public final static String IWEventSessionAddressParameter = "iw_event_address"; // added
+	public final static String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
+	
+    private final static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
+    
+    public final static String templateParameter = "idegaweb_template";
+    public final static String templateClassParameter = "idegaweb_template_class";
+    
+    public final static String classToInstanciateParameter = "idegaweb_instance_class";
+    
     private final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
     private final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
     private final static String IDEGAWEB_PRIVATE_DIRECTORY = "WEB-INF/idegaweb";
     private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
+    
     public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
     public final static String CORE_DEFAULT_FONT = "default.ttf";
@@ -115,36 +120,44 @@ public class IWMainApplication //{//implements ServletContext{
     public final static String _PROPERTY_USING_EVENTSYSTEM = "using_eventsystem";
     public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
     public final static String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
-    private final static String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
-    private final static String bundlesFileName = "bundles.properties";
     
-    private static final String APACHE_RESTART_PARAMETER = "restart_apache";
-    private static final String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
-	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
-	public static final String PROPERTY_JSF_RENDERING = "jsf_rendering";
-    private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
-    private static final String SLASH = "/";
+    private static final String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
+    private static final String bundlesFileName = "bundles.properties";
+    
+    private final static String APACHE_RESTART_PARAMETER = "restart_apache";
+    private final static String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
+	
+    public final static String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
+	public final static String PROPERTY_JSF_RENDERING = "jsf_rendering";
+    
+	private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
+    private final static String SLASH = "/";
     private final static String windowOpenerURL = "/servlet/WindowOpener";
     private final static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
+    
     public final static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
     public final static String FILE_SERVLET_URL = "/servlet/FileServlet/";
+    
     private final static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
     private final static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
     private final static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
-    private static final String NEW_WINDOW_URL="/window/";
-    private static final String NEW_BUILDER_PAGE_URL="/pages/";
-    private static final String WORKSPACE_URI="/workspace/";
-    private static final String LOGIN_URI="/login/";
     
-    //Static variables:
-    protected static IWMainApplication defaultIWMainApplication;
-    public static boolean USE_NEW_URL_SCHEME=false;
+    private final static String NEW_WINDOW_URL="/window/";
+    private final static String NEW_BUILDER_PAGE_URL="/pages/";
+    private final static String WORKSPACE_URI="/workspace/";
+    private final static String LOGIN_URI="/login/";
+    
+    //mutable class variables:
+    protected static IWMainApplication defaultIWMainApplication = null;
+    private static IWCacheManager cacheManager = null;
+    public static final boolean DEFAULT_USE_NEW_URL_SCHEME = false;
+    public static boolean useNewURLScheme= DEFAULT_USE_NEW_URL_SCHEME;
 	//This is a temporary solution should be removed when JSF implementation is done:
-	public static boolean USE_JSF=false;
-    private static IWCacheManager cacheManager;
-    private static boolean alreadyUnLoaded = false;//for restartApplication
-    public static boolean DEBUG_FLAG = false;
+    public static final boolean DEFAULT_USE_JSF = false;
+	public static boolean useJSF = DEFAULT_USE_JSF;
+    public static final boolean DEFAULT_DEBUG_FLAG = false;
+    public static boolean debug = DEFAULT_DEBUG_FLAG;
     
     //Member variables:
     private Map loadedBundles;
@@ -167,7 +180,16 @@ public class IWMainApplication //{//implements ServletContext{
     private ApplicationProductInfo applicationProductInfo;
     private boolean inDatabaseLessMode=false;
     private boolean inSetupMode=false;
+    
+    private boolean alreadyUnloaded = false; // for restart application
 
+    public static void unload()	{
+    	defaultIWMainApplication = null;
+    	cacheManager = null;
+    	useNewURLScheme = DEFAULT_USE_NEW_URL_SCHEME;
+    	useJSF = DEFAULT_USE_JSF;
+    	debug = DEFAULT_DEBUG_FLAG;
+    }
     
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -179,6 +201,11 @@ public class IWMainApplication //{//implements ServletContext{
         }
         //attention this must be reviewed if we implement multi domains within
         // one virtualmachine
+        // comment by thomas: 
+        // The implementation is wrong and not fixed yet:
+        // The cacheManager is a singleton and is stored twice:
+        // As an attribute of an instance of the IWMainApplication and in a class variable
+        // of the class IWMainApplication.. At least it is the same object.
         cacheManager = IWCacheManager.getInstance(this);
         load();
     }
@@ -261,7 +288,7 @@ public class IWMainApplication //{//implements ServletContext{
     		
 
 		ViewManager viewManager = ViewManager.getInstance(this);
-		if(USE_JSF){
+		if(useJSF){
 	    	
 	    		ApplicationFactory factory = getApplicationFactory();
 			replaceJSFApplication(factory);
@@ -307,7 +334,7 @@ public class IWMainApplication //{//implements ServletContext{
     
     public String getObjectInstanciatorURI(Class className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
-		if(USE_NEW_URL_SCHEME){
+		if(useNewURLScheme){
 			return this.getWindowOpenerURI(className)
 			+ templateParameter + "=" + getEncryptedClassName(templateName);
 		}
@@ -329,7 +356,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getObjectInstanciatorURI(String className) {
-		if(USE_NEW_URL_SCHEME){
+		if(useNewURLScheme){
 			try {
 				return this.getWindowOpenerURI(Class.forName(className));
 			} catch (ClassNotFoundException e) {
@@ -345,7 +372,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getObjectInstanciatorURI(Class classToInstanciate) {
-    		if(USE_NEW_URL_SCHEME){
+    		if(useNewURLScheme){
     			return this.getWindowOpenerURI(classToInstanciate);
     		}
     		else{
@@ -530,40 +557,46 @@ public class IWMainApplication //{//implements ServletContext{
     public LogWriter getLogWriter() {
         return lw;
     }
-
-    public synchronized void unload() {
-        if (!alreadyUnLoaded) {
-            log("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
-            storeStatus();
-            //IWCacheManager.deleteCachedBlobs(this);
-            //      getImageFactory(true).deleteGeneratedImages(this);
-
-            for (Iterator keyIter = getLoadedBundles().keySet().iterator(); keyIter
-                    .hasNext();) {
-                Object key = keyIter.next();
-                IWBundle bundle = (IWBundle) getLoadedBundles().get(key);
-                bundle.unload();
-            }
-            loadedBundles=null;
-            bundlesFile=null;
-            
-            if(cacheManager!=null){
-            		cacheManager.unload(this);
-            }
-            cacheManager=null;
-            windowClassesStaticInstances=null;
-            
-            shutdownApplicationServices();
-            SingletonRepository.stop();
-            
-            application.removeAttribute(APPLICATION_BEAN_ID);
-
-            removeAllApplicationAttributes();
-            
-            application=null;
-            defaultIWMainApplication=null;
-            alreadyUnLoaded = true;
+    
+    public synchronized void unloadInstanceAndClass() {
+        if (!alreadyUnloaded) {
+        	unloadInstance();
+        	IWMainApplication.unload();
+        	alreadyUnloaded = true;
         }
+    }
+    
+    private void unloadInstance() {
+        log("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
+        storeStatus();
+        //IWCacheManager.deleteCachedBlobs(this);
+        //      getImageFactory(true).deleteGeneratedImages(this);
+
+        for (Iterator keyIter = getLoadedBundles().keySet().iterator(); keyIter
+                .hasNext();) {
+            Object key = keyIter.next();
+            IWBundle bundle = (IWBundle) getLoadedBundles().get(key);
+            bundle.unload();
+        }
+        loadedBundles=null;
+        bundlesFile=null;
+        
+        // see comment above!
+        if(cacheManager!=null){
+    		cacheManager.unload(this);
+        }
+        cacheManager=null;
+        
+        windowClassesStaticInstances=null;
+        
+        shutdownApplicationServices();
+        SingletonRepository.stop();
+        
+        application.removeAttribute(APPLICATION_BEAN_ID);
+
+        removeAllApplicationAttributes();
+        
+        application=null;
     }
     
     protected void removeAllApplicationAttributes(){
@@ -895,7 +928,7 @@ public class IWMainApplication //{//implements ServletContext{
                     .booleanValue();
         }
 
-        unload();
+        unloadInstanceAndClass();
 
         String prePath = System.getProperty("user.dir");//return /tomcat/bin
         System.out
@@ -1166,11 +1199,11 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public static void setDebugMode(boolean debugFlag) {
-        DEBUG_FLAG = debugFlag;
+        debug = debugFlag;
     }
 
     public static boolean isDebugActive() {
-        return DEBUG_FLAG;
+        return debug;
     }
 
     public void startFileSystem() {
@@ -1260,7 +1293,7 @@ public class IWMainApplication //{//implements ServletContext{
      * implement // return url; }
      */
     public String getWindowOpenerURI() {
-		if(USE_NEW_URL_SCHEME){
+		if(useNewURLScheme){
 			return getTranslatedURIWithContext(NEW_WINDOW_URL);
 		}
 		else{	
@@ -1269,7 +1302,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getWindowOpenerURI(Class windowToOpen) {
-    		if(USE_NEW_URL_SCHEME){
+    		if(useNewURLScheme){
     			return getWindowOpenerURI()+getEncryptedClassName(windowToOpen);
     		}
     		else{
@@ -1292,7 +1325,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getObjectInstanciatorURI() {
-    		if(USE_NEW_URL_SCHEME){
+    		if(useNewURLScheme){
     			return getTranslatedURIWithContext(NEW_WINDOW_URL);  
     		}
     		else{
@@ -1305,7 +1338,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getBuilderPagePrefixURI(){
-    		if(USE_NEW_URL_SCHEME){
+    		if(useNewURLScheme){
     			return getTranslatedURIWithContext(NEW_BUILDER_PAGE_URL);
     		}
     		else{
@@ -1323,7 +1356,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getIdegaWebApplicationsURI() {
-    		if(USE_NEW_URL_SCHEME){
+    		if(useNewURLScheme){
     			return getLoginURI();
     		}
     		else{
