@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.96 2004/03/12 11:30:51 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.97 2004/05/20 14:12:33 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -46,6 +47,7 @@ public abstract class DatastoreInterface {
 	final static int STATEMENT_INSERT = 1;
 	final static int STATEMENT_UPDATE = 2;
 	protected boolean useTransactionsInEntityCreation = true;
+	private boolean useIndexes = true;
 	protected IDOTableCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
 	public static DatastoreInterface getInstance(String datastoreType) {
@@ -99,7 +101,9 @@ public abstract class DatastoreInterface {
 		return theReturn;
 	}
 
-
+	public boolean useIndexes() {
+		return useIndexes;
+	}
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the default datasource
 	 * @return the instance of DatastoreInterface for the current application
@@ -1439,9 +1443,74 @@ public abstract class DatastoreInterface {
 	   * @return
 	   */
 	  public String[] getTableColumnNames(String dataSourceName,String tableName){
-	  	return getColumnArrayFromMetaData(dataSourceName,tableName);
+	  		return getColumnArrayFromMetaData(dataSourceName,tableName);
 	  }
 	  
+		private Collection getIndexArrayFromMetaData(String dataSourceName,String tableName){
+			Connection conn = null;
+			ResultSet rs = null;
+			Vector v = new Vector();
+			try{
+			  conn = ConnectionBroker.getConnection(dataSourceName);
+			  //conn = entity.getConnection();
+			  
+			  //String tableName = entity.getTableName();
+			  DatabaseMetaData metadata = conn.getMetaData();
+			  
+//			Check for upper case
+			  rs = metadata.getIndexInfo(null,null,tableName.toUpperCase(), false, false);
+			  //System.out.println("Table: "+tableName+" has the following columns:");
+			  while (rs.next()) {
+				String column = rs.getString("INDEX_NAME");
+				v.add(column);
+				//System.out.println("\t\t"+column);
+			  }
+			  rs.close();
+			  
+//			Check for lower case
+			  if(v.isEmpty()){
+				rs = metadata.getIndexInfo(null,null,tableName.toLowerCase(), false, false);
+				//System.out.println("Table: "+tableName+" has the following columns:");
+				while (rs.next()) {
+				  String column = rs.getString("INDEX_NAME");
+				  v.add(column);
+				  //System.out.println("\t\t"+column);
+				}
+				rs.close();
+			  }
+			  
+//			Check without any case manipulating, this can be removed if we always force uppercase		
+			  if(v.isEmpty()){
+				rs = metadata.getIndexInfo(null,null,tableName, false, false);
+				//System.out.println("Table: "+tableName+" has the following columns:");
+				while (rs.next()) {
+				  String column = rs.getString("INDEX_NAME");
+				  v.add(column);
+				  //System.out.println("\t\t"+column);
+				}
+				rs.close();
+			  }
+			  
+			}
+			catch(SQLException e){
+			  e.printStackTrace();
+			}
+			finally{
+			  if(conn!=null){
+				ConnectionBroker.freeConnection(conn);
+			  }
+			}
+			
+			return v;
+/*			if(v!=null && !v.isEmpty())
+				return (String[])v.toArray(new String[0]);
+			return null;
+			*/
+		  }
+
+		public Collection getTableIndexes(String dataSourceName, String tableName){
+			return getIndexArrayFromMetaData(dataSourceName, tableName);
+	  }
 	  
 	  //STANDARD LOGGING METHODS:
 	  

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -309,11 +310,12 @@ public class IDOTableCreator{
       }
     }
     else{
-    	debug("Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+    		debug("Synchronizing  "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit = false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
       updateColumns(entity);
+      updateIndexes(entity);
       createMiddleTables(entity);
       this.endEntityCreationTransaction(entity,canCommit,true);
     }//End if(!doesTableExist())
@@ -568,7 +570,6 @@ public class IDOTableCreator{
   protected void createIndexes(GenericEntity entity) throws Exception {
 	  	try {
 	  		HashMap map = entity.getEntityDefinition().getIndexes();
-	  		String tableName = entity.getEntityDefinition().getSQLTableName();
 	  		Set keys = map.keySet();
 	  		if (keys != null) {
 	  			Iterator iter = keys.iterator();
@@ -578,7 +579,7 @@ public class IDOTableCreator{
 	  				try {
 		  				key = (String) iter.next();
 		  				values = (String[]) map.get(key);
-		  				createIndex(entity, tableName, key, values);
+		  				createIndex(entity, key, values);
 	  				} catch (Exception e) {
 	  					e.printStackTrace();
 	  				}
@@ -587,17 +588,24 @@ public class IDOTableCreator{
 	  	} catch (NoIndexException ignore) {}
   }
   
-  private void createIndex(GenericEntity entity, String tableName, String name, String[] fields) throws Exception {
-  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
-		.append(name).append(" ON ").append(tableName).append(" (");
-  		for (int i = 0; i < fields.length; i++) {
-  			if (i > 0) {
-  				sql.append(", ");
-  			}
-  			sql.append(fields[i]);
-  		}
-  		sql.append(")");
-  		executeUpdate(entity, sql.toString());
+  private void dropIndex(GenericEntity entity, String name) throws Exception {
+  		String sql = "DROP INDEX "+entity.getTableName()+"."+name;
+  		executeUpdate(entity, sql);
+  }
+  
+  private void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+		if (_dsi.useIndexes()) {
+	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
+			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
+	  		for (int i = 0; i < fields.length; i++) {
+	  			if (i > 0) {
+	  				sql.append(", ");
+	  			}
+	  			sql.append(fields[i]);
+	  		}
+	  		sql.append(")");
+	  		executeUpdate(entity, sql.toString());
+		}
   }
 
   protected void createForeignKeys(IDOEntity entity) throws Exception {
@@ -722,6 +730,63 @@ public class IDOTableCreator{
         }
       }
     }
+  }
+
+  private void updateIndexes(GenericEntity entity) {
+  		if (_dsi.useIndexes()) {
+			Collection indexesFromDB = _dsi.getTableIndexes(entity.getDatasource(), entity.getTableName());
+	  		try {
+					HashMap map = entity.getEntityDefinition().getIndexes();
+					Set indexesFromEntity = map.keySet();
+					Vector temp = new Vector(indexesFromEntity);
+					
+					if (indexesFromDB != null) {
+						indexesFromEntity.removeAll(indexesFromDB);
+						indexesFromDB.removeAll(temp);
+					}
+	
+					// CREATING
+					Iterator iter = indexesFromEntity.iterator();
+					String indexName;
+					while (iter.hasNext()) {
+						indexName = (String) iter.next();
+						try {
+							this.createIndex(entity, indexName, (String[]) map.get(indexName));
+						}
+						catch (Exception e1) {
+							System.out.println("IDOTableCreator : failed to create index : "+indexName+" ("+e1.getMessage()+")");
+						}
+					}
+					// REMOVING - Not active since it tries to removed the PRIMARY_KEY index....
+					/*iter = indexesFromDB.iterator();
+					while (iter.hasNext()) {
+						indexName = (String) iter.next();
+						try {
+							dropIndex(entity, indexName);
+						} catch (Exception e1) {
+							System.out.println("IDOTableCreator : failed to drop index : "+indexName);
+						}
+					}*/
+					
+				}
+				catch (NoIndexException e) {
+					// REMOVING ALL INDEXES - Not active since it tries to removed the PRIMARY_KEY index....
+					/*
+					if (indexesFromDB != null) {
+						Iterator iter = indexesFromDB.iterator();
+						String indexName;
+						while (iter.hasNext()) {
+							indexName = (String) iter.next();
+							try {
+								dropIndex(entity, indexName);
+							} catch (Exception e1) {
+								System.out.println("IDOTableCreator : failed to drop index : "+indexName);
+							}
+						}
+					}*/
+				}
+  		}
+
   }
 
   

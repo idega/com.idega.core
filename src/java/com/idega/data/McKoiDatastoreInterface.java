@@ -356,6 +356,10 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 			   
 	}
 
+	public boolean useIndexes() {
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#format(java.sql.Date)
 	 */
