@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.128 2004/08/09 15:07:30 laddi Exp $
+ * $Id: Link.java,v 1.129 2004/08/11 07:18:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -39,6 +39,7 @@ import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
@@ -1862,6 +1863,25 @@ public class Link extends Text {
 		}
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
+	}
+	
+	public void setFormToSubmit(Form form, boolean useFormValidation) {
+		Script script = form.getAssociatedFormScript();
+		
+		StringBuffer method = new StringBuffer();
+		method.append("function submitForm(formID) {").append("\n\t");
+		if (useFormValidation) {
+			method.append("if (checkSubmit(getElementById(formID)) {").append("\n\t\t");
+			method.append("getElementById(formID).submit();").append("\n\t");
+			method.append("}").append("\n");
+		}
+		else {
+			method.append("getElementById(formID).submit();").append("\n");
+		}
+		method.append("}");
+		
+		script.addMethod("submitForm", method.toString());
+		setFinalUrl(JAVASCRIPT + "submitForm('" + form.getID() + "')");
 	}
 	
 	public void setToFormReset(Form form) {
