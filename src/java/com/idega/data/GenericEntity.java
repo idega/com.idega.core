@@ -34,8 +34,6 @@ import javax.ejb.RemoveException;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
 
-import dori.jasper.engine.JRException;
-import dori.jasper.engine.JRField;
 /**
  * A class to serve as a base implementation for objects mapped to persistent data in the IDO Framework.
  *
@@ -3899,11 +3897,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 	/**
 	 * Default implimentation for IDOReportableEntity
-	 * @param field, IDOEntityField extends JRField and can therefore be used
+	 * @param field
 	 * @return
-	 * @throws JRException
 	 */
-	public Object getFieldValue(JRField field) throws JRException {
+	public Object getFieldValue(IDOReportableField field){
 		return this.getColumnValue(field.getName());
 	}
 	
