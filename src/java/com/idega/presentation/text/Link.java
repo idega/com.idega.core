@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.76 2002/07/10 14:37:08 laddi Exp $
+ * $Id: Link.java,v 1.77 2002/07/12 14:31:59 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -103,6 +103,7 @@ public class Link extends Text{
   private List maintainedParameters = null;
 
   private boolean https = false;
+  private String protocol = null;
 
   private int dptTemplateId = 0;
   private ICFile file = null;
@@ -492,9 +493,21 @@ public class Link extends Text{
    *
    */
   public String getURL(IWContext iwc) {
-    if (https) {
-      return "https://"+iwc.getServerName()+ getAttribute(HREF_ATTRIBUTE);
-    }else {
+    if ( (protocol==null) && https) {
+      String attr = getAttribute(HREF_ATTRIBUTE);
+      StringBuffer url = new StringBuffer();
+      url.append("https://").append(iwc.getServerName());
+      if( attr!=null ) url.append(attr);
+      return url.toString();
+    }
+    else if(protocol!=null){
+      String attr = getAttribute(HREF_ATTRIBUTE);
+      StringBuffer url = new StringBuffer();
+      url.append(protocol).append("://").append(iwc.getServerName());
+      if( attr!=null ) url.append(attr);
+      return url.toString();
+    }
+    else{
       return(getAttribute(HREF_ATTRIBUTE));
     }
   }
@@ -1205,6 +1218,7 @@ public class Link extends Text{
       linkObj.classToInstanciate=this.classToInstanciate;
       linkObj.templateForObjectInstanciation=this.templateForObjectInstanciation;
       linkObj.templatePageClass=this.templatePageClass;
+      linkObj.protocol = this.protocol;
 
       if (_parameterString != null) {
 	linkObj._parameterString = new StringBuffer(_parameterString.toString());
@@ -2011,6 +2025,10 @@ public class Link extends Text{
       Parameter prm = (Parameter)iter.next();
       this.addParameter(prm);
     }
+  }
+
+  public void setProtocol(String protocol){
+    this.protocol = protocol;
   }
 
 }
