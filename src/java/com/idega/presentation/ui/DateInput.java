@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.11 2002/02/20 19:33:33 tryggvil Exp $
+ * $Id: DateInput.java,v 1.12 2002/02/21 15:57:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -363,13 +363,18 @@ public void setMonth(int month){
 public void setMonth(String month){
 	_setCheck=true;
 	if (month.length() > 1){
-		//_theMonth.setSelectedElement(month);
+        if(_theMonth!=null){
+		  _theMonth.setSelectedElement(month);
+        }
         _setMonth=month;
 	}
 	else{
-		//_theMonth.setSelectedElement("0"+month);
-	  _setMonth="0"+_setMonth;
+      if(_theMonth!=null){
+        _theMonth.setSelectedElement("0"+month);
+      }
+	  _setMonth="0"+month;
     }
+
 }
 
 public void setDay(int day){
@@ -480,7 +485,7 @@ private void constructInputs(){
 
 private void setSetValues(){
   if(_setMonth!=null){
-    this._theMonth.setSelectedElement(_setMonth);
+    this.setMonth(_setMonth);
   }
   if(_setDay!=null){
     if(_isShowDay){
@@ -527,6 +532,7 @@ private void setSetValues(){
 
 private void addDropDowns(){
     if(_justConstructed){
+      System.out.println("DateInput.addDropDowns()");
       if(_displayDayLast){
         if(this._showYear){
           super.add(_theYear);
@@ -557,7 +563,7 @@ private void addDropDowns(){
 }
 
 public void main(IWContext iwc)throws Exception{
-
+  System.out.println("DateInput.main(iwc)");
   //constructInputs();
   setSetValues();
   addDropDowns();
