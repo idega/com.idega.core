@@ -45,8 +45,8 @@ private IWResourceBundle iwrb;
     }
 
     public void main(ModuleInfo modinfo){
-      iwb = getBundle(modinfo);
-      iwrb = getResourceBundle(modinfo);
+      iwb = this.getBundle(modinfo);
+      iwrb = this.getResourceBundle(modinfo);
 
       Page thePage = this;
       thePage.setBackgroundColor(backgroundColor);
