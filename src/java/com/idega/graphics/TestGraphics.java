@@ -1,5 +1,5 @@
 /*
- * $Id: TestGraphics.java,v 1.3 2001/05/17 10:26:38 palli Exp $
+ * $Id: TestGraphics.java,v 1.4 2001/09/06 09:52:40 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -37,17 +37,17 @@ public class TestGraphics {
 //    System.out.println("fontplatform = " + System.getProperty("java2d.font.usePlatformFont"));
 //    System.out.println("graphenv = " + System.getProperty("java.awt.graphicsenv"));
     String legend[] = new String[5];
-    legend[0] = "Test 1";
-    legend[1] = "Test 2";
-    legend[2] = "Test 3";
-    legend[3] = "Test 4";
-    legend[4] = "Test 5";
+    legend[0] = "Ernir";
+    legend[1] = "Fuglar";
+    legend[2] = "Pör";
+    legend[3] = "Skollar";
+    legend[4] = "Skrambar+";
     Double data[] = new Double[5];
-    data[0] = new Double(46.15);
-    data[1] = new Double(53.85);
-    data[2] = new Double(17.40);
-    data[3] = new Double(23.34);
-    data[4] = new Double(89.72);
+    data[0] = new Double(3);
+    data[1] = new Double(2);
+    data[2] = new Double(86);
+    data[3] = new Double(47);
+    data[4] = new Double(690);
 
     try {
       CreateChart chart =new CreateChart();
@@ -59,8 +59,8 @@ public class TestGraphics {
       chart.setWebPrefix("/tio/no/survey/results/");
       chart.addToBarLabel("");
       chart.setNumberOfBarLabelDigits(2);
-      String url = chart.createChart(CreateChart.BARCHART);
-//      String url = chart.createChart(CreateChart.PIECHART);
+//      String url = chart.createChart(CreateChart.BARCHART);
+      String url = chart.createChart(CreateChart.PIECHART);
       System.out.println("url = " + url);
     }
     catch (ChartException e) {
