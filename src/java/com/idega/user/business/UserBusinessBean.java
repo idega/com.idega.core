@@ -1699,39 +1699,44 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						Map cachedGroups = new HashMap();
 						while (permissions.hasNext()) {
 							ICPermission perm = (ICPermission) permissions.next();
-							try {
-								String groupId = perm.getContextValue();
-								
-								//we don't want to use this permission if is a negative permission (a NOT permission)
-								if(!perm.getPermissionValue()) {
-								   
-								    continue;
-								}
-								
-								Integer primaryKey = new Integer(groupId);
-								
-								if( !groupMap.containsKey(primaryKey) ){
-									Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
-									if( !cachedGroups.containsKey(primaryKey) ) {
-										cachedGroups.put(primaryKey,permissionGroup);
+							if (perm != null) {
+								try {
+									String groupId = perm.getContextValue();
+									
+									//we don't want to use this permission if is a negative permission (a NOT permission)
+									if(!perm.getPermissionValue()) {
+									   
+									    continue;
 									}
-									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
-									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
-									parents.put(primaryKey,parentMap);
-									groupMap.put(primaryKey,permissionGroup);
-									//if it's an alias we don't need the original group and make a list of those groups to filter out later
-									if(permissionGroup.isAlias()){
-										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
-										aliasMap.put(originalGroupID,primaryKey);
+									
+									Integer primaryKey = new Integer(groupId);
+									
+									if( !groupMap.containsKey(primaryKey) ){
+										Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
+										if( !cachedGroups.containsKey(primaryKey) ) {
+											cachedGroups.put(primaryKey,permissionGroup);
+										}
+										Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
+										Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
+										parents.put(primaryKey,parentMap);
+										groupMap.put(primaryKey,permissionGroup);
+										//if it's an alias we don't need the original group and make a list of those groups to filter out later
+										if(permissionGroup.isAlias()){
+											Integer originalGroupID = new Integer(permissionGroup.getAliasID());
+											aliasMap.put(originalGroupID,primaryKey);
+										}
 									}
+							
 								}
-						
+								catch (NumberFormatException e1) {
+									e1.printStackTrace();
+								}
+								catch (FinderException e1) {
+									System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
+								}
 							}
-							catch (NumberFormatException e1) {
-								e1.printStackTrace();
-							}
-							catch (FinderException e1) {
-								System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
+							else {
+							    System.out.println("At least one permission is null in UserBusinessBean.getUsersTopGroupNodesByViewAndOwnerPermissions");
 							}
 						}
 						
