@@ -50,6 +50,7 @@ public class IWMainApplication {//implements ServletContext{
     protected static IWMainApplication defaultIWMainApplication;
                                                                               // gummi@idega.is
     public static final String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
+    
     private static String windowOpenerURL = "/servlet/WindowOpener";
     private static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
     public static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
@@ -64,7 +65,13 @@ public class IWMainApplication {//implements ServletContext{
     public static String classToInstanciateParameter = "idegaweb_instance_class";
 
     private static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
+    
+    public static boolean USE_NEW_URL_SCHEME=false;
+    
+    private static String NEW_WINDOW_URL="/window/";
+    private static String NEW_BUILDER_PAGE_URL="/pages/";
 
+    	
     private Map loadedBundles;
     private Properties bundlesFile;
     private File bundlesFileFile;
@@ -98,6 +105,8 @@ public class IWMainApplication {//implements ServletContext{
     private String cacheDirURI;
     private IWApplicationContext iwappContext;
     public static boolean DEBUG_FLAG = false;
+	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
+	public static final String PROPERTY_JSF_RENDERING = "jsf_rendering";
 
     public IWMainApplication(ServletContext application) {
         this.application = application;
@@ -155,32 +164,61 @@ public class IWMainApplication {//implements ServletContext{
     }
 
     public String getObjectInstanciatorURI(Class className, String templateName) {
-        return getObjectInstanciatorURI(className.getName(), templateName);
+        //return getObjectInstanciatorURI(className.getName(), templateName);
+		if(USE_NEW_URL_SCHEME){
+			return this.getWindowOpenerURI(className)
+			+ templateParameter + "=" + getEncryptedClassName(templateName);
+		}
+		else{
+	        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
+	                + "=" + getEncryptedClassName(className) + "&"
+	                + templateParameter + "=" + getEncryptedClassName(templateName);
+		}    
     }
 
     public String getObjectInstanciatorURI(String className, String templateName) {
-        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
-                + "=" + getEncryptedClassName(className) + "&"
-                + templateParameter + "=" + getEncryptedClassName(templateName);
+		try {
+			return getObjectInstanciatorURI(Class.forName(className),templateName);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
     }
 
     public String getObjectInstanciatorURI(String className) {
-        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
-                + "=" + getEncryptedClassName(className);
+		if(USE_NEW_URL_SCHEME){
+			try {
+				return this.getWindowOpenerURI(Class.forName(className));
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		}
+		else{
+	        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
+            + "=" + getEncryptedClassName(className);
+		}
     }
 
     public String getObjectInstanciatorURI(Class classToInstanciate) {
-        return getObjectInstanciatorURI(classToInstanciate.getName());
+    		if(USE_NEW_URL_SCHEME){
+    			return this.getWindowOpenerURI(classToInstanciate);
+    		}
+    		else{
+    			return getObjectInstanciatorURI(classToInstanciate.getName());
+    		}
     }
 
-    public String getObjectInstanciatorURI(Class classToInstanciate,
+    /*public String getObjectInstanciatorURI(Class classToInstanciate,
             Class templateClass) {
         return this.getObjectInstanciatorURI() + "?"
                 + classToInstanciateParameter + "="
                 + getEncryptedClassName(classToInstanciate) + "&"
                 + templateClassParameter + "="
                 + getEncryptedClassName(templateClass);
-    }
+    }*/
 
     /**
      * @todo: Change this so it encrypts the classToInstanciateName
@@ -924,18 +962,28 @@ public class IWMainApplication {//implements ServletContext{
      * implement // return url; }
      */
     public String getWindowOpenerURI() {
-        return getTranslatedURIWithContext(this.windowOpenerURL);
+		if(USE_NEW_URL_SCHEME){
+			return getTranslatedURIWithContext(NEW_WINDOW_URL);
+		}
+		else{	
+			return getTranslatedURIWithContext(windowOpenerURL);
+		}
     }
 
     public String getWindowOpenerURI(Class windowToOpen) {
-        StringBuffer url = new StringBuffer();
-        url.append(getWindowOpenerURI()).append('?').append(
-                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
-                getEncryptedClassName(windowToOpen));
-
-        return url.toString();
-        //return
-        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+    		if(USE_NEW_URL_SCHEME){
+    			return getWindowOpenerURI()+getEncryptedClassName(windowToOpen);
+    		}
+    		else{
+	        StringBuffer url = new StringBuffer();
+	        url.append(getWindowOpenerURI()).append('?').append(
+	                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
+	                getEncryptedClassName(windowToOpen));
+	
+	        return url.toString();
+	        //return
+	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+    		}
     }
 
     public String getWindowOpenerURI(Class windowToOpen,
@@ -946,23 +994,38 @@ public class IWMainApplication {//implements ServletContext{
     }
 
     public String getObjectInstanciatorURI() {
-        return getTranslatedURIWithContext(objectInstanciatorURL);
+    		if(USE_NEW_URL_SCHEME){
+    			return getTranslatedURIWithContext(NEW_WINDOW_URL);  
+    		}
+    		else{
+    			return getTranslatedURIWithContext(objectInstanciatorURL);    
+    		}
     }
 
     public String getMediaServletURI() {
-        return getTranslatedURIWithContext(this.MEDIA_SERVLET_URL);
+        return getTranslatedURIWithContext(MEDIA_SERVLET_URL);
     }
 
-    public String getBuilderServletURI() {
-        return getTranslatedURIWithContext(this.BUILDER_SERVLET_URL);
+    public String getBuilderPagePrefixURI(){
+    		if(USE_NEW_URL_SCHEME){
+    			return getTranslatedURIWithContext(NEW_BUILDER_PAGE_URL);
+    		}
+    		else{
+    			return getTranslatedURIWithContext(BUILDER_SERVLET_URL);
+    		}
+    }
+    
+   
+    private String getBuilderServletURI() {
+        return getTranslatedURIWithContext(BUILDER_SERVLET_URL);
     }
 
     public String getIFrameContentURI() {
-        return getTranslatedURIWithContext(this._IFRAME_CONTENT_URL);
+        return getTranslatedURIWithContext(_IFRAME_CONTENT_URL);
     }
 
     public String getIdegaWebApplicationsURI() {
-        return getTranslatedURIWithContext(this.IDEGAWEB_APP_SERVLET_URI);
+        return getTranslatedURIWithContext(IDEGAWEB_APP_SERVLET_URI);
     }
 
     /*

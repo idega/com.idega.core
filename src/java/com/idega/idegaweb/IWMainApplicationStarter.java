@@ -11,6 +11,7 @@ import java.util.logging.LogManager;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.servlet.ServletContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -19,6 +20,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookupException;
+import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
@@ -35,6 +37,15 @@ import com.idega.util.database.PoolManager;
 public class IWMainApplicationStarter {
 	
 	IWMainApplication iwma;
+	
+	
+	public IWMainApplicationStarter(ServletContext context){
+		IWMainApplication _iwma = new IWMainApplication(context);
+		iwma=_iwma;
+		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
+		sendStartMessage("Initializing IWMainApplicationStarter");
+		startup();
+	}
 	
 	public IWMainApplicationStarter(IWMainApplication _iwma){
 		iwma=_iwma;
@@ -76,7 +87,7 @@ public class IWMainApplicationStarter {
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
 		//String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"poolman.xml";
-		this.propertiesfile = file;
+		propertiesfile = file;
 		sendStartMessage("Reading Databases from file: " + file);
 		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
@@ -168,6 +179,7 @@ public class IWMainApplicationStarter {
 		iwStyleManager.getStyleSheet();
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
+		startTemporaryBundleStarters();
 		insertStartData();
 		application.startAccessController();
 		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
@@ -250,13 +262,58 @@ public class IWMainApplicationStarter {
 				if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
 					com.idega.presentation.text.Link.usingEventSystem = true;
 				}
+				String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
+				if (usingNewURLStructure != null && !"false".equalsIgnoreCase(usingNewURLStructure)) {
+					sendStartMessage("Using new URL Scheme");
+					IWMainApplication.USE_NEW_URL_SCHEME=true;
+				}
+				String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
+				if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
+					sendStartMessage("Using JSF rendering");
+					PresentationObject.USE_JSF_RENDERING=true;
+				}
 	}
 	
 	/**
-	 * 
+	 * This is a fix so that these bundle starters are always started
+	 */
+	private void startTemporaryBundleStarters(){
+	    IWBundleStartable starter;
+        try {
+            starter = (IWBundleStartable) Class.forName("com.idega.builder.IWBundleStarter").newInstance();
+            starter.start(null);
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    IWBundleStartable starter2;
+        try {
+            starter2 = (IWBundleStartable) Class.forName("com.idega.block.media.IWBundleStarter").newInstance();
+            starter2.start(null);
+        } catch (InstantiationException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (ClassNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+	}
+	
+	/**
+	 * This is a fix so that these bundle starters are always started
 	 */
 	private void registerSystemBeans()
 	{
+	    //TODO: TL: Move this to be registered in a property file.
 		RefactorClassRegistry rfregistry = RefactorClassRegistry.getInstance();
 		rfregistry.registerRefactoredClass("com.idega.builder.data.IBDomain","com.idega.core.builder.data.ICDomain");
 		rfregistry.registerRefactoredClass("com.idega.builder.data.IBPage","com.idega.core.builder.data.ICPage");
