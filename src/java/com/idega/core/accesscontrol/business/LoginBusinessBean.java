@@ -401,8 +401,7 @@ public class LoginBusinessBean implements IWEventListener {
 		}
 		getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, iwc);
-
-		this.setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo,iwc);
+		
 	}
 
 	private int verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception {
@@ -518,11 +517,19 @@ public class LoginBusinessBean implements IWEventListener {
 	}
 
 	public static LoggedOnInfo getLoggedOnInfo(IWUserContext iwc) throws NotLoggedOnException {
-		return (LoggedOnInfo)getLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, iwc);
+		// Not stored as LoginAttribute because it is HttpSessionBindingListener
+		//return (LoggedOnInfo)getLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, iwc);
+		return (LoggedOnInfo)iwc.getSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO);
 	}
 
 	public static void setLoggedOnInfo(LoggedOnInfo lInfo, IWContext iwc) throws NotLoggedOnException {
-		setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo, iwc);
+        // Not stored as LoginAttribute because it is HttpSessionBindingListener
+		//setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo, iwc);
+		if(isLoggedOn(iwc)){
+			iwc.setSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo);
+		} else {
+			throw new NotLoggedOnException();
+		}
 	}
 	public static LoginContext changeUserPassword(User user, String password) throws Exception {
 		LoginTable login = LoginDBHandler.getUserLogin(user.getID());
