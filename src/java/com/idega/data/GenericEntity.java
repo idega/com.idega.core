@@ -685,7 +685,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ " = null where "
 					+ this.getIDColumnName()
 					+ " = "
-					+ Integer.toString(this.getID());
+					//+ Integer.toString(this.getID()) ;
+					+ this.getPrimaryKeyValueSQLString();
+					
 			Conn.createStatement().executeUpdate(sql);
 			Conn.commit();
 		}
@@ -1110,7 +1112,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			catch (Exception e)
 			{
 				System.err.println(
-					"Exception in connecting blob fields for " + this.getClass().getName() + ", id=" + this.getID());
+					"Exception in connecting blob fields for " + this.getClass().getName() + ", primary value=" + this.getPrimaryKeyValueSQLString());
 				e.printStackTrace();
 			}
 		}
@@ -1905,7 +1907,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		buffer.append("=");
 		buffer.append("e." + entity.getIDColumnName());
 		
-		primaryValue = this.getPrimaryKeyValueSQLString(entity.getPrimaryKeyValue());
+		primaryValue = this.getKeyValueSQLString(entity.getPrimaryKeyValue());
 		
 		if( !primaryValue.equals("-1") && !primaryValue.equals("'-1'") ){
 			buffer.append(" and ");
@@ -4689,20 +4691,26 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 * @return String
 	 */
 	public String getPrimaryKeyValueSQLString(){
-		return getPrimaryKeyValueSQLString(getPrimaryKeyValue());
+		return getKeyValueSQLString(getPrimaryKeyValue());
 	}
 	
 	/**
-	 * Method getPrimaryKeyValueSQLString. Gets the primarykey for this record and returns it value to be added to an sql query.<br>
-	 * e.g. if the primary key of of the type String this method returns the value as = 'value' but if it is an integer as = value .
+	 * Method getPrimaryKeyValueSQLString.
 	 * @return String
 	 */
-	public String getPrimaryKeyValueSQLString(Object primaryKeyValue){
-
-		if( primaryKeyValue instanceof String ){
-			return "'"+primaryKeyValue.toString()+"'";	
+	/**
+	 * Method getKeyValueSQLString. Returns the value to be added to an sql query.<br>
+	 * e.g. if the value is of the type String this method returns the value as = 'value' but if it is an integer as = value .
+	 * @param keyValue
+	 *  @return String
+	 */
+	public String getKeyValueSQLString(Object value){
+		if( value!= null ){
+			if( value instanceof String ){
+				return "'"+value.toString()+"'";	
+			}
+			else return value.toString();
 		}
-		else return primaryKeyValue.toString();
-		
+		else return null;
 	}
 }
