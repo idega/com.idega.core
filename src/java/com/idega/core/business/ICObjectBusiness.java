@@ -243,6 +243,7 @@ public class ICObjectBusiness {
 
   /**
    * Returns the related object's id relative to the objectinstance we have
+   * Catches the error if there is any and returns the number -2
    * @todo cache somehow
    */
   public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFrom){
