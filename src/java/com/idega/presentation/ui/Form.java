@@ -229,7 +229,7 @@ private void contvertActionToHTTPS(IWContext iwc){
 			}
 		}
 		else{
-			setAction(HTTPS+COLONSLASHSLASH+iwc.getRequest().getServerName()+SLASH+iwc.getRequestURI());
+			setAction(HTTPS+COLONSLASHSLASH+iwc.getRequest().getServerName()+iwc.getRequestURI());
 		}
 	}
 }
