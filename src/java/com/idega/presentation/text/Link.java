@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.93 2003/08/05 19:45:36 tryggvil Exp $
+ * $Id: Link.java,v 1.94 2003/09/09 12:20:19 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -392,7 +392,7 @@ public class Link extends Text {
 
 		}
 
-		if (!isParameterSet(LocaleSwitcher.languageParameterString)) {
+		if (!isParameterSet(LocaleSwitcher.languageParameterString) && !isAttributeSet(HREF_ATTRIBUTE)) {
 			setLocale(iwc.getCurrentLocale());
 		}
 
