@@ -8,6 +8,7 @@ package com.idega.presentation.text;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javax.faces.context.FacesContext;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWConstants;
@@ -24,23 +25,10 @@ import com.idega.util.text.StyleConstants;
  */
 public class Text extends PresentationObject {
 
+	//Static variables:
 	private static Text emptyText;
 	private static Text HTMLbreak;
 	private static Text HTMLnbsp;
-
-	protected String text;
-
-	/**
-	 * 
-	 * @uml.property name="localizationMap"
-	 * @uml.associationEnd multiplicity="(0 1)" qualifier="locale:java.util.Locale text:java.lang.String"
-	 */
-	protected Map localizationMap;
-
-	protected boolean attributeSet;
-	protected boolean teletype;
-
-	private boolean addHTMLFontTag = true;
 
 	public static String FONT_FACE_ARIAL = "Arial, Helvetica, Sans-serif";
 	public static String FONT_FACE_TIMES = "Times New Roman, Times, serif";
@@ -71,7 +59,16 @@ public class Text extends PresentationObject {
 	public static String NON_BREAKING_SPACE = "&nbsp;";
 	public static String BREAK = "<br/>";
 
-	public static final String EMPTY_TEXT_STRING = "No text";
+	public static final String EMPTY_TEXT_STRING = "No text";	
+	
+	//instance variables:
+	protected String text;
+	protected Map localizationMap;
+	protected boolean attributeSet;
+	protected boolean teletype;
+	private boolean addHTMLFontTag = true;
+
+
 
 	/**
 	 * *Constructor that creates the object with an empty string
@@ -394,4 +391,29 @@ public class Text extends PresentationObject {
 		}
 		return size + "px";
 	}
+	
+	
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.text = (String) values[1];
+		this.localizationMap = (Map) values[2];
+		this.attributeSet = ((Boolean)values[3]).booleanValue();
+		this.teletype = ((Boolean)values[4]).booleanValue();
+		this.addHTMLFontTag = ((Boolean)values[5]).booleanValue();
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[6];
+		values[0] = super.saveState(context);
+		values[1] = text;
+		values[2] = localizationMap;
+		values[3] = Boolean.valueOf(attributeSet);
+		values[4] = Boolean.valueOf(teletype);
+		values[5] = Boolean.valueOf(addHTMLFontTag);
+		return values;
+	}	
+	
 }
