@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.66 2002/11/22 09:48:22 laddi Exp $
+ *  $Id: Page.java,v 1.67 2002/11/25 16:07:02 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -303,21 +303,6 @@ public class Page extends PresentationObjectContainer {
 	 *  Sets the defaultValues attribute of the Page object
 	 */
 	private void setDefaultValues() {
-		/*if (getStyleAttribute("A") == null) {
-		  setStyleDefinition("A",IWConstants.LINK_STYLE);
-		}
-		if (getStyleAttribute("A:hover") == null) {
-		  setStyleDefinition("A:hover",IWConstants.LINK_HOVER_STYLE);
-		}
-		if (getStyleAttribute("body") == null) {
-		  setStyleDefinition("body",IWConstants.BODY_STYLE+"color:#FF0000;");
-		}
-		if (getStyleAttribute("table") == null) {
-		  setStyleDefinition("table",IWConstants.BODY_STYLE);
-		}
-		if (getStyleAttribute("form") == null) {
-		  setStyleDefinition("form",IWConstants.FORM_STYLE);
-		}*/
 		addStyleSheetURL(_styleSheetURL);
 		getAssociatedScript().addFunction("windowopen", Window.windowScript());
 	}
@@ -948,14 +933,10 @@ public class Page extends PresentationObjectContainer {
 			}
 		}
 
-		if (this._styleSheetURL == null)
-			_styleSheetURL = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
 		/* get the files cached url */
 		if (styleFile != null) {
 			setStyleSheetURL(MediaBusiness.getMediaURL(styleFile.getID(), iwc.getApplication()));
 		}
-
-		setDefaultValues();
 	}
 
 	/*
@@ -993,7 +974,12 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void print(IWContext iwc) throws Exception {
 
+		if (this._styleSheetURL == null)
+			_styleSheetURL = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
+
+		setDefaultValues();
 		setDefaultAttributes(iwc);
+
 
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
