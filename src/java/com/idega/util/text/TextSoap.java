@@ -6,6 +6,8 @@ package com.idega.util.text;
 //import idega.*;
 //import java.awt.event.*;
 import java.util.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 /**
  * General class for text manipulation
@@ -13,6 +15,8 @@ import java.util.*;
 *@version 1.2
 */
 public class TextSoap{
+   private static DecimalFormat singleDecimalFormat = new DecimalFormat("0.0");
+   private static DecimalFormatSymbols symbols = singleDecimalFormat.getDecimalFormatSymbols();
 
 	/**
 	 * Function to cut out all the text between two tokens in a larger string and return the results as a Vector of strings
@@ -500,8 +504,43 @@ public static boolean nonNumericString( String myString ){
 	return isTrue;
 }
 
+public static String singleDecimalFormat(String stringToDecimalFormat){
+  symbols.setDecimalSeparator('.');
+  singleDecimalFormat.setDecimalFormatSymbols(symbols);
+  double doubleToDecimalFormat = Double.parseDouble(findAndReplace(stringToDecimalFormat,',','.'));
+  return singleDecimalFormat.format(doubleToDecimalFormat);
+}
 
+public static String singleDecimalFormat(double doubleToDecimalFormat){
+  symbols.setDecimalSeparator('.');
+  singleDecimalFormat.setDecimalFormatSymbols(symbols);
+  return singleDecimalFormat.format(doubleToDecimalFormat);
+}
 
+public static String decimalFormat(double doubleToDecimalFormat, int numberOfDecimals){
+  StringBuffer decimalString = new StringBuffer("0.0");//always at least one decimal
+  for (int i = 1; i < numberOfDecimals; i++) {
+    decimalString.append("0");
+  }
+  DecimalFormat decimalFormat = new DecimalFormat(decimalString.toString());
 
+  symbols.setDecimalSeparator('.');
+  decimalFormat.setDecimalFormatSymbols(symbols);
+  return decimalFormat.format(doubleToDecimalFormat);
+}
+
+public static String decimalFormat(String stringToDecimalFormat, int numberOfDecimals){
+  StringBuffer decimalString = new StringBuffer("0.0");//always at least one decimal
+  for (int i = 1; i < numberOfDecimals; i++) {
+    decimalString.append("0");
+  }
+  System.out.print(decimalString.toString());
+  DecimalFormat decimalFormat = new DecimalFormat(decimalString.toString());
+
+  symbols.setDecimalSeparator('.');
+  decimalFormat.setDecimalFormatSymbols(symbols);
+  double doubleToDecimalFormat = Double.parseDouble(findAndReplace(stringToDecimalFormat,',','.'));
+  return decimalFormat.format(doubleToDecimalFormat);
+}
 
 } // class TestSoap
