@@ -46,6 +46,7 @@ public class Executer {
         p.waitFor();
         System.out.println(sbOut.toString());
         System.out.println("Exit status: " + p.exitValue());
+        p.destroy();
         }
       }
     } catch (Exception ex) {
