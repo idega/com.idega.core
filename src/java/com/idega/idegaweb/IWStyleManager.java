@@ -173,17 +173,21 @@ public class IWStyleManager {
 				if ( !isDefaultStyle(name) && name.indexOf(".") == -1 ) {
 					name = "." + name;
 				}
+				
 				String style = getStyle(name);
 				String writeString = name + " {";
 				writer.write(writeString, 0, writeString.length());
 				writer.newLine();
 				
-				StringTokenizer tokens = new StringTokenizer(style, ";");
-				while (tokens.hasMoreTokens()) {
-					writeString = "\t" + tokens.nextToken() + ";";
-					writer.write(writeString, 0, writeString.length());
-					writer.newLine();
+				if (style.length() > 0 ) {
+					StringTokenizer tokens = new StringTokenizer(style, ";");
+					while (tokens.hasMoreTokens()) {
+						writeString = "\t" + tokens.nextToken() + ";";
+						writer.write(writeString, 0, writeString.length());
+						writer.newLine();
+					}
 				}
+
 				writeString = "}";
 				writer.write(writeString, 0, writeString.length());
 				writer.newLine();
