@@ -11,6 +11,7 @@ import com.idega.data.*;
 import java.util.Vector;
 
 /**
+ * @deprecated Replaced with com.idega.core.data.GenericGroup
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */

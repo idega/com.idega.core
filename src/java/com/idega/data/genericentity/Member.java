@@ -11,6 +11,7 @@ import com.idega.data.*;
 import java.util.List;
 
 /**
+ *@deprecated Replaced with com.idega.core.user.data.User
 *@author <a href="mailto:gimmi@idega.is">Grímur Jónsson</a>
 *@version 1.2
 */

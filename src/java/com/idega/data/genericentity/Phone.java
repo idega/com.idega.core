@@ -6,6 +6,9 @@ package com.idega.data.genericentity;
 import java.sql.*;
 import com.idega.data.*;
 
+/**
+ *@deprecated Replaced with com.idega.core.data.Phone
+ */
 public class Phone extends GenericEntity{
 
 	public Phone(){
@@ -43,11 +46,11 @@ public class Phone extends GenericEntity{
 	public int getCountryId(){
 		return getIntColumnValue("country_id");
 	}
-/*	
+/*
 	public Country getCountry()throws SQLException{
 		return (Country) getColumnValue("country_id");
 	}
-	
+
 	public void setCountry(Country country){
 		setColumn("country_id",new Integer(country.getID()));
 	}

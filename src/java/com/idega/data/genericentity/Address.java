@@ -5,6 +5,9 @@ package com.idega.data.genericentity;
 import java.sql.*;
 import com.idega.data.*;
 
+/**
+ * @deprecated Replaced with com.idega.core.data.Address
+ */
 public class Address extends GenericEntity{
 
 	public Address(){
