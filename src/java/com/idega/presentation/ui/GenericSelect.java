@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 import com.idega.presentation.IWContext;
+import com.idega.util.text.TextSoap;
 
 /**
  * @author laddi
@@ -297,7 +298,7 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void setAsNotEmpty(String errorMessage, String emptyValue) {
 		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = errorMessage;
+		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 		this.emptyValue = emptyValue;
 	}
 

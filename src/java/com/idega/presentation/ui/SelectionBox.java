@@ -13,6 +13,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.util.text.TextSoap;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
@@ -497,7 +498,7 @@ public class SelectionBox extends InterfaceObject
 	 */
 	public void setAsNotEmpty(String errorMessage) {
 		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = errorMessage;
+		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 }

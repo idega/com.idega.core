@@ -7,6 +7,7 @@ package com.idega.presentation.ui;
 import java.io.*;
 import java.util.*;
 import com.idega.presentation.*;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -105,7 +106,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsNotEmpty(String errorMessage) {
 		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = errorMessage;
+		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsCreditCardNumber(String errorMessage) {
 		isSetAsCreditCardNumber = true;
-		notCreditCardErrorMessage = errorMessage;
+		notCreditCardErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -143,7 +144,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsEmail(String errorMessage) {
 		isSetAsEmail = true;
-		emailErrorMessage = errorMessage;
+		emailErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -162,7 +163,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsIntegers(String errorMessage) {
 		isSetAsIntegers = true;
-		integersErrorMessage = errorMessage;
+		integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsFloat(String errorMessage) {
 		isSetAsFloat = true;
-		floatErrorMessage = errorMessage;
+		floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsIcelandicSSNumber(String errorMessage) {
 		isSetAsIcelandicSSNumber = true;
-		icelandicSSNumberErrorMessage = errorMessage;
+		icelandicSSNumberErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/**
@@ -221,7 +222,7 @@ public class TextInput extends GenericInput {
 	 */
 	public void setAsAlphabeticText(String errorMessage) {
 		isSetAsAlphabetical = true;
-		alphabetErrorMessage = errorMessage;
+		alphabetErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	public void main(IWContext iwc) throws Exception {
