@@ -53,7 +53,6 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;

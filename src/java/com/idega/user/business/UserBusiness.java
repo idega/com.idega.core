@@ -15,7 +15,6 @@ import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
