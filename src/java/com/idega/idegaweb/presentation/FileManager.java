@@ -31,6 +31,8 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.util.FileUtil;
 
+
+
 /**
  * The <code>FileManager</code> class represents a file
  * manager resource files of the running webapplication.
@@ -162,9 +164,19 @@ public class FileManager extends Block {
 		table.add(getHeaderText(iwrb.getLocalizedString("selected_file","Selected file")+" : "+new File(currentFile).getName()),1,2);
 		table.setColor(1,2,headerBackgroundColor);
 		
-		String appURI =iwc.getApplication().getApplicationContextURI();
-		int index = currentFile.indexOf(appURI);
-		String url = currentFile.substring(index);
+		//TODO fix x url
+		String server = iwc.getServerURL();
+		String context = iwc.getApplication().getApplicationContextURI();
+		String appURI = iwc.getApplication().getApplicationRealPath();
+		//String appURI =iwc.getApplication().getApplicationContextURI();
+		//int index = currentFile.indexOf(appURI);
+		String url = currentFile.substring(appURI.length());
+		if(context.endsWith("/"))
+			url = context+url;
+		else
+			url =context+"/"+url;
+			//url ="/"+url;
+		url = server+url;
 		IFrame frame =new IFrame("fileview",600,600);
 		frame.setSrc(url);
 		frame.setAsTransparent(true);
