@@ -89,6 +89,12 @@ public class XMLData implements Storable {
   	return data;
   }
   
+  public static XMLData getInstanceForFile(File file) throws IOException {
+  	XMLData data = new XMLData();
+  	data.initialize(file);
+  	return data;
+  }
+  
   public static XMLData getInstanceWithoutExistingFile()  {
     XMLData data = new XMLData();
     return data;
@@ -295,6 +301,11 @@ public class XMLData implements Storable {
   	if (! (file.exists() && file.canRead() && file.isFile())) {
   		throw new IOException("[XMLData] File could not be opened");
   	}
+  	initialize(file);
+  }
+  	
+  	
+  private void initialize(File file) throws IOException {
   	InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
   	initialize(inputStream);
   }
