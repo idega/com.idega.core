@@ -54,6 +54,7 @@ public class TxtWriter extends DocWriter implements DocListener {
 	 * @throws  DocumentException when a document isn't open yet, or has been closed
 	 */
 	public boolean add(Element element) throws DocumentException {
+		//System.err.println("adding element "+element.toString());
 		if (pause) {
 			return false;
 		}
@@ -83,6 +84,7 @@ public class TxtWriter extends DocWriter implements DocListener {
 	 * @param   indent      the indentation
 	 */
 	protected void write(Element element) throws IOException {
+		//System.err.println("writing element "+element.toString());
 		switch (element.type()) {
 			case Element.CHUNK :
 				{

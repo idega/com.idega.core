@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Properties;
 import org.xml.sax.Attributes;
 import com.lowagie.text.*;
-import com.lowagie.text.xml.SAXiTextHandler;
 import com.lowagie.text.xml.XmlPeer;
 
 /**
@@ -51,6 +50,7 @@ public class SAXpdfHandler extends SAXiTextHandler {
  */
     
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
+		//System.err.println("Start: " + name);
 		if (myTags.containsKey(name)) {
 			XmlPeer peer = (XmlPeer) myTags.get(name);
 			handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
@@ -74,6 +74,7 @@ public class SAXpdfHandler extends SAXiTextHandler {
  */
     
 	public void endElement(String uri, String lname, String name) {
+		//System.err.println("Stop: " + name);
 		if (myTags.containsKey(name)) {
 			XmlPeer peer = (XmlPeer) myTags.get(name);
 			handleEndingTags(peer.getTag());
