@@ -70,8 +70,10 @@ import com.idega.util.LocaleUtil;
     				}
     				buffer.append(" ").append(firstName).append(" ").append(middleName);
     			}
+    			return buffer.toString();
+    			
     		}
-    		return fullName;
+    		return getName();
     }
 
     public String getFirstName() {
@@ -85,7 +87,7 @@ import com.idega.util.LocaleUtil;
     public String getLastName() {
         return this.lastName;
     }
-
+    
     public void setMiddleName(String middleName) {
       this.middleName = middleName;
       fullName = null;
@@ -103,6 +105,7 @@ import com.idega.util.LocaleUtil;
 
     public void setName(String name) {
 		if ((name != null) && (name.length() > 0)) {
+		    fullName = name;
 			StringTokenizer token = new StringTokenizer(name);
 			int countWithoutFirstAndLast = token.countTokens() - 2;
 			
