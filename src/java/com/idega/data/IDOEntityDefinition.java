@@ -20,6 +20,7 @@ public interface IDOEntityDefinition {
 	public Class getInterfaceClass();
 	public IDOEntityField findFieldByUniqueName(String name);
 	public String getMiddleTableNameForRelation(String relatedTable);
+	public IDOEntityField[] findFieldByRelation(Class interfaceClass);
 	/**
 	 * @return HashMap with the indexes for this Entity, where the KEY is indexName, 
 	 * and VALUE is String[], containing columns

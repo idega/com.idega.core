@@ -1,5 +1,8 @@
 package com.idega.data.query;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.idega.data.query.output.Output;
 
 /**
@@ -26,6 +29,13 @@ public class JoinCriteria extends Criteria {
         out.print(source)
             .print(" = ")
             .print(dest);
+    }
+    
+    public Set getTables(){
+		Set s = new HashSet();
+		s.add(source.getTable());
+		s.add(dest.getTable());
+		return s; 
     }
 
 }

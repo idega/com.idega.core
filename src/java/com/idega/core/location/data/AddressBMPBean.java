@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 
 import com.idega.core.user.data.User;
+import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.util.text.TextSoap;
@@ -40,7 +41,11 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(getColumnNameAddressTypeId(), "Address type", AddressType.class);
+		
 		addAttribute(STREET_NAME, "Street Name", true, true, String.class, 150);
+		EntityAttribute streetNameAttr = (EntityAttribute)getEntityDefinition().findFieldByUniqueName(STREET_NAME);
+		streetNameAttr.setUniqueFieldName(Address.FIELD_STREET_NAME);
+		
 		addAttribute(STREET_NUMBER, "Street number", true, true, String.class, 30);
 		addAttribute(CITY, "City", true, true, String.class, 50);
 		addAttribute(PROVINCE, "Province", true, true, String.class, 50);

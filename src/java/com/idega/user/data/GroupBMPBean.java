@@ -35,6 +35,10 @@ import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
+import com.idega.data.query.AND;
+import com.idega.data.query.Criteria;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.SelectQuery;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupTreeComparator;
@@ -578,29 +582,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
 
-		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(getEntityName());
+		SelectQuery query = idoSelectQuery();
+		Criteria theCriteria = null;
 		if (groupTypes != null && !groupTypes.isEmpty()) {
-			query.appendWhere(COLUMN_GROUP_TYPE);
-
-			IDOQuery subQuery = idoQuery();
-			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
-			if (returnTypes) {
-				query.appendIn(subQuery);
-			}
-			else {
-				query.appendNotIn(subQuery);
-			}
-			query.appendAnd();
+			theCriteria = new InCriteria(idoQueryTable(),COLUMN_GROUP_TYPE,groupTypes,!returnTypes);
 		}
-		else {
-			query.appendWhere();
+		
+		
+		Criteria inCr = new InCriteria(idoQueryTable(),COLUMN_GROUP_ID,findGroupRelationsSQL);
+			
+		if(theCriteria==null){
+			theCriteria = inCr;
+		} else {
+			theCriteria = new AND(theCriteria,inCr);
 		}
-		query.append(this.COLUMN_GROUP_ID);
-		query.appendIn(findGroupRelationsSQL);
-		query.appendOrderBy(this.COLUMN_NAME);
-
-
+		
+		query.addCriteria(theCriteria);
+		query.addOrder(idoQueryTable(),this.COLUMN_NAME,true);
 		
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());

@@ -1,8 +1,10 @@
 package com.idega.data.query;
 
-import com.idega.data.query.output.ToStringer;
-import com.idega.data.query.output.Outputable;
+import java.util.Set;
+
 import com.idega.data.query.output.Output;
+import com.idega.data.query.output.Outputable;
+import com.idega.data.query.output.ToStringer;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -30,5 +32,7 @@ public abstract class Criteria implements Outputable {
         str.append('\'');
         return str.toString();
     }
+    
+    public abstract Set getTables();
 
 }

@@ -1,5 +1,8 @@
 package com.idega.data.query;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.idega.data.query.output.Output;
 
 /**
@@ -26,6 +29,13 @@ public abstract class BaseLogicGroup extends Criteria {
             .print(' ')
             .print(right)
             .print(" )");
+    }
+    
+    public Set getTables(){
+    		Set s = new HashSet();
+    		s.addAll(left.getTables());
+    		s.addAll(right.getTables());
+    		return s; 
     }
 
 }

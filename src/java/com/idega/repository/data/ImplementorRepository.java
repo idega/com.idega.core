@@ -133,6 +133,7 @@ public class ImplementorRepository {
 			}
 			catch (ClassNotFoundException e) {
 				// do nothing, not very likely that a class is registered but doesn't exist
+				e.printStackTrace();
 			}
 		}
 		if (classes.isEmpty()) {

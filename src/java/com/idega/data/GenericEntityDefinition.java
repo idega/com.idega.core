@@ -6,6 +6,7 @@
  */
 package com.idega.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
@@ -205,6 +206,19 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 			_beanClass = IDOLookup.getBeanClassFor(_interfaceClass);
 		}
 		return _beanClass;
+	}
+	
+	public IDOEntityField[] findFieldByRelation(Class interfaceClass){
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < _fields.length; i++) {
+			if(_fields[i].getRelationShipClass().equals(interfaceClass)){
+				list.add(_fields[i]);
+			}
+		}
+		if(list.size() > 0)
+			return (IDOEntityField[])list.toArray(new IDOEntityField[list.size()]);
+		else
+			return new IDOEntityField[0];
 	}
 
 	// IDOEntityDefinition ends //

@@ -1,10 +1,12 @@
 package com.idega.data.query;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -14,6 +16,7 @@ public class InCriteria extends Criteria {
     private Column column;
     private String value;
     private SelectQuery subSelect;
+    private boolean notInCr = false;
 
     public InCriteria(Column column, Collection values) {
         this.column = column;
@@ -106,6 +109,79 @@ public class InCriteria extends Criteria {
     public InCriteria(Table table, String columnname, String[] values) {
         this(table.getColumn(columnname), values);
     }
+    
+    ///////////
+    
+    public InCriteria(Column column, Collection values, boolean notIn) {
+        this(column,values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Column column, String[] values, boolean notIn) {
+        this(column,values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Column column, int[] values, boolean notIn) {
+        this(column,values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Column column, float[] values, boolean notIn) {
+        this(column,values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Column column, SelectQuery subSelect, boolean notIn) {
+        this(column,subSelect);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Column column, String subSelect, boolean notIn) {
+        this(column,subSelect);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, Collection values, boolean notIn) {
+        this(table,columnname, values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, float[] values, boolean notIn) {
+        this(table,columnname, values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, int[] values, boolean notIn) {
+        this(table,columnname, values);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, SelectQuery subSelect, boolean notIn) {
+        this(table,columnname, subSelect);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, String subSelect, boolean notIn) {
+        this(table,columnname, subSelect);
+        setAsNotInCriteria(notIn);
+    }
+
+    public InCriteria(Table table, String columnname, String[] values, boolean notIn) {
+        this(table,columnname, values);
+        setAsNotInCriteria(notIn);
+    }
+
+    
+    //////////
+    
+    public void setAsNotInCriteria(boolean value){
+    		notInCr = value;
+    }
+    
+    public void setAsNotInCriteria(){
+    		setAsNotInCriteria(true);
+    }
 
     public Column getColumn() {
         return column;
@@ -113,7 +189,12 @@ public class InCriteria extends Criteria {
 
     public void write(Output out) {
         out.print(column);
-        out.println(" IN (");
+        if(notInCr){
+        		out.println(" NOT IN (");
+        } else {
+        		out.println(" IN (");
+        }
+        
 
         out.indent();
         if (subSelect != null) {
@@ -125,6 +206,12 @@ public class InCriteria extends Criteria {
 
         out.println();
         out.print(")");
+    }
+    
+    public Set getTables(){
+		Set s = new HashSet();
+		s.add(column.getTable());
+		return s; 
     }
 
 }

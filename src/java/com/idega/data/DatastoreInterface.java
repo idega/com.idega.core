@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.106 2004/08/16 15:42:10 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.107 2004/08/23 17:21:24 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1969,6 +1969,13 @@ public abstract class DatastoreInterface {
 	
 	public boolean isCabableOfRSScroll(){
 		return false;
+	}
+	
+	/**
+	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
+	 */
+	public int getOptimalEJBLoadFetchSize(){
+		return 500;
 	}
 	
 }

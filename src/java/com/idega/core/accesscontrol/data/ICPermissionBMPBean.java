@@ -7,6 +7,12 @@ import javax.ejb.FinderException;
 
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOUtil;
+import com.idega.data.query.AND;
+import com.idega.data.query.Criteria;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
+import com.idega.data.query.SelectQuery;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -282,15 +288,24 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 * @throws FinderException
 	 */
 	public Collection ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group,String permissionString, String contextType) throws FinderException{
-		IDOQuery sql = idoQuery();
-		sql.appendSelectAllFrom(this).appendWhereEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
-		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
-		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
-		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
-		.appendOrderBy(getContextValueColumnName());
+		
+		SelectQuery query = idoSelectQuery();
+		Criteria theCriteria = new MatchCriteria(idoQueryTable(),getGroupIDColumnName(),MatchCriteria.EQUALS,group);
+		
+		Criteria permCr = new MatchCriteria(idoQueryTable(),getPermissionStringColumnName(),MatchCriteria.EQUALS,permissionString,true);
+		Criteria contextCr = new MatchCriteria(idoQueryTable(),getContextTypeColumnName(),MatchCriteria.EQUALS,contextType,true);
+		Criteria statusCr = new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.EQUALS,STATUS_ACTIVE,true);
+		statusCr = new OR(statusCr,new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.IS,MatchCriteria.NULL));
+		
+		theCriteria = new AND(theCriteria,permCr);
+		theCriteria = new AND(theCriteria,contextCr);
+		theCriteria = new AND(theCriteria,statusCr);
+		
+		query.addCriteria(theCriteria);
+		query.addOrder(idoQueryTable(),getContextValueColumnName(),true);
 		
 		//return super.idoFindPKsByQuery(sql);
-		return super.idoFindPKsByQueryUsingLoadBalance(sql, 10000);
+		return super.idoFindPKsByQueryUsingLoadBalance(query, 10000);
 	}
 	
 	
@@ -309,18 +324,24 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 			return ListUtil.getEmptyList();
 		}
 		
-		IDOQuery sql = idoQuery();
-		IDOUtil util = IDOUtil.getInstance();
-		sql.appendSelectAllFrom(this).appendWhere()
-		.append(getGroupIDColumnName())
-		.appendIn(util.convertListToCommaseparatedString(groups))
-		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
-		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
-		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
-		.appendOrderBy(getContextValueColumnName());
+		
+		SelectQuery query = idoSelectQuery();
+		Criteria theCriteria = new InCriteria(idoQueryTable(),getGroupIDColumnName(),groups);
+		
+		Criteria permCr = new MatchCriteria(idoQueryTable(),getPermissionStringColumnName(),MatchCriteria.EQUALS,permissionString,true);
+		Criteria contextCr = new MatchCriteria(idoQueryTable(),getContextTypeColumnName(),MatchCriteria.EQUALS,contextType,true);
+		Criteria statusCr = new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.EQUALS,STATUS_ACTIVE,true);
+		statusCr = new OR(statusCr,new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.IS,MatchCriteria.NULL));
+		
+		theCriteria = new AND(theCriteria,permCr);
+		theCriteria = new AND(theCriteria,contextCr);
+		theCriteria = new AND(theCriteria,statusCr);
+		
+		query.addCriteria(theCriteria);
+		query.addOrder(idoQueryTable(),getContextValueColumnName(),true);
 		
 		//return super.idoFindPKsByQuery(sql);
-		return super.idoFindPKsByQueryUsingLoadBalance(sql, 10000);
+		return super.idoFindPKsByQueryUsingLoadBalance(query, 10000);
 	}
 	
 	

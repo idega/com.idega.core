@@ -8,6 +8,8 @@ import javax.ejb.RemoveException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
@@ -409,9 +411,10 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		*/
 	 public Collection ejbFindAllGroupsWithoutRelatedGroupType()throws FinderException{
 //		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_TYPE_COLUMN+" is null");
-		 IDOQuery query = idoQueryGetSelect().appendWhereIsNull(this.RELATED_GROUP_TYPE_COLUMN);
+		 SelectQuery query = idoSelectQuery();
+		 query.addCriteria(new MatchCriteria(idoQueryTable(),RELATED_GROUP_TYPE_COLUMN,MatchCriteria.IS,MatchCriteria.NULL));
 		 if(this.isDebugActive()){
-		 	debug("["+this.getClass().getName()+"]: "+query);
+		 	debug("["+this.getClass().getName()+"]: "+query.toString());
 		 }
 		 return idoFindPKsByQueryUsingLoadBalance(query,2000);
 	 }

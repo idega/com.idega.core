@@ -5,28 +5,29 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.EmailBMPBean;
+import com.idega.core.contact.data.Phone;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
-import com.idega.core.contact.data.Email;
-import com.idega.core.contact.data.EmailBMPBean;
-import com.idega.core.contact.data.Phone;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
+import com.idega.data.IDOEntityField;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDOLookup;
@@ -36,6 +37,15 @@ import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
+import com.idega.data.query.AND;
+import com.idega.data.query.Column;
+import com.idega.data.query.Criteria;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.JoinCriteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
@@ -739,29 +749,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      System.out.println("[UserBMPBean]: sGroupList = "+sGroupList);
 		//      System.out.println("[UserBMPBean]: "+"select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
 
-		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(getEntityName());
-		query.appendWhere();
-		
-		if(groupList!=null && !groupList.isEmpty()){
-			query.append(getIDColumnName());
-			query.appendIn(sGroupList);
-    	query.appendAnd();
-    	appendIsNotDeleted(query);
-			query.appendOrderBy(this.getColumnNameFirstName());
+		SelectQuery query = idoSelectQuery();
 
-			IDOQuery countQuery = idoQuery();
-			countQuery.appendSelectCountFrom(getEntityName());
-			countQuery.appendWhere(this.getIDColumnName());
-			countQuery.appendIn(sGroupList);
-    	countQuery.appendAnd();
-    	appendIsNotDeleted(countQuery);
-		//	  return this.idoFindPKsBySQL(query.toString());
-				
-		//this could be tuned
-		int loadBalancePrefetchSize = 1000;
-		return this.idoFindPKsByQueryUsingLoadBalance(query, countQuery, loadBalancePrefetchSize);
-	
+		if(groupList!=null && !groupList.isEmpty()){
+			InCriteria inCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),sGroupList);
+    	
+			query.addCriteria(new AND(inCriteria,getNotDeletedCriteria()));
+			addOrderByName(query,false,true);
+
+			int loadBalancePrefetchSize = 1000;
+			return this.idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
 		}
 		else{
 			System.err.println("UserBMPBean: ejbFindUsersForUserRepresentativeGroups : groupList is NULL or empty!!");
@@ -770,6 +767,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}
 
+	public void addOrderByName(SelectQuery query, boolean lastnameFirst, boolean ascending){
+		query.addOrder(idoQueryTable(),((lastnameFirst)?getColumnNameLastName():getColumnNameFirstName()),ascending);
+		query.addOrder(idoQueryTable(),((!lastnameFirst)?getColumnNameLastName():getColumnNameFirstName()),ascending);
+		query.addOrder(idoQueryTable(),getColumnNameMiddleName(),ascending);
+	}
+	
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
 	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
@@ -849,22 +852,13 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
    */
 
 	public Collection ejbFindAllUsersOrderedByFirstName() throws FinderException {
-		IDOQuery query = idoQueryGetSelect();
-    query.appendWhere();
-    appendIsNotDeleted(query);
-		query.appendOrderBy(this.getColumnNameFirstName() + "," + this.getColumnNameLastName() + "," + this.getColumnNameMiddleName());
-
-		IDOQuery countQuery = idoQueryGetSelectCount();
-    countQuery.appendWhere();
-    appendIsNotDeleted(countQuery);
-
-		//	  return super.idoFindPKsBySQL(query.toString());
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria(getNotDeletedCriteria());
+		addOrderByName(query,false,true);
 		
 		int loadBalancePrefetchSize = 1000;
-		return super.idoFindPKsByQueryUsingLoadBalance(query, countQuery,loadBalancePrefetchSize);
-	
+		return super.idoFindPKsByQueryUsingLoadBalance(query,loadBalancePrefetchSize);
 
-		//      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
 	}
 
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
@@ -1271,97 +1265,232 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
-		IDOQuery query = idoQuery();
-		boolean firstOperatorAdded = false;
 		
-		final String operator = useAnd ? " AND " : " OR ";
+		SelectQuery query = idoSelectQuery();
 		
-		query.appendSelectAllFrom(this).appendWhere();
+		Criteria theCriteria = null;
 		
-		query.append(" ( ");
 		//name	
 		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
-			query.append(" ( ")
-			.append(getUserNameSearchString(firstName,middleName,lastName,operator))
-			.append(" ) ");
-			
-			firstOperatorAdded = true;
+			theCriteria = getUserNameSearchCriteria(firstName,middleName,lastName,useAnd);
 		}
 				
 		if( (startAge >= 0) && (endAge >=startAge) ){
-			if(firstOperatorAdded ) query.appendAnd();
-			
-			query.append(" ( ")
-			.append(getUserDateOfBirthSearchString(startAge, endAge))
-			.append(" ) ");
-			
-			firstOperatorAdded = true;
-		}
-		
-		//not deleted
-		if(firstOperatorAdded) query.appendAnd();
-		appendIsNotDeleted(query);
-		
-		
-		query.append(" ) ");
+			Criteria ageCriteria = getUserDateOfBirthCriteria(startAge, endAge);
+			if(theCriteria==null)
+				theCriteria = ageCriteria;
+			else 
+				theCriteria = new AND(theCriteria,ageCriteria);
+		}		
 		
 		//personalId
 		if(personalId!=null && !personalId.equals("") ){
-			query.append(operator)
-			.append(" ( ")
-			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
-			.append(" ) ");
+			Criteria personalIdCriteria = new MatchCriteria(idoQueryTable(),getColumnNamePersonalID(),MatchCriteria.LIKE,"%"+personalId+"%");
+			if(theCriteria==null){
+				theCriteria = personalIdCriteria;
+			} else {
+				if(useAnd)
+					theCriteria = new AND(theCriteria,personalIdCriteria);
+				else 
+					theCriteria = new OR(theCriteria,personalIdCriteria);
+			}	
 		}
 			
 		//address
 		if(streetName!=null && !streetName.equals("")  ){
-			query.append(operator)
-			.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
+			Criteria streetNameCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),getUserAddressSelectQuery(streetName));
+			if(theCriteria==null){
+				theCriteria = streetNameCriteria;
+			} else {
+				if(useAnd)
+					theCriteria = new AND(theCriteria,streetNameCriteria);
+				else 
+					theCriteria = new OR(theCriteria,streetNameCriteria);
+			}
 		}
 				
 		//gender
 		if(gender>0){
-			query.appendAnd()
-			.append(" ( ")
-			.append(getColumnNameGender()).appendEqualSign().append(gender)
-			.append(" ) ");
+			Criteria genderCriteria = new MatchCriteria(idoQueryTable(),getColumnNameGender(),MatchCriteria.EQUALS,gender);
+			if(theCriteria==null){
+				theCriteria = genderCriteria;
+			} else {
+				if(useAnd)
+					theCriteria = new AND(theCriteria,genderCriteria);
+				else 
+					theCriteria = new OR(theCriteria,genderCriteria);
+			}
 		}
 			
 		//status
-		//TODO Eiki add sql for only allowed groups
+		//TODO Eiki add sql for only allowed groups and create and use method getUserStatusCriteria
 		if( statusId>0 ){
-			query.append(operator)
-			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId,IWTimestamp.RightNow()));
+			Criteria StatusIdCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),getUserStatusSearchString(statusId,IWTimestamp.RightNow()));
+			if(theCriteria==null){
+				theCriteria = StatusIdCriteria;
+			} else {
+				if(useAnd)
+					theCriteria = new AND(theCriteria,StatusIdCriteria);
+				else 
+					theCriteria = new OR(theCriteria,StatusIdCriteria);
+			}
 		}
 		
 		//group search
-		//TODO Eiki filter out only allowed
+		//TODO Eiki filter out only allowed and create and use method getUserInAllowedGroupsCriteria
 		if(groupName!=null || (allowedGroups!=null && allowedGroups.length>0 )){
-			query.append(operator)
-			.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
+			Criteria groupNameCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),getUserInAllowedGroupsSearchString(groupName,allowedGroups));
+			if(theCriteria==null){
+				theCriteria = groupNameCriteria;
+			} else {
+				if(useAnd)
+					theCriteria = new AND(theCriteria,groupNameCriteria);
+				else 
+					theCriteria = new OR(theCriteria,groupNameCriteria);
+			}
 		}	
 			
 		//filter by users
 		if ( allowedUsers != null && allowedUsers.length>0 ) {
-			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));	
+			Criteria allowedUsersCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));
+			if(theCriteria==null){
+				theCriteria = allowedUsersCriteria;
+			} else {
+				theCriteria = new AND(theCriteria,allowedUsersCriteria);
+			}
 		}
-      
-		if (orderLastFirst)
-			query.appendOrderBy(this.getColumnNameLastName()+","+this.getColumnNameFirstName()+","+this.getColumnNameMiddleName());
-		else
-			query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
 		
+		if(theCriteria==null)
+			theCriteria = getNotDeletedCriteria();
+		else 
+			theCriteria = new AND(theCriteria,getNotDeletedCriteria());
 		
+		query.addCriteria(theCriteria);
+		addOrderByName(query,orderLastFirst,true);
+
 		//return this.idoFindIDsBySQL(query.toString());
 		//to benefit from the IDOEntityList features
 		
 		int loadBalancePrefetchSize = 100;
 		if(this.isDebugActive()){
-			System.out.println("[ejbFindUsersByConditions-sql]: "+query);
+			System.out.println("[ejbFindUsersByConditions-sql]: "+query.toString());
 		}
 		return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
 
 	}
+
+	
+//	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
+//		IDOQuery query = idoQuery();
+//		boolean firstOperatorAdded = false;
+//		
+//		final String operator = useAnd ? " AND " : " OR ";
+//		
+//		query.appendSelectAllFrom(this).appendWhere();
+//		
+//		query.append(" ( ");
+//		//name	
+//		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
+//			query.append(" ( ")
+//			.append(getUserNameSearchString(firstName,middleName,lastName,operator))
+//			.append(" ) ");
+//			
+//			firstOperatorAdded = true;
+//		}
+//				
+//		if( (startAge >= 0) && (endAge >=startAge) ){
+//			if(firstOperatorAdded ) query.appendAnd();
+//			
+//			query.append(" ( ")
+//			.append(getUserDateOfBirthSearchString(startAge, endAge))
+//			.append(" ) ");
+//			
+//			firstOperatorAdded = true;
+//		}
+//		
+//		//not deleted
+//		if(firstOperatorAdded) query.appendAnd();
+//		appendIsNotDeleted(query);
+//		
+//		
+//		query.append(" ) ");
+//		
+//		//personalId
+//		if(personalId!=null && !personalId.equals("") ){
+//			query.append(operator)
+//			.append(" ( ")
+//			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
+//			.append(" ) ");
+//		}
+//			
+//		//address
+//		if(streetName!=null && !streetName.equals("")  ){
+//			query.append(operator)
+//			.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
+//		}
+//				
+//		//gender
+//		if(gender>0){
+//			query.appendAnd()
+//			.append(" ( ")
+//			.append(getColumnNameGender()).appendEqualSign().append(gender)
+//			.append(" ) ");
+//		}
+//			
+//		//status
+//		//TODO Eiki add sql for only allowed groups
+//		if( statusId>0 ){
+//			query.append(operator)
+//			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId,IWTimestamp.RightNow()));
+//		}
+//		
+//		//group search
+//		//TODO Eiki filter out only allowed
+//		if(groupName!=null || (allowedGroups!=null && allowedGroups.length>0 )){
+//			query.append(operator)
+//			.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
+//		}	
+//			
+//		//filter by users
+//		if ( allowedUsers != null && allowedUsers.length>0 ) {
+//			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));	
+//		}
+//      
+//		if (orderLastFirst)
+//			query.appendOrderBy(this.getColumnNameLastName()+","+this.getColumnNameFirstName()+","+this.getColumnNameMiddleName());
+//		else
+//			query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
+//		
+//		
+//		//return this.idoFindIDsBySQL(query.toString());
+//		//to benefit from the IDOEntityList features
+//		
+//		int loadBalancePrefetchSize = 100;
+//		if(this.isDebugActive()){
+//			System.out.println("[ejbFindUsersByConditions-sql]: "+query);
+//		}
+//		return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
+//
+//	}
+
+	private Criteria getUserDateOfBirthCriteria(int startAge, int endAge) {				
+		IWTimestamp youngerAgeStamp = IWTimestamp.RightNow();
+		IWTimestamp olderAgeStamp = IWTimestamp.RightNow();
+		
+		youngerAgeStamp.addYears(-startAge);
+		youngerAgeStamp.setMonth(12);
+		youngerAgeStamp.setDay(31);
+		
+		olderAgeStamp.addYears(-endAge);
+		olderAgeStamp.setMonth(1);
+		olderAgeStamp.setDay(1);
+		
+		Criteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDateOfBirth(),MatchCriteria.GREATEREQUAL,olderAgeStamp.getTimestamp());
+		Criteria c2 = new MatchCriteria(idoQueryTable(),getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL,youngerAgeStamp.getTimestamp());
+		
+		return new AND(c1,c2);
+	}
+
 	
 	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
 		IDOQuery query = idoQuery();
@@ -1385,40 +1514,103 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return query.toString();
 	}
 	
-	
-	/**
-	 * @param condition
-	 * @return
-	 */
-	private String getUserNameSearchString(String firstName, String middleName, String lastName, String ANDOrOR) {
-		boolean firstNameAdded = false;
-		boolean middleNameAdded = false;
-
-		StringBuffer sql = new StringBuffer();
+	private Criteria getUserNameSearchCriteria(String firstName, String middleName, String lastName, boolean andCriteria) {
+		int count = 0;
+		Criteria firstNameCriteria = null;
 		if(firstName!=null && !firstName.equals("")){
-			sql.append(getColumnNameFirstName()).append(" like '").append(firstName).append("%' ");
-			firstNameAdded = true;
+			firstNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameFirstName(),MatchCriteria.LIKE,firstName+"%");
+			count++;
 		}
 		
+		Criteria middleNameCriteria = null;
 		if(middleName!=null && !middleName.equals("") ){
-			if(firstNameAdded){
-				sql.append(ANDOrOR).append(" ");
+			middleNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameMiddleName(),MatchCriteria.LIKE,middleName+"%");
+			count++;
+		}
+		
+		Criteria lastNameCriteria = null;
+		if(lastName!=null  && !lastName.equals("") ){
+			lastNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameLastName(),MatchCriteria.LIKE,lastName+"%");
+			count++;
+		}
+		
+		switch (count) {
+		case 1:
+			if(firstNameCriteria!=null)
+				return firstNameCriteria;
+			if(middleNameCriteria!=null)
+				return middleNameCriteria;
+			if(lastNameCriteria!=null)
+				return lastNameCriteria;
+		case 2:
+			if(middleNameCriteria==null){
+				if(andCriteria)
+					return new AND(firstNameCriteria,lastNameCriteria);
+				else 
+					return new OR(firstNameCriteria,lastNameCriteria);
+			}
+			if(lastNameCriteria==null){
+				if(andCriteria)
+					return new AND(firstNameCriteria,middleNameCriteria);
+				else 
+					return new OR(firstNameCriteria,middleNameCriteria);
+			}
+			if(firstNameCriteria==null){
+				if(andCriteria)
+					return new AND(middleNameCriteria,lastNameCriteria);
+				else 
+					return new OR(middleNameCriteria,lastNameCriteria);
 			}
 			
-			sql.append(getColumnNameMiddleName()).append(" like '").append(middleName).append("%' ");
-			middleNameAdded = true;
-		}
-		
-		if(lastName!=null  && !lastName.equals("") ){
-			if(middleNameAdded || firstNameAdded){
-				sql.append(ANDOrOR).append(" ");
+		case 3:
+			if(andCriteria){
+				AND cr1 = new AND(firstNameCriteria,middleNameCriteria);
+				AND cr2 = new AND(cr1,lastNameCriteria);
+				return cr2;
+			}else {
+				OR cr1 = new OR(firstNameCriteria,middleNameCriteria);
+				OR cr2 = new OR(cr1,lastNameCriteria);
+				return cr2;
 			}
-			sql.append(getColumnNameLastName()).append(" like '").append(lastName).append("%'");
+		default:
+			return null;
 		}
-		
-		
-		return sql.toString();
 	}
+	
+	
+//	/**
+//	 * @param condition
+//	 * @return
+//	 */
+//	private String getUserNameSearchString(String firstName, String middleName, String lastName, String ANDOrOR) {
+//		boolean firstNameAdded = false;
+//		boolean middleNameAdded = false;
+//
+//		StringBuffer sql = new StringBuffer();
+//		if(firstName!=null && !firstName.equals("")){
+//			sql.append(getColumnNameFirstName()).append(" like '").append(firstName).append("%' ");
+//			firstNameAdded = true;
+//		}
+//		
+//		if(middleName!=null && !middleName.equals("") ){
+//			if(firstNameAdded){
+//				sql.append(ANDOrOR).append(" ");
+//			}
+//			
+//			sql.append(getColumnNameMiddleName()).append(" like '").append(middleName).append("%' ");
+//			middleNameAdded = true;
+//		}
+//		
+//		if(lastName!=null  && !lastName.equals("") ){
+//			if(middleNameAdded || firstNameAdded){
+//				sql.append(ANDOrOR).append(" ");
+//			}
+//			sql.append(getColumnNameLastName()).append(" like '").append(lastName).append("%'");
+//		}
+//		
+//		
+//		return sql.toString();
+//	}
 
 	/**
 	 * @param condition
@@ -1464,6 +1656,39 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param streetName
+	 * @return returns SelectQuery that returns the userIDs matching this streetName
+	 */
+	private SelectQuery getUserAddressSelectQuery(String streetName) throws IDOLookupException {
+		Table addressTable = new Table(Address.class);
+		Table userAddressTable = new Table(SQL_RELATION_ADDRESS);
+		SelectQuery query = new SelectQuery(userAddressTable);	
+		
+
+		query.addColumn(userAddressTable,getIDColumnName(),true);
+		
+		IDOEntityDefinition addressDef = IDOLookup.getEntityDefinitionForClass(Address.class);
+		IDOEntityField pkAddressField = null;
+		try {
+			pkAddressField = addressDef.getPrimaryKeyDefinition().getField();
+		} catch (IDOCompositePrimaryKeyException e) {
+			e.printStackTrace();
+		}
+		
+		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
+		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+		Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+
+		query.addCriteria(new AND(join,match));
+		
+//		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id").append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
+	
+		return query;
+		
+	}
 	
 
 
@@ -1772,7 +1997,20 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       .append(getColumnNameDeleted())
       .append(" IS NULL ")
       .appendRightParenthesis();
-  }  
+  }
+  
+  
+  /**
+   * add condition if column deleted equals 'N' or is null
+   * 
+   * @param query
+   */  
+  private Criteria getNotDeletedCriteria() {
+  	MatchCriteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.EQUALS,false);
+  	MatchCriteria c2 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.IS,MatchCriteria.NULL);
+    return new OR(c1,c2);
+  }
+  
   
   /**
    * add condition if column deleted equals 'N' or is null

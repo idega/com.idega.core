@@ -2,6 +2,8 @@ package com.idega.data.query;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
@@ -60,7 +62,11 @@ public class MatchCriteria extends Criteria {
 
 	public MatchCriteria(Column column, String matchType, String value) {
 		this.column = column;
-		this.value = quote(value);
+		if(NULL==value){
+			this.value = value;
+		} else {
+			this.value = quote(value);
+		}
 		this.matchType = matchType;
 	}
 
@@ -144,10 +150,14 @@ public class MatchCriteria extends Criteria {
 		this(table.getColumn(columnname), matchType, value);
 	}
 
+	public MatchCriteria(Table table, String columnname, String matchType, String value, boolean addQuotes) {
+		this(table.getColumn(columnname), matchType, value, addQuotes);
+	}
+
 	public MatchCriteria(Table table, String columnname, String matchType, String value) {
 		this(table.getColumn(columnname), matchType, value);
 	}
-
+	
 	public MatchCriteria(Table table, String columnname, String matchType, Object value) {
 		this(table.getColumn(columnname), matchType, value);
 	}
@@ -176,4 +186,10 @@ public class MatchCriteria extends Criteria {
 		if (this.dataStore == null) this.dataStore = DatastoreInterface.getInstance();
 		return this.dataStore;
 	}
+	
+    public Set getTables(){
+		Set s = new HashSet();
+		s.add(column.getTable());
+		return s; 
+    }
 }

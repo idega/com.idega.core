@@ -18,7 +18,7 @@ public class Table implements Outputable {
 
 	private String name;
 
-	private String alias;
+	private String alias=null;
 	
 	private String primaryKeyColumnName;
 	private String[] primaryKeyColumnNames;
@@ -147,6 +147,13 @@ public class Table implements Outputable {
 	public Column getColumn(String columnName) {
 		return new Column(this, columnName);
 	}
+	
+    public int hashCode() {
+    		if(alias != null){
+    			return (name+alias).hashCode();
+    		} 
+    		return name.hashCode();
+    }
 
 	public boolean equals(Object o) {
 		if (o == null) return false;

@@ -1,5 +1,13 @@
 package com.idega.data.query;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOEntityField;
@@ -8,30 +16,28 @@ import com.idega.data.query.output.Output;
 import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.ToStringer;
 
-import java.util.*;
-
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
  */
-public class SelectQuery implements Outputable {
+public class SelectQuery implements Outputable, Cloneable {
 
 	public static final int indentSize = 4;
 
 	private Table baseTable;
 
-	private List columns;
-	private List criteria;
-	private List order;
-	private List groupBy;
+	private Vector columns;
+	private Vector criteria;
+	private Vector order;
+	private Vector groupBy;
 	private boolean _countQuery = false;
     private boolean _distinct =false;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
-		columns = new ArrayList();
-		criteria = new ArrayList();
-		order = new ArrayList();
-		groupBy = new ArrayList();
+		columns = new Vector();
+		criteria = new Vector();
+		order = new Vector();
+		groupBy = new Vector();
 	}
 
 	public Table getBaseTable() {
@@ -101,6 +107,10 @@ public class SelectQuery implements Outputable {
 
 	public void removeCriteria(Criteria criteria) {
 		this.criteria.remove(criteria);
+	}
+	
+	public void removeAllCriteria(){
+		this.criteria.clear();
 	}
 
 	public List listCriteria() {
@@ -287,8 +297,8 @@ public class SelectQuery implements Outputable {
 
 		while (hasNext) {
 			Outputable curr = (Outputable) i.next();
+			hasNext = i.hasNext();
 			if (curr != null) {
-				hasNext = i.hasNext();
 				curr.write(out);
 				out.print(' ');
 				if (hasNext) {
@@ -304,16 +314,16 @@ public class SelectQuery implements Outputable {
 	 * 
 	 * @return List of {@link com.truemesh.squiggle.Table}s
 	 */
-	private List findAllUsedTables() {
+	private Set findAllUsedTables() {
 
-		List allTables = new ArrayList();
+		Set allTables = new HashSet();
 		allTables.add(baseTable);
 
 		{ // Get all tables used by columns
 			Iterator i = columns.iterator();
 			while (i.hasNext()) {
 				Table curr = ((Column) i.next()).getTable();
-				if (curr != null && !allTables.contains(curr)) {
+				if (curr != null) {
 					allTables.add(curr);
 				}
 			}
@@ -322,17 +332,8 @@ public class SelectQuery implements Outputable {
 		{ // Get all tables used by criteria
 			Iterator i = criteria.iterator();
 			while (i.hasNext()) {
-				try {
-					JoinCriteria curr = (JoinCriteria) i.next();
-					if (!allTables.contains(curr.getSource().getTable())) {
-						allTables.add(curr.getSource().getTable());
-					}
-					if (!allTables.contains(curr.getDest().getTable())) {
-						allTables.add(curr.getDest().getTable());
-					}
-				}
-				catch (ClassCastException e) {
-				} // not a JoinCriteria
+				Criteria curr = (Criteria) i.next();
+				allTables.addAll(curr.getTables());
 			}
 		}
 
@@ -341,9 +342,7 @@ public class SelectQuery implements Outputable {
 			while (i.hasNext()) {
 				Order curr = (Order) i.next();
 				Table c = curr.getColumn().getTable();
-				if (!allTables.contains(c)) {
-					allTables.add(c);
-				}
+				allTables.add(c);
 			}
 		}
 
@@ -364,4 +363,51 @@ public class SelectQuery implements Outputable {
 	public void setAsDistinct(boolean distinct){
 		_distinct = distinct;
 	}
+	
+	public Object clone(){
+		SelectQuery obj = null;
+		
+		try {
+			obj = (SelectQuery) super.clone();		
+			
+			obj.baseTable = baseTable;
+			
+			//obj.columns = (Vector)columns.clone();
+			//obj.criteria = (Vector)criteria.clone();
+			//obj.order = (Vector)order.clone();
+			//obj.groupBy = (Vector)groupBy.clone();
+			
+			obj.columns = new Vector();
+			if(this.columns.size()>0){
+				obj.columns.setSize(this.columns.size());
+				Collections.copy(obj.columns,this.columns);
+			}
+			obj.criteria = new Vector();
+			if(this.criteria.size()>0){
+				obj.criteria.setSize(this.criteria.size());
+				Collections.copy(obj.criteria,this.criteria);
+			}
+			obj.order = new Vector();
+			if(this.order.size()>0){
+				obj.order.setSize(this.order.size());
+				Collections.copy(obj.order,this.order);
+			}
+			obj.groupBy = new Vector();
+			if(this.groupBy.size()>0){
+				obj.groupBy.setSize(this.groupBy.size());
+				Collections.copy(obj.groupBy,this.groupBy);
+			}
+			
+			obj._countQuery = _countQuery;
+			obj._distinct = _distinct;
+
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		
+		return obj;
+	}
+	
+
+	
 }

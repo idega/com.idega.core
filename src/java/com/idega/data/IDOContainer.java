@@ -172,9 +172,10 @@ public class IDOContainer {
          */
          ((IDOEntityBean)entity).ejbFindByPrimaryKey(pk);
          if(rs!=null){
-          ((GenericEntity)entity).preEjbLoad(rs);
+         	((GenericEntity)entity).preEjbLoad(rs);
+         } else {
+         	((IDOEntityBean)entity).ejbLoad();
          }
-         ((IDOEntityBean)entity).ejbLoad();
       }
       ((IDOEntityBean)entity).setEJBLocalHome(home);
       if(useBeanCaching){
