@@ -339,7 +339,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 					+ groupId
 					+ ")";
 			//System.err.println(sql);
-			int i = Stmt.executeUpdate(sql);
+			Stmt.executeUpdate(sql);
 			//System.err.println(sql);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.out);
@@ -386,7 +386,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 						+ "' AND CHILD_IC_GROUP_ID ='"
 						+ groupId
 						+ "'";
-			int i = Stmt.executeUpdate(qry);
+			Stmt.executeUpdate(qry);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.out);
 		} finally {

@@ -210,8 +210,8 @@ public class AccessControllerApp extends IWApplication {
 
         ICObject staticICO = (ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class);
 
-        List bundles = iwc.getApplication().getRegisteredBundles();
-        List bundleLinks = tranceformBundleListToLinkList(bundles);
+        //List bundles = iwc.getApplication().getRegisteredBundles();
+        //List bundleLinks = tranceformBundleListToLinkList(bundles);
 
         List elements = EntityFinder.findAllByColumn(staticICO,com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_ELEMENT);
         List elementLinks = tranceformICObjectListToLinkList(elements);
@@ -425,7 +425,6 @@ public class AccessControllerApp extends IWApplication {
 
           Map hash = (Map)iwc.getSessionAttribute(this.SessionAddressPermissionMap);
           List directGroups = null;
-          List oldvalues = null;
           if(hash != null && hash.get(permissionType)!=null){
             directGroups = UserGroupBusiness.getGroups((String[])hash.get(permissionType));
             collectOld = false;
@@ -474,7 +473,6 @@ public class AccessControllerApp extends IWApplication {
 
 
           // Submit
-          Table buttonTable = new Table(2,1);
           SubmitButton save = new SubmitButton(" Save ","subm","save");
           //SubmitButton cancel = new SubmitButton("  Cancel  ","subm","cancel");
 

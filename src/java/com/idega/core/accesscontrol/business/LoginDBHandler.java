@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.40 2003/02/27 22:32:17 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.41 2003/04/03 20:00:46 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -731,7 +731,6 @@ public class LoginDBHandler
 	}
 	public static boolean verifyPassword(String user, String password) throws Exception
 	{
-		boolean returner = false;
 		java.util.List c =
 			EntityFinder.getInstance().findAllByColumn(
 				LoginTable.class,

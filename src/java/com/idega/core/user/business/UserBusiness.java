@@ -1,8 +1,6 @@
 package com.idega.core.user.business;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import com.idega.block.staff.business.StaffBusiness;
@@ -403,8 +401,6 @@ public class UserBusiness {
     return null;
   }
   public static void addNewUserEmail(int iUserId,String sNewEmailAddress){
-    Connection conn= null;
-    Statement Stmt= null;
     try {
       Email eEmail = lookupEmail(sNewEmailAddress);
       if(eEmail==null){
@@ -413,7 +409,6 @@ public class UserBusiness {
         eEmail.insert();
       }
 
-      User U = getUser(iUserId);
       eEmail.addTo(User.class,iUserId);
 
     }

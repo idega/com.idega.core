@@ -441,7 +441,6 @@ public class CategoryFinder {
 			(ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class);
 		ICCategory icCat = ((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
 		String middletable = EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
-		String tablename = entity.getEntityName();
 		StringBuffer sql = new StringBuffer("select ");
 		sql.append(entity.getEntityName()).append(".* from ").append(entity.getEntityName()).append(",");
 		sql.append(catEntity.getEntityName()).append(",");

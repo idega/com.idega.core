@@ -102,8 +102,6 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   public void insertStartData() {
     try {
       ICFileType type;
-      ICFile file;
-      ICFileTypeHandler handler = ((com.idega.core.data.ICFileTypeHandlerHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileTypeHandler.class)).createLegacy();
 
       type = ((com.idega.core.data.ICFileTypeHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileType.class)).createLegacy();
       type.setName("iW system");

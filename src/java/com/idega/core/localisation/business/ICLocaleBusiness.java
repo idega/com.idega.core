@@ -294,9 +294,7 @@ public class ICLocaleBusiness {
 
   public static void makeLocalesInUse(List listOfStringIds){
     if(listOfStringIds != null){
-      StringBuffer ids = new StringBuffer();
       Iterator I = listOfStringIds.iterator();
-      String id;
       try{
         ICLocaleHome home = (ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class);
         List currentLocales = listOfICLocalesInUse();

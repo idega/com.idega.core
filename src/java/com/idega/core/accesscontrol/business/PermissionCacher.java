@@ -301,7 +301,6 @@ public class PermissionCacher {
         permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 
-      Boolean False = null;
       if (permissions != null){
       	if( permissions.contains(Boolean.TRUE)){
       		return Boolean.TRUE;
@@ -352,7 +351,6 @@ public class PermissionCacher {
         permissions = permissionMap.get(identifier,permissionKey,groups);
       }
 			
-			Boolean False = null;
 			if (permissions != null){
 				if( permissions.contains(Boolean.TRUE)){
 					return Boolean.TRUE;
@@ -466,7 +464,6 @@ public class PermissionCacher {
 
     if(permissions != null){
       Iterator iter = permissions.iterator();
-      boolean first = true;
       Map mapToPutTo = new Hashtable();
       while (iter.hasNext()) {
         ICPermission item = (ICPermission)iter.next();
