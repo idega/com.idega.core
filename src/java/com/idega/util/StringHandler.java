@@ -256,6 +256,28 @@ public class StringHandler {
     return true;
   }
   
+  /** Returns the package name and the name of the specified className.
+   * Example:
+   * "com.idega.util.StringHandler" returns {"com.idega.util", "StringHandler"}
+   * "StringHandler" returns {"", "StringHandler"}
+   * @param className
+   * @return array containing the package name and the class name without package name
+   */
+  public static String[] splitOffPackageFromClassName(String className) {
+  	String packageName;
+  	String name;
+  	int index = className.lastIndexOf(".");
+  	if (index < 0) {
+  		packageName = "";
+  		name = className;
+  	}
+  	else {
+  		packageName = className.substring(0, index);
+  		name = className.substring(++index);
+  	}
+  	return new String[] {packageName, name };
+  }
+  
   /** Returns the specified filename without extension but
    * not if the fileName starts with a dot character.
    * Example:
