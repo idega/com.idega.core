@@ -5,7 +5,6 @@ public interface ICObjectType extends com.idega.data.IDOEntity,com.idega.core.co
 {
  public java.lang.Class getFinalReflectionClass();
  public java.lang.String getFinalReflectionClassName();
- public java.lang.String getIDColumnName();
  public java.lang.String[] getMethodStartFilters();
  public java.lang.String getMethodStartFiltersString();
  public java.lang.String getName();
@@ -15,7 +14,6 @@ public interface ICObjectType extends com.idega.data.IDOEntity,com.idega.core.co
  public java.lang.Class getRequiredSuperClass();
  public java.lang.String getRequiredSuperClassName();
  public java.lang.String getType();
- public void initializeAttributes();
  public java.util.Vector seperateStringIntoVector(java.lang.String p0);
  public void setFinalReflectionClassName(java.lang.String p0);
  public void setMethodStartFiltersString(java.lang.String p0);

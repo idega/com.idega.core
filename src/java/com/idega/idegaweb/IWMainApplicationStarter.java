@@ -15,10 +15,15 @@ import javax.servlet.ServletContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.builder.data.ICPropertyHandler;
+import com.idega.core.component.data.ICObjectType;
+import com.idega.core.component.data.ICObjectTypeHome;
 import com.idega.core.user.data.OldUserBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
+import com.idega.data.IDOException;
+import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
@@ -179,6 +184,7 @@ public class IWMainApplicationStarter {
 		iwStyleManager.getStyleSheet();
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
+		updateClassReferencesInDatabase();
 		startTemporaryBundleStarters();
 		insertStartData();
 		application.startAccessController();
@@ -360,6 +366,22 @@ public class IWMainApplicationStarter {
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICProtocol","com.idega.core.net.data.ICProtocol");
 	}
 
+	private void updateClassReferencesInDatabase() {
+		try {
+			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
+			home.updateClassReferences("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class);
+		} 
+		catch (IDOLookupException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IDOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	protected void insertStartData() {
 		/*
 		 * @todo Move to user plugin system

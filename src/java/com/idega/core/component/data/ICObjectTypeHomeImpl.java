@@ -25,5 +25,12 @@ public java.util.Collection findAll()throws javax.ejb.FinderException{
 	return theReturn;
 }
 
+public boolean updateClassReferences(java.lang.String p0,java.lang.Class p1)throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	boolean theReturn = ((ICObjectTypeBMPBean)entity).ejbHomeUpdateClassReferences(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

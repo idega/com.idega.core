@@ -15,7 +15,9 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -58,7 +60,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		insertData("iw.application.component","Application component", "com.idega.presentation.PresentationObject", null, "com.idega.presentation.PresentationObject", "set");
 		insertData("iw.data","Data", null, "com.idega.data.IDOEntity", null, "get,set");
 		insertData("iw.home","Home", null, "com.idega.data.IDOHome", null, "find,get");
-		insertData("iw.propertyhandler","Property handler", null, "com.idega.builder.handler.PropertyHandler", null, "set");
+		insertData("iw.propertyhandler","Property handler", null, "com.idega.builder.handler.ICPropertyHandler", null, "set");
 	}
 
 	private void insertData(String objectType, String objectName, String superClass, String interfaces, String reflection, String filters) {
@@ -81,6 +83,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		  ex.printStackTrace();
 		}
 	}
+	
 
 	public String getName() {
 		return getStringColumnValue(COLUMN_NAME);
@@ -142,6 +145,27 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		return this.idoFindAllIDsBySQL();
 	}
 
+	public boolean  ejbHomeUpdateClassReferences(String oldClassName, Class newClass) throws IDOException {
+		String newClassName = newClass.getName();
+		// updated is true if an update was executed, that is if the table was changed. 
+		// If updated is false it doesn't mean that the execution of the update statement failed.
+		boolean updated = updateColumn(COLUMN_FINAL_REFLECTION_CLASS, newClassName, oldClassName);
+		updated = updateColumn(COLUMN_REQUIRED_INTERFACES, newClassName, oldClassName) || updated;
+		updated = updateColumn(COLUMN_REQUIRED_SUPER_CLASS, newClassName, oldClassName) || updated;
+		return updated;
+	}
+	
+	
+	private boolean updateColumn(String columnName, String newValue, String oldValue) throws IDOException {
+		IDOQuery query = IDOQuery.getStaticInstance();
+		query.appendUpdateSet(this);
+		query.append(columnName).appendEqualSign().appendQuoted(newValue);
+		query.appendWhiteSpace();
+		query.appendWhereEqualsQuoted(columnName, oldValue);
+		return idoExecuteTableUpdate(query.toString());
+	}
+	
+	
 	public String type() {
 		return getType();
 	}
@@ -245,4 +269,5 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		}
 		return vector;
 	}
+	
 }
