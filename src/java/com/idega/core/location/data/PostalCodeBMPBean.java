@@ -191,9 +191,9 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	codeTo) throws FinderException {
 	IDOQuery query = this.idoQuery();
 	query.append("Select * from ").append(getEntityName())
-	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >=").append(codeFrom)
-	.append(" and ").append(COLUMN_POSTAL_CODE).append(" <= ").append(codeTo)
-	.append(" order by ").append(COLUMN_POSTAL_CODE);
+	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >= '").append(codeFrom)
+	.append("' and ").append(COLUMN_POSTAL_CODE).append(" <= '").append(codeTo)
+	.append("' order by ").append(COLUMN_POSTAL_CODE);
 	return this.idoFindPKsByQuery(query);
 	}
 	
