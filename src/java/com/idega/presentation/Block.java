@@ -59,7 +59,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   /**
    * Override to add styles (names) to stylesheet.  Add name (String) as key and style (String) as value.
    */
-  public HashMap getStyleNames() {
+  public Map getStyleNames() {
   	//return IWConstants.getDefaultStyles();
   	return null;
   }
@@ -266,7 +266,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       targetObjInst = getParentObjectInstanceID();
       
     if(getStyleNames() != null){
-    	HashMap styles = getStyleNames();
+    	Map styles = getStyleNames();
     	IWStyleManager manager = new IWStyleManager();
     	Iterator iter = styles.keySet().iterator();
     	while ( iter.hasNext() ) {
