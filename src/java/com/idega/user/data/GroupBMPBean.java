@@ -1140,7 +1140,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Collection ejbFindAll() throws FinderException {
 		//          String[] types = {this.getGroupTypeValue()};
 		//          return ejbFindAllGroups(types,true);
-		String theUserType = "ic_user_representative";
+		//String theUserType = "ic_user_representative";
 		
 		SelectQuery query = idoSelectQuery();
 		query.addCriteria(new MatchCriteria(idoQueryTable(),getGroupTypeColumnName(),MatchCriteria.NOTEQUALS,GenericEntity.COLUMN_VALUE_TRUE,true));

@@ -258,7 +258,7 @@ public class DN implements Name
         System.out.print("\n");
         for (int i=0; i<size(); i++)
         {
-            String rdn = get(i);
+            //String rdn = get(i);
             System.out.print("element [" + i + "]  = " + get(i).toString() + "\n");
             getRDN(i).dump();
 

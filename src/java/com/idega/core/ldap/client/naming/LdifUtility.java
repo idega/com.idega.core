@@ -265,7 +265,8 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
          }
          
          NamingEnumeration allAtts = atts.getAll();
-         String attName, attValue;
+         String attName;
+         //String attValue;
          Attribute currentAtt;
          while (allAtts.hasMore())
          {

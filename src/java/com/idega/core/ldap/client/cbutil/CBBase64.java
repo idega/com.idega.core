@@ -77,8 +77,8 @@ public class CBBase64
     {
         if (byteArray == null) return null;  // XXX correct behaviour?
         
-        int arraySize = byteArray.length;
-        int thirdSize = arraySize/3;
+        //int arraySize = byteArray.length;
+        //int thirdSize = arraySize/3;
         
         byte[] base64Data = encode(byteArray);
         
@@ -452,7 +452,7 @@ public class CBBase64
     private static byte convertFrom6Bit(byte b)
         throws Base64EncodingException
     {
-        byte c;
+        //byte c;
         
         if (b < 26)
             return (byte)('A' + b);           // 'A' -> 'Z'

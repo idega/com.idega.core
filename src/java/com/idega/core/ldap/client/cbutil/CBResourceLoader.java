@@ -197,8 +197,8 @@ public class CBResourceLoader
         if (wildpos == exp.length()-1) // i.e. last character
             return getPrefixedResources(exp.substring(0,exp.length()-1));
             
-        String prefix = exp.substring(0,wildpos);
-        String suffix = exp.substring(wildpos+1);
+        //String prefix = exp.substring(0,wildpos);
+        //String suffix = exp.substring(wildpos+1);
         
         Vector resources = new Vector();
 

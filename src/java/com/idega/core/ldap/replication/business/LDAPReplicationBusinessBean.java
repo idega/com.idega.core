@@ -15,12 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+
 import javax.ejb.CreateException;
 import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
@@ -32,7 +34,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.User;
 import com.idega.util.FileUtil;
 import com.idega.util.timer.PastDateException;
 import com.idega.util.timer.TimerEntry;
@@ -84,7 +85,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		stopReplicator(replicatorNumber);
 		//move all values up one level and then delete the last replicator (its
 		// already been copied up)
-		Properties props = getReplicationSettings();
+		/*Properties props = */getReplicationSettings();
 		int num = getNumberOfReplicators();
 		if (num != 1) {
 			for (int i = replicatorNumber + 1; i <= num; i++) {
@@ -192,18 +193,18 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		final String baseUniqueId = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber+PROPS_REPLICATOR_BASE_UNIQUE_ID);
 		final String baseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_BASE_RDN);
-		final String replicateBaseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
-				+ PROPS_REPLICATOR_REPLICATE_BASE_RDN);
+		/*final String replicateBaseRDN = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
+				+ PROPS_REPLICATOR_REPLICATE_BASE_RDN);*/
 		final String intervalMinute = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_INTERVAL_MINUTES);
 		final String schedulerCronString = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SCHEDULER_STRING);
-		final String searchEntryLimit = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
+		/*final String searchEntryLimit = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT);
 		final String searchTimeLimitInMs = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
 				+ PROPS_REPLICATOR_SEARCH_TIMEOUT_MS);
 		final String matchByUUID = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber
-				+ PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);
+				+ PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);*/
 		
 		//do stuff
 		try {
@@ -379,10 +380,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				try {
 					if(ldapUtil.isUser(childDN)){
 						if(parentGroup!=null){
-							User user = getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs,parentGroup);
+							/*User user = */getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs,parentGroup);
 						}
 						else{
-							User user = getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs);
+							/*User user = */getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs);
 						}
 					}
 					else if(ldapUtil.isGroup(childDN)){

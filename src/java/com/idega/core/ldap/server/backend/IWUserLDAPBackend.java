@@ -236,8 +236,8 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		// TODO find user or group we are looking for from dn. cn=user o=group
 		// and ou=group
 		//iterate through changes and apply them and store the object
-		boolean isUser = ldapUtil.isUser(dn);
-		boolean isGroup = ldapUtil.isGroup(dn);
+		//boolean isUser = ldapUtil.isUser(dn);
+		//boolean isGroup = ldapUtil.isGroup(dn);
 		/*
 		 * Entry entry = (Entry) datastore.get( name );
 		 * 
@@ -510,7 +510,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	}
 	
 	private void addTopGroupsToEntries(DirectoryString base, Vector entries) throws IDORelationshipException, RemoteException, FinderException, InvalidDNException {
-		String suffix = base.getDirectoryString();
+		//String suffix = base.getDirectoryString();
 		Collection topGroups = IWMainApplication.getDefaultIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
 		
 		Iterator iter = topGroups.iterator();
@@ -531,7 +531,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		switch (currentFilter.choiceId) {
 			case Filter.EQUALITYMATCH_CID :
 				DirectoryString matchType = new DirectoryString(currentFilter.equalityMatch.attributeDesc);
-			DirectoryString matchVal = new DirectoryString(currentFilter.equalityMatch.assertionValue);
+			//DirectoryString matchVal = new DirectoryString(currentFilter.equalityMatch.assertionValue);
 			
 			//only search for allowed attributes
 			

@@ -156,7 +156,7 @@ public class CBIntText
             return key;        // try to keep on trucking using the (english) key phrase
         }
 
-        String ret = null;
+        //String ret = null;
 
         try
         {

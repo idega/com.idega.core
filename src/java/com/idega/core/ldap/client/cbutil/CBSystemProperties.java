@@ -116,7 +116,7 @@ public class CBSystemProperties
         // (e.g DXHOME=c:\dxserver => DXHOME  and 'c:\dxserver' )
         
         String line = "";
-        int pos;
+        //int pos;
         
         if (debug)
             System.out.println("reading output from batch file");
