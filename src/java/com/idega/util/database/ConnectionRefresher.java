@@ -38,6 +38,7 @@ public class ConnectionRefresher implements Runnable {
 				runRefresh();
 			}
 			catch (InterruptedException ex) {
+				System.out.println("Killing ConectionRefresher (caused by interrupt)");
 				if (isRunning)
 					System.err.println("There was an InterruptedException in ConnectionRefresher.run() The error was: " + ex.getMessage());
 			}
@@ -69,7 +70,7 @@ public class ConnectionRefresher implements Runnable {
 			// !!!! Do not change this code. If this thread never dies the application will not restart proper !!!
 			// 
 			if (th instanceof ThreadDeath) {
-				System.out.println("Killing thread....");
+				System.out.println("Killing ConnectionRefresher (caused by ThreadDeath)");
 				throw (Error) th;
 			}
 		}
@@ -86,7 +87,7 @@ public class ConnectionRefresher implements Runnable {
 		System.out.println("Stopping ConnectionRefresher");
 		isRunning = false;
 		refresher.interrupt();
-		refresher = null;
+		refresher= null;
 	}
 	
 	public void start() {
