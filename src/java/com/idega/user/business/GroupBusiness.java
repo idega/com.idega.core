@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusiness.java,v 1.44 2004/09/28 16:31:57 eiki Exp $
- * Created on Sep 27, 2004
+ * $Id: GroupBusiness.java,v 1.45 2004/10/11 17:23:44 eiki Exp $
+ * Created on Oct 11, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -51,10 +51,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/28 16:31:57 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/11 17:23:44 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -279,6 +279,11 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupName
 	 */
 	public Collection getGroupsByGroupName(String name) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByAbbreviation
+	 */
+	public Collection getGroupsByAbbreviation(String abbreviation) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserByID

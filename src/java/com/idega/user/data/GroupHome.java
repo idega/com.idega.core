@@ -1,3 +1,12 @@
+/*
+ * $Id: GroupHome.java,v 1.24 2004/10/11 17:26:05 eiki Exp $
+ * Created on Oct 11, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.data;
 
 import java.util.Collection;
@@ -9,7 +18,11 @@ import com.idega.data.IDOHome;
 
 
 /**
- * @author gimmi
+ * 
+ *  Last modified: $Date: 2004/10/11 17:26:05 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.24 $
  */
 public interface GroupHome extends IDOHome {
 
@@ -26,6 +39,11 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByName
 	 */
 	public Collection findGroupsByName(String name) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByAbbreviation
+	 */
+	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByNameAndDescription

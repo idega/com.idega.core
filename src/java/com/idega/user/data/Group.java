@@ -1,3 +1,12 @@
+/*
+ * $Id: Group.java,v 1.45 2004/10/11 17:26:05 eiki Exp $
+ * Created on Oct 11, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.data;
 
 import java.sql.Timestamp;
@@ -29,7 +38,11 @@ import com.idega.idegaweb.IWApplicationContext;
 
 
 /**
- * @author gimmi
+ * 
+ *  Last modified: $Date: 2004/10/11 17:26:05 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.45 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
@@ -272,6 +285,11 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
 	 */
 	public void addGroup(Group groupToAdd) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addGroup
+	 */
+	public void addGroup(User userToAdd) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup

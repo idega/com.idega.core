@@ -482,6 +482,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Collection ejbFindGroupsByName(String name) throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
 	}
+	public Collection ejbFindGroupsByAbbreviation(String abbreviation) throws FinderException {
+		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + COLUMN_ABBREVATION + " = '" + abbreviation + "'");
+	}
+	
 	public Collection ejbFindGroupsByNameAndDescription(String name, String description) throws FinderException {
 		Table table = new Table(this);
 		Column nameCol = new Column(table, getNameColumnName());
@@ -888,6 +892,30 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	
 	/**
+	 * Adds the user by id under this group and changes his deleted status to false if needed.
+	 * Also sets his primary group to this group if it is not set
+	 * @see com.idega.user.data.Group#addGroup(User)
+	 */
+	public void addGroup(User userToAdd) throws EJBException {
+
+		this.addGroup(this.getGroupIDFromGroup(userToAdd));
+		boolean needsToStore= false;
+		if(userToAdd.getDeleted()){
+			needsToStore = true;
+			userToAdd.setDeleted(false);
+		}
+		
+		if(userToAdd.getPrimaryGroupID()<0){
+			needsToStore = true;
+			userToAdd.setPrimaryGroup(this);
+		}
+		
+		if(needsToStore){
+			userToAdd.store();
+		}
+	}
+	
+	/**
 	 * Adds the group by id groupToAdd under this group 
 	 * @see com.idega.user.data.Group#addGroup(Group)
 	 */
@@ -905,8 +933,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			//rel.setGroup(this);
 			//rel.setRelatedGroup(groupId);
 			//rel.store();
-			addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT,time);
-
+			if(time!=null){
+				addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT,time);
+			}
+			else{
+				addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT);
+			}
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -918,17 +950,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @see com.idega.core.data.GenericGroup#addGroup(int)
 	 */
 	public void addGroup(int groupId) throws EJBException {
-		try {
-			//GroupRelation rel = this.getGroupRelationHome().create();
-			//rel.setGroup(this);
-			//rel.setRelatedGroup(groupId);
-			//rel.store();
-			addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT);
-
-		}
-		catch (Exception e) {
-			throw new EJBException(e.getMessage());
-		}
+		addGroup(groupId,null);
 	}
 	
 	public void addRelation(Group groupToAdd, String relationType) throws CreateException {
@@ -968,9 +990,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			rel.setGroup(this);
 			rel.setRelatedGroup(relatedGroupId);
 			rel.setRelationshipType(relationType);
-			if(time != null){
-				rel.setInitiationDate(time);			
+			if(time == null){
+				time = IWTimestamp.getTimestampRightNow();
 			}
+			
+			rel.setInitiationDate(time);			
 			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
 			rel.store();
 		}

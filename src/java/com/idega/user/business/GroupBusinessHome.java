@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusinessHome.java,v 1.4 2004/09/28 16:31:57 eiki Exp $
- * Created on Sep 27, 2004
+ * $Id: GroupBusinessHome.java,v 1.5 2004/10/11 17:23:43 eiki Exp $
+ * Created on Oct 11, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/28 16:31:57 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/11 17:23:43 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface GroupBusinessHome extends IBOHome {
 

@@ -343,6 +343,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public void addGroup(com.idega.user.data.Group p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
+	
+	public void addGroup(com.idega.user.data.User p0) throws javax.ejb.EJBException{
+		this.getGeneralGroup().addGroup(p0);
+	}
 
 	public java.util.List getChildGroups(java.lang.String[] p0, boolean p1) throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups(p0, p1);

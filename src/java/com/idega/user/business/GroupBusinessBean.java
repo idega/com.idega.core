@@ -961,6 +961,15 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 			return ListUtil.getEmptyList();
 		}
 	}
+	
+	public Collection getGroupsByAbbreviation(String abbreviation)throws RemoteException{
+		try {
+			return this.getGroupHome().findGroupsByAbbreviation(abbreviation);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
+	}
 
   public User getUserByID(int id)throws FinderException,RemoteException{
     return this.getUserHome().findByPrimaryKey(new Integer(id));
@@ -968,8 +977,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 
   public void addUser(int groupId, User user)throws EJBException,RemoteException{
     try{
-      //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId).addGroup(user.getGroupID());
-      this.getGroupByGroupID(groupId).addGroup(user.getGroup());
+      this.getGroupByGroupID(groupId).addGroup(user);
     }
     catch(FinderException fe){
       throw new EJBException(fe.getMessage());
@@ -2316,10 +2324,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/11 12:41:40 $ by $Author: laddi $
+	 *  Last modified: $Date: 2004/10/11 17:23:44 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.78 $
+	 * @version $Revision: 1.79 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

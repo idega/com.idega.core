@@ -1,3 +1,12 @@
+/*
+ * $Id: GroupHomeImpl.java,v 1.24 2004/10/11 17:26:05 eiki Exp $
+ * Created on Oct 11, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.data;
 
 import java.util.Collection;
@@ -9,7 +18,11 @@ import com.idega.data.IDOFactory;
 
 
 /**
- * @author gimmi
+ * 
+ *  Last modified: $Date: 2004/10/11 17:26:05 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.24 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
@@ -44,6 +57,13 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	public Collection findGroupsByName(String name) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByName(name);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByAbbreviation(abbreviation);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
