@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.66 2001/11/12 10:34:03 gummi Exp $
+ * $Id: GenericEntity.java,v 1.67 2001/11/12 18:40:07 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1155,7 +1155,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	*Updates the entity in the datastore
 	*/
-  public void update()throws SQLException{
+  public synchronized void update()throws SQLException{
       try{
         DatastoreInterface.getInstance(this).update(this);
       }
