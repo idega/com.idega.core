@@ -9,6 +9,7 @@ import com.idega.idegaweb.IWResourceBundle;
 
 public class IWAdminWindow extends Window {
 
+public static final String MENU_COLOR = "#EFEFEF";
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
 public final static String STYLE = "font-family:arial; font-size:8pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
@@ -77,7 +78,7 @@ public static String HEADER_COLOR = "#0E2456";
     if( !displayEmpty ){
       makeTables();
       setAllMargins(0);
-      HEADER_COLOR = iwbCore.getProperty("adminHeaderColor","#0E2456");
+      HEADER_COLOR = iwbCore.getProperty("adminHeaderColor",HEADER_COLOR);
 
       if ( merged ){
 	super.add(adminTable);
@@ -107,7 +108,7 @@ public static String HEADER_COLOR = "#0E2456";
       adminTable.setColor(1,1,HEADER_COLOR);
       adminTable.setColor(1,2,"#FFFFFF");
       if ( !merged ) {
-	adminTable.setColor(2,2,"#EFEFEF");
+	adminTable.setColor(2,2,MENU_COLOR);
 	adminTable.setWidth(2,2,rightWidth);
       }
       else {
