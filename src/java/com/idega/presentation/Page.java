@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.43 2002/03/13 16:33:50 laddi Exp $
+ * $Id: Page.java,v 1.44 2002/03/14 10:40:12 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -137,6 +137,18 @@ public class Page extends PresentationObjectContainer {
     _styleDefinitions.put(styleName,styleAttribute);
   }
 
+  public void setLinkStyle(String style) {
+    setStyleDefinition("A",style);
+  }
+
+  public void setLinkHoverStyle(String style) {
+    setStyleDefinition("A:hover",style);
+  }
+
+  public void setPageStyle(String style) {
+    setStyleDefinition("A",style);
+  }
+
   public void setMetaTag(String tagName, String tagValue) {
     if (_metaTags == null) {
       _metaTags = new Hashtable();
@@ -164,9 +176,12 @@ public class Page extends PresentationObjectContainer {
   }
 
   private void setDefaultValues() {
-    setStyleDefinition("A","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
-    setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
-    setStyleDefinition("body","font-family:"+_pageStyleFont+";font-size:"+_pageStyleFontSize+";");
+    if ( getStyleAttribute("A") == null )
+      setStyleDefinition("A","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
+    if ( getStyleAttribute("A:hover") == null )
+      setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
+    if ( getStyleAttribute("body") == null )
+      setStyleDefinition("body","font-family:"+_pageStyleFont+";font-size:"+_pageStyleFontSize+";");
     getAssociatedScript().addFunction("windowopen",Window.windowScript());
   }
 
