@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.76 2002/02/05 14:42:08 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.77 2002/02/05 15:46:31 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -348,6 +348,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       System.err.println("Error in "+this.getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
     }*/
 		return theReturn;
+	}
+
+	public void addOneToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
+      addOneToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
+	}
+
+	public void addOneToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
+      addAttribute(relationshipColumnName,description,true,true, Integer.class,GenericEntity.ONE_TO_ONE,relatingEntityClass);
+	}
+
+	public void addManyToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
+      addManyToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
+	}
+
+	public void addManyToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
+      addAttribute(relationshipColumnName,description,true,true, Integer.class,GenericEntity.ONE_TO_MANY,relatingEntityClass);
 	}
 
 	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
