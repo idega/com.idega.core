@@ -781,7 +781,7 @@ public class Form extends InterfaceObject {
 	 * @return Script
 	 */
 	public Script getAssociatedFormScript() {
-		return associatedScript;
+		return getScript();
 	}
 
 	protected Script getScript() {
