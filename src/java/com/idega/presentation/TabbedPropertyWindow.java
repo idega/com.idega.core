@@ -20,7 +20,7 @@ public abstract class TabbedPropertyWindow extends Window {
   protected TabbedPropertyPanel panel = null;
 
   public TabbedPropertyWindow(){
-    this(410,482);
+    this(410,512);
   }
 
   public TabbedPropertyWindow(int width, int height){
