@@ -100,11 +100,11 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
     public void lineUpTabs(){
       //this.resize(this.getAddedTabs().size()+3, 2);
       this.empty();
-      IWColor color = getColor();
+      /*IWColor color = getColor();
       IWColor dark = color.darker();
       IWColor darker = dark.darker();
       IWColor darkest = darker.darker();
-      IWColor bright = color.brighter();
+      IWColor bright = color.brighter();*/
       
       int tabSize = this.getAddedTabs().size();
 			if(this.getSelectedIndex() == -1 && tabSize != 0){
@@ -220,9 +220,9 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
           }
 
           dark = color.darker();
-          IWColor darker = dark.darker();
+          /*IWColor darker = dark.darker();
           IWColor darkest = darker.darker();
-          IWColor bright = color.brighter();
+          IWColor bright = color.brighter();*/
 
 //          tabColor = isSelected() ? color : dark;
           this.setWidth(1, "1");
