@@ -222,7 +222,7 @@ public class GenericGroup extends GenericEntity{
 
         public void insert()throws SQLException{
           try {
-            if(SimpleQuerier.executeStringQuery("select * form "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'") != null){
+            if(SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'") != null){
               throw new SQLException("group with same name and type already in database");
             }
             super.insert();
