@@ -12,7 +12,7 @@ import java.net.*;
 import com.idega.util.*;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
-
+import com.idega.util.Executer;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -361,10 +361,14 @@ public class IWMainApplication{//implements ServletContext{
     String prePath = System.getProperty("tomcat.home");
     try{
       if(System.getProperty("os.name").toLowerCase().indexOf("win")==-1){
-        Runtime.getRuntime().exec(prePath+"/bin/restart");
+        //Runtime.getRuntime().exec(prePath+"/bin/restart");
+        String[] array = {prePath+"/bin/restart"};
+        Executer.executeInAnotherVM(array);
       }
       else{
-        Runtime.getRuntime().exec(prePath+"\\bin\\restart.bat");
+        //Runtime.getRuntime().exec(prePath+"\\bin\\restart.bat");
+        String[] array = {prePath+"\\bin\\restart.bat"};
+        Executer.executeInAnotherVM(array);
       }
       return true;
     }
