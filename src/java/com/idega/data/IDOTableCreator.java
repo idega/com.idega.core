@@ -8,15 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.transaction.TransactionManager;
 
-
 import com.idega.idegaweb.IWMainApplicationSettings;
-
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
 import com.idega.util.logging.LoggingHelper;
@@ -35,6 +34,7 @@ public class IDOTableCreator{
 
   private static String recordCreationKey="datastoreinterface_entity_record_creation";
   private DatastoreInterface _dsi;
+  private List _entityWithStartData = new Stack();
 
   protected IDOTableCreator(DatastoreInterface dsi){
     this._dsi=dsi;
@@ -234,6 +234,7 @@ public class IDOTableCreator{
    * Creates an entity record (table) that represents the entity in the datastore
    */
   public void createEntityRecord(GenericEntity entity)throws Exception{
+  	
     if(!doesTableExist(entity,entity.getTableName())){
 		//if(this.isDebugActive())
     	debug("Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
@@ -262,12 +263,32 @@ public class IDOTableCreator{
           }
           createMiddleTables(entity);
           if(entity.getIfInsertStartData()){
-          	//TODO create some Interface instead of GenericEntity and GenericEntity so this class cast will not be needed
-            ((GenericEntity)entity).insertStartData();
+	      		_entityWithStartData.add(entity);
           }
         }
-		
-        this.endEntityCreationTransaction(entity,canCommit,true);
+        
+        
+      	this.endEntityCreationTransaction(entity,canCommit,true);
+
+      	try {
+	      	if (canCommit || !_dsi.useTransactionsInEntityCreation && !_entityWithStartData.isEmpty()) {
+	      		Iterator iter = _entityWithStartData.iterator();
+	      		while (iter.hasNext()) {
+	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
+		      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
+	      			((GenericEntity) tmpEnt).insertStartData();
+	      		}
+	      		_entityWithStartData = new Stack();
+	      	}
+        } catch (Exception e) {
+        	System.out.println("===========================================");
+        	System.out.println("============"+e.getMessage()+"=============");
+        	if (e.getMessage() == null) {
+        		e.printStackTrace();
+        	}
+        	System.out.println("===========================================");
+        }
+
       }
       catch(Exception ex){
 		//if(this.isDebugActive()){
