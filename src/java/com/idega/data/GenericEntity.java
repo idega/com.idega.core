@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.48 2001/09/28 17:03:26 laddi Exp $
+ * $Id: GenericEntity.java,v 1.49 2001/09/29 15:10:31 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -425,6 +425,28 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 	public void setColumn(String columnName,Boolean columnValue){
 		setValue(columnName,columnValue);
+	}
+
+	/**
+	**Sets a column value to null
+	**/
+  public void setColumnAsNull(String columnName)throws SQLException{
+    Connection Conn= null;
+		try{
+			Conn = getConnection(getDatasource());
+      String sql = "update "+this.getEntityName()+" set "+columnName+" = null where "+this.getIDColumnName()+" = "+Integer.toString(this.getID());
+			Conn.createStatement().executeUpdate(sql);
+      Conn.commit();
+		}
+    catch (SQLException e) {
+      e.printStackTrace(System.err);
+    }
+		finally{
+			if (Conn != null){
+				freeConnection(getDatasource(),Conn);
+			}
+		}
+
 	}
 
   /**
