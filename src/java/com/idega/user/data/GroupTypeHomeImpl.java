@@ -32,9 +32,30 @@ public java.util.Collection findVisibleGroupTypes()throws javax.ejb.FinderExcept
  }
 
 
+public java.lang.String getAliasGroupTypeString(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetAliasGroupTypeString();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public java.lang.String getGeneralGroupTypeString(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetGeneralGroupTypeString();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetNumberOfVisibleGroupTypes();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public java.lang.String getPermissionGroupTypeString(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupTypeBMPBean)entity).ejbHomeGetPermissionGroupTypeString();
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }

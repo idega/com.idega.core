@@ -7,7 +7,10 @@ public interface GroupTypeHome extends com.idega.data.IDOHome
  public GroupType findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
  public java.util.Collection findAllGroupTypes()throws javax.ejb.FinderException;
  public java.util.Collection findVisibleGroupTypes()throws javax.ejb.FinderException;
+ public java.lang.String getAliasGroupTypeString();
+ public java.lang.String getGeneralGroupTypeString();
  public int getNumberOfVisibleGroupTypes()throws javax.ejb.FinderException,com.idega.data.IDOException;
+ public java.lang.String getPermissionGroupTypeString();
  public java.lang.String getVisibleGroupTypesSQLString();
 
 }

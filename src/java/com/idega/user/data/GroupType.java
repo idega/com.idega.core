@@ -3,16 +3,13 @@ package com.idega.user.data;
 
 public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
 {
- public java.lang.String getAliasGroupTypeString();
  public boolean getAutoCreate();
  public java.lang.String getDefaultGroupName();
  public java.lang.String getDescription();
- public java.lang.String getGeneralGroupTypeString();
  public java.lang.String getIDColumnName();
  public java.lang.Integer getMaximumNumberOfInstances();
  public java.lang.Integer getMaximumNumberOfInstancesPerParent();
  public java.lang.Integer getNumberOfInstancesToAutoCreate();
- public java.lang.String getPermissionGroupTypeString();
  public java.lang.Class getPrimaryKeyClass();
  public java.lang.String getType();
  public boolean getVisibility();

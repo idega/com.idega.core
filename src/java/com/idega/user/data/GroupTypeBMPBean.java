@@ -211,15 +211,15 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   }
 */
 
-  public String getGeneralGroupTypeString(){
+  protected String getGeneralGroupTypeString(){
     return TYPE_GENERAL_GROUP;
   }
 
-  public String getPermissionGroupTypeString(){
+  protected String getPermissionGroupTypeString(){
     return TYPE_PERMISSION_GROUP;
   }
   
-  public String getAliasGroupTypeString() {
+  protected String getAliasGroupTypeString() {
   	return TYPE_ALIAS;
   }
 
@@ -291,4 +291,16 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   public static GroupTypeBMPBean getStaticInstance() {
     return (GroupTypeBMPBean) com.idega.user.data.GroupTypeBMPBean.getStaticInstance(GroupType.class.getName());
   }
+  
+public String ejbHomeGetGeneralGroupTypeString(){
+  return getGeneralGroupTypeString();
+}
+
+public String ejbHomeGetPermissionGroupTypeString(){
+  return getPermissionGroupTypeString();
+}
+  
+public String ejbHomeGetAliasGroupTypeString() {
+  return getAliasGroupTypeString();
+}
 }
