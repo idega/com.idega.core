@@ -52,6 +52,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     private static String prefix = "<div id=\"menu\">\n\t<ul id=\"menuList\">\n";
     private static String suffix = "\t</ul>\n</div>";
     private static String CSS_FILE_PATH = "cssmenu/CSSMultiLevelMenu.css";
+    private static String CSS_EXPLORER_FIX_FILE_PATH = "cssmenu/csshover.htc";
     private boolean addTestData = false;
     
     
@@ -86,7 +87,10 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      * Constructs and returns a CSSMenu with a Link(menuName,"#") as the label
      */
     public CSSMenu createCSSMenu(String menuName) {
-       return createCSSMenu(menuName, new Link(menuName,"#"));
+        Link menuNameNowherelink = new Link(menuName);
+        menuNameNowherelink.setURL("#");
+        
+        return createCSSMenu(menuName, menuNameNowherelink);
     }
     
     /*
@@ -108,6 +112,12 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      */
     public void main(IWContext iwc) throws Exception {
         Page parentPage = this.getParentPage();
+        
+		if(iwc.isIE()) {
+		    String pathToExplorerFixCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_EXPLORER_FIX_FILE_PATH);
+		    parentPage.addStyleSheetURL(pathToExplorerFixCSS);
+		}
+		
 		String pathToMenuCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_FILE_PATH);
 		parentPage.addStyleSheetURL(pathToMenuCSS);
 		
@@ -186,13 +196,6 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
             this.topMenuItem = topMenuItem;
         }
         
-        /**
-         * Constructs a CSSMenu with an Link(menuName,"#") object as the top level of the menu you specify using the menuname as its text.
-         */
-        public CSSMenu(String menuName) {
-            this(menuName,new Link(menuName,"#"));
-        }
-        
         /*
          * Add a PresentationObject (another CSSMenu for example) as a menu item.
          */
@@ -218,7 +221,9 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
          * Constructs and adds an Link("#") object to the menu using the supplied text.
          */
         public void addMenuItem(String textMenuItem) {
-            addMenuItem(new Link(textMenuItem,"#"));
+            Link menuItemNowhereLink = new Link(textMenuItem);
+            menuItemNowhereLink.setURL("#");
+            addMenuItem(menuItemNowhereLink);
         }
         
         
