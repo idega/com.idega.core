@@ -44,4 +44,12 @@ public class BackButton extends GenericButton {
 		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
 	}
+	
+	/**
+	 * Sets the steps to move back or forward upon button press.
+	 * @param steps	The amount of steps to take, forward or backwards.
+	 */
+	public void setHistoryMove(int steps) {
+		howFarBackOrForward = String.valueOf(steps);
+	}
 }
