@@ -1,5 +1,5 @@
 /*
- * Created on 18.5.2004
+ * Created on 16.9.2004
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
@@ -23,24 +23,23 @@ import com.idega.util.StringHandler;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class WindowViewHandler extends CbpViewHandler {
+public class ViewNodeViewHandler extends CbpViewHandler {
 	
 	private static Logger log = Logger.getLogger(WindowViewHandler.class.getName());
-	private Class defaultPageClass;
+	private ViewNode viewNode;
 	
 	/**
 	 * 
 	 */
-	public WindowViewHandler() {
+	public ViewNodeViewHandler() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @param parentViewHandler
 	 */
-	public WindowViewHandler(ViewNode windowViewNode) {
-		this.defaultPageClass=windowViewNode.getComponentClass();
-		ViewHandler parentViewHandler=windowViewNode.getParent().getViewHandler();
+	public ViewNodeViewHandler(ViewNode viewNode) {
+		setViewNode(viewNode);
+		ViewHandler parentViewHandler =viewNode.getViewHandler();
 		this.setParentViewHandler(parentViewHandler);
 	}
 	/* (non-Javadoc)
@@ -128,7 +127,18 @@ public class WindowViewHandler extends CbpViewHandler {
 	}
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{
-		//return Class.forName("com.idega.webface.workspace.WorkspaceLoginPage");
-		return defaultPageClass;
+		return Class.forName("com.idega.webface.workspace.WorkspaceLoginPage");
+	}
+	/**
+	 * @return Returns the viewNode.
+	 */
+	protected ViewNode getViewNode() {
+		return viewNode;
+	}
+	/**
+	 * @param viewNode The viewNode to set.
+	 */
+	protected void setViewNode(ViewNode viewNode) {
+		this.viewNode = viewNode;
 	}
 }

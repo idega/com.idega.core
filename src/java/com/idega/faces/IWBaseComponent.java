@@ -5,11 +5,10 @@ package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Iterator;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
-
+import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
 /**
@@ -59,11 +58,19 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
 	public void encodeChildren(FacesContext context) throws IOException {
+		/*if(getRendersChildren()){
 			Iterator children = this.getChildren().iterator();
 			while (children.hasNext()) {
 				UIComponent element = (UIComponent) children.next();
 				renderChild(context,element);
 			}
+		}*/
+		/*Iterator children = this.getChildren().iterator();
+			while (children.hasNext()) {
+				UIComponent element = (UIComponent) children.next();
+				renderChild(context,element);
+			}*/
+		super.encodeChildren(context);
 	}
 	
 	
@@ -76,9 +83,7 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @param child which child to render
 	 */
 	public void renderChild(FacesContext context, UIComponent child) throws IOException {
-		child.encodeBegin(context);
-		child.encodeChildren(context);
-		child.encodeEnd(context);
+		RenderUtils.renderChild(context,child);
 	}	
 	
 	/* (non-Javadoc)
@@ -92,7 +97,8 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
 	 */
 	public boolean getRendersChildren() {
-		return true;
+		//return true;
+		return super.getRendersChildren();
 	}
 
 	/**

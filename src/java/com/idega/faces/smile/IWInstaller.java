@@ -13,6 +13,7 @@ import javax.faces.application.ViewHandler;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import com.idega.idegaweb.IWMainApplication;
 
 /**
  * @author tryggvil
@@ -25,6 +26,7 @@ public class IWInstaller implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
+		System.out.println("IWInstaller.contextInitialized");
 		installViewHandler(arg0.getServletContext());
 	}
 	/* (non-Javadoc)
@@ -66,7 +68,10 @@ public class IWInstaller implements ServletContextListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		iwViewHandler = new IWViewHandlerImpl(origViewHandler);
+		
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		
+		iwViewHandler = new IWViewHandlerImpl(origViewHandler,iwma);
 		app.setViewHandler(iwViewHandler);		
 	}		
 }

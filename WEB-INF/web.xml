@@ -16,6 +16,17 @@
         <url-pattern>/window/*</url-pattern>
     </servlet-mapping>
 
+	<!-- Fix to make this work with JSF -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/login/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/workspace/*</url-pattern>
+	</servlet-mapping>
+
     <!-- idegaWeb event listeners -->
     <listener>
         <listener-class>com.idega.faces.IWApplicationListener</listener-class>

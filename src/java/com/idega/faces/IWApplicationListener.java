@@ -130,6 +130,7 @@ public class IWApplicationListener implements ServletContextListener {
 			call_Main(iwc,root);
 		}
 		
+		/*
 		protected void recurseMain(IWContext iwc,UIComponent comp){
 			if(comp!=null){
 				if(comp instanceof PresentationObject){
@@ -148,9 +149,13 @@ public class IWApplicationListener implements ServletContextListener {
 					recurseMain(iwc,child);
 				}
 			}
-		}
+		}*/
 
-		
+		/**
+		 * This method goes down the tree to call the _main(iwc) methods of PresentationObjects
+		 * @param iwc
+		 * @param comp
+		 */
 		protected void call_Main(IWContext iwc,UIComponent comp){
 			if(comp!=null){
 				if(comp instanceof PresentationObject){
@@ -161,6 +166,7 @@ public class IWApplicationListener implements ServletContextListener {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					findNextInstanceOfNotPresentationObject(iwc,po);
 				}
 				else{
 					List children = comp.getChildren();
@@ -172,6 +178,34 @@ public class IWApplicationListener implements ServletContextListener {
 			}
 		}
 		
+		/**
+		 * This method goes down the component tree to find a child that is not an instance
+		 * of PresentationObject and calls call_Main for those components.<br>
+		 * This is to handle if we have the case PresentationObject->UIComponent->PresentationObject 
+		 * in the tree hierarchy and make sure _main(iwc) is called for all PresentationObjects.
+		 * @param iwc
+		 * @param comp
+		 */
+		protected void findNextInstanceOfNotPresentationObject(IWContext iwc, UIComponent comp) {
+			if(comp!=null){
+				if(comp instanceof PresentationObject){
+					List children = comp.getChildren();
+					for (Iterator iter = children.iterator(); iter.hasNext();) {
+						UIComponent child = (UIComponent) iter.next();
+						findNextInstanceOfNotPresentationObject(iwc,child);
+					}
+				}
+				else{
+					List children = comp.getChildren();
+					for (Iterator iter = children.iterator(); iter.hasNext();) {
+						UIComponent child = (UIComponent) iter.next();
+						call_Main(iwc,child);
+					}
+				}
+			}
+			
+		}
+
 		/* (non-Javadoc)
 		 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
 		 */

@@ -4,22 +4,21 @@
 package com.idega.faces.smile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
-
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.idega.faces.view.ViewManager;
+import com.idega.faces.view.ViewNode;
+import com.idega.idegaweb.IWMainApplication;
 
 
 /**
@@ -36,84 +35,85 @@ public class IWViewHandlerImpl extends ViewHandler{
 	private static Logger log = Logger.getLogger(IWViewHandlerImpl.class.getName());
 	private ViewHandler parentViewHandler;
 	private Map childHandlerMap;
+	private ViewManager viewManager;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
 	}
 
-	public IWViewHandlerImpl(ViewHandler parentViewHandler){
+	public IWViewHandlerImpl(ViewHandler parentViewHandler,IWMainApplication iwma){
 		log.info("Loading IWViewHandlerImpl with constructor IWViewHandlerImpl(ViewHandler parentViewHandler)");
 		this.setParentViewHandler(parentViewHandler);
 		
-		ViewHandler builderPageViewHandler = new BuilderPageViewHandler(this);
+		/*ViewHandler builderPageViewHandler = new BuilderPageViewHandler(this);
 		ViewHandler windowViewHandler = new WindowViewHandler(this);
+		ViewHandler workspaceViewHandler = new WorkspaceViewHandler(this);
+		ViewHandler loginViewHandler = new LoginViewHandler(this);
 		
 		addChildViewHandler("/pages",builderPageViewHandler);
 		addChildViewHandler("/idegaweb/pages",builderPageViewHandler);
 		addChildViewHandler("/window",windowViewHandler);
 		addChildViewHandler("/idegaweb/window",windowViewHandler);
+
+		addChildViewHandler("/login",loginViewHandler);
+		addChildViewHandler("/idegaweb/login",loginViewHandler);
+	
+		addChildViewHandler("/workspace",workspaceViewHandler);
+		addChildViewHandler("/idegaweb/workspace",workspaceViewHandler);
+		*/
+		viewManager = ViewManager.getInstance(iwma);
+		viewManager.initializeStandardViews(new RootViewHandler(parentViewHandler));
+		
 	}	
 	
-	/**
-	 * @param string
-	 * @param handler
-	 */
+	/*
 	protected void addChildViewHandler(String urlPrefix, ViewHandler handler) {
 		Map m = getChildHandlerMap();
 		m.put(urlPrefix,handler);
 	}
-
-	/**
-	 * @return
-	 */
+	
 	protected Map getChildHandlerMap() {
 		if(childHandlerMap==null){
 			childHandlerMap=new HashMap();
 		}
 		return childHandlerMap;
 	}
+	*/
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#calculateLocale(javax.faces.context.FacesContext)
 	 */
 	public Locale calculateLocale(FacesContext ctx) {
-		if(getParentViewHandler()!=null){
-			return getParentViewHandler().calculateLocale(ctx);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.calculateLocale(ctx);
 		}
 		else{
-			throw new RuntimeException ("No parent ViewHandler");
-			//return super.calculateLocale(ctx);
+			throw new RuntimeException ("No ViewHandler Found to calculate Locale");
 		}
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#calculateRenderKitId(javax.faces.context.FacesContext)
 	 */
 	public String calculateRenderKitId(FacesContext ctx) {
-		if(getParentViewHandler()!=null){
-			return getParentViewHandler().calculateRenderKitId(ctx);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.calculateRenderKitId(ctx);
 		}
 		else{
-			//return super.calculateRenderKitId(ctx);
-			throw new RuntimeException ("No parent ViewHandler");
+			throw new RuntimeException ("No ViewHandler Found to calculate RenderKitId");
 		}
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot createView(FacesContext ctx, String viewId) {
-		String url = getRequestUrl(ctx);
-		ViewHandler childHandler = getChildHandler(url);
-		if(childHandler!=null){
-			return childHandler.createView(ctx,viewId);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.createView(ctx,viewId);
 		}
 		else{
-			if(getParentViewHandler()!=null){
-				return getParentViewHandler().createView(ctx,viewId);
-			}
-			else{
-				//return createView(ctx,vewId);
-				throw new RuntimeException ("No parent ViewHandler");
-			}
+			throw new RuntimeException ("No ViewHandler Found to create View");
 		}
 	}
 	/**
@@ -121,20 +121,64 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @return
 	 */
 	private String getRequestUrl(FacesContext ctx) {
-		return ctx.getExternalContext().getRequestServletPath();
+		HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
+		String contextPath = request.getContextPath();
+		String fullRequestUri = request.getRequestURI();
+		if(contextPath.equals("/")){
+			return fullRequestUri;
+		}
+		else{
+			String subPath = fullRequestUri.substring(contextPath.length());
+			return subPath;
+		}
 	}
 
+	
+	private ViewHandler getViewHandlerForContext(FacesContext ctx) {
+		String url = getRequestUrl(ctx);
+		ViewHandler viewHandler = getViewHandlerForUrl(url,ctx);
+			if(viewHandler!=null){
+				return viewHandler;
+			}
+			else{
+				if(getParentViewHandler()!=null){
+					return getParentViewHandler();
+				}
+				else{
+					//return createView(ctx,vewId);
+					throw new RuntimeException ("No parent ViewHandler");
+				}
+			}
+		//return viewHandler;
+	}
+	
 	/**
 	 * @param url
 	 * @return
 	 */
-	private ViewHandler getChildHandler(String url) {
-		Iterator iterator = this.getChildHandlerMap().keySet().iterator();
+	private ViewHandler getViewHandlerForUrl(String url,FacesContext ctx) {
+		/*Iterator iterator = this.getChildHandlerMap().keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
 			if(key.startsWith(url)){
 				return (ViewHandler)getChildHandlerMap().get(key);
 			}
+		}
+		return null;*/
+		
+		ViewNode node = getViewManager().getViewNodeForUrl(url);
+		if(node!=null){
+			if(node.isJSP()){
+				try {
+					ctx.getExternalContext().dispatch(node.getJSPURI());
+					ctx.responseComplete();
+				}
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return node.getViewHandler();
 		}
 		return null;
 	}
@@ -143,24 +187,24 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @see javax.faces.application.ViewHandler#getActionURL(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public String getActionURL(FacesContext ctx, String viewId) {
-		if(getParentViewHandler()!=null){
-			return getParentViewHandler().getActionURL(ctx,viewId);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.getActionURL(ctx,viewId);
 		}
 		else{
-			//return getActionURL(ctx,vewId);
-			throw new RuntimeException ("No parent ViewHandler");
+			throw new RuntimeException ("No ViewHandler Found for getActionURL");
 		}
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#getResourceURL(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public String getResourceURL(FacesContext ctx, String path) {
-		if(getParentViewHandler()!=null){
-			return getParentViewHandler().getResourceURL(ctx,path);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.getResourceURL(ctx,path);
 		}
 		else{
-			//return getResourceURL(ctx,path);
-			throw new RuntimeException ("No parent ViewHandler");
+			throw new RuntimeException ("No ViewHandler Found for getResourceURL");
 		}
 	}
 	/*
@@ -187,8 +231,15 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 */
 	public void renderView(FacesContext ctx, UIViewRoot viewId)
 			throws IOException, FacesException {
-		String url = getRequestUrl(ctx);
-		ViewHandler childHandler = getChildHandler(url);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			realHandler.renderView(ctx,viewId);
+		}
+		else{
+			throw new RuntimeException ("No ViewHandler Found for getResourceURL");
+		}
+		/*String url = getRequestUrl(ctx);
+		ViewHandler childHandler = getViewHandlerForUrl(url);
 		if(childHandler!=null){
 			childHandler.renderView(ctx,viewId);
 		}
@@ -200,7 +251,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 				//return createView(ctx,vewId);
 				throw new RuntimeException ("No parent ViewHandler");
 			}
-		}	
+		}*/
 		/*
 		if(getParentViewHandler()!=null){
 			getParentViewHandler().renderView(ctx,viewRoot);
@@ -280,24 +331,24 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot restoreView(FacesContext ctx, String viewId) {
-		if(getParentViewHandler()!=null){
-			return getParentViewHandler().restoreView(ctx,viewId);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			return realHandler.restoreView(ctx,viewId);
 		}
 		else{
-			//return super.restoreView(ctx,viewId);
-			throw new RuntimeException ("No parent ViewHandler");
+			throw new RuntimeException ("No ViewHandler Found for restoreView");
 		}
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#writeState(javax.faces.context.FacesContext)
 	 */
 	public void writeState(FacesContext ctx) throws IOException {
-		if(getParentViewHandler()!=null){
-			getParentViewHandler().writeState(ctx);
+		ViewHandler realHandler = getViewHandlerForContext(ctx);
+		if(realHandler!=null){
+			realHandler.writeState(ctx);
 		}
 		else{
-			//return super.writeState(ctx);
-			throw new RuntimeException ("No parent ViewHandler");
+			throw new RuntimeException ("No ViewHandler Found for writeState");
 		}
 	}
 	/**
@@ -314,65 +365,9 @@ public class IWViewHandlerImpl extends ViewHandler{
 	}
 	
 	/**
-	 * Breaks down the URL string separated by the '/' charachter to an array.<br>
-	 * For instance it breaks down the URL "/component/78909" to {"component","78909"}
-	 * @return
+	 * @return Returns the viewManager.
 	 */
-	protected String[] breakDownURL(String urlString) {
-		//Performance optimization to handle the first 4 parameters without having to construct the Vector
-		String s1=null;
-		String s2=null;
-		String s3=null;
-		String s4=null;
-		List list = null;
-		StringTokenizer st = new StringTokenizer(urlString,"/");
-		int index=0;
-		while(st.hasMoreTokens()){
-			index++;
-			if(index==1){
-				s1=st.nextToken();
-			}
-			else if(index==2){
-				s2=st.nextToken();
-			}
-			else if(index==3){
-				s3=st.nextToken();
-			}
-			else if(index==4){
-				s4=st.nextToken();
-			}
-			else if(index==5){
-				list=new ArrayList();
-				list.add(s1);
-				list.add(s2);
-				list.add(s3);
-				list.add(s4);
-				list.add(st.nextToken());
-			}
-			else if(index>5){
-				st.nextToken();
-			}	
-		}
-		if(index==1){
-			String[] theReturn={s1};
-			return theReturn;
-		}
-		else if(index==2){
-			String[] theReturn={s1,s2};
-			return theReturn;
-		}
-		else if(index==3){
-			String[] theReturn={s1,s2,s3};
-			return theReturn;
-		}
-		else if(index==4){
-			String[] theReturn={s1,s2,s3,s4};
-			return theReturn;
-		}
-		else if(index>4){
-			String[] theReturn = (String[])list.toArray(new String[0]);
-			return theReturn;
-		}
-		return null;
+	protected ViewManager getViewManager() {
+		return viewManager;
 	}
 }
