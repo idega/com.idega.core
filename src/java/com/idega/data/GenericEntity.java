@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.31 2001/07/17 21:57:23 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.32 2001/08/02 20:47:05 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -33,6 +33,7 @@ public abstract class GenericEntity implements java.io.Serializable {
   private String cachedColumnNameList;
   private String lobColumnName;
   private static boolean useEntityCacher=false;
+  private static boolean hasMetaDataRelationship=false;
 
   private int state;
 
@@ -1910,4 +1911,27 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
        return entity;
       }
+
+  public void addMetaDataRelationship(){
+    this.hasMetaDataRelationship = true;
+  }
+
+  public boolean hasMetaDataRelationship(){
+    return this.hasMetaDataRelationship;
+  }
+
+// fetches the metadata for this id and puts it in a Map
+  private boolean getMetaData(){
+
+
+    return true;
+  }
+
+  public String getMetaDataValue(String metaDataKey){
+    return "Metadata";
+  }
+
+  public void setMetaDataValue(String metaDataKey, String metaDataValue){
+
+  }
 }
