@@ -35,8 +35,8 @@ import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import org.doomdark.uuid.*;
-
+import com.idega.core.idgenerator.business.IdGenerator;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
@@ -54,7 +54,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
 	public static final String ONE_TO_ONE = "one-to-one";
-	public static final String UNIQUE_ID_COLUMN_NAME = "IW_UNIQUE_ID";
+	protected static final String UNIQUE_ID_COLUMN_NAME = "UNIQUE_ID";
 	
 	private static Map _theAttributes = new Hashtable();
 	private static Map _allStaticClasses = new Hashtable();
@@ -3252,16 +3252,44 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * You must call addUniqueIDColumn() in your IDO's initializeAttributes method to enable this behavior.
 	 */
 	protected void generateAndSetUniqueIDForIDO() {
-		UUIDGenerator uidGenerator = UUIDGenerator.getInstance();
-		String uniqueId = uidGenerator.generateTimeBasedUUID().toString();
+		IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
+		String uniqueId = uidGenerator.generateId();
 		
-		setColumn(UNIQUE_ID_COLUMN_NAME,uniqueId);
+		setUniqueId(uniqueId);
+	}
+	
+	/**
+	 * Gets the name for the UniqueId Column. Defaults to UNIQUE_ID
+	 * @return
+	 */
+	protected String getUniqueIdColumnName(){
+		return UNIQUE_ID_COLUMN_NAME;
+	}
+	
+	/**
+	 * Sets the Unique ID column.
+	 * This method should generally never be called manually
+	 * @param uniqueId
+	 */
+	protected void setUniqueId(String uniqueId){
+		setColumn(getUniqueIdColumnName(),uniqueId);
+	}
+
+	/**
+	 * Gets the value of the unique Id column
+	 * @return
+	 */
+	public String getUniqueId(){
+		if(hasUniqueIDColumn()){
+			return getStringColumnValue(getUniqueIdColumnName());
+		}
+		return null;
 	}
 	/**
 	 * @return true if this entity has called addUniqueIdColumn() to add a unique id column to its table
 	 */
 	protected boolean hasUniqueIDColumn() {
-		return getGenericEntityDefinition().hasField(UNIQUE_ID_COLUMN_NAME);
+		return getGenericEntityDefinition().hasField(getUniqueIdColumnName());
 	}
 	/**
 	 * Default create method for IDO
@@ -3845,7 +3873,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByUniqueId(String uniqueID) throws FinderException {
-		return idoFindOnePKByColumnBySQL(UNIQUE_ID_COLUMN_NAME,uniqueID);
+		return idoFindOnePKByColumnBySQL(getUniqueIdColumnName(),uniqueID);
 	}
 
 	/**
@@ -4496,7 +4524,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482
 	 */
 	protected void addUniqueIDColumn() {
-		addAttribute(UNIQUE_ID_COLUMN_NAME,"A generated unique id do not change manually!",String.class,36);
+		addAttribute(getUniqueIdColumnName(),"A generated unique id do not change manually!",String.class,36);
 		_hasUniqueIDColumn = true;
 	}
 
