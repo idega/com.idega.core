@@ -562,6 +562,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException{
 		group.removeUser(user, currentUser);
+		Integer primaryGroupId = new Integer(user.getPrimaryGroupID());
+		if(group.getPrimaryKey().equals(primaryGroupId)) {
+			// update primary group for user, since it was the group the user was removed from
+			Collection groups = getUserGroups(user, new String[] {"general"});
+			Iterator iter = groups.iterator();
+			Group newPG = null;
+			if(groups != null && !groups.isEmpty()) {
+				// no smart way to find new primary group, just set as first group in user groups collection that
+				// is not same as current primary group
+				newPG = (Group)iter.next();
+				while(newPG != null && newPG.getPrimaryKey().equals(primaryGroupId)) {
+					if(iter.hasNext()) {
+						newPG = (Group) iter.next();
+					} else {
+						newPG = null;
+					}
+				}
+			}
+			if(newPG != null) {
+				user.setPrimaryGroup(newPG);
+			} else {
+				user.setPrimaryGroupID(-1);
+			}
+			user.store();
+		}
 	}
 
 	public void setPermissionGroup(User user, Integer primaryGroupId) throws IDOStoreException, RemoteException {
