@@ -3,6 +3,9 @@ package com.idega.presentation.util;
 
 
 import com.idega.presentation.text.Text;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * Title:
@@ -13,25 +16,24 @@ import com.idega.presentation.text.Text;
  * @version 1.0
  */
 
-public class TextFormat{
+public class TextFormat implements Singleton{
 
-  private static TextFormat format;
+  private static Instantiator initiator = new Instantiator() { public Object getInstance() { return new TextFormat();}};
 
   public static final int NORMAL = 1;
   public static final int HEADER = 2;
   public static final int TITLE = 3;
 
-  public static Text[] TextTemplates;
+  private Text[] textTemplates;
 
-
-  public static TextFormat getInstance(){
-    if(format == null){
-      format = new TextFormat();
-      format.load();
-    }
-    return format;
+  public TextFormat()	{
+  	load();
   }
-
+  
+  public static TextFormat getInstance()	{
+  	return (TextFormat) SingletonRepository.getRepository().getInstance(TextFormat.class, initiator);
+  }
+  
   public Text format(String text){
     return getText(text,NORMAL);
   }
@@ -51,22 +53,22 @@ public class TextFormat{
   private Text getText(String text,int type){
     Text t  = new Text();
     switch (type) {
-      case NORMAL : t =  (Text)TextTemplates[0].clone(); break;
-      case HEADER : t =  (Text)TextTemplates[1].clone(); break;
-      case TITLE :  t =  (Text)TextTemplates[2].clone(); break;
-      default : t =  (Text)TextTemplates[0].clone(); break;
+      case NORMAL : t =  (Text)textTemplates[0].clone(); break;
+      case HEADER : t =  (Text)textTemplates[1].clone(); break;
+      case TITLE :  t =  (Text)textTemplates[2].clone(); break;
+      default : t =  (Text)textTemplates[0].clone(); break;
     }
     t.setText(text);
     return t;
   }
 
   private void load(){
-    TextTemplates = new Text[3];
-    TextTemplates[0] = new Text();
-    TextTemplates[1] = new Text();
-    TextTemplates[1].setBold(true);
-    TextTemplates[2] = new Text();
-    TextTemplates[2].setBold(true);
+    textTemplates = new Text[3];
+    textTemplates[0] = new Text();
+    textTemplates[1] = new Text();
+    textTemplates[1].setBold(true);
+    textTemplates[2] = new Text();
+    textTemplates[2].setBold(true);
   }
 
   private void store(){
