@@ -60,4 +60,23 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		
 		return true;
 	}
+	
+	public int getUserGroupStatus(int user_id, int group_id) {
+		try {
+			Collection obj = ((UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class)).findAllByUserIdAndGroupId(user_id,group_id);
+			int ret = -1;
+
+			if (obj != null && obj.size() > 0) {
+				UserStatus uStatus = (UserStatus)obj.toArray()[obj.size()-1];
+				ret = uStatus.getStatusId();			
+			}
+			
+			return ret;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			
+			return -1;
+		}
+	}	
 }
