@@ -52,24 +52,44 @@ public class GroupTreeComparator implements Comparator {
 						else if (groupLongValue1.longValue() < groupLongValue2.longValue()) {
 							returner = -1;
 						}
-						else
+						else {
 							returner = 1;
+						}
 						
 						if (returner == 0)
-							returner = collator.compare(g1.getNodeName(), g2.getNodeName());
+                            returner = compareNodes(collator, g1, g2);
 					}
 					else {
-						returner = collator.compare(g1.getNodeName(), g2.getNodeName());
+					    returner = compareNodes(collator, g1, g2);
 					}
 				}
 			} else {
-				returner = collator.compare(g1.getNodeName(), g2.getNodeName());
+			    returner = compareNodes(collator, g1, g2);
 			}
 		}
 		return returner;
 	}
 	  
-	  private Long getLongFromBeginnigOfString(String original) {
+	  /**
+     * @param returner
+     * @param collator
+     * @param g1
+     * @param g2
+     * @return
+     */
+    private int compareNodes(Collator collator, GroupTreeNode g1, GroupTreeNode g2) {
+        int returner = 0;
+        if (g1.getNodeName() != null && g2.getNodeName() == null) {
+            returner = -1;
+        } else if (g1.getNodeName() == null && g2.getNodeName() != null) {
+            returner = 1;
+        } else if (g1.getNodeName() != null && g2.getNodeName() != null) { 
+        	returner = collator.compare(g1.getNodeName(), g2.getNodeName());
+        }
+        return returner;
+    }
+
+    private Long getLongFromBeginnigOfString(String original) {
         if (original == null) return null;
 
         StringBuffer result = new StringBuffer();
