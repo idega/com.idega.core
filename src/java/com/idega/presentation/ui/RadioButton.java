@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.2 2002/02/21 00:20:22 palli Exp $
+ * $Id: RadioButton.java,v 1.3 2002/03/18 23:26:18 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,7 +17,7 @@ import com.idega.presentation.IWContext;
  * @version 1.2
  */
 public class RadioButton extends InterfaceObject {
-  private String _checked;
+  public String _checked;
 
   /**
    *
@@ -63,16 +63,7 @@ public class RadioButton extends InterfaceObject {
   public void print(IWContext iwc) throws IOException {
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
-      if (statusKeptOnAction()) {
-        String[] parameters = iwc.getParameterValues(getName());
-        if (parameters != null) {
-          for (int i = 0; i < parameters.length; i++) {
-            if (parameters[i].equals(getValue())) {
-              setSelected();
-            }
-          }
-        }
-      }
+      handleKeepStatus(iwc);
 
       println("<input type=\"radio\" name=\"" + getName() + "\" " + _checked + "  " + getAttributeString() + " >");
     }
@@ -82,7 +73,37 @@ public class RadioButton extends InterfaceObject {
    * Sets the radio button to submit automatically.
    * Must add to a form before this function is used!!!!
    */
-  public void setToSubmit(){
+  public void setToSubmit() {
     setOnClick("this.form.submit()");
+  }
+
+  public synchronized Object clone() {
+    RadioButton obj = null;
+    try {
+      obj = (RadioButton)super.clone();
+      obj._checked = _checked;
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+
+    return obj;
+  }
+
+  public void handleKeepStatus(IWContext iwc) {
+    if (statusKeptOnAction()) {
+      String[] parameters = iwc.getParameterValues(getName());
+      if (parameters != null) {
+        for (int i = 0; i < parameters.length; i++) {
+          if (parameters[i].equals(getValue())) {
+            setSelected();
+          }
+        }
+      }
+    }
+  }
+
+  public void main(IWContext iwc) {
+    handleKeepStatus(iwc);
   }
 }

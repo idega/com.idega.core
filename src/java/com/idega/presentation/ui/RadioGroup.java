@@ -1,5 +1,5 @@
 /*
- * $Id: RadioGroup.java,v 1.2 2002/02/21 00:20:22 palli Exp $
+ * $Id: RadioGroup.java,v 1.3 2002/03/18 23:26:18 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,8 +58,10 @@ public class RadioGroup extends InterfaceObjectContainer {
 
   public void keepStatusOnAction() {
     if (_buttons != null) {
-      for(int i=0;i<_buttons.size();i++){
-        ((RadioButton)_buttons.get(i)).keepStatusOnAction();
+      Iterator it = _buttons.iterator();
+      while (it.hasNext()) {
+        RadioButton b = (RadioButton)it.next();
+        b.keepStatusOnAction();
       }
     }
   }
@@ -268,11 +270,32 @@ public class RadioGroup extends InterfaceObjectContainer {
       Iterator it = _buttons.iterator();
       while (it.hasNext()) {
         RadioButton b = (RadioButton)it.next();
+        System.out.println("Button value = " + b.getValue());
+        System.out.println("Button _checked = " + b._checked);
         if (b.getSelected())
           return(b.getValue());
       }
     }
 
     return(null);
+  }
+
+  /**
+   *
+   */
+  public synchronized Object clone() {
+    RadioGroup obj = null;
+    try {
+      obj = (RadioGroup)super.clone();
+      obj._buttons = (Vector)_buttons.clone();
+//      obj._fillVertical = _fillVertical;
+      obj._frameTable = (Table)_frameTable.clone();
+      obj._name = _name;
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+
+    return(obj);
   }
 }
