@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.1 2001/10/05 07:59:08 tryggvil Exp $
+ * $Id: Table.java,v 1.2 2001/10/15 15:05:38 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -790,22 +790,22 @@ public class Table extends PresentationObjectContainer {
   }
 
   //Prints out the no-breaking-space for cells
-  private void printNbsp(IWContext Modinfo, int xpos,int ypos){
+  private void printNbsp(IWContext iwc, int xpos,int ypos){
     if (theObjects[xpos-1][ypos-1] != null){
       if (theObjects[xpos-1][ypos-1].isEmpty()){
         if( false){
           //not implemented
         }
         else{
-          print("&nbsp;");
-          //print("<font size=\"1\">&nbsp;</font>");
+          //print(Text.getNonBrakingSpace().getText());
+          print("<font size=\"1\">&nbsp;</font>");
         }
       }
 
     }
     else{
-      //print("<font size=\"1\">&nbsp;</font>");
-      print("&nbsp;");
+      print("<font size=\"1\">&nbsp;</font>");
+      //print(Text.getNonBrakingSpace().getText());
     }
   }
 

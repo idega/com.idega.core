@@ -208,8 +208,14 @@ public static Text getNonBrakingSpace(){
   if (HTMLnbsp == null){
     HTMLnbsp = new Text(NON_BREAKING_SPACE);
     HTMLnbsp.addHTMLFontTag(false);
-    //HTMLnbsp.setFontSize("1");
+    //HTMLnbsp.setFontSize(1);
   }
+  return HTMLnbsp;
+}
+
+public static Text getNonBrakingSpace(int fontSize){
+  Text nbsp = getNonBrakingSpace();
+    nbsp.setFontSize(fontSize);
   return HTMLnbsp;
 }
 

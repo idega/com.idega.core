@@ -17,11 +17,19 @@ public class Layer extends PresentationObjectContainer{
 
 public static String RELATIVE = "relative";
 public static String ABSOLUTE = "absolute";
+public static String DIV = "div";
+public static String SPAN = "span";
 
 String absoluteOrRelative;
+String layerType;
 
 public Layer(){
+  this(DIV);
+}
+
+public Layer(String layerType) {
   super();
+  this.layerType = layerType;
 }
 
 
@@ -77,6 +85,10 @@ public void setBackgroundColor(String backgroundColor){
   setAttribute("layer-background-color",backgroundColor);
 }
 
+public void setLayerType(String layerType) {
+  this.layerType=layerType;
+}
+
 /*
 public void setBorder(int borderWidth,String borderColor){
 
@@ -115,11 +127,11 @@ public void print(IWContext iwc) throws Exception{
                   //if (getInterfaceStyle().equals("something")){
                   //}
                   //else{
-                          println("<div id=\""+getID()+"\" style=\""+getAttributeString()+"\" >");
+                          println("<"+layerType+" id=\""+getID()+"\" style=\""+getAttributeString()+"\" >");
 
                           super.print(iwc);
 
-                          println("\n</div>");
+                          println("\n</"+layerType+">");
 
           }//end if (getLanguage(...
   }
