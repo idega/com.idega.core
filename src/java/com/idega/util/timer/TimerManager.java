@@ -383,14 +383,18 @@ public class TimerManager {
       return;
     } // if
 
-    // Removes this timer and notifies the listener
+    // Removes this timer and notifies the listener IF they previous run is finished ( use entry.isDone() )
     TimerEntry entry = (TimerEntry) queue.first();
     queue.remove(entry);
-    try {
-      entry.listener.handleTimer(entry);
-    }
-    catch(Exception e) {}
-
+    if(entry.canRun()){
+	    try {
+	      entry.listener.handleTimer(entry);
+	    }
+	    catch(Exception e) {
+	    		e.printStackTrace();
+	    }
+  	}
+  
     // Reactivates the timer if it is repetitive
     if (entry.isRepetitive) {
       entry.updateTimerTime();

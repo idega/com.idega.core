@@ -22,6 +22,140 @@ public class TimerEntry implements Comparable, java.io.Serializable {
   public long timerTime;
   public String timerName = "";
   public transient TimerListener listener;
+  public boolean canRun = true;
+  
+/**
+ * @return Returns the dayOfMonth.
+ */
+public int getDayOfMonth() {
+	return dayOfMonth;
+}
+/**
+ * @param dayOfMonth The dayOfMonth to set.
+ */
+public void setDayOfMonth(int dayOfMonth) {
+	this.dayOfMonth = dayOfMonth;
+}
+/**
+ * @return Returns the dayOfWeek.
+ */
+public int getDayOfWeek() {
+	return dayOfWeek;
+}
+/**
+ * @param dayOfWeek The dayOfWeek to set.
+ */
+public void setDayOfWeek(int dayOfWeek) {
+	this.dayOfWeek = dayOfWeek;
+}
+/**
+ * @return Returns the hour.
+ */
+public int getHour() {
+	return hour;
+}
+/**
+ * @param hour The hour to set.
+ */
+public void setHour(int hour) {
+	this.hour = hour;
+}
+/**
+ * @return Returns the if the handleTime method can be called.
+ */
+public boolean canRun() {
+	return canRun;
+}
+/**
+ * @param canRun
+ */
+public void setCanRun(boolean canRun) {
+	this.canRun = canRun;
+}
+/**
+ * @return Returns the isRelative.
+ */
+public boolean isRelative() {
+	return isRelative;
+}
+/**
+ * @param isRelative The isRelative to set.
+ */
+public void setRelative(boolean isRelative) {
+	this.isRelative = isRelative;
+}
+/**
+ * @return Returns the isRepetitive.
+ */
+public boolean isRepetitive() {
+	return isRepetitive;
+}
+/**
+ * @param isRepetitive The isRepetitive to set.
+ */
+public void setRepetitive(boolean isRepetitive) {
+	this.isRepetitive = isRepetitive;
+}
+/**
+ * @return Returns the minute.
+ */
+public int getMinute() {
+	return minute;
+}
+/**
+ * @param minute The minute to set.
+ */
+public void setMinute(int minute) {
+	this.minute = minute;
+}
+/**
+ * @return Returns the month.
+ */
+public int getMonth() {
+	return month;
+}
+/**
+ * @param month The month to set.
+ */
+public void setMonth(int month) {
+	this.month = month;
+}
+/**
+ * @return Returns the timerName.
+ */
+public String getTimerName() {
+	return timerName;
+}
+/**
+ * @param timerName The timerName to set.
+ */
+public void setTimerName(String timerName) {
+	this.timerName = timerName;
+}
+/**
+ * @return Returns the timerTime.
+ */
+public long getTimerTime() {
+	return timerTime;
+}
+/**
+ * @param timerTime The timerTime to set.
+ */
+public void setTimerTime(long timerTime) {
+	this.timerTime = timerTime;
+}
+/**
+ * @return Returns the year.
+ */
+public int getYear() {
+	return year;
+}
+/**
+ * @param year The year to set.
+ */
+public void setYear(int year) {
+	this.year = year;
+}
   private transient boolean debug = false;
 
   private void debug(String s) {
@@ -78,7 +212,7 @@ public class TimerEntry implements Comparable, java.io.Serializable {
     isRelative = true;
     updateTimerTime();
   }
-
+ 
   /**
     * Creates a new TimerEntry.
     *
