@@ -2057,10 +2057,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc) {
   	
+  	//headerTable.add(getBundle(iwc).getImage(this.getBundle(iwc).getProperty("logo_image_name","top.gif")));
+  	
 		IWMainApplication application = getIWApplicationContext().getApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");		
-		String styleScript = "UserApplicationStyle.css";
-		String styleSrc = bundle.getVirtualPathWithFileNameString(styleScript);
+		String styleScript = "DefaultStyle.css";
+		String styleSrc = bundle.getVirtualPathWithFileNameString(application.getBundle("com.idega.user").getProperty("styleSheet_name",styleScript));
 		return styleSrc;
 
   }
