@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.zip.ZipInputStream;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -23,6 +24,7 @@ import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
+import com.idega.xml.XMLException;
 import com.idega.xml.XMLOutput;
 import com.idega.xml.XMLParser;
 
@@ -50,6 +52,18 @@ public class XMLData implements Storable {
   private int xmlFileId = -1;
   private String name = null;
   private String rootName = null;
+  
+  public static XMLData getInstanceForInputStream(InputStream inputStream) {
+  	XMLData data = new XMLData();
+    data.initialize(inputStream);
+    return data;
+  }
+  
+  public static XMLData getInstanceForInputStream(ZipInputStream zipInputStream) {
+  	XMLData data = new XMLData();
+    data.initialize(zipInputStream);
+    return data;
+  }
   
   public static XMLData getInstanceForFile(int xmlFileId) {
     XMLData data = new XMLData();
@@ -238,6 +252,20 @@ public class XMLData implements Storable {
   	 initialize(inputStream);
   }
   	 
+  private void initialize(ZipInputStream inputStream) {
+  	// do not close zip input streams
+  	try {
+  		XMLParser parser = new XMLParser();
+  		document = parser.parse(inputStream);
+  	}
+  	catch (XMLException ex)  {
+      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
+      ex.printStackTrace(System.err);
+      document = null;
+      xmlFileId = -1;
+  	}
+  }
+  
   private void initialize(InputStream inputStream) {
     try {
       XMLParser parser = new XMLParser();
