@@ -1389,16 +1389,24 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	}
   }
   
+  public Collection getUserGroupPluginsForGroup(Group group) {
+  	try {
+		return getUserGroupPlugInHome().findRegisteredPlugInsForGroup(group);
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+  }
   
   /**
  * Method getUserGroupPluginsForUser.
- * @param groupType
+ * @param user
  * @return Collection of plugins or null if no found or error occured
  */
   public Collection getUserGroupPluginsForUser(User user){
   	try {
   		//finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
-		return getUserGroupPlugInHome().findAllPlugIns();
+		return getUserGroupPlugInHome().findRegisteredPlugInsForUser(user);
 	} catch (Exception e) {
 		e.printStackTrace();
 		return null;

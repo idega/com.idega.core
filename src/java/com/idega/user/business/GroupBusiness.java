@@ -210,6 +210,9 @@ public interface GroupBusiness extends com.idega.business.IBOService {
 
     public java.lang.String getGroupType(java.lang.Class p0)
             throws java.rmi.RemoteException, java.rmi.RemoteException;
+    
+    public java.util.Collection getUserGroupPluginsForGroup(
+            com.idega.user.data.Group p0) throws java.rmi.RemoteException;
 
     public java.util.Collection getUsersForUserRepresentativeGroups(
             java.util.Collection p0) throws javax.ejb.FinderException,
