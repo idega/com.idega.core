@@ -144,6 +144,12 @@ public class IDOQuery {
 		_buffer.append(str);
 		return this;
 	}
+	
+	
+	public IDOQuery append(IDOEntityField field){
+		return this.append(field.getSQLFieldName());
+	}
+	
 
 	public IDOQuery append(Date date) {
 		IWTimestamp stamp = new IWTimestamp(date);
@@ -825,6 +831,15 @@ public class IDOQuery {
 	public IDOQuery appendInArrayWithSingleQuotes(String[] array) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array, true));
 	}
+	
+	public IDOQuery appendInCollection(Collection coll) {
+		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll));
+	}
+	
+	public IDOQuery appendInCollectionWithSingleQuotes(Collection coll) {
+		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
+	}
+
 
 	public IDOQuery appendNotInArray(String[] array) {
 		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array));

@@ -169,6 +169,37 @@ public class IDOUtil {
 		else return null;
 		
 	}
+
+
+	public String convertListToCommaseparatedString(Collection coll, boolean whithSimpleQuoteMarks) {
+		StringBuffer sList = new StringBuffer();
+		if (coll != null && coll.size() > 0) {
+			//String sGroupList = "";
+			Iterator iter = coll.iterator();
+			for (int g = 0; iter.hasNext(); g++) {
+				IDOEntity item = (IDOEntity) iter.next();
+				if (g > 0) {
+					sList.append(COMMA_AND_SPACE);
+				}
+				
+				Object sPK = null;
+				//try {
+				sPK = item.getPrimaryKey();
+				//} catch (RemoteException rme) {
+				//	rme.printStackTrace();
+				//}
+				
+				if (sPK != null) {
+					if (whithSimpleQuoteMarks) {
+						sList.append(SINGLE_QUOTE).append(sPK).append(SINGLE_QUOTE);
+					} else {
+						sList.append(sPK);
+					}
+				}
+			}
+		}
+		return sList.toString();
+	}
 	
 	
 	
