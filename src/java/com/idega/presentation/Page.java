@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.139 2005/03/05 21:54:34 tryggvil Exp $
+ *  $Id: Page.java,v 1.140 2005/03/05 21:57:30 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1544,14 +1544,20 @@ public class Page extends PresentationObjectContainer {
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
 			buffer.append(NEWLINE);
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
+			buffer.append(locale.getLanguage());
+			buffer.append("\" lang=\"");
+			buffer.append(locale.getLanguage());
+			buffer.append("\">");
 			return buffer.toString();
 		}
 		else if(docType.equals(DOCTYPE_XHTML_1_1)){
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
 			buffer.append(NEWLINE);
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
+			buffer.append(locale.getLanguage());
+			buffer.append("\">");
 			return buffer.toString();
 		}
 		else{
