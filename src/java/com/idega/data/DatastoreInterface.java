@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.33 2002/01/23 23:06:30 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.34 2002/01/23 23:31:05 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -426,7 +426,7 @@ public abstract class DatastoreInterface{
 
   protected void executeAfterUpdate(GenericEntity entity)throws Exception{
     //if( entity.hasLobColumn() ) insertBlob(entity); copied from insert not sure if used
-    if( entity.hasLobColumn() ) insertBlob(entity);
+    //if( entity.hasLobColumn() ) insertBlob(entity);
     if( entity.hasMetaDataRelationship() ) crunchMetaData(entity);
   }
 
@@ -633,7 +633,6 @@ public abstract class DatastoreInterface{
                 //System.out.println("bin.available(): "+bin.available());
                 //System.out.println("stream.available(): "+stream.available());
                 statement.setBinaryStream(index, stream, stream.available() );
-
               }
               catch(Exception e){
                 //System.err.println("Error updating BLOB field in "+entity.getClass().getName());
