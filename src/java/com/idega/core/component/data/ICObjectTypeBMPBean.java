@@ -14,10 +14,14 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
+import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.presentation.PresentationObject;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -54,13 +58,13 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 
 
 	public void insertStartData(){
-		insertData("iw.element","Element", "com.idega.presentation.PresentationObject", null, "com.idega.presentation.PresentationObject", "set");
-		insertData("iw.block","Block", "com.idega.presentation.PresentationObject", null, "com.idega.presentation.PresentationObject", "set");
-		insertData("iw.application","Application", "com.idega.presentation.PresentationObject", null, "com.idega.presentation.PresentationObject", "set");
-		insertData("iw.application.component","Application component", "com.idega.presentation.PresentationObject", null, "com.idega.presentation.PresentationObject", "set");
-		insertData("iw.data","Data", null, "com.idega.data.IDOEntity", null, "get,set");
-		insertData("iw.home","Home", null, "com.idega.data.IDOHome", null, "find,get");
-		insertData("iw.propertyhandler","Property handler", null, "com.idega.builder.handler.ICPropertyHandler", null, "set");
+		insertData("iw.element","Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
+		insertData("iw.block","Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
+		insertData("iw.application","Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
+		insertData("iw.application.component","Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
+		insertData("iw.data","Data", null, IDOEntity.class.getName(), null, "get,set");
+		insertData("iw.home","Home", null, IDOHome.class.getName(), null, "find,get");
+		insertData("iw.propertyhandler","Property handler", null, ICPropertyHandler.class.getName(), null, "set");
 	}
 
 	private void insertData(String objectType, String objectName, String superClass, String interfaces, String reflection, String filters) {
