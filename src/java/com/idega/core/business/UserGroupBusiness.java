@@ -28,6 +28,16 @@ public class UserGroupBusiness {
   }
 
 
+  public static List getAllGroups() {
+    try {
+      return EntityFinder.findAll(GenericGroup.getStaticInstance());
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
   public static void deleteGroup(int groupId) throws SQLException {
     GenericGroup delGroup = new GenericGroup(groupId);
 
