@@ -10,6 +10,8 @@ import java.util.Locale;
  *
  */
 public class IWTreeNode implements ICTreeNodeAddable {
+  
+  protected static final String PATH_DELIMITER = "#"; 
 	
 	ICTreeNode parent = null;
 	ArrayList childs = null;
@@ -142,7 +144,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	
 	private String generatePath(ICTreeNode node){
 		if(node.getParentNode()!=null ){
-			return  generatePath(node.getParentNode())+"#"+node.getNodeName();
+			return  generatePath(node.getParentNode())+ PATH_DELIMITER +node.getNodeName();
 		}
 		return  node.getNodeName();
 	}
