@@ -386,7 +386,7 @@ public class IWMainApplication{//implements ServletContext{
 
   private String getBundleVirtualPath(String bundleIdentifier){
     //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
-    String sBundle = getInternalBundeVirtualPath(bundleIdentifier);
+    String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
     if( sBundle!= null ) sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");
 
     String path = "/"+getApplicationSpecialVirtualPath()+"/"+sBundle;
@@ -396,11 +396,14 @@ public class IWMainApplication{//implements ServletContext{
 
   private String getBundleRealPath(String bundleIdentifier){
     //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
-    String sBundle = getInternalBundeVirtualPath(bundleIdentifier);
+    String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
     if( sBundle!=null){
-      if( FileUtil.getFileSeparator().equals("/") )
+      if( FileUtil.getFileSeparator().equals("/") ) {
 	sBundle = TextSoap.findAndReplace(sBundle,"\\","/");//unix
-      else sBundle = TextSoap.findAndReplace(sBundle,"/","\\");//windows
+      }
+      else {
+	sBundle = TextSoap.findAndReplace(sBundle,"/","\\");//windows
+      }
     }
     //debug
     //System.out.println("IWMainApplication : sBundle = "+sBundle);
@@ -426,7 +429,7 @@ public class IWMainApplication{//implements ServletContext{
       }
   }
 
-  private String getInternalBundeVirtualPath(String bundleIdentifier){
+  private String getInternalBundleVirtualPath(String bundleIdentifier){
     String tryString = getBundlesFile().getProperty(bundleIdentifier);
     if(tryString==null){
       File theRoot = new File(this.getApplicationSpecialRealPath(),BUNDLES_STANDARD_DIRECTORY);
