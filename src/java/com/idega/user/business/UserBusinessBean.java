@@ -1647,11 +1647,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						//Now we have to check if the remaining top nodes have a shortcut 
 						//that is not a top node and if so we need to remove that node 
 						//unless there is only one node left or if the alias and the real group are both top nodes
-						if(groupMap!=null && groupMap.size()>1){
+						if(groupMap!=null && !groupMap.isEmpty()){
+							String[] aliasGroupType = new String[1];
+							aliasGroupType[0] = "alias";
+							
 							if(!aliasMap.isEmpty()){
 								Iterator keyIter = groupMap.keySet().iterator();
 								while (keyIter.hasNext()) {
 									Integer topNodeId = (Integer) keyIter.next();
+									
 									Integer aliasGroupsId = (Integer)aliasMap.get(topNodeId);
 									if(aliasGroupsId!=null){
 										if(!groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
@@ -1660,6 +1664,38 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									}
 								}
 							}
+							
+							//check the children recursively
+							Iterator keyIter = groupMap.keySet().iterator();
+							while (keyIter.hasNext()) {
+								Integer topNodeId = (Integer) keyIter.next();
+								try {
+									//also we need to check the children of the current top nodes recursively for aliases :s
+									Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursive(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
+									
+									if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
+										Iterator aliasIter = aliasesRecursive.iterator();
+										while (aliasIter.hasNext()) {
+											Group alias = (Group) aliasIter.next();
+											Integer aliasGroupsId = new Integer(alias.getAliasID());
+											if(groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
+												groupMap.remove(topNodeId);
+											}
+										}
+										
+										
+									}
+								
+								}
+								catch (FinderException e1) {
+									
+									e1.printStackTrace();
+								}
+								
+								
+							}
+							
+							
 							
 						}
 						
