@@ -201,13 +201,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public Object getPrimaryKeyValue(){
-
-      if(this._primaryKey!=null){
-	return _primaryKey;
-      }
-      else{
-	return this.getColumnValue(getIDColumnName());
-      }
+          if(this._primaryKey!=null){
+            return _primaryKey;
+          }
+          else{
+            return this.getValue(getIDColumnName());
+          }
 	}
 
 	public Integer getIDInteger() {
@@ -2930,6 +2929,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     return getPrimaryKey();
   }
+
 
   public void ejbPostCreate(){}
 

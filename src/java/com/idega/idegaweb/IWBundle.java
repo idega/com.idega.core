@@ -182,7 +182,7 @@ public class IWBundle implements java.lang.Comparable {
 	  try{
 	    Class c = ico.getObjectClass();
 	    //c.newInstance();
-	    IDOLookup.createLegacy(c);
+	    IDOLookup.instanciateEntity(c);
           }
 	  catch(Exception e){
 	    e.printStackTrace();

@@ -3,12 +3,13 @@ package com.idega.data;
 import java.sql.*;
 
 /**
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001
+ *
+ * Title:        IDOLegacyEntity the old interface for IDO data objects
+ * Description:  IDOLegacyEntity is to be deprecated soon and all new code should use IDOEntity instead.
+ * Copyright:    Copyright (c) 2001-2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
+ * @version 1.0
  */
 
 public interface IDOLegacyEntity extends IDOEntity{

@@ -126,12 +126,21 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
+  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT "+columnName+refrencingTableName+referencingColumnName+" FOREIGN KEY " + columnName + " REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      executeUpdate(entity,SQLCommand);
+  }
+
+
+  protected String getCreatePrimaryKeyStatementBeginning(String tableName){
+    return "alter table "+tableName+" add constraint "+tableName+"_PK UNIQUE (";
+  }
 
 
 
 
   public void createTrigger(IDOLegacyEntity entity)throws Exception{
-    super.executeQuery(entity,"CREATE TRIGGER ins_after  BEFORE  INSERT ON "+entity.getTableName()+" CALL \""+this.getClass().getName()+"\"");
+    //super.executeQuery(entity,"CREATE TRIGGER ins_after  BEFORE  INSERT ON "+entity.getTableName()+" CALL \""+this.getClass().getName()+"\"");
   }
 
 

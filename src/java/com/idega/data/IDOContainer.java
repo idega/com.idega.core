@@ -84,6 +84,7 @@ public class IDOContainer {
 
   public IDOEntity createEntity(Class entityInterfaceClass)throws javax.ejb.CreateException{
     try{
+
       IDOEntity entity = null;
       try{
         entity = getFreeBeanInstance(entityInterfaceClass);
@@ -130,18 +131,43 @@ public class IDOContainer {
   }
 
   /**
+   * To find the data by a primary key (cached if appropriate), usually called by HomeImpl classes
+   */
+  IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk,IDOHome home,String dataSourceName)throws javax.ejb.FinderException{
+    return findByPrimaryKey(entityInterfaceClass,pk,null,home,dataSourceName);
+  }
+
+
+  /**
    * Workaround to speed up finders where the ResultSet is already created
    */
   IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk,java.sql.ResultSet rs,IDOHome home)throws javax.ejb.FinderException{
+    return findByPrimaryKey(entityInterfaceClass,pk,rs,home,null);
+  }
+
+  /**
+   * Workaround to speed up finders where the ResultSet is already created
+   */
+  IDOEntity findByPrimaryKey(Class entityInterfaceClass,Object pk,java.sql.ResultSet rs,IDOHome home,String dataSourceName)throws javax.ejb.FinderException{
       try{
       IDOEntity entity=null;
       IDOBeanCache cache = null;
-      if(beanCachingActive(entityInterfaceClass)){
-        cache = this.getBeanCache(entityInterfaceClass);
-        entity = cache.getCachedEntity(pk);
+      if(dataSourceName==null){
+        if(beanCachingActive(entityInterfaceClass)){
+          cache = this.getBeanCache(entityInterfaceClass);
+          entity = cache.getCachedEntity(pk);
+        }
       }
       if(entity==null){
-        entity = this.createEntity(entityInterfaceClass);
+        entity = this.instanciateBean(entityInterfaceClass);
+        if(dataSourceName!=null){
+          try{
+            ((GenericEntity)entity).setDatasource(dataSourceName);
+          }
+          catch(ClassCastException ce){
+            ce.printStackTrace();
+          }
+        }
         /**
          *@todo
          */

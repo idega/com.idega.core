@@ -1,21 +1,13 @@
 
 
 /*
-
- * $Id: DatastoreInterface.java,v 1.48 2002/05/02 19:47:35 tryggvil Exp $
-
+ * $Id: DatastoreInterface.java,v 1.49 2002/06/14 18:12:06 tryggvil Exp $
  *
-
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
-
  *
-
  * This software is the proprietary information of Idega hf.
-
  * Use is subject to license terms.
-
  *
-
  */
 
 package com.idega.data;
@@ -78,55 +70,32 @@ public abstract class DatastoreInterface{
 
 
   public static DatastoreInterface getInstance(String datastoreType){
-
     DatastoreInterface theReturn = null;
-
     String className;
-
     if (interfacesHashtable == null){
-
       interfacesHashtable = new Hashtable();
-
     }
-
-
-
     if (datastoreType.equals("oracle")){
-
        className = "com.idega.data.OracleDatastoreInterface";
-
     }
-
     else if (datastoreType.equals("interbase")){
-
        className = "com.idega.data.InterbaseDatastoreInterface";
-
     }
-
     else if (datastoreType.equals("mysql")){
-
         className = "com.idega.data.MySQLDatastoreInterface";
-
     }
-
     else if (datastoreType.equals("sapdb")){
-
         className = "com.idega.data.SapDBDatastoreInterface";
-
     }
-
     else if (datastoreType.equals("db2")){
-
-        className = "com.idega.data.DB2DatastoreInterface";
-
+       className = "com.idega.data.DB2DatastoreInterface";
     }
-
     else if (datastoreType.equals("informix")){
-
         className = "com.idega.data.InformixDatastoreInterface";
-
     }
-
+    else if (datastoreType.equals("hsql")){
+        className = "com.idega.data.HSQLDatastoreInterface";
+    }
     else{
 
         //className = "unimplemented DatastoreInterface";
@@ -308,53 +277,32 @@ public abstract class DatastoreInterface{
                                         }
 
 
-
 					if (checkString.indexOf("oracle") != -1 ){
-
 						dataStoreType = "oracle";
-
 					}
-
-					else if (checkString.indexOf("interbase") != -1 ){
-
+					else if (checkString.indexOf("interbase") != -1 || checkString.indexOf("firebird") != -1  ){
 						dataStoreType = "interbase";
-
 					}
-
+                                        else if (checkString.indexOf("hsql") != -1 || checkString.indexOf("hypersonicsql") != -1  ){
+						dataStoreType = "hsql";
+					}
 					else if (checkString.indexOf("mysql") != -1 ){
-
 						dataStoreType =  "mysql";
-
 					}
-
 					else if (checkString.indexOf("sap") != -1 ){
-
 						dataStoreType =  "sapdb";
-
 					}
-
 					else if (checkString.indexOf("db2") != -1 ){
-
 						dataStoreType =  "db2";
-
 					}
-
 					else if (checkString.indexOf("informix") != -1 ){
-
 						dataStoreType =  "informix";
-
 					}
-
             				else if (checkString.indexOf("idega") != -1 ){
-
                					dataStoreType = "idega";
-
             				}
-
 					else{
-
 						dataStoreType = "unimplemented";
-
 					}
 
 				}

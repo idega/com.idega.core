@@ -144,16 +144,18 @@ public class IDOLookup extends IBOLookup{
     }
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id,String datasource)throws java.sql.SQLException{
-    return findByPrimaryKeyLegacy(entityInterfaceClass,new Integer(id),datasource);
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id,String dataSourceName)throws java.sql.SQLException{
+    return findByPrimaryKeyLegacy(entityInterfaceClass,new Integer(id),dataSourceName);
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id,String datasource)throws java.sql.SQLException{
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id,String dataSourceName)throws java.sql.SQLException{
     try{
-      IDOLegacyEntity entity = (IDOLegacyEntity)getHome(entityInterfaceClass).createIDO();
+      IDOHome home = getHome(entityInterfaceClass);
+      IDOLegacyEntity entity = (IDOLegacyEntity)IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,id,null,home,dataSourceName);
+      /*IDOLegacyEntity entity = (IDOLegacyEntity)getHome(entityInterfaceClass).createIDO();
       entity.setDatasource(datasource);
       ((IDOEntityBean)entity).ejbFindByPrimaryKey(id);
-      ((IDOEntityBean)entity).ejbLoad();
+      ((IDOEntityBean)entity).ejbLoad();*/
       return entity;
       //return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
     }
@@ -177,13 +179,18 @@ public class IDOLookup extends IBOLookup{
     return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
   }
 
-  static IDOLegacyEntity instanciateEntity(Class entityBeanOrInterfaceClass){
+  /**
+   * Sould only be used for LegacyEntities
+   */
+  public static IDOLegacyEntity instanciateEntity(Class entityBeanOrInterfaceClass){
     try{
       Class beanClass = entityBeanOrInterfaceClass;
       if(beanClass.isInterface()){
         beanClass = getBeanClassFor(entityBeanOrInterfaceClass);
       }
-      return (IDOLegacyEntity)beanClass.newInstance();
+      IDOLegacyEntity instance = (IDOLegacyEntity)beanClass.newInstance();
+      ((IDOEntityBean)instance).setEJBHome(getHome(entityBeanOrInterfaceClass));
+      return instance;
     }
     catch(Exception e){
       throw new EJBException(e.getMessage());

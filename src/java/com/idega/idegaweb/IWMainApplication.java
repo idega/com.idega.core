@@ -448,8 +448,14 @@ public class IWMainApplication{//implements ServletContext{
 	    String bundleIdentifier = list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
 	    if(bundleIdentifier!=null){
 	      String bundleDir = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
-	      this.registerBundle(bundleIdentifier,bundleDir);
-	    }
+              try{
+  	        this.registerBundle(bundleIdentifier,bundleDir);
+	      }
+              catch(Throwable t){
+                this.sendStartupMessage("Error loading bundle "+bundleIdentifier);
+                t.printStackTrace();
+              }
+            }
 	}
       }
   }
