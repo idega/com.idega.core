@@ -1,6 +1,6 @@
 package com.idega.util;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Collection;
@@ -16,25 +16,33 @@ import java.util.Collection;
 
 public class ListUtil {
 
-  private static final Vector emptyVector = new EmptyList();
+  private static final ArrayList emptyVector = new EmptyList();
 
   private ListUtil() {
   }
-
+/**
+ * Gets an instance of a list that is empty.
+ * @return An immutable unsynchronized List with no values
+ **/
   public static List getEmptyList(){
     return getEmptyVector();
   }
 
-  public static Vector getEmptyVector(){
+  private static ArrayList getEmptyVector(){
     return emptyVector;
   }
 
+/**
+ * Converts an instance of List to an instance of Collection.
+ * @param coll An input Collection
+ * @return The input value coll if it is an instance of List. Else it will construct a list with the same values and return it.
+ **/
   public static List convertCollectionToList(Collection coll){
     if(coll instanceof List){
       return (List)coll;
     }
     else{
-      List theReturn = new Vector();
+      List theReturn = new ArrayList();
       Iterator iter = coll.iterator();
       while (iter.hasNext()) {
         Object item = iter.next();
@@ -45,7 +53,7 @@ public class ListUtil {
   }
 
   public static List reverseList(List list){
-    Vector theReturn = new Vector();
+    List theReturn = new ArrayList();
     int size = list.size();
     for (int i = size-1 ; i >= 0 ; i--) {
       Object item = list.get(i);
@@ -56,7 +64,7 @@ public class ListUtil {
     return theReturn;
   }
 
-  private static class EmptyList extends Vector{
+  private static class EmptyList extends ArrayList{
 
 
     public boolean add(Object o){
