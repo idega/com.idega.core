@@ -50,7 +50,13 @@ public class POIUtility {
 		int cols = table.getColumns();
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet(sheetName);
+		HSSFSheet sheet = null;
+		if (sheetName.length() > 31) {
+	        sheet = wb.createSheet(sheetName.substring(0,31));
+		} 
+	    else {
+	        sheet = wb.createSheet(sheetName);
+	    }
 
 		Text obj;
 		String text;
