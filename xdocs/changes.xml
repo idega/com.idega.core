@@ -5,7 +5,7 @@
   </properties>
   <body>
 
-    <release version="3.0.2" date="2005-03-31">
+    <release version="3.0.3" date="2005-04-06">
       <action dev="tryggvil" type="update">
       	This version is the very first one with a correct iwbar.
         Declaration of version for use in new systems based on JSF.
