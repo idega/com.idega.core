@@ -11,17 +11,45 @@ import java.util.Vector;
 
 import com.idega.data.DatastoreConnection;
 import com.idega.util.LogWriter;
+
 /**
-
+ * <code>ConnectionPool</code> is the default ConnectilPool implementation for
+ * idegaWeb. The connectionpool handles retrieving and putting back java.sql.
+ * Connection objects. This class should in most cases not be used on its own
+ * but rather access Connections through <code>ConnectionBroker</code>.<br><br>
+ * 
+ * The Connectionpool reads its properties through a properties file (db.
+ * properties) and supports the following attributes.
+ * 
+ * drivers=[JDBCdriverClassName] This must be set for the pool to initialize
+ * correctly with the correct Driver class.<br><br>
+ * 
+ * All connection properties must be prefixed with the name of the pool
+ * [poolname] and the default pool name is "default".<br><br>
+ * 
+ * [poolname].url The fully qualified JDBC URL to the datastore<br>
+ * [poolname].user The user name to log into the databstore<br>
+ * [poolname].password The password to log into the databstore<br> 
+ * [poolname].initconns The number of connections that the pool should hold
+ * initially<br> 
+ * [poolname].maxconns The number of connections that the pool should hold
+ * maximally at any time<br>
+ * [poolname].loglevel The level of logging for the pool. Possible values
+ * are: 0 (NONE - no logging), 1 (INFO - only information messages), 2
+ * (ERROR - show error messages), 3 (DEBUG - show all info,error and debug
+ * messages)<br>
+ * [poolname].logintimeout The timout (in seconds) that the pool will wait for
+ * a connection before throwing an SQLException<br> 
+ * [poolname]. refreshminutes
+ * The number of minutes for the pool to refresh itself and load new
+ * connections<br>
  *
-
-*@author <a href="http://www.wrox.com">wrox</a> modified by <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.3
-
-* Class to store database connections
-
-*/
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ * 
+ *@author <a href="http://www.wrox.com">wrox</a> modified by <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.3
+ */
 public class ConnectionPool
 {
 	/**
