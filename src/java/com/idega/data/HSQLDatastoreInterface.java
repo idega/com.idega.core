@@ -58,7 +58,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		}
 		return theReturn;
 	}
-
+/*
 	protected void createForeignKey(GenericEntity entity, String baseTableName,
 			String columnName, String refrencingTableName,
 			String referencingColumnName) throws Exception {
@@ -68,7 +68,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 				+ refrencingTableName + "(" + referencingColumnName + ")";
 		executeUpdate(entity, SQLCommand);
 	}
-
+*/
 	protected String getCreatePrimaryKeyStatementBeginning(String tableName) {
 		return "alter table " + tableName + " add constraint " + tableName
 				+ "_PK UNIQUE (";
@@ -99,9 +99,9 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 	}
 
 	protected void executeAfterInsert(GenericEntity entity) throws Exception {
-		if (entity.isNull(entity.getIDColumnName())) {
-			entity.setID(createUniqueID(entity));
-		}
+		//if (entity.isNull(entity.getIDColumnName())) {
+		//	entity.setID(createUniqueID(entity));
+		//}
 		super.executeAfterInsert(entity);
 	}
 
@@ -115,40 +115,28 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 				+ entity.getIDColumnName() + ") values(null)";
 	}*/
 
-	private static String getOracleSequenceName(GenericEntity entity) {
-		String entityName = entity.getTableName();
-		return entityName + "_seq";
-		/*
-		 * if (entityName.endsWith("_")){
-		 * 
-		 * return entityName+"seq"; }
-		 * 
-		 * else{
-		 * 
-		 * return entityName+"_seq"; }
-		 */
-	}
 
 	public String getSequenceTableName(GenericEntity entity) {
 		//return "seq_"+entity.getTableName();
 		return entity.getTableName();
-	}
-
+	}	
+	
+	
 	/**
 	 * 
 	 * *Creates a unique ID for the ID column
 	 *  
 	 */
-	public int createUniqueID(GenericEntity entity) throws Exception {
+	public int getCreatedUniqueId(GenericEntity entity,Connection conn) throws Exception {
 		int returnInt = -1;
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		ResultSet RS = null;
 		try {
-			conn = entity.getConnection();
-			stmt = conn.createStatement();
-			stmt.executeUpdate(getCreateUniqueIDQuery(entity));
-			stmt.close();
+			//conn = entity.getConnection();
+			//stmt = conn.createStatement();
+			//stmt.executeUpdate(getCreateUniqueIDQuery(entity));
+			//stmt.close();
 			stmt = conn.createStatement();
 			RS = stmt.executeQuery("CALL IDENTITY()");
 			RS.next();
@@ -160,13 +148,33 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 			if (stmt != null) {
 				stmt.close();
 			}
-			if (conn != null) {
+			/*if (conn != null) {
 				entity.freeConnection(conn);
-			}
+			}*/
 		}
 		return returnInt;
 	}
+	
+	public boolean updateNumberGeneratedValueAfterInsert(){
+		return true;
+	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#updateNumberGeneratedValue(com.idega.data.GenericEntity, java.sql.Connection)
+	 */
+	protected void updateNumberGeneratedValue(GenericEntity entity,
+			Connection conn) {
+		int id;
+		try {
+			id = this.getCreatedUniqueId(entity,conn);
+			entity.setID(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
+	
+	
 	//Implementing org.hsqldb.Trigger:
 	public void fire(String trigName, String tabName, Object row[]) {
 		System.out.println(trigName + " trigger fired on " + tabName);
@@ -188,4 +196,5 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		return "CREATE CACHED TABLE "+tableName;
 	}
 	
+
 }
