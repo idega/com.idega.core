@@ -2988,61 +2988,74 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	// fetches the metadata for this id and puts it in a HashTable
 	private void getMetaData() {
-		Connection conn = null;
-		Statement Stmt = null;
 		_theMetaDataAttributes = new Hashtable();
 		_theMetaDataIds = new Hashtable();
 		_theMetaDataTypes = new Hashtable();
-		try {
-			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-			MetaData metadata = (MetaData)getStaticInstance(MetaData.class);
-			String metadataIdColumn = metadata.getIDColumnName();
-			String tableToSelectFrom = getNameOfMiddleTable(metadata, this);
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value,meta_data_type from ");
-			buffer.append(tableToSelectFrom);
-			buffer.append(",ic_metadata where ");
-			buffer.append(tableToSelectFrom);
-			buffer.append(".");
-			buffer.append(getIDColumnName());
-			buffer.append("= ");
-			buffer.append(getPrimaryKeyValueSQLString());
-			buffer.append(" and ");
-			buffer.append(tableToSelectFrom);
-			buffer.append(".");
-			buffer.append(metadataIdColumn);
-			buffer.append("=");
-			buffer.append(metadata.getEntityName());
-			buffer.append(".");
-			buffer.append(metadataIdColumn);
-			String query = buffer.toString();
-			this.logSQL("[MetadataQuery]: "+query);
-			ResultSet RS = Stmt.executeQuery(query);
-			while (RS.next()) {
-				if(RS.getString("metadata_value")!=null) {
-					_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
-					_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
-				}				
-				if (RS.getString("meta_data_type") != null) {
-					_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
-				}
-			}
-			RS.close();
-		} catch (SQLException ex) {
-			System.err.println("Exception in " + this.getClass().getName() + " gettingMetaData " + ex.getMessage());
-			ex.printStackTrace(System.err);
-		} finally {
+
+		if( getEntityState() ==  IDOLegacyEntity.STATE_NEW || getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE){
+			//if it is new then it has no primary key and has no relation to the metdata table
+			return;
+		}
+		else{
+			//look for the metadata
+			Connection conn = null;
+			Statement Stmt = null;
+			ResultSet RS = null;
 			try {
-				if (Stmt != null) {
-					Stmt.close();
+				conn = getConnection(getDatasource());
+				Stmt = conn.createStatement();
+				MetaData metadata = (MetaData)getStaticInstance(MetaData.class);
+				String metadataIdColumn = metadata.getIDColumnName();
+				String tableToSelectFrom = getNameOfMiddleTable(metadata, this);
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("select ic_metadata.ic_metadata_id,ic_metadata.metadata_name,ic_metadata.metadata_value,ic_metadata.meta_data_type from ");
+				buffer.append(tableToSelectFrom);
+				buffer.append(",ic_metadata where ");
+				buffer.append(tableToSelectFrom);
+				buffer.append(".");
+				buffer.append(getIDColumnName());
+				buffer.append("= ");
+				buffer.append(getPrimaryKeyValueSQLString());
+				buffer.append(" and ");
+				buffer.append(tableToSelectFrom);
+				buffer.append(".");
+				buffer.append(metadataIdColumn);
+				buffer.append("=");
+				buffer.append(metadata.getEntityName());
+				buffer.append(".");
+				buffer.append(metadataIdColumn);
+				String query = buffer.toString();
+				this.logSQL("[MetadataQuery]: "+query);
+				RS = Stmt.executeQuery(query);
+				while (RS.next()) {
+					if(RS.getString("metadata_value")!=null) {
+						_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
+						_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
+					}				
+					if (RS.getString("meta_data_type") != null) {
+						_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
+					}
 				}
 			} catch (SQLException ex) {
 				System.err.println("Exception in " + this.getClass().getName() + " gettingMetaData " + ex.getMessage());
 				ex.printStackTrace(System.err);
-			}
-			if (conn != null) {
-				freeConnection(getDatasource(), conn);
+			} finally {
+				try {
+					
+					if(RS!=null){
+						RS.close();
+					}
+					if (Stmt != null) {
+						Stmt.close();
+					}
+					
+				} catch (SQLException ex) {
+					System.err.println("Exception in " + this.getClass().getName() + " gettingMetaData " + ex.getMessage());
+					ex.printStackTrace(System.err);
+				}
+				if (conn != null) {
+					freeConnection(getDatasource(), conn);
+				}
 			}
 		}
 	}
