@@ -10,7 +10,7 @@ import com.idega.idegaweb.IWResourceBundle;
 public class IWAdminWindow extends BlockWindow {
 
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
-public final static String STYLE = "font-family:arial; font-size:8pt; color:#000000; text-align: justify; border: 1 solid #000000";
+public final static String STYLE = "font-family:arial; font-size:8pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
 
 private IWBundle iwb;
