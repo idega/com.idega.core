@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.86 2004/12/28 17:18:17 gimmi Exp $
+ * $Id: IWBundle.java,v 1.87 2005/01/10 14:38:57 gimmi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2004/12/28 17:18:17 $ by $Author: gimmi $
+ * Last modified: $Date: 2005/01/10 14:38:57 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.86 $
+ * @version $Revision: 1.87 $
  */
 public interface IWBundle {
 	/**
@@ -292,5 +292,13 @@ public interface IWBundle {
 	 * @return 
 	 */
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component);
+
+	/**
+	 * Returns a localized string.
+	 * Use ONLY if you need the string, otherwise use the getLocalizedText or getLocalizeUIComponent
+	 * @param localizationKey LocalizationKey
+	 * @return 
+	 */
+	public String getLocalizedString(String localizationKey);
 
 }

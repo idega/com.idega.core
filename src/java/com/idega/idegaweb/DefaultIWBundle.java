@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.12 2004/12/28 17:18:17 gimmi Exp $
+ * $Id: DefaultIWBundle.java,v 1.13 2005/01/10 14:38:57 gimmi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -28,6 +28,7 @@ import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
+import javax.faces.context.FacesContext;
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
@@ -1467,6 +1468,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		HtmlOutputText t = new HtmlOutputText();
 		t = (HtmlOutputText) getLocalizedUIComponent(localizationKey, t);
 		return t;
+	}
+	
+	public String getLocalizedString(String localizationKey) {
+		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
+		return (String) getApplication().createValueBinding(valueBinding).getValue(FacesContext.getCurrentInstance());
 	}
 	
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
