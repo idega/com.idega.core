@@ -32,6 +32,10 @@ public class HashMatrix {
     return oldValue;
   }
   
+  public boolean containsKey(Object xKey, Object yKey) {
+  	return (! isEmpty()) && xDimension.containsKey(xKey) && 	(get(xKey).containsKey(yKey));
+  }
+  
   public Object get(Object xKey, Object yKey) {
     return getYDimension(xKey).get(yKey);
   }
