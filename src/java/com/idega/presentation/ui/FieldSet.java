@@ -27,7 +27,7 @@ public class FieldSet extends InterfaceObject {
 		if (getLanguage().equals("HTML")) {
 			println("<fieldset>");
 			if (_legend != null)
-				theElements.add(0, new Legend(_legend));
+				print("<legend>" + _legend + "</legend>");
 			
 			theElements.trimToSize();
 			Iterator iter = theElements.iterator();
