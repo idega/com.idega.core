@@ -48,14 +48,14 @@ import com.idega.util.reflect.MethodFinder;
  */
 
 public class LoginBusinessBean implements IWPageEventListener {
-	public static String UserAttributeParameter = "user_login";
-	public static String PermissionGroupParameter = "user_permission_groups";
+	//public static String UserAttributeParameter = "user_login";
+	//public static String PermissionGroupParameter = "user_permission_groups";
 	public static String LoginStateParameter = "login_state";
-	public static String LoginStateMsgParameter = "login_state_msg";
+	//public static String LoginStateMsgParameter = "login_state_msg";
 	//public static String LoginRedirectPageParameter = "login_redirect_page";
 	//public static String LoginFailedRedirectPageParameter = "login_failed_redirect_page";
-	protected static String LoginAttributeParameter = "login_attributes";
-	private static String prmReservedLoginSessionAttribute = "reserved_login_attributes";
+	//protected static String LoginAttributeParameter = "login_attributes";
+	//private static String prmReservedLoginSessionAttribute = "reserved_login_attributes";
 	private static String UserGroupRepresentativeParameter = "ic_user_representative_group";
 	private static String PrimaryGroupsParameter = "ic_user_primarygroups";
 	private static String PrimaryGroupParameter = "ic_user_primarygroup";
@@ -1015,7 +1015,7 @@ public class LoginBusinessBean implements IWPageEventListener {
         return null;
 	}
 	
-	private static LoginSession getLoginSession(IWUserContext iwc) throws RemoteException {
+	public static LoginSession getLoginSession(IWUserContext iwc) throws RemoteException {
         return (LoginSession) IBOLookup.getSessionInstance(iwc, LoginSession.class);
 	}
 	
