@@ -750,6 +750,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoggedOnInfo info = this.getLoggedOnInfo(iwc);
 		int rec = info.getLoginRecordId();
 		retrieveLoginInformation(iwc);
+		info.setLoginType("");
+		setLoggedOnInfo(info,iwc);
 		LoginDBHandler.recordLogout(rec);
 	}
 
