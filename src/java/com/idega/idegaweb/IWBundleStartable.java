@@ -10,8 +10,10 @@ package com.idega.idegaweb;
  */
 
 public interface IWBundleStartable{
-
-  public void start(IWBundle starterBundle);
-  public void stop(IWBundle starterBundle);
+	
+	String DEFAULT_STARTER_CLASS = "IWBundleStarter";
+	
+	void start(IWBundle starterBundle);
+	void stop(IWBundle starterBundle);
 
 }

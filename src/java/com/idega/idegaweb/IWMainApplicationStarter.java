@@ -12,7 +12,7 @@ import java.util.logging.LogManager;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
-import com.idega.builder.business.BuilderBundleStarter;
+import com.idega.builder.IWBundleStarter;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.data.EntityControl;
@@ -165,8 +165,6 @@ public class IWMainApplicationStarter {
 		this.startLogManager();
 		IWStyleManager iwStyleManager = new IWStyleManager(application);
 		iwStyleManager.getStyleSheet();
-		sendStartMessage("Starting IWBundleStarter");
-		startBundleStarter();
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
 		insertStartData();
@@ -403,10 +401,4 @@ public class IWMainApplicationStarter {
 		System.out.println("[idegaWeb] : shutdown : " + message);
 	}
 	
-	// hack under development
-	private void startBundleStarter() {
-		IWBundleStartable builderStarter = new BuilderBundleStarter();
-		builderStarter.start(null);
-		
-	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.77 2004/06/10 18:36:21 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.78 2004/06/11 16:46:23 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -38,6 +38,7 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.refactor.RefactorClassRegistry;
 import com.idega.xml.XMLElement;
@@ -53,6 +54,8 @@ import com.idega.xml.XMLElement;
  */
 public class IWBundle implements java.lang.Comparable
 {
+	private static final String DOT = "."; 
+	
 	//TODO: Tryggvi: Change to true
 	private boolean autoMoveComponentPropertiesToFile = true;
 	
@@ -241,6 +244,7 @@ public class IWBundle implements java.lang.Comparable
 	}
 	private void runStartClass()
 	{
+		// starting starter defined in bundle property
 		String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
 		if (starterClassName != null)
 		{
@@ -254,7 +258,45 @@ public class IWBundle implements java.lang.Comparable
 				e.printStackTrace();
 			}
 		}
+		// starting of default bundle starter
+		startBundleStarter();
 	}
+	
+	private void startBundleStarter() {
+		IWBundleStartable bundleStarter = getBundleStarter();
+		if (bundleStarter != null) {
+			bundleStarter.start(this);
+		}
+	}
+	
+	private void stopBundleStarter() {
+		IWBundleStartable bundleStarter = getBundleStarter();
+		if (bundleStarter != null) {
+			bundleStarter.stop(this);
+		}
+	}
+	
+	private IWBundleStartable getBundleStarter() {
+		StringBuffer buffer = new StringBuffer(getBundleName());
+		buffer.append(DOT);
+		buffer.append(IWBundleStartable.DEFAULT_STARTER_CLASS);
+	  	String className = buffer.toString();
+	  	try {
+	  		Class starterClass = Class.forName(className);
+	  		return (IWBundleStartable) starterClass.newInstance();
+	  	}
+	  	catch (ClassNotFoundException ex) {
+	  		// nothing to worry about, some bundles don't have a starter class
+	  	}
+	  	catch (InstantiationException ex) {
+	  		logError("[IWBundle] Instantiation of bundle starter class failed: "+ className);
+	  	}
+	  	catch (IllegalAccessException ex) {
+	  		logError("[IWBundle] Instantiation of bundle starter class failed, access problem: "+ className);
+	  	}
+	  	return null;
+	  }
+	
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
@@ -279,10 +321,13 @@ public class IWBundle implements java.lang.Comparable
 	}
 	private void stopStartClass()
 	{
+		// stopping of starter defined in bundle property
 		if (starter != null)
 		{
 			starter.stop(this);
 		}
+		// stopping of default bundle starter
+		stopBundleStarter();
 	}
 	private void installComponents()
 	{
