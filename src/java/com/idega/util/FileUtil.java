@@ -15,6 +15,8 @@ package com.idega.util;
  import java.io.IOException;
  import java.io.LineNumberReader;
  import java.io.FileReader;
+ import java.net.*;
+ import java.io.*;
  import java.util.Vector;
  import java.util.StringTokenizer;
  import java.util.Iterator;
@@ -229,6 +231,35 @@ public class FileUtil {
         buffer.append((String) iter.next());
       }
     }
+    return buffer.toString();
+  }
+
+
+/** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  public static String getStringFromURL(String uri){
+    StringBuffer buffer = new StringBuffer("");
+    String line;
+    BufferedInputStream bin;
+    BufferedReader in;
+    URL url;
+
+    try {
+      url = new URL(uri);
+      bin = new BufferedInputStream(url.openStream());
+      in = new BufferedReader(new InputStreamReader(bin));
+      //Put the contents in a string
+      while ((line = in.readLine()) != null) {
+        buffer.append(line);
+      }
+      in.close();
+    }
+    catch(MalformedURLException mue) { // URL c'tor
+      return "MalformedURLException: Site not available or wrong url";
+    }
+    catch(IOException ioe) { // Stream constructors
+      return "IOException: Site not available or wrong url";
+    }
+
     return buffer.toString();
   }
 
