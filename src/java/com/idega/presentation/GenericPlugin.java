@@ -4,8 +4,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.idega.builder.presentation.InvisibleInBuilder;
 import com.idega.core.file.data.ICFile;
-public class GenericPlugin extends PresentationObject
+public class GenericPlugin extends PresentationObject implements InvisibleInBuilder
 {
 	private Map params;
 	private String classId;

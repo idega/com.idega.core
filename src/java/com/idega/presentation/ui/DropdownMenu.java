@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.24 2004/01/13 15:50:46 gummi Exp $
+ * $Id: DropdownMenu.java,v 1.25 2004/06/15 18:15:26 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.presentation.ui;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.builder.presentation.InvisibleInBuilder;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 
@@ -19,7 +20,7 @@ import com.idega.data.IDOLegacyEntity;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
-public class DropdownMenu extends GenericSelect {
+public class DropdownMenu extends GenericSelect implements InvisibleInBuilder {
 	private final static String untitled = "untitled";
 
 	public DropdownMenu() {
