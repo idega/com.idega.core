@@ -66,7 +66,7 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void setToSubmit(boolean setToSubmit) {
 		if (setToSubmit)
-			setAttribute("onChange", "this.form.submit()");
+			setOnChange("this.form.submit()");
 		else
 			removeAttribute("onChange");
 	}
