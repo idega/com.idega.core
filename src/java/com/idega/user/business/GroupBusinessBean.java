@@ -646,6 +646,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    * @return a collection of groups
    */
   public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean complementSetWanted) {
+    // author: Thomas
     Collection alreadyCheckedGroups = new ArrayList();
     Collection result = new ArrayList();
     getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, complementSetWanted);
@@ -653,8 +654,13 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   }
   
   public Collection getUsersFromGroupRecursive(Group group)  {
+    return getUsersFromGroupRecursive(group, new ArrayList(0), true);
+  }
+
+  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean complementSetWanted)  {
+    // author: Thomas
     Collection users = new ArrayList();
-    Collection groups = getChildGroupsRecursiveResultFiltered(group, new ArrayList() , true);
+    Collection groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString , complementSetWanted);
     Iterator iterator = groups.iterator();
     while (iterator.hasNext())  {
       Group tempGroup = (Group) iterator.next();
@@ -665,7 +671,6 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     }
     return users;
   }
-
 
   private void getChildGroupsRecursive
     ( Group currentGroup, 

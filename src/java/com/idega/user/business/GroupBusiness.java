@@ -148,5 +148,6 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean complementSetWanted) throws java.rmi.RemoteException;
   public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted) throws java.rmi.RemoteException;
   public Collection getUsersFromGroupRecursive(Group group) ;
+  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean complementSetWanted);
 
 }
