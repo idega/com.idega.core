@@ -4327,10 +4327,32 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		return idoFindPKsBySQL(SQLString, returningNumberOfRecords);
 	}
+
+        /**
+         * @todo why use like? isn't that slower?? also use IDOQuery or at least a StringBuffer!
+         */
 	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind) throws FinderException
 	{
 		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " like '" + toFind + "'");
 	}
+
+        /**
+        * Finds by two columns
+        */
+        protected Collection idoFindAllIDsByColumnsBySQL(String columnName, String toFind, String columnName2 , String toFind2) throws FinderException {
+          IDOQuery query = new IDOQuery();
+          query.appendSelectAllFrom(getTableName());
+          query.appendWhere(columnName);
+          query.appendEqualSign();
+          query.appendWithinSingleQuotes(toFind);
+          query.appendAnd();
+          query.append(columnName2);
+          query.appendEqualSign();
+          query.appendWithinSingleQuotes(toFind2);
+	  return idoFindIDsBySQL(query.toString());
+	}
+
+
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind, String orderByColumnName)
 		throws FinderException
 	{
