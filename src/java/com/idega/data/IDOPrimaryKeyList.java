@@ -298,7 +298,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			    
 			    int partitionSize = iFace.getOptimalEJBLoadFetchSize();
 			    int partitions = (tIndex-fIndex)/partitionSize;
-			    if(partitions==0 || (tIndex-fIndex)%partitions>0){
+			    if((tIndex-fIndex)%partitionSize>0){
 			    		partitions++;
 			    }
 				for(int i = 0; i < partitions; i++){
