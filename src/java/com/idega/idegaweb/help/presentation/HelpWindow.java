@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.1 2004/01/22 22:45:34 tryggvil Exp $
+ * $Id: HelpWindow.java,v 1.2 2004/01/23 08:28:27 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -17,7 +17,6 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.help.presentation.*;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
