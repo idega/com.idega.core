@@ -61,17 +61,18 @@ public class EventTimer implements Runnable{
   }
 
   public void run(){
-    while(runThread){
+    while (runThread) {
       try {
-      	if(intervalToSleepOnStart!=0){
+      	if (intervalToSleepOnStart!=0) {
       		t.sleep(intervalToSleepOnStart);
       		intervalToSleepOnStart=0;
       	}
-        if( listener!=null ) listener.actionPerformed(new ActionEvent(this,ActionEvent.ACTION_PERFORMED,actionCommand));
+        if (listener != null) listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
         t.sleep(interval);
       }
       catch (Exception e) {
-        e.printStackTrace(System.out);
+      	if (runThread)
+	        e.printStackTrace(System.out);
       }
     }
   }
@@ -99,6 +100,7 @@ public class EventTimer implements Runnable{
   public void stop(){
     if ( t != null ){
       runThread = false;
+      t.interrupt();
     }
   }
 
