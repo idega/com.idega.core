@@ -45,6 +45,17 @@ public class SelectQuery implements Outputable {
         addColumn(table.getColumn(columname));
     }
 
+    /**
+     * Syntax sugar for addColumn(Column).
+     */
+    public void addColumn(Table table, String columname, boolean distinct) {
+    		Column column = table.getColumn(columname);
+    		if (distinct) {
+    			column.setAsDistinct();
+    		}
+        addColumn(column);
+    }
+
 
     public void removeColumn(Column column) {
         columns.remove(column);

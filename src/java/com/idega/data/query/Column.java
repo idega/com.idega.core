@@ -9,7 +9,8 @@ import com.idega.data.query.output.ToStringer;
  */
 public class Column implements Outputable {
 
-    private String name;
+    private boolean distinct = false;
+		private String name;
     private Table table;
 
     public Column(Table table, String name) {
@@ -28,12 +29,19 @@ public class Column implements Outputable {
     public String getName() {
         return name;
     }
+    
+    public void setAsDistinct() {
+    	distinct = true;
+    }
 
     public String toString() {
         return ToStringer.toString(this);
     }
 
     public void write(Output out) {
+    	if (distinct) {
+    		out.println("DISTINCT ");
+    	}
     	if (getTable() != null) {
     		out.print(getTable().getAlias()).print('.');
     	}
