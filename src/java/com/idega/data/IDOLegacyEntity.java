@@ -27,7 +27,7 @@ public interface IDOLegacyEntity extends IDOEntity{
  public java.lang.Class getRelationShipClass(java.lang.String p0);
  public void addTo(com.idega.data.IDOLegacyEntity p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4)throws java.sql.SQLException;
  public void addTo(com.idega.data.IDOLegacyEntity p0,java.lang.String p1,java.lang.String p2)throws java.sql.SQLException;
- public void addColumnName(java.lang.String p0,java.lang.String p1,boolean p2,boolean p3,java.lang.String p4);
+ //public void addColumnName(java.lang.String p0,java.lang.String p1,boolean p2,boolean p3,java.lang.String p4);
  public boolean equals(com.idega.data.IDOLegacyEntity p0);
  public void setMetaDataAttributes(java.util.Hashtable p0);
  public void addTo(com.idega.data.IDOLegacyEntity p0)throws java.sql.SQLException;
@@ -159,9 +159,9 @@ public interface IDOLegacyEntity extends IDOEntity{
  public boolean getIfInsertStartData();
  public String getTableName();
  public void setEntityState(int state);
- public java.util.Vector getAttributes();
+ //public java.util.Collection getAttributes();
  public IDOLegacyEntity getIDOEntityStaticInstance();
- public String getCachedColumnNamesList();
+ //public String getCachedColumnNamesList();
  public boolean hasBeenSetNull(String columnName);
  public Object getPrimaryKeyValue();
  public boolean hasLobColumn()throws Exception;
