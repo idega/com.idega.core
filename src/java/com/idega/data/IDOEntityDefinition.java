@@ -26,4 +26,7 @@ public interface IDOEntityDefinition {
 	 * @throws NoIndexException is no indexes are specified
 	 */
 	public HashMap getIndexes() throws NoIndexException;
+	public boolean hasAutoIncrementColumn();
+	public void setHasAutoIncrementColumn(boolean autoIncrementColumn);
+	
 }

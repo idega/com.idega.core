@@ -28,7 +28,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private HashMap _indexes = null;
 	private Class _interfaceClass=null;
 	private Class _beanClass = null;
-
+	private boolean _hasAutoIncrementColumn = true;
 	/**
 	 * 
 	 */
@@ -247,5 +247,17 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		} else {
 			return null;
 		}
+	}
+	/**
+	 * @return Returns the _hasAutoIncrementColumn.
+	 */
+	public boolean hasAutoIncrementColumn() {
+		return _hasAutoIncrementColumn;
+	}
+	/**
+	 * @param autoIncrementColumn The _hasAutoIncrementColumn to set.
+	 */
+	public void setHasAutoIncrementColumn(boolean autoIncrementColumn) {
+		_hasAutoIncrementColumn = autoIncrementColumn;
 	}
 }
