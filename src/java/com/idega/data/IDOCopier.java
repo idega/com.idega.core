@@ -22,7 +22,7 @@ public class IDOCopier {
   private List entityRelationshipInfos= new Vector();
   private List copiedEntityClasses=new Vector();
 
-  private IDOCopier(){
+  protected IDOCopier(){
   }
 
   private IDOCopier(GenericEntity entity) {
