@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.1 2004/12/20 08:55:01 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.2 2004/12/31 02:17:29 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,14 +18,15 @@ import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.FacesUtil;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/31 02:17:29 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -128,9 +129,8 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		
 		//HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
 		//return request.getRequestURI();
-		String servletPath = context.getExternalContext().getRequestContextPath();
-		String requestUri = getViewManager().getRequestUrl(context);
-		return servletPath+requestUri;
+		String requestUri = FacesUtil.getRequestUri(context);
+		return requestUri;
 	}
 	
 	protected ViewManager getViewManager(){
