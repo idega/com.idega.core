@@ -368,6 +368,60 @@ public class MethodFinder
 		//return matchedMethods;
 		return (Method[]) matchedMethodsVector.toArray(new Method[0]);
 	}
+	
+	private final static String openingParentheses = "(";
+	private final static String closingParentheses = ")";
+	private final static String comma = ",";
+	
+	/**
+	 * Gets a string representation of a class method
+	 *  "getMyValue(String arg)"
+	 * @param method
+	 * @return string representation of method
+	 */
+	public String getMethodNameWidthParameters(Method method){
+		String methodToString = method.getName()+openingParentheses;
+		Class[] arguments = method.getParameterTypes();
+		for (int j = 0; j < arguments.length; j++) {
+			if(j!=0){
+				methodToString += comma;
+			}
+			methodToString += arguments[j].getName();
+		}
+		methodToString += closingParentheses;
+	  	return methodToString;
+	}
+	
+	/**
+	 * Gets a map of class methods, keyed by getMethodNameWithParameter method
+	 * lastSuperClassToReflect tells at wich superclass the reflection should stop
+	 * if null then only the methods of the base class 
+	 * @param methodClass
+	 * @param lastSuperClassToReflect
+	 * @param filters
+	 * @return map of methods
+	 */
+	public Map getMapOfClassMethodsRecursive(Class methodClass, Class lastSuperClassToReflect,String[] filters){
+		Map map = new HashMap();
+		boolean noStopClass = lastSuperClassToReflect ==null;
+		while(!methodClass.equals(lastSuperClassToReflect)){
+			Method[] methods = methodClass.getMethods();
+			for (int i = 0; i < filters.length; i++) {
+				for (int j = 0; j < methods.length; j++) {
+					String name = MethodFinder.getInstance().getMethodNameWidthParameters(methods[j]);
+					if(name.startsWith(filters[i])){
+						map.put(name,methods[j]);
+						System.out.println("Putting method for "+name);
+					}
+				}
+			}
+			if(noStopClass)
+				break;
+			methodClass = methodClass.getSuperclass();
+		}
+		return map;
+	}
+	
 	/**
 	 * Test main method
 	 **/
@@ -386,4 +440,5 @@ public class MethodFinder
 			e.printStackTrace();	
 		}*/
 	}
+	
 }
