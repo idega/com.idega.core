@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.77 2003/07/23 12:05:04 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.78 2003/07/25 17:06:59 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1250,10 +1250,18 @@ public abstract class DatastoreInterface {
 	}
 	void appendPrimaryKeyWhereClause(GenericEntity entity, StringBuffer bufferToAppendTo) {
 		//try {
+		
 		bufferToAppendTo.append(" where ");
 		bufferToAppendTo.append(entity.getIDColumnName());
 		bufferToAppendTo.append("=");
-		bufferToAppendTo.append(entity.getPrimaryKey());
+		if(entity.getPrimaryKeyClass()==Integer.class){
+			bufferToAppendTo.append(entity.getPrimaryKey());
+		} else {
+			bufferToAppendTo.append("'");
+			bufferToAppendTo.append(entity.getPrimaryKey());
+			bufferToAppendTo.append("'");
+		}
+
 		//} catch (java.rmi.RemoteException rme) {
 		//	throw new RuntimeException(rme.getMessage());
 		//}
