@@ -178,7 +178,7 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
     public void setAutoCreateStrings(boolean ifAutoCreate){
       this.setProperty("auto-create-localized-strings",ifAutoCreate);
-      CREATE_STRINGS = ifAutoCreate;
+      setAutoCreateStringsMode(ifAutoCreate);
     }
 
     public boolean getIfAutoCreateStrings() {
@@ -190,6 +190,10 @@ public class IWMainApplicationSettings extends IWPropertyList{
 	return Boolean.valueOf(value).booleanValue();
       }
     }
+
+  public static void setAutoCreateStringsMode(boolean ifAutoCreate){
+    CREATE_STRINGS = ifAutoCreate;
+  }
 
   public static boolean isAutoCreateStringsActive(){
     return CREATE_STRINGS;
