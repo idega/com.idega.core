@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIManager.java,v 1.3 2005/02/27 15:16:34 eiki Exp $
+ * $Id: IWActionURIManager.java,v 1.4 2005/02/28 13:37:06 eiki Exp $
  * Created on 31.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,7 @@ import com.idega.repository.data.Singleton;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/27 15:16:34 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/02/28 13:37:06 $ by $Author: eiki $
  * 
  * A singleton business object to get an IWActionURIHandler for an URI or the redirect URI directly.<br>
  * Register you IWActionURIHandlers using the registerHandler methods. <br>
@@ -28,7 +28,7 @@ import com.idega.repository.data.Singleton;
  * and set a low number (0-x) to prioratize your handler before the default one.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWActionURIManager implements Singleton {
 	
@@ -117,13 +117,11 @@ public class IWActionURIManager implements Singleton {
 	}
 	
 	public String getRedirectURI(String requestURI){
-		
-		requestURI = IWMainApplication.getDefaultIWMainApplication().getURIFromURL(requestURI);
-		
+				
 		IWActionURIHandler handler = getIWActionURIHandler(requestURI);
 		
 		IWActionURI actionURI = handler.getIWActionURI(requestURI);
-		
+	
 		if(actionURI==null){
 			actionURI = new IWActionURI(requestURI);
 		}
@@ -134,7 +132,6 @@ public class IWActionURIManager implements Singleton {
 	
 	public IWActionURIHandler getIWActionURIHandler(String requestURI){
 	//TODO register handlers with regular expressions	, and lookup with regexp instead of iterator	
-		requestURI = IWMainApplication.getDefaultIWMainApplication().getURIFromURL(requestURI);
 		IWActionURI actionURI = new IWActionURI(requestURI);
 		List handlers = getHandlerList();
 		Iterator iter = handlers.iterator();

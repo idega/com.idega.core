@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURI.java,v 1.2 2005/02/25 14:50:13 eiki Exp $
+ * $Id: IWActionURI.java,v 1.3 2005/02/28 13:37:06 eiki Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,13 +9,15 @@
  */
 package com.idega.core.uri;
 
+import com.idega.idegaweb.IWMainApplication;
+
 
 /**
  * 
- *  Last modified: $Date: 2005/02/25 14:50:13 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/02/28 13:37:06 $ by $Author: eiki $
  * A "parser" class for an action URI that divides an action uri into three parts: action, path and identifier
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWActionURI {
 	
@@ -23,6 +25,7 @@ public class IWActionURI {
 	private String pathPart;
 	private String identifierPart;
 	private String originalURI;
+	private String contextURI;
 
 	/**
 	 * 
@@ -35,6 +38,8 @@ public class IWActionURI {
 		pathPart = extractPathPart(requestURI);
 		
 		identifierPart = extractIdentifierPath(requestURI);
+		
+		contextURI = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();
 		
 //		
 //		String[] parts = requestURI.split("/");
@@ -77,8 +82,10 @@ public class IWActionURI {
 	 */
 	protected String extractActionPart(String requestURI) {
 		//get the action part
-		String[] parts = requestURI.split("/");
-		return parts[3];
+		int index = requestURI.indexOf(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
+		String action = requestURI.substring(index+IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX.length());
+		action = action.substring(0,action.indexOf("/"));
+		return action;
 	}
 
 
@@ -140,4 +147,12 @@ public class IWActionURI {
 	public String toString(){
 		return getOriginalURI();
 	}
+	
+	public String getContextURI(){
+		if(!contextURI.endsWith("/")){
+			contextURI = contextURI+"/";
+		}
+		return contextURI;
+	}
+	
 }
