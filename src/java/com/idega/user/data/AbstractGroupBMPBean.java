@@ -280,11 +280,6 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGeneralGroup().getParentGroups();
 	}
 
-	public void removeGroup(com.idega.user.data.Group p0)
-		throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
-		this.getGeneralGroup().removeGroup(p0);
-	}
-
 	public void addGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
 		this.getGeneralGroup().addGroup(p0);
 	}
@@ -306,25 +301,8 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGeneralGroup().getAllGroupsContainingUser(p0);
 	}
 
-	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
-		this.getGeneralGroup().removeGroup(p0, p1);
-	}
-
 	public java.lang.String getGroupTypeValue() throws java.rmi.RemoteException {
 		return this.getGroupTypeKey();
-	}
-
-	public void removeUser(com.idega.user.data.User p0) {
-		try {
-			this.getGeneralGroup().removeUser(p0);
-		}
-		catch (Exception e) {
-			throw new IDORuntimeException(e);
-		}
-	}
-
-	public void removeGroup() throws javax.ejb.EJBException, java.rmi.RemoteException {
-		this.getGeneralGroup().removeGroup();
 	}
 
 	public boolean hasRelationTo(Group group) throws java.rmi.RemoteException {
