@@ -14,6 +14,7 @@ import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.Script;
 import com.idega.util.URLUtil;
 import com.idega.util.text.TextSoap;
 
@@ -30,6 +31,9 @@ public class GenericButton extends GenericInput {
 	private final String buttonImageStyle = "cursor:hand;";
 	private Class _windowClassToOpen;
 	private Map parameterMap;
+	
+	private boolean _onClickConfirm = false;
+	private String _confirmMessage;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -54,20 +58,61 @@ public class GenericButton extends GenericInput {
 		setAttribute("src",source);
 	}
 
+	/**
+	 * @see com.idega.presentation.PresentationObject#main(IWContext)
+	 */
+	public void main(IWContext iwc) throws Exception {
+		if (_onClickConfirm) {
+			Script script = getParentPage().getAssociatedScript();
+			if (script != null)
+				script = new Script();
+					
+			boolean addFunction = false;
+					
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("function onClickConfirm(message) {").append("\n\t");
+			buffer.append("var submit = confirm(message);").append("\n\t");
+			buffer.append("if (submit)").append("\n\t\t");
+					
+			if (_windowClassToOpen != null) {
+				String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
+				buffer.append(Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc)).append(";\n");
+				addFunction = true;
+			}
+			if (_pageID != -1) {
+				buffer.append("window.location='"+getURLString(iwc, false)+"';").append("\n");
+				addFunction = true;
+			}
+			if (_fileID != -1) {
+				buffer.append(Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication()))).append(";\n");
+				addFunction = true;
+			}
+
+			buffer.append("}");
+			if (addFunction) {
+				setOnClick("javascript:onClickConfirm('"+_confirmMessage+"')");
+				script.addFunction("onClickConfirm", buffer.toString());
+				getParentPage().setAssociatedScript(script);
+			}
+		}
+	}
+	
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
 			if (asImageButton) {
 				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
 			}
-			if (_windowClassToOpen != null) {
-				String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
-				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
-			}
-			if (_pageID != -1) {
-				setOnClick("javascript:window.location='"+getURLString(iwc)+"';");
-			}
-			if (_fileID != -1) {
-				setOnClick("javascript:"+Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication())));	
+			if (!_onClickConfirm) {
+				if (_windowClassToOpen != null) {
+					String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
+					setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
+				}
+				if (_pageID != -1) {
+					setOnClick("javascript:window.location='"+getURLString(iwc, true)+"';");
+				}
+				if (_fileID != -1) {
+					setOnClick("javascript:"+Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication())));	
+				}
 			}
 			
 			getParentPage();
@@ -175,8 +220,8 @@ public class GenericButton extends GenericInput {
 		return TextSoap.convertSpecialCharacters(returnString.toString());
 	}
 	
-	private String getURLString(IWContext iwc) {
-		URLUtil url = new URLUtil(BuilderLogic.getInstance().getIBPageURL(iwc, _pageID));
+	private String getURLString(IWContext iwc, boolean convert) {
+		URLUtil url = new URLUtil(BuilderLogic.getInstance().getIBPageURL(iwc, _pageID), convert);
 		if (parameterMap != null) {
 			Iterator iter = parameterMap.keySet().iterator();
 			while (iter.hasNext()) {
@@ -198,5 +243,9 @@ public class GenericButton extends GenericInput {
 	public void setFileToOpen(int fileID) {
 		_fileID = fileID;
 	}
-
+	
+	public void setOnClickConfirm(String confirmMessage) {
+		_onClickConfirm = true;
+		_confirmMessage = confirmMessage;
+	}
 }
