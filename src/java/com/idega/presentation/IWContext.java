@@ -229,10 +229,10 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		if (parameterName == null)
 			return false;
 		boolean theReturn = false;
-		if (getRequest().getParameter(parameterName) != null) {
+		if (getRequest().getParameter(parameterName) != null && getRequest().getParameter(parameterName).length() > 0) {
 			theReturn = true;
 		}
-		if (getRequest().getParameter(parameterName + ".x") != null) {
+		if (getRequest().getParameter(parameterName + ".x") != null && getRequest().getParameter(parameterName + ".x").length() > 0) {
 			theReturn = true;
 		}
 		return theReturn;
