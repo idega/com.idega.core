@@ -605,8 +605,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    *  The last mentioned point ist the most important difference to the other method getChildGroupsrecursive.
    * @param groupId 
    * @param groupTypesAsString - a collection of strings representing group types
-   * @param complementSetWanted - should be set to true if you want to fetch all the groups that have group types
-   * that are contained in the collection groupTypesAsString else false if you want to get the complement set
+   * @param complementSetWanted - should be set to false if you want to fetch all the groups that have group types
+   * that are contained in the collection groupTypesAsString else true if you want to get the complement set
    * @return a collection of groups
    */
   public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted) {
@@ -632,7 +632,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   }
     
     
-  /** Returns all the groups that are direct and indirect chhildren of the specified group.
+  /** Returns all the groups that are direct and indirect children of the specified group.
    *  The returned groups are filtered:
    *  If the complement set is wanted, all groups are returned that do not have one of the specified group types else
    *  all groups are returned that have one of the specified group types.  
@@ -641,8 +641,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    *  The last mentioned point ist the most important difference to the other method getChildGroupsRecursive.
    * @param group
    * @param groupTypesAsString - a collection of strings representing group types
-   * @param complementSetWanted - should be set to true if you want to fetch all the groups that have group types
-   * that are contained in the collection groupTypesAsString else false if you want to get the complement set
+   * @param complementSetWanted - should be set to false if you want to fetch all the groups that have group types
+   * that are contained in the collection groupTypesAsString else true if you want to get the complement set
    * @return a collection of groups
    */
   public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean complementSetWanted) {
