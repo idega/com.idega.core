@@ -1,0 +1,77 @@
+package com.idega.io;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.idega.idegaweb.IWApplicationContext;
+
+/**
+ * <p>Title: idegaWeb</p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2003</p>
+ * <p>Company: idega Software</p>
+ * @author <a href="thomas@idega.is">Thomas Hilbig</a>
+ * @version 1.0
+ * Created on Mar 31, 2004
+ */
+public abstract class ReaderFromFile {
+	
+	protected IWApplicationContext iwac = null;
+	protected Storable storable = null;
+
+	public ReaderFromFile(IWApplicationContext iwac) {
+		this.iwac = iwac;
+	}
+	
+	public ReaderFromFile(Storable storable, IWApplicationContext iwac) {
+		this(iwac);
+		setTarget(storable);
+	}
+	
+	public abstract void openContainer(File file) throws IOException;
+	
+	public abstract void setName(String name);
+	
+	public abstract void setMimeType(String mimeType);
+	
+	public abstract InputStream readData(InputStream source) throws IOException;
+	
+	public void setTarget(Storable storable) {
+		this.storable = storable;
+	}
+	
+	protected void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
+		// parts of this method  were copied from "Java in a nutshell" by David Flanagan
+    byte[] buffer = new byte[4096];  // A buffer to hold file contents
+    int bytesRead;                       
+    while((bytesRead = source.read(buffer)) != -1)  {  // Read bytes until EOF
+      destination.write(buffer, 0, bytesRead);    
+    }
+	}
+	
+  protected void close(InputStream input) {
+  	try {
+			if (input != null) {
+				input.close();
+			}
+		}
+		// do not hide an existing exception
+		catch (IOException io) {
+		}
+  }		
+  
+  protected void close(OutputStream output) {
+  	try {
+  		if (output != null) {
+  			output.close();
+  		}
+  	}
+  	// do not hide an existing exception
+  	catch (IOException io) {
+  	}
+  }
+
+
+}
