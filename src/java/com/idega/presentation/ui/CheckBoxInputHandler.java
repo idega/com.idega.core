@@ -54,4 +54,8 @@ public class CheckBoxInputHandler extends CheckBox implements InputHandler {
         	ret = CHECKED;
         return ret;
     }
+    
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 }
