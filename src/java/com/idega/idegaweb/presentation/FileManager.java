@@ -383,7 +383,7 @@ public class FileManager extends Block {
 		table.setColor(1, 1, headerBackgroundColor);
 		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
 		table.add(getBoldText(iwrb.getLocalizedString("file","File")+":"), 1, 2);
-		FileInput fileInput = new FileInput("added_file");
+		FileInput fileInput = new FileInput();
 		
 		table.add(fileInput, 2, 2);
 		CheckBox overWriteCheck = new CheckBox("overwrite");
