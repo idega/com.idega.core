@@ -44,8 +44,8 @@ import com.idega.io.UploadFile;
 public class IWContext extends Object implements IWUserContext,IWApplicationContext{
 
 
-private HttpServletRequest Request;
-private HttpServletResponse Response;
+private HttpServletRequest _request;
+private HttpServletResponse _response;
 private final static String LOCALE_ATTRIBUTE="idegaweb_locale";
 
 private final static String WEAK_HASHMAP_KEY ="idegaweb_weak_hashmap";
@@ -64,24 +64,24 @@ private PrintWriter cacheWriter;
 private HashtableMultivalued _multipartParameters = null;
 private UploadFile _uploadedFile = null;
 
-public IWContext(HttpServletRequest Request,HttpServletResponse Response){
-	this.Request=Request;
-	this.Response=Response;
-	setLanguage(getRightLanguage(Request,Response));
+public IWContext(HttpServletRequest request,HttpServletResponse response){
+	this.setRequest(request);
+	this.setResponse(response);
+	setLanguage(getRightLanguage(request,response));
 	setAllDefault();
 }
 
-public IWContext(HttpServletRequest Request,HttpServletResponse Response,String language){
-	this.Request=Request;
-	this.Response=Response;
+public IWContext(HttpServletRequest request,HttpServletResponse response,String language){
+	this.setRequest(request);
+	this.setResponse(response);
 	setLanguage(language);
 	setAllDefault();
 }
 
-public IWContext(HttpServletRequest Request,HttpServletResponse Response,HttpSession session){
-	this.Request=Request;
-	this.Response=Response;
-	setLanguage(getRightLanguage(Request,Response));
+public IWContext(HttpServletRequest request,HttpServletResponse response,HttpSession session){
+	this.setRequest(request);
+	this.setResponse(response);
+	setLanguage(getRightLanguage(request,response));
 	setAllDefault();
 	//this.session=session;
 }
@@ -153,11 +153,11 @@ public void setUploadedFile(UploadFile file){
 }
 
 public String getUserAgent(){
-	return Request.getHeader("User-agent");
+	return getRequest().getHeader("User-agent");
 }
 
 public String getReferer(){
-	return Request.getHeader("Referer");
+	return getRequest().getHeader("Referer");
 }
 
 public boolean isNetscape(){
@@ -243,10 +243,10 @@ private String getRightLanguage(HttpServletRequest Request,HttpServletResponse R
 
 public boolean isParameterSet(String parameterName){
 	boolean theReturn = false;
-	if (Request.getParameter(parameterName) != null){
+	if (getRequest().getParameter(parameterName) != null){
 		theReturn = true;
 	}
-	if (Request.getParameter(parameterName+".x") != null){
+	if (getRequest().getParameter(parameterName+".x") != null){
 		theReturn = true;
 	}
 	return theReturn;
@@ -254,7 +254,7 @@ public boolean isParameterSet(String parameterName){
 
 public boolean isParameterSet(Parameter parameter){
 	boolean theReturn = false;
-	if (Request.getParameter(parameter.getName()) != null){
+	if (getRequest().getParameter(parameter.getName()) != null){
 		theReturn = true;
 	}
 	return theReturn;
@@ -264,8 +264,8 @@ public boolean isParameterSet(Parameter parameter){
 public boolean parameterEquals(Parameter parameter){
 	boolean theReturn = false;
 	if (parameter != null){
-		if (Request.getParameter(parameter.getName()) != null){
-			if (Request.getParameter(parameter.getName()).equals(parameter.getValue())){
+		if (getRequest().getParameter(parameter.getName()) != null){
+			if (getRequest().getParameter(parameter.getName()).equals(parameter.getValue())){
 				theReturn=true;
 			}
 		}
@@ -275,8 +275,8 @@ public boolean parameterEquals(Parameter parameter){
 
 public boolean parameterEquals(String parameterName,String parameterValue){
 	boolean theReturn = false;
-	if (Request.getParameter(parameterName) != null){
-		if (Request.getParameter(parameterName).equals(parameterValue)){
+	if (getRequest().getParameter(parameterName) != null){
+		if (getRequest().getParameter(parameterName).equals(parameterValue)){
 		theReturn=true;
 		}
 	}
@@ -305,24 +305,24 @@ public String getPreference(String name){
 /**
  * @deprecated
  */
-public void setRequest(HttpServletRequest Request){
-	this.Request=Request;
+public void setRequest(HttpServletRequest request){
+	this._request=request;
 }
 
 /**
  * @deprecated
  */
-public void setResponse(HttpServletResponse Response){
-	this.Response = Response;
+public void setResponse(HttpServletResponse response){
+	this._response = response;
 }
 
 public void setLanguage(String language){
 	this.language = language;
 	if (language.equals(IWConstants.MARKUP_LANGUAGE_WML)){
-		this.Response.setContentType("text/vnd.wap.wml");
+		this.getResponse().setContentType("text/vnd.wap.wml");
 	}
 	if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)){
-		this.Response.setContentType("text/html");
+		this.getResponse().setContentType("text/html");
 	}
 
 }
@@ -337,7 +337,7 @@ public void setInterfaceStyle(String InterfaceStyle){
 }
 
 public HttpServletRequest getRequest(){
-	return this.Request;
+	return this._request;
 }
 
 public Cookie[] getCookies() {
@@ -406,7 +406,7 @@ public String getQueryString(){
 }
 
 public HttpServletResponse getResponse(){
-	return this.Response;
+	return this._response;
 }
 
 public Object getSessionAttribute(String attributeName){
@@ -815,7 +815,7 @@ private Map getWeakHashMap(){
 }
 
 public void setContentType(String contentType){
-  Response.setContentType(contentType);
+  getResponse().setContentType(contentType);
 }
 
 void setCacheing(boolean ifCacheing){
@@ -848,19 +848,19 @@ public void setCacheWriter(PrintWriter writer){
   }
 
   public String getRequestContentType(){
-    return Request.getContentType();
+    return getRequest().getContentType();
   }
 
   public String getRemoteIpAddress(){
-    return Request.getRemoteAddr();
+    return getRequest().getRemoteAddr();
   }
 
   public String getRemoteHostName(){
-    return Request.getRemoteHost();
+    return getRequest().getRemoteHost();
   }
 
   public String getRemoteUser(){
-    return Request.getRemoteUser();
+    return getRequest().getRemoteUser();
   }
 
   public boolean hasPermission(String permissionKey, PresentationObject obj){
