@@ -80,6 +80,8 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
     public IWTabbedPane(int tabPlacement) {
 
         super(1,2);
+        
+     //   this.setStyleClass("back"); // added - birna 
 
         this.setCellpadding(0);
 

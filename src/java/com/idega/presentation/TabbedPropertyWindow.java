@@ -9,7 +9,7 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.ui.Window;
-
+import com.idega.user.presentation.StyledIWAdminWindow;
 
 /**
  * Title:        IW
@@ -19,7 +19,7 @@ import com.idega.presentation.ui.Window;
  * @version 1.0
  */
 
-public abstract class TabbedPropertyWindow extends Window {
+public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
 
   protected TabbedPropertyPanel panel = null;
 
@@ -31,10 +31,14 @@ public abstract class TabbedPropertyWindow extends Window {
     super(width,height);
     super.setScrollbar(false);
     super.setAllMargins(0);
-    super.setTopMargin(3);
+    super.setTopMargin(1);//changed from 3
   }
 
   public void _main(IWContext iwc) throws Exception {
+  	
+  	//added -birna
+  	panel = new TabbedPropertyPanel(iwc);
+  	
     this.empty();
 		if(disposeOfPanel(iwc)){
 			//temp solution
@@ -68,7 +72,7 @@ public abstract class TabbedPropertyWindow extends Window {
         close();
     }
     else {
-      this.add(panel);
+      this.add(panel,iwc);
     }
     super._main(iwc);
 

@@ -12,11 +12,16 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.user.app.UserApplication;
+import com.idega.user.event.CreateGroupEvent;
 import com.idega.util.GenericFormCollector;
 import com.idega.util.datastructures.Collectable;
 //import com.idega.presentation.ui.ResetButton;
+import com.idega.user.presentation.StyledIWAdminWindow;
 
 /**
  * Title:        UserModule
@@ -27,7 +32,7 @@ import com.idega.util.datastructures.Collectable;
  * @version 1.0
  */
 
-public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmitListener {
+public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmitListener { 
 
   private Table frameTable;
   private Table buttonTable;
@@ -45,11 +50,19 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private SubmitButton ok;
   private SubmitButton cancel;
-  private SubmitButton apply;
+//  private SubmitButton apply;
+  
+  
+	private CreateGroupEvent _createEvent;
 
   private boolean useOkButton=true;
   private boolean useCancelButton=true;
   private boolean useApplyButton=true;
+  
+  //added - birna
+  public TabbedPropertyPanel(IWContext iwc) {
+  	this("undefined", iwc);
+  }
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
     frameTable = new Table();
@@ -74,17 +87,23 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     this.add(frameTable);
     initializeLayout();
     collector = new GenericFormCollector();
-    initializeButtons();
+    initializeButtons(iwc);
     lineUpButtons();
     ok.addIWSubmitListener(this, this,iwc);
-    apply.addIWSubmitListener(this, this,iwc);
+ //   apply.addIWSubmitListener(this, this,iwc);
     cancel.addIWSubmitListener(this, this,iwc);
   }
 
-  public void initializeButtons(){
-    ok = new SubmitButton("     OK     ");
-    cancel = new SubmitButton(" Cancel ");
-    apply = new SubmitButton("  Apply  ");
+  public void initializeButtons(IWContext iwc){
+  	//changed for localized buttons - birna
+  	IWResourceBundle iwrb = getResourceBundle(iwc);
+		ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
+		cancel = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), iwrb.getLocalizedString("close", "Close"));
+//		apply = new SubmitButton(iwrb.getLocalizedImageButton("apply", "Apply"),iwrb.getLocalizedString("commit", "Commit"));
+
+//    ok = new SubmitButton("     OK     ");
+//    cancel = new SubmitButton(" Cancel ");
+//    apply = new SubmitButton("  Apply  ");
   }
 
 
@@ -123,7 +142,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     tpane.dispose(iwc);
     ok.endEvent(iwc);
     cancel.endEvent(iwc);
-    apply.endEvent(iwc);
+//    apply.endEvent(iwc);
   }
 
 
@@ -164,16 +183,17 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
       this.cancelClicked = false;
       this.applyClicked = false;
    
-    }else if(e.getSource() == apply){
-      boolean success = collector.storeAll(e.getIWContext());
-      this.okClicked = false;
-      this.cancelClicked = false;
-      if(success){
-        this.applyClicked = true;
-      }else{
-        this.applyClicked = false;
-      }
-    }else if(e.getSource() == cancel){
+//    }else if(e.getSource() == apply){
+//      boolean success = collector.storeAll(e.getIWContext());
+//      this.okClicked = false;
+//      this.cancelClicked = false;
+//      if(success){
+//        this.applyClicked = true;
+//      }else{
+//        this.applyClicked = false;
+//      }
+    }
+    else if(e.getSource() == cancel){
       this.okClicked = false;
       this.cancelClicked = true;
       this.applyClicked = false;
@@ -232,9 +252,9 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     return cancel;
   }
 
-  public SubmitButton getApplyButton(){
-    return apply;
-  }
+//  public SubmitButton getApplyButton(){
+//    return apply;
+//  }
 
 
   public void lineUpButtons(){
@@ -255,7 +275,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
     buttonTable.add(ok,1,1);
     buttonTable.add(cancel,3,1);
-    buttonTable.add(apply,5,1);
+//    buttonTable.add(apply,5,1);
 
     frameTable.add(buttonTable,1,2);
     frameTable.setAlignment(1,2,"right");

@@ -136,23 +136,17 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
     public PresentationObject getTab(int index,boolean selected){
 
       Link tempObj = (Link)this.getAddedTabs().elementAt(index);
-
+      tempObj.setStyleClass("styledLink"); //added - birna
       Tab tempTab = new Tab(this.getColor());
-
       tempTab.setSelected(selected);
-
-      if(selected){
-
-        tempTab.addLink(tempObj.getObject());
-
-      } else {
-
-        tempTab.addLink(tempObj);
-
-      }
-
+      tempTab.addLink(tempObj); //added - birna
+      //commented out - birna
+//      if(selected){
+//        tempTab.addLink(tempObj.getObject());
+//      } else {
+//        tempTab.addLink(tempObj);
+//      }
       return tempTab;
-
     }
 
 
@@ -168,29 +162,17 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
 
     public void lineUpTabs(){
-
       //this.resize(this.getAddedTabs().size()+3, 2);
-
       this.empty();
 
-
-
       IWColor color = getColor();
-
       IWColor dark = color.darker();
-
       IWColor darker = dark.darker();
-
       IWColor darkest = darker.darker();
-
       IWColor bright = color.brighter();
 
-
-
       if(this.getSelectedIndex() == -1 && this.getAddedTabs().size() != 0){
-
         this.setSelectedIndex(0);
-
       }
       
       int row = 2;
@@ -203,7 +185,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
         this.add(tempObj,column,row-1);
         this.add(Text.emptyString(),column,row);
 //        this.setWidth(i+2,tempObj.getWidth());
-        this.setWidth(column,"70");
+        this.setWidth(column,"100%");
         this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);        
         if ( i == 4 ) {
         	row = 2;
@@ -216,37 +198,21 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 				size = 5;
 				row = 4;	
 			}
-
-      this.add(Text.emptyString(), 1, row-1);
-
-      this.add(Text.emptyString(), 1, row);
-
-      this.add(Text.emptyString(), size+2, row);
-
-      this.add(Text.emptyString(), size+3, row-1);
-
-      this.add(Text.emptyString(), size+3, row);
-
-
-
-      this.setWidth(size+3,"1");
-
-      this.setWidth(size+2,"100%");
-
-      this.setHeight(2,"1");
-
-      this.setWidth("100%");
-
-      this.setWidth(1,"3");
-
-
-
-      this.setColor(1, row, bright);
-
-      this.setColor(size+2, row, bright);
-
-      this.setColor(size+3, row, darkest);
-
+//      this.add(Text.emptyString(), 1, row-1);
+//      this.add(Text.emptyString(), 1, row);
+//      this.add(Text.emptyString(), size+2, row);
+//      this.add(Text.emptyString(), size+3, row-1);
+//      this.add(Text.emptyString(), size+3, row);
+//      
+//      this.setWidth(size+3,"1");
+//      this.setWidth(size+2,"100%");
+//      this.setHeight(2,"1");
+//      this.setWidth("100%");
+//      this.setWidth(1,"3");
+//
+//      this.setColor(1, row, bright);
+//      this.setColor(size+2, row, bright);
+//      this.setColor(size+3, row, darkest);
     }
 
 
@@ -298,49 +264,28 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
         private IWColor color;
         private IWColor dark;
         private IWColor tabColor;
-        
-        private boolean style = true; //style is default set to isiStyle - birna
+        private String styleSelectedBox = "selectedBox";
+        private String styleBox = "box";
+        private String styleName;
 
         public Tab(IWColor color){
           super();
-          this.color = color;
+//          this.color = color;
           selected = false;
           this.setCellpadding(0);
           this.setCellspacing(0);
 //          this.setWidth(TabName.length()*10);
-          this.setWidth(75);
+//          this.setWidth(75);
           newStyleInitializeTab();
           //initilizeTab();
         }
         //a function to initialize the new style for tabbed UserPropertyWindow - birna
         public void newStyleInitializeTab() {
-					this.setStyleClass("box"); //"box" is a table style in memberStyles.css
-        	this.resize(3,3);
-					for (int i=1;i <= 3 ; i++) {
-						for (int j=1;j <= 3; j++) {
-							this.add(Text.emptyString(),i,j);
-						}
-					}
-					dark = color.darker();
-					//IWColor darker = dark.darker();
-					//IWColor darkest = darker.darker();
-					IWColor bright = color.brighter();
-
-					tabColor = isSelected() ? dark : bright;
-					this.setWidth(1, "1");
-					this.setWidth(3,"1");
-					this.setHeight(1, "1");
-					this.setHeight(3, "1");
-					 
-					this.setColor(1,1,bright.getHexColorString());
-					 
-					this.setColor(2,2,tabColor.getHexColorString());
-					this.setColor(2,3,bright.getHexColorString());
-					 
-					this.setColor(3,1,bright.getHexColorString());
-					 					
-					super.setHeight(2,2, Integer.toString(23));
-					this.setAlignment(2,2,"center");
+        	styleName = isSelected() ? styleSelectedBox : styleBox;
+					this.setStyleClass(styleName); //"box" is a table style in memberStyles.css
+					this.resize(1,1);
+					this.add(Text.emptyString(),1,1);
+					this.setAlignment("left");
         }
         
         public void initilizeTab(){
@@ -402,24 +347,18 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
         }
 
         public void updateTab(){
-        	IWColor bright = color.brighter();
-          tabColor = isSelected() ? dark : bright; //changed from color:dark;
-//changed for the new userPropertyWindow          
-          this.setColor(2,2,tabColor.getHexColorString());
+        	styleName = isSelected() ? styleSelectedBox : styleBox;
+        	
+//        	IWColor bright = color.brighter();
+//          tabColor = isSelected() ? dark : bright; //changed from color:dark;
+//changed for the new userPropertyWindow         
+//          this.setColor(2,2,tabColor.getHexColorString());
   
 //          this.setColor(2,3,tabColor.getHexColorString());
 //          this.setColor(3,2,tabColor.getHexColorString());
 //          this.setColor(3,3,tabColor.getHexColorString());
         }
-        
-			private Page parentPage;
-			private String styleScript = "memberStyles.css";
-			private String styleSrc = "";
-
         public void main(IWContext iwc) throws Exception {
-					parentPage = this.getParentPage();
-					styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
-					parentPage.addStyleSheetURL(styleSrc);		
           updateTab();
         }
     } // Inner(Inner)Class Tab END
@@ -435,212 +374,106 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
 
   } // InnerClass BasicTabPresentation
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
   public class BasicTabPagePresentation extends GenericTabPagePresentation {
 
-
-
     public BasicTabPagePresentation(){
-
       super();
-
     }
-
-
 
     public BasicTabPagePresentation( IWColor color ){
-
       this();
-
       this.setColor(color);
-
       this.setCellpadding(0);
-
-      this.setCellspacing(0);
-
+      this.setCellspacing(10); //changed from (0) - birna
       this.setWidth("100%");
-
       initilizePage();
-
     }
 
-
-
-
-
     public void initilizePage(){
-
-      this.resize(5,3);
-
-      for (int i=1;i <= 5 ; i++) {
-
-        for (int j=1;j <= 3; j++) {
-
-          this.add(Text.emptyString(),i,j);
-
-        }
-
-      }
+    	this.resize(1,1);
+    	this.add(Text.emptyString(),1,1);
+    	
+    	this.setWidth("100%");
+    	this.setHeight("100%");
+    	this.setStyleClass("back");
+			this.setAlignment(1,1,"center"); //changed from ...ment(3,1,"center");
+			this.setVerticalAlignment(1,1,"middle");
 
 
+//      this.resize(5,3);
+//      for (int i=1;i <= 5 ; i++) {
+//        for (int j=1;j <= 3; j++) {
+//          this.add(Text.emptyString(),i,j);
+//        }
+//      }
 
-    IWColor color = getColor();
-
-    IWColor dark = color.darker();
-
-    IWColor darker = dark.darker();
-
-    IWColor darkest = darker.darker();
-
-    IWColor bright = color.brighter();
-
-
-
-    this.setWidth(1, "1");
-
-    this.setWidth(2, "1");
-
-    this.setWidth(4, "1");
-
-    this.setWidth(5, "1");
-
-    this.setHeight(2, "1");
-
-    this.setHeight(3, "1");
-
-
-
-    this.setColor(color.getHexColorString());
-
-
-
-    this.setColor(1,1,bright.getHexColorString());
-
-    this.setColor(1,2,bright.getHexColorString());
-
-    this.setColor(1,3,darkest.getHexColorString());
-
-
-
-    this.setColor(2,2,darker.getHexColorString());
-
-    this.setColor(2,3,darkest.getHexColorString());
-
-
-
-    this.setColor(3,2,darker.getHexColorString());
-
-    this.setColor(3,3,darkest.getHexColorString());
-
-
-
-    this.setColor(4,1,darker.getHexColorString());
-
-    this.setColor(4,2,darker.getHexColorString());
-
-    this.setColor(4,3,darkest.getHexColorString());
-
-
-
-    this.setColor(5,1,darkest.getHexColorString());
-
-    this.setColor(5,2,darkest.getHexColorString());
-
-    this.setColor(5,3,darkest.getHexColorString());
-
-
-
-
+//    IWColor color = getColor();
+//    IWColor dark = color.darker();
+//    IWColor darker = dark.darker();
+//    IWColor darkest = darker.darker();
+//    IWColor bright = color.brighter();
+//
+//    this.setWidth(1, "1");
+//    this.setWidth(2, "1");
+//    this.setWidth(4, "1");
+//    this.setWidth(5, "1");
+//    this.setHeight(2, "1");
+//    this.setHeight(3, "1");
+//    
+//    this.setBorder("1");
+//
+//    this.setColor(color.getHexColorString());
+//    
+//    this.setColor(1,1,darkest.getHexColorString());
+//    this.setColor(1,2,bright.getHexColorString());
+//    this.setColor(1,3,darkest.getHexColorString());
+//
+//    this.setColor(2,2,darker.getHexColorString());
+//    this.setColor(2,3,darkest.getHexColorString());
+//
+//    this.setColor(3,2,darker.getHexColorString());
+//    this.setColor(3,3,darkest.getHexColorString());
+//
+//    this.setColor(4,1,darker.getHexColorString());
+//    this.setColor(4,2,darker.getHexColorString());
+//    this.setColor(4,3,darkest.getHexColorString());
+//
+//    this.setColor(5,1,darkest.getHexColorString());
+//    this.setColor(5,2,darkest.getHexColorString());
+//    this.setColor(5,3,darkest.getHexColorString());
 
 //    super.setHeight(3,1, Integer.toString(paneModel.getTabPageHeight()-2));
-
 //    super.setWidth(3,1,Integer.toString(paneModel.getTabPageWidth()-4));
 
-    super.setHeight(3,1, Integer.toString(410));
+//    super.setHeight(3,1, Integer.toString(410));
+//    super.setWidth(3,1,Integer.toString(390));
 
-    super.setWidth(3,1,Integer.toString(390));
-
-
-
-    this.setAlignment(3,1,"center");
-
+ 
 }
 
-
-
   public void add(PresentationObject obj){
-
-    this.add(Text.getBreak(),3,1);
-
-    this.add(obj,3,1);
-
-    this.setVerticalAlignment(3,1,"top");
-
+    this.add(Text.getBreak(),1,1); //changed from 3,1
+    this.add(obj,1,1); //changed from 3,1
+    this.setVerticalAlignment(1,1,"top"); //changed from 3,1
   }
 
 //  public void empty(){}
 
-
-
     public void setWidth(String width){
-
       super.setWidth(width);
-
     }
-
-
 
     public void setHeight(String height){
-
       super.setHeight(height);
-
     }
-
-
 
     public void empty(){
-
-      super.emptyCell(3,1);
-
+      super.emptyCell(1,1); //changed from 3,1
     }
 
-
-
     public void fireContentChange(){}
-
-
-
   } // InnerClass GenericTabPagePresentation
-
-
-
-
-
-
 
 } // Class BasicTabbedPaneUI
 
