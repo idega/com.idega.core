@@ -104,7 +104,9 @@
       <version>0.3.3</version>
       <type>jar</type>
       <url>http://smile.sourceforge.net/</url>
-      <properties/>
+	  <properties>
+	 <idegaweb.bundle.include>true</idegaweb.bundle.include>
+	 </properties>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
