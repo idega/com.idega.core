@@ -176,7 +176,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	
   public void setInitiationDate(Timestamp stamp){
     this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
-    this.setColumn(INITIATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow());
+    this.setColumn(INITIATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow().getTimestamp());
   }
 
   public Timestamp getInitiationDate(){
@@ -189,7 +189,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   public void setTerminationDate(Timestamp stamp){
     this.setColumn(this.TERMINATION_DATE_COLUMN,stamp);
-    this.setColumn(this.TERMINATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow());
+    this.setColumn(this.TERMINATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow().getTimestamp());
   }
 
   public Timestamp getTerminationDate(){
