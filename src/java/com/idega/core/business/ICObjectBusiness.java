@@ -298,7 +298,7 @@ public class ICObjectBusiness {
         return -1;
     }
     catch (IDOFinderException ex) {
-      ex.printStackTrace();
+      //ex.printStackTrace();
       return -2;
     }
   }
