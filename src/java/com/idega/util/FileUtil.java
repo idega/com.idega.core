@@ -179,8 +179,58 @@ public class FileUtil {
 
   }
 
+    /** 
+   * Deletes content of folder.
+   * !! Be careful !!
+   * Returns also false if the specified path doesn't exist.
+   * @author thomas
+   */
+  public static boolean deleteContentOfFolder(String path) {
+  	boolean result = true;
+  	boolean successful = true;
+  	File folder = new File(path);
+  	if (folder.exists() && folder.isDirectory()) {
+  		File children[] = folder.listFiles();
+  		for (int i = 0; i < children.length; i++) {
+  			successful = FileUtil.deleteFileAndChildren(children[i]);
+  			if (! successful) {
+  				result = false;
+  			}
+  		}
+  		return result;
+  	}
+  	return false;
+  }
+  
+  
+  /** 
+   * Deletes file and children.
+   * !! Be careful !!
+   * @author thomas
+   */
+  public static boolean deleteFileAndChildren(File file) {
+  	boolean successful = true;
+  	if (file.exists()) {
+  		if (file.isDirectory()) {
+  			File children[] = file.listFiles();
+  			for (int i = 0; i < children.length; i++) {
+  				successful = FileUtil.deleteFileAndChildren(children[i]);
+  				if (! successful) {
+  					return false;
+  				}
+  			}
+  			// folder is now empty
+  		}
+  		return file.delete();
+  	}
+  	return true;
+  }
+  			
     /**
    * deletes entire contents of a folder. Returns true if deletion successful, false otherwise
+   * 
+   * comment added by thomas:
+   * doesn't delete folders that contain nonempty folders
    */
   public static boolean deleteAllFilesInDirectory(String path){
    	File folder = new File(path);
