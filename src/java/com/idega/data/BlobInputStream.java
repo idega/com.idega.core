@@ -77,7 +77,7 @@ public class BlobInputStream extends InputStream{
         }
         if (conn!= null){
          // conn.commit();
-          conn.setAutoCommit(true);
+          //conn.setAutoCommit(true);
           entity.freeConnection(dataSourceName,conn);
         }
       }
