@@ -25,16 +25,125 @@
             <name>${pom.name} User List</name>
         </mailingList>
     </mailingLists>
-    <developers/>
-    <dependencies>
-        <dependency>
-            <groupId>[groupId]</groupId>
-            <artifactId>[artifactId]</artifactId>
-            <version>[version]</version>
-            <type>jar</type>
-            <properties/>
-        </dependency>
-    </dependencies>
+  <developers>
+    <developer>
+      <name>Tryggvi Larusson</name>
+      <id>tryggvil</id>
+      <email>tryggvi@idega.is</email>
+      <organization>idega software</organization>
+    </developer>
+    <developer>
+      <name>Pall Helgason</name>
+      <id>palli</id>
+      <email>palli@idega.is</email>
+      <organization>idega software</organization>
+    </developer>
+    <developer>
+      <name>Eirikur Sveinn Hrafnsson</name>
+      <id>eiki</id>
+      <email>eiki@idega.is</email>
+      <organization>idega software</organization>
+    </developer>
+    <developer>
+      <name>Thorhallur Helgason</name>
+      <id>laddi</id>
+      <email>laddi@idega.is</email>
+      <organization>idega software</organization>
+    </developer>
+  </developers>
+  <dependencies>
+    <dependency>
+      <!-- JDOM Beta 9   -->
+      <id>jdom</id>
+      <version>b9-rc2</version>
+      <url>http://www.jdom.org/</url>
+    </dependency>
+    <dependency>
+      <!-- Javax Servlet API spec 2.3   -->
+      <id>servletapi</id>
+      <version>2.3</version>
+      <url>http://java.sun.com/products/servlet/docs.html</url>
+    </dependency>
+    <dependency>
+      <!-- Enterprise Java Beans spec 2.0  -->    
+      <id>ejb</id>
+      <version>2.0</version>
+      <url>http://java.sun.com/products/ejb/docs.html</url>
+    </dependency>
+    <dependency>
+      <!-- Java Transaction API -->
+      <id>jta</id>
+      <version>spec1_0_1</version>
+      <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
+    </dependency>
+    <dependency>
+      <!-- Java Image I/O classes  -->
+      <id>jimi</id>
+      <version>1.0</version>
+      <url>http://java.sun.com/products/jimi/</url>
+    </dependency>  
+    <dependency>
+      <!-- Java Advanced Imaging  -->
+      <id>jai</id>
+      <version>1.0</version>
+      <url>http://java.sun.com/products/java-media/jai/</url>
+    </dependency>
+    <dependency>
+      <!-- Java Advanced Imaging Codecs -->
+      <groupId>jai</groupId>
+      <artifactId>jai_codec</artifactId>
+      <version>1.0</version>
+      <url>http://java.sun.com/products/java-media/jai/</url>
+    </dependency>
+    <dependency>
+      <!-- Java Mail  -->
+      <id>javamail</id>
+      <version>1.3</version>
+      <url>http://java.sun.com/products/javamail/</url>
+    </dependency>
+    <dependency>
+      <!-- JavaBeans(TM) Activation Framework  -->
+      <id>jaf</id>
+      <version>1.0.2</version>
+      <url>http://java.sun.com/products/javabeans/glasgow/jaf.html</url>
+    </dependency>
+    <dependency>
+      <!-- com.oreilly.servlet Package -->
+      <id>cos</id>
+      <version>05Nov2002</version>
+      <url>http://www.servlets.com/cos/</url>
+    </dependency> 
+    <dependency>
+      <!-- IBM International Components for Unicode for Java  -->
+      <id>icu4j</id>
+      <version>2.4</version>
+      <url> http://oss.software.ibm.com/icu4j/</url>
+    </dependency>
+    <dependency>
+      <!-- iText - Lowagie PDF framework  -->
+      <id>itext</id>
+      <version>0.99</version>
+      <url> http://itext.sourceforge.net/</url>
+    </dependency>
+    <dependency>
+      <!-- JSF - Java Server Faces  -->
+      <id>jsf</id>
+      <version>ea1</version>
+      <url> http://java.sun.com/j2ee/javaserverfaces/</url>
+    </dependency>
+    <dependency>
+      <!-- Oracle JDBC drivers  -->
+      <id>oracle_jdbc</id>
+      <version>9.2</version>
+      <url> http://www.oracle.com/</url>
+    </dependency>
+    <dependency>
+      <!-- Informix JDBC drivers  -->
+      <id>informix_jdbc</id>
+      <version>9.0</version>
+      <url> http://www.informix.com/</url>
+    </dependency>
+  </dependencies>    
     <build>
         <sourceDirectory>src/java</sourceDirectory>
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
