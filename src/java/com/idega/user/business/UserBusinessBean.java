@@ -111,6 +111,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private TopNodeGroupHome topNodeGroupHome;
   
   private Gender male,female;
+  
+  private  Map pluginsForGroupTypeCachMap = new HashMap();
 
   /**
    * if stored prosedure is not available and users view and owner permissions for groups are more than <code>searchForTopNodesFromTop</code> then the top nodes are searched
@@ -2331,7 +2333,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    String userIsAlreadyAMemberOfTheGroupMessage = iwrb.getLocalizedString("user_already_member_of_the_target_group", "The user is already a member of the target group"); 
  
    // finally perform moving 
-   Map cachMap = new HashMap();
+   
    Iterator iterator = userIds.iterator();
     while (iterator.hasNext()) {
       String message;
@@ -2344,7 +2346,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
       // second check
       else {
-        message = isUserSuitedForGroup(user, targetGroup,cachMap);
+        message = isUserSuitedForGroup(user, targetGroup);
       }
       // if there aren't any problems the message is null
       if (message == null)  {
@@ -2410,7 +2412,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
      
     // iterate over all users
     Iterator groupIdsIterator = groupIdGroup.entrySet().iterator();
-    Map cachMap = new HashMap();
+   
     int while2 = 0;
     int while2b = 0;
     int while2c = 0;
@@ -2440,7 +2442,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
           }
           // check if the user is suited for the target group when the result is still true
           if (result) {
-            result = (isUserSuitedForGroup(user, targetGroup,cachMap) == null);
+            result = (isUserSuitedForGroup(user, targetGroup) == null);
           }
           if (result) {
           	 if(possibleTargets==null) {
@@ -2618,7 +2620,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
 
-  private String isUserSuitedForGroup(User user, Group targetGroup, Map pluginsForGroupTypeCachMap) {
+  public String isUserSuitedForGroup(User user, Group targetGroup) {
     try {
       String grouptype = targetGroup.getGroupType();
       Collection plugins = (Collection)pluginsForGroupTypeCachMap.get(grouptype);

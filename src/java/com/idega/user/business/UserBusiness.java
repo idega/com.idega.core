@@ -231,4 +231,14 @@ public interface UserBusiness extends com.idega.business.IBOService
 		public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes);
 		public Collection getUsersByLDAPAttribute(String key, String value);
 		public boolean hasTopNodes(User user, IWUserContext iwuc) throws RemoteException;
+		
+		/**
+		 * Tests if the installed plugins accept the given user into the given group.
+		 * Returns a message to be displayed to performing user
+		 * @param user
+		 * @param targetGroup
+		 * @return
+		 * @throws RemoteException
+		 */
+		 public String isUserSuitedForGroup(User user, Group targetGroup)throws RemoteException;
 }
