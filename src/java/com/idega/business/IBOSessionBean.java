@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import java.rmi.RemoteException;
 
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWApplicationContext;
@@ -77,6 +77,6 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
 
 
   protected User getCurrentUser(){
-    return this.getUserContext().getUser();
+    return this.getUserContext().getCurrentUser();
   }
 }
