@@ -22,6 +22,7 @@ public class GlobalIncludeManager {
 
 	private static GlobalIncludeManager instance;
 	private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
+	private IWMainApplication iwma;
 
 	private List styleSheets;
 
@@ -54,4 +55,30 @@ public class GlobalIncludeManager {
 	public void addStyleSheet(String url){
 		getStyleSheets().add(url);
 	}
+	
+	/**
+	 * Adds a stylesheet where the bundleIdentifier is a reference to the bundle where the stylesheet file is located.
+	 * @param bundleIdentifier the bundle where the stylesheet is located
+	 * @param url the URL within the bundle (relative to the resources subfoler)
+	 */
+	public void addBundleStyleSheet(String bundleIdentifier,String url){
+		IWBundle iwb = getIWMainApplication().getBundle(bundleIdentifier);
+		String resourcesUrl = iwb.getResourcesVirtualPath();
+		String cssRealUrl = resourcesUrl+url;
+		getStyleSheets().add(cssRealUrl);
+	}
+	
+	
+	public IWMainApplication getIWMainApplication(){
+		if(iwma==null){
+			setIWMainApplication(IWMainApplication.getDefaultIWMainApplication());
+		}
+		return iwma;
+	}
+	
+	public void setIWMainApplication(IWMainApplication iwma){
+		this.iwma=iwma;
+	}
+	
+	
 }
