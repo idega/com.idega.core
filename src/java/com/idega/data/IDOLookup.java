@@ -196,13 +196,13 @@ public class IDOLookup extends IBOLookup{
   /**
    * Sould only be used for LegacyEntities
    */
-  public static IDOLegacyEntity instanciateEntity(Class entityBeanOrInterfaceClass){
+  public static IDOEntity instanciateEntity(Class entityBeanOrInterfaceClass){
     try{
       Class beanClass = entityBeanOrInterfaceClass;
       if(beanClass.isInterface()){
         beanClass = getBeanClassFor(entityBeanOrInterfaceClass);
       }
-      IDOLegacyEntity instance = (IDOLegacyEntity)beanClass.newInstance();
+      IDOEntity instance = (IDOEntity)beanClass.newInstance();
       try{
       ((IDOEntityBean)instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass));
       }

@@ -67,7 +67,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		}
 		return theReturn;
 	}
-	public void createTrigger(IDOLegacyEntity entity) throws Exception {
+	public void createTrigger(GenericEntity entity) throws Exception {
 		createSequence(entity);
 		/*
 		
@@ -103,10 +103,10 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		
 		  */
 	}
-	public void createSequence(IDOLegacyEntity entity) throws Exception {
+	public void createSequence(GenericEntity entity) throws Exception {
 		createSequence(entity, 1);
 	}
-	public void createSequence(IDOLegacyEntity entity, int startNumber) throws Exception {
+	public void createSequence(GenericEntity entity, int startNumber) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -129,12 +129,12 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
-	public void deleteEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void deleteEntityRecord(GenericEntity entity) throws Exception {
 		//deleteTrigger(entity);
 		deleteSequence(entity);
 		super.deleteEntityRecord(entity);
 	}
-	protected void deleteTrigger(IDOLegacyEntity entity) throws Exception {
+	protected void deleteTrigger(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -151,7 +151,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
-	protected void deleteSequence(IDOLegacyEntity entity) throws Exception {
+	protected void deleteSequence(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -233,7 +233,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 			}
 	
 	}*/
-	protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception {
+	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
 		if (entity.isNull(entity.getIDColumnName())) {
 			entity.setID(createUniqueID(entity));
 		}
@@ -341,10 +341,10 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 	  }
 	
 	  */
-	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity) {
+	protected String getCreateUniqueIDQuery(GenericEntity entity) {
 		return "SELECT " + getSequenceName(entity) + ".NEXTVAL FROM dual";
 	}
-	private static String getSequenceName(IDOLegacyEntity entity) {
+	private static String getSequenceName(GenericEntity entity) {
 		String entityName = entity.getTableName();
 		return entityName + "_seq";
 		/*if (entityName.endsWith("_")){
@@ -359,7 +359,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		
 		}*/
 	}
-	public void setNumberGeneratorValue(IDOLegacyEntity entity, int value) {
+	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 		//String statement = "update sequences set last_number="+value+" where sequence_name='"+this.getSequenceName(entity)+"'";
 		String statement = "drop sequence " + this.getSequenceName(entity);

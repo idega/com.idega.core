@@ -411,7 +411,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	public GenericGroup findGroup(String groupName) throws SQLException {
 		List group =
-			EntityFinder.findAllByColumn(
+			EntityFinder.findAllByColumn((IDOLegacyEntity)
 				com.idega.data.GenericEntity.getStaticInstance(this.getClass().getName()),
 				getNameColumnName(),
 				groupName,

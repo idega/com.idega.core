@@ -123,7 +123,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
-  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT "+columnName+refrencingTableName+referencingColumnName+" FOREIGN KEY " + columnName + " REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       executeUpdate(entity,SQLCommand);
   }
@@ -136,7 +136,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
-  public void createTrigger(IDOLegacyEntity entity)throws Exception{
+  public void createTrigger(GenericEntity entity)throws Exception{
     //super.executeQuery(entity,"CREATE TRIGGER ins_after  BEFORE  INSERT ON "+entity.getTableName()+" CALL \""+this.getClass().getName()+"\"");
   }
 
@@ -148,12 +148,12 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
-  public void createSequence(IDOLegacyEntity entity)throws Exception{
+  public void createSequence(GenericEntity entity)throws Exception{
   }
 
 
 
-    public void deleteEntityRecord(IDOLegacyEntity entity)throws Exception{
+    public void deleteEntityRecord(GenericEntity entity)throws Exception{
 
       super.deleteEntityRecord(entity);
 
@@ -165,17 +165,17 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
-      protected void deleteTrigger(IDOLegacyEntity entity)throws Exception{
+      protected void deleteTrigger(GenericEntity entity)throws Exception{
     }
 
 
 
-      protected void deleteSequence(IDOLegacyEntity entity)throws Exception{
+      protected void deleteSequence(GenericEntity entity)throws Exception{
 
     }
 
 
-  protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
 				if ( entity.isNull(entity.getIDColumnName()) ){
 					entity.setID(createUniqueID(entity));
 				}
@@ -183,19 +183,19 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
- protected void insertBlob(IDOLegacyEntity entity)throws Exception{
+ protected void insertBlob(GenericEntity entity)throws Exception{
     //Use the standard implementation
     super.insertBlob(entity);
   }
 
-  protected String getCreateUniqueIDQuery(IDOLegacyEntity entity){
+  protected String getCreateUniqueIDQuery(GenericEntity entity){
     return "insert into "+getSequenceTableName(entity)+"("+entity.getIDColumnName()+") values(null)";
   }
 
 
 
 
-	private static String getOracleSequenceName(IDOLegacyEntity entity){
+	private static String getOracleSequenceName(GenericEntity entity){
 
 		String entityName = entity.getTableName();
 
@@ -218,7 +218,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 
 
-  public String getSequenceTableName(IDOLegacyEntity entity){
+  public String getSequenceTableName(GenericEntity entity){
     //return "seq_"+entity.getTableName();
     return entity.getTableName();
   }
@@ -232,7 +232,7 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements or
 
 	**/
 
-	public int createUniqueID(IDOLegacyEntity entity) throws Exception{
+	public int createUniqueID(GenericEntity entity) throws Exception{
 
 		int returnInt = -1;
 

@@ -9,7 +9,7 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public java.sql.Timestamp getDeletedWhen();
  public java.lang.String getDescription();
  public java.lang.Integer getFileSize();
- public java.io.InputStream getFileValue()throws java.lang.Exception;
+ public java.io.InputStream getFileValue();
  public java.io.OutputStream getFileValueForWrite();
  public com.idega.core.data.ICLocale getICLocale();
  public int getLanguage();

@@ -91,10 +91,6 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public void insertStartData() throws java.lang.Exception;
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
 	public java.lang.String getNameOfMiddleTable(com.idega.data.IDOEntity p0, com.idega.data.IDOEntity p1);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
@@ -428,10 +424,10 @@ public interface IDOLegacyEntity extends IDOEntity {
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
 	public boolean getIfUnique(java.lang.String p0);
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public com.idega.data.IDOLegacyEntity[] constructArray(int[] p0);
+//	/**
+//	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+//	*/
+//	public com.idega.data.IDOLegacyEntity[] constructArray(int[] p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
@@ -587,10 +583,10 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/ //public java.util.Collection getAttributes();
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
-	public IDOLegacyEntity getIDOEntityStaticInstance();
+//	/**
+//	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+//	*/
+//	public GenericEntity getIDOEntityStaticInstance();
 	//public String getCachedColumnNamesList();
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity

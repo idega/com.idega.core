@@ -30,7 +30,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import com.idega.data.IDOLegacyEntity;
+import com.idega.data.GenericEntity;
 import com.idega.util.ThreadContext;
 
 
@@ -54,7 +54,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
   private static IdegaTransactionManager instance;
 
-  private IDOLegacyEntity _entity;
+  private GenericEntity _entity;
 
   String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
@@ -304,7 +304,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   }
 
 
-  public void setEntity(IDOLegacyEntity entity){
+  public void setEntity(GenericEntity entity){
     this._entity=entity;
     this.datasource=entity.getDatasource();
   }

@@ -41,7 +41,7 @@ import com.idega.util.database.ConnectionBroker;
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEntity, IDOEntityBean {
+public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean {
 	public static final String MANY_TO_ONE = "many-to-one";
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
@@ -51,7 +51,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	private static String DEFAULT_DATASOURCE = "default";
 	//private static NullColumnValue nullColumnValue = new NullColumnValue();
 	private String _dataStoreType;
-	private int _state = STATE_NEW;
+	private int _state = IDOLegacyEntity.STATE_NEW;
 	private Map _columns = new Hashtable();
 	private Map _updatedColumns;
 	private String _dataSource;
@@ -386,7 +386,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		addManyToOneRelationship(relationshipColumnName, relatingEntityClass.getName(), relatingEntityClass);
 	}
 	protected void addManyToOneRelationship(String relationshipColumnName, String description, Class relatingEntityClass) {
-		Class primaryKeyInRelatedClass = ((IDOEntityBean)this.getStaticInstance(relatingEntityClass)).getPrimaryKeyClass();
+		Class primaryKeyInRelatedClass = this.getEntityDefinition().getPrimaryKeyDefinition().getPrimaryKeyClass();
 		addAttribute(relationshipColumnName, description, true, true, primaryKeyInRelatedClass, com.idega.data.GenericEntity.ONE_TO_MANY, relatingEntityClass);
 	}
 	protected void addRelationship(String relationshipName, String relationshipType, String relationshipClassName) {
@@ -400,24 +400,26 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
 	}
-	/**
-	*Constructs an array of GenericEntities through an int Array (containing rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
-	**/
-	public IDOLegacyEntity[] constructArray(int[] id_array) {
-		IDOLegacyEntity[] returnArr = null;
-		try {
-			returnArr = (IDOLegacyEntity[])java.lang.reflect.Array.newInstance(this.getClass(), id_array.length);
-			for (int i = 0; i < id_array.length; i++) {
-				returnArr[i] = (IDOLegacyEntity)instanciateEntity(this.getClass());
-				returnArr[i].findByPrimaryKey(id_array[i]);
-			}
-		} catch (Exception ex) {
-			System.err.println("There was an error in com.idega.data.GenericEntity.constructArray(int[] id_array): " + ex.getMessage());
-		}
-		return returnArr;
-	}
+	//	/**
+	//	*Constructs an array of GenericEntities through an int Array (containing rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
+	//	*@deprecated Only IDOLegacyEntity method, does not work with pure IDOEntity
+	//	**/
+	//	public IDOLegacyEntity[] constructArray(int[] id_array) {
+	//		IDOLegacyEntity[] returnArr = null;
+	//		try {
+	//			returnArr = (IDOLegacyEntity[])java.lang.reflect.Array.newInstance(this.getClass(), id_array.length);
+	//			for (int i = 0; i < id_array.length; i++) {
+	//				returnArr[i] = (IDOLegacyEntity)instanciateEntity(this.getClass());
+	//				returnArr[i].findByPrimaryKey(id_array[i]);
+	//			}
+	//		} catch (Exception ex) {
+	//			System.err.println("There was an error in com.idega.data.GenericEntity.constructArray(int[] id_array): " + ex.getMessage());
+	//		}
+	//		return returnArr;
+	//	}
 	/**
 	*Constructs an array of GenericEntities through a String Array (containing only int's for the rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
+	*@deprecated Only IDOLegacyEntity method, does not work with pure IDOEntity
 	**/
 	public IDOLegacyEntity[] constructArray(String[] id_array) {
 		IDOLegacyEntity[] returnArr = null;
@@ -440,10 +442,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			removeFromColumn(columnName);
 		}
 		this.flagColumnUpdate(columnName);
-		if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-			setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+		if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+			setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
 		} else {
-			this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
 		}
 	}
 	protected Object getValue(String columnName) {
@@ -470,7 +472,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 			//else if (columnValue instanceof IDOLegacyEntity){
 			else {
-				setValue(columnName, ((IDOLegacyEntity)columnValue).getPrimaryKeyValue());
+				setValue(columnName, ((IDOEntity)columnValue).getPrimaryKey());
 			}
 		}
 	}
@@ -523,37 +525,34 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		if (wrapper == null) {
 			wrapper = new BlobWrapper(this, columnName);
 			setColumn(columnName, wrapper);
+		} else {
+			this.flagColumnUpdate(columnName);
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			} else {
+				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
 		}
-    else {
-      this.flagColumnUpdate(columnName);
-      if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-        setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-      } 
-      else {
-        this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-      }
-    }
 		return wrapper.getOutputStreamForBlobWrite();
 	}
-  
+
 	public void setColumn(String columnName, InputStream streamForBlobWrite) {
 		BlobWrapper wrapper = getBlobColumnValue(columnName);
 		if (wrapper != null) {
 			wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
-      this.flagColumnUpdate(columnName);
-      if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-        setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-      } 
-      else {
-        this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-      }
+			this.flagColumnUpdate(columnName);
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			} else {
+				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
 		} else {
 			wrapper = new BlobWrapper(this, columnName);
 			wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
 			setColumn(columnName, wrapper);
 		}
 	}
-  
+
 	public BlobWrapper getBlobColumnValue(String columnName) {
 		BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
 		if (wrapper == null) {
@@ -562,7 +561,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return wrapper;
 	}
-	public InputStream getInputStreamColumnValue(String columnName) throws Exception {
+	public InputStream getInputStreamColumnValue(String columnName){
 		BlobWrapper wrapper = getBlobColumnValue(columnName);
 		/*if(wrapper==null){
 		  wrapper = new BlobWrapper(this,columnName);
@@ -830,12 +829,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			try {
 				//Connect the blob fields if the datasource is changed
 				//System.out.println("[setDataSource()] "+this.getClass().getName()+" EntityState="+this.getEntityState());
-				if (getEntityState() == this.STATE_IN_SYNCH_WITH_DATASTORE && this.hasLobColumn()) {
+				if (getEntityState() == IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE && this.hasLobColumn()) {
 					BlobWrapper wrapper = this.getBlobColumnValue(this.getLobColumnName());
 					BlobInputStream inStream = wrapper.getBlobInputStream();
 					//inStream.setDataSource(this._dataSource);
 					wrapper.setInputStreamForBlobWrite(inStream);
-					setEntityState(this.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+					setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
 					//System.out.println(this.getClass().getName()+".setDatasource("+dataSource+"), connecting blob fields");
 				}
 			} catch (Exception e) {
@@ -1156,16 +1155,56 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 	}
 	public void deleteMultiple(String columnName, String stringColumnValue) throws SQLException {
-		EntityControl.deleteMultiple(this, columnName, stringColumnValue);
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = this.getConnection();
+			Stmt = conn.createStatement();
+			Stmt.executeUpdate("delete from " + this.getEntityName() + " where " + columnName + "='" + stringColumnValue + "'");
+		} finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				this.freeConnection(conn);
+			}
+		}
 	}
 	public void deleteMultiple(String columnName1, String stringColumnValue1, String columnName2, String stringColumnValue2) throws SQLException {
-		EntityControl.deleteMultiple(this, columnName1, stringColumnValue1, columnName2, stringColumnValue2);
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = this.getConnection();
+			Stmt = conn.createStatement();
+			Stmt.executeUpdate("delete from " + this.getEntityName() + " where " + columnName1 + "='" + stringColumnValue1 + "' and " + columnName2 + "='" + stringColumnValue2 + "'");
+		} finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				this.freeConnection(conn);
+			}
+		}
 	}
 	/**
 	*Deletes everything from the table of this entity
 	**/
 	public void clear() throws SQLException {
-		EntityControl.clear(this);
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = this.getConnection();
+			Stmt = conn.createStatement();
+			Stmt.executeUpdate("delete from " + this.getEntityName());
+		} finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				this.freeConnection(conn);
+			}
+		}
+		this.setEntityState(IDOLegacyEntity.STATE_DELETED);
 	}
 	/**
 	**Function to populate a column through a string representation
@@ -1309,7 +1348,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	public synchronized void ejbLoad() throws EJBException {
 		try {
-			if (this.getEntityState() != STATE_IN_SYNCH_WITH_DATASTORE) {
+			if (this.getEntityState() != IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE) {
 				Object pk = this.getPrimaryKey();
 				/*if(pk instanceof Integer){
 				  findByPrimaryKey(((Integer)pk).intValue());
@@ -1318,7 +1357,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					throw new EJBException("Cannot load entity " + this.getClass().getName() + " for primary key null");
 				}
 				ejbLoad(pk);
-				setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+				setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 			}
 		} catch (SQLException e) {
 			throw new EJBException(e.getMessage());
@@ -1332,7 +1371,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			//Object pk = this.getPrimaryKey();
 			if (rs != null) {
 				this.loadFromResultSet(rs);
-				setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+				setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 			}
 		} catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -1372,7 +1411,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				freeConnection(getDatasource(), conn);
 			}
 		}
-		setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 	/**
 	 * @ deprecated Replaced with ejbLoad(Object value);
@@ -1413,7 +1452,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				freeConnection(getDatasource(), conn);
 			}
 		}
-		setEntityState(STATE_IN_SYNCH_WITH_DATASTORE);
+		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 	Object getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
 		Object theReturn = null;
@@ -1972,7 +2011,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				Integer tempInt = (Integer) enum.nextElement();
 				vector.addElement(new IDOLegacyEntity(tempInt.intValue()));
 			}*/
-		List list = EntityFinder.findAll(this, SQLString, returningNumberOfRecords);
+		List list = EntityFinder.findAll((IDOLegacyEntity)this, SQLString, returningNumberOfRecords);
 		if (list != null) {
 			return (IDOLegacyEntity[])list.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(), 0));
 			//return vector.toArray(new IDOLegacyEntity[0]);
@@ -2118,7 +2157,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			Stmt.executeUpdate("insert into " + getNameOfMiddleTable((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo), this) + "(" + getIDColumnName() + "," + ((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo)).getIDColumnName() + ") values(" + getPrimaryKeyValueSQLString() + "," + id + ")");
+			Stmt.executeUpdate("insert into " + getNameOfMiddleTable((IDOEntity)com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo), this) + "(" + getIDColumnName() + "," + (com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + id + ")");
+		} catch (IDOCompositPrimaryKeyException e) {
+			e.printStackTrace();
+			throw new SQLException(e.getMessage());
 		} finally {
 			if (Stmt != null) {
 				Stmt.close();
@@ -2137,8 +2179,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			String middleTable = getNameOfMiddleTable((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo), this);
-			String columnName = ((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo)).getIDColumnName();
+			String middleTable = getNameOfMiddleTable(getStaticInstanceIDO(entityToAddTo), this);
+			String columnName = (getStaticInstance(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 			if (ids != null) {
 				for (int i = 0; i < ids.length; i++) {
 					try {
@@ -2147,6 +2189,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					}
 				}
 			}
+		} catch (IDOCompositPrimaryKeyException e) {
+			e.printStackTrace();
+			throw new SQLException(e.getMessage());
 		} finally {
 			if (Stmt != null) {
 				Stmt.close();
@@ -2212,10 +2257,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		removeFrom((IDOEntity)entityToRemoveFrom);
 	}
 
-	/**
-	 * @deprecated Replaced with idoRemoveFrom
-	 */
-	public void removeFrom(IDOEntity entityToRemoveFrom) throws SQLException {
+	private void removeFrom(IDOEntity entityToRemoveFrom) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
 		String qry = "";
@@ -2392,9 +2434,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public void empty() {
 		_columns.clear();
 	}
-	public IDOLegacyEntity getIDOEntityStaticInstance() {
-		return getStaticInstance(this.getClass().getName());
-	}
+
 	public boolean hasLobColumn() throws Exception {
 		String lobColumnName = this.getLobColumnName();
 		//String lobColumnName = this.getStaticInstance()._lobColumnName;
@@ -2416,14 +2456,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 		}
 	}
-  
-  public String getLobColumnName()  {
-    return ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
-  }
-  
-	public static IDOLegacyEntity getStaticInstance(String entityClassName) {
+
+	public String getLobColumnName() {
+		return ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
+	}
+
+	public static GenericEntity getStaticInstance(String entityClassName) {
 		try {
-			return getStaticInstance(Class.forName(entityClassName));
+			return (GenericEntity)getStaticInstanceIDO(Class.forName(entityClassName));
 		} catch (Exception e) {
 			throw new RuntimeException(e.getClass().getName() + ": " + e.getMessage());
 		}
@@ -2442,36 +2482,73 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		    }
 		    return theReturn;*/
 	}
+
+	private GenericEntity getIDOEntityStaticInstance() {
+		//	return getStaticInstance(entityClass.getName());
+		return (GenericEntity)getStaticInstanceIDO(this.getClass());
+	}
+
+	/**
+	 * @deprecated Only for IDOLegacyEntity, does not work with pure IDOEntity, use getStaticInstanceIDO() instead
+	 */
 	public static IDOLegacyEntity getStaticInstance(Class entityClass) {
+		//		//return getStaticInstance(entityClass.getName());
+		//		if (entityClass.isInterface()) {
+		//			return getStaticInstance(IDOLookup.getBeanClassFor(entityClass));
+		//		}
+		//		if (_allStaticClasses == null) {
+		//			_allStaticClasses = new Hashtable();
+		//		}
+		//
+		//		IDOLegacyEntity theReturn = (IDOLegacyEntity)_allStaticClasses.get(entityClass.getName());
+		//
+		//		if (theReturn == null) {
+		//			try {
+		//				//theReturn = (IDOLegacyEntity)entityClass.newInstance();
+		//				theReturn = (IDOLegacyEntity)instanciateEntity(entityClass);
+		//				_allStaticClasses.put(entityClass, theReturn);
+		//			} catch (Exception ex) {
+		//				ex.printStackTrace();
+		//			}
+		//		}
+		//		return theReturn;
+		return (IDOLegacyEntity)getStaticInstanceIDO(entityClass);
+	}
+
+	public static IDOEntity getStaticInstanceIDO(Class entityClass) {
 		//return getStaticInstance(entityClass.getName());
 		if (entityClass.isInterface()) {
-			return getStaticInstance(IDOLookup.getBeanClassFor(entityClass));
+			return getStaticInstanceIDO(IDOLookup.getBeanClassFor(entityClass));
 		}
 		if (_allStaticClasses == null) {
 			_allStaticClasses = new Hashtable();
 		}
-		IDOLegacyEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass);
+
+		IDOEntity theReturn = (IDOEntity)_allStaticClasses.get(entityClass);
+
 		if (theReturn == null) {
 			try {
+
 				theReturn = instanciateEntity(entityClass);
-        // it might be that the method instanciateEntity(Class) has just put an
-        // initialized instance of the specified entityClass into 
-        // the _allStaticInstances map.
-        // !!!!!!This instance should not be replaced!!!!
-        // Therefore get the "right" instance.
-        IDOLegacyEntity correctInstance = (GenericEntity)_allStaticClasses.get(entityClass);
-        if (correctInstance != null) {
-          theReturn = correctInstance;
-        }
-        else {
-				  _allStaticClasses.put(entityClass, theReturn);
-        }
+				// it might be that the method instanciateEntity(Class) has just put an
+				// initialized instance of the specified entityClass into 
+				// the _allStaticInstances map.
+				// !!!!!!This instance should not be replaced!!!!
+				// Therefore get the "right" instance.
+				IDOEntity correctInstance = (GenericEntity)_allStaticClasses.get(entityClass);
+				if (correctInstance != null) {
+					theReturn = correctInstance;
+				} else {
+					_allStaticClasses.put(entityClass, theReturn);
+				}
+
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 		return theReturn;
 	}
+
 	public void addManyToManyRelationShip(IDOEntity relatingEntity, String relationShipTableName) {
 		//addManyToManyRelationShip(relatingEntity.getClass().getName(), relationShipTableName);
 		addManyToManyRelationShip(relatingEntity.getEntityDefinition().getInterfaceClass().getName(), relationShipTableName);
@@ -2509,7 +2586,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		_state = state;
 	}
 	public boolean isInSynchWithDatastore() {
-		return (getEntityState() == this.STATE_IN_SYNCH_WITH_DATASTORE);
+		return (getEntityState() == IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 	/**
 	 *
@@ -2529,8 +2606,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 *
 	 * @deprecated Replaced with IDOLookup.instanciateEntity(entityClass);
 	 */
-	public static IDOLegacyEntity getEntityInstance(Class entityClass) {
-		return IDOLookup.instanciateEntity(entityClass);
+	public static GenericEntity getEntityInstance(Class entityClass) {
+		return (GenericEntity)IDOLookup.instanciateEntity(entityClass);
 	}
 	public void addMetaDataRelationship() {
 		addManyToManyRelationShip(MetaData.class);
@@ -2617,10 +2694,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			getMetaData(); //get all meta data first if null
 		if (metaDataValue != null) {
 			// change state of the entity bean
-			if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
-				setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
 			} else {
-				this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
 			}
 			Object obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
 			metaDataHasChanged(true);
@@ -2794,9 +2871,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	public void store() throws IDOStoreException {
 		try {
-			if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
+			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
 				insert();
-			} else if (this.getEntityState() == STATE_NOT_IN_SYNCH_WITH_DATASTORE) {
+			} else if (this.getEntityState() == IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE) {
 				update();
 			}
 		} catch (Exception e) {
@@ -2812,7 +2889,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		_dataStoreType = null;
 		_dataSource = DEFAULT_DATASOURCE;
-		_state = STATE_NEW;
+		_state = IDOLegacyEntity.STATE_NEW;
 		_updatedColumns = null;
 		_primaryKey = null;
 		_theMetaDataAttributes = null;
@@ -2925,23 +3002,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		this._primaryKey = pk;
 	}
 
-	private static IDOLegacyEntity instanciateEntity(String entityClassName) {
-		try {
-			return instanciateEntity(Class.forName(entityClassName));
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e.getClass().getName() + ": " + e.getMessage());
-		}
-	}
-	private static IDOLegacyEntity instanciateEntity(Class entityInterfaceOrBeanClass) {
+	private static GenericEntity instanciateEntity(Class entityInterfaceOrBeanClass) {
 		try {
 			//return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
-			return IDOLookup.instanciateEntity(entityInterfaceOrBeanClass);
+			return (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceOrBeanClass);
 		} catch (Exception e1) {
 			//Only for legacy beans;
 			e1.printStackTrace();
 			try {
-				return (IDOLegacyEntity)entityInterfaceOrBeanClass.newInstance();
+				return (GenericEntity)entityInterfaceOrBeanClass.newInstance();
 			} catch (Exception e2) {
 				e2.printStackTrace();
 				throw new RuntimeException(e1.getMessage());
@@ -3082,7 +3151,80 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 */
 	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
 		try {
-			return EntityFinder.getInstance().findRelated(this, returningEntityInterfaceClass);
+			//return EntityFinder.getInstance().findRelated((IDOLegacyEntity)this, returningEntityInterfaceClass);
+
+			IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+
+			String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity, this);
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("select * from ");
+			buffer.append(tableToSelectFrom);
+			buffer.append(" where ");
+			buffer.append(this.getIDColumnName());
+			buffer.append("=");
+			buffer.append(GenericEntity.getKeyValueSQLString(this.getPrimaryKeyValue()));
+			//buffer.append(" order by ");
+			//buffer.append(fromEntity.getIDColumnName());
+			String SQLString = buffer.toString();
+
+			//
+
+			Connection conn = null;
+			Statement Stmt = null;
+			//Vector vector = new Vector();
+			Vector vector = null;
+			/*String tableToSelectFrom = "";
+			if (returningEntity.getTableName().endsWith("_")){
+				tableToSelectFrom = returningEntity.getTableName()+fromEntity.getTableName();
+			}
+			else{
+				tableToSelectFrom = returningEntity.getTableName()+"_"+fromEntity.getTableName();
+			}*/
+
+			try {
+				conn = this.getConnection();
+				Stmt = conn.createStatement();
+				ResultSet RS = Stmt.executeQuery(SQLString);
+				while (RS != null && RS.next()) {
+
+					IDOEntity tempobj = null;
+					try {
+						tempobj = (IDOEntity)Class.forName(returningEntity.getClass().getName()).newInstance();
+
+						Object pkObj = RS.getObject(returningEntity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+						((IDOEntityBean)tempobj).setDatasource(this.getDatasource());
+						tempobj = ((IDOHome)IDOLookup.getHome(returningEntity.getClass())).findByPrimaryKeyIDO(pkObj);
+					} catch (Exception ex) {
+
+						System.err.println("There was an error in com.idega.data.GenericEntity#idoGetRelatedEntities(Class returningEntityInterfaceClass)\n returningEntityInterfaceClass=" + returningEntity.getClass() + " : " + ex.getMessage());
+						ex.printStackTrace();
+
+					}
+					if (vector == null) {
+						vector = new Vector();
+					}
+					vector.addElement(tempobj);
+
+				}
+				RS.close();
+
+			} finally {
+				if (Stmt != null) {
+					Stmt.close();
+				}
+				if (conn != null) {
+					this.freeConnection(conn);
+				}
+			}
+
+			if (vector != null) {
+				vector.trimToSize();
+				//return (IDOLegacyEntity[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(returningEntity.getClass(),0));
+				//return vector.toArray(new IDOLegacyEntity[0]);
+				return vector;
+			} else {
+				return null;
+			}
 		} catch (Exception e) {
 			throw new IDORelationshipException(e, this);
 		}
@@ -3454,7 +3596,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		 * @todo Change implementation
 		 */
 		try {
-			removeFrom((IDOLegacyEntity)entity);
+			removeFrom(entity);
 		} catch (SQLException ex) {
 			//ex.printStackTrace();
 			throw new IDORemoveRelationshipException(ex, this);
@@ -3470,7 +3612,34 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		 * @todo Change implementation
 		 */
 		try {
-			this.addTo((IDOLegacyEntity)entity);
+			Connection conn = null;
+			Statement Stmt = null;
+			try {
+				conn = getConnection(getDatasource());
+				Stmt = conn.createStatement();
+				//String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")";
+				String sql = null;
+				//try
+				//{
+				sql = "insert into " + getNameOfMiddleTable(entity, this) + "(" + getIDColumnName() + "," + entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + getKeyValueSQLString(entity.getPrimaryKey()) + ")";
+				/*}
+				catch (RemoteException rme)
+				{
+					throw new SQLException("RemoteException in addTo, message: " + rme.getMessage());
+				}*/
+
+				//debug("statement: "+sql);
+
+				Stmt.executeUpdate(sql);
+			} finally {
+				if (Stmt != null) {
+					Stmt.close();
+				}
+				if (conn != null) {
+					freeConnection(getDatasource(), conn);
+				}
+			}
+
 		} catch (Exception ex) {
 			//ex.printStackTrace();
 			throw new IDOAddRelationshipException(ex, this);

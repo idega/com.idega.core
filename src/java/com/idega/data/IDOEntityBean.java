@@ -28,6 +28,8 @@ public interface IDOEntityBean extends EntityBean{
   public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome);
   //public void setEJBHome(javax.ejb.EJBHome ejbHome);
   public Class getPrimaryKeyClass();
+  
+  public void setDatasource(String dataSource);
 
 /**
  * @return Set

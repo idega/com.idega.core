@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.13 2003/04/10 14:56:43 joakim Exp $
+ * $Id: BlobWrapper.java,v 1.14 2003/07/05 17:21:46 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -8,10 +8,9 @@
  *
  */
 package com.idega.data;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
+
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
@@ -30,14 +29,14 @@ public class BlobWrapper {
 	private String dataSourceName;
 	private BlobInputStream blobInputStream;
 	//private Connection conn;
-	private IDOLegacyEntity entity;
+	private GenericEntity entity;
 	//private ResultSet RS;
 	//private Statement Stmt;
 	public final static int INSERT_STATUS = 1;
 	public final static int SELECT_STATUS = 2;
 	public final static int DELETE_STATUS = 3;
 	public final static int IS_CLOSED = 3;
-	public BlobWrapper(IDOLegacyEntity entity, String tableColumnName) {
+	public BlobWrapper(GenericEntity entity, String tableColumnName) {
 		this.setEntity(entity);
 		this.setTableColumnName(tableColumnName);
 		//setDatasource(entity.getDatasource());
@@ -143,7 +142,7 @@ public class BlobWrapper {
 	    return readInputStream;
 	
 	  }*/
-	public BlobInputStream getBlobInputStream() throws SQLException, IOException {
+	public BlobInputStream getBlobInputStream(){
 		if (blobInputStream == null) {
 			blobInputStream = (new BlobInputStream(this.entity, this.getTableColumnName()));
 		}
@@ -152,10 +151,10 @@ public class BlobWrapper {
 	//public void populate() {
 	//  DatastoreInterface.getInstance(conn).populateBlob(this);
 	//}
-	protected void setEntity(IDOLegacyEntity entity) {
+	protected void setEntity(GenericEntity entity) {
 		this.entity = entity;
 	}
-	public IDOLegacyEntity getEntity() {
+	public GenericEntity getEntity() {
 		return this.entity;
 	}
 	public void setStatus(int status) {

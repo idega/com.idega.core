@@ -7,9 +7,11 @@ public class LoginTableHomeImpl extends com.idega.data.IDOFactory implements Log
   return LoginTable.class;
  }
 
+
  public LoginTable create() throws javax.ejb.CreateException{
-  return (LoginTable) super.idoCreate();
+  return (LoginTable) super.createIDO();
  }
+
 
  public LoginTable createLegacy(){
 	try{
@@ -21,13 +23,23 @@ public class LoginTableHomeImpl extends com.idega.data.IDOFactory implements Log
 
  }
 
- public LoginTable findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (LoginTable) super.idoFindByPrimaryKey(id);
- }
+
+public java.util.Collection findLoginsForUser(com.idega.core.user.data.User p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((LoginTableBMPBean)entity).ejbFindLoginsForUser(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public LoginTable findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (LoginTable) super.idoFindByPrimaryKey(pk);
+  return (LoginTable) super.findByPrimaryKeyIDO(pk);
  }
+
+
+ public LoginTable findByPrimaryKey(int id) throws javax.ejb.FinderException{
+  return (LoginTable) super.findByPrimaryKeyIDO(id);
+ }
+
 
  public LoginTable findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
@@ -38,6 +50,7 @@ public class LoginTableHomeImpl extends com.idega.data.IDOFactory implements Log
 	}
 
  }
+
 
 
 }

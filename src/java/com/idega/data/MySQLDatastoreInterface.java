@@ -122,7 +122,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected String getCreateUniqueIDQuery(IDOLegacyEntity entity){
+  protected String getCreateUniqueIDQuery(GenericEntity entity){
     return "insert into "+getSequenceTableName(entity)+"("+entity.getIDColumnName()+") values(null)";
   }
 
@@ -137,7 +137,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 	**/
 
-	public int createUniqueID(IDOLegacyEntity entity) throws Exception{
+	public int createUniqueID(GenericEntity entity) throws Exception{
 
 		int returnInt = -1;
 
@@ -201,7 +201,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
 
     if ( entity.isNull(entity.getIDColumnName()) ){
 
@@ -213,7 +213,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  public String getSequenceTableName(IDOLegacyEntity entity){
+  public String getSequenceTableName(GenericEntity entity){
 
     return "seq_"+entity.getTableName();
 
@@ -327,7 +327,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  public void createSequenceTable(IDOLegacyEntity entity)throws Exception{
+  public void createSequenceTable(GenericEntity entity)throws Exception{
     Connection conn = null;
     Statement Stmt = null;
     try {
@@ -351,20 +351,20 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  public void createTrigger(IDOLegacyEntity entity)throws Exception{
+  public void createTrigger(GenericEntity entity)throws Exception{
     createSequenceTable(entity);
   }
 
 
 
-  public void createForeignKeys(IDOLegacyEntity entity)throws Exception{
+  public void createForeignKeys(GenericEntity entity)throws Exception{
   }
 
 
 
 
 
-    protected String getCreationStatement(IDOLegacyEntity entity){
+    protected String getCreationStatement(GenericEntity entity){
 		String returnString = "create table "+entity.getTableName()+"(";
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
@@ -495,7 +495,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-   public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,IDOLegacyEntity entity){
+   public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
 
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
 
@@ -559,7 +559,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void insertBlob(IDOLegacyEntity entity)throws Exception{
+  protected void insertBlob(GenericEntity entity)throws Exception{
 
 
 
@@ -685,7 +685,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
 
-  public void setNumberGeneratorValue(IDOLegacyEntity entity,int value){
+  public void setNumberGeneratorValue(GenericEntity entity,int value){
 
     //throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 

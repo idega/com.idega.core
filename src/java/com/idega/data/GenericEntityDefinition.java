@@ -25,6 +25,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private EntityAttribute[] _fields = new EntityAttribute[0];
 	private PrimaryKeyDefinition _pkDefinition = null;
 	private Class _interfaceClass=null;
+	private Class _beanClass = null;
 
 	/**
 	 * 
@@ -168,6 +169,13 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 */
 	public Class getInterfaceClass() {
 		return _interfaceClass;
+	}
+	
+	public Class getBeanClass() {
+		if(_beanClass == null){
+			_beanClass = IDOLookup.getBeanClassFor(_interfaceClass);
+		}
+		return _beanClass;
 	}
 
 	// IDOEntityDefinition ends //

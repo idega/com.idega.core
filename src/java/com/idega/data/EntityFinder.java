@@ -112,7 +112,7 @@ public class EntityFinder{
       }
     }
     else{
-      return findAllLegacy(entity,SQLString,returningNumberOfRecords);
+      return findAllLegacy((GenericEntity)entity,SQLString,returningNumberOfRecords);
     }
   }
 
@@ -134,7 +134,7 @@ public class EntityFinder{
   /**
    * Returns null if there was no match
    */
-  public static List findAllLegacy(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
+  public static List findAllLegacy(GenericEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
     Connection conn= null;
     Statement Stmt= null;
     ResultSetMetaData metaData;
@@ -183,7 +183,7 @@ public class EntityFinder{
           vector=new Vector();
         }
         ((IDOLegacyEntity)tempobj).setDatasource(entity.getDatasource());
-        ((IDOLegacyEntity)tempobj).setEntityState(com.idega.data.GenericEntity.STATE_IN_SYNCH_WITH_DATASTORE);
+        ((IDOLegacyEntity)tempobj).setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 
         vector.addElement(tempobj);
 

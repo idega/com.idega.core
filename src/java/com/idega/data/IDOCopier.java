@@ -21,9 +21,9 @@ import java.util.ArrayList;
  *@version 1.0
  */
 public class IDOCopier {
-	private IDOLegacyEntity fromEntity;
+	private GenericEntity fromEntity;
 	private String toDataSourceName;
-	private IDOLegacyEntity toEntity;
+	private GenericEntity toEntity;
 	private List entityToCopyList;
 	private List entityRelationshipInfos = new ArrayList();
 	//private List copiedEntityClasses=new Vector();
@@ -33,20 +33,20 @@ public class IDOCopier {
 	
 	protected IDOCopier() {
 	}
-	private IDOCopier(IDOLegacyEntity entity) {
+	private IDOCopier(GenericEntity entity) {
 		this.fromEntity = entity;
 		addEntityToCopy(entity);
 	}
 	public static IDOCopier getCopierInstance() {
 		return new IDOCopier();
 	}
-	public static IDOCopier getCopierInstance(IDOLegacyEntity entity) {
+	public static IDOCopier getCopierInstance(GenericEntity entity) {
 		return new IDOCopier(entity);
 	}
 	public void setToDatasource(String dataSourceName) {
 		this.toDataSourceName = dataSourceName;
 	}
-	public void addEntityToCopy(IDOLegacyEntity entity) {
+	public void addEntityToCopy(GenericEntity entity) {
 		if (fromEntity == null) {
 			fromEntity = entity;
 		}
@@ -63,7 +63,7 @@ public class IDOCopier {
 	}
 	public void copyAllData() {
 		try {
-			//toEntity = (IDOLegacyEntity)fromEntity.getClass().newInstance();
+			//toEntity = (GenericEntity)fromEntity.getClass().newInstance();
 			toEntity = this.createEntityInstance(fromEntity);
 			toEntity.setDatasource(getToDatasource());
 			toEntity.setToInsertStartData(false);
@@ -78,12 +78,12 @@ public class IDOCopier {
 				Class item = (Class) iter.next();
 				//out.println(item.getName()+"\n<br>");
 				try {
-					IDOLegacyEntity toInstance = (IDOLegacyEntity) this.createEntityInstance(item);
-					//IDOLegacyEntity toInstance = (IDOLegacyEntity)item.newInstance();
+					GenericEntity toInstance = (GenericEntity) this.createEntityInstance(item);
+					//GenericEntity toInstance = (GenericEntity)item.newInstance();
 					toInstance.setDatasource(this.getToDatasource());
 					toInstance.setToInsertStartData(false);
-					//IDOLegacyEntity fromInstance = (IDOLegacyEntity)item.newInstance();
-					IDOLegacyEntity fromInstance = this.createEntityInstance(item);
+					//GenericEntity fromInstance = (GenericEntity)item.newInstance();
+					GenericEntity fromInstance = (GenericEntity)this.createEntityInstance(item);
 					fromInstance.setDatasource(this.fromEntity.getDatasource());
 					DatastoreInterface.getInstance(toInstance).createEntityRecord(toInstance);
 					copyAllData(fromInstance, toInstance, true);
@@ -98,7 +98,7 @@ public class IDOCopier {
 			e.printStackTrace();
 		}
 	}
-	private void copyAllData(IDOLegacyEntity fromInstance, IDOLegacyEntity toInstance, boolean maintainIDs) {
+	private void copyAllData(GenericEntity fromInstance, GenericEntity toInstance, boolean maintainIDs) {
 		try {
 			IDOEntityCopyInfo info = getIDOEntityCopyInfo(fromInstance.getClass(), fromInstance.getTableName());
 			if (!isTableAlreadyCopied(info)) {
@@ -109,23 +109,23 @@ public class IDOCopier {
 					*  @todo change - Shitty mix change this as soon as possible!!!
 					*
 					*/
-					List l1 = EntityFinder.getInstance().findAll(fromInstance, "select * from ib_page where template_id is null");
+					List l1 = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance, "select * from ib_page where template_id is null");
 					l = new Vector();
 					l.addAll(l1);
 					List l2 =
-						EntityFinder.getInstance().findAll(
+						EntityFinder.getInstance().findAll((IDOLegacyEntity)
 							fromInstance,
 							"select * from ib_page where template_id is not null order by template_id asc,ib_page_id asc");
 					l.addAll(l2);
 				}
 				else {
-					l = EntityFinder.getInstance().findAll(fromInstance);
+					l = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance);
 				}
 				if (l != null) {
 					int highestID = 1;
 					Iterator iter = l.iterator();
 					while (iter.hasNext()) {
-						IDOLegacyEntity tempEntity = (IDOLegacyEntity) iter.next();
+						GenericEntity tempEntity = (GenericEntity) iter.next();
 						String originalDatasource = tempEntity.getDatasource();
 						tempEntity.setDatasource(this.getToDatasource());
 						if (!maintainIDs) {
@@ -170,7 +170,7 @@ public class IDOCopier {
 			e.printStackTrace();
 		}
 	}
-	private void copyManyToManyData(IDOLegacyEntity fromInstance, IDOLegacyEntity toInstance) {
+	private void copyManyToManyData(GenericEntity fromInstance, GenericEntity toInstance) {
 		//addToCopiedEntityList(fromInstance);
 		List infoList = getManyToManyRelatedAndCopied(fromInstance);
 		Iterator iter = infoList.iterator();
@@ -227,7 +227,7 @@ public class IDOCopier {
 			return entityRelationship.getSetTableName();			
 		}
 	}
-	private IDOEntityCopyInfo addToCopiedEntityList(IDOLegacyEntity entity) {
+	private IDOEntityCopyInfo addToCopiedEntityList(GenericEntity entity) {
 		IDOEntityCopyInfo cInfo = getIDOEntityCopyInfo(entity.getClass(), entity.getTableName());
 		copiedEntites.add(cInfo);
 		//copiedEntityClasses.add(entity.getClass());
@@ -265,7 +265,7 @@ public class IDOCopier {
 	/**
 	 *   Returns a List of IDOEntityRelationshipCopyInfo Objects
 	 */
-	private List getManyToManyRelatedAndCopied(IDOLegacyEntity entity) {
+	private List getManyToManyRelatedAndCopied(GenericEntity entity) {
 		return entityRelationshipInfos;
 	}
 	private void copyManyToManyData(String fromTableName,String toTableName, Connection fromConnection, Connection toConnection) throws SQLException{
@@ -330,7 +330,7 @@ public class IDOCopier {
 	}
 
 	protected IDOEntityCopyInfo getIDOEntityCopyInfo(Class entityClass){
-		IDOLegacyEntity entity = this.createEntityInstance(entityClass);
+		GenericEntity entity = this.createEntityInstance(entityClass);
 		String tableName = entity.getTableName();
 		return getIDOEntityCopyInfo(entityClass,tableName);
 	}
@@ -381,7 +381,7 @@ public class IDOCopier {
 			return false;
 		}
 	}
-	private void updateNumberGeneratorValue(IDOLegacyEntity entity, int highestValue) {
+	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -408,13 +408,13 @@ public class IDOCopier {
 		}
 		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
 	}
-	protected IDOLegacyEntity createEntityInstance(IDOLegacyEntity entity) {
+	protected GenericEntity createEntityInstance(GenericEntity entity) {
 		return createEntityInstance(entity.getClass());
 	}
-	protected IDOLegacyEntity createEntityInstance(Class entityInterfaceOrBeanClass) {
+	protected GenericEntity createEntityInstance(Class entityInterfaceOrBeanClass) {
 		try {
 			Class interfaceClass = IDOLookup.getInterfaceClassFor(entityInterfaceOrBeanClass);
-			return (IDOLegacyEntity) IDOLookup.getHome(interfaceClass).createIDO();
+			return (GenericEntity) IDOLookup.getHome(interfaceClass).createIDO();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(
@@ -449,7 +449,7 @@ public class IDOCopier {
 		}
 		return false;
 	}
-	protected boolean isTableAlreadyCopied(IDOLegacyEntity entity) {
+	protected boolean isTableAlreadyCopied(GenericEntity entity) {
 		IDOEntityCopyInfo info = getIDOEntityCopyInfo(entity.getClass(), entity.getTableName());
 		return isTableAlreadyCopied(info);
 	}

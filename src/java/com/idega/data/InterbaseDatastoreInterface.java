@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.24 2003/05/23 10:48:27 aron Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.25 2003/07/05 17:21:46 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -95,7 +95,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 		return theReturn;
 	}
-	public void createTrigger(IDOLegacyEntity entity) throws Exception
+	public void createTrigger(GenericEntity entity) throws Exception
 	{
 		createGenerator(entity);
 		Connection conn = null;
@@ -131,7 +131,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			}
 		}
 	}
-	public void createGenerator(IDOLegacyEntity entity) throws Exception
+	public void createGenerator(GenericEntity entity) throws Exception
 	{
 		Connection conn = null;
 		Statement Stmt = null;
@@ -181,7 +181,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	     }
 	   }
 	 }*/
-	protected void deleteTrigger(IDOLegacyEntity entity) throws Exception
+	protected void deleteTrigger(GenericEntity entity) throws Exception
 	{
 		Connection conn = null;
 		Statement Stmt = null;
@@ -203,12 +203,12 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			}
 		}
 	}
-	public void deleteEntityRecord(IDOLegacyEntity entity) throws Exception
+	public void deleteEntityRecord(GenericEntity entity) throws Exception
 	{
 		deleteGenerator(entity);
 		super.deleteEntityRecord(entity);
 	}
-	protected void deleteGenerator(IDOLegacyEntity entity) throws Exception
+	protected void deleteGenerator(GenericEntity entity) throws Exception
 	{
 		Connection conn = null;
 		Statement Stmt = null;
@@ -273,11 +273,11 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 		return true;
 	}
-	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity)
+	protected String getCreateUniqueIDQuery(GenericEntity entity)
 	{
 		return "SELECT GEN_ID(" + getInterbaseGeneratorName(entity) + ", 1) FROM RDB$DATABASE";
 	}
-	protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception
+	protected void executeBeforeInsert(GenericEntity entity) throws Exception
 	{
 		if (entity.isNull(entity.getIDColumnName()))
 		{
@@ -316,7 +316,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	    }
 	  }
 	*/
-	private static String getInterbaseGeneratorName(IDOLegacyEntity entity)
+	private static String getInterbaseGeneratorName(GenericEntity entity)
 	{
 		String entityName = entity.getTableName();
 		if (entityName.endsWith("_"))
@@ -331,7 +331,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	/**
 	 * Interbase workaraound because only one connection can be to the database when altering tables
 	 */
-	public void executeBeforeCreateEntityRecord(IDOLegacyEntity entity) throws Exception
+	public void executeBeforeCreateEntityRecord(GenericEntity entity) throws Exception
 	{
 		String datasource = entity.getDatasource();
 		InterbaseConnectionInfo info = new InterbaseConnectionInfo();
@@ -352,7 +352,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	/**
 	 * Interbase workaraound because only one connection can be to the database when altering tables
 	 */
-	public void executeAfterCreateEntityRecord(IDOLegacyEntity entity) throws Exception
+	public void executeAfterCreateEntityRecord(GenericEntity entity) throws Exception
 	{
 		String datasource = entity.getDatasource();
 		PoolManager pmgr = PoolManager.getInstance();
@@ -374,7 +374,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		public int min;
 		public int max;
 	}
-	public void setNumberGeneratorValue(IDOLegacyEntity entity, int value)
+	public void setNumberGeneratorValue(GenericEntity entity, int value)
 	{
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 		String statement = "set generator " + this.getInterbaseGeneratorName(entity) + " to " + value;
@@ -388,7 +388,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 	}
 	
-	public boolean doesTableExist(IDOLegacyEntity entity, String tableName){
+	public boolean doesTableExist(GenericEntity entity, String tableName){
 	    try{
 	 
 	    	StringBuffer query = new StringBuffer("SELECT COUNT(RDB$RELATION_NAME) ");

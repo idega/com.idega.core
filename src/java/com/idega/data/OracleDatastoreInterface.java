@@ -121,7 +121,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 		return theReturn;
 	}
-	public void createTrigger(IDOLegacyEntity entity) throws Exception {
+	public void createTrigger(GenericEntity entity) throws Exception {
 		createSequence(entity);
 		Connection conn = null;
 		Statement Stmt = null;
@@ -153,10 +153,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	
 	
 	
-	public void createSequence(IDOLegacyEntity entity) throws Exception {
+	public void createSequence(GenericEntity entity) throws Exception {
 		createSequence(entity, 1);
 	}
-	public void createSequence(IDOLegacyEntity entity, int startNumber) throws Exception {
+	public void createSequence(GenericEntity entity, int startNumber) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -202,12 +202,12 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}*/
-	public void deleteEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void deleteEntityRecord(GenericEntity entity) throws Exception {
 		super.deleteEntityRecord(entity);
 		deleteTrigger(entity);
 		deleteSequence(entity);
 	}
-	protected void deleteTrigger(IDOLegacyEntity entity) throws Exception {
+	protected void deleteTrigger(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -224,7 +224,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
-	protected void deleteSequence(IDOLegacyEntity entity) throws Exception {
+	protected void deleteSequence(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -268,7 +268,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				}
 			}
 	}*/
-	protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception {
+	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
 		if (entity.isNull(entity.getIDColumnName())) {
 			entity.setID(createUniqueID(entity));
 		}
@@ -333,13 +333,13 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	
 	
 	*/
-	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity) {
+	protected String getCreateUniqueIDQuery(GenericEntity entity) {
 		return "SELECT " + getOracleSequenceName(entity) + ".nextval FROM dual";
 	}
-	private static String getSequenceName(IDOLegacyEntity entity) {
+	private static String getSequenceName(GenericEntity entity) {
 		return getOracleSequenceName(entity);
 	}
-	private static String getOracleSequenceName(IDOLegacyEntity entity) {
+	private static String getOracleSequenceName(GenericEntity entity) {
 		String entityName = entity.getTableName();
 		return entityName + "_seq";
 		/*if (entityName.endsWith("_")){
@@ -351,7 +351,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 
 
-	public void setNumberGeneratorValue(IDOLegacyEntity entity, int value) {
+	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 		//String statement = "update sequences set last_number="+value+" where sequence_name='"+this.getSequenceName(entity)+"'";
 		String statement = "drop sequence " + this.getSequenceName(entity);
@@ -386,9 +386,9 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 
 	/**
 	 * Varchar is limited to 4000 chars need to use clob for larger fields. Great example http://www.experts-exchange.com/Databases/Oracle/Q_20358143.html
-	 * @see com.idega.data.DatastoreInterface#fillStringColumn(IDOLegacyEntity, String, ResultSet)
+	 * @see com.idega.data.DatastoreInterface#fillStringColumn(GenericEntity, String, ResultSet)
 	 */
-	protected void fillStringColumn(IDOLegacyEntity entity, String columnName, ResultSet rs) throws SQLException {
+	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {
 		
 		int maxlength = entity.getMaxLength(columnName);
 		if (maxlength<=4000) {
@@ -428,7 +428,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
-	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) throws SQLException{
+	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException{
 		try {
 			int maxlength = entity.getMaxLength(columnName);
 			if (maxlength <= 4000) {

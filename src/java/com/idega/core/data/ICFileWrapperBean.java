@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import javax.ejb.FinderException;
 
+import com.idega.data.BlobWrapper;
 import com.idega.data.IDOLookupException;
 import com.idega.data.TreeableEntityWrapper;
 
@@ -121,7 +122,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getFileValue()
 	 */
-	public InputStream getFileValue() throws Exception {
+	public InputStream getFileValue() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getFileValue();
 		} else {
@@ -332,6 +333,20 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	 */
 	public void delete() throws SQLException {
 		((ICFile)this.getMainEntity()).delete();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICFile#getBlobWrapperFileValue()
+	 */
+	public BlobWrapper getBlobWrapperFileValue() {
+		throw new UnsupportedOperationException("method getBlobWrapperFileValue() not yet implemented in ICFileWrapper");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICFile#setBlobWrapperFileValue(com.idega.data.BlobWrapper)
+	 */
+	public void setBlobWrapperFileValue(BlobWrapper p0) {
+		throw new UnsupportedOperationException("method setBlobWrapperFileValue() not yet implemented  in ICFileWrapper");
 	}
 
 

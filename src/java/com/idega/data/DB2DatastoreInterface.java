@@ -218,7 +218,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
    */
 
-  public void createTrigger(IDOLegacyEntity entity)throws Exception{
+  public void createTrigger(GenericEntity entity)throws Exception{
 
 
 
@@ -264,7 +264,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-  public void createSequence(IDOLegacyEntity entity)throws Exception{
+  public void createSequence(GenericEntity entity)throws Exception{
 
 
 
@@ -304,7 +304,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-    public void deleteEntityRecord(IDOLegacyEntity entity)throws Exception{
+    public void deleteEntityRecord(GenericEntity entity)throws Exception{
 
       super.deleteEntityRecord(entity);
 
@@ -322,7 +322,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-      protected void deleteTrigger(IDOLegacyEntity entity)throws Exception{
+      protected void deleteTrigger(GenericEntity entity)throws Exception{
 
 		Connection conn= null;
 
@@ -358,7 +358,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-      protected void deleteSequence(IDOLegacyEntity entity)throws Exception{
+      protected void deleteSequence(GenericEntity entity)throws Exception{
 
 		Connection conn= null;
 
@@ -464,7 +464,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-  protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
+  protected void executeBeforeInsert(GenericEntity entity)throws Exception{
 
 				if ( entity.isNull(entity.getIDColumnName()) ){
 
@@ -582,7 +582,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-  protected String getCreateUniqueIDQuery(IDOLegacyEntity entity){
+  protected String getCreateUniqueIDQuery(GenericEntity entity){
 
     return "SELECT "+getSequenceName(entity)+".nextval FROM dual";
 
@@ -592,7 +592,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
 
-	private static String getSequenceName(IDOLegacyEntity entity){
+	private static String getSequenceName(GenericEntity entity){
 
 		String entityName = entity.getTableName();
 

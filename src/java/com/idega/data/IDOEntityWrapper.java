@@ -34,7 +34,7 @@ import com.idega.core.version.data.ICVersionableHome;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
-public abstract class IDOEntityWrapper implements IDOEntityBean {
+public abstract class IDOEntityWrapper implements IDOEntityBean { 
 
 	private ICLocale _locale = null;
 	private Object _mainPrimaryKey = null;
@@ -398,4 +398,15 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	public void updateMetaData() throws SQLException {
 		((MetaDataCapable)this.getCurrentOpenVersionEntity()).updateMetaData();
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOEntityBean#setDatasource(java.lang.String)
+	 */
+	public void setDatasource(String dataSource) {
+		((IDOEntityBean)this.getCurrentOpenVersionEntity()).setDatasource(dataSource);
+		((IDOEntityBean)this.getMainEntity()).setDatasource(dataSource);
+		((IDOEntityBean)this.getTranslationEntity()).setDatasource(dataSource);
+		((IDOEntityBean)this.getVersionInProgress()).setDatasource(dataSource);
+	}
+
 }

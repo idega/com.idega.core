@@ -204,7 +204,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
     /**
      * @todo: Change implementation
      */
-    return com.idega.data.GenericEntity.getStaticInstance(this.getEntityInterfaceClass());
+    return com.idega.data.GenericEntity.getStaticInstanceIDO(this.getEntityInterfaceClass());
   }
 
 

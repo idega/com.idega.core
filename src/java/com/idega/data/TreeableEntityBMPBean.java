@@ -148,23 +148,23 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	}
 
 	public String getTreeRelationshipTableName(TreeableEntity entity) {
-		return EntityControl.getTreeRelationShipTableName((IDOLegacyEntity)entity);
+		return EntityControl.getTreeRelationShipTableName((TreeableEntityBMPBean)entity);
 	}
 
 	public String getTreeRelationshipChildColumnName(TreeableEntity entity) {
-		return EntityControl.getTreeRelationShipChildColumnName((IDOLegacyEntity)entity);
+		return EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity);
 	}
 
 	public void addChild(TreeableEntity entity) throws java.sql.SQLException {
-		addToTree((IDOLegacyEntity)entity, EntityControl.getTreeRelationShipChildColumnName((IDOLegacyEntity)entity), getTreeRelationshipTableName(entity));
+		addToTree((TreeableEntityBMPBean)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity), getTreeRelationshipTableName(entity));
 	}
 
 	public void removeChild(TreeableEntity entity) throws java.sql.SQLException {
-		removeFrom((IDOLegacyEntity)entity, EntityControl.getTreeRelationShipChildColumnName((IDOLegacyEntity)entity));
+		removeFrom((TreeableEntityBMPBean)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity));
 	}
 
 	public void moveChildrenFrom(TreeableEntity entityFrom) throws java.sql.SQLException {
-		moveChildrenToCurrent((IDOLegacyEntity)entityFrom, EntityControl.getTreeRelationShipChildColumnName((IDOLegacyEntity)entityFrom));
+		moveChildrenToCurrent((TreeableEntityBMPBean)entityFrom, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entityFrom));
 	}
 
 	/**

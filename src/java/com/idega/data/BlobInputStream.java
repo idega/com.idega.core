@@ -22,14 +22,14 @@ import com.idega.util.database.ConnectionBroker;
 public class BlobInputStream extends InputStream {
 	private InputStream in;
 	private Connection conn;
-	private IDOLegacyEntity entity;
+	private GenericEntity entity;
 	private ResultSet RS;
 	private Statement Stmt;
 	private int status; //not used
 	private String columnName;
 	private String tableName;
 	private String dataSource;
-	public BlobInputStream(IDOLegacyEntity entity, String tableColumnName) throws SQLException, IOException {
+	public BlobInputStream(GenericEntity entity, String tableColumnName){
 		this.setEntity(entity);
 		this.setTableColumnName(tableColumnName);
 		initConnection();
@@ -38,7 +38,7 @@ public class BlobInputStream extends InputStream {
 	public BlobInputStream(InputStream in) {
 		this.in = in;
 	}
-	public void setEntity(IDOLegacyEntity entity) {
+	public void setEntity(GenericEntity entity) {
 		this.entity = entity;
 		setDataSource(entity.getDatasource());
 	}
@@ -179,7 +179,7 @@ public class BlobInputStream extends InputStream {
 		}
 		return in;
 	}
-	public IDOLegacyEntity getEntity() {
+	public GenericEntity getEntity() {
 		return entity;
 	}
 	public void setStatus(int status) {
@@ -197,7 +197,7 @@ public class BlobInputStream extends InputStream {
 	private String getTableName() {
 		return this.tableName;
 	}
-	private void initConnection() throws SQLException {
+	private void initConnection(){
 		conn = ConnectionBroker.getConnection(getDataSource());
 	}
 	/*

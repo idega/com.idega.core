@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.70 2003/07/01 13:38:24 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.71 2003/07/05 17:21:46 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -101,7 +101,7 @@ public abstract class DatastoreInterface {
 	 * <b>This</b> function is bla
 	
 	 */
-	public static DatastoreInterface getInstance(IDOLegacyEntity entity) {
+	public static DatastoreInterface getInstance(GenericEntity entity) {
 		//String datastoreType=null;
 		try {
 			DatastoreInterface theReturn = getDatastoreInterfaceByDatasource(entity.getDatasource());
@@ -185,17 +185,17 @@ public abstract class DatastoreInterface {
 		}
 		return _TableCreator;
 	}
-	public void createEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void createEntityRecord(GenericEntity entity) throws Exception {
 		getTableCreator().createEntityRecord(entity);
 	}
-	public void executeBeforeCreateEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void executeBeforeCreateEntityRecord(GenericEntity entity) throws Exception {
 	}
-	public void executeAfterCreateEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void executeAfterCreateEntityRecord(GenericEntity entity) throws Exception {
 	}
-	public void deleteEntityRecord(IDOLegacyEntity entity) throws Exception {
+	public void deleteEntityRecord(GenericEntity entity) throws Exception {
 		getTableCreator().deleteEntityRecord(entity);
 	}
-	public abstract void createTrigger(IDOLegacyEntity entity) throws Exception;
+	public abstract void createTrigger(GenericEntity entity) throws Exception;
 	//public abstract void createForeignKeys(IDOLegacyEntity entity)throws Exception;
 	/**
 	 * Executes a query to the entity's set datasource and returns the first result (ResultSet.getObject(1)).
@@ -203,7 +203,7 @@ public abstract class DatastoreInterface {
 	 * @param entity an entity instance for the datasource to query to.
 	 * @param a well formatted SQL command string
 	 */
-	protected Object executeQuery(IDOLegacyEntity entity, String SQLCommand) throws Exception {
+	protected Object executeQuery(GenericEntity entity, String SQLCommand) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		ResultSet rs = null;
@@ -234,7 +234,7 @@ public abstract class DatastoreInterface {
 		Statement Stmt = null;
 		int theReturn = 0;
 		try {
-			conn = ((IDOLegacyEntity)entity).getConnection();
+			conn = ((GenericEntity)entity).getConnection();
 			//conn.commit();
 			Stmt = conn.createStatement();
 			System.out.println(SQLCommand);
@@ -244,7 +244,7 @@ public abstract class DatastoreInterface {
 				Stmt.close();
 			}
 			if (conn != null) {
-				((IDOLegacyEntity)entity).freeConnection(conn);
+				((GenericEntity)entity).freeConnection(conn);
 			}
 		}
 		return theReturn;
@@ -339,7 +339,7 @@ public abstract class DatastoreInterface {
 		return true;
 	}
 
-	public void insert(IDOLegacyEntity entity) throws Exception {
+	public void insert(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		try {
 			conn = entity.getConnection();
@@ -398,7 +398,7 @@ public abstract class DatastoreInterface {
 	 * @param entity
 	 * @param conn
 	 */
-	protected void updateNumberGeneratedValue(IDOLegacyEntity entity, Connection conn) {
+	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn) {
 
 	}
 	/**
@@ -412,7 +412,7 @@ public abstract class DatastoreInterface {
 	**Creates a unique ID for the ID column
 	
 	**/
-	public int createUniqueID(IDOLegacyEntity entity) throws Exception {
+	public int createUniqueID(GenericEntity entity) throws Exception {
 		int returnInt = -1;
 		Connection conn = null;
 		Statement stmt = null;
@@ -436,12 +436,12 @@ public abstract class DatastoreInterface {
 		}
 		return returnInt;
 	}
-	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity) throws Exception {
+	protected String getCreateUniqueIDQuery(GenericEntity entity) throws Exception {
 		return "";
 	}
-	protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception {
+	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
 	}
-	protected void executeAfterInsert(IDOLegacyEntity entity) throws Exception {
+	protected void executeAfterInsert(GenericEntity entity) throws Exception {
 		if (entity.hasLobColumn() && (entity.getBlobColumnValue(entity.getLobColumnName()).getInputStreamForBlobWrite() != null)) {
 			insertBlob(entity);
 		}
@@ -449,9 +449,9 @@ public abstract class DatastoreInterface {
 			crunchMetaData(entity);
 		}
 	}
-	protected void executeBeforeUpdate(IDOLegacyEntity entity) throws Exception {
+	protected void executeBeforeUpdate(GenericEntity entity) throws Exception {
 	}
-	protected void executeAfterUpdate(IDOLegacyEntity entity) throws Exception {
+	protected void executeAfterUpdate(GenericEntity entity) throws Exception {
 		if (!supportsBlobInUpdate()) {
 			if (entity.hasLobColumn() && (entity.getBlobColumnValue(entity.getLobColumnName()).getInputStreamForBlobWrite() != null)) {
 				insertBlob(entity);
@@ -461,11 +461,11 @@ public abstract class DatastoreInterface {
 			crunchMetaData(entity);
 		}
 	}
-	protected void executeBeforeDelete(IDOLegacyEntity entity) throws Exception {
+	protected void executeBeforeDelete(GenericEntity entity) throws Exception {
 	}
-	protected void executeAfterDelete(IDOLegacyEntity entity) throws Exception {
+	protected void executeAfterDelete(GenericEntity entity) throws Exception {
 	}
-	protected void crunchMetaData(IDOLegacyEntity entity) throws SQLException {
+	protected void crunchMetaData(GenericEntity entity) throws SQLException {
 		if (entity.metaDataHasChanged()) { //else do nothing
 			int length;
 			MetaData data;
@@ -514,7 +514,7 @@ public abstract class DatastoreInterface {
 			entity.metaDataHasChanged(false); //so we don't do anything next time
 		}
 	}
-	protected void insertBlob(IDOLegacyEntity entity) throws Exception {
+	protected void insertBlob(GenericEntity entity) throws Exception {
 		StringBuffer statement;
 		Connection Conn = null;
 		InputStream instream = null;
@@ -574,7 +574,7 @@ public abstract class DatastoreInterface {
 				instream.close();
 		}
 	}
-	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, IDOLegacyEntity entity) throws SQLException {
+	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity) throws SQLException {
 		String returnString = "";
 		String[] names = entity.getColumnNames();
 		int questionmarkCount = 1;
@@ -609,7 +609,7 @@ public abstract class DatastoreInterface {
 		}
 		return returnString;
 	}
-	private void insertIntoPreparedStatement(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) throws SQLException {
+	private void insertIntoPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException {
 		try {
 
 			String storageClassName = entity.getStorageClassName(columnName);
@@ -648,7 +648,7 @@ public abstract class DatastoreInterface {
 			throw new SQLException("Entity: " + entity.getEntityName() + "; Column:  " + columnName + " - " + ex.getMessage());
 		}
 	}
-	public void handleBlobUpdate(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) {
+	public void handleBlobUpdate(String columnName, PreparedStatement statement, int index, GenericEntity entity) {
 		BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
 		//System.out.println("DatastoreInterface, in handleBlobUpdate, columnName="+columnName+" index="+index);
 		if (wrapper != null) {
@@ -673,7 +673,7 @@ public abstract class DatastoreInterface {
 	public void setBlobstreamForStatement(PreparedStatement statement, InputStream stream, int index) throws SQLException, IOException {
 		statement.setBinaryStream(index, stream, stream.available());
 	}
-	public void update(IDOLegacyEntity entity) throws Exception {
+	public void update(GenericEntity entity) throws Exception {
 		if (entity.columnsHaveChanged()) {
 			executeBeforeUpdate(entity);
 			Connection conn = null;
@@ -708,10 +708,10 @@ public abstract class DatastoreInterface {
 				}
 			}
 			executeAfterUpdate(entity);
-			entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+			entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 		}
 	}
-	public void update(IDOLegacyEntity entity, Connection conn) throws Exception {
+	public void update(GenericEntity entity, Connection conn) throws Exception {
 		executeBeforeUpdate(entity);
 		PreparedStatement Stmt = null;
 		try {
@@ -741,10 +741,10 @@ public abstract class DatastoreInterface {
 			}
 		}
 		executeAfterUpdate(entity);
-		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
-	public void insert(IDOLegacyEntity entity, Connection conn) throws Exception {
+	public void insert(GenericEntity entity, Connection conn) throws Exception {
 		executeBeforeInsert(entity);
 		PreparedStatement Stmt = null;
 		ResultSet RS = null;
@@ -778,10 +778,10 @@ public abstract class DatastoreInterface {
 			}
 		}
 		executeAfterInsert(entity);
-		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
-	public void delete(IDOLegacyEntity entity) throws Exception {
+	public void delete(GenericEntity entity) throws Exception {
 		executeBeforeInsert(entity);
 		Connection conn = null;
 		Statement Stmt = null;
@@ -814,9 +814,9 @@ public abstract class DatastoreInterface {
 			}
 		}
 		executeAfterInsert(entity);
-		entity.setEntityState(entity.STATE_DELETED);
+		entity.setEntityState(IDOLegacyEntity.STATE_DELETED);
 	}
-	public void delete(IDOLegacyEntity entity, Connection conn) throws Exception {
+	public void delete(GenericEntity entity, Connection conn) throws Exception {
 		executeBeforeInsert(entity);
 		Statement Stmt = null;
 		try {
@@ -843,9 +843,9 @@ public abstract class DatastoreInterface {
 			}
 		}
 		executeAfterInsert(entity);
-		entity.setEntityState(entity.STATE_DELETED);
+		entity.setEntityState(IDOLegacyEntity.STATE_DELETED);
 	}
-	public void deleteMetaData(IDOLegacyEntity entity, Connection conn) throws Exception {
+	public void deleteMetaData(GenericEntity entity, Connection conn) throws Exception {
 		Statement Stmt = null;
 		Statement stmt2 = null;
 		try {
@@ -911,7 +911,7 @@ public abstract class DatastoreInterface {
 			}
 		}
 	}
-	public void deleteMetaData(IDOLegacyEntity entity) throws Exception {
+	public void deleteMetaData(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		try {
 			conn = entity.getConnection();
@@ -930,7 +930,7 @@ public abstract class DatastoreInterface {
 	*Used to generate the ?,? mark list for preparedstatement
 	
 	**/
-	protected String getQuestionmarksForColumns(IDOLegacyEntity entity) {
+	protected String getQuestionmarksForColumns(GenericEntity entity) {
 		String returnString = "";
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++) {
@@ -945,7 +945,7 @@ public abstract class DatastoreInterface {
 		}
 		return returnString;
 	}
-	boolean isValidColumnForUpdateList(IDOLegacyEntity entity, String columnName) {
+	boolean isValidColumnForUpdateList(GenericEntity entity, String columnName) {
 		boolean isIDColumn = entity.getIDColumnName().equalsIgnoreCase(columnName);
 		if (isIDColumn) {
 			return false;
@@ -976,7 +976,7 @@ public abstract class DatastoreInterface {
 			}
 		}
 	}
-	protected static boolean isValidColumnForInsertList(IDOLegacyEntity entity, String columnName) {
+	protected static boolean isValidColumnForInsertList(GenericEntity entity, String columnName) {
 		if (entity.isNull(columnName)) {
 			return false;
 		} else {
@@ -986,7 +986,7 @@ public abstract class DatastoreInterface {
 			return true;
 		}
 	}
-	protected static boolean isValidColumnForSelectList(IDOLegacyEntity entity, String columnName) {
+	protected static boolean isValidColumnForSelectList(GenericEntity entity, String columnName) {
 		return !(entity.getStorageClassType(columnName) == EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER);
 	}
 	/**
@@ -995,7 +995,7 @@ public abstract class DatastoreInterface {
 	 * @param columnName
 	 * @return the columnName if there is nothing specific about the select
 	 */
-	protected String getColumnStringForSelectList(IDOLegacyEntity entity, String columnName) {
+	protected String getColumnStringForSelectList(GenericEntity entity, String columnName) {
 		return columnName;
 	}
 	/**
@@ -1003,7 +1003,7 @@ public abstract class DatastoreInterface {
 	 * @param entity
 	 * @return the SQL query string
 	 */
-	protected String getCommaDelimitedColumnNamesForSelect(IDOLegacyEntity entity) {
+	protected String getCommaDelimitedColumnNamesForSelect(GenericEntity entity) {
 		String newCachedColumnNameList = null;
 		//String newCachedColumnNameList = entity.getCachedColumnNamesList();
 		if (newCachedColumnNameList == null) {
@@ -1031,7 +1031,7 @@ public abstract class DatastoreInterface {
 	 * @param entity
 	 * @return String
 	 */
-	protected static String getCommaDelimitedColumnNamesForInsert(IDOLegacyEntity entity) {
+	protected static String getCommaDelimitedColumnNamesForInsert(GenericEntity entity) {
 		String newCachedColumnNameList = null;
 		//String newCachedColumnNameList = entity.getCachedColumnNamesList();
 		if (newCachedColumnNameList == null) {
@@ -1052,7 +1052,7 @@ public abstract class DatastoreInterface {
 		}
 		return newCachedColumnNameList;
 	}
-	protected static String getCommaDelimitedColumnValues(IDOLegacyEntity entity) {
+	protected static String getCommaDelimitedColumnValues(GenericEntity entity) {
 		StringBuffer returnString = null;
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++) {
@@ -1071,7 +1071,7 @@ public abstract class DatastoreInterface {
 		}
 		return returnString.toString();
 	}
-	protected String getAllColumnsAndQuestionMarks(IDOLegacyEntity entity) {
+	protected String getAllColumnsAndQuestionMarks(GenericEntity entity) {
 		StringBuffer returnString = null;
 		String[] names = entity.getColumnNames();
 		String questionmark = "=?";
@@ -1109,14 +1109,14 @@ public abstract class DatastoreInterface {
 	protected String getCreatePrimaryKeyStatementBeginning(String tableName) {
 		return "alter table " + tableName + " add primary key (";
 	}
-	public void setNumberGeneratorValue(IDOLegacyEntity entity, int value) {
+	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
 	}
 	/**
 	 * This method outputs the outputString to System.out if the Application property
 	 * "debug" is set to "TRUE"
 	 */
-	protected static void debug(String outputString, IDOLegacyEntity entity) {
+	protected static void debug(String outputString, GenericEntity entity) {
 		if (IWMainApplicationSettings.isDebugActive()) {
 			System.out.println("[DEBUG] \"" + outputString + "\" : " + entity.getEntityName());
 		}
@@ -1148,16 +1148,16 @@ public abstract class DatastoreInterface {
 		}
 		return interfacesByDatasourcesMap;
 	}
-	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) throws SQLException {
+	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException {
 		statement.setString(index, entity.getStringColumnValue(columnName));
 	}
-	protected void fillStringColumn(IDOLegacyEntity entity, String columnName, ResultSet rs) throws SQLException {
+	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {
 		String value = rs.getString(columnName);
 		if (value != null) {
 			entity.setColumn(columnName, value);
 		}
 	}
-	protected void fillColumn(IDOLegacyEntity entity, String columnName, ResultSet RS) throws SQLException {
+	protected void fillColumn(GenericEntity entity, String columnName, ResultSet RS) throws SQLException {
 		int classType = entity.getStorageClassType(columnName);
 		if (classType == EntityAttribute.TYPE_JAVA_LANG_INTEGER) {
 			//if (RS.getInt(columnName) != -1){
@@ -1224,12 +1224,12 @@ public abstract class DatastoreInterface {
 			}
 		}
 	}
-	String getPrimaryKeyWhereClause(IDOLegacyEntity entity) {
+	String getPrimaryKeyWhereClause(GenericEntity entity) {
 		StringBuffer statement = new StringBuffer();
 		appendPrimaryKeyWhereClause(entity, statement);
 		return statement.toString();
 	}
-	void appendPrimaryKeyWhereClause(IDOLegacyEntity entity, StringBuffer bufferToAppendTo) {
+	void appendPrimaryKeyWhereClause(GenericEntity entity, StringBuffer bufferToAppendTo) {
 		//try {
 		bufferToAppendTo.append(" where ");
 		bufferToAppendTo.append(entity.getIDColumnName());
@@ -1256,7 +1256,7 @@ public abstract class DatastoreInterface {
 		return IWMainApplicationSettings.isDebugActive();
 	}
 
-	public boolean doesTableExist(IDOLegacyEntity entity, String tableName) throws Exception {
+	public boolean doesTableExist(GenericEntity entity, String tableName) throws Exception {
 		String checkQuery = "select count(*) from " + tableName;
 		try {
 			executeQuery(entity, checkQuery);

@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.8 2003/05/23 23:47:40 eiki Exp $
+ * $Id: EntityBulkUpdater.java,v 1.9 2003/07/05 17:21:46 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -32,14 +32,18 @@ public class EntityBulkUpdater {
   public static String addto = "addto";
   public static String removefrom = "removefrom";
 
-  private IDOLegacyEntity relatedEntity;
+  private GenericEntity relatedEntity;
 
   public EntityBulkUpdater() {
   }
 
   public EntityBulkUpdater(IDOLegacyEntity relatedEntity) {
-    this.relatedEntity = relatedEntity;
+    this.relatedEntity = (GenericEntity)relatedEntity;
   }
+  
+	public EntityBulkUpdater(GenericEntity relatedEntity) {
+		this.relatedEntity = relatedEntity;
+	}
 
   /**
    * Adds a IDOLegacyEntity to the list of elememts to be updated/inserted
@@ -143,7 +147,7 @@ public class EntityBulkUpdater {
       if (update_ != null) {
         Iterator i = update_.iterator();
         while (i.hasNext()) {
-          IDOLegacyEntity e = (IDOLegacyEntity)i.next();
+          GenericEntity e = (GenericEntity)i.next();
           e.update(c);
         }
         update_.clear();
@@ -154,7 +158,7 @@ public class EntityBulkUpdater {
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
-            e.removeFrom(relatedEntity,c);
+            e.removeFrom((IDOLegacyEntity)relatedEntity,c);
           }
           e.delete(c);
         }
@@ -166,7 +170,7 @@ public class EntityBulkUpdater {
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
-            e.addTo(relatedEntity,c);
+            e.addTo((IDOLegacyEntity)relatedEntity,c);
           }
         }
         addto_.clear();
@@ -176,7 +180,7 @@ public class EntityBulkUpdater {
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           if( relatedEntity != null ){
-            e.removeFrom(relatedEntity,c);
+            e.removeFrom((IDOLegacyEntity)relatedEntity,c);
           }
         }
         removefrom_.clear();
@@ -210,7 +214,11 @@ public class EntityBulkUpdater {
   }
 
   public void setRelatedEntity(IDOLegacyEntity relatedEntity){
-   this.relatedEntity = relatedEntity;
+   this.relatedEntity = (GenericEntity)relatedEntity;
   }
+  
+	public void setRelatedEntity(GenericEntity relatedEntity){
+	 this.relatedEntity = relatedEntity;
+	}
 
 }

@@ -12,8 +12,12 @@ package com.idega.core.accesscontrol.data;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Collection;
+
+import javax.ejb.FinderException;
 
 import com.idega.core.user.data.User;
+import com.idega.data.IDOQuery;
 
 
 
@@ -438,5 +442,18 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 		public String getLoginType() {
 			  return getStringColumnValue(getLoginTypeColumnName());
 		}
+		
+		
+		public Collection ejbFindLoginsForUser(User user) throws FinderException{
+			
+			IDOQuery query = idoQuery();
+			query.appendSelectAllFrom(this);
+			query.appendWhereEquals(getColumnNameUserID(),user.getPrimaryKey());
+
+			return idoFindPKsByQuery(query);	
+		}
+			
+		
+		
 }
 

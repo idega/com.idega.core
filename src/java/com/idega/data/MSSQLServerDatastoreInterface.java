@@ -89,14 +89,14 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#createTrigger(com.idega.data.IDOLegacyEntity)
 	 */
-	public void createTrigger(IDOLegacyEntity entity) throws Exception
+	public void createTrigger(GenericEntity entity) throws Exception
 	{
 	}
 	/**
 	 * @param entity
 	 * @param conn
 	 */
-	protected void updateNumberGeneratedValue(IDOLegacyEntity entity, Connection conn)
+	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn)
 	{
 		try
 		{
@@ -178,7 +178,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	 * Hacked version of the insert method.
 	 * @todo: Implement in a better way.
 	 */
-	public void insert(IDOLegacyEntity entity, Connection conn) throws Exception
+	public void insert(GenericEntity entity, Connection conn) throws Exception
 	{
 		executeBeforeInsert(entity);
 		PreparedStatement Stmt = null;
@@ -219,9 +219,9 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			}
 		}
 		executeAfterInsert(entity);
-		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
-	private boolean turnOnIdentityInsertFlag(IDOLegacyEntity entity, Connection conn, boolean entityInsertModeIsOn)
+	private boolean turnOnIdentityInsertFlag(GenericEntity entity, Connection conn, boolean entityInsertModeIsOn)
 	{
 		try
 		{
@@ -246,7 +246,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		}
 		return false;
 	}
-	private boolean turnOffIdentityInsertFlag(IDOLegacyEntity entity, Connection conn, boolean entityInsertModeIsOn)
+	private boolean turnOffIdentityInsertFlag(GenericEntity entity, Connection conn, boolean entityInsertModeIsOn)
 	{
 		if (entityInsertModeIsOn)
 		{

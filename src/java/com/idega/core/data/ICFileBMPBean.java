@@ -14,6 +14,7 @@ import com.idega.core.user.data.User;
 import com.idega.core.version.data.ICItem;
 import com.idega.core.version.data.ICVersion;
 import com.idega.core.version.util.ICVersionQuery;
+import com.idega.data.BlobWrapper;
 import com.idega.data.IDOQuery;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
@@ -121,13 +122,13 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
   public String getDescription(){
     return (String) getStringColumnValue(getColumnNameDescription());
   }
-/*
-  public BlobWrapper getFileValue(){
-    return (BlobWrapper) getColumnValue("file_value");
-  }
-*/
 
-  public InputStream getFileValue()throws Exception{
+  public BlobWrapper getBlobWrapperFileValue(){
+    return (BlobWrapper) getColumnValue(getColumnFileValue());
+  }
+
+
+  public InputStream getFileValue(){
     return getInputStreamColumnValue(getColumnFileValue());
   }
 
@@ -167,11 +168,11 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
   public void setFileSize(int fileSize){
     setColumn(getColumnNameFileSize(), fileSize);
   }
-/*
-  public void setFileValue(BlobWrapper fileValue){
-    setColumn("file_value", fileValue);
+
+  public void setBlobWrapperFileValue(BlobWrapper fileValue){
+    setColumn(getColumnFileValue(), fileValue);
   }
-*/
+
   public void setFileValue(InputStream fileValue){
     setColumn(getColumnFileValue(), fileValue);
   }
