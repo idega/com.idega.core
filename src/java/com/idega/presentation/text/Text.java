@@ -326,10 +326,16 @@ protected String getLocalizedText(IWContext iwc){
 
 public void print(IWContext iwc)throws Exception{
 	initVariables(iwc);
+
 	//setDefaultAttributes(iwc);
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
-			//if (getInterfaceStyle().equals("something")){
+                  boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
+                  if(alignSet){
+                    print("<div align=\""+getHorizontalAlignment()+"\">");
+                    removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+                  }
+                  	//if (getInterfaceStyle().equals("something")){
 			//}
 			//else{
 			if (bold)
@@ -349,7 +355,12 @@ public void print(IWContext iwc)throws Exception{
 				{print("</b>");}
 			if (italic)
 				{print("</i>");}
-			//}
+
+                  if(alignSet){
+                    print("</div>");
+                  }
+
+                        //}
 		}
 		else if (getLanguage().equals("WML")){
 			/*if (isEnclosedByParagraph()){

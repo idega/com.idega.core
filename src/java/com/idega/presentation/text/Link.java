@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.55 2002/03/15 20:31:38 eiki Exp $
+ * $Id: Link.java,v 1.56 2002/03/21 00:03:13 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1429,6 +1429,13 @@ public class Link extends Text{
 
     if (getLanguage().equals("HTML")) {
       boolean openInNewWindow=isOpeningInNewWindow();
+      boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
+
+      if(alignSet){
+        print("<div align=\""+getHorizontalAlignment()+"\">");
+        removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+      }
+
       if(openInNewWindow){
       //if (_objectType==(OBJECT_TYPE_WINDOW)) {
        // openInNewWindow=true;
@@ -1493,6 +1500,10 @@ public class Link extends Text{
 	  }
 	/*}*/
 	print("</a>");
+
+        if(alignSet){
+          print("</div>");
+        }
       /*} else {
 	if (addParameters) {
 	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
