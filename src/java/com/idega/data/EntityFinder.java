@@ -730,6 +730,26 @@ public class EntityFinder {
 				+ toFind2);
 	}
 
+	public static List findAllByColumn(IDOLegacyEntity fromEntity, String columnName1, int toFind1, String columnName2, String toFind2)
+	throws SQLException {
+	//System.out.println("select * from "+fromEntity.getTableName()+"
+	// where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like
+	// '"+toFind2+"'");
+	return findAll(
+		fromEntity,
+		"select * from "
+			+ fromEntity.getTableName()
+			+ " where "
+			+ columnName1
+			+ " = "
+			+ toFind1
+			+ " and "
+			+ columnName2
+			+ " = '"
+			+ toFind2
+			+ "'");
+	}
+
 	/**
 	 * Finds all instances of the entityClass where columnName1==toFind1 and
 	 * columnName2==toFind2, returns empty List if no match
