@@ -1,12 +1,12 @@
 /*
 <<<<<<< GenericEntity.java
 <<<<<<< GenericEntity.java
- * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
 =======
- * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
 >>>>>>> 1.83
 =======
- * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.88 2002/03/25 17:54:08 tryggvil Exp $
 >>>>>>> 1.84
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
@@ -2683,7 +2683,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
   }
 
-  boolean columnsHaveChanged(){
+  public boolean columnsHaveChanged(){
     return (_updatedColumns!=null);
   }
 

@@ -144,4 +144,8 @@ public interface IDOLegacyEntity extends IDOEntity{
  public void setNullable(java.lang.String p0,boolean p1);
  public void deleteMetaData()throws java.sql.SQLException;
  public com.idega.data.EntityAttribute getColumn(java.lang.String p0);
+ public boolean columnsHaveChanged();
+ public void setToInsertStartData(boolean ifTrue);
+ public boolean getIfInsertStartData();
+
 }
