@@ -62,6 +62,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
   public boolean hasPermission(String permissionKey, PresentationObject obj,IWContext iwc) throws Exception;
   public boolean hasPermission(String permissionKey, ICObject obj, IWContext iwc) throws Exception;
+  public boolean hasPermission(String permissionKey, int category, String identifier, IWContext iwc) throws Exception;
   public boolean hasFilePermission(String permissionKey, int id, IWContext iwc)throws Exception;
   //temp public boolean hasDataPermission(String permissionKey, Class entity, int entityRecordId, IWContext iwc)throws Exception;
   //temp public boolean hasDataPermission(String permissionKey, Class entity, IWContext iwc)throws Exception;

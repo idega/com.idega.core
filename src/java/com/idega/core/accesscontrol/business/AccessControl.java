@@ -174,6 +174,129 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return "administrator";
   }
 
+  public boolean hasPermission(String permissionKey, int category, String identifier, IWContext iwc) throws Exception{
+    Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
+
+    if (isAdmin(iwc)){
+      return true;
+    }
+
+    User user = LoginBusiness.getUser(iwc);
+    ICPermission permission = ICPermission.getStaticInstance();
+    ICPermission[] Permissions = null;
+    List groups = null;
+    List tempGroupList = new Vector();
+    List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
+
+    if (user == null){
+      permissionOrder = new List[1];
+      permissionOrder[0] = new Vector();
+      permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+    } else {
+
+      groups = LoginBusiness.getPermissionGroups(iwc);
+      GenericGroup primaryGroup = LoginBusiness.getPrimaryGroup(iwc);
+
+      if (groups != null && groups.size() > 0){
+        if(primaryGroup != null){
+          groups.remove(primaryGroup);
+        }
+        List groupIds = new Vector();
+        Iterator iter = groups.iterator();
+        while (iter.hasNext()) {
+          groupIds.add(Integer.toString(((GenericGroup)iter.next()).getID()));
+        }
+        permissionOrder = new List[5];
+        permissionOrder[4] = groupIds;
+      } else {
+        permissionOrder = new List[4];
+      }
+        permissionOrder[0] = new Vector();
+        permissionOrder[0].add( Integer.toString(getPermissionGroupEveryOne().getID()) );
+        permissionOrder[1] = new Vector();
+        permissionOrder[1].add( Integer.toString(getPermissionGroupUsers().getID()) );
+        permissionOrder[2] = new Vector();
+        permissionOrder[2].add( Integer.toString(user.getGroupID()) );
+        permissionOrder[3] = new Vector();
+        permissionOrder[3].add( Integer.toString(user.getPrimaryGroupID()) );
+        // Everyone, user, primaryGroup, otherGroups
+    }
+    myPermission = checkForPermission(permissionOrder, category, identifier, permissionKey, iwc);
+    if(myPermission != null){
+      return myPermission.booleanValue();
+    }
+    return false;
+
+  }
+
+
+  private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionType, IWContext iwc ) throws Exception {
+    Boolean myPermission = null;
+    if(permissionGroupLists != null){
+      int arrayLength = permissionGroupLists.length;
+      if (category == AccessController._CATEGORY_JSP_PAGE){ // JSP page
+        for (int i = 0; i < arrayLength; i++) {
+          myPermission = PermissionCacher.hasPermissionForJSPPage(identifier,iwc,permissionType,permissionGroupLists[i]);
+          if(myPermission != null){
+            return myPermission;
+          }
+        }
+
+        return myPermission;
+      } else { // if (obj != null)
+
+        //PageInstance
+        if(category == AccessController._CATEGORY_PAGE_INSTANCE &&  !identifier.equals(Integer.toString(_notBuilderPageID)) ){
+          for (int i = 0; i < arrayLength; i++) {
+            myPermission = PermissionCacher.hasPermissionForPage(identifier,iwc,permissionType,permissionGroupLists[i]);
+            if(myPermission != null){
+              return myPermission;
+            }
+          }
+
+          // Global - (Page)
+          if(!PermissionCacher.anyInstancePerissionsDefinedForPage(identifier,iwc,permissionType)){
+            ICObject page = getStaticPageICObject();
+            if(page != null){
+              for (int i = 0; i < arrayLength; i++) {
+                myPermission = PermissionCacher.hasPermission(page,iwc,permissionType,permissionGroupLists[i]);
+                if(myPermission != null){
+                  return myPermission;
+                }
+              }
+            }
+          }
+          // Global - (Page)
+
+
+          return myPermission;
+        }else{
+          //instance
+          for (int i = 0; i < arrayLength; i++) {
+            myPermission = PermissionCacher.hasPermissionForObjectInstance(identifier,iwc,permissionType,permissionGroupLists[i]);
+            if(myPermission != null){
+              return myPermission;
+            }
+          }
+          //instance
+
+          // Global - (object)
+          if(!PermissionCacher.anyInstancePerissionsDefinedForObject(identifier,iwc,permissionType)){
+            for (int i = 0; i < arrayLength; i++) {
+              myPermission = PermissionCacher.hasPermissionForObject(identifier,iwc,permissionType,permissionGroupLists[i]);
+              if(myPermission != null){
+                return myPermission;
+              }
+            }
+          }
+          // Global - (object)
+
+          return myPermission;
+        }
+      }
+    }
+    return myPermission;
+  }
 
 
   public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
