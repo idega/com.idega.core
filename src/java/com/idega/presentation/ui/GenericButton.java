@@ -20,6 +20,7 @@ public class GenericButton extends GenericInput {
 	private boolean asImageButton = false;
 	private Image defaultImage;
 	private final String buttonImageStyle = "cursor:hand;";
+	private Class _windowClassToOpen;
 
 	public GenericButton() {
 		this("untitled", "");
@@ -48,6 +49,9 @@ public class GenericButton extends GenericInput {
 		if (getLanguage().equals("HTML")) {
 			if (asImageButton) {
 				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
+			}
+			if (_windowClassToOpen != null) {
+				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, iwc));
 			}
 
 			if (defaultImage == null) {
@@ -99,5 +103,9 @@ public class GenericButton extends GenericInput {
 	 */
 	public void handleKeepStatus(IWContext iwc) {
 		//does nothing...
+	}
+	
+	public void setWindowToOpen(Class windowClassToOpen) {
+		_windowClassToOpen = windowClassToOpen;
 	}
 }
