@@ -355,4 +355,20 @@ public class IWMainApplication{//implements ServletContext{
   }
 
 
+  public boolean restartApplication(){
+    try{
+      if(System.getProperty("os.name").toLowerCase().indexOf("win")!=-1){
+        Runtime.getRuntime().exec(this.getApplicationRealPath()+"/../../bin/restart");
+      }
+      else{
+        Runtime.getRuntime().exec(this.getApplicationRealPath()+"\\..\\..\\bin\\restart.bat");
+      }
+      return true;
+    }
+    catch(Exception ex){
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
 }
