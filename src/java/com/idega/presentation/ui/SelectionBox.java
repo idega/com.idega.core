@@ -457,6 +457,14 @@ public class SelectionBox extends InterfaceObject {
 		setAttribute("size", height);
 
 	}
+	
+	/**
+	 * Sets the width in pixels or percents
+	 */
+	public void setWidth(String width)
+	{
+		setWidthStyle(width);
+	}
 
 	//Returns the first menuelement in the menu if there is no match
 
