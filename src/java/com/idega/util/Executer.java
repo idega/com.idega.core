@@ -31,21 +31,26 @@ public class Executer {
 
         for (int i = 0; i < args.length; i++) {
           System.out.println("com.idega.util.Executer args["+i+"] = "+args[i]);
-          Process p = Runtime.getRuntime().exec(args[i]);
-          StringBuffer sbOut = new StringBuffer(1000);
-          BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-          while (true) {
-            String s = br.readLine();
-            if (s == null) {
-              break;
+          if( canExecute(args[i]) ){
+            Process p = Runtime.getRuntime().exec(args[i]);
+            StringBuffer sbOut = new StringBuffer(1000);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while (true) {
+              String s = br.readLine();
+              if (s == null) {
+                break;
+              }
+              System.out.println(s);
             }
-            System.out.println(s);
+            br.close();
+            //p.waitFor();
+            System.out.println(sbOut.toString());
+            System.out.println("Exit status: " + p.exitValue());
+            p.destroy();
           }
-          br.close();
-          //p.waitFor();
-          System.out.println(sbOut.toString());
-          System.out.println("Exit status: " + p.exitValue());
-          p.destroy();
+          else{
+            System.out.println("WARNING SOMEONE IS TRYING TO USE EXECUTE_AFTER_RESTART TO CORRUPT OR DELETE FILES!");
+          }
         }
       }
     } catch (Exception ex) {
@@ -54,6 +59,15 @@ public class Executer {
     }
   }
 
+  private static boolean canExecute(String exec){
+    exec = exec.toLowerCase();
+    if(exec.indexOf("rm -r")!=-1) return false;
+    else if(exec.indexOf("rm -f")!=-1) return false;
+    else if(exec.indexOf("rm /")!=-1) return false;
+    else if(exec.indexOf("rmdir")!=-1) return false;
+    else if(exec.startsWith("del ")) return false;
+    else return true;
+  }
 
   /**
    *  Description of the Method
