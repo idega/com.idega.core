@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.104 2004/02/20 16:37:43 tryggvil Exp $
+ * $Id: Link.java,v 1.105 2004/03/11 18:17:37 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -642,6 +642,17 @@ public class Link extends Text {
 			maintainedParameters = new Vector();
 		if (maintain)
 			maintainedParameters.add(name);
+	}
+	
+	/**
+	 * Adds a collection of parameter names (String)
+	 * for the link to maintain from the request
+	 * @param parameterNames
+	 */
+	public void setToMaintainParameters(java.util.Collection parameterNames){
+		if (this.maintainedParameters == null)
+			maintainedParameters = new Vector();
+		maintainedParameters.addAll(parameterNames);
 	}
 
 	/*
