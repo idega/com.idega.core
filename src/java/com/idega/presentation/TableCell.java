@@ -25,6 +25,7 @@ public class TableCell extends PresentationObjectContainer {
 	
 	protected TableCell() {
 		super();
+		this.setTransient(false);
 	}
 
 	

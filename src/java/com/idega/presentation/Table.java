@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.80 2004/12/05 13:48:38 laddi Exp $
+ * $Id: Table.java,v 1.81 2004/12/07 15:11:12 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -98,6 +98,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 	public static final String HORIZONTAL_ALIGN_CENTER = "center";
 	
 	//Member variables:
+	/**
+	 * @deprecated replaced with calling getCellAt(x,y)
+	 */
 	protected TableCell theCells[][];
 	protected int cols = 0;
 	protected int rows = 0;
@@ -147,13 +150,25 @@ public class Table extends PresentationObjectContainer implements TableType{
 	public Table(int cols, int rows) {
 		super();
 		isResizable = false;
-		theCells = new TableCell[cols][rows];
+		if(!useFacetBasedCells()){
+			theCells = new TableCell[cols][rows];
+		}
 		this.cols = cols;
 		this.rows = rows;
 		setBorder("0");
 		cellsAreMerged = false;
+		setTransient(false);
 	}
 
+	/**
+	 * Returns weather use the new JSF based Facets to reference the table cells opposed to the old TableCells[] array.
+	 * This method will be used in the JSF transition and will be removed when the theCells[] array is finally removed.
+	 * @return true if Facets are used
+	 */
+	private boolean useFacetBasedCells(){
+		return PresentationObject.USE_JSF_RENDERING;
+		//return false;
+	}
 	
 	/**
 	*Add an object inside this Table in cell with coordinates 1,1 - same as the add() function
@@ -343,12 +358,14 @@ public class Table extends PresentationObjectContainer implements TableType{
 		if (columns != cols || rows != this.rows) {
 			int minCols = Math.min(columns, cols);
 			int minRows = Math.min(rows, this.rows);
-			TableCell theNewObjects[][];
-			theNewObjects = new TableCell[columns][rows];
-			for (int x = 0; x < minCols; x++) {
-				System.arraycopy(theCells[x], 0, theNewObjects[x], 0, minRows);
+			if(!useFacetBasedCells()){
+				TableCell theNewObjects[][];
+				theNewObjects = new TableCell[columns][rows];
+				for (int x = 0; x < minCols; x++) {
+					System.arraycopy(theCells[x], 0, theNewObjects[x], 0, minRows);
+				}
+				theCells = theNewObjects;
 			}
-			theCells = theNewObjects;
 			this.cols = columns;
 			this.rows = rows;
 		}
@@ -360,17 +377,21 @@ public class Table extends PresentationObjectContainer implements TableType{
 	public void empty() {
 		for (int x = 0; x < cols; x++) {
 			for (int y = 0; y < rows; y++) {
-				if (theCells[x][y] != null) {
+				/*if (theCells[x][y] != null) {
 					theCells[x][y].empty();
-				}
+				}*/
+				int xpos=x+1;
+				int ypos=y+1;
+				getCellAt(xpos,ypos).empty();
 			}
 		}
 	}
 	
 	public void emptyCell(int xpos, int ypos) {
-		if (theCells[xpos - 1][ypos - 1] != null) {
+		/*if (theCells[xpos - 1][ypos - 1] != null) {
 			theCells[xpos - 1][ypos - 1].empty();
-		}
+		}*/
+		getCellAt(xpos,ypos).empty();
 	}
 	
 	public int getColumns() {
@@ -462,6 +483,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 		setHeight(xpos, ypos, String.valueOf(height));
 	}
 
+	private static String DOT = ".";
+	
 	public TableCell getCellAt(int xpos, int ypos) {
 		if (isResizable) {
 			if (xpos > this.getColumns()) {
@@ -471,11 +494,26 @@ public class Table extends PresentationObjectContainer implements TableType{
 				setRows(ypos);
 			}
 		}
-		if (this.theCells[xpos - 1][ypos - 1] == null) {
-			this.theCells[xpos - 1][ypos - 1] = new TableCell();
-			// super.add(theObjects);
+		if(useFacetBasedCells()){
+			String facetKey = xpos+DOT+ypos;
+			UIComponent facet = getFacet(facetKey);
+			TableCell cell = (TableCell)facet;
+			if(cell==null){
+				cell = new TableCell();
+				getFacets().put(facetKey,cell);
+			}
+			return cell;
 		}
-		return this.theCells[xpos - 1][ypos - 1];
+		else{
+			//The old array way:
+			if (this.theCells[xpos - 1][ypos - 1] == null) {
+				TableCell cell = new TableCell();
+				cell.setParentObject(this);
+				this.theCells[xpos - 1][ypos - 1]=cell;
+				// super.add(theObjects);
+			}
+			return this.theCells[xpos - 1][ypos - 1];
+		}
 	}
 	
 	public void setWidth(int xpos, int ypos, int width) {
@@ -928,11 +966,13 @@ public class Table extends PresentationObjectContainer implements TableType{
 				setRows(ypos);
 			}
 		}
-		if (this.theCells[xpos - 1][ypos - 1] == null) {
+		/*if (this.theCells[xpos - 1][ypos - 1] == null) {
 			this.theCells[xpos - 1][ypos - 1] = new TableCell();
 			// super.add(theObjects);
 		}
 		this.theCells[xpos - 1][ypos - 1].setMarkupAttribute(attributeName, attributeValue);
+		*/
+		getCellAt(xpos,ypos).setMarkupAttribute(attributeName,attributeValue);
 	}
 	
 	public void setStyle(int xpos, int ypos, String styleAttribute, String styleValue) {
@@ -944,13 +984,16 @@ public class Table extends PresentationObjectContainer implements TableType{
 				setRows(ypos);
 			}
 		}
-		if (this.theCells[xpos - 1][ypos - 1] == null) {
+		/*if (this.theCells[xpos - 1][ypos - 1] == null) {
 			theCells[xpos - 1][ypos - 1] = new TableCell();
 			// super.add(theObjects);
-		}
-		TextStyler styler = new TextStyler(theCells[xpos-1][ypos-1].getStyleAttribute());
+		}*/
+		TableCell cell = getCellAt(xpos,ypos);
+		TextStyler styler = new TextStyler(cell.getStyleAttribute());
 		styler.setStyleValue(styleAttribute, styleValue);
-		theCells[xpos - 1][ypos - 1].setStyleAttribute(styler.getStyleString());
+		cell.setStyleAttribute(styler.getStyleString());
+		
+		
 	}
 	//added for setting a styleClass for a specific cell in a table
 	public void setStyleClass(int xpos, int ypos, String styleName) {
@@ -962,10 +1005,12 @@ public class Table extends PresentationObjectContainer implements TableType{
 				setRows(ypos);
 			}
 		}
-		if (this.theCells[xpos - 1][ypos - 1] == null) {
+		/*if (this.theCells[xpos - 1][ypos - 1] == null) {
 			theCells[xpos - 1][ypos - 1] = new TableCell();
 		}
 		this.theCells[xpos - 1][ypos - 1].setMarkupAttribute("class",styleName);
+		*/
+		getCellAt(xpos,ypos).setMarkupAttribute("class",styleName);
 	}
 	
 	public void setAttribute(int xpos, int ypos, String attribute) {
@@ -977,11 +1022,13 @@ public class Table extends PresentationObjectContainer implements TableType{
 				setRows(ypos);
 			}
 		}
-		if (this.theCells[xpos - 1][ypos - 1] == null) {
+		/*if (this.theCells[xpos - 1][ypos - 1] == null) {
 			this.theCells[xpos - 1][ypos - 1] = new TableCell();
 			// super.add(theObjects);
 		}
 		this.theCells[xpos - 1][ypos - 1].setMarkupAttributeWithoutValue(attribute);
+		*/
+		getCellAt(xpos,ypos).setMarkupAttributeWithoutValue(attribute);
 	}
 	
 	public void setNoWrap(int xpos, int ypos) {
@@ -1226,22 +1273,32 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 */
 	public Object set(int xindex, int yindex, int innercontainerindex, PresentationObject o) {
 		//return set(index,0,o);
-		TableCell moc = theCells[xindex][yindex];
+		/*TableCell moc = theCells[xindex][yindex];
 		if (moc == null) {
 			moc = new TableCell();
 			theCells[xindex][yindex] = moc;
-		}
+		}*/
+		int xpos = xindex+1;
+		int ypos = yindex+1;
+		TableCell moc = getCellAt(xpos,ypos);
 		return moc.set(innercontainerindex, o);
 	}
 
 	public List getChildrenRecursive() {
 		if (allObjects == null) {
 			List toReturn = null;
-			List containedObjects = this.getChildren();
-			if (theCells != null) {
+			Iterator iter = null;
+			if(useFacetBasedCells()){
+				iter = getFacetsAndChildren();
+			}
+			else{
+				//Legacy implementation, see the getChildren() method:
+				iter = this.getChildren().iterator();
+			}
+			//if (theCells != null) {
 				toReturn = new Vector();
-				toReturn.containsAll(containedObjects);
-				Iterator iter = containedObjects.iterator();
+				//toReturn.containsAll(containedObjects);
+				//Iterator iter = containedObjects.iterator();
 				while (iter.hasNext()) {
 					Object item = iter.next();
 					if (item instanceof PresentationObjectContainer) {
@@ -1257,33 +1314,42 @@ public class Table extends PresentationObjectContainer implements TableType{
 						toReturn.add(item);
 					}
 				}
-			}
+			//}
 			allObjects = toReturn;
 		}
 		return allObjects;
 	}
 
 	public List getChildren() {
-		//List theReturn = new TableList(this);
-		List theReturn = new ArrayList();
-		for (int x = 0; x < theCells.length; x++) {
-			for (int y = 0; y < theCells[x].length; y++) {
-				if (theCells[x][y] != null) {
-					theReturn.add(theCells[x][y]);
+		if(useFacetBasedCells()){
+			return super.getChildren();
+		}
+		else{
+			//TODO: Remove this legacy implementation 
+			// - as the table cells are now JSF Facets they cannot be children as well
+			List theReturn = new ArrayList();
+			for (int x = 0; x < theCells.length; x++) {
+				for (int y = 0; y < theCells[x].length; y++) {
+					if (theCells[x][y] != null) {
+						theReturn.add(theCells[x][y]);
+					}
 				}
 			}
+			return theReturn;
 		}
-		return theReturn;
 	}
 
 	//Prints out the no-breaking-space for cells
 	protected void printNbsp(IWContext iwc, int xpos, int ypos) {
-		if (theCells[xpos - 1][ypos - 1] != null) {
-			if (theCells[xpos - 1][ypos - 1].isEmpty()) {
+		TableCell cell = getCellAt(xpos,ypos);
+		//if (theCells[xpos - 1][ypos - 1] != null) {
+		if(cell!=null){
+			//if (theCells[xpos - 1][ypos - 1].isEmpty()) {
+			if(cell.isEmpty()){
 				String width = "1";
 				String height = "1";
 				
-				TextStyler styler = new TextStyler(theCells[xpos - 1][ypos - 1].getStyleAttribute());
+				TextStyler styler = new TextStyler(cell.getStyleAttribute());
 				if (styler.isStyleSet("width")) {
 					width = styler.getStyleValue("width");
 					if (width.indexOf("px") != -1)
@@ -1417,11 +1483,15 @@ public class Table extends PresentationObjectContainer implements TableType{
 							if (this.addLineLeft && x == 1) {
 								printVerticalLine(iwc);
 							}
-							if (theCells[x - 1][y - 1] != null) {
-								if (theCells[x - 1][y - 1].getMarkupAttributesString().indexOf("align") == -1) {
+							TableCell cell = getCellAt(x,y);
+							//if (theCells[x - 1][y - 1] != null) {
+							if(cell!=null){
+							  //if (theCells[x - 1][y - 1].getMarkupAttributesString().indexOf("align") == -1) {
+								if (cell.getMarkupAttributesString().indexOf("align") == -1) {
 									setAlignment(x, y, "left");
 								}
-								if (theCells[x - 1][y - 1].getMarkupAttributesString().indexOf("valign") == -1) {
+								//if (theCells[x - 1][y - 1].getMarkupAttributesString().indexOf("valign") == -1) {
+								if (cell.getMarkupAttributesString().indexOf("align") == -1) {
 									setVerticalAlignment(x, y, "middle");
 								}
 								if (printString == null) {
@@ -1432,11 +1502,11 @@ public class Table extends PresentationObjectContainer implements TableType{
 								}
 								print(LINE_BREAK);
 								printString.append(getCellStartTag(iwc,x,y));
-								printString.append(theCells[x - 1][y - 1].getMarkupAttributesString());
+								printString.append(cell.getMarkupAttributesString());
 								printString.append(TAG_END);
 								println(printString.toString());
 
-								UIComponent child = theCells[x - 1][y - 1];
+								UIComponent child = cell;
 								renderChild(iwc,child);
 								//theObjects[x - 1][y - 1]._print(iwc);
 								printNbsp(iwc, x, y);
@@ -1492,9 +1562,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 							}
 							if (isInMergedCell(x, y)) {
 								if (isTopLeftOfMergedCell(x, y)) {
-									if (theCells[x - 1][y - 1] == null) {
-										theCells[x - 1][y - 1] = new TableCell();
-									}
+									TableCell cell = getCellAt(x,y);
+									//if (theCells[x - 1][y - 1] == null) {
+									//	theCells[x - 1][y - 1] = new TableCell();
+									//}
 									if (printString == null) {
 										printString = new StringBuffer();
 									}
@@ -1505,9 +1576,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 									printString.append(getCellStartTag(iwc,x,y));
 									int mergeWidth = getWidthOfMergedCell(x, y);
 									int mergeHeight = getHeightOfMergedCell(x, y);
-									theCells[x - 1][y - 1].setMarkupAttribute("colspan",mergeWidth);
-									theCells[x - 1][y - 1].setMarkupAttribute("rowspan",mergeHeight);
-									printString.append(theCells[x - 1][y - 1].getMarkupAttributesString());
+									cell.setMarkupAttribute("colspan",mergeWidth);
+									cell.setMarkupAttribute("rowspan",mergeHeight);
+									printString.append(cell.getMarkupAttributesString());
 									/*
 									printString.append(" colspan=\"");
 									printString.append(mergeWidth);
@@ -1519,7 +1590,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 									printString.append(TAG_END);
 									println(printString.toString());
 									
-									UIComponent child = theCells[x - 1][y - 1];
+									UIComponent child = cell;
 									renderChild(iwc,child);
 									//theObjects[x - 1][y - 1]._print(iwc);
 
@@ -1528,7 +1599,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 								}
 							}
 							else {
-								if (theCells[x - 1][y - 1] != null) {
+								TableCell cell = getCellAt(x,y);
+								if (cell != null) {
 									if (printString == null) {
 										printString = new StringBuffer();
 									}
@@ -1537,12 +1609,12 @@ public class Table extends PresentationObjectContainer implements TableType{
 									}
 									print(LINE_BREAK);
 									printString.append(getCellStartTag(iwc,x,y));
-									printString.append(theCells[x - 1][y - 1].getMarkupAttributesString());
+									printString.append(cell.getMarkupAttributesString());
 									printString.append(" ");
 									printString.append(TAG_END);
 									println(printString.toString());
 									
-									UIComponent child = theCells[x - 1][y - 1];
+									UIComponent child = cell;
 									renderChild(iwc,child);
 									//theObjects[x - 1][y - 1]._print(iwc);
 									
@@ -1624,8 +1696,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 				print(trStart);
 				for (int x = 1; x <= cols;) {
 					print(cellTagStart);
-					if (theCells[x - 1][y - 1] != null) {
-						UIComponent child = theCells[x - 1][y - 1];
+					TableCell cell = getCellAt(x,y);
+					if (cell != null) {
+						UIComponent child = cell;
 						renderChild(iwc,child);
 						//theObjects[x - 1][y - 1]._print(iwc);
 					}
@@ -1642,8 +1715,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 		else {
 			for (int y = 1; y <= rows;) {
 				for (int x = 1; x <= cols;) {
-					if (theCells[x - 1][y - 1] != null) {
-						UIComponent child = theCells[x - 1][y - 1];
+					TableCell cell = getCellAt(x,y);
+					if (cell != null) {
+						UIComponent child = cell;
 						renderChild(iwc,child);
 						//theObjects[x - 1][y - 1]._print(iwc);
 					}
@@ -1741,40 +1815,43 @@ public class Table extends PresentationObjectContainer implements TableType{
 	
 
 	public int numberOfObjects() {
-		if (theCells != null) {
+		//if (theCells != null) {
 			return cols * rows;
-		}
-		else {
-			return 0;
-		}
+		//}
+		//else {
+		//	return 0;
+		//}
 	}
 
 	public UIComponent objectAt(int index) {
-		if (theCells != null) {
+		//if (theCells != null) {
 			if (rows != 0) {
 				int x = Math.round(index / rows);
 				int y = index - x * rows;
-				return theCells[x][y];
+				int xpos = x+1;
+				int ypos = y+1;
+				return getCellAt(xpos,ypos);
 			}
 			else {
 				return null;
 			}
-		}
-		else {
-			return null;
-		}
+		//}
+		//else {
+		//	return null;
+		//}
 	}
 
 	public boolean isEmpty() {
-		if (theCells != null) {
+		/*if (theCells != null) {
 			return false;
 		}
 		else {
 			return true;
-		}
+		}*/
+		return false;
 	}
 
-	public int[] getTableIndex(PresentationObject o) {
+	/*public int[] getTableIndex(PresentationObject o) {
 		if (theCells == null)
 			return (null);
 		for (int i = 0; i < rows; i++)
@@ -1789,10 +1866,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 				}
 			}
 		return (null);
-	}
+	}*/
 
 	public boolean isEmpty(int x, int y) {
-		if (theCells != null) {
+		/*if (theCells != null) {
 			if (theCells[x - 1][y - 1] == null) {
 				return true;
 			}
@@ -1802,7 +1879,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 		}
 		else {
 			return true;
-		}
+		}*/
+		return getCellAt(x,y).isEmpty();
 	}
 
 	public void setProperty(String key, String values[]) {
@@ -1830,15 +1908,20 @@ public class Table extends PresentationObjectContainer implements TableType{
 		Table obj = null;
 		try {
 			obj = (Table) super.clone(iwc, askForPermission);
-			if (this.theCells != null) {
-				obj.theCells = new TableCell[cols][rows];
-				for (int x = 0; x < theCells.length; x++) {
-					for (int y = (startRow-1); y < endRow; y++) {
-						if (this.theCells[x][y] != null) {
-							obj.theCells[x][y] = (TableCell) ((TableCell) this.theCells[x][y]).clonePermissionChecked(iwc, askForPermission);
-							obj.theCells[x][y].setParentObject(obj);
-							obj.theCells[x][y].setLocation(this.getLocation());
-							//obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
+			if(useFacetBasedCells()){
+				cloneJSFFacets(obj,iwc,askForPermission);
+			}
+			else{
+				if (this.theCells != null) {
+					obj.theCells = new TableCell[cols][rows];
+					for (int x = 0; x < theCells.length; x++) {
+						for (int y = (startRow-1); y < endRow; y++) {
+							if (this.theCells[x][y] != null) {
+								obj.theCells[x][y] = (TableCell) ((TableCell) this.theCells[x][y]).clonePermissionChecked(iwc, askForPermission);
+								obj.theCells[x][y].setParentObject(obj);
+								obj.theCells[x][y].setLocation(this.getLocation());
+								//obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
+							}
 						}
 					}
 				}
@@ -1869,12 +1952,13 @@ public class Table extends PresentationObjectContainer implements TableType{
 	public PresentationObjectContainer containerAt(int x, int y) {
 		TableCell cont = null;
 		try {
-			cont = theCells[x - 1][y - 1];
+			/*cont = theCells[x - 1][y - 1];
 			if (cont == null) {
 				cont = new TableCell();
 				theCells[x - 1][y - 1] = cont;
 				cont.setParentObject(this);
-			}
+			}*/
+			return getCellAt(x,y);
 		}
 		catch (ArrayIndexOutOfBoundsException e) {
 		}
@@ -1882,7 +1966,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	}
 
 	public boolean remove(PresentationObject obj) {
-		if (theCells != null) {
+		/*if (theCells != null) {
 			for (int x = 0; x < theCells.length; x++) {
 				for (int y = 0; y < theCells[x].length; y++) {
 					if (theCells[x][y] != null) {
@@ -1890,6 +1974,14 @@ public class Table extends PresentationObjectContainer implements TableType{
 							return true;
 						}
 					}
+				}
+			}
+		}*/
+		for (int y = 1; y <= rows;) {
+			for (int x = 1; x <= cols;) {
+				TableCell cell = getCellAt(x,y);
+				if (cell.remove(obj)) {
+					return true;
 				}
 			}
 		}
@@ -1901,7 +1993,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * Returns NULL if no color set
 	 */
 	public String getColor(int xpos, int ypos) {
-		PresentationObjectContainer cont = theCells[xpos - 1][ypos - 1];
+		PresentationObjectContainer cont = getCellAt(xpos,ypos);
 		if (cont == null) {
 			return null;
 		}
@@ -1917,7 +2009,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * Returns NULL of no style is set
 	 */
 	public String getStyle(int xpos, int ypos) {
-		PresentationObjectContainer cont = theCells[xpos - 1][ypos - 1];
+		PresentationObjectContainer cont = getCellAt(xpos,ypos);
 		if (cont != null) {
 			String styleAtt = cont.getStyleAttribute();
 			if (!"".equals(styleAtt)) {
@@ -1931,7 +2023,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * Returns NULL of no style is set
 	 */
 	public String getClass(int xpos, int ypos) {
-		PresentationObjectContainer cont = theCells[xpos - 1][ypos - 1];
+		PresentationObjectContainer cont = getCellAt(xpos,ypos);
 		if (cont != null) {
 			String classAtt = cont.getMarkupAttribute("class");
 			if (!"".equals(classAtt)) {
@@ -2146,22 +2238,66 @@ public class Table extends PresentationObjectContainer implements TableType{
 		super.encodeChildren(context);
 	}
 	
-	
-	
-	
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
 	public void restoreState(FacesContext context, Object state) {
-		// TODO Auto-generated method stub
-		super.restoreState(context, state);
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.cols = ((Integer) values[1]).intValue();
+		this.rows = ((Integer) values[2]).intValue();
+		this.beginMergedxpos = (Vector)values[3];
+		this.beginMergedypos = (Vector)values[4];
+		this.endMergedxpos = (Vector)values[5];
+		this.endMergedypos = (Vector)values[6];
+		this.isResizable = ((Boolean) values[7]).booleanValue();
+		this.cellsAreMerged = ((Boolean) values[8]).booleanValue();
+		this._width=(String)values[9];
+		this._height=(String)values[10];
+		this.forceToRenderAsTableInWML = ((Boolean) values[11]).booleanValue();
+		this.addLineTop = ((Boolean) values[12]).booleanValue();
+		this.addLinesBetween = ((Boolean) values[13]).booleanValue();
+		this.addLinesBottom = ((Boolean) values[14]).booleanValue();
+		this.addLineLeft = ((Boolean) values[15]).booleanValue();
+		this.addVerticalLinesBetween = ((Boolean) values[16]).booleanValue();
+		this.addLineRight = ((Boolean) values[17]).booleanValue();
+		this.lineColor = (String) values[18];
+		this.lineHeight = (String) values[19];
+		this.lineWidth = (String) values[20];
+		this.lineColspan = ((Integer)values[21]).intValue();
+		this.lineRows = (int[])values[22];
+		this.lineCols = (int[])values[23];
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		// TODO Auto-generated method stub
-		return super.saveState(context);
+		Object values[] = new Object[24];
+		values[0] = super.saveState(context);
+		values[1] = new Integer(cols);
+		values[2] = new Integer(rows);
+		values[3] = beginMergedxpos;
+		values[4] = beginMergedypos;
+		values[5] = endMergedxpos;
+		values[6] = endMergedypos;
+		values[7] = Boolean.valueOf(this.isResizable);
+		values[8] = Boolean.valueOf(this.cellsAreMerged);
+		values[9] = _width;
+		values[10] = _height;
+		values[11] = Boolean.valueOf(forceToRenderAsTableInWML);
+		values[12] = Boolean.valueOf(addLineTop);
+		values[13] = Boolean.valueOf(addLinesBetween);
+		values[14] = Boolean.valueOf(addLinesBottom);
+		values[15] = Boolean.valueOf(addLineLeft);
+		values[16] = Boolean.valueOf(addVerticalLinesBetween);
+		values[17] = Boolean.valueOf(addLineRight);
+		values[18] = lineColor;
+		values[19] = lineHeight;
+		values[20] = lineWidth;
+		values[21] = new Integer(lineColspan);
+		values[22] = lineRows;
+		values[23] = lineCols;
+		return values;
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processRestoreState(javax.faces.context.FacesContext, java.lang.Object)
@@ -2186,5 +2322,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 */
 	public void setToForceToRenderAsTableInWML(boolean forceToRenderAsTableInWML) {
 		this.forceToRenderAsTableInWML = forceToRenderAsTableInWML;
+	}
+	
+	//debug:
+	public void _main(IWContext iwc) throws Exception{
+		super._main(iwc);
 	}
 }
