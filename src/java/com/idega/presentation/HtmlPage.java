@@ -272,8 +272,10 @@ public class HtmlPage extends Page {
 			if (htmlBody.length > 1) {
 				out.write(htmlBody[index++]);
 			}
+			body = htmlBody[index];
+			System.out.println("BODY: " + body);
 			
-			String attributes = htmlBody[index].substring(0, htmlBody[index].indexOf(">"));
+			String attributes = body.substring(0, body.indexOf(">"));
 			Map attributeMap = AttributeParser.parse(attributes);
 			Iterator iter = attributeMap.keySet().iterator();
 			while (iter.hasNext()) {
@@ -293,7 +295,7 @@ public class HtmlPage extends Page {
 			}
 			out.write("<body " + getMarkupAttributesString() + " >\n");
 			
-			body = htmlBody[index].substring(htmlBody[index].indexOf(">" + 1));
+			body = body.substring(body.indexOf(">" + 1));
 			
 			//Process the template regions:			
 			String[] parts = body.split("<!-- TemplateBeginEditable");
