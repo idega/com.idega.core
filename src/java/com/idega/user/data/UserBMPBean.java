@@ -1086,76 +1086,100 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return ejbFindUsers(userIds);
 			}
 		}else {
-			
-			//TODO finish
-			
-			Vector users = null;
-			if( userIds !=null){
-					 users = new Vector();
-					for (int i = 0; i < userIds.length; i++) {
-						users.add(userIds[i]);
-					}	
-			}
-			
-			return ejbFindUsersByConditions(condition,condition,condition,condition,null,condition,0,110,null,null);
+			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,200,null,userIds,false);
 		}
 	}
 	
-	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, Gender gender, String status, int startAge, int endAge, Collection allowedGroups, Collection allowedUsers) throws FinderException, RemoteException {
+	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
 		IDOQuery query = idoQuery();
-			
+		
+		final String operator = useAnd ? " AND " : " OR ";
+		
 		query.appendSelectAllFrom(this).appendWhere();
 		
+		query.append(" ( ");
 		//name	
 		if(userName!=null){
-			query.append(getUserNameSearchString(userName));	
+			query.append(" ( ")
+			.append(getUserNameSearchString(userName))
+			.append(" ) ");
 		}
-	
-		//address
-		if(streetName!=null){
-			query.appendOr();
-			query.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
-		}
-		
-		//personalId
-		if(personalId!=null){
-			query.appendOr();
-			query.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%'");
+				
+		if( (startAge > 0) && (endAge >startAge) ){
+			query.appendAnd()
+			.append(" ( ")
+			.append(getUserDateOfBirthSearchString(startAge, endAge))
+			.append(" ) ");
 		}
 		
-		//gender
-		if(gender!=null){
-			query.appendAnd();
-			query.append(getColumnNameGender()).appendEqualSign().append((Integer)gender.getPrimaryKey());
-		}
-			
-		//status
-		//TODO add sql for status
-		//query.appendOr().append(getIDColumnName()).appendIn(getUserStatusSearchString(condition));
-		
-		//age
-		//IWTimestamp.RightNow().
-			
-		//group search
-		//TODO filter out only allowed
-		if(groupName!=null || (allowedGroups!=null && !allowedGroups.isEmpty() )){
-			query.appendOr();//virkar ekki alveg svona thyrfti ad vera and og or
-			query.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
-		}	
 		//not deleted
 		query.appendAnd();
 		appendIsNotDeleted(query);
+		
+		
+		query.append(" ) ");
+		
+		//personalId
+		if(personalId!=null){
+			query.append(operator)
+			.append(" ( ")
+			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
+			.append(" ) ");
+		}
+			
+		//address
+		if(streetName!=null){
+			query.append(operator)
+			.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
+		}
+				
+		//gender
+		if(gender>0){
+			query.appendAnd()
+			.append(" ( ")
+			.append(getColumnNameGender()).appendEqualSign().append(gender)
+			.append(" ) ");
+		}
+			
+		//status
+		//TODO Eiki add sql for only allowed groups
+		if( statusId>0 ){
+			query.append(operator)
+			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId));
+		}
+		
+		//group search
+		//TODO Eiki filter out only allowed
+		if(groupName!=null || (allowedGroups!=null && allowedGroups.length>0 )){
+			query.append(operator)
+			.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
+		}	
 			
 		//filter by users
-		if ( allowedUsers != null && !allowedUsers.isEmpty()) {
-			query.appendAnd().append(getIDColumnName()).append(" IN (");
-			query.append(IDOUtil.getInstance().convertListToCommaseparatedString(allowedUsers) );
-			query.append(")");	
+		if ( allowedUsers != null && allowedUsers.length>0 ) {
+			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));	
 		}
       
 		query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
 			
 		return this.idoFindIDsBySQL(query.toString());
+	}
+
+	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
+		IDOQuery query = idoQuery();
+		IWTimestamp fromAgeStamp = IWTimestamp.RightNow();
+		IWTimestamp toAgeStamp = IWTimestamp.RightNow();
+		
+		fromAgeStamp.addYears(-startAge);
+		toAgeStamp.addYears(-endAge);
+		
+		
+		
+		query.append(getColumnNameDateOfBirth()).appendGreaterThanOrEqualsSign().append("'").append(toAgeStamp.toString()).append("' ");
+		query.appendAnd()
+		.append(getColumnNameDateOfBirth()).appendLessThanOrEqualsSign().append("'").append(fromAgeStamp.toString()).append("' ");
+		
+		return query.toString();
 	}
 	
 	
@@ -1165,11 +1189,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 */
 	private String getUserNameSearchString(String condition) {
 		StringBuffer sql = new StringBuffer();
-		sql.append("(")
-		.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%' OR ")
+		sql.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%' OR ")
 		.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%' OR ")
-		.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
-		.append(")");
+		.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'");
 		
 		return sql.toString();
 	}
@@ -1177,22 +1199,31 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * @param condition
 	 */
-	private String getUserStatusSearchString(String condition) {
+	private String getUserStatusSearchString(int statusId) {
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append("select ua.ic_user_id from ic_user u,iwme_user_status us where u.ic_user_id=us.ic_user_id")
-		.append(" and us.status like '%").append(condition.toUpperCase()).append("%' ");
+		sql.append("select distinct(ic_user_id) from ic_user_status where status_id = ")
+		.append(statusId);
 
 		return sql.toString();
 	}
 
-	private String getUserInAllowedGroupsSearchString(String condition, Collection allowedGroups) {
+	private String getUserInAllowedGroupsSearchString(String condition, String[] allowedGroups) {
 		StringBuffer sql = new StringBuffer();
-		sql.append("select gr.related_ic_group_id from ic_group g, ic_group_relation gr where gr.ic_group_id = g.ic_group_id ")
-		.append("and g.name like '%")
-		.append(condition)
-		.append("%' and gr.group_relation_status='ST_ACTIVE' ");
-		//and g.ic_group_id in (view permission groups)
+		sql.append("select gr.related_ic_group_id from ic_group g, ic_group_relation gr where gr.ic_group_id = g.ic_group_id ");
+		if(condition!=null){
+			sql.append(" and g.name like '%")
+			.append(condition)
+			.append("%' and gr.group_relation_status='ST_ACTIVE' ");
+		}
+		
+		if(allowedGroups!=null && allowedGroups.length>0){
+			sql.append(" and g.ic_group_id in ( ")
+			.append(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedGroups))
+			.append(" ) ");
+		}
+		
+		//TODO use only allowed groups and g.ic_group_id in (view permission groups)
 			
 		return sql.toString();
 	}
