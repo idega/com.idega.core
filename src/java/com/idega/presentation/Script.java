@@ -7,6 +7,9 @@ package com.idega.presentation;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -15,7 +18,7 @@ import java.util.Hashtable;
 public class Script extends PresentationObject{
 
 private String scriptType;
-private Hashtable scriptCode;
+private LinkedHashMap scriptCode;
 private Hashtable variables;
 private Hashtable methods;
 
@@ -26,7 +29,7 @@ public Script(){
 public Script(String scriptLanguage){
 	super();
 	setType();
-	scriptCode = new Hashtable();
+	scriptCode = new LinkedHashMap();
 }
 
 /*public void setScriptType(String scriptType){
@@ -57,9 +60,10 @@ public void setScriptCode(String code){
 
 public String getScriptCode(IWContext iwc){
 	StringBuffer returnString = new StringBuffer();
-	for (Enumeration e = scriptCode.keys(); e.hasMoreElements();){
-
-		Object function=e.nextElement();
+	Iterator iter = scriptCode.keySet().iterator();
+	
+	while (iter.hasNext()) {
+		Object function=iter.next();
 		String functionCode = (String) scriptCode.get(function);
 
 		returnString.append(functionCode + "\n");
@@ -260,7 +264,7 @@ public void print(IWContext iwc)throws Exception{
       obj = (Script)super.clone();
       obj.scriptType = this.scriptType;
       if(this.scriptCode != null){
-	obj.scriptCode = (Hashtable)this.scriptCode.clone();
+      	obj.scriptCode = (LinkedHashMap)this.scriptCode.clone();
       }
     }
     catch(Exception ex) {
