@@ -123,6 +123,14 @@ public class StringHandler {
 		}
 		return first + separator + second;
 	}
+	
+	public static String concat(String firstString, String secondString) {
+		StringBuffer buffer = new StringBuffer(firstString);
+		buffer.append(secondString);
+		return buffer.toString();
+	}
+		
+	
 	public static String concatAlphabetically(String string1, String string2) {
 		return concatAlphabetically(string1, string2, "");
 	}
