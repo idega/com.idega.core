@@ -73,7 +73,7 @@ public class FileManager extends Block {
 		iwb = getBundle(iwc);
 		iwrb =getResourceBundle(iwc);
 		if(iwc.isLoggedOn()){
-			iconSupplier =FileIconSupplier.getInstance(iwc);
+			iconSupplier =FileIconSupplier.getInstance();
 //			currentFolder = folder;
 			if(null==currentFolder){
 				if(null!=folder){
@@ -430,11 +430,11 @@ public class FileManager extends Block {
 	}
 	
 	private Image getFileIcon(File file) {
-		return new Image(iconSupplier.getFilenameIconURI(file.getName()));
+		return new Image(iconSupplier.getFileIconURLByFileName(file.getName()));
 		//return iwb.getImage("shared/rugl.gif");
 	}
 	private Image getFolderIcon() {
-		return new Image(iconSupplier.getFolderIconURI());
+		return new Image(iconSupplier.getFolderIconURL());
 		//return iwb.getImage("shared/folder.gif");
 	}
 	private Image getDeleteIcon() {
