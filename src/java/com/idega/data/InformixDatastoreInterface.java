@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
 import com.informix.jdbc.IfxPreparedStatement;
 /**
@@ -28,6 +29,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 	private boolean checkedBlobTable = false;
 	InformixDatastoreInterface() {
 		useTransactionsInEntityCreation = false;
+		IWTimestamp.CUT_MILLISECONDS_OFF_IN_TOSTRING=false;
 	}
 	public String getSQLType(String javaClassName, int maxlength) {
 		String theReturn;

@@ -135,6 +135,12 @@ public class IWTimestamp implements Comparable {
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String TIME_PATTERN = HOUR + ":" + MINUTE + ":" + SECOND + "." + MILLISECOND;
+	
+	/**
+	 * This field sets if the toString and toSQLString methods should cut off their milliseconds part in the returned String.
+	 * This is default true but is set to false for certain databases such as Informix.
+	 */
+	public static boolean CUT_MILLISECONDS_OFF_IN_TOSTRING=true;
 
 	private GregorianCalendar calendar;
 	private boolean isDate;
@@ -1017,7 +1023,13 @@ public class IWTimestamp implements Comparable {
 	 */
 	//To methods
 	public String toString() {
-		return this.getTimestamp().toString().substring(0,19);
+		String theString = this.getTimestamp().toString();
+		if(CUT_MILLISECONDS_OFF_IN_TOSTRING){
+			return theString.substring(0,19);
+		}
+		else{
+			return theString;
+		}
 	}
 
 	/**
@@ -1030,8 +1042,15 @@ public class IWTimestamp implements Comparable {
 			return toSQLDateString();
 		else if (isTime())
 			return toSQLTimeString();
-		else
-			return getTimestamp().toString().substring(0,19);
+		else{
+			String theTimestampString = getTimestamp().toString();
+			if(CUT_MILLISECONDS_OFF_IN_TOSTRING){
+				return theTimestampString.substring(0,19);
+			}
+			else{
+				return theTimestampString;
+			}
+		}
 	}
 
 	/**
