@@ -52,9 +52,11 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public final static String IW_BLOCK_CACHE_KEY = "iw_not_cached";
 
 	public static boolean usingNewAcessControlSystem = false;
+	
+	private String blockWidth = null;
 
 	public Block() {
-
+		setDefaultWidth();
 	}
 
 	public String getBundleIdentifier() {
@@ -725,4 +727,17 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public boolean isContainer() {
 		return false;
 	}
+	
+	public void setWidth(String width) {
+		blockWidth = width;
+	}
+	
+	public String getWidth() {
+		return blockWidth;
+	}
+	
+	protected void setDefaultWidth() {
+		setWidth(Table.HUNDRED_PERCENT);
+	}
+	
 }
