@@ -71,6 +71,8 @@ public class IWConstants{
   public static final String BUILDER_FONT_STYLE_TITLE = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
   public static final String BUILDER_FONT_STYLE_INTERFACE = "font-size: 8pt; border: 1 solid #000000;";
   public static final String BUILDER_FONT_STYLE_INTERFACE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size: 7pt; border: 1 solid #000000;";
+
+  public static final String BUILDER_FONT_STYLE_LARGE_RED = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#FF0000;";
   
   public static HashMap getDefaultStyles() {
   	HashMap map = new HashMap();
