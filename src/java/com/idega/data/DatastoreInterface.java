@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.56 2002/12/20 16:06:14 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.57 2003/01/21 14:27:46 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -340,7 +340,8 @@ public abstract class DatastoreInterface {
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
-			//System.out.println(statement);
+			if (isDebugActive())
+				debug(statement.toString());
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
@@ -634,7 +635,8 @@ public abstract class DatastoreInterface {
 				statement.append(entity.getID());
 				*/
 				appendPrimaryKeyWhereClause(entity, statement);
-				//System.out.println(statement);
+				if (isDebugActive())
+					debug(statement.toString());
 				Stmt = conn.prepareStatement(statement.toString());
 				setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
 				//Stmt.execute();
@@ -668,6 +670,8 @@ public abstract class DatastoreInterface {
 			statement.append(entity.getID());
 			*/
 			appendPrimaryKeyWhereClause(entity, statement);
+			if (isDebugActive())
+				debug(statement.toString());
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
 			Stmt.execute();
@@ -694,7 +698,8 @@ public abstract class DatastoreInterface {
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
-			//System.out.println(statement);
+			if (isDebugActive())
+				debug(statement.toString());
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
@@ -1190,4 +1195,8 @@ public abstract class DatastoreInterface {
 		}*/
 	}
 	
+	protected boolean isDebugActive()
+	{
+		return IWMainApplicationSettings.isDebugActive();
+	}
 }
