@@ -26,6 +26,9 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 	private String leftLabel = null;
 	private String rightLabel = null;
 
+	private boolean isSetAsNotEmpty = false;
+	private String notEmptyErrorMessage;
+
 	public SelectionDoubleBox(){
 		this("untitled");
 	}
@@ -58,6 +61,10 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		
 		if(rightLabel!=null){
 			rightBox.setTextHeading(rightLabel);
+		}
+		
+		if(isSetAsNotEmpty){
+			rightBox.setAsNotEmpty(notEmptyErrorMessage);	
 		}
     
 		if (getStyleAttribute() != null) {
@@ -161,5 +168,15 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 	
 	public void setRightName(String name) {
 		getRightBox().setName(name);	
+	}
+	
+	/**
+	 * Sets the right selection box so that it can not be empty, displays an alert with the given 
+	 * error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsNotEmpty(String errorMessage) {
+		isSetAsNotEmpty = true;
+		notEmptyErrorMessage = errorMessage;
 	}
 }

@@ -29,6 +29,10 @@ public class SelectionBox extends InterfaceObject
 	private Text textHeading;
 	private boolean headerTable = false;
 	private boolean allSelected = false;
+
+	private boolean isSetAsNotEmpty = false;
+	private String notEmptyErrorMessage;
+	
 	public SelectionBox()
 	{
 		this("untitled");
@@ -274,7 +278,21 @@ public class SelectionBox extends InterfaceObject
 				"function selectAllInSelectionBox(input){\n  for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n}");
 			this.getParentForm().setOnSubmit("selectAllInSelectionBox(this." + this.getName() + ")");
 		}
+		if (isSetAsNotEmpty) {
+			getParentForm().setOnSubmit("return checkSubmit(this)");
+			setCheckSubmit();
+			getScript().addToFunction("checkSubmit", "if (warnIfNonSelected (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "') == false ){\nreturn false;\n}\n");
+			getScript().addFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
+		}
+
 	}
+
+	private void setCheckSubmit() {
+		if (getScript().getFunction("checkSubmit") == null) {
+			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+		}
+	}
+
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue)
 	{
 		getMenuElement(ElementValue).setAttribute(AttributeName, AttributeValue);
@@ -479,6 +497,16 @@ public class SelectionBox extends InterfaceObject
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
+	}
+
+	/**
+	 * Sets the text input so that it can not be empty, displays an alert with the given 
+	 * error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsNotEmpty(String errorMessage) {
+		isSetAsNotEmpty = true;
+		notEmptyErrorMessage = errorMessage;
 	}
 
 }
