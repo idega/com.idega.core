@@ -305,7 +305,14 @@ public class FileIconSupplier {
 	}
 	
 	public String guessMimeTypeFromFileName(String fileName){
-		return fileNameMap.getContentTypeFor(fileName);
+		String theReturn =  fileNameMap.getContentTypeFor(fileName);
+		if(theReturn==null){
+			//A few additions that aren't covered by the fileNameMap
+			if(fileName.endsWith(".css")){
+				return "text/css";
+			}
+		}
+		return theReturn;
 	}
 	
 	public String getTheme(){
