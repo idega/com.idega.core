@@ -7,6 +7,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWService;
 import com.idega.idegaweb.IWStyleManager;
+import com.idega.user.data.GroupRelationType;
+import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.FileUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
@@ -203,6 +205,7 @@ public class IWStarterServlet extends GenericServlet
 	    iwStyleManager.getStyleSheet();
 	    sendStartMessage("Starting IWStyleManager");
 
+		insertStartData();
 	    application.startAccessController();
 	    application.createMediaTables();//added by Eiki to ensure that ic_file is created before ib_page
 	    application.loadBundles();
@@ -215,7 +218,33 @@ public class IWStarterServlet extends GenericServlet
 		long time = (end-start)/1000;
 	    sendStartMessage("Completed in "+time+" seconds");
 	}
-
+	
+	
+	protected void insertStartData(){
+		/*
+		 * @todo Move to user plugin system
+		 **/
+		insertGroupRelationType("GROUP_PARENT");
+		insertGroupRelationType("FAM_CHILD");
+		insertGroupRelationType("FAM_PARENT");
+		insertGroupRelationType("FAM_SPOUSE");
+	}
+	
+	private void insertGroupRelationType(String groupRelationType){
+		/**
+		 * @todo Move this to a more appropriate place
+		 **/
+		try{
+			GroupRelationTypeHome grtHome = (GroupRelationTypeHome)com.idega.data.IDOLookup.getHome(GroupRelationType.class);
+			GroupRelationType grType =grtHome.create();
+			grType.setType(groupRelationType);
+			grType.store();
+			sendStartMessage("Registered Group relation type: '"+groupRelationType+"'");
+		}
+		catch(Exception e){
+			//sendStartMessage("Failed Registering Group relation type: '"+groupRelationType+"'");
+		}	
+	}
 	/**
 	 * Not Implemented fully
 	 */
