@@ -29,6 +29,7 @@ public class SelectQuery implements Outputable, Cloneable {
 	private Vector criteria;
 	private Vector order;
 	private Vector groupBy;
+	private Vector placeHolderValues;
 	private boolean _countQuery = false;
     private boolean _distinct =false;
 
@@ -38,6 +39,7 @@ public class SelectQuery implements Outputable, Cloneable {
 		criteria = new Vector();
 		order = new Vector();
 		groupBy = new Vector();
+		placeHolderValues = new Vector();
 	}
 
 	public Table getBaseTable() {
@@ -289,6 +291,17 @@ public class SelectQuery implements Outputable, Cloneable {
 			out.unindent();
 		}
 
+	}
+	
+	public List getPlaceHolderValues(){
+	    Vector list = new Vector();
+	    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
+            Criteria crit = (Criteria) iter.next();
+            if(crit instanceof PlaceHolder)
+                list.add(((PlaceHolder)crit).getPlaceValue());
+            
+        }
+	    return list;
 	}
 
 	/**

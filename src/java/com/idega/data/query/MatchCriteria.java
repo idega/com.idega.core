@@ -12,7 +12,7 @@ import com.idega.data.query.output.Output;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
  */
-public class MatchCriteria extends Criteria {
+public class MatchCriteria extends Criteria implements PlaceHolder {
 
 	public static final String EQUALS = "=";
 	public static final String GREATER = ">";
@@ -30,6 +30,7 @@ public class MatchCriteria extends Criteria {
 	private String value;
 	private String matchType;
 	private DatastoreInterface dataStore;
+	private Object placeHolderValue;
 
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
@@ -68,6 +69,7 @@ public class MatchCriteria extends Criteria {
 			this.value = quote(value);
 		}
 		this.matchType = matchType;
+		this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, String value, boolean addQuotes) {
@@ -79,18 +81,21 @@ public class MatchCriteria extends Criteria {
 			this.value = value;
 		}
 		this.matchType = matchType;
+		this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, float value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
+		this.placeHolderValue = new Float(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, int value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
+		this.placeHolderValue = new Integer(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, boolean value) {
@@ -102,24 +107,29 @@ public class MatchCriteria extends Criteria {
 			this.value = quote("N");
 		}
 		this.matchType = matchType;
+		this.placeHolderValue = new Boolean(value);
 	}
 
 	public MatchCriteria(Column column, String matchType, Object value) {
 		this.column = column;
 		this.value = value.toString();
 		this.matchType = matchType;
+		this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, Date value) {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
+		this.placeHolderValue = value;
+		
 	}
 
 	public MatchCriteria(Column column, String matchType, Timestamp value) {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
+		this.placeHolderValue = value;
 	}
 
 	public MatchCriteria(Column column, String matchType, IDOEntity value) {
@@ -179,7 +189,10 @@ public class MatchCriteria extends Criteria {
 	}
 
 	public void write(Output out) {
-		out.print(column).print(' ').print(matchType).print(' ').print(value);
+	    if(getDatastore().isUsingPreparedStatements())
+	        out.print(column).print(' ').print(matchType).print(' ').print("?");
+	    else
+	        out.print(column).print(' ').print(matchType).print(' ').print(value);
 	}
 
 	protected DatastoreInterface getDatastore() {
@@ -191,5 +204,12 @@ public class MatchCriteria extends Criteria {
 		Set s = new HashSet();
 		s.add(column.getTable());
 		return s; 
+    }
+
+    /* (non-Javadoc)
+     * @see com.idega.data.query.PlaceHolder#getPlaceValue()
+     */
+    public Object getPlaceValue() {
+        return this.placeHolderValue;
     }
 }
