@@ -9,6 +9,7 @@ import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.sql.SQLException;
+import java.util.Iterator;
 
 /**
  * Title:
@@ -55,6 +56,23 @@ public class ICLocaleBusiness {
     catch (SQLException ex) {
       return null;
     }
+  }
+
+  public static List listOfLocalesJAVA(){
+    List list = listOfLocales();
+    List localeList = new Vector();
+
+    if ( list != null ) {
+      Iterator iter = list.iterator();
+      while (iter.hasNext()) {
+       ICLocale item = (ICLocale) iter.next();
+       Locale locale = getLocaleFromLocaleString(item.getLocale());
+       if ( locale != null )
+        localeList.add(locale);
+      }
+    }
+
+    return localeList;
   }
 
   private static void makeHashtables(){

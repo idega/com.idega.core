@@ -5,6 +5,7 @@ import com.idega.presentation.*;
 import java.util.Calendar;
 import java.sql.*;
 import java.util.Locale;
+import java.text.DateFormatSymbols;
 
 
 
@@ -347,23 +348,18 @@ public class idegaCalendar{
 	}
 
 	public String getNameOfMonth(int month, IWContext iwc){
-            Locale currentLocale = iwc.getCurrentLocale();
-            String returner = "";
+      Locale currentLocale = iwc.getCurrentLocale();
+      String returner = "";
 
-            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
-                returner = getISLNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.ENGLISH)){
-                returner = getENGNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.UK)){
-                returner = getENGNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.US)){
-                returner = getENGNameOfMonth(month);
-            }else {
-                returner = getENGNameOfMonth(month);
-            }
+      DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+      String[] months = dfs.getMonths();
+      if ( months != null ) {
+        returner = months[month-1];
+      }
 
-            return returner;
-        }
+
+      return returner;
+  }
 
 
         public String getENGNameOfMonth(int month) {
@@ -477,26 +473,31 @@ public class idegaCalendar{
 		return manudurnafn;
 	}
 
-	public String getShortNameOfMonth(int month, IWContext iwc){
-            Locale currentLocale = iwc.getCurrentLocale();
-            String returner = "";
+	public String getShortNameOfDay(int day, IWContext iwc){
+    Locale currentLocale = iwc.getCurrentLocale();
+    String returner = "";
 
-            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
-                returner = getShortISLNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.ENGLISH)){
-                returner = getShortENGNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.UK)){
-                returner = getShortENGNameOfMonth(month);
-            }else if (currentLocale.equals(Locale.US)){
-                returner = getShortENGNameOfMonth(month);
-            }else {
-                returner = getShortENGNameOfMonth(month);
-            }
+    DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+    String[] days = dfs.getShortWeekdays();
+    if ( days != null ) {
+      returner = days[day];
+    }
 
-            return returner;
+    return returner;
+  }
 
+  public String getShortNameOfMonth(int month, IWContext iwc){
+    Locale currentLocale = iwc.getCurrentLocale();
+    String returner = "";
 
-        }
+    DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+    String[] months = dfs.getShortMonths();
+    if ( months != null ) {
+      returner = months[month-1];
+    }
+
+    return returner;
+  }
 
 
         public String getShortISLNameOfMonth(int mon) {
@@ -596,23 +597,17 @@ public class idegaCalendar{
         }
 
 	public String getNameOfDay(int day, IWContext iwc) {
-            Locale currentLocale = iwc.getCurrentLocale();
-            String returner = "";
+      Locale currentLocale = iwc.getCurrentLocale();
+      String returner = "";
 
-            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
-                returner = getISLNameOfDay(day);
-            }else if (currentLocale.equals(Locale.ENGLISH)){
-                returner = getENGNameOfDay(day);
-            }else if (currentLocale.equals(Locale.UK)){
-                returner = getENGNameOfDay(day);
-            }else if (currentLocale.equals(Locale.US)){
-                returner = getENGNameOfDay(day);
-            }else {
-                returner = getENGNameOfDay(day);
-            }
+      DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+      String[] days = dfs.getWeekdays();
+      if ( days != null ) {
+        returner = days[day-1];
+      }
 
-            return returner;
-        }
+      return returner;
+  }
 
         public String getENGNameOfDay(int dagur) {
             String nafn= getNameOfDay(dagur);
