@@ -661,6 +661,7 @@ public class LoginDBHandler {
         } catch (RemoveException exc) {
           exc.printStackTrace();
         } catch (FinderException e){
+          e.printStackTrace();
           // assume login record does not exist for this login
         }
 
@@ -684,8 +685,6 @@ public class LoginDBHandler {
       } catch (RemoveException ex){
         ex.printStackTrace();
       }
-
-
     }
   }
 

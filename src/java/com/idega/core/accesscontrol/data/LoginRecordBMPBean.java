@@ -68,7 +68,7 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     }
 
     public Collection ejbFindAllLoginRecords(int loginID)throws FinderException{
-      String sql = "select * from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
+      String sql = "select "+this.getIDColumnName()+" from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
       return super.idoFindIDsBySQL(sql);
     }
 

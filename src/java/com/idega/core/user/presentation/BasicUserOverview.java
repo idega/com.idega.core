@@ -59,33 +59,40 @@ public class BasicUserOverview extends Page {
         userTable.setHeight(i,"20");
       }
 
-
+      int line = 1;
       for (int i = 0; i < users.size(); i++) {
         User tempUser = (User)users.get(i);
         if(tempUser != null){
 
           boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
+          boolean delete = false;
 
-          if(userIsSuperAdmin){
+          if(!userIsSuperAdmin){
+            Link aLink = new Link(new Text(tempUser.getName()));
+            aLink.setWindowToOpen(UserPropertyWindow.class);
+            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            userTable.add(aLink,2,line);
+            delete = true;
+            line++;
+          }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
 //            Text aText = new Text(tempUser.getName());
 //            userTable.add(aText,2,i+1);
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
             aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
-            userTable.add(aLink,2,i+1);
-          }else {
-            Link aLink = new Link(new Text(tempUser.getName()));
-            aLink.setWindowToOpen(UserPropertyWindow.class);
-            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
-            userTable.add(aLink,2,i+1);
+            userTable.add(aLink,2,line);
+            delete = true;
+            line++;
           }
 
-          if(!adminUsers.contains(tempUser) && !userIsSuperAdmin){
+          if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindow.class);
             delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
-            userTable.add(delLink,3,i+1);
+            userTable.add(delLink,3,line-1);
           }
+
+
         }
       }
     }
