@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.1 2001/10/05 07:59:19 tryggvil Exp $
+ * $Id: TimeInput.java,v 1.2 2001/10/24 21:44:01 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,6 +31,9 @@ private boolean setCheck = false;
 
 final static String HOUR_KEY = "timeinput.hour";
 final static String MINUTE_KEY = "timeinput.minute";
+
+final static String HOUR_KEY_S = "timeinput.hour_short";
+final static String MINUTE_KEY_S = "timeinput.minute_short";
 
 
 public TimeInput(){

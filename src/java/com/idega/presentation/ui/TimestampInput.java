@@ -1,5 +1,5 @@
 /*
- * $Id: TimestampInput.java,v 1.1 2001/10/05 07:59:19 tryggvil Exp $
+ * $Id: TimestampInput.java,v 1.2 2001/10/24 21:43:58 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ private DropdownMenu theMinute;
 //private DropdownMenu theSecond;
 private Parameter theWholeTimestamp;
 private boolean setCheck=false;
-
+private boolean inShort=false;
 private int fromYear;
 private int toYear;
 private int selectedYear=-1;
@@ -50,7 +50,15 @@ public TimestampInput(){
 }
 
 public TimestampInput(String name){
+  init(name);
+}
 
+public TimestampInput(String name,boolean inShort){
+  this.inShort = inShort;
+  init(name);
+}
+
+private void init(String name){
 	theDay = new DropdownMenu(name+"_day");
 	theMonth = new DropdownMenu(name+"_month");
 	theYear = new DropdownMenu(name+"_year");
@@ -350,6 +358,8 @@ public TimestampInput(String name){
 
 
 
+
+
     private void addLocalized(IWContext iwc){
         Locale locale = iwc.getCurrentLocale();
         DateFormatSymbols symbols = new DateFormatSymbols(locale);
@@ -358,11 +368,20 @@ public TimestampInput(String name){
         textInFront.setText(iwrb.getLocalizedString(THETIME_KEY));
 
         String emptyString = "";
-        theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY));
-        theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY));
-        theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY));
-        theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY));
-        theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+        if(inShort){
+          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY_S));
+          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S));
+          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S));
+          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S));
+          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY_S));
+        }
+        else{
+          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY));
+          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY));
+          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY));
+          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY));
+          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+        }
 
         String[] monthStrings = symbols.getMonths();
 
@@ -448,12 +467,13 @@ public void setTimestamp(java.sql.Timestamp timestamp){
 	setHour(greg.get(Calendar.HOUR_OF_DAY));
 	setMinute(greg.get(Calendar.MINUTE));
 	//setSecond(timestamp.getMinutes());
-
-	//System.out.println("Timestamp gefur year: "+timestamp.getYear()+" fyrir "+this.getName());
-	//System.out.println("Timestamp gefur month: "+timestamp.getMonth()+" fyrir "+this.getName());
-	//System.out.println("Timestamp gefur day: "+timestamp.getDay()+" fyrir "+this.getName());
-	//System.out.println("Timestamp gefur hour: "+timestamp.getHours()+" fyrir "+this.getName());
-	//System.out.println("Timestamp gefur minute: "+timestamp.getMinutes()+" fyrir "+this.getName());
+/*
+	System.err.println("Timestamp gefur year: "+timestamp.getYear()+" fyrir "+this.getName());
+	System.err.println("Timestamp gefur month: "+timestamp.getMonth()+" fyrir "+this.getName());
+	System.err.println("Timestamp gefur day: "+timestamp.getDay()+" fyrir "+this.getName());
+	System.err.println("Timestamp gefur hour: "+timestamp.getHours()+" fyrir "+this.getName());
+	System.err.println("Timestamp gefur minute: "+timestamp.getMinutes()+" fyrir "+this.getName());
+      */
 }
 
 public void setMinute(int minute){
