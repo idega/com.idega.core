@@ -24,7 +24,7 @@ public class AttributeParser {
 				String attribute = values[0].trim();
 				String value = values[1];
 				
-				map.put(attribute, value);
+				map.put(attribute.toLowerCase(), TextSoap.findAndCut(value, "\""));
 			}
 		}
 		
