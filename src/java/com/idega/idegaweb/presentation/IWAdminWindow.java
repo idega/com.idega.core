@@ -21,18 +21,22 @@ private Table adminTable;
 private Table headerTable;
 private Table leftTable;
 private Table rightTable;
-private boolean merged = false;
+private boolean merged = true;
 
   public IWAdminWindow() {
   }
 
-  public void main(ModuleInfo modinfo)throws Exception{
+  public void _main(ModuleInfo modinfo)throws Exception{
     iwb = getBundle(modinfo);
     iwrb = getResourceBundle(modinfo);
     iwbCore = modinfo.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
     makeTables();
     setAllMargins(0);
-    add(adminForm);
+    super.add(adminForm);
+    super._main(modinfo);
+  }
+
+  public void main(ModuleInfo modinfo){
   }
 
   private void makeTables() {
@@ -85,15 +89,15 @@ private boolean merged = false;
   }
 
   public void addBottom(String text) {
-    if ( merged ) {
-      adminTable.add(text,1,2);
-    }
+    adminTable.add(text,1,2);
+  }
+
+  public void add(ModuleObject obj) {
+    adminTable.add(obj,1,2);
   }
 
   public void addBottom(ModuleObject obj) {
-    if ( merged ) {
-      adminTable.add(obj,1,2);
-    }
+    adminTable.add(obj,1,2);
   }
 
   public void addLeft(String text) {
@@ -246,8 +250,8 @@ private boolean merged = false;
     obj.setAttribute("style",style);
   }
 
-  public void setMerged() {
-    merged = true;
+  public void setUnMerged() {
+    merged = false;
   }
 
   public String getBundleIdentifier(){

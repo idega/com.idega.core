@@ -12,17 +12,20 @@ public class HelpWindow extends IWAdminWindow {
 public HelpWindow() {
   setWidth(300);
   setHeight(300);
-  setMerged();
 }
 
 	public void main(ModuleInfo modinfo) {
     boolean hasImage = false;
     String headline = modinfo.getParameter(HelpButton.PARAMETERSTRING_HEADLINE);
     String text = modinfo.getParameter(HelpButton.PARAMETERSTRING_TEXT);
-      text = TextSoap.findAndReplace(text,"\r\n\r\n","<br><br>");
+      if ( text != null && text.length() > 0 ) {
+        text = TextSoap.findAndReplace(text,"\r\n\r\n","<br><br>");
+      }
     String url = modinfo.getParameter(HelpButton.PARAMETERSTRING_URL);
-      if ( url.length() > 0 ) {
-        hasImage = true;
+      if ( url != null ) {
+        if ( url.length() > 0 ) {
+          hasImage = true;
+        }
       }
 
     try {
@@ -63,7 +66,7 @@ public HelpWindow() {
 
       helpTable.add(new CloseButton(iwbCore.getImage("close")),1,3);
 
-      addBottom(helpTable);
+      add(helpTable);
     }
     catch (Exception e) {
       add("No help available");
