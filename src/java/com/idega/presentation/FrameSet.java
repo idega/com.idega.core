@@ -236,7 +236,7 @@ public class FrameSet extends Window{
         buf.append(getEndTag());
       }
 
-      System.out.println("FrameSet - in print()\n"+ buf.toString());
+      //System.out.println("FrameSet - in print()\n"+ buf.toString());
       print(buf.toString());
     }
 
