@@ -60,7 +60,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             reload = new GenericFormCollector().storeAll(iwc);
         }
         
-        Object  obj = iwc.getSessionAttribute(key+TabbedPropertyPanelAttributeString);
+        Object  obj = iwc.getSessionAttribute(key);
         if (obj != null && obj instanceof TabbedPropertyPanel) {
             TabbedPropertyPanel TabPropPanelObj = (TabbedPropertyPanel)obj;
             TabPropPanelObj.justConstructed(false);
@@ -78,8 +78,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
                 tempTab = new TabbedPropertyPanel(key,iwc);
             }
             
-            iwc.setSessionAttribute(key+TabbedPropertyPanelAttributeString, tempTab);
-            tempTab.setAttributeString(key+TabbedPropertyPanelAttributeString);
+            iwc.setSessionAttribute(key, tempTab);
+            tempTab.setAttributeString(key);
             return tempTab;
         }
     }
@@ -127,9 +127,10 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             tpane.addChangeListener((ChangeListener) iterator.next());
         }
         tpane.setTabsToFormSubmit(this);
-        this.add(frameTable);
+        
         initializeLayout();
         initializeButtons(iwc);
+        this.add(frameTable);
         
         ok.addIWSubmitListener(this, this,iwc);
         cancel.addIWSubmitListener(this, this,iwc);
@@ -165,6 +166,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     }
     
     public void addTab(PresentationObject collectable, int index, IWContext iwc){
+    		collectable.setParent(this);
+    	
         tpane.insertTab( collectable.getName(), collectable, index, iwc);
         if(collectable instanceof Collectable){
             collector.addCollectable((Collectable)collectable, index);
@@ -184,6 +187,16 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         return this.okClicked;
     }
     
+    public boolean isApplyButtonDisabled(){
+		return !useApplyButton;
+    }
+    public boolean isOkButtonDisabled(){
+		return !useOkButton;
+    }
+    public boolean isCancelButtonDisabled(){
+		return !useCancelButton;
+    }
+
     public void disableApplyButton(boolean value){
         useApplyButton = !value;
     }

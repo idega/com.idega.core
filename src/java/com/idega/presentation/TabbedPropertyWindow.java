@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
@@ -40,13 +39,28 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
         if(disposeOfPanel(iwc)){
             //temp solution
             panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc, null );
-            panel.dispose(iwc);     
+            panel.dispose(iwc);  
+            panel = null;
         }
         
+        //the getPanelInstance is needed because we need to override the method from this classes extenders and not the TabbedProprtyPanel classes
         panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc , getPanelInstance(iwc));
         
+        // do not close the window if the cancel button was pressed
+        if (panel.clickedCancel()) {
+            panel.dispose(iwc);
+            close();
+        }
+        else {
+            this.add(panel,iwc);
+        }
+        //WE MUST HAVE ADDED THE PANEL FIRST, OTHERWISE THE PARENT PAGE WILL BE NULL!
         if(panel.justConstructed()){
             initializePanel(iwc, panel);
+        }else{
+        		//we must set the page parents to this window so getParentPage() works
+        		//their parent is lost because it was added to the session and then the window was destroyed
+        		resetParentOfTabs(panel);
         }
         
         if(panel.clickedCancel() || panel.clickedOk() || panel.clickedApply()){
@@ -61,18 +75,30 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
                 clearOnLoad(iwc);
             }
         }
-        // do not close the window if the apply button was clicked
-        if (panel.clickedCancel()) {
-            panel.dispose(iwc);
-            close();
-        }
-        else {
-            this.add(panel,iwc);
-        }
+
         super._main(iwc);
         
     }
     
+    /**
+	 * 
+	 */
+	private void resetParentOfTabs(TabbedPropertyPanel panel) {
+		PresentationObject[] obj = panel.getAddedTabs();
+		
+		for (int i = 0; i < obj.length; i++) {
+			PresentationObject tab = obj[i];
+			tab.setParentObject(panel);
+		}
+		
+		
+	}
+
+	/**
+     * This is overridden else where to add permission checks
+     * @param iwc
+     * @return
+     */
     protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
         //added -birna
         return new TabbedPropertyPanel(iwc);
@@ -87,7 +113,10 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
     }
     
     
-    
+    /**
+     * This method must be overridden, for example the user properties window could just return something like "UserPropertiesTabbedWindow"
+     * @return
+     */
     public abstract String getSessionAddressString();
     
     public abstract void initializePanel( IWContext iwc, TabbedPropertyPanel panel);
