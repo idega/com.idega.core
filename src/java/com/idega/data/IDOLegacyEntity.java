@@ -1,5 +1,7 @@
 package com.idega.data;
 
+import java.sql.*;
+
 /**
  * Title:        idegaclasses
  * Description:
@@ -40,6 +42,7 @@ public interface IDOLegacyEntity extends IDOEntity{
  public boolean getIfNullable(java.lang.String p0);
  public void setName(java.lang.String p0);
  public void deleteMultiple(java.lang.String p0,java.lang.String p1)throws java.sql.SQLException;
+ public void deleteMultiple(String columnName1,String stringColumnValue1,String columnName2,String stringColumnValue2)throws SQLException;
  public void update()throws java.sql.SQLException;
  public boolean getIfVisible(java.lang.String p0);
  public java.lang.String getStringColumnValue(java.lang.String p0);
@@ -159,4 +162,12 @@ public interface IDOLegacyEntity extends IDOEntity{
  public IDOLegacyEntity getIDOEntityStaticInstance();
  public String getCachedColumnNamesList();
  public boolean hasBeenSetNull(String columnName);
+ public Object getPrimaryKeyValue();
+ public boolean hasLobColumn()throws Exception;
+ public void fillColumn(String columnName,java.sql.ResultSet rs)throws java.sql.SQLException;
+ public void delete(Connection c) throws SQLException;
+ public void insert(Connection c)throws SQLException;
+ public void update(Connection c) throws SQLException;
+ public void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException;
+ public int getEntityState();
 }

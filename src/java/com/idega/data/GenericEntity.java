@@ -1115,7 +1115,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     /**
     *Inserts this entity as a record into the datastore
     */
-  protected void insert(Connection c)throws SQLException{
+  public void insert(Connection c)throws SQLException{
     try{
       DatastoreInterface.getInstance(c).insert(this,c);
     }
@@ -1150,7 +1150,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	*Updates the entity in the datastore
 	*/
-  protected void update(Connection c) throws SQLException {
+  public void update(Connection c) throws SQLException {
     try {
       DatastoreInterface.getInstance(c).update(this,c);
     }
@@ -1175,7 +1175,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    }
   }
 
-  protected void delete(Connection c) throws SQLException {
+  public void delete(Connection c) throws SQLException {
     try {
       DatastoreInterface.getInstance(c).delete(this,c);
     }
@@ -1266,7 +1266,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	protected void fillColumn(String columnName,ResultSet RS)throws SQLException{
+	public void fillColumn(String columnName,ResultSet RS)throws SQLException{
 		int classType = getStorageClassType(columnName);
 
 		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
@@ -2188,7 +2188,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	** deletes only one line in middle table if the genericentity wa consructed with a value
 	** Takes in a connection but does not close it.
 	**/
-	protected void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException{
+	public void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException{
 		Statement Stmt= null;
 		String qry = "";
 		try{
@@ -2301,7 +2301,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  return getStaticInstance(this.getClass().getName());
 	}
 
-	protected boolean hasLobColumn()throws Exception{
+	public boolean hasLobColumn()throws Exception{
 	  String lobColumnName = this.getLobColumnName();
           //String lobColumnName = this.getStaticInstance()._lobColumnName;
           if(lobColumnName==null){
@@ -2395,7 +2395,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	EntityControl.addTreeRelationShip(this);
       }
 
-      protected int getEntityState(){
+      public int getEntityState(){
 	return _state;
       }
 
@@ -2433,13 +2433,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
        return entity;
       }
 
+
   public void addMetaDataRelationship(){
     addManyToManyRelationShip(MetaData.class);
-    this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
+    //this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
+    ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship=true;
   }
 
   public boolean hasMetaDataRelationship(){
-   return this.getStaticInstance(this.getClass())._hasMetaDataRelationship;
+   return ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship;
   }
 
 
