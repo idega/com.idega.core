@@ -28,6 +28,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	private static final String IC_GROUP = "ic_group_id";
 	private static final String DATE_FROM = "date_from";
 	private static final String DATE_TO = "date_to";
+	private static final String CREATED_BY = "created_by";
 
 	public UserStatusBMPBean() {
 		super();
@@ -49,7 +50,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		addManyToOneRelationship(STATUS_ID,Status.class);
 		addManyToOneRelationship(IC_USER,User.class);
 		addManyToOneRelationship(IC_GROUP,Group.class);
-		
+		addManyToOneRelationship(CREATED_BY,User.class);
 		addAttribute(DATE_FROM,"Date from",true,true,java.sql.Timestamp.class);
 		addAttribute(DATE_TO,"Date to",true,true,java.sql.Timestamp.class);
 	}
@@ -84,6 +85,26 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	
 	public void setUser(User user) {
 		setColumn(IC_USER, user);
+	}
+	
+	public User getCreatedBy(){
+	    return (User)getColumnValue(CREATED_BY);
+	}
+	
+	public int getCreatedById(){
+	    return getIntColumnValue(CREATED_BY);
+	}
+	
+	public void setCreatedBy(int userID){
+	    setColumn(CREATED_BY,userID);
+	}
+	
+	public void setCreatedBy(Integer userID){
+	    setColumn(CREATED_BY,userID);
+	}
+	
+	public void setCreatedBy(User user){
+	    setColumn(CREATED_BY,user);
 	}
 	
 	public int getGroupId() {
