@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.19 2001/06/20 18:33:54 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.20 2001/06/21 13:54:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1656,7 +1656,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 
         public boolean equals(GenericEntity entity){
           if(entity!=null){
-            if(entity.getClass().getName().equals(this.getClass().getName())){
+            if(entity.getClass().equals(this.getClass())){
               if(entity.getID()==this.getID()){
                 return true;
               }
