@@ -1,7 +1,9 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.8 2004/10/04 13:19:35 aron Exp $
- *
- * Copyright (C) 2002 Idega hf. All Rights Reserved.
+ * $Id: DefaultIWBundle.java,v 1.9 2004/11/14 23:27:24 tryggvil Exp $
+ * 
+ * Created in 2001 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -1435,6 +1437,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected Level getErrorLogLevel(){
 		return Level.WARNING;
 	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWBundle#getJSPURI(java.lang.String)
+	 */
+	public String getJSPURI(String jspInBundle) {
+		return this.rootVirtualPath+"/jsp/"+jspInBundle;
+	}
 	
-	//ENTITY SPECIFIC LOG MEHTODS:	
+	//ENTITY SPECIFIC LOG MEHTODS:
 }

@@ -1,8 +1,11 @@
 /*
- * Created on 28.7.2004
+ * $Id: IWBundle.java,v 1.84 2004/11/14 23:27:24 tryggvil Exp $
+ * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.idegaweb;
 
@@ -19,10 +22,17 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
 /**
- * @author tryggvil
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * This is the declaration of the class that represents each bundle folder (or file).
+ * An instance of this class is loaded on startup for each bundle that is installed
+ * in the idegaWeb application. (by default in /idegaweb/bundles/). 
+ * An idegaWeb Bundle is convenient class to access properties and resources etc. for the
+ * components contained in the bundle.<br>
+ * The default implementation for this is DefaultIWBundle.<br>
+ * 
+ * Last modified: $Date: 2004/11/14 23:27:24 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.84 $
  */
 public interface IWBundle {
 	/**
@@ -255,4 +265,11 @@ public interface IWBundle {
 	public abstract String toString();
 	
 	public void runBundleStarters();
+	
+	/**
+	 * Returns the URI of a jsp page found inside this bundle
+	 * @param jspInBundle
+	 * @return
+	 */
+	public String getJSPURI(String jspInBundle);
 }
