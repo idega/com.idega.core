@@ -186,14 +186,14 @@ public class IDOTableCreator{
         if(!this.doesTableExist(entity,entity.getTableName())){
           createTable(entity);
           createTrigger(entity);
-          //try{
+          try{
             createForeignKeys(entity);
-          //}
-          //catch(Exception e){
-            //e.printStackTrace();
+          }
+          catch(Exception e){
+           e.printStackTrace();
             //System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
             //System.err.println("  Error was: "+e.getMessage());
-          //}
+          }
           createMiddleTables(entity);
           if(entity.getIfInsertStartData()){
             entity.insertStartData();
@@ -562,7 +562,7 @@ public class IDOTableCreator{
           }
         }
         catch(Exception e){
-          e.printStackTrace();
+          //e.printStackTrace();
         }
       }
     }

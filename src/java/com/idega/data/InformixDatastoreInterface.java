@@ -59,7 +59,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
   InformixDatastoreInterface(){
 
-    //useTransactionsInEntityCreation=false;
+    useTransactionsInEntityCreation=false;
 
   }
 
@@ -76,37 +76,18 @@ public class InformixDatastoreInterface extends DatastoreInterface{
     }
 
     else if (javaClassName.equals("java.lang.String")){
-
       	if (maxlength<0){
-
-			theReturn = "VARCHAR(255)";
-
-		}
-
-      	else if (maxlength<=255){
-
-			theReturn = "VARCHAR("+maxlength+")";
-
-
-
-		}
-
-		else if (maxlength<=2000){
-
-			theReturn = "LVARCHAR";
-
-		}
-
-        else{
-
-			theReturn = "TEXT";
-
+          theReturn = "VARCHAR(255)";
         }
-
-
-
-
-
+      	else if (maxlength<=255){
+            theReturn = "VARCHAR("+maxlength+")";
+        }
+        else if (maxlength<=2000){
+            theReturn = "LVARCHAR";
+        }
+        else{
+            theReturn = "TEXT";
+        }
     }
 
     else if (javaClassName.equals("java.lang.Boolean")){
@@ -1017,14 +998,14 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
   protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,GenericEntity entity)throws SQLException{
     int maxlength = entity.getMaxLength(columnName);
-    if(maxlength>2000){
+    if(maxlength<=2000){
+      statement.setString(index,entity.getStringColumnValue(columnName));
+    }
+    else{
       String stringValue = entity.getStringColumnValue(columnName);
       //java.io.InputStream stream = new java.io.StringBufferInputStream(stringValue);
       InputStream stream = new IDOInformixStringStream(stringValue);
       statement.setAsciiStream(index,stream,stringValue.length());
-    }
-    else{
-      statement.setString(index,entity.getStringColumnValue(columnName));
     }
   }
 
@@ -1074,6 +1055,76 @@ public class InformixDatastoreInterface extends DatastoreInterface{
           return reader.skip(n);
      }
 
+  }
+
+
+  protected void fillStringColumn(GenericEntity entity,String columnName,ResultSet rs)throws SQLException{
+    int maxlength = entity.getMaxLength(columnName);
+    if(maxlength<=2000){
+        //System.out.println("Informix: Filling column for varchar field:"+columnName);
+        String string = rs.getString(columnName);
+        if (string != null){
+                entity.setColumn(columnName,string);
+        }
+    }
+    else{
+        try{
+          //System.out.println("Informix: 1 Filling column for clob field:"+columnName);
+          //Clob clob = rs.getClob(columnName);
+          //if(!(clob==null||rs.wasNull())){
+          //Reader reader = rs.getCharacterStream(columnName);
+          InputStream stream = rs.getAsciiStream(columnName);
+          //System.out.println("Informix: 2 Filling column for clob field:"+columnName);
+          if(!(stream==null||rs.wasNull())){
+          //if(!(reader==null||rs.wasNull())){
+            StringBuffer sbuffer = new StringBuffer();
+            //InputStream stream = clob.getAsciiStream();
+            //System.out.println("clob field was not empty");
+            int buffersize = 1000;
+            /*char[] charArray = new char[buffersize];
+            while (reader.ready()) {
+              System.out.println("yes!");
+              reader.read(charArray);
+              sbuffer.append(charArray);
+            }*/
+            byte[] charArray = new byte[buffersize];
+            stream.read(charArray);
+            sbuffer.append(convertToCharArray(charArray));
+            while (stream.read(charArray)!=-1) {
+              //System.out.println("yes!");
+              sbuffer.append(convertToCharArray(charArray));
+            }
+            //System.out.println("StringBuffer:"+sbuffer.toString()+"!");
+            entity.setColumn(columnName,sbuffer.toString());
+          }
+          else{
+            //System.out.println("clob field was empty");
+          }
+        }
+        catch(IOException io){
+          throw new SQLException("IOException: "+io.getMessage());
+        }
+    }
+  }
+
+
+  /*protected String getColumnStringForSelectList(GenericEntity entity,String columnName){
+    int columnType = entity.getAttribute(columnName).getStorageClassType();
+    int maxLength = entity.getMaxLength(columnName);
+    if(columnType==EntityAttribute.TYPE_JAVA_LANG_STRING){
+       if(maxLength<=2000){
+        return columnName;
+      }
+      else{
+        return columnName+"::LVARCHAR";
+      }
+
+    }
+    else{
+      return columnName;
+    }
+  }*/
+
      private char[] convertToCharArray(byte[] byteArray){
       char[] charArray = new char[byteArray.length];
       for (int i = 0; i < byteArray.length; i++) {
@@ -1087,55 +1138,5 @@ public class InformixDatastoreInterface extends DatastoreInterface{
         byteArray[i]=(byte)charArray[i];
       }
      }
-
-  }
-
-
-  protected void fillStringColumn(GenericEntity entity,String columnName,ResultSet rs)throws SQLException{
-    int maxlength = entity.getMaxLength(columnName);
-    if(maxlength>2000){
-        if (rs.getString(columnName) != null){
-                entity.setColumn(columnName,rs.getString(columnName));
-        }
-    }
-    else{
-        try{
-          Clob clob = rs.getClob(columnName);
-          if(clob!=null){
-            StringBuffer sbuffer = new StringBuffer();
-            Reader reader = clob.getCharacterStream();
-            int buffersize = 1000;
-            char[] charArray = new char[buffersize];
-            while (reader.ready()) {
-              reader.read(charArray);
-              sbuffer.append(charArray);
-            }
-            entity.setColumn(columnName,sbuffer.toString());
-          }
-        }
-        catch(IOException io){
-          throw new SQLException("IOException: "+io.getMessage());
-        }
-    }
-  }
-
-
-  protected String getColumnStringForSelectList(GenericEntity entity,String columnName){
-    int columnType = entity.getAttribute(columnName).getStorageClassType();
-    int maxLength = entity.getMaxLength(columnName);
-    if(columnType==EntityAttribute.TYPE_JAVA_LANG_STRING){
-      if(maxLength>2000){
-        return columnName+"::LVARCHAR";
-      }
-      else{
-        return columnName;
-      }
-    }
-    else{
-      return columnName;
-    }
-  }
-
-
 }
 
