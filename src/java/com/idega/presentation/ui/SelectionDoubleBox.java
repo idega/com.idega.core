@@ -5,42 +5,61 @@
 
 package com.idega.presentation.ui;
 
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Script;
+import com.idega.presentation.Table;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a><br>
+* modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
 *@version 1.0
 */
+
 public class SelectionDoubleBox extends InterfaceObjectContainer {
 
-	private SelectionBox leftBox;
-	private SelectionBox rightBox;
-	private GenericButton toTheRight;
-	private GenericButton toTheLeft;
+	private SelectionBox leftBox = null;
+	private SelectionBox rightBox = null;
+	private GenericButton toTheRight = null;
+	private GenericButton toTheLeft = null;
+	private String leftName = null;
+	private String rightName = null;
+	private String leftLabel = null;
+	private String rightLabel = null;
 
-	public SelectionDoubleBox() {
+	public SelectionDoubleBox(){
 		this("untitled");
 	}
-
-	public SelectionDoubleBox(String nameOfRightBox) {
-		this(nameOfRightBox + "_left", nameOfRightBox);
+	
+	public SelectionDoubleBox(String nameOfRightBox){
+	  this(nameOfRightBox+"_left",nameOfRightBox);
 	}
-
-	public SelectionDoubleBox(String nameOfRightBox, String headerOfLeftBox, String headerOfRightBox) {
-		this(nameOfRightBox + "_left", nameOfRightBox);
-		this.getLeftBox().setTextHeading(headerOfLeftBox);
-		this.getRightBox().setTextHeading(headerOfRightBox);
+	
+	public SelectionDoubleBox(String nameOfRightBox,String headerOfLeftBox,String headerOfRightBox){
+	  this(nameOfRightBox+"_left",nameOfRightBox);
+	  leftLabel = headerOfLeftBox;
+	  rightLabel = headerOfRightBox;
 	}
 
 	public SelectionDoubleBox(String nameOfLeftBox, String nameOfRightBox) {
-		leftBox = new SelectionBox(nameOfLeftBox);
-		rightBox = new SelectionBox(nameOfRightBox);
-		toTheRight = new GenericButton("sdb_right", ">>");
-		toTheLeft = new GenericButton("sdb_left", "<<");
+		leftName = nameOfLeftBox;
+		rightName = nameOfRightBox;
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		//this.getParentPage().initializeAssociatedScript();
+	    leftBox = new SelectionBox(leftName);
+	    rightBox = new SelectionBox(rightName);
+	    toTheRight = new GenericButton("sdb_right", ">>");
+		toTheLeft = new GenericButton("sdb_left", "<<");
+		
+	    
+		if( leftLabel!=null){
+		  leftBox.setTextHeading(leftLabel);
+		}
+		
+		if(rightLabel!=null){
+			rightBox.setTextHeading(rightLabel);
+		}
+    
 		if (getStyleAttribute() != null) {
 			leftBox.setStyleAttribute(getStyleAttribute());
 			rightBox.setStyleAttribute(getStyleAttribute());
@@ -66,7 +85,7 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		table.add(toTheLeft, 2, 1);
 
 		table.add(rightBox, 3, 1);
-
+		//add the script
 		Script script = this.getParentPage().getAssociatedScript();
 		addToScripts(script);
 	}
