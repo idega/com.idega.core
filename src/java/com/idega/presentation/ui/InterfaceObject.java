@@ -5,14 +5,14 @@
 package com.idega.presentation.ui;
 
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public abstract class InterfaceObject extends PresentationObject {
+public abstract class InterfaceObject extends PresentationObjectContainer {
 
 	protected boolean keepStatus;
 
@@ -761,4 +761,9 @@ public abstract class InterfaceObject extends PresentationObject {
 			getScript().addFunction(functionName, function);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public abstract boolean isContainer();
 }
