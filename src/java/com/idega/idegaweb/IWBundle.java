@@ -429,7 +429,7 @@ public class IWBundle implements java.lang.Comparable {
 	//System.out.println("localizableStringsFile:"+localizableStringsFile);
 
 	getLocalizableStringsProperties().clear();
-	getLocalizableStringsProperties().putAll(localizableStringsMap);
+	getLocalizableStringsProperties().putAll(getLocalizableStringsMap());
 	getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
       }
       catch(IOException ex){
@@ -735,9 +735,9 @@ public class IWBundle implements java.lang.Comparable {
     }
 
     public String getComponentName(String className,Locale locale,String returnIfNameNotLocalized){
-      System.out.println("className = " + className);
+      /*System.out.println("className = " + className);
       System.out.println("Locale = " + locale.toString());
-      System.out.println("Default = " + returnIfNameNotLocalized);
+      System.out.println("Default = " + returnIfNameNotLocalized);*/
       return this.getResourceBundle(locale).getLocalizedString("iw.component."+className+".name",returnIfNameNotLocalized);
     }
 

@@ -138,7 +138,8 @@ public class IWResourceBundle extends ResourceBundle {
     public void storeState() {
       try {
 	properties.clear();
-	properties.putAll(lookup);
+	if ( lookup != null )
+	  properties.putAll(lookup);
 	properties.store(new FileOutputStream(file),null);
 	//lookup.store(new FileOutputStream(file),null);
       }
