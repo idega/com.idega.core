@@ -53,7 +53,9 @@ import com.idega.xml.XMLElement;
 public class IBExportImportDataReader extends ReaderFromFile implements ObjectReader {
 	
 	private IWUserContext iwuc = null;
-	private HashMatrix sourceNameHolder = null;
+	
+	// moduleName :  propertyName : value -> zipEntryName
+	private HashMatrix modulePropertyValueEntryName = null;
 	private Map entryNameHolder = null;
 	private Map pageIdHolder = null;
 	private Map oldNewInstanceId = null;
@@ -93,9 +95,22 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		if (performValidation && ! ((IBExportImportData) storable).isValid()) {
 			return;
 		}
-		// create external data first
 		entryNameHolder = new HashMap();
-		sourceNameHolder = new HashMatrix();
+		List pageElements = ((IBExportImportData) storable).getSortedPageElements();
+		// a little bit tricky: 
+		// handle pageElements first, that is create pages first, 
+		// because they are so special that they 
+		// can't be handled in the
+		// method createExternalData
+		// if a non page element has a reference to a page the page doesn't need to be created - 
+		// it was already created.
+		createPages(pageElements, sourceFile);
+		createExternalData(sourceFile);
+		modifyPages(pageElements, sourceFile);
+	}	
+		
+	private void createExternalData(File sourceFile) throws IOException, RemoteException {
+		modulePropertyValueEntryName = new HashMatrix();
 		IBReferences references = new IBReferences(iwac.getIWMainApplication());
 		List nonPages = ((IBExportImportData) storable).getNonPageFileElements();
 		Iterator nonPageIterator = nonPages.iterator();
@@ -119,17 +134,24 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 					closeStream(inputStream);
 				}
 				entryNameHolder.put(zipEntryName, holder);
-				String source = nonPageElement.getTextTrim(XMLConstants.FILE_SOURCE);
-				String name = nonPageElement.getTextTrim(XMLConstants.FILE_NAME);
-				sourceNameHolder.put(source, name, holder);				
+			}
+			String moduleName = nonPageElement.getTextTrim(XMLConstants.FILE_MODULE);
+			String propertyName = nonPageElement.getTextTrim(XMLConstants.FILE_NAME);
+			String value = nonPageElement.getTextTrim(XMLConstants.FILE_VALUE);
+			Map entryMap = null;
+			if (modulePropertyValueEntryName.containsKey(moduleName, propertyName)) {
+				entryMap = (Map) modulePropertyValueEntryName.get(moduleName, propertyName);
+			}
+			else {
+				entryMap = new HashMap();
+				modulePropertyValueEntryName.put(moduleName, propertyName, entryMap);
+			}
+			if (! entryMap.containsKey(value)) {
+				entryMap.put(value, zipEntryName);
 			}
 		}
-		// create pages and templates
-		List pageElements = ((IBExportImportData) storable).getSortedPageElements();
-		createPages(pageElements, sourceFile);
-		modifyPages(pageElements, sourceFile);
-	}	
-		
+	}
+
 	private void createPages(List pageFileElements, File sourceFile) throws IOException {
 		pageIdHolder = new HashMap(); 
 		IBPageHelper pageHelper = IBPageHelper.getInstance();
@@ -339,16 +361,22 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		String nameOfElement = element.getName();
 		// is it a property?
 		if (XMLConstants.PROPERTY_STRING.equalsIgnoreCase(nameOfElement)) {
-			// ask for the source of the property
-			String propertySource = element.getParent().getAttributeValue(XMLConstants.CLASS_STRING);
+			// ask for the module of the property
+			String moduleName = element.getParent().getAttributeValue(XMLConstants.CLASS_STRING);
 			// ask for the name of the property
 			String propertyName = element.getTextTrim(XMLConstants.NAME_STRING);
 			// do we have a reference with that source and name?
-			if (sourceNameHolder.containsKey(propertySource, propertyName)) {
-				StorableHolder holder = (StorableHolder) sourceNameHolder.get(propertySource, propertyName);
-				// set the value
-				String value = holder.getValue();
-				element.setContent(XMLConstants.VALUE_STRING, value);
+			if (modulePropertyValueEntryName.containsKey(moduleName, propertyName)) {
+				Map valueEntryName = (Map) modulePropertyValueEntryName.get(moduleName, propertyName);
+				// ask for the value
+				String value = element.getTextTrim(XMLConstants.VALUE_STRING);
+				if (valueEntryName.containsKey(value)) {
+					String entryName = (String) valueEntryName.get(value);
+					StorableHolder holder = (StorableHolder) entryNameHolder.get(entryName);
+					// set the value
+					String newValue = holder.getValue();
+					element.setContent(XMLConstants.VALUE_STRING, newValue);
+				}
 			}
 		}
 	}
