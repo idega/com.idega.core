@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -20,6 +21,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -507,11 +509,25 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public String getNodeName() {
 		return this.getGeneralGroup().getNodeName();
 	}
+
+	public String getNodeName(Locale locale) {
+		return this.getGeneralGroup().getNodeName(locale);
+	}
+	public String getNodeName(Locale locale, IWApplicationContext iwac) {
+		return this.getGeneralGroup().getNodeName(locale,iwac);
+	}
 	public int getNodeID() {
 		return this.getGeneralGroup().getNodeID();
 	}
 	public int getSiblingCount() {
 		return this.getGeneralGroup().getSiblingCount();
+	}
+	
+	/**
+	 * @see com.idega.core.ICTreeNode#getNodeType()
+	 */
+	public int getNodeType(){
+		return -1;
 	}
 
 

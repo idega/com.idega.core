@@ -28,6 +28,7 @@ import com.idega.data.IDOQuery;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -1296,6 +1297,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public String getNodeName(Locale locale) {
 		return this.getNodeName();
 	}
+	public String getNodeName(Locale locale, IWApplicationContext iwac){
+		return getNodeName(locale);
+	}
 	public int getNodeID() {
 		return ((Integer)this.getPrimaryKey()).intValue();
 	}
@@ -1308,6 +1312,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			return 0;
 		}
 	}
+	
+	/**
+	 * @see com.idega.core.ICTreeNode#getNodeType()
+	 */
+	public int getNodeType(){
+		return -1;
+	}
+	
 	public void store() {
 		super.store();
 	}

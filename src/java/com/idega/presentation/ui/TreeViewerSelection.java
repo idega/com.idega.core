@@ -95,7 +95,7 @@ public class TreeViewerSelection extends TreeViewer {
       link.addParameter((String) entry.getKey(), entry.getValue().toString());
     }
     if ( selectedNodeId == node.getNodeID()) {
-      String name = node.getNodeName();
+      String name = node.getNodeName(iwc.getCurrentLocale(),iwc);
       Text text = getProxyForSelectedNode();
       text.setText(name);
       link.setText(text);

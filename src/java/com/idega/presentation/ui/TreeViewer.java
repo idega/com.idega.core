@@ -127,7 +127,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		//if (node instanceof ICTreeNode)
 		//	nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
 		//else
-			nodeName = node.getNodeName(iwc.getCurrentLocale());
+			nodeName = node.getNodeName(iwc.getCurrentLocale(),iwc);
 			
 		titleName = nodeName;
 		if(!getShortenedNodeName(nodeName))

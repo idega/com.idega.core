@@ -1,6 +1,7 @@
 package com.idega.presentation.ui;
 
 import com.idega.event.*;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.*;
 import com.idega.presentation.event.TreeViewerEvent;
@@ -15,7 +16,7 @@ import com.idega.presentation.text.Text;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 
@@ -212,11 +213,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		if (nodes != null) {
 			Iterator iter = nodes;
 			for (int i = 0; iter.hasNext(); i++) {
-				ICTreeNode item = (ICTreeNode) iter.next();
+				ICTreeNode item = (ICTreeNode) iter.next();			
 				boolean hasChild = (item.getChildCount() > 0);
 				boolean isOpen = false;
 				int rowIndex = getRowIndex();
 				Table treeColumns = this.getTreeTableClone();
+//				treeColumns.setBorder(1);
+//				frameTable.setBorder(1);
 				if (hasChild) {
 					isOpen = openNodes.contains(Integer.toString(item.getNodeID()));
 				}
@@ -900,6 +903,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		public String getNodeName(Locale locale ) {
 			return getNodeName();
 		}
+		
+		/**
+		 *  Returns the name of the Node
+		 */
+		public String getNodeName(Locale locale, IWApplicationContext iwac ) {
+			return getNodeName(locale);
+		}
 
 		/**
 		 * Returns the unique ID of the Node in the tree
@@ -918,6 +928,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				return -1;
 			}
 		}
+		
 
 		public void addTreeNode(ICTreeNode node) {
 			if (node instanceof DefaultTreeNode) {
