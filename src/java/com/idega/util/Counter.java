@@ -7,7 +7,14 @@ package com.idega.util;
 /**
  * @author laddi
  */
-public class Counter {
+public class Counter implements Comparable {
+	
+	public Counter() {
+	}
+	
+	public Counter(int seconds) {
+		this.seconds = seconds;
+	}
 
 	private int seconds = 0;
 	
@@ -26,14 +33,26 @@ public class Counter {
 		addSeconds(hours * SECONDS_IN_HOUR);
 	}
 	
+	public int getHours() {
+		return seconds / SECONDS_IN_HOUR;
+	}
+	
+	public int getMinutes() {
+		int remainder = seconds % SECONDS_IN_HOUR;
+		return remainder / SECONDS_IN_MINUTE;
+	}
+	
+	public int getSeconds() {
+		int remainder = seconds % SECONDS_IN_HOUR;
+		return remainder % SECONDS_IN_MINUTE;
+	}
+	
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		
-		int hours = seconds / SECONDS_IN_HOUR;
-		int remainder = seconds % SECONDS_IN_HOUR;
-		
-		int minutes = remainder / SECONDS_IN_MINUTE;
-		int seconds = remainder % SECONDS_IN_MINUTE;
+		int hours = getHours();
+		int minutes = getMinutes();
+		int seconds = getSeconds();
 		
 		if (hours < 10) {
 			buffer.append("0");
@@ -49,5 +68,40 @@ public class Counter {
 		buffer.append(seconds);
 		
 		return buffer.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if (object instanceof Counter) {
+			Counter counter = (Counter) object;
+			if (getHours() == counter.getHours()) {
+				if (getMinutes() == counter.getMinutes()) {
+					if (getSeconds() == counter.getSeconds()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object object) {
+		if (object instanceof Counter) {
+			Counter counter = (Counter) object;
+			int returner = getHours() - counter.getHours();
+			if (returner == 0) {
+				returner = getMinutes() - counter.getMinutes();
+				if (returner == 0) {
+					returner = getSeconds() - counter.getSeconds();
+				}
+			}
+			return returner;
+		}
+		return 0;
 	}
 }
