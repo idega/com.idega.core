@@ -1,5 +1,6 @@
 package com.idega.util;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 /**
@@ -210,6 +211,35 @@ public class StringHandler {
 		}
 		return newString.toString();
 	}
+  
+  /** 
+   * Returns true if the specified object returns a non empty string when the toString() method is invoked else
+   * false.
+   */
+  public static boolean isNotEmpty(Object element) {
+    String aString = element.toString();
+    return (aString != null && aString.length() > 0);
+  }
+  
+  /**
+   * Returns true if each element of the collection returns a non empty string when the toString() method is 
+   * invoked else false.
+   */
+  public static boolean elementsAreNotEmpty(Collection collection)  {
+    if (collection == null || collection.isEmpty())   {
+      return false;
+    }
+    Iterator iter = collection.iterator();
+    while (iter.hasNext())  {
+      Object element = iter.next();
+      String aString = element.toString();
+      if (! StringHandler.isNotEmpty(aString))  {
+        return false;
+      }
+		}
+    return true;
+  }
+    
   
   /**
    * replaces all non roman characters by suitable strings
