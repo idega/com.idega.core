@@ -141,7 +141,12 @@ public void setStyle(String style) {
 }
 
 public void addToText(String s){
-	text=text+s;
+  if(text==EMPTY_TEXT_STRING){
+    text=s;
+  }
+  else{
+    text=text+s;
+  }
 }
 
 public void setText(String s){
