@@ -1,5 +1,6 @@
 package com.idega.idegaweb;
 
+import com.idega.util.text.TextSoap;
 import com.idega.presentation.ui.DropdownMenu;
 import java.io.*;
 import java.util.*;
@@ -74,8 +75,14 @@ public static final String[] defaultStyles = { "A","body","table" };
     while (iter.hasNext()) {
       tokenizer = new StringTokenizer((String) iter.next(),"{");
       while ( tokenizer.hasMoreTokens() ) {
-        /** @todo  not working in jdk 1.3.1 : */
+	/** @todo  not working in jdk 1.3.1 : */
 	//addStyleParameter(tokenizer.nextToken().replaceAll(" ",""),tokenizer.nextToken().replaceAll("}","").replaceAll(" ",""));
+
+	/** Fix for jdk 1.3.1 */
+	String styleName = TextSoap.findAndReplace(tokenizer.nextToken()," ","");
+	String styleParameter = TextSoap.findAndReplace(tokenizer.nextToken(),"}","");
+	styleParameter = TextSoap.findAndReplace(styleParameter," ","");
+	addStyleParameter(styleName,styleParameter);
       }
     }
   }
