@@ -2210,6 +2210,41 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	}
 
+        /**
+	* Attention: Beta implementation
+	*/
+	public void addTo(Class entityToAddTo, int[] ids)throws SQLException{
+
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+                        String middleTable = getNameOfMiddleTable((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo),this);
+                        String columnName = ((IDOLegacyEntity)com.idega.data.GenericEntity.getStaticInstance(entityToAddTo)).getIDColumnName();
+                        if(ids!=null){
+                          for (int i = 0; i < ids.length; i++) {
+                            try{
+                              int y = Stmt.executeUpdate("insert into "+middleTable+"("+getIDColumnName()+","+columnName+") values("+getID()+","+ids[i]+")");
+                            }
+                            finally{
+
+                            }
+                          }
+
+                        }
+		}
+		finally{
+                  if(Stmt != null){
+                          Stmt.close();
+                  }
+                  if (conn != null){
+                          freeConnection(getDatasource(),conn);
+                  }
+		}
+
+	}
+
 
 
 
