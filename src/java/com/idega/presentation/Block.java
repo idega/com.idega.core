@@ -5,7 +5,9 @@
 
 package com.idega.presentation;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWStyleManager;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
@@ -52,6 +54,14 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public String getBundleIdentifier(){
     return IW_CORE_BUNDLE_IDENTIFIER;
+  }
+  
+  /**
+   * Override to add styles (names) to stylesheet.  Add name (String) as key and style (String) as value.
+   */
+  public HashMap getStyleNames() {
+  	//return IWConstants.getDefaultStyles();
+  	return null;
   }
 
   public String getCacheKey(){
@@ -254,6 +264,17 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
     if(targetObjInst <=0)
       targetObjInst = getParentObjectInstanceID();
+      
+    if(getStyleNames() != null){
+    	HashMap styles = getStyleNames();
+    	IWStyleManager manager = new IWStyleManager();
+    	Iterator iter = styles.keySet().iterator();
+    	while ( iter.hasNext() ) {
+    		String style = (String) iter.next();
+    		if ( !manager.isStyleSet(style) )
+    			manager.setStyle(style, (String) styles.get(style));
+    	}
+    }
 
     if(this.isCacheable()){
       setCacheKey(iwc);
