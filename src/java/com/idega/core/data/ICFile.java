@@ -35,15 +35,15 @@ public class ICFile extends TreeableEntity {
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
     addAttribute(getColumnNameLanguageId(),"Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
-    addAttribute(getColumnNameMimeType(),"Type of file",true,true, String.class,255);
+    addAttribute(getColumnNameMimeType(),"Mime Type of file",true,true, String.class,100,"many-to-one",ICMimeType.class);
     addAttribute(getColumnNameName(),"File name",true,true, String.class, 255);
     addAttribute(getColumnNameDescription(),"Description",true,true, String.class, 1000);
     addAttribute(getColumnNameFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute(getColumnNameCreationDate(),"Creation date",true,true, java.sql.Timestamp.class);
     addAttribute(getColumnNameModificationDate(),"Modification date",true,true, java.sql.Timestamp.class);
     addAttribute(getColumnNameFileSize(),"file size in bytes",true,true,java.lang.Integer.class);
+
     addMetaDataRelationship();//can have extra info in the ic_metadata table
-    addManyToManyRelationShip(ICFileCategory.class,"ic_file_file_category");
 
   }
 

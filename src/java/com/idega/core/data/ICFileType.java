@@ -14,72 +14,34 @@ import java.sql.SQLException;
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
-/**@todo : add localization support for category names
- *
- */
-public class ICFileCategory extends GenericEntity {
+public class ICFileType extends GenericType {
 
-  public ICFileCategory() {
+  public ICFileType() {
     super();
   }
 
-    public ICFileCategory(int id) throws SQLException{
+    public ICFileType(int id) throws SQLException{
     super(id);
   }
 
   public void initializeAttributes() {
-    addAttribute(getIDColumnName());
-    addAttribute("category_type","Type of category",true,true, String.class,255);
-    addAttribute("category_name","File category name",true,true, String.class, 255);
-    //Temporary Soloution
-    //addManyToManyRelationShip(ICFile.class,"ic_file_file_category");
+    super.initializeAttributes();
+    addAttribute("ic_file_handler_id","File handler",true,true, Integer.class,"many-to-one",ICFileHandler.class);
   }
 
   public String getEntityName() {
-    return("ic_file_category");
+    return("ic_file_type");
   }
-
-  public String getName(){
-    return (String) getColumnValue("category_name");
-  }
-
-  public String getFileCategoryName(){
-    return getName();
-  }
-
-  public void setFileCategoryName(String fileCategoryName){
-    setColumn("category_name", fileCategoryName);
-  }
-
-  public void setName(String fileCategoryName){
-    setFileCategoryName(fileCategoryName);
-  }
-
-  public String getType(){
-    return (String) getColumnValue("category_type");
-  }
-
-  public String getFileCategoryType(){
-    return getType();
-  }
-
-  public void setFileCategoryType(String fileCategoryType){
-    setColumn("category_type", fileCategoryType);
-  }
-
-  public void setType(String fileCategoryType){
-    setFileCategoryType(fileCategoryType);
-  }
-
+/*
 
   public void insertStartData() {
     try {
-      ICFileCategory cat;
+      ICFileType cat;
       ICFile file;
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Applications");
-      cat.setType("IC_CATEGORY_APPLICATIONS");
+      cat.setType("IC_TYPE_APPLICATIONS");
       cat.insert();
 
       file = new ICFile();
@@ -89,9 +51,9 @@ public class ICFileCategory extends GenericEntity {
       file.insert();
       file.addTo(cat);
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Audio");
-      cat.setType("IC_CATEGORY_AUDIO");
+      cat.setType("IC_TYPE_AUDIO");
       cat.insert();
 
       file = new ICFile();
@@ -101,9 +63,9 @@ public class ICFileCategory extends GenericEntity {
       file.insert();
       file.addTo(cat);
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Documents");
-      cat.setType("IC_CATEGORY_DOCUMENTS");
+      cat.setType("IC_TYPE_DOCUMENTS");
       cat.insert();
 
       file = new ICFile();
@@ -113,9 +75,9 @@ public class ICFileCategory extends GenericEntity {
       file.insert();
       file.addTo(cat);
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Flash");
-      cat.setType("IC_CATEGORY_FLASH");
+      cat.setType("IC_TYPE_FLASH");
       cat.insert();
 
       file = new ICFile();
@@ -125,9 +87,9 @@ public class ICFileCategory extends GenericEntity {
       file.insert();
       file.addTo(cat);
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Images");
-      cat.setType("IC_CATEGORY_IMAGES");
+      cat.setType("IC_TYPE_IMAGES");
       cat.insert();
 
       file = new ICFile();
@@ -137,9 +99,9 @@ public class ICFileCategory extends GenericEntity {
       file.insert();
       file.addTo(cat);
 
-      cat = new ICFileCategory();
+      cat = new ICFileType();
       cat.setName("Movies");
-      cat.setType("IC_CATEGORY_MOVIES");
+      cat.setType("IC_TYPE_MOVIES");
       cat.insert();
 
       file = new ICFile();
@@ -153,5 +115,5 @@ public class ICFileCategory extends GenericEntity {
     catch (SQLException sql) {
       sql.printStackTrace(System.err);
     }
-  }
+  }*/
 }
