@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.75 2003/04/30 01:27:06 eiki Exp $
+ *  $Id: Page.java,v 1.76 2003/04/30 03:57:37 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1008,7 +1008,7 @@ public class Page extends PresentationObjectContainer {
 	protected boolean isInFrameSet() {
 		PresentationObject parent = getParentObject();
 		if (parent != null) {
-			if (parent instanceof FrameSet) {
+			if (parent instanceof FrameSet || parent instanceof Frame) {
 				return true;
 			}
 		}

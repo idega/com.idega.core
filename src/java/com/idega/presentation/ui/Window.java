@@ -81,11 +81,7 @@ public Window(String name,int width,int height){
     this.setName(name);
     this.setWidth(width);
     this.setHeight(height);
-    
-    if(!isInFrameSet()) {
-    	setOnLoad("focus()");
-    } 
-	
+ 	
 }
 
 public Window(String name,String url){
@@ -134,9 +130,6 @@ private void setSettings(){
 	setTitlebar(false);
 	setResizable(false);
 	
-	if(!isInFrameSet()) {
-		setOnLoad("focus()");
-	} 
 }
 
 public void setToolbar(boolean ifToolbar){
@@ -562,5 +555,17 @@ public void print(IWContext iwc)throws IOException{
 	}
 }*/
 
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#initInMain(com.idega.presentation.IWContext)
+	 */
+	protected void initInMain(IWContext iwc) throws Exception {
+		
+		if( !isChildOfOtherPage() && !isInFrameSet()) {
+			setOnLoad("focus()");
+		} 
+
+		super.initInMain(iwc);
+	}
 
 }//End class
