@@ -67,7 +67,18 @@ public class XMLData {
   }
     
   public String getName()  {
-    return (name == null || name.length() == 0) ? DEFAULT_NAME : name;
+    // name is set
+    if (name != null && name.length() > 0) {
+      return name;
+    }
+    // name is not set, file id is set
+    if (xmlFileId > -1) { 
+      StringBuffer buffer = new StringBuffer(DEFAULT_NAME);
+      buffer.append('_').append(xmlFileId);
+      return buffer.toString();
+    }
+    // neither name nor file id is set
+    return DEFAULT_NAME;
   }   
 
   
@@ -91,8 +102,8 @@ public class XMLData {
   public ICFile store() throws IOException  {
     // create or fetch existing file
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
-    xmlFile.setName(getName());
     xmlFile.setMimeType("text/xml");
+    xmlFile.setName(getName());
     OutputStream output = xmlFile.getFileValueForWrite();
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
@@ -104,14 +115,15 @@ public class XMLData {
     output.close();
     //FileWriter writer = new FileWriter("thomasTest.xml");
     xmlOutput.output(document, System.out);
-    
     try {
+      xmlFile.store();
       if (xmlFileId < 0) {
-        xmlFile.store();
         xmlFileId = ((Integer) xmlFile.getPrimaryKey()).intValue();
-      }
-      else {
-        xmlFile.store();
+        // the default name uses the id, therefore set again and store again
+        if (name == null) {
+          xmlFile.setName(getName());
+          xmlFile.store();
+        }
       }
       return  xmlFile;
     }
@@ -122,10 +134,10 @@ public class XMLData {
   }
  
   private void initialize(ICFile xmlFile) {
-    name = xmlFile.getName();
-    XMLParser parser = new XMLParser();
     InputStream inputStream = null;
     try {
+      name = xmlFile.getName();
+      XMLParser parser = new XMLParser();
       inputStream = xmlFile.getFileValue();
       document = parser.parse(inputStream);
       inputStream.close();
@@ -133,6 +145,7 @@ public class XMLData {
     }
     catch (Exception ex)  {
       System.err.println("[QueryResult]: input stream could not be parsed. Message was: " + ex.getMessage());
+      ex.printStackTrace(System.err);
       document = null;
       xmlFileId = -1;
       try { 
@@ -140,6 +153,7 @@ public class XMLData {
       }
       catch (IOException ioEx)  {
         System.err.println("[QueryResult]: input stream could not be closed. Message was: "+ ex.getMessage());
+        ioEx.printStackTrace(System.err);
       }
     }      
   } 
@@ -153,7 +167,9 @@ public class XMLData {
     }
     // FinderException, RemoteException
     catch(Exception ex){
-      throw new RuntimeException("[XMLData]: Message was: " + ex.getMessage());
+      System.err.println("[XMLData]: Can't restrieve file with id "+ fileId + "Message is:" + ex.getMessage());
+      ex.printStackTrace(System.err); 
+      return null;
     }
   } 
   

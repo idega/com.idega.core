@@ -1,6 +1,7 @@
 package com.idega.util.datastructures;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,9 @@ public class SortedHashMatrix {
   
   public List getCopiedListOfValues() {
     List values = new ArrayList();
+    if (xDimension == null) {
+      return values;
+    }
     Iterator xIterator = xDimension.values().iterator();
     while (xIterator.hasNext())  {
       SortedMap yDimension = (SortedMap) xIterator.next();
@@ -58,25 +62,18 @@ public class SortedHashMatrix {
   }
   
   public Set firstKeySet()  {
-    return xDimension.keySet();
+    return (xDimension == null) ? new HashSet(0) : xDimension.keySet();
   }
-    
-  
-  
+ 
   private SortedMap getYDimension(Object xKey)  {
     if (xDimension == null) {
       xDimension = new TreeMap(new StringNumberComparator());
-      
     }
     SortedMap yDimension = (SortedMap) xDimension.get(xKey);
     if (yDimension == null) {
       yDimension = new TreeMap(new StringNumberComparator());
+      xDimension.put(xKey, yDimension);
     }
     return yDimension;
   }
-      
-  
-      
-      
-      
 }
