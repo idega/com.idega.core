@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.68 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: Link.java,v 1.69 2002/04/10 09:33:23 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,36 +9,18 @@
  */
 package com.idega.presentation.text;
 
-import com.idega.block.media.business.MediaBusiness;
-import java.net.URLDecoder;
-import com.idega.util.text.TextSoap;
-import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Locale;
-
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.Parameter;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWConstants;
-import com.idega.event.IWLinkEvent;
-import com.idega.event.IWLinkListener;
-import com.idega.builder.data.IBPage;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICObjectInstance;
-import com.idega.presentation.Image;
-import com.idega.core.localisation.business.LocaleSwitcher;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.block.media.business.*;
+import com.idega.builder.business.*;
+import com.idega.builder.data.*;
+import com.idega.core.data.*;
+import com.idega.core.localisation.business.*;
+import com.idega.event.*;
+import com.idega.idegaweb.*;
+import com.idega.presentation.*;
+import com.idega.presentation.ui.*;
+import com.idega.util.text.*;
+import java.net.*;
+import java.util.*;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -87,6 +69,7 @@ public class Link extends Text{
   private boolean _maintainAllGlobalParameters = false;
   private boolean _maintainBuilderParameters = true;
   private boolean _addSessionId = true;
+  private boolean _maintainAll = false;
 
   private int _imageId;
   private int _onMouseOverImageId;
@@ -100,6 +83,7 @@ public class Link extends Text{
   private String templateForObjectInstanciation;
 
   private List listenerInstances = null;
+  private List maintainedParameters = null;
 
   private boolean https = false;
 
@@ -432,24 +416,24 @@ public class Link extends Text{
 
     if( isImageButton ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-        setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text));
       }
       else{
-        setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(text));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(text));
       }
     }
     else if( isImageTab ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-        setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip));
       }
       else{
-        setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(text,flip));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(text,flip));
       }
     }
 
     if(isImageTab||isImageButton ){
       if( isSetToSubmitForm() ){
-         ((Image)_obj).removeAttribute("onMouseDown");//so that it doesn't interfere with the link onclick event
+	 ((Image)_obj).removeAttribute("onMouseDown");//so that it doesn't interfere with the link onclick event
       }
     }
 
@@ -479,6 +463,8 @@ public class Link extends Text{
       }
     }
     setAttribute(HREF_ATTRIBUTE,newUrl);
+    this._maintainAllGlobalParameters = false;
+    this._maintainBuilderParameters = false;
   }
 
   /**
@@ -593,6 +579,12 @@ public class Link extends Text{
     if (parameterValue != null) {
       addParameter(parameterName,parameterValue);
     }
+  }
+
+  public void setToMaintainParameter(String name) {
+    if ( this.maintainedParameters == null )
+      maintainedParameters = new Vector();
+    maintainedParameters.add(name);
   }
 
   /*
@@ -1455,6 +1447,16 @@ public class Link extends Text{
     setAttribute(HREF_ATTRIBUTE,url);
   }
 
+  private void maintainParameters(IWContext iwc) {
+    Iterator iter = maintainedParameters.iterator();
+    while (iter.hasNext()) {
+      String name = (String)iter.next();
+      String value = iwc.getParameter(name);
+      if ( value != null )
+	addParameter(name,value);
+    }
+  }
+
   /**
    *
    */
@@ -1462,6 +1464,11 @@ public class Link extends Text{
     initVariables(iwc);
     boolean addParameters = true;
     String oldURL = getURL(iwc);
+
+    if (maintainedParameters != null) {
+      maintainParameters(iwc);
+    }
+
     /**
      * @todo: Is this the right solution? - If the user is not logged on then do not add a session id to the link
      */
@@ -1488,8 +1495,8 @@ public class Link extends Text{
       boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
       if(alignSet){
-        print("<div align=\""+getHorizontalAlignment()+"\">");
-        removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+	print("<div align=\""+getHorizontalAlignment()+"\">");
+	removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
       }
 
       if(openInNewWindow){
@@ -1500,7 +1507,7 @@ public class Link extends Text{
 	} else {
 	  setFinalUrl("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
 	}*/
-        setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
+	setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
 	//setFinalUrl(HASH);
       }
       else{
@@ -1557,9 +1564,9 @@ public class Link extends Text{
 	/*}*/
 	print("</a>");
 
-        if(alignSet){
-          print("</div>");
-        }
+	if(alignSet){
+	  print("</div>");
+	}
       /*} else {
 	if (addParameters) {
 	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
@@ -1880,11 +1887,11 @@ public class Link extends Text{
 		newBuffer.append("&");
 	      }
 	      newBuffer.append(name);
-              if(token2.hasMoreTokens()){
-                String value = token2.nextToken();
-                newBuffer.append("=");
-                newBuffer.append(value);
-              }
+	      if(token2.hasMoreTokens()){
+		String value = token2.nextToken();
+		newBuffer.append("=");
+		newBuffer.append(value);
+	      }
 	    }
 	  }
 	  /*else {
@@ -1916,12 +1923,12 @@ public class Link extends Text{
       List between = TextSoap.FindAllBetween(windowOpenerJavascriptString, "openwindow('", "'");
       String theUrl = "";
       if (between != null && between.size() > 0) {
-        theUrl = (String) between.get(0);
+	theUrl = (String) between.get(0);
       }
 
       String paramString = this.getParameterString(iwc, this.getURL(iwc));
       if (theUrl.indexOf("?") != -1) {
-        paramString = TextSoap.findAndReplace(paramString, "?","&");
+	paramString = TextSoap.findAndReplace(paramString, "?","&");
       }
 
       if (!paramString.equals("") || !theUrl.equals(""))
@@ -1950,13 +1957,13 @@ public class Link extends Text{
   private void setURIToClassToInstanciate(IWContext iwc){
     if(this.classToInstanciate!=null){
       if(this.templatePageClass!=null){
-        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templatePageClass));
+	this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templatePageClass));
       }
       else if(this.templateForObjectInstanciation!=null){
-        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templateForObjectInstanciation));
+	this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templateForObjectInstanciation));
       }
       else{
-        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+	this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
       }
     }
   }
@@ -1967,11 +1974,11 @@ public class Link extends Text{
       //setURL(iwc.getApplication().getWindowOpenerURI());
       //addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
       if(this.icObjectInstanceIDForWindow==-1){
-          setURL(iwc.getApplication().getWindowOpenerURI(_windowClass));
+	  setURL(iwc.getApplication().getWindowOpenerURI(_windowClass));
       }
       else{
-        setURL(iwc.getApplication().getWindowOpenerURI(_windowClass,icObjectInstanceIDForWindow));
-        //this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+	setURL(iwc.getApplication().getWindowOpenerURI(_windowClass,icObjectInstanceIDForWindow));
+	//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
       }
     }
   }
