@@ -32,7 +32,20 @@ public class Executer {
         for (int i = 0; i < args.length; i++) {
           System.out.println(args[i]);
           Process p = runner.exec(args[i]);
-          //p.waitFor();
+
+        StringBuffer sbOut = new StringBuffer(1000);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while (true) {
+          String s = br.readLine();
+          if (s == null) {
+            break;
+          }
+          System.out.println(s);
+        }
+        br.close();
+        p.waitFor();
+        System.out.println(sbOut.toString());
+        System.out.println("Exit status: " + p.exitValue());
         }
       }
     } catch (Exception ex) {
