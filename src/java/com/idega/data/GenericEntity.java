@@ -1260,10 +1260,6 @@ private String dataSource;
 		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
 
-	public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
-	}
-
         public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
 		return getNumberOfRecords("select count(*) from "+getTableName()+" where "+columnName+" like '"+columnValue+"'");
 	}
@@ -1464,16 +1460,27 @@ private String dataSource;
 
 	/**
 	**Default remove behavior with a many-to-many relationship
+        ** deletes only one line in middle table if the genericentity wa consructed with a value
 	**/
 	public void removeFrom(GenericEntity entityToRemoveFrom)throws SQLException{
 
 		Connection conn= null;
 		Statement Stmt= null;
+                String qry = "";
 		try{
+                        int i = 0;
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
-		}
+
+                        if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
+                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'";
+                        else// just removing this particular one
+                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
+
+                        //  System.out.println("GENERIC ENTITY: "+ qry);
+                          i = Stmt.executeUpdate(qry);
+
+                }
 		finally{
 			if(Stmt != null){
 				Stmt.close();
@@ -1498,6 +1505,13 @@ private String dataSource;
 			int count = 0;
                         for (int i = 0; i < entityToRemoveFrom.length; i++) {
                             count += Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"'");
+                        if( entityToRemoveFrom[i].getID()==-1)//removing all in middle table
+			  count +=  Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"'");
+                        else// just removing this particular one
+                          count +=  Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"' AND "+entityToRemoveFrom[i].getIDColumnName()+"='"+entityToRemoveFrom[i].getID()+"'");
+
+
+
                         }
 
 
