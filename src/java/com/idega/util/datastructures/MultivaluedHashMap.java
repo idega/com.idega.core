@@ -76,4 +76,15 @@ public class MultivaluedHashMap extends HashMap {
 		}
 		return null;
 	}
+	
+	/**
+	 * To bypass put method in subclasses 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	// (aron 23.08.2004)
+	protected Object superPut(Object key, Object value){
+	    return super.put(key,value);
+	}
 }
