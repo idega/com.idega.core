@@ -10,7 +10,6 @@
 */
 package com.idega.presentation.ui;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
-import com.sun.rsasign.t;
 
 /**
  * Class to create pop-up windows and Windows to open with various settings
