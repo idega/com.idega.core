@@ -591,6 +591,8 @@ public class Form extends InterfaceObjectContainer {
 			Parameter prm = (Parameter) iter.next();
 			this.add(prm);
 		}
+    setTarget(model.getEventTarget());
+    setAction(model.getEventHandlerURL());
 	}
 
 	/**
