@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.58 2003/01/29 03:06:30 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.59 2003/03/01 18:44:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -54,6 +54,8 @@ public abstract class DatastoreInterface {
 			className = "com.idega.data.MySQLDatastoreInterface";
 		} else if (datastoreType.equals("sapdb")) {
 			className = "com.idega.data.SapDBDatastoreInterface";
+		} else if (datastoreType.equals("mssqlserver")) {
+			className = "com.idega.data.MSSQLServerDatastoreInterface";
 		} else if (datastoreType.equals("db2")) {
 			className = "com.idega.data.DB2DatastoreInterface";
 		} else if (datastoreType.equals("informix")) {
@@ -156,6 +158,8 @@ public abstract class DatastoreInterface {
 					dataStoreType = "sapdb";
 				} else if (checkString.indexOf("db2") != -1) {
 					dataStoreType = "db2";
+				} else if (checkString.indexOf("microsoft sql") != -1 || checkString.indexOf("microsoftsql") != -1) {
+					dataStoreType = "mssqlserver";
 				} else if (checkString.indexOf("informix") != -1) {
 					dataStoreType = "informix";
 				} else if (checkString.indexOf("idega") != -1) {
@@ -194,16 +198,29 @@ public abstract class DatastoreInterface {
 	}
 	public abstract void createTrigger(IDOLegacyEntity entity) throws Exception;
 	//public abstract void createForeignKeys(IDOLegacyEntity entity)throws Exception;
+	/**
+	 * Executes a query to the entity's set datasource and returns the first result (ResultSet.getObject(1)).
+	 * Returns null if there was no result.
+	 * @param entity an entity instance for the datasource to query to.
+	 * @param a well formatted SQL command string
+	 */
 	protected Object executeQuery(IDOLegacyEntity entity, String SQLCommand) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
+		ResultSet rs = null;
 		Object theReturn = null;
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			//System.out.println(SQLCommand);
-			Stmt.executeQuery(SQLCommand);
+			rs = Stmt.executeQuery(SQLCommand);
+			if(rs!=null&&rs.next()){
+				theReturn = rs.getObject(1);
+			}
 		} finally {
+			if (rs != null) {
+				rs.close();
+			}
 			if (Stmt != null) {
 				Stmt.close();
 			}
@@ -322,6 +339,22 @@ public abstract class DatastoreInterface {
 		}
 		return true;
 	}
+	
+	
+	public void insert(IDOLegacyEntity entity) throws Exception {
+		Connection conn = null;
+		try {
+			conn = entity.getConnection();
+			insert(entity,conn);
+		}
+		finally{
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+	}
+	
+	/*
 	public void insert(IDOLegacyEntity entity) throws Exception {
 		this.executeBeforeInsert(entity);
 		Connection conn = null;
@@ -345,6 +378,11 @@ public abstract class DatastoreInterface {
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
+			
+			if(updateNumberGeneratedValueAfterInsert()){
+				updateNumberGeneratedValue(entity,conn);
+			}
+			
 		} finally {
 			if (RS != null) {
 				RS.close();
@@ -358,6 +396,23 @@ public abstract class DatastoreInterface {
 		}
 		this.executeAfterInsert(entity);
 		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+	}*/
+	/**
+	 * @param entity
+	 * @param conn
+	 */
+	protected void updateNumberGeneratedValue(IDOLegacyEntity entity, Connection conn)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * @return boolean
+	 */
+	protected boolean updateNumberGeneratedValueAfterInsert()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 	/**
 	
@@ -703,6 +758,10 @@ public abstract class DatastoreInterface {
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
+			Stmt.close();
+			if(updateNumberGeneratedValueAfterInsert()){
+				updateNumberGeneratedValue(entity,conn);
+			}
 		} finally {
 			if (RS != null) {
 				RS.close();
