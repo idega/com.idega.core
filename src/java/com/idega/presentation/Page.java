@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.19 2001/11/20 13:50:18 eiki Exp $
+ * $Id: Page.java,v 1.20 2001/11/22 12:49:09 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -66,7 +66,10 @@ public class Page extends PresentationObjectContainer {
   public static final String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
 
  // private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n<html>";
-  private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
+ // private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
+
+  /** By skipping the validation URL XML compliant browser still recognise attributes such as height / width **/
+  private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
   private final static String END_TAG="</html>";
 
   /**
