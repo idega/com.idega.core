@@ -41,11 +41,11 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com
       il.setLocale(sLocale);
       if(sLocale.equals("en"))
         il.setInUse(true);
-      else if(sLocale.equals("is_IS"))
-        il.setInUse(true);
+      //else if(sLocale.equals("is_IS"))
+      //  il.setInUse(true);
       else
         il.setInUse(false);
-      il.insert();
+      il.store();
     }
   }
 
