@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.55 2004/09/14 06:25:49 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.56 2004/10/22 13:38:28 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -28,6 +28,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveException;
@@ -477,7 +478,22 @@ public class LoginDBHandler {
 			return (-1);
 		}
 	}
-
+	
+	public static int getNumberOfSuccessfulLogins(int iLoginID) {
+		try {
+			LoginRecordHome lHome = (LoginRecordHome) com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
+			int numberOfLogins = lHome.getNumberOfLoginsByLoginID(iLoginID);
+			return numberOfLogins;
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace();
+			return (0);
+		}
+		catch (RemoteException ex) {
+			return (0);
+		}
+	}
+	
 	/**
 	 * Records a logout record, returns true if succeeds
 	 */

@@ -4,9 +4,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 
-import com.idega.user.data.User;
-
 import javax.ejb.FinderException;
+
+import com.idega.data.IDOException;
+import com.idega.user.data.User;
 
 /**
  * Title:   idegaclasses
@@ -92,6 +93,11 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       System.out.println(sql);
       System.out.println("----------------");
       return super.idoFindIDsBySQL(sql);
+    }
+    
+    public int ejbHomeGetNumberOfLoginsByLoginID(int loginID) throws IDOException {
+      String sql = "select count(*) from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
+      return super.idoGetNumberOfRecords(sql);
     }
     
     public Integer ejbFindByLoginID(int loginID)throws FinderException{
