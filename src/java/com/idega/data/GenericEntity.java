@@ -4219,6 +4219,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			insert();
 			return this.getPrimaryKey();
 		} catch (SQLException sqle) {
+			logError("Error in insertForCreate() for PrimaryKey="+this.getPrimaryKey());
 			sqle.printStackTrace();
 			throw new IDOCreateException(sqle);
 		}
