@@ -1,5 +1,5 @@
 /*
- * $Id: PropertyCache.java,v 1.1 2004/12/28 00:09:45 tryggvil Exp $
+ * $Id: PropertyCache.java,v 1.2 2005/02/01 18:05:14 thomas Exp $
  * Created on 27.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,17 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Singleton;
 
 
 /**
  * This class holds a cache of lists of Property object keyed by an id (ICObjectInstanceId).
  * 
- *  Last modified: $Date: 2004/12/28 00:09:45 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/01 18:05:14 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class PropertyCache {
+public class PropertyCache implements Singleton {
 	
 	//private PropertyCache instance¾
 	private Map propertyListCache;
