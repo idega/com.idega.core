@@ -41,12 +41,12 @@ public Flash(String url,int width,int height){
   setHeight(height);
 }
 
-
+/*
 public void setURL(String url){
   setSrc(url);
   setParam("movie",url);
 }
-
+*/
 public void setTransparent(){
   setParamAndAttribute("wmode","transparent");
 }

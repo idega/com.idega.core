@@ -188,7 +188,7 @@ public void print(IWContext iwc)throws IOException{
       StringBuffer url = new StringBuffer();
       url.append(IWMainApplication.MEDIA_SERVLET_URL);
       url.append(file.getID());
-      url.append("media");
+      url.append(file.getName());
       url.append('?');
       url.append(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME);
       url.append('=');
