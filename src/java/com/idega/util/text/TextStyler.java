@@ -9,12 +9,9 @@ package com.idega.util.text;
  * @version 1.0
  */
 
-import java.util.StringTokenizer;
 import java.util.HashMap;
 import java.util.Iterator;
-import com.idega.util.text.StyleConstants;
-import com.idega.presentation.Block;
-import com.idega.presentation.IWContext;
+import java.util.StringTokenizer;
 
 
 public class TextStyler {

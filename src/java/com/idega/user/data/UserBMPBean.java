@@ -1,5 +1,17 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
 import com.idega.builder.data.IBPage;
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.Address;
@@ -17,19 +29,6 @@ import com.idega.data.IDOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
-
-import java.rmi.RemoteException;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
 
 /**
  * Title:        User

@@ -7,10 +7,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import com.idega.presentation.IWContext;
-import com.idega.util.text.TextSoap;
 
 /**
  * <code>IWTimestamp</code> is a class that can be used when working with SQL date/time

@@ -1,6 +1,7 @@
 package com.idega.util.caching;
-import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 /**
  * Title:        idegaWeb Utility classes
  * Description:  This class is to be used as a java.util.Map as a convenient way of caching objects.

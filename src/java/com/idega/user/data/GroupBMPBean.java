@@ -1,19 +1,4 @@
 package com.idega.user.data;
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
-import com.idega.util.ListUtil;
-import com.idega.data.*;
-
-import javax.ejb.*;
-
-import com.idega.core.ICTreeNode;
-import com.idega.core.data.Address;
-import com.idega.core.data.Email;
-import com.idega.core.data.GenericGroup;
-import com.idega.core.data.ICNetwork;
-import com.idega.core.data.ICProtocol;
-import com.idega.core.data.Phone;
-import com.idega.util.IWTimestamp;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -21,6 +6,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+
+import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBPage;
+import com.idega.core.ICTreeNode;
+import com.idega.core.data.Address;
+import com.idega.core.data.Email;
+import com.idega.core.data.ICNetwork;
+import com.idega.core.data.ICProtocol;
+import com.idega.core.data.Phone;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
+import com.idega.data.IDORuntimeException;
+import com.idega.data.IDOUtil;
+import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 
 /**
  * Title:        IW Core

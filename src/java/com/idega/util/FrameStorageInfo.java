@@ -9,7 +9,6 @@ package com.idega.util;
  * @version 1.0
  */
 import com.idega.presentation.Page;
-import com.idega.presentation.IWContext;
 
   public class FrameStorageInfo{
 

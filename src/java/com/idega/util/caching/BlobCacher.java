@@ -2,21 +2,15 @@ package com.idega.util.caching;
 
 
 
-import java.io.*;
-
-import java.util.*;
-
-import com.idega.idegaweb.IWMainApplication;
-
-import com.idega.util.datastructures.HashtableDoubleKeyed;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 
 import com.idega.data.IDOLegacyEntity;
-
-import com.idega.util.FileUtil;
-
-import com.idega.util.text.TextSoap;
-
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.FileUtil;
+import com.idega.util.datastructures.HashtableDoubleKeyed;
+import com.idega.util.text.TextSoap;
 
 
 

@@ -1,6 +1,5 @@
 package com.idega.user.data;
 
-import javax.ejb.*;
 
 public interface GroupRelationType extends com.idega.data.IDOEntity
 {

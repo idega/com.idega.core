@@ -3,7 +3,6 @@ package com.idega.user.data;
 
 import com.idega.business.IBOService;
 import com.idega.presentation.Image;
-import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * <p>Title: idegaWeb</p>

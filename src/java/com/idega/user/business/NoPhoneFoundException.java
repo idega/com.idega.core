@@ -1,6 +1,5 @@
 package com.idega.user.business;
 
-import com.idega.user.data.User;
 
 /**
  * @author tryggvil

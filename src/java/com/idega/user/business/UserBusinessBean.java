@@ -1,53 +1,61 @@
 package com.idega.user.business;
 
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.builder.data.IBPageHome;
-
-import java.sql.SQLException;
-import com.idega.user.data.*;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
-import com.idega.core.data.*;
-import com.idega.util.IWTimestamp;
-import com.idega.util.text.Name;
-
-import java.util.Collection;
-import com.idega.core.data.*;
-import com.idega.core.data.Email;
-import com.idega.data.*;
-import com.idega.data.EntityFinder;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.presentation.DataEmailer;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Iterator;
-import com.idega.data.*;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.presentation.IWContext;
-import com.idega.block.staff.business.StaffBusiness;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.business.AddressBusiness;
-
-import com.idega.data.*;
-
-import javax.ejb.*;
-import javax.transaction.*;
-import com.idega.business.*;
-
-import java.rmi.RemoteException;
+import com.idega.core.data.Address;
+import com.idega.core.data.AddressHome;
+import com.idega.core.data.AddressType;
+import com.idega.core.data.Country;
+import com.idega.core.data.CountryHome;
+import com.idega.core.data.Email;
+import com.idega.core.data.EmailHome;
+import com.idega.core.data.Phone;
+import com.idega.core.data.PhoneHome;
+import com.idega.core.data.PostalCode;
+import com.idega.core.data.PostalCodeHome;
+import com.idega.data.IDOCreateException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
+import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.user.data.Gender;
+import com.idega.user.data.GenderHome;
+import com.idega.user.data.Group;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.GroupDomainRelation;
+import com.idega.user.data.GroupDomainRelationType;
+import com.idega.user.data.GroupHome;
+import com.idega.user.data.User;
+import com.idega.user.data.UserGroupRepresentativeHome;
+import com.idega.user.data.UserHome;
+import com.idega.util.IWTimestamp;
+import com.idega.util.text.Name;
 
  /**
   * <p>Title: idegaWeb</p>

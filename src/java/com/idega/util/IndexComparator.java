@@ -1,7 +1,12 @@
 package com.idega.util;
 
-import java.util.*;
-import com.idega.util.IsCollator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Title: com.idega.util.IndexComparator

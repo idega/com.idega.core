@@ -1,6 +1,5 @@
 package com.idega.util;
 
-import java.sql.Date;
 import java.util.Locale;
 /**
  * Title:        A class for formatting presentation of PersonalIDs

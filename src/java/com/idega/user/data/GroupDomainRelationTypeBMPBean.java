@@ -1,9 +1,13 @@
 package com.idega.user.data;
 
-import com.idega.builder.data.IBDomain;
-import javax.ejb.*;
 import java.rmi.RemoteException;
-import com.idega.data.*;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
 
 
 /**

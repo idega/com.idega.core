@@ -3,8 +3,6 @@ package com.idega.util.text;
 
 
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.InterfaceObject;
-import com.idega.idegaweb.IWMainApplication;
 
 /**
  * Title:

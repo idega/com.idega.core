@@ -1,6 +1,5 @@
 package com.idega.util.timer;
 
-import java.util.Date;
 
 /**
   * The listener interface for receiving timer events.

@@ -1,6 +1,5 @@
 package com.idega.user.data;
 
-import javax.ejb.*;
 
 public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User
 {

@@ -1,15 +1,19 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Collection;
+
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
+
 import com.idega.builder.data.IBDomain;
-import com.idega.data.*;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
-
-import java.util.Date;
-import java.util.Collection;
-import java.rmi.RemoteException;
-import javax.ejb.*;
 
 
 /**

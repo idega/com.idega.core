@@ -1,11 +1,9 @@
 package com.idega.util;
 
-import com.idega.presentation.PresentationObjectContainer;
-import javax.swing.DefaultSingleSelectionModel;
 import java.util.Vector;
-import javax.swing.event.ChangeListener;
-import com.idega.util.datastructures.Collectable;
+
 import com.idega.presentation.IWContext;
+import com.idega.util.datastructures.Collectable;
 
 /**
  * Title:        IWTabbedPane

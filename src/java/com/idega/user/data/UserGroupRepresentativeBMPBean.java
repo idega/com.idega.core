@@ -1,7 +1,5 @@
 package com.idega.user.data;
 
-import com.idega.user.data.Group;
-import java.sql.SQLException;
 
 /**
  * Title:        User

@@ -2,15 +2,8 @@ package com.idega.util;
 
 
 
-import com.idega.util.text.TextSoap;
-
-import com.idega.util.*;
-
 import java.awt.Color;
-
 import java.awt.color.ColorSpace;
-
-import java.io.*;
 
 
 

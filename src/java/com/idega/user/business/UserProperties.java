@@ -1,7 +1,5 @@
 package com.idega.user.business;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 

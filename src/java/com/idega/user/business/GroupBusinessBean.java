@@ -16,7 +16,6 @@ import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
 
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBORuntimeException;
@@ -36,7 +35,6 @@ import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.presentation.text.Text;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;

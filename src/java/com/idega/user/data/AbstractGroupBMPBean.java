@@ -1,9 +1,5 @@
 package com.idega.user.data;
 
-import com.idega.data.*;
-import java.sql.SQLException;
-import com.idega.core.ICTreeNode;
-
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -13,6 +9,13 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import com.idega.core.ICTreeNode;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDORuntimeException;
+import com.idega.data.IDOStoreException;
 
 /**
  * <p>Title: idegaWeb</p>
