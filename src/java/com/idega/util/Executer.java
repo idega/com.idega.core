@@ -48,16 +48,35 @@ public class Executer {
    */
   public static void executeInAnotherVM(String[] args) {
     try {
-      String javaHome = System.getProperty("sun.boot.library.path");
-      //jdk/jre/bin
-      String tomcatClasspath = System.getProperty("tc_path_add");
+      String javaHome;
+
+      //jre path
+      if(System.getProperty("os.name").toLowerCase().indexOf("win")!=-1){
+        javaHome = System.getProperty("sun.boot.library.path");
+      }
+      else{//unix
+        javaHome = System.getProperty("java.home")+FileUtil.getFileSeparator()+"bin";
+      }
+
+      //@todo update this to reflect other versions of application servers classpath
+      String classPath = null;
+      classPath = System.getProperty("tc_path_add");//tomcat 3.3
+      //System.getProperty("java.class.path");
       //tomcat classpath
+
+      //put together the string
       StringBuffer exec = new StringBuffer();
       exec.append(javaHome);
       exec.append(FileUtil.getFileSeparator());
-      exec.append("java -cp ");
-      exec.append(tomcatClasspath);
-      exec.append(" com.idega.util.Executer ");
+      exec.append("java ");
+      if(classPath!=null) {
+        exec.append(" -cp ");
+        exec.append(classPath);
+        exec.append(" ");
+      }
+
+      exec.append(Executer.class.getName());
+      exec.append(" ");
 
       if (args != null) {
         for (int i = 0; i < args.length; i++) {

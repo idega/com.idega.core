@@ -104,6 +104,11 @@ public class IWStarterServlet extends GenericServlet
 	 * Adds the .jar files in /WEB-INF/classes to the ClassPath
 	 */
 	protected void addToClassPath(){
+          String classPathProperty = "java.class.path";
+          String classPath = System.getProperty(classPathProperty);
+                      System.out.println("CLASSPATH : "+classPath);
+          StringBuffer classes = new StringBuffer(classPath);
+
 	  File webINF = new File(this.getServletContext().getRealPath("/WEB-INF/classes"));
 	  File[] subfiles = webINF.listFiles();
 	  if(subfiles!=null){
@@ -112,27 +117,44 @@ public class IWStarterServlet extends GenericServlet
 		String jarEnding = ".jar";
 		String fileName = subfiles[i].getAbsolutePath();
 		if(fileName.endsWith(jarEnding)){
-		  addToClassPath(fileName);
+		  classes.append(File.pathSeparator);
+                  classes.append(fileName);
 		}
 	      }
 	    }
 	  }
+
+          System.setProperty(classPathProperty,classes.toString());
+
 	}
 
 	private static void addToClassPath(String path){
 	    String classPathProperty = "java.class.path";
-	    String classPath = System.getProperty(classPathProperty,".");
+	    String classPath = System.getProperty(classPathProperty);
 	    classPath += File.pathSeparator;
 	    classPath += path;
 	    System.setProperty(classPathProperty,classPath);
 	}
 
 	public void startIdegaWebApplication(){
+          Properties prop = System.getProperties();
+
+      // Collection by Traverse wizard 2.02:
+      Iterator property =    prop.keySet().iterator();
+      String x;
+      while (property.hasNext()) {
+       x= (String)property.next();
+       System.out.println("System.getProperty("+x+") = "+prop.getProperty(x));
+
+         //with x
+       } //end v
+
+
 	    try{
 	      addToClassPath();
 	    }
 	    catch(Exception e){
-	      e.printStackTrace();
+	      e.printStackTrace(System.err);
 	    }
 	    IWMainApplication application = new IWMainApplication(this.getServletContext());
 	    if(application.getSettings().getIfDebug()){
