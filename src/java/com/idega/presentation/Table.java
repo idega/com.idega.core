@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.42 2003/06/24 10:50:07 aron Exp $
+ * $Id: Table.java,v 1.43 2003/08/07 16:31:33 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -978,9 +978,8 @@ public class Table extends PresentationObjectContainer {
 						}
 					}
 					
-					
 					//print(Text.getNonBrakingSpace().getText());
-					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(iWidth-2*iPadding))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(iHeight-2*iPadding))+"\" alt=\"\" />");
+					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(getNbspWidthAndHeight(iWidth,iPadding)))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(getNbspWidthAndHeight(iHeight,iPadding)))+"\" alt=\"\" />");
 				}
 			}
 		}
@@ -988,6 +987,13 @@ public class Table extends PresentationObjectContainer {
 			print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" />");
 			//print(Text.getNonBrakingSpace().getText());
 		}
+	}
+	
+	private int getNbspWidthAndHeight(int dimension, int padding) {
+		dimension = dimension - 2 * padding;
+		if (dimension < 1)
+			dimension = 1;
+		return dimension;
 	}
 
 	protected void printLine(IWContext iwc) throws Exception {
