@@ -63,6 +63,21 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String USER_PROPERTY_PARAMETER = "user_properties";
 
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
+	/**
+	 * Value that the LoginStateParameter can have to signal that a login is being made
+	 */
+	public static final String LOGIN_EVENT_LOGIN="login";
+	/**
+	 * Value that the LoginStateParameter can have to signal that a log-out is being made
+	 */
+	public static final String LOGIN_EVENT_LOGOFF="logoff";
+	/**
+	 * Value that the LoginStateParameter can have to signal that a login retry is being made
+	 */
+	public static final String LOGIN_EVENT_TRYAGAIN="tryagain";
+	
+	public static final String PARAMETER_USERNAME="login";
+	public static final String PARAMETER_PASSWORD="password";
 	
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM=false;
@@ -108,14 +123,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return The username the current user is trying to log in with. Returns null if no log-in attemt is going on.
 	 */
 	protected String getLoginUserName(IWContext iwc) {
-		return iwc.getParameter("login");
+		return iwc.getParameter(PARAMETER_USERNAME);
 	}
 	/**
 	 * To get the password of the current log-in attempt
 	 * @return The password the current user is trying to log in with. Returns null if no log-in attemt is going on.
 	 */
 	protected String getLoginPassword(IWContext iwc) {
-		return iwc.getParameter("password");
+		return iwc.getParameter(PARAMETER_PASSWORD);
 	}
 	/**
 	 * @return True if logIn was succesful, false if it failed
@@ -200,15 +215,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static boolean isLogOnAction(IWContext iwc) {
-		return "login".equals(getControlActionValue(iwc));
+		return LOGIN_EVENT_LOGIN.equals(getControlActionValue(iwc));
 	}
 
 	public static boolean isLogOffAction(IWContext iwc) {
-		return "logoff".equals(getControlActionValue(iwc));
+		return LOGIN_EVENT_LOGOFF.equals(getControlActionValue(iwc));
 	}
 
 	protected static boolean isTryAgainAction(IWContext iwc) {
-		return "tryagain".equals(getControlActionValue(iwc));
+		return LOGIN_EVENT_TRYAGAIN.equals(getControlActionValue(iwc));
 	}
 
 	private static String getControlActionValue(IWContext iwc) {
