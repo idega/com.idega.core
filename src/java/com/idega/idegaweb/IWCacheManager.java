@@ -31,6 +31,7 @@ public class IWCacheManager {
   private Map intervalsMap;
   private Map entityMaps;
   private Map entityMapsKeys;
+  private Map _keysMap;
 
   private IWCacheManager() {
   }
@@ -81,7 +82,29 @@ public class IWCacheManager {
     removeCache(key);
   }
 
-  public synchronized void setObject(String key,Object object,long cacheInterval){
+  private Map getKeysMap(){
+    if(_keysMap==null){
+      _keysMap=new HashMap();
+    }
+    return _keysMap;
+  }
+
+  public synchronized void registerDerivedKey(String key,String derivedKey){
+    List derived = (List) getKeysMap().get(key);
+    if(derived==null){
+      derived=new Vector();
+      getKeysMap().put(key,derived);
+    }
+    derived.add(derivedKey);
+  }
+
+  public synchronized void setObject(String key,String derivedKey, Object object,long cacheInterval){
+    registerDerivedKey(key,derivedKey);
+    setObject(derivedKey,object,cacheInterval);
+  }
+
+
+  public synchronized void setObject(String key, Object object,long cacheInterval){
     getObjectsMap().put(key,object);
     getTimesMap().put(key,getCurrentTime());
     getIntervalsMap().put(key,new Long(cacheInterval));
@@ -120,6 +143,20 @@ public class IWCacheManager {
   }
 
   private synchronized void removeCache(String key){
+    removeFromGlobalCache(key);
+
+    Map map = getKeysMap();
+    List derived = (List)map.get(key);
+    if(derived!=null){
+      Iterator iter = derived.iterator();
+      while (iter.hasNext()) {
+        String item = (String)iter.next();
+        removeFromGlobalCache(item);
+      }
+    }
+  }
+
+  private void removeFromGlobalCache(String key){
     getObjectsMap().remove(key);
     getTimesMap().remove(key);
     getIntervalsMap().remove(key);

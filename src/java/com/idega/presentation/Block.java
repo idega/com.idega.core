@@ -26,6 +26,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   private static Map permissionKeyMap = new Hashtable();
   private String cacheKey = null;
+  private String derivedCacheKey = null;
   private boolean cacheable=false;
   private long cacheInterval;
   private int targetObjInst = -1;
@@ -217,7 +218,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public void endCacheing(IWContext iwc,StringBuffer buffer){
     iwc.setCacheing(false);
-    IWCacheManager.getInstance(iwc.getApplication()).setObject(getCacheKey(iwc),buffer,cacheInterval);
+    IWCacheManager.getInstance(iwc.getApplication()).setObject(getOriginalCacheKey(iwc),getDerivedCacheKey(iwc),buffer,cacheInterval);
   }
 
   public boolean hasEditPermission(){
@@ -254,7 +255,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public final void print(IWContext iwc)throws Exception{
     if(this.isCacheable()){
       if(isCacheValid(iwc)){
-        StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getCacheKey(iwc));
+        StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey(iwc));
         iwc.getWriter().print(buffer.toString());
       }
       else{
@@ -273,21 +274,27 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   private boolean isCacheValid(IWContext iwc){
     boolean valid = false;
     if( cacheable ){
-      if(getCacheKey(iwc)!=null){
-        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getCacheKey(iwc));
+      if(getDerivedCacheKey(iwc)!=null){
+        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey(iwc));
       }
     }
 
     return valid;
   }
 
-  private String getCacheKey(IWContext iwc){
+  private String getDerivedCacheKey(IWContext iwc){
+    return derivedCacheKey;
+  }
+
+
+  private String getOriginalCacheKey(IWContext iwc){
     return cacheKey;
   }
 
   /** cache specifically for view right and for edit rights**/
   private void setCacheKey(IWContext iwc){
-    cacheKey += getCacheState(iwc,getCachePrefixString(iwc));
+    derivedCacheKey= cacheKey + getCacheState(iwc,getCachePrefixString(iwc));
+//    cacheKey += getCacheState(iwc,getCachePrefixString(iwc));
     /**@todo remove debug**/
     //debug("cachKey = "+cacheKey);
   }
@@ -296,10 +303,11 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * Default string is currentlocale+hasEditPermission
    */
   protected String getCachePrefixString(IWContext iwc){
+    int instanceID = this.getICObjectInstanceID();
     boolean edit = hasEditPermission();
     String locale = iwc.getCurrentLocale().toString();
 
-    return (locale+edit);
+    return (instanceID+locale+edit);
   }
 
   protected boolean isCacheable(){
@@ -326,7 +334,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
    */
   protected void invalidateCache(IWContext iwc){
-    if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc));
+    if( getDerivedCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getDerivedCacheKey(iwc));
     //debug("INVALIDATING : "+getCacheKey(iwc));
   }
 
@@ -334,7 +342,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey+suffix);
    */
   protected void invalidateCache(IWContext iwc, String suffix){
-    if( getCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getCacheKey(iwc)+suffix);
+    if( getOriginalCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey(iwc)+suffix);
     //debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
   }
 
@@ -502,7 +510,9 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     if(this.cacheKey != null){
       obj.cacheKey = this.cacheKey;
     }
-
+    if(this.derivedCacheKey != null){
+      obj.derivedCacheKey = this.derivedCacheKey;
+    }
     return obj;
   }
 
