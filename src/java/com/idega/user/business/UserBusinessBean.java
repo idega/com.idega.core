@@ -2067,8 +2067,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
 		Address address = getUsersMainAddress(user);
-		Commune commmune = getCommuneHome().findByPrimaryKey(new Integer(address.getCommuneID()));
-		return commmune.getIsDefault();
+		Commune commune = null;
+		if (address != null)
+			commune = getCommuneHome().findByPrimaryKey(new Integer(address.getCommuneID()));
+		else 
+			return false;
+			
+		if (commune != null)
+			return commune.getIsDefault();
+			
+		return false;
 	}
 	
 	private CommuneHome getCommuneHome() throws RemoteException {
