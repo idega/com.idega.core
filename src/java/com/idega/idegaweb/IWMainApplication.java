@@ -620,8 +620,8 @@ public class IWMainApplication{//implements ServletContext{
 
   // hashcode referencing
   private static Hashtable hashClasses = null;
-  private static Properties cryptoCodes = null;
-  private static Properties cryptoProperties = null;
+  private static Properties cryptoCodesPropertiesKeyedByClassName = null;
+  private static Properties cryptoClassNamesPropertiesKeyedByCode = null;
   protected static String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
   private static boolean isCryptoUsed = true;
 
@@ -640,24 +640,24 @@ public class IWMainApplication{//implements ServletContext{
   private void loadCryptoProperties(){
   	initCryptoUsage();
   	if(isUsingCryptoProperties()){
-    cryptoProperties = new Properties();
+    cryptoClassNamesPropertiesKeyedByCode = new Properties();
     sendStartupMessage("Loading Cryptonium");
     String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
     try{
-      cryptoProperties.load(new FileInputStream(file));
+      cryptoClassNamesPropertiesKeyedByCode.load(new FileInputStream(file));
       // temporary property cleaning
-      String clean = cryptoProperties.getProperty("clean");
+      String clean = cryptoClassNamesPropertiesKeyedByCode.getProperty("clean");
       if(clean == null){
-        cryptoProperties.clear();
-        cryptoProperties.setProperty("clean","true");
+        cryptoClassNamesPropertiesKeyedByCode.clear();
+        cryptoClassNamesPropertiesKeyedByCode.setProperty("clean","true");
       }
       /////////////////////////////
-      cryptoCodes = new Properties();
-      if(cryptoProperties.size() > 0){
-        Iterator iter = cryptoCodes.entrySet().iterator();
+      cryptoCodesPropertiesKeyedByClassName = new Properties();
+      if(cryptoClassNamesPropertiesKeyedByCode.size() > 0){
+        Iterator iter = cryptoCodesPropertiesKeyedByClassName.entrySet().iterator();
         while(iter.hasNext()){
           Map.Entry me = (Map.Entry) iter.next();
-          cryptoCodes.put(me.getValue(),me.getKey());
+          cryptoCodesPropertiesKeyedByClassName.put(me.getValue(),me.getKey());
         }
       }
     }
@@ -666,12 +666,12 @@ public class IWMainApplication{//implements ServletContext{
   }
 
    private void storeCryptoProperties(){
-    if(isUsingCryptoProperties() && cryptoProperties!=null){
+    if(isUsingCryptoProperties() && cryptoClassNamesPropertiesKeyedByCode!=null){
       sendShutdownMessage("Storing Cryptonium");
       
       try{
       String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
-      cryptoProperties.store(new FileOutputStream(file),"Cryptonium");
+      cryptoClassNamesPropertiesKeyedByCode.store(new FileOutputStream(file),"Cryptonium");
       }
       catch(Exception ex){
       	ex.printStackTrace();
@@ -697,42 +697,49 @@ public class IWMainApplication{//implements ServletContext{
  * @return String
  */
   public static String getHashCode(Class classObject){
+
 	if(isUsingCryptoProperties()){
-    if(cryptoCodes == null)
-      cryptoCodes = new Properties();
-
-    if(cryptoProperties == null)
-      cryptoProperties =new Properties();
-
-    String crypto;
-    // crypto code fort this class has already been created
-    if(cryptoCodes.containsKey(classObject.getName())){
-      crypto = (String) cryptoCodes.get(classObject.getName());
+    if(cryptoCodesPropertiesKeyedByClassName == null) cryptoCodesPropertiesKeyedByClassName = new Properties();
+    if(cryptoClassNamesPropertiesKeyedByCode == null) cryptoClassNamesPropertiesKeyedByCode = new Properties();
+		
+		final String className = classObject.getName();
+ 
+    // if crypto code for this class has already been created
+    if(cryptoCodesPropertiesKeyedByClassName.containsKey(className)){
+      return (String) cryptoCodesPropertiesKeyedByClassName.get(className);
     }
-    // crypto code fort this class has not been created
-    else{
-      int iCrypto = calculate(classObject.getName());
-      crypto = Integer.toString(iCrypto);
-      
-      	while(cryptoProperties.contains(String.valueOf(iCrypto))){
-      		//System.err.println("inside loop");
-      		iCrypto++;
-      	}
-      
-      crypto = Integer.toString(iCrypto);
-      cryptoCodes.put(classObject.getName(),crypto);
-      cryptoProperties.put(crypto,classObject.getName());
+    else{// else crypto code for this class has NOT been created
+			return createAndStoreCryptoName(className);
     }
-    return crypto;
+    
 	}
-	else
-	return classObject.getName();
+	else return classObject.getName();
   }
   
+	private synchronized static String createAndStoreCryptoName(String className){
+		if(cryptoCodesPropertiesKeyedByClassName.containsKey(className)){ //if someone else beat us to creating the key!
+			return (String) cryptoCodesPropertiesKeyedByClassName.get(className);
+		}
+		
+		String crypto;
+		int iCrypto = calculate(className);
+		crypto = Integer.toString(iCrypto);
+		
+		while(cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)){
+			crypto = Integer.toString(++iCrypto);
+			System.out.println("creating crypto number in loop: "+iCrypto);	
+		}
 
+		 cryptoCodesPropertiesKeyedByClassName.put(className,crypto);
+		 cryptoClassNamesPropertiesKeyedByCode.put(crypto,className);
+		 
+		return crypto;
+		
+	}
+	
   public static String getHashCodedClassName(String crypto){
-    if(cryptoProperties!=null && crypto!=null && cryptoProperties.containsKey(crypto))
-     return (String)cryptoProperties.get(crypto);
+    if(cryptoClassNamesPropertiesKeyedByCode!=null && crypto!=null && cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto))
+     return (String)cryptoClassNamesPropertiesKeyedByCode.get(crypto);
     else
      return crypto;
   }
