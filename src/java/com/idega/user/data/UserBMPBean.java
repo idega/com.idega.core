@@ -798,9 +798,26 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     IDOQuery query = idoQueryGetSelect();
     query.appendWhere();
     appendIsNotDeleted(query);
-    return idoFindIDsBySQL(query.toString());
+    return idoFindPKsBySQL(query.toString());
    
 	}
+	
+  /** Gets newest users that are not marked as deleted
+   * 
+   * @return Collection
+   * @throws FinderException
+   */
+	public Collection ejbFindNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
+    // use where not because DELETED = NULL means also not deleted
+    // select * from ic_user where deleted != 'Y'
+    IDOQuery query = idoQueryGetSelect();
+    query.appendWhere();
+    appendIsNotDeleted(query);
+    query.appendOrderByDescending(getIDColumnName());
+    return idoFindPKsBySQL(query.toString(), returningNumberOfRecords, startingRecord);
+   
+	}
+	
 	
 	public Collection ejbFindUsersByMetaData(String key, String value) throws FinderException {
 		return super.idoFindPKsByMetaData(key,value);

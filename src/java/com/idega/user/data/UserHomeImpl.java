@@ -68,6 +68,13 @@ public java.util.Collection findAllUsers()throws javax.ejb.FinderException{
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public Collection findNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindNewestUsers(returningNumberOfRecords, startingRecord);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByNames(p0,p1,p2);
