@@ -651,6 +651,20 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, complementSetWanted);
     return result;
   }
+  
+  public Collection getUsersFromGroupRecursive(Group group)  {
+    Collection users = new ArrayList();
+    Collection groups = getChildGroupsRecursiveResultFiltered(group, new ArrayList() , true);
+    Iterator iterator = groups.iterator();
+    while (iterator.hasNext())  {
+      Group tempGroup = (Group) iterator.next();
+      try {
+        users.addAll(getUsers(tempGroup));
+      }
+      catch (Exception ex)  {};
+    }
+    return users;
+  }
 
 
   private void getChildGroupsRecursive
