@@ -2108,7 +2108,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    String userIsAlreadyAMemberOfTheGroupMessage = iwrb.getLocalizedString("user_already_member_of_the_target_group", "The user is already a member of the target group"); 
  
    // finally perform moving 
-   
+   Map cachMap = new HashMap();
    Iterator iterator = userIds.iterator();
     while (iterator.hasNext()) {
       String message;
@@ -2121,7 +2121,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
       // second check
       else {
-        message = isUserSuitedForGroup(user, targetGroup);
+        message = isUserSuitedForGroup(user, targetGroup,cachMap);
       }
       // if there aren't any problems the message is null
       if (message == null)  {
@@ -2133,13 +2133,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return result;
   }
 
-  public Map moveUsers(IWUserContext iwuc, Collection groupIds, String parentGroupType) {
+  public Map moveUsers(IWUserContext iwuc, Collection groups, String parentGroupType) {
     IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
     IWResourceBundle iwrb = bundle.getResourceBundle(locale);
     String noSuitableGroupMessage = iwrb.getLocalizedString("user_suitable_group_could_not_be_found", "A suitable group for the user could not be found.");
-   
+    String moreThanOneSuitableGroupMessage = iwrb.getLocalizedString("user_more_than_one_suitable_group_was_found_prefix", "More than one suitable groups where found. The system could not decide where to put the user. The possible groups are: ");
+
+    
     // key groups id, value group
     Map groupIdGroup = new HashMap();
     // key group id, value users
@@ -2154,13 +2156,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
     // get all groups 
     try {
-      GroupBusiness groupBiz = null;
-      groupBiz = getGroupBusiness();
-      Iterator groupIdsIterator = groupIds.iterator();
-      while (groupIdsIterator.hasNext())  {
-        String groupId = (String) groupIdsIterator.next();
-        int id = Integer.parseInt(groupId);
-        Group group = groupBiz.getGroupByGroupID(id);
+      Iterator groupsIterator = groups.iterator();
+      int while1 = 0; 
+	  int while1b = 0;
+      while (groupsIterator.hasNext())  {
+      	Group group = (Group) groupsIterator.next();
+        String groupId = group.getPrimaryKey().toString();
         // check if the group id has the specified type 
         // if the type equals to the specified type iterate over the children
         if (parentGroupType != null && (parentGroupType.equals(group.getGroupType())))  {
@@ -2170,19 +2171,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
             Group childGroup = (Group) childIterator.next();
             String childGroupId = childGroup.getPrimaryKey().toString();
             fillMaps(childGroup, childGroupId, groupIdGroup, groupIdUsers, groupIdUsersId);
+            while1b++;
           }
         }
         else {
           fillMaps(group, groupId, groupIdGroup, groupIdUsers, groupIdUsersId);
         }
+        while1++;
       }
     }
     // Finder and RemoteException
     catch (Exception ex)  {
       throw new EJBException("Error getting group. Message: "+ex.getMessage());
     }  
+     
     // iterate over all users
     Iterator groupIdsIterator = groupIdGroup.entrySet().iterator();
+    Map cachMap = new HashMap();
+    int while2 = 0;
+    int while2b = 0;
+    int while2c = 0;
     // iterate over groups
     while (groupIdsIterator.hasNext())  {
       Map.Entry entry = (Map.Entry) groupIdsIterator.next();
@@ -2192,8 +2200,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       Iterator userIterator = userInGroup.iterator();
       // iterate over users within a group
       while (userIterator.hasNext())  {
-        Group possibleTarget= null;
-        boolean possibleTargetAlreadySet = false;
+        Collection possibleTargets=null;
         User user = (User) userIterator.next();
         // test if the user is assignable to one and only one group
         Iterator targetGroupIds = groupIdGroup.entrySet().iterator();
@@ -2210,30 +2217,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
           }
           // check if the user is suited for the target group when the result is still true
           if (result) {
-            result = (isUserSuitedForGroup(user, targetGroup) == null);
+            result = (isUserSuitedForGroup(user, targetGroup,cachMap) == null);
           }
           if (result) {
-            if (! possibleTargetAlreadySet) {
-              possibleTarget = targetGroup;
-              possibleTargetAlreadySet = true;
-            }
-            else {
-              possibleTarget = null;
-            }
+          	 if(possibleTargets==null) {
+          	 	possibleTargets = new ArrayList();
+          	 }
+              possibleTargets.add(targetGroup);
           }
+          while2c++;
         }
         userParentGroup.put(user, parentGroup);
-        userTargetGroup.put(user, possibleTarget); 
+        userTargetGroup.put(user, possibleTargets); 
+        while2b++;
       }
+      while2++;
     }
     
     // perform moving
     Map result = new HashMap();
+    int while3 = 0;
     Iterator userIterator = userTargetGroup.entrySet().iterator();
     while (userIterator.hasNext())  {
       Map.Entry entry = (Map.Entry) userIterator.next();
       User user = (User) entry.getKey();
-      Group target = (Group) entry.getValue();
+      Collection target = (Collection) entry.getValue();
       Group source = (Group) userParentGroup.get(user);
       Integer sourceId = (Integer) source.getPrimaryKey();
       Map map = (Map) result.get(sourceId);
@@ -2241,22 +2249,41 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         map = new HashMap();
         result.put(sourceId, map);
       } 
-      if (target != null) {  
-        int source_id = ((Integer) source.getPrimaryKey()).intValue();  
-        int target_id = ((Integer) target.getPrimaryKey()).intValue();
-        if (source_id != target_id) {
-          String message = moveUserWithoutTest(user, source, target, iwuc.getCurrentUser());
-          // if there is not a transaction error the message is null!
-          map.put(user.getPrimaryKey(), message);
-        }
-        else {
-          map.put(user.getPrimaryKey(), null);
-        }
-      }
-      else {
+      if (target != null){
+      	if(target.size()==1)  {  
+	        int source_id = ((Integer) source.getPrimaryKey()).intValue();
+	        Group targetGr = (Group)target.iterator().next();
+	        int target_id = ((Integer) targetGr.getPrimaryKey()).intValue();
+	        if (source_id != target_id) {
+	          String message = moveUserWithoutTest(user, source, targetGr, iwuc.getCurrentUser());
+	          // if there is not a transaction error the message is null!
+	          map.put(user.getPrimaryKey(), message);
+	        }
+	        else {
+	          map.put(user.getPrimaryKey(), null);
+	        }
+      	} else {
+      		String message = moreThanOneSuitableGroupMessage;
+      		boolean first = true;
+      		for (Iterator iter = target.iterator(); iter.hasNext();) {
+				Group gr = (Group) iter.next();
+				if(first){
+					message += " ";
+				} else {
+					message += ", ";
+				}
+				message += gr.getName();
+				first = false;
+			}
+      		map.put(user.getPrimaryKey(), message);
+      	}
+      } else {
         map.put(user.getPrimaryKey(), noSuitableGroupMessage);
       }
+      
+      while3++;
     }
+    
     return result;
   }
 
@@ -2368,15 +2395,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
 
-  private String isUserSuitedForGroup(User user, Group targetGroup) {
+  private String isUserSuitedForGroup(User user, Group targetGroup, Map pluginsForGroupTypeCachMap) {
     try {
-      Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
+      String grouptype = targetGroup.getGroupType();
+      Collection plugins = (Collection)pluginsForGroupTypeCachMap.get(grouptype);
+      if(plugins==null){
+      	plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(grouptype);
+      	pluginsForGroupTypeCachMap.put(grouptype,plugins);
+      }
       Iterator iter = plugins.iterator();
       while (iter.hasNext()) {
         UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
         UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
         String message;
-        if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {  
+        if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {
           return message;
         }    
       }
