@@ -104,12 +104,16 @@ public class PageIncluder extends PresentationObject implements Index{
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
     if( changeURL && _sendToPage != null) {//forwarding
+      //unecessary I think...(eiki)
       if (_sendToPageIfSet == null){
 	iwc.forwardToIBPage(fromPage,_sendToPage);
+        debug("PAGEINCLUDER FORWARDING");
       }
+      //thinking...
       else {
 	if (iwc.isParameterSet(_sendToPageIfSet)){
 	  iwc.forwardToIBPage(fromPage,_sendToPage);
+        debug("PAGEINCLUDER FORWARDING2");
 	}
       }
     }
@@ -127,15 +131,7 @@ public class PageIncluder extends PresentationObject implements Index{
   protected void process(IWContext iwc)throws IOException{
 	StringBuffer location = new StringBuffer();
 	StringBuffer queryBuf = new StringBuffer();
-
-
-
 	String query = null;
-/*        Enumeration enum2 = iwc.getParameterNames();
-	while (enum2.hasMoreElements()) {
-	  String param2 = (String) enum2.nextElement();
-	  System.out.println("param = " + param2);
-	}*/
 
 	if (forceFrame ) {
 	  String currentPage = getCurrentIBPageIDToURLString(iwc);
@@ -146,38 +142,41 @@ public class PageIncluder extends PresentationObject implements Index{
 	  buf.append('&');
 
 
-	  if (_sendURLTo == null){
-	    buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	    buf.append(instanceId);
-	    buf.append('=');
-	  }
-	  else {
-	    if (_sendToPageIfSet == null){
+          if( _sendToPage!=null ){
+            if (_sendURLTo != null){
+              buf.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
+              buf.append('&');
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(_sendURLTo);
 	      buf.append('=');
+            }
+            else{
+              buf.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
+              buf.append('&');
+              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	      buf.append(instanceId);
+	      buf.append('=');
 	    }
-	    else {
-	      if (iwc.isParameterSet(_sendToPageIfSet)){
-		buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-		buf.append(_sendURLTo);
-		buf.append('=');
-	      }
-	      else{
-		buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-		buf.append(instanceId);
-		buf.append('=');
-	      }
-	    }
+          }
+          else{
+            if (_sendURLTo != null){
+	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+	      buf.append(_sendURLTo);
+	      buf.append('=');
+            }
+            else{
+              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+              buf.append(instanceId);
+              buf.append('=');
+            }
 	  }
 
-	  pageIncluderPrefix = buf.toString();
-
-
-	}
-	else {
-	 pageIncluderPrefix ="";
-	}
+          pageIncluderPrefix = buf.toString();
+          System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+      }
+      else {
+        pageIncluderPrefix ="";
+      }
 
 	//after clicking a link and submitting a form
 	// check if the action is for this page includer
