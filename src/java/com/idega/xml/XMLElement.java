@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.11 2004/04/19 18:01:37 thomas Exp $
+ * $Id: XMLElement.java,v 1.12 2004/04/28 13:31:50 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -369,9 +369,10 @@ public class XMLElement {
   }
   
   /** Returns an iterator of all children (recursive) of this element.
+   * 	 The order of the returned elements corresponds to the result of a breadth first search.
    * @author Thomas
    */
-  public Iterator allChildrenIterator() {
+  public Iterator allChildrenBreadthFirstIterator() {
   	return new Iterator() {
   		
   		private Iterator iterator = null;
@@ -394,19 +395,20 @@ public class XMLElement {
 			private void checkInitialization() {
   			 if (iterator == null) {
   			 	List allChildren = new ArrayList();
-  			 	collectChildren(XMLElement.this, allChildren);
+  			 	collectChildrenBreadthFirstMethod(XMLElement.this, allChildren);
   			 	iterator = allChildren.iterator();
   			 }
   		}
   			 	
 				
-			private void collectChildren(XMLElement element, List allChildren) {
+			private void collectChildrenBreadthFirstMethod(XMLElement element, List allChildren) {
+					// breadth first search
   				allChildren.add(element);
   				List localChildren = element.getChildren();
   				Iterator iterator = localChildren.iterator();
   				while (iterator.hasNext()) {
   					XMLElement elementItem = (XMLElement) iterator.next();
-  					collectChildren(elementItem, allChildren);
+  					collectChildrenBreadthFirstMethod(elementItem, allChildren);
   				}
   			}
   	};
