@@ -379,7 +379,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
 		throws RemoteException, FinderException {
-		Collection relations = this.getParentalGroupRelationships();
+			
+		//was this.getParentalGroupRelationships() but "this" has the id -1
+		//should this method be public and not protected?
+		//this casting of group to groupbmpbean can be dangerous for users (Group)
+		Collection relations = ((GroupBMPBean)containingGroup).getParentalGroupRelationships();
 		Iterator iter = relations.iterator();
 		Collection PKs = new Vector();
 		while (iter.hasNext()) {
