@@ -27,6 +27,7 @@ public class IDOQuery {
 	private static final String FROM = " FROM ";
 	private static final String SUM = "SUM";
 	private static final String STAR = " * ";
+	private static final String DISTINCT = " DISTINCT ";
 	private static final String ORDER_BY = " ORDER BY ";
 	private static final String WHERE = " WHERE ";
 	private static final String LIKE = " LIKE ";
@@ -60,6 +61,8 @@ public class IDOQuery {
 	private static final String DESCENDING = " DESC ";
 	private static final String TRUE = "Y";
 	private static final String FALSE = "N";
+
+	private DatastoreInterface dataStore = null;
 
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
@@ -157,14 +160,16 @@ public class IDOQuery {
 	
 
 	public IDOQuery append(Date date) {
-		IWTimestamp stamp = new IWTimestamp(date);
-		this.appendWithinSingleQuotes(stamp.toSQLString());
+		//IWTimestamp stamp = new IWTimestamp(date);
+		//this.appendWithinSingleQuotes(stamp.toSQLString());
+		this.append(getDatastore().format(date));
 		return this;
 	}
 
 	public IDOQuery append(Timestamp timestamp) {
-		IWTimestamp stamp = new IWTimestamp(timestamp);
-		this.appendWithinSingleQuotes(stamp.toSQLString());
+		//IWTimestamp stamp = new IWTimestamp(timestamp);
+		//this.appendWithinSingleQuotes(stamp.toSQLString());
+		this.append(getDatastore().format(timestamp));
 		return this;
 	}
 
@@ -566,6 +571,10 @@ public class IDOQuery {
 	public IDOQuery appendStar() {
 		return this.append(STAR);
 	}
+	
+	public IDOQuery appendDistinct() {
+		return this.append(DISTINCT);
+	}
 
 	public IDOQuery appendOrderBy() {
 		return this.append(ORDER_BY);
@@ -677,6 +686,17 @@ public class IDOQuery {
 	public IDOQuery appendWhereEquals(String columnName, int columnValue) {
 		return appendWhereEquals(columnName, Integer.toString(columnValue));
 	}
+	
+
+	/**
+	 * Appends a where (where columnName=columnValue) without quotemarks
+	 * @param columnName the name of the field
+	 * @param columnValue the value
+	 * @return IDOQuery this Object
+	 */
+	public IDOQuery appendWhereEquals(String columnName, Integer columnValue) {
+		return appendWhereEquals(columnName, columnValue.toString());
+	}
 
 	public IDOQuery appendWhereEqualsQuoted(String columnName, String columnValue) {
 		appendWhere(columnName);
@@ -753,6 +773,11 @@ public class IDOQuery {
 		append(columnName);
 		this.appendEqualSign();
 		this.append(columnValue);
+		return this;
+	}
+	
+	public IDOQuery appendAndEquals(String columnName, Integer columnValue) {
+		appendAndEquals(columnName,columnValue.intValue());
 		return this;
 	}
 
@@ -973,6 +998,33 @@ public class IDOQuery {
 		return this;
 	}
 	
+	/**
+	 * Appends a condition where date column specified is between the provided dates
+	 * exluding the provided dates (see appendWithinDates for included dates)
+	 * @param dateColumnName
+	 * @param fromDate
+	 * @param toDate
+	 * @return the query itself
+	 */
+	public IDOQuery appendBetweenDates(String dateColumnName,Date fromDate,Date toDate){
+		this.append(dateColumnName).appendGreaterThanSign().append(fromDate);
+		this.appendAnd().append(dateColumnName).appendLessThanSign().append(toDate);
+		return this;
+	}
+	/**
+	 * Appends a condition where date column specified is within the provided dates
+	 * including the provided dates (see appendBetweenDates for included dates)
+	 * @param dateColumnName
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	public IDOQuery appendWithinDates(String dateColumnName,Date fromDate,Date toDate){
+		this.append(dateColumnName).appendGreaterThanOrEqualsSign().append(fromDate);
+		this.appendAnd().append(dateColumnName).appendLessThanOrEqualsSign().append(toDate);
+		return this;
+	}
+	
 	public void setToCount() {
 		if (_buffer != null) {
 			int index = _buffer.indexOf(" from ");
@@ -983,5 +1035,15 @@ public class IDOQuery {
 				_buffer.replace(0, index, this.SELECT_COUNT);
 			}
 		}
+	}
+	
+	protected void setDataStore(DatastoreInterface datastore){
+		this.dataStore = datastore;
+	}
+	
+	protected DatastoreInterface getDatastore(){
+		if(this.dataStore==null)
+			this.dataStore = DatastoreInterface.getInstance();
+		return this.dataStore;
 	}
 }
