@@ -89,6 +89,37 @@ public class FileUtil {
   }
 
   /**
+   * Returns a File Object. Creates the File and recursively all the directory structure prefixing the file
+   * if it does not exist.
+   */
+  public static File getFileAndCreateRecursiveIfNotExists(String fileNameWithFullPath)throws IOException{
+
+      String separator = File.separator;
+      int index = fileNameWithFullPath.lastIndexOf(separator);
+
+      String path = fileNameWithFullPath.substring(0,index);
+      String name = fileNameWithFullPath.substring(index+1);
+
+      File dirs = null;
+      try{
+        dirs = new File(path);
+        dirs.mkdirs();
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+      File file = null;
+
+      if(dirs!=null)
+        file = new File(dirs,name);
+      else
+        file = new File(name);
+
+      file.createNewFile();
+      return file;
+  }
+
+  /**
    * Deletes a File Object.
    */
   public static File delete(File file){
@@ -162,14 +193,14 @@ public class FileUtil {
       return false;
     }
   }
-/** Gets the lines from a file and return the as a vector of strings **/
-  public static Vector getLinesFromFile(String pathAndFile) throws IOException{
+
+  public static Vector getLinesFromFile(File fromFile) throws IOException{
     Vector strings = new Vector();
 
     FileReader reader;
     LineNumberReader lineReader = null;
 
-    reader = new FileReader(pathAndFile);
+    reader = new FileReader(fromFile);
     lineReader = new LineNumberReader(reader);
 
     lineReader.mark(1);
@@ -182,6 +213,13 @@ public class FileUtil {
     return strings;
   }
 
+/** Gets the lines from a file and return the as a vector of strings **/
+  public static Vector getLinesFromFile(String pathAndFile) throws IOException{
+    File f = new File(pathAndFile);
+    return getLinesFromFile(f);
+  }
+
+/** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
   public static String getStringFromFile(String pathAndFile) throws IOException{
     StringBuffer buffer = new StringBuffer();
     Vector vector = getLinesFromFile(pathAndFile);
@@ -195,6 +233,7 @@ public class FileUtil {
   }
 
   /** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
+
    public static Vector getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
     Vector lines = getLinesFromFile(pathAndFile);
     Vector tokens = new Vector();
@@ -214,4 +253,83 @@ public class FileUtil {
   }
 
 
+  public static void copyFile(File sourceFile,String newFileName)throws java.io.FileNotFoundException,java.io.IOException{
+    File newFile = new File(newFileName);
+    if(!newFile.exists()){
+      newFile.createNewFile();
+    }
+    copyFile(sourceFile,newFile);
+  }
+
+  public static void copyFile(File sourceFile,File newFile)throws java.io.FileNotFoundException,java.io.IOException{
+
+    java.io.FileInputStream input = new java.io.FileInputStream(sourceFile);
+    if(!newFile.exists()){
+      newFile.createNewFile();
+    }
+    java.io.FileOutputStream output  = new FileOutputStream(newFile);
+
+
+    byte buffer[]= new byte[1024];
+    int	noRead	= 0;
+
+    noRead = input.read( buffer, 0, 1024 );
+
+    //Write out the stream to the file
+    while ( noRead != -1 ){
+      output.write( buffer, 0, noRead );
+      noRead = input.read( buffer, 0, 1024 );
+    }
+    output.flush();
+    output.close();
+
+
+  }
+
+  /**
+   * Gunzips one file from the inputGZippedFile and unzips to outputUnZippedFile
+   */
+  public static void gunzipFile(File inputGZippedFile,File outputFile)throws java.io.FileNotFoundException,java.io.IOException{
+    java.util.zip.GZIPInputStream input = new java.util.zip.GZIPInputStream(new java.io.FileInputStream(inputGZippedFile));
+    java.io.FileOutputStream output = new java.io.FileOutputStream(outputFile);
+    //java.util.zip.GZIPOutputStream output = new java.util.zip.GZIPOutputStream();
+
+    int buffersize=100;
+    byte[] buf = new byte[buffersize];
+    int read = input.read(buf,0,buffersize);
+
+    while(read!=-1){
+      output.write(buf,0,read);
+      read = input.read(buf,0,buffersize);
+    }
+  }
+
+
+  public static void copyDirectoryRecursively(File inputDirectory,File outputDirectory)throws java.io.IOException{
+    if(inputDirectory.isDirectory()){
+      if(!outputDirectory.exists()){
+        outputDirectory.mkdir();
+      }
+
+      File tempOutFile;
+      File inputFile;
+      File[] files = inputDirectory.listFiles();
+      for (int i = 0; i < files.length; i++) {
+        inputFile = files[i];
+        String name = inputFile.getName();
+        tempOutFile = new File(outputDirectory,name);
+        if(inputFile.isDirectory()){
+          copyDirectoryRecursively(inputFile,tempOutFile);
+        }
+        else{
+          tempOutFile.createNewFile();
+          copyFile(inputFile,tempOutFile);
+        }
+      }
+
+    }
+    else{
+      throw new IOException(inputDirectory.toString()+" is not a directory");
+    }
+  }
 }
