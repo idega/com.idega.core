@@ -3,6 +3,7 @@
  */
 package com.idega.core.ldap.server.backend;
 
+import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +52,8 @@ import com.idega.user.data.User;
 public class IWUserLDAPBackend extends BaseBackend implements Backend, IWLDAPConstants, EmbeddedLDAPServerConstants,
 LDAPReplicationConstants {
 	
+	
+private static final String UNICODE_ENCODING = "UTF-8";
 	private List exactIndexes = null;
 	
 	private  String baseDN = null;
@@ -317,6 +320,7 @@ LDAPReplicationConstants {
 		else if (scope == SearchRequestEnum.BASEOBJECT) {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
+				//String baseString = new String(base.getDirectoryString().getBytes(),UNICODE_ENCODING);
 				if (base.getDirectoryString().equals(baseDN)) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
@@ -336,8 +340,15 @@ LDAPReplicationConstants {
 	}
 	
 	private List doSubStringSearch(DirectoryString base, List entries, List alreadyLoaded, String type, String searchWord) throws FinderException, RemoteException, InvalidDNException {
-		//we only allow substring searches for these attributes
-		//(|(givenName=Fred*)(sn=Fred*)(cn=Fred*)(mail=Fred*))
+			//we only allow substring searches for these attributes
+			//(|(givenName=Fred*)(sn=Fred*)(cn=Fred*)(mail=Fred*))
+		try {
+			searchWord = new String(searchWord.getBytes(),UNICODE_ENCODING);
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
 		type = type.toLowerCase();
 		if(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase().equals(type) || LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase().equals(type)){
 			//look by the personal id
@@ -875,7 +886,12 @@ LDAPReplicationConstants {
 	private List getAttributeListForSingleEntry(String value) {
 		List attributes = new ArrayList();
 		if (value != null) {
-			attributes.add(new DirectoryString(value));
+			try {
+				attributes.add(new DirectoryString(new String(value.getBytes(),UNICODE_ENCODING)));
+			}
+			catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return attributes;
 	}
