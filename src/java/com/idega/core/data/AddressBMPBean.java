@@ -12,6 +12,8 @@ import com.idega.core.user.data.User;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
   private transient AddressTypeHome addressTypeHome;
+  private static  AddressType type1 ; //for caching
+  private static  AddressType type2 ; //for caching
 
   public AddressBMPBean(){
           super();
@@ -145,22 +147,31 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
     }
     return addressTypeHome;
   }
+  
   public AddressType ejbHomeGetAddressType1() throws RemoteException{
-    try{
-      return getAddressTypeHome().findAddressType1();
-    }
-    catch(FinderException e){
-      throw new RemoteException(e.getMessage());
-    }
+  	if( this.type1 == null ){
+	    try{
+	      type1 = getAddressTypeHome().findAddressType1();
+	    }
+	    catch(FinderException e){
+	      throw new RemoteException(e.getMessage());
+	    }
+  	}
+  	
+  	return type1;
+  	
   }
 
   public AddressType ejbHomeGetAddressType2() throws RemoteException{
-    try{
-      return getAddressTypeHome().findAddressType2();
-    }
-    catch(FinderException e){
-      throw new RemoteException(e.getMessage());
-    }
+	if( this.type2 == null ){
+	    try{
+	      type2 = getAddressTypeHome().findAddressType2();
+	    }
+	    catch(FinderException e){
+	      throw new RemoteException(e.getMessage());
+	    }
+	}
+	return type2;
   }
      /**
      * Gets the street name together with the number
