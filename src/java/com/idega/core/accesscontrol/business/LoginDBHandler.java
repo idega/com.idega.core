@@ -7,6 +7,7 @@ import com.idega.data.EntityFinder;
 import com.idega.core.user.data.User;
 import java.util.List;
 import java.sql.SQLException;
+import com.idega.util.Encrypter;
 
 /**
  * Title:        IW Accesscontrol
@@ -51,9 +52,23 @@ public class LoginDBHandler {
       throw new Exception("invalid user_id");
     }
 
+
+    String encryptedPassword = null;
+
+    if( password != null && !"".equals(password)){
+      encryptedPassword = Encrypter.encryptOneWay(password);
+      loginTable.setUserPassword(encryptedPassword);
+    }else if (!update){
+      throw new Exception("Password not valid");
+    }
+
     if(update){
       if(userLogin != null && !"".equals(userLogin)){
-        loginTable.setUserPassword(password);
+        if(encryptedPassword != null){
+          loginTable.setUserPassword(encryptedPassword);
+        }else{
+          throw new Exception("Password not valid");
+        }
       }
     }else{
       if( userLogin != null && !"".equals(userLogin)){
@@ -65,13 +80,6 @@ public class LoginDBHandler {
       }else{
         throw new Exception("Login not valid: null or emptyString");
       }
-    }
-
-
-    if( password != null && !"".equals(password)){
-      loginTable.setUserPassword(password);
-    }else if (!update){
-      throw new Exception("Password not valid");
     }
 
 
@@ -99,7 +107,7 @@ public class LoginDBHandler {
  }
 
 
-  protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
+  protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
     List noLoginInfo = EntityFinder.findAllByColumn(LoginInfo.getStaticInstance(), LoginInfo.getLoginTableIdColumnName(), loginTableID);
 
     LoginInfo logInfo;
@@ -144,6 +152,10 @@ public class LoginDBHandler {
       logInfo.setChangeNextTime(changeNextTime);
     }
 
+    if(encryptionType != null){
+      logInfo.setEncriptionType(encryptionType);
+    }
+
     if(!logInfo.getAllowedToChange() && logInfo.getChangeNextTime()){
       throw new Exception("inconsistency: userAllowedToChangePassw = false and changeNextTime = true");
     }
@@ -167,13 +179,18 @@ public class LoginDBHandler {
     return logInfo.getID();
 
   }
-
-
+  /**
+   * @deprecated
+   */
   public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
+      createLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime,null);
+  }
+
+  public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
 
       int loginTableID = createLogin( false, userID, userLogin, password);
       try {
-        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime);
+        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
       }
       catch (Exception e) {
         if ("LoginInfo creation failed. ".equals(e.getMessage())){
@@ -192,24 +209,53 @@ public class LoginDBHandler {
 
   }
 
-
+  /**
+   * @deprecated
+   */
   public static void updateLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
-    int loginTableID = createLogin( true, userID, userLogin, password);
-    createLoginInfo(true, loginTableID ,accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime);
+    updateLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, null);
   }
 
+  public static void updateLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
+    int loginTableID = createLogin( true, userID, userLogin, password);
+    createLoginInfo(true, loginTableID ,accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
+  }
+
+  /**
+   * @deprecated
+   */
   public static void updateLoginInfo(int loginTableID ,Boolean accoutEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
-    createLoginInfo(true, loginTableID ,accoutEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime);
+    updateLoginInfo( loginTableID , accoutEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, null);
+  }
+
+  public static void updateLoginInfo(int loginTableID ,Boolean accoutEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
+    createLoginInfo(true, loginTableID ,accoutEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
   }
 
 
   public static void createLogin( int userID, String userLogin, String password) throws Exception {
-    createLogin(userID, userLogin, password,null,null,-1,null,null,null);
+    createLogin(userID, userLogin, password,null,null,-1,null,null,null,null);
   }
 
 
   public static void updateLogin( int userID, String userLogin, String password) throws Exception {
     createLogin( true, userID, userLogin, password);
+  }
+
+  public static void changePassword(int userID, String password ) throws Exception {
+
+    LoginTable loginTable;
+
+    List noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserIDColumnName(), userID);
+    loginTable = (LoginTable)noLogin.get(0);
+
+    if(loginTable != null){
+      loginTable.setUserPassword(Encrypter.encryptOneWay(password));
+      loginTable.update();
+    } else {
+      throw new Exception("Cannot update. Login does not exist");
+    }
+
   }
 
 }

@@ -49,6 +49,12 @@ public class User extends GenericEntity {
     public void setDefaultValues(){
     }
 
+    public void insertStartData() throws SQLException {
+      User firstUser = new User();
+      firstUser.setFirstName(getAdminDefaultName());
+      firstUser.insert();
+    }
+
     public String getIDColumnName(){
       return getUserIDColumnName();
     }
@@ -57,6 +63,9 @@ public class User extends GenericEntity {
       return (User)User.getStaticInstance(sClassName);
     }
 
+    public static String getAdminDefaultName(){
+      return "Administrator";
+    }
 
 
 

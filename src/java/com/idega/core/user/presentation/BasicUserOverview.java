@@ -21,6 +21,8 @@ import com.idega.core.user.presentation.UserPropertyWindow;
 
 public class BasicUserOverview extends ModuleObjectContainer {
 
+  public static String userIdParameterString = "user_id";
+
   public BasicUserOverview(ModuleInfo modinfo) throws Exception {
     this.empty();
     this.add(this.getUsers(modinfo));
@@ -39,7 +41,7 @@ public class BasicUserOverview extends ModuleObjectContainer {
 
 //          Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getUserIDColumnName(),modinfo).getSessionAddressString());
           Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getUserIDColumnName(),modinfo));
-          aLink.addParameter(User.getUserIDColumnName(), tempUser.getID());
+          aLink.addParameter(BasicUserOverview.userIdParameterString, tempUser.getID());
           userTable.add(aLink,1,i+1);
         }
       }

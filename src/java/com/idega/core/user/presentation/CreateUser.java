@@ -83,7 +83,7 @@ public class CreateUser extends Window {
 
   private UserBusiness business;
 
-  private String columnHeight = "37";
+  private String rowHeight = "37";
 
   public CreateUser() {
     super();
@@ -156,8 +156,8 @@ public class CreateUser extends Window {
     Table nameTable = new Table(4,2);
     nameTable.setCellpadding(0);
     nameTable.setCellspacing(0);
-    nameTable.setHeight(1,columnHeight);
-    nameTable.setHeight(2,columnHeight);
+    nameTable.setHeight(1,rowHeight);
+    nameTable.setHeight(2,rowHeight);
 
     nameTable.add(firstNameText,1,1);
     nameTable.add(firstNameField,2,1);
@@ -171,9 +171,9 @@ public class CreateUser extends Window {
     Table loginTable = new Table(4,3);
     loginTable.setCellpadding(0);
     loginTable.setCellspacing(0);
-    loginTable.setHeight(1,columnHeight);
-    loginTable.setHeight(2,columnHeight);
-    loginTable.setHeight(3,columnHeight);
+    loginTable.setHeight(1,rowHeight);
+    loginTable.setHeight(2,rowHeight);
+    loginTable.setHeight(3,rowHeight);
 
     loginTable.add(this.userLoginText,1,1);
     loginTable.add(this.userLoginField,2,1);
@@ -191,10 +191,10 @@ public class CreateUser extends Window {
     Table AccountPropertyTable = new Table(2,4);
     AccountPropertyTable.setCellpadding(0);
     AccountPropertyTable.setCellspacing(0);
-    AccountPropertyTable.setHeight(1,columnHeight);
-    AccountPropertyTable.setHeight(2,columnHeight);
-    AccountPropertyTable.setHeight(3,columnHeight);
-    AccountPropertyTable.setHeight(4,columnHeight);
+    AccountPropertyTable.setHeight(1,rowHeight);
+    AccountPropertyTable.setHeight(2,rowHeight);
+    AccountPropertyTable.setHeight(3,rowHeight);
+    AccountPropertyTable.setHeight(4,rowHeight);
 
     AccountPropertyTable.add(this.mustChangePasswordField,1,1);
     AccountPropertyTable.add(this.mustChangePasswordText,2,1);
@@ -210,7 +210,7 @@ public class CreateUser extends Window {
     Table propertyTable = new Table(2,1);
     propertyTable.setCellpadding(0);
     propertyTable.setCellspacing(0);
-    propertyTable.setHeight(1,columnHeight);
+    propertyTable.setHeight(1,rowHeight);
 
     propertyTable.add(this.goToPropertiesText,1,1);
     propertyTable.add(this.goToPropertiesField,2,1);
@@ -221,7 +221,7 @@ public class CreateUser extends Window {
     Table buttonTable = new Table(3,1);
     buttonTable.setCellpadding(0);
     buttonTable.setCellspacing(0);
-    buttonTable.setHeight(1,columnHeight);
+    buttonTable.setHeight(1,rowHeight);
     buttonTable.setWidth(2,"5");
 
     buttonTable.add(okButton,1,1);
@@ -322,8 +322,10 @@ public class CreateUser extends Window {
       if(submit.equals("ok")){
         this.commitCreation(modinfo);
         this.close();
+        this.setParentToReload();
       }else if(submit.equals("cancel")){
         this.close();
+        this.setParentToReload();
       }
     }
   }

@@ -5,6 +5,7 @@ import com.idega.jmodule.object.TabbedPropertyPanel;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.jmodule.object.ModuleInfo;
+import com.idega.core.user.presentation.BasicUserOverview;
 
 /**
  * Title:        User
@@ -69,7 +70,11 @@ public class UserPropertyWindow extends Window implements IWSubmitListener {
 
   public void initializePanel( ModuleInfo modinfo ){
     GeneralUserInfoTab genTab = new GeneralUserInfoTab();
-    genTab.setUserID(1);
+    String id = modinfo.getParameter(BasicUserOverview.userIdParameterString);
+    if(id != null){
+      genTab.setUserID(Integer.parseInt(id));
+    }
+    System.err.println("id = " + id);
     panel.addTab(genTab, 0, modinfo);
     panel.addTab(new AddressInfoTab(), 1, modinfo);
     panel.getOkButton().addIWSubmitListener(this,modinfo);

@@ -118,7 +118,28 @@ public class IWMainApplication{//implements ServletContext{
    * @todo: Change this so it encrypts the classToInstanciateName
    */
   public static String getEncryptedClassName(String classToInstanciate){
-      return classToInstanciate;
+/*      System.err.println("classToInstanciate "+classToInstanciate);
+      if(classToInstanciate != null){
+      char[] characters = classToInstanciate.toCharArray();
+
+      int max = 255;
+
+      char[] encryptedChars = new char[characters.length];
+
+      System.err.println("max "+max);
+
+      for (int i = 0; i < characters.length; i++) {
+        int ch = (int)characters[i];
+        encryptedChars[i] = ((char)((ch+11)%max));
+        System.err.println();
+        System.err.println(characters[i]+ " -> "+ ((char)((ch+5)%max)));
+        System.err.println(ch + " -> "+ ((ch+11)%max));
+      }
+
+      return String.valueOf(encryptedChars);
+      }else{*/
+        return classToInstanciate;
+//      }
   }
 
   public static String getEncryptedClassName(Class classToInstanciate){
@@ -126,7 +147,27 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public static String decryptClassName(String encryptedClassName){
-    return encryptedClassName;
+/*
+      if(encryptedClassName != null){
+        System.err.println("encryptedClassName "+encryptedClassName);
+        char[] characters = encryptedClassName.toCharArray();
+
+        int max = 255;
+
+        for (int i = 0; i < characters.length; i++) {
+          int ch = (int)characters[i];
+          int ch2 = (char)(ch-11);
+          if(ch2 < 0){
+            ch2 = max - ch2;
+          }
+          characters[i] = (char)ch2;
+        }
+
+        System.err.println("String.valueOf(characters)"+String.valueOf(characters));
+        return String.valueOf(characters);
+    }else{*/
+      return encryptedClassName;
+    //}
   }
 
 

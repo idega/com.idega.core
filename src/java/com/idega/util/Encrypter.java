@@ -63,8 +63,10 @@ public class Encrypter {
          */
         byte[] digestedBytes = digest.digest();
         char[] digestedChars = new char[digestedBytes.length];
+        int maxvalue=128;
         for (int i = 0; i < digestedBytes.length; i++) {
-          digestedChars[i]=(char)digestedBytes[i];
+          int myByte = (int)digestedBytes[i]+maxvalue;
+          digestedChars[i]=(char)myByte;
         }
 
 
@@ -76,11 +78,10 @@ public class Encrypter {
 
 
   public static boolean verifyOneWayEncrypted(String encryptedString,String unEncryptedString){
-    String secondEncrypted = encryptOneWay(unEncryptedString);
-    if(secondEncrypted.equals(encryptedString)){
-      return true;
-    }
-    return false;
+    return encryptOneWay(unEncryptedString).equals(encryptedString);
+
+    //String secondEncrypted = encryptOneWay(unEncryptedString);
+    //return secondEncrypted.equals(encryptedString);
   }
 
   /*

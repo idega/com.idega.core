@@ -34,9 +34,10 @@ public class LoginInfo extends GenericEntity {
     addAttribute(getAccountEnabledColumnName(),"Aðgangur virkur",true,true,"java.lang.Boolean");
     addAttribute(getModifiedColumnName(),"Síðast breytt",true,true,"java.sql.Date");
     addAttribute(getDaysOfValityColumnName(),"Dagar í gildi",true,true,"java.sql.Integer");
-    addAttribute(getPasswNeverExpiresColumnName(),"Lykilorð rennur aldrei út",true,true,"java.lang.Boolean");
+    addAttribute(getPasswordExpiresColumnName(),"Lykilorð rennur út",true,true,"java.lang.Boolean");
     addAttribute(getAllowedToChangeColumnName(),"Notandi má breyta",true,true,"java.lang.Boolean");
-    addAttribute(getChangeNextTimeColumnName(),"Bryta næst",true,true,"java.lang.Boolean");
+    addAttribute(getChangeNextTimeColumnName(),"Breyta næst",true,true,"java.lang.Boolean");
+    addAttribute(getEncryptionTypeColumnName(),"Kóðunaraðferð",true,true,"java.lang.String",30);
   }
 
   public void setDefaultValues(){
@@ -45,7 +46,7 @@ public class LoginInfo extends GenericEntity {
     this.setChangeNextTime(Boolean.FALSE);
     this.setDaysOfVality(10000);
     this.setModified(idegaTimestamp.RightNow());
-    this.setPasswNeverExpires(Boolean.TRUE);
+    this.setPasswordExpires(Boolean.FALSE);
   }
 
   public String getEntityName() {
@@ -79,8 +80,14 @@ public class LoginInfo extends GenericEntity {
     return "days_of_vality";
   }
 
-  public static String getPasswNeverExpiresColumnName(){
+  public static String getPasswordExpiresColumnName(){
     return "passwd_expires";
+  }
+  /**
+   * @deprecated
+   */
+  public static String getPasswNeverExpiresColumnName(){
+    return getPasswordExpiresColumnName();
   }
 
   public static String getAllowedToChangeColumnName(){
@@ -89,6 +96,10 @@ public class LoginInfo extends GenericEntity {
 
   public static String getChangeNextTimeColumnName(){
     return "change_next_time";
+  }
+
+  public static String getEncryptionTypeColumnName(){
+    return "encryption_type";
   }
 
   /*  ColumNames end   */
@@ -111,8 +122,15 @@ public class LoginInfo extends GenericEntity {
     return this.getIntColumnValue(getDaysOfValityColumnName());
   }
 
+
+  public boolean getPasswordExpires(){
+    return this.getBooleanColumnValue(getPasswordExpiresColumnName());
+  }
+  /**
+   * @deprecated
+   */
   public boolean getPasswNeverExpires(){
-    return !this.getBooleanColumnValue(getPasswNeverExpiresColumnName());
+    return !getPasswordExpires();
   }
 
   public boolean getAllowedToChange(){
@@ -121,6 +139,10 @@ public class LoginInfo extends GenericEntity {
 
   public boolean getChangeNextTime(){
     return this.getBooleanColumnValue(getChangeNextTimeColumnName());
+  }
+
+  public String getEncryprionType(){
+    return this.getStringColumnValue(getEncryptionTypeColumnName());
   }
   /*  Getters end   */
 
@@ -135,6 +157,10 @@ public class LoginInfo extends GenericEntity {
     this.setColumn(getAccountEnabledColumnName(),value);
   }
 
+  public void setAccountEnabled(Boolean value){
+    this.setColumn(getAccountEnabledColumnName(),value);
+  }
+
   public void setModified(idegaTimestamp date){
     this.setColumn(getModifiedColumnName(),date.getSQLDate());
   }
@@ -143,11 +169,11 @@ public class LoginInfo extends GenericEntity {
     this.setColumn(getDaysOfValityColumnName(),days);
   }
 
-  public void setPasswNeverExpires(boolean value){
-    this.setColumn(getPasswNeverExpiresColumnName(),!value);
+  public void setAllowedToChange(boolean value){
+    this.setColumn(getAllowedToChangeColumnName(),value);
   }
 
-  public void setAllowedToChange(boolean value){
+  public void setAllowedToChange(Boolean value){
     this.setColumn(getAllowedToChangeColumnName(),value);
   }
 
@@ -155,29 +181,40 @@ public class LoginInfo extends GenericEntity {
     this.setColumn(getChangeNextTimeColumnName(),value);
   }
 
-
-
-  public void setAccountEnabled(Boolean value){
-    this.setColumn(getAccountEnabledColumnName(),value);
-  }
-
-  public void setPasswNeverExpires(Boolean value){
-    if(value != null){
-      this.setColumn(getPasswNeverExpiresColumnName(),!value.booleanValue());
-    }else{
-      this.setColumn(getPasswNeverExpiresColumnName(),value);
-    }
-  }
-
-  public void setAllowedToChange(Boolean value){
-    this.setColumn(getAllowedToChangeColumnName(),value);
-  }
-
   public void setChangeNextTime(Boolean value){
     this.setColumn(getChangeNextTimeColumnName(),value);
   }
 
 
+  public void setPasswordExpires(boolean value){
+      this.setColumn(getPasswordExpiresColumnName(),value);
+  }
+
+  public void setPasswordExpires(Boolean value){
+      this.setColumn(getPasswordExpiresColumnName(),value);
+  }
+
+  /**
+   * @deprecated
+   */
+  public void setPasswNeverExpires(boolean value){
+    this.setColumn(getPasswNeverExpiresColumnName(),!value);
+  }
+
+  /**
+   * @deprecated
+   */
+  public void setPasswNeverExpires(Boolean value){
+    if(value != null){
+      this.setColumn(getPasswordExpiresColumnName(),!value.booleanValue());
+    }else{
+      this.setColumn(getPasswordExpiresColumnName(),value);
+    }
+  }
+
+  public void setEncriptionType(String type){
+      this.setColumn(getEncryptionTypeColumnName(),type);
+  }
 
   /*  Setters end   */
 
