@@ -844,7 +844,7 @@ public class Form extends InterfaceObject {
 		if (this.windowClass != null) {
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
-			if (this.icObjectInstanceIDForWindow == -1) {
+			if (this.icObjectInstanceIDForWindow <= 0) {
 				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass));
 			}
 			else {
