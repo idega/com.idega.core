@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.124 2005/01/07 09:49:21 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.125 2005/01/13 21:25:25 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/07 09:49:21 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/01/13 21:25:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.124 $
+ * @version $Revision: 1.125 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -130,6 +130,8 @@ public class IWMainApplication //{//implements ServletContext{
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
     private static final String NEW_WINDOW_URL="/window/";
     private static final String NEW_BUILDER_PAGE_URL="/pages/";
+    private static final String WORKSPACE_URI="/workspace/";
+    private static final String LOGIN_URI="/login/";
     
     //Static variables:
     protected static IWMainApplication defaultIWMainApplication;
@@ -1313,7 +1315,28 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public String getIdegaWebApplicationsURI() {
-        return getTranslatedURIWithContext(IDEGAWEB_APP_SERVLET_URI);
+    		if(USE_NEW_URL_SCHEME){
+    			return getLoginURI();
+    		}
+    		else{
+    			return getTranslatedURIWithContext(IDEGAWEB_APP_SERVLET_URI);
+    		}
+    	}
+    
+    /**
+     * Gets the URI to the workspace environment (/workspace) with prefixed application context path if any.
+     * @return
+     */
+    public String getWorkspaceURI(){
+    		return getTranslatedURIWithContext(WORKSPACE_URI);
+    }
+    
+    /**
+     * Gets the URI to the standard login page  (/login) with prefixed application context path if any.
+     * @return
+     */
+    public String getLoginURI(){
+    		return getTranslatedURIWithContext(LOGIN_URI);
     }
 
     /*
