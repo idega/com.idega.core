@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.35 2002/02/14 16:54:42 tryggvil Exp $
+ * $Id: Page.java,v 1.36 2002/02/14 18:12:53 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -707,7 +707,7 @@ public class Page extends PresentationObjectContainer {
         println("\n<head>");
         if(addGlobalScript){
           //Print a reference to the global .js script file
-          println("<script src=\""+this.getBundle(iwc).getResourcesURL()+"/iw_core.js\">");
+          println("<script type=\"text/javascript\" language=\"javascript\" src=\""+this.getBundle(iwc).getResourcesURL()+"/iw_core.js\">");
           println("</script>");
         }
         if (getAssociatedScript() != null) {
