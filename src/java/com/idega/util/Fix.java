@@ -37,7 +37,7 @@ public class Fix extends JModuleObject {
   max = selection_max;
   }
 */
-
+/*
   public void copy_from_Member_To_UnionMemberInfo(int min, int max) throws SQLException, IOException {
     PrintStream ut = System.out;
     Connection conn= null;
@@ -128,6 +128,7 @@ public class Fix extends JModuleObject {
 
 
   }
+  */
 /*
   public void main(ModuleInfo modinfo2)throws Exception{
   this.modinfo = modinfo2;
