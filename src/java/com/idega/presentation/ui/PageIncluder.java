@@ -94,7 +94,13 @@ public class PageIncluder extends PresentationObject{
 
   protected String encodeQueryStrings(String html){
     html = TextSoap.findAndReplace(html,"&","#");
-    return TextSoap.findAndReplace(html," #"," &");
+    html = TextSoap.findAndReplace(html,"#eth;","&eth;");
+    html = TextSoap.findAndReplace(html,"#thorn;","&eth;");
+    html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
+    html = TextSoap.findAndReplace(html,"#uacute;","&uacute;");
+    html = TextSoap.findAndReplace(html,"#ouml;","&ouml;");
+  //  html = TextSoap.findAndReplace(html,"#iacute;","&iacute;");
+  return html;
   }
 
   protected String decodeQueryString(String query){
