@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOEntityField;
@@ -33,6 +32,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	private boolean _countQuery = false;
     private boolean _distinct =false;
     private boolean flag = false;
+    
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
@@ -322,15 +322,12 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	 */
 	public List getValues(){
 	    Vector list = new Vector();
-	    DatastoreInterface dsi = DatastoreInterface.getInstance();
-	    if(dsi.isUsingPreparedStatements()){
-		    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
-	            Criteria crit = (Criteria) iter.next();
-	            if(crit instanceof PlaceHolder)
-	                list.addAll(((PlaceHolder)crit).getValues());
-	            
-	        }
-	    }
+	    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
+            Criteria crit = (Criteria) iter.next();
+            if(crit instanceof PlaceHolder)
+                list.addAll(((PlaceHolder)crit).getValues());
+            
+        }
 	    return list;
 	}
 
