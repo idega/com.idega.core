@@ -323,6 +323,12 @@ public class IWMainApplication{//implements ServletContext{
       storeCryptoProperties();
       //IWCacheManager.deleteCachedBlobs(this);
 //      getImageFactory(true).deleteGeneratedImages(this);
+      for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
+				Object key = enum.nextElement();
+				IWBundle bundle = (IWBundle)loadedBundles.get(key);
+				bundle.unload();
+      }     
+     
       alreadyUnLoaded = true;
     }
   }
@@ -337,11 +343,7 @@ public class IWMainApplication{//implements ServletContext{
       catch(Exception ex){
 	  ex.printStackTrace();
       }
-      for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
-	Object key = enum.nextElement();
-	IWBundle bundle = (IWBundle)loadedBundles.get(key);
-	bundle.storeState();
-      }
+
   }
 
   private Properties getBundlesFile(){
