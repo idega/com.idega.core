@@ -196,6 +196,19 @@ public class FileUtil {
     }
   }
 
+	/**
+  * Returns the entire contents of a folder. Returns NULL if no files exist.
+  */
+	public static File[] getAllFilesInDirectory(String path){
+		File folder = new File(path);
+		if(folder.exists()){
+			return folder.listFiles();
+		}
+		else{
+			return null;
+		}
+	}
+
   public static Vector getLinesFromFile(File fromFile) throws IOException{
     Vector strings = new Vector();
 
