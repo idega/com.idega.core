@@ -79,9 +79,9 @@ public class ImplementorRepository {
 		}
 	}
 	
-	public Object getImplementorOrNull(Class interfaceClass, Class implementationClass) {
+	public Object getImplementorOrNull(Class interfaceClass, Class callerClass) {
 		try {
-			return getImplementor(interfaceClass, implementationClass);
+			return getImplementor(interfaceClass, callerClass);
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
