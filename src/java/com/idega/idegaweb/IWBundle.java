@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.66 2003/10/28 15:39:43 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.67 2003/10/29 09:24:39 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -8,6 +8,22 @@
  *
  */
 package com.idega.idegaweb;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.ejb.FinderException;
+
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.core.component.data.ICObjectHome;
@@ -22,22 +38,6 @@ import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.refactor.RefactorClassRegistry;
 import com.idega.xml.XMLElement;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.ArrayList;
-import javax.ejb.FinderException;
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.
  * <br>
