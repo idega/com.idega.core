@@ -7,9 +7,11 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
   return User.class;
  }
 
+
  public User create() throws javax.ejb.CreateException{
-  return (User) super.idoCreate();
+  return (User) super.createIDO();
  }
+
 
  public User createLegacy(){
 	try{
@@ -21,13 +23,23 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 
  }
 
- public User findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (User) super.idoFindByPrimaryKey(id);
- }
+
+public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((UserBMPBean)entity).ejbFindUserFromEmail(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
 
  public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (User) super.idoFindByPrimaryKey(pk);
+  return (User) super.findByPrimaryKeyIDO(pk);
  }
+
+
+ public User findByPrimaryKey(int id) throws javax.ejb.FinderException{
+  return (User) super.findByPrimaryKeyIDO(id);
+ }
+
 
  public User findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
@@ -38,6 +50,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 	}
 
  }
+
 
 
 }

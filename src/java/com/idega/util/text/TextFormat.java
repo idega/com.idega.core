@@ -90,6 +90,12 @@ public class TextFormat{
 
   }
 
+  public Text format(String text,String color){
+    Text t = getText(text,NORMAL);
+    t.setFontColor(color);
+    return t;
+  }
+
 
 
   private Text getText(String text,int type){

@@ -322,5 +322,19 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User {
       return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
     }
 
+    public Integer ejbFindUserFromEmail(String emailAddress)throws FinderException,RemoteException{
+      StringBuffer sql = new StringBuffer("select iu.* ");
+      sql.append("from ic_email ie,ic_user_email iue,ic_user iu ");
+      sql.append("where ie.ic_email_id = iue.ic_email_address ");
+      sql.append("and iue.ic_user_id = iu.ic_user_id " );
+      sql.append(" and ie.address = ");
+      sql.append(emailAddress);
+      Collection coll =  super.idoFindIDsBySQL(sql.toString());
+      if(!coll.isEmpty())
+        return (Integer)coll.iterator().next();
+      else
+        throw new FinderException("No user found");
+    }
+
     /*  Finders end   */
 }

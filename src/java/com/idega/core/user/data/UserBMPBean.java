@@ -222,6 +222,20 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements com.ide
 
 
     /*  Setters end   */
+    public Integer ejbFindUserFromEmail(String emailAddress)throws javax.ejb.FinderException{
+      StringBuffer sql = new StringBuffer("select iu.* ");
+      sql.append("from ic_email ie,ic_user_email iue,ic_user iu ");
+      sql.append("where ie.ic_email_id = iue.ic_email_address ");
+      sql.append("and iue.ic_user_id = iu.ic_user_id " );
+      sql.append(" and ie.address = '");
+      sql.append(emailAddress);
+      sql.append("'");
+      java.util.Collection coll =  super.idoFindIDsBySQL(sql.toString());
+      if(!coll.isEmpty())
+        return (Integer)coll.iterator().next();
+      else
+        throw new javax.ejb.FinderException("No user found");
+    }
 
 
 }
