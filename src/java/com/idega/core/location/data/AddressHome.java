@@ -1,5 +1,9 @@
 package com.idega.core.location.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public interface AddressHome extends com.idega.data.IDOHome
 {
@@ -15,4 +19,5 @@ public interface AddressHome extends com.idega.data.IDOHome
  public java.util.Collection findUserAddressesByAddressType(int userID,AddressType type) throws javax.ejb.FinderException ;
  public com.idega.core.location.data.AddressType getAddressType2()throws java.rmi.RemoteException;
  public com.idega.core.location.data.AddressType getAddressType1()throws java.rmi.RemoteException;
+ public Collection findByPostalCode(Integer postalCodeID)throws FinderException;
 }

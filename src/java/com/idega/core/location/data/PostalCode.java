@@ -1,5 +1,7 @@
 package com.idega.core.location.data;
 
+import java.util.Collection;
+
 
 public interface PostalCode extends com.idega.data.IDOEntity
 {
@@ -14,4 +16,5 @@ public interface PostalCode extends com.idega.data.IDOEntity
  public void setName(java.lang.String p0);
  public void setPostalCode(java.lang.String p0);
  public boolean isEqualTo(PostalCode postal);
+ public Collection getAddresses();
 }

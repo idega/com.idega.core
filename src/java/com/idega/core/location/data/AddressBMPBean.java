@@ -306,6 +306,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 		return super.idoFindPKsBySQL(query.toString());
 	}
+	
+	public Collection ejbFindByPostalCode(Integer postalCodeID)throws FinderException{
+		return idoFindPKsByQuery(idoQueryGetSelect().appendWhereEquals(POSTAL_CODE_ID,postalCodeID));
+	}
 
 	/*
 	 * (non-Javadoc)

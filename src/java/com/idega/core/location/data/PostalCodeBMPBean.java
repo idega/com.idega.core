@@ -14,6 +14,8 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 
 
@@ -192,6 +194,21 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	.append(" and ").append(COLUMN_POSTAL_CODE).append(" <= ").append(codeTo)
 	.append(" order by ").append(COLUMN_POSTAL_CODE);
 	return this.idoFindPKsByQuery(query);
+	}
+	
+	/**
+	 * Gets related addresses
+	 * null if no found
+	 */
+	public Collection getAddresses(){
+		try {
+			return ((AddressHome)IDOLookup.getHome(Address.class)).findByPostalCode((Integer)getPrimaryKey());
+		} catch (FinderException e) {
+			
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 

@@ -1,5 +1,9 @@
 package com.idega.core.location.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public class AddressHomeImpl extends com.idega.data.IDOFactory implements AddressHome
 {
@@ -93,4 +97,14 @@ public java.util.Collection findUserAddressesByAddressType(int userID,AddressTyp
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.location.data.AddressHome#findByPostalCode(java.lang.Integer)
+	 */
+	public Collection findByPostalCode(Integer postalCodeID)throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((AddressBMPBean)entity).ejbFindByPostalCode(postalCodeID);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }

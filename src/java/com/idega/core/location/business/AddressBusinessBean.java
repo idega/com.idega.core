@@ -80,6 +80,19 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
     return code;
   }
+  
+  /**
+   * Change postal code name when only one address is related to the postalcode
+   */
+  public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode,String newName){
+  	java.util.Collection addresses = postalCode.getAddresses();
+  	if(addresses!=null && addresses.size()==1){
+  		postalCode.setName(newName);
+  		postalCode.store();
+  	}
+  	return postalCode;
+  		
+  }
 
 
   /**

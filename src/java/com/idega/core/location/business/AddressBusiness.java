@@ -1,6 +1,9 @@
 package com.idega.core.location.business;
 
+import java.rmi.RemoteException;
+
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.PostalCode;
 
 
 public interface AddressBusiness extends com.idega.business.IBOService
@@ -18,4 +21,5 @@ public interface AddressBusiness extends com.idega.business.IBOService
   * @return The full address string with postal info and country
   */
  public String getFullAddressString(Address address) throws java.rmi.RemoteException;
+ public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode,String newName)throws RemoteException;
 }
