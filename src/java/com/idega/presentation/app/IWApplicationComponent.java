@@ -74,20 +74,28 @@ public class IWApplicationComponent extends Page {
       imagesSet=true;
     }
         Image emptyCell = Table.getTransparentCell(iwc);
-        iwacTable.add(topleft,1,1);
-        iwacTable.add(topright,3,1);
-        iwacTable.add(bottomleft,1,3);
-        iwacTable.add(bottomright,3,3);
+          emptyCell.setWidth(2);
+          emptyCell.setHeight(2);
+        Image tilerCell = (Image) emptyCell.clone();
+          tilerCell.setHeight("100%");
 
+        iwacTable.setBackgroundImage(1,1,topleft);
+        iwacTable.setBackgroundImage(3,1,topright);
+        iwacTable.setBackgroundImage(1,3,bottomleft);
+        iwacTable.setBackgroundImage(3,3,bottomright);
         iwacTable.setBackgroundImage(2,1,top);
         iwacTable.setBackgroundImage(2,3,bottom);
         iwacTable.setBackgroundImage(1,2,left);
         iwacTable.setBackgroundImage(3,2,right);
 
+        iwacTable.add(emptyCell,1,1);
         iwacTable.add(emptyCell,2,1);
+        iwacTable.add(emptyCell,3,1);
+        iwacTable.add(emptyCell,1,3);
         iwacTable.add(emptyCell,2,3);
-        iwacTable.add(emptyCell,1,2);
-        iwacTable.add(emptyCell,3,2);
+        iwacTable.add(emptyCell,3,3);
+        iwacTable.add(tilerCell,1,2);
+        iwacTable.add(tilerCell,3,2);
   }
 
   public void setAlignment(String alignment) {

@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.5 2001/10/18 22:43:01 laddi Exp $
+ * $Id: TreeViewer.java,v 1.6 2001/10/19 00:48:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -143,7 +143,13 @@ public class TreeViewer extends PresentationObjectContainer {
   private PresentationObject getNodeText(ICTreeNode node,boolean nodeIsOpen,IWBundle bundle){
     Link proto = (Link)getLinkPrototype().clone();
     String nodeName = node.getNodeName();
-    proto.setText(nodeName);
+    String name = "";
+
+    java.util.StringTokenizer token = new java.util.StringTokenizer(nodeName," ");
+    while (token.hasMoreTokens())
+      name += token.nextToken() + com.idega.presentation.text.Text.NON_BREAKING_SPACE;
+
+    proto.setText(name);
 
     ICTreeNode parentNode = getParent(node);//change this method to optimize this procedure
 
