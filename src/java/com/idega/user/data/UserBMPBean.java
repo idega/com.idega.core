@@ -1015,19 +1015,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 */
    public Collection ejbFindUsersByYearOfBirth (int minYear, int maxYear)  throws FinderException {
         final IDOQuery  sql = new IDOQuery ();
-        IWTimestamp minStamp = new IWTimestamp(minYear,1,1,0,0,0);
-        IWTimestamp maxStamp = new IWTimestamp(maxYear,12,31,23,59,59);
-        sql.append ("select * from ").append(getTableName());
-        sql.append(" where ");
-        sql.append(getColumnNameDateOfBirth());
-		sql.append(" >= '");
-		sql.append(minStamp.toSQLString());
-		sql.append("'");
+        IWTimestamp minStamp = new IWTimestamp(1,1,minYear);
+        IWTimestamp maxStamp = new IWTimestamp(31,12,maxYear);
+        sql.appendSelectAllFrom(getTableName());
+        sql.appendWhere(getColumnNameDateOfBirth());
+        sql.append(" >= '");
+        sql.appendWithinSingleQuotes(minStamp.toSQLDateString());
 		sql.appendAnd();
 		sql.append(getColumnNameDateOfBirth());
 		sql.append(" <= '");
-		sql.append(maxStamp.toSQLString());
-		sql.append("'");
+		sql.appendWithinSingleQuotes(maxStamp.toSQLDateString());
         return idoFindIDsBySQL (sql.toString ());
     }
 
