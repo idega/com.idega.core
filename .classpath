@@ -39,9 +39,9 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.20.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/snacc/jars/snacc-2.3.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.3.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>

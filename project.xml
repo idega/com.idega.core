@@ -277,19 +277,9 @@
     <dependency>
         <groupId>javaldap</groupId>
         <artifactId>javaldap-server</artifactId>
-        <version>0.20</version>
+        <version>0.3</version>
         <type>jar</type>
         <url>http://codehaus.org/~trygvis/ldap</url>
-        <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
-    <dependency>
-        <groupId>snacc</groupId>
-        <artifactId>snacc</artifactId>
-        <version>2.3</version>
-        <type>jar</type>
-        <url>http://www.alphaworks.ibm.com/tech/snaccforjava</url>
         <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
