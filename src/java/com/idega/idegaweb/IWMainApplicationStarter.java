@@ -151,13 +151,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		File file2 = new File(sfile2);
 		if(file1.exists()){
 			fileName=sfile1;
+			sendStartMessage("Reading Databases from file: "+fileName);
+			sendStartMessage("Starting idega Datastore ConnectionPool");
+			PoolManager.getInstance(fileName,iwma);	
 		}
 		else if(file2.exists()){
 			fileName=sfile2;
+			sendStartMessage("Reading Databases from file: "+fileName);
+			sendStartMessage("Starting idega Datastore ConnectionPool");
+			PoolManager.getInstance(fileName,iwma);	
 		}
-		sendStartMessage("Reading Databases from file: "+fileName);
-		sendStartMessage("Starting idega Datastore ConnectionPool");
-		PoolManager.getInstance(fileName,iwma);	
+		else{
+			sendStartMessage("No db.properties found - setting to databaseless mode and setup mode");
+			iwma.setInDatabaseLessMode(true);
+			iwma.setInSetupMode(true);
+		}
 	}
 	protected void startJDBCDatasourcePool(IWMainApplication iwma){
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
@@ -238,18 +246,27 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		iwStyleManager.getStyleSheet();
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
-		updateClassReferencesInDatabase();
-		updateStartDataInDatabase();
+		if(!application.isInDatabaseLessMode()){
+			updateClassReferencesInDatabase();
+			updateStartDataInDatabase();
+		}
 		startTemporaryBundleStarters();
-		application.startAccessController();
-		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		
+		if(!application.isInDatabaseLessMode()){
+			application.startAccessController();
+		}
+		
+		if(!application.isInDatabaseLessMode()){
+			application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
+		}
 		//if(IWMainApplication.USE_JSF){
 			application.loadViewManager();
 			sendStartMessage("Loaded the ViewManager");
 		//}		
-		
-		application.loadBundles();
+
+		if(!application.isInDatabaseLessMode()){
+			application.loadBundles();
+		}
 
 		executeServices(application);
 		//create ibdomain

@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.125 2005/01/13 21:25:25 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.126 2005/01/13 23:54:06 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/13 21:25:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/13 23:54:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.125 $
+ * @version $Revision: 1.126 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -161,6 +161,9 @@ public class IWMainApplication //{//implements ServletContext{
     private Map windowClassesStaticInstances;
     private Application realJSFApplication;
     private ApplicationProductInfo applicationProductInfo;
+    private boolean inDatabaseLessMode=false;
+    private boolean inSetupMode=false;
+
     
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -1744,5 +1747,28 @@ public class IWMainApplication //{//implements ServletContext{
 	}
 	
 	//End JSF Application implementation
+	
+	
 
+	/**
+	 * Gets if the application is in "database-less" mode, i.e. when the application doesn't know which database to talk to.
+	 * This is set to true when no db.properties is found.
+	 */
+	public boolean isInDatabaseLessMode() {
+		return inDatabaseLessMode;
+	}
+	public void setInDatabaseLessMode(boolean inDatabaseLessMode) {
+		this.inDatabaseLessMode = inDatabaseLessMode;
+	}
+	
+	/**
+	 * Gets if the application is in "setup" mode, i.e. when the application hasn't been configured.
+	 * This is set to true when no db.properties and installation.properties is found.
+	 */
+	public boolean isInSetupMode() {
+		return inSetupMode;
+	}
+	public void setInSetupMode(boolean inSetupMode) {
+		this.inSetupMode = inSetupMode;
+	}
 }

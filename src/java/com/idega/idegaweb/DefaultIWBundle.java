@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.13 2005/01/10 14:38:57 gimmi Exp $
+ * $Id: DefaultIWBundle.java,v 1.14 2005/01/13 23:54:06 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -166,11 +166,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		SystemClassPath.append(File.pathSeparator);
 		SystemClassPath.append(getClassesRealPath());
 		System.setProperty("java.class.path", SystemClassPath.toString());
-		installComponents();
+		if(!getApplication().isInDatabaseLessMode()){
+			installComponents();
+		}
 		try
 		{
-			createDataRecords();
-			registerBlockPermisionKeys();
+			if(!getApplication().isInDatabaseLessMode()){
+				createDataRecords();
+				registerBlockPermisionKeys();
+			}
 		}
 		catch (IDOLookupException e)
 		{
@@ -312,7 +316,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public synchronized void unload()
 	{
-		unload(true);
+		if(getApplication().getSettings().getWriteBundleFilesOnShutdown()){
+			unload(true);
+		}
+		else{
+			unload(false);
+		}
 	}
 	/**
 	 *Unloads all resources for this bundle and stores the state of this bundle if storeState==true
@@ -639,22 +648,21 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public synchronized void storeState()
 	{
-
-		debug("Storing State");
-
+		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
+		debug("Storing State");		
 		propertyList.store();
 		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
 		if(storeResourcesOnStore){
 			this.storeLocalizableStrings();
 			this.storeResourceBundles();
 		}
+
 		Iterator valueIter = getComponentPropertiesListMap().values().iterator();
 		while (valueIter.hasNext())
 		{
 			IWPropertyList element = (IWPropertyList) valueIter.next();
 			element.store();
 		}
-
 	}
 	
 	/**

@@ -40,6 +40,8 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public static boolean DEBUG_FLAG = false;
 	public static boolean CREATE_STRINGS = false;
 	public static boolean CREATE_PROPERTIES = false;
+
+	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		super(application.getPropertiesRealPath(), "idegaweb.pxml", true);
 	}
@@ -298,5 +300,27 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 */
 	public String getCharacterEncoding() {
 		return getProperty(CHARACTER_ENCODING, DEFAULT_CHARACTER_ENCODING);
+	}
+	
+	
+	/**
+	 * Gets if the application should automatically write down bundle property files (.pxml) fiiles on shutdown.
+	 * This defaults to true;
+	 */
+	public boolean getWriteBundleFilesOnShutdown(){
+		String value = getProperty("write_bundle_files_on_shudown");
+		if (value == null) {
+			return true;
+		} else {
+			return Boolean.valueOf(value).booleanValue();
+		}
+	}
+	/**
+	 * Sets if the application should automatically write down bundle property files (.pxml) fiiles on shutdown.
+	 * This defaults to true, but can be specified on startup with setting
+	 * the variable write_bundle_files_on_shudown=false in idegaweb.pxml
+	 */
+	public void setWriteBundleFilesOnShutdown(boolean ifWriteDown){
+		this.setProperty("write_bundle_files_on_shudown", ifWriteDown);
 	}
 }
