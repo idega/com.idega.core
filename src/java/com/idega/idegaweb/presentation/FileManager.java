@@ -477,7 +477,8 @@ public class FileManager extends Block {
 			return l;
 	    }
 	    else{
-	        DownloadLink l = new DownloadLink(file.getName(),file.getAbsolutePath());
+	        DownloadLink l = new DownloadLink(file.getName());
+	        l.setAbsoluteFilePath(file.getAbsolutePath());
 	        /*
 	        Link l = new Link(file.getName(),iwc.getIWMainApplication().getMediaServletURI());
 	        l.addParameter(MediaWritable.PRM_WRITABLE_CLASS,IWMainApplication.getEncryptedClassName(DownloadWriter.class));
