@@ -531,7 +531,7 @@ public class UserGroupBusiness {
       }
       if(!sGroupList.equals("")){
         User user = User.getStaticInstance();
-        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+user._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+User._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
       }
     }
     return null;
