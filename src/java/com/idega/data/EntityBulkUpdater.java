@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.3 2001/08/25 12:24:59 eiki Exp $
+ * $Id: EntityBulkUpdater.java,v 1.4 2001/08/27 12:07:54 haffi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -102,7 +102,7 @@ public class EntityBulkUpdater {
         while (i.hasNext()) {
           GenericEntity e = (GenericEntity)i.next();
           if( relatedEntity != null ){
-            e.removeFrom(relatedEntity);//change to removeFrom(entity,connection)
+            e.removeFrom(relatedEntity,c);
           }
           e.delete(c);
         }

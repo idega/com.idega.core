@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.39 2001/08/25 12:24:14 eiki Exp $
+ * $Id: GenericEntity.java,v 1.40 2001/08/27 12:07:54 haffi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -741,12 +741,13 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
 	public String getIDColumnName(){
-		if (getTableName().endsWith("_")){
-			return getTableName()+"id";
-		}
-		else{
-			return getTableName()+"_id";
-		}
+          String entityName = getEntityName();
+          if (entityName.endsWith("_")){
+                  return entityName+"id";
+          }
+          else{
+                  return entityName+"_id";
+          }
 	}
 
         public static String getLanguageIDColumnName(){
@@ -1029,11 +1030,12 @@ public abstract class GenericEntity implements java.io.Serializable {
   }
 
   /**
-  *Inserts this entity's metadata into the datastore
+  *Inserts/update/removes this entity's metadata into the datastore
   */
   public void updateMetaData()throws SQLException{
     try{
-      DatastoreInterface.getInstance(this).crunchMetaData(this);
+      if(this.getID()!=-1) DatastoreInterface.getInstance(this).crunchMetaData(this);
+      else System.err.println("GenericEntity: updateMetaData() getID = -1 !");
     }
     catch(Exception ex){
       if(ex instanceof SQLException){
@@ -1046,6 +1048,26 @@ public abstract class GenericEntity implements java.io.Serializable {
     }
   }
 
+  /**
+  *Inserts/update/removes this entity's metadata into the datastore
+  */
+  public void insertMetaData()throws SQLException{
+   updateMetaData();
+  }
+  /**
+  *deletes all of this entity's metadata
+  */
+  public void deleteMetaData()throws SQLException{
+    try {
+      DatastoreInterface.getInstance(this).deleteMetaData(this);
+    }
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+    }
+  }
 
     /**
     *Inserts this entity as a record into the datastore
@@ -1061,7 +1083,6 @@ public abstract class GenericEntity implements java.io.Serializable {
       }
     }
   }
-
 
   /*
   public void insert()throws SQLException{
@@ -1275,7 +1296,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			Stmt = conn.createStatement();
                         StringBuffer buffer = new StringBuffer();
                         buffer.append("select * from ");
-                        buffer.append(getTableName());
+                        buffer.append(getEntityName());
                         buffer.append(" where ");
                         buffer.append(getIDColumnName());
                         buffer.append("=");
@@ -1364,11 +1385,11 @@ public abstract class GenericEntity implements java.io.Serializable {
 		Statement Stmt= null;
 		Vector vector = new Vector();
 		String tableToSelectFrom = "";
-		if (entity.getTableName().endsWith("_")){
-			tableToSelectFrom = entity.getTableName()+this.getTableName();
+		if (entity.getEntityName().endsWith("_")){
+			tableToSelectFrom = entity.getEntityName()+this.getEntityName();
 		}
 		else{
-			tableToSelectFrom = entity.getTableName()+"_"+this.getTableName();
+			tableToSelectFrom = entity.getEntityName()+"_"+this.getEntityName();
 		}
 
 		try {
@@ -1416,60 +1437,60 @@ public abstract class GenericEntity implements java.io.Serializable {
 	*Finds all instances of the current object in the otherEntity
 	**/
 	public GenericEntity[] findAssociated(GenericEntity otherEntity)throws SQLException{
-		return otherEntity.findAll("select * from "+otherEntity.getTableName()+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
+		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
 	}
 
 	public GenericEntity[] findAssociatedOrdered(GenericEntity otherEntity,String column_name)throws SQLException{
-		return otherEntity.findAll("select * from "+otherEntity.getTableName()+" where "+this.getIDColumnName()+"='"+this.getID()+"' order by "+column_name+"");
+		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"' order by "+column_name+"");
 	}
 
 	public GenericEntity[] findAll()throws SQLException{
-		return findAll("select * from "+getTableName());
+		return findAll("select * from "+getEntityName());
 	}
 
 
 	public GenericEntity[] findAllOrdered(String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" order by "+orderByColumnName);
+		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName);
 	}
 
 	public GenericEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
+		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
 
  	public GenericEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
+		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 	}
 
 	public GenericEntity[] findAllByColumnDescendingOrdered(String columnName, String toFind, String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName+" desc");
+		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName+" desc");
 	}
 
  	public GenericEntity[] findAllByColumnDescendingOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName+" desc");
+		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName+" desc");
 	}
 
  	public GenericEntity[] findAllDescendingOrdered(String orderByColumnName)throws SQLException{
-		return findAll("select * from "+getTableName()+" order by "+orderByColumnName+" desc");
+		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName+" desc");
 	}
 
 	public GenericEntity[] findAllByColumn(String columnName, String toFind)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"'");
+		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"'");
 	}
 
 	public GenericEntity[] findAllByColumn(String columnName, int toFind)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+Integer.toString(toFind)+"'");
+		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+Integer.toString(toFind)+"'");
 	}
 
         public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
- 		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
+ 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
  	}
 
 	public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2)throws SQLException{
-		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
+		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
 
         public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
-		return getNumberOfRecords("select count(*) from "+getTableName()+" where "+columnName+" like '"+columnValue+"'");
+		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" like '"+columnValue+"'");
 	}
 
         public int getNumberOfRecordsRelated(GenericEntity entity)throws SQLException{
@@ -1487,7 +1508,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	}
 
         public int getNumberOfRecords()throws SQLException{
-            return getNumberOfRecords("select count(*) from "+getTableName());
+            return getNumberOfRecords("select count(*) from "+getEntityName());
         }
 
         public int getNumberOfRecords(String CountSQLString)throws SQLException {
@@ -1495,15 +1516,15 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
         public int getNumberOfRecords(String columnName, String Operator ,String columnValue)throws SQLException{
-		return getNumberOfRecords("select count(*) from "+getTableName()+" where "+columnName+" "+Operator+" "+columnValue);
+		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" "+Operator+" "+columnValue);
 	}
 
         public int getMaxColumnValue(String columnName)throws SQLException {
-            return getIntTableValue("select max("+columnName+") from "+getTableName());
+            return getIntTableValue("select max("+columnName+") from "+getEntityName());
         }
 
         public int getMaxColumnValue(String columnToGetMaxFrom, String columnCondition, String columnConditionValue)throws SQLException {
-            return getIntTableValue("select max("+columnToGetMaxFrom+") from "+getTableName()+" where "+columnCondition+" = '"+columnConditionValue+"'");
+            return getIntTableValue("select max("+columnToGetMaxFrom+") from "+getEntityName()+" where "+columnCondition+" = '"+columnConditionValue+"'");
         }
 
         public int getIntTableValue(String CountSQLString)throws SQLException {
@@ -1783,6 +1804,35 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 	}
 
+	/**
+	**Default remove behavior with a many-to-many relationship
+        ** deletes only one line in middle table if the genericentity wa consructed with a value
+	** Takes in a connection but does not close it.
+        **/
+	protected void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException{
+		Statement Stmt= null;
+                String qry = "";
+		try{
+                  int i = 0;
+                  Stmt = conn.createStatement();
+
+                  if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
+                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'";
+                  else// just removing this particular one
+                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
+
+                  //  System.out.println("GENERIC ENTITY: "+ qry);
+                    i = Stmt.executeUpdate(qry);
+
+                }
+		finally{
+                  if(Stmt != null){
+                          Stmt.close();
+                  }
+		}
+
+	}
+
         public void removeFrom(GenericEntity[] entityToRemoveFrom)throws SQLException{
 
 		Connection conn= null;
@@ -1940,8 +1990,8 @@ public abstract class GenericEntity implements java.io.Serializable {
       public void addManyToManyRelationShip(String relatingEntityClassName){
             String relationShipTableName;
             try{
-              String tableName1 = ((GenericEntity)getClass().newInstance()).getTableName();
-              String tableName2 = ((GenericEntity)Class.forName(relatingEntityClassName).newInstance()).getTableName();
+              String tableName1 = ((GenericEntity)getClass().newInstance()).getEntityName();
+              String tableName2 = ((GenericEntity)Class.forName(relatingEntityClassName).newInstance()).getEntityName();
 
               relationShipTableName = StringHandler.concatAlphabetically(tableName1,tableName2);
               addManyToManyRelationShip(relatingEntityClassName,relationShipTableName);
@@ -2136,15 +2186,13 @@ public abstract class GenericEntity implements java.io.Serializable {
 
     if( theMetaDataAttributes.get(metaDataKey) != null ) {
       deleteMetaDataVector.add(metaDataKey);
+      if( insertMetaDataVector != null ) insertMetaDataVector.remove(metaDataKey);
+      if( updateMetaDataVector != null ) updateMetaDataVector.remove(metaDataKey);
       metaDataHasChanged(true);
 
       return true;
     }
     else return false;
-  }
-
-  public boolean deleteMetaData(String metaDataKey){
-   return removeMetaData(metaDataKey);
   }
 
   public Hashtable getMetaDataAttributes(){

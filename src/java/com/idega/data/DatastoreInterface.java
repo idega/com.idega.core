@@ -185,7 +185,7 @@ public abstract class DatastoreInterface{
   public void createEntityRecord(GenericEntity entity)throws Exception{
       //System.out.println("Trying to create record for "+entity.getClass().getName()+" tablename: "+entity.getTableName());
 
-      if(!doesTableExist(entity,entity.getTableName())){
+      if(!doesTableExist(entity,entity.getEntityName())){
 
           TransactionManager trans=null;
           boolean canCommit=false;
@@ -211,7 +211,7 @@ public abstract class DatastoreInterface{
 
                 if(alreadyInCreation.contains(entity.getClass().getName())){
                   //try{
-                   if(!this.doesTableExist(entity,entity.getTableName())){
+                   if(!this.doesTableExist(entity,entity.getEntityName())){
                       createTable(entity);
                       createTrigger(entity);
                       try{
@@ -233,7 +233,7 @@ public abstract class DatastoreInterface{
                 else{
                   alreadyInCreation.add(entity.getClass().getName());
                   createRefrencedTables(entity);
-                  if(!this.doesTableExist(entity,entity.getTableName())){
+                  if(!this.doesTableExist(entity,entity.getEntityName())){
                     createTable(entity);
                     createTrigger(entity);
                     try{
@@ -282,7 +282,7 @@ public abstract class DatastoreInterface{
 
 
   protected String getCreationStatement(GenericEntity entity){
-		String returnString = "create table "+entity.getTableName()+"(";
+		String returnString = "create table "+entity.getEntityName()+"(";
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
 
@@ -331,7 +331,7 @@ public abstract class DatastoreInterface{
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("drop table "+entity.getTableName());
+			int i = Stmt.executeUpdate("drop table "+entity.getEntityName());
 		}
 		finally{
 			if(Stmt != null){
@@ -471,7 +471,7 @@ public abstract class DatastoreInterface{
               try{
                 GenericEntity entity1 = (GenericEntity)relClass.newInstance();
                 createEntityRecord(entity1);
-                createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
+                createForeignKey(entity,tableName,column,entity1.getEntityName(),entity1.getIDColumnName());
               }
               catch(Exception e){
                 e.printStackTrace();
@@ -489,7 +489,7 @@ public abstract class DatastoreInterface{
           if(!this.doesTableExist(entity,tableName)){
             String creationStatement = "CREATE TABLE "+tableName+" ( "+entity.getIDColumnName() + " INTEGER NOT NULL,"+relatingEntity.getIDColumnName() + " INTEGER NOT NULL , PRIMARY KEY("+entity.getIDColumnName() + "," + relatingEntity.getIDColumnName() +") )";
             executeUpdate(entity,creationStatement);
-            createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getTableName());
+            createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getEntityName());
             createForeignKey(entity,tableName,relatingEntity.getIDColumnName(),relatingEntity.getTableName());
           }*/
         }
@@ -544,9 +544,9 @@ public abstract class DatastoreInterface{
         //try{
           Class relationShipClass = entity.getRelationShipClass(names[i]);
           if (relationShipClass!=null) {
-            String table1=entity.getTableName();
+            String table1=entity.getEntityName();
             GenericEntity entityToReference = (GenericEntity)relationShipClass.newInstance();
-            String tableToReference=entityToReference.getTableName();
+            String tableToReference=entityToReference.getEntityName();
             if(!doesTableExist(entity,tableToReference)){
               createEntityRecord(entityToReference);
             }
@@ -700,7 +700,7 @@ public abstract class DatastoreInterface{
                   conn = entity.getConnection();
                   //Stmt = conn.createStatement();
                   //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
-                  String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+                  String statement = "insert into "+entity.getEntityName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
                   //System.out.println(statement);
                   Stmt = conn.prepareStatement (statement);
                   setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
@@ -795,9 +795,7 @@ public abstract class DatastoreInterface{
   }
 
   protected void crunchMetaData(GenericEntity entity)throws SQLException{
-            System.out.println("CRUNCH!");
     if( entity.metaDataHasChanged() ){//else do nothing
-      System.out.println("CRUNCHING");
       int length;
       MetaData data;
 
@@ -816,22 +814,22 @@ public abstract class DatastoreInterface{
           updater.add(data,EntityBulkUpdater.insert);
         }
       }
-      else       System.out.println("insert is null");
+      //else       System.out.println("insert is null");
 
       if( update!= null ){
         length = update.size();
         System.out.println("update size: "+length);
         for (int i = 0; i < length; i++) {
-          System.out.println("updating: "+i);
+          //System.out.println("updating: "+i);
           data = new MetaData();//do not construct with id to avoid database access
           if(ids==null) System.out.println("ids is null");
           data.setID((Integer) ids.get(update.elementAt(i)));
-          System.out.println("ID: "+data.getID());
+          //System.out.println("ID: "+data.getID());
           data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get((String) update.elementAt(i)));
           updater.add(data,EntityBulkUpdater.update);
         }
       }
-      else       System.out.println("update is null");
+      //else       System.out.println("update is null");
 
       if( delete!= null ){
         length = delete.size();
@@ -841,10 +839,10 @@ public abstract class DatastoreInterface{
           updater.add(data,EntityBulkUpdater.delete);
         }
       }
-      else       System.out.println("delete is null");
+      //else       System.out.println("delete is null");
 
       updater.execute();
-
+      entity.metaDataHasChanged(false);//so we don't do anything next time
 
     }
 
@@ -858,7 +856,7 @@ public abstract class DatastoreInterface{
 
     try{
 
-      statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
+      statement = "update " + entity.getEntityName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
       System.out.println(statement);
       System.out.println("In insertBlob() in DatastoreInterface");
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
@@ -1006,7 +1004,7 @@ public abstract class DatastoreInterface{
 			conn = entity.getConnection();
 //			Stmt = conn.createStatement();
 
-                                String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                                String statement = "update "+entity.getEntityName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
                                 //System.out.println(statement);
 		                Stmt = conn.prepareStatement (statement);
                                 setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
@@ -1033,7 +1031,7 @@ public abstract class DatastoreInterface{
           executeBeforeUpdate(entity);
 		PreparedStatement Stmt = null;
 		try {
-                  String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                  String statement = "update "+entity.getEntityName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
                   Stmt = conn.prepareStatement (statement);
                   setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
                   Stmt.execute();
@@ -1054,7 +1052,7 @@ public abstract class DatastoreInterface{
       PreparedStatement Stmt = null;
       ResultSet RS = null;
       try {
-        String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+        String statement = "insert into "+entity.getEntityName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
         //System.out.println(statement);
         Stmt = conn.prepareStatement (statement);
         setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
@@ -1079,7 +1077,17 @@ public abstract class DatastoreInterface{
       try{
               conn = entity.getConnection();
               Stmt = conn.createStatement();
-              int i = Stmt.executeUpdate("delete from "+entity.getEntityName()+" where "+entity.getIDColumnName()+"="+entity.getID());
+              StringBuffer statement = new StringBuffer();
+              statement.append("delete from  ");
+              statement.append(entity.getEntityName());
+              statement.append(" where ");
+              statement.append(entity.getIDColumnName());
+              statement.append("=");
+              statement.append(entity.getID());
+              Stmt.executeUpdate(statement.toString());
+          if( entity.hasMetaDataRelationship() ){
+            deleteMetaData(entity,conn);
+          }
 
       }
       finally{
@@ -1099,8 +1107,18 @@ public abstract class DatastoreInterface{
     Statement Stmt= null;
     try {
       Stmt = conn.createStatement();
-      String statement = "delete from  "+entity.getTableName()+" where "+entity.getIDColumnName()+"="+entity.getID();
-      Stmt.executeUpdate(statement);
+      StringBuffer statement = new StringBuffer();
+      statement.append("delete from  ");
+      statement.append(entity.getEntityName());
+      statement.append(" where ");
+      statement.append(entity.getIDColumnName());
+      statement.append("=");
+      statement.append(entity.getID());
+      Stmt.executeUpdate(statement.toString());
+
+      if( entity.hasMetaDataRelationship() ){
+        deleteMetaData(entity,conn);
+      }
     }
     finally{
             if(Stmt != null){
@@ -1109,5 +1127,92 @@ public abstract class DatastoreInterface{
     }
     executeAfterInsert(entity);
     entity.setEntityState(entity.STATE_DELETED);
+
+  }
+
+  public void deleteMetaData(GenericEntity entity, Connection conn)throws Exception{
+    Statement Stmt = null;
+    Statement stmt2 = null;
+    try{
+      MetaData metadata = (MetaData) GenericEntity.getStaticInstance(MetaData.class);
+      Stmt = conn.createStatement();
+      String middletable = entity.getNameOfMiddleTable(metadata,entity);
+      String metadataIdColumn = metadata.getIDColumnName();
+      String metadataname = metadata.getEntityName();
+
+      //get all the id's of the metadata
+      StringBuffer statement = new StringBuffer();
+      statement.append("select ");
+      statement.append(metadataIdColumn);
+      statement.append(" from ");
+      statement.append(middletable);
+      statement.append(',');
+      statement.append(metadataname);
+      statement.append(" where ");
+      statement.append(middletable);
+      statement.append('.');
+      statement.append(entity.getIDColumnName());
+      statement.append('=');
+      statement.append(entity.getID());
+      statement.append(" and ");
+      statement.append(middletable);
+      statement.append('.');
+      statement.append(metadataIdColumn);
+      statement.append('=');
+      statement.append(metadataname);
+      statement.append('.');
+      statement.append(metadataIdColumn);
+
+      ResultSet RS = Stmt.executeQuery(statement.toString());
+
+      stmt2 = conn.createStatement();
+      StringBuffer statement2;
+      //delete thos id's
+      while(RS.next()){
+        statement2 = new StringBuffer();
+        statement2.append("delete from ");
+        statement2.append(metadataname);
+        statement2.append(" where ");
+        statement2.append(metadataIdColumn);
+        statement2.append('=');
+        statement2.append(RS.getString(1));
+        stmt2.executeUpdate(statement2.toString());
+      }
+
+      if( RS!=null ) RS.close();
+
+      //delete from the middle table
+      Stmt = conn.createStatement();
+      statement = new StringBuffer();
+      statement.append("delete from ");
+      statement.append(middletable);
+      statement.append(" where ");
+      statement.append(entity.getIDColumnName());
+      statement.append('=');
+      statement.append(entity.getID());
+      Stmt.executeUpdate(statement.toString());
     }
+    finally{
+      if(Stmt != null){
+        Stmt.close();
+      }
+      if(stmt2 != null){
+        stmt2.close();
+      }
+    }
+  }
+
+  public void deleteMetaData(GenericEntity entity)throws Exception{
+    Connection conn= null;
+    try{
+      conn = entity.getConnection();
+      deleteMetaData(entity,conn);
+    }
+    finally{
+      if (conn != null){
+        entity.freeConnection(conn);
+      }
+    }
+  }
+
   }
