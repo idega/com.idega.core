@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.36 2003/04/03 20:36:55 laddi Exp $
+ * $Id: Table.java,v 1.37 2003/05/26 11:10:20 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -931,8 +931,31 @@ public class Table extends PresentationObjectContainer {
 					//not implemented
 				}
 				else {
+					String sPadding = getAttribute("cellpadding");
+					int iPadding = (sPadding != null)? Integer.parseInt(sPadding):0;
+					int iWidth = 1;
+					int iHeight = 1;
+					boolean withInPercentsOrNoPadding = false;
+					boolean heightInPercentsOrNoPadding = false;
+					
+					if(iPadding!=0){
+						try {
+							iWidth = Integer.parseInt(width);
+						} catch (NumberFormatException e) {
+							withInPercentsOrNoPadding = true;
+						}
+						
+						
+						try {
+							iHeight = Integer.parseInt(height);
+						} catch (NumberFormatException e1) {
+							heightInPercentsOrNoPadding = true;
+						}
+					}
+					
+					
 					//print(Text.getNonBrakingSpace().getText());
-					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\">");
+					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(iWidth-2*iPadding))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(iHeight-2*iPadding))+"\" alt=\"\">");
 				}
 			}
 		}
