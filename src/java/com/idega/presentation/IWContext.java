@@ -122,6 +122,7 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
+		//MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
@@ -130,6 +131,7 @@ implements IWUserContext, IWApplicationContext {
 				e.printStackTrace();
 			}
 		}
+		//CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE PREFERRED ENCODING!
 		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
 	}
 	
