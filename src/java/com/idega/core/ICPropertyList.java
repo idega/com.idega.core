@@ -5,7 +5,6 @@
 
 package com.idega.core;
 
-
 import java.util.List;
 import java.util.Iterator;
 import java.io.IOException;
@@ -14,23 +13,20 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import com.idega.xml.XMLDocument;
+import com.idega.xml.XMLElement;
+import com.idega.xml.XMLException;
+import com.idega.xml.XMLParser;
+import com.idega.xml.XMLOutput;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 0.8 - Under development
-*/
-public class ICPropertyList{
-
-
-
-  private Document xmlDocument;
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 0.8 - Under development
+ */
+public class ICPropertyList {
+  private XMLDocument xmlDocument;
   private File xmlFile;
-  private Element rootElement;
+  private XMLElement rootElement;
   //private static String rootElementTag = "plist";
   private static String propertyString = "property";
   private static String keyString = "key";
@@ -58,7 +54,7 @@ public class ICPropertyList{
    }
 
    public void setProperty(String key, String value,String type){
-      Element property = findPropertyElement(key);
+      XMLElement property = findPropertyElement(key);
       if(property==null){
         addProperty(key,value,type);
       }
@@ -82,18 +78,18 @@ public class ICPropertyList{
   }
 
    public void addProperty(String key, String value,String type){
-      Element property = new Element(propertyString);
-      Element keyElement = new Element(keyString);
+      XMLElement property = new XMLElement(propertyString);
+      XMLElement keyElement = new XMLElement(keyString);
       keyElement.addContent(key);
       property.addContent(keyElement);
       setProperty(property,value,type);
       rootElement.addContent(property);
    }
 
-   private void setProperty(Element property, String value,String type){
-      Element valueElement = new Element(valueString);
+   private void setProperty(XMLElement property, String value,String type){
+      XMLElement valueElement = new XMLElement(valueString);
       valueElement.addContent(value);
-      Element typeElement = new Element(typeString);
+      XMLElement typeElement = new XMLElement(typeString);
       typeElement.addContent(type);
       property.addContent(valueElement);
       property.addContent(typeElement);
@@ -115,13 +111,13 @@ public class ICPropertyList{
    /**
     * Returns null if no match
     */
-   private Element findPropertyElement(String key){
+   private XMLElement findPropertyElement(String key){
         List list = rootElement.getChildren();
         Iterator iter = list.iterator();
 
         while(iter.hasNext()){
-          Element property = (Element)iter.next();
-          Element keyElement = property.getChild(keyString);
+          XMLElement property = (XMLElement)iter.next();
+          XMLElement keyElement = property.getChild(keyString);
           if(keyElement.getText().equalsIgnoreCase(key)){
               return property;
           }
@@ -131,12 +127,12 @@ public class ICPropertyList{
 
    public void load(String path){
       xmlFile = new File(path);
-      SAXBuilder builder = new SAXBuilder(false);
+      XMLParser parser = new XMLParser(false);
       xmlFile = new File(path);
       try{
-      xmlDocument = builder.build(xmlFile);
+      xmlDocument = parser.parse(xmlFile);
       }
-      catch(JDOMException e){
+      catch(XMLException e){
         e.printStackTrace();
       }
       rootElement = xmlDocument.getRootElement();
@@ -154,8 +150,8 @@ public class ICPropertyList{
     public void store(OutputStream stream){
 
       try{
-        XMLOutputter outputter = new XMLOutputter();
-        outputter.output(xmlDocument,stream);
+        XMLOutput output = new XMLOutput();
+        output.output(xmlDocument,stream);
       }
       catch(IOException e){
         e.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.8 2001/11/23 16:55:24 gummi Exp $
+ * $Id: Table.java,v 1.9 2001/12/03 16:20:05 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ public class Table extends PresentationObjectContainer {
 
   private boolean cellsAreMerged;
 
-  private static final String COLOR_ATTRIBUTE="bgcolor";
+  private static final String COLOR_ATTRIBUTE = "bgcolor";
 
 
   private boolean addLineTop = false;
@@ -83,16 +83,16 @@ public class Table extends PresentationObjectContainer {
   }
 
   /**
-  *Add an object inside this Table in cell with coordinates 1,1 - same as the add() function
-  *@deprecated replaced by the add function
-  */
+   * Add an object inside this Table in cell with coordinates 1,1 - same as the add() function
+   * @deprecated replaced by the add function
+   */
   public void addObject(PresentationObject modObject){
     addObject( modObject,1,1);
   }
 
   /**
-  *Add an object inside this Table in cell with coordinates 1,1
-  */
+   * Add an object inside this Table in cell with coordinates 1,1
+   */
   public void add(PresentationObject modObject){
     add( modObject,1,1);
   }
@@ -1177,13 +1177,17 @@ public boolean isEmpty(int x, int y){
     return obj;
   }
 
-  public PresentationObjectContainer containerAt(int x,int y){
-    PresentationObjectContainer cont = theObjects[x-1][y-1];
-    if(cont==null){
-      cont = new PresentationObjectContainer();
-      theObjects[x-1][y-1] = cont ;
-      cont.setParentObject(this);
+  public PresentationObjectContainer containerAt(int x,int y) {
+    PresentationObjectContainer cont = null;
+    try {
+      cont = theObjects[x-1][y-1];
+      if (cont == null) {
+        cont = new PresentationObjectContainer();
+        theObjects[x-1][y-1] = cont ;
+        cont.setParentObject(this);
+      }
     }
+    catch(ArrayIndexOutOfBoundsException e) {}
     return cont;
   }
 
@@ -1233,7 +1237,8 @@ public boolean isEmpty(int x, int y){
    */
   public void lock(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
-    cont.lock();
+    if (cont != null)
+      cont.lock();
   }
 
   /**
@@ -1241,7 +1246,8 @@ public boolean isEmpty(int x, int y){
    */
   public void unlock(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
-    cont.unlock();
+    if (cont != null)
+      cont.unlock();
   }
 
   /**
@@ -1249,7 +1255,10 @@ public boolean isEmpty(int x, int y){
    */
   public boolean isLocked(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
-    return(cont.isLocked());
+    if (cont != null)
+      return(cont.isLocked());
+    else
+      return(true);
   }
 
   /**
@@ -1257,7 +1266,8 @@ public boolean isEmpty(int x, int y){
    */
   public void setLabel(String label, int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
-    cont.setLabel(label);
+    if (cont != null)
+      cont.setLabel(label);
   }
 
   /**
@@ -1265,7 +1275,10 @@ public boolean isEmpty(int x, int y){
    */
   public String getLabel(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
-    return(cont.getLabel());
+    if (cont != null)
+      return(cont.getLabel());
+    else
+      return(null);
   }
 
 

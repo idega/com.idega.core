@@ -14,11 +14,11 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import com.idega.xml.XMLDocument;
+import com.idega.xml.XMLElement;
+import com.idega.xml.XMLException;
+import com.idega.xml.XMLParser;
+import com.idega.xml.XMLOutput;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -28,9 +28,9 @@ public class ICProperty{
 
 
 
-  private Document xmlDocument;
+  private XMLDocument xmlDocument;
   private File xmlFile;
-  private Element rootElement;
+  private XMLElement rootElement;
   //private static String rootElementTag = "plist";
   private static String propertyString = "property";
   private static String keyString = "key";
@@ -58,7 +58,7 @@ public class ICProperty{
    }
 
    public void setProperty(String key, String value,String type){
-      Element property = findPropertyElement(key);
+      XMLElement property = findPropertyElement(key);
       if(property==null){
         addProperty(key,value,type);
       }
@@ -82,18 +82,18 @@ public class ICProperty{
   }
 
    public void addProperty(String key, String value,String type){
-      Element property = new Element(propertyString);
-      Element keyElement = new Element(keyString);
+      XMLElement property = new XMLElement(propertyString);
+      XMLElement keyElement = new XMLElement(keyString);
       keyElement.addContent(key);
       property.addContent(keyElement);
       setProperty(property,value,type);
       rootElement.addContent(property);
    }
 
-   private void setProperty(Element property, String value,String type){
-      Element valueElement = new Element(valueString);
+   private void setProperty(XMLElement property, String value,String type){
+      XMLElement valueElement = new XMLElement(valueString);
       valueElement.addContent(value);
-      Element typeElement = new Element(typeString);
+      XMLElement typeElement = new XMLElement(typeString);
       typeElement.addContent(type);
       property.addContent(valueElement);
       property.addContent(typeElement);
@@ -103,30 +103,34 @@ public class ICProperty{
       return findPropertyElement(key).getChild(typeString).getText();
    }
 
-   public String getProperty(String key){
-      try{
-        return findPropertyElement(key).getChild(valueString).getText();
-      }
-      catch(NullPointerException ex){
-        return null;
-      }
-   }
+  /**
+   *
+   */
+  public String getProperty(String key) {
+    try {
+      return(findPropertyElement(key).getChild(valueString).getText());
+    }
+    catch(NullPointerException ex) {
+      return(null);
+    }
+  }
 
-   /**
-    * Returns null if no match
-    */
-   private Element findPropertyElement(String key){
-        List list = rootElement.getChildren();
-        Iterator iter = list.iterator();
+  /**
+   * Returns null if no match
+   */
+  private XMLElement findPropertyElement(String key){
+    List list = rootElement.getChildren();
+    Iterator iter = list.iterator();
 
-        while(iter.hasNext()){
-          Element property = (Element)iter.next();
-          Element keyElement = property.getChild(keyString);
-          if(keyElement.getText().equalsIgnoreCase(key)){
-              return property;
-          }
-        }
-        return null;
+    while(iter.hasNext()){
+      XMLElement property = (XMLElement)iter.next();
+      XMLElement keyElement = property.getChild(keyString);
+      if(keyElement.getText().equalsIgnoreCase(key)){
+        return(property);
+      }
+    }
+
+    return(null);
    }
 
 
