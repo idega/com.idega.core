@@ -3,7 +3,7 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 package com.idega.presentation.ui;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -381,13 +381,14 @@ public class SelectionBox extends InterfaceObject
 	public MenuElement getMenuElement(String ElementValue)
 	{
 		MenuElement theReturn = new MenuElement();
-		for (Enumeration e = theElements.elements(); e.hasMoreElements();)
+		Iterator iter = theElements.iterator();
+		while (iter.hasNext())
 		{
-			MenuElement tempobj = (MenuElement) e.nextElement();
+			MenuElement tempobj = (MenuElement) iter.next();
 			if (tempobj.getValue().equals(ElementValue))
-			{
-				theReturn = tempobj;
-			}
+				{
+					theReturn = tempobj;
+				}
 		}
 		return theReturn;
 	}
@@ -428,9 +429,10 @@ public class SelectionBox extends InterfaceObject
 				if (getInterfaceStyle().equals("default"))
 				{
 					println("<select name=\"" + getName() + "\" " + getAttributeString() + " " + multipleString + " >");
-					for (Enumeration e = theElements.elements(); e.hasMoreElements();)
+					Iterator iter = theElements.iterator();
+					while (iter.hasNext())
 					{
-						MenuElement tempobj = (MenuElement) e.nextElement();
+						MenuElement tempobj = (MenuElement) iter.next();
 						if (allSelected)
 							tempobj.setSelected(true);
 						tempobj._print(iwc);
@@ -449,9 +451,12 @@ public class SelectionBox extends InterfaceObject
 				if (getInterfaceStyle().equals("default"))
 				{
 					println("<select name=\"" + getName() + "\" " + getAttributeString() + " >");
-					for (Enumeration e = theElements.elements(); e.hasMoreElements();)
+					Iterator iter = theElements.iterator();
+					while (iter.hasNext())
 					{
-						MenuElement tempobj = (MenuElement) e.nextElement();
+						MenuElement tempobj = (MenuElement) iter.next();
+						if (allSelected)
+							tempobj.setSelected(true);
 						tempobj._print(iwc);
 					}
 					println("</select>");
