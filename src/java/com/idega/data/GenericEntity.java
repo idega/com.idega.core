@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.5 2001/05/07 22:12:15 eiki Exp $
+ * $Id: GenericEntity.java,v 1.6 2001/05/07 22:41:31 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -618,26 +618,30 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 	protected String getAllColumnsAndQuestionMarks(){
-		String returnString="";
+		StringBuffer returnString= new StringBuffer("");
                 String[] names = getColumnNames();
+                String questionmark = "=?";
+
 		for(int i=0;i<names.length;i++){
                 //for (Enumeration e = columns.keys(); e.hasMoreElements();){
 		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 			//String ColumnName = (String)e.nextElement();
                         String ColumnName = names[i];
-                        //debug eiki until Blobwrapper works well
-			//if ( (!isNull(ColumnName) ){
-                          if ( (!isNull(ColumnName)) && (!ColumnName.equalsIgnoreCase("image_value")) ){
-				if (returnString.equals("")){
-					returnString = returnString + ColumnName + "=?";
+
+			if ( !isNull(ColumnName) ){
+				if (returnString.toString().equals("")){
+					returnString.append(ColumnName);
+                                        returnString.append(questionmark);
 				}
 				else{
-					returnString = returnString + "," + ColumnName + "=?";
+					returnString.append(',');
+                                        returnString.append(ColumnName);
+                                        returnString.append(questionmark);;
 				}
 			}
 		}
 
-		return returnString;
+		return returnString.toString();
 	}
 
 
