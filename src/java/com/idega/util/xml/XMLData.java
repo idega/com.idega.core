@@ -15,6 +15,8 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.Storable;
+import com.idega.io.Writer;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
@@ -33,7 +35,7 @@ import com.idega.xml.XMLParser;
  * @version 1.0
  * Created on May 22, 2003
  */
-public class XMLData {
+public class XMLData implements Storable {
   
   private final String DEFAULT_ROOT = "default_root";
   
@@ -285,6 +287,10 @@ public class XMLData {
   */
   public void setXmlFileId(int i) {
    xmlFileId = i;
+  }
+  
+  public Object write(Writer writer) {
+  	return writer.write(this);
   }
 
 }
