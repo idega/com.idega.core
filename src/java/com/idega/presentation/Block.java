@@ -234,6 +234,9 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     }
   }
 
+  /**
+   * The default implementation for the print function for Blocks. This implementation is final and therefore can not be overrided.
+   */
   public final void print(IWContext iwc)throws Exception{
     if(this.isCacheable()){
       if(isCacheValid(iwc)){

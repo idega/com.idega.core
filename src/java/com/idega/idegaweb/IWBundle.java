@@ -20,8 +20,14 @@ import com.idega.data.IDOFinderException;
 import com.idega.data.EntityFinder;
 
 /**
+ * A class to serve as a wrapper for an idegaWeb Bundle.
+ * <br>
+ * <br>
+ * An idegaWeb Bundle is a wrapper for contained components and their properties and resources.
+ * <br>
+ * <br>
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.0a1- Under development
+*@version 1.0
 */
 public class IWBundle implements java.lang.Comparable{
 

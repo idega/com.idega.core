@@ -28,13 +28,13 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 
 /**
  * A class to serve as the context of a user request in an idegaWeb application.
- *
+ * <br>
  * This class gives access to User specific information and Application specific information.
  * <br>
  * An instance of this class should be used under the interfaces com.idega.idegaweb.IWUserContext and
  * com.idega.idegaweb.IWApplicationContext where it is applicable (i.e. when only working with User scoped
  * functionality or Application scoped functionality).
- *
+ *<br>
  *
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
