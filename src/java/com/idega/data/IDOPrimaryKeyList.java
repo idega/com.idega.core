@@ -242,11 +242,11 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				List placeHolderValues = initialQuery.getValues();
 			    if(placeHolderValues==null || placeHolderValues.isEmpty()){
 				    Stmt = conn.createStatement();
-				    RS = Stmt.executeQuery(initialQuery.toString(true));
+				    RS = Stmt.executeQuery(initialQuery.toString());
 				}
 				// use PreparedStatement
 				else{
-				    Stmt = conn.prepareStatement(initialQuery.toString());
+				    Stmt = conn.prepareStatement(initialQuery.toString(true));
 				    DatastoreInterface dsi = DatastoreInterface.getInstance(_entity);
 				    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
 				    	RS = ((PreparedStatement)Stmt).executeQuery();
@@ -408,11 +408,11 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    List placeHolderValues = subsetQuery.getValues();
 		    if(placeHolderValues==null || placeHolderValues.isEmpty()){
 			    Stmt = conn.createStatement();
-			    RS = Stmt.executeQuery(subsetQuery.toString(true));
+			    RS = Stmt.executeQuery(subsetQuery.toString());
 			}
 			// use PreparedStatement
 			else{
-			    Stmt = conn.prepareStatement(subsetQuery.toString());
+			    Stmt = conn.prepareStatement(subsetQuery.toString(true));
 			    DatastoreInterface dsi = DatastoreInterface.getInstance(_entity);
 			    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
 			    	RS = ((PreparedStatement)Stmt).executeQuery();
