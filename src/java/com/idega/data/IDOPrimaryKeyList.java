@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.RandomAccess;
 import java.util.Vector;
 
 import javax.ejb.FinderException;
@@ -17,6 +18,7 @@ import javax.ejb.FinderException;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 import com.idega.util.Timer;
 
 /**
@@ -31,6 +33,7 @@ import com.idega.util.Timer;
 public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	private SelectQuery _sqlQuery;
+	private Collection _primaryKeyList;
 	private GenericEntity _entity;
 	private Class allowedPrimaryKeyClass; // varaable set in the initialize method where it is fetched ones from the variable _entity for optimizing reasons
 	private String pkColumnName;
@@ -81,6 +84,17 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize) throws IDOFinderException {
 		_sqlQuery = sqlQuery;
+		_primaryKeyList = null;
+//		_Stmt = Stmt;
+//		_RS = RS;
+		_entity = entity;
+		_prefetchSize = prefetchSize;
+		initialize();
+    }
+	
+	public IDOPrimaryKeyList(Collection primaryKeyList, GenericEntity entity, int prefetchSize) throws IDOFinderException {
+		_sqlQuery = null;
+		_primaryKeyList = primaryKeyList;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
@@ -131,72 +145,78 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		
 		sqlQueryTable = new Table(_entity);
 		
-		SelectQuery initialQuery = (SelectQuery)_sqlQuery.clone();
-		initialQuery.addOrder(sqlQueryTable,pkColumnName,true);
-		initialQuery.removeAllColumns();
-		initialQuery.addColumn(sqlQueryTable,pkColumnName);
-		
-		Connection conn = null;
-		Statement Stmt = null;
-		try
-		{
-			conn = _entity.getConnection(_entity.getDatasource());
-			Stmt = conn.createStatement();
-			
-			
-			System.out.println("[IDOPrimaryKeyList - Initialize - orginal query]: "+ _sqlQuery.toString());
-				
-			if (_entity.isDebugActive())
-			{
-				System.out.println("[IDOPrimaryKeyList - Initialize - modified query]: "+ initialQuery.toString());
-			}
-			ResultSet RS=Stmt.executeQuery(initialQuery.toString());
+		if(_primaryKeyList != null){
+			System.out.println("[IDOPrimaryKeyList - Initialize - primary key list added]: length"+ _primaryKeyList.size());
+			super.addAll(_primaryKeyList);
 			_entities = new Vector();
-				
-//			int fetchIndex = 0;
-			Object pk = null;
-			while(RS.next()){
-				pk = _entity.getPrimaryKeyFromResultSet(allowedPrimaryKeyClass,pkFields,RS);
-				super.add(pk);
-//				if(fetchIndex++<=_prefetchSize){
-//					_entities.add(_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
-//				}
-			}
-			RS.close();
-			
-			
-			
 			_entities.setSize(size());
 			_tracker = new LoadTracker(size(),fetchSize);
-//			_tracker.setSubsetAsLoaded(0,_prefetchSize);
-		}
-		catch (SQLException sqle)
-		{
-			System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
-			sqle.printStackTrace();
-			throw new IDOFinderException(sqle);
-		} 
-//		catch (FinderException e) {
-//			System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
-//			e.printStackTrace();
-//			throw new IDOFinderException(e);
-//		}
-		finally
-		{
-			if (Stmt != null)
+		} else {
+			SelectQuery initialQuery = (SelectQuery)_sqlQuery.clone();
+			initialQuery.addOrder(sqlQueryTable,pkColumnName,true);
+			initialQuery.removeAllColumns();
+			initialQuery.addColumn(sqlQueryTable,pkColumnName);
+			
+			Connection conn = null;
+			Statement Stmt = null;
+			try
 			{
-				try
+				conn = _entity.getConnection(_entity.getDatasource());
+				Stmt = conn.createStatement();
+					
+				if (_entity.isDebugActive())
 				{
-					Stmt.close();
+					System.out.println("[IDOPrimaryKeyList - Initialize - orginal query]: "+ _sqlQuery.toString());
+					System.out.println("[IDOPrimaryKeyList - Initialize - modified query]: "+ initialQuery.toString());
 				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
+				ResultSet RS=Stmt.executeQuery(initialQuery.toString());
+				_entities = new Vector();
+					
+	//			int fetchIndex = 0;
+				Object pk = null;
+				while(RS.next()){
+					pk = _entity.getPrimaryKeyFromResultSet(allowedPrimaryKeyClass,pkFields,RS);
+					super.add(pk);
+	//				if(fetchIndex++<=_prefetchSize){
+	//					_entities.add(_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
+	//				}
 				}
+				RS.close();
+				
+				
+				
+				_entities.setSize(size());
+				_tracker = new LoadTracker(size(),fetchSize);
+	//			_tracker.setSubsetAsLoaded(0,_prefetchSize);
 			}
-			if (conn != null)
+			catch (SQLException sqle)
 			{
-				_entity.freeConnection(_entity.getDatasource(), conn);
+				System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
+				sqle.printStackTrace();
+				throw new IDOFinderException(sqle);
+			} 
+	//		catch (FinderException e) {
+	//			System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
+	//			e.printStackTrace();
+	//			throw new IDOFinderException(e);
+	//		}
+			finally
+			{
+				if (Stmt != null)
+				{
+					try
+					{
+						Stmt.close();
+					}
+					catch (SQLException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				if (conn != null)
+				{
+					_entity.freeConnection(_entity.getDatasource(), conn);
+				}
 			}
 		}
 		timer.stop();
@@ -219,7 +239,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			System.out.println("[PrimaryKeyList]: method loadSubset("+fromIndex+","+toIndex+") before");
 		}
 		
-		if(setsToLoad != null && setsToLoad.size() > 0)
+		if(setsToLoad != null && !setsToLoad.isEmpty())
 		{
 			DatastoreInterface iFace = DatastoreInterface.getInstance(_entity);
 			for (Iterator iter = setsToLoad.iterator(); iter.hasNext();) {
@@ -242,7 +262,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 						}
 				  		_tracker.printLoadInformations();
 						loadSubset(subList(f,t), f);
-				  		_tracker.setSubsetAsLoaded(f,t);
 				  		if (_entity.isDebugActive())
 						{
 					  		System.out.println("[PrimaryKeyList]: after");
@@ -263,11 +282,17 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	private void loadSubset(List listOfPrimaryKeys, int firstIndex) throws IDOFinderException {
 		Timer timer = new Timer();
 		timer.start();
-		SelectQuery subsetQuery = (SelectQuery)_sqlQuery.clone();
-		subsetQuery.removeAllCriteria();
-		subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
-		subsetQuery.addOrder(sqlQueryTable,pkColumnName,true);
-		
+		SelectQuery subsetQuery = null;
+		if(_sqlQuery==null){
+			subsetQuery = new SelectQuery(sqlQueryTable);
+			subsetQuery.addColumn(new WildCardColumn(sqlQueryTable));
+			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+		} else {
+			subsetQuery = (SelectQuery)_sqlQuery.clone();
+			subsetQuery.removeAllCriteria();
+			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+			subsetQuery.addOrder(sqlQueryTable,pkColumnName,true);
+		}
 		
 		Connection conn = null;
 		Statement Stmt = null;
@@ -283,28 +308,61 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    
 		    int total = 0;
 		    int no = 0;
-		    
-			for(int i = firstIndex; RS.next(); i++)
-			{
-				Object pk = _entity.getPrimaryKeyFromResultSet(RS);
-				if (pk != null)
+		    if(_sqlQuery==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
+				while(RS.next())
 				{
-					try {
-						_entities.set(i,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
-						if(!pk.equals(this.get(i))){
-//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
-							no++;
-							System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
-							System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
+					if (pk != null)
+					{
+						try {
+							IDOEntity bean = _entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource());
+							int index = super.indexOf(pk);
+							while (index >= 0) {
+								_entities.set(index,bean);
+								_tracker.setAsLoaded(index);
+								if(!pk.equals(this.get(index))){
+		//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
+									no++;
+									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(index)+" at that index");
+									System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+								} 
+//								else {
+//									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk);
+//								}
+								index = super.indexOf(pk,index+1);
+							}
+						} catch (FinderException e) {
+							//The row must have been deleted from database
+	//						this.remove(pk);
+							e.printStackTrace();
 						}
-					} catch (FinderException e) {
-						//The row must have been deleted from database
-//						this.remove(pk);
-						e.printStackTrace();
 					}
+					total++;
 				}
-				total++;
-			}
+		    } else {
+			    	for(int i = firstIndex; RS.next(); i++)
+				{
+					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
+					if (pk != null)
+					{
+						try {
+							_entities.set(i,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
+							if(!pk.equals(this.get(i))){
+	//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
+								no++;
+								System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+								System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+							}
+						} catch (FinderException e) {
+							//The row must have been deleted from database
+	//						this.remove(pk);
+							e.printStackTrace();
+						}
+					}
+					total++;
+				}
+			    	_tracker.setSubsetAsLoaded(firstIndex,firstIndex+listOfPrimaryKeys.size());
+		    }
 			if (_entity.isDebugActive())
 			{
 				System.err.println("[IDOPrimaryKeyList]:  "+no+" of "+total+ " where not loaded right");
@@ -636,12 +694,66 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   		return super.lastIndexOf(o);
   	}
   }
+  
+  private boolean addAllPrimaryKeys(Collection pks){
+  	return super.addAll(pks);
+  }
+  
+	static boolean areMergeable(IDOPrimaryKeyList l1, IDOPrimaryKeyList l2){
+		return l1._entity.getClass() == l2._entity.getClass();
+	}
+	
+	static IDOPrimaryKeyList merge(IDOPrimaryKeyList l1, IDOPrimaryKeyList l2) throws IDOFinderException{
+		IDOPrimaryKeyList l = new IDOPrimaryKeyList(l1,l1._entity,((l1._prefetchSize+l2._prefetchSize)/2));
+		
+		l.addAllPrimaryKeys(l2);
+		l._entities.setSize(l1.size()+l2.size());
+		Collections.copy(l._entities,l1._entities);
+		IDOPrimaryKeyList.copy(l._entities,l2._entities,l1._entities.size());
+		l._tracker.add(l2._tracker);
+		
+		return l;
+	}
+	
+	   /**
+     * Copies all of the elements from one list into another.  After the
+     * operation, the index of each copied element in the destination list
+     * will be identical to its index in the source list.  The destination
+     * list must be at least as long as the source list.  If it is longer, the
+     * remaining elements in the destination list are unaffected. <p>
+     *
+     * This method runs in linear time.
+     *
+     * @param  dest The destination list.
+     * @param  src The source list.
+     * @throws IndexOutOfBoundsException if the destination list is too small
+     *         to contain the entire source List.
+     * @throws UnsupportedOperationException if the destination list's
+     *         list-iterator does not support the <tt>set</tt> operation.
+     */
+    private static void copy(List dest, List src, int startIndexInSrc) {
+    		//implementation copied from java.util.Collections but modified
+        int srcSize = src.size();
+        if (srcSize > dest.size())
+            throw new IndexOutOfBoundsException("Source does not fit in dest");
+        int COPY_THRESHOLD = 10;
+        if (srcSize < COPY_THRESHOLD ||
+            (src instanceof RandomAccess && dest instanceof RandomAccess)) {
+            for (int i=0; i<srcSize; i++)
+                dest.set(i+startIndexInSrc, src.get(i));
+        } else {
+            ListIterator di=dest.listIterator(startIndexInSrc), si=src.listIterator();
+            for (int i=0; i<srcSize; i++) {
+                di.next();
+                di.set(si.next());
+            }
+        }
+    }
 
 
 	public class LoadTracker {
 //		int initialCapacity;
 		private int _subsetMinLength = 100;
-		private int _capacityIncrement;
 		private IntervalComparator _comparator = new IntervalComparator();
 		/**
 		 * int this list there are added int[] of length 2 wherre the int in index 0 is first loaded object in subset but the int in index 1 is the index after the last loaded object in that subset 
@@ -657,6 +769,17 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		public LoadTracker(int size, int subsetMinLength){
 		    this._size = size;
 			this._subsetMinLength = subsetMinLength;
+		}
+		
+		boolean add(LoadTracker tracker){
+			for (Iterator iter = tracker._loadedSubSets.iterator(); iter.hasNext();) {
+				int[] sub = (int[]) iter.next();
+				sub[FROM_INDEX_IN_ARRAY] += _size;
+				sub[TO_INDEX_IN_ARRAY] += _size;
+				_loadedSubSets.add(sub);
+			}
+			_size += tracker._size;
+			return true;
 		}
 
 		private void debugLoadedSubSets(){
@@ -762,7 +885,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //				System.out.println("[IDOPrimaryKeyList]: isLoaded("+fromIndex+","+toIndex+") = "+isLoaded(fromIndex,toIndex));
 //
 //			}
-			if(isLoaded(fromIndex,toIndex)){
+			if(_size == 0 || isLoaded(fromIndex,toIndex)){
 			    return toReturn;
 			}
 			tIndex = Math.max(tIndex,fromIndex+_subsetMinLength);

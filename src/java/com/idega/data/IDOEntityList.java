@@ -1,5 +1,6 @@
 package com.idega.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -136,6 +137,17 @@ public class IDOEntityList implements List {
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
   
+  
+  public static Collection merge(Collection c1, Collection c2) throws IDOFinderException {
+  	if(c1 instanceof IDOEntityList && c2 instanceof IDOEntityList && IDOPrimaryKeyList.areMergeable(((IDOEntityList)c1)._pkLists,((IDOEntityList)c2)._pkLists)){
+  		return new IDOEntityList(IDOPrimaryKeyList.merge(((IDOEntityList)c1)._pkLists,((IDOEntityList)c2)._pkLists));
+  	} else {
+  		ArrayList l = new ArrayList(c1.size()+c2.size());
+  		l.addAll(c1);
+  		l.addAll(c2);
+  		return l;
+  	}
+  }
   
   
   

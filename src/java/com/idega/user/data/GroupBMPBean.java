@@ -1,4 +1,5 @@
 package com.idega.user.data;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -1551,6 +1552,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	public Integer ejbFindGroupByUniqueId(String uniqueIdString) throws FinderException {
 		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
+	}
+	
+	public Collection ejbFindByPrimaryKeyCollection(Collection primaryKeys) throws FinderException{
+		return idoFindByPrimaryKeyList(primaryKeys,1000);
 	}
 	
 } // Class Group

@@ -46,6 +46,7 @@ import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCreateException;
+import com.idega.data.IDOEntityList;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
@@ -73,6 +74,7 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.text.Name;
 
  /**
@@ -2011,43 +2013,60 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     
 		Collection resultGroups = new ArrayList();
 		//Group userGroup = null;
-		GroupBusiness groupBiz = null;
-		try {
-			groupBiz = getGroupBusiness();
-		}
-		catch (RemoteException ex)  {
-			throw new RuntimeException(ex.getMessage());
-		}
+//		GroupBusiness groupBiz = null;
+		GroupHome grHome = getGroupHome();
+//		try {
+//			groupBiz = getGroupBusiness();
+//		}
+//		catch (RemoteException ex)  {
+//			throw new RuntimeException(ex.getMessage());
+//		}
 		
 		Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 		List parentGroupsList = user.getParentGroups();
     
 			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(parentGroupsList);
 		 // permissions.removeAll(editPermissions); // avoid double entries
-		// ownerPermissions.addAll(viewPermissions); //Sigtryggur: this caused an error because both of the collection are now prefetched and are therefore IDOPrimaryKeyLists, not normal collections
-		Collection allPermissions = new ArrayList();
-		allPermissions.addAll(permissions);
-		allPermissions.addAll(viewPermissions);
+		// permissions.addAll(viewPermissions); //Sigtryggur: this caused an error because both of the collection are now prefetched and are therefore IDOPrimaryKeyLists, not normal collections
+//		Collection allPermissions = new ArrayList();
+//		allPermissions.addAll(permissions);
+//		allPermissions.addAll(viewPermissions);
 
-		Iterator iterator = permissions.iterator();
+		Collection allPermissions = null;
+		try {
+			allPermissions = IDOEntityList.merge(permissions,viewPermissions);
+		} catch (FinderException e) {
+			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. merge failed");
+			e.printStackTrace();
+			return ListUtil.getEmptyList();
+		}	
+		Iterator iterator = allPermissions.iterator();
 		while (iterator.hasNext()) {
 			ICPermission perm = (ICPermission) iterator.next();
 			try {
 				String groupId = perm.getContextValue();
-				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
-				resultGroups.add(group);
+//				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+//				resultGroups.add(group);
+				Object grPK = grHome.decode(groupId); 
+				resultGroups.add(grPK);
 			}
 			catch (NumberFormatException e1) {
 				e1.printStackTrace();
 			}
-			catch (FinderException e1) {
-				System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
-			}
-			catch (RemoteException ex)  {
-				throw new RuntimeException(ex.getMessage());
-			}
+//			catch (FinderException e1) {
+//				System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
+//			}
+//			catch (RemoteException ex)  {
+//				throw new RuntimeException(ex.getMessage());
+//			}
 		}
-		return resultGroups;
+		try {
+			return grHome.findByPrimaryKeyCollection(resultGroups);
+		} catch (FinderException e) {
+			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. groups not found");
+			e.printStackTrace();
+			return ListUtil.getEmptyList();
+		}
 	}
 
   public Map moveUsers(IWUserContext iwuc,Collection userIds, Group parentGroup, int targetGroupId) {

@@ -1,6 +1,7 @@
 package com.idega.core.accesscontrol.data;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -281,18 +282,21 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 * Finds all permissions of a certain type for the contexttype and group
 	 * specifide.
 	 * @param group The group that ownes the records
-	 * @param permissionString A certain type of permission such as "owner"
+	 * @param permissionStrings Collection of certain type of permission such as "owner"
 	 * @param contextType What type of object the permission is for such a
 	 * ic_group_id
 	 * @return Collection
 	 * @throws FinderException
 	 */
-	public Collection ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group,String permissionString, String contextType) throws FinderException{
+	public Collection ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group,Collection permissionStrings, String contextType) throws FinderException{
+		if(permissionStrings==null || permissionStrings.isEmpty()){
+			return ListUtil.getEmptyList();
+		}
 		
 		SelectQuery query = idoSelectQuery();
 		Criteria theCriteria = new MatchCriteria(idoQueryTable(),getGroupIDColumnName(),MatchCriteria.EQUALS,group);
 		
-		Criteria permCr = new MatchCriteria(idoQueryTable(),getPermissionStringColumnName(),MatchCriteria.EQUALS,permissionString,true);
+		Criteria permCr = new InCriteria(idoQueryTable(),getPermissionStringColumnName(),permissionStrings);
 		Criteria contextCr = new MatchCriteria(idoQueryTable(),getContextTypeColumnName(),MatchCriteria.EQUALS,contextType,true);
 		Criteria statusCr = new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.EQUALS,STATUS_ACTIVE,true);
 		statusCr = new OR(statusCr,new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.IS,MatchCriteria.NULL));
@@ -313,14 +317,14 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 * Finds all permissions of a certain type for the contexttype and the collection of groups
 	 * specifide.
 	 * @param group The group that ownes the records
-	 * @param permissionString A certain type of permission such as "owner"
+	 * @param permissionString Collection of certain type of permission such as "owner"
 	 * @param contextType What type of object the permission is for such a
 	 * ic_group_id
 	 * @return Collection
 	 * @throws FinderException
 	 */
-	public Collection ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException{
-		if(groups==null || groups.isEmpty()){
+	public Collection ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,Collection permissionStrings, String contextType) throws FinderException{
+		if(groups==null || groups.isEmpty() || permissionStrings==null || permissionStrings.isEmpty()){
 			return ListUtil.getEmptyList();
 		}
 		
@@ -328,7 +332,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		SelectQuery query = idoSelectQuery();
 		Criteria theCriteria = new InCriteria(idoQueryTable(),getGroupIDColumnName(),groups);
 		
-		Criteria permCr = new MatchCriteria(idoQueryTable(),getPermissionStringColumnName(),MatchCriteria.EQUALS,permissionString,true);
+		Criteria permCr = new InCriteria(idoQueryTable(),getPermissionStringColumnName(),permissionStrings);
 		Criteria contextCr = new MatchCriteria(idoQueryTable(),getContextTypeColumnName(),MatchCriteria.EQUALS,contextType,true);
 		Criteria statusCr = new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.EQUALS,STATUS_ACTIVE,true);
 		statusCr = new OR(statusCr,new MatchCriteria(idoQueryTable(),STATUS_COLUMN,MatchCriteria.IS,MatchCriteria.NULL));
@@ -343,6 +347,41 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		//return super.idoFindPKsByQuery(sql);
 		return super.idoFindPKsByQueryUsingLoadBalance(query, 10000);
 	}
+	
+	
+	/**
+	 * Finds all permissions of a certain type for the contexttype and group
+	 * specifide.
+	 * @param group The group that ownes the records
+	 * @param permissionString A certain type of permission such as "owner"
+	 * @param contextType What type of object the permission is for such a
+	 * ic_group_id
+	 * @return Collection
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group,String permissionString, String contextType) throws FinderException{
+		ArrayList l = new ArrayList();
+		l.add(permissionString);
+		return ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group, l, contextType);
+	}
+	
+	
+	/**
+	 * Finds all permissions of a certain type for the contexttype and the collection of groups
+	 * specifide.
+	 * @param group The group that ownes the records
+	 * @param permissionString A certain type of permission such as "owner"
+	 * @param contextType What type of object the permission is for such a
+	 * ic_group_id
+	 * @return Collection
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException{
+		ArrayList l = new ArrayList();
+		l.add(permissionString);
+		return ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups, l, contextType);
+	}
+
 	
 	
 	/**

@@ -3444,6 +3444,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return pkColl;
 	}
+	
+	protected Collection idoFindByPrimaryKeyList(Collection primaryKeys, int prefetchSize ) throws FinderException {
+		return new IDOPrimaryKeyList(primaryKeys, this,prefetchSize);
+	}
 
 
 	/**

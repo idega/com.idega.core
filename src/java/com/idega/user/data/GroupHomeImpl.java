@@ -127,6 +127,13 @@ public java.util.Collection findTopNodeGroupsContained(com.idega.core.builder.da
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findByPrimaryKeyCollection(java.util.Collection p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindByPrimaryKeyCollection(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindTopNodeVisibleGroupsContained(p0);
