@@ -3015,30 +3015,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		//the login
 		if(userName!=null){
-			//remove the encryption e.g. {md5} prefix
-			userPassword = userPassword.substring(userPassword.indexOf("}")+1);
 			try {
 				int userId = ((Integer)user.getPrimaryKey()).intValue();
 				LoginTable login = LoginDBHandler.getUserLogin(userId);
-				if(login!=null){
-					login.setUserLogin(userName);
-					if(userPassword!=null){
-						login.setUserPasswordInClearText(userPassword);
-					}
-					login.setLastChanged(IWTimestamp.getTimestampRightNow());
-					login.store();
-				}
-				else{
+				if(login==null){
 					//no login create one
 					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
-					login.setUserId(userId);
-					login.setUserLogin(userName);
-					if(userPassword!=null){
-						login.setUserPasswordInClearText(userPassword);
-					}
-					login.setLastChanged(IWTimestamp.getTimestampRightNow());
-					login.store();
+					login.setUserId(userId);	
 				}
+				
+				login.setUserLogin(userName);
+				if(userPassword!=null){
+//					remove the encryption e.g. {md5} prefix
+					userPassword = userPassword.substring(userPassword.indexOf("}")+1);
+					login.setUserPasswordInClearText(userPassword);
+				}
+				login.setLastChanged(IWTimestamp.getTimestampRightNow());
+				login.store();
 			}
 			catch (IDOStoreException e) {
 				e.printStackTrace();
