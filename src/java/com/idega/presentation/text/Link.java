@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.99 2003/12/05 10:14:13 laddi Exp $
+ * $Id: Link.java,v 1.100 2004/01/21 22:28:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -509,7 +509,7 @@ public class Link extends Text {
 		if ((protocol == null) && https) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
-			url.append("https://").append(iwc.getServerName());
+			url.append("https://").append(iwc.getServerName()).append(slash);
 			if (attr != null)
 				url.append(attr);
 			return url.toString();
@@ -517,7 +517,7 @@ public class Link extends Text {
 		else if (protocol != null) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
-			url.append(protocol).append("://").append(iwc.getServerName());
+			url.append(protocol).append("://").append(iwc.getServerName()).append(slash);
 			if (attr != null)
 				url.append(attr);
 			return url.toString();
