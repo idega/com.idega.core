@@ -177,7 +177,17 @@ public class UserBusiness {
 
   public static Email getUserMail(int userId) {
     try {
-      GenericEntity[] result = new User(userId).findRelated(Email.getStaticInstance(Email.class));
+      return getUserMail(new User(userId));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static Email getUserMail(User user) {
+    try {
+      GenericEntity[] result = user.findRelated(Email.getStaticInstance(Email.class));
       if(result != null){
         if ( result.length > 0 )
           return (Email)result[0];
@@ -425,6 +435,11 @@ public class UserBusiness {
       ex.printStackTrace();
       return null;
     }
+  }
+
+  public static List getUsers() throws SQLException  {
+    List nonrelated = EntityFinder.findRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
+    return nonrelated;
   }
 
   public static List getUsersInNoGroup() throws SQLException  {
