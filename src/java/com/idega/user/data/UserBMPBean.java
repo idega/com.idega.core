@@ -1019,11 +1019,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
         IWTimestamp maxStamp = new IWTimestamp(31,12,maxYear);
         sql.appendSelectAllFrom(getTableName());
         sql.appendWhere(getColumnNameDateOfBirth());
-        sql.append(" >= '");
+        sql.append(" >= ");
         sql.appendWithinSingleQuotes(minStamp.toSQLDateString());
 		sql.appendAnd();
 		sql.append(getColumnNameDateOfBirth());
-		sql.append(" <= '");
+		sql.append(" <= ");
 		sql.appendWithinSingleQuotes(maxStamp.toSQLDateString());
         return idoFindIDsBySQL (sql.toString ());
     }
