@@ -16,8 +16,8 @@ import com.idega.presentation.IWContext;
  */
 public interface StorableProvider {
 	
-	public Storable getSource(String value, IWContext iwc) throws IOException;
+	public Storable getSource(String value, String className, IWContext iwc) throws IOException;
 	
-	public StorableHolder createSource(String value, IWContext iwc) throws IOException;
+	public StorableHolder createSource(String value, String className, IWContext iwc) throws IOException;
 	
 }

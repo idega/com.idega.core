@@ -124,7 +124,7 @@ public class FileObjectReader extends ReaderFromFile implements StorableProvider
 	/* (non-Javadoc)
 	 * @see com.idega.io.StorableProvider#getSource(java.lang.String)
 	 */
-	public Storable getSource(String value, IWContext iwc) throws IOException {
+	public Storable getSource(String value, String sourceClassName, IWContext iwc) throws IOException {
 		IWMainApplication mainApp = iwc.getIWMainApplication();
 		String separator = FileUtil.getFileSeparator();
     String path = mainApp.getApplicationRealPath();
@@ -147,7 +147,7 @@ public class FileObjectReader extends ReaderFromFile implements StorableProvider
 	/* (non-Javadoc)
 	 * @see com.idega.io.StorableProvider#createSource(java.lang.String)
 	 */
-	public StorableHolder createSource(String value, IWContext iwc) throws IOException {
+	public StorableHolder createSource(String value, String sourceClassName, IWContext iwc) throws IOException {
 		// get file name 
 		int lastPathSeparator = value.lastIndexOf(SLASH);
 		String fileName = value.substring(++lastPathSeparator); 
