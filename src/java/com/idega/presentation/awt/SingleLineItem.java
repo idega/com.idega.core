@@ -197,9 +197,7 @@ public class SingleLineItem extends Panel {
       parentContainer.doLayout();
       parentContainer.repaint();
 
-
-
-
+      actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));
     }
 /*
     public void mouseReleased(MouseEvent e) {
