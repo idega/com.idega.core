@@ -19,12 +19,10 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.reflect.MethodFinder;
 /**
- * Title:        idega Business Objects
- * Description:  IBOLookup is a class use to get instances of IBO (Service and Session) objects.<br><br>
+ * IBOLookup is a class use to get instances of IBO (Service and Session) objects.<br><br>
  * <br>Instances of IBOService classes are stored in the IWApplicationContext and obtained by passing a reference to the application context and either a class representing a bean interface of implementation.
  * <br>Instances of IBOSession classes are stored in the IWUserContext and obtained by passing a reference to the user context and either a class representing a bean interface of implementation.
- * Copyright:    Copyright (c) 2002
- * Company:      idega
+ * Copyright (c) 2002-2004 Idega Software
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
 public class IBOLookup
@@ -39,6 +37,13 @@ public class IBOLookup
 		return instance;
 	}
 	
+	/**
+	 * Unload the previously loaded instance and all its resources
+	 */
+	public static void unload(){
+		instance=null;
+	}
+	
 	protected final String HOME_SUFFIX = "Home";
 	protected final String FACTORY_SUFFIX = "HomeImpl";
 	private final String BEAN_SUFFIX = "Bean";
@@ -46,9 +51,9 @@ public class IBOLookup
 	{
 		return BEAN_SUFFIX;
 	}
-	protected static Map homes = new HashMap();
-	protected static Map beanClasses = new HashMap();
-	protected static Map interfaceClasses = new HashMap();
+	protected Map homes = new HashMap();
+	protected Map beanClasses = new HashMap();
+	protected Map interfaceClasses = new HashMap();
 	protected Map services;
 	private Properties jndiProperties;
 	private Map createMethodsMap;
@@ -380,9 +385,9 @@ public class IBOLookup
 	 **/
 	public static synchronized void clearAllCache()
 	{
-		homes.clear();
-		beanClasses.clear();
-		interfaceClasses.clear();
+		getInstance().homes.clear();
+		getInstance().beanClasses.clear();
+		getInstance().interfaceClasses.clear();
 	}
 	
 	protected Object getHomeThroughJNDI(Class beanInterfaceClass)throws RemoteException{
@@ -423,7 +428,7 @@ public class IBOLookup
 
 
   public static void registerImplementationForBean(Class interfaceClass, Class beanClass) {
-  	beanClasses.put(interfaceClass,beanClass);
-	interfaceClasses.put(beanClass,interfaceClass);
+  	getInstance().beanClasses.put(interfaceClass,beanClass);
+	getInstance().interfaceClasses.put(beanClass,interfaceClass);
   }
 }

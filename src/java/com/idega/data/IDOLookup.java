@@ -33,6 +33,13 @@ public class IDOLookup extends IBOLookup{
     }
     return idoInstance;
   }
+  
+	/**
+	 * Unload the previously loaded instance and all its resources
+	 */
+	public static void unload(){
+		idoInstance=null;
+	}
 
   private final String BMP_BEAN_SUFFIX = "BMPBean";
   protected String getBeanSuffix(){

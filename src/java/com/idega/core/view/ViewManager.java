@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.2 2004/11/16 00:50:22 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.3 2004/12/02 23:11:19 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2004/11/16 00:50:22 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/02 23:11:19 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ViewManager {
 	
@@ -42,6 +42,13 @@ public class ViewManager {
 	public static ViewManager getInstance(FacesContext context){
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
 		return getInstance(iwma);
+	}
+	
+	/**
+	 * Unload the previously loaded instance and all its resources.
+	 */
+	public static void unload(){
+		instance=null;
 	}
 	
 	private ViewManager(IWMainApplication iwma){
