@@ -301,13 +301,11 @@ implements IWUserContext, IWApplicationContext {
 		}
 		boolean isWMLAgent = false;
 		String user_agent = request.getHeader("User-agent");
-		System.out.println("[User-agent]: "+user_agent);
 		if (user_agent != null) {
 			user_agent = user_agent.toLowerCase();
 			for(int i=0; i<WML_USER_AGENTS.length; i++) {
 				if(user_agent.indexOf(WML_USER_AGENTS[i]) > -1) {
 					isWMLAgent = true;
-					System.out.println("[Language]: "+IWConstants.MARKUP_LANGUAGE_WML);
 					break;
 				}
 			}
