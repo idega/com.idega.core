@@ -314,4 +314,15 @@ public class TextInput extends GenericInput {
 			setContent(iwc.getParameter(getName()));
 		}
 	}
+
+	/**
+	 * Sets the <code>TextInput</code> as a password input.
+	 * @param asPasswordInput	To set as password, set as true, false otherwise.
+	 */
+	public void setAsPasswordInput(boolean asPasswordInput) {
+	  if ( asPasswordInput )
+	    setInputType(INPUT_TYPE_PASSWORD);
+	  else
+	    setInputType(INPUT_TYPE_TEXT);
+	}
 }
