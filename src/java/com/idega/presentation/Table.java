@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.49 2004/01/13 15:51:47 gummi Exp $
+ * $Id: Table.java,v 1.50 2004/02/05 20:10:27 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -556,10 +556,16 @@ public class Table extends PresentationObjectContainer {
 		setHeight(ypos, String.valueOf(height));
 	}
 	
+	/**
+	 * @deprecated  Should be set parent object.
+	 */
 	public void setAlignment(String align) {
 		setMarkupAttribute("align", align);
 	}
 	
+	/**
+	 * @deprecated  Should be set parent object.
+	 */
 	public void setVerticalAlignment(String verticalAlignment) {
 		setMarkupAttribute("valign", verticalAlignment);
 	}
