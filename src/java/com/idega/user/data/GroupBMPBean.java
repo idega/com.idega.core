@@ -631,7 +631,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @see com.idega.user.data.Group#addGroup(Group)
 	 */
 	public void addGroup(Group groupToAdd) throws EJBException, RemoteException {
-		this.addGroup(this.getGroupIDFromGroup(groupToAdd));
+		if (!hasRelationTo(groupToAdd))
+			this.addGroup(this.getGroupIDFromGroup(groupToAdd));
 	}
 	/**
 	 * Adds the group by id groupId under this group 
