@@ -42,14 +42,14 @@ public class PageIncluder extends PresentationObject implements Index{
   private String out;
   private int index = 1000;
 
-  private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
+  private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri_";
   private static final String PAGE_INCLUDER_SESSION_NAME="iw_session_token";
   private String pageIncluderFinalParamName = null;
   private int instanceId;
   private boolean forceFrame = false;
 
   private boolean changeURL = false;
-  private final String symbol = "$$";
+  private final String symbol = "$";
 
 
   public PageIncluder(){
@@ -105,19 +105,9 @@ public class PageIncluder extends PresentationObject implements Index{
     instanceId=getICObjectInstanceID();
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
-    if( changeURL && _sendToPage != null) {//forwarding
-      //unecessary I think...(eiki)
-      if (_sendToPageIfSet == null){
-	iwc.forwardToIBPage(fromPage,_sendToPage);
-	debug("PAGEINCLUDER FORWARDING");
-      }
-      //thinking...
-      else {
-	if (iwc.isParameterSet(_sendToPageIfSet)){
-	  iwc.forwardToIBPage(fromPage,_sendToPage);
-	debug("PAGEINCLUDER FORWARDING2");
-	}
-      }
+    if( changeURL && (_sendToPage != null) && iwc.isParameterSet(_sendToPageIfSet) ) {//forwarding
+      iwc.forwardToIBPage(fromPage,_sendToPage);
+      debug("PAGEINCLUDER FORWARDING2");
     }
     else if(out==null) sortAndProcess(iwc);//ususal
 
@@ -131,6 +121,8 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected void process(IWContext iwc)throws IOException{
+    changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+
 	StringBuffer location = new StringBuffer();
 	StringBuffer queryBuf = new StringBuffer();
 	String query = null;
@@ -182,6 +174,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	//after clicking a link and submitting a form
 	// check if the action is for this page includer
 	if ( changeURL ) {
+	  System.out.println("Changing!");
 
 	  //get all parameters even from post actions
 	  Enumeration enum = iwc.getParameterNames();
@@ -191,6 +184,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	    if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
 	      URL = decodeQueryString(iwc.getParameter(param));
 	      location.append(URL);
+	      System.out.println("Changing location to:"+location.toString());
 	    }
 	    else{
 	      if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
@@ -230,7 +224,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	}
 
 	String loc = location.toString();
-	//System.out.println("Loc = "+loc);
+	System.out.println("Loc = "+loc);
 
 	if( (sessionURL!=null) && (token!=null) ){
 
@@ -259,7 +253,7 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
 
-	if(loc!=null && !loc.equals("") ){
+	//if(loc!=null && !loc.equals("") ){
 	  out = FileUtil.getStringFromURL(loc);
 
 	  URL url = new URL(loc);
@@ -280,7 +274,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	  out = changeAHrefAttributes(out);
 	  out = changeFormActionAttributes(out);
 	  out = postProcess(out);
-	}
+	//}
   }
 
 
