@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.3 2005/01/24 18:31:04 thomas Exp $
+ * $Id: IWJspViewHandler.java,v 1.4 2005/03/02 11:29:59 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.FacesUtil;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/24 18:31:04 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/03/02 11:29:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -116,8 +116,13 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public UIViewRoot createView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
-			newViewId=node.getResourceURI();
+		//if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
+		//	newViewId=node.getResourceURI();
+		//}
+		if(node.isResourceBased()){
+			if(!viewId.endsWith(JSP_EXT)){
+				newViewId=node.getResourceURI();
+			}
 		}
 		return super.createView(context, newViewId);
 	}
