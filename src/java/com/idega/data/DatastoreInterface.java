@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.67 2003/05/23 10:48:49 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.68 2003/05/23 13:43:50 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1287,7 +1287,7 @@ public abstract class DatastoreInterface {
 	}
 	
 	public boolean doesTableExist(IDOLegacyEntity entity,String tableName)throws Exception{
-		String checkQuery = "select * from "+tableName;
+		String checkQuery = "select count(*) from "+tableName;
 		try{
 			Object theReturn = executeQuery(entity,checkQuery);
 			return true;
