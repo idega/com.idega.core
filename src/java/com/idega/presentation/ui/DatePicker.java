@@ -48,6 +48,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     private String dateFormatPattern = "yyyy-MM-dd";
     private Date date = new Date();
 
+    /**
+     * Creates a new DateInput object.
+     */
+    public DatePicker() {
+        this("datepicker");
+    }
+    
     public DatePicker(String pickerName) {
         this(pickerName, null, null, null);
     }
