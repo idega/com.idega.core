@@ -19,6 +19,7 @@ import java.util.Iterator;
 import com.idega.data.GenericEntity;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.presentation.IWContext;
+import com.idega.block.staff.business.StaffBusiness;
 
 /**
  * Title:        User
@@ -87,6 +88,7 @@ public class UserBusiness {
 
   public static void deleteUser(int userId) throws SQLException {
     User delUser = new User(userId);
+    StaffBusiness.delete(userId);
 
     //delUser.removeFrom(GenericGroup.getStaticInstance());
     int groupId =delUser.getGroupID();
@@ -453,6 +455,16 @@ public class UserBusiness {
   public static List getUserGroupsDirectlyRelated(int iUserId){
     try {
       return getUserGroupsDirectlyRelated(new User(iUserId));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getUsersInPrimaryGroup(GenericGroup group){
+    try {
+      return EntityFinder.findAllByColumn(User.getStaticInstance(),User._COLUMNNAME_PRIMARY_GROUP_ID,group.getID());
     }
     catch (SQLException ex) {
       ex.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.73 2002/01/05 20:34:15 laddi Exp $
+ * $Id: GenericEntity.java,v 1.74 2002/01/06 14:12:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1683,6 +1683,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	public GenericEntity[] findAllByColumn(String columnName, String toFind, String condition)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" "+condition+" '"+toFind+"'");
+	}
+
+	public GenericEntity[] findAllByColumn(String columnName1, String toFind1, char condition1, String columnName2, String toFind2, char condition2)throws SQLException{
+		return findAll("select * from "+getEntityName()+" where "+columnName1+" "+String.valueOf(condition1)+" '"+toFind1+"' and "+columnName2+" "+String.valueOf(condition2)+" '"+toFind2+"'");
 	}
 
 	public GenericEntity[] findAllByColumn(String columnName, String toFind)throws SQLException{
