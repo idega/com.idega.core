@@ -50,20 +50,24 @@ public abstract class TabbedPropertyWindow extends Window {
       initializePanel(iwc, panel);
     }
 
-    if(panel.clickedCancel() || panel.clickedOk()){
+    if(panel.clickedCancel() || panel.clickedOk() || panel.clickedApply()){
       if(panel.clickedOk() || panel.clickedApply()){
         iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
-        iwc.getApplicationContext().removeApplicationAttribute("group_tree");    
-        setOnLoad(iwc);
-        //this.setParentToReload();
+        iwc.getApplicationContext().removeApplicationAttribute("group_tree");
+        // clear on load only if okay was clicked    
+        setOnLoad(iwc, panel.clickedOk());
       }
       else {
         // cancel was clicked
         clearOnLoad(iwc);
       }
-      this.close();
-      panel.dispose(iwc);
-    }else{
+    }
+    // do not close the window if the apply button was clicked
+    if (panel.clickedOk() || panel.clickedCancel()) {
+        panel.dispose(iwc);
+        close();
+    }
+    else {
       this.add(panel);
     }
     super._main(iwc);
@@ -88,7 +92,7 @@ public abstract class TabbedPropertyWindow extends Window {
   	return false;
   }
 
-  private void setOnLoad(IWContext iwc)  {
+  private void setOnLoad(IWContext iwc, boolean clearOnLoad)  {
 		Iterator iterator = getControllerIterator(iwc);
     while (iterator.hasNext())  {
       IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
@@ -100,7 +104,9 @@ public abstract class TabbedPropertyWindow extends Window {
         buffer.append((String) iter.next());
         this.setOnLoad(buffer.toString());
       }
-      state.clearOnLoad();
+      if (clearOnLoad)  {
+        state.clearOnLoad();
+      }
     }
   }
 
