@@ -7,7 +7,6 @@
 package com.idega.faces.smile;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.faces.FacesException;
@@ -19,16 +18,12 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKitFactory;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.myfaces.renderkit.html.HtmlResponseWriterImpl;
-//import net.sourceforge.smile.component.Screen;
-//import net.sourceforge.smile.exception.InternalServerException;
-//import net.sourceforge.smile.exception.SmileException;
-//import net.sourceforge.smile.exception.SmileRuntimeException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import com.idega.presentation.IWContext;
 //import net.sourceforge.smile.application.CbpViewHandlerImpl;
 
 /**
@@ -177,22 +172,8 @@ public class CbpViewHandler extends ViewHandler {
 	 * @see javax.faces.application.ViewHandler#calculateLocale(javax.faces.context.FacesContext)
 	 */
 	public Locale calculateLocale(FacesContext ctx) {
-		Locale result = null;
-		for(Enumeration enumeration = ((ServletRequest)ctx.getExternalContext().getRequest()).getLocales(); enumeration.hasMoreElements();)
-		{
-			Locale locale = (Locale)enumeration.nextElement();
-			result = getMatch(ctx, locale);
-			if(result != null)
-				break;
-		}
-
-		if(result == null) {
-			if(ctx.getApplication().getDefaultLocale() == null)
-				result = Locale.getDefault();
-			else
-				result = ctx.getApplication().getDefaultLocale();			
-		}
-		return result;
+		IWContext iwc = IWContext.getIWContext(ctx);
+		return iwc.getCurrentLocale();
 		
 	}
 	

@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.faces.smile.CbpViewHandler;
+import com.idega.presentation.IWContext;
 
 /**
  * @author tryggvil
@@ -55,7 +56,8 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#calculateLocale(javax.faces.context.FacesContext)
 	 */
 	public Locale calculateLocale(FacesContext arg0) {
-		return getParentViewHandler().calculateLocale(arg0);
+		IWContext iwc = IWContext.getIWContext(arg0);
+		return iwc.getCurrentLocale();
 	}
 	/* (non-Javadoc)
 	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#calculateRenderKitId(javax.faces.context.FacesContext)

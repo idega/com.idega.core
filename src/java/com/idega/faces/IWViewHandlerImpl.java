@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.2 2004/12/20 08:55:01 tryggvil Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.3 2004/12/30 17:55:16 gummi Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -26,6 +26,7 @@ import com.idega.core.view.DefaultViewNode;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 
 
 /**
@@ -37,10 +38,10 @@ import com.idega.idegaweb.IWMainApplication;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/30 17:55:16 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -111,13 +112,9 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @see javax.faces.application.ViewHandler#calculateLocale(javax.faces.context.FacesContext)
 	 */
 	public Locale calculateLocale(FacesContext ctx) {
-		ViewHandler realHandler = getViewHandlerForContext(ctx);
-		if(realHandler!=null){
-			return realHandler.calculateLocale(ctx);
-		}
-		else{
-			throw new RuntimeException ("No ViewHandler Found to calculate Locale");
-		}
+		IWContext iwc = IWContext.getIWContext(ctx);
+		Locale locale =  iwc.getCurrentLocale();
+		return locale;
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#calculateRenderKitId(javax.faces.context.FacesContext)
@@ -137,7 +134,9 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public UIViewRoot createView(FacesContext ctx, String viewId) {
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
-			return realHandler.createView(ctx,viewId);
+			UIViewRoot root = realHandler.createView(ctx,viewId);
+			root.setLocale(IWContext.getIWContext(ctx).getCurrentLocale());
+			return root;
 		}
 		else{
 			throw new RuntimeException ("No ViewHandler Found to create View");
@@ -357,7 +356,11 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public UIViewRoot restoreView(FacesContext ctx, String viewId) {
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
-			return realHandler.restoreView(ctx,viewId);
+			UIViewRoot root = realHandler.restoreView(ctx,viewId);
+			if(root != null){
+				root.setLocale(IWContext.getIWContext(ctx).getCurrentLocale());
+			}
+			return root;
 		}
 		else{
 			throw new RuntimeException ("No ViewHandler Found for restoreView");
