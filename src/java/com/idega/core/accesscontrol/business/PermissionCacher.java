@@ -474,16 +474,11 @@ public class PermissionCacher {
       if(permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)){
         permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(PERMISSION_MAP_OBJECT)){
-          //permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_IC_OBJECT_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      		//temporary fix because of hsql select problems:
-      	permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_IC_OBJECT_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_IC_OBJECT_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(PERMISSION_MAP_BUNDLE)){
           permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)){
-          //permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_PAGE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-      	//temporary fix because of hsql select problems:
-      	permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_PAGE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-
+          permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_PAGE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)){
           permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_JSP_PAGE,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       } else if(permissionMapKey.equals(PERMISSION_MAP_FILE)){
@@ -503,13 +498,7 @@ public class PermissionCacher {
       Map mapToPutTo = new Hashtable();
       while (iter.hasNext()) {
         ICPermission item = (ICPermission)iter.next();
-        //make sure that contextvalue is equal to identifier because of the hsql hack above:
-        String itemContextValue = item.getContextValue();
-        if(itemContextValue!=null){
-	        if(itemContextValue.equals(identifier)){
-	        		mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
-	        }
-        }
+        mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
       }
       
       //THIS IS DONE SO YOU ALWAYS HAVE VIEW PERMISSION IF NO PERMISSION IS DEFINED
