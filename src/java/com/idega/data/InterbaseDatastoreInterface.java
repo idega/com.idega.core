@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.29 2004/02/28 19:11:51 eiki Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.30 2004/03/01 17:04:09 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -393,7 +393,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#doesTableExist(java.lang.String, java.lang.String)
 	 */
-/*	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
+	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
 		try{
 	 
 		  StringBuffer query = new StringBuffer("SELECT COUNT(RDB$RELATION_NAME) ");
@@ -412,6 +412,6 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	  }
 			
 	}
-*/
+
 	
 }
