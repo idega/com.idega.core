@@ -4,7 +4,7 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:
@@ -19,7 +19,7 @@ public interface MediaWritable {
 
   public final static String PRM_WRITABLE_CLASS = "wrcls";
   public String getMimeType();
-  public void init(HttpServletRequest req, IWMainApplication iwma);
+  public void init(HttpServletRequest req, IWContext iwc);
   public void writeTo(OutputStream out) throws java.io.IOException;
 
 }
