@@ -48,6 +48,25 @@ public class PersonalIDFormatter {
 		return originalString;
 	}
 	
+	public static String stripForDatabaseSearch(String personalID){
+		return stripForDatabaseSearch(personalID,false);
+	}
+	
+	public static String stripForDatabaseSearch(String personalID,boolean trailingWildCard){
+		StringBuffer sb = new StringBuffer();
+
+		for (int i=0; i<personalID.length(); i++) {
+  			 if (Character.isDigit(personalID.charAt(i)))
+       			sb.append(personalID.charAt(i));
+		}
+		sb.insert(0,"%");
+		if(trailingWildCard)
+			sb.append("%");
+		//System.err.println("changing "+s+" to "+sb.toString());
+		return sb.toString();
+		
+	}
+	
 	public static void main(String[] args){
 			test(args);
 	}
