@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.134 2005/02/03 11:27:37 eiki Exp $
+ * $Id: IWMainApplication.java,v 1.135 2005/02/03 14:25:04 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
+
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -46,25 +47,18 @@ import javax.faces.el.VariableResolver;
 import javax.faces.event.ActionListener;
 import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
-import com.idega.core.idgenerator.business.IdGeneratorFactory;
-import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.core.search.business.SearchPluginManager;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
-import com.idega.data.EntityFinder;
-import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOUtil;
-import com.idega.event.IWEventProcessor;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
@@ -87,10 +81,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/02/03 11:27:37 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/02/03 14:25:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.134 $
+ * @version $Revision: 1.135 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
