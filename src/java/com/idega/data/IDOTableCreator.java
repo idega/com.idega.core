@@ -489,7 +489,10 @@ public class IDOTableCreator{
           Class relationShipClass = entity.getRelationShipClass(names[i]);
           if (relationShipClass!=null) {
             //String table1=entity.getTableName();
-            IDOLegacyEntity entityToReference = (IDOLegacyEntity)relationShipClass.newInstance();
+
+            Class intefaceClass = IDOLookup.getInterfaceClassFor(relationShipClass);
+            IDOLegacyEntity entityToReference = (IDOLegacyEntity)IDOLookup.getHome(intefaceClass).idoCreate();
+            //IDOLegacyEntity entityToReference = (IDOLegacyEntity)relationShipClass.newInstance();
             //String tableToReference=entityToReference.getTableName();
             //if(!doesTableExist(entity,tableToReference)){
             //  createEntityRecord(entityToReference);
