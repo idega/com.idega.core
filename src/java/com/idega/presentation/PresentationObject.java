@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.59 2002/10/15 10:49:24 laddi Exp $
+ * $Id: PresentationObject.java,v 1.60 2002/10/15 11:02:22 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import java.sql.*;
 
 import com.idega.user.business.UserProperties;
 import com.idega.util.database.*;
+import com.idega.util.text.TextStyler;
 import com.idega.core.data.*;
 import javax.swing.event.EventListenerList;
 import com.idega.data.EntityFinder;
@@ -247,11 +248,14 @@ public class PresentationObject extends Object implements Cloneable {
 	 * <br><br>Preserves previous set values with this method
 	 * */
   public void setStyleAttribute(String style){
-  	setAttributeMultivalued("style",style);
+  	TextStyler styler = new TextStyler(getStyleAttribute()+style);
+  	setAttribute("style",styler.getStyleString());
   }
 
   public String getStyleAttribute(){
-    return this.getAttribute("style");
+  	if (isAttributeSet("style"))
+    	return this.getAttribute("style");
+    return "";
   }
 
   /** Copies all of the attribute mappings from the specified map to attributes.
@@ -1170,6 +1174,13 @@ public class PresentationObject extends Object implements Cloneable {
 
   public void setWidth(String width){
     setAttribute(WIDTH,width);
+  }
+  
+  public void setVisible(boolean visible) {
+  	if (visible)
+  		setStyleAttribute("visibility:visible");	
+  	else
+  		setStyleAttribute("visibility:hidden");
   }
 
   public void setHeight(String height){
