@@ -19,6 +19,7 @@ import com.idega.presentation.IWContext;
 public class GenericSelect extends InterfaceObject {
 
 	private List theElements;
+	private List selectedElements;
 	private boolean _allSelected = false;
 
 	/**
@@ -35,6 +36,7 @@ public class GenericSelect extends InterfaceObject {
 	public GenericSelect(String name) {
 		setName(name);
 		theElements = new ArrayList();
+		selectedElements = new ArrayList();
 	}
 
 	/**
@@ -58,6 +60,8 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void addOption(SelectOption option) {
 		theElements.add(option);
+		if (option.getSelected())
+			setSelectedOption(option.getValue());
 	}
 
 	/**
@@ -66,6 +70,8 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void addFirstOption(SelectOption option) {
 		theElements.add(0, option);
+		if (option.getSelected())
+			setSelectedOption(option.getValue());
 	}
 
 	/**
@@ -75,6 +81,8 @@ public class GenericSelect extends InterfaceObject {
 	public void addDisabledOption(SelectOption option) {
 		option.setDisabled(true);
 		theElements.add(option);
+		if (option.getSelected())
+			setSelectedOption(option.getValue());
 	}
 
 	/**
@@ -90,12 +98,7 @@ public class GenericSelect extends InterfaceObject {
 	 * Sets all <code>SelectOption</code> object in the select object as not selected.
 	 */
 	protected void deselectOptions() {
-		Iterator iter = theElements.iterator();
-		while (iter.hasNext()) {
-			SelectOption element = (SelectOption) iter.next();
-			if (element.getSelected())
-				element.setSelected(false);
-		}
+		selectedElements.clear();
 	}
 
 	/**
@@ -103,11 +106,9 @@ public class GenericSelect extends InterfaceObject {
 	 * @return String	The value of the <code>SelectOption</code> in the select object.
 	 */
 	public String getSelectedValue() {
-		Iterator iter = theElements.iterator();
+		Iterator iter = selectedElements.iterator();
 		while (iter.hasNext()) {
-			SelectOption element = (SelectOption) iter.next();
-			if (element.getSelected())
-				return element.getValue();
+			return (String) iter.next();
 		}
 		return "";
 	}
@@ -120,8 +121,7 @@ public class GenericSelect extends InterfaceObject {
 	public void setSelectedOption(String value) {
 		if (!getMultiple())
 			deselectOptions();
-		SelectOption option = getOption(value);
-		option.setSelected(true);
+		selectedElements.add(value);
 	}
 
 	/**
@@ -183,6 +183,10 @@ public class GenericSelect extends InterfaceObject {
 				SelectOption option = (SelectOption) iter.next();
 				if (_allSelected)
 					option.setSelected(true);
+				else {
+					if (selectedElements.contains(option.getValue()))
+						option.setSelected(true);
+				}
 				option._print(iwc);
 			}
 
@@ -196,6 +200,10 @@ public class GenericSelect extends InterfaceObject {
 				SelectOption option = (SelectOption) iter.next();
 				if (_allSelected)
 					option.setSelected(true);
+				else {
+					if (selectedElements.contains(option.getValue()))
+						option.setSelected(true);
+				}
 				option._print(iwc);
 			}
 
@@ -220,6 +228,9 @@ public class GenericSelect extends InterfaceObject {
 						obj.theElements.set(index, (SelectOption) item);
 					}
 				}
+			}
+			if (this.selectedElements != null) {
+				obj.selectedElements = (List) ((ArrayList) this.selectedElements).clone();
 			}
 		}
 		catch (Exception ex) {
