@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.43 2002/05/22 15:05:11 gummi Exp $
+ * $Id: PresentationObject.java,v 1.44 2002/05/23 15:42:47 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -73,6 +73,8 @@ public class PresentationObject extends Object implements Cloneable {
   //public static final PresentationObject NULL_CLONE_OBJECT = new com.idega.presentation.text.Text("NULL_OBJECT",true,false,false);
 
   protected boolean initializedInMain = false;
+  private IWApplicationContext _iwac;
+  private IWUserContext _iwuc;
 
   public static final String TARGET_OBJ_INS = "tois";
 
@@ -586,7 +588,9 @@ public class PresentationObject extends Object implements Cloneable {
   protected void prepareClone(PresentationObject newObjToCreate) {
   }
 
-  public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
+  public Object _clone(IWUserContext iwc, boolean askForPermission){
+    this.setIWApplicationContext(iwc.getApplicationContext());
+    this.setIWUserContext(iwc);
     if(askForPermission){
       if(iwc.hasViewPermission(this)){
 	//return this.clone(iwc,askForPermission);
@@ -599,7 +603,7 @@ public class PresentationObject extends Object implements Cloneable {
     }
   }
 
-  public synchronized Object clone(IWUserContext iwc) {
+  public Object clone(IWUserContext iwc) {
     return this._clone(iwc,true);
   }
 
@@ -631,7 +635,7 @@ public class PresentationObject extends Object implements Cloneable {
   }
   */
 
-  public synchronized Object clone() {
+  public Object clone() {
     PresentationObject obj = null;
 /*    System.err.println("--");
     System.err.println("Cloning class of type: "+ this.getClassName());
@@ -1129,6 +1133,39 @@ public class PresentationObject extends Object implements Cloneable {
 
   public String getHorizontalAlignment(){
    return getAttribute(HORIZONTAL_ALIGNMENT);
+  }
+
+  /**
+   * Returns the IWApplicationContext that this object is running in.
+   *
+   * @throws RuntimeException if the context is not set
+   */
+  protected IWApplicationContext getIWApplicationContext(){
+    if(_iwac==null){
+      setIWApplicationContext(IWContext.getInstance());
+    }
+    return _iwac;
+  }
+
+  protected void setIWApplicationContext(IWApplicationContext iwac){
+    _iwac=iwac;
+  }
+
+
+  /**
+   * Returns the IWUserContext that this object is running in.
+   *
+   * @throws RuntimeException if the context is not set
+   */
+  protected IWUserContext getIWUserContext(){
+    if(_iwuc==null){
+     setIWUserContext(IWContext.getInstance());
+    }
+    return _iwuc;
+  }
+
+  protected void setIWUserContext(IWUserContext iwuc){
+    _iwuc=iwuc;
   }
 
 }

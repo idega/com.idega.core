@@ -502,6 +502,8 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
 
   public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
+    this.setIWApplicationContext(iwc.getApplicationContext());
+    this.setIWUserContext(iwc);
     if(askForPermission){
       if(iwc.hasViewPermission(this)){
         return this.clone();

@@ -16,6 +16,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBDomainHome;
 import com.idega.data.IDOLookup;
@@ -967,8 +968,11 @@ public void setCacheWriter(PrintWriter writer){
 
   /**
    * Expensive method, not recommended to use frequently
+   *
+   * @throws UnavailableIWContext if the IWContext is not set
+   *
    */
-  public static IWContext getInstance(){
+  public static IWContext getInstance()throws UnavailableIWContext{
     return com.idega.servlet.IWPresentationServlet.getIWContext();
   }
 
