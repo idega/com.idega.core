@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.81 2003/09/18 11:26:29 palli Exp $
+ *  $Id: Page.java,v 1.82 2003/09/18 11:32:25 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -114,6 +114,7 @@ public class Page extends PresentationObjectContainer {
 	private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
 
 	private final static String END_TAG = "</html>";
+	private boolean _isCategory = false;
 
 	/**
 	 */
@@ -527,6 +528,9 @@ public class Page extends PresentationObjectContainer {
 	public void setLocalizedTitle(String text) {
 	}
 
+	public void setIsCategory(boolean isCategory) {
+		_isCategory = isCategory;
+	}
 
 	public String getLocalizedTitle(IWContext iwc) {
 		//Map tree = PageTreeNode.getTree(iwc);
