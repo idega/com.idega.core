@@ -571,7 +571,7 @@ public class IWMainApplication{//implements ServletContext{
 
   private void loadCryptoProperties(){
     cryptoProps = new Properties();
-    System.err.println("Loading Cryptonium");
+    System.out.println("[idegaWeb] : startup : Loading Cryptonium");
     String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
     try{
       cryptoProps.load(new FileInputStream(file));
@@ -589,7 +589,7 @@ public class IWMainApplication{//implements ServletContext{
 
    private void storeCryptoProperties(){
     if(cryptoProps!=null){
-      System.err.println("Storing Cryptonium");
+      System.err.println("[idegaWeb] : shutdown : Storing Cryptonium");
       try{
       String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
       cryptoProps.store(new FileOutputStream(file),"Cryptonium");
