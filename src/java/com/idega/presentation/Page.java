@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.29 2002/02/10 21:57:01 aron Exp $
+ * $Id: Page.java,v 1.30 2002/02/11 13:42:50 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -775,13 +775,14 @@ public class Page extends PresentationObjectContainer {
 
     //If the user is logged on then there is no caching by proxy servers
     boolean notUseProxyCaching=true;
+    /**@todo this must be true at all times or users might get another persons as if they are logged on
     if(com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)){
       notUseProxyCaching=true;
     }
     else{
       notUseProxyCaching=false;
     }
-
+*/
     if(notUseProxyCaching){
       theReturn += "\n<meta http-equiv=\"pragma\" content=\"no-cache\"/>";
     }
