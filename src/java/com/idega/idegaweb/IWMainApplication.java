@@ -604,6 +604,10 @@ public class IWMainApplication{//implements ServletContext{
   public IWBundle getCoreBundle(){
    return getBundle(CORE_BUNDLE_IDENTIFIER);
   }
+  
+  public Locale getCoreLocale() {
+  	return Locale.ENGLISH;
+  }
 
   public void addLocaleToRegisteredBundles(Locale locale){
     List bundles = this.getRegisteredBundles();
