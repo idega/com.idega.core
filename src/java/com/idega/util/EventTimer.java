@@ -39,6 +39,7 @@ public class EventTimer implements Runnable{
   public static long THREAD_SLEEP_24_HOURS = 86400000;
   private long interval = DEFAULT_THREAD_SLEEP_5_SECONDS;
   private String actionCommand = "iw_event_timer";
+  private long intervalToSleepOnStart = 0;
 
 
   private boolean runThread = false;
@@ -62,6 +63,10 @@ public class EventTimer implements Runnable{
   public void run(){
     while(runThread){
       try {
+      	if(intervalToSleepOnStart!=0){
+      		t.sleep(intervalToSleepOnStart);
+      		intervalToSleepOnStart=0;
+      	}
         if( listener!=null ) listener.actionPerformed(new ActionEvent(this,ActionEvent.ACTION_PERFORMED,actionCommand));
         t.sleep(interval);
       }
@@ -70,6 +75,17 @@ public class EventTimer implements Runnable{
       }
     }
   }
+
+
+
+	/**
+	 * Starts the thread normally but tells the thread to wait for intervalToSleepOnStart millis before normal start happens.
+	 **/
+  public void start(long intervalToSleepOnStart){
+    this.intervalToSleepOnStart=intervalToSleepOnStart;
+    start();
+  }
+
 
   public void start(){
     runThread = true;
