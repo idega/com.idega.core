@@ -10,7 +10,8 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.idega.core.ldap.client.cbutil.CBArray;
 import com.idega.core.ldap.client.cbutil.CBIntText;
@@ -95,7 +96,7 @@ public class DXOps extends AdvancedOps
         }
         catch (NamingException e)     // should never happen :-) (ROTFL)
         {
-            log.error("unexpected error: bad name back from jndi ftn in CBOps.postParse(" + name + ")?\n"+ e.toString());
+            log.log(Level.WARNING,"unexpected error: bad name back from jndi ftn in CBOps.postParse(" + name + ")?\n"+ e.toString());
             e.printStackTrace();
             //System.exit(-1);
             return new DN(name);  // bad server response?  return (possibly) corrupt name anyway...
@@ -136,7 +137,7 @@ public class DXOps extends AdvancedOps
         }
         catch (NamingException e)     // should never happen :-) (ROTFL)
         {
-            log.error("unexpected error: bad name back from jndi ftn in CBOps.postParseString(" + name + ")?\n"+ e.toString());
+            log.log(Level.WARNING,"unexpected error: bad name back from jndi ftn in CBOps.postParseString(" + name + ")?\n"+ e.toString());
             e.printStackTrace();
             return name;  // bad server response?  return (possibly) corrupt name anyway...
         }
@@ -155,7 +156,7 @@ public class DXOps extends AdvancedOps
     public NamingEnumeration postParseNameClassPairs(NamingEnumeration e, Name base)
         throws NamingException
     {
-        log.debug("parsing with base :" + base.toString());
+    		log.log(Level.FINER,"parsing with base :" + base.toString());
         DXNamingEnumeration dxe = new DXNamingEnumeration();
 
         String baseString = null;
@@ -182,7 +183,7 @@ public class DXOps extends AdvancedOps
 	                	rawName = baseString;
 	            }
 
-                log.debug("ended up with: '" + rawName + "'");
+                log.log(Level.FINER,"ended up with: '" + rawName + "'");
 	            ncp.setName(rawName);
 	            dxe.add(ncp);
 	        }
