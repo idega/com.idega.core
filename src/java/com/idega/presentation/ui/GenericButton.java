@@ -62,7 +62,7 @@ public class GenericButton extends GenericInput {
 				setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 			}
 			if (_pageID != -1) {
-				setOnClick("javascript:window.location='"+BuilderLogic.getInstance().getIBPageURL(iwc, _pageID)+"';");
+				setOnClick("javascript:window.location='"+getURLString(iwc)+"';");
 			}
 			if (_fileID != -1) {
 				setOnClick("javascript:"+Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication())));	
@@ -145,6 +145,16 @@ public class GenericButton extends GenericInput {
 		addParameterToWindow(name, String.valueOf(value));
 	}
 	
+	public void addParameterToPage(String name, String value) {
+		if (parameterMap == null)
+			parameterMap = new HashMap();
+		parameterMap.put(name, value);
+	}
+	
+	public void addParameterToPage(String name, int value) {
+		addParameterToPage(name, String.valueOf(value));
+	}
+	
 	private String getParameters() {
 		StringBuffer returnString = new StringBuffer();
 		if (parameterMap != null) {
@@ -161,6 +171,22 @@ public class GenericButton extends GenericInput {
 			}
 		}
 		return TextSoap.convertSpecialCharacters(returnString.toString());
+	}
+	
+	private String getURLString(IWContext iwc) {
+		URLUtil url = new URLUtil(BuilderLogic.getInstance().getIBPageURL(iwc, _pageID));
+		if (parameterMap != null) {
+			Iterator iter = parameterMap.keySet().iterator();
+			while (iter.hasNext()) {
+				String name = (String) iter.next();
+				String value = (String) parameterMap.get(name);
+				if (name != null && value != null) {
+					url.addParameter(name, value);
+				}
+			}
+		}
+				
+		return url.toString();
 	}
 
 	/**
