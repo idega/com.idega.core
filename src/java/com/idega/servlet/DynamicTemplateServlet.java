@@ -87,7 +87,11 @@ public class DynamicTemplateServlet extends PageJSPModule{
         public String getFirstTemplatePageClass()throws Exception{
           //Properties prop = getDefaultProperties();
           //String className = prop.getProperty("idegaweb.template.default.classname");
-          String className = getApplicationSettings().getDefaultTemplateClass();
+          String className = null;
+          IWMainApplicationSettings settings = getApplicationSettings();
+          if(settings!=null){
+            className = settings.getDefaultTemplateClass();
+          }
           //System.err.println("className="+className);
           //Page page = (Page)Class.forName(className).newInstance();
           //return page;
@@ -125,6 +129,9 @@ public class DynamicTemplateServlet extends PageJSPModule{
             setTemplateClassName(className);
           }
           Page page = (Page)Class.forName(className).newInstance();
+          if(page==null){
+            page = new Page();
+          }
           return page;
         }
 
