@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.73 2003/12/11 15:32:29 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.74 2004/01/12 12:15:35 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -330,6 +330,29 @@ public class IWBundle implements java.lang.Comparable
 		}
 		else
 			return prop;
+	}
+	public boolean getBooleanProperty(String propertyName)
+	{
+		return Boolean.valueOf(getProperty(propertyName)).booleanValue();
+	}
+	public boolean getBooleanProperty(String propertyName, boolean returnValueIfNull)
+	{
+		String prop = getProperty(propertyName);
+		if (prop == null)
+		{
+			if (getApplication().getSettings().isAutoCreatePropertiesActive())
+			{
+				if (getApplication().getSettings().isDebugActive())
+					System.out.println("Storing property: " + propertyName);
+				setBooleanProperty(propertyName, returnValueIfNull);
+			}
+			return returnValueIfNull;
+		}
+		else
+			return Boolean.valueOf(prop).booleanValue();
+	}
+	public void setBooleanProperty(String propertyName, boolean setValue){
+		setProperty(propertyName,Boolean.toString(setValue));
 	}
 	public void removeProperty(String propertyName)
 	{

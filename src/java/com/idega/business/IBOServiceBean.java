@@ -14,6 +14,8 @@ import javax.ejb.SessionBean;
 import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -31,6 +33,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
 
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
+  private static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
   public IBOServiceBean() {
   }
@@ -108,7 +111,33 @@ public class IBOServiceBean implements IBOService, SessionBean {
   public IWApplicationContext getIWApplicationContext(){
     return this.iwac;
   }
+  
+  /**
+   * Gets the current IWMainApplication
+   * @return
+   */
+  protected IWMainApplication getIWMainApplication(){
+  	return getIWApplicationContext().getApplication();
+  }
 
+  /**
+   * Gets the bundle for this component. Can be overridden.
+   * @return
+   */
+  protected IWBundle getBundle(){
+  	return getIWMainApplication().getBundle(getBundleIdentifier());
+  }
+  /**
+   * Gets the bundle identifier for this component.
+   * This method is used by default by the getBundle() method and should be overridden.<br>
+   * By default it returns the identifier for the core bundle.
+   * @return
+   */
+  protected String getBundleIdentifier(){
+  	return CORE_IW_BUNDLE_IDENTIFIER;
+  }
+  
+  
   /**
    * Get an instance of the service bean specified by serviceClass
    */

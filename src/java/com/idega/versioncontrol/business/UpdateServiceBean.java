@@ -23,15 +23,22 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 {
 
 	public boolean updateBundleToMostRecentVersion(String bundleIdentifier){
-		IWBundle bundle = this.getIWApplicationContext().getApplication().getBundle(bundleIdentifier);
-		return this.updateBundleToMostRecentVersion(bundle);
+		return updateBundleToMostRecentVersion(bundleIdentifier,false);
 	}
-
+	
+	public boolean updateBundleToMostRecentVersion(String bundleIdentifier,boolean overWriteLocalChanges){
+		IWBundle bundle = this.getIWApplicationContext().getApplication().getBundle(bundleIdentifier);
+		return this.updateBundleToMostRecentVersion(bundle,overWriteLocalChanges);
+	}
 	
 	public boolean updateBundleToMostRecentVersion(IWBundle bundle){
+		return updateBundleToMostRecentVersion(bundle,false);
+	}
+	
+	public boolean updateBundleToMostRecentVersion(IWBundle bundle,boolean overWriteLocalChanges){
 		String realBundleDir = bundle.getRealPath();
 		bundle.storeState();
-		if(executeCVSUpdate(realBundleDir)){
+		if(executeCVSUpdate(realBundleDir,overWriteLocalChanges)){
 			bundle.reloadBundle();
 			return true;
 		}
@@ -153,6 +160,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	/**
 	 * @param stream
 	 */
+	
 	private void writeInputStreamToPrintStream(InputStream input,PrintStream stream) throws IOException
 	{
 		int buflen = 10;

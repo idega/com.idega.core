@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.17 2003/10/03 01:41:58 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.18 2004/01/12 12:15:35 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -452,6 +452,14 @@ public class IWPropertyList {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public boolean getBooleanProperty(String propertyName)
+	{
+		return Boolean.valueOf(getProperty(propertyName)).booleanValue();
+	}
+	public void setBooleanProperty(String propertyName, boolean setValue){
+		setProperty(propertyName,Boolean.toString(setValue));
 	}
 
 }
