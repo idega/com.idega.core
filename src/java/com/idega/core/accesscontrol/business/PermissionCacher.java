@@ -34,13 +34,17 @@ public class PermissionCacher {
 
   public PermissionCacher() {
   }
-  /**
-   * Does not handle pages or jsp pages
-   */
-  public static boolean somePermissionSet( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException {
+
+
+
+  public static boolean anyInstancePerissionsDefined( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException{
+    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE};
+    return anyPermissionsDefined(obj,iwc,permissionKey,maps);
+  }
+
+  private static boolean anyPermissionsDefined( PresentationObject obj, IWContext iwc, String permissionKey, String[] maps) throws SQLException{
     String identifier = null;
     Boolean set = null;
-    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE, APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
 
 
     for (int i = 0; i < maps.length; i++) {
@@ -82,6 +86,14 @@ public class PermissionCacher {
     } else{
       return true;
     }
+  }
+
+  /**
+   * Does not handle pages or jsp pages
+   */
+  public static boolean somePermissionSet( PresentationObject obj, IWContext iwc, String permissionKey) throws SQLException {
+    String[] maps = {APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE, APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT}; //, APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
+    return anyPermissionsDefined(obj,iwc,permissionKey,maps);
   }
 
   private static Boolean hasPermission(String permissionMapKey, PresentationObject obj, IWContext iwc, String permissionKey, List groups) throws SQLException {

@@ -331,15 +331,20 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           }
 
           // Global - (Page)
-          ICObject page = getStaticPageICObject();
-          if(page != null){
-            for (int i = 0; i < arrayLength; i++) {
-              myPermission = PermissionCacher.hasPermission(page,iwc,permissionType,permissionGroupLists[i]);
-              if(myPermission != null){
-                return myPermission;
+          /**
+           * @todo setja stopp ef einhver réttindi hafa verið sett á síðu instance
+           */
+          //if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
+            ICObject page = getStaticPageICObject();
+            if(page != null){
+              for (int i = 0; i < arrayLength; i++) {
+                myPermission = PermissionCacher.hasPermission(page,iwc,permissionType,permissionGroupLists[i]);
+                if(myPermission != null){
+                  return myPermission;
+                }
               }
             }
-          }
+          //}
           // Global - (Page)
 
           return myPermission;
@@ -355,12 +360,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           //instance
 
           // Global - (object)
-          for (int i = 0; i < arrayLength; i++) {
-            myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionType,permissionGroupLists[i]);
-            if(myPermission != null){
-              return myPermission;
+          if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
+            for (int i = 0; i < arrayLength; i++) {
+              myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionType,permissionGroupLists[i]);
+              if(myPermission != null){
+                return myPermission;
+              }
             }
-          }// Global - (object)
+          }
+          // Global - (object)
 
 
   /*
