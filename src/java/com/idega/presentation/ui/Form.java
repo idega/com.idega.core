@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.84 2005/03/09 14:48:23 laddi Exp $
+ * $Id: Form.java,v 1.85 2005/03/09 15:34:01 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/03/09 14:48:23 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/03/09 15:34:01 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.84 $
+ * @version $Revision: 1.85 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -859,8 +859,8 @@ public class Form
 	}
 
 	protected void addControlParameter(Parameter parameter) {
-		Parameter param = (Parameter) getControlParameters().get(parameter.getName());
-		if (param == null) {
+		Object parameterValue = getControlParameters().get(parameter.getName());
+		if (parameterValue == null) {
 			getControlParameters().put(parameter.getName(), parameter.getValueAsString());
 			add(parameter);
 		}
