@@ -599,6 +599,19 @@ public class IWTimestamp implements Comparable,Cloneable {
 
 	/**
 	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the current date and time settings and the locale provided.
+	 */
+	public IWTimestamp(Locale locale) {
+		if (locale != null) {
+			calendar = new GregorianCalendar(locale);
+		}
+		else {
+			calendar = new GregorianCalendar();
+		}
+	}
+
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
 	 * the date settings of the given <code>Date</code> object.  Time settings are
 	 * disgarded.
 	 */
@@ -657,8 +670,17 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * Available string formats are: 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss || ddmmyy'
 	 */
 	public IWTimestamp(String SQLFormat) {
-		this();
+		this(null, SQLFormat);
+	}
 
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and/or time settings given in the constructor.<br>
+	 * Available string formats are: 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss || ddmmyy'
+	 */
+	public IWTimestamp(Locale locale, String SQLFormat) {
+		this(locale);
+		
 		if (SQLFormat.length() == 10) {
 			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
 			calendar.setTime(Date.valueOf(SQLFormat));
