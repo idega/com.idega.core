@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.1 2004/11/14 23:24:47 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.2 2004/11/16 00:50:22 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2004/11/14 23:24:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/16 00:50:22 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ViewManager {
 	
@@ -105,7 +105,9 @@ public class ViewManager {
 		searchNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/searcharticle.jsp");
 		*/
 		
-		DefaultViewNode webviewNode = new ApplicationViewNode("webview",getWorkspaceRoot());
+		DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
+		//TODO: Change this
+		myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
 		
 		//DefaultViewNode loginViewNode = new WindowViewNode("login",getApplicationRoot());
 		
@@ -122,7 +124,9 @@ public class ViewManager {
 			node.setViewId("workspace");
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
-			node.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsp");
+			//String jspUri = iwma.getBundle("com.idega.webface").getJSPURI("workspace.jsp");
+			String jspUri = "/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsp";
+			node.setJspUri(jspUri);
 			workspaceNode = node;
 		}
 		return workspaceNode;
