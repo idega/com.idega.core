@@ -162,7 +162,8 @@ public class ConnectionPool
          return getConnection(remaining);
       }
       checkedOut++;
-      logWriter.log("Delivered connection from pool", LogWriter.INFO);
+      //debug
+      //logWriter.log("Delivered connection from pool", LogWriter.INFO);
       logWriter.log(getStats(), LogWriter.DEBUG);
       return conn;
    }
@@ -250,7 +251,8 @@ public class ConnectionPool
       freeConnections.addElement(conn);
       checkedOut--;
       notifyAll();
-      logWriter.log("Returned connection to pool", LogWriter.INFO);
+     //debug
+     //logWriter.log("Returned connection to pool", LogWriter.INFO);
       logWriter.log(getStats(), LogWriter.DEBUG);
    }
 
