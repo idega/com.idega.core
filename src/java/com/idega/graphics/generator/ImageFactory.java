@@ -58,16 +58,9 @@ public class ImageFactory {
 
       fontbase = Font.createFont(Font.TRUETYPE_FONT,fis);
 
-      String OS = System.getProperty("os.name","Windows");
-      /**
-       * Special check for point sizing on MacOS
-       */
-      if(OS.startsWith("Mac")){
-        defaultFont = fontbase.deriveFont(Font.PLAIN,10);
-      }
-      else{
-        defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
-      }
+
+      defaultFont = fontbase.deriveFont(Font.PLAIN,getDefaultFontSize());
+
     }
     catch (Exception ex) {
       System.err.println("ImageFactory : default font is missing using default java font instead");
@@ -149,16 +142,9 @@ public class ImageFactory {
     FileUtil.createFolder(filePath);
     Font tabFont = null;
 
-    String OS = System.getProperty("os.name","Windows");
-    /**
-     * Special check for point sizing on MacOS
-     */
-    if(OS.startsWith("Mac")){
-      tabFont = fontbase.deriveFont(Font.PLAIN,10);
-    }
-    else{
-      tabFont = fontbase.deriveFont(Font.PLAIN,8.5f);
-    }
+
+    tabFont = fontbase.deriveFont(Font.PLAIN,getDefaultFontSize());
+
 
     Tab tab = new Tab(textOnTab,tabFont);
     tab.flip(flip);
@@ -210,5 +196,21 @@ public class ImageFactory {
     }
   }
 
+
+  static float getDefaultFontSize(){
+      String VMVer = System.getProperty("java.vm.version","1.3");
+      String OS = System.getProperty("os.name","Windows");
+      /**
+       * Special check for "correct" point sizing on MacOS X and JVM 1.4
+       */
+      if(OS.startsWith("Mac")|| VMVer.startsWith("1.4")){
+        //defaultFont = fontbase.deriveFont(Font.PLAIN,10);
+        return 10;
+      }
+      else{
+        //defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
+        return 8.5f;
+      }
+  }
 
 }
