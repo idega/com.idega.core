@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.121 2004/12/28 00:20:56 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.122 2004/12/30 15:45:50 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/28 00:20:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/30 15:45:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.121 $
+ * @version $Revision: 1.122 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -558,7 +558,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		if(IWMainApplication.USE_JSF){
 			try {
-				FacesContext.getCurrentInstance().getResponseWriter().write(string);
+				if(string!=null){
+					FacesContext.getCurrentInstance().getResponseWriter().write(string);
+				}
 			}
 			catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -578,7 +580,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if(IWMainApplication.USE_JSF){
 			try {
 				ResponseWriter writer = FacesContext.getCurrentInstance().getResponseWriter();
-				writer.write(string);
+				if(string!=null){
+					writer.write(string);
+				}
 				writer.write(StringHandler.NEWLINE);
 			}
 			catch (IOException e) {
@@ -956,14 +960,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void _main(IWContext iwc) throws Exception
 	{
-		/*
-		 * if(this.ic_object_instance_id <= 0){ initICObjectInstanceId(iwc);
-		 */
+
 		initVariables(iwc);
-		//if (_iwuc == null)
-		//{
-		//	this.setIWUserContext(iwc);
-		//}
+
 		if (!initializedInMain)
 		{
 			this.initInMain(iwc);
