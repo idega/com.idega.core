@@ -59,14 +59,22 @@ public class SimpleQuerier{
 	}
 
 
-
-
 	public static String[] executeStringQuery(String sqlQuery)throws Exception{
 		Connection conn= null;
+                try {
+                  conn = getConnection();
+                  return executeStringQuery(sqlQuery, conn);
+                }finally {
+                  if (conn != null){
+                          freeConnection(conn);
+                  }
+                }
+        }
+
+	public static String[] executeStringQuery(String sqlQuery, Connection conn)throws Exception{
 		Statement Stmt= null;
                 String[] theReturn = null;
 		try{
-			conn = getConnection();
 			Stmt = conn.createStatement();
                         ResultSet RS = Stmt.executeQuery(sqlQuery);
 
@@ -83,9 +91,6 @@ public class SimpleQuerier{
 		finally{
 			if(Stmt != null){
 				Stmt.close();
-			}
-			if (conn != null){
-				freeConnection(conn);
 			}
 		}
                 return theReturn;
