@@ -13,6 +13,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 
 import com.idega.presentation.IWContext;
@@ -144,7 +145,7 @@ public class XMLData {
     IWMainApplication mainApp = IWContext.getInstance().getApplication();
     StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
            
-    path.append(mainApp.getIWCacheManager().IW_ROOT_CACHE_DIRECTORY)
+    path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
       .append(separator)
       .append(AUXILIARY_FOLDER);
     // check if the folder exists create it if necessary
