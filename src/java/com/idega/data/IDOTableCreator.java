@@ -13,11 +13,8 @@ import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.transaction.TransactionManager;
-
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
 import com.idega.util.Timer;
@@ -956,7 +953,7 @@ public class IDOTableCreator{
 
   protected String getPrimaryKeyReferenceForManyToManyRelationship(GenericEntity entity,String column,String referencingColumn){
     try{
-      EntityAttribute attr = entity.getColumn(referencingColumn);
+      EntityAttribute attr = entity.getAttribute(referencingColumn);
       Class storageClass = attr.getStorageClass();
       int maxLength = attr.getMaxLength();
       String sqlType = this._dsi.getSQLType(storageClass,maxLength);
