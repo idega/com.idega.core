@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.17 2002/03/07 11:44:57 tryggvil Exp $
+ * $Id: Table.java,v 1.16 2002/03/07 11:43:27 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,13 +19,11 @@ import com.idega.idegaweb.IWMainApplication;
 import java.util.Iterator;
 
 /**
- * A class to use for presentation of 2 dimensional (grid) layout.
- *
- *   Note: xpos is in [1:cols]
- *    ,ypos is in [1:rows]
+ * A class to use for cell (grid) layout. Note xpos is in [1:cols]
+ *                     ypos is in [1:rows]
  *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.3
+ * @version 1.2
  */
 public class Table extends PresentationObjectContainer {
   protected static Image transparentcell;
