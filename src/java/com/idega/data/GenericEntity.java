@@ -64,8 +64,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public static final String ONE_TO_ONE = "one-to-one";
 	protected static final String UNIQUE_ID_COLUMN_NAME = "UNIQUE_ID";
 	
-	private static Map _theAttributes = new Hashtable();
-	private static Map _allStaticClasses = new Hashtable();
+
 	static String DEFAULT_DATASOURCE = "default";
 	//private static NullColumnValue nullColumnValue = new NullColumnValue();
 	private String _dataStoreType;
@@ -144,7 +143,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 			//First store a static instance of this class
 			try {
-				_allStaticClasses.put(this.getClass(), this.instanciateEntity(this.getClass()));
+				getIDOContainer().getEntityStaticInstances().put(this.getClass(), this.instanciateEntity(this.getClass()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -164,8 +163,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	
+	protected static IDOContainer getIDOContainer(){
+		return IDOContainer.getInstance();
+	}
+	
 	protected static Collection getLoadedEntityBeans(){
-	    	return _allStaticClasses.values();
+		return getIDOContainer().getEntityStaticInstances().values();
 	}
 	/**
 	 * Meant to be overrided in subclasses to add default attributes
@@ -202,11 +205,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected GenericEntityDefinition getGenericEntityDefinition() {
-		return (GenericEntityDefinition)_theAttributes.get(this.getClass());
+		return (GenericEntityDefinition)getIDOContainer().getEntityDefinitions().get(this.getClass());
 	}
 
 	protected GenericEntityDefinition setGenericEntityDefinition(GenericEntityDefinition definition) {
-		return (GenericEntityDefinition)_theAttributes.put(this.getClass(), definition);
+		return (GenericEntityDefinition)getIDOContainer().getEntityDefinitions().put(this.getClass(), definition);
 	}
 
 	//	protected Map getAttributesMap()
@@ -2928,11 +2931,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (entityClass.isInterface()) {
 			return getStaticInstanceIDO(IDOLookup.getBeanClassFor(entityClass));
 		}
-		if (_allStaticClasses == null) {
-			_allStaticClasses = new Hashtable();
-		}
 
-		IDOEntity theReturn = (IDOEntity)_allStaticClasses.get(entityClass);
+
+		IDOEntity theReturn = (IDOEntity)getIDOContainer().getEntityStaticInstances().get(entityClass);
 
 		if (theReturn == null) {
 			try {
@@ -2943,11 +2944,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				// the _allStaticInstances map.
 				// !!!!!!This instance should not be replaced!!!!
 				// Therefore get the "right" instance.
-				IDOEntity correctInstance = (GenericEntity)_allStaticClasses.get(entityClass);
+				IDOEntity correctInstance = (GenericEntity)getIDOContainer().getEntityStaticInstances().get(entityClass);
 				if (correctInstance != null) {
 					theReturn = correctInstance;
 				} else {
-					_allStaticClasses.put(entityClass, theReturn);
+					getIDOContainer().getEntityStaticInstances().put(entityClass, theReturn);
 				}
 
 			} catch (Exception ex) {

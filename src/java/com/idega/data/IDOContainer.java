@@ -1,18 +1,19 @@
 package com.idega.data;
 
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Vector;
-import java.util.List;
 import java.util.Iterator;
-
-import javax.ejb.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import javax.ejb.EntityBean;
+import javax.ejb.FinderException;
+import com.idega.util.datastructures.HashtableDoubleKeyed;
 
 /**
- * Title:        idega Data Objects
- * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
- * Copyright:    Copyright (c) 2001
- * Company:      idega
+ * IDOContainer is the central service for the IDO Framework.
+ * IDO or Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores.<br>
+ * <br>
+ * Copyright (c) 2001-2004 idega Software
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
@@ -29,7 +30,11 @@ public class IDOContainer {
   private Map emptyBeanInstances;
   private Map beanCacheMap;
   private Map isBeanCacheActive;
-
+  //These variables were moved from GenericEntity:
+  private Map entityAttributes;
+  private Map entityStaticInstances;  
+  private HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
+  
   private IDOContainer() {
   }
 
@@ -44,10 +49,14 @@ public class IDOContainer {
    * Unloads the previously loaded instance and all its resources
    */
   public static void unload(){
-  	instance.beanCacheMap=null;
-  	instance.beanCacheMap=null;
-  	instance.isBeanCacheActive=null;
+  	
+  	IDOContainer privateInstance = instance;
   	instance=null;
+  	privateInstance.beanCacheMap=null;
+  	privateInstance.beanCacheMap=null;
+  	privateInstance.isBeanCacheActive=null;
+  	privateInstance.entityAttributes=null;
+  	privateInstance.entityStaticInstances=null;
   }
 
   protected Map getBeanMap(){
@@ -285,4 +294,39 @@ public class IDOContainer {
     }
   }
 
+  /**
+   * Map Used by the IDO Framework and stores a static instance of a IDOEntityDefinition.
+   * This map has as a key a Class instance and a value a IDOEntityDefinition instance.
+   * @return Returns the entityAttributes.
+   */
+  Map getEntityDefinitions() {
+  	if(entityAttributes==null){
+  		entityAttributes=new HashMap();
+  	}
+  	return entityAttributes;
+  }
+  /**
+   * Map Used by the IDO Framework and stores a static instance of a IDOEntity.
+   * This map has as a key a Class instance and a value a IDOEntity instance.
+   */
+  Map getEntityStaticInstances() {
+  	if(entityStaticInstances==null){
+  		entityStaticInstances=new HashMap();
+  	}
+  	return entityStaticInstances;
+  }  
+  
+  /**
+   * Map used to look up relationships (Many-to-many) between tables.<br>
+   * The keys here are two Strings (the EntityNames or TableNames for the Entity beans that have the relationship)
+   * and as a value an instance of EntityRelationship.
+   * @return the relationship Map
+   */
+  HashtableDoubleKeyed getRelationshipTableMap(){
+  	if(this.relationshipTables==null){
+  		relationshipTables=new HashtableDoubleKeyed();
+  	}
+  	return relationshipTables;
+  }
+  
 }

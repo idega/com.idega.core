@@ -10,9 +10,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
-
 import com.idega.util.StringHandler;
-import com.idega.util.datastructures.HashtableDoubleKeyed;
 //import com.idega.util.datastructures.HashtableMultivalued;
 /**
  * Title:        idega Data Objects
@@ -23,7 +21,7 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
  * @version 1.0
  */
 public class EntityControl {
-	private static HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
+	
 	
 //	private static HashtableMultivalued relationshipClasses = new HashtableMultivalued();
 	private static boolean autoCreate = false;
@@ -595,7 +593,7 @@ public class EntityControl {
 		
 		rel.addColumn(column1, relatingEntityClass1);
 		rel.addColumn(column2, relatingEntityClass2);
-		relationshipTables.put(relatingEntityName1, relatingEntityName2, rel);
+		getIDOContainer().getRelationshipTableMap().put(relatingEntityName1, relatingEntityName2, rel);
 		//relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
 //		relationshipClasses.put(relatingEntityClass1, relatingEntityClass2);
 //		relationshipClasses.put(relatingEntityClass2, relatingEntityClass1);
@@ -634,10 +632,10 @@ public class EntityControl {
 	 * Returns a list of EntityRelationship Objects
 	 */
 	protected static List getManyToManyRelationShips(GenericEntity entity) {
-		if (relationshipTables != null) {
-			return relationshipTables.get(entity.getEntityName());
-		}
-		return null;
+		//if (relationshipTables != null) {
+			return getIDOContainer().getRelationshipTableMap().get(entity.getEntityName());
+		//}
+		//return null;
 	}
 	/**@todo : set back to protected
 	 *
@@ -783,12 +781,12 @@ public class EntityControl {
 	 * Returns a list of IDOLegacyEntity Class objects that have N:1 relationship with entityClass
 	 */
 	public static List getNToOneRelatedClasses(Class entityClass) {
-		return getNToOneRelatedClasses(GenericEntity.getEntityInstance(entityClass));
+		return getNToOneRelatedClasses(GenericEntity.getStaticInstanceIDO(entityClass));
 	}
 	/**
 	 * Returns a list of IDOLegacyEntity Class objects that have N:1 relationship with entity
 	 */
-	public static List getNToOneRelatedClasses(GenericEntity entity) {
+	public static List getNToOneRelatedClasses(IDOEntity entity) {
 		List theReturn = new java.util.Vector();
 		IDOEntityBean bean = (IDOEntityBean)entity;
 		Collection attributes = bean.getAttributes();
@@ -815,16 +813,17 @@ public class EntityControl {
 		return getManyToManyRelationShip(relatingEntityName1, relatingEntityName2);
 	}
 	protected static EntityRelationship getManyToManyRelationShip(String relatingEntityName1, String relatingEntityName2) {
-		if (relationshipTables == null) {
-			relationshipTables = new HashtableDoubleKeyed();
-			return null;
-		}
-		EntityRelationship rel = (EntityRelationship)relationshipTables.get(relatingEntityName1, relatingEntityName2);
+
+		EntityRelationship rel = (EntityRelationship)getIDOContainer().getRelationshipTableMap().get(relatingEntityName1, relatingEntityName2);
 		if (rel == null) {
 			return null;
 		} else {
 			return rel;
 		}
 		//return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
+	}
+	
+	public static IDOContainer getIDOContainer(){
+		return IDOContainer.getInstance();
 	}
 }
