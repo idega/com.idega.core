@@ -36,6 +36,8 @@ public class PoolManager implements Singleton
 	static private PoolManager instance;
 	static private int clients;
 	
+	private static boolean isUnlocked = true; 
+	
 	private LogWriter logWriter;
 	private PrintWriter pw;
 	private Vector drivers = new Vector();
@@ -57,9 +59,18 @@ public class PoolManager implements Singleton
 	    
 		init(propertiesFileLocation);
 	}
+	
+	public static void lock() {
+		isUnlocked = false;
+	}
+	
+	public static void unlock() {
+		isUnlocked = true;
+	}
+	
 	static synchronized public PoolManager getInstance()
 	{
-		if (instance == null)
+		if (instance == null && isUnlocked)
 		{
 			instance = new PoolManager();
 		}
@@ -70,7 +81,7 @@ public class PoolManager implements Singleton
 
 	static synchronized public PoolManager getInstance(String propertiesFileLocation)
 	{
-		if (instance == null)
+		if (instance == null && isUnlocked)
 		{
 			instance = new PoolManager(propertiesFileLocation);
 		}
@@ -80,7 +91,7 @@ public class PoolManager implements Singleton
 	
 	static synchronized public PoolManager getInstance(String propertiesFileLocation, IWMainApplication mainApplication)
 	{
-		if (instance == null)
+		if (instance == null && isUnlocked)
 		{
 			instance = new PoolManager(propertiesFileLocation,mainApplication);
 		}
@@ -280,6 +291,10 @@ public class PoolManager implements Singleton
 		//{
 		//   return;
 		//}
+		
+		// prevent creation
+		PoolManager.lock();
+		
 		Enumeration allPools = pools.elements();
 		while (allPools.hasMoreElements())
 		{

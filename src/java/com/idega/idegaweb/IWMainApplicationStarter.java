@@ -149,12 +149,14 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			fileName=sfile1;
 			sendStartMessage("Reading Databases from file: "+fileName);
 			sendStartMessage("Starting idega Datastore ConnectionPool");
+			PoolManager.unlock();
 			PoolManager.getInstance(fileName,iwma);	
 		}
 		else if(file2.exists()){
 			fileName=sfile2;
 			sendStartMessage("Reading Databases from file: "+fileName);
 			sendStartMessage("Starting idega Datastore ConnectionPool");
+			PoolManager.unlock();
 			PoolManager.getInstance(fileName,iwma);	
 		}
 		else{
