@@ -365,21 +365,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
 		List theReturn = new ArrayList();
 		try {
-			Collection parents = null;
 			Group parent = null;
-			String key = this.getPrimaryKey().toString();
-			if (cachedParents!=null) {
-				if (cachedParents.containsKey(key))
-					parents = (Collection)cachedParents.get(key);
-				else
-				{	
-					parents = getCollectionOfParents(cachedGroups);
-					cachedParents.put(key, parents);
-				}
-			}
-			else {
-				parents = getCollectionOfParents();
-			}	
+			Collection parents = getCollectionOfParents(cachedParents, cachedGroups);
 			Iterator parIter = parents.iterator();
 			while (parIter.hasNext()) {
 				parent = (Group)parIter.next();
@@ -391,7 +378,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				try {
                     User user = getUserForGroup();
 	                Group usersPrimaryGroup = null;
-                    key = String.valueOf(user.getPrimaryGroupID());
+                    String key = String.valueOf(user.getPrimaryGroupID());
         	        if (cachedGroups != null) {
         	        	if (cachedGroups.containsKey(key))
         	        	    usersPrimaryGroup = (Group)cachedGroups.get(key);
@@ -421,18 +408,32 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	private Collection getCollectionOfParents() throws FinderException {		
-		return getCollectionOfParents(null);
+		return getCollectionOfParents(null, null);
 	}
 
-	private Collection getCollectionOfParents(Map cachedGroups) throws FinderException {		
-		Collection col = ejbFindParentGroups(this.getID());
+	private Collection getCollectionOfParents(Map cachedParents, Map cachedGroups) throws FinderException {		
+		Collection col = null;
+		String key = this.getPrimaryKey().toString();
+		if (cachedParents!=null) {
+			if (cachedParents.containsKey(key))
+				col = (Collection)cachedParents.get(key);
+			else
+			{	
+				col = ejbFindParentGroups(this.getID());
+				cachedParents.put(key, col);
+			}
+		}
+		else {
+		    col = ejbFindParentGroups(this.getID());
+		}
+		
 		Collection returnCol = new ArrayList();
 		Group parent = null;
 		Integer parentID = null;
 		Iterator iter = col.iterator();
 		while (iter.hasNext()) {
 			parentID = (Integer)iter.next();
-			String key = parentID.toString();
+			key = parentID.toString();
 			if (cachedGroups != null) {
 				if (cachedGroups.containsKey(key))
 					parent = (Group)cachedGroups.get(key);
