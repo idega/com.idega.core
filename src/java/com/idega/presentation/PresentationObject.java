@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.46 2002/05/28 17:22:27 gummi Exp $
+ * $Id: PresentationObject.java,v 1.47 2002/06/07 11:06:04 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,9 @@
  */
 package com.idega.presentation;
 
+import java.rmi.RemoteException;
+import com.idega.business.IBOLookup;
+import com.idega.event.*;
 import com.idega.idegaweb.*;
 import java.io.*;
 import java.util.*;
@@ -17,11 +20,6 @@ import java.sql.*;
 import com.idega.util.database.*;
 import com.idega.core.data.*;
 import javax.swing.event.EventListenerList;
-import com.idega.event.IWEvent;
-import com.idega.event.IWLinkEvent;
-import com.idega.event.IWSubmitEvent;
-import com.idega.event.IWLinkListener;
-import com.idega.event.IWSubmitListener;
 import com.idega.data.EntityFinder;
 import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.presentation.ui.Form;
@@ -62,7 +60,12 @@ public class PresentationObject extends Object implements Cloneable {
   private int ic_object_id;
   private static String emptyString = "";
   public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
+  /**
+   * @deprecated Do not use this function
+   */
   public EventListenerList listenerList = null;
+
+  public EventListenerList _listenerList = null;
   private Hashtable eventAttributes = null;
   private static long InstanceUniqueID;
   private String UniqueInstanceName;
@@ -83,7 +86,7 @@ public class PresentationObject extends Object implements Cloneable {
   private boolean _changeInstanceIDOnInheritance = false;
   private boolean _allowPagePermissionInheritance = true;
 
-  private String _location = "_top";
+  private IWLocation _location = new IWPresentationLocation();
 
   private GenericState defaultState = null;
 
@@ -737,11 +740,12 @@ public class PresentationObject extends Object implements Cloneable {
 
   public void setICObjectInstanceID(int id) {
     this.ic_object_instance_id = id;
+    this.getLocation().setICObjectInstanceID(id);
   }
 
 
   public void setICObjectInstance(ICObjectInstance instance) {
-    this.ic_object_instance_id = instance.getID();
+    setICObjectInstanceID(instance.getID());
   }
 
   public void setICObjectID(int id) {
@@ -818,7 +822,9 @@ public class PresentationObject extends Object implements Cloneable {
       throw (IWException) excep.fillInStackTrace();
     }
   }
-
+  /**
+   * @deprecated Do not use this function
+   */
   public void addIWLinkListener(IWLinkListener l,IWContext iwc) {
     //System.err.println(this.getClass().getName() + " : listener added of type -> " + l.getClass().getName());
     /**
@@ -829,14 +835,23 @@ public class PresentationObject extends Object implements Cloneable {
     getEventListenerList().add(IWLinkListener.class,l);
   }
 
+  /**
+   * @deprecated Do not use this function
+   */
   public IWLinkListener[] getIWLinkListeners() {
     return (IWLinkListener[])getEventListenerList().getListeners(IWLinkListener.class);
   }
 
+  /**
+   * @deprecated Do not use this function
+   */
   public void addIWSubmitListener(IWSubmitListener l,IWContext iwc){
     getEventListenerList().add(IWSubmitListener.class,l);
   }
 
+    /**
+     * @deprecated Do not use this function
+     */
     public IWSubmitListener[] getIWSubmitListeners(){
       if (listenerList == null){
 	listenerList = new EventListenerList();
@@ -928,6 +943,9 @@ public class PresentationObject extends Object implements Cloneable {
     eventIWContext = iwc;
   }
 
+  /**
+   * @deprecated Do not use this function
+   */
   public EventListenerList getEventListenerList(){
     if (listenerList == null){
 	listenerList = new EventListenerList();
@@ -1174,12 +1192,72 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
 
-  public void setLocation(String target){
-    _location = target;
+  public void setLocation(IWLocation location){
+    this.setLocation(location,this.getIWUserContext());
   }
 
-  public String getLocation(){
-    return _location;
+  public void setLocation(IWLocation location, IWUserContext iwuc){
+    _location = location;
+    if(this instanceof StatefullPresentation){
+      IWPresentationState state = ((StatefullPresentation)this).getPresentationState(iwuc);
+      if(state != null){
+        state.setLocation(location);
+      }
+    }
+  }
+
+  public IWLocation getLocation(){
+//    if(this instanceof StatefullPresentation){
+//      return ((StatefullPresentation)this).getPresentationState().getLocation();
+//    } else {
+      return _location;
+//    }
+  }
+
+  public EventListenerList getEventListenerList(IWUserContext iwuc){
+    if(_listenerList != null){
+      return _listenerList;
+    } else {
+      try {
+        IWEventMachine machine = (IWEventMachine)IBOLookup.getSessionInstance(iwuc,IWEventMachine.class);
+        System.out.println();
+//        System.out.println("getEventListenerList: machine = "+ machine);
+//        System.out.println("getEventListenerList: location = "+this.getLocation());
+        System.out.println();
+        if(this.getICObjectInstanceID() == 0){
+          if(this.getLocation() != null){
+            _listenerList = machine.getListenersFor(this.getLocation());
+            return _listenerList;
+          } else {
+            throw new RuntimeException("ERROR: "+this+".getEventListenerList(IWUserContext iwuc): Object has neither instanceId nor IWLocationObject");
+          }
+        } else {
+          _listenerList = machine.getListenersFor(this.getICObjectInstance());
+          return _listenerList;
+        }
+      }
+      catch (RemoteException ex) {
+        throw new RuntimeException(ex.getMessage());
+      }
+      catch (SQLException sql) {
+        throw new RuntimeException(sql.getMessage());
+      }
+
+    }
+  }
+
+  public void addIWActionListener(IWActionListener l){
+    getEventListenerList(this.getIWUserContext()).add(IWActionListener.class,l);
+//    System.out.println();
+//    System.out.println("addIWActionListener: _listenerList = "+getEventListenerList(this.getIWUserContext()));
+//    System.out.println("addIWActionListener: IWActionListener = " + l);
+//    System.out.println("addIWActionListener: location = "+this.getLocation());
+//    System.out.println();
+
+  }
+
+  public void removeIWActionListener(IWActionListener l){
+    getEventListenerList(this.getIWUserContext()).remove(IWActionListener.class,l);
   }
 
 }

@@ -1,8 +1,11 @@
 package com.idega.event;
 
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
+import java.rmi.RemoteException;
+import javax.ejb.FinderException;
+import com.idega.data.IDOLookup;
+import com.idega.core.data.ICObjectInstance;
+import com.idega.idegaweb.*;
+import com.idega.presentation.*;
 import com.idega.presentation.ui.Parameter;
 import java.util.EventObject;
 import java.util.Iterator;
@@ -21,11 +24,22 @@ import java.util.Vector;
 public abstract class IWPresentationEvent extends EventObject implements Cloneable {
 
   public final static String PRM_IW_EVENT = "iw_event_type";
+  public final static String PRM_IW_EVENT_SOURCE = "iw_ev_src";
+//  private final static String SEPARATOR = "|";
   private List _parameters = new Vector();
+  private Page _page = null;
 
 
   public IWPresentationEvent(){
     this(PresentationObject.NULL_CLONE_OBJECT);
+  }
+
+  public Page getPage(){
+    return _page;
+  }
+
+  public void setPage(Page page){
+    _page = page;
   }
 
   public IWPresentationEvent(PresentationObject source){
@@ -48,8 +62,27 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   }
 
   protected void setSource(PresentationObject source){
-    this.source = source;
+    if(source.getICObjectInstanceID() != 0){
+      setSource(source.getICObjectInstanceID());
+    } else if(source.getLocation() != null){
+      setSource(source.getLocation());
+    }
+    //this.source = source;
   }
+
+  public void setSource(IWLocation source){
+    this.addParameter(PRM_IW_EVENT_SOURCE, source.getLocationString());
+
+  }
+
+  public void setSource(int instanceId){
+    this.addParameter(PRM_IW_EVENT_SOURCE,instanceId);
+  }
+
+  public void setSource(ICObjectInstance instance) throws RemoteException {
+    this.addParameter(PRM_IW_EVENT_SOURCE,((Integer)instance.getPrimaryKey()).toString());
+  }
+
 
 
 
@@ -114,5 +147,80 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   }
 
 
+  public static IWPresentationEvent[] getCurrentEvents(IWContext iwc){
+    String[] classNames = iwc.getParameterValues(PRM_IW_EVENT);
+    if(classNames != null){
+      IWPresentationEvent[] events = new IWPresentationEvent[classNames.length];
+      int index = 0;
+      for (int i = 0; i < classNames.length; i++) {
+        String className = IWMainApplication.decryptClassName(classNames[i]);
+
+        boolean ok = false;
+        IWPresentationEvent event = null;
+        try {
+          event = (IWPresentationEvent)Class.forName(className).newInstance();
+          ok = event.initializeEvent(iwc);
+        }
+        catch(ClassCastException cce){
+          ok = false;
+          System.err.println("IWPresentationEvent ClassCastException for :"+className);
+          System.err.println(cce.getMessage());
+        }
+        catch(ClassNotFoundException cnfe){
+          ok = false;
+          System.err.println("IWPresentationEvent ClassCastException for :"+className);
+          System.err.println(cnfe.getMessage());
+        }
+        catch(IllegalAccessException iae){
+          ok = false;
+          System.err.println("IWPresentationEvent IllegalAccessException for :"+className);
+          System.err.println(iae.getMessage());
+        }
+        catch(InstantiationException ie){
+          ok = false;
+          System.err.println("IWPresentationEvent InstantiationException for :"+className);
+          System.err.println(ie.getMessage());
+        }
+
+        if(ok){
+          events[index++] = event;
+        }
+      }
+      if(index < classNames.length){
+        IWPresentationEvent[] newEvents = new IWPresentationEvent[index];
+        System.arraycopy(events,0,newEvents,0,index);
+        return newEvents;
+      } else {
+        return events;
+      }
+
+    } else {
+      return new IWPresentationEvent[0];
+    }
+  }
+
+  public static boolean anyEvents(IWContext iwc){
+    return (iwc.getParameter(PRM_IW_EVENT) != null);
+  }
+
+  public static Object getSource(IWContext iwc){
+    String sourceString = iwc.getParameter(PRM_IW_EVENT_SOURCE);
+    try {
+      Integer primaryKey = new Integer(sourceString);
+      ICObjectInstance instance = (ICObjectInstance)IDOLookup.findByPrimaryKey(ICObjectInstance.class,primaryKey);
+      return instance;
+    }
+    catch (NumberFormatException ex) {
+      // Source is location
+    }
+    catch (RemoteException rex) {
+      throw new RuntimeException(rex.getMessage());
+    }
+    catch (FinderException fe) {
+      throw new RuntimeException(fe.getMessage());
+    }
+
+    return IWPresentationLocation.getLocationObject(sourceString);
+  }
 
 }

@@ -1,4 +1,5 @@
 package com.idega.idegaweb.browser.presentation;
+import javax.swing.event.ChangeListener;
 import com.idega.presentation.IWContext;
 
 /**
@@ -12,6 +13,10 @@ import com.idega.presentation.IWContext;
 
 public interface IWBrowseControl extends IWBrowserCompliant {
 
-  public void dispatchEvent(IWContext iwc);
+  //public void dispatchEvent(IWContext iwc);
+//  public void setOnLoad(String action);
+//  public void setOnUnLoad(String action);
+
+  public ChangeListener getChangeControler();
 
 }

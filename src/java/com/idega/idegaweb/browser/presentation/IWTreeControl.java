@@ -1,6 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.event.IWEventListener;
+import com.idega.event.IWActionListener;
 import com.idega.core.ICTreeNode;
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
@@ -41,6 +41,6 @@ public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
 
   }
 
-  public IWEventListener getListener(){return null;}
+  public IWActionListener getListener(){return null;}
 
 }

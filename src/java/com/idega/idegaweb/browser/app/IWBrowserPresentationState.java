@@ -14,7 +14,7 @@ import com.idega.idegaweb.browser.event.*;
  * @version 1.0
  */
 
-public class IWBrowserPresentationState implements IWPresentationState, IWEventListener {
+public class IWBrowserPresentationState extends IWPresentationStateImpl implements IWActionListener {
 
   private boolean _showTopFrame;
   private boolean _showMenuFrame;
@@ -33,16 +33,6 @@ public class IWBrowserPresentationState implements IWPresentationState, IWEventL
     _showBottomFrame = false;
     _showLeftMainFrame = true;
     _showRightMainFrame = false;
-  }
-
-
-  public void setStateValue(String stateName, Object value) {
-    /**@todo: Implement this com.idega.event.IWPresentationState method*/
-    throw new java.lang.UnsupportedOperationException("Method setStateValue() not yet implemented.");
-  }
-  public Object getStateValue(String stateName) {
-    /**@todo: Implement this com.idega.event.IWPresentationState method*/
-    throw new java.lang.UnsupportedOperationException("Method getStateValue() not yet implemented.");
   }
 
 
@@ -97,6 +87,22 @@ public class IWBrowserPresentationState implements IWPresentationState, IWEventL
 
 
     return refresh;
+  }
+
+  public Object clone() {
+    IWBrowserPresentationState obj = null;
+    try {
+      obj = (IWBrowserPresentationState)super.clone();
+      obj._showTopFrame = this._showTopFrame;
+      obj._showMenuFrame = this._showMenuFrame;
+      obj._showBottomFrame = this._showBottomFrame;
+      obj._showLeftMainFrame = this._showLeftMainFrame;
+      obj._showRightMainFrame = this._showRightMainFrame;
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+    return obj;
   }
 
 }

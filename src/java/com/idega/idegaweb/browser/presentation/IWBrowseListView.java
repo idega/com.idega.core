@@ -1,6 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
-import com.idega.event.IWEventListener;
+import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.Block;
 
@@ -21,7 +21,7 @@ public class IWBrowseListView extends Block implements IWBrowserView {
   public IWBrowseListView() {
   }
 
-  public IWEventListener getListener(){return null;}
+  public IWActionListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;

@@ -1,5 +1,5 @@
 package com.idega.idegaweb.browser.presentation;
-import com.idega.event.IWEventListener;
+import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 
 /**
@@ -13,7 +13,7 @@ import com.idega.event.IWPresentationEvent;
 
 public interface IWBrowserView extends IWBrowserCompliant{
 
-  public IWEventListener getListener();
+  public IWActionListener getListener();
   public void setControlTarget(String target);
 
   public void setControlEventModel(IWPresentationEvent model);

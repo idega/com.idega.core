@@ -1,5 +1,5 @@
 package com.idega.presentation;
-import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.*;
 
 
 /**
@@ -26,6 +26,12 @@ import com.idega.idegaweb.IWUserContext;
     private static final String PERCENTSIGN = "%";
     protected final static String ROWS_PROPERTY = "ROWS";
 
+    public Frame(){
+      this.getLocation().isInFrameSet(true);
+    }
+
+
+
     public void setUrlProperty(String url){
       type = URL;
       _url = url;
@@ -47,14 +53,37 @@ import com.idega.idegaweb.IWUserContext;
     public void setNameProperty(String frameName){
       this.setName(frameName);
       this.setAttribute("name", frameName);
-      if(_obj != null){
-        _obj.setLocation(frameName);
-      }
+
+//      if(_obj != null){
+//        IWLocation location = _obj.getLocation();
+//        if(location == null){
+//          if(this.getLocation() != null){
+//            location = this.getLocation();
+//            _obj.setLocation(location);
+//          } else {
+//            //Warning applicationClass Not set
+//            location = new IWPresentationLocation();
+//            location.isInFrameSet(true);
+//            this.setLocation(location);
+//          }
+//        }
+//        location.setTarget(frameName);
+//      } else {
+//        this.getLocation()
+//      }
+
+      this.getLocation().setTarget(frameName);
+
     }
 
-    public String getLocation(){
-      return getName();
+
+  public void setLocation(IWLocation location){
+    location.isInFrameSet(true);
+    super.setLocation(location);
+    if(_obj != null && !(_obj instanceof FrameTable)){
+      _obj.setLocation(location);
     }
+  }
 
     public void setNameProperty(int name){
       this.setNameProperty(Integer.toString(name));
@@ -65,13 +94,21 @@ import com.idega.idegaweb.IWUserContext;
       if(obj instanceof FrameTable){
         type = FRAMESET;
         obj.setParentObject(this);
+        _obj = obj;
       } else {
         type = OBJ;
-      }
-      _obj = obj;
 
-      if(this.getAttribute("name") != null){
-        _obj.setLocation(this.getName());
+        _obj = obj;
+
+//        System.out.println("Frame.setPresentationObject().this.location: "+this.getLocation()+" ->"+this.getLocation().getLocationString());
+//        System.out.println("Frame.setPresentationObject()._obj.location: "+_obj.getLocation()+" ->"+_obj.getLocation().getLocationString());
+
+        _obj.setLocation(this.getLocation());
+
+//        System.out.println("And then");
+//        System.out.println("Frame.setPresentationObject().this.location: "+this.getLocation()+" ->"+this.getLocation().getLocationString());
+//        System.out.println("Frame.setPresentationObject()._obj.location: "+_obj.getLocation()+" ->"+_obj.getLocation().getLocationString());
+//        System.out.println("");
       }
     }
 
@@ -96,6 +133,7 @@ import com.idega.idegaweb.IWUserContext;
             } else {
               //Page page = new Page();
               Page page = defaultPage;
+              page.setLocation(this.getLocation());
               page.add(pObj._clone(iwc, askForPermission));
               return (Page)page;
             }
@@ -113,6 +151,7 @@ import com.idega.idegaweb.IWUserContext;
           } else {
             //Page page = new Page();
             Page page = defaultPage;
+            page.setLocation(this.getLocation());
             page.add(_obj._clone(iwc,askForPermission));
             return (Page)page;
           }

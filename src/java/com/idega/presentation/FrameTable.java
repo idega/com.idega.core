@@ -5,6 +5,7 @@
 
 package com.idega.presentation;
 
+import com.idega.idegaweb.*;
 import java.rmi.RemoteException;
 import com.idega.business.*;
 import com.idega.presentation.ui.Window;
@@ -14,10 +15,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.*;
 
-import com.idega.idegaweb.IWURL;
-import com.idega.idegaweb.IWConstants;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWUserContext;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -50,6 +47,10 @@ public class FrameTable extends Window{
     setBorder(0);
     setFrameSpacing(0);
     setVertical();
+    IWLocation loc = this.getLocation();
+    loc.setApplicationClass(this.getClass());
+//    loc.setTarget(null);
+    loc.isInFrameSet(true);
   }
 
   public void add(String frameURL){
@@ -63,12 +64,20 @@ public class FrameTable extends Window{
   public void add(PresentationObject obj, String frameName){
     if(!(obj instanceof Frame) ){
       Frame frame = new Frame();
+
+      IWLocation location = new IWPresentationLocation();
+      location.isInFrameSet(true);
+      location.setApplicationClass(this.getClass());
+      location.setTarget(frameName);
+
+      frame.setLocation(location);
       frame.setPresentationObject(obj);
       frame.setNameProperty(frameName);
-      super.add(frame);
+
+      this.add(frame);
     } else {
       ((Frame)obj).setNameProperty(frameName);
-      super.add(obj);
+      this.add(obj);
     }
 
 
@@ -77,11 +86,43 @@ public class FrameTable extends Window{
   public void add(PresentationObject obj){
     if(!(obj instanceof Frame)){
       Frame frame = new Frame();
+
+      IWLocation location = new IWPresentationLocation();
+      location.isInFrameSet(true);
+      location.setApplicationClass(this.getClass());
+
+      frame.setLocation(location);
       frame.setPresentationObject(obj);
       frame.setNameProperty(frameNameCounter++);
-      super.add(frame);
+      // super.add() but does not set Location = this.location;
+      try {
+        if (theObjects == null) {
+          this.theObjects = new Vector();
+        }
+        if (obj != null) {
+          obj.setParentObject(this);
+          //modObject.setLocation(this.getLocation());
+          this.theObjects.addElement(obj);
+        }
+      }
+      catch(Exception ex) {
+        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      }
     }else{
-      super.add(obj);
+      // super.add() but does not set Location = this.location;
+      try {
+        if (theObjects == null) {
+          this.theObjects = new Vector();
+        }
+        if (obj != null) {
+          obj.setParentObject(this);
+          //modObject.setLocation(this.getLocation());
+          this.theObjects.addElement(obj);
+        }
+      }
+      catch(Exception ex) {
+        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      }
     }
 
   }
@@ -89,22 +130,77 @@ public class FrameTable extends Window{
   public void add(int index, PresentationObject obj){
     if(!(obj instanceof Frame)){
       Frame frame = new Frame();
+
+      IWLocation location = new IWPresentationLocation();
+      location.isInFrameSet(true);
+      location.setApplicationClass(this.getClass());
+
+      frame.setLocation(location);
       frame.setPresentationObject(obj);
       frame.setNameProperty(frameNameCounter++);
-      super.add(index, frame);
+
+      // super.add() but does not set Location = this.location;
+      try {
+        if (theObjects == null) {
+          this.theObjects = new Vector();
+        }
+        if (obj != null) {
+          obj.setParentObject(this);
+          //obj.setLocation(this.getLocation());
+          this.theObjects.add(index,obj);
+        }
+      }
+      catch(Exception ex) {
+        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      }
     }else{
-      super.add(index, obj);
+      // super.add() but does not set Location = this.location;
+      try {
+        if (theObjects == null) {
+          this.theObjects = new Vector();
+        }
+        if (obj != null) {
+          obj.setParentObject(this);
+          //obj.setLocation(this.getLocation());
+          this.theObjects.add(index,obj);
+        }
+      }
+      catch(Exception ex) {
+        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      }
     }
   }
 
   public void addAtBeginning(PresentationObject obj){
     if(!(obj instanceof Frame)){
       Frame frame = new Frame();
+
+      IWLocation location = new IWPresentationLocation();
+      location.isInFrameSet(true);
+      location.setApplicationClass(this.getClass());
+
+      frame.setLocation(location);
       frame.setPresentationObject(obj);
       frame.setNameProperty(frameNameCounter++);
-      super.addAtBeginning(frame);
+
+      // super.addAtBeginning() but does not set Location = this.location;
+      if (theObjects == null) {
+        theObjects = new Vector();
+      }
+      obj.setParentObject(this);
+      obj.setLocation(this.getLocation());
+      theObjects.insertElementAt(obj,0);
+
     }else{
-      super.addAtBeginning(obj);
+
+      // super.addAtBeginning() but does not set Location = this.location;
+      if (theObjects == null) {
+        theObjects = new Vector();
+      }
+      obj.setParentObject(this);
+      obj.setLocation(this.getLocation());
+      theObjects.insertElementAt(obj,0);
+
     }
   }
 
@@ -115,7 +211,7 @@ public class FrameTable extends Window{
       Frame frame = new Frame();
       frame.setClassProperty(pageClass);
       frame.setNameProperty(frameName);
-      super.add(frame);
+      this.add(frame);
   }
 
 //  private void setPage(int frameIndex, Class pageClass){
@@ -130,7 +226,7 @@ public class FrameTable extends Window{
       Frame frame = new Frame();
       frame.setClassProperty(pageClass);
       frame.setNameProperty(frameNameCounter++);
-      super.add(frame);
+      this.add(frame);
   }
 
 //  private void setPage(int frameIndex, String url){
@@ -145,7 +241,7 @@ public class FrameTable extends Window{
       Frame frame = new Frame();
       frame.setUrlProperty(url);
       frame.setNameProperty(frameNameCounter++);
-      super.add(frame);
+      this.add(frame);
   }
 
 //  public Class getClass(int frameIndex){
@@ -398,7 +494,7 @@ public class FrameTable extends Window{
           Object item = iter.next();
           if(item instanceof Frame){
             if(((Frame)item).getFrameType() == Frame.FRAMESET){
-              System.out.println(buf.toString());
+              //System.out.println(buf.toString());
               print(buf.toString());
               buf = new StringBuffer();
               ((Frame)item).getPresentationObject()._print(iwc);
@@ -419,7 +515,7 @@ public class FrameTable extends Window{
       if( !isInAWindow && !isInFrame ){
         buf.append(getEndTag());
       }
-      System.out.println(buf.toString());
+      //System.out.println(buf.toString());
       print(buf.toString());
     }
 
@@ -675,16 +771,32 @@ public class FrameTable extends Window{
     }
 
     public Page getFrame(String frameName, IWUserContext iwc, boolean askForPermission){// throws FrameNotFoundException {
-      List l = this.getAllContainingObjects();
+      List l = this.getAllContainedFrames();
       if(l != null){
         Iterator iter = l.iterator();
         while (iter.hasNext()) {
           Object item = iter.next();
-          if(item instanceof Frame){
+          //if(item instanceof Frame){
             if(frameName.equals(((Frame)item).getName())){
               return ((Frame)item).getPage(iwc, askForPermission);
             }
-          }
+          //}
+        }
+      }
+      return null;
+    }
+
+    public Frame getFrame(String frameName){// throws FrameNotFoundException {
+      List l = this.getAllContainedFrames();
+      if(l != null){
+        Iterator iter = l.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          //if(item instanceof Frame){
+            if(frameName.equals(((Frame)item).getName())){
+              return ((Frame)item);
+            }
+          //}
         }
       }
       return null;

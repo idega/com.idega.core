@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.33 2002/05/28 17:22:27 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.34 2002/06/07 11:06:04 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,8 @@
  */
 package com.idega.servlet;
 
+import java.rmi.RemoteException;
+import com.idega.business.IBOLookup;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -116,6 +118,38 @@ public  class IWPresentationServlet extends IWCoreServlet{
     }
   }
 
+
+  public boolean processAWTEvent(IWContext iwc, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+    String sessionAddress = iwc.getParameter(IWMainApplication.IWEventSessionAddressParameter);
+
+    if (sessionAddress != null && !"".equals(sessionAddress)){
+      Object obj = iwc.getSessionAttribute(sessionAddress);
+      if(obj != null) {
+        if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
+
+            if(Page.isRequestingTopPage(iwc)){
+              __theService(request,response);
+            }
+          //theServiceDone = true;
+          if(obj instanceof IWModuleEvent){
+            ((IWModuleEvent)obj).setIWContext(iwc);
+          }else{
+            this.getPage()._setIWContext(iwc);
+          }
+          ((ActiveEvent)obj).dispatch();
+          return true;
+        /* Kommentað út þar til kerfið ræður við þræði
+          EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+          q.postEvent((AWTEvent)obj);
+        */
+        }
+      }
+    }
+    return false;
+  }
+
+
+
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
           try {
 
@@ -124,36 +158,16 @@ long time1 = System.currentTimeMillis();
             __initializeIWC(request,response);
             IWContext iwc = getIWContext();
           try{
+
             processBusinessEvent(iwc);
+
             initializePage();
+
+            processPresentationEvent(iwc);
 
             //added by gummi@idega.is
             //begin
-            boolean theServiceDone = false;
-            String sessionAddress = iwc.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-
-            if (sessionAddress != null && !"".equals(sessionAddress)){
-              Object obj = iwc.getSessionAttribute(sessionAddress);
-              if(obj != null) {
-                if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {
-
-                    if(Page.isRequestingTopPage(iwc)){
-                      __theService(request,response);
-                    }
-                  theServiceDone = true;
-                  if(obj instanceof IWModuleEvent){
-                    ((IWModuleEvent)obj).setIWContext(iwc);
-                  }else{
-                    this.getPage()._setIWContext(iwc);
-                  }
-                  ((ActiveEvent)obj).dispatch();
-                /* Kommentað út þar til kerfið ræður við þræði
-                  EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
-                  q.postEvent((AWTEvent)obj);
-                */
-                }
-              }
-            }
+            boolean theServiceDone = processAWTEvent(iwc,request,response);
 
             //end
 
@@ -464,6 +478,10 @@ writer.println("-->");
 
   }
 
+
+
+
+
   public void handleEvent(IWContext  iwc){
   try {
 //    System.err.println("-------------------------------------");
@@ -635,5 +653,18 @@ writer.println("-->");
       }
     }
   }
+
+
+
+  public void processPresentationEvent(IWContext iwc) throws RemoteException{
+    if(IWPresentationEvent.anyEvents(iwc)){
+      IWEventMachine eventMachine = (IWEventMachine)IBOLookup.getSessionInstance(iwc,IWEventMachine.class);
+      eventMachine.processEvent(this.getPage(),iwc);
+    }
+  }
+
+
+
+
 
 }

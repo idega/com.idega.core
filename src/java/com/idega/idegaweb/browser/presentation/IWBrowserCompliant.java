@@ -1,5 +1,4 @@
 package com.idega.idegaweb.browser.presentation;
-import com.idega.event.IWEventListener;
 
 /**
  * <p>Title: idegaWeb</p>

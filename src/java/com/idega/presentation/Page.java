@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.54 2002/05/29 13:32:19 laddi Exp $
+ *  $Id: Page.java,v 1.55 2002/06/07 11:06:04 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1109,10 +1109,10 @@ public class Page extends PresentationObjectContainer {
       IWFrameBusiness fb = (IWFrameBusiness)IBOLookup.getSessionInstance(iwc,IWFrameBusiness.class);
       Page pg = fb.getFrame(framePathKey,frameNameKey);
       if(pg != null){
-	if( iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE) != null && pg instanceof IWBrowseControl){
-	  //System.out.println("dispatchEvent(iwc)");
-	  ((IWBrowseControl)pg).dispatchEvent(iwc);
-	}
+//	if( iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE) != null && pg instanceof IWBrowseControl){
+//	  //System.out.println("dispatchEvent(iwc)");
+//	  ((IWBrowseControl)pg).dispatchEvent(iwc);
+//	}
 //        else {
 //          System.out.println("!dispatchEvent(iwc)");
 //        }

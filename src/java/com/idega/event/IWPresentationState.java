@@ -1,5 +1,9 @@
 package com.idega.event;
 
+import com.idega.idegaweb.IWLocation;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -9,8 +13,20 @@ package com.idega.event;
  * @version 1.0
  */
 
-public interface IWPresentationState {
+public interface IWPresentationState extends Cloneable {
   public void reset();
-  public void setStateValue(String stateName,Object value);
-  public Object getStateValue(String stateName);
+//  public void setStateValue(String stateName,Object value);
+//  public Object getStateValue(String stateName);
+
+  public IWLocation getLocation();
+  public void setLocation(IWLocation location);
+
+  public boolean stateHasChanged();
+  public void fireStateChanged();
+  public ChangeListener[] getChangeListener();
+  public void addChangeListener(ChangeListener listener);
+  public void removeChangeListener(ChangeListener listener);
+
+  public Object clone();
+
 }

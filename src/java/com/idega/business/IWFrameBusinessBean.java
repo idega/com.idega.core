@@ -1,5 +1,6 @@
 package com.idega.business;
 
+import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.browser.app.IWBrowser;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.FrameTable;
@@ -38,6 +39,11 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
     } else {
       identifier = Integer.toString(id);
     }
+    return identifier;
+  }
+
+  public String getFrameSetIdentifier(IWLocation location){
+    String identifier = (0+SLASH+IWMainApplication.getEncryptedClassName(location.getApplicationClass()));
     return identifier;
   }
 
@@ -102,6 +108,10 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
       }
 //    }
     return null;
+  }
+
+  public Page getFrame(IWLocation location){
+    return this.getFrame(this.getFrameSetIdentifier(location),location.getTarget());
   }
 
 }

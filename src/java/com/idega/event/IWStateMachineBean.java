@@ -1,7 +1,13 @@
 package com.idega.event;
 
-import com.idega.business.IBOSessionBean;
-import com.idega.business.IBOServiceBean;
+import com.idega.presentation.Page;
+import com.idega.business.*;
+import java.lang.ClassNotFoundException;
+import javax.ejb.FinderException;
+import java.rmi.RemoteException;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.core.data.ICObject;
+import com.idega.data.IDOLookup;
 import java.util.*;
 
 import com.idega.idegaweb.*;
@@ -16,9 +22,10 @@ import com.idega.core.data.ICObjectInstance;
  * @version 1.0
  */
 
-public class IWStateMachineBean extends IBOSessionBean {
+public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine {
 
   private int _historyID = 0;
+  private Map _stateMap = new Hashtable();
 
   public void setHistoryID(int historyId ){
     _historyID = historyId;
@@ -32,26 +39,43 @@ public class IWStateMachineBean extends IBOSessionBean {
     _historyID++;
   }
 
+//  public IWPresentationState getStateFor(ICObjectInstance instance){
+//    IWPresentationState state = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(instance);
+//    if(state==null){
+//      state = state = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(instance);
+//      if(state==null){
+//        state = initializeState(instance);
+//        getGlobalStatesMap(getUserContext().getApplicationContext()).put(instance,state);
+//      }
+//    }
+//    return state;
+//  }
+
   public IWPresentationState getStateFor(ICObjectInstance instance){
-    IWPresentationState state = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(instance);
-    if(state==null){
-      state = state = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(instance);
-      if(state==null){
-        state = initializeState(instance);
-        getGlobalStatesMap(getUserContext().getApplicationContext()).put(instance,state);
-      }
-    }
-    return state;
+    return getStateFor((Object)instance);
   }
 
 
 
-
-
   private IWPresentationState initializeState(ICObjectInstance instance)throws RuntimeException{
-    Class stateClass = lookupStateClassForInstance(instance);
     try{
-      return (IWPresentationState)stateClass.newInstance();
+      Class stateClass = lookupStateClassForInstance(instance);
+      if(stateClass != null){
+        return (IWPresentationState)stateClass.newInstance();
+      } else {
+        System.err.println("IWStateMachine.initializeState(instance): stateClass == null");
+        return null;
+      }
+
+    }
+    catch(RemoteException re){
+      throw new RuntimeException(re.getMessage());
+    }
+    catch(FinderException fe){
+      throw new RuntimeException(fe.getMessage());
+    }
+    catch(ClassNotFoundException cnfe){
+      throw new RuntimeException(cnfe.getMessage());
     }
     catch(IllegalAccessException iae){
       throw new RuntimeException(iae.getMessage());
@@ -61,21 +85,33 @@ public class IWStateMachineBean extends IBOSessionBean {
     }
   }
 
-  private Class lookupStateClassForInstance(ICObjectInstance instance){
-    /**
-     * @todo Implement
-     */
-    return null;
+  private Class lookupStateClassForInstance(ICObjectInstance instance) throws RemoteException, FinderException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    ICObject obj = (ICObject)IDOLookup.getHome(ICObject.class).findByPrimaryKeyIDO(instance.getObject().getPrimaryKey());
+    String className = obj.getClassName();
+    return ((StatefullPresentation)Class.forName(className).newInstance()).getPresentationStateClass();
   }
 
+//  private Map getUserStatesMap(){
+//    String mapKey = "iw_user_state_map";
+//    Map stateMap = (Map)getUserContext().getSessionAttribute(mapKey);
+//    if(stateMap == null){
+//      stateMap = new Hashtable();
+//      getUserContext().setSessionAttribute(mapKey,stateMap);
+//    }
+//    return stateMap;
+//  }
+
   private Map getUserStatesMap(){
-    String mapKey = "iw_user_state_map";
-    Map stateMap = (Map)getUserContext().getSessionAttribute(mapKey);
-    if(stateMap == null){
-      stateMap = new Hashtable();
-      getUserContext().setSessionAttribute(mapKey,stateMap);
+//    String mapKey = "iw_user_event_listener_map";
+//    Map stateMap = (Map)getUserContext().getSessionAttribute(mapKey);
+//    if(stateMap == null){
+//      stateMap = new Hashtable();
+//      getUserContext().setSessionAttribute(mapKey,stateMap);
+//    }
+    if(_stateMap == null){
+      _stateMap = new Hashtable();
     }
-    return stateMap;
+    return _stateMap;
   }
 
   private Map getGlobalStatesMap(IWApplicationContext iwac){
@@ -89,53 +125,148 @@ public class IWStateMachineBean extends IBOSessionBean {
   }
 
 
-//  public PresentationObject[] getIWPOListeners(IWContext iwc){
-//    String prm = iwc.getParameter(this.IB_OBJECT_INSTANCE_COORDINATE);
-//    String[] coordinates = null;
-//    if(prm != null){
-//      StringTokenizer tokens = new StringTokenizer(prm,",");
-//      coordinates = new String[tokens.countTokens()];
-//      int index = 0;
-//      while (tokens.hasMoreTokens()) {
-//	coordinates[index++] = tokens.nextToken();
-//      }
-//    }
-//
-//    if(coordinates != null && coordinates.length > 0){
-//      List l = new Vector();
-//      for (int i = 0; i < coordinates.length; i++) {
-//	String crdnts = coordinates[i];
-//	int index = crdnts.indexOf('_');
-//	String page = crdnts.substring(0,index);
-//	String inst = crdnts.substring(index+1,crdnts.length());
-//	if(!"".equals(page) && !"".equals(inst)){
-//	  //Page parentPage = BuilderLogic.getInstance().getIBXMLPage(page).getPopulatedPage();
-//	  //PresentationObject obj = parentPage.getContainedICObjectInstance(Integer.parseInt(inst));
-//	  PresentationObject obj = getPopulatedObjectInstance(inst,iwc);
-//	  if(obj != null && !obj.equals(PresentationObject.NULL_CLONE_OBJECT)){
-//	    l.add(obj);
-//	  }
-//	}
-//      }
-//      PresentationObject[] toReturn = (PresentationObject[])l.toArray(new PresentationObject[0]);
-//
-//      if(toReturn.length > 0){
-//	/*
-//	System.err.println("BuilderLogic Listeners");
-//	for (int i = 0; i < toReturn.length; i++) {
-//	  System.err.println(" - "+toReturn[i].getParentPageID()+"_"+toReturn[i].getICObjectInstanceID());
-//	}*/
-//
-//	return toReturn;
-//      }else{
-//	//System.err.println("BuilderLogic Listeners are null");
-//	return null;
-//      }
-//    } else{
-//      //System.err.println("BuilderLogic Listeners are null");
-//      return null;
-//    }
-//  }
+
+
+  public IWPresentationState getStateFor(IWLocation location){
+    return getStateFor((Object)location);
+  }
+
+  public IWPresentationState getStateFor(IWLocation location, Class stateClassType){
+    IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(location);
+    if(state==null){
+      IWPresentationState globalState = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(location);
+      if(globalState==null){
+        globalState = initializeState(location, stateClassType);
+        if(globalState != null){
+          getGlobalStatesMap(getUserContext().getApplicationContext()).put(location,globalState);
+        } else {
+          return null;
+        }
+      }
+
+      try{
+        state = (IWPresentationState)((IWPresentationState)globalState).getClass().newInstance();
+      }
+      catch(IllegalAccessException iae){
+        throw new RuntimeException(iae.getMessage());
+      }
+      catch(InstantiationException ie){
+        throw new RuntimeException(ie.getMessage());
+      }
+
+      this.getUserStatesMap().put(location,state);
+    }
+    return state;
+  }
+
+  private IWPresentationState initializeState(Object obj)throws RuntimeException{
+    if(obj instanceof ICObjectInstance){
+      return initializeState((ICObjectInstance)obj);
+    } else if(obj instanceof IWLocation){
+      return initializeState((IWLocation)obj);
+    } else {
+      return null;
+    }
+  }
+
+
+
+
+  private IWPresentationState getStateFor(Object idObj){
+    IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(idObj);
+    if(state==null){
+      IWPresentationState globalState = (IWPresentationState)this.getGlobalStatesMap(getUserContext().getApplicationContext()).get(idObj);
+      if(globalState==null){
+        globalState = initializeState(idObj);
+        if(globalState != null){
+          getGlobalStatesMap(getUserContext().getApplicationContext()).put(idObj,globalState);
+        } else {
+          return null;
+        }
+      }
+
+      try{
+        state = (IWPresentationState)((IWPresentationState)globalState).getClass().newInstance();
+      }
+      catch(IllegalAccessException iae){
+        throw new RuntimeException(iae.getMessage());
+      }
+      catch(InstantiationException ie){
+        throw new RuntimeException(ie.getMessage());
+      }
+
+      this.getUserStatesMap().put(idObj,state);
+    }
+    return state;
+  }
+
+
+
+
+
+  private IWPresentationState initializeState(IWLocation location)throws RuntimeException{
+    try{
+      Class stateClass = lookupStateClassForLocation(location);
+      if(stateClass != null){
+        return (IWPresentationState)stateClass.newInstance();
+      } else {
+        System.err.println("IWStateMachine.initializeState(location): stateClass == null");
+        return null;
+      }
+    }
+    catch(IllegalAccessException iae){
+      throw new RuntimeException(iae.getMessage());
+    }
+    catch(InstantiationException ie){
+      throw new RuntimeException(ie.getMessage());
+    }
+    catch(RemoteException re){
+      throw new RuntimeException(re.getMessage());
+    }
+  }
+
+  private IWPresentationState initializeState(IWLocation location, Class stateClassType)throws RuntimeException{
+    try{
+      Class stateClass = stateClassType;
+      if(stateClass != null){
+        return (IWPresentationState)stateClass.newInstance();
+      } else {
+        System.err.println("IWStateMachine.initializeState(location): stateClass == null");
+        return null;
+      }
+    }
+    catch(IllegalAccessException iae){
+      throw new RuntimeException(iae.getMessage());
+    }
+    catch(InstantiationException ie){
+      throw new RuntimeException(ie.getMessage());
+    }
+  }
+
+  private Class lookupStateClassForLocation(IWLocation location) throws RemoteException {
+    IWFrameBusiness fb = (IWFrameBusiness)IBOLookup.getSessionInstance(this.getUserContext(),IWFrameBusiness.class);
+
+    Page page = fb.getFrame(location);
+    if(page != null){
+      if(page instanceof StatefullPresentation){
+        return ((StatefullPresentation)page).getPresentationStateClass();
+      } else {
+        List l = page.getAllContainingObjects();
+        if(l != null){
+          Iterator iter = l.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            if(item instanceof StatefullPresentation){
+              return ((StatefullPresentation)item).getPresentationStateClass();
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
 
 
 

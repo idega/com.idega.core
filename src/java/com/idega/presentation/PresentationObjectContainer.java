@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.14 2002/05/28 17:22:27 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.15 2002/06/07 11:06:04 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,8 @@
  */
 package com.idega.presentation;
 
+import com.idega.event.IWPresentationState;
+import com.idega.idegaweb.IWLocation;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
@@ -630,8 +632,8 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
   }
 
 
-  public void setLocation(String target){
-    super.setLocation(target);
+  public void setLocation(IWLocation location, IWUserContext iwuc){
+    super.setLocation(location,iwuc);
 
     List l = this.getAllContainingObjects();
     if(l != null){
@@ -639,7 +641,13 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
       while (iter.hasNext()) {
         Object item = iter.next();
         if(item instanceof PresentationObject){
-          ((PresentationObject)item).setLocation(target);
+          ((PresentationObject)item).setLocation(location,iwuc);
+        }
+        if(item instanceof StatefullPresentation){
+          IWPresentationState state = ((StatefullPresentation)this).getPresentationState(iwuc);
+          if(state != null){
+            state.setLocation(location);
+          }
         }
       }
     }

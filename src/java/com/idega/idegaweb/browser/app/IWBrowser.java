@@ -1,16 +1,15 @@
 package com.idega.idegaweb.browser.app;
 
+import com.idega.event.*;
+import com.idega.idegaweb.browser.presentation.*;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.event.ChangeListener;
+import com.idega.business.IBOLookup;
+import com.idega.presentation.*;
 import com.idega.business.IWFrameBusiness;
-import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.event.IWBrowseEvent;
-import com.idega.idegaweb.browser.presentation.IWBrowserCompliant;
-import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.Frame;
-import com.idega.presentation.FrameTable;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
 import java.rmi.RemoteException;
 
 /**
@@ -22,7 +21,7 @@ import java.rmi.RemoteException;
  * @version 1.0
  */
 
-public class IWBrowser extends FrameTable {
+public class IWBrowser extends FrameTable implements StatefullPresentation {
 
 
   private String _frameName[] = {"iwb_top","iwb_menu","iwb_middle","iwb_bottom","iwb_main_left","iwb_main","iwb_main_right"};
@@ -55,15 +54,6 @@ public class IWBrowser extends FrameTable {
 
   private IWBrowserPresentationState _presentationState = null;
 
-  public void setPresentationState( IWPresentationState state ){
-    if(state instanceof IWBrowserPresentationState){
-      _presentationState = (IWBrowserPresentationState)state;
-    } else {
-      System.err.println("PresentationState not instanceof IWBrowserPresentationState");
-    }
-
-  }
-
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.idegaweb.browser";
 
   public IWBrowser() {
@@ -76,8 +66,11 @@ public class IWBrowser extends FrameTable {
 
   protected void initializeFrames(){
     for (int i = 0; i < _browserFrames.length; i++) {
+//      System.out.println("IWBrowser.initializeFrames(): "+i);
       _browserFrames[i] = new IWBrowserFrame();
       _browserFrames[i].setNameProperty(this.getFrameName(i));
+      _browserFrames[i].getLocation().setApplicationClass(this.getClass());
+      //_browserFrames[i].getLocation().isInFrameSet(true);
     }
     _middleFrameset = new FrameTable();
     _middleFrameset.setHorizontal();
@@ -85,6 +78,10 @@ public class IWBrowser extends FrameTable {
 
   public String getControlframeTarget(){
     return this.getFrameName(_controlPosition);
+  }
+
+  public Frame getControlframe(){
+    return this.getFrame(this.getFrameName(_controlPosition));
   }
 
   public String getFrameName(int pos){
@@ -197,6 +194,10 @@ public class IWBrowser extends FrameTable {
   }
 
 
+  public void addIWActionListener(int pos, IWActionListener l){
+    this.getFrame(this.getFrameName(pos)).addIWActionListener(l);
+  }
+
 
   public void modifyFrameObject(IWContext iwc, IWFrameBusiness fb, Frame frame) throws RemoteException {
       //System.out.println("IWBrowser.modifyFrameObject");
@@ -211,6 +212,9 @@ public class IWBrowser extends FrameTable {
         model.setApplicationIdentifier(this,fb);
         model.setControlFrameTarget(getControlframeTarget());
         model.setSourceTarget(frame);
+//        System.out.println("-----------------------------");
+//        System.out.println("IWBrowser.frame.location: " +frame.getLocation().getLocationString());
+        model.setSource(frame.getLocation());
 
         ((IWBrowserView)obj).setControlEventModel(model);
 
@@ -364,6 +368,39 @@ public class IWBrowser extends FrameTable {
     }
 
     super._main(iwc);
+
+
+//    System.out.println("IWBrowser: addChangeListener ...");
+    Frame ctrlFrame = this.getControlframe();
+
+    if(ctrlFrame != null){
+      PresentationObject ctrlFrameObject = ctrlFrame.getPresentationObject();
+//      System.out.println("IWBrowser: addChangeListener ...0");
+      if(ctrlFrameObject instanceof IWBrowseControl){
+//        System.out.println("IWBrowser: addChangeListener ...1");
+        ChangeListener ctrlFrameListener = ((IWBrowseControl)ctrlFrameObject).getChangeControler();
+        List l = this.getAllContainedFrames();
+        if(l != null){
+//          System.out.println("IWBrowser: addChangeListener ...2");
+          Iterator iter = l.iterator();
+          while (iter.hasNext()) {
+//            System.out.println("IWBrowser: addChangeListener ...3 while");
+            Frame item = (Frame)iter.next();
+  //          if(item != ctrlFrame){
+              PresentationObject obj = item.getPresentationObject();
+              if(obj instanceof StatefullPresentation){
+//                System.out.println("IWBrowser: addChangeListener -> "+ctrlFrameListener);
+                ((StatefullPresentation)obj).getPresentationState(iwc).addChangeListener(ctrlFrameListener);
+              }
+  //          }
+          }
+        }
+      }
+    }
+
+
+
+
   }
 
 
@@ -420,5 +457,35 @@ public class IWBrowser extends FrameTable {
 //
 //  public class LeftMain extends Window {}
 //  public class RightMain extends Window {}
+
+//  public void setPresentationState( IWPresentationState state ){
+//    IWStateMachine stateMachine = IBOLookup.getSessionInstance(this.getIWUserContext(),IWStateMachine.class);
+//    if(state instanceof IWBrowserPresentationState){
+//      _presentationState = (IWBrowserPresentationState)state;
+//    } else {
+//      System.err.println("PresentationState not instanceof IWBrowserPresentationState");
+//    }
+//
+//  }
+
+  public IWPresentationState getPresentationState(IWUserContext iwuc){
+    if(_presentationState == null){
+      try {
+        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+        _presentationState = (IWBrowserPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+      }
+      catch (RemoteException re) {
+        throw new RuntimeException(re.getMessage());
+      }
+    }
+    return _presentationState;
+  }
+
+  public Class getPresentationStateClass(){
+    return IWBrowserPresentationState.class;
+  }
+
+
+
 
 }

@@ -1,0 +1,21 @@
+package com.idega.event;
+import javax.swing.event.ChangeEvent;
+import java.util.EventListener;
+import com.idega.idegaweb.IWException;
+
+/**
+ * <p>Title: idegaWeb</p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2001</p>
+ * <p>Company: idega Software</p>
+ * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ */
+
+public interface IWActionListener extends EventListener {
+
+  public boolean actionPerformed(IWPresentationEvent e) throws IWException;
+
+
+
+}

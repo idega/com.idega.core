@@ -1,0 +1,142 @@
+package com.idega.event;
+
+import java.util.*;
+import com.idega.idegaweb.IWException;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.servlet.IWPresentationServlet;
+import com.idega.idegaweb.IWLocation;
+import com.idega.core.data.ICObjectInstance;
+import javax.swing.event.EventListenerList;
+import com.idega.business.IBOSessionBean;
+
+/**
+ * <p>Title: idegaWeb</p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: idega Software</p>
+ * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ **/
+
+public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine {
+
+  private Map _stateMap = new Hashtable();
+//
+//  private int _historyID = 0;
+//
+//  public void setHistoryID(int historyId ){
+//    _historyID = historyId;
+//  }
+//
+//  public void newState(){
+//    increaseHistoryID();
+//  }
+//
+//  public void increaseHistoryID(){
+//    _historyID++;
+//  }
+
+  public EventListenerList getListenersFor(ICObjectInstance instance){
+    return getListenersFor((Object)instance);
+  }
+
+//  private EventListenerList getListenersFor(int idObj){
+//    return getListenersFor(new Integer(idObj));
+//  }
+
+  public EventListenerList getListenersFor(IWLocation location){
+    return getListenersFor((Object)location);
+  }
+
+  public EventListenerList getListenersFor(String location){
+    return getListenersFor((Object)location);
+  }
+
+
+
+
+  private EventListenerList getListenersFor(Object idObj){
+//    System.out.println("getListenersFor(): get -> "+idObj);
+    EventListenerList list = (EventListenerList)this.getUserStatesMap().get(idObj);
+    if(list==null){
+      list = new EventListenerList();
+//      System.out.println("getListenersFor(): initialize for -> "+idObj);
+      getUserStatesMap().put(idObj,list);
+    }
+    return list;
+  }
+
+  private Map getUserStatesMap(){
+//    String mapKey = "iw_user_event_listener_map";
+//    Map stateMap = (Map)getUserContext().getSessionAttribute(mapKey);
+//    if(stateMap == null){
+//      stateMap = new Hashtable();
+//      getUserContext().setSessionAttribute(mapKey,stateMap);
+//    }
+//    System.out.println("getUserStatesMap()._stateMap.isEmpty(): "+_stateMap.isEmpty());
+    if(!_stateMap.isEmpty()){
+      Set set = _stateMap.keySet();
+      Iterator iter = set.iterator();
+      while (iter.hasNext()) {
+        Object item = iter.next();
+//        System.out.println("_stateMap contained key = "+item);
+      }
+    }
+    return _stateMap;
+  }
+
+
+
+  public void processEvent(Page page, IWContext iwc) {
+//    System.out.println("-------------processEvent begins-----------------------");
+//
+//    System.out.println("getEventListenerList: machine = "+ this);
+
+    IWPresentationEvent[] events = IWPresentationEvent.getCurrentEvents(iwc);
+
+//    System.out.println("Events: " + events);
+
+    for (int i = 0; i < events.length; i++) {
+      events[i].setPage(page);
+    }
+
+    Object id = IWPresentationEvent.getSource(iwc);
+
+//    System.out.println("ID: " + id);
+
+//    if(id instanceof IWLocation && ((IWLocation)id).isInFrameSet()){
+//ChageListener
+//    }
+
+    if(id != null){
+      EventListenerList list = this.getListenersFor(id);
+//      System.out.println("EventListenerList: " + list);
+      if(list != null){
+        IWActionListener[] listeners = (IWActionListener[])list.getListeners(IWActionListener.class);
+//        System.out.println("listeners: " + listeners);
+//        System.out.println("listeners.length: " + listeners.length);
+        for (int i = 0; i < listeners.length; i++) {
+//          System.out.println("listeners["+i+"]: " + listeners[i]);
+          for (int j = 0; j < events.length; j++) {
+            try {
+//              System.out.println("events["+j+"]: " + events[j]);
+              listeners[i].actionPerformed(events[j]);
+            }
+            catch (IWException ex) {
+              ex.printStackTrace();
+            }
+          }
+        }
+      }
+    }
+
+//    System.out.println("---------------processEvent ends---------------------");
+  }
+
+
+
+
+
+
+}
