@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.ejb.*;
 
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupRelationHome;
 
 public interface GroupBusiness extends com.idega.business.IBOService
 {
@@ -142,4 +143,5 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public Collection getAllAllowedGroupTypesForChildren(Group group, com.idega.idegaweb.IWUserContext iwc);
   
   public String getNameOfGroupWithParentName(Group group);
+	public GroupRelationHome getGroupRelationHome();
 }

@@ -39,6 +39,8 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupRelation;
+import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
@@ -62,7 +64,8 @@ import com.idega.util.ListUtil;
 
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
-  private UserHome userHome;
+  private GroupRelationHome groupRelationHome;
+	private UserHome userHome;
   private GroupHome groupHome;
   private UserGroupRepresentativeHome userRepHome; 
   private GroupHome permGroupHome;
@@ -919,6 +922,18 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
+	public GroupRelationHome getGroupRelationHome(){
+		 if(groupRelationHome==null){
+			 try{
+				groupRelationHome = (GroupRelationHome)IDOLookup.getHome(GroupRelation.class);
+			 }
+			 catch(RemoteException rme){
+				 throw new RuntimeException(rme.getMessage());
+			 }
+		 }
+		 return groupRelationHome;
+	 }
+	 
 /**
    * Creates a group with the general grouptype and adds it under the default Domain (IBDomain)
  * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String)
