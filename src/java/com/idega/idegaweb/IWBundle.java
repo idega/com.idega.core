@@ -125,6 +125,9 @@ public class IWBundle{
         propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
       }
 
+      String SystemClassPath = System.getProperty("java.class.path");
+      String newClassPath = SystemClassPath+File.pathSeparator+this.getClassesRealPath();
+      System.setProperty("java.class.path",newClassPath);
    }
 
    protected String getRootRealPath(){

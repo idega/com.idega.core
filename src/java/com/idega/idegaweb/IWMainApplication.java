@@ -15,6 +15,7 @@ import com.idega.util.text.TextSoap;
 import com.idega.util.Executer;
 import com.idega.jmodule.object.Page;
 import com.idega.util.caching.BlobCacher;
+import com.idega.exception.IWBundleDoesNotExist;
 
 
 /**
@@ -400,11 +401,16 @@ public class IWMainApplication{//implements ServletContext{
         if(bundles[i].isDirectory()){
           File properties = new File(bundles[i],"properties");
           File propertiesFile = new File(properties,IWBundle.propertyFileName);
+          try{
           IWPropertyList list = new IWPropertyList(propertiesFile);
           if(list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(bundleIdentifier)){
             tryString = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
             this.registerBundle(bundleIdentifier,tryString);
             return tryString;
+          }
+          }
+          catch(Exception e){
+            throw new IWBundleDoesNotExist(bundleIdentifier);
           }
         }
       }
