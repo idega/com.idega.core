@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.ejb.FinderException;
 
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOQuery;
 
 /**
  * Title:        IW Core
@@ -107,6 +108,8 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
     else throw new FinderException("Country was not found");
   }
   public Collection ejbFindAll() throws FinderException {
-		  return super.idoFindAllIDsBySQL();
+  		IDOQuery query = idoQuery();
+  		query.appendSelectAllFrom(this).appendOrderBy(getColumnNameName());
+		  return super.idoFindPKsByQuery(query);
   }
 }
