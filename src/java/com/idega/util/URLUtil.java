@@ -66,7 +66,8 @@ public class URLUtil {
 			parseQuery(url.getQuery());
 		}
 		catch (MalformedURLException mue) {
-			mue.printStackTrace();
+			//mue.printStackTrace();
+			
 			if (URL.indexOf("?") != -1) {
 				setPath(URL.substring(0, URL.indexOf("?")));
 				if (URL.length() > URL.indexOf("?") + 1)
