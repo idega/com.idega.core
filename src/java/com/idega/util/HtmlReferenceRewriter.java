@@ -12,8 +12,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.idega.core.builder.data.ICPage;
 
 
@@ -209,9 +209,33 @@ public class HtmlReferenceRewriter {
 			m.appendTail(outString);
 			replaceBuffer=new StringBuffer(outString.toString());
 		}
-		PrintWriter out = new PrintWriter(getOutput());
-		out.write(outString.toString());
-		out.close();
+		
+		String utfString;
+		try {
+			utfString = new String(outString.toString().getBytes("UTF-8"));
+			StringReader sr = new StringReader(utfString);
+			System.out.println("[HTMLReferenceWriter] The final html string in unicode:\n"+utfString);
+			Writer out = getOutput();
+			
+			int bufferlength=1000;
+			char[] buf = new char[bufferlength];
+			int read = sr.read(buf);
+			while (read!=-1){
+				out.write(buf,0,read);
+				read = sr.read(buf);
+			}
+			sr.close();
+			//out.close(); don't close the stream, that is done automatically when the page is stored
+		}
+		catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 	/**
 	 * Gets the rewritten URL. this can be overridden
