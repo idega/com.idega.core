@@ -302,7 +302,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 
 			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-			if (recurseParents == null) { //old crap
+			if ( !"true".equals(recurseParents) ) { //old crap
 				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwc);
 			}
@@ -491,7 +491,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else { //user check
 
 			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-			if (recurseParents == null) { //old crap
+			if ( !"true".equals(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwc);
 			}
