@@ -72,6 +72,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	private boolean _clientIsHandHeld = false;
 	private boolean isCaching = false;
 	private PrintWriter cacheWriter;
+	private PrintWriter writer = null;
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
@@ -577,15 +578,13 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		return getRequest().getServerPort();
 	}
 	public PrintWriter getWriter() throws IOException {
-		if (cacheWriter == null) {
-			return getResponse().getWriter();
+		if (this.isCacheing() && cacheWriter!=null) {
+			return cacheWriter;
 		} else {
-			if (this.isCacheing()) {
-				return cacheWriter;
-			} else {
-				return getResponse().getWriter();
-			}
+			if( writer == null ) writer = getResponse().getWriter();
+			return writer;
 		}
+		
 	}
 	public void sendRedirect(String URL) {
 		try {
