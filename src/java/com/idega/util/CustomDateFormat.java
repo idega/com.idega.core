@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 /**
- * Title:        A class for formatting presentation of PersonalIDs
+ * Title:        A class for formatting presentation of Dates
  * Description:
  * Copyright:    Copyright (c) 2002
  * Company:      idega
@@ -19,7 +19,7 @@ public class CustomDateFormat {
 	}
 	private static DateFormat getSwedishDateTimeFormat(){
 		if(swedishDateFormat==null){
-			swedishDateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			swedishDateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		}
 		return swedishDateFormat;
 	}
