@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.10 2004/03/24 18:45:01 thomas Exp $
+ * $Id: XMLElement.java,v 1.11 2004/04/19 18:01:37 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -214,10 +215,26 @@ public class XMLElement {
   	return this;
   }
   
+  /** sets the content of the first child or creates a child if no child exists
+   * @author thomas
+   */
+  public XMLElement setContent(String name, String value) {
+  	XMLElement child = getChild(name);
+  	if (child == null) {
+  		child = new XMLElement(name);
+  	}
+  	// do not use addContent!
+  	child.setText(value);
+  	return this;
+  }
+  		
+  /** adds a child with the specified value 
+   * @author Thomas
+   */
   public XMLElement addContent(String name, String value) {
   	XMLElement element = new XMLElement(name);
   	element.addContent(value);
-  	return this.addContent(element);
+  	return addContent(element);
   }
   
   /**
@@ -339,7 +356,66 @@ public class XMLElement {
     return element;
   }
   
-  // do not remove that method even if it is not used at the moment
+  /**
+   * Returns parent, or null if this element is currently not attached to another element.
+   * @author Thomas
+   */
+  public XMLElement getParent() {
+  	if (_element == null) {
+  		return null;
+  	}
+  	Element parent = _element.getParent();
+  	return (parent == null) ? null : new XMLElement(parent);
+  }
+  
+  /** Returns an iterator of all children (recursive) of this element.
+   * @author Thomas
+   */
+  public Iterator allChildrenIterator() {
+  	return new Iterator() {
+  		
+  		private Iterator iterator = null;
+  		
+  		public Object next() {
+  			checkInitialization();
+  			return iterator.next();
+  		}
+  		
+  		public boolean hasNext() {
+  			checkInitialization();
+  			return iterator.hasNext();
+  		}
+  		
+  		public void remove() {
+  			checkInitialization();
+  			iterator.remove();
+  		}
+ 
+			private void checkInitialization() {
+  			 if (iterator == null) {
+  			 	List allChildren = new ArrayList();
+  			 	collectChildren(XMLElement.this, allChildren);
+  			 	iterator = allChildren.iterator();
+  			 }
+  		}
+  			 	
+				
+			private void collectChildren(XMLElement element, List allChildren) {
+  				allChildren.add(element);
+  				List localChildren = element.getChildren();
+  				Iterator iterator = localChildren.iterator();
+  				while (iterator.hasNext()) {
+  					XMLElement elementItem = (XMLElement) iterator.next();
+  					collectChildren(elementItem, allChildren);
+  				}
+  			}
+  	};
+  }
+  
+  /**do not remove that method even if it is not used at the moment - it's so hard to find that method.
+   * Use this method to get really rid of the parent of an element.
+   * @author Thomas
+   */
   public XMLElement detach()	{
   	if (_element != null)	{
   		return new XMLElement(_element.detach());
