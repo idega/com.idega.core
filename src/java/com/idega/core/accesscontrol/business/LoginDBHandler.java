@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.39 2003/01/13 23:41:07 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.40 2003/02/27 22:32:17 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -853,5 +853,10 @@ public class LoginDBHandler
 		}
 		theReturn[4] = finalPossibility;
 		return theReturn;
+	}
+
+	public static void changeNextTime(LoginTable login,boolean changeValue){                LoginInfo info = getLoginInfo(login.getID());
+		info.setChangeNextTime(changeValue);
+		info.store();
 	}
 }
