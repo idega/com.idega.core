@@ -1365,79 +1365,87 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user)throws RemoteException{
 		Collection topNodes = new Vector();
-
 		
-		try {
+		topNodes = (Collection)this.getIWApplicationContext().getApplicationAttribute("top_nodes_for_userid_"+user.getPrimaryKey());
 		
-		Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
-		HashMap parents = new HashMap();
+		if( topNodes != null ) return topNodes;
 		
-		//get all view permissions for direct parent and put in a list
-		Iterator groups = directlyRelatedParents.iterator();
-		List allViewAndOwnerPermissions = new Vector();
-		while (groups.hasNext()) {
-			Group group = (Group) groups.next();
-			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
-			allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
-			allViewAndOwnerPermissions.addAll(viewPermissions);
-		}
-		Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
-		allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
-		allViewAndOwnerPermissions.addAll(ownedPermissions);
+		else{
 		
-		
-		//get all (recursively) parents for permission
-		GroupBusiness groupBiz = getGroupBusiness();
-		Iterator permissions = allViewAndOwnerPermissions.iterator();
-		while (permissions.hasNext()) {
-			ICPermission perm = (ICPermission) permissions.next();
-			try {
-				String groupId = perm.getContextValue();
-				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
-				Collection recParents = groupBiz.getParentGroupsRecursive(group);
-				parents.put(group,recParents);
-			}
-			catch (NumberFormatException e1) {
-				e1.printStackTrace();
-			}
-			catch (FinderException e1) {
-				System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
-			}
-		}
-		
-		
-		//Filter out the real top nodes!
-		List skipThese = new ArrayList();
-		Set keys = parents.keySet();
-		Iterator iter = keys.iterator();
-		while (iter.hasNext()) {
-			Group myGroup = (Group) iter.next();
-		
-			Iterator iter2 = parents.keySet().iterator();
-			while (iter2.hasNext()) {
-				Group myGroup2 = (Group) iter2.next();
-				if(myGroup.equals(myGroup2) || skipThese.contains(myGroup)) continue;//dont check for self
-				
-				Collection theParents = (Collection) (parents.get(myGroup2));
-				
-				if(theParents!=null && theParents.contains(myGroup)){
-					skipThese.add(myGroup2); 
-				}//remove if this group is a child group of myGroup
-					
-			}
-		}
-		
-		topNodes = parents.keySet();
-		topNodes.removeAll(skipThese);
 			
-		}
-		catch (EJBException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
+			try {
+			
+			Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+			HashMap parents = new HashMap();
+			
+			//get all view permissions for direct parent and put in a list
+			Iterator groups = directlyRelatedParents.iterator();
+			List allViewAndOwnerPermissions = new Vector();
+			while (groups.hasNext()) {
+				Group group = (Group) groups.next();
+				Collection viewPermissions = AccessControl.getAllGroupViewPermissions(group);
+				allViewAndOwnerPermissions.removeAll(viewPermissions);//no double entries thank you
+				allViewAndOwnerPermissions.addAll(viewPermissions);
+			}
+			Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
+			allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
+			allViewAndOwnerPermissions.addAll(ownedPermissions);
+			
+			
+			//get all (recursively) parents for permission
+			GroupBusiness groupBiz = getGroupBusiness();
+			Iterator permissions = allViewAndOwnerPermissions.iterator();
+			while (permissions.hasNext()) {
+				ICPermission perm = (ICPermission) permissions.next();
+				try {
+					String groupId = perm.getContextValue();
+					Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+					Collection recParents = groupBiz.getParentGroupsRecursive(group);
+					parents.put(group,recParents);
+				}
+				catch (NumberFormatException e1) {
+					e1.printStackTrace();
+				}
+				catch (FinderException e1) {
+					System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
+				}
+			}
+			
+			
+			//Filter out the real top nodes!
+			List skipThese = new ArrayList();
+			Set keys = parents.keySet();
+			Iterator iter = keys.iterator();
+			while (iter.hasNext()) {
+				Group myGroup = (Group) iter.next();
+			
+				Iterator iter2 = parents.keySet().iterator();
+				while (iter2.hasNext()) {
+					Group myGroup2 = (Group) iter2.next();
+					if(myGroup.equals(myGroup2) || skipThese.contains(myGroup)) continue;//dont check for self
 					
+					Collection theParents = (Collection) (parents.get(myGroup2));
+					
+					if(theParents!=null && theParents.contains(myGroup)){
+						skipThese.add(myGroup2); 
+					}//remove if this group is a child group of myGroup
+						
+				}
+			}
+			
+			topNodes = parents.keySet();
+			topNodes.removeAll(skipThese);
+				
+			}
+			catch (EJBException e) {
+				e.printStackTrace();
+			}
+		
+		
+		}
+		
+		this.getIWApplicationContext().setApplicationAttribute("top_nodes_for_userid_"+user.getPrimaryKey(),topNodes);
+		
 		return 	topNodes;
 	
 	}
