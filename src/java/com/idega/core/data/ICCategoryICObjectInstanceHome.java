@@ -1,0 +1,14 @@
+package com.idega.core.data;
+
+
+public interface ICCategoryICObjectInstanceHome extends com.idega.data.IDOHome
+{
+ public ICCategoryICObjectInstance create() throws javax.ejb.CreateException, java.rmi.RemoteException;
+ public ICCategoryICObjectInstance findByPrimaryKey(Object pk) throws javax.ejb.FinderException, java.rmi.RemoteException;
+ public int getOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1)throws javax.ejb.FinderException, java.rmi.RemoteException;
+ public java.util.List getListOfCategoryForObjectInstance(com.idega.core.data.ICObjectInstance p0)throws javax.ejb.FinderException, java.rmi.RemoteException;
+ public java.lang.String getRelatedSQL(int p0) throws java.rmi.RemoteException;
+ public java.lang.String getRelatedSQL(int p0, String p1) throws java.rmi.RemoteException;
+ public boolean setOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1,int p2)throws com.idega.data.IDOException, java.rmi.RemoteException;
+
+}

@@ -2,11 +2,12 @@ package com.idega.core.business;
 
 
 
+import com.idega.data.IDOLookup;
+import com.idega.core.data.*;
 import java.sql.*;
 
 
 
-import com.idega.core.data.ICObjectInstance;
 
 import com.idega.util.IWTimestamp;
 
@@ -18,7 +19,6 @@ import java.util.Vector;
 
 import java.util.Iterator;
 
-import com.idega.core.data.ICCategory;
 
 import com.idega.core.business.ICObjectBusiness;
 
@@ -205,12 +205,21 @@ public class CategoryBusiness{
   public void saveRelatedCategories(int iObjectInstanceId,int[] CategoryIds){
 
     try {
+      ICObjectInstance instance = ((ICObjectInstanceHome) IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
+      ICCategoryICObjectInstanceHome catObjInstHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+      ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHomeLegacy(ICCategory.class);
 
-      com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom(ICCategory.class);
+      Category category;
+      int tree_order = 0;
 
       for (int i = 0; i < CategoryIds.length; i++) {
+        category = catHome.findByPrimaryKeyLegacy(CategoryIds[i]);
+        tree_order = catObjInstHome.getOrderNumber(category, instance);
+//        com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom(ICCategory.class, CategoryIds[i]);
+        com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom((ICCategory) category);
 
         com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).addTo(ICCategory.class,CategoryIds[i]);
+        catObjInstHome.setOrderNumber(category, instance, tree_order);
 
       }
 
@@ -224,9 +233,10 @@ public class CategoryBusiness{
 
   }
 
-
-
   public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type,boolean allowMultible){
+    return saveCategory(iCategoryId, sName, sDesc, 0, type, allowMultible);
+  }
+  public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int orderNumber, int iObjectInstanceId,String type,boolean allowMultible){
 
     ICCategory Cat = ((com.idega.core.data.ICCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICCategory.class)).createLegacy();
 
@@ -240,13 +250,16 @@ public class CategoryBusiness{
 
     Cat.setType(type);
 
+
     return saveCategory(Cat,iObjectInstanceId,allowMultible);
 
   }
 
-
-
   public boolean updateCategory(int id,String name,String info){
+    return updateCategory(id, name, info, 0, -1);
+  }
+
+  public boolean updateCategory(int id,String name,String info, int orderNumber, int objectInstanceId){
 
     try {
 
@@ -257,6 +270,12 @@ public class CategoryBusiness{
       cat.setDescription(info);
 
       cat.update();
+
+      if (objectInstanceId > 0) {
+        ICObjectInstance objIns = (( ICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(objectInstanceId);
+        ICCategoryICObjectInstanceHome catObjInsHome = ( ICCategoryICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class);
+        catObjInsHome.setOrderNumber(cat, objIns, orderNumber);
+      }
 
       return true;
 
@@ -280,9 +299,11 @@ public class CategoryBusiness{
 
   }
 
-
-
   public ICCategory saveCategory(ICCategory Cat,int iObjectInstanceId,boolean allowMultible){
+    return saveCategory(Cat, iObjectInstanceId, 0, allowMultible);
+  }
+
+  public ICCategory saveCategory(ICCategory Cat,int iObjectInstanceId,int orderNumber, boolean allowMultible){
 
     javax.transaction.TransactionManager t = com.idega.transaction.IdegaTransactionManager.getInstance();
 
@@ -310,7 +331,9 @@ public class CategoryBusiness{
 
       if(iObjectInstanceId > 0){
 
+        ICCategoryICObjectInstanceHome catObjInstHome = ((com.idega.core.data.ICCategoryICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class));
         ICObjectInstance objIns = ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
+        catObjInstHome.setOrderNumber(Cat, objIns, orderNumber);
 
         // Allows only one category per instanceId
 

@@ -2,21 +2,18 @@ package com.idega.core.business;
 
 
 
-import com.idega.core.data.ICCategory;
-
-import com.idega.core.data.ICObjectInstance;
-
-import com.idega.data.CategoryEntity;
-
-import com.idega.data.EntityControl;
+import java.rmi.RemoteException;
+import javax.ejb.FinderException;
+import com.idega.core.data.*;
+import com.idega.data.*;
 
 
 
-import com.idega.data.EntityFinder;
 
-import com.idega.data.IDOLegacyEntity;
 
-import com.idega.data.IDOFinderException;
+
+
+
 
 
 
@@ -84,7 +81,14 @@ public class CategoryFinder {
 
     if (iCategoryId > 0) {
 
-      return (ICCategory) com.idega.core.data.ICCategoryBMPBean.getEntityInstance(ICCategory.class, iCategoryId);
+      try {
+        return ( (ICCategoryHome) IDOLookup.getHomeLegacy(ICCategory.class) ).findByPrimaryKeyLegacy(iCategoryId);
+      }catch (SQLException sql) {
+        sql.printStackTrace(System.err);
+        return null;
+      }
+
+//      return (ICCategory) com.idega.core.data.ICCategoryBMPBean.getEntityInstance(ICCategory.class, iCategoryId);
 
     }
 
@@ -573,7 +577,6 @@ public class CategoryFinder {
   public List listOfCategoryForObjectInstanceId(int instanceid) {
 
     try {
-
       ICObjectInstance obj = ICObjectBusiness.getInstance().getICObjectInstance(instanceid);
 
       return listOfCategoryForObjectInstanceId(obj);
@@ -605,12 +608,12 @@ public class CategoryFinder {
   public List listOfCategoryForObjectInstanceId(ICObjectInstance obj) {
 
     try {
+      ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+      return home.getListOfCategoryForObjectInstance(obj);
+//      List L = EntityFinder.getInstance().findRelated(obj,(ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
+//      return L;
 
-      List L = EntityFinder.getInstance().findRelated(obj,(ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
-
-      return L;
-
-    } catch (SQLException ex) {
+    } catch (Exception ex) {
 
       return null;
 
@@ -634,128 +637,82 @@ public class CategoryFinder {
 
    */
 
-  public String getRelatedSQL(int iObjectInstanceId) {
-
-    StringBuffer sql = new StringBuffer("select ");
-
-    sql.append(((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class)).getIDColumnName());
-
-    sql.append(" from ").append(com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class));
-
-    sql.append(" where ").append(((ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class)).getIDColumnName());
-
-    sql.append(" = ").append(iObjectInstanceId);
-
-    return sql.toString();
-
+//<<<<<<< CategoryFinder.java
+  private String getRelatedSQL(int iObjectInstanceId) {
+    try {
+      ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+      return home.getRelatedSQL(iObjectInstanceId);
+    }catch (RemoteException rm) {
+      // Gamla dótið, fyrir Grím
+      StringBuffer sql = new StringBuffer("select ");
+      sql.append(((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class)).getIDColumnName());
+      sql.append(" from ").append(com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class));
+      sql.append(" where ").append(((ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class)).getIDColumnName());
+      sql.append(" = ").append(iObjectInstanceId);
+      return sql.toString();
+    }
   }
-
-
-
-
+    /*  public String getRelatedSQL(int iObjectInstanceId) {
+    StringBuffer sql = new StringBuffer("select ");
+    sql.append(((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class)).getIDColumnName());
+    sql.append(" from ").append(com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class));
+    sql.append(" where ").append(((ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class)).getIDColumnName());
+    sql.append(" = ").append(iObjectInstanceId);
+    return sql.toString();
+  }*/
 
   /**
-
    *  Gets the relatedEntitySQL of the CategoryFinder object
-
    *
-
    * @param  tablename          Description of the Parameter
-
    * @param  iObjectInstanceId  Description of the Parameter
-
    * @return                    The related entity SQL value
-
    */
-
   private String getRelatedEntitySQL(String tablename, int iObjectInstanceId) {
-
     StringBuffer sql = new StringBuffer("select ");
-
     sql.append(tablename).append(".* from ").append(tablename).append(",");
-
     String middletable = EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
-
     sql.append(middletable);
-
     sql.append(" where ").append(((ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class)).getIDColumnName());
-
     sql.append(" = ").append(iObjectInstanceId);
-
     String idname = ((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class)).getIDColumnName();
-
     sql.append(" and ").append(middletable).append(".").append(idname);
-
     sql.append(" = ").append(tablename).append(".").append(idname);
 
     return sql.toString();
-
   }
 
 
-
-
-
   /**
-
    *  Gets the relatedEntitySql of the CategoryFinder object
-
    *
-
    * @param  EntityClass          Description of the Parameter
-
    * @param  CategoryEntityClass  Description of the Parameter
-
    * @param  EntityColumn         Description of the Parameter
-
    * @param  iObjectInstanceId    Description of the Parameter
-
    * @return                      The related entity sql value
-
    */
-
   private String getRelatedEntitySql(Class EntityClass, Class CategoryEntityClass, String EntityColumn, int iObjectInstanceId) {
-
     IDOLegacyEntity entity = com.idega.data.GenericEntity.getStaticInstance(EntityClass);
-
     CategoryEntity catEntity = (CategoryEntity) com.idega.data.CategoryEntityBMPBean.getStaticInstance(CategoryEntityClass);
-
     ICObjectInstance instanceEntity = (ICObjectInstance) com.idega.core.data.ICObjectInstanceBMPBean.getStaticInstance(ICObjectInstance.class);
-
     ICCategory icCat = ((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
-
     String middletable = EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
-
     String tablename = entity.getEntityName();
 
-
-
     StringBuffer sql = new StringBuffer("select ");
-
     sql.append(entity.getEntityName()).append(".* from ").append(entity.getEntityName()).append(",");
-
     sql.append(catEntity.getEntityName()).append(",");
-
     sql.append(middletable);
-
     sql.append(" where ").append(instanceEntity.getIDColumnName());
-
     sql.append(" = ").append(iObjectInstanceId);
-
     sql.append(" and ").append(middletable).append(".").append(icCat.getIDColumnName());
-
     sql.append(" = ").append(catEntity.getEntityName()).append(".").append(com.idega.data.CategoryEntityBMPBean.getColumnCategoryId());
-
     sql.append(" and ").append(catEntity.getEntityName()).append(".").append(catEntity.getIDColumnName());
-
     sql.append(" = ").append(entity.getEntityName()).append(".").append(EntityColumn);
 
-
-
     //System.err.println(sql.toString());
-
     return sql.toString();
-
   }
 
 
@@ -1082,6 +1039,17 @@ public class CategoryFinder {
 
     return EntityControl.getManyToManyRelationShipTableName(ICCategory.class,ICObjectInstance.class);
 
+  }
+
+  public int getCategoryOrderNumber(Category category, ICObjectInstance instance) throws FinderException, RemoteException{
+    ICCategoryICObjectInstanceHome catObjInsHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+    return catObjInsHome.getOrderNumber(category, instance);
+  }
+
+  public boolean setOrderNumber(Category category, ICObjectInstance instance, int orderNumber) throws IDOException, RemoteException {
+    ICCategoryICObjectInstanceHome catObjInsHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+    return catObjInsHome.setOrderNumber(category, instance, orderNumber);
+//    return this.idoExecuteTableUpdate("UPDATE "+getEntityName()+" SET "+TREE_ORDER_COLUMN_NAME+" = "+orderNumber+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
   }
 
 }
