@@ -737,13 +737,13 @@ public class AccessControl{
 
   }
 
-  public void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws SQLException{
+  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws SQLException{
     User userToAdd = new User(userIDtoAdd);
     group.addUser(userToAdd);
   }
 
 
-  public void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws SQLException{
+  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws SQLException{
     GenericGroup groupToAdd = new GenericGroup(groupIDtoAdd);
     group.addGroup(groupToAdd);
   }
