@@ -32,11 +32,16 @@ private boolean merged = true;
     iwbCore = modinfo.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
     makeTables();
     setAllMargins(0);
-    super.add(adminForm);
+
+    if ( merged )
+      super.add(adminTable);
+    else
+      super.add(adminForm);
+
     super._main(modinfo);
   }
 
-  public void main(ModuleInfo modinfo){
+  public void main(ModuleInfo modinfo)throws Exception{
   }
 
   private void makeTables() {
