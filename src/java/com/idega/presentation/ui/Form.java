@@ -243,7 +243,7 @@ public class Form extends InterfaceObject {
 					String name = (String) iter.next();
 					String values = (String) _objectsToDisable.get(name);
 					setCheckSubmit();
-					getScript().addToBeginningOfFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "')");
+					getScript().addToFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "')");
 				}
 			}
 		}
