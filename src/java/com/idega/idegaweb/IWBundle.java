@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.63 2003/10/06 06:30:13 laddi Exp $
+ * $Id: IWBundle.java,v 1.64 2003/10/17 15:34:24 joakim Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -925,7 +925,9 @@ public class IWBundle implements java.lang.Comparable
 		if (fetchFromBundlePropertyFile)
 		{
 			IWProperty prop = getComponentList().getIWProperty(className);
-			return prop.getPropertyList();
+			if(prop!=null){
+				return prop.getPropertyList();
+			}
 		}
 		else
 		{
@@ -933,11 +935,14 @@ public class IWBundle implements java.lang.Comparable
 			IWPropertyList propertyList = (IWPropertyList) getComponentPropertiesListMap().get(className);
 			if (propertyList == null)
 			{
-				String fileName = prop.getPropertyList().getProperty(COMPONENT_PROPERTY_FILE);
-				propertyList = initializeComponentPropertyList(className, fileName);
+				if(prop!=null){
+					String fileName = prop.getPropertyList().getProperty(COMPONENT_PROPERTY_FILE);
+					propertyList = initializeComponentPropertyList(className, fileName);
+				}
 			}
 			return propertyList;
 		}
+		return null;
 	}
 	/**
 	 * @param className
@@ -965,8 +970,12 @@ public class IWBundle implements java.lang.Comparable
 				}
 				return true;
 			}
+			else
+			{
+				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 	/**
 	 * @param autoMoveComponentPropertiesToFile
@@ -1030,8 +1039,10 @@ public class IWBundle implements java.lang.Comparable
 		else
 		{
 			IWPropertyList propl = getComponentPropertyList(className);
-			String value = propl.getProperty(propertyName);
-			return value;
+			if(propl!=null){
+				String value = propl.getProperty(propertyName);
+				return value;
+			}
 		}
 		return null;
 	}
@@ -1056,14 +1067,26 @@ public class IWBundle implements java.lang.Comparable
 	 */
 	public String getComponentName(Class componentClass, Locale locale)
 	{
-		return getComponentName(componentClass.getName(), locale);
+		String name = getComponentName(componentClass.getName(), locale);
+		if(name!=null){
+			return name;
+		}
+		else{
+			return componentClass.getName();
+		}
 	}
 	/**
 	 * Returns getComponentName(className) if localized name not found
 	 */
 	public String getComponentName(String className, Locale locale)
 	{
-		return getComponentName(className, locale, getComponentName(className));
+		String name = getComponentName(className, locale, getComponentName(className));
+		if(name!=null){
+			return name;
+		}
+		else{
+			return className;
+		}
 	}
 	public void setComponentName(Class componentClass, Locale locale, String sName)
 	{
