@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.0 - Under development
+*@version 1.0
 */
 public class IWConstants{
 
@@ -35,7 +35,8 @@ public class IWConstants{
   public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";
 
-  public final static String SERVLET_WINDOWOPENER_URL = IWMainApplication.windowOpenerURL;
+  //Deprecated
+  //public final static String SERVLET_WINDOWOPENER_URL = IWMainApplication.windowOpenerURL;
 
 
   public static final String MARKUP_LANGUAGE_HTML="HTML";
