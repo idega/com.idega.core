@@ -70,7 +70,7 @@ public class IWTimestamp {
 	 * two digit hour (0-23).
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
-	public static final String HOUR = "kk";
+	public static final String HOUR = "HH";
 
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
@@ -181,18 +181,19 @@ public class IWTimestamp {
 	 */
 	public IWTimestamp(String SQLFormat) {
 		this();
-		String TimeString = SQLFormat;
 
-		if (TimeString.length() == 10) {
-			calendar = new IWTimestamp(Date.valueOf(SQLFormat)).getGregorianCalendar();
+		if (SQLFormat.length() == 10) {
+			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
+			calendar.setTime(Date.valueOf(SQLFormat));
 			isDate = true;
 		}
-		else if (TimeString.length() == 8) {
-			calendar = new IWTimestamp(Time.valueOf(SQLFormat)).getGregorianCalendar();
+		if (SQLFormat.length() == 8) {
+			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
+			calendar.setTime(Time.valueOf(SQLFormat));
 			isTime = true;
 		}
 		else
-			calendar = new IWTimestamp(Timestamp.valueOf(SQLFormat)).getGregorianCalendar();
+			calendar.setTime(Timestamp.valueOf(SQLFormat));
 	}
 
 	/**
@@ -557,7 +558,7 @@ public class IWTimestamp {
 	 * @return int
 	 */
 	public int getDay() {
-		return calendar.get(calendar.DATE);
+		return calendar.get(calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -585,11 +586,27 @@ public class IWTimestamp {
 	}
 
 	/**
+	 * Returns the millisecond from the default time setting.
+	 * @return int
+	 */
+	public int getMilliSecond() {
+		return calendar.get(calendar.MILLISECOND);
+	}
+
+	/**
 	 * Returns the day of the week (Sunday = 1) from the default date setting.
 	 * @return int
 	 */
 	public int getDayOfWeek() {
 		return calendar.get(calendar.DAY_OF_WEEK);
+	}
+
+	/**
+	 * Returns the day of the year (1-366) from the default date setting.
+	 * @return int
+	 */
+	public int getDayOfYear() {
+		return calendar.get(calendar.DAY_OF_YEAR);
 	}
 
 	/**
@@ -685,7 +702,7 @@ public class IWTimestamp {
 	 * @param numberOfHours	The number of hours to add.
 	 */
 	public void addHours(int numberOfHours) {
-		calendar.add(calendar.HOUR, numberOfHours);
+		calendar.add(calendar.HOUR_OF_DAY, numberOfHours);
 	}
 
 	/**
@@ -693,7 +710,7 @@ public class IWTimestamp {
 	 * @param numberOfDays	The number of days to add.
 	 */
 	public void addDays(int numberOfDays) {
-		calendar.add(calendar.DATE, numberOfDays);
+		calendar.add(calendar.DAY_OF_MONTH, numberOfDays);
 	}
 
 	/**
@@ -750,7 +767,7 @@ public class IWTimestamp {
 	 * @param day		The day to set
 	 */
 	public void setDay(int day) {
-		calendar.set(calendar.DATE, day);
+		calendar.set(calendar.DAY_OF_MONTH, day);
 	}
 
 	/**
@@ -758,7 +775,7 @@ public class IWTimestamp {
 	 * @param hour		The hour to set
 	 */
 	public void setHour(int hour) {
-		calendar.set(calendar.HOUR, hour);
+		calendar.set(calendar.HOUR_OF_DAY, hour);
 	}
 
 	/**
@@ -775,6 +792,14 @@ public class IWTimestamp {
 	 */
 	public void setSecond(int second) {
 		calendar.set(calendar.SECOND, second);
+	}
+
+	/**
+	 * Sets the millisecond of the time setting.
+	 * @param millisecond		The millisecond to set
+	 */
+	public void setMilliSecond(int millisecond) {
+		calendar.set(calendar.MILLISECOND, millisecond);
 	}
 
 	/**
