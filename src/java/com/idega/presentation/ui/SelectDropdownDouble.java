@@ -12,11 +12,15 @@ import java.util.Vector;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 
 /**
  * @author laddi
  */
 public class SelectDropdownDouble extends InterfaceObject {
+	
+	public final static int LAYOUT_HORIZONTAL = 1;
+	public final static int LAYOUT_VERTICAL = 2;
 
 	private String _styleClass;
 	private String _primarySelected;
@@ -33,6 +37,9 @@ public class SelectDropdownDouble extends InterfaceObject {
 	private String _disableValue;
 	
 	private boolean _disabled = false;
+	private int layout = 1;
+	private Text primaryLabel = null;
+	private Text secondaryLabel = null;
 	
 	public SelectDropdownDouble() {
 	}
@@ -62,12 +69,25 @@ public class SelectDropdownDouble extends InterfaceObject {
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		add(table);
-		int column = 1;
-
-		table.add(getPrimaryDropdown(), column++, 1);
-		if (_spaceBetween > 0)
-			table.setWidth(column++, _spaceBetween);
-		table.add(getSecondaryDropdown(), column, 1);
+		
+		// Layout:
+		if(layout!=LAYOUT_VERTICAL){
+			int column = 1;
+			table.add(getPrimaryDropdown(), column++, 1);
+			if (_spaceBetween > 0)
+				table.setWidth(column++, _spaceBetween);
+			table.add(getSecondaryDropdown(), column, 1);
+		}
+		else {
+			if(primaryLabel!=null)
+				table.add(primaryLabel,1,1);
+			if(secondaryLabel!=null)
+				table.add(secondaryLabel,1,2);
+			table.setWidth(2,_spaceBetween);
+			table.add(getPrimaryDropdown(),3,1);
+			table.add(getSecondaryDropdown(),3,2);
+		
+		}
 		
 		if (_styleClass != null) {
 			getPrimaryDropdown().setStyleClass(_styleClass);
@@ -247,5 +267,31 @@ public class SelectDropdownDouble extends InterfaceObject {
 	 */
 	public boolean isContainer() {
 		return false;
+	}
+	/**
+	 * @param layout The layout to set.
+	 */
+	public void setLayout(int layout) {
+		this.layout = layout;
+	}
+	
+	/**
+	 * 
+	 * @param vertical
+	 */
+	public void setLayoutVertical(boolean vertical){
+		setLayout(LAYOUT_VERTICAL);
+	}
+	/**
+	 * @param primaryLabel The primaryLabel to set.
+	 */
+	public void setPrimaryLabel(Text primaryLabel) {
+		this.primaryLabel = primaryLabel;
+	}
+	/**
+	 * @param secondaryLabel The secondaryLabel to set.
+	 */
+	public void setSecondaryLabel(Text secondaryLabel) {
+		this.secondaryLabel = secondaryLabel;
 	}
 }
