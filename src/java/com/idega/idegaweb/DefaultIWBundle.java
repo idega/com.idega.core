@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.2 2004/07/29 01:10:24 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.3 2004/07/29 01:12:00 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -717,10 +717,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return propertiesRealPath;
 	}
-	public static IWBundle getBundle(String bundleIdentifier, IWMainApplication application)
-	{
-		return application.getBundle(bundleIdentifier);
-	}
 	public void addLocale(Locale locale)
 	{
 		String LocalePath = getResourcesRealPath(locale);
@@ -870,7 +866,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return this.propertyList;
 	}
-	public static List getAvailableComponentTypes()
+	private List getAvailableComponentTypes()
 	{
 		return com.idega.core.component.data.ICObjectBMPBean.getAvailableComponentTypes();
 	}
