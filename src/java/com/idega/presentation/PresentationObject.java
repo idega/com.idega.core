@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.39 2002/03/20 19:15:23 eiki Exp $
+ * $Id: PresentationObject.java,v 1.40 2002/03/20 22:58:18 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -40,6 +40,8 @@ public class PresentationObject extends Object implements Cloneable {
   public final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
   public final static String WIDTH ="width";
   public final static String HEIGHT ="height";
+  public final static String HORIZONTAL_ALIGNMENT ="align";
+
 
   protected static final String slash = "/";
 
@@ -1121,5 +1123,12 @@ public class PresentationObject extends Object implements Cloneable {
     return getAttribute(WIDTH);
   }
 
+  public void setHorizontalAlignment(String align){
+    setAttribute(HORIZONTAL_ALIGNMENT,align);
+  }
+
+  public String getHorizontalAlignment(){
+   return getAttribute(HORIZONTAL_ALIGNMENT);
+  }
 
 }
