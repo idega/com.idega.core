@@ -41,7 +41,16 @@ public class ConnectionPool
       this.URL = URL;
       this.user = user;
       this.password = password;
-      this.minConns = initConns;
+
+      //Special case if using Interbase
+      if(URL.indexOf("interbase")!=-1){
+        this.minConns = 1;
+        initConns=1;
+      }
+      else{
+        this.minConns = initConns;
+      }
+
       this.maxConns = maxConns;
       this.timeOut = timeOut > 0 ? timeOut : 5;
 
