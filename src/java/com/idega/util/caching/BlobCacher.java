@@ -70,7 +70,7 @@ public class BlobCacher  {
      return;
     }
 
-    cache.put(entity.getEntityName(),Integer.toString(entity.getID()),virtualPath+entity.getID()+"_"+fileName);
+    cache.put(entity.getEntityName(), Integer.toString(entity.getID()),virtualPath+java.net.URLEncoder.encode(entity.getID()+"_"+fileName));
 
   }
 
@@ -80,7 +80,7 @@ public class BlobCacher  {
       String realPath = app.getApplicationRealPath();
       Enumeration enum = cache.elements();
       while( enum.hasMoreElements() ){
-        String pathAndFile = realPath + TextSoap.findAndReplace( (String)enum.nextElement() ,"/",FileUtil.getFileSeparator());
+        String pathAndFile = realPath + java.net.URLDecoder.decode(TextSoap.findAndReplace( (String)enum.nextElement() ,"/",FileUtil.getFileSeparator()) );
         System.out.println(pathAndFile);
         FileUtil.delete( pathAndFile );
       }
