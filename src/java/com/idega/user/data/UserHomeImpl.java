@@ -120,7 +120,8 @@ public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)thr
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByYearOfBirth(minYear,maxYear);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+	//return this.getEntityCollectionForPrimaryKeys(ids);
+	return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean p2) throws FinderException, RemoteException {
@@ -225,16 +226,6 @@ public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup,
 	//return this.getEntityCollectionForPrimaryKeys(ids);
 	return this.getIDOEntityListForPrimaryKeys(ids);
 }
-
-public Collection findUsersWithContract() throws IDOLookupException, FinderException {
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersWithContract();
-	this.idoCheckInPooledEntity(entity);
-	return ids;
-	//return this.getEntityCollectionForPrimaryKeys(ids);
-	//return this.getIDOEntityListForPrimaryKeys(ids);
-}
-
 
 
 
