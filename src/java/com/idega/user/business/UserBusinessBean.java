@@ -879,7 +879,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
           if( poBox!=null)  address.setPOBox(poBox);
 	        
 	        address.setStreetName(streetName);
-	        if( streetNumber!=null ) address.setStreetNumber(streetNumber);
+	        if( streetNumber!=null ) 
+	        	address.setStreetNumber(streetNumber);
+	        else{
+	        	// Fix when entering unnumbered addresses (Aron )
+	        	address.setStreetNumber("");
+	        }
 	
 	        address.store();
 	
