@@ -25,7 +25,7 @@ public class GenericSelect extends InterfaceObject {
 
 	private List selectedElements;
 	private boolean _allSelected = false;
-
+	private boolean _isMultiple = false;
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
@@ -237,8 +237,15 @@ public class GenericSelect extends InterfaceObject {
 	public void main(IWContext iwc) throws Exception {
 		if (_isSetAsNotEmpty)
 			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", _notEmptyErrorMessage, _emptyValue);
-		if (_isSetToDisable)
-			getScript().addFunction("disableObjectByDropdown", "function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\nelse {\n\tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=!eval(value);\n	\t\t}\n	\t\tinputs.disabled=!eval(value);\n}\n}");
+		if (_isSetToDisable) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\n");
+			if (!_isMultiple) {
+				buffer.append("else {\n\tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=!eval(value);\n	\t\t}\n	\t\tinputs.disabled=!eval(value);\n}\n");
+			}
+			buffer.append("}");
+			getScript().addFunction("disableObjectByDropdown", buffer.toString());
+		}
 		if (_isSetToSubmit)
 			getScript().addFunction("submitWhenSelected", "function submitWhenSelected (dropdown,selectedValue) {\n\tif (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue))\n\t\tdropdown.form.submit();\n}");
 	}
@@ -328,7 +335,18 @@ public class GenericSelect extends InterfaceObject {
 	 * @param disable					Disables if boolean is true, enables otherwise.
 	 */
 	public void setToDisableWhenSelected(InterfaceObject objectToDisable, String selectedValue, boolean disable) {
-		setToDisableWhenSelected(objectToDisable.getName(), selectedValue, disable);
+
+	}	
+	/**
+	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisable	The interface object(s) to disable/enable.
+	 * @param selectedValue		The selected value of the <code>GenericSelect</code> to use.
+	 * @param disable					Disables if boolean is true, enables otherwise.
+	 * @param isMultiple					Must be used when multiple values can disable...
+	 */
+	public void setToDisableWhenSelected(InterfaceObject objectToDisable, String selectedValue, boolean disable, boolean isMultiple) {
+		setToDisableWhenSelected(objectToDisable.getName(), selectedValue, disable, isMultiple);
 	}
 
 	/**
@@ -339,7 +357,20 @@ public class GenericSelect extends InterfaceObject {
 	 * @param disable							Disables if boolean is true, enables otherwise.
 	 */
 	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue, boolean disable) {
+		setToDisableWhenSelected(objectToDisableName, selectedValue, disable, false);
+	}
+	
+	/**
+	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisableName	The name of the interface object(s) to disable/enable.
+	 * @param selectedValue				The selected value of the <code>GenericSelect</code> to use.
+	 * @param disable							Disables if boolean is true, enables otherwise.
+	 * @param isMultiple					Must be used when multiple values can disable...
+	 */
+	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue, boolean disable, boolean isMultiple) {
 		_isSetToDisable = true;
+		_isMultiple = isMultiple;
 		this.setOnChange("disableObjectByDropdown(this,findObj('"+objectToDisableName+"'),'"+String.valueOf(disable)+"','"+selectedValue+"')");
 	}
 
