@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.108 2004/11/18 10:38:29 tryggvil Exp $
+ * $Id: IWContext.java,v 1.109 2004/12/03 03:01:13 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/11/18 10:38:29 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/03 03:01:13 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.108 $
+ * @version $Revision: 1.109 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -774,7 +774,7 @@ implements IWUserContext, IWApplicationContext {
 		return null;
 	}
 	public IWApplicationContext getApplicationContext() {
-		return this;
+		return this.getIWMainApplication().getIWApplicationContext();
 	}
 	/**
 	 * Gets if this object is in "Preview" mode in the Builder or in regular view not inside the Builder.
