@@ -263,6 +263,17 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
+    <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+      <type>jar</type>
+      <url>http://commons.apache.org/</url>
+	  <properties>
+	 <idegaweb.bundle.include>true</idegaweb.bundle.include>
+	 </properties>
+    </dependency>
     <dependency>
         <groupId>javaldap</groupId>
         <artifactId>javaldap-server</artifactId>
