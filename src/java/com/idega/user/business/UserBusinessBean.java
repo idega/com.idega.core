@@ -12,14 +12,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -35,6 +35,9 @@ import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.ldap.client.naming.DN;
+import com.idega.core.ldap.util.IWLDAPConstants;
+import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -78,15 +81,15 @@ import com.idega.util.ListUtil;
 import com.idega.util.text.Name;
 
  /**
-  * <p>Title: idegaWeb</p>
-  * <p>Description: </p>
+  * <p>Title: UserBusinessBean</p>
+  * <p>Description: A collection of methods to create, remove, lookup and manipulate a User. See also GroupBusinessBean</p>
   * <p>Copyright: Copyright (c) 2002</p>
   * <p>Company: idega Software</p>
-  * @author <a href="gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
-  * @version 1.0
+  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
+  * @version 1.5
   */
 
-public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness{
+public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness,IWLDAPConstants {
 
   // remove use of "null" when metadata can be removed
   private static final String NULL = "null";
@@ -250,15 +253,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
  */
   public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException{
     User user;
-    StringBuffer fullName = new StringBuffer();
+  
+	Name name = new Name(firstName,middleName,lastName);
+	String fullName = name.getName();
 
-	  firstName = (firstName==null) ? "" : firstName;
-	  middleName = (middleName==null) ? "" : middleName;
-	  lastName = (lastName==null) ? "" : lastName;
-	
-	  fullName.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
 
-      user = createUserByPersonalIDIfDoesNotExist(fullName.toString(),personalID,gender,dateOfBirth);
+      user = createUserByPersonalIDIfDoesNotExist(fullName,personalID,gender,dateOfBirth);
 
     return user;
   }
@@ -272,16 +272,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     try{
       User userToAdd = getUserHome().create();
 
-			if (fullName == null) {
-	      StringBuffer fullNameBuffer = new StringBuffer();
-
-  	    firstName = (firstName==null) ? "" : firstName;
-    	  middleName = (middleName==null) ? "" : middleName;
-      	lastName = (lastName==null) ? "" : lastName;
-
-	      fullNameBuffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
-	      fullName = fullNameBuffer.toString();
-			}
+	if (fullName == null) {
+		Name name = new Name(firstName,middleName,lastName);
+		fullName = name.getName();
+	}
 
       userToAdd.setFullName(fullName);
 
@@ -685,27 +679,28 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
   
   public void updateUserMail(User user, String email) throws CreateException,RemoteException {
-    Email mail = getUserMail(((Integer) user.getPrimaryKey()).intValue());
-    boolean insert = false;
-    if ( mail == null ) {
-      mail = this.getEmailHome().create();
-      insert = true;
-    }
-
-    if ( email != null ) {
-      mail.setEmailAddress(email);
-    }
-    mail.store();
-    if(insert){
-      //((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
-      try{
-       user.addEmail(mail);
-      }
-      catch(Exception e){
-        throw new RemoteException(e.getMessage());
-      }
-    }
-
+  	if ( email != null ) {
+  		Email mail = getUserMail(((Integer) user.getPrimaryKey()).intValue());
+  		boolean insert = false;
+  		if ( mail == null ) {
+  			mail = this.getEmailHome().create();
+  			insert = true;
+  		}
+  		
+  		
+  		mail.setEmailAddress(email);
+  		
+  		mail.store();
+  		if(insert){
+  			//((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
+  			try{
+  				user.addEmail(mail);
+  			}
+  			catch(Exception e){
+  				throw new RemoteException(e.getMessage());
+  			}
+  		}
+  	}
   }
 
   public void updateUserJob(int userId, String job) {
@@ -2448,5 +2443,167 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private CommuneHome getCommuneHome() throws RemoteException {
 		return (CommuneHome) IDOLookup.getHome(Commune.class);
 	}
-									
+	
+	/**
+	 * Creates or updates a user from an LDAP DN and its attributes.
+	 * @throws NamingException,RemoteException
+	 * @see com.idega.user.business.UserBusiness#createOrUpdateUser(DN distinguishedName,Attributes attributes)
+	 */
+	public User createOrUpdateUser(DN distinguishedName,Attributes attributes)throws CreateException,NamingException,RemoteException{
+		IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
+		
+		String fullName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_COMMON_NAME,attributes);
+		Name name = new Name(fullName);
+		String firstName = name.getFirstName();
+		String middleName = name.getMiddleName();
+		String lastName = name.getLastName();
+		
+		String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION,attributes);
+		String uniqueID =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
+		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
+		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL,attributes);
+		String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+		String phone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
+		
+		
+		User user = null;
+		
+		if(uniqueID!=null){
+			try {
+				user = getUserHome().findUserByUniqueId(uniqueID);
+				
+			} catch (FinderException e) {
+				System.out.println("UserBusiness: User not found by unique id:"+uniqueID);
+			}
+		}
+		
+		if(user==null && personalId!=null ){
+			try {
+				user = getUser(personalId);
+			}
+			catch (FinderException e) {
+				System.out.println("UserBusiness: User not found by personal id:"+personalId);
+			}
+		}
+		
+		if(user == null){
+			user = getUserByDirectoryString(distinguishedName.toString());
+		}
+		
+		if(user==null && firstName!=null){
+			try {
+				Collection users = getUserHome().findUsersByConditions(firstName,middleName,lastName,null,null,null,-1,-1,-1,-1,null,null,true,false);
+				if(users!=null && !users.isEmpty() && users.size()==1){
+					//its the only one with this name must be our guy!
+					user = (User)users.iterator().next();
+				}
+			}
+			catch (FinderException e) {
+				System.out.println("UserBusiness: last try...user not found by firstname,middlename,lastname");
+			}
+			
+		}
+		
+		//could not find the person create it
+		if(user == null){
+			user = createUser(firstName,middleName,lastName,personalId);
+			if(uniqueID!=null){
+				user.setUniqueId(uniqueID);
+			}
+			
+			user.setDescription(description);
+			user.store();
+			updateUserMail(user,email);
+			//	  		updateUsersMainAddressOrCreateIfDoesNotExist()
+			//	  		String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+			//			String phone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
+			//	  		
+			
+		}
+		else{
+			//found the person! update if needed
+			if(uniqueID!=null){
+				user.setUniqueId(uniqueID);
+			}
+			
+			user.setDescription(description);
+			user.store();
+			updateUserMail(user,email);
+			
+		}
+		
+		//set all the attributes as metadata also
+		setMetaDataFromLDAPAttributes(user,distinguishedName,attributes);
+		
+		return user;
+	}
+	
+	/**
+	 * Creates or updates a user from an LDAP DN and its attributes and adds it under the parentGroup supplied
+	 * @throws NamingException
+	 * @throws CreateException
+	 * @throws NamingException
+	 * @throws RemoteException
+	 * @see com.idega.user.business.UserBusiness#createOrUpdateUser(DN distinguishedName,Attributes attributes,Group parentGroup)
+	 */
+	public User createOrUpdateUser(DN distinguishedName,Attributes attributes, Group parentGroup)throws RemoteException, CreateException, NamingException{
+		
+		User user = createOrUpdateUser(distinguishedName,attributes);
+		parentGroup.addGroup(user);
+		
+		return user;
+	}
+	
+	/**
+	 * Adds all the ldap attributes as metadata-fields
+	 * @param group
+	 * @param distinguishedName
+	 * @param attributes
+	 */
+	public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes) {
+		try {
+			getGroupBusiness().setMetaDataFromLDAPAttributes(user,distinguishedName,attributes);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+		
+
+	/**
+	 * Gets all the users that have this ldap metadata
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Collection getUsersByLDAPAttribute(String key, String value){
+		IWLDAPUtil util = IWLDAPUtil.getInstance();
+		Collection users;
+		try {
+			users = getUserHome().findUsersByMetaData(util.getAttributeKeyWithMetaDataNamePrefix(key),value);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
+		
+		return users;
+	}
+	
+	/**
+	 * Looks for the user by his DN in his metadata
+	 * @param identifier
+	 * @return
+	 */
+	private User getUserByDirectoryString(String identifier) {
+		User user = null;
+		Collection users = getUsersByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
+
+		if(!users.isEmpty() && users.size()==1){
+			user = (User)users.iterator().next();
+		}
+		
+		
+		return user;
+	}
+	
 } // Class UserBusiness

@@ -11,11 +11,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -29,6 +35,9 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.core.ldap.client.naming.DN;
+import com.idega.core.ldap.util.IWLDAPConstants;
+import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -62,19 +71,19 @@ import com.idega.user.data.UserHome;
 import com.idega.util.ListUtil;
 
  /**
-  * <p>Title: idegaWeb User</p>
-  * <p>Description: </p>
+  * <p>Title: GroupBusinessBean</p>
+  * <p>Description:  A collection of methods to create, remove, lookup and manipulate a Group.</p>
   * <p>Copyright: Copyright (c) 2002</p>
   * <p>Company: idega Software</p>
-  * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
   * @version 1.2
   */
 
 
-public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
+public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness,IWLDAPConstants {
 
   private GroupRelationHome groupRelationHome;
-	private UserHome userHome;
+  private UserHome userHome;
   private GroupHome groupHome;
   private UserGroupRepresentativeHome userRepHome; 
   private GroupHome permGroupHome;
@@ -976,6 +985,130 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		 }
 		 return groupRelationHome;
 	 }
+	
+
+	/**
+	   * Creates or updated a group from an LDAP DN and its attributes and adds it under the root (directly under in the group tree) of the default Domain (ICDomain) and/or the supplied parent group
+	 * @throws NamingException,RemoteException,CreateException
+	 * @see com.idega.user.business.GroupBusiness#createOrUpdateGroup(DN distinguishedName,Attributes attributes, boolean createUnderRootGroup, Group parentGroup)
+	 */
+	  public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes, boolean createUnderRootDomainGroup, Group parentGroup)throws CreateException,NamingException,RemoteException{
+	  	IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
+	 	int homePageID,homeFolderID,aliasID;
+	 	homePageID=homeFolderID=aliasID=-1;
+	 	
+	  	String name = ldapUtil.getNameOfGroupFromAttributes(attributes);
+	  	String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION,attributes);
+		String type = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE,attributes);
+		if(type==null){
+			type = getGroupTypeHome().getGeneralGroupTypeString();
+		}
+		String uniqueID =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
+		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL,attributes);
+		String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+		String phone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
+			
+	  	Group group = null;
+	  	
+		//try to find the group by its unique id
+	  	//if it is found this must mean an update
+	  	if(uniqueID!=null){
+		  	try {
+				group = getGroupHome().findGroupByUniqueId(uniqueID);
+			} catch (FinderException e) {
+				System.out.println("GroupBusiness: Group not found by unique id: "+uniqueID);
+			}
+	  	}
+	  	
+	  	if(group==null && distinguishedName!=null){
+	  		try {
+				group = getGroupByDirectoryString(ldapUtil.convertDNToDirectoryString(distinguishedName));
+			}
+			catch (FinderException e) {
+				System.out.println("GroupBusiness: Group not found by directorystring: "+distinguishedName);
+			}
+	  	}
+	  	
+	  	if(group==null){
+	  		group = createGroup(name,description,type,homePageID,homeFolderID,aliasID,createUnderRootDomainGroup,parentGroup);
+	  	}
+	  	else{
+	  		//TODO update the group
+	  		group.setName(name);
+	  		group.setDescription(description);
+	  		group.setGroupType(type);
+	  		if(uniqueID!=null){
+	  			group.setUniqueId(uniqueID);
+	  		}
+	  		
+	  		//update emails,addresses,phone and email
+	  		group.store();
+	  	}
+	  	
+	  	//set all the attributes as metadata also
+	  	setMetaDataFromLDAPAttributes(group,distinguishedName,attributes);
+	  	
+	  	
+	  	return group;
+	  	
+	  	
+	  }
+	
+/**
+ * Adds all the ldap attributes as metadata-fields to the group
+	 * @param group
+	 * @param distinguishedName
+	 * @param attributes
+	 */
+	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes) {
+		IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
+		
+		if(distinguishedName!=null){
+			group.setMetaData(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING),distinguishedName.toString());
+		}
+		
+		if (attributes != null) {
+			NamingEnumeration attrlist = attributes.getAll();
+			try {
+				while (attrlist.hasMore()) {
+					Attribute att = (Attribute) attrlist.next();
+					String key = ldapUtil.getAttributeKeyWithMetaDataNamePrefix(att);
+					
+					if(key.indexOf("binary")<0){
+						String value = att.get().toString();
+						if(value.length()<=2000){
+							group.setMetaData(key,value);
+						}
+					}
+				}
+			}
+			catch (NamingException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		group.store();
+		
+	}
+	
+	
+
+/**
+   * Creates or updated a group from an LDAP DN and its attributes and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
+ * @throws NamingException,RemoteException,CreateException
+ * @see com.idega.user.business.GroupBusiness#createOrUpdateGroup(DN distinguishedName,Attributes attributes)
+ */
+  public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes)throws CreateException,NamingException,RemoteException{
+  	return createOrUpdateGroup(distinguishedName,attributes,true,null);
+  }
+  
+  /**
+   * Creates a group from an LDAP DN and its attributes and adds it under the parentGroup supplied
+ * @see com.idega.user.business.GroupBusiness#createOrUpdateGroup(DN distinguishedName,Attributes attributes,Group parentGroup)
+ */
+  public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes, Group parentGroup)throws CreateException,NamingException,RemoteException{
+  	return createOrUpdateGroup(distinguishedName,attributes,false,parentGroup);
+  }
 	 
 /**
    * Creates a general group and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
@@ -1882,7 +2015,94 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	    return listOfOwnerUsers;
   }
  
+
+	/**
+	 * Finds the correct group from the database using the directory strings
+	 * group structure
+	 * 
+	 * @param dn
+	 * @return a Group data bean
+	 */
+	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException, FinderException {
+		//TODO use one of the DN helper classes to do this cleaner
+		String identifier = dn.getDirectoryString();
+		Group group = null;
+		
+		//try and get by metadata first then by inaccurate method
+		Collection groups = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
+
+		if(!groups.isEmpty() && groups.size()==1){
+			return (Group)groups.iterator().next();
+		}
+		else{
+			StringTokenizer tokenizer = new StringTokenizer(identifier,",");
+			Vector parts = new Vector();
+			
+			while (tokenizer.hasMoreTokens()) {
+				String dnPart = tokenizer.nextToken();
+				parts.add(dnPart);
+			}
+			int size = parts.size();
+			
+			//temp variable to get to the group we want
+			Group parentGroup = null;
+			
+			//TODO EIKI find the parentGroup and then check in next round if it is a parent of the group...more accurate
+			//this only ends with the last group it finds!!
+			for (int i = size-1; i >= 0; i-- ) {
+				String part = (String)parts.get(i);
+				if(!part.startsWith(LDAP_ATTRIBUTE_DOMAIN+"=")) {
+					if(part.startsWith(LDAP_ATTRIBUTE_ORGANIZATION+"=")) {
+						int index = part.indexOf("=");
+						String groupName = part.substring(index+1,part.length());
+						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
+					}
+					else if(part.startsWith(LDAP_ATTRIBUTE_ORGANIZATION_UNIT+"=")) {
+						int index = part.indexOf("=");
+						String groupName = part.substring(index+1,part.length());
+						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
+					}
+					else if(part.startsWith(LDAP_ATTRIBUTE_LOCATION+"=")) {
+						int index = part.indexOf("=");
+						String groupName = part.substring(index+1,part.length());
+						parentGroup = getGroupByGroupName(groupName);//needs to be groupname,parentgroup
+					}
+				}
+				
+			}
+			
+			if(parentGroup!=null){
+				group = parentGroup;
+			}
+		}		
+		
+		return group;
+	}
+
+
+	/**
+	 * Gets all the groups that have this ldap metadata
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Collection getGroupsByLDAPAttribute(String key, String value){
+		IWLDAPUtil util = IWLDAPUtil.getInstance();
+		Collection groups;
+		try {
+			groups = getGroupHome().findGroupsByMetaData(util.getAttributeKeyWithMetaDataNamePrefix(key),value);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
+		
+		return groups;
+	}
+	
+	
 } // Class
+
+
 
 /**
   * @todo move implementation from methodName(Group group) to methodName(int groupId)

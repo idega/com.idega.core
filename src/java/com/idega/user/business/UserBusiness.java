@@ -9,10 +9,13 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.location.data.Country;
@@ -214,4 +217,16 @@ public interface UserBusiness extends com.idega.business.IBOService
 	  public Collection getStoredTopNodeGroups(User user)throws RemoteException;
 	  public Collection getStoredTopGroupNodes(User user)throws RemoteException;
 	  public void removeStoredTopGroupNodes(User user)throws RemoveException,RemoteException;
+	  
+	  public User createOrUpdateUser(DN distinguishedName,Attributes attributes) throws CreateException,NamingException,RemoteException;
+	  public User createOrUpdateUser(DN distinguishedName,Attributes attributes, Group parentGroup) throws CreateException,NamingException,RemoteException;
+	  
+		/**
+		 * Adds all the ldap attributes as metadata-fields
+		 * @param group
+		 * @param distinguishedName
+		 * @param attributes
+		 */
+		public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes);
+		public Collection getUsersByLDAPAttribute(String key, String value);
 }

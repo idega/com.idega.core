@@ -7,9 +7,13 @@ import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookupException;
@@ -384,6 +388,17 @@ public interface GroupBusiness extends com.idega.business.IBOService {
      */
     public Group createGroupUnder(String name, String description,
             Group parentGroup) throws CreateException, RemoteException;
+    
+    /**
+     * Creates a group from an LDAP DN and its attributes and adds it under the root (directly under in the group tree) of the default Domain (ICDomain)
+   */
+    public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes)throws CreateException,NamingException,RemoteException; 
+    
+    /**
+     * Creates a group from an LDAP DN and its attributes and adds it under the supplied parentGroup
+   */
+    public Group createOrUpdateGroup(DN distinguishedName,Attributes attributes, Group parentGroup)throws CreateException,NamingException,RemoteException;    	 
+
 
     /**
      * Gives all parent groups owners' primary groups, permit permission to this group.
@@ -467,6 +482,7 @@ public interface GroupBusiness extends com.idega.business.IBOService {
   public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 	public ICFile createGroupHomeFolder(Group group) throws CreateException;
   public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException,  IDORelationshipException;
+  public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException, FinderException;
 
 	/**
 	 * Optimized version of getParentGroups(Group group) by Gummi 25.08.2004
@@ -480,4 +496,14 @@ public interface GroupBusiness extends com.idega.business.IBOService {
 	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
 	 */
 	  public String getNameOfGroupWithParentName(Group group,Map cachedParents, Map cachedGroups) throws RemoteException;
+	  
+	  /**
+	   * Adds all the ldap attributes as metadata-fields
+	  	 * @param group
+	  	 * @param distinguishedName
+	  	 * @param attributes
+	  	 */
+	  	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes);
+		public Collection getGroupsByLDAPAttribute(String key, String value);
+	  	
 }
