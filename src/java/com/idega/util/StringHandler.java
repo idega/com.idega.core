@@ -1,4 +1,5 @@
 package com.idega.util;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 /**
@@ -7,10 +8,67 @@ import java.util.NoSuchElementException;
  * Copyright:    Copyright (c) 2001
  * Company:      idega margmi?lun hf.
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
- * @version 1.0
+ * @version 1.0  
 
- */
+ */   
+
 public class StringHandler {
+  
+  /**
+   * substitution string if a character is not a letter
+   */
+  public static String NO_LETTER_SUBSTITUTION = "x";
+  
+  /** 
+   * groups of characters (represented by uni code) 
+   * replaced by strings defined in substitution.
+   * Use the uni code table (@see http:\\www.unicode.org)
+   */
+  static public int[][] SUBSTITUTION_GROUP = { 
+      // 192 - 207
+      { 192 , 193, 194, 195, 196, 197} , // A
+      { 198 }, // Ae 
+      { 199 }, // C
+      { 200, 201, 202, 203}, // E
+      { 204, 205, 206, 207}, // I
+      // 208 - 223
+      { 208 }, // D
+      { 209 }, // N
+      { 210, 211, 212, 213, 214 }, // O
+      { 215 }, // x  - char 215 is no letter
+      { 216 }, // O
+      { 217, 218, 219, 220 }, // U
+      { 221 }, // Y
+      { 222 }, // Th
+      { 223 }, // ss
+      // 224 - 239
+      { 224, 225, 226, 227, 228, 229 }, // a
+      { 230 }, // ae
+      { 231 }, // c
+      { 232, 233, 234, 235 }, // e
+      { 236, 237, 238, 239 }, // i
+      // 240 - 255
+      { 240 }, // d
+      { 241 }, // n
+      { 242, 243, 244, 245, 246 }, // o
+      { 247 }, // x char 247 is no letter
+      { 248 }, // o
+      { 249, 250, 251, 252 }, // u 
+      { 253 }, // y
+      { 254 }, // th
+      { 255 }}; // y
+      
+  
+  /**
+   * substitution strings for characters defined in substitution group
+   */
+  static public String[] SUBSTITUTION = 
+    { "A", "Ae", "C", "E", "I",
+      "D", "N", "O", NO_LETTER_SUBSTITUTION , "O", "U", "Y", "Th", "ss",
+      "a", "ae", "c", "e", "i",
+      "d", "n", "o", NO_LETTER_SUBSTITUTION , "o", "u", "y", "th", "y"};
+     
+  
 	public static String alfabet= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	public static final String EMPTY_STRING= "";
 	public StringHandler() {}
@@ -127,79 +185,35 @@ public class StringHandler {
 	 */
 	public static String stripNonRomanCharacters(String inputString) {
 		char[] cAinputString= inputString.toCharArray();
+    StringBuffer newString = new StringBuffer();
 		for (int i= 0; i < cAinputString.length; i++) {
 			char c= cAinputString[i];
-			char newC= translateCharacter(c);
-			cAinputString[i]= newC;
+			newString.append(translateCharacter(c));
 		}
-		String newString= new String(cAinputString);
-		return newString;
+		return newString.toString();
 	}
-	private static char translateCharacter(char c) {
-		/**
-		 * @todo: Finish implementation
-		 * 
-		 */
-		/*
-		switch (c) {
-			case 'A' :
-				return 'A';
-			case 'a' :
-				return 'a';
-			case 'A' :
-				return 'A';
-			case 'a' :
-				return 'a';
-			case 'A' :
-				return 'A';
-			case 'a' :
-				return 'a';
-			case 'F' :
-				return 'E';
-			case 'e' :
-				return 'e';
-			case 'E' :
-				return 'E';
-			case 'e' :
-				return 'e';
-			case 'D' :
-				return 'D';
-			case 'd' :
-				return 'd';
-			case 'I' :
-				return 'I';
-			case 'i' :
-				return 'i';
-			case 'I' :
-				return 'I';
-			case 'i' :
-				return 'i';
-			case 'O' :
-				return 'O';
-			case 'o' :
-				return 'o';
-			case 'O' :
-				return 'O';
-			case 'o' :
-				return 'o';
-			case 'U' :
-				return 'U';
-			case 'u' :
-				return 'u';
-			case 'U' :
-				return 'U';
-			case 'u' :
-				return 'u';
-			case 'Y' :
-				return 'Y';
-			case 'y' :
-				return 'y';
-			case 'T' :
-				return 'T';
-			case 't' :
-				return 't';
-
-		}*/
-		return c;
+  
+  /**
+   * replaces all non roman characters by suitable strings
+   */
+	private static String translateCharacter(char c) {   
+    // get uni code number  
+    int value = (int) c;
+    // is c a "normal" letter?
+    if (( 'A' <= value && value <= 'Z' ) ||
+        ( 'a' <= value && value <= 'z'))
+      return String.valueOf(c);
+    int groupsNumber = SUBSTITUTION_GROUP.length;		
+    int i = 0;
+    // look up to which group the character belongs
+    while (( i < groupsNumber) 
+            && (Arrays.binarySearch(SUBSTITUTION_GROUP[i],value) < 0)) {
+      i++;
+    }
+    // if the character does not belong to a group return special substitution
+    if (i == groupsNumber)
+      return NO_LETTER_SUBSTITUTION;
+      // return substitution string
+    return SUBSTITUTION[i];
 	}
-} // Class StringHandler
+} 
