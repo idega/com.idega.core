@@ -55,27 +55,25 @@ public class IWStyleManager {
 	public void getStyleSheet() {
 		if ( application != null ) {
 			String URL = application.getApplicationRealPath() + FileUtil.getFileSeparator() + "idegaweb" + FileUtil.getFileSeparator() + "style" + FileUtil.getFileSeparator() + "style.css";
-			Vector vector = null;
+			String lines = null;
 	
 			try {
-				file = FileUtil.getFileAndCreateRecursiveIfNotExists(URL);
+				file = FileUtil.getFileAndCreateIfNotExists(URL);
 			}
 			catch (IOException e) {
-				e.printStackTrace(System.err);
+				file = null;
 			}
-	
-			if (file != null) {
-				try {
-					vector = FileUtil.getLinesFromFile(file);
-				}
-				catch (IOException e) {
-					vector = null;
-				}
-	
-				if (vector != null) {
-					getStylesFromFile(vector);
-					addDefaultValues();
-				}
+			
+			try {
+				lines = FileUtil.getStringFromFile(URL);
+			}
+			catch (IOException e) {
+				lines = null;
+			}
+
+			if (lines != null) {
+				getStylesFromFile(lines);
+				addDefaultValues();
 			}
 		}
 	}
@@ -122,20 +120,42 @@ public class IWStyleManager {
 		return getStyleMap().containsKey(name);	
 	}
 
-	private void getStylesFromFile(Vector vector) {
-		Iterator iter = vector.iterator();
-		StringTokenizer tokenizer;
-		while (iter.hasNext()) {
-			tokenizer = new StringTokenizer((String) iter.next(), "{");
-			while (tokenizer.hasMoreTokens()) {
-				/*String styleName = TextSoap.findAndReplace(tokenizer.nextToken(), " ", "");
-				styleName = TextSoap.findAndReplace(styleName, ".", "");
-				String styleParameter = TextSoap.findAndReplace(tokenizer.nextToken(), "}", "");
-				styleParameter = TextSoap.findAndReplace(styleParameter, " ", "");
-				setStyle(styleName, styleParameter);*/
-
-				String styleName = TextSoap.findAndReplace(tokenizer.nextToken(), ".", "");
-				String styleParameter = TextSoap.findAndReplace(tokenizer.nextToken(), "}", "");
+	private void getStylesFromFile(String lines) {
+		StringTokenizer tokenizer = new StringTokenizer(lines, "}");
+		while (tokenizer.hasMoreTokens()) {
+			String style = tokenizer.nextToken();
+			int index = style.indexOf("{");
+			
+			if (index != -1) {
+				String styleName = style.substring(0, index).trim();
+				String styleParameter = "";
+				
+				if (style.indexOf(";") != -1) {
+					StringTokenizer tokens = new StringTokenizer(style.substring(index + 1), ";");
+					while (tokens.hasMoreTokens()) {
+						String parameter = tokens.nextToken();
+						index = parameter.indexOf(":");
+						
+						if (index != -1) {
+							String parameterName = parameter.substring(0, index).trim();
+							parameterName = TextSoap.findAndReplace(parameterName, "\n", "");
+							parameterName = TextSoap.findAndReplace(parameterName, "\t", "");
+							
+							String parameterValue = parameter.substring(index + 1);
+							parameterValue = TextSoap.findAndReplace(parameterValue, "\n", "");
+							parameterValue = TextSoap.findAndReplace(parameterValue, "\t", "");
+							
+							String paramValue = "";
+							StringTokenizer params = new StringTokenizer(parameterValue, " ");
+							while (params.hasMoreTokens()) {
+								String value = params.nextToken().trim();
+								paramValue += value;
+							}
+							
+							styleParameter += parameterName + ":" + paramValue + ";";
+						}
+					}
+				}
 				setStyle(styleName, styleParameter);
 			}
 		}
