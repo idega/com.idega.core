@@ -23,6 +23,7 @@ public class ImageWindow extends Window{
 
   public ImageWindow() {
     setResizable(true);
+    setHeight(700);
   }
 
   public ImageWindow(Image image){
