@@ -10,7 +10,7 @@ package com.idega.core.business;
  * code;areaname;countryname
  * Copyright: idega software 2002
  * @author Eirikur S. Hrafnsson eiki@idega.is
- * @version 1.0
+ * @version 1.0 
  */
 
 import java.io.File;

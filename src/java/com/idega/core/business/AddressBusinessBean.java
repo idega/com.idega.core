@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  /**
   * <p>Title: com.idega.core.business.AddressBusinessBean</p>
   * <p>Description: Common business class for handling all Address related IDO</p>
-  * <p>Copyright: (c) 2002</p>
+  * <p>Copyright: (c) 2002</p> 
   * <p>Company: Idega Software</p>
   * @author <a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
   * @version 1.0
@@ -24,7 +24,28 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
   }
 
   /**
-   * @return The AddressBeans' home
+   * @return The Country Beans' home
+   */
+  public CountryHome getCountryHome() throws RemoteException{
+    return (CountryHome)this.getIDOHome(Country.class);
+  }
+  
+    /**
+   * @return The PostalCode Beans' home
+   */
+  public PostalCodeHome getPostalCodeHome() throws RemoteException{
+    return (PostalCodeHome)this.getIDOHome(PostalCode.class);
+  }
+  
+    /**
+   * @return The Email Beans' home
+   */
+  public EmailHome getEmailHome() throws RemoteException{
+    return (EmailHome)this.getIDOHome(Email.class);
+  }
+  
+    /**
+   * @return The Address Beans' home
    */
   public AddressHome getAddressHome() throws RemoteException{
     return (AddressHome)this.getIDOHome(Address.class);

@@ -5,15 +5,13 @@
 package com.idega.core.data;
 
 
-
-//import java.util.*;
-
-import java.util.Collection;
 import java.rmi.RemoteException;
-import javax.ejb.FinderException;
-import java.sql.*;
+import java.sql.SQLException;
+import java.util.Collection;
 
-import com.idega.data.*;
+import javax.ejb.FinderException;
+
+import com.idega.data.GenericEntity;
 
 
 
@@ -121,7 +119,7 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
     else throw new FinderException("PostalCode not found");
   }
 
-  public Collection ejbFindByPostalCodeAndCountryId(int countryId)throws FinderException,RemoteException{
+  public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{
     return idoFindAllIDsByColumnBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId));
   }
 
