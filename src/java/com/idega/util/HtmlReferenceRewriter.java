@@ -5,7 +5,6 @@
 package com.idega.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -99,7 +98,6 @@ public class HtmlReferenceRewriter {
 		FileReader reader = new FileReader(fromFile);
 		Reader input = new BufferedReader(reader);
 		FileWriter output = new FileWriter(toFile);
-		Writer w = new BufferedWriter(output);
 		instance.setInput(input);
 		instance.setOutput(output);
 		instance.setUrlPrefix(urlPrefix);
@@ -121,7 +119,6 @@ public class HtmlReferenceRewriter {
 		
 		Reader input = new BufferedReader(iReader);
 		FileWriter output = new FileWriter(toFile);
-		Writer w = new BufferedWriter(output);
 		instance.setInput(input);
 		instance.setOutput(output);
 		instance.setUrlPrefix(urlPrefix);
@@ -154,9 +151,6 @@ public class HtmlReferenceRewriter {
 		Reader input = new BufferedReader(iReader);
 		Writer output = new OutputStreamWriter(outStream);
 		
-		
-		
-		Writer w = new BufferedWriter(output);
 		instance.setInput(input);
 		instance.setOutput(output);
 		instance.setUrlPrefix(urlPrefix);
