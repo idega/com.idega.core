@@ -22,7 +22,7 @@ public class ImageSave {
 
   }
 
-  public static int saveImageToDB(Connection Conn,int ImageID, InputStream in,String ContentType,String FileName,boolean NewImage){
+  public static int saveImageToDB(Connection Conn,int imageId, InputStream in,String ContentType,String FileName,boolean NewImage){
     int id = -1;
     String statement ;
       try{
@@ -35,7 +35,7 @@ public class ImageSave {
           statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file) values("+id+",?,?,?,'"+idegaTimestamp.getTimestampRightNow().toString()+"','N')";
         }
         else
-          statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+ImageID;
+          statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+imageId;
 
         com.idega.data.EntityControl.createUniqueID(new com.idega.data.genericentity.Image() );
 
@@ -54,7 +54,7 @@ public class ImageSave {
       return id;
     }
 
-  public static int saveImageToDB(int ImageID, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
+  public static int saveImageToDB(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
     int id = -1;
     String statement ;
     Connection Conn = null;
@@ -66,13 +66,13 @@ public class ImageSave {
       if(Conn== null) return id;
 
       if(NewImage){
-        id = com.idega.data.EntityControl.createUniqueID(new com.idega.data.genericentity.Image());
+        id = com.idega.data.EntityControl.createUniqueID(GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
         if( dimensions ) statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+idegaTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
         else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,'"+idegaTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+")";
       }
       else{
-        if( dimensions ) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id="+ImageID;
-        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+ImageID;
+        if( dimensions ) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id="+imageId;
+        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+imageId;
       }
       Conn.setAutoCommit(false);
       BufferedInputStream bin = new BufferedInputStream(in);
@@ -98,32 +98,36 @@ public class ImageSave {
     return id;
   }
 
-  public static int saveImageToOracleDB(int ImageID, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
+  public static int saveImageToOracleDB(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
     int id = -1;
     String statement ;
     Connection Conn = null;
-    boolean dimensions = true;
+    boolean dimensions = false;
     if(width.equalsIgnoreCase("-1")) dimensions = false;
+System.out.println("ImageSave : width ="+width);
+
+System.out.println("ImageSave : height ="+height);
 
     try{
       Conn = GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").getConnection();
-      if(Conn== null) return id;
+      if(Conn == null) return id;
 
        if(NewImage){
-        id = com.idega.data.EntityControl.createUniqueID(new com.idega.data.genericentity.Image());
-      //debug skips date_added for now
-       // statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+idegaTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
-        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,from_file,parent_id,width,height) values("+id+",?,?,?,'N',"+parentImageId+",?,?)";
-        else statement = "insert into image (image_id,image_value,content_type,image_name,from_file,parent_id) values("+id+",?,?,?,'N',"+parentImageId+")";
+        id = com.idega.data.EntityControl.createUniqueID(GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
+        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+idegaTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+idegaTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
       }
       else{
-        if(dimensions) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id='"+ImageID+"'";
-        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id='"+ImageID+"'";
+        if(dimensions) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id='"+imageId+"'";
+        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id='"+imageId+"'";
       }
+
         oracle.sql.BLOB blob;
+        System.out.println(statement);
+
 	Conn.setAutoCommit(false);
 	PreparedStatement myPreparedStatement = Conn.prepareStatement ( statement );
-        myPreparedStatement.setString(1, "00000001");//i stað hins venjulega empty_blob()
+        myPreparedStatement.setString(1, "00000001");// 00000001 i stað hins venjulega empty_blob()
         myPreparedStatement.setString(2, ContentType );
         myPreparedStatement.setString(3, FileName );
         if(dimensions){
@@ -137,14 +141,15 @@ public class ImageSave {
 
         Conn.setAutoCommit(false);
         Statement stmt2 = Conn.createStatement();
-        String cmd = "SELECT image_value FROM image WHERE image_id ='"+ImageID+"' FOR UPDATE";
-        ResultSet RS2 = stmt2.executeQuery(statement);
+        if(!NewImage) id = imageId;
+        String cmd = "SELECT image_value FROM image WHERE image_id ='"+id+"' FOR UPDATE ";
+        ResultSet RS2 =  stmt2.executeQuery(cmd);
 
         RS2.next();
-        blob = ((OracleResultSet)RS2).getBLOB("image_value");
+        blob = ((OracleResultSet)RS2).getBLOB(1);
 
           // write the array of binary data to a BLOB
-        OutputStream     outstream = blob.getBinaryOutputStream();
+        OutputStream outstream = blob.getBinaryOutputStream();
 
         int size = blob.getBufferSize();
         byte[] buffer = new byte[size];
