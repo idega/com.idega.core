@@ -99,15 +99,15 @@ public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
   }
 
   public String getMimeType(){
-    return (String) getColumnValue(getColumnNameMimeType());
+    return (String) getStringColumnValue(getColumnNameMimeType());
   }
 
   public String getName(){
-    return (String) getColumnValue(getColumnNameName());
+    return (String) getStringColumnValue(getColumnNameName());
   }
 
   public String getDescription(){
-    return (String) getColumnValue(getColumnNameDescription());
+    return (String) getStringColumnValue(getColumnNameDescription());
   }
 /*
   public BlobWrapper getFileValue(){
