@@ -211,9 +211,10 @@ public void _main(IWContext iwc)throws Exception{
 		}
 		else if(isSetAsFloat){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
+			this.setOnBlur("return checkSubmit(this)");
 			setCheckSubmit();
 			getScript().addToFunction("checkSubmit","if (warnIfNotFloat (findObj('"+getName()+"'),'"+floatErrorMessage+"') == false ){\nreturn false;\n}\n");
-			getScript().addFunction("warnIfNotFloat","function warnIfNotFloat(inputbox,warnMsg) {\n	if (inputbox.value.length == 0) { return true;\n	}\n	if (isNaN(parseFloat(inputbox.value))){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}");
+			getScript().addFunction("warnIfNotFloat","function warnIfNotFloat(inputbox,warnMsg) {\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) { return true;\n	}\n	if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}");
 
 		}
 		else if(isSetAsAlphabetical){
