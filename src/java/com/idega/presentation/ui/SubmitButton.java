@@ -125,7 +125,8 @@ public class SubmitButton extends GenericButton {
 	private void postIWSubmitEvent(IWContext iwc, Form form) {
 		eventLocationString = this.getID();
 		IWSubmitEvent event = new IWSubmitEvent(this, IWSubmitEvent.SUBMIT_PERFORMED);
-		this.setOnClick("javascript:document." + form.getID() + "." + IWMainApplication.IWEventSessionAddressParameter + ".value=this.id ");
+		//this.setOnClick("javascript:document." + form.getID() + "." + IWMainApplication.IWEventSessionAddressParameter + ".value=this.id ");
+		this.setOnClick("javascript:document.forms['"+form.getID()+"']." + IWMainApplication.IWEventSessionAddressParameter + ".value=this.id ");
 		iwc.setSessionAttribute(eventLocationString, event);
 		listenerAdded(true);
 	}
