@@ -53,9 +53,9 @@ public class XMLData {
     return data;
   }
   
-  public static XMLData getInstanceForFile(XMLFile xmlFile) {
+  public static XMLData getInstanceForFile(ICFile file) {
     XMLData data = new XMLData();
-    data.initialize(xmlFile);
+    data.initialize(file);
     return data;
   }
   
@@ -70,12 +70,12 @@ public class XMLData {
     return data;
   }
  
-  public void initialize(int xmlFileId) {
-    ICFile xmlFile = getXMLFile(xmlFileId);
+  public void initialize(int fileId) {
+    ICFile xmlFile = getXMLFile(fileId);
     initialize(xmlFile);
   }
   
-  public void inittialize(XMLFile xmlFile) {
+  public void inittialize(ICFile xmlFile) {
     // force to initialize with an instance of XMLFile
     initialize(xmlFile);
   }
@@ -172,9 +172,9 @@ public class XMLData {
     xmlOutput.setTextNormalize(true);
     xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
-    XMLDocument document = getDocument();
+    XMLDocument myDocument = getDocument();
     try {
-      xmlOutput.output(document, outputStream);
+      xmlOutput.output(myDocument, outputStream);
     }
     catch (IOException ex) {
       System.err.println("[XMLData] problem writing to file. Message is: "+ex.getMessage());
@@ -248,7 +248,7 @@ public class XMLData {
   private ICFile getXMLFile(int fileId)  {
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile xmlFile = (ICFile) home.findByPrimaryKey(new Integer(fileId));
+      ICFile xmlFile = home.findByPrimaryKey(new Integer(fileId));
       return xmlFile;
     }
     // FinderException, RemoteException
@@ -262,7 +262,7 @@ public class XMLData {
   private ICFile getNewXMLFile()  {
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile xmlFile = (ICFile) home.create();
+      ICFile xmlFile = home.create();
       return xmlFile;
     }
     // FinderException, RemoteException
