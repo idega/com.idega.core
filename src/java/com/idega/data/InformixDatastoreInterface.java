@@ -76,7 +76,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "VARCHAR(1)";
     }
     else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-      theReturn = "BLOB";
+      theReturn = "BYTE";
     }
     else{
       theReturn = "";
