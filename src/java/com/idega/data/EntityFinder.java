@@ -171,10 +171,10 @@ public class EntityFinder{
             //debug getting an object every time? that sucks tryggvi ;)
             columnName = metaData.getColumnName(i);
 
-            //this must be done if using AS in an sql query
-            if ( "".equals(columnName) )
-              columnName = metaData.getColumnLabel(i);
             if ( RS.getObject(columnName) != null ){
+               //this must be done if using AS in an sql query
+              if ( "".equals(columnName) )
+                columnName = metaData.getColumnLabel(i);
               tempobj.fillColumn(columnName,RS);
             }
           }
