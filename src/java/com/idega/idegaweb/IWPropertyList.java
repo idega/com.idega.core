@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.18 2004/01/12 12:15:35 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.19 2004/02/04 10:44:52 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -267,6 +267,16 @@ public class IWPropertyList {
 		}
 		catch (NullPointerException ex) {
 			return null;
+		}
+	}
+	
+	public String getProperty(String key, String defaultReturnValue) {
+		try {
+			return findKeyElement(key).getChild(valueTag).getText();
+		}
+		catch (NullPointerException ex) {
+			addProperty(key, defaultReturnValue);
+			return defaultReturnValue;
 		}
 	}
 
