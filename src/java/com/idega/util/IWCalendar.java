@@ -462,7 +462,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
 		if (moonCalendar.getMoonPhase() == FULL_MOON)
 			return true;
 		return false;
@@ -503,7 +503,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
 		return new Date(moonCalendar.getMoonTime(FULL_MOON, true));
 	}
 
@@ -549,7 +549,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
 		return moonCalendar.getMoonPhase();
 	}
 
@@ -589,7 +589,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
 		return new Time(moonCalendar.getMoonRiseSet(rise));
 	}
 
@@ -629,7 +629,7 @@ public class IWCalendar {
 		GregorianCalendar calendar = new GregorianCalendar(locale);
 		calendar.set(year, month - 1, day);
 
-		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTimeInMillis());
+		CalendarAstronomer moonCalendar = new CalendarAstronomer(_calendar.getTime());
 		return new Time(moonCalendar.getSunRiseSet(rise));
 	}
 
