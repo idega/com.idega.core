@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.2 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.3 2005/02/28 17:26:06 gummi Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.
  * 
- *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/28 17:26:06 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface ViewNode {
 	
@@ -84,5 +84,7 @@ public interface ViewNode {
 	public String getLocalizedName(Locale locale);
 	public KeyboardShortcut getKeyboardShortcut();
 	public ToolTip getToolTip(Locale locale);
+	
+	public boolean isRendered();
 	
 }

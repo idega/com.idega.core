@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.4 2005/02/02 13:30:58 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.5 2005/02/28 17:26:06 gummi Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/02/02 13:30:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/28 17:26:06 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -42,6 +42,7 @@ public class DefaultViewNode implements ViewNode {
 	private IWMainApplication iwma;
 	private static String SLASH="/";
 	private static String NODE_SEPARATOR=SLASH;
+	private boolean isRendered = true;
 	
 	
 	/**
@@ -492,5 +493,17 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	public void setIWMainApplication(IWMainApplication iwma) {
 		this.iwma = iwma;
+	}
+	/**
+	 * @return Returns the isRendered.
+	 */
+	public boolean isRendered() {
+		return isRendered;
+	}
+	/**
+	 * @param isRendered The isRendered to set.
+	 */
+	public void setRendered(boolean isRendered) {
+		this.isRendered = isRendered;
 	}
 }
