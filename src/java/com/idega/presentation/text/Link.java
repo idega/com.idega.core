@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.109 2004/05/18 10:17:30 birna Exp $
+ * $Id: Link.java,v 1.110 2004/05/18 17:00:21 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.presentation.text;
 
 import java.net.URLDecoder;
 import java.rmi.RemoteException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -93,7 +94,7 @@ public class Link extends Text implements DPTCrawlable {
 	private boolean _maintainAllGlobalParameters = false;
 	private boolean _maintainBuilderParameters = true;
 	private boolean _addSessionId = true;
-	private boolean _maintainAll = false;
+	private boolean _maintainAllParameters = false;
 
 	private int _imageId;
 	private int _onMouseOverImageId;
@@ -681,6 +682,10 @@ public class Link extends Text implements DPTCrawlable {
 			maintainedParameters.add(name);
 	}
 	
+	public void setToMaintainAllParameter(boolean value) {
+		_maintainAllParameters = value;
+	}
+	
 	/**
 	 * Adds a collection of parameter names (String)
 	 * for the link to maintain from the request
@@ -1003,6 +1008,7 @@ public class Link extends Text implements DPTCrawlable {
 	public void setLocale(String languageString) {
 		//setEventListener(LocaleSwitcher.class.getName());
 		addParameter(LocaleSwitcher.languageParameterString, languageString);
+		this.setToMaintainAllParameter(true);
 	}
 
 	/**
@@ -1277,6 +1283,7 @@ public class Link extends Text implements DPTCrawlable {
 			linkObj._addSessionId = _addSessionId;
 			linkObj._maintainAllGlobalParameters = _maintainAllGlobalParameters;
 			linkObj._maintainBuilderParameters = _maintainBuilderParameters;
+			linkObj._maintainAllParameters = _maintainAllParameters;
 			linkObj.text = text;
 			linkObj.isImageButton = isImageButton;
 			linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
@@ -1575,6 +1582,23 @@ public class Link extends Text implements DPTCrawlable {
 				addParameter(name, value);
 		}
 	}
+	
+	private void maintainAllParameters(IWContext iwc) {
+		Enumeration pNames = iwc.getParameterNames();
+		if(pNames != null) {
+			while (pNames.hasMoreElements()) {
+				String pName = (String) pNames.nextElement();
+				if(!isParameterSet(pName)) {
+					String[] pValues = iwc.getParameterValues(pName);
+					if(pValues!=null) {
+						for (int i = 0; i < pValues.length; i++) {
+							addParameter(pName,pValues[i]);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 *
@@ -1584,8 +1608,9 @@ public class Link extends Text implements DPTCrawlable {
 		boolean addParameters = true;
 		String oldURL = getURL(iwc);
 
-
-		if (maintainedParameters != null) {
+		if(_maintainAllParameters) {
+			maintainAllParameters(iwc);
+		}else if (maintainedParameters != null) {
 			maintainParameters(iwc);
 		}
 
