@@ -7,13 +7,16 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.presentation.IWContext;
 
 /**
  * @author tryggvil
@@ -21,7 +24,7 @@ import javax.servlet.ServletResponse;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class IWAuthorizationFilter implements Filter {
+public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -37,20 +40,31 @@ public class IWAuthorizationFilter implements Filter {
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
 			FilterChain chain) throws IOException, ServletException {
 		
-
 		
-		/*HttpServletRequest request = (HttpServletRequest)srequest;
+		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
 		
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
-		
-		String appUri = iwma.getApplicationContextURI();
-		String requestUri = request.getRequestURI();*/
-		
-		//TODO: implement authorization check
-		
-		chain.doFilter(srequest,sresponse);
+		boolean hasPermission = getIfUserHasPermission(request,response);
+		if(!hasPermission){
+			String newUrl = getNewLoginUri(request);
+			response.sendRedirect(newUrl);
+		}
+		else{
+			chain.doFilter(srequest,sresponse);
+		}
+		//chain.doFilter(srequest,sresponse);
 
+	}
+	
+	protected boolean getIfUserHasPermission(HttpServletRequest request,HttpServletResponse response){
+		String uri = getURLMinusContextPath(request);
+		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
+			IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
+			if(!LoginBusinessBean.isLoggedOn(iwc)){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)

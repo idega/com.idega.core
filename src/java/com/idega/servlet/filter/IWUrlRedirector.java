@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.1 2004/12/30 23:19:14 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.2 2005/01/07 04:14:41 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,18 +28,13 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2004/12/30 23:19:14 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/07 04:14:41 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class IWUrlRedirector implements Filter {
+public class IWUrlRedirector extends BaseFilter implements Filter {
 
-	static String OLD_BUILDER_SERVLET_URI="/servlet/IBMainServlet";
-	static String OLD_BUILDER_INDEX_JSP_URI="/index.jsp";
-	static String OLD_BUILDER_PAGE_PARAMETER="ib_page";
-	
-	static String SLASH = "/";
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
@@ -70,7 +65,8 @@ public class IWUrlRedirector implements Filter {
 	 * @param request
 	 * @return
 	 */
-	private String getNewRedirectURL(HttpServletRequest request) {
+	String getNewRedirectURL(HttpServletRequest request) {
+		//TODO: Make this logic support regular expressions
 		String requestUri = getURLMinusContextPath(request);
 		if(requestUri.startsWith(OLD_BUILDER_SERVLET_URI) || requestUri.equals(OLD_BUILDER_INDEX_JSP_URI)){
 			String pageId = request.getParameter(OLD_BUILDER_PAGE_PARAMETER);
@@ -87,6 +83,14 @@ public class IWUrlRedirector implements Filter {
 				e.printStackTrace();
 			}
 		}
+		else if(requestUri.startsWith(OLD_IDEGAWEB_LOGIN)){
+			if(requestUri.equals(OLD_IDEGAWEB_LOGIN) || requestUri.equals(OLD_IDEGAWEB_LOGIN_WITHSLASH)){
+				return getNewLoginUri(request);
+			}
+		}
+		else if(requestUri.equals(NEW_IDEGAWEB_LOGIN_MINUSSLASH)){
+				return getNewLoginUri(request);
+		}
 		throw new RuntimeException("Error handling redirect Url");
 	}
 
@@ -94,7 +98,7 @@ public class IWUrlRedirector implements Filter {
 	 * @param request
 	 * @return
 	 */
-	private boolean getIfDoRedirect(HttpServletRequest request) {
+	boolean getIfDoRedirect(HttpServletRequest request) {
 
 		String requestUri = getURLMinusContextPath(request);
 			
@@ -104,7 +108,13 @@ public class IWUrlRedirector implements Filter {
 		else if(requestUri.equals(OLD_BUILDER_INDEX_JSP_URI)){
 			return true;
 		}
-
+		else if(requestUri.startsWith(OLD_IDEGAWEB_LOGIN)){
+			return true;
+		}
+		else if(requestUri.equals(NEW_IDEGAWEB_LOGIN_MINUSSLASH)){
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -114,33 +124,6 @@ public class IWUrlRedirector implements Filter {
 	public void destroy() {
 		// TODO Auto-generated method stub
 
-	}
-	
-	private String getURLMinusContextPath(HttpServletRequest request) {
-		IWMainApplication iwma = getIWMainApplication(request);
-		
-		String appUri = iwma.getApplicationContextURI();
-		String requestUri = request.getRequestURI();
-
-		if(!appUri.endsWith(SLASH)){
-			appUri =appUri+SLASH;
-		}
-		
-		if(appUri.equals(SLASH)){
-			return requestUri;
-		}
-		else{
-			//Here we set -1 because we want to keep the "/" character in the beginning
-			String newUri = requestUri.substring(appUri.length()-1);
-			return newUri;
-		}
-		
-	}
-		
-	
-	protected IWMainApplication getIWMainApplication(HttpServletRequest request){
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
-		return iwma;
 	}
 		
 }
