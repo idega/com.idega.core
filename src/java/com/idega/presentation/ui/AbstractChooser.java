@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.24 2004/09/28 16:41:01 eiki Exp $
+ * $Id: AbstractChooser.java,v 1.25 2004/10/14 16:16:37 eiki Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -89,7 +89,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	public void setChooserParameter(String parameterName) {
 		chooserParameter = parameterName;
-		if (displayInputName == DISPLAYSTRING_PARAMETER) {
+		if (displayInputName.equals(DISPLAYSTRING_PARAMETER)) {
 			displayInputName = parameterName + "_displaystring";
 		}
 	}
@@ -124,7 +124,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	public void setName(String name) {
 		displayInputName = name;
-		if (chooserParameter == VALUE_PARAMETER) {
+		if (chooserParameter.equals(VALUE_PARAMETER)) {
 			chooserParameter = name + "_chooser";
 		}
 	}
@@ -200,8 +200,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			 */
 			link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 			//}
-
-			link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getID());
+			
+			//this was object.getID() but the id could change if this object was kept in session but the form changed
+			//by using getName() the reference is not lost, however we might need to add extra steps for handling more than one
+			//chooser of the same type in the same form.
+			link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getName());
 			link.addParameter(VALUE_PARAMETER_NAME, value.getName());
 			if (_attributeName != null && _attributeValue != null) {
 				link.addParameter(_attributeName, _attributeValue);
