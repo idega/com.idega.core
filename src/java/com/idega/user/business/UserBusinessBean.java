@@ -603,7 +603,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
   
   /**
-   * Gets the users main address and returns it.
+   * Gets the user's main address by addresstype and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getUserAddressByAddressType(int userID,AddressType type) throws EJBException,RemoteException{
+  	try {
+  		return getAddressHome().findUserAddressByAddressType(userID,type);
+  	}
+  	catch (FinderException fe) {
+  		return null;
+  	}
+  }
+  
+   /**
+   * Gets the user's main address and returns it.
    * @returns the address if found or null if not.
    */
   public Address getUsersMainAddress(int userID) throws EJBException,RemoteException{
