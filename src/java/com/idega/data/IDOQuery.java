@@ -1109,11 +1109,21 @@ public class IDOQuery {
 		 	4) starts witin selected period, but end afterwards
 		 		 
 		 		 validFrom <= start && validTo <= end
+		 		 or
 		 		 validFrom <= start && validTo >= end
+		 		 or
 		 		 validFrom >= start && validTo <= end
-		 		 validFrom >= start && validTo >= end 
+		 		 or
+		 		 validFrom >= start && validTo >= end
+		 		 
+		 		 // refined version by aron 24.02.04
+		 		 validTo >= start && validTo <= end
+		 		 or
+		 		 validFrom >= start && validFrom <= end
+		 		 or 
+		 		 validFrom <= start && validTo >= end
 		 */
-	
+	/*
 		append("(");
 			append("(");
 				append(validFromColumnName).append(before).append(start);
@@ -1135,6 +1145,26 @@ public class IDOQuery {
 		appendOr();
 			append("(");
 				append(validFromColumnName).append(after).append(start);
+				appendAnd();
+				append(validToColumnName).append(after).append(end);
+			append(")");
+		append(")");	 
+		*/
+		append("(");
+			append("(");
+				append(validToColumnName).append(after).append(start);
+				appendAnd();
+				append(validToColumnName).append(before).append(end);
+			append(")");
+		appendOr();
+			append("(");
+				append(validFromColumnName).append(after).append(start);
+				appendAnd();
+				append(validFromColumnName).append(before).append(end);
+			append(")");
+		appendOr();
+			append("(");
+				append(validFromColumnName).append(before).append(start);
 				appendAnd();
 				append(validToColumnName).append(after).append(end);
 			append(")");
