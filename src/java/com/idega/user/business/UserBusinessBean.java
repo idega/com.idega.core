@@ -512,7 +512,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
 
-  public void updateUserAddress1(int userId, String streetName, String streetNumber, String city, Integer postalCodeId, String providence, Integer countryId, String pobox ) throws CreateException,RemoteException {
+  public void updateUserAddress1(int userId, String streetName, String streetNumber, String city, Integer postalCodeId, String province, Integer countryId, String pobox ) throws CreateException,RemoteException {
     Address addr = this.getUserAddress1(userId);
     boolean insert = false;
     if(addr == null){
@@ -539,8 +539,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       addr.setPostalCodeID(postalCodeId.intValue());
     }
 
-    if( providence != null){
-      addr.setProvidence(providence);
+    if( province != null){
+      addr.setProvince(province);
     }
 
     if( streetName != null){
