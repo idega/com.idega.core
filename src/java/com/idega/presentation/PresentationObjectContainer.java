@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.32 2004/06/09 16:12:58 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.33 2004/06/10 19:55:02 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -32,6 +32,10 @@ public class PresentationObjectContainer extends PresentationObject
 	protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
 	protected String _label = null;
+	/**
+	 * Default constructor.
+	 * Should only be called by sublasses.
+	 */
 	public PresentationObjectContainer()
 	{
 	}
@@ -532,7 +536,11 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 		}
 	}
-	public Object _clone(IWUserContext iwc, boolean askForPermission)
+	/**
+	 * This method is overrided from the PresentationObject superclass here 
+	 * to call clone(iwc,askForPermission) if askForPermission is true instead of plain clone() to handle children
+	 */
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
 	{
 		if (askForPermission || iwc != null)
 		{
@@ -554,6 +562,12 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return this.clone(null, false);
 	}
+	/**
+	 * This method can be overridden in subclasses to handle clone of the children inside this container
+	 * @param iwc
+	 * @param askForPermission
+	 * @return
+	 */
 	public Object clone(IWUserContext iwc, boolean askForPermission)
 	{
 		PresentationObjectContainer obj = null;
@@ -581,12 +595,13 @@ public class PresentationObjectContainer extends PresentationObject
 					//Object item = obj.theObjects.elementAt(index);
 					if (item instanceof PresentationObject)
 					{
-						PresentationObject newObject = (PresentationObject) ((PresentationObject) item)._clone(iwc, askForPermission);
+						PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
 						//newObject.setParentObject(obj);
 						//newObject.setLocation(this.getLocation());
 						obj.getChildren().set(index, newObject);
 						newObject.setParent(obj);
 					}
+					
 				}
 				//}
 			//}

@@ -60,11 +60,13 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 		//This is done to handle the Builder Region handling
 		setLabel(regionId);
 	}
-	/* (non-Javadoc)
-	 * @see com.idega.presentation.PresentationObject#_clone(com.idega.idegaweb.IWUserContext, boolean)
+	/**
+	 * Override this method to bypass the permission logic for HtmlPageRegions
+	 * (because they dont have a direct instance id)
 	 */
-	public Object _clone(IWUserContext iwc, boolean askForPermission) {
-		return super._clone(iwc, askForPermission);
+	public Object clonePermissionChecked(IWUserContext iwc,
+			boolean askForPermission) {
+		return clone(iwc, askForPermission);
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#_main(com.idega.presentation.IWContext)

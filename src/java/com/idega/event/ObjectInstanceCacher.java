@@ -28,7 +28,7 @@ public class ObjectInstanceCacher
 		PresentationObject obj = getObjectInstanceCached(key);
 		if (obj != null)
 		{
-			return (PresentationObject) obj.clone(iwc);
+			return (PresentationObject) obj.clonePermissionChecked(iwc);
 		}
 		else
 		{

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.91 2004/06/10 17:53:22 thomas Exp $
+ * $Id: PresentationObject.java,v 1.92 2004/06/10 19:55:02 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -136,9 +136,10 @@ implements Cloneable, PresentationObjectType
 	private static boolean USE_JSF_RENDERING=false;
 
 	/**
-	 * Default constructor
+	 * Default constructor.
+	 * Should only be called by sublasses.
 	 */
-	public PresentationObject()
+	protected PresentationObject()
 	{
 	}
 	/**
@@ -749,7 +750,15 @@ implements Cloneable, PresentationObjectType
 	protected void prepareClone(PresentationObject newObjToCreate)
 	{
 	}
-	public Object _clone(IWUserContext iwc, boolean askForPermission)
+	
+	/**
+	 * This clone method checks for permission for "this" instance if askForPermission is true
+	 * This method should generally not be overridden unless there is need to alter the default permission behaviour.
+	 * @param iwc
+	 * @param askForPermission
+	 * @return
+	 */
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
 	{
 		if (iwc != null)
 		{
@@ -773,10 +782,19 @@ implements Cloneable, PresentationObjectType
 			return this.clone();
 		}
 	}
-	public Object clone(IWUserContext iwc)
+	/**
+	 * This method calls by default clonePermissionChecked(iwc,askForPermission) with askForPermission=true
+	 * This method should generally not be overridden unless there is need to alter the default permission behaviour.
+	 * @param iwc
+	 * @return
+	 */
+	public Object clonePermissionChecked(IWUserContext iwc)
 	{
-		return this._clone(iwc, true);
+		return this.clonePermissionChecked(iwc, true);
 	}
+	/**
+	 * The default clone implementation
+	 */
 	public Object clone()
 	{
 		PresentationObject obj = null;

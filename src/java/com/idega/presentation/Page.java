@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.109 2004/06/09 16:12:58 tryggvil Exp $
+ *  $Id: Page.java,v 1.110 2004/06/10 19:55:02 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -951,7 +951,7 @@ public class Page extends PresentationObjectContainer {
 	 *@return                   Description of the Return Value
 	 */
 
-	public Object _clone(IWUserContext iwuc, boolean askForPermission) {
+	public Object clonePermissionChecked(IWUserContext iwuc, boolean askForPermission) {
 
 		//return this.clone(iwc,true);
 		if (askForPermission) {

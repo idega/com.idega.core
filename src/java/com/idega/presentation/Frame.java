@@ -154,12 +154,12 @@ import com.idega.idegaweb.*;
           try {
             PresentationObject pObj = (PresentationObject)myClass.newInstance();
             if(pObj instanceof Page){
-              return (Page)pObj._clone(iwc, askForPermission);
+              return (Page)pObj.clonePermissionChecked(iwc, askForPermission);
             } else {
               //Page page = new Page();
               Page page = defaultPage;
               page.setLocation(this.getLocation());
-              page.add(pObj._clone(iwc, askForPermission));
+              page.add(pObj.clonePermissionChecked(iwc, askForPermission));
               return (Page)page;
             }
           }
@@ -172,12 +172,12 @@ import com.idega.idegaweb.*;
           return null;
         case OBJ:
           if(_obj instanceof Page){
-            return (Page)_obj._clone(iwc, askForPermission);
+            return (Page)_obj.clonePermissionChecked(iwc, askForPermission);
           } else {
             //Page page = new Page();
             Page page = defaultPage;
             page.setLocation(this.getLocation());
-            page.add(_obj._clone(iwc,askForPermission));
+            page.add(_obj.clonePermissionChecked(iwc,askForPermission));
             return (Page)page;
           }
         default:

@@ -11,14 +11,21 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.idega.builder.business.PageCacher;
+import com.idega.core.builder.data.ICPage;
 
 
 /**
@@ -66,9 +73,11 @@ public class HtmlReferenceRewriter {
 			patterns.add(p5);
 			Pattern p6 = Pattern.compile("(<form[^>]+action=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
 			patterns.add(p6);
+			Pattern p7 = Pattern.compile("(<embed[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+			patterns.add(p7);
 			if(this.isRewriteOptionValues()){
-				Pattern p7 = Pattern.compile("(<option[^>]+value=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-				patterns.add(p7);
+				Pattern p8 = Pattern.compile("(<option[^>]+value=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
+				patterns.add(p8);
 			}
 		}
 		return patterns;
@@ -80,12 +89,17 @@ public class HtmlReferenceRewriter {
 		this.patterns = patterns;
 	}
 	public static void main(String[] args) throws Exception{
+		performReykjavikNetworkTestToFile();
+	}
+
+	
+	public static void performReykjavikFileTest()throws Exception{
 		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
 		String fromFile = "/Users/tryggvil/Documents/Reykjavik/rrvk-dtemplate.html";
 		String toFile = "/Users/tryggvil/Documents/Reykjavik/rvktest.html";
 		String urlPrefix = "http://www.rvk.is/";
-		FileReader input = new FileReader(fromFile);
-		Reader r = new BufferedReader(input);
+		FileReader reader = new FileReader(fromFile);
+		Reader input = new BufferedReader(reader);
 		FileWriter output = new FileWriter(toFile);
 		Writer w = new BufferedWriter(output);
 		instance.setInput(input);
@@ -94,7 +108,65 @@ public class HtmlReferenceRewriter {
 		instance.setRewriteOptionValues(true);
 		instance.process();
 	}
-
+	
+	public static void performReykjavikNetworkTestToFile()throws Exception{
+		String sUrl = "http://nobel.idega.is/rvk/template.html";
+		URL url = new URL(sUrl);
+		InputStream iStream = url.openStream();
+		
+		InputStreamReader iReader = new InputStreamReader(iStream);
+		
+		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
+		
+		String toFile = "/Users/tryggvil/Documents/Reykjavik/rvktest2.html";
+		String urlPrefix = "http://www.rvk.is/";
+		
+		Reader input = new BufferedReader(iReader);
+		FileWriter output = new FileWriter(toFile);
+		Writer w = new BufferedWriter(output);
+		instance.setInput(input);
+		instance.setOutput(output);
+		instance.setUrlPrefix(urlPrefix);
+		instance.setRewriteOptionValues(true);
+		instance.process();
+	}	
+	
+	
+	public static void performReykjavikNetworkTestToIBPageTemplate()throws Exception{
+		String sUrl = "http://nobel.idega.is/rvk/template.html";
+		URL url = new URL(sUrl);
+		InputStream iStream = url.openStream();
+		
+		InputStreamReader iReader = new InputStreamReader(iStream);
+		
+		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
+		
+		String urlPrefix = "http://www.rvk.is/";
+		String pageKey = "101";
+		
+		//ServletContext application = null;
+		//IWApplicationContext iwac = IWMainApplication.getIWMainApplication(application).getIWApplicationContext();
+		//BuilderLogic.getInstance().getIBXMLPage(pageKey).
+		
+		ICPage ibpage = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHome(ICPage.class)).findByPrimaryKey(new Integer(pageKey));
+		ibpage.setFormat("HTML");
+		OutputStream outStream = ibpage.getPageValueForWrite();
+		
+		
+		Reader input = new BufferedReader(iReader);
+		Writer output = new OutputStreamWriter(outStream);
+		
+		
+		
+		Writer w = new BufferedWriter(output);
+		instance.setInput(input);
+		instance.setOutput(output);
+		instance.setUrlPrefix(urlPrefix);
+		instance.process();
+		
+		ibpage.store();
+		PageCacher.flagPageInvalid(pageKey);
+	}
 
 	/**
 	 * Execute the processing. Read the input, search/replace and write to the output.

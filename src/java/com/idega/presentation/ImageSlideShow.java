@@ -321,7 +321,7 @@ public class ImageSlideShow extends Block
 		addPics.append("}\n");
 		return addPics.toString();
 	}
-	public Object clone(IWUserContext iwc)
+	public Object clonePermissionChecked(IWUserContext iwc)
 	{
 		ImageSlideShow obj = null;
 		try

@@ -608,7 +608,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return obj;
 	}
 
-	public synchronized Object _clone(IWUserContext iwc, boolean askForPermission) {
+	public synchronized Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission) {
 		if (iwc != null) {
 			this.setIWApplicationContext(iwc.getApplicationContext());
 			this.setIWUserContext(iwc);
