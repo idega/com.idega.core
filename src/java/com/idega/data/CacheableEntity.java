@@ -1,4 +1,4 @@
-package com.idega.core.data;
+package com.idega.data;
 
 import java.lang.String;
 import java.lang.Integer;
