@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.53 2002/05/22 15:05:11 gummi Exp $
+ *  $Id: Page.java,v 1.54 2002/05/29 13:32:19 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,24 +9,17 @@
  */
 package com.idega.presentation;
 
-import com.idega.idegaweb.browser.presentation.IWBrowseControl;
+import com.idega.block.media.business.*;
+import com.idega.builder.business.*;
 import com.idega.business.*;
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.idegaweb.IWConstants;
-import com.idega.core.data.ICFile;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.ui.Window;
-import com.idega.servlet.IWCoreServlet;
-import com.idega.util.FrameStorageInfo;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Map;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.IBXMLPage;
-import com.idega.idegaweb.IWApplicationContext;
+import com.idega.core.data.*;
+import com.idega.idegaweb.*;
+import com.idega.idegaweb.browser.presentation.*;
+import com.idega.presentation.text.*;
+import com.idega.presentation.ui.*;
+import com.idega.servlet.*;
+import com.idega.util.*;
+import java.util.*;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -60,6 +53,8 @@ public class Page extends PresentationObjectContainer {
   private String _templateId = null;
   private Hashtable _styleDefinitions;
   private Hashtable _metaTags;
+  private Vector _styleSheets;
+  private Vector _javascripts;
   private Hashtable _HTTPEquivs;
 
   private boolean addGlobalScript = true;
@@ -159,6 +154,46 @@ public class Page extends PresentationObjectContainer {
       _styleDefinitions = new Hashtable();
     }
     _styleDefinitions.put(styleName, styleAttribute);
+  }
+
+  public void addStyleSheetURL(String URL) {
+    if (_styleSheets == null) {
+      _styleSheets = new Vector();
+    }
+    _styleSheets.add(URL);
+  }
+
+  private String getStyleSheetURL() {
+    if ( _styleSheets != null ) {
+      StringBuffer buffer = new StringBuffer();
+      Iterator iter = _styleSheets.iterator();
+      while (iter.hasNext()) {
+	String URL = (String) iter.next();
+	buffer.append("<link href=\""+URL+"\" rel=\"stylesheet\">\n");
+      }
+      return buffer.toString();
+    }
+    return "";
+  }
+
+  public void addJavascriptURL(String URL) {
+    if (_javascripts == null) {
+      _javascripts = new Vector();
+    }
+    _javascripts.add(URL);
+  }
+
+  private String getJavascriptURL() {
+    if ( _javascripts != null ) {
+      StringBuffer buffer = new StringBuffer();
+      Iterator iter = _javascripts.iterator();
+      while (iter.hasNext()) {
+	String URL = (String) iter.next();
+	buffer.append("<script language=\"javascript\" src=\""+URL+"\"></script>\n");
+      }
+      return buffer.toString();
+    }
+    return "";
   }
 
   /**
@@ -752,35 +787,35 @@ public class Page extends PresentationObjectContainer {
     if(askForPermission){
       if ( iwuc.hasViewPermission(this)) {
 
-        return this.clone(iwuc, askForPermission);
+	return this.clone(iwuc, askForPermission);
 
 
       } else {
-        if (!NULL_CLONE_PAGE_INITIALIZED) {
+	if (!NULL_CLONE_PAGE_INITIALIZED) {
 
-          Text pageNotFound = new Text("No permission", true, false, false);
-          pageNotFound.setFontSize(4);
-          NULL_CLONE_PAGE.add(pageNotFound);
+	  Text pageNotFound = new Text("No permission", true, false, false);
+	  pageNotFound.setFontSize(4);
+	  NULL_CLONE_PAGE.add(pageNotFound);
 
-          IWContext iwc = IWContext.getInstance();
-          if(iwc != null){
-            int pageId = 1;
-            String page = null;
-            // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
-            if (page != null ) {
-              try {
-                pageId = Integer.parseInt(page);
-              } catch (NumberFormatException ex) {
-                pageId = BuilderLogic.getStartPageId(iwc);
-              }
-            } else {
-              pageId = BuilderLogic.getStartPageId(iwc);
-            }
-            NULL_CLONE_PAGE.setOnLoad("document.location='" + BuilderLogic.getInstance().getIBPageURL(iwc, pageId) + "'");
-          }
-          NULL_CLONE_PAGE_INITIALIZED = true;
-        }
-        return NULL_CLONE_PAGE;
+	  IWContext iwc = IWContext.getInstance();
+	  if(iwc != null){
+	    int pageId = 1;
+	    String page = null;
+	    // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
+	    if (page != null ) {
+	      try {
+		pageId = Integer.parseInt(page);
+	      } catch (NumberFormatException ex) {
+		pageId = BuilderLogic.getStartPageId(iwc);
+	      }
+	    } else {
+	      pageId = BuilderLogic.getStartPageId(iwc);
+	    }
+	    NULL_CLONE_PAGE.setOnLoad("document.location='" + BuilderLogic.getInstance().getIBPageURL(iwc, pageId) + "'");
+	  }
+	  NULL_CLONE_PAGE_INITIALIZED = true;
+	}
+	return NULL_CLONE_PAGE;
       }
     } else {
       return this.clone();
@@ -813,6 +848,10 @@ public class Page extends PresentationObjectContainer {
       obj._addStyleSheet = _addStyleSheet;
       obj._ibPageID = _ibPageID;
       obj.styleFile = styleFile;
+      if ( _javascripts != null )
+	obj._javascripts = _javascripts;
+      if ( _styleSheets != null )
+	obj._styleSheets = _styleSheets;
 
     } catch (Exception ex) {
       ex.printStackTrace(System.err);
@@ -919,28 +958,30 @@ public class Page extends PresentationObjectContainer {
 
     if (d.getURL() != null) {
       if (src.startsWith("/")) {
-        src = d.getURL() + src;
+	src = d.getURL() + src;
       }
     }
 
 	  println("<script type=\"text/javascript\" language=\"javascript\" src=\"" + src + "/iw_core.js\">");
 	  println("</script>");
+	  print(getJavascriptURL());
 	}
 	if (getAssociatedScript() != null) {
 	  getAssociatedScript()._print(iwc);
 	}
+
+	println(getStyleSheetURL());
 
 	println(getMetaInformation(iwc));
 	println(getMetaTags());
 	println("<title>" + getTitle() + "</title>");
 	if (_addStyleSheet) {
 	  println("<link rel=\"stylesheet\" href=\"" + _styleSheetURL + "\" type=\"text/css\">\n");
-	} else {
-	  println("<style type=\"text/css\">\n" +
-	      "<!--\n" +
-	      getStyleDefinition() +
-	      "   -->\n</style>");
 	}
+	println("<style type=\"text/css\">\n" +
+	    "<!--\n" +
+	    getStyleDefinition() +
+	    "   -->\n</style>");
 	println("</head>\n");
 	if (_addBody) {
 	  println("<body  " + getAttributeString() + " >\n");
@@ -1068,19 +1109,19 @@ public class Page extends PresentationObjectContainer {
       IWFrameBusiness fb = (IWFrameBusiness)IBOLookup.getSessionInstance(iwc,IWFrameBusiness.class);
       Page pg = fb.getFrame(framePathKey,frameNameKey);
       if(pg != null){
-        if( iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE) != null && pg instanceof IWBrowseControl){
-          //System.out.println("dispatchEvent(iwc)");
-          ((IWBrowseControl)pg).dispatchEvent(iwc);
-        }
+	if( iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE) != null && pg instanceof IWBrowseControl){
+	  //System.out.println("dispatchEvent(iwc)");
+	  ((IWBrowseControl)pg).dispatchEvent(iwc);
+	}
 //        else {
 //          System.out.println("!dispatchEvent(iwc)");
 //        }
-        return pg;
+	return pg;
       } else {
-        Page defaultPage = new Page();
-        //defaultPage.setBackgroundColor("#FF0000");
-        System.err.println("Frame "+frameNameKey+": page is null");
-        return defaultPage;
+	Page defaultPage = new Page();
+	//defaultPage.setBackgroundColor("#FF0000");
+	System.err.println("Frame "+frameNameKey+": page is null");
+	return defaultPage;
       }
 
     } else if (frameKey != null) {
@@ -1094,7 +1135,7 @@ public class Page extends PresentationObjectContainer {
       try {
 	page = (Page) Class.forName(className).newInstance();
       } catch (ClassNotFoundException e) {
-        e.printStackTrace();
+	e.printStackTrace();
 	throw new IWPageInitializationException("There was an error, your session is probably expired");
       }
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
