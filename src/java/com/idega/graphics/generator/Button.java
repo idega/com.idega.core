@@ -13,9 +13,7 @@ import java.io.FileInputStream;
 import java.awt.geom.AffineTransform;
 import java.awt.FontMetrics;
 import java.awt.BasicStroke;
-import java.text.DecimalFormat;
 import java.awt.Font;
-import java.util.*;
 import com.idega.util.FileUtil;
 
 /**
@@ -29,37 +27,37 @@ import com.idega.util.FileUtil;
 
 public class Button {
 
-  private static final Color defaultBorderColor = new Color(85,87,92);
-  private static final int defaultBorderSize = 1;
-  private static final Color defaultUnderColor = new Color(148,151,156);
-  private static final Color defaultOverColor = Color.white;
-  private static final Color defaultFillColor = new Color(201,203,206);
-  private static final Color defaultFontColor = Color.black;
-  private static final Color defaultHightlightColor = new Color(221,223,226);
-  public static final String BUTTON_UP = "_BUTTON_UP";
-  public static final String BUTTON_OVER = "_BUTTON_OVER";
-  public static final String BUTTON_DOWN = "_BUTTON_DOWN";
+  private static Color defaultBorderColor = new Color(85,87,92);
+  private static int defaultBorderSize = 1;
+  private static Color defaultUnderColor = new Color(148,151,156);
+  private static Color defaultOverColor = Color.white;
+  private static Color defaultFillColor = new Color(201,203,206);
+  private static Color defaultFontColor = Color.black;
+  private static Color defaultHightlightColor = new Color(221,223,226);
+  public static String BUTTON_UP = "_BUTTON_UP";
+  public static String BUTTON_OVER = "_BUTTON_OVER";
+  public static String BUTTON_DOWN = "_BUTTON_DOWN";
 
-  private Color underColor = defaultUnderColor;
-  private Color fillColor = defaultFillColor;
-  private Color overColor = defaultOverColor;
-  private Color borderColor = defaultBorderColor;
-  private Color fontColor = defaultFontColor;
-  private Color highlightColor = defaultHightlightColor;
+  protected Color underColor = defaultUnderColor;
+  protected Color fillColor = defaultFillColor;
+  protected Color overColor = defaultOverColor;
+  protected Color borderColor = defaultBorderColor;
+  protected Color fontColor = defaultFontColor;
+  protected Color highlightColor = defaultHightlightColor;
 
-  private int borderSize = defaultBorderSize;
+  protected int borderSize = defaultBorderSize;
 
-  private boolean drawBorder = true;
-  private int width = 54;
-  private int height = 15;
-  private int doubleBorder = (2*borderSize);
-  private int textXPos = 5;
-  private int textYPos = 10;
-  private int verticalPadding = 5;
+  protected boolean drawBorder = true;
+  protected int width = 54;
+  protected int height = 15;
+  protected int doubleBorder = (2*borderSize);
+  protected int textXPos = 5;
+  protected int textYPos = 10;
+  protected int verticalPadding = 5;
 
-  private String buttonUpName;
-  private String buttonDownName;
-  private String buttonOverName;
+  protected String buttonUpName;
+  protected String buttonDownName;
+  protected String buttonOverName;
 
   private String text;
   private Font font;
@@ -146,6 +144,18 @@ public class Button {
     return buttonDownName;
   }
 
+  public String getStaticButtonDownString(){
+    return BUTTON_DOWN;
+  }
+
+  public String getStaticButtonUpString(){
+    return BUTTON_UP;
+  }
+
+  public String getStaticButtonOverString(){
+    return BUTTON_OVER;
+  }
+
   public int getWidth(){
     return width;
   }
@@ -180,14 +190,12 @@ public class Button {
       if( font!= null ) g.setFont(font);
     }
 
-    g.setBackground(borderColor);
 
+    makeButton(g,text,image,folderPath,getStaticButtonUpString());
 
-    makeButton(g,text,image,folderPath,BUTTON_UP);
+    makeButton(g,text,image,folderPath,getStaticButtonOverString());
 
-    makeButton(g,text,image,folderPath,BUTTON_OVER);
-
-    makeButton(g,text,image,folderPath,BUTTON_DOWN);
+    makeButton(g,text,image,folderPath,getStaticButtonDownString());
 
   }
 
@@ -215,6 +223,11 @@ public class Button {
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
    // g.setStroke(new BasicStroke(0.5f));
 
+   if( drawBorder){
+    g.setColor(borderColor);
+    g.fillRect(0,0,width,height);
+   }
+
     if(effect==BUTTON_DOWN) g.setColor(underColor);
     else g.setColor(overColor);
 
@@ -238,9 +251,13 @@ public class Button {
     g.setColor(fontColor);
     g.drawString(text,textXPos,textYPos);
 
-    try {
+    encode(image,filename,effect);
+
+  }
+
+  public void encode(Image image, String path, String effect){
+   try {
       GIFEncoder encode = new GIFEncoder(image);
-      Date date = Calendar.getInstance().getTime();
 
       StringBuffer name = new StringBuffer();
       name.append(width);
@@ -251,7 +268,7 @@ public class Button {
 
       String sName = name.toString();
 
-      filename+=name.toString();
+      path+=name.toString();
 
       if( effect == BUTTON_UP ){
         buttonUpName = sName;
@@ -263,15 +280,13 @@ public class Button {
         buttonOverName = sName;
       }
 
-      OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
-
-     // System.out.println("filename = " + filename);
+      OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
 
       encode.Write(output);
       output.close();
     }
     catch (Exception e) {
-      e.printStackTrace(System.err);
+      e.printStackTrace(System.out);
     }
 
   }
