@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -2314,10 +2313,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/29 18:39:53 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2004/09/30 10:00:53 $ by $Author: gimmi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.75 $
+	 * @version $Revision: 1.76 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
