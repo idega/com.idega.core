@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.9 2002/09/15 14:56:12 tryggvil Exp $
+ * $Id: DropdownMenu.java,v 1.10 2002/09/29 22:07:19 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -151,12 +151,27 @@ public class DropdownMenu extends InterfaceObject {
 		}
 	}
 
-	public void setSelectedElement(String ElementValue) {
+	/**
+	 * Sets the element by value elementValue as selected if it is found in this menu
+	 **/
+	public void setSelectedElement(String elementValue) {
 		deselectElements();
-		getMenuElement(ElementValue).setSelected(true);
-		selectedElementValue = ElementValue;
+		getMenuElement(elementValue).setSelected(true);
+		selectedElementValue = elementValue;
+	}
+	
+	
+	/**
+	 * Sets the element by value elementValue as selected if it is found in this menu
+	 **/
+	public void setSelectedElement(int elementValue)
+	{
+		setSelectedElement(Integer.toString(elementValue));
 	}
 
+	/**
+	 * Gets the elementValue of the selected menuelement if any. If none is selected it returns an empty String.
+	 **/
 	public String getSelectedElementValue() {
 		if (selectedElementValue == null) {
 			return "";
