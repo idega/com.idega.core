@@ -70,6 +70,11 @@ public class HashMatrix {
     return (xDimension == null) ? new HashSet(0) : xDimension.keySet();
   }
   
+  public int sizeOfFirstKeySet() {
+  	return (xDimension == null) ? 0 : xDimension.size();
+  }
+		
+  
   /** Returns true if this matrix contains no key-key-value mappings
    * 
    * @return true if this matrix contains no key-key-value-mappings
