@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.2 2004/10/14 16:52:02 tryggvil Exp $
+ * $Id: Page.java,v 1.3 2004/10/15 11:38:53 eiki Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -22,7 +22,7 @@ import com.idega.presentation.text.Text;
  * Last modified: 14.10.2004 13:56:18 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Page extends Widget {
 
@@ -33,9 +33,9 @@ public class Page extends Widget {
 		try {
 			ICPage currentPage = getBuilderService(iwc).getCurrentPage(iwc);
 			//PageTreeNode page = new PageTreeNode(((Integer) currentPage.getPrimaryKey()).intValue(), iwc);
-
-			Text text = new Text(page.getLocalizedNodeName(iwc));
-			return text;
+			
+			//Text text = new Text(page.getLocalizedNodeName(iwc));
+			return null;
 		}
 		catch (RemoteException re) {
 			log(re);
