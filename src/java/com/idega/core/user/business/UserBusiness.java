@@ -36,7 +36,7 @@ public class UserBusiness {
   }
 
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws SQLException{
-  	return insertUser(firstname,middlename,lastname,displayname,description,gender,date_of_birth,primary_group);
+  	return insertUser(firstname,middlename,lastname,displayname,description,gender,date_of_birth,primary_group, null);
   }
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group,String personalID) throws SQLException{
     User userToAdd = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).createLegacy();
