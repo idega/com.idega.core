@@ -1,28 +1,30 @@
-// idega 2000 - Tryggvi Larusson
-
 /*
- * 
- * Copyright 2000 idega.is All Rights Reserved.
- *  
+ * $Id: Lists.java,v 1.13 2005/02/17 11:12:12 tryggvil Exp $
+ * Created in 2000 Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
-
 package com.idega.presentation.text;
 
 import java.util.Iterator;
 import java.util.List;
-
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
+ * <p>
+ * A UIComponent class to render out a "List" or <code>ul</code> or <code>ol</code> html tag.
+ * </p>
+ *  Last modified: $Date: 2005/02/17 11:12:12 $ by $Author: tryggvil $
  * 
- * @version 1.2
- *  
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.13 $
  */
-
 public class Lists extends PresentationObjectContainer {
 
 	public static final String ARABIC_NUMBERS = "1";
@@ -44,12 +46,21 @@ public class Lists extends PresentationObjectContainer {
 		super();
 	}
 
-	public void setClass(String s) {
-		setMarkupAttribute("class", s);
+	/**
+	 * @deprecated replaced with setStyleClass
+	 * @param sClass the Styleclass
+	 */
+	public void setClass(String sClass) {
+		//setMarkupAttribute("class", s);
+		super.setStyleClass(sClass);
 	}
-
-	public void setStyle(String s) {
-		setMarkupAttribute("style", s);
+	/**
+	 * @deprecated replaced with setStyleAttribute
+	 * @param sClass the Styleclass
+	 */
+	public void setStyle(String styleAttribute) {
+		//setMarkupAttribute("style", s);
+		super.setStyleAttribute(styleAttribute);
 	}
 
 	public void setType(String type) {
@@ -106,15 +117,21 @@ public class Lists extends PresentationObjectContainer {
 						//item._print(iwc);
 						renderChild(iwc,item);
 					}
+					else if (item instanceof ListItem) {
+						//item._print(iwc);
+						renderChild(iwc,item);
+					}
 					else {
 						if (compact) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("<li");
-							if (getMarkupAttribute("style") != null) {
-								buffer.append(" style=\"" + getMarkupAttribute("style") + "\"");
+							String styleAttributes = getListItemStyleAttributes();
+							if(styleAttributes!=null){
+								buffer.append(" style=\"" + styleAttributes + "\"");
 							}
-							if (getMarkupAttribute("class") != null) {
-								buffer.append(" class=\"" + getMarkupAttribute("class") + "\"");
+							String styleClass = getListItemStyleClass();
+							if (styleClass != null) {
+								buffer.append(" class=\"" + styleClass + "\"");
 							}
 							buffer.append(">");
 							print(buffer.toString());
@@ -138,4 +155,29 @@ public class Lists extends PresentationObjectContainer {
 			println("</ul>");
 		}
 	}
+	
+	/**
+	 * Sets the style attributes on all list items.
+	 * @param attributeString
+	 */
+	public void setListItemStyleAttributes(String attributeString){
+		getAttributes().put("listitemstyleattributes",attributeString);
+	}
+	
+	public String getListItemStyleAttributes(){
+		return (String)getAttributes().get("listitemstyleattributes");
+	}
+
+	/**
+	 * Sets the style attributes on all list items.
+	 * @param attributeString
+	 */
+	public void setListItemStyleClass(String attributeString){
+		getAttributes().put("listitemstyleclass",attributeString);
+	}
+	
+	public String getListItemStyleClass(){
+		return (String)getAttributes().get("listitemstyleclass");
+	}
+
 }
