@@ -40,27 +40,6 @@ public SelectionDoubleBox(String nameOfRightBox,String headerOfLeftBox,String he
 public SelectionDoubleBox(String nameOfLeftBox,String nameOfRightBox){
     leftBox = new SelectionBox(nameOfLeftBox);
     rightBox = new SelectionBox(nameOfRightBox);
-    if ( getStyleAttribute() != null ) {
-    	leftBox.setStyleAttribute(getStyleAttribute());
-    	rightBox.setStyleAttribute(getStyleAttribute());
-    }
-
-    Table table = new Table(3,1);
-    add(table);
-
-    table.add(leftBox,1,1);
-
-    toTheRight = new GenericButton("sdb_right",">>");
-    toTheRight.setOnClick("move( this.form."+leftBox.getName()+", this.form."+rightBox.getName()+" )");
-    table.add(toTheRight,2,1);
-
-    table.addBreak(2,1);
-
-    toTheLeft = new GenericButton("sdb_left","<<");
-    toTheLeft.setOnClick("move( this.form."+rightBox.getName()+", this.form."+leftBox.getName()+" )");
-    table.add(toTheLeft,2,1);
-
-    table.add(rightBox,3,1);
 }
 
 public SelectionBox getLeftBox(){
@@ -85,6 +64,28 @@ public void addToScripts(Script script) {
 }
 public void main(IWContext iwc)throws Exception{
     //this.getParentPage().initializeAssociatedScript();
+    if ( getStyleAttribute() != null ) {
+    	leftBox.setStyleAttribute(getStyleAttribute());
+    	rightBox.setStyleAttribute(getStyleAttribute());
+    }
+
+    Table table = new Table(3,1);
+    add(table);
+
+    table.add(leftBox,1,1);
+
+    toTheRight = new GenericButton("sdb_right",">>");
+    toTheRight.setOnClick("move( this.form."+leftBox.getName()+", this.form."+rightBox.getName()+" )");
+    table.add(toTheRight,2,1);
+
+    table.addBreak(2,1);
+
+    toTheLeft = new GenericButton("sdb_left","<<");
+    toTheLeft.setOnClick("move( this.form."+rightBox.getName()+", this.form."+leftBox.getName()+" )");
+    table.add(toTheLeft,2,1);
+
+    table.add(rightBox,3,1);
+
     Script script = this.getParentPage().getAssociatedScript();
     addToScripts(script);
 }
