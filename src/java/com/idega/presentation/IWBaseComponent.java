@@ -1,10 +1,16 @@
 /*
+ * $Id: IWBaseComponent.java,v 1.3 2004/10/29 01:17:24 tryggvil Exp $
  * Created on 20.2.2004 by  tryggvil in project com.project
+ * 
+ * Copyright (C) 2004 Idega. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega.
+ * Use is subject to license terms.
+ *
  */
 package com.idega.presentation;
 
 import java.io.IOException;
-import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
@@ -45,14 +51,12 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#decode(javax.faces.context.FacesContext)
 	 */
 	public void decode(FacesContext arg0) {
-		// TODO Auto-generated method stub
 		super.decode(arg0);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processDecodes(javax.faces.context.FacesContext)
 	 */
 	public void processDecodes(FacesContext arg0) {
-		// TODO Auto-generated method stub
 		super.processDecodes(arg0);
 	}
 	
@@ -60,7 +64,6 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
 	public void encodeBegin(FacesContext arg0) throws IOException {
-		// TODO Auto-generated method stub
 		super.encodeBegin(arg0);
 	}
 	/* (non-Javadoc)
