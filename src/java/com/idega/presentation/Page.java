@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.32 2002/02/14 13:30:12 tryggvil Exp $
+ * $Id: Page.java,v 1.33 2002/02/14 15:04:59 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -57,11 +57,13 @@ public class Page extends PresentationObjectContainer {
   private static String META_DESCRIPTION = "description";
 
   private static Page NULL_CLONE_PAGE = new Page();
+  private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
   static{
     Text pageNotFound = new Text("Page not found",true,false,false);
     pageNotFound.setFontSize(4);
     NULL_CLONE_PAGE.add(pageNotFound);
+
   }
 
 
@@ -559,6 +561,25 @@ public class Page extends PresentationObjectContainer {
     if(iwc.hasViewPermission(this)){
       return this.clone(iwc,askForPermission);
     } else {
+      if(!NULL_CLONE_PAGE_INITIALIZED){
+        /**
+         * @todo get property from application, which page to forward to
+         */
+        int pageId = 1;
+        String page = null; // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
+        if(page != null){
+          try {
+            pageId = Integer.parseInt(page);
+          }
+          catch (NumberFormatException ex) {
+            pageId = BuilderLogic.getStartPageId(iwc);
+          }
+
+        }else{
+          pageId = BuilderLogic.getStartPageId(iwc);
+        }
+        NULL_CLONE_PAGE.setOnLoad("document.location='"+BuilderLogic.getInstance().getIBPageURL(pageId)+"'");
+      }
       return NULL_CLONE_PAGE;
     }
 
