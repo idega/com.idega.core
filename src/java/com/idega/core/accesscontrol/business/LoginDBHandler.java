@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.37 2002/12/21 00:43:07 thomas Exp $
+ * $Id: LoginDBHandler.java,v 1.38 2002/12/27 18:17:19 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -784,7 +784,7 @@ public class LoginDBHandler
 		
 		throw new LoginCreateException("Error creating login for userID: " + userID + ". Exhausted possibilities");
 	}
-	private static String getGeneratedPasswordForUser()
+	public static String getGeneratedPasswordForUser()
 	{
 		return com.idega.util.StringHandler.getRandomString(8);
 	}
