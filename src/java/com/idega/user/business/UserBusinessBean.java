@@ -1102,6 +1102,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return getUserHome().findByPersonalID(personalID);
 	}
 	
+	/**
+	 *  Returns User from personal id returns null if not found
+	 */
+	public  User getUserByPartOfPersonalIdAndFirstName(String personalID, String first_name) throws FinderException {
+		return getUserHome().findByPartOfPersonalIDAndFirstName(personalID,first_name);
+	}
 
   public  Collection getUsersInNoGroup() throws SQLException  {
     //return EntityFinder.findNonRelated(com.idega.user.data.GroupBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getStaticInstance());

@@ -1006,6 +1006,30 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		else
 			throw new FinderException("No user found");
 	}
+
+	public Integer ejbFindByPartOfPersonalIDAndFirstName(String personalId, String first_name) throws FinderException {
+    
+	IDOQuery query = idoQueryGetSelect();
+		 query
+			.appendWhere(getColumnNamePersonalID())
+			.appendLike()
+			.appendWithinSingleQuotes("%"+personalId+"%")
+		.appendAnd()
+		.appendWhere(getColumnNameFirstName())
+		.appendLike()
+		.appendWithinSingleQuotes("%"+first_name+"%")
+		.appendAnd();
+		appendIsNotDeleted(query);
+    
+		 Collection users = idoFindPKsByQuery(query);
+
+
+		if (!users.isEmpty())
+			return (Integer) users.iterator().next();
+		else
+			throw new FinderException("No user found");
+	}
+
 	
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup

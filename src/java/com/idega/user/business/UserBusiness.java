@@ -152,6 +152,7 @@ public interface UserBusiness extends com.idega.business.IBOService
 	 *  Returns User from personal id returns null if not found
 	 */
 	public  User getUser(String personalID) throws FinderException;
+	public com.idega.user.data.User getUserByPartOfPersonalIdAndFirstName(java.lang.String p0,java.lang.String p1) throws FinderException;
 
 	
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException;
