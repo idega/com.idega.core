@@ -1001,9 +1001,9 @@ public class IWTimestamp implements Comparable {
 	public void setDate(String inStr) throws DateFormatException
 	{
 		try{
-			setYear(Integer.parseInt(inStr.substring(0, 3)));
-			setMonth(Integer.parseInt(inStr.substring(4, 5)));
-			setDay(Integer.parseInt(inStr.substring(6, 7)));
+			setYear(Integer.parseInt(inStr.substring(0, 4)));
+			setMonth(Integer.parseInt(inStr.substring(4, 6)));
+			setDay(Integer.parseInt(inStr.substring(6, 8)));
 		} catch (Exception e){
 			System.out.println("Could not parse the following date: "+inStr+". Expected format is YYYYMMDD.");
 			throw new DateFormatException();
