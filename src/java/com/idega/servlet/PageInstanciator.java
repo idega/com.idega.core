@@ -6,6 +6,7 @@ import com.idega.presentation.jsp.JSPModule;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
+*@deprecated This class should no longer be used
 */
 public class PageInstanciator extends JSPModule {
 	public void initializePage() {

@@ -20,8 +20,8 @@ import com.idega.servlet.IWPresentationServlet;
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.2
+ * @deprecated This class should no longer be used
  */
-
 public class JSPModule extends IWPresentationServlet implements JspPage {
 
 	public void jspInit() {
