@@ -94,7 +94,7 @@ private IWResourceBundle iwrb;
 
       Image headerImage;
 
-      Image bottomImage = iwrb.getImage("/login/bottom.gif","",323,12);
+      Image bottomImage = iwrb.getImage("login/bottom.gif","",323,12);
       mainTable.add(bottomImage,1,4);
 
       boolean isAdministrator = false;
@@ -107,15 +107,20 @@ private IWResourceBundle iwrb;
 
       if(isAdministrator){
         IWControlCenter iwcc = new IWControlCenter();
-        mainTable.setHeight(2,"195");
+        mainTable.setHeight(2,"165");
         mainTable.setAlignment(1,2,"center");
+        mainTable.setAlignment(1,3,"right");
         mainTable.setVerticalAlignment(1,2,"middle");
+        mainTable.setVerticalAlignment(1,3,"middle");
         mainTable.add(iwcc,1,2);
-        headerImage = iwrb.getImage("/login/header_app_suite.jpg","",323,196);
+        headerImage = iwrb.getImage("login/header_app_suite.jpg","",323,196);
 
         Login login = new Login();
-          login.setLogoutButton(iwrb.getImage("/login/logout.gif"));
-          login.setHeight("25");
+          login.setLogoutButton(iwrb.getImage("login/logout.gif"));
+          login.setHeight("60");
+          login.setWidth("70");
+          login.setViewOnlyLogoutButton(true);
+          login.setLoginAlignment("right");
         mainTable.add(login,1,3);
 
       }
@@ -130,8 +135,8 @@ private IWResourceBundle iwrb;
           loginTable.setCellspacing(0);
 
         Login login = new Login();
-          login.setLoginButton(iwrb.getImage("/login/login.gif"));
-          login.setLogoutButton(iwrb.getImage("/login/logout.gif"));
+          login.setLoginButton(iwrb.getImage("login/login.gif"));
+          login.setLogoutButton(iwrb.getImage("login/logout.gif"));
           login.setUserTextSize(1);
           login.setPasswordTextSize(1);
           login.setHeight("130");
