@@ -37,12 +37,14 @@ import com.idega.util.LogWriter;
  * [poolname].loglevel The level of logging for the pool. Possible values
  * are: 0 (NONE - no logging), 1 (INFO - only information messages), 2
  * (ERROR - show error messages), 3 (DEBUG - show all info,error and debug
- * messages)<br>
- * [poolname].logintimeout The timout (in seconds) that the pool will wait for
- * a connection before throwing an SQLException<br> 
- * [poolname]. refreshminutes
- * The number of minutes for the pool to refresh itself and load new
- * connections<br>
+ * messages). The default is 1 (INFO.<br> 
+ * 
+ * [poolname].logintimeout The timout (in
+ * seconds) that the pool will wait for a connection before throwing an
+ * SQLException. The default is 5.<br>
+ *  [poolname]. refreshminutes The number of
+ * minutes for the pool to refresh itself and load new connections. The
+ * default is 20.<br>
  *<br>
  * This software is the proprietary information of Idega hf. Use is subject
  *to license terms.
