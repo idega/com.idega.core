@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.50 2004/05/19 11:15:37 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.51 2004/06/15 19:47:33 aron Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -31,6 +31,7 @@ import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
@@ -41,6 +42,8 @@ import com.idega.util.StringHandler;
  * @version 1.0
  */
 public class LoginDBHandler {
+	
+	public static final String LOGIN_USE_PID_AS_GENERATED = "USE_PID_AS_GENERATED_LOGIN";
 
 	public LoginDBHandler() {
 	}
@@ -606,6 +609,15 @@ public class LoginDBHandler {
 		}
 		catch (Exception e) {
 			userNameList.add(StringHandler.getRandomString(8));
+		}
+		
+		try {
+			String usePidAsGenerated = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getProperty(LOGIN_USE_PID_AS_GENERATED,Boolean.toString(false));
+			if(Boolean.getBoolean(usePidAsGenerated)){
+				userNameList.add(user.getPersonalID());
+			}
+		} catch (RuntimeException e1) {
+			e1.printStackTrace();
 		}
 
 		userNameList.addAll(generatePossibleUserNames(firstName, middleName, lastName, 8));
