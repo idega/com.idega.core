@@ -1,22 +1,22 @@
 package com.idega.core.version.data;
 
 
-public interface ICVersion extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode
+public interface ICVersion extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode
 {
  public boolean getAllowsChildren();
- public com.idega.core.ICTreeNode getChildAtIndex(int p0);
+ public com.idega.core.data.ICTreeNode getChildAtIndex(int p0);
  public int getChildCount();
  public java.util.Iterator getChildren();
  public com.idega.user.data.User getCreatedByUser();
  public int getCreatedByUserID();
  public java.sql.Timestamp getCreatedTimestamp();
  public java.lang.String getDescription();
- public int getIndex(com.idega.core.ICTreeNode p0);
+ public int getIndex(com.idega.core.data.ICTreeNode p0);
  public java.lang.String getName();
  public int getNodeID();
  public java.lang.String getNodeName();
  public java.lang.String getNumber();
- public com.idega.core.ICTreeNode getParentNode();
+ public com.idega.core.data.ICTreeNode getParentNode();
  public com.idega.core.version.data.ICVersion getParentVersion();
  public int getParentVersionID();
  public int getSiblingCount();

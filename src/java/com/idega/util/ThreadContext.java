@@ -12,11 +12,10 @@ import java.util.Map;
 */
 public class ThreadContext
 {
-	private Map theThreads;
+	private Map threadsMap;
 	private static ThreadContext instance;
 	private ThreadContext()
 	{
-		initThreadsMap();
 	}
 
 	/**
@@ -30,12 +29,13 @@ public class ThreadContext
 		}
 		return instance;
 	}
-	private void initThreadsMap()
-	{
-		if (theThreads == null)
+
+	private Map getThreadsMap(){
+		if (threadsMap == null)
 		{
-			theThreads = new HashMap();
+			threadsMap = new HashMap();
 		}
+		return threadsMap;
 	}
 	/**
 	 * initializes a Map for the Thread thread to associate objects
@@ -43,7 +43,7 @@ public class ThreadContext
 	 */
 	public void putThread(Thread thread)
 	{
-		theThreads.put(thread, new HashMap());
+		getThreadsMap().put(thread, new HashMap());
 	}
 	/**
 	 * releases all object mapped to the Thread thread
@@ -51,7 +51,7 @@ public class ThreadContext
 	 */
 	public void releaseThread(Thread thread)
 	{
-		theThreads.remove(thread);
+		getThreadsMap().remove(thread);
 	}
 	/**
 	 * Associates an object attribute to the Thread thread
@@ -95,11 +95,11 @@ public class ThreadContext
 	}
 	private Map getThreadAttributes(Thread thread)
 	{
-		Map theReturn = (Map) theThreads.get(thread);
+		Map theReturn = (Map) getThreadsMap().get(thread);
 		if (theReturn == null)
 		{
 			putThread(thread);
-			theReturn = (Map) theThreads.get(thread);
+			theReturn = (Map) getThreadsMap().get(thread);
 		}
 		return theReturn;
 	}
@@ -110,7 +110,7 @@ public class ThreadContext
 	 */
 	public Object getAttribute(Thread thread, String attributeName)
 	{
-		Map tempTable = (Map) theThreads.get(thread);
+		Map tempTable = (Map) getThreadsMap().get(thread);
 		if (tempTable != null)
 		{
 			return tempTable.get(attributeName);
@@ -134,6 +134,17 @@ public class ThreadContext
 	 */
 	public int getSize()
 	{
-		return theThreads.size();
+		return getThreadsMap().size();
+	}
+	
+	public boolean reset(){
+		try{
+			getThreadsMap().clear();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

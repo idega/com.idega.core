@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -128,7 +128,7 @@ public class GenericButton extends GenericInput {
 					URL = defaultImage.getMediaURL(iwc);
 				}
 
-				IBDomain d = iwc.getDomain();
+				ICDomain d = iwc.getDomain();
 				if (d.getURL() != null) {
 					if (URL.startsWith("/")) {
 						String protocol;
@@ -179,7 +179,7 @@ public class GenericButton extends GenericInput {
 		_pageID = pageID;
 	}
 	
-	public void setPageToOpen(IBPage page) {
+	public void setPageToOpen(ICPage page) {
 		if (page != null && page.getID() != -1)
 			setPageToOpen(page.getID());
 	}

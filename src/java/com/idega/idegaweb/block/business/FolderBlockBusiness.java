@@ -10,13 +10,13 @@ import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
-import com.idega.core.data.ICInformationCategory;
-import com.idega.core.data.ICInformationCategoryHome;
-import com.idega.core.data.ICInformationCategoryTranslation;
-import com.idega.core.data.ICInformationCategoryTranslationHome;
-import com.idega.core.data.ICInformationFolder;
-import com.idega.core.data.ICObjectInstance;
-import com.idega.core.data.ICObjectInstanceHome;
+import com.idega.core.category.data.ICInformationCategory;
+import com.idega.core.category.data.ICInformationCategoryHome;
+import com.idega.core.category.data.ICInformationCategoryTranslation;
+import com.idega.core.category.data.ICInformationCategoryTranslationHome;
+import com.idega.core.category.data.ICInformationFolder;
+import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
@@ -45,7 +45,7 @@ public class FolderBlockBusiness {
 	public ICInformationFolder getInstanceWorkeFolder(int icObjectInstanceId, int icObjectId, int localeId, boolean autocreate) {
 		ICInformationFolder parentFolder = null;
 		try {
-			List l = EntityFinder.findRelated(((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceId), com.idega.core.data.ICInformationFolderBMPBean.getStaticInstance(ICInformationFolder.class));
+			List l = EntityFinder.findRelated(((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceId), com.idega.core.category.data.ICInformationFolderBMPBean.getStaticInstance(ICInformationFolder.class));
 			if (l != null && l.size() > 0) {
 				parentFolder = (ICInformationFolder)l.get(0);
 			} else if (autocreate) {
@@ -57,7 +57,7 @@ public class FolderBlockBusiness {
 		}
 		if (parentFolder != null) {
 			try {
-				List l = EntityFinder.findAllByColumn(com.idega.core.data.ICInformationFolderBMPBean.getStaticInstance(ICInformationFolder.class), com.idega.core.data.ICInformationFolderBMPBean.getColumnParentFolderId(), parentFolder.getID(), com.idega.core.data.ICInformationFolderBMPBean.getColumnLocaleId(), localeId);
+				List l = EntityFinder.findAllByColumn(com.idega.core.category.data.ICInformationFolderBMPBean.getStaticInstance(ICInformationFolder.class), com.idega.core.category.data.ICInformationFolderBMPBean.getColumnParentFolderId(), parentFolder.getID(), com.idega.core.category.data.ICInformationFolderBMPBean.getColumnLocaleId(), localeId);
 				if (l != null && l.size() > 0) {
 					return (ICInformationFolder)l.get(0);
 				} else { // autocreates locleFolders
@@ -77,7 +77,7 @@ public class FolderBlockBusiness {
 
 	public List getInstanceCategories(int icObjectInstanceId) {
 		try {
-			List l = EntityFinder.findRelated(((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceId), com.idega.core.data.ICInformationCategoryBMPBean.getStaticInstance(ICInformationCategory.class));
+			List l = EntityFinder.findRelated(((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceId), com.idega.core.category.data.ICInformationCategoryBMPBean.getStaticInstance(ICInformationCategory.class));
 			return l;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -94,7 +94,7 @@ public class FolderBlockBusiness {
 	}
 
 	private ICInformationFolder createICInformationFolder(String name, String description, String type, int ICObjectId, int parentId, int localeId, int ownerGroup, int relatedInstanceId) throws SQLException {
-		ICInformationFolder folder = ((com.idega.core.data.ICInformationFolderHome)com.idega.data.IDOLookup.getHomeLegacy(ICInformationFolder.class)).createLegacy();
+		ICInformationFolder folder = ((com.idega.core.category.data.ICInformationFolderHome)com.idega.data.IDOLookup.getHomeLegacy(ICInformationFolder.class)).createLegacy();
 		if (name != null) {
 			folder.setName(name);
 		}

@@ -10,10 +10,12 @@ package com.idega.util.reflect;
  */
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import com.idega.util.caching.CacheMap;
+import com.idega.util.refactor.RefactorClassRegistry;
 public class MethodFinder
 {
 	static final String separator = ":";
@@ -85,7 +87,7 @@ public class MethodFinder
 			{
 				String[] idArray = getIdentifierAsArray(methodIdentifier);
 				Class declaringClass = getDeclaringClass(idArray);
-				m = getMethod(methodIdentifier, declaringClass, idArray);
+				m = getMethod(declaringClass, idArray);
 				putMethodInGlobalCache(methodIdentifier, m);
 			}
 			return m;
@@ -101,15 +103,71 @@ public class MethodFinder
 		Method m = getMethodFromClassCache(declaringClass,methodIdentifier);
 		if(m==null){
 			String[] idArray = getIdentifierAsArray(methodIdentifier);
-			m = getMethod(methodIdentifier, declaringClass, idArray);
+			m = getMethod(declaringClass, idArray);
 			putMethodInClassCache(declaringClass,methodIdentifier,m);
 		}
 		return m;
 	}
-	private Method getMethod(String methodIdentifier, Class declaringClass, String[] idArray)
+	
+	
+	/**
+	 * Does method finding and tries to correct any refactored class types
+	 * @param methodIdentifier
+	 * @param declaringClass
+	 * @param idArray
+	 * @return
+	 */
+	private Method getMethod(Class declaringClass, String[] idArray)
 	{
-		try
-		{
+		try{
+			return findRealMethod(declaringClass,idArray);
+		}
+		catch(Throwable nsme){
+			RefactorClassRegistry registry = RefactorClassRegistry.getInstance();
+			Map refactoredClassNames = registry.getRefactoredClassNames();
+			Iterator iterator = refactoredClassNames.keySet().iterator();
+			while (iterator.hasNext())
+			{
+				String oldClassName = (String) iterator.next();
+				String newClassName = (String)refactoredClassNames.get(oldClassName);
+				String[] newIdArray = new String[idArray.length];
+				for (int i = 0; i < idArray.length; i++)
+				{
+					String str = idArray[i];
+					if(str.equals(oldClassName)){
+						newIdArray[i]=newClassName;
+					}
+					else{
+						newIdArray[i]=idArray[i];
+					}
+				}
+				try{
+					return findRealMethod(declaringClass,newIdArray);
+				}
+				catch(ClassNotFoundException cnfe){
+					System.err.println("MethodFinder.getMethod() Error finding method with parameter of type : "+cnfe.getMessage());
+				}
+				catch(Throwable nsme2){
+					System.err.println("MethodFinder.getMethod() Error finding method, message: "+nsme2.getMessage());
+				}
+				
+			}
+			throw new NoSuchMethodError(nsme.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Does the Real method finding
+	 * @param methodIdentifier
+	 * @param declaringClass
+	 * @param idArray
+	 * @return
+	 */
+	private Method findRealMethod(Class declaringClass, String[] idArray) throws ClassNotFoundException
+	{
+		//try
+		//{
 			//System.out.println("Declaring class: "+c.getName());
 			Method[] methods = getMethods(declaringClass);
 			for (int i = 0; i < methods.length; i++)
@@ -158,10 +216,10 @@ public class MethodFinder
 					}
 				}
 			}
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
+		//} catch (ClassNotFoundException e)
+		//{
+		//	e.printStackTrace();
+		//}
 		return null;
 	}
 	public String getMethodIdentifierWithoutDeclaringClass(Method method)

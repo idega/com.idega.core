@@ -655,7 +655,9 @@ public class EntityControl {
 	}
 	private static String createMiddleTableString(IDOEntity entity1, IDOEntity entity2) {
 		String tableToSelectFrom = "";
-		tableToSelectFrom = StringHandler.concatAlphabetically(entity1.getEntityDefinition().getSQLTableName(), entity2.getEntityDefinition().getSQLTableName(), "_");
+		String tableName1=entity1.getEntityDefinition().getSQLTableName().toUpperCase();
+		String tableName2=entity2.getEntityDefinition().getSQLTableName().toUpperCase();
+		tableToSelectFrom = StringHandler.concatAlphabetically(tableName1,tableName2, "_");
 		return tableToSelectFrom;
 	}
 	protected static String getNameOfMiddleTable(IDOEntity entity1, IDOEntity entity2) {

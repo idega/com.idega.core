@@ -3,13 +3,13 @@ package com.idega.user.data;
 import java.sql.Timestamp;
 
 
-public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode,com.idega.data.MetaDataCapable
+public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable
 {
- public void addAddress(com.idega.core.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
- public void addEmail(com.idega.core.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
+ public void addAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
+ public void addEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
  public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
  public void addGroup(int p0)throws javax.ejb.EJBException;
- public void addPhone(com.idega.core.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
+ public void addPhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
  public void addRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
  public void addRelation(com.idega.user.data.Group p0,com.idega.user.data.GroupRelationType p1)throws javax.ejb.CreateException;
  public void addRelation(int p0,com.idega.user.data.GroupRelationType p1)throws javax.ejb.CreateException;
@@ -21,7 +21,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public int getAliasID();
  public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;
  public boolean getAllowsChildren();
- public com.idega.core.ICTreeNode getChildAtIndex(int p0);
+ public com.idega.core.data.ICTreeNode getChildAtIndex(int p0);
  public int getChildCount();
  public java.util.List getChildGroups()throws javax.ejb.EJBException;
  public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
@@ -34,16 +34,16 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public java.lang.String getGroupTypeDescription();
  public java.lang.String getGroupTypeKey();
  public java.lang.String getGroupTypeValue();
- public com.idega.builder.data.IBPage getHomePage();
+ public com.idega.core.builder.data.ICPage getHomePage();
  public int getHomePageID();
+ public int getIndex(com.idega.core.data.ICTreeNode p0);
  public java.lang.String getHomePageURL();
- public int getIndex(com.idega.core.ICTreeNode p0);
  public java.lang.String getName();
  public int getNodeID();
  public java.lang.String getNodeName();
  public java.lang.String getNodeName(java.util.Locale p0);
  public java.util.List getParentGroups()throws javax.ejb.EJBException;
- public com.idega.core.ICTreeNode getParentNode();
+ public com.idega.core.data.ICTreeNode getParentNode();
  public java.util.Collection getPhones();
  public java.util.Collection getRelatedBy(com.idega.user.data.GroupRelationType p0)throws javax.ejb.FinderException;
  public java.util.Collection getRelatedBy(java.lang.String p0)throws javax.ejb.FinderException;
@@ -71,7 +71,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setExtraInfo(java.lang.String p0);
  public void setGroupType(java.lang.String p0);
  public void setGroupType(com.idega.user.data.GroupType p0);
- public void setHomePage(com.idega.builder.data.IBPage p0);
+ public void setHomePage(com.idega.core.builder.data.ICPage p0);
  public void setHomePageID(int p0);
  public void setHomePageID(java.lang.Integer p0);
  public void setHomePageURL(java.lang.String p0);

@@ -3,10 +3,10 @@ package com.idega.idegaweb.block.presentation;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.core.business.InformationCategory;
-import com.idega.core.business.InformationFolder;
-import com.idega.core.data.ICLocale;
+import com.idega.core.category.data.InformationCategory;
+import com.idega.core.category.data.InformationFolder;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.localisation.data.ICLocale;
 import com.idega.idegaweb.block.business.FolderBlockBusiness;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;

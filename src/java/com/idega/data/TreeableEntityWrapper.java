@@ -12,8 +12,8 @@ import java.util.Locale;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.ICTreeNode;
-import com.idega.core.data.ICLocale;
+import com.idega.core.data.ICTreeNode;
+import com.idega.core.localisation.data.ICLocale;
 
 /**
  * Title:		TreeableEntityWrapper

@@ -5,8 +5,8 @@
 
 package com.idega.presentation.ui;
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
@@ -619,7 +619,7 @@ public class Form extends InterfaceObjectContainer {
 		this._submitToPage = ibPageID;
 	}
 
-	public void setPageToSubmitTo(IBPage page) {
+	public void setPageToSubmitTo(ICPage page) {
 		setPageToSubmitTo(((Integer)page.getPrimaryKey()).intValue());
 	}
 

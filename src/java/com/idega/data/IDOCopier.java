@@ -104,7 +104,7 @@ public class IDOCopier {
 			if (!isTableAlreadyCopied(info)) {
 				System.out.println("[idoCopier] Copying data for " + fromInstance.getClass().getName());
 				List l = null;
-				if (fromInstance instanceof com.idega.builder.data.IBPage) {
+				if (fromInstance instanceof com.idega.core.builder.data.ICPage) {
 					/**
 					*  @todo change - Shitty mix change this as soon as possible!!!
 					*

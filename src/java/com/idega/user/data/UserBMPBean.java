@@ -13,12 +13,12 @@ import java.util.StringTokenizer;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import com.idega.builder.data.IBPage;
-import com.idega.core.ICTreeNode;
-import com.idega.core.data.Address;
-import com.idega.core.data.Email;
-import com.idega.core.data.EmailBMPBean;
-import com.idega.core.data.Phone;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.data.ICTreeNode;
+import com.idega.core.location.data.Address;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.EmailBMPBean;
+import com.idega.core.contact.data.Phone;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositPrimaryKeyException;
@@ -83,7 +83,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
     addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
-		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.data.ICFile.class);
+		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.file.data.ICFile.class);
 		/**
 		 * For legacy compatabuility
 		 */
@@ -302,7 +302,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			return getGeneralGroup().getHomePageID();
 	}
 
-	public IBPage getHomePage() {
+	public ICPage getHomePage() {
 		return getGeneralGroup().getHomePage();
 	}
 	
@@ -484,7 +484,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
-	public void setHomePage(IBPage page)  {
+	public void setHomePage(ICPage page)  {
 		try{
 			Group group = getGeneralGroup();
 			group.setHomePage(page);

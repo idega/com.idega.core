@@ -11,15 +11,15 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.accesscontrol.data.PermissionGroupHome;
-import com.idega.core.business.UserGroupBusiness;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICObject;
+import com.idega.core.file.data.ICFile;
+import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.data.EntityFinder;
@@ -32,6 +32,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.user.data.Group;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
+import com.idega.util.reflect.FieldAccessor;
 
 
 
@@ -215,7 +216,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return isOwner(AccessController.CATEGORY_GROUP_ID, group.getPrimaryKey().toString(),iwc);
 	}
 
-  public boolean isOwner(IBPage page, IWUserContext iwc)throws Exception{
+  public boolean isOwner(ICPage page, IWUserContext iwc)throws Exception{
     return isOwner(AccessController.CATEGORY_PAGE_INSTANCE, Integer.toString(page.getID()),iwc);
   }
 
@@ -651,7 +652,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   private static ICObject getStaticPageICObject(){
     if(staticPageICObject == null){
       try {
-        staticPageICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getClassNameColumnName(),Page.class.getName()).get(0);
+        staticPageICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),Page.class.getName()).get(0);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -664,7 +665,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   private static ICObject getStaticFileICObject(){
     if(staticFileICObject == null){
       try {
-				staticFileICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.data.ICObjectBMPBean.getClassNameColumnName(),ICFile.class.getName()).get(0);
+				staticFileICObject = (ICObject)EntityFinder.findAllByColumn((ICObject)com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),ICFile.class.getName()).get(0);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -1084,8 +1085,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     //filter begin
     String[] groupsToReturn = new String[2];
     groupsToReturn[0] = com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticPermissionGroupInstance().getGroupTypeValue();
-    groupsToReturn[1] = com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean.getStaticGroupInstance().getGroupTypeValue();
-/*
+    //TODO: This is a hack, implement better
+	try
+	{
+		//groupsToReturn[1] = com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean.getStaticGroupInstance().getGroupTypeValue();
+		groupsToReturn[1] = FieldAccessor.getInstance().getStaticStringFieldValue(Class.forName("com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean"),"GROUP_TYPE");
+	}
+	catch (IllegalArgumentException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	catch (IllegalAccessException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	catch (NoSuchFieldException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	catch (ClassNotFoundException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    /*
     String[] groupsToReturn = new String[1];
     groupsToReturn[0] = com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticPermissionGroupInstance().getGroupTypeValue();
 */
@@ -1412,7 +1438,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public void setCurrentUserAsOwner(IBPage page, IWUserContext iwc)throws Exception {
+  public void setCurrentUserAsOwner(ICPage page, IWUserContext iwc)throws Exception {
     User user = iwc.getUser();
 //    System.out.println("User = "+ user);
     if(user != null){
@@ -1437,7 +1463,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
    */
-  public void setAsOwner(IBPage page, int groupId, IWUserContext iwc)throws Exception {
+  public void setAsOwner(ICPage page, int groupId, IWUserContext iwc)throws Exception {
     setPermission(AccessController.CATEGORY_PAGE_INSTANCE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
   }
 

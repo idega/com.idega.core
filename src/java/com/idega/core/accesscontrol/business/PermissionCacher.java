@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.idega.core.accesscontrol.data.ICPermission;
-import com.idega.core.business.ICJspHandler;
-import com.idega.core.data.ICObject;
+import com.idega.core.component.data.ICObject;
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.Page;
@@ -258,7 +257,8 @@ public class PermissionCacher {
 		    //identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
 		} 
 		else if(permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)){
-		    identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(iwc));
+		    //identifier = Integer.toString(com.idega.builder.business.IBJspHandler.getJspPageInstanceID(iwc));
+			throw new UnsupportedOperationException("PermissionCacher : PermissinonType: "+PERMISSION_MAP_JSP_PAGE+" is not supported");
 		}
 		else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
 			identifier = ((Group) obj).getPrimaryKey().toString();

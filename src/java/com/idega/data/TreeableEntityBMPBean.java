@@ -1,7 +1,7 @@
 package com.idega.data;
 
-import com.idega.core.ICTreeNode;
 import com.idega.core.business.ICTreeNodeLeafComparator;
+import com.idega.core.data.ICTreeNode;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Locale;
  * @version 1.0
  */
 
-public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity implements com.idega.data.TreeableEntity, IDOLegacyEntity, com.idega.core.ICTreeNode {
+public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity implements com.idega.data.TreeableEntity, IDOLegacyEntity, com.idega.core.data.ICTreeNode {
 
 	protected boolean _sortLeafs = false;
 	protected boolean _leafsFirst = false;

@@ -12,14 +12,14 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
-import com.idega.core.ICTreeNode;
-import com.idega.core.data.Address;
-import com.idega.core.data.Email;
-import com.idega.core.data.ICNetwork;
-import com.idega.core.data.ICProtocol;
-import com.idega.core.data.Phone;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.data.ICTreeNode;
+import com.idega.core.location.data.Address;
+import com.idega.core.net.data.ICNetwork;
+import com.idega.core.net.data.ICProtocol;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -71,7 +71,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(getGroupDescriptionColumnName(), "Description", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(), "Extra information", true, true, "java.lang.String");
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
-		addAttribute(getColumnNameHomePageID(), "Home page ID", true, true, Integer.class, "many-to-one", IBPage.class);
+		addAttribute(getColumnNameHomePageID(), "Home page ID", true, true, Integer.class, "many-to-one", ICPage.class);
 		setNullable(getColumnNameHomePageID(), true);
 		addAttribute(COLUMN_SHORT_NAME, "Short name", true, true, String.class);
 		addAttribute(COLUMN_ABBREVATION, "Abbrevation", true, true, String.class);
@@ -231,8 +231,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public int getHomePageID() {
 		return getIntColumnValue(getColumnNameHomePageID());
 	}
-	public IBPage getHomePage() {
-		return (IBPage)getColumnValue(getColumnNameHomePageID());
+	public ICPage getHomePage() {
+		return (ICPage)getColumnValue(getColumnNameHomePageID());
 	}
 	public void setHomePageID(int pageID) {
 		setColumn(getColumnNameHomePageID(), pageID);
@@ -240,7 +240,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void setHomePageID(Integer pageID) {
 		setColumn(getColumnNameHomePageID(), pageID);
 	}
-	public void setHomePage(IBPage page) {
+	public void setHomePage(ICPage page) {
 		setHomePageID((Integer)page.getPrimaryKey());
 	}
 
@@ -515,7 +515,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 
-	public Collection ejbFindTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes) throws FinderException {
+	public Collection ejbFindTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes) throws FinderException {
 		String relationsSQL = this.getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(((Integer)containingDomain.getPrimaryKey()).intValue(), getGroupDomainRelationTypeHome().getTopNodeRelationTypeString());
 
 		if (groupTypes != null && !groupTypes.isEmpty()) {
@@ -541,7 +541,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			return ListUtil.getEmptyList();
 		}
 	}
-	public int ejbHomeGetNumberOfTopNodeGroupsContained(IBDomain containingDomain, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
 		String relationsSQL = getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(((Integer)containingDomain.getPrimaryKey()).intValue(), getGroupDomainRelationTypeHome().getTopNodeRelationTypeString());
 
 		if (groupTypes != null && !groupTypes.isEmpty()) {
@@ -568,7 +568,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	public int ejbHomeGetNumberOfTopNodeVisibleGroupsContained(IBDomain containingDomain) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException, IDOException {
 		String relatedSQL = getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(((Integer)containingDomain.getPrimaryKey()).intValue(), getGroupDomainRelationTypeHome().getTopNodeRelationTypeString());
 		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
 
@@ -583,7 +583,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 
-	public Collection ejbFindTopNodeVisibleGroupsContained(IBDomain containingDomain) throws FinderException {
+	public Collection ejbFindTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException {
 		String relationsSQL = this.getGroupDomainRelationHome().getFindRelatedGroupIdsInGroupDomainRelationshipsContainingSQL(((Integer)containingDomain.getPrimaryKey()).intValue(), getGroupDomainRelationTypeHome().getTopNodeRelationTypeString());
 		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
 

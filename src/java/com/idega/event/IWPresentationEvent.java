@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.core.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;

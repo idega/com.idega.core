@@ -17,9 +17,9 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.business.AddressBusiness;
-import com.idega.core.data.Country;
-import com.idega.core.data.CountryHome;
+import com.idega.core.location.business.AddressBusiness;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 //import com.idega.core.localisation.business.ICLocaleBusiness;

@@ -4,7 +4,8 @@
 */
 package com.idega.presentation.app;
 import java.util.List;
-import com.idega.core.data.ICObject;
+import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -63,7 +64,7 @@ public class IWApplication extends FrameSet
 	}
 	public static PresentationObject getIWApplicationIcon(Class iwApplicationClass, IWContext iwc)
 	{
-		ICObject obj = com.idega.core.data.ICObjectBMPBean.getICObject(iwApplicationClass.getName());
+		ICObject obj = ICObjectBMPBean.getICObject(iwApplicationClass.getName());
 		return getIWApplicationIcon(obj, iwApplicationClass, iwc);
 	}
 	public static PresentationObject getIWApplicationIcon(ICObject obj, IWContext iwc)
@@ -136,8 +137,8 @@ public class IWApplication extends FrameSet
 		{
 			return EntityFinder.findAllByColumn(
 				com.idega.data.GenericEntity.getStaticInstance(ICObject.class),
-				com.idega.core.data.ICObjectBMPBean.getObjectTypeColumnName(),
-				com.idega.core.data.ICObjectBMPBean.COMPONENT_TYPE_APPLICATION);
+				ICObjectBMPBean.getObjectTypeColumnName(),
+				ICObjectBMPBean.COMPONENT_TYPE_APPLICATION);
 		}
 		catch (Exception e)
 		{

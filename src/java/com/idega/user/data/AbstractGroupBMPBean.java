@@ -10,7 +10,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICTreeNode;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOCompositPrimaryKeyException;
 import com.idega.data.IDOEntity;

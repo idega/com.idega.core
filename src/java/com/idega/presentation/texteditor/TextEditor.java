@@ -103,8 +103,8 @@ public class TextEditor extends PresentationObject {
         buf.append("<script language=\"JavaScript1.2\">");
         buf.append("new DHTMLEdit(\"").append(inputName).append("\",").append(width).append(",").append(height)
             .append(",\"\",").append(menu).append(",\"").append(color).append("\"")
-            .append(",\"").append(Window.getWindowURL(com.idega.builder.presentation.IBColorChooserWindow.class,iwc)+"&from_editor=true").append("\"")
-            .append(",\"").append(Window.getWindowURL(com.idega.builder.presentation.IBPageChooserWindow.class,iwc)+"&from_editor=true").append("\");");
+            .append(",\"").append(Window.getWindowURL(Class.forName("com.idega.builder.presentation.IBColorChooserWindow"),iwc)+"&from_editor=true").append("\"")
+            .append(",\"").append(Window.getWindowURL(Class.forName("com.idega.builder.presentation.IBPageChooserWindow"),iwc)+"&from_editor=true").append("\");");
 
         buf.append("</script>");
 

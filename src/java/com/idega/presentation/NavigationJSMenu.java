@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-import com.idega.builder.data.IBPage;
-import com.idega.core.ICTreeNode;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.data.ICTreeNode;
 
 /**
  * Title:
@@ -149,7 +149,7 @@ public class NavigationJSMenu extends Block {
 		menuYPosition.put(new Integer(menu), String.valueOf(yPosition));
 	}
 	
-	public void setRootNode(IBPage page) {
+	public void setRootNode(ICPage page) {
 		rootNode = page.getID();
 	}
 

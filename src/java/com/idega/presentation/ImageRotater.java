@@ -3,10 +3,8 @@ package com.idega.presentation;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.util.Iterator;
-import com.idega.core.data.ICFile;
-import com.idega.presentation.Block;
-import com.idega.presentation.Image;
-import com.idega.presentation.IWContext;
+
+import com.idega.core.file.data.ICFile;
 
 public class ImageRotater extends Block {
 

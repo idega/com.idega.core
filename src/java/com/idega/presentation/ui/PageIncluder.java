@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -35,7 +35,7 @@ public class PageIncluder extends PresentationObject implements Index{
   private String pageIncluderPrefix = null;
   private String _label = null;
   private String _sendToLabel = null;
-  private IBPage _sendToPage = null;
+  private ICPage _sendToPage = null;
   private String _sendToPageIfSet = null;
 
   private String sessionId = null;
@@ -482,11 +482,11 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToLabel;
   }
 
-  public void setSendToPage(IBPage page) {
+  public void setSendToPage(ICPage page) {
     _sendToPage = page;
   }
 
-  public IBPage getSendToPage() {
+  public ICPage getSendToPage() {
     return _sendToPage;
   }
 
@@ -498,7 +498,7 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToPageIfSet;
   }
 
-  public void forwardToIBPage(Page fromPage ,IBPage page, IWContext iwc) throws Exception{
+  public void forwardToIBPage(Page fromPage ,ICPage page, IWContext iwc) throws Exception{
     StringBuffer URL = new StringBuffer();
 	BuilderService bservice = getBuilderService(iwc);
     URL.append(bservice.getPageURI(((Integer)page.getPrimaryKeyValue()).intValue()));

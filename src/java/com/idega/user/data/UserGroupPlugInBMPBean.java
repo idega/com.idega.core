@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import com.idega.data.*;
+import com.idega.core.component.data.*;
 import com.idega.core.data.*;
 
 import java.rmi.RemoteException;

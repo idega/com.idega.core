@@ -30,7 +30,7 @@ public final class ICFileSystemFactory
 	 * @return the ICFileSystem instance
 	 */
 	public static ICFileSystem getFileSystem(IWApplicationContext iwac)throws RemoteException{
-		Class serviceClass=null;
+		/*Class serviceClass=null;
 		try
 		{
 			//TODO: Remove hardcoding of serviceclass:
@@ -39,8 +39,8 @@ public final class ICFileSystemFactory
 		catch (ClassNotFoundException e)
 		{
 			throw new RemoteException("ICFileSystemFactory.getFileSystem:"+e.getClass()+":"+e.getMessage());
-		}
-		return (ICFileSystem)IBOLookup.getServiceInstance(iwac,serviceClass);
+		}*/
+		return (ICFileSystem)IBOLookup.getServiceInstance(iwac,ICFileSystem.class);
 	}
 	
 }

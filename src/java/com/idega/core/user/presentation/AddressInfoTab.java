@@ -3,7 +3,7 @@ package com.idega.core.user.presentation;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import com.idega.core.data.Address;
+import com.idega.core.location.data.Address;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;

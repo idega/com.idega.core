@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.5 2002/12/11 18:59:05 palli Exp $
+ * $Id: XMLElement.java,v 1.6 2003/10/03 01:42:00 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -273,8 +273,18 @@ public class XMLElement {
     if (_element != null) {
       return(_element.removeChildren());
     }
-
     return(false);
+  }
+  
+  public boolean removeParent() {
+	if (_element != null) {
+		Element parent = _element.getParent();
+		if(parent!=null){
+			return parent.removeChild(_element.getName());
+		}
+		return true;
+	}
+	return(false);
   }
 
   public XMLElement setChildren(List children) {

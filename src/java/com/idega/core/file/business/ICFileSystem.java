@@ -6,7 +6,7 @@ package com.idega.core.file.business;
 import java.rmi.RemoteException;
 
 import com.idega.business.IBOService;
-import com.idega.core.data.ICFile;
+import com.idega.core.file.data.ICFile;
 
 /**
  * FileSystem: This is the interface to the file system in idegaWeb.
@@ -17,6 +17,12 @@ import com.idega.core.data.ICFile;
  */
 public interface ICFileSystem extends IBOService
 {
+	/**
+		 * Initializes the filesystem correctly
+		 * @throws RemoteException
+		 */
+	public void initialize()throws RemoteException;
+	
 	/**
 	 * Get the URI to a file on the webserver.
 	 * @param file The file to get the url to

@@ -22,8 +22,9 @@ import java.util.Vector;
 
 import javax.servlet.ServletContext;
 
-import com.idega.block.media.business.MediaBundleStarter;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
@@ -792,10 +793,14 @@ public class IWMainApplication{//implements ServletContext{
     return DEBUG_FLAG;
   }
 
-  public void createMediaTables(){
-    MediaBundleStarter starter = new MediaBundleStarter();
-    starter.start(this);
-
+  public void startFileSystem(){
+  	try{
+  		ICFileSystem fs = ICFileSystemFactory.getFileSystem(this.getIWApplicationContext());
+		fs.initialize();
+  	}
+  	catch(Exception e){
+  		System.err.println("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
+  	}
   }
 
   public void sendStartupMessage(String message){

@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.user.business.UserBusiness;
+import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.presentation.IWContext;

@@ -62,7 +62,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  */
 
  
- public void addGroupUnderDomain(com.idega.builder.data.IBDomain p0,com.idega.user.data.Group p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public void addGroupUnderDomain(com.idega.core.builder.data.ICDomain p0,com.idega.user.data.Group p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  //public java.util.Collection getRegisteredGroups(com.idega.presentation.IWContext p0) throws java.rmi.RemoteException;
  public java.util.Collection getUserGroupPluginsForUser(com.idega.user.data.User p0) throws java.rmi.RemoteException;
  //public java.util.Collection getGroups(java.lang.String[] p0,boolean p1,com.idega.presentation.IWContext p2)throws java.lang.Exception, java.rmi.RemoteException;
@@ -121,18 +121,19 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
  */
   public Group createGroup(String name,String description)throws CreateException,RemoteException;
 
-  public com.idega.core.data.Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws javax.ejb.CreateException,java.rmi.RemoteException;
+  public com.idega.core.location.data.Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws javax.ejb.CreateException,java.rmi.RemoteException;
 
-  public com.idega.core.data.Address getGroupMainAddress(Group group) throws RemoteException;
+  public com.idega.core.location.data.Address getGroupMainAddress(Group group) throws RemoteException;
   
-  public  com.idega.core.data.Phone[] getGroupPhones(Group group)throws RemoteException;
-  public com.idega.core.data.Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException;
+
+  public  com.idega.core.contact.data.Phone[] getGroupPhones(Group group)throws RemoteException;
+  public com.idega.core.contact.data.Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException;
   
-  public com.idega.core.data.Email getGroupEmail(Group group)throws NoEmailFoundException;
+  public com.idega.core.contact.data.Email getGroupEmail(Group group)throws NoEmailFoundException;
   
   public void updateGroupMail(Group group, String email) throws CreateException,RemoteException;
   
-  public com.idega.core.data.PhoneHome getPhoneHome();
+  public com.idega.core.contact.data.PhoneHome getPhoneHome();
   
   public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException;
 

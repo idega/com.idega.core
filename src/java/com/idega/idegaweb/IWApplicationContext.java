@@ -1,6 +1,6 @@
 package com.idega.idegaweb;
 
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 
 /**
  * Title:        idegaclasses
@@ -22,6 +22,6 @@ public interface IWApplicationContext extends java.io.Serializable{
   /**
    * Gets the Domain which this idegaWeb Application is running under
    */
-  public IBDomain getDomain();
+  public ICDomain getDomain();
 
 }

@@ -68,6 +68,7 @@ public class IWCoreServlet extends HttpServlet
 	protected void unSynchronizedService(ServletRequest _req, ServletResponse _res)
 	throws ServletException, IOException{
 				ThreadContext context = getThreadContext();
+		//Thread ct = Thread.currentThread();
 		context.putThread(Thread.currentThread());
 		super.service(_req,_res);
 		context.releaseThread(Thread.currentThread());

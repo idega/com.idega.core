@@ -70,6 +70,37 @@ public class MethodInvoker {
 	return invokeStaticMethodWithNoParameters(objectClass,methodName);
   }
   /**
+   * Invoke the static method of class of name objectClassName of name methodName, where that method does only take in one parameter that may not be null
+   * @param objectClassName The fully qualified class name to invoke a method in.
+   * @param methodName the name of the method to invoke (without parentheses)
+   * @return the return of the method invokation
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   * @throws ClassNotFoundException
+   */
+  public Object invokeStaticMethodWithOneParameter(String objectClassName,String methodName,Object argument)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException{
+	Class objectClass = Class.forName(objectClassName);
+	Method method = MethodFinder.getInstance().getMethodWithNameAndOneParameter(objectClass,methodName,argument.getClass());
+	Object[] params = {argument};
+	return this.invokeStaticMethod(method,params);
+  }
+  
+  /**
+   * Invoke the static method of class of name objectClassName of name methodName, where that method does only take in one parameter that may not be null
+   * @param objectClassName The fully qualified class name to invoke a method in.
+   * @param methodName the name of the method to invoke (without parentheses)
+   * @return the return of the method invokation
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   * @throws ClassNotFoundException
+   */
+  public Object invokeStaticMethodWithOneIntParameter(String objectClassName,String methodName,int argument)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException{
+	return invokeStaticMethodWithOneParameter(objectClassName,methodName,new Integer(argument));
+  }
+  
+  /**
    * Invoke a method of object instance of name methodName, where that method does take in one argument of type int
    * @param instance The instance of the object to invoke a method in.
    * @param methodName the name of the method to invoke (without parentheses)

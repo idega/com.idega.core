@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.16 2003/07/21 10:46:48 aron Exp $
+ * $Id: IWPropertyList.java,v 1.17 2003/10/03 01:41:58 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -37,6 +37,7 @@ public class IWPropertyList {
 	private XMLElement parentElement;
 
 	private XMLElement mapElement;
+	static String DEFAULT_FILE_ENDING=".pxml";
 	private static String rootElementTag = "pxml";
 	static String dictTag = "dict";
 	static String mapTag = "map";
@@ -53,7 +54,20 @@ public class IWPropertyList {
 	}
 
 	IWPropertyList(XMLElement parentElement) {
+		setParentElement(parentElement);
+	}
+
+	/**
+	 * @param parentElement
+	 */
+	void setParentElement(XMLElement parentElement)
+	{
 		this.parentElement = parentElement;
+	}
+	void setMapElement(XMLElement mapElement){
+		getParentElement().removeContent(this.mapElement);
+		this.mapElement=mapElement;
+		this.getParentElement().addContent(mapElement);
 	}
 
 	public IWPropertyList(String fileNameWithPath) {
@@ -110,12 +124,12 @@ public class IWPropertyList {
 					mapElement = new XMLElement(mapTag);
 					mapElement.setChildren(dictElement.getChildren());
 					parentElement.removeContent(dictElement);
-					parentElement.addContent(mapElement);
+					setMapElement(mapElement);
 				}
 			}
 			if (mapElement == null) {
 				mapElement = new XMLElement(mapTag);
-				parentElement.addContent(mapElement);
+				setMapElement(mapElement);
 			}
 		}
 		return mapElement;
@@ -412,6 +426,18 @@ public class IWPropertyList {
 			e.printStackTrace();
 		}
 	}
+
+	public void delete() {
+		try {
+			String fileName = xmlFile.getName();
+			File XMLFile = new File(xmlFile.getParentFile(), fileName);
+			XMLFile.delete();
+		}
+		catch (Exception io) {
+			System.err.println("Error deleting " + xmlFile.getAbsolutePath() + xmlFile.getName() + " " + io.getMessage());
+		}
+	}
+			
 
 	public void store(OutputStream stream) {
 		if (xmlDocument != null) {

@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICTreeNode;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;

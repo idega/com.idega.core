@@ -1,6 +1,6 @@
 package com.idega.presentation.event;
 
-import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.NoSuchEventException;
 import com.idega.presentation.IWContext;

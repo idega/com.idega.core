@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import com.idega.core.data.ICLocale;
-import com.idega.core.data.ICLocaleHome;
+import com.idega.core.localisation.data.ICLocale;
+import com.idega.core.localisation.data.ICLocaleHome;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOFinderException;
 import com.idega.idegaweb.IWMainApplication;
@@ -43,7 +43,7 @@ public class ICLocaleBusiness {
 
   private static List listOfICLocalesInUse(){
     try {
-     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
+     return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
     }
     catch (IDOFinderException ex) {
       ex.printStackTrace();
@@ -54,9 +54,9 @@ public class ICLocaleBusiness {
   private static List listOfICLocales(boolean inUse){
     try {
       if(inUse)
-        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
+        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
       else
-        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,com.idega.core.data.ICLocaleBMPBean.getColumnNameInUse(),"N");
+        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"N");
     }
     catch (IDOFinderException ex) {
       ex.printStackTrace();
@@ -70,11 +70,11 @@ public class ICLocaleBusiness {
     if(L == null){
       try {
         Vector V = new Vector();
-        ICLocale is= ((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
+        ICLocale is= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
         is.setLocale("is_IS");
         is.insert();
 
-        ICLocale en= ((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
+        ICLocale en= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy();
         en.setLocale("en");
         en.insert();
         V.add(is);

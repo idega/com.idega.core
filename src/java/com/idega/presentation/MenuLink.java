@@ -1,8 +1,8 @@
 package com.idega.presentation;
 
 import com.idega.presentation.text.Link;
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
 
 /**
  * Title:
@@ -51,7 +51,7 @@ public class MenuLink extends Block {
     stateImage = image;
   }
 
-  public void setPage(IBPage page){
+  public void setPage(ICPage page){
     pageId = page.getID();
   }
 

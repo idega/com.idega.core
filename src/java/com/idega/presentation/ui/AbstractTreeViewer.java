@@ -7,7 +7,7 @@ import com.idega.presentation.event.TreeViewerEvent;
 import java.util.*;
 import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
-import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.text.Text;
 
 /**

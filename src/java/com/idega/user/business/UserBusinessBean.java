@@ -19,9 +19,6 @@ import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
-import com.idega.builder.data.IBPageHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -29,18 +26,21 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.business.AddressBusiness;
-import com.idega.core.data.Address;
-import com.idega.core.data.AddressHome;
-import com.idega.core.data.AddressType;
-import com.idega.core.data.Country;
-import com.idega.core.data.CountryHome;
-import com.idega.core.data.Email;
-import com.idega.core.data.EmailHome;
-import com.idega.core.data.Phone;
-import com.idega.core.data.PhoneHome;
-import com.idega.core.data.PostalCode;
-import com.idega.core.data.PostalCodeHome;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.builder.data.ICPageHome;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.EmailHome;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.location.business.AddressBusiness;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.AddressType;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
+import com.idega.core.location.data.PostalCode;
+import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
@@ -306,7 +306,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 
-  public void setUserUnderDomain(IBDomain domain, User user, GroupDomainRelationType type) throws CreateException,RemoteException{
+  public void setUserUnderDomain(ICDomain domain, User user, GroupDomainRelationType type) throws CreateException,RemoteException{
     GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
     relation.setDomain(domain);
     relation.setRelatedUser(user);
@@ -1370,7 +1370,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * if none is set it checks on the homepage set for the users primary group, 
 	 * else it throws a javax.ejb.FinderException
 	 **/
-	public com.idega.builder.data.IBPage getHomePageForUser(User user)throws javax.ejb.FinderException{
+	public com.idega.core.builder.data.ICPage getHomePageForUser(User user)throws javax.ejb.FinderException{
 		try{
 			int homeID = getHomePageIDForUser(user);
 			if(homeID!=-1){
@@ -1385,8 +1385,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 	
-	protected IBPageHome getIBPageHome()throws java.rmi.RemoteException{
-		return (IBPageHome)com.idega.data.IDOLookup.getHome(IBPage.class);	
+	protected ICPageHome getIBPageHome()throws java.rmi.RemoteException{
+		return (ICPageHome)com.idega.data.IDOLookup.getHome(ICPage.class);	
 	}
 	
 	public AddressBusiness getAddressBusiness() throws RemoteException{

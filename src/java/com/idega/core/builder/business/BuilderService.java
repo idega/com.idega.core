@@ -5,10 +5,10 @@ package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
 import com.idega.business.IBOService;
-import com.idega.core.ICTreeNode;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.IWContext;
 
 /**
@@ -24,7 +24,7 @@ public interface BuilderService extends IBOService
 	 * @return IBDomain representing the current application
 	 * @throws RemoteException
 	 */
-	public IBDomain getCurrentDomain()throws RemoteException;
+	public ICDomain getCurrentDomain()throws RemoteException;
 	/**
 	 * Gets the URI to a page on this webserver
 	 * @param pageID an id for a page to get the URI to
@@ -43,7 +43,7 @@ public interface BuilderService extends IBOService
 	 * @return the IBPage for the root page
 	 * @throws RemoteException
 	 */		
-	public IBPage getRootPage()throws RemoteException;
+	public ICPage getRootPage()throws RemoteException;
 	/**
 	 * Gets the id for the requested page
 	 * @param iwc the IWContext of the request
@@ -57,7 +57,7 @@ public interface BuilderService extends IBOService
 	 * @return the IBPage for the currently requested page
 	 * @throws RemoteException
 	 */	
-	public IBPage getCurrentPage(IWContext iwc)throws RemoteException;
+	public ICPage getCurrentPage(IWContext iwc)throws RemoteException;
 	/**
 	 * Gets the Builder page tree starting from page with id startNodeId
 	 * @param startNodeId Id of the IBPage to start traversing down the tree

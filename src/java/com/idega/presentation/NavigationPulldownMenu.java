@@ -3,9 +3,9 @@ package com.idega.presentation;
 import java.util.Iterator;
 import java.util.Vector;
 
-import com.idega.builder.data.IBPage;
-import com.idega.core.ICTreeNode;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
@@ -133,7 +133,7 @@ public class NavigationPulldownMenu extends Block {
     }
   }
 
-  public  void setRootNode(IBPage page){
+  public  void setRootNode(ICPage page){
     rootNode = page.getID();
   }
 

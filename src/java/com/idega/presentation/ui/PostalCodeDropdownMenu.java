@@ -3,8 +3,9 @@ package com.idega.presentation.ui;
 import java.rmi.RemoteException;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.business.AddressBusiness;
 import com.idega.core.data.*;
+import com.idega.core.location.business.AddressBusiness;
+import com.idega.core.location.data.*;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import java.util.*;

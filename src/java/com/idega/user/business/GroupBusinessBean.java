@@ -17,21 +17,21 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.PermissionGroup;
-import com.idega.core.business.AddressBusiness;
-import com.idega.core.data.Address;
-import com.idega.core.data.AddressHome;
-import com.idega.core.data.AddressType;
-import com.idega.core.data.Country;
-import com.idega.core.data.CountryHome;
-import com.idega.core.data.Email;
-import com.idega.core.data.EmailHome;
-import com.idega.core.data.Phone;
-import com.idega.core.data.PhoneHome;
-import com.idega.core.data.PostalCode;
-import com.idega.core.data.PostalCodeHome;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.EmailHome;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.location.business.AddressBusiness;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.AddressType;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
+import com.idega.core.location.data.PostalCode;
+import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
@@ -1128,7 +1128,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
-  public void addGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
+  public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
     GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
     relation.setDomain(domain);
     relation.setRelatedGroup(group);

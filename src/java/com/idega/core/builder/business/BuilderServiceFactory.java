@@ -32,7 +32,7 @@ public final class BuilderServiceFactory
 	 * @return the BuilderService instance
 	 */
 	public static BuilderService getBuilderService(IWApplicationContext iwac) throws RemoteException{
-		Class serviceClass=null;
+		/*Class serviceClass=null;
 		try
 		{
 			//TODO: Remove hardcoding of serviceclass:
@@ -41,8 +41,8 @@ public final class BuilderServiceFactory
 		catch (ClassNotFoundException e)
 		{
 			throw new RemoteException("BuilderServiceFactory.getBuilderService:"+e.getClass()+":"+e.getMessage());
-		}
-		return (BuilderService)IBOLookup.getServiceInstance(iwac,serviceClass);
+		}*/
+		return (BuilderService)IBOLookup.getServiceInstance(iwac,BuilderService.class);
 	}
 	
 }

@@ -7,7 +7,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -43,7 +43,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
 
-    this.addManyToOneRelationship(DOMAIN_ID_COLUMN,"Domain",IBDomain.class);
+    this.addManyToOneRelationship(DOMAIN_ID_COLUMN,"Domain",ICDomain.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
     this.addAttribute(RELATIONSHIP_TYPE_COLUMN,"Type",true,true,String.class, 30, "many-to-one", GroupDomainRelationType.class);
     this.addAttribute(STATUS_COLUMN,"Status",String.class);
@@ -58,7 +58,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     return TABLE_NAME;
   }
 
-  public void setDomain(IBDomain domain){
+  public void setDomain(ICDomain domain){
     this.setColumn(DOMAIN_ID_COLUMN,domain);
   }
 
@@ -66,8 +66,8 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     this.setColumn(DOMAIN_ID_COLUMN,domainID);
   }
 
-  public IBDomain getDomain(){
-    return (IBDomain)getColumnValue(DOMAIN_ID_COLUMN);
+  public ICDomain getDomain(){
+    return (ICDomain)getColumnValue(DOMAIN_ID_COLUMN);
   }
 
   public void setRelatedGroup(Group group){
@@ -123,12 +123,12 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 
   /**Finders begin**/
 
-  public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain)throws FinderException{
+  public Collection ejbFindGroupsRelationshipsUnder(ICDomain domain)throws FinderException{
     //return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
     return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ (domain.getPrimaryKey().toString()) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
-  public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain, GroupDomainRelationType type)throws FinderException{
+  public Collection ejbFindGroupsRelationshipsUnder(ICDomain domain, GroupDomainRelationType type)throws FinderException{
     IDOQuery query = idoQuery();
     query.appendSelectAllFrom(getEntityName());
     query.appendWhere(RELATIONSHIP_TYPE_COLUMN);
@@ -146,7 +146,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   }
   
 
-  public Collection ejbFindDomainsRelationshipsContaining(IBDomain domain,Group relatedGroup)throws FinderException{
+  public Collection ejbFindDomainsRelationshipsContaining(ICDomain domain,Group relatedGroup)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+
       this.DOMAIN_ID_COLUMN+"="+ domain.getPrimaryKey().toString() +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }

@@ -1,6 +1,6 @@
 package com.idega.util.xml;
 
-import com.idega.core.data.ICFile;
+import com.idega.core.file.data.ICFile;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.71 2003/09/17 09:06:42 palli Exp $
+ * $Id: PresentationObject.java,v 1.72 2003/10/03 01:41:55 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.data.ICObject;
-import com.idega.core.data.ICObjectHome;
-import com.idega.core.data.ICObjectInstance;
-import com.idega.core.data.ICObjectInstanceHome;
+import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectHome;
+import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.event.IWActionListener;
@@ -864,7 +864,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   public ICObjectInstance getICObjectInstance()throws SQLException{
     if(getICObjectInstanceID() != 0){
-      return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID());
+      return ((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID());
     } else {
       return null;
     }

@@ -2,10 +2,10 @@ package com.idega.core.accesscontrol.business;
 
 import java.util.List;
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.data.PermissionGroup;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICObject;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.component.data.ICObject;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.user.data.User;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.PresentationObject;
@@ -63,15 +63,15 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean isOwner(Object obj , IWUserContext iwc) throws Exception ;
   public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception;
 	public boolean isOwner(Group group, IWUserContext iwc)throws Exception;
-  public boolean isOwner(IBPage page, IWUserContext iwc)throws Exception;
+  public boolean isOwner(ICPage page, IWUserContext iwc)throws Exception;
   public boolean isOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception;
 
   public void setAsOwner(PresentationObject obj, int groupId, IWUserContext iwc) throws Exception ;
   public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception;
 	public void setAsOwner(Group group, int groupId, IWUserContext iwc)throws Exception;
-  public void setAsOwner(IBPage page, int groupId, IWUserContext iwc)throws Exception;
+  public void setAsOwner(ICPage page, int groupId, IWUserContext iwc)throws Exception;
   public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWUserContext iwc)throws Exception;
-  public void setCurrentUserAsOwner(IBPage page,IWUserContext iwc)throws Exception;
+  public void setCurrentUserAsOwner(ICPage page,IWUserContext iwc)throws Exception;
 
 
   public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception;

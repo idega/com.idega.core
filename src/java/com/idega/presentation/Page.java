@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.82 2003/09/18 11:32:25 laddi Exp $
+ *  $Id: Page.java,v 1.83 2003/10/03 01:41:55 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,13 +16,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWFrameBusiness;
-import com.idega.core.ICTreeNode;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.data.ICFile;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
@@ -1072,7 +1072,7 @@ public class Page extends PresentationObjectContainer {
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
 					String src = iwc.getApplication().getCoreBundle().getResourcesURL();
-					IBDomain d = iwc.getDomain();
+					ICDomain d = iwc.getDomain();
 
 					if (d.getURL() != null) {
 						if (src.startsWith("/")) {

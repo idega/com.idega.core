@@ -5,10 +5,10 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.data.ICInformationCategory;
-import com.idega.core.data.ICInformationCategoryTranslation;
-import com.idega.core.data.ICObjectInstance;
-import com.idega.core.data.ICObjectInstanceHome;
+import com.idega.core.category.data.ICInformationCategory;
+import com.idega.core.category.data.ICInformationCategoryTranslation;
+import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.presentation.ICLocalePresentation;
 import com.idega.data.IDOLookup;

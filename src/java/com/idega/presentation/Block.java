@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.idega.idegaweb.block.presentation.Builderaware;
-import com.idega.core.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;

@@ -22,14 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.data.ICObject;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.component.data.ICObject;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
 import com.idega.idegaweb.IWApplicationContext;
@@ -41,8 +41,8 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
-import com.idega.user.Converter;
 import com.idega.user.business.UserProperties;
+import com.idega.user.util.Converter;
 import com.idega.util.datastructures.HashtableMultivalued;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
@@ -944,11 +944,11 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return _clientIsHandHeld;
 	}
-	public IBDomain getDomain() {
+	public ICDomain getDomain() {
 		return getApplication().getIWApplicationContext().getDomain();
 	}
 	
-	public void forwardToIBPage(Page fromPage, IBPage page){
+	public void forwardToIBPage(Page fromPage, ICPage page){
 		forwardToIBPage(fromPage,((Integer) page.getPrimaryKeyValue()).intValue());
 	}
 	

@@ -4,7 +4,7 @@ package com.idega.core.accesscontrol.data;
 
 import java.sql.SQLException;
 
-import com.idega.core.data.ICObject;
+import com.idega.core.component.data.ICObject;
 
 
 

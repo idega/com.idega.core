@@ -2,8 +2,8 @@ package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
 
-import com.idega.core.ICTreeNode;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;

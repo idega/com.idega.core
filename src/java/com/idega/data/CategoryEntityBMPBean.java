@@ -22,7 +22,7 @@ public abstract class CategoryEntityBMPBean extends com.idega.data.GenericEntity
     super(id);
   }
   protected final void afterInitializeAttributes(){
-    addAttribute(getColumnCategoryId(),"Category",true,true,Integer.class,"many-to_one",com.idega.core.data.ICCategory.class);
+    addAttribute(getColumnCategoryId(),"Category",true,true,Integer.class,"many-to_one",com.idega.core.category.data.ICCategory.class);
   }
   public final int getCategoryId(){
     return getIntColumnValue(getColumnCategoryId());

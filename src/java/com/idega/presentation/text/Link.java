@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.95 2003/09/18 12:30:22 eiki Exp $
+ * $Id: Link.java,v 1.96 2003/10/03 01:42:00 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,13 +9,15 @@
  */
 package com.idega.presentation.text;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBPage;
+
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.business.BuilderConstants;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICObjectInstance;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.EventLogic;
@@ -24,6 +26,7 @@ import com.idega.event.IWLinkListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -33,6 +36,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.util.caching.Cache;
 import com.idega.util.text.TextSoap;
 import java.net.URLDecoder;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -209,8 +213,23 @@ public class Link extends Text {
 	public Link(int icFileId) {
 	
 		this("File");
-		Cache cache = MediaBusiness.getCachedFileInfo(icFileId, IWContext.getInstance().getApplication());
-		setURL(cache.getVirtualPathToFile());
+		String uri;
+		try
+		{
+			uri = this.getICFileSystem(IWContext.getInstance()).getFileURI(icFileId);
+			setURL(uri);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (UnavailableIWContext e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		//this(new Text("File"),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
 	}
 	/**
@@ -1078,7 +1097,7 @@ public class Link extends Text {
 	/**
 	 * method for adding a link to a page object
 	 */
-	public void setPage(IBPage page) {
+	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
 			/*StringBuffer url = new StringBuffer();
 			url.append(IWMainApplication.BUILDER_SERVLET_URL);
@@ -1097,9 +1116,9 @@ public class Link extends Text {
 	}
 
 	public void setPage(int pageID) {
-		IBPage page = null;
+		ICPage page = null;
 		try {
-			page = ((com.idega.builder.data.IBPageHome) com.idega.data.IDOLookup.getHomeLegacy(IBPage.class)).findByPrimaryKeyLegacy(pageID);
+			page = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHomeLegacy(ICPage.class)).findByPrimaryKeyLegacy(pageID);
 		}
 		catch (Exception e) {
 			page = null;
@@ -1561,7 +1580,7 @@ public class Link extends Text {
 				}
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
-			IBDomain d = iwc.getDomain();
+			ICDomain d = iwc.getDomain();
 
 			if (d.getURL() != null) {
 				String attr = getAttribute(HREF_ATTRIBUTE);
@@ -1932,7 +1951,7 @@ public void setWindowToOpen(String className) {
 		return dptTemplateId;
 	}
 
-	public void setDPTTemplateId(IBPage page) {
+	public void setDPTTemplateId(ICPage page) {
 		dptTemplateId = page.getID();
 	}
 

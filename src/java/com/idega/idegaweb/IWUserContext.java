@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.data.ICObject;
+import com.idega.core.component.data.ICObject;
 import com.idega.core.user.data.User;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserProperties;

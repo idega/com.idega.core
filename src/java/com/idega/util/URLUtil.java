@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.data.ICPage;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -151,7 +151,7 @@ public class URLUtil {
 		addParameter(name, String.valueOf(value));
 	}
 	
-	public void setPage(IBPage page) {
+	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
 			addParameter(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER, page.getID());
 		}

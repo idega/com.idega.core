@@ -13,7 +13,7 @@ package com.idega.presentation.ui;
 import java.util.Hashtable;
 import java.util.Map;
 
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -187,7 +187,7 @@ public void setFullScreen(boolean ifFullScreen){
 
 //System.out.println("ret1 = " + ret);
 
-    IBDomain d = iwc.getDomain();
+    ICDomain d = iwc.getDomain();
 
     if (d.getURL() != null) {
       if (ret.startsWith("/")) {

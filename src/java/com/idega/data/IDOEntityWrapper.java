@@ -18,7 +18,7 @@ import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.core.data.ICLocale;
+import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.version.data.ICItem;
 import com.idega.core.version.data.ICItemHome;
 import com.idega.core.version.data.ICVersion;

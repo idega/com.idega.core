@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.13 2003/08/05 19:45:36 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.14 2003/10/03 01:42:00 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.data.ICFile;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
@@ -196,7 +196,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	/**
 	 * method for adding a link to a page object
 	 */
-	public void setPage(IBPage page) {
+	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
 			String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
 			if (value != null) {

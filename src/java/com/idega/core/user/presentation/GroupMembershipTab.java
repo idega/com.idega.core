@@ -3,8 +3,8 @@ package com.idega.core.user.presentation;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
+import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.User;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;

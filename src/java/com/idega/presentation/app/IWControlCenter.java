@@ -14,7 +14,7 @@ import com.idega.presentation.IWContext;
 
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
-import com.idega.core.data.ICObject;
+import com.idega.core.component.data.ICObject;
 
 import java.util.List;
 import java.util.Iterator;

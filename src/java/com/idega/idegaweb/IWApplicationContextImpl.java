@@ -1,7 +1,7 @@
 package com.idega.idegaweb;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBDomainHome;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICDomainHome;
 import com.idega.data.IDOLookup;
 
 /**
@@ -15,7 +15,7 @@ import com.idega.data.IDOLookup;
 public class IWApplicationContextImpl implements IWApplicationContext {
 	private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 	private IWMainApplication iwma;
-	IBDomain domain;
+	ICDomain domain;
 	
 	
 	protected IWApplicationContextImpl(IWMainApplication superApp){
@@ -71,7 +71,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getDomain()
 	 */
-	public IBDomain getDomain() {
+	public ICDomain getDomain() {
 		try {
 			String id = (String) this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
 			int domainID = 1;
@@ -82,7 +82,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 				}
 			}
 			if(domain==null){
-				IBDomainHome domainHome = (IBDomainHome)IDOLookup.getHome(IBDomain.class);
+				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
 				domain = domainHome.findByPrimaryKey(domainID);
 			}
 			return domain;

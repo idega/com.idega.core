@@ -2,8 +2,8 @@ package com.idega.core.localisation.presentation;
 
 import java.util.Map;
 
-import com.idega.core.data.ICLocale;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.localisation.data.ICLocale;
 import com.idega.presentation.ui.DropdownMenu;
 
 /**

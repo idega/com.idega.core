@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.swing.event.EventListenerList;
 
 import com.idega.business.IBOSessionBean;
-import com.idega.core.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWLocation;
 import com.idega.presentation.IWContext;
