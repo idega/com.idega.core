@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.38 2002/12/27 18:17:19 thomas Exp $
+ * $Id: LoginDBHandler.java,v 1.39 2003/01/13 23:41:07 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -786,7 +786,7 @@ public class LoginDBHandler
 	}
 	public static String getGeneratedPasswordForUser()
 	{
-		return com.idega.util.StringHandler.getRandomString(8);
+		return com.idega.util.StringHandler.getRandomStringNonAmbiguous(8);
 	}
 	private static String[] getPossibleGeneratedUserLogins(User user)
 	{
