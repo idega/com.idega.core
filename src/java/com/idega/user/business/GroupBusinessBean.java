@@ -553,8 +553,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	        }
 	      }
 	
-	      List specifiedGroups = new Vector();
-	      List notSpecifiedGroups = new Vector();
+	      List specifiedGroups = new ArrayList();
+	      List notSpecifiedGroups = new ArrayList();
 	      int j = 0;
 	      int k = 0;
 	      Iterator iter2 = GroupsContained.values().iterator();
@@ -618,7 +618,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	
 	    Collection list = group.getChildGroups(groupTypeToReturn,true);
 	    if(list != null && !list.isEmpty()){
+	      
 	      return getUsersForUserRepresentativeGroups(list);
+	    
+	    
 	    } else {
 	      return ListUtil.getEmptyList();
 	    }
@@ -633,7 +636,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * 
  * @see com.idega.user.business.GroupBusiness#getUsersContainedRecursive(Group)
  */
-  public Collection getUsersContainedRecursive(Group group) throws FinderException{
+  public Collection getUsersRecursive(Group group) throws FinderException{
 	try{
 	    //filter
 	    String[] groupTypeToReturn = new String[1];
@@ -656,10 +659,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * 
  * @see com.idega.user.business.GroupBusiness#getUsersContainedRecursive(Group)
  */
-  public Collection getUsersContainedRecursive(int groupId) throws FinderException{
+  public Collection getUsersRecursive(int groupId) throws FinderException{
   	try{
 	    Group group = this.getGroupByGroupID(groupId);
-	    return getUsersContainedRecursive(group);
+	    return getUsersRecursive(group);
   	}
   	catch(RemoteException e){
   		throw new IBORuntimeException(e,this);
