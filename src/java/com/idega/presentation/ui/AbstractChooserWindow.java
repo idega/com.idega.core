@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -44,7 +45,13 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
   public void main(IWContext iwc){
 
     if( (!noScript) && (getSelectionParameter(iwc)!=null) ){
-      Script script = this.getAssociatedScript();
+      Page parent = this.getParentPage();
+      parent = (parent!=null) ? parent : this;
+      
+            
+      Script script = parent.getAssociatedScript();
+      
+      
       String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
       String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
 
