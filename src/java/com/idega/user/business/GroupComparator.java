@@ -2,6 +2,8 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Locale;
 
 import javax.ejb.FinderException;
@@ -23,6 +25,7 @@ public class GroupComparator extends GenericGroupComparator{
 
   private GroupBusiness groupBiz;
   private boolean areICPermissions = false;
+  private Map cachedGroups = new HashMap();
 
 	public GroupComparator(Locale locale) {
 		super(locale);
@@ -53,13 +56,8 @@ public class GroupComparator extends GenericGroupComparator{
 		GenericGroup groupA = null;
 		GenericGroup groupB = null;
 		try {
-			groupA =
-				(GenericGroup) groupBiz.getGroupByGroupID(
-					Integer.parseInt(((ICPermission) ((Collection) permissionCollectionA).iterator().next()).getContextValue()));
-			groupB =
-				(GenericGroup) groupBiz.getGroupByGroupID(
-					Integer.parseInt(((ICPermission) ((Collection) permissionCollectionB).iterator().next()).getContextValue()));
-			
+			groupA = checkForCachedGroups(permissionCollectionA);
+			groupB = checkForCachedGroups(permissionCollectionB);
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -74,6 +72,26 @@ public class GroupComparator extends GenericGroupComparator{
 		return super.compare(groupA,groupB);
 	}
 
+	/**
+	 * The compatator checks if the two groups being compared have already been loaded
+	 * and then gets them from a HashMap instead of loading them from the database 
+	 * Optimization done by Sigtryggur 6.7.2004  
+	 * @param permissionCollection
+	 * @return group
+	 */
+	private GenericGroup checkForCachedGroups(Object permissionCollection) throws FinderException, RemoteException {
+		GenericGroup group = null;
+		String groupID = ((ICPermission) ((Collection) permissionCollection).iterator().next()).getContextValue();
+		if (cachedGroups.containsKey(groupID)) {
+			group = (GenericGroup)cachedGroups.get(groupID);
+		}
+		else
+		{	
+			group = (GenericGroup) groupBiz.getGroupByGroupID(Integer.parseInt(groupID));
+			cachedGroups.put(groupID, group);
+		}
+		return group;
+	}
 
 	/**
 	 * Tells the comparator to check inside the collections and get the group from the ICPermission bean. 
