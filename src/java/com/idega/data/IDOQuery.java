@@ -1103,7 +1103,7 @@ public class IDOQuery implements Cloneable {
 	 * @param toStamp
 	 * @return
 	 */
-	public IDOQuery appendBetweenStamps(String dateColumnName,Date fromStamp,Date toStamp){
+	public IDOQuery appendBetweenStamps(String dateColumnName,Timestamp fromStamp,Timestamp toStamp){
 		this.append(dateColumnName).appendGreaterThanSign().append(fromStamp);
 		this.appendAnd().append(dateColumnName).appendLessThanSign().append(toStamp);
 		return this;
