@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationViewNode.java,v 1.1 2004/11/14 23:24:47 tryggvil Exp $
+ * $Id: ApplicationViewNode.java,v 1.2 2004/12/05 09:23:40 laddi Exp $
  * Created on 16.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,16 +9,15 @@
  */
 package com.idega.core.view;
 
-import java.util.Locale;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:24:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/05 09:23:40 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ApplicationViewNode extends DefaultViewNode {
 

@@ -45,7 +45,6 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
