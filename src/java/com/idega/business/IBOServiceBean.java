@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 
@@ -125,5 +126,9 @@ public class IBOServiceBean implements IBOService, SessionBean {
     protected IDOHome getIDOHome(Class beanClass)throws RemoteException{
     return IDOLookup.getHome(beanClass);
   }
+  
+  	protected AccessController getAccessController() {
+		return ((AccessController) this.getIWApplicationContext().getApplication().getAccessController());
+	}
 
 }
