@@ -569,4 +569,12 @@ public void print(IWContext iwc)throws IOException{
 		super.initInMain(iwc);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.Page#getLocalizedTitle(com.idega.presentation.IWContext)
+	 */
+	public String getLocalizedTitle(IWContext iwc) {
+		// TODO Auto-generated method stub
+		return getTitle();
+	}
+
 }//End class

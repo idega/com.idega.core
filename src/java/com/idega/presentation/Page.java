@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.80 2003/08/05 19:45:36 tryggvil Exp $
+ *  $Id: Page.java,v 1.81 2003/09/18 11:26:29 palli Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -532,15 +532,12 @@ public class Page extends PresentationObjectContainer {
 		//Map tree = PageTreeNode.getTree(iwc);
 		BuilderService bservice;
 		ICTreeNode node=null;
-		try
-		{
+		try {
 			bservice = getBuilderService(iwc);
 			int pageId = bservice.getCurrentPageId(iwc);
 			node = (ICTreeNode)bservice.getPageTree(pageId,iwc.getCurrentUserId());
 		}
-		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
+		catch (RemoteException e) {
 			e.printStackTrace();
 		}
 
