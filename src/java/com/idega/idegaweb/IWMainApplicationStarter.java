@@ -301,6 +301,7 @@ public class IWMainApplicationStarter {
 		startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
 		startTemporaryBundleStarter("se.cubecon.bun24.viewpoint.IWBundleStarter");
+		startTemporaryBundleStarter("se.idega.idegaweb.commune.childcare.IWBundleStarter");
 	}
 	
 	
