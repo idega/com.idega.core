@@ -382,12 +382,14 @@ public void setOverImageURL(String overImageURL){
 }
 
 public void setOverImage(Image image){
-  this.overImageUrl =image.getMediaURL();
+  this.overImageUrl = image.getMediaURL();
   setOnMouseOut("swapImgRestore()");
   setOnMouseOver("swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
 
-
+public void setImageToOpenInPopUp(Image image) {
+  this.setOnClick("img_wnd=window.open('','','width=100,height=100,left='+((screen.width/2)-50)+',top='+((screen.height/2)-50)+',resizable=yes,scrollbars=no'); doopen('"+image.getMediaURL()+"'); return true;");
+}
 
 public String getOverImageURL(){
   return this.overImageUrl;
