@@ -159,15 +159,20 @@ public class SingleLineItem extends Panel {
 
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
-      super.doLayout();
-      super.repaint();
       return component;
   }
 
-  /*public Image getGrayImage() {
-    return(grayImage);
+  public void refresh() {
+   Component[] comps = SingleLineItem.this.getComponents();
+   for (int i = 0; i < comps.length; i++) {
+    comps[i].repaint();
+   }
+
+   doLayout();
+   repaint();
+
   }
-*/
+
 
   private final class ClickAdapter extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
@@ -191,13 +196,7 @@ public class SingleLineItem extends Panel {
         }
       }
 
-      Component[] comps = SingleLineItem.this.getComponents();
-      for (int i = 0; i < comps.length; i++) {
-        comps[i].repaint();
-      }
-
-      SingleLineItem.this.doLayout();
-      SingleLineItem.this.repaint();
+      refresh();
 
       actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));
     }
