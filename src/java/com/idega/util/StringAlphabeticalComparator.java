@@ -6,7 +6,8 @@ import java.util.Comparator;
 import java.util.Locale;
 
 /**
- * A very simple class that compares two strings alphabetically by their local.
+ * A very simple class that compares two strings alphabetically by their local. Useful for TreeMaps for example
+ * just construct a TreeMap map = new TreeMap(new StringAlphabeticalComparator(locale)) and it keeps the maps keys sorted.
  * @author Eiki
  *
  */
