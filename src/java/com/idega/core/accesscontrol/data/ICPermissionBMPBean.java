@@ -23,14 +23,14 @@ import com.idega.util.IWTimestamp;
 
 public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.ICPermission {
 
-	private static final String ENTITY_NAME = "ic_permission";
+	private static final String ENTITY_NAME = "IC_PERMISSION";
 	
-	private static final String PERMISSION_TYPE_COLUMN = "permission_type";//defines the type of permission e.g. ic_object_id,group_id,role
-	private static final String CONTEXT_TYPE_COLUMN = "permission_context_type"; //just backward compatability, use permission type
-	private static final String CONTEXT_VALUE_COLUMN = "permission_context_value";
-	private static final String PERMISSION_STRING_COLUMN = "permission_string";
-	private static final String PERMISSION_VALUE_COLUMN = "permission_value";
-	private static final String GROUP_ID_COLUMN = "group_id";
+	private static final String PERMISSION_TYPE_COLUMN = "PERMISSION_TYPE";//defines the type of permission e.g. ic_object_id,group_id,role
+	private static final String CONTEXT_TYPE_COLUMN = "PERMISSION_CONTEXT_TYPE"; //just backward compatability, use permission type
+	private static final String CONTEXT_VALUE_COLUMN = "PERMISSION_CONTEXT_VALUE";
+	private static final String PERMISSION_STRING_COLUMN = "PERMISSION_STRING";
+	private static final String PERMISSION_VALUE_COLUMN = "PERMISSION_VALUE";
+	private static final String GROUP_ID_COLUMN = "GROUP_ID";
 	
 //private static final String PERMISSION_STRING_VALUE = "permission_string_value"; removed because never used! eiki
 	
