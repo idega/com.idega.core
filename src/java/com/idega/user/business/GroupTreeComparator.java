@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import com.idega.presentation.IWContext;
-import com.idega.user.data.Group;
+import com.idega.user.presentation.GroupTreeNode;
 
 
 /**
@@ -28,8 +28,8 @@ public class GroupTreeComparator implements Comparator {
 		int returner = 0;
 	  	Collator collator = Collator.getInstance(_locale);
 		
-		Group g1 = (Group) o1;
-		Group g2 = (Group) o2;
+		GroupTreeNode g1 = (GroupTreeNode) o1;
+		GroupTreeNode g2 = (GroupTreeNode) o2;
 	
 		IWContext iwc = IWContext.getInstance();
 		String groupType1 = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_locale).getLocalizedString(g1.getGroupType());
@@ -42,8 +42,8 @@ public class GroupTreeComparator implements Comparator {
 		} else if (groupType1 != null && groupType2 != null) { 
 			returner = collator.compare(groupType1, groupType2);
 			if (returner == 0) {
-				Integer groupIntValue1 = getIntegerFromBeginnigOfString(g1.getName());
-				Integer groupIntValue2 = getIntegerFromBeginnigOfString(g2.getName());
+				Integer groupIntValue1 = getIntegerFromBeginnigOfString(g1.getNodeName());
+				Integer groupIntValue2 = getIntegerFromBeginnigOfString(g2.getNodeName());
 	
 				if (groupIntValue1 != null && groupIntValue2 != null) {
 					if (groupIntValue1.intValue() == groupIntValue2.intValue()) {
@@ -56,14 +56,14 @@ public class GroupTreeComparator implements Comparator {
 						returner = 1;
 					
 					if (returner == 0)
-						returner = collator.compare(g1.getName(), g2.getName());
+						returner = collator.compare(g1.getNodeName(), g2.getNodeName());
 				}
 				else {
-					returner = collator.compare(g1.getName(), g2.getName());
+					returner = collator.compare(g1.getNodeName(), g2.getNodeName());
 				}
 			}
 		} else {
-			returner = collator.compare(g1.getName(), g2.getName());
+			returner = collator.compare(g1.getNodeName(), g2.getNodeName());
 		}
 		return returner;
 	}
