@@ -1121,7 +1121,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				//ex.printStackTrace();
 				throw (SQLException)ex.fillInStackTrace();
 			} else {
-				//ex.printStackTrace();
+				ex.printStackTrace();
 				throw new SQLException("Exception rethrown: " + ex.getClass().getName() + " - " + ex.getMessage());
 			}
 		}
@@ -2078,6 +2078,34 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 		return recordCount;
+	}
+	
+	public Date getDateTableValue(String dateSQLString) throws SQLException {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		Date date = null;
+		try {
+			conn = getConnection(this.getDatasource());
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(dateSQLString);
+			if (rs.next())
+				date = rs.getDate(1);
+			rs.close();
+			//System.out.println(SQLString+"\n");
+		} catch (SQLException e) {
+			throw new SQLException("There was an error in com.idega.data.GenericEntity.getDateTableValue \n" + e.getMessage());
+		} catch (Exception e) {
+			System.err.println("There was an error in com.idega.data.GenericEntity.getDateTableValue " + e.getMessage());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				freeConnection(getDatasource(), conn);
+			}
+		}
+		return date;
 	}
 	
 	public double getDoubleTableValue(String sqlString) throws SQLException {
@@ -3121,7 +3149,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				this.updateMetaData();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			throw new IDOStoreException(e.getMessage());
 		}
 	}
