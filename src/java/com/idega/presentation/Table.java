@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.32 2003/03/21 12:19:00 laddi Exp $
+ * $Id: Table.java,v 1.33 2003/03/30 11:36:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -214,7 +214,7 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setBackgroundImageURL(int xpos, int ypos, String backgroundImageURL) {
 		//this.setAttribute(xpos, ypos, "background", backgroundImageURL);
-		setStyle(xpos, ypos, "background: url('"+backgroundImageURL+"');");
+		setStyle(xpos, ypos, "background","url('"+backgroundImageURL+"')");
 	}
 	
 	public void setVerticalAlignment(int xpos, int ypos, String alignment) {
@@ -467,7 +467,7 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setColor(int xpos, int ypos, String color) {
 		//setAttribute(xpos, ypos, COLOR_ATTRIBUTE, s);
-		setStyle(xpos, ypos, "background-color: "+color+";");
+		setStyle(xpos, ypos, "background-color", color);
 	}
 	
 	public void setColor(int xpos, int ypos, IWColor color) {
@@ -476,12 +476,12 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setRowColor(int ypos, String color) {
 		//setRowAttribute(ypos, COLOR_ATTRIBUTE, s);
-		setRowStyle(ypos, "background-color: "+color+";");
+		setRowStyle(ypos, "background-color", color);
 	}
 	
 	public void setColumnColor(int xpos, String color) {
 		//setColumnAttribute(xpos, COLOR_ATTRIBUTE, s);
-		setColumnStyle(xpos, "background-color: "+color+";");
+		setColumnStyle(xpos, "background-color", color);
 	}
 	
 	public void setWidth(int xpos, String width) {
@@ -519,9 +519,9 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
-	public void setColumnStyle(int xpos, String styleValue) {
+	public void setColumnStyle(int xpos, String styleAttribute, String styleValue) {
 		for (int temp = 1; temp <= rows;) {
-			setStyle(xpos, temp, styleValue);
+			setStyle(xpos, temp, styleAttribute, styleValue);
 			temp++;
 		}
 	}
@@ -547,9 +547,9 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
-	public void setRowStyle(int ypos, String styleValue) {
+	public void setRowStyle(int ypos, String styleAttribute, String styleValue) {
 		for (int temp = 1; temp <= cols;) {
-			setStyle(temp, ypos, styleValue);
+			setStyle(temp, ypos, styleAttribute, styleValue);
 			temp++;
 		}
 	}
@@ -584,7 +584,7 @@ public class Table extends PresentationObjectContainer {
 		this.theObjects[xpos - 1][ypos - 1].setAttribute(attributeName, attributeValue);
 	}
 	
-	public void setStyle(int xpos, int ypos, String styleValue) {
+	public void setStyle(int xpos, int ypos, String styleAttribute, String styleValue) {
 		if (isResizable) {
 			if (xpos > this.getColumns()) {
 				setColumns(xpos);
@@ -594,10 +594,12 @@ public class Table extends PresentationObjectContainer {
 			}
 		}
 		if (this.theObjects[xpos - 1][ypos - 1] == null) {
-			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
+			theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
 			// super.add(theObjects);
 		}
-		this.theObjects[xpos - 1][ypos - 1].setStyleAttribute(styleValue);
+		TextStyler styler = new TextStyler(theObjects[xpos-1][ypos-1].getStyleAttribute());
+		styler.setStyleValue(styleAttribute, styleValue);
+		theObjects[xpos - 1][ypos - 1].setStyleAttribute(styler.getStyleString());
 	}
 	
 	public void setAttribute(int xpos, int ypos, String attribute) {
@@ -617,7 +619,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setNoWrap(int xpos, int ypos) {
-		setStyle(xpos, ypos, "white-space:nowrap;");
+		setStyle(xpos, ypos, "white-space","nowrap");
 	}
 	
 	public void setNoWrap() {
@@ -1331,7 +1333,8 @@ public class Table extends PresentationObjectContainer {
 			return null;
 		}
 		else {
-			return cont.getAttribute(COLOR_ATTRIBUTE);
+			TextStyler styler = new TextStyler(cont.getStyleAttribute());
+			return styler.getStyleValue("background-color");
 		}
 	}
 
