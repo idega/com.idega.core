@@ -537,4 +537,13 @@ public class IWMainApplication{//implements ServletContext{
    return getBundle(CORE_BUNDLE_IDENTIFIER);
   }
 
+  public void addLocaleToRegisteredBundles(Locale locale){
+    List bundles = this.getRegisteredBundles();
+    Iterator iter = bundles.iterator();
+    while (iter.hasNext()) {
+      IWBundle item = (IWBundle)iter.next();
+      item.addLocale(locale);
+    }
+  }
+
 }

@@ -167,12 +167,14 @@ public class IWBundle implements java.lang.Comparable{
 
    private void runStartClass(){
       String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
-      try{
-        IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
-        starter.start(this);
-      }
-      catch(Exception e){
-        e.printStackTrace();
+      if(starterClassName!=null){
+        try{
+          IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
+          starter.start(this);
+        }
+        catch(Exception e){
+          e.printStackTrace();
+        }
       }
    }
 
@@ -463,6 +465,13 @@ public class IWBundle implements java.lang.Comparable{
 
     public static IWBundle getBundle(String bundleIdentifier , IWMainApplication application){
       return application.getBundle(bundleIdentifier);
+    }
+
+
+    public void addLocale(Locale locale){
+      String LocalePath = getResourcesRealPath(locale);
+      File file = new File(LocalePath);
+      file.mkdirs();
     }
 
     protected void initializeStructure(){
