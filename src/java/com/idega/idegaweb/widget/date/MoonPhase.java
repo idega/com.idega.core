@@ -1,5 +1,5 @@
 /*
- * $Id: MoonPhase.java,v 1.1 2004/10/26 09:05:20 laddi Exp $
+ * $Id: MoonPhase.java,v 1.2 2004/11/02 08:47:02 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,13 @@ import com.idega.util.IWCalendar;
 
 
 /**
- * Last modified: 14.10.2004 14:14:38 by laddi
+ * Shows an image representing the current moonphase.  Has ten different images that are stored
+ * in the com.idega.idegaweb.widget bundle.
+ * 
+ * Last modified: 02.11.2004 09:39:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class MoonPhase extends Widget {
 	
@@ -37,22 +40,11 @@ public class MoonPhase extends Widget {
 		double moonPhase = calendar.getMoonPhase();
 		
 		BigDecimal bd = new BigDecimal(moonPhase);
-    bd = bd.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+    bd = bd.setScale(1, BigDecimal.ROUND_HALF_DOWN);
     moonPhase = bd.doubleValue();
+    int moon = (int) (moonPhase * 10);
 		
-		Image image = null;
-		if (moonPhase == IWCalendar.NEW_MOON || moonPhase == IWCalendar.NEW_MOON + 1) {
-			image = getBundle().getImage("/moonphase/new_moon.jpg", getResourceBundle().getLocalizedString("moon_phase.new_moon", "New moon"));
-		}
-		else if (moonPhase == IWCalendar.FIRST_QUARTER) {
-			image = getBundle().getImage("/moonphase/waxing_moon.jpg", getResourceBundle().getLocalizedString("moon_phase.waxing_moon", "Waxing moon"));
-		}
-		else if (moonPhase == IWCalendar.FULL_MOON) {
-			image = getBundle().getImage("/moonphase/full_moon.jpg", getResourceBundle().getLocalizedString("moon_phase.full_moon", "Full moon"));
-		}
-		else if (moonPhase == IWCalendar.LAST_QUARTER) {
-			image = getBundle().getImage("/moonphase/waning_moon.jpg", getResourceBundle().getLocalizedString("moon_phase.waning_moon", "Waning moon"));
-		}
+		Image image = getBundle().getImage("/moonphase/" + moon + ".gif");
 		
 		if (image != null) {
 			if (width > 0) {
