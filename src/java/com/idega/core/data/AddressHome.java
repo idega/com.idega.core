@@ -9,6 +9,7 @@ public interface AddressHome extends com.idega.data.IDOHome
  public Address findByPrimaryKey(int id) throws javax.ejb.FinderException;
  public Address findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
  public Address findPrimaryUserAddress(int userID) throws javax.ejb.FinderException;
+ public Address findUserAddressByAddressType(int userID,AddressType type) throws javax.ejb.FinderException;
  public java.util.Collection findPrimaryUserAddresses(String[] userIDs) throws javax.ejb.FinderException;
  public java.util.Collection findPrimaryUserAddresses(com.idega.data.IDOQuery query) throws javax.ejb.FinderException;
  public java.util.Collection findUserAddressesByAddressType(int userID,AddressType type) throws javax.ejb.FinderException ;

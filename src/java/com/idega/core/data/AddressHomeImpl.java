@@ -66,6 +66,13 @@ public Address findPrimaryUserAddress(int userID)throws javax.ejb.FinderExceptio
 	return this.findByPrimaryKey(pk);
 }
 
+
+public Address findUserAddressByAddressType(int userID,AddressType type)throws javax.ejb.FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((AddressBMPBean)entity).ejbFindUserAddressByAddressType( userID,type);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
 public java.util.Collection findPrimaryUserAddresses(String[] userIDs)throws javax.ejb.FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((AddressBMPBean)entity).ejbFindPrimaryUserAddresses(userIDs);
