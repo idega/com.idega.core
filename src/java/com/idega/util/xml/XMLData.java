@@ -264,11 +264,11 @@ public class XMLData implements Storable {
   	catch (XMLException ex)  {
       document = null;
       xmlFileId = -1;
-      throw new IOException("[XMLData] input strream could not be parsed. Message is: " + ex.getMessage());
+      throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
   	}
   }
   
-  private void initialize(InputStream inputStream) throws IOException {
+  public void initialize(InputStream inputStream) throws IOException {
     try {
       XMLParser parser = new XMLParser();
       document = parser.parse(inputStream);
