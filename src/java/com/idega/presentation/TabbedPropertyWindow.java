@@ -19,118 +19,121 @@ import com.idega.idegaweb.presentation.StyledIWAdminWindow;
  */
 
 public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
-
-  protected TabbedPropertyPanel panel = null;
-
-  public TabbedPropertyWindow(){
-    this(410,512);
-  }
-
-  public TabbedPropertyWindow(int width, int height){
-    super(width,height);
-    super.setScrollbar(false);
-    super.setAllMargins(0);
-    super.setTopMargin(1);//changed from 3
-  }
-
-  public void _main(IWContext iwc) throws Exception {
-
-  	//added -birna
-  	panel = new TabbedPropertyPanel(iwc);
-  	
-    this.empty();
-		if(disposeOfPanel(iwc)){
-			//temp solution
-			panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
-			panel.dispose(iwc);
-		}
-		
-		panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
     
-    if(panel.justConstructed()){
-      initializePanel(iwc, panel);
+    protected TabbedPropertyPanel panel = null;
+    
+    public TabbedPropertyWindow(){
+        this(410,512);
     }
-
-    if(panel.clickedCancel() || panel.clickedOk() || panel.clickedApply()){
-      if(panel.clickedOk() || panel.clickedApply()){
-        iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
-        iwc.getApplicationContext().removeApplicationAttribute("group_tree");
-        // clear on load only if okay was clicked    
-        setOnLoad(iwc, panel.clickedOk());
-      }
-      else {
-        // cancel was clicked
-        clearOnLoad(iwc);
-      }
+    
+    public TabbedPropertyWindow(int width, int height){
+        super(width,height);
+        super.setScrollbar(false);
+        super.setAllMargins(0);
+        super.setTopMargin(1);//changed from 3
     }
-    // do not close the window if the apply button was clicked
-    if (panel.clickedCancel()) {
-        panel.dispose(iwc);
-        close();
+    
+    public void _main(IWContext iwc) throws Exception {
+        
+        this.empty();
+       
+        if(disposeOfPanel(iwc)){
+            //temp solution
+            panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc, null );
+            panel.dispose(iwc);     
+        }
+        
+        panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc , getPanelInstance(iwc));
+        
+        if(panel.justConstructed()){
+            initializePanel(iwc, panel);
+        }
+        
+        if(panel.clickedCancel() || panel.clickedOk() || panel.clickedApply()){
+            if(panel.clickedOk() || panel.clickedApply()){
+                iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
+                iwc.getApplicationContext().removeApplicationAttribute("group_tree");
+                // clear on load only if okay was clicked    
+                setOnLoad(iwc, panel.clickedOk());
+            }
+            else {
+                // cancel was clicked
+                clearOnLoad(iwc);
+            }
+        }
+        // do not close the window if the apply button was clicked
+        if (panel.clickedCancel()) {
+            panel.dispose(iwc);
+            close();
+        }
+        else {
+            this.add(panel,iwc);
+        }
+        super._main(iwc);
+        
     }
-    else {
-      this.add(panel,iwc);
+    
+    protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
+        //added -birna
+        return new TabbedPropertyPanel(iwc);
     }
-		super._main(iwc);
-
-  }
-
-  public PresentationObject[] getAddedTabs(){
-    if(panel != null){
-      return panel.getAddedTabs();
-    } else {
-      throw new RuntimeException("TabbedPropertyPanel not set. TabbedPropertyPanel is set in main(IWContext iwc)");
+    
+    public PresentationObject[] getAddedTabs(){
+        if(panel != null){
+            return panel.getAddedTabs();
+        } else {
+            throw new RuntimeException("TabbedPropertyPanel not set. TabbedPropertyPanel is set in main(IWContext iwc)");
+        }
     }
-  }
-
-
-
-  public abstract String getSessionAddressString();
-
-  public abstract void initializePanel( IWContext iwc, TabbedPropertyPanel panel);
-  
-  public boolean disposeOfPanel(IWContext iwc){
-  	return false;
-  }
-
-  private void setOnLoad(IWContext iwc, boolean clearOnLoad)  {
-		Iterator iterator = getControllerIterator(iwc);
-    while (iterator.hasNext())  {
-      IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
-      Set onLoadSet = state.getOnLoadSet();
-      Iterator iter = onLoadSet.iterator();
-      while (iter.hasNext()) {
-        // this is a pop up window therefore add window.opener as prefix
-        StringBuffer buffer = new StringBuffer("window.opener.");
-        buffer.append((String) iter.next());
-        this.setOnLoad(buffer.toString());
-      }
-      if (clearOnLoad)  {
-        state.clearOnLoad();
-      }
+    
+    
+    
+    public abstract String getSessionAddressString();
+    
+    public abstract void initializePanel( IWContext iwc, TabbedPropertyPanel panel);
+    
+    public boolean disposeOfPanel(IWContext iwc){
+        return false;
     }
-  }
-
-	private Iterator getControllerIterator(IWContext iwc) {
-		IWStateMachine stateMachine;
-		Collection controllers;   
-		try {
-		  stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwc,IWStateMachine.class);
-		  controllers = stateMachine.getAllControllers();
-		}
-		catch (RemoteException re) {
-		  throw new RuntimeException(re.getMessage());
-		}
-		Iterator iterator = controllers.iterator();
-		return iterator;
-	}
-
-  private void clearOnLoad(IWContext iwc)  {
-    Iterator iterator = getControllerIterator(iwc);
-    while (iterator.hasNext())  {
-      IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
-      state.clearOnLoad();
+    
+    private void setOnLoad(IWContext iwc, boolean clearOnLoad)  {
+        Iterator iterator = getControllerIterator(iwc);
+        while (iterator.hasNext())  {
+            IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
+            Set onLoadSet = state.getOnLoadSet();
+            Iterator iter = onLoadSet.iterator();
+            while (iter.hasNext()) {
+                // this is a pop up window therefore add window.opener as prefix
+                StringBuffer buffer = new StringBuffer("window.opener.");
+                buffer.append((String) iter.next());
+                this.setOnLoad(buffer.toString());
+            }
+            if (clearOnLoad)  {
+                state.clearOnLoad();
+            }
+        }
     }
-  }
-
+    
+    private Iterator getControllerIterator(IWContext iwc) {
+        IWStateMachine stateMachine;
+        Collection controllers;   
+        try {
+            stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwc,IWStateMachine.class);
+            controllers = stateMachine.getAllControllers();
+        }
+        catch (RemoteException re) {
+            throw new RuntimeException(re.getMessage());
+        }
+        Iterator iterator = controllers.iterator();
+        return iterator;
+    }
+    
+    private void clearOnLoad(IWContext iwc)  {
+        Iterator iterator = getControllerIterator(iwc);
+        while (iterator.hasNext())  {
+            IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
+            state.clearOnLoad();
+        }
+    }
+    
 }
