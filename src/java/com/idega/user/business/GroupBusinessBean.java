@@ -598,20 +598,15 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   	}
   }
 
-  /** Returns all the groups that are direct and indirect chhildren of the specified group (specified by id).
-   *  The returned groups are filtered:
-   *  If the complement set is wanted, all groups are returned that do not have one of the specified group types else
-   *  all groups are returned that have one of the specified group types.  
-   *  This method filters only the result set, that is, even if one child does not belong to the result set the 
-   *  children of this child are also checked.
-   *  The last mentioned point ist the most important difference to the other method getChildGroupsrecursive.
+  /**
+   * @see getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection)
    * @param groupId 
-   * @param groupTypesAsString - a collection of strings representing group types
-   * @param complementSetWanted - should be set to false if you want to fetch all the groups that have group types
-   * that are contained in the collection groupTypesAsString else true if you want to get the complement set
+   * @param groupTypesAsString - a collection of strings representing group types, empty or null for any type
+   * @param onlyReturnTypesInCollection - should be set to true if you want to fetch all the groups that have group types
+   * that are contained in the collection groupTypesAsString else false to exclude those group types
    * @return a collection of groups
    */
-  public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted) {
+  public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
     Group group = null;
     try{
       group = this.getGroupByGroupID(groupId);
@@ -630,39 +625,37 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       ex.printStackTrace(System.err);
       throw new RuntimeException("[GroupBusiness]: Can't retrieve group.");
     }
-    return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, complementSetWanted);
+    return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection);
   }
     
     
   /** Returns all the groups that are direct and indirect children of the specified group.
-   *  The returned groups are filtered:
-   *  If the complement set is wanted, all groups are returned that do not have one of the specified group types else
-   *  all groups are returned that have one of the specified group types.  
-   *  This method filters only the result set, that is, even if one child does not belong to the result set the 
-   *  children of this child are also checked.
-   *  The last mentioned point ist the most important difference to the other method getChildGroupsRecursive.
+   *  If the grouptype collection is not null and none empty the returned groups are filtered to only include or exclude those grouptypes
+   * in the returning collection depending on whether the boolean is set to true or false.
+   *  The method does not stop recursing a group even if that group is not specified in the desired grouptype collection.
+   * Its children are always checked also that is the most important difference to the method getChildGroupsRecursive.
    * @param group
-   * @param groupTypesAsString - a collection of strings representing group types
-   * @param complementSetWanted - should be set to false if you want to fetch all the groups that have group types
-   * that are contained in the collection groupTypesAsString else true if you want to get the complement set
+   * @param groupTypesAsString - a collection of strings representing group types, empty or null for any type
+   * @param onlyReturnTypesInCollection - should be set to true if you want to fetch all the groups that have group types
+   * that are contained in the collection groupTypesAsString else false to exclude those group types
    * @return a collection of groups
    */
-  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean complementSetWanted) {
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
     // author: Thomas
     Collection alreadyCheckedGroups = new ArrayList();
     Collection result = new ArrayList();
-    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, complementSetWanted);
+    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection);
     return result;
   }
   
   public Collection getUsersFromGroupRecursive(Group group)  {
-    return getUsersFromGroupRecursive(group, new ArrayList(0), true);
+    return getUsersFromGroupRecursive(group, null, false);
   }
 
-  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean complementSetWanted)  {
+  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection)  {
     // author: Thomas
     Collection users = new ArrayList();
-    Collection groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString , complementSetWanted);
+    Collection groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString , onlyReturnTypesInCollection);
     Iterator iterator = groups.iterator();
     while (iterator.hasNext())  {
       Group tempGroup = (Group) iterator.next();
@@ -679,7 +672,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       Collection alreadyCheckedGroups, 
       Collection result, 
       Collection groupTypesAsString,
-      boolean complementSetWanted)  {
+      boolean onlyReturnTypesInCollection)  {
+  	
     Integer currentPrimaryKey = (Integer) currentGroup.getPrimaryKey();
     if (alreadyCheckedGroups.contains(currentPrimaryKey)) {
       // already checked, avoid looping 
@@ -688,7 +682,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     alreadyCheckedGroups.add(currentPrimaryKey);
     String currentGroupType = currentGroup.getGroupType();
     // does the current group belong to the result set?
-    if (! (groupTypesAsString.contains(currentGroupType) ^ (! complementSetWanted) ) )  {
+    //if both are true or false then it belongs, otherwise not. (using XOR)
+    if (!(groupTypesAsString.contains(currentGroupType) ^ ( onlyReturnTypesInCollection) ) )  {
       result.add(currentGroup);
     }
     // go further
@@ -696,7 +691,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     Iterator childrenIterator = children.iterator();
     while (childrenIterator.hasNext())  {
       Group child = (Group) childrenIterator.next();
-      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, complementSetWanted);
+      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection);
     }
   }
 

@@ -147,10 +147,10 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
   public String getNameOfGroupWithParentName(Group group);
 	public GroupRelationHome getGroupRelationHome();
   
-  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean complementSetWanted) throws java.rmi.RemoteException;
-  public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean complementSetWanted) throws java.rmi.RemoteException;
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+  public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
   public Collection getUsersFromGroupRecursive(Group group) ;
-  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean complementSetWanted);
+  public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection);
   /**
    * Adds a group direcly under the domain (right in top under the domain in the group tree).
    * This adds the group with GroupRelationType Top to the domain.
