@@ -334,6 +334,10 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return (Link) setStyle(link,styleName);	
 	}
 	
+	public PresentationObject getStyleObject(PresentationObject object, String styleName) {
+		return (PresentationObject) setStyle(object, styleName);
+	}
+	
 	/**
 	 * Gets a prefixed stylename to use for objects, with prefix specific for the bundle used by this block
 	 * if the block is in the core bundle, no prefix is added
