@@ -1518,4 +1518,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindOnePKByQuery(idoQueryGetSelect().appendWhereEquals(getColumnNameHomePageID(),pageID));
 	}
 
+	public Integer ejbFindGroupByUniqueId(String uniqueIdString) throws FinderException {
+		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
+	}
+	
 } // Class Group

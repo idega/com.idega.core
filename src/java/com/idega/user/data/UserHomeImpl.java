@@ -30,6 +30,14 @@ public User findByPersonalID(java.lang.String p0)throws javax.ejb.FinderExceptio
 	return this.findByPrimaryKey(pk);
 }
 
+public User findUserByUniqueId(String uniqueIdString) throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((UserBMPBean)entity).ejbFindUserByUniqueId(uniqueIdString);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);	
+}
+
+
 	public User findByPartOfPersonalIDAndFirstName(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException{
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((UserBMPBean)entity).ejbFindByPartOfPersonalIDAndFirstName(p0,p1);

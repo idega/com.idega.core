@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import javax.ejb.FinderException;
+
 
 public interface GroupHome extends com.idega.data.IDOHome
 {
@@ -24,4 +26,5 @@ public interface GroupHome extends com.idega.data.IDOHome
  public int getNumberOfVisibleGroupsContained(com.idega.user.data.Group p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public java.lang.String getRelationTypeGroupParent();
  public Group findByHomePageID(int p0)throws javax.ejb.FinderException;
+ public Group findUserByUniqueId(String uniqueIdString) throws FinderException;
 }

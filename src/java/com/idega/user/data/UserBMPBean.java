@@ -1018,6 +1018,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return this.getID();
 	}
 
+	public Integer ejbFindUserByUniqueId(String uniqueIdString) throws FinderException {
+		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
+	}
+	
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException, RemoteException {
 		StringBuffer sql = new StringBuffer("select iu.* ");
 		sql.append(" from ").append(this.getTableName()).append(" iu ,");

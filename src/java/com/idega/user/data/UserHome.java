@@ -39,4 +39,6 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException;
  public java.util.Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date firstBirthDateInPeriode, java.sql.Date lastBirthDateInPeriode, Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;
  public java.util.Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;
+ public User findUserByUniqueId(String uniqueIdString) throws FinderException;
+	
 }

@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import javax.ejb.FinderException;
+
 
 public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHome
 {
@@ -160,5 +162,13 @@ public Group findByHomePageID(int p0)throws javax.ejb.FinderException{
 	this.idoCheckInPooledEntity(entity);
 	return this.findByPrimaryKey(pk);
 }
+
+public Group findUserByUniqueId(String uniqueIdString) throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((GroupBMPBean)entity).ejbFindGroupByUniqueId(uniqueIdString);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);	
+}
+
 
 }
