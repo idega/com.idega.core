@@ -12,6 +12,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -699,13 +700,16 @@ public class Image extends PresentationObject
 	{
 		return getMediaURL(IWContext.getInstance());
 	}
+	public String getMediaURL(IWContext iwc) {
+		return getMediaURL((IWApplicationContext) iwc);
+	}
 	/**
 	 * Use this method for getting an images (stored in the database) url
 	 * @todo check if fails with usesOldMedia tables
 	 * @param iwc The IWContext
 	 * @return
 	 */
-	public String getMediaURL(IWContext iwc)
+	public String getMediaURL(IWApplicationContext iwc)
 	{
 		if (imageId != -1){
 			String theReturn = "";
