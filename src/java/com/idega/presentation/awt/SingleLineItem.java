@@ -118,13 +118,10 @@ public class SingleLineItem extends Container {
       gbc = new GridBagConstraints();
       gbc.gridx = nextXpos;
       gbc.gridy = nextYpos; //Set at position 0,0
-      nextXpos++;
-
       gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
-
-
+      gbc.anchor = gbc.NORTHWEST;
+      /*
       gbc.fill = GridBagConstraints.NONE;
-/*
       gbc.weightx = gbc.weighty = 1.0; //we want component to get all extra space
       gbc.fill = GridBagConstraints.BOTH; //Expand the component in both directions
 
@@ -137,8 +134,8 @@ public class SingleLineItem extends Container {
 
     }
       gbc.gridx = nextXpos;
-      gbc.gridheight = component.getSize().height;
-      gbc.gridwidth = component.getSize().width;
+      nextXpos++;
+
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
 
