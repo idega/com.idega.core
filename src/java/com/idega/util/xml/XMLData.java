@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 //import java.sql.SQLException;
 
 import com.idega.core.data.ICFile;
@@ -16,6 +17,9 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 
 import com.idega.util.FileUtil;
 import com.idega.xml.XMLDocument;
@@ -112,7 +116,100 @@ public class XMLData {
     this.document = document;
   }        
   
-  public ICFile store(IWApplicationContext iwac) throws IOException {
+  public ICFile store(IWApplicationContext iwac) throws IOException  {
+    // create or fetch existing file
+    ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    xmlFile.setMimeType("text/xml");
+    xmlFile.setName(getName());
+    OutputStream output = xmlFile.getFileValueForWrite();
+    XMLOutput xmlOutput = new XMLOutput("  ", true);
+    xmlOutput.setLineSeparator(System.getProperty("line.separator"));
+    xmlOutput.setTextNormalize(true);
+    xmlOutput.setEncoding("iso-8859-1");
+    // do not use document directly use accessor method
+    XMLDocument document = getDocument();
+    xmlOutput.output(document, output);
+    output.flush();
+    output.close();
+    try {
+      xmlFile.store();
+      if (xmlFileId < 0) {
+        xmlFileId = ((Integer) xmlFile.getPrimaryKey()).intValue();
+        // the default name uses the id, therefore set again and store again
+        if (name == null) {
+          xmlFile.setName(getName());
+          xmlFile.store();
+        }
+      }
+      return  xmlFile;
+    }
+    catch (Exception ex)  {
+      ex.printStackTrace();
+    }
+    return null;
+  }  
+  
+  public ICFile storey(IWApplicationContext iwac) throws IOException {
+    // create or fetch existing ICFile
+    ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    xmlFile.setMimeType("text/xml");
+    xmlFile.setName(getName());
+    try {
+      xmlFile.store();
+    }
+    catch (IDOStoreException ex)  {
+      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      throw new IOException("xml file could not be stored");
+    }
+    if (xmlFileId < 0) {
+      xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
+      // the default name uses the id, therefore set again and store again
+      if (name == null) {
+        xmlFile.setName(getName());
+      }
+    }
+    MemoryFileBuffer buffer = new MemoryFileBuffer();
+    OutputStream outputStream = new MemoryOutputStream(buffer);
+    
+    XMLOutput xmlOutput = new XMLOutput("  ", true);
+    xmlOutput.setLineSeparator(System.getProperty("line.separator"));
+    xmlOutput.setTextNormalize(true);
+    xmlOutput.setEncoding("iso-8859-1");
+    // do not use document directly use accessor method
+    XMLDocument document = getDocument();
+    try {
+      xmlOutput.output(document, outputStream);
+    }
+    catch (IOException ex) {
+      System.err.println("[XMLData] problem writing to file. Message is: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      outputStream.close();
+      throw new IOException("xml file could not be stored");
+    }
+    outputStream.close();    
+    
+    InputStream inputStream = new MemoryInputStream(buffer);
+    xmlFile.setFileValue(inputStream);
+//    try {
+      //xmlFile.update();
+      xmlFile.store();
+//    }
+//    catch (SQLException ex)  {
+//      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
+//      ex.printStackTrace(System.err);
+//      throw new IOException("xml file could not be stored");
+//    }
+    inputStream.close();
+    // reading finished
+    // delete file
+    return xmlFile;
+  }
+    
+    
+    
+  
+  public ICFile storex(IWApplicationContext iwac) throws IOException {
     // create or fetch existing ICFile
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
