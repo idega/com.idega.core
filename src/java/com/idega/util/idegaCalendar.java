@@ -597,16 +597,16 @@ public class idegaCalendar{
         }
 
 	public String getNameOfDay(int day, IWContext iwc) {
-      Locale currentLocale = iwc.getCurrentLocale();
-      String returner = "";
+    Locale currentLocale = iwc.getCurrentLocale();
+    String returner = "";
 
-      DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
-      String[] days = dfs.getWeekdays();
-      if ( days != null ) {
-        returner = days[day-1];
-      }
+    DateFormatSymbols dfs = new DateFormatSymbols(iwc.getCurrentLocale());
+    String[] days = dfs.getWeekdays();
+    if ( days != null ) {
+      returner = days[day];
+    }
 
-      return returner;
+    return returner;
   }
 
         public String getENGNameOfDay(int dagur) {
