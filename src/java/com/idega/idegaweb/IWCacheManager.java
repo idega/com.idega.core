@@ -41,18 +41,25 @@ public class IWCacheManager {
   }*/
 
   public boolean isCacheValid(String key){
-    if(!isNull(key)){
+    if(isNull(key)){
+    //System.out.println(" CacheKey is null ");
+      return false;
+    }
+    else{
       long currentTime = System.currentTimeMillis();
       long invalidation = this.getTimeOfInvalidation(key);
-      if(currentTime>invalidation){
+       //System.out.println("Current     : "+currentTime);
+       //System.out.println("Invalidation: "+invalidation);
+
+      if(currentTime > invalidation){
+        //System.out.println(" currentTime > invalidation ");
         return false;
       }
       else{
+        //System.out.println(" currentTime < invalidation ");
         return true;
       }
     }
-    return false;
-
   }
 
   private boolean isNull(String key){
