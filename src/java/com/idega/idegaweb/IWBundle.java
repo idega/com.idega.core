@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.58 2003/05/27 20:33:39 eiki Exp $
+ * $Id: IWBundle.java,v 1.59 2003/05/31 14:34:53 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import com.idega.presentation.Image;
 import com.idega.user.business.UserProperties;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
+import com.idega.util.SortedProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -354,7 +355,7 @@ public class IWBundle implements java.lang.Comparable {
 
 	private void initializePropertiesStrings() {
 		if (localizableStringsProperties == null) {
-			localizableStringsProperties = new Properties();
+			localizableStringsProperties = new SortedProperties();
 			try {
 				localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
 				localizableStringsMap = new TreeMap(localizableStringsProperties);
