@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.61 2004/06/04 17:54:16 tryggvil Exp $
+ * $Id: Table.java,v 1.62 2004/06/04 17:55:27 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,12 @@ import com.idega.util.text.TextStyler;
 
 /**
  * A class to use for presentation of 2 dimensional (grid) layout.
- *
- *   Note: xpos is in [1:cols]
+ * <br>
+ * <br>
+ *   <b>NOTE:</b> xpos is in [1:cols]
  *    ,ypos is in [1:rows]
-
+ * <br>
+ * <br>
  * This object maps to and renders the 
  * <code><pre>
  * <TABLE><TR><TD>...</TD></TR></TABLEL>
