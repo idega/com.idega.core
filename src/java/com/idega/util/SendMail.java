@@ -46,7 +46,7 @@ public class SendMail {
 
 	}
 
-    private static String parseCharacters(String input){
+    /*private static String parseCharacters(String input){
       StringBuffer returnBuffer = new StringBuffer();
       char[] charArray = input.toCharArray();
       for (int i = 0; i < charArray.length; i++) {
@@ -62,6 +62,41 @@ public class SendMail {
         }
       }
       return returnBuffer.toString();
+    }*/
+
+    private static String parseCharacters(String input){
+      return convertStringBody(input);
     }
+
+
+
+    /**
+     * From 2M Business Applications DK
+     */
+    private static String convertStringBody(String tekst) {
+
+        while (tekst.indexOf("®") > -1) {
+            tekst = replace(tekst, "®","&AElig;");
+        }
+
+        while (tekst.indexOf("¾") > -1) {
+            tekst = replace(tekst, "¾","&aelig;");
+        }
+        while (tekst.indexOf(System.getProperty("line.separator")) > -1) {
+            tekst = replace(tekst,System.getProperty("line.separator"),"<br>");
+        }
+        return tekst;
+    }
+
+    private static String replace(String tekst, String changeFrom, String changeTo) {
+        String tekst1 = tekst.substring(0,tekst.indexOf(changeFrom));
+        String tekst2 = tekst.substring(tekst.indexOf(changeFrom)+1);
+        return tekst1 + changeTo + tekst2;
+    }
+
+
+
+
+
 
 }
