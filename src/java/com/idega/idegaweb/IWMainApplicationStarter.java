@@ -9,6 +9,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookupException;
@@ -149,44 +150,12 @@ public class IWMainApplicationStarter {
 		catch (Exception e) {
 			e.printStackTrace(System.err);
 		}
+		
 		//IWMainApplication application = new IWMainApplication(this.getServletContext());
 		IWMainApplication application = iwma;
+		setApplicationVariables(application);
 		application.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
-		if (application.getSettings().getIfDebug()) {
-			application.getSettings().setDebug(true);
-			sendStartMessage("Debug mode is active");
-		}
-		if (application.getSettings().getIfAutoCreateStrings()) {
-			application.getSettings().setAutoCreateStrings(true);
-			sendStartMessage("AutoCreateLocalizedStrings is active");
-		}
-		if (application.getSettings().getIfAutoCreateProperties()) {
-			application.getSettings().setAutoCreateProperties(true);
-			sendStartMessage("AutoCreateProperties is active");
-		}
-		if (application.getSettings().getIfEntityBeanCaching()) {
-			IDOContainer.getInstance().setBeanCaching(true);
-			sendStartMessage("EntityBeanCaching Active");
-		}
-		if (application.getSettings().getIfEntityQueryCaching()) {
-			IDOContainer.getInstance().setQueryCaching(true);
-			sendStartMessage("EntityQueryCaching Active");
-		}
-		if (application.getSettings().getIfEntityAutoCreate()) {
-			EntityControl.setAutoCreationOfEntities(true);
-			sendStartMessage("EntityAutoCreation Active");
-		}
-		else {
-			sendStartMessage("EntityAutoCreation Not Active");
-		}
-		String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
-		if (accControlType != null) {
-			com.idega.presentation.Block.usingNewAcessControlSystem = true;
-		}
-		String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
-		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
-			com.idega.presentation.text.Link.usingEventSystem = true;
-		}
+		
 		this.startDatabasePool();
 		IWStyleManager iwStyleManager = new IWStyleManager(application);
 		iwStyleManager.getStyleSheet();
@@ -202,6 +171,61 @@ public class IWMainApplicationStarter {
 		long time = (end - start) / 1000;
 		sendStartMessage("Completed in " + time + " seconds");
 	}
+	
+	protected void setApplicationVariables(IWMainApplication application){
+		if (application.getSettings().getIfDebug()) {
+					application.getSettings().setDebug(true);
+					sendStartMessage("Debug mode is active");
+				}
+				if (application.getSettings().getIfAutoCreateStrings()) {
+					application.getSettings().setAutoCreateStrings(true);
+					sendStartMessage("AutoCreateLocalizedStrings is active");
+				}
+				if (application.getSettings().getIfAutoCreateProperties()) {
+					application.getSettings().setAutoCreateProperties(true);
+					sendStartMessage("AutoCreateProperties is active");
+				}
+				if (application.getSettings().getIfEntityBeanCaching()) {
+					IDOContainer.getInstance().setBeanCaching(true);
+					sendStartMessage("EntityBeanCaching Active");
+				}
+				if (application.getSettings().getIfEntityQueryCaching()) {
+					IDOContainer.getInstance().setQueryCaching(true);
+					sendStartMessage("EntityQueryCaching Active");
+				}
+				if (application.getSettings().getIfEntityAutoCreate()) {
+					EntityControl.setAutoCreationOfEntities(true);
+					sendStartMessage("EntityAutoCreation Active");
+				}
+				else {
+					sendStartMessage("EntityAutoCreation Not Active");
+				}
+				String userSystem = iwma.getSettings().getProperty("IW_USER_SYSTEM");
+				if(userSystem!=null){
+					if(userSystem.equalsIgnoreCase("OLD")){
+						sendStartMessage("Using Old idegaWeb User System");
+						LoginBusinessBean.USING_OLD_USER_SYSTEM=true;
+						try
+						{
+							IBOLookup.registerImplementationForBean("com.idega.core.user.data.User","com.idega.core.user.data.OldUserBMPBean");
+						}
+						catch (ClassNotFoundException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}	
+					}
+				}
+				String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
+				if (accControlType != null) {
+					com.idega.presentation.Block.usingNewAcessControlSystem = true;
+				}
+				String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
+				if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
+					com.idega.presentation.text.Link.usingEventSystem = true;
+				}
+	}
+	
 	/**
 	 * 
 	 */
