@@ -64,14 +64,14 @@ public class BlobInputStream extends InputStream{
   **/
   public void close() throws IOException {
     try{
-      if( in!=null) in.close();
-
       if (RS != null){
           RS.close();
        }
       if(Stmt!= null){
           Stmt.close();
       }
+
+      if( in!=null) in.close();
 
     }
     catch(Exception ex){
@@ -80,7 +80,7 @@ public class BlobInputStream extends InputStream{
     }
     finally{
       if (conn!= null){
-        entity.freeConnection(conn);
+        ConnectionBroker.freeConnection(conn);
       }
     }
   }
@@ -157,9 +157,7 @@ public class BlobInputStream extends InputStream{
   }
 
   private void initConnection() throws SQLException{
-    if(entity!=null){
-      conn=entity.getConnection();
-    }
+      conn = ConnectionBroker.getConnection();
   }
 
   protected void finalize()throws Throwable{
