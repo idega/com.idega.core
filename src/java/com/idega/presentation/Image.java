@@ -518,6 +518,7 @@ public void limitImageWidth( boolean limitImageWidth ){
   }
 
   public void main(IWContext iwc) {
+    System.out.println("inni í image main");
     if( this.overImageUrl != null ){
       Script rollOverScript = getParentPage().getAssociatedScript();
       rollOverScript.addFunction("swapImgRestore()","function swapImgRestore() {var i,x,a=document.sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;}");
