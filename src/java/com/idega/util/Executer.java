@@ -30,23 +30,22 @@ public class Executer {
       if (args != null) {
         Runtime runner = Runtime.getRuntime();
         for (int i = 0; i < args.length; i++) {
-          System.out.println(args[i]);
+          System.out.println("com.idega.util.Executer args["+i+"] = "+args[i]);
           Process p = runner.exec(args[i]);
-
-        StringBuffer sbOut = new StringBuffer(1000);
-        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        while (true) {
-          String s = br.readLine();
-          if (s == null) {
-            break;
+          StringBuffer sbOut = new StringBuffer(1000);
+          BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+          while (true) {
+            String s = br.readLine();
+            if (s == null) {
+              break;
+            }
+            System.out.println(s);
           }
-          System.out.println(s);
-        }
-        br.close();
-        p.waitFor();
-        System.out.println(sbOut.toString());
-        System.out.println("Exit status: " + p.exitValue());
-        p.destroy();
+          br.close();
+          p.waitFor();
+          System.out.println(sbOut.toString());
+          System.out.println("Exit status: " + p.exitValue());
+          p.destroy();
         }
       }
     } catch (Exception ex) {
