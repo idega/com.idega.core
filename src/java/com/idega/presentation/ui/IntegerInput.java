@@ -135,9 +135,7 @@ public void print(IWContext iwc)throws IOException{
 
 		else if (getLanguage().equals("WML")){
 
-			println("<p><input type=\"text\" format=\"NN\" name=\""+getName()+"\" value=\""+getValueAsString()+"\" />");
-
-			println("</p>");
+			print("<input type=\"text\" format=\"NN\" name=\""+getName()+"\" value=\""+getValueAsString()+"\" />");
 
 		}
 

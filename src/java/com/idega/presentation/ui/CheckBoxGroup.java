@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -120,6 +121,17 @@ public class CheckBoxGroup extends InterfaceObject
 		}
 	}
 
+	
+	public void print(IWContext iwc) throws Exception {
+		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getLanguage())) {
+			print("<select multiple=\"true\">");
+			super.print(iwc);
+			print("</select>");
+		} else {
+			super.print(iwc);
+		}
+	}
+	
 
 	/**
 	 * @param displayString

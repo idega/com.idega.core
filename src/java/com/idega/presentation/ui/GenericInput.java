@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 
@@ -43,11 +44,36 @@ public abstract class GenericInput extends InterfaceObject {
 			String markup = main.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		}
-		else if (getLanguage().equals("WML")) {
-			print("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " />");
+		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+			if(normalPrintSequence()) {
+				printWML(main);
+			}
 		}
 	}
-	
+
+	/**
+	 * @return
+	 */
+	public boolean normalPrintSequence() {
+		return false;
+	}
+
+	public String[] getDefinedWmlAttributes() {
+		String[] definedAttributes = {"emptyok","format","maxlength","size","tabindex","title","value","class","id"};
+		return definedAttributes;
+	}
+
+	public void printWML(IWContext main) {
+		String[] definedAttributes = getDefinedWmlAttributes();
+		print("<input type=\"text\" name=\"" + getName() + "\" ");
+		for (int i = 0; i < definedAttributes.length; i++) {
+			if(isMarkupAttributeSet(definedAttributes[i])) {
+				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
+			}
+		} 		
+		print("/>");
+	}
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */

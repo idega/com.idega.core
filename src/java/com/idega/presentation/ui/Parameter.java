@@ -57,4 +57,27 @@ public class Parameter extends GenericInput {
 			return super.equals(obj);
 		}
 	}
+	
+	public String[] getDefinedWmlAttributes() {
+		String[] definedAttributes = {"value"};//,"class","id"};
+		return definedAttributes;
+	}
+	
+	public void printWML(IWContext main) {
+		String[] definedAttributes = getDefinedWmlAttributes();
+		print("<postfield name=\"" + getName() + "\" ");
+		for (int i = 0; i < definedAttributes.length; i++) {
+			if(isMarkupAttributeSet(definedAttributes[i])) {
+				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
+			}
+		} 		
+		print("/>");
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean normalPrintSequence() {
+		return false;
+	}
 }

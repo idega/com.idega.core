@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -175,14 +176,17 @@ public class Form extends InterfaceObject {
 			for (Iterator iter = objects.iterator(); iter.hasNext();) {
 				PresentationObject mo = (PresentationObject) iter.next();
 				if (mo instanceof PresentationObjectContainer) {
-					vector = findAllInputNamesHelper(vector, (PresentationObjectContainer) mo);
-				}
-				else {
 					if (mo instanceof InterfaceObject) {
-						vector.add(mo.getName());
+						if(!(mo instanceof Parameter) && !(mo instanceof GenericButton)) {
+							String name = mo.getName();
+							if(name != null && !"null".equals(name)) {
+								vector.add(name);
+							}
+						}
+					} else {
+						vector = findAllInputNamesHelper(vector, (PresentationObjectContainer) mo);
 					}
 				}
-
 			}
 		}
 		return vector;
@@ -488,23 +492,48 @@ public class Form extends InterfaceObject {
 		else if (getLanguage().equals("WML")) {
 			//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 			setAction(getIdegaSpecialRequestURI(iwc));
-			println("<onevent type=\"onenterforward\" >");
-			println("<refresh>");
-			for (int j = 0; j < findAllInputNames().length; j++) {
-				println("<setvar name=\"" + findAllInputNames()[j] + "\" value=\"\" />");
+			print("<onevent type=\"onenterforward\" >");
+			print("<refresh>");
+			String[] allInputNames = findAllInputNames();
+			for (int j = 0; j < allInputNames.length; j++) {
+				print("<setvar name=\"" + allInputNames[j] + "\" value=\"\" />");
 			}
-			println("</refresh>");
-			println("</onevent>");
-			println("<do type=\"accept\">");
-			println("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
-			for (int i = 0; i < findAllInputNames().length; i++) {
-				println("<postfield name=\"" + findAllInputNames()[i] + "\" value=\"$" + findAllInputNames()[i] + "\" />");
-			}
-			println("</go>");
-			println("</do>");
+			print("</refresh>");
+			print("</onevent>");
+			print("<p><fieldset>");
 			super.print(iwc);
+			print("</fieldset></p>");
+			
+			SubmitButton theButton = new SubmitButton();
+			List parameters = new ArrayList();
+			List children = getChildrenRecursive();
+			for (Iterator iter = children.iterator(); iter.hasNext();) {
+				PresentationObject child = (PresentationObject) iter.next();
+				if(child instanceof Parameter || child instanceof HiddenInput) {
+					parameters.add(child);
+				}
+				if(child instanceof SubmitButton) {
+					theButton = (SubmitButton)child;
+				}
+			}
+			
+			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
+			print("<p><anchor>"+theButton.getContent());
+			print("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
+			for (int i = 0; i < allInputNames.length; i++) {
+				print("<postfield name=\"" + allInputNames[i] + "\" value=\"$" + allInputNames[i] + "\" />");
+			}
+			
+			for (Iterator iter = parameters.iterator(); iter.hasNext();) {
+				Parameter child = (Parameter) iter.next();
+				child.printWML(iwc);
+			}
+			print("</go>");
+			print("</anchor></p>");
+			//print("</do>");
+			
 		}
-		//}
+		//};
 		//else{
 		//	super.print(iwc);
 		//}

@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.11 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: RadioButton.java,v 1.12 2004/06/22 17:25:57 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -108,5 +108,9 @@ public class RadioButton extends GenericInput {
 				}
 			}
 		}
+	}
+	
+	public void printWML(IWContext main) {
+		print("<option value=\""+getValueAsString()+"\">"+getContent()+"</option>");
 	}
 }

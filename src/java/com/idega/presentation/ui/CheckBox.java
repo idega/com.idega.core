@@ -90,4 +90,8 @@ public class CheckBox extends GenericInput {
 			}
 		}
 	}
+	
+	public void printWML(IWContext main) {
+		print("<option value=\""+getValueAsString()+"\">"+getContent()+"</option>");
+	}
 }

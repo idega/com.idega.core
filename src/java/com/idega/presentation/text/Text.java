@@ -336,7 +336,8 @@ public class Text extends PresentationObject {
 			print("</paragraph>");
 		}
 		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
-			print(getLocalizedText(iwc));
+			String text = getLocalizedText(iwc);
+			print(text);
 		}
 	}
 

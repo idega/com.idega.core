@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.110 2004/06/10 19:55:02 tryggvil Exp $
+ *  $Id: Page.java,v 1.111 2004/06/22 17:25:57 gummi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1260,7 +1260,7 @@ public class Page extends PresentationObjectContainer {
 		}
 		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
-			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
+			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
 			println("<wml>");
 			println("<card title=\"" + getLocalizedTitle(iwc) + "\" id=\"card1\">");
 

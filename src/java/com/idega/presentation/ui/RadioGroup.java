@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.7 2004/02/26 09:09:53 laddi Exp $
+ * $Id: RadioGroup.java,v 1.8 2004/06/22 17:25:57 gummi Exp $
 
  *
 
@@ -31,6 +31,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 
 import com.idega.data.IDOLegacyEntity;
+import com.idega.idegaweb.IWConstants;
 
 
 
@@ -443,7 +444,15 @@ public class RadioGroup extends InterfaceObject {
   }
 
 
-
+	public void print(IWContext iwc) throws Exception {
+		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getLanguage())) {
+			print("<select>");
+			super.print(iwc);
+			print("</select>");
+		} else {
+			super.print(iwc);
+		}
+	}
 
 
   public void setBorder(int i){

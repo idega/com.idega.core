@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
@@ -30,6 +31,10 @@ public class Label extends InterfaceObject {
 			print("<label "+getMarkupAttributesString()+" >");
 			print(_label);
 			println("</label>");	
+		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getLanguage())) {
+			println("<br/>");	
+			print(_label);
+			println("<br/>");	
 		}
 	}	
 	
