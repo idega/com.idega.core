@@ -264,6 +264,14 @@ public class GenericSelect extends InterfaceObject {
 		}
 	}
 
+	public int getNumberOfElemetent() {
+		if (theElements != null) {
+			return theElements.size();
+		}	else {
+			return 0;	
+		}
+	}
+
 	protected List getOptions() {
 		return theElements;
 	}
