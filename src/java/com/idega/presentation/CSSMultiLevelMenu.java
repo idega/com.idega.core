@@ -242,7 +242,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
                 Iterator iter = children.iterator();
                 while (iter.hasNext()) {
                     PresentationObject obj = (PresentationObject) iter.next();
-                    print("\n");
+                    
                     if(!(obj instanceof CSSMenu)){
                         print(LI_START_TAG);
                         obj._print(iwc);
@@ -260,9 +260,9 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
             }
             else {
                 //topMenuItem.setStyleClass("menuitem");
-                println(LI_START_TAG);
+                print(LI_START_TAG);
                 topMenuItem._print(iwc);
-                println(LI_END_TAG);
+                print(LI_END_TAG);
             }
             
         }
