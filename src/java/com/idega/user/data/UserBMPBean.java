@@ -970,13 +970,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
-    IDOQuery query = idoQueryGetSelect();
-    query
-      .appendWhereEqualsQuoted(getColumnNamePersonalID(), personalId)
-      .appendAnd();
-    appendIsNotDeleted(query);
     
-    Collection users = idoFindIDsBySQL(query.toString());
+	IDOQuery query = idoQueryGetSelect();
+	   query
+	   	.appendWhere(getColumnNamePersonalID())
+	   	.appendLike()
+	   	.appendWithinSingleQuotes(personalId)
+		.appendAnd();
+	   appendIsNotDeleted(query);
+    
+	   Collection users = idoFindPKsByQuery(query);
+
 
 		if (!users.isEmpty())
 			return (Integer) users.iterator().next();
