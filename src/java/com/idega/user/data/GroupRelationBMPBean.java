@@ -245,7 +245,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   	.append(STATUS_COLUMN).append("='").append(STATUS_ACTIVE).append("'")
   	.append(" or ")
   	.append(STATUS_COLUMN).append("='").append(STATUS_PASSIVE_PENDING).append("' ) ");
-  	
+		//might have to or null check
   	return sql.toString();
   }
   
@@ -261,7 +261,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		.append(STATUS_COLUMN).append("='").append(STATUS_ACTIVE).append("'")
 		.append(" or ")
 		.append(STATUS_COLUMN).append("='").append(STATUS_PASSIVE_PENDING).append("' ) ");
-  	
+  	//might have to or null check
 		return sql.toString();
 	}
   
