@@ -28,6 +28,16 @@ public class ICLocale extends GenericEntity {
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
   }
 
+  public void insertStartData() throws Exception{
+    ICLocale is= new ICLocale();
+    is.setLocale("is_IS");
+    is.insert();
+
+    ICLocale en= new ICLocale();
+    en.setLocale("en");
+    en.insert();
+  }
+
 
   public String getEntityName() {
     return getEntityTableName();
