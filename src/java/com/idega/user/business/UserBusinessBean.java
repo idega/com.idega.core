@@ -794,10 +794,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
     User userToUpdate = this.getUser(userId);
-    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group);
+    updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, null);
   }
 
+	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname ) throws EJBException,RemoteException {
+		User userToUpdate = this.getUser(userId);
+		updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, fullname);
+	}
+
   public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+	updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, null);
+  }
+
+  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname ) throws EJBException,RemoteException {
 
     if(firstname != null){
       userToUpdate.setFirstName(firstname);
@@ -827,9 +836,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     if (personalID != null){
     	userToUpdate.setPersonalID(personalID);
     }
+    if (fullname != null) {
+    	userToUpdate.setFullName(fullname);
+    }
 
     userToUpdate.store();
-
   }
 
   /**
