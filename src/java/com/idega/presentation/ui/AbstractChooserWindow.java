@@ -1,5 +1,8 @@
 package com.idega.presentation.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -112,4 +115,18 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
     this.noScript = noScript;
   }
 
+  public Collection getHiddenParameters(IWContext iwc) {
+    String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
+    String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
+    String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
+    String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
+
+    Collection coll = new ArrayList();
+
+    coll.add(new Parameter(SCRIPT_PREFIX_PARAMETER,prefix));
+    coll.add(new Parameter(SCRIPT_SUFFIX_PARAMETER,suffix));
+    coll.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,displayString));
+    coll.add(new Parameter(VALUE_PARAMETER_NAME,valueString));
+    return coll;
+  }
 }
