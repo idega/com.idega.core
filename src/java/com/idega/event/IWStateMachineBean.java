@@ -2,8 +2,9 @@ package com.idega.event;
 
 import com.idega.presentation.Page;
 import com.idega.business.*;
-import java.lang.ClassNotFoundException;
 import javax.ejb.FinderException;
+import javax.swing.event.ChangeListener;
+
 import java.rmi.RemoteException;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.core.data.ICObject;
@@ -11,6 +12,7 @@ import com.idega.data.IDOLookup;
 import java.util.*;
 
 import com.idega.idegaweb.*;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.core.data.ICObjectInstance;
 
 /**
@@ -190,10 +192,39 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
     return state;
   }
   
+  /** Returns all existing change listeners */
+  public Collection getAllChangeListeners() {
+    Collection changeListeners = new ArrayList();
+    Map map = this.getUserStatesMap();
+    Collection coll = map.values();
+    Iterator iterator = coll.iterator();
+    while (iterator.hasNext()) {
+      Object object = iterator.next();
+      if (object instanceof ChangeListener)
+        changeListeners.add(object);
+    }
+    return changeListeners;
+  }
+
+  /** Returns all existing controllers */  
+  public Collection getAllControllers() {
+    Collection controllers = new ArrayList();
+    Map map = this.getUserStatesMap();
+    Collection coll = map.values();
+    Iterator iterator = coll.iterator();
+    while (iterator.hasNext()) {
+      Object object = iterator.next();
+      if (object instanceof IWControlFramePresentationState)
+        controllers.add(object);
+    }
+    return controllers;
+  }
+
+
   
   public IWPresentationState getStateFor(String compoundId, Class stateClassType) {
     IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(compoundId);
-    // remove me 
+    // is the following  part of code ever used?
     if (state == null)  {
        Map map = this.getUserStatesMap();
        Collection coll = map.values();
