@@ -1231,19 +1231,42 @@ public class IDOQuery implements Cloneable {
 	
 	public IDOQuery setToCount() {
 		if (_buffer != null) {
-			int index = _buffer.indexOf(" from ");
-			if (index < 0) {
-				index = _buffer.indexOf(" FROM ");
+			int index1 = -1;
+			int indexUpper= _buffer.indexOf(" from ");
+			int indexLower = _buffer.indexOf(" FROM ");
+			
+			if (indexUpper == -1) {
+				index1 = indexLower;
 			}
-			if (index != -1) {
-				_buffer.replace(0, index, this.SELECT_COUNT);
+			else if (indexLower == -1) {
+				index1 = indexUpper;
+			}
+			else if (indexLower<indexUpper) {
+				index1 = indexLower;
+			}
+			else {
+				index1 = indexUpper;
+			}
+			if (index1 != -1) {
+				_buffer.replace(0, index1, this.SELECT_COUNT);
+			}
+			int index2 = -1;
+			indexUpper = _buffer.indexOf(" order by ");
+			indexLower = _buffer.indexOf(" ORDER BY ");
+			
+			if (indexUpper == -1 && indexLower != -1) {
+				index2 = indexLower;
+			}
+			else if (indexLower == -1 && indexUpper != -1) {
+				index2 = indexUpper;
+			}
+			else if (indexLower>indexUpper) {
+				index2 = indexLower;
+			}
+			else {
+				index2 = indexUpper;
 			}
 			
-			
-			int index2 = _buffer.indexOf(" order by ");
-			if (index2 < 0) {
-				index2 = _buffer.indexOf(" ORDER BY ");
-			}
 			if (index2 != -1) {
 				_buffer = _buffer.replace(index2,_buffer.length(),"");
 			}
