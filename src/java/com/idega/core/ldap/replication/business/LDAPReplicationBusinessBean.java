@@ -369,7 +369,6 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					attribs= jndiOps.read(entryDN.toString());
 				}
 				
-				Group childGroup = null;
 					if(ldapUtil.isUser(entryDN)){
 						if(parentGroup!=null){
 							getUserBusiness().createOrUpdateUser(entryDN, attribs,parentGroup);
