@@ -5,6 +5,7 @@
 
 package com.idega.presentation.app;
 
+import com.idega.idegaweb.*;
 import com.idega.presentation.FrameSet;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -14,8 +15,6 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.Window;
 
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWMainApplication;
 
 import com.idega.data.EntityFinder;
 import com.idega.data.GenericEntity;
@@ -79,7 +78,7 @@ public class IWApplication extends FrameSet{
   public static PresentationObject getIWApplicationIcon(ICObject obj,IWContext iwc){
       Class iwApplicationClass=null;
       try{
-        iwApplicationClass = obj.getObjectClass();
+	iwApplicationClass = obj.getObjectClass();
       }
       catch(ClassNotFoundException e){
       }
@@ -90,11 +89,11 @@ public class IWApplication extends FrameSet{
       Table icon = new Table(1,2);
       String name = null;
       if(obj!=null){
-        name = obj.getName();
+	name = obj.getName();
       }
       else{
-          Window instance = Window.getStaticInstance(iwApplicationClass);
-          name = instance.getName();
+	  Window instance = Window.getStaticInstance(iwApplicationClass);
+	  name = instance.getName();
       }
       /**
        * @todo get the right Image
@@ -102,18 +101,18 @@ public class IWApplication extends FrameSet{
       Image iconImage = null;
       IWBundle bundle = null;
       if(obj==null){
-        bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
-        iconImage = bundle.getImage("IWApplicationIcon.gif");
+	bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+	iconImage = bundle.getImage("IWApplicationIcon.gif");
       }
       else{
-        bundle = obj.getBundle(iwc.getApplication());
-        if(bundle==null){
-          bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
-          iconImage = bundle.getImage("IWApplicationIcon.gif");
-        }
-        else{
-          iconImage = bundle.getImage("IWApplicationIcon.gif");
-        }
+	bundle = obj.getBundle(iwc.getApplication());
+	if(bundle==null){
+	  bundle = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+	  iconImage = bundle.getImage("IWApplicationIcon.gif");
+	}
+	else{
+	  iconImage = bundle.getImage("IWApplicationIcon.gif");
+	}
       }
 
       Link icon_image = new Link(iconImage);
@@ -122,6 +121,7 @@ public class IWApplication extends FrameSet{
       icon_text.setFontSize(1);
       icon_text.setFontColor("black");
       Link icon_link = new Link(name);
+	icon_link.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_LARGE);
       icon_link.setWindowToOpen(iwApplicationClass);
       icon.setAlignment(1,1,"center");
       icon.add(icon_image,1,1);

@@ -275,6 +275,7 @@ public static String HEADER_COLOR="#0E2456";
       adminTitle.setBold();
       adminTitle.setFontColor("#FFFFFF");
       adminTitle.setFontSize("3");
+      adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
 
     super.setTitle(title);
 
