@@ -13,6 +13,7 @@ import com.idega.data.IDOQuery;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
 import java.rmi.RemoteException;
@@ -975,4 +976,31 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   	
   	return super.idoFindPKsBySQL(query.toString());
   }
+  
+  /**
+	 * Returns users within a given birth year range
+	 *	 * @param minYear , the year on the format 'yyyy' 
+	 * @param maxYear , the year on the format 'yyyy'  
+	 * @return Collection
+	 * @throws FinderException
+	 * @throws RemoteException
+	 */
+   public Collection ejbFindUsersByYearOfBirth (int minYear, int maxYear)  throws FinderException {
+        final IDOQuery  sql = new IDOQuery ();
+        IWTimestamp minStamp = new IWTimestamp(minYear,1,1,0,0,0);
+        IWTimestamp maxStamp = new IWTimestamp(maxYear,12,31,23,59,59);
+        sql.append ("select * from ").append(getTableName());
+        sql.append(" where ");
+        sql.append(getColumnNameDateOfBirth());
+		sql.append(" >= '");
+		sql.append(minStamp.toSQLString());
+		sql.append("'");
+		sql.appendAnd();
+		sql.append(getColumnNameDateOfBirth());
+		sql.append(" <= '");
+		sql.append(maxStamp.toSQLString());
+		sql.append("'");
+        return idoFindIDsBySQL (sql.toString ());
+    }
+
 }

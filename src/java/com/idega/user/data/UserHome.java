@@ -23,6 +23,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException;
  public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException;
  public java.util.Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
+ public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException,RemoteException;
  public int getUserCount()throws com.idega.data.IDOException;
  public java.lang.String getGroupType();
 
