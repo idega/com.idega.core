@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.75 2004/09/24 13:50:44 thomas Exp $
+ * $Id: Table.java,v 1.76 2004/11/23 17:14:32 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -44,6 +44,7 @@ import com.idega.util.text.TextStyler;
  */
 public class Table extends PresentationObjectContainer implements TableType{
 
+	//Static variables:
 	public static final String FRAME_VOID = "void";
 	public static final String FRAME_ABOVE = "above";
 	public static final String FRAME_BELOW = "below";
@@ -86,45 +87,33 @@ public class Table extends PresentationObjectContainer implements TableType{
 	
 	protected static Image transparentcell;
 	protected static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
+
+	protected static final String COLOR_ATTRIBUTE = "bgcolor";
+	public static final String HUNDRED_PERCENT = "100%";
+	public static final String VERTICAL_ALIGN_TOP = "top";
+	public static final String VERTICAL_ALIGN_MIDDLE = "middle";
+	public static final String VERTICAL_ALIGN_BOTTOM = "bottom";
+	public static final String HORIZONTAL_ALIGN_LEFT = "left";
+	public static final String HORIZONTAL_ALIGN_RIGHT = "right";
+	public static final String HORIZONTAL_ALIGN_CENTER = "center";
+	
+	//Member variables:
 	protected TableCell theCells[][];
 	protected int cols = 0;
 	protected int rows = 0;
+	protected String _width = null;
+	protected String _height = null;
 
 	protected boolean forceToRenderAsTableInWML = false;
 	
-	/**
-	 * 
-	 * @uml.property name="beginMergedxpos"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
-	 */
 	//Variables to hold coordinates of merge point of cells
-	//Initialized only if needed
-	protected Vector beginMergedxpos;
-
-	/**
-	 * 
-	 * @uml.property name="beginMergedypos"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
-	 */
+	//Initialized only if neededprotected Vector beginMergedxpos;
 	protected Vector beginMergedypos;
-
-	/**
-	 * 
-	 * @uml.property name="endMergedxpos"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
-	 */
 	protected Vector endMergedxpos;
-
-	/**
-	 * 
-	 * @uml.property name="endMergedypos"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
-	 */
 	protected Vector endMergedypos;
 
 	protected boolean isResizable;
 	protected boolean cellsAreMerged;
-	protected static final String COLOR_ATTRIBUTE = "bgcolor";
 	protected boolean addLineTop = false;
 	protected boolean addLinesBetween = false;
 	protected boolean addLinesBottom = false;
@@ -137,19 +126,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 	protected int lineColspan = 0;
 	protected int[] lineRows = new int[0];
 	protected int[] lineCols = new int[0];
-	protected String markupLanguage = null;
 	
-	protected String _width = null;
-	protected String _height = null;
-
-
-	public static final String HUNDRED_PERCENT = "100%";
-	public static final String VERTICAL_ALIGN_TOP = "top";
-	public static final String VERTICAL_ALIGN_MIDDLE = "middle";
-	public static final String VERTICAL_ALIGN_BOTTOM = "bottom";
-	public static final String HORIZONTAL_ALIGN_LEFT = "left";
-	public static final String HORIZONTAL_ALIGN_RIGHT = "right";
-	public static final String HORIZONTAL_ALIGN_CENTER = "center";
+	//Temporary legacy variables:
+	protected transient String markupLanguage = null;
 
 	/**
 	 * Constructor that defaults with 1 column and 1 row
@@ -2112,32 +2091,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	}
 
 	
-	protected class TableList extends ArrayList{
-		private UIComponent pContainer;
-		TableList(UIComponent container){
-			pContainer=container;
-		}
-		public boolean add(Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			//Table table = (Table)pContainer;
-			//table.getChild(1).getChildren().add(comp);
-			
-			return super.add(comp);
-			
-		}
-		public void add(int index,Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			super.add(index,comp);
-		}
-		public Object set(int index,Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			return super.set(index,child);
-		}
-	}
-	
+
 	public void encodeBegin(FacesContext fc)throws IOException{
 		//Does nothing here. insted encodeChildren calles the print(iwc) method.
 	}
@@ -2147,8 +2101,39 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 */
 	public void encodeChildren(FacesContext context) throws IOException {
 		super.encodeChildren(context);
-	}	
+	}
 	
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext context, Object state) {
+		// TODO Auto-generated method stub
+		super.restoreState(context, state);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		// TODO Auto-generated method stub
+		return super.saveState(context);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processRestoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void processRestoreState(FacesContext fc, Object arg1) {
+		// TODO Auto-generated method stub
+		super.processRestoreState(fc, arg1);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processSaveState(javax.faces.context.FacesContext)
+	 */
+	public Object processSaveState(FacesContext arg0) {
+		// TODO Auto-generated method stub
+		return super.processSaveState(arg0);
+	}
 	/*
 	 * End JSF SPECIFIC IMPLEMENTAION METHODS
 	 */	
