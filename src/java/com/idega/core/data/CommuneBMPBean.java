@@ -125,14 +125,16 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
   public Collection ejbFindAllCommunes() throws FinderException {
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this)
-		.appendWhereEqualsQuoted(COLUMN_VALID, "Y");
+		.appendWhereEqualsQuoted(COLUMN_VALID, "Y")
+		.appendOrderBy(COLUMN_COMMUNE);
 		return idoFindPKsByQuery(query);
   }
   
   public Integer ejbFindByCommuneNameAndProvince(String name, Object provinceID) throws FinderException {
     IDOQuery query = idoQuery();
     query.appendSelectAllFrom(this).appendWhereEquals(COLUMN_PROVINCE_ID, provinceID).appendAndEqualsQuoted(COLUMN_COMMUNE_NAME, name)
-    .appendAndEqualsQuoted(COLUMN_VALID, "Y");
+    .appendAndEqualsQuoted(COLUMN_VALID, "Y")
+		.appendOrderBy(COLUMN_COMMUNE);
     return (Integer) idoFindOnePKByQuery(query);
   }
   
