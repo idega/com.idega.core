@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.46 2003/04/03 20:36:55 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.47 2003/05/02 19:22:51 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -196,7 +196,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 			//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
 			__initializeIWC(request, response);
 			IWContext iwc = getIWContext();
-			try {
+			//try {
 				handleLocaleParameter(iwc);
 				writer = iwc.getWriter(); //get the writer
 				try{
@@ -231,8 +231,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 				//}
 				//      iwc.getWriter().println("\n");
 				_main(iwc);
-			}
-			catch (IWPageInitializationException iwe) {
+			//}
+			/*catch (IWPageInitializationException iwe) {
 				iwe.printStackTrace();
 				ErrorPage errorPage = new ErrorPage();
 				errorPage.setErrorMessage(iwe.getMessage());
@@ -243,7 +243,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 				ErrorPage errorPage = new ErrorPage();
 				errorPage.setErrorMessage("There was an error, your session is probably expired");
 				this.setPage(errorPage);
-			}
+			}*/
 			__print(iwc);
 			long time2 = System.currentTimeMillis();
 			writer.println("<!--" + (time2 - time1) + " ms-->");
@@ -271,19 +271,22 @@ public class IWPresentationServlet extends IWCoreServlet {
 			//getThreadContext().releaseThread(Thread.currentThread());
 		}
 		catch (Exception ex) {
-			/*if (ex instanceof java.io.IOException){
-				  throw (java.io.IOException) ex.fillInStackTrace();
+			if (ex instanceof java.io.IOException){
+				  //throw (java.io.IOException) ex.fillInStackTrace();
+				throw (java.io.IOException)ex;
 			}
 			else if (ex instanceof javax.servlet.ServletException){
-				  throw (javax.servlet.ServletException) ex.fillInStackTrace();
+				  //throw (javax.servlet.ServletException) ex.fillInStackTrace();
+				throw (javax.servlet.ServletException)ex;
 			}
-			else{*/
-			writer.println("<H2>IWError</H2>");
-			writer.println("<pre>");
-			writer.println(ex.getMessage());
-			ex.printStackTrace(System.err);
-			writer.println("</pre>");
-			//}
+			else{
+				throw new javax.servlet.ServletException(ex);
+				/*writer.println("<H2>IWError</H2>");
+				writer.println("<pre>");
+				writer.println(ex.getMessage());
+				ex.printStackTrace(System.err);
+				writer.println("</pre>");*/
+			}
 		}
 	}
 	public void __theService(HttpServletRequest request, HttpServletResponse response)
