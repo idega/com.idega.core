@@ -4,6 +4,7 @@ import com.idega.builder.data.IBPage;
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
+import com.idega.core.data.EmailBMPBean;
 import com.idega.core.data.Phone;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOException;
@@ -30,7 +31,7 @@ import javax.ejb.FinderException;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
  * @version 1.0
  */
 
@@ -38,7 +39,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static String sClassName = User.class.getName();
 	static String USER_GROUP_TYPE="ic_user_representative";
-	public final static String TABLE_NAME = "ic_user";
+	
+	public final static String SQL_TABLE_NAME= "IC_USER";
+	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
+	public final static String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
+	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
+	public final static String TABLE_NAME = SQL_TABLE_NAME;
 
 	//    public UserBMPBean(){
 	//      super();
@@ -69,9 +75,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		 */
 		addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID, "User", Group.class);
 		addOneToOneRelationship(_COLUMNNAME_PRIMARY_GROUP_ID, "Primary group", Group.class);
-		this.addManyToManyRelationShip(Address.class, "ic_user_address");
-		this.addManyToManyRelationShip(Phone.class, "ic_user_phone");
-		this.addManyToManyRelationShip(Email.class, "ic_user_email");
+		this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);
+		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
+		this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
 		this.setNullable(getColumnNameSystemImage(), true);
 		//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
 		// this.setUnique(getColumnNamePersonalID(),true);
@@ -732,19 +738,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException, RemoteException {
 		StringBuffer sql = new StringBuffer("select iu.* ");
-		sql.append("from ic_email ie,ic_user_email iue,ic_user iu ");
-		sql.append("where ie.ic_email_id = iue.ic_email_address ");
-		sql.append("and iue.ic_user_id = iu.ic_user_id ");
-		sql.append(" and ie.address = ");
-		sql.append(emailAddress);
+		sql.append(" from ").append(this.getTableName()).append(" iu ,");
+		sql.append(EmailBMPBean.SQL_TABLE_NAME).append(" ie ,");
+		sql.append(SQL_RELATION_EMAIL).append(" iue ");
+		sql.append(" where ie.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID = ");
+		sql.append("iue.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID  and ");
+		sql.append("iue.").append(getIDColumnName()).append(" = iu").append(getIDColumnName());
+		sql.append(" and ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL).append(" = '");
+		sql.append(emailAddress).append("'");
 		return (Integer) super.idoFindOnePKBySQL(sql.toString());
-		/*
-		Collection coll =  super.idoFindIDsBySQL(sql.toString());
-		if(!coll.isEmpty())
-		return (Integer)coll.iterator().next();
-		else
-		throw new FinderException("No user found");
-		*/
 	}
 
 	public Collection ejbFindByNames(String first, String middle, String last) throws FinderException {
