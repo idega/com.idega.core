@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.33 2002/03/07 12:02:41 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.35 2002/03/07 12:13:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -37,7 +37,7 @@ import com.idega.builder.business.BuilderLogic;
 
 
 /**
- * The base class for objects that present themselves to the user on screen in idegaWeb.
+ * The base class for objects that present themselves to a user on screen in idegaWeb.
  *
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.3
@@ -384,6 +384,11 @@ public class PresentationObject extends Object implements Cloneable {
 
   /**
    * The default implementation for the print function
+   *
+   * This function is invoked on each request by the user for each PresentationObject instance (after main(iwc)).
+   *
+   * Override this function where it is needed to print out the specified content.
+   * This function should only be overrided in idegaWeb Elements.
    */
   public void print(IWContext iwc) throws Exception {
     initVariables(iwc);
@@ -565,7 +570,11 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
 
-
+  /**
+   * Override this function for needed funcionality.
+   *
+   * This funcion is invoked on each request by the user (before print(iwc) ) on a PresentationObject Instance.
+   */
   public void main(IWContext iwc) throws Exception {
   }
 

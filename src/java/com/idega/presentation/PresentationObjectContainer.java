@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.10 2002/03/07 12:02:01 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.11 2002/03/07 12:13:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -180,8 +180,7 @@ public class PresentationObjectContainer extends PresentationObject {
     }
   }
 
-  public void main(IWContext iwc) throws Exception {
-  }
+
 
   public void _main(IWContext iwc) throws Exception {
     if(!initializedInMain){
@@ -248,6 +247,14 @@ public class PresentationObjectContainer extends PresentationObject {
     super._print(iwc);
   }
 
+  /**
+   * The default implementation for the print function for a container.
+   *
+   * This function is invoked on each request by the user for each PresentationObject instance (after main(iwc)).
+   *
+   * Override this function where it is needed to print out the specified content.
+   * This function should only be overrided in idegaWeb Elements.
+   */
   public void print(IWContext iwc) throws Exception {
     initVariables(iwc);
     //Workaround for JRun - JRun has hardcoded content type text/html in JSP pages

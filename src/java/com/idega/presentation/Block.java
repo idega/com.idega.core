@@ -234,7 +234,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     }
   }
 
-  public void print(IWContext iwc)throws Exception{
+  public final void print(IWContext iwc)throws Exception{
     if(this.isCacheable()){
       if(isCacheValid(iwc)){
         StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getCacheKey(iwc));
@@ -488,7 +488,6 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
     return obj;
   }
-
 
 
 }
