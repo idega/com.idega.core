@@ -1605,7 +1605,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return SQLString;
 	}
 
-	private String getFindReverseRelatedSQLQuery(IDOEntity entity, String entityColumnName, String entityColumnValue) {
+	protected String getFindReverseRelatedSQLQuery(IDOEntity entity, String entityColumnName, String entityColumnValue) {
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
 		String primaryValue = getPrimaryKeyValueSQLString();
 
@@ -3541,6 +3541,38 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		query.appendWhere(columnName);
 		query.appendEqualSign();
 		query.appendWithinSingleQuotes(toFind);
+		query.appendAnd();
+		query.append(columnName2);
+		query.appendEqualSign();
+		query.appendWithinSingleQuotes(toFind2);
+		return idoFindIDsBySQL(query.toString());
+	}
+	
+	/**
+	* Finds by two columns
+	*/
+	protected Collection idoFindAllIDsByColumnsBySQL(String columnName, int toFind, String columnName2, int toFind2) throws FinderException {
+		IDOQuery query = new IDOQuery();
+		query.appendSelectAllFrom(getTableName());
+		query.appendWhere(columnName);
+		query.appendEqualSign();
+		query.append(toFind);
+		query.appendAnd();
+		query.append(columnName2);
+		query.appendEqualSign();
+		query.append(toFind2);
+		return idoFindIDsBySQL(query.toString());
+	}
+	
+	/**
+	* Finds by two columns
+	*/
+	protected Collection idoFindAllIDsByColumnsBySQL(String columnName, int toFind, String columnName2, String toFind2) throws FinderException {
+		IDOQuery query = new IDOQuery();
+		query.appendSelectAllFrom(getTableName());
+		query.appendWhere(columnName);
+		query.appendEqualSign();
+		query.append(toFind);
 		query.appendAnd();
 		query.append(columnName2);
 		query.appendEqualSign();
