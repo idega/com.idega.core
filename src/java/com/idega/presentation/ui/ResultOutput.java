@@ -32,6 +32,8 @@ public class ResultOutput extends PresentationObjectContainer {
   private String extraForTotal = "";
   private String extraForEach = "";
 
+  private String finalContent = "";
+
   public ResultOutput() {
     this("unspecified","");
   }
@@ -149,4 +151,7 @@ public class ResultOutput extends PresentationObjectContainer {
       moduleObjects.add(resOut);
   }
 
+  public void setContent(String content) {
+    this.content = content;
+  }
 }
