@@ -304,6 +304,7 @@ public class CreateUser extends Window {
   public void commitCreation(IWContext iwc) throws Exception{
 
     User newUser;
+    boolean createLogin = false;
 
     String login = iwc.getParameter(this.userLoginFieldParameterName);
     String passw = iwc.getParameter(this.passwordFieldParameterName);
@@ -357,6 +358,9 @@ public class CreateUser extends Window {
     }else if(passw != null && cfPassw != null && !passw.equals(cfPassw)){
       throw new Exception("password and confirmed password not the same");
     }
+    
+    if (password != null && password.length() > 0 && login != null && login.length() > 0)
+    	createLogin = true;
 
     TransactionManager transaction = IdegaTransactionManager.getInstance();
     try{
@@ -367,7 +371,8 @@ public class CreateUser extends Window {
                                    null,null,null,null,primaryGroupId);
 
 
-      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,IWTimestamp.RightNow(),
+      if (createLogin)
+	      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,IWTimestamp.RightNow(),
                                  5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage,null);
 
       transaction.commit();
