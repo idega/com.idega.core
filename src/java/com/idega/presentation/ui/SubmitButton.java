@@ -209,7 +209,7 @@ public class SubmitButton extends GenericButton {
 					form.setParentObject(getParentObject());
 					this.setParentObject(form);
 					form.add(this);
-					form._print(iwc);
+					renderChild(iwc,form);
 				}
 			}
 			else {

@@ -103,7 +103,8 @@ public class Lists extends PresentationObjectContainer {
 				while (iter.hasNext()) {
 					PresentationObject item = (PresentationObject) iter.next();
 					if (item instanceof Lists) {
-						item._print(iwc);
+						//item._print(iwc);
+						renderChild(iwc,item);
 					}
 					else {
 						if (compact) {
@@ -121,7 +122,8 @@ public class Lists extends PresentationObjectContainer {
 						else {
 							print("<li>");
 						}
-						item._print(iwc);
+						//item._print(iwc);
+						renderChild(iwc,item);
 						println("</li>");
 					}
 				}
