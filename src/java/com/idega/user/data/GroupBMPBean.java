@@ -1003,8 +1003,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		sql.append(getEntityName());
 		sql.append(" where ");
 		sql.append(COLUMN_GROUP_TYPE);
-		sql.append(" = ");
+		sql.append(" = '");
 		sql.append(type);
+		sql.append("'");
 		
 		return super.idoFindPKsBySQL(sql.toString());
 	}
