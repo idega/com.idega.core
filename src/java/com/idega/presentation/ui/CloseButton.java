@@ -3,7 +3,6 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 
-
 package com.idega.presentation.ui;
 
 import java.io.*;
@@ -14,95 +13,26 @@ import com.idega.presentation.*;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class CloseButton extends GenericButton{
+public class CloseButton extends GenericButton {
 
-private Image defaultImage;
-private boolean useGeneratedImage=false;
-
-public CloseButton(){
-	//this("Close");
-    useGeneratedImage=true;
-	this.setOnClick("top.window.close()");
-}
-
-public CloseButton(String displayString){
-	super();
-	setName("");
-	setValue(displayString);
-	this.setOnClick("top.window.close()");
-}
-
-public CloseButton(Image defaultImage){
-	super();
-	this.defaultImage = defaultImage;
-	this.setOnClick("top.window.close()");
-}
-
-public synchronized Object clone(){
-  CloseButton obj = (CloseButton)super.clone();
-  if(this.defaultImage != null){
-    obj.defaultImage = (Image)this.defaultImage.clone();
-  }
-  return obj;
-}
-
-public void print(IWContext iwc) throws IOException{
-	  if(useGeneratedImage){
-	defaultImage = this.getBundle(iwc).getResourceBundle(iwc).getLocalizedImageButton("close","Close");
-      }
-
-	StringBuffer printString = new StringBuffer();
-	 if( defaultImage!= null ) {
-	  setAttribute("src",defaultImage.getMediaURL(iwc));
+	public CloseButton() {
+		setAsImageButton(true);
+		setOnClick("top.window.close()");
+		setValue("close");
 	}
-	//if ( doPrint(iwc) ){
-		if (getLanguage().equals("HTML")){
-			if (getInterfaceStyle().equals("default")){
-				if (defaultImage == null){
-				  printString.append("<input type=\"button\" name=\"");
-				  printString.append(getName());
-				  printString.append("\" ");
-				  printString.append(getAttributeString());
-				  printString.append(" >");
-				  print(printString.toString());
-				}
-				else{
-				  setAttribute("border","0");
-				  printString.append("<input type=\"image\" name=\"");
-				  printString.append(getName());
-				  printString.append("\" ");
-				  printString.append(getAttributeString());
-				  printString.append(" >");
 
-				  print(printString.toString());
-				}
-/*
-				if (defaultImage == null){
+	public CloseButton(String displayString) {
+		super();
+		setName("");
+		setValue(displayString);
+		setInputType(INPUT_TYPE_BUTTON);
+		setOnClick("top.window.close()");
+	}
 
-					println("<input type=\"button\" name=\""+getName()+"\" "+getAttributeString()+" >");
-					//println("</input>");
-				}
-				else{
-					println("<img "+getAttributeString()+" >");
-					//println("</img>");
-				}
-*/
-			}
-		}
-		else if (getLanguage().equals("WML")){
-
-			if (getInterfaceStyle().equals("default")){
-				println("<input type=\"button\" name=\""+getName()+"\" "+getAttributeString()+" >");
-				println("</input>");
-			}
-		}
-	//}
-}
-
-public void setButtonImage(Image image){
-  this.defaultImage=image;
-  this.useGeneratedImage=false;
-}
+	public CloseButton(Image image) {
+		super();
+		setButtonImage(image);
+		setOnClick("top.window.close()");
+	}
 
 }
-
