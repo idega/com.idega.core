@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.45 2002/02/11 17:09:40 aron Exp $
+ * $Id: Link.java,v 1.46 2002/02/18 16:25:49 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -328,38 +328,38 @@ public class Link extends Text {
   public void main(IWContext iwc)throws Exception {
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_myWindow != null) {
-        if (_myWindow.getURL(iwc).indexOf(IWMainApplication.windowOpenerURL) != -1) {
-          String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc,_myWindow);
-          addParameter(_sessionStorageName,sessionParameterName);
-        }
+	if (_myWindow.getURL(iwc).indexOf(IWMainApplication.windowOpenerURL) != -1) {
+	  String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc,_myWindow);
+	  addParameter(_sessionStorageName,sessionParameterName);
+	}
       }
     //}
 
     if(_obj != null){
       if (_obj instanceof Image) {
-        if(_onMouseOverImage != null){
-          ((Image)_obj).setOverImage(_onMouseOverImage);
-        }else if(_onMouseOverImageId > 0){
-          ((Image)_obj).setOverImage(new Image(_onMouseOverImageId));
-        }
-        if(_onClickImage != null){
-          ((Image)_obj).setOnClickImage(_onClickImage);
-        }else if(_onClickImageId > 0){
-          ((Image)_obj).setOnClickImage(new Image(_onClickImageId));
-        }
+	if(_onMouseOverImage != null){
+	  ((Image)_obj).setOverImage(_onMouseOverImage);
+	}else if(_onMouseOverImageId > 0){
+	  ((Image)_obj).setOverImage(new Image(_onMouseOverImageId));
+	}
+	if(_onClickImage != null){
+	  ((Image)_obj).setOnClickImage(_onClickImage);
+	}else if(_onClickImageId > 0){
+	  ((Image)_obj).setOnClickImage(new Image(_onClickImageId));
+	}
       }
 
     } else if (_imageId > 0){
       Image image = new Image(_imageId);
       if(_onMouseOverImage != null){
-        image.setOverImage(_onMouseOverImage);
+	image.setOverImage(_onMouseOverImage);
       }else if(_onMouseOverImageId > 0){
-        image.setOverImage(new Image(_onMouseOverImageId));
+	image.setOverImage(new Image(_onMouseOverImageId));
       }
       if(_onClickImage != null){
-        image.setOnClickImage(_onClickImage);
+	image.setOnClickImage(_onClickImage);
       }else if(_onClickImageId > 0){
-        image.setOnClickImage(new Image(_onClickImageId));
+	image.setOnClickImage(new Image(_onClickImageId));
       }
       image.setParentObject(this);
       _obj = image;
@@ -368,20 +368,20 @@ public class Link extends Text {
 
     if( isImageButton ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text);
+	_obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text);
       }
       else{
-        _obj = iwc.getApplication().getCoreBundle().getImageButton(text);
+	_obj = iwc.getApplication().getCoreBundle().getImageButton(text);
       }
       _obj.setParentObject(this);
       _objectType = OBJECT_TYPE_MODULEOBJECT;
     }
     else if( isImageTab ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip);
+	_obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip);
       }
       else{
-        _obj = iwc.getApplication().getCoreBundle().getImageTab(text,flip);
+	_obj = iwc.getApplication().getCoreBundle().getImageTab(text,flip);
       }
       _obj.setParentObject(this);
       _objectType = OBJECT_TYPE_MODULEOBJECT;
@@ -402,14 +402,14 @@ public class Link extends Text {
       String prm = urlplusprm.nextToken();
       StringTokenizer param = new StringTokenizer(prm,"=&");
       while (param.hasMoreTokens()) {
-        String p = param.nextToken();
-        String v = null;
-        if(param.hasMoreTokens()){
-          v = param.nextToken();
-        }
-        if(v != null){
-          this.addParameter(p,v);
-        }
+	String p = param.nextToken();
+	String v = null;
+	if(param.hasMoreTokens()){
+	  v = param.nextToken();
+	}
+	if(v != null){
+	  this.addParameter(p,v);
+	}
       }
     }
     setAttribute(HREF_ATTRIBUTE,newUrl);
@@ -448,37 +448,37 @@ public class Link extends Text {
   public boolean isParameterSet(String prmName){
     if(_parameterString != null){
       if(!(prmName != null && !prmName.equals(""))){
-        return true;
+	return true;
       }
       String prmString = _parameterString.toString();
       if(prmString.length()>0){
-        if((prmString.charAt(0) == '?') && (prmString.length()>1)){
-          prmString = prmString.substring(1,prmString.length());
-        }
-        if((prmString.charAt(0) == '&') && (prmString.length()>1)){
-          prmString = prmString.substring(1,prmString.length());
-        }
-        StringTokenizer token = new StringTokenizer(prmString,"&=",false);
-        int index = 0;
-        while (token.hasMoreTokens()) {
-          String st = token.nextToken();
+	if((prmString.charAt(0) == '?') && (prmString.length()>1)){
+	  prmString = prmString.substring(1,prmString.length());
+	}
+	if((prmString.charAt(0) == '&') && (prmString.length()>1)){
+	  prmString = prmString.substring(1,prmString.length());
+	}
+	StringTokenizer token = new StringTokenizer(prmString,"&=",false);
+	int index = 0;
+	while (token.hasMoreTokens()) {
+	  String st = token.nextToken();
 					if(token.hasMoreTokens()){
-          String value = token.nextToken();
-          if(prmName.equals(st)){
-            return true;
-            //System.out.println("token "+index+" : "+st+" / true");
-            //System.err.println("token "+index+" : "+st+" / true");
-          }
-          //else{
-            //System.out.println("token "+index+" : "+st+" / false");
-            //System.err.println("token "+index+" : "+st+" / false");
-          //}
-          index++;
-        }
-        }
+	  String value = token.nextToken();
+	  if(prmName.equals(st)){
+	    return true;
+	    //System.out.println("token "+index+" : "+st+" / true");
+	    //System.err.println("token "+index+" : "+st+" / true");
+	  }
+	  //else{
+	    //System.out.println("token "+index+" : "+st+" / false");
+	    //System.err.println("token "+index+" : "+st+" / false");
+	  //}
+	  index++;
+	}
+	}
       }
       else{
-        return false;
+	return false;
       }
     }
     return false; // false
@@ -493,11 +493,11 @@ public class Link extends Text {
       parameterValue = java.net.URLEncoder.encode(parameterValue);
 
       if (_parameterString == null) {
-        _parameterString = new StringBuffer();
-        _parameterString.append("?");
+	_parameterString = new StringBuffer();
+	_parameterString.append("?");
       }
       else  {
-        _parameterString.append("&");
+	_parameterString.append("&");
       }
 
       _parameterString.append(parameterName);
@@ -776,10 +776,10 @@ public class Link extends Text {
 
   public void setLocalizedText(String localeString,String text){
       if (isText()){
-        ((Text)_obj).setLocalizedText(localeString,text);
+	((Text)_obj).setLocalizedText(localeString,text);
       }
       else{
-        super.setLocalizedText(localeString,text);
+	super.setLocalizedText(localeString,text);
       }
   }
 
@@ -833,7 +833,7 @@ public class Link extends Text {
     _obj = object;
     _objectType = OBJECT_TYPE_MODULEOBJECT;
 
-        _obj.setParentObject(this);
+	_obj.setParentObject(this);
   }
 
   /**
@@ -892,14 +892,14 @@ public class Link extends Text {
     }
     else{
       if(this._obj == null){
-        if(this._ImageLocalizationMap != null){
-          return true;
-        }
+	if(this._ImageLocalizationMap != null){
+	  return true;
+	}
       }
       else{
-        if(this._obj instanceof Image){
-          return true;
-        }
+	if(this._obj instanceof Image){
+	  return true;
+	}
       }
     }
     return false;
@@ -928,13 +928,13 @@ public class Link extends Text {
 
       Integer localizedImageID = (Integer)this.getImageLocalizationMap().get(currLocale);
       if(localizedImageID!=null){
-        return localizedImageID;
+	return localizedImageID;
       }
       else{
-        Integer defImageID = (Integer)this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
-        if(defImageID!=null){
-          return defImageID;
-        }
+	Integer defImageID = (Integer)this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+	if(defImageID!=null){
+	  return defImageID;
+	}
       }
     }
     return null;
@@ -991,7 +991,7 @@ public class Link extends Text {
       setURL(url.toString());*/
       String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
       if (value != null) {
-        removeParameter(BuilderLogic.IB_PAGE_PARAMETER);
+	removeParameter(BuilderLogic.IB_PAGE_PARAMETER);
       }
 
       addParameter(BuilderLogic.IB_PAGE_PARAMETER,page.getID());
@@ -1022,31 +1022,31 @@ public class Link extends Text {
   public String getParameterValue(String prmName){
     if(_parameterString != null){
       if(!(prmName != null && prmName.endsWith(""))){
-        return null;
+	return null;
       }
       String prmString = _parameterString.toString();
       if(prmString.length()>0){
-        if((prmString.charAt(0) == '?') && (prmString.length()>1)){
-          prmString = prmString.substring(1,prmString.length());
-        }
-        if((prmString.charAt(0) == '&') && (prmString.length()>1)){
-          prmString = prmString.substring(1,prmString.length());
-        }
-        StringTokenizer token = new StringTokenizer(prmString,"&=",false);
-        int index = 0;
-        while (token.hasMoreTokens()) {
-          String st = token.nextToken();
-          if(token.hasMoreTokens()){
-            String value = token.nextToken();
-            if(prmName.equals(st)){
-              return value;
-            }
-            index++;
-          }
-        }
+	if((prmString.charAt(0) == '?') && (prmString.length()>1)){
+	  prmString = prmString.substring(1,prmString.length());
+	}
+	if((prmString.charAt(0) == '&') && (prmString.length()>1)){
+	  prmString = prmString.substring(1,prmString.length());
+	}
+	StringTokenizer token = new StringTokenizer(prmString,"&=",false);
+	int index = 0;
+	while (token.hasMoreTokens()) {
+	  String st = token.nextToken();
+	  if(token.hasMoreTokens()){
+	    String value = token.nextToken();
+	    if(prmName.equals(st)){
+	      return value;
+	    }
+	    index++;
+	  }
+	}
       }
       else{
-        return null;
+	return null;
       }
     }
     return null;
@@ -1107,18 +1107,18 @@ public class Link extends Text {
       linkObj = (Link)super.clone();
 
       if (_obj != null) {
-        linkObj._obj = (PresentationObject)_obj.clone();
+	linkObj._obj = (PresentationObject)_obj.clone();
       }
       if (_myWindow != null) {
-        linkObj._myWindow = (Window)_myWindow.clone();
+	linkObj._myWindow = (Window)_myWindow.clone();
       }
 
       if (_formToSubmit != null) {
-        linkObj._formToSubmit = (Form)_formToSubmit.clone();
+	linkObj._formToSubmit = (Form)_formToSubmit.clone();
       }
 
       if (_windowClass != null) {
-        linkObj._windowClass = _windowClass;
+	linkObj._windowClass = _windowClass;
       }
 
       linkObj._objectType = _objectType;
@@ -1133,10 +1133,10 @@ public class Link extends Text {
       linkObj.flip = flip;
 
       if (_parameterString != null) {
-        linkObj._parameterString = new StringBuffer(_parameterString.toString());
+	linkObj._parameterString = new StringBuffer(_parameterString.toString());
       }
       if(this._ImageLocalizationMap!=null){
-        linkObj._ImageLocalizationMap=(Map)((HashMap)this._ImageLocalizationMap).clone();
+	linkObj._ImageLocalizationMap=(Map)((HashMap)this._ImageLocalizationMap).clone();
       }
 
     }
@@ -1155,13 +1155,13 @@ public class Link extends Text {
     if (list != null) {
       Iterator iter = list.iterator();
       while(iter.hasNext()) {
-        String parameterName = (String)iter.next();
-        String parameterValue = iwc.getParameter(parameterName);
-        if (parameterValue != null) {
-          if(!this.isParameterSet(parameterName)){
-            addParameter(parameterName,parameterValue);
-          }
-        }
+	String parameterName = (String)iter.next();
+	String parameterValue = iwc.getParameter(parameterName);
+	if (parameterValue != null) {
+	  if(!this.isParameterSet(parameterName)){
+	    addParameter(parameterName,parameterValue);
+	  }
+	}
       }
     }
   }
@@ -1177,19 +1177,19 @@ public class Link extends Text {
     if (list != null) {
       Iterator iter = list.iterator();
       while(iter.hasNext()) {
-        String parameterName = (String)iter.next();
-        String parameterValue = iwc.getParameter(parameterName);
-        //System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
-        if (parameterValue != null) {
-          if(!this.isParameterSet(parameterName)){
-            //System.out.println("false");
-            addParameter(parameterName,parameterValue);
-          } else{
-            //System.out.println("true");
-          }
-        }else{
-          //System.out.println("null");
-        }
+	String parameterName = (String)iter.next();
+	String parameterValue = iwc.getParameter(parameterName);
+	//System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
+	if (parameterValue != null) {
+	  if(!this.isParameterSet(parameterName)){
+	    //System.out.println("false");
+	    addParameter(parameterName,parameterValue);
+	  } else{
+	    //System.out.println("true");
+	  }
+	}else{
+	  //System.out.println("null");
+	}
       }
     }
   }
@@ -1223,7 +1223,7 @@ public class Link extends Text {
     }
     else {
       if (isLinkOpeningOnSamePage()) {
-        addTheMaintainedParameters(iwc);
+	addTheMaintainedParameters(iwc);
       }
     }
 
@@ -1232,7 +1232,7 @@ public class Link extends Text {
     }
     else {
       if (isLinkOpeningOnSamePage()) {
-        addTheMaintainedParameters(iwc);
+	addTheMaintainedParameters(iwc);
       }
     }
     List l = getIWPOListeners();
@@ -1240,37 +1240,37 @@ public class Link extends Text {
       int size = l.size();
       BuilderLogic logic = BuilderLogic.getInstance();
       if(size>1){
-        int[] pages = new int[size];
-        int[] inst = new int[size];
-        ListIterator lIter = l.listIterator();
-        while (lIter.hasNext()) {
-          int index = lIter.nextIndex();
-          Object lItem = lIter.next();
-          if(lItem instanceof String){
-            String str = (String)lItem;
-            int indexof_ = str.indexOf('_');
-            if(indexof_ != -1){
-              try{
-                pages[index] = Integer.parseInt(str.substring(0,indexof_));
-                inst[index] = Integer.parseInt(str.substring(indexof_+1,str.length()));
-              }catch(NumberFormatException e){
-                System.err.println("Link: Listener coordenates not right");
-              }
-            }
-          } else if(lItem instanceof PresentationObject){
-            PresentationObject obj = (PresentationObject)lItem;
-            pages[index] = obj.getParentPageID();
-            inst[index] = obj.getParentObjectInstanceID();
-          }
-        }
-        logic.setICObjectInstanceListeners(this,pages,inst);
-        logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
+	int[] pages = new int[size];
+	int[] inst = new int[size];
+	ListIterator lIter = l.listIterator();
+	while (lIter.hasNext()) {
+	  int index = lIter.nextIndex();
+	  Object lItem = lIter.next();
+	  if(lItem instanceof String){
+	    String str = (String)lItem;
+	    int indexof_ = str.indexOf('_');
+	    if(indexof_ != -1){
+	      try{
+		pages[index] = Integer.parseInt(str.substring(0,indexof_));
+		inst[index] = Integer.parseInt(str.substring(indexof_+1,str.length()));
+	      }catch(NumberFormatException e){
+		System.err.println("Link: Listener coordenates not right");
+	      }
+	    }
+	  } else if(lItem instanceof PresentationObject){
+	    PresentationObject obj = (PresentationObject)lItem;
+	    pages[index] = obj.getParentPageID();
+	    inst[index] = obj.getParentObjectInstanceID();
+	  }
+	}
+	logic.setICObjectInstanceListeners(this,pages,inst);
+	logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
       } else if(size==1){
-        PresentationObject obj = (PresentationObject)l.get(0);
-        if(obj != null){
-          logic.setICObjectInstanceListener(this,obj.getParentPageID(),obj.getParentObjectInstanceID());
-          logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
-        }
+	PresentationObject obj = (PresentationObject)l.get(0);
+	if(obj != null){
+	  logic.setICObjectInstanceListener(this,obj.getParentPageID(),obj.getParentObjectInstanceID());
+	  logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
+	}
       }
     }
 
@@ -1279,82 +1279,82 @@ public class Link extends Text {
     }
     if((!this.isParameterSet("idega_session_id"))){
       if (_parameterString == null) {
-        _parameterString = new StringBuffer();
-        if (_addSessionId && (!iwc.isSearchEngine())) {
-          if (URL.equals("#")) {
-            return("");
-          } else if (URL.indexOf("://") == -1) { //does not include ://
-            if (URL.indexOf("?") != -1) {
-              _parameterString.append("&idega_session_id=");
-              _parameterString.append(iwc.getSession().getId());
-              return(_parameterString.toString());
-            } else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1 )) {
-              //the case where the URL is etc. http://www.idega.is
-              _parameterString.append("/?idega_session_id=");
-              _parameterString.append(iwc.getSession().getId());
-              return(_parameterString.toString());
-            } else {
-              if (URL.indexOf("/") != -1) {
-                //If the URL ends with a "/"
-                if (URL.lastIndexOf("/") == (URL.length()-1)) {
-                  _parameterString.append("?idega_session_id=");
-                  _parameterString.append(iwc.getSession().getId());
-                  return(_parameterString.toString());
-                }else {
-                  //There is a dot after the last "/" interpreted as a file not a directory
-                  if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
-                    _parameterString.append("?idega_session_id=");
-                    _parameterString.append(iwc.getSession().getId());
-                    return(_parameterString.toString());
-                  }
-                  else {
-                    _parameterString.append("/?idega_session_id=");
-                    _parameterString.append(iwc.getSession().getId());
-                    return(_parameterString.toString());
-                  }
-                }
-              } else {
-                _parameterString.append("?idega_session_id=");
-                _parameterString.append(iwc.getSession().getId());
-                return(_parameterString.toString());
-              }
-            }
-          } else {
-            /**
-             * @todo Temporary solution??? :// in link then no idega_session_id
-             */
-            return("");
-          }
-        } else {
-          return("");
-        }
+	_parameterString = new StringBuffer();
+	if (_addSessionId && (!iwc.isSearchEngine())) {
+	  if (URL.equals("#")) {
+	    return("");
+	  } else if (URL.indexOf("://") == -1) { //does not include ://
+	    if (URL.indexOf("?") != -1) {
+	      _parameterString.append("&idega_session_id=");
+	      _parameterString.append(iwc.getSession().getId());
+	      return(_parameterString.toString());
+	    } else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1 )) {
+	      //the case where the URL is etc. http://www.idega.is
+	      _parameterString.append("/?idega_session_id=");
+	      _parameterString.append(iwc.getSession().getId());
+	      return(_parameterString.toString());
+	    } else {
+	      if (URL.indexOf("/") != -1) {
+		//If the URL ends with a "/"
+		if (URL.lastIndexOf("/") == (URL.length()-1)) {
+		  _parameterString.append("?idega_session_id=");
+		  _parameterString.append(iwc.getSession().getId());
+		  return(_parameterString.toString());
+		}else {
+		  //There is a dot after the last "/" interpreted as a file not a directory
+		  if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
+		    _parameterString.append("?idega_session_id=");
+		    _parameterString.append(iwc.getSession().getId());
+		    return(_parameterString.toString());
+		  }
+		  else {
+		    _parameterString.append("/?idega_session_id=");
+		    _parameterString.append(iwc.getSession().getId());
+		    return(_parameterString.toString());
+		  }
+		}
+	      } else {
+		_parameterString.append("?idega_session_id=");
+		_parameterString.append(iwc.getSession().getId());
+		return(_parameterString.toString());
+	      }
+	    }
+	  } else {
+	    /**
+	     * @todo Temporary solution??? :// in link then no idega_session_id
+	     */
+	    return("");
+	  }
+	} else {
+	  return("");
+	}
 
       }else{
-        /**
-        * @todo Temporary solution??? :// in link then no idega_session_id
-        */
-        if (URL.indexOf("?") == -1) {
-          if (_addSessionId && (!iwc.isSearchEngine())) {
-            if ( _parameterString.toString().indexOf("?") == -1) {
-              _parameterString.insert(0,'?');
-            }
-             _parameterString.append("&");
-            if (URL.indexOf("://") == -1) {
-              _parameterString.append("idega_session_id=");
-              _parameterString.append(iwc.getSession().getId());
-            }
-          }
-        }
-        else {
-          if (_addSessionId && (!iwc.isSearchEngine())) {
-            _parameterString.append("&");
-            if (URL.indexOf("://") == -1) {
-              _parameterString.append("idega_session_id=");
-              _parameterString.append(iwc.getSession().getId());
-            }
-          }
-        }
-        return(_parameterString.toString());
+	/**
+	* @todo Temporary solution??? :// in link then no idega_session_id
+	*/
+	if (URL.indexOf("?") == -1) {
+	  if (_addSessionId && (!iwc.isSearchEngine())) {
+	    if ( _parameterString.toString().indexOf("?") == -1) {
+	      _parameterString.insert(0,'?');
+	    }
+	     _parameterString.append("&");
+	    if (URL.indexOf("://") == -1) {
+	      _parameterString.append("idega_session_id=");
+	      _parameterString.append(iwc.getSession().getId());
+	    }
+	  }
+	}
+	else {
+	  if (_addSessionId && (!iwc.isSearchEngine())) {
+	    _parameterString.append("&");
+	    if (URL.indexOf("://") == -1) {
+	      _parameterString.append("idega_session_id=");
+	      _parameterString.append(iwc.getSession().getId());
+	    }
+	  }
+	}
+	return(_parameterString.toString());
       }
     }
     if(_parameterString != null){
@@ -1382,10 +1382,10 @@ public class Link extends Text {
     if (isOpeningInNewWindow()) {
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_windowClass == null) {
-        return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
+	return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
       }
       else {
-        return Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true);
+	return Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true);
       }
     }
     return "";
@@ -1428,108 +1428,108 @@ public class Link extends Text {
       if(openInNewWindow){
       //if (_objectType==(OBJECT_TYPE_WINDOW)) {
        // openInNewWindow=true;
-        if (_windowClass == null) {
-          setOnClick(_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
-        } else {
-          setOnClick(Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
-        }
-        setFinalUrl(HASH);
+	if (_windowClass == null) {
+	  setFinalUrl("javascript:"+_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
+	} else {
+	  setFinalUrl("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
+	}
+	//setFinalUrl(HASH);
       }
       else{
-        //Should not happen when a new window is opened
-        if (addParameters) {
-          setFinalUrl(oldURL+getParameterString(iwc,oldURL));
-        }
+	//Should not happen when a new window is opened
+	if (addParameters) {
+	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	}
       }//end if (_objectType==(OBJECT_TYPE_WINDOW))
 
-        print("<a "+getAttributeString()+" >");
-        /*
-        if(openInNewWindow){
-        //if (_obj == null) {
-          if(_obj!=null){
-            _obj.print(iwc);
-          }
-          else{
-            Text myText = new Text(_myWindow.getName());
-            myText.print(iwc);
-          }
-        } else {
-        */
-          //if (_objectType==OBJECT_TYPE_TEXT) {
-          if (this.isText()) {
-            if ( hasClass ) {
-              /*if ( displayString != null ) {
-                print(displayString);
-              }
-              else {*/
-                if(_obj!=null){
-                  String text = ((Text)_obj).getLocalizedText(iwc);
-                  if ( text != null ) {
-                    print(text);
-                  }
-                }
-              /*}*/
-            } else {
-              if(_obj!=null){
-                _obj.print(iwc);
-              }
-            }
-          }
-          else if (this.isImage()){
-            Image image = this.getTheCorrectDefaultImage(iwc);
-            if(image!=null){
-              image.print(iwc);
-            }
-          }
-          else{
-            if(_obj !=null){
-              _obj.print(iwc);
-            }
-          }
-        /*}*/
-        print("</a>");
+	print("<a "+getAttributeString()+" >");
+	/*
+	if(openInNewWindow){
+	//if (_obj == null) {
+	  if(_obj!=null){
+	    _obj.print(iwc);
+	  }
+	  else{
+	    Text myText = new Text(_myWindow.getName());
+	    myText.print(iwc);
+	  }
+	} else {
+	*/
+	  //if (_objectType==OBJECT_TYPE_TEXT) {
+	  if (this.isText()) {
+	    if ( hasClass ) {
+	      /*if ( displayString != null ) {
+		print(displayString);
+	      }
+	      else {*/
+		if(_obj!=null){
+		  String text = ((Text)_obj).getLocalizedText(iwc);
+		  if ( text != null ) {
+		    print(text);
+		  }
+		}
+	      /*}*/
+	    } else {
+	      if(_obj!=null){
+		_obj.print(iwc);
+	      }
+	    }
+	  }
+	  else if (this.isImage()){
+	    Image image = this.getTheCorrectDefaultImage(iwc);
+	    if(image!=null){
+	      image.print(iwc);
+	    }
+	  }
+	  else{
+	    if(_obj !=null){
+	      _obj.print(iwc);
+	    }
+	  }
+	/*}*/
+	print("</a>");
       /*} else {
-        if (addParameters) {
-          setFinalUrl(oldURL+getParameterString(iwc,oldURL));
-        }
-        print("<a "+getAttributeString()+" >");
-        //if (_objectType==OBJECT_TYPE_TEXT) {
-        if (isText()) {
-          if ( hasClass ) {
-            if ( displayString != null ) {
-              print(displayString);
-            } else {
-              if ( ((Text)_obj).getText() != null ) {
-                print(((Text)_obj).getText());
-              }
-            }
-          } else {
-          _obj.print(iwc);
-          }
-        }
-        else if (this.isImage()){
-          Image image = this.getTheCorrectDefaultImage(iwc);
-          image.print(iwc);
-        } else {
-          _obj.print(iwc);
-        }
-        print("</a>");
+	if (addParameters) {
+	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	}
+	print("<a "+getAttributeString()+" >");
+	//if (_objectType==OBJECT_TYPE_TEXT) {
+	if (isText()) {
+	  if ( hasClass ) {
+	    if ( displayString != null ) {
+	      print(displayString);
+	    } else {
+	      if ( ((Text)_obj).getText() != null ) {
+		print(((Text)_obj).getText());
+	      }
+	    }
+	  } else {
+	  _obj.print(iwc);
+	  }
+	}
+	else if (this.isImage()){
+	  Image image = this.getTheCorrectDefaultImage(iwc);
+	  image.print(iwc);
+	} else {
+	  _obj.print(iwc);
+	}
+	print("</a>");
       }*/
     } else if (getLanguage().equals("WML")) {
       if(_myWindow!=null){
       //if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
-        setFinalUrl(_myWindow.getURL(iwc)+getParameterString(iwc,oldURL));  // ????????????
-        setFinalUrl(HASH);
-        print("<a "+getAttributeString()+" >");
-        print(_myWindow.getName());
-        print("</a>");
+	setFinalUrl(_myWindow.getURL(iwc)+getParameterString(iwc,oldURL));  // ????????????
+	setFinalUrl(HASH);
+	print("<a "+getAttributeString()+" >");
+	print(_myWindow.getName());
+	print("</a>");
       } else {
-        if (addParameters) {
-          setFinalUrl(oldURL+getParameterString(iwc,oldURL));
-        }
-        print("<a "+getAttributeString()+" >");
-        _obj.print(iwc);
-        print("</a>");
+	if (addParameters) {
+	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	}
+	print("<a "+getAttributeString()+" >");
+	_obj.print(iwc);
+	print("</a>");
       }
     }
     /**
@@ -1671,13 +1671,13 @@ public class Link extends Text {
   private boolean isText(){
     if(this._objectType==this.OBJECT_TYPE_TEXT){
       if(_obj!=null){
-        if(_obj instanceof Text){
-          return true;
-        }
+	if(_obj instanceof Text){
+	  return true;
+	}
       }
       else{
-          //return (this._objectType==this.OBJECT_TYPE_TEXT);
-          return true;
+	  //return (this._objectType==this.OBJECT_TYPE_TEXT);
+	  return true;
       }
     }
     return false;
@@ -1730,10 +1730,10 @@ public class Link extends Text {
     if(page_instID != null){
       StringTokenizer token = new StringTokenizer(page_instID,",",false);
       while(token.hasMoreTokens()){
-        String pointer = token.nextToken();
-        if(!listenerInstances.contains(pointer)){
-          listenerInstances.add(pointer);
-        }
+	String pointer = token.nextToken();
+	if(!listenerInstances.contains(pointer)){
+	  listenerInstances.add(pointer);
+	}
       }
     }
   }
@@ -1770,43 +1770,43 @@ public class Link extends Text {
   public void removeParameter(String prmName){
     if(_parameterString != null){
       if (!(prmName != null && !prmName.equals(""))){
-        return;
+	return;
       }
 
       StringBuffer newBuffer = new StringBuffer();
       String prmString = _parameterString.toString();
 
       if (prmString.length() > 0) {
-        if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
-          prmString = prmString.substring(1,prmString.length());
-          newBuffer.append("?");
-        }
-        if ((prmString.charAt(0) == '&') && (prmString.length() > 1)) {
-          prmString = prmString.substring(1,prmString.length());
-          newBuffer.append("&");
-        }
-        StringTokenizer token = new StringTokenizer(prmString,"&",false);
-        boolean firstToken = true;
-        while (token.hasMoreTokens()) {
-          String st = token.nextToken();
-          StringTokenizer token2 = new StringTokenizer(st,"=",false);
-          if (token2.hasMoreTokens()) {
-            String name = token2.nextToken();
-            String value = token2.nextToken();
-            if (!name.equals(prmName)) {
-              if(!firstToken){
-                newBuffer.append("&");
-              }
-              newBuffer.append(name);
-              newBuffer.append("=");
-              newBuffer.append(value);
-            }
-          }
-          /*else {
-            newBuffer.append("&" + st);
-          }*/
-          firstToken = false;
-        }
+	if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
+	  prmString = prmString.substring(1,prmString.length());
+	  newBuffer.append("?");
+	}
+	if ((prmString.charAt(0) == '&') && (prmString.length() > 1)) {
+	  prmString = prmString.substring(1,prmString.length());
+	  newBuffer.append("&");
+	}
+	StringTokenizer token = new StringTokenizer(prmString,"&",false);
+	boolean firstToken = true;
+	while (token.hasMoreTokens()) {
+	  String st = token.nextToken();
+	  StringTokenizer token2 = new StringTokenizer(st,"=",false);
+	  if (token2.hasMoreTokens()) {
+	    String name = token2.nextToken();
+	    String value = token2.nextToken();
+	    if (!name.equals(prmName)) {
+	      if(!firstToken){
+		newBuffer.append("&");
+	      }
+	      newBuffer.append(name);
+	      newBuffer.append("=");
+	      newBuffer.append(value);
+	    }
+	  }
+	  /*else {
+	    newBuffer.append("&" + st);
+	  }*/
+	  firstToken = false;
+	}
       }
       _parameterString = newBuffer;
       return;
