@@ -669,7 +669,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     return "preLoadImages('"+url+"')";
   }
 
-  public synchronized Object clone() {
+  public Object clone() {
     Image obj = null;
     try {
       obj = (Image)super.clone();
