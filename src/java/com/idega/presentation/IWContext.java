@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.118 2005/03/02 12:04:24 tryggvil Exp $
+ * $Id: IWContext.java,v 1.119 2005/03/07 12:20:35 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/03/02 12:04:24 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/03/07 12:20:35 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.118 $
+ * @version $Revision: 1.119 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -224,56 +224,68 @@ implements IWUserContext, IWApplicationContext {
 	
 	public boolean isWebDavClient() {
 		boolean isDav = false;
-		if (getUserAgent().indexOf("DAV") != -1) {
-			isDav = true;
-		} else if (getUserAgent().indexOf("dav") != -1) {
-			isDav = true;
-		} else if (getUserAgent().indexOf("Dav") != -1) {
-			isDav = true;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("DAV") != -1) {
+				isDav = true;
+			} else if (userAgent.indexOf("dav") != -1) {
+				isDav = true;
+			} else if (userAgent.indexOf("Dav") != -1) {
+				isDav = true;
+			}
 		}
-		
 		return isDav;
 	}
 	
 	public boolean isNetscape() {
-		if (getUserAgent().indexOf("Mozilla") != -1) {
-			//if not Internet Explorer then Netscape :)
-			if (getUserAgent().indexOf("MSIE") != -1) {
-				return false;
-			} else {
-				return true;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("Mozilla") != -1) {
+				//if not Internet Explorer then Netscape :)
+				if (userAgent.indexOf("MSIE") != -1) {
+					return false;
+				} else {
+					return true;
+				}
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 	public boolean isIE() {
-		if (getUserAgent().indexOf("MSIE") != -1) {
-			return true;
-		} else {
-			return false;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("MSIE") != -1) {
+				return true;
+			}
 		}
+		return false;
 	}
 	public boolean isOpera() {
-		if (getUserAgent().indexOf("Opera") != -1) {
-			return true;
-		} else {
-			return false;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("Opera") != -1) {
+				return true;
+			}
 		}
+		return false;
 	}
 	public boolean isSafari() {
-		if (getUserAgent().indexOf("Safari") != -1) {
-			return true;
-		} else {
-			return false;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("Safari") != -1) {
+				return true;
+			}
 		}
+		return false;
 	}
 	public boolean isSearchEngine() {
-		if (getUserAgent().indexOf("Ultraseek") != -1) {
-			return true;
-		} else {
-			return false;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("Ultraseek") != -1) {
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	/**
