@@ -288,7 +288,8 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
 		.appendOrderBy(getContextValueColumnName());
 		
-		return super.idoFindPKsByQuery(sql);
+		//return super.idoFindPKsByQuery(sql);
+		return super.idoFindPKsByQueryUsingLoadBalance(sql, 10000);
 	}
 	
 	
@@ -313,7 +314,8 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
 		.appendOrderBy(getContextValueColumnName());
 		
-		return super.idoFindPKsByQuery(sql);
+		//return super.idoFindPKsByQuery(sql);
+		return super.idoFindPKsByQueryUsingLoadBalance(sql, 10000);
 	}
 	
 	
