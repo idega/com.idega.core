@@ -4559,9 +4559,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		final String valueColumn = ((MetaDataBMPBean)metadata).COLUMN_META_VALUE;
 		
 		StringBuffer sql = new StringBuffer();
-		sql.append("select ")
-		.append(tableToSelectFrom)
-		.append(".* from ")
+		sql.append("select entity.* from ")
 		.append(tableToSelectFrom).append(" entity ,")
 		.append(middleTableName).append(" middle ,")
 		.append(metadata.getEntityName()).append(" meta ")
@@ -4569,12 +4567,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		.append("entity.")
 		.append(primaryColumnName)
 		.append("=")
-		.append(getPrimaryKeyValueSQLString())
-		.append(" and ")
-		.append("entity.")
-		.append(primaryColumnName)
-		.append("=")
-		.append(metadata.getEntityName())
+		.append("middle")
 		.append(".")
 		.append(primaryColumnName)
 		.append(" and ")
@@ -4588,13 +4581,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		.append("meta.")
 		.append(keyColumn)
 		.append("=")
-		.append("'").append(key);
+		.append("'").append(key)
+		.append("'");
 		if( value!=null ){
 			sql.append(" and ")
 			.append("meta.")
 			.append(valueColumn)
 			.append("=")
-			.append(value);
+			.append("'")
+			.append(value)
+			.append("'");
 		}
 		
 		return idoFindPKsBySQL(sql.toString());
