@@ -67,7 +67,6 @@ public class NavigationPulldownMenu extends Block {
 			Layer layer = new Layer(Layer.DIV);
 			layer.setID("menuBar");
 			layer.setMarkupAttribute("class", "menuBar");
-			layer.setNoStyle(true);
 			if (iwc.isIE()) {
 				table.add(layer);
 				table.add(Text.NON_BREAKING_SPACE);
@@ -81,7 +80,6 @@ public class NavigationPulldownMenu extends Block {
 				subLayer.setMarkupAttribute("class", "Bar");
 				subLayer.setMarkupAttribute("title", n.getNodeName(iwc.getCurrentLocale()));
 				subLayer.setMarkupAttribute("cmd", bservice.getPageURI(n.getNodeID()));
-				subLayer.setNoStyle(true);
 				if (rootLinks) {
 					Link link = new Link(n.getNodeName(iwc.getCurrentLocale()));
 					link.setPage(n.getNodeID());
@@ -108,7 +106,6 @@ public class NavigationPulldownMenu extends Block {
 		Layer layer = new Layer(Layer.DIV);
 		layer.setID("menu" + String.valueOf(node.getNodeID()));
 		layer.setMarkupAttribute("class", "menu");
-		layer.setNoStyle(true);
 		table.add(layer);
 		Iterator iterator = node.getChildren();
 		while (iterator.hasNext()) {
@@ -118,7 +115,6 @@ public class NavigationPulldownMenu extends Block {
 			subLayer.setMarkupAttribute("class", "menuItem");
 			subLayer.setMarkupAttribute("title", n.getNodeName(iwc.getCurrentLocale()));
 			subLayer.setMarkupAttribute("cmd", bservice.getPageURI(n.getNodeID()));
-			subLayer.setNoStyle(true);
 			subLayer.add(n.getNodeName(iwc.getCurrentLocale()));
 			layer.add(subLayer);
 			if (n.getChildCount() > 0) {
