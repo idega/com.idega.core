@@ -1,6 +1,9 @@
 package com.idega.business;
 
 import java.util.Locale;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.Handle;
 import javax.ejb.EJBObject;
@@ -31,12 +34,27 @@ public class IBOServiceBean implements IBOService, SessionBean {
   /**
    * The default implementation
    */
-
-  public void ejbCreate(){
+  public void ejbCreate()throws CreateException{
   }
   public void ejbPostCreate(){
   }
+  
+  public void ejbHomeIboCreate() throws CreateException{
+  		ejbCreate();
+  }  
+  
+  public void ejbCreateIBO() throws CreateException{
+  	
+  }
+  
 
+  public void ejbPostCreateIBO(){	
+  }
+
+
+  public IBOService ejbHomeCreateIBO() throws CreateException{
+  	throw new UnsupportedOperationException("Not implemented");
+  }
   public String getServiceDescription() {
     /**@todo: Implement this com.idega.business.IBOService method*/
     throw new java.lang.UnsupportedOperationException("Method getServiceDescription() not yet implemented.");
@@ -56,8 +74,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
   public Handle getHandle() throws java.rmi.RemoteException {
     throw new java.lang.UnsupportedOperationException("Method getHandle() not yet implemented.");
   }
-  public Object getPrimaryKey() throws java.rmi.RemoteException {
-    throw new java.rmi.RemoteException("Method getPrimaryKey() not available for a session bean");
+  public Object getPrimaryKey() throws EJBException {
+    throw new EJBException("Method getPrimaryKey() not available for a session bean");
   }
   public boolean isIdentical(EJBObject parm1) throws java.rmi.RemoteException {
     return this.getEJBObject().equals(parm1);

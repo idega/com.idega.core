@@ -1,15 +1,25 @@
 package com.idega.business;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 import java.rmi.RemoteException;
 import javax.ejb.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.rmi.PortableRemoteObject;
+
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityBean;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDOHome;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.reflect.MethodFinder;
 /**
  * Title:        idega Business Objects
  * Description:  IBOLookup is a class use to get instances of IBO (Service and Session) objects.<br><br>
@@ -30,6 +40,8 @@ public class IBOLookup
 		}
 		return instance;
 	}
+	
+	protected final String HOME_SUFFIX = "Home";
 	protected final String FACTORY_SUFFIX = "HomeImpl";
 	private final String BEAN_SUFFIX = "Bean";
 	protected String getBeanSuffix()
@@ -40,6 +52,9 @@ public class IBOLookup
 	protected static Map beanClasses = new HashMap();
 	protected static Map interfaceClasses = new HashMap();
 	protected Map services;
+	private Properties jndiProperties;
+	private Map createMethodsMap;
+	
 	protected IBOLookup()
 	{}
 	protected static EJBHome getHomeForClass(Class beanInterfaceClass) throws RemoteException
@@ -103,9 +118,46 @@ public class IBOLookup
 	{
 		IBOService session = null;
 		IBOHome home = getIBOHomeForClass(beanInterfaceClass);
-		session = home.createIBO();
+		try{
+			Method defaultCreateMethod = getCreateMethod(home);
+			session = (IBOService)defaultCreateMethod.invoke(home,null);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getMessage());	
+		}
+		//session = home.createIBO();
 		return session;
 	}
+
+	/**
+	 * Method getCreateMethod.
+	 * @param home
+	 * @return Method
+	 */
+	private Method getCreateMethod(IBOHome home) throws NoSuchMethodException{
+		Map map = getCreateMethodsMap();
+		Class homeClass = home.getClass();
+		Method m = (Method)map.get(homeClass);
+		if(m==null){
+			m = MethodFinder.getInstance().getMethodsWithNameAndNoParameters(homeClass,"create");
+			map.put(homeClass,m);
+		}
+		return m;
+	}
+
+	/**
+	 * Method getCreateMethodsMap.
+	 * @return Map
+	 */
+	private Map getCreateMethodsMap() {
+		if(createMethodsMap==null){
+			createMethodsMap=new HashMap();	
+		}
+		return createMethodsMap;
+	}
+
+
 	/**
 	 * Returns an instance of a IBOService bean.
 	 * The instance is stored in the application context and is shared between all users.
@@ -126,7 +178,9 @@ public class IBOLookup
 			try
 			{
 				service = this.instanciateServiceBean(beanInterfaceClass);
-				((IBOServiceBean) service).setIWApplicationContext(iwac);
+				if(iwac!=null){
+					((IBOServiceBean) service).setIWApplicationContext(iwac);
+				}
 				getServicesMap(iwac).put(beanInterfaceClass, service);
 			}
 			catch (CreateException cre)
@@ -135,6 +189,12 @@ public class IBOLookup
 			}
 		}
 		return service;
+	}
+	protected Class getHomeInterfaceClassFor(Class entityInterfaceClass) throws Exception
+	{
+		String className = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
+		String homeClassName = className + HOME_SUFFIX;
+		return Class.forName(homeClassName);
 	}
 	protected Class getFactoryClassFor(Class entityInterfaceClass) throws Exception
 	{
@@ -151,15 +211,25 @@ public class IBOLookup
 	 * <br>The object retured can then needs to be casted to the specific home interface for the bean.
 	 * @param entityInterfaceClass i the (Remote) interface of the data bean.
 	 */
-	protected EJBHome getEJBHomeInstance(Class entityInterfaceClass) throws RemoteException
+	protected EJBHome getEJBHomeInstance(Class entityBeanOrInterfaceClass) throws RemoteException
 	{
+		//Double check so it is not the bean class that is sent into the methods below
+		Class entityInterfaceClass = getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
+			
 		EJBHome home = (EJBHome) homes.get(entityInterfaceClass);
 		if (home == null)
 		{
 			try
 			{
-				Class factoryClass = getFactoryClassFor(entityInterfaceClass);
-				home = (EJBHome) factoryClass.newInstance();
+				if(doLookupOverJNDI(entityInterfaceClass)){
+					//home = (EJBHome) getHomeThroughJNDI(getInterfaceClassForNonStatic(entityInterfaceClass));
+					
+					home = (EJBHome) getHomeThroughJNDI(entityInterfaceClass);
+				}
+				else{
+					Class factoryClass = getFactoryClassFor(entityInterfaceClass);
+					home = (EJBHome) factoryClass.newInstance();
+				}
 				homes.put(entityInterfaceClass, home);
 			}
 			catch (Exception e)
@@ -198,13 +268,15 @@ public class IBOLookup
 					String className = entityInterfaceClass.getName();
 					String beanClassName = className + getBeanSuffix();
 					beanClass = Class.forName(beanClassName);
+						
+					beanClasses.put(entityInterfaceClass, beanClass);
+					interfaceClasses.put(beanClass, entityInterfaceClass);
+					
 				}
 				else
 				{
 					beanClass = entityInterfaceClass;
 				}
-				beanClasses.put(entityInterfaceClass, beanClass);
-				interfaceClasses.put(beanClass, entityInterfaceClass);
 			}
 			return beanClass;
 		}
@@ -238,6 +310,9 @@ public class IBOLookup
 					{
 						String interfaceClassName = className.substring(0, endIndex);
 						interfaceClass = Class.forName(interfaceClassName);
+						
+						beanClasses.put(interfaceClass, entityBeanOrInterfaceClass);
+						interfaceClasses.put(entityBeanOrInterfaceClass, interfaceClass);
 					}
 					else
 					{
@@ -277,5 +352,42 @@ public class IBOLookup
 		beanClasses.clear();
 		interfaceClasses.clear();
 	}
+	
+	protected Object getHomeThroughJNDI(Class beanInterfaceClass)throws RemoteException{
+		Object home = null;
+		try{
+	  		InitialContext jndiContext = getInitialContext();
+			Object homeObj = jndiContext.lookup(getBeanClassForNonStatic(beanInterfaceClass).getName());
+			//home = (ResponseHome) jndiContext.lookup("java:comp/env/"+ResponseBMPBean.class.getName());
+			home = PortableRemoteObject.narrow(homeObj, getHomeInterfaceClassFor(beanInterfaceClass));
+			return home;
+		}
+		catch(Exception e){
+			throw new RemoteException("Error looking up home for "+beanInterfaceClass.getName()+". Errormessage was: "+e.getMessage());	
+		}
+	}
+	
+	protected boolean doLookupOverJNDI(Class beanInterfaceClass){
+		/**
+		 *@todo: implement
+		 **/
+		return false;
+	}
+
+  private InitialContext getInitialContext() throws NamingException{
+  	if(jndiProperties==null){
+  		jndiProperties=new Properties();
+	  	try {
+			jndiProperties.load(new FileInputStream("/idega/jndi.properties"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+  	}
+  	return new InitialContext(jndiProperties);
+  }
+
+
 
 }

@@ -13,5 +13,5 @@ import java.rmi.RemoteException;
  */
 
 public interface IBOHome extends EJBHome {
-  public IBOService createIBO() throws CreateException, RemoteException;
+  //public IBOService createIBO() throws CreateException, RemoteException;
 }
