@@ -20,6 +20,13 @@ public java.util.Collection findAllCommunes()throws javax.ejb.FinderException{
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public Commune findByCommuneCode(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((CommuneBMPBean)entity).ejbFindByCommuneCode(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
 public Commune findByCommuneNameAndProvince(java.lang.String p0,java.lang.Object p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((CommuneBMPBean)entity).ejbFindByCommuneNameAndProvince(p0,p1);
