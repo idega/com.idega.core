@@ -2,6 +2,8 @@ package com.idega.idegaweb.browser.presentation;
 
 import com.idega.idegaweb.IWLocation;
 import com.idega.presentation.Frame;
+import com.idega.presentation.PresentationObject;
+import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.event.IWPresentationState;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -43,9 +45,11 @@ public class IWControlFramePresentationState extends IWPresentationStateImpl imp
 
 
   public void stateChanged(ChangeEvent e){
-      IWPresentationState state = (IWPresentationState)e.getSource();
-      IWLocation location = state.getLocation();
-      location.getClass();
+      Object object = e.getSource();
+      // refuse objects that you can not handle
+      if (! (object instanceof IWPresentationState))  
+        return;
+      IWPresentationState state = (IWPresentationState) object;
       String compoundId = state.getArtificialCompoundId();
       if (compoundId == null)
         compoundId = state.getCompoundId();
