@@ -689,7 +689,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	/**
 	 * @deprecated replaced with removeFromColumn(columnName)
-	**Sets a column value to null
+	 * Sets a column value to null
 	**/
 	public void setColumnAsNull(String columnName) throws SQLException
 	{
@@ -707,6 +707,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ columnName
 					+ " = null where "
 					+ this.getIDColumnName()
+					+ " = "
 					+ this.getPrimaryKeyValueSQLString();
 					
 			Conn.createStatement().executeUpdate(sql);
