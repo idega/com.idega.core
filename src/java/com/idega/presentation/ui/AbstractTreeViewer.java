@@ -181,9 +181,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		treeTableIndex = ((!_showHeaderRow) ? 1 : 2);
 		if (_showSuperRootNode) {
 			drawSuperRoot(iwc);
-		} else {
+		}
+		
+		if (defaultRoot.getChildCount() > 0) {
 			drawTree(defaultRoot.getChildren(), null, iwc);
 		}
+		
+		
 	}
 
 	private void drawSuperRoot(IWContext iwc) {
@@ -201,9 +205,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		nodeTable.add(new Text(_superRootNodeName), 3, 1);
 
 		frameTable.add(nodeTable, 1, this.getRowIndex());
-		if (defaultRoot.getChildCount() > 0) {
-			drawTree(defaultRoot.getChildren(), null, iwc);
-		}
+		
 	}
 
 	private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc) {
