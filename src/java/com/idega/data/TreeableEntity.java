@@ -1,10 +1,12 @@
 package com.idega.data;
 
 import com.idega.core.ICTreeNode;
-
+import com.idega.core.business.ICTreeNodeLeafComparator;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
+
 
 /**
  * Title:        idegaclasses
@@ -16,6 +18,9 @@ import java.util.List;
  */
 
 public abstract class TreeableEntity extends GenericEntity implements ICTreeNode{
+
+  protected boolean _sortLeafs = false;
+  protected boolean _leafsFirst = false;
 
   public TreeableEntity(){
     super();
@@ -60,6 +65,10 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
 
         List list = EntityFinder.findAll(this,buffer.toString());
         if(list != null){
+          if(_sortLeafs){
+            ICTreeNodeLeafComparator c = new ICTreeNodeLeafComparator(_leafsFirst);
+            Collections.sort(list,c);
+          }
           return list.iterator();
         }
         else{

@@ -30,7 +30,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   boolean showRootNodeTreeIcons = false;
   int defaultOpenLevel = 1;
 
-  private static final String TREEVIEW_PREFIX = "treeviewer/";
+  private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
+
+  public static final String _UI_WIN = "win/";
+  public static final String _UI_MAC = "mac/";
+  public static final String _UI_IW = "iw/";
+  private String _ui = _UI_IW;
 
   Image icons[] = null;
   String iconNames[]={"treeviewer_trancparent.gif","treeviewer_line.gif",
@@ -54,8 +59,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private static final int ICONINDEX_F_PLUS = 13;
 
 
-  String iconWidth = "16";
-  String iconHeight = "16";
+  protected String iconWidth = "16";
+  protected String iconHeight = "16";
 
   Table nodeTable = null;
   Table treeTable = null;
@@ -74,7 +79,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     super();
     defaultRoot = new DefaultTreeNode("root",-1);
     icons = new Image[14];
-    nodeTable = new Table(3,1);
+    nodeTable = new Table(2,1);
     nodeTable.setCellpadding(0);
     nodeTable.setCellspacing(0);
     treeTable = new Table();
@@ -111,7 +116,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     IWBundle bundle = getBundle(iwc);
     for (int i = 0; i < icons.length; i++) {
       if(icons[i] == null){
-        icons[i] = bundle.getImage(TREEVIEW_PREFIX+iconNames[i]);
+        icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+iconNames[i]);
       }
     }
 
@@ -122,15 +127,29 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     initIcons(iwc);
   }
 
+
+  public void setUI(String ui){
+    if(ui != null){
+      _ui = ui+((ui.endsWith("/"))?"":"/");
+    } else {
+      _ui = "";
+    }
+  }
+
+  public String getUI(){
+    return _ui;
+  }
+
+
   public void drawTree(IWContext iwc){
     this.empty();
     this.add(treeTable);
     treeTable.empty();
     treeTableIndex = 1;
-    drawTree(defaultRoot.getChildren(),null);
+    drawTree(defaultRoot.getChildren(),null,iwc);
   }
 
-  private synchronized void drawTree(Iterator nodes, Image[] collectedIcons){
+  private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc){
     if(nodes != null){
       Iterator iter = nodes;
       for (int i = 0; iter.hasNext(); i++) {
@@ -144,7 +163,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
         Table nodeTable = this.getNodeTableClone();
 
         for (int k = 1; k < nodeTable.getColumns(); k++) {
-          PresentationObject obj = this.getObjectToAddToColumn(k,item,null,isOpen,hasChild,isRoot);
+          PresentationObject obj = this.getObjectToAddToColumn(k,item,iwc,isOpen,hasChild,isRoot);
           if(obj != null){
             nodeTable.add(obj,k+1,1);
           }
@@ -264,7 +283,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
         addNodeTableInTreeTable(nodeTable);
         if(hasChild && isOpen){
-          drawTree(item.getChildren(),newCollectedIcons);
+          drawTree(item.getChildren(),newCollectedIcons, iwc);
         }
       }
     }
@@ -407,24 +426,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
 
   public void setColumns(int cols){
-    nodeTable.resize(cols,nodeTable.getRows());
+    nodeTable.resize(cols+1,nodeTable.getRows());
   }
 
   public void setColumnWidth(int col, String width){
-    nodeTable.setWidth(col,width);
+    nodeTable.setWidth(col+1,width);
   }
 
   public void setColumnHorizontalAlignemnt(int col, String alignment){
     int rows = nodeTable.getRows();
     for (int i = 1; i <= rows; i++) {
-      nodeTable.setAlignment(col,i,alignment);
+      nodeTable.setAlignment(col+1,i,alignment);
     }
   }
 
   public void setColumnVerticalAlignemnt(int col, String alignment){
     int rows = nodeTable.getRows();
     for (int i = 1; i <= rows; i++) {
-      nodeTable.setVerticalAlignment(col,i,alignment);
+      nodeTable.setVerticalAlignment(col+1,i,alignment);
     }
   }
 

@@ -49,6 +49,7 @@ public class TreeViewer extends AbstractTreeViewer {
   public TreeViewer() {
     super();
     folderAndFileIcons = new Image[3];
+    this.setColumns(2);
   }
 
 
@@ -123,7 +124,7 @@ public class TreeViewer extends AbstractTreeViewer {
       if(tmp != null){
         //tmp.setWidth(iconWidth);
         tmp.setHeight(iconHeight);
-        tmp.setAlignment("top");
+        //tmp.setAlignment("top");
         folderAndFileIcons[i] = tmp;
       }
     }
@@ -161,7 +162,9 @@ public class TreeViewer extends AbstractTreeViewer {
             if(isRootNode && !showRootNodeTreeIcons()){
               Link l = new Link();
               l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
-              this.setLinkToOpenOrCloseNode(l,node,nodeIsOpen);
+              if(!nodeIsOpen){ //   || allowRootNodeToClose ){
+                this.setLinkToOpenOrCloseNode(l,node,nodeIsOpen);
+              }
               return l;
             } else {
               return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];

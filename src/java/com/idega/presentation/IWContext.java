@@ -856,7 +856,7 @@ public void setCacheWriter(PrintWriter writer){
       if(historyList != null && historyList.contains(historyId)){
         int index = historyList.indexOf(historyId);
         Object ob = ((Hashtable)historyList.get(index+1)).get(Integer.toString(instanceId));
-        System.err.println("current state = "+ob);
+        //System.err.println("current state = "+ob);
         return (String)ob;
       }
     }

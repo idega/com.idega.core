@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.31 2001/12/10 13:14:53 tryggvil Exp $
+ * $Id: Link.java,v 1.32 2001/12/17 15:48:39 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -980,7 +980,7 @@ public class Link extends Text {
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
-    //  event this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
+    this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
 
     if (_maintainBuilderParameters) {
       addTheMaintainedBuilderParameters(iwc);
@@ -1009,9 +1009,23 @@ public class Link extends Text {
         ListIterator lIter = l.listIterator();
         while (lIter.hasNext()) {
           int index = lIter.nextIndex();
-          PresentationObject lItem = (PresentationObject)lIter.next();
-          pages[index] = lItem.getParentPageID();
-          inst[index] = lItem.getParentObjectInstanceID();
+          Object lItem = lIter.next();
+          if(lItem instanceof String){
+            String str = (String)lItem;
+            int indexof_ = str.indexOf('_');
+            if(indexof_ != -1){
+              try{
+                pages[index] = Integer.parseInt(str.substring(0,indexof_));
+                inst[index] = Integer.parseInt(str.substring(indexof_+1,str.length()));
+              }catch(NumberFormatException e){
+                System.err.println("Link: Listener coordenates not right");
+              }
+            }
+          } else if(lItem instanceof PresentationObject){
+            PresentationObject obj = (PresentationObject)lItem;
+            pages[index] = obj.getParentPageID();
+            inst[index] = obj.getParentObjectInstanceID();
+          }
         }
         logic.setICObjectInstanceListeners(this,pages,inst);
         logic.setICObjectInstanceEventSource(this,this.getParentPageID(),this.getParentObjectInstanceID());
@@ -1416,6 +1430,15 @@ public class Link extends Text {
     }
     if(!listenerInstances.contains(obj)){
       listenerInstances.add(obj);
+    }
+  }
+
+  public void addIWPOListener(String page_instID){
+    if(listenerInstances == null){
+      listenerInstances = new Vector();
+    }
+    if(!listenerInstances.contains(page_instID)){
+      listenerInstances.add(page_instID);
     }
   }
 

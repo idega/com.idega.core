@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.24 2001/12/04 23:40:13 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.25 2001/12/17 15:48:39 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -138,12 +138,8 @@ long time1 = System.currentTimeMillis();
             //end
 
             // new Event system
-            /**
-             * not in use jet
-             */
-              //increaseHistoryID(iwc);
-              //handleEvent(iwc);
-
+              increaseHistoryID(iwc);
+              handleEvent(iwc);
             // event system end
 
             //if (isActionPerformed(request,response)){
@@ -454,7 +450,7 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
         PresentationObject source = logic.getIWPOEventSource(iwc);
         for (int i = 0; i < listeners.length; i++) {
           //System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
-          //System.err.println(listeners[i].changeState(source,iwc));
+          //System.err.println("newStateString = "+listeners[i].changeState(source,iwc));
           String newState = listeners[i].changeState(source,iwc);
           if(newState != null){
             ((Hashtable)state.getLast()).put(Integer.toString(listeners[i].getParentObjectInstanceID()),newState);

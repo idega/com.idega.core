@@ -23,6 +23,8 @@ public class GenericState {
   public final static String STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR = ";";
   public final static String STATESTRING_NOVALUE = "null";
 
+  //private static Hashtable _theAttributes = new Hashtable();
+
   List state = null;
 //  List defaultStage = null;
   int pageKey;
@@ -54,6 +56,34 @@ public class GenericState {
     this.instanceId = obj.getICObjectInstanceID();
   }
 
+//
+//  private void firstLoadInMemoryCheck() {
+//    Object[][] values = (Object[][])_theAttributes.get(this.getClass().getName());
+//    if (values == null) {
+//      values = new Vector();
+//      _theAttributes.put(this.getClass().getName(),values);
+//
+///*
+//      //First store a static instance of this class
+//      String className = this.getClass().getName();
+//      try {
+//        _allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+//      }
+//      catch(Exception ex) {
+//        ex.printStackTrace();
+//      }
+//*/
+//
+//      //call the ializeAttributes that stores information about columns and relationships
+//      initializeAttributes();
+//    }
+//  }
+//
+//  public void initializeAttributes(){}
+//
+//  public void addAttribute(String name, Class storageClass ){
+//
+//  }
 
   public void updateState(String stateString){
     parseStateString(stateString);
@@ -82,6 +112,7 @@ public class GenericState {
   }
 
   protected void parseStateString(String stateString){
+    //System.err.println(this+" string to parse: "+stateString);
     StringTokenizer stoken = new StringTokenizer(stateString,STATESTRING_VALUE_SEPERATOR);
     while (stoken.hasMoreTokens()) {
       state = new Vector();
@@ -120,8 +151,8 @@ public class GenericState {
         if(index != 0){
           str += STATESTRING_VALUE_SEPERATOR;
         }
-        if(lItem instanceof Object[]){
-          Object[] obj = (Object[])lItem;
+        if(lItem instanceof String[]){
+          String[] obj = (String[])lItem;
           for (int i = 0; i < obj.length; i++) {
             if(i != 0){
               str += STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR;
@@ -143,6 +174,7 @@ public class GenericState {
         }
       }
     }
+    //System.err.println(this+" statestring: "+str);
     return str;
   }
 

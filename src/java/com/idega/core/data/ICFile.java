@@ -26,10 +26,12 @@ public class ICFile extends TreeableEntity {
 
   public ICFile() {
     super();
+    _sortLeafs = true;
   }
 
   public ICFile(int id) throws SQLException{
     super(id);
+    _sortLeafs = true;
   }
 
   public void initializeAttributes() {
@@ -158,6 +160,13 @@ public class ICFile extends TreeableEntity {
     super.update();
   }
 
+
+  public boolean isLeaf(){
+    if(ICMimeType.IC_MIME_TYPE_FOLDER.equalsIgnoreCase(this.getMimeType())){
+      return false;
+    }
+    return true;
+  }
 
 
         /*
