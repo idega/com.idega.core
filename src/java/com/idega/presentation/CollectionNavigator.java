@@ -11,7 +11,7 @@ import com.idega.presentation.text.Text;
  */
 public class CollectionNavigator extends Block {
 
-	private static final String PARAMETER_CURRENT_PAGE = "cn_current_page";
+	public static final String PARAMETER_CURRENT_PAGE = "cn_current_page";
 	
 	private int _currentPage = 0;
 	private int _maxPage = 0;
