@@ -28,6 +28,7 @@ public class SingleLineItem extends Panel {
   private GridBagConstraints gbc = null;
   private Color bgColor = Color.white;
   private Container parentContainer;
+  private String ID;
 
 
   public SingleLineItem(Container parent) {
@@ -113,6 +114,15 @@ public class SingleLineItem extends Panel {
 
   private void openWindow(){
     if(window!=null) window.setVisible(true);
+  }
+
+
+  public void setId(String ID){
+   this.ID = ID;
+  }
+
+  public String getId(){
+   return ID;
   }
 
   public Component add(Component component){
