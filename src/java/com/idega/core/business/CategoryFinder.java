@@ -658,7 +658,7 @@ public class CategoryFinder {
    */
 
 //<<<<<<< CategoryFinder.java
-  private String getRelatedSQL(int iObjectInstanceId) {
+  public String getRelatedSQL(int iObjectInstanceId) {
     /*try {
       ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
       return home.getRelatedSQL(iObjectInstanceId);
