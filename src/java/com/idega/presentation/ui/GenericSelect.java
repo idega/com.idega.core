@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Script;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -26,6 +27,9 @@ public class GenericSelect extends InterfaceObject {
 	private List selectedElements;
 	private boolean _allSelected = false;
 	private boolean _isMultiple = false;
+	
+	private boolean addSelectScript = false;
+	
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
@@ -256,6 +260,38 @@ public class GenericSelect extends InterfaceObject {
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
 	public void print(IWContext iwc) throws Exception {
+		if (addSelectScript) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("function navHandler(input) {").append("\n\t");
+			buffer.append("var URL = input.options[input.selectedIndex].value;").append("\n\t");
+			buffer.append("if (URL.length > 0) {").append("\n\t\t");
+			buffer.append("var index = -1;").append("\n\t\t");
+			buffer.append("var targetIndex = -1;").append("\n\t\t");
+			buffer.append("for (var a = 0; a < URL.length; a++) {").append("\n\t\t\t");
+			buffer.append("if (URL.charAt(a) == '$') {").append("\n\t\t\t\t");
+			buffer.append("if (index == -1) {").append("\n\t\t\t\t\t");
+			buffer.append("index = a;").append("\n\t\t\t\t");
+			buffer.append("}").append("\n\t\t\t\t");
+			buffer.append("else {").append("\n\t\t\t\t\t");
+			buffer.append("targetIndex = a;").append("\n\t\t\t\t");
+			buffer.append("}").append("\n\t\t\t");
+			buffer.append("}").append("\n\t\t");
+			buffer.append("}").append("\n\t\t");
+			buffer.append("window.open(URL.substring(0, index), URL.substring(targetIndex+1, URL.length), URL.substring(index+1, targetIndex));").append("\n\t");
+			buffer.append("}").append("\n\t");
+			buffer.append("var option = input.options[0];").append("\n\t");
+			buffer.append("option.selected = true;").append("\n");
+			buffer.append("}");
+			
+			Script script = getScript();
+			if (script == null) {
+				script = new Script();
+				this.getParentPage().add(script);
+			}
+			script.addFunction("navHandler", buffer.toString());
+			setOnChange("navHandler(this)");
+		}
+		
 		String val = null;
 		if (!iwc.isInEditMode()) {
 			Iterator iter = getChildren().iterator();
@@ -451,4 +487,8 @@ public class GenericSelect extends InterfaceObject {
 	public boolean isContainer() {
 		return false;
 	}
-}
+	
+	protected void addSelectScript(boolean addScript) {
+		this.addSelectScript = addScript;
+	}
+} 

@@ -1,11 +1,19 @@
 package com.idega.presentation.ui;
 
+import java.util.Map;
+
+import javax.faces.component.UIComponent;
+
 import com.idega.presentation.IWContext;
 
 /**
  * @author laddi
  */
 public class SelectOption extends InterfaceObject {
+	
+	private Class windowClass;
+	private Map parameterMap;
+	private String target;
 
 	public SelectOption() {
 		this("untitled");
@@ -59,6 +67,24 @@ public class SelectOption extends InterfaceObject {
 			return true;
 		return false;	
 	}
+	
+	public void main(IWContext iwc) throws Exception {
+		if (windowClass != null) {
+			String URL = Window.getWindowURLWithParameters(windowClass, iwc, parameterMap);
+			String arguments = Window.getWindowArgumentCallingScript(windowClass);
+			setValue(URL + "$" + arguments + "$" + target);
+			
+			getParentSelect().addSelectScript(true);
+		}
+	}
+	
+	protected GenericSelect getParentSelect() {
+		UIComponent parent = this.getParent();
+		if (parent != null && parent instanceof GenericSelect) {
+			return (GenericSelect) parent;
+		}
+		return null;
+	}
 
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
@@ -71,6 +97,18 @@ public class SelectOption extends InterfaceObject {
 			print(getName());
 			println("</option>");
 		}
+	}
+
+	public void setWindowToOpenOnSelect(Class windowClass, Map parameterMap) {
+		this.windowClass = windowClass;
+		this.parameterMap = parameterMap;
+		this.target = "undefined";
+	}
+
+	public void setWindowToOpenOnSelect(Class windowClass, Map parameterMap, String target) {
+		this.windowClass = windowClass;
+		this.parameterMap = parameterMap;
+		this.target = target;
 	}
 
 	/**
