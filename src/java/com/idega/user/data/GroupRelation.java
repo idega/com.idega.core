@@ -20,7 +20,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public java.lang.String getRelationshipType() throws java.rmi.RemoteException;
  public void setTerminationDate(java.sql.Timestamp p0) throws java.rmi.RemoteException;
  public void setRelatedGroup(com.idega.user.data.Group p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void remove()throws javax.ejb.RemoveException, java.rmi.RemoteException;
+
  public void setActive() throws java.rmi.RemoteException;
  public void setGroup(int p0) throws java.rmi.RemoteException;
  public void setRelationship(com.idega.user.data.GroupRelationType p0) throws java.rmi.RemoteException;

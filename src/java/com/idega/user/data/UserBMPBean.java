@@ -405,11 +405,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     /**@todo: Implement this com.idega.user.data.Group method*/
     throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
   }
-  public boolean equals(Group p0) throws java.rmi.RemoteException {
-    /**@todo: Implement this com.idega.user.data.Group method*/
+ /* public boolean equals(Group p0) throws java.rmi.RemoteException {
     //throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
-    return equals((Object)this);
-  }
+    //return equals((Object)this);
+    return this.getGeneralGroup().equals(p0);
+  }*/
   public void addGroup(Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
     throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
@@ -558,7 +558,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
      */
     public Group getUserGroup(){
       try {
-	return super.getGeneralGroup();
+	return getGeneralGroup();
       }
       catch (RemoteException ex) {
 	throw new EJBException(ex);
