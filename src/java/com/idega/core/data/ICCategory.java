@@ -37,4 +37,7 @@ public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core
  public void addFile(ICFile file) throws IDOAddRelationshipException;
  public void removeFile(ICFile file) throws IDORemoveRelationshipException;
  public Collection getFiles() throws IDORelationshipException;
+ public java.sql.Timestamp getInvalidationDate();
+ public void setInvalidationDate(java.sql.Timestamp date);
+ 
 }

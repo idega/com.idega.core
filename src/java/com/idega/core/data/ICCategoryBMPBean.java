@@ -46,11 +46,17 @@ public class ICCategoryBMPBean
 		addAttribute(getColumnDescription(), "Description", true, true, String.class);
 		addAttribute(getColumnType(), "Type", true, true, String.class);
 		addAttribute(getColumnCreated(), "Created", true, true, java.sql.Timestamp.class);
+		addAttribute(getColumnInvalidationDate(), "Invalidation date", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnValid(), "Valid", true, true, Boolean.class);
 		addManyToManyRelationShip(com.idega.core.data.ICObjectInstance.class);
 		// Gimmi 8.04.2003
 		addManyToManyRelationShip(com.idega.core.data.ICFile.class);
 	}
+
+	public static String getColumnInvalidationDate() {
+		return "INVALIDATED";
+	}
+	
 	public void insertStartData() {
 		String table =
 			com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
@@ -137,6 +143,14 @@ public class ICCategoryBMPBean
 	public void setCreated(java.sql.Timestamp created) {
 		setColumn(getColumnCreated(), created);
 	}
+	
+	public java.sql.Timestamp getInvalidationDate() {
+		return (java.sql.Timestamp) getColumnValue(getColumnInvalidationDate());
+	}
+	public void setInvalidationDate(java.sql.Timestamp date) {
+		setColumn(getColumnInvalidationDate(), date);
+	}
+	
 	public String getType() {
 		return getStringColumnValue(getColumnType());
 	}
