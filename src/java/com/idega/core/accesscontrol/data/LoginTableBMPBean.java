@@ -63,14 +63,14 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
 	public String getEntityName(){
-		return "ic_login";
+		return "IC_LOGIN";
 	}
 
 
 
         public static String getUserLoginColumnName(){
 
-          return "user_login";
+          return "USER_LOGIN";
 
         }
 
@@ -94,13 +94,13 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String getLastChangedColumnName() {
 
-          return("last_changed");
+          return("LAST_CHANGED");
 
         }
         
 			public static String getLoginTypeColumnName() {
 	
-			  return("login_type");
+			  return("LOGIN_TYPE");
 	
 			}
 
