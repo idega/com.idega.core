@@ -293,17 +293,16 @@ public class GenericSelect extends InterfaceObject {
 		}
 		
 		String val = null;
-		if (!iwc.isInEditMode()) {
-			Iterator iter = getChildren().iterator();
-			while (iter.hasNext()) {
-				SelectOption option = (SelectOption) iter.next();
-				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
-				option.setSelected(setSelected);
-				if(setSelected){
-					val = option.getValueAsString();
-				}
+		Iterator iter = getChildren().iterator();
+		while (iter.hasNext()) {
+			SelectOption option = (SelectOption) iter.next();
+			boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
+			option.setSelected(setSelected);
+			if(setSelected){
+				val = option.getValueAsString();
 			}
 		}
+		
 
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
