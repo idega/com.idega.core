@@ -24,7 +24,7 @@ public class UserGroupRepresentative extends GenericGroup {
 
 
   public String getGroupTypeValue(){
-    return "ic_user_representive";
+    return "ic_user_representative";
   }
 
 

@@ -67,7 +67,7 @@ public class UserBusiness {
 
     UserGroupRepresentative group = new UserGroupRepresentative();
     group.setName(userToAdd.getName());
-    group.setDescription("User representive in table ic_group");
+    group.setDescription("User representative in table ic_group");
     group.insert();
 
     userToAdd.setGroupID(group.getID());
@@ -416,7 +416,7 @@ public class UserBusiness {
 
     List nonrelated = EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),GenericGroup.getStaticInstance());
 
-    return UserGroupBusiness.getUsersForUserRepresentiveGroups(nonrelated);
+    return UserGroupBusiness.getUsersForUserRepresentativeGroups(nonrelated);
   }
 
   public static List getUserGroupsDirectlyRelated(int iUserId){

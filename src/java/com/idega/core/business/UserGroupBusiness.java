@@ -98,7 +98,7 @@ public class UserGroupBusiness {
     try {
       GenericGroup group = new GenericGroup(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
-      List AllGroups =  UserGroupBusiness.getAllGroups();// Filters out userrepresentive groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List AllGroups =  UserGroupBusiness.getAllGroups();// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -344,11 +344,11 @@ public class UserGroupBusiness {
     //filter end
 
     List list = UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,true);
-    return getUsersForUserRepresentiveGroups(list);
+    return getUsersForUserRepresentativeGroups(list);
   }
 
   /**
-   * @todo filter out UserGroupRepresentive groups
+   * @todo filter out UserGroupRepresentative groups
    */
 
   public static List getGroupsContainedDirectlyRelated(GenericGroup group){
@@ -371,11 +371,11 @@ public class UserGroupBusiness {
   }
 
   /**
-   * @todo filter out UserGroupRepresentive groups ? time
+   * @todo filter out UserGroupRepresentative groups ? time
    */
   public static List getUsersContainedDirectlyRelated(GenericGroup group) throws SQLException{
     List result = group.getListOfAllGroupsContained();
-    return UserGroupBusiness.getUsersForUserRepresentiveGroups(result);
+    return UserGroupBusiness.getUsersForUserRepresentativeGroups(result);
   }
 
   public static List getGroupsContainedNotDirectlyRelated(GenericGroup group) throws SQLException{
@@ -473,7 +473,7 @@ public class UserGroupBusiness {
   }
 
 
-  public static List getUsersForUserRepresentiveGroups(List groups)throws SQLException {
+  public static List getUsersForUserRepresentativeGroups(List groups)throws SQLException {
     if(groups != null && groups.size() > 0){
       String sGroupList = "";
       Iterator iter = groups.iterator();
