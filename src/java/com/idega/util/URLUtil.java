@@ -25,6 +25,8 @@ public class URLUtil {
 	private String _protocol;
 	private String _host;
 	private int _port = -1;
+	
+	boolean _convertSpecialCharacters = true;
 
 	/**
 	 * 
@@ -36,6 +38,11 @@ public class URLUtil {
 	 * 
 	 */
 	public URLUtil(String URL) {
+		parseURL(URL);
+	}
+	
+	public URLUtil(String URL, boolean convertSpecialCharacters) {
+		_convertSpecialCharacters = convertSpecialCharacters;
 		parseURL(URL);
 	}
 	
@@ -111,7 +118,10 @@ public class URLUtil {
 			}
 		}
 		
-		return TextSoap.convertSpecialCharacters(parameters.toString());
+		if (_convertSpecialCharacters)
+			return TextSoap.convertSpecialCharacters(parameters.toString());
+		else
+			return parameters.toString();
 	}
 
 	/**
