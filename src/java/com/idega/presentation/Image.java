@@ -761,5 +761,25 @@ public void limitImageWidth( boolean limitImageWidth ){
     
   }
 
+	public void setPadding(int padding) {
+		setStyleAttribute("padding: "+padding+"px;");
+	}
+	
+	public void setPaddingLeft(int padding) {
+		setStyleAttribute("padding-left: "+padding+"px;");
+	}
+	
+	public void setPaddingRight(int padding) {
+		setStyleAttribute("padding-right: "+padding+"px;");
+	}
+	
+	public void setPaddingTop(int padding) {
+		setStyleAttribute("padding-top: "+padding+"px;");
+	}
+	
+	public void setPaddingBottom(int padding) {
+		setStyleAttribute("padding-bottom: "+padding+"px;");
+	}
+
 }
 
