@@ -63,6 +63,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 
   public void setDefaultValues(){
     setVisibility(true);
+    setAutoCreate(Boolean.TRUE);
   }
 
   public void insertStartData(){
@@ -241,7 +242,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   
 	
 	public boolean getAutoCreate(){
-		return getBooleanColumnValue(COLUMN_AUTO_CREATE,false);
+		return getBooleanColumnValue(COLUMN_AUTO_CREATE,true);
 	}
 	
 	public void setAutoCreate(Boolean autoCreate){
