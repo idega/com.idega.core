@@ -1,7 +1,6 @@
 package com.idega.presentation;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 /**
  * A class that constructs a <code>MenuElement</code> of the <code>DynamicJSMenu</code>

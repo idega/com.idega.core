@@ -17,12 +17,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import javax.faces.FacesException;
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.ViewHandler;
 import javax.faces.application.FacesMessage.Severity;
-import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
