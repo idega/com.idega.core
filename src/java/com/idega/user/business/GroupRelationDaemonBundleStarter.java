@@ -42,14 +42,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	}
 	
 	public void actionPerformed(ActionEvent event) {
-		try {
-			Collection relationsWithoutRelatedGroupType = getGroupRelationHome().findAllGroupsWithoutRelatedGroupType();
-			Iterator iterWithoutRelGroupType = relationsWithoutRelatedGroupType.iterator();
-			while (iterWithoutRelGroupType.hasNext()) {
-				GroupRelation relation = (GroupRelation) iterWithoutRelGroupType.next();
-				relation.setRelatedGroupType(relation.getRelatedGroup().getGroupType());
-  				relation.store();
-			}	
+		try {	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
 				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
 				Collection relations = getGroupRelationHome().findAllPendingGroupRelationships();
