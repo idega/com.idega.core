@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.33 2001/12/17 16:33:34 eiki Exp $
+ * $Id: Link.java,v 1.34 2001/12/18 13:41:00 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -982,7 +982,7 @@ public class Link extends Text {
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
-    this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
+    //this.addParameter(BuilderLogic.PRM_HISTORY_ID,(String)iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
 
     if (_maintainBuilderParameters) {
       addTheMaintainedBuilderParameters(iwc);
