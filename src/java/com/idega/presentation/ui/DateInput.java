@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.51 2004/06/30 11:49:35 palli Exp $
+ * $Id: DateInput.java,v 1.52 2004/07/14 14:23:27 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -605,9 +605,12 @@ public class DateInput extends InterfaceObject implements InputHandler {
                     script.addFunction("checkSubmit",
                             "function checkSubmit(inputs){\n\n}");
                 }
+                
+                IWTimestamp earlyDate = new IWTimestamp(earliestDate.getTime());
+                earlyDate.setTime(0,0,0,0);
                 script.addToBeginningOfFunction("checkSubmit",
                         "if (checkEarliestDate (findObj('" + getName() + "'),"
-                                + earliestDate.getTime() + ", '"
+                                + earlyDate.getDate().getTime() + ", '"
                                 + earliestDateErrorMessage
                                 + "') == false ){\nreturn false;\n}\n");
 
