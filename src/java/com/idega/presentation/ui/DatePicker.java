@@ -145,9 +145,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * @param date
      */
     public void setDate(Date date) {
+    	  this.date = date;
         String display = date.toString();
-        String value = new IWTimestamp(date.getTime()).getTimestamp()
-                .toString();
+        String value = date.toString();
         if (locale != null) {
             display = new SimpleDateFormat(dateFormatPattern,locale).format(date);
             //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
