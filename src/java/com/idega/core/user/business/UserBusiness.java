@@ -34,6 +34,10 @@ public class UserBusiness {
   public UserBusiness() {
   }
 
+  public static UserBusiness getInstance(){
+    return new UserBusiness();
+  }
+
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws SQLException{
     User userToAdd = new User();
 
@@ -85,6 +89,23 @@ public class UserBusiness {
 
   }
 
+/*
+  public User getUser(int userGroupRepresentativeID) throws SQLException {
+    List l = EntityFinder.findAllByColumn(User.getStaticInstance(User.class),User._COLUMNNAME_USER_GROUP_ID,userGroupRepresentativeID);
+    if(l != null && l.size() > 0){
+      return ((User)l.get(0));
+    }
+    return null;
+  }
+
+  public int getUserID(int userGroupRepresentativeID) throws SQLException {
+    User user = getUser(userGroupRepresentativeID);
+    if(user != null){
+      return user.getID();
+    }
+    return -1;
+  }
+*/
 
   public static void deleteUser(int userId) throws SQLException {
     User delUser = new User(userId);
@@ -438,6 +459,8 @@ public class UserBusiness {
     return l;
   }
 
+
+
   /**
    *  Returns User from userid, null if not found
    */
@@ -450,6 +473,7 @@ public class UserBusiness {
     }
     return null;
   }
+
 
 
   public static List getUsersInNoGroup() throws SQLException  {

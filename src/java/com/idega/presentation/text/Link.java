@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.51 2002/03/11 16:08:38 gimmi Exp $
+ * $Id: Link.java,v 1.52 2002/03/15 12:09:33 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1069,31 +1069,17 @@ public class Link extends Text{
 
   /**
    * method for adding a link to a file object
+   * @depricated use setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(file))
    */
   public void setFile(ICFile file) {
-    if( (file!=null) && (file.getID()!=-1) ){
-      StringBuffer url = new StringBuffer();
-      url.append(IWMainApplication.MEDIA_SERVLET_URL);
-      url.append('/');
-      url.append(file.getID());
-      url.append("media");
-      url.append('?');
-      url.append(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME);
-      url.append('=');
-      url.append(file.getID());
-      setURL(url.toString());
-    }
+    setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(file));
   }
 
+  /**
+   * @depricated use setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(fileID))
+   */
   public void setFile(int fileID) {
-    ICFile file = null;
-    try {
-      file = new ICFile(fileID);
-    }
-    catch (Exception e) {
-      file = null;
-    }
-    setFile(file);
+    setURL(com.idega.block.media.business.MediaBusiness.getMediaURL(fileID));
   }
 
 

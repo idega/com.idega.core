@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.29 2002/02/18 14:11:14 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.30 2002/03/15 12:09:33 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -32,6 +32,11 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Enumeration;
+import com.oreilly.servlet.multipart.*;
+import com.idega.io.UploadFile;
+import com.idega.util.FileUtil;
+import java.util.StringTokenizer;
+
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -73,6 +78,15 @@ public  class IWPresentationServlet extends IWCoreServlet{
             iwc.setRequest(request);
             iwc.setResponse(response);
           }
+
+          if(iwc.isMultipartFormData()){
+            //iwc.getWriter().println("form is multipart");
+            handleMultipartFormData(iwc);
+          }
+//          else {
+//            iwc.getWriter().println("form is not multipart");
+//            iwc.getWriter().println("<br>type: "+iwc.getRequestContentType());
+//          }
 
           String markup = iwc.getParameter("idega_special_markup");
           if(markup != null) {
@@ -551,6 +565,68 @@ writer.println("-->");
   }
 
 
+  }
+
+
+
+  private void handleMultipartFormData(IWContext iwc) throws Exception{
+    String sep = FileUtil.getFileSeparator();
+    StringBuffer pathToFile = new StringBuffer();
+    pathToFile.append(iwc.getApplication().getApplicationRealPath());
+    pathToFile.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+    pathToFile.append(sep);
+    pathToFile.append("upload");
+    pathToFile.append(sep);
+
+    FileUtil.createFolder(pathToFile.toString());
+
+    MultipartParser mp = new MultipartParser(iwc.getRequest(),iwc.getRequest().getContentLength());/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/
+    Part part;
+    File dir = null;
+    String value = null;
+
+    while ((part = mp.readNextPart()) != null) {
+      String name = part.getName();
+      if(part.isParam()){
+        ParamPart paramPart = (ParamPart) part;
+        iwc.setMultipartParameter(paramPart.getName(),paramPart.getStringValue());
+        //System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
+      }
+      else if (part.isFile()) {
+        // it's a file part
+        FilePart filePart = (FilePart) part;
+        String fileName = filePart.getFileName();
+
+        if (fileName != null) {
+          pathToFile.append(fileName);
+          String filePath = pathToFile.toString();
+          StringBuffer webPath = new StringBuffer();
+          webPath.append('/');
+          webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+          webPath.append('/');
+          webPath.append("upload");
+          webPath.append('/');
+          webPath.append(fileName);
+
+
+        // Opera mimetype fix ( aron@idega.is )
+        String mimetype = filePart.getContentType();
+        if(mimetype!=null){
+          StringTokenizer tokenizer = new StringTokenizer(mimetype," ;:");
+          if(tokenizer.hasMoreTokens())
+            mimetype = tokenizer.nextToken();
+        }
+
+        UploadFile file = new UploadFile(fileName,filePath,webPath.toString(),mimetype,(long)-1);
+
+        long size = filePart.writeTo(file);
+        file.setSize(size);
+
+        iwc.setUploadedFile(file);
+
+        }
+      }
+    }
   }
 
 }

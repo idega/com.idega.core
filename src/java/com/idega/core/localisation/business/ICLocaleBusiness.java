@@ -243,11 +243,14 @@ public class ICLocaleBusiness {
    *  returns ICLocale from Locale string identifier
    */
   public static ICLocale getICLocale(String localeString){
-    if(LocaleHashByString == null)
-      reload();
-    if( LocaleHashByString!=null && LocaleHashByString.containsKey(localeString) ){
-      ICLocale ICL = (ICLocale) LocaleHashByString.get(localeString);
-      return ICL;
+    if(localeString != null){
+      if(LocaleHashByString == null){
+        reload();
+      }
+      if( LocaleHashByString!=null && LocaleHashByString.containsKey(localeString) ){
+        ICLocale ICL = (ICLocale) LocaleHashByString.get(localeString);
+        return ICL;
+      }
     }
     return null;
   }

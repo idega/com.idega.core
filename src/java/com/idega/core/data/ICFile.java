@@ -262,7 +262,10 @@ public class ICFile extends TreeableEntity {
     setDeletedWhen(idegaTimestamp.getTimestampRightNow());
     try{
       IWContext iwc = IWContext.getInstance();
-      setDeletedByUserId(iwc.getUserId());
+      int userId = iwc.getUserId();
+      if(userId != -1){
+        setDeletedByUserId(userId);
+      }
     }
     catch(Exception e){
      e.printStackTrace(System.err);

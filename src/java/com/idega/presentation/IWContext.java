@@ -24,6 +24,8 @@ import com.idega.core.data.ICObject;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.util.datastructures.HashtableMultivalued;
+import com.idega.io.UploadFile;
 
 
 /**
@@ -59,7 +61,8 @@ private ServletContext servletContext;
 
 private boolean isCaching = false;
 private PrintWriter cacheWriter;
-
+private HashtableMultivalued _multipartParameters = null;
+private UploadFile _uploadedFile = null;
 
 public IWContext(HttpServletRequest Request,HttpServletResponse Response){
 	this.Request=Request;
@@ -115,6 +118,38 @@ private void setAllDefault(){
 
 public HttpSession getSession(){
 	return getRequest().getSession();
+}
+
+public boolean isMultipartFormData(){
+  String contentType = this.getRequestContentType();
+  if(contentType != null){
+    return (contentType.indexOf("multipart") != -1);
+  }else{
+    return false;
+  }
+}
+
+public void setMultipartParameter(String key, String value){
+  if(_multipartParameters == null){
+    _multipartParameters = new HashtableMultivalued();
+  }
+  _multipartParameters.put(key,value);
+}
+
+public String getMultipartParameter(String key){
+  if(_multipartParameters != null){
+    return (String)_multipartParameters.get(key);
+  }else{
+    return null;
+  }
+}
+
+public UploadFile getUploadedFile(){
+  return _uploadedFile;
+}
+
+public void setUploadedFile(UploadFile file){
+  _uploadedFile = file;
 }
 
 public String getUserAgent(){
@@ -334,15 +369,36 @@ public void addCookies(Cookie cookie) {
 
 
 public String getParameter(String parameterName){
-  return getRequest().getParameter(parameterName);
+  String prm = null;
+
+  if(_multipartParameters != null ){
+    prm = getMultipartParameter(parameterName);
+  } else{
+    prm = getRequest().getParameter(parameterName);
+  }
+
+  return prm;
 }
 
 public Enumeration getParameterNames(){
-  return getRequest().getParameterNames();
+  if(_multipartParameters != null){
+    return _multipartParameters.keys();
+  }else{
+    return getRequest().getParameterNames();
+  }
 }
 
 public String[] getParameterValues(String parameterName){
-  return getRequest().getParameterValues(parameterName);
+  if(_multipartParameters != null){
+    Collection values = _multipartParameters.getCollection(parameterName);
+    if(values != null){
+      return (String[])values.toArray(new String[values.size()]);
+    } else{
+      return null;
+    }
+  } else {
+    return getRequest().getParameterValues(parameterName);
+  }
 }
 
 public String getQueryString(){

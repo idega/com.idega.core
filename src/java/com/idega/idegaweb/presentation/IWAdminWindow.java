@@ -66,6 +66,10 @@ public static String HEADER_COLOR="#0E2456";
     super(name,classToInstanciate);
   }
 
+  public Form getUnderlyingForm(){
+    return adminForm;
+  }
+
   public void _main(IWContext iwc)throws Exception{
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
@@ -321,7 +325,7 @@ public static String HEADER_COLOR="#0E2456";
     Text T= new Text();
     if ( s != null ) {
       T= new Text(s);
-       T.setBold();
+      T.setBold();
       T.setFontColor("#000000");
       T.setFontSize(Text.FONT_SIZE_10_HTML_2);
       T.setFontFace(Text.FONT_FACE_VERDANA);
