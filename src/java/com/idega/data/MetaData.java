@@ -1,11 +1,7 @@
 package com.idega.core.data;
 
 import com.idega.data.GenericEntity;
-import com.idega.data.BlobWrapper;
-import com.idega.core.data.ICLanguage;
-import java.sql.Timestamp;
 import java.lang.String;
-import java.lang.Integer;
 import java.sql.SQLException;
 
 
