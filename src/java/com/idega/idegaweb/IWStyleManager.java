@@ -169,8 +169,7 @@ public class IWStyleManager {
 						name = name.substring(name.indexOf(".") + 1);
 					}
 
-					if (!isDefaultStyle(name))
-						list.add(name);
+					list.add(name);
 				}
 			}
 		}
