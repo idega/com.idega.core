@@ -175,6 +175,7 @@ public class SingleLineItem extends Panel {
 
       layout();
       repaint();
+      notifyAll();
       parentContainer.layout();
       parentContainer.repaint();
 
