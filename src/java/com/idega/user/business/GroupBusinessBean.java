@@ -18,6 +18,9 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBORuntimeException;
+import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -1532,6 +1535,163 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       }
     }
   }  
+  
+  /**
+   * Gives all parent groups owners' primary groups, permit permission to this group.
+   * The permission to give others permissions to this group.
+   */
+  public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc,
+          Group group) throws RemoteException {
+
+     
+      UserBusiness userBiz = getUserBusiness();
+      String groupId = group.getPrimaryKey().toString();
+      AccessController access = iwc.getAccessController();
+
+      Collection col = getParentGroupsRecursive(group);
+      if (col != null && !col.isEmpty()) {
+          Iterator iter = col.iterator();
+          while (iter.hasNext()) {
+              Group parent = (Group) iter.next();
+              Collection owners = AccessControl
+                      .getAllOwnerGroupPermissionsReverseForGroup(parent);
+
+              if (owners != null && !owners.isEmpty()) {
+                  Iterator iter2 = owners.iterator();
+                  while (iter2.hasNext()) {
+
+                      ICPermission perm = (ICPermission) iter2.next();
+                      User user = userBiz.getUser(perm.getGroupID());
+                      Group primary = user.getPrimaryGroup();
+                      String primaryGroupId = primary.getPrimaryKey()
+                              .toString();
+                      try {
+                          //the owners primary group
+                          access.setPermission(
+                                  AccessController.CATEGORY_GROUP_ID, iwc,
+                                  primaryGroupId, groupId,
+                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+                      } catch (Exception e) {
+                          e.printStackTrace();
+                      }
+                  }
+              }
+          }
+      }
+  }
+  
+  /**
+   * Sets the user as the owner of the group.
+   * @param iwc
+   * @param group
+   * @param user
+   */
+  public void applyUserAsGroupsOwner(IWUserContext iwc, Group group, User user) {
+      AccessController access = iwc.getAccessController();
+
+      try {
+          access.setAsOwner(group, ((Integer) user.getPrimaryKey())
+                  .intValue(), iwc);
+      } catch (Exception ex) {
+          ex.printStackTrace();
+
+      }
+  }
+  
+  public void applyCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group) {
+      User user = iwc.getCurrentUser();
+      applyUserAsGroupsOwner(iwc, group, user);
+  }
+  
+
+  /**
+   * Give the current users primary group all permission except for owner
+   * 
+   */
+      public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group) {
+          
+          User user = iwuc.getCurrentUser();
+          
+          Group groupToGetPermissions = user.getPrimaryGroup();
+          applyAllGroupPermissionsForGroupToGroup(iwuc, group, groupToGetPermissions);
+      }
+      
+  /**
+   * Give the users primary group all permission except for owner
+   * 
+   */
+  public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user) {
+      
+      Group groupToGetPermissions = user.getPrimaryGroup();
+      applyAllGroupPermissionsForGroupToGroup(iwuc, group, groupToGetPermissions);
+  }      
+
+  /**
+   * This methods gives the second group specified all permissions to the other groups except for owner permission (set to users not groups).
+   * The permissions include: view,edit,create,remove users, and the permission to give others permissions to it.
+   * @param iwuc
+   * @param groupToSetPermissionTo The group the permission apply to.
+   * @param groupToGetPermissions The group that will own the permissions e.g. get the rights to do the stuff.
+   */
+  public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo, Group groupToGetPermissions) {
+      AccessController access = iwuc.getAccessController();
+      try {
+          
+          String groupId = groupToGetPermissions.getPrimaryKey()
+                  .toString();
+          String theGroupIDToSetPermissionTo = groupToSetPermissionTo.getPrimaryKey()
+                  .toString();
+
+          //create permission
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+                  groupId, theGroupIDToSetPermissionTo,
+                  access.PERMISSION_KEY_CREATE, Boolean.TRUE);
+          //edit permission
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+                  groupId, theGroupIDToSetPermissionTo,
+                  access.PERMISSION_KEY_EDIT, Boolean.TRUE);
+          //delete permission
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+                  groupId, theGroupIDToSetPermissionTo,
+                  access.PERMISSION_KEY_DELETE, Boolean.TRUE);
+          //view permission
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+                  groupId, theGroupIDToSetPermissionTo,
+                  access.PERMISSION_KEY_VIEW, Boolean.TRUE);
+          //permission to give other permission
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+                  groupId, theGroupIDToSetPermissionTo,
+                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+      } catch (Exception ex) {
+          ex.printStackTrace();
+      }
+  }
+  
+  /**
+   * If the groupToGetInheritanceFrom has inherited permission it is copied to the other group.
+   * 
+   * @param groupToGetInheritanceFrom
+   * @param groupToInheritPermissions
+   */
+  public void applyPermissionInheritanceFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions) {
+
+      if (groupToGetInheritanceFrom != null) {
+          //is controller
+          if (groupToGetInheritanceFrom.isPermissionControllingGroup()) {
+              groupToInheritPermissions.setPermissionControllingGroup(groupToGetInheritanceFrom);
+              groupToInheritPermissions.store();
+          }
+          //is being controlled
+          if (groupToGetInheritanceFrom.getPermissionControllingGroupID() > 0) {
+              groupToInheritPermissions.setPermissionControllingGroup(groupToGetInheritanceFrom
+                      .getPermissionControllingGroup());
+              groupToInheritPermissions.store();
+          }
+
+      }
+
+  }
+  
  
 } // Class
 
