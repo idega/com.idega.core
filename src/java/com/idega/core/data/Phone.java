@@ -59,7 +59,7 @@ public class Phone extends GenericEntity{
       return getIntColumnValue(getColumnNamePhoneTypeId());
     }
 
-    public void setPhoneTypeId(String phone_type_id){
+    public void setPhoneTypeId(int phone_type_id){
       setColumn(getColumnNamePhoneTypeId(), phone_type_id);
     }
 

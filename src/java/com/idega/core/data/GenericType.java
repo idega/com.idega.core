@@ -25,33 +25,47 @@ public abstract class GenericType extends GenericEntity {
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
+    this.addAttribute(getColumnNameDisplayName(),"Nafn",true,true,String.class,255);
     this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
+    this.addAttribute(getColumnNameUniqueName(),"unique name",true,true,String.class,255);
   }
 
-  public static String getColumnNameName(){return "type_name";}
+  public static String getColumnNameDisplayName(){return "type_display_name";}
+  public static String getColumnNameUniqueName() {return "unique_name";}
   public static String getColumnNameDescription(){return "type_description";}
 
 
   public String getName(){
-    return this.getStringColumnValue(getColumnNameName());
+    return this.getStringColumnValue(getColumnNameDisplayName());
+  }
+
+  public String getDisplayName(){
+    return this.getStringColumnValue(getColumnNameDisplayName());
   }
 
   public String getDescription(){
     return this.getStringColumnValue(getColumnNameDescription());
   }
 
-
+  public void setDisplayName(String typeName){
+    this.setColumn(getColumnNameDisplayName(),typeName);
+  }
 
   public void setName(String typeName){
-    this.setColumn(getColumnNameName(),typeName);
+    this.setColumn(getColumnNameDisplayName(),typeName);
   }
 
   public void setDescription(String typeDescription){
     this.setColumn(getColumnNameDescription(),typeDescription);
   }
 
+  public String getUniqueName() {
+    return this.getStringColumnValue(getColumnNameUniqueName());
+  }
 
+  public void setUniqueName(String uniqueName) {
+    this.setColumn(getColumnNameUniqueName(),uniqueName);
+  }
 
 
 
