@@ -25,6 +25,10 @@ public class XMLDataWriter extends WriterToFile {
 	
 	private static final String XML_EXTENSION = "xml";
 	
+	public XMLDataWriter( IWApplicationContext iwac) {
+		super(iwac);
+	}
+	
 	public XMLDataWriter(Storable storable, IWApplicationContext iwac) {
 		super(storable, iwac);
 	}
