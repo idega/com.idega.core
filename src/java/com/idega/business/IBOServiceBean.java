@@ -294,7 +294,11 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}
 	
 	public void triggerActionEvent(String command) {
-		ActionEvent e = new ActionEvent(this, 0, command);
+		triggerActionEvent(command, 0);
+	}
+	
+	public void triggerActionEvent(String command, int id) {
+		ActionEvent e = new ActionEvent(this, id, command);
 		Iterator iter = actionListeners.iterator();
 		while (iter.hasNext()) {
 			((ActionListener) iter.next()).actionPerformed(e);
