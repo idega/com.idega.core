@@ -5,9 +5,15 @@ import com.idega.block.login.presentation.Login;
 import com.idega.jmodule.object.Page;
 import com.idega.jmodule.object.Table;
 import com.idega.jmodule.object.ModuleInfo;
+import com.idega.jmodule.object.Image;
+import com.idega.jmodule.object.interfaceobject.Form;
+import com.idega.development.presentation.Localizer;
+import com.idega.jmodule.object.interfaceobject.DropdownMenu;
 
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.jmodule.object.app.IWControlCenter;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWBundle;
 
 /**
  * Title:        idegaclasses
@@ -20,6 +26,10 @@ import com.idega.jmodule.object.app.IWControlCenter;
 
 public class IWApplicationsServlet extends IWPresentationServlet {
 
+private final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
+private IWBundle iwb;
+private IWResourceBundle iwrb;
+
   public IWApplicationsServlet(){
   }
 
@@ -29,41 +39,125 @@ public class IWApplicationsServlet extends IWPresentationServlet {
   }
 
   private class IWASPage extends Page{
-
-    String backgroundColor = "#D4D0C8";
+    String backgroundColor = "#B0B29D";
 
     public IWASPage(){
     }
 
     public void main(ModuleInfo modinfo){
+      iwb = getBundle(modinfo);
+      iwrb = getResourceBundle(modinfo);
 
       Page thePage = this;
       thePage.setBackgroundColor(backgroundColor);
-      thePage.setMarginWidth(50);
-      thePage.setMarginHeight (50);
-      thePage.setLeftMargin(50);
-      thePage.setTopMargin(50);
+      thePage.setAllMargins(0);
 
       thePage.setTitle("idegaWeb Applications");
 
-      Table mainTable = new Table();
-      thePage.add(mainTable);
-      mainTable.setAlignment("center");
+      Table frameTable = new Table(1,1);
+        frameTable.setWidth("100%");
+        frameTable.setHeight("100%");
+        frameTable.setCellpadding(0);
+        frameTable.setCellspacing(0);
+        frameTable.setAlignment(1,1,"center");
+        frameTable.setVerticalAlignment(1,1,"middle");
 
-      Login login = new Login();
-      mainTable.add(login,1,1);
+      Table outerTable = new Table(1,1);
+        //outerTable.setWidth(325);
+        //outerTable.setHeight(433);
+        outerTable.setCellspacing(1);
+        outerTable.setCellpadding(0);
+        outerTable.setColor("#000000");
+        outerTable.setAlignment("center");
+        outerTable.setVerticalAlignment("middle");
+        frameTable.add(outerTable,1,1);
 
+      Table mainTable = new Table(1,4);
+        mainTable.setWidth("100%");
+        mainTable.setHeight("100%");
+        mainTable.setCellspacing(0);
+        mainTable.setCellpadding(0);
+        mainTable.setAlignment(1,2,"right");
+        mainTable.setAlignment(1,3,"right");
+        mainTable.setAlignment(1,4,"middle");
+        mainTable.setVerticalAlignment(1,1,"top");
+        mainTable.setVerticalAlignment(1,2,"top");
+        mainTable.setVerticalAlignment(1,3,"top");
+        mainTable.setVerticalAlignment(1,4,"bottom");
+        mainTable.setHeight(4,"12");
+        mainTable.setHeight(1,"196");
+        mainTable.setColor("#FFFFFF");
+        outerTable.add(mainTable,1,1);
+
+      Image headerImage;
+
+      Image bottomImage = iwrb.getImage("/login/bottom.gif","",323,12);
+      mainTable.add(bottomImage,1,4);
+
+      boolean isAdministrator = false;
       try{
-        if(AccessControl.isAdmin(modinfo)){
-          IWControlCenter iwcc = new IWControlCenter();
-          mainTable.add(iwcc,1,2);
-        }
+        isAdministrator = AccessControl.isAdmin(modinfo);
       }
       catch(Exception e){
+        isAdministrator = false;
       }
 
-    }
+      if(isAdministrator){
+        IWControlCenter iwcc = new IWControlCenter();
+        mainTable.mergeCells(1,2,1,3);
+        mainTable.setHeight(2,"225");
+        mainTable.setAlignment(1,2,"center");
+        mainTable.setVerticalAlignment(1,2,"middle");
+        mainTable.add(iwcc,1,2);
+        headerImage = iwrb.getImage("/login/header_app_suite.jpg","",323,196);
+      }
+
+      else {
+        mainTable.setHeight(2,"175");
+        mainTable.setHeight(3,"50");
+
+        Table loginTable = new Table(1,1);
+          loginTable.setAlignment("right");
+          loginTable.setCellpadding(0);
+          loginTable.setCellspacing(0);
+
+        Login login = new Login();
+          login.setLoginButton(iwrb.getImage("/login/login.gif"));
+          login.setLogoutButton(iwrb.getImage("/login/logout.gif"));
+          login.setUserTextSize(1);
+          login.setPasswordTextSize(1);
+          login.setHeight("130");
+          login.setStyle("font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
+          login.setInputLength(10);
+          login.setLayout(Login.LAYOUT_STACKED);
+          loginTable.add(login,1,1);
+        mainTable.add(loginTable,1,2);
+
+        Table dropdownTable = new Table(1,1);
+          dropdownTable.setWidth(148);
+          dropdownTable.setCellpadding(0);
+          dropdownTable.setCellspacing(0);
+          dropdownTable.setAlignment("right");
+          dropdownTable.setAlignment(1,1,"center");
+        mainTable.add(dropdownTable,1,3);
+
+        Form myForm = new Form();
+          myForm.setEventListener(com.idega.core.localisation.business.LocaleSwitcher.class.getName());
+        DropdownMenu dropdown = Localizer.getAvailableLocalesDropdown(modinfo);
+          dropdown.setAttribute("style","font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
+          myForm.add(dropdown);
+          dropdownTable.add(myForm);
+
+        headerImage = iwrb.getImage("/login/header.jpg","",323,196);
+      }
+
+      mainTable.add(headerImage,1,1);
+      thePage.add(frameTable);
+   }
 
   }
 
+  public String getBundleIdentifier(){
+    return IW_BUNDLE_IDENTIFIER;
+  }
 }
