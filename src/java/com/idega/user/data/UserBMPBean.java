@@ -1473,7 +1473,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			query.appendInArrayWithSingleQuotes(relationStatus);		
 		}
 	  	
-		System.out.println("SQL -> "+this.getClass()+":"+query);
+		//System.out.println("SQL -> "+this.getClass()+":"+query);
 		return idoFindPKsByQuery(query); 
   	
 	} catch (IDOCompositPrimaryKeyException e) {
