@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -43,6 +44,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -725,6 +727,9 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     }
     // go further
     Collection children = currentGroup.getChildGroups();
+    IWContext iwc = IWContext.getInstance();
+    GroupTreeComparator groupTreeComparator = new GroupTreeComparator(iwc.getCurrentLocale());
+	Collections.sort((List)children,groupTreeComparator);
     Iterator childrenIterator = children.iterator();
     while (childrenIterator.hasNext())  {
       Group child = (Group) childrenIterator.next();
