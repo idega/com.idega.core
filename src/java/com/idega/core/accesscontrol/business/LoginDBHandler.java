@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.44 2004/01/30 13:16:48 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.45 2004/02/02 11:45:13 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -918,21 +918,21 @@ public class LoginDBHandler
 		String alfabet = first+last+middle;
 		boolean rand = false;
 		char[] alfa = alfabet.toCharArray();
-		char[] digi = new String("0123456789ZXYW").toCharArray();
+		char[] digi = new String("012345679").toCharArray();
 		int digilength = digi.length;
 		int alfalength = alfabet.length();
 		// index1 keeps track of first startindex
 		// index2 keeps track of second index
 		int index1 = 0;
 		int index2 = first.length();
-		int index3 = last.length()+middle.length()-2;
+		int index3 = last.length()+middle.length()-3;
 		int count1 = first.length();
 		int count2 = 0;
 		//int laststep = namelength-first.length();
 		String startletters = new String("ZWYX");
 		int startlettercount = startletters.length();
 		java.util.ArrayList list = new java.util.ArrayList(196);
-		
+		Random random = new Random();
 		for (int row = 0;row<array.length;row++){
 			int col = 0;
 			// add first part of name
@@ -946,7 +946,7 @@ public class LoginDBHandler
 				}
 			}
 			else{
-				Random random = new Random();
+				
 				for (int j =0 ; j < count2 && index2+(j)<alfalength && col<namelength; j++)
 					array[row][col++] = digi[random.nextInt(digilength)];
 			}
@@ -974,27 +974,31 @@ public class LoginDBHandler
 					count1++;
 					count2--;
 				}*/
-				else if( index2== first.length()){
+				else if( index2== first.length() && middle.length()>0){
 					index2 = index3;
 					count2 = 1;
+					count1 = first.length();
 					//laststep = namelength-first.length();
 				}
-				else if(!rand ) {
-					rand = true;
-					count2=1;
-					index2 = first.length();
-				}
+			
 				else if(startlettercount>0){
 					
 					alfa = (startletters.charAt(startletters.length()-startlettercount)+alfabet).toCharArray();
 					index2= first.length()+1;
 					count2=1;
-					count1 = first.length()+1;
+					count1 = first.length()+2;
 					if((first.length()+1)<=namelength)
 						count1--;
 						
 					startlettercount--;
-					rand =false;
+				}
+				else if(!rand ) {
+					rand = true;
+					startlettercount = startletters.length();
+					count2=1;
+					count1= first.length();
+					index2 = first.length();
+					
 				}
 				else 	{// lets break this 
 					//System.out.println(row);
@@ -1005,12 +1009,14 @@ public class LoginDBHandler
 			//System.out.println(array[row]);
 			list.add(new String(array[row]));
 		}
+		
 		list.trimToSize();
+		System.out.println(list.size());
 		return list;
 	}
 	
 	public static void main(String[] args){
-		java.util.List list = generatePossibleUserNames("aron","birkir","gudmundsson",8);
+		java.util.List list = generatePossibleUserNames("jon","skafti","sigurdsson",8);
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			System.out.println(element);
