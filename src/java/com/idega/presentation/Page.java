@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.16 2001/11/09 12:53:41 eiki Exp $
+ * $Id: Page.java,v 1.17 2001/11/15 15:02:40 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -461,13 +461,13 @@ public class Page extends PresentationObjectContainer {
 
 
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
-    return this.clone(iwc,true);
-    /*if(com.idega.core.accesscontrol.business.AccessControl.hasViewPermission(this,iwc)){
+    //return this.clone(iwc,true);
+    if(iwc.hasViewPermission(this)){
       return this.clone(iwc,askForPermission);
     } else {
       return NULL_CLONE_PAGE;
     }
-*/
+
   }
 
 
