@@ -15,6 +15,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
+	
+	private static final String COLUMN_NAME_STREET_NAME = "street_name";
+	private static final String COLUMN_NAME_STREET_NUMBER = "street_number";
 
 	public AddressBMPBean() {
 		super();
@@ -27,8 +30,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(getColumnNameAddressTypeId(), "Address type", AddressType.class);
-		addAttribute("street_name", "Street Name", true, true, String.class, 150);
-		addAttribute("street_number", "Street number", true, true, String.class, 30);
+		addAttribute(COLUMN_NAME_STREET_NAME, "Street Name", true, true, String.class, 150);
+		addAttribute(COLUMN_NAME_STREET_NUMBER, "Street number", true, true, String.class, 30);
 		addAttribute("city", "City", true, true, String.class, 50);
 		addAttribute("province", "Province", true, true, String.class, 50);
 		addAttribute("p_o_box", "PostBox", true, true, String.class, 50);
