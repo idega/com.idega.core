@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.49 2003/05/27 20:36:22 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.50 2003/05/27 21:40:28 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,7 +11,7 @@ package com.idega.servlet;
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
 import java.io.IOException;
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -189,15 +189,15 @@ public class IWPresentationServlet extends IWCoreServlet {
 		return false;
 	}
 	public void __main(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter writer = null;
+		//PrintWriter writer = null;
 		try {
-			long time1 = System.currentTimeMillis();
+			//long time1 = System.currentTimeMillis();
 			//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
 			__initializeIWC(request, response);
 			IWContext iwc = getIWContext();
 			//try {
 				handleLocaleParameter(iwc);
-				writer = iwc.getWriter(); //get the writer
+				//writer = iwc.getWriter(); //get the writer
 				try{
 					processBusinessEvent(iwc);
 					processApplicationEvents(iwc);
@@ -244,7 +244,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 				this.setPage(errorPage);
 			}*/
 			__print(iwc);
-			long time2 = System.currentTimeMillis();
+			//long time2 = System.currentTimeMillis();
 			
 			//writer.println("<!--" + (time2 - time1) + " ms-->");
 			
