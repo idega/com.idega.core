@@ -1,6 +1,5 @@
 package com.idega.servlet;
 
-import com.idega.block.login.presentation.Login;
 import com.idega.core.localisation.presentation.LocalePresentationUtil;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -13,6 +12,7 @@ import com.idega.presentation.app.IWControlCenter;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.util.reflect.FieldAccessor;
 import com.idega.util.reflect.MethodInvoker;
 
 /**
@@ -146,7 +146,22 @@ private IWResourceBundle iwrb;
           loginTable.setAlignment("right");
           loginTable.setCellpadding(0);
           loginTable.setCellspacing(0);
-
+		
+		try{
+			PresentationObject login = (PresentationObject)Class.forName("com.idega.block.login.presentation.Login").newInstance();
+			MethodInvoker invoker = MethodInvoker.getInstance();
+			invoker.invokeMethodWithStringParameter(login,"setLoginButtonImageURL",iwrb.getImageURI("login/login.gif"));
+			invoker.invokeMethodWithStringParameter(login,"setLogoutButtonImageURL",iwrb.getImageURI("login/logout.gif"));
+			invoker.invokeMethodWithIntParameter(login,"setUserTextSize",1);
+			invoker.invokeMethodWithIntParameter(login,"setPasswordTextSize",1);
+			invoker.invokeMethodWithStringParameter(login,"setHeight","130");
+			invoker.invokeMethodWithStringParameter(login,"setWidth","160");
+			invoker.invokeMethodWithStringParameter(login,"setStyle","font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
+			invoker.invokeMethodWithIntParameter(login,"setInputLength",13);
+			FieldAccessor accessor = FieldAccessor.getInstance();
+			int layout = accessor.getStaticIntFieldValue(login.getClass(),"LAYOUT_STACKED");
+			invoker.invokeMethodWithIntParameter(login,"setLayout",layout);
+		/*
         Login login = new Login();
           login.setLoginButton(iwrb.getImage("login/login.gif"));
           login.setLogoutButton(iwrb.getImage("login/logout.gif"));
@@ -157,9 +172,17 @@ private IWResourceBundle iwrb;
           login.setStyle("font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
           login.setInputLength(13);
           login.setLayout(Login.LAYOUT_STACKED);
+          */
           loginTable.add(login,1,1);
+          
         mainTable.add(loginTable,1,2);
+		}
+		catch(Exception e){
+			add(iwrb.getLocalizedString("login.init.error","There was an error initialising the login component, most likely it is missing"));
+			e.printStackTrace();
+		}
 
+		
         Table dropdownTable = new Table(1,1);
           dropdownTable.setWidth(148);
           dropdownTable.setCellpadding(0);
