@@ -52,6 +52,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		
 		addIndex("IDX_ADDRESS_TYPE", getColumnNameAddressTypeId());
 		addIndex("IDX_ADDRESS_STREET_NAME", STREET_NAME);
+		addIndex("IDX_ADDR_ADDR_TYPE", new String[]{getIDColumnName(), getColumnNameAddressTypeId()});
 	}
 
 	public static String getColumnNameAddressTypeId() {
