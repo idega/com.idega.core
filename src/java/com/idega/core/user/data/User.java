@@ -194,7 +194,9 @@ public class User extends GenericEntity {
 
 
     /*  relationship begin  */
-
+    /**
+     * @deprecated wrong implementaticon
+     */
     public List getAllGroups() throws SQLException{
       return EntityFinder.findRelated(this,GenericGroup.getStaticInstance());
     }

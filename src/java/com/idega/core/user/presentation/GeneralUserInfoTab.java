@@ -27,7 +27,7 @@ import com.idega.core.user.data.Gender;
 
 public class GeneralUserInfoTab extends UserTab{
 
-  private UserBusiness business;
+
 
   private TextInput firstNameField;
   private TextInput middleNameField;
@@ -37,13 +37,13 @@ public class GeneralUserInfoTab extends UserTab{
   private DateInput dateOfBirthField;
   private DropdownMenu genderField;
 
-  private String firstNameFieldName = "UMfname";
-  private String middleNameFieldName = "UMmname";
-  private String lastNameFieldName = "UMlname";
-  private String displayNameFieldName = "UMdname";
-  private String descriptionFieldName = "UMdesc";
-  private String dateOfBirthFieldName = "UMdateofbirth";
-  private String genderFieldName = "UMgender";
+  private String firstNameFieldName;
+  private String middleNameFieldName;
+  private String lastNameFieldName;
+  private String displayNameFieldName;
+  private String descriptionFieldName;
+  private String dateOfBirthFieldName;
+  private String genderFieldName;
 
 
 
@@ -55,9 +55,6 @@ public class GeneralUserInfoTab extends UserTab{
   private Text dateOfBirthText;
   private Text genderText;
 
-  private Hashtable fieldValues;
-
-
   public GeneralUserInfoTab() {
     super();
     this.setName("General");
@@ -68,9 +65,7 @@ public class GeneralUserInfoTab extends UserTab{
     this.setUserID(userId);
   }
 
-  public void init(){
-    business = new UserBusiness();
-  }
+
 
   public void initializeFieldNames(){
     firstNameFieldName = "UMfname";
@@ -150,7 +145,7 @@ public class GeneralUserInfoTab extends UserTab{
     displayNameField.setLength(12);
 
     descriptionField = new TextArea(descriptionFieldName);
-    descriptionField.setHeight(5);
+    descriptionField.setHeight(7);
     descriptionField.setWidth(42);
     descriptionField.setWrap(true);
 
@@ -179,26 +174,26 @@ public class GeneralUserInfoTab extends UserTab{
   }
 
   public void initializeTexts(){
-    firstNameText = new Text("First name");
-    firstNameText.setFontSize(fontSize);
+    firstNameText = getTextObject();
+    firstNameText.setText("First name");
 
-    middleNameText = new Text("Middle name");
-    middleNameText.setFontSize(fontSize);
+    middleNameText = getTextObject();
+    middleNameText.setText("Middle name");
 
-    lastNameText = new Text("Last name");
-    lastNameText.setFontSize(fontSize);
+    lastNameText = getTextObject();
+    lastNameText.setText("Last name");
 
-    displayNameText = new Text("Display name");
-    displayNameText.setFontSize(fontSize);
+    displayNameText = getTextObject();
+    displayNameText.setText("Display name");
 
-    descriptionText = new Text("Description : ");
-    descriptionText.setFontSize(fontSize);
+    descriptionText = getTextObject();
+    descriptionText.setText("Description : ");
 
-    dateOfBirthText = new Text("Date of birth : ");
-    dateOfBirthText.setFontSize(fontSize);
+    dateOfBirthText = getTextObject();
+    dateOfBirthText.setText("Date of birth : ");
 
-    genderText = new Text("Gender");
-    genderText.setFontSize(fontSize);
+    genderText = getTextObject();
+    genderText.setText("Gender");
 
   }
 

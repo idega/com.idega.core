@@ -12,6 +12,9 @@ import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import com.idega.core.data.Address;
+
+
 
 
 /**
@@ -22,7 +25,7 @@ import java.util.StringTokenizer;
  * @version 1.0
  */
 
-public class AddressInfoTab extends Table implements Collectable {
+public class AddressInfoTab extends UserTab{
 
   private TextInput streetField;
   private TextInput cityField;
@@ -45,35 +48,28 @@ public class AddressInfoTab extends Table implements Collectable {
   private Text countryText;
   private Text poBoxText;
 
-  private Hashtable fieldValues;
-
-
-  private String columnHeight = "37";
-  private int fontSize = 2;
-
-
   public AddressInfoTab() {
     super();
-    this.setCellpadding(0);
-    this.setCellspacing(0);
     this.setName("Address");
-    this.setWidth("370");
+  }
+
+  public void initializeFieldNames(){
+    streetFieldName = "UMstreet";
+    cityFieldName = "UMcity";
+    provinceFieldName = "UMprovince";
+    postalCodeFieldName = "UMpostal";
+    countryFieldName = "UMconty";
+    poBoxFieldName = "UMpoBox";
+/*
     streetFieldName += this.getID();
     cityFieldName += this.getID();
     provinceFieldName += this.getID();
     postalCodeFieldName += this.getID();
     countryFieldName += this.getID();
     poBoxFieldName += this.getID();
-    initializeFields();
-    initializeTexts();
-    initializeFieldValues();
-    lineUpFields();
+*/
   }
 
-  public AddressInfoTab(int MemberID){
-    this();
-    this.initFieldContents(MemberID);
-  }
 
   public void initializeFieldValues(){
 
@@ -117,9 +113,11 @@ public class AddressInfoTab extends Table implements Collectable {
 
     postalCodeField = new TextInput(postalCodeFieldName);
     postalCodeField.setLength(4);
+    postalCodeField.setDisabled(true);
 
     countryField = new TextInput(countryFieldName);
     countryField.setLength(20);
+    countryField.setDisabled(true);
 
     poBoxField = new TextInput(poBoxFieldName);
     poBoxField.setLength(10);
@@ -235,12 +233,42 @@ public class AddressInfoTab extends Table implements Collectable {
   }
 
   public boolean store(ModuleInfo modinfo){
-    System.err.println(this.getClass().getName() + ": in method store");
-    return true;
+
+    try{
+      StringTokenizer tok = new StringTokenizer((String)fieldValues.get(this.streetFieldName));
+
+      //fieldValues.get(this.postalCodeFieldName);
+      //fieldValues.get(this.countryFieldName);
+
+      business.updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)fieldValues.get(this.cityFieldName), null, (String)fieldValues.get(this.provinceFieldName), null, (String)fieldValues.get(this.poBoxFieldName));
+
+      return true;
+    }catch(Exception e){
+      e.printStackTrace();
+      return false;
+    }
   }
 
-  public void initFieldContents(int MemberID){
+  public void initFieldContents(){
+    try{
+      Address addr = business.getUserAddress1(this.getUserId());
 
+      boolean hasAddress = false;
+      if(addr != null){
+        hasAddress = true;
+      }
+
+      fieldValues.put(this.streetFieldName,(hasAddress) ? addr.getStreetName()+" "+addr.getStreetNumber():"" );
+      fieldValues.put(this.cityFieldName,(hasAddress) ? addr.getCity():"" );
+      fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvidence():"" );
+      fieldValues.put(this.postalCodeFieldName,(hasAddress) ? "":"" );
+      fieldValues.put(this.countryFieldName,(hasAddress) ? "":"" );
+      fieldValues.put(this.poBoxFieldName,(hasAddress) ? addr.getPOBox():"");
+      this.updateFieldsDisplayStatus();
+
+    }catch(Exception e){
+      System.err.println("AddressInfoTab error initFieldContents, userId : " + getUserId());
+    }
   }
 
 

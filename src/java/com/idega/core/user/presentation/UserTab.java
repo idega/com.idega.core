@@ -1,18 +1,11 @@
 package com.idega.core.user.presentation;
 
 import com.idega.jmodule.object.Table;
-import com.idega.jmodule.object.interfaceobject.TextInput;
-import com.idega.jmodule.object.interfaceobject.TextArea;
-import com.idega.jmodule.object.interfaceobject.DateInput;
-import com.idega.jmodule.object.interfaceobject.DropdownMenu;
 import com.idega.jmodule.object.ModuleInfo;
 import com.idega.jmodule.object.textObject.Text;
 import com.idega.core.user.business.UserBusiness;
-import com.idega.core.user.data.User;
 import com.idega.util.datastructures.Collectable;
-import com.idega.util.idegaTimestamp;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 
 
 /**
@@ -30,9 +23,16 @@ public abstract class UserTab extends Table implements Collectable{
   protected String columnHeight = "37";
   protected int fontSize = 2;
 
+  protected Text proxyText;
+
+  protected UserBusiness business;
+
+  protected Hashtable fieldValues;
+
 
   public UserTab() {
     super();
+    business = new UserBusiness();
     init();
     this.setCellpadding(0);
     this.setCellspacing(0);
@@ -61,6 +61,18 @@ public abstract class UserTab extends Table implements Collectable{
   public abstract boolean store(ModuleInfo modinfo);
   public abstract void initFieldContents();
 
+  private void initProxyText(){
+    proxyText = new Text("");
+    proxyText.setFontSize(fontSize);
+
+  }
+
+  public Text getTextObject(){
+    if(proxyText == null){
+      initProxyText();
+    }
+    return (Text)proxyText.clone();
+  }
 
   public void setUserID(int id){
     userId = id;
@@ -69,18 +81,6 @@ public abstract class UserTab extends Table implements Collectable{
 
   public int getUserId(){
     return userId;
-  }
-
-
-
-  public void main(ModuleInfo modinfo) throws Exception {
-    String id = modinfo.getParameter(BasicUserOverview.userIdParameterString);
-    if(id != null){
-      int newId = Integer.parseInt(id);
-      if(userId != newId){
-        this.setUserID(newId);
-      }
-    }
   }
 
 

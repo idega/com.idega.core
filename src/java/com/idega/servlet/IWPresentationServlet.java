@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.15 2001/08/23 20:43:49 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.16 2001/08/27 20:37:37 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -272,7 +272,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 			getResponse().setContentType("text/vnd.wap.wml");
 		}
 
-		getPage().print(modinfo);
+		getPage()._print(modinfo);
                 //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 

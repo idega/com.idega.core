@@ -1,8 +1,8 @@
 package com.idega.core.user.business;
 
 import java.sql.SQLException;
-import com.idega.core.user.data.User;
-import com.idega.core.user.data.Gender;
+import com.idega.core.user.data.*;
+import com.idega.core.data.*;
 import com.idega.util.idegaTimestamp;
 import java.util.List;
 import com.idega.core.data.Email;
@@ -10,6 +10,12 @@ import com.idega.core.data.GenericGroup;
 import com.idega.data.EntityFinder;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+import java.util.Enumeration;
+import java.util.Iterator;
+import com.idega.data.GenericEntity;
 
 /**
  * Title:        User
@@ -23,6 +29,8 @@ public class UserBusiness {
 
   public UserBusiness() {
   }
+
+
 
 
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth) throws SQLException{
@@ -50,6 +58,8 @@ public class UserBusiness {
     if(date_of_birth != null){
       userToAdd.setDateOfBirth(date_of_birth.getSQLDate());
     }
+
+
 
 
     userToAdd.insert();
@@ -81,6 +91,68 @@ public class UserBusiness {
         return null;
         //throw new RuntimeException("no result");
       }
+  }
+
+  public Address getUserAddress1(int userId) throws SQLException {
+    GenericEntity[] result = new User(userId).findRelated(Address.getStaticInstance(Address.class));
+    if(result != null){
+      int addrTypeId = AddressType.getId(AddressType.ADDRESS_1);
+      for (int i = 0; i < result.length; i++) {
+        if(((Address)result[i]).getAddressTypeID() == addrTypeId){
+          return (Address)result[i];
+        }
+      }
+    }
+    return null;
+  }
+
+
+  public void updateUserAddress1(int userId, String streetName, String streetNumber, String city, Integer postalCodeId, String providence, Integer countryId, String pobox ) throws SQLException {
+    Address addr = this.getUserAddress1(userId);
+    boolean insert = false;
+    if(addr == null){
+      addr = new Address();
+      addr.setAddressTypeID(AddressType.getId(AddressType.ADDRESS_1));
+      insert = true;
+    }
+
+
+    if( city != null){
+      addr.setCity(city);
+    }
+
+    if( countryId != null){
+      addr.setCountryId(countryId.intValue());
+    }
+
+    if( pobox != null){
+      addr.setPOBox(pobox);
+    }
+
+    if( postalCodeId != null){
+      addr.setPostalCodeID(postalCodeId.intValue());
+    }
+
+    if( providence != null){
+      addr.setProvidence(providence);
+    }
+
+    if( streetName != null){
+      addr.setStreetName(streetName);
+    }
+
+    if( streetNumber != null){
+      addr.setStreetNumber(streetNumber);
+    }
+
+
+    if(insert){
+      addr.insert();
+      (new User(userId)).addTo(addr);
+    }else{
+      addr.update();
+    }
+
   }
 
 
@@ -166,13 +238,151 @@ public class UserBusiness {
     }
   }
 
+
+  /**
+   * @deprecated use  getUserGroupsDirectlyRelated(int iUserId)
+   */
   public static List listOfUserGroups(int iUserId){
+      return  getUserGroupsDirectlyRelated(iUserId);
+  }
+
+
+  public static List getUserGroups(int iUserId)throws SQLException{
     try {
-      return new User(iUserId).getAllGroups();
+      return getUserGroups(new User(iUserId));
     }
     catch (SQLException ex) {
+      ex.printStackTrace();
       return null;
     }
   }
+
+  public static List getUserGroupsDirectlyRelated(int iUserId){
+    try {
+      return getUserGroupsDirectlyRelated(new User(iUserId));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getUserGroupsDirectlyRelated(User user){
+    try {
+      return EntityFinder.findRelated(user,GenericGroup.getStaticInstance());
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getUserGroupsNotDirectlyRelated(int iUserId){
+    try {
+      User user = new User(iUserId);
+      List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
+      List AllRelatedGroups = getUserGroups(user);
+
+      if(AllRelatedGroups != null){
+        if(isDirectlyRelated != null){
+          Iterator iter = isDirectlyRelated.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            AllRelatedGroups.remove(item);
+            //while(AllRelatedGroups.remove(item)){}
+          }
+        }
+        return AllRelatedGroups;
+      }else {
+        return null;
+      }
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getAllGroupsNotDirectlyRelated(int iUserId){
+    try {
+      User user = new User(iUserId);
+      List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
+      List AllGroups = EntityFinder.findAll(GenericGroup.getStaticInstance());
+
+      if(AllGroups != null){
+        if(isDirectlyRelated != null){
+          Iterator iter = isDirectlyRelated.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            AllGroups.remove(item);
+            //while(AllGroups.remove(item)){}
+          }
+        }
+        return AllGroups;
+      }else{
+        return null;
+      }
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+
+
+  /**
+   * @todo change implementation. Use EntityFinder not GenericEntity
+   */
+  public static List getUserGroups(User user) throws SQLException{
+      GenericGroup[] groups = GenericGroup.getStaticInstance().getAllGroupsContainingUser(user);
+
+      if (groups != null && groups.length > 0){
+        Hashtable GroupsContained = new Hashtable();
+
+        String key = "";
+        for (int i = 0; i < groups.length; i++) {
+          key = Integer.toString(groups[i].getID());
+          if(!GroupsContained.containsKey(key)){
+            GroupsContained.put(key,groups[i]);
+            putGroupsContaining( (GenericGroup)groups[i], GroupsContained );
+          }
+        }
+
+
+        Vector  groupVector = new Vector();
+        Enumeration e;
+        int i = 0;
+        for ( e = (Enumeration)GroupsContained.elements(); e.hasMoreElements();){
+          GenericGroup tempObj = (GenericGroup)e.nextElement();
+          if (!tempObj.getGroupType().equals(((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue()))
+            groupVector.add(i++, tempObj);
+        }
+
+        //return (PermissionGroup[])groupVector.toArray((Object[])new PermissionGroup[0]);
+        return groupVector;
+      }else{
+        return null;
+      }
+    }
+
+  /**
+   * @todo change implementation. Use EntityFinder not GenericEntity
+   */
+    private static void putGroupsContaining(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
+      GenericGroup[] pGroups = group.getAllGroupsContainingThis();
+      if (pGroups != null){
+        String key = "";
+        for (int i = 0; i < pGroups.length; i++) {
+          key = Integer.toString(pGroups[i].getID());
+          if(!GroupsContained.containsKey(key)){
+            GroupsContained.put(key,pGroups[i]);
+            putGroupsContaining((GenericGroup)pGroups[i], GroupsContained);
+          }
+        }
+      }
+    }
+
+
 
 } // Class UserBusiness

@@ -93,6 +93,7 @@ public class CreateUser extends Window {
     this.setHeight(440);
     this.setWidth(390);
     this.setBackgroundColor("#d4d0c8");
+    this.setScrollbar(false);
     myForm = new Form();
     this.add(myForm);
     business = new UserBusiness();
@@ -326,7 +327,6 @@ public class CreateUser extends Window {
         this.setParentToReload();
       }else if(submit.equals("cancel")){
         this.close();
-        this.setParentToReload();
       }
     }
   }

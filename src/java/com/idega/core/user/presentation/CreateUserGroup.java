@@ -146,7 +146,12 @@ public class CreateUserGroup extends Window {
         String value = ((GenericGroup)GenericGroup.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
         String text = value.substring(1);
         text = value.substring(0,1).toUpperCase() + text;
-        groupTypeField.addRadioButton(value,new Text(text));
+
+        if(i==0){
+          groupTypeField.addRadioButton(value,new Text(text),true);
+        }else{
+          groupTypeField.addRadioButton(value,new Text(text));
+        }
       }
 
       frPane.add(groupTypeField);
@@ -217,7 +222,6 @@ public class CreateUserGroup extends Window {
         this.setParentToReload();
       }else if(submit.equals("cancel")){
         this.close();
-        this.setParentToReload();
       }
     }
   }

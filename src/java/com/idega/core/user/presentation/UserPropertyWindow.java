@@ -1,53 +1,53 @@
 package com.idega.core.user.presentation;
 
-import com.idega.jmodule.object.interfaceobject.Window;
+import com.idega.jmodule.object.TabbedPropertyWindow;
 import com.idega.jmodule.object.ModuleInfo;
-import com.idega.jmodule.object.interfaceobject.IFrame;
 import com.idega.jmodule.object.TabbedPropertyPanel;
-
+import com.idega.jmodule.object.ModuleObject;
 
 /**
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
-public class UserPropertyWindow extends Window{
+public class UserPropertyWindow extends TabbedPropertyWindow{
 
-  //public TabbedPropertyPanel panel;
+  public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
 
   public UserPropertyWindow(){
-    super(440,500);
+    super();
     this.setBackgroundColor("#d4d0c8");
   }
 
-  public void main(ModuleInfo modinfo) throws Exception {
-    this.empty();
-    TabbedPropertyPanel panel = TabbedPropertyPanel.getInstance("ic_user_property_window", modinfo );
-    if(panel.justConstructed()){
-      initializePanel(modinfo, panel);
-    }
-
-    if(panel.clickedCancel() || panel.clickedOk()){
-      this.setParentToReload();
-      this.close();
-      panel.dispose(modinfo);
-    }else{
-      this.add(panel);
-    }
-
+  public String getSessionAddressString(){
+    return "ic_user_property_window";
   }
-
-
 
   public void initializePanel( ModuleInfo modinfo, TabbedPropertyPanel panel){
     GeneralUserInfoTab genTab = new GeneralUserInfoTab();
+
     panel.addTab(genTab, 0, modinfo);
     panel.addTab(new AddressInfoTab(), 1, modinfo);
+    panel.addTab(new UserGroupList(),2,modinfo);
+
+
   }
 
-
+  public void main(ModuleInfo modinfo) throws Exception {
+    String id = modinfo.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+    if(id != null){
+      int newId = Integer.parseInt(id);
+      ModuleObject[] obj = this.getAddedTabs();
+      for (int i = 0; i < obj.length; i++) {
+        ModuleObject mo = obj[i];
+        if( mo instanceof UserTab && ((UserTab)mo).getUserId() != newId){
+          ((UserTab)mo).setUserID(newId);
+        }
+      }
+    }
+  }
 
 }

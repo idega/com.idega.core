@@ -4,6 +4,7 @@ package com.idega.core.data;
 //import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
+import com.idega.core.user.data.User;
 
 public class Address extends GenericEntity{
 
@@ -25,6 +26,7 @@ public class Address extends GenericEntity{
                 addAttribute("p_o_box","Pósthólf",true, true, String.class);
 		addAttribute("postal_code_id", "Póstnúmer", true, true, Integer.class, "many-to-one",PostalCode.class);
 		addAttribute("ic_country_id", "Land id", true, true,Integer.class, "many-to-one",Country.class);
+                this.addManyToManyRelationShip(User.class,"ic_user_address");
         }
 
 	public String getEntityName(){
@@ -73,6 +75,7 @@ public class Address extends GenericEntity{
 	public void setProvidence(String providence){
 		setColumn("providence",providence);
 	}
+
 	public String getPOBox(){
 		return (String) getColumnValue("p_o_box");
 	}
@@ -94,16 +97,16 @@ public class Address extends GenericEntity{
 	}
 
 	public AddressType getAddressType(){
-            return (AddressType) getColumnValue("address_type_id");
+            return (AddressType) getColumnValue("ic_address_type_id");
 	}
 
 	public void setAddressTypeID(int address_type_id){
-		setColumn("address_type_id",address_type_id);
+          setColumn("ic_address_type_id",address_type_id);
 	}
-        public int getAddressTypeID() {
-            return getIntColumnValue("address_type_id");
-        }
 
+        public int getAddressTypeID() {
+            return getIntColumnValue("ic_address_type_id");
+        }
 
 	public Country getCountry(){
 		return (Country) getColumnValue("ic_country_id");

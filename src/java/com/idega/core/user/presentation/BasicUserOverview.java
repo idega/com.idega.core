@@ -22,7 +22,6 @@ import com.idega.core.user.presentation.UserPropertyWindow;
 
 public class BasicUserOverview extends Page {
 
-  public static String userIdParameterString = "user_id";
 
   public BasicUserOverview(ModuleInfo modinfo) throws Exception {
     //this.empty();
@@ -37,20 +36,17 @@ public class BasicUserOverview extends Page {
     List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
     Table userTable = null;
     if(users != null){
-      userTable = new Table(3,users.size());
-      //userTable.setCellpadding(0);
+      userTable = new Table(3,(users.size()>8)?users.size():8);
       userTable.setCellspacing(0);
-      //userTable.setBorder(1);
       userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
       userTable.setWidth("100%");
       for (int i = 0; i < users.size(); i++) {
         User tempUser = (User)users.get(i);
         if(tempUser != null){
 
-//        Link aLink = new Link(new Text(tempUser.getName()),UserPropertyWindow.getInstance(User.getUserIDColumnName(),modinfo).getSessionAddressString());
           Link aLink = new Link(new Text(tempUser.getName()));
           aLink.setWindowToOpen(UserPropertyWindow.class);
-          aLink.addParameter(BasicUserOverview.userIdParameterString, tempUser.getID());
+          aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
           userTable.add(aLink,2,i+1);
         }
       }
