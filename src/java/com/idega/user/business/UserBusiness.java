@@ -91,5 +91,7 @@ public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFound
    */
   public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimestamp dateOfBirth,Group primaryGroup) throws CreateException,RemoteException;
 
+  public com.idega.user.business.UserProperties getUserProperties(com.idega.user.data.User user) throws RemoteException;
+  public com.idega.user.business.UserProperties getUserProperties(int userID) throws RemoteException;
 
 }

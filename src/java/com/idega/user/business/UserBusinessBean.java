@@ -1007,6 +1007,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   		return "";
   	}
   }
+  
+  public UserProperties getUserProperties(User user) throws RemoteException {
+  	return getUserProperties(((Integer)user.getPrimaryKey()).intValue());	
+  }
+  
+  public UserProperties getUserProperties(int userID) {
+  	UserProperties properties = new UserProperties(getIWApplicationContext().getApplication(),userID);
+  	return properties;
+  }
 
 
 } // Class UserBusiness
