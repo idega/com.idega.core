@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.53 2002/11/15 02:16:26 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.54 2002/11/19 13:52:42 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -684,6 +684,8 @@ public abstract class DatastoreInterface {
 		executeAfterUpdate(entity);
 		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
+	
+	
 	public void insert(IDOLegacyEntity entity, Connection conn) throws Exception {
 		executeBeforeInsert(entity);
 		PreparedStatement Stmt = null;
@@ -712,6 +714,8 @@ public abstract class DatastoreInterface {
 		executeAfterInsert(entity);
 		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
+	
+	
 	public void delete(IDOLegacyEntity entity) throws Exception {
 		executeBeforeInsert(entity);
 		Connection conn = null;
@@ -1090,8 +1094,9 @@ public abstract class DatastoreInterface {
 		statement.setString(index, entity.getStringColumnValue(columnName));
 	}
 	protected void fillStringColumn(IDOLegacyEntity entity, String columnName, ResultSet rs) throws SQLException {
-		if (rs.getString(columnName) != null) {
-			entity.setColumn(columnName, rs.getString(columnName));
+		String value = rs.getString(columnName);
+		if (  value!= null) {
+			entity.setColumn(columnName, value);
 		}
 	}
 	protected void fillColumn(IDOLegacyEntity entity, String columnName, ResultSet RS) throws SQLException {
@@ -1189,4 +1194,5 @@ public abstract class DatastoreInterface {
 		catch(SQLException sqle){		
 		}*/
 	}
+	
 }

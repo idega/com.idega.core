@@ -1305,6 +1305,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		catch (Exception ex)
 		{
+			if( debug ) ex.printStackTrace();
+			
 			try
 			{
 				this.closeBlobConnections();
@@ -1408,6 +1410,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		catch (Exception ex)
 		{
+			if( debug ) ex.printStackTrace();
+			
 			if (ex instanceof SQLException)
 			{
 				//ex.printStackTrace();
