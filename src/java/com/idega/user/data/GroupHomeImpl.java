@@ -1,6 +1,6 @@
 /*
- * $Id: GroupHomeImpl.java,v 1.24 2004/10/11 17:26:05 eiki Exp $
- * Created on Oct 11, 2004
+ * $Id: GroupHomeImpl.java,v 1.25 2004/10/18 17:22:46 eiki Exp $
+ * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/11 17:26:05 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/18 17:22:46 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 

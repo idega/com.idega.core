@@ -1,6 +1,6 @@
 /*
- * $Id: Group.java,v 1.45 2004/10/11 17:26:05 eiki Exp $
- * Created on Oct 11, 2004
+ * $Id: Group.java,v 1.46 2004/10/18 17:22:46 eiki Exp $
+ * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -39,10 +39,10 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/11 17:26:05 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/18 17:22:46 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
@@ -379,12 +379,12 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#removeUser
 	 */
-	public void removeUser(User user, User currentUser);
+	public void removeUser(User user, User currentUser) throws RemoveException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#removeUser
 	 */
-	public void removeUser(User user, User currentUser, Timestamp time);
+	public void removeUser(User user, User currentUser, Timestamp time) throws RemoveException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#hasRelationTo

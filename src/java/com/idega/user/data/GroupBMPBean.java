@@ -1165,14 +1165,26 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//  public void addUser(User user)throws RemoteException{
 	//    this.addGroup(user.getGroupID());
 	//  }
-	public void removeUser(User user, User currentUser) {
+	public void removeUser(User user, User currentUser) throws RemoveException{
 		// former: user.getGroupId() but this method is deprecated therefore: user.getId()
-		this.removeGroup(user.getID(), currentUser, false);
+		try {
+			this.removeGroup(user.getID(), currentUser, false);
+		}
+		catch (EJBException e) {
+			throw new RemoveException(e.getMessage());
+		}
 	}
 	
-	public void removeUser(User user, User currentUser, Timestamp time) {
+	public void removeUser(User user, User currentUser, Timestamp time) throws RemoveException{
 		// former: user.getGroupId() but this method is deprecated therefore: user.getId()
-		this.removeGroup(user.getID(), currentUser, false, time);
+		try{
+			this.removeGroup(user.getID(), currentUser, false, time);
+			
+		}
+		catch (EJBException e) {
+			throw new RemoveException(e.getMessage());
+		}
+		
 	}
 
 	//        public Group findGroup(String groupName) throws SQLException{
