@@ -276,7 +276,7 @@ public class Text extends PresentationObject {
 			emptyText = new Text("");
 			emptyText.setFontSize("1");
 		}
-		return emptyText;
+		return (Text)emptyText.clone();
 	}
 
 	public static Text getBreak() {
@@ -286,7 +286,7 @@ public class Text extends PresentationObject {
 			HTMLbreak.setUseBuilderObjectControl(false);
 			// HTMLbreak.setFontSize("1");
 		}
-		return HTMLbreak;
+		return (Text)HTMLbreak.clone();
 	}
 
 	public static Text getNonBrakingSpace() {
@@ -295,13 +295,14 @@ public class Text extends PresentationObject {
 			HTMLnbsp.addHTMLFontTag(false);
 			//HTMLnbsp.setFontSize(1);
 		}
-		return HTMLnbsp;
+		return (Text)HTMLnbsp.clone();
 	}
 
 	public static Text getNonBrakingSpace(int fontSize) {
 		Text nbsp = getNonBrakingSpace();
 		nbsp.setFontSize(fontSize);
-		return HTMLnbsp;
+		//return HTMLnbsp;
+		return nbsp;
 	}
 
 	public void addHTMLFontTag(boolean addHTMLFontTag) {
