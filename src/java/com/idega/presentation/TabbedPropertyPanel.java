@@ -8,7 +8,6 @@ import java.util.Iterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;

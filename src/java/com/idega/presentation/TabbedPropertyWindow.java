@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.user.presentation.StyledIWAdminWindow;
 
