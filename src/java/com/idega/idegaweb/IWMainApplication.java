@@ -34,10 +34,10 @@ public class IWMainApplication{//implements ServletContext{
   public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
 
   public static String windowOpenerURL="/servlet/WindowOpener";
-  public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
+  private static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
-  public static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
+  private static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
   private static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
   private static String _IFRAME_CONTENT_URL="/servlet/IBIFrameServlet/";
 
@@ -128,25 +128,25 @@ public class IWMainApplication{//implements ServletContext{
     checkForInstalledBundles();
   }
 
-  public static String getObjectInstanciatorURL(Class className,String templateName){
-    return getObjectInstanciatorURL(className.getName(),templateName);
+  public String getObjectInstanciatorURI(Class className,String templateName){
+    return getObjectInstanciatorURI(className.getName(),templateName);
   }
 
-  public static String getObjectInstanciatorURL(String className,String templateName){
-      return objectInstanciatorURL+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className)+"&"+templateParameter+"="+getEncryptedClassName(templateName);
+  public  String getObjectInstanciatorURI(String className,String templateName){
+      return getObjectInstanciatorURI()+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className)+"&"+templateParameter+"="+getEncryptedClassName(templateName);
   }
 
 
-  public static String getObjectInstanciatorURL(String className){
-      return objectInstanciatorURL+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className);
+  public  String getObjectInstanciatorURI(String className){
+      return getObjectInstanciatorURI()+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className);
   }
 
-  public static String getObjectInstanciatorURL(Class classToInstanciate){
-      return getObjectInstanciatorURL(classToInstanciate.getName());
+  public  String getObjectInstanciatorURI(Class classToInstanciate){
+      return getObjectInstanciatorURI(classToInstanciate.getName());
   }
 
-  public static String getObjectInstanciatorURL(Class classToInstanciate,Class templateClass){
-    return objectInstanciatorURL+"?"+classToInstanciateParameter+"="+getEncryptedClassName(classToInstanciate)+"&"+templateClassParameter+"="+getEncryptedClassName(templateClass);
+  public  String getObjectInstanciatorURI(Class classToInstanciate,Class templateClass){
+    return this.getObjectInstanciatorURI()+"?"+classToInstanciateParameter+"="+getEncryptedClassName(classToInstanciate)+"&"+templateClassParameter+"="+getEncryptedClassName(templateClass);
   }
 
   /**

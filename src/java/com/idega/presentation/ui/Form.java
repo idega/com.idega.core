@@ -25,6 +25,7 @@ private PresentationObject submitToObject;
 //private Parameter controlParameter;
 private Map controlParameters;
 private Class windowClass;
+private Class classToInstanciateAndSubmitTo;
 private int _submitToPage = -1;
 
 private static String FORM_EVENT_PARAMETER="idega_special_form_event";
@@ -49,7 +50,7 @@ public Form(String action){
 }
 
 public Form(Class classToInstanciateAndSubmitTo){
-	this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo));
+	//this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo));
 }
 
 
@@ -63,7 +64,9 @@ public Form(String actionURL,String method){
 }
 
 public Form(Class classToInstanciateAndSubmitTo,String method){
-  this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo),method);
+  //this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo),method);
+  this.setMethod(method);
+  this.setClassToInstanciateAndSendTo(classToInstanciateAndSubmitTo);
 }
 
 
@@ -182,6 +185,9 @@ private String getIdegaSpecialRequestURI(IWContext iwc){
 
 
 public void main(IWContext iwc){
+  //Chech if there is some class set
+  setActionToInstanciatedClass(iwc);
+
   if(this._submitToPage!=-1){
     //Set a builder page as the action
     this.setAction(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc,_submitToPage));
@@ -437,7 +443,7 @@ public void print(IWContext iwc)throws Exception{
       }
 
       obj.maintainAllParameters = this.maintainAllParameters;
-
+      obj.classToInstanciateAndSubmitTo=this.classToInstanciateAndSubmitTo;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
@@ -520,6 +526,19 @@ public void setEventListener(String eventListenerClassName){
     this._submitToPage=ibPageID;
   }
 
+  public void setClassToInstanciateAndSendTo(Class presentationObjectClass){
+    this.classToInstanciateAndSubmitTo=presentationObjectClass;
+  }
 
+  public void setClassToInstanciateAndSendTo(Class presentationObjectClass,IWContext iwc){
+    this.setClassToInstanciateAndSendTo(presentationObjectClass);
+    setActionToInstanciatedClass(iwc);
+  }
+
+  private void setActionToInstanciatedClass(IWContext iwc){
+    if(this.classToInstanciateAndSubmitTo!=null){
+        this.setAction(iwc.getApplication().getObjectInstanciatorURI(classToInstanciateAndSubmitTo));
+    }
+  }
 } // Class ends
 

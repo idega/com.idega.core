@@ -32,6 +32,8 @@ public static final int FRAMEBORDER_OFF = 0;
 private boolean transparent = false;
 private int ibPageId = 0;
 private boolean addLocaleID = false;
+private Class classToInstanciate;
+
 
 public IFrame(){
 	this("untitled");
@@ -42,9 +44,11 @@ public IFrame(String name){
 }
 
 public IFrame(String name,Class classToInstanciate){
-	this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+//	this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+  this(name);
+  setSrc(classToInstanciate);
 }
-
+/*
 public IFrame(String name,String classToInstanciate,String template){
 	this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
 }
@@ -55,7 +59,7 @@ public IFrame(String name,Class classToInstanciate,Class template){
 
 public IFrame(String name,Class classToInstanciate,String template){
 	this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-}
+}*/
 
 public IFrame(String name,String URL){
 	super();
@@ -92,12 +96,19 @@ public IFrame(String name,String URL,int width,int height){
   }
 
   public void setSrc(Class classToAdd){
-    setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd));
+    //setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd));
+    this.classToInstanciate=classToAdd;
   }
 
-  public void setSrc(Class classToAdd, Class templateClass) {
-    setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd,templateClass));
+  private void setClassToInstanciateAsSource(IWContext iwc){
+    if(classToInstanciate!=null){
+      this.setSrc(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+    }
   }
+
+  /*public void setSrc(Class classToAdd, Class templateClass) {
+    setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd,templateClass));
+  }*/
 
   public void setWidth(String width){
     setAttribute("width",width);
@@ -162,6 +173,8 @@ public IFrame(String name,String URL,int width,int height){
   }
 
   public void print(IWContext iwc)throws IOException{
+    setClassToInstanciateAsSource(iwc);
+
     String src = getAttribute("src");
     if ( src != null ) {
       if ( src.indexOf("?") != -1 ) {
@@ -174,7 +187,8 @@ public IFrame(String name,String URL,int width,int height){
 
     if(transparent) setAttribute("ALLOWTRANSPARENCY","true");
     if(ibPageId > 0){
-      setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
+      //setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
+      this.setSrc(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc,ibPageId));
     }
     initVariables(iwc);
     if (getLanguage().equals("HTML")){

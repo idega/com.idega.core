@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.60 2002/03/26 17:13:41 tryggvil Exp $
+ * $Id: Link.java,v 1.61 2002/03/26 17:59:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -92,6 +92,8 @@ public class Link extends Text{
   private int _onClickImageId;
   private Image _onMouseOverImage = null;
   private Image _onClickImage = null;
+
+  //If Link is constructed to open an instance of an object in a new page via ObjectInstanciator
   private Class classToInstanciate;
   private Class templatePageClass;
   private String templateForObjectInstanciation;
@@ -374,17 +376,7 @@ public class Link extends Text{
    */
   public void main(IWContext iwc)throws Exception {
     if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
-    if(this.classToInstanciate!=null){
-      if(this.templatePageClass!=null){
-        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate,templatePageClass));
-      }
-      else if(this.templateForObjectInstanciation!=null){
-        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate,templateForObjectInstanciation));
-      }
-      else{
-        this.setURL(iwc.getApplication().getObjectInstanciatorURL(classToInstanciate));
-      }
-    }
+    setURIToClassToInstanciate(iwc);
     //Builder edit mode
     if(iwc.isInEditMode()){
      addParameter("view","builder");/**@todo this doesn't update all the frames**/
@@ -1159,7 +1151,7 @@ public class Link extends Text{
   /**
    *
    */
-  public synchronized Object clone() {
+  public Object clone() {
     Link linkObj = null;
     try {
       linkObj = (Link)super.clone();
@@ -1189,6 +1181,9 @@ public class Link extends Text{
       linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
       linkObj.isImageTab = isImageTab;
       linkObj.flip = flip;
+      linkObj.classToInstanciate=this.classToInstanciate;
+      linkObj.templateForObjectInstanciation=this.templateForObjectInstanciation;
+      linkObj.templatePageClass=this.templatePageClass;
 
       if (_parameterString != null) {
 	linkObj._parameterString = new StringBuffer(_parameterString.toString());
@@ -1931,5 +1926,19 @@ public class Link extends Text{
   public void setClassToInstanciate(Class presentationObjectClass,String template){
     setClassToInstanciate(presentationObjectClass);
     this.templateForObjectInstanciation=template;
+  }
+
+  private void setURIToClassToInstanciate(IWContext iwc){
+    if(this.classToInstanciate!=null){
+      if(this.templatePageClass!=null){
+        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templatePageClass));
+      }
+      else if(this.templateForObjectInstanciation!=null){
+        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate,templateForObjectInstanciation));
+      }
+      else{
+        this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+      }
+    }
   }
 }

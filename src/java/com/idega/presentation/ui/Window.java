@@ -21,29 +21,33 @@ import java.util.Map;
  * */
 public class Window extends Page{
 
-private String title;
-private int width;
-private int height;
-private String url;
-private String xlocation = "0";
-private String ylocation = "0";
-//private boolean newURL;
-//private Script theAssociatedScript;
-private static String emptyString="";
+  private String title;
+  private int width;
+  private int height;
+  private String url;
+  private String xlocation = "0";
+  private String ylocation = "0";
+  //private boolean newURL;
+  //private Script theAssociatedScript;
+  private static String emptyString="";
 
-//settings for the window:
-private boolean toolbar;
-private boolean location;
-private boolean scrollbar;
-private boolean directories;
-private boolean menubar;
-private boolean status;
-private boolean titlebar;
-private boolean resizable;
-private boolean fullscreen;
+  //settings for the window:
+  private boolean toolbar;
+  private boolean location;
+  private boolean scrollbar;
+  private boolean directories;
+  private boolean menubar;
+  private boolean status;
+  private boolean titlebar;
+  private boolean resizable;
+  private boolean fullscreen;
 
-private static Map allOpenedWindowClasses = new Hashtable();
+  private static Map allOpenedWindowClasses = new Hashtable();
 
+  //If this window is constructed to open an instance of an object in a new Window via ObjectInstanciator
+  private Class classToInstanciate;
+  private Class templatePageClass;
+  private String templateForObjectInstanciation;
 
 public Window(){
 	this(emptyString);
@@ -89,15 +93,24 @@ public Window(String name, int width, int height, String url){
 }
 
 public Window(String name,String classToInstanciate,String template){
-	this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+	//this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+    this(name,400,400);
+    try{
+      this.setClassToInstanciate(Class.forName(classToInstanciate),template);
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.toString()+e.getMessage());
+    }
 }
 
 public Window(String name,Class classToInstanciate,Class template){
-	this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+	//this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+    this(name,400,400);
+    this.setClassToInstanciate(classToInstanciate,template);
 }
 
 public Window(String name,Class classToInstanciate){
-	this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	//this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
 }
 
 private void setSettings(){
@@ -448,7 +461,7 @@ public String getTarget(){
 
 
 
-  public synchronized Object clone() {
+  public Object clone() {
     Window obj = null;
     try {
       obj = (Window)super.clone();
@@ -456,7 +469,9 @@ public String getTarget(){
       obj.width = this.width;
       obj.height = this.height;
       obj.url = this.url;
-
+      obj.classToInstanciate=this.classToInstanciate;
+      obj.templateForObjectInstanciation=this.templateForObjectInstanciation;
+      obj.templatePageClass=this.templatePageClass;
       obj.toolbar = this.toolbar;
       obj.location = this.location;
       obj.scrollbar = this.scrollbar;
@@ -473,7 +488,22 @@ public String getTarget(){
     return obj;
   }
 
+  public void setClassToInstanciate(Class presentationObjectClass){
+    this.classToInstanciate=presentationObjectClass;
+    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass));
+  }
 
+  public void setClassToInstanciate(Class presentationObjectClass,Class pageTemplateClass){
+    setClassToInstanciate(presentationObjectClass);
+    this.templatePageClass=pageTemplateClass;
+    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass,pageTemplateClass));
+  }
+
+  public void setClassToInstanciate(Class presentationObjectClass,String template){
+    setClassToInstanciate(presentationObjectClass);
+    this.templateForObjectInstanciation=template;
+    this.setURL(IWContext.getInstance().getApplication().getObjectInstanciatorURI(presentationObjectClass,template));
+  }
 
 
 /*
