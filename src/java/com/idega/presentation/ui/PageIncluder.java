@@ -17,6 +17,7 @@ import com.idega.util.text.TextSoap;
 public class PageIncluder extends PresentationObject{
   private String URL = null;
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
+  private int instanceId;
 
   public PageIncluder(){
     super();
@@ -34,15 +35,16 @@ public class PageIncluder extends PresentationObject{
         StringBuffer location = new StringBuffer();
         StringBuffer queryBuf = new StringBuffer();
         String query = null;
+        instanceId=getICObjectInstanceID();
 
-        if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME) ){//after clicking a link og submitting a form
+        if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
           //get all parameters even from post actions
           Enumeration enum = iwc.getParameterNames();
           while (enum.hasMoreElements()) {
             String param = (String) enum.nextElement();
             debug(param+" : "+iwc.getParameter(param));
             /**@todo use a post method to get the page or stringbuffer this URL  encode?**/
-            if( param.equals(PAGE_INCLUDER_PARAMETER_NAME) ){
+            if( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){
              URL = decodeQueryString(iwc.getParameter(param));
              location.append(URL);
             }
@@ -100,23 +102,26 @@ public class PageIncluder extends PresentationObject{
   }
 
   protected String changeAHrefAttributes(String html,IWContext iwc){
-    html = TextSoap.findAndInsertAfter(html,"href=\"",iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+"=");
-    return TextSoap.findAndInsertAfter(html,"HREF=\"",iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+"=");
+    String prefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+    html = TextSoap.findAndInsertAfter(html,"href=\"",prefix);
+    return TextSoap.findAndInsertAfter(html,"HREF=\"",prefix);
   }
 
   protected String changeFormActionAttributes(String html,IWContext iwc){
-    html = TextSoap.findAndInsertAfter(html,"action=\"",iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+"=");
-    return TextSoap.findAndInsertAfter(html,"ACTION=\"",iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+"=");
+    String prefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+    html = TextSoap.findAndInsertAfter(html,"action=\"",prefix);
+    return TextSoap.findAndInsertAfter(html,"ACTION=\"",prefix);
   }
 
   protected String changeSrcAttributes(String html, String location){
 
     try {
       URL url = new URL(location);
-      html = TextSoap.findAndInsertAfter(html,"background=\"",url.getProtocol()+"://"+url.getHost()+"/");
-      html = TextSoap.findAndInsertAfter(html,"BACKGROUND=\"",url.getProtocol()+"://"+url.getHost()+"/");
-      html = TextSoap.findAndInsertAfter(html,"src=\"",url.getProtocol()+"://"+url.getHost()+"/");
-      html = TextSoap.findAndInsertAfter(html,"SRC=\"",url.getProtocol()+"://"+url.getHost()+"/");
+      String prefix = url.getProtocol()+"://"+url.getHost()+"/";
+      html = TextSoap.findAndInsertAfter(html,"background=\"",prefix);
+      html = TextSoap.findAndInsertAfter(html,"BACKGROUND=\"",prefix);
+      html = TextSoap.findAndInsertAfter(html,"src=\"",prefix);
+      html = TextSoap.findAndInsertAfter(html,"SRC=\"",prefix);
     }
     catch (MalformedURLException ex) {
       ex.printStackTrace();
@@ -139,6 +144,8 @@ public class PageIncluder extends PresentationObject{
     html = TextSoap.findAndReplace(html,"#nbsp;","&nbsp;");
     html = TextSoap.findAndReplace(html,"#amp;","&amp;");
     html = TextSoap.findAndReplace(html,"#quot;","&quot;");
+    html = TextSoap.findAndReplace(html,"#middot","&middot");
+    html = TextSoap.findAndReplace(html," # "," & ");
 
 //islenskir broddstafir
     html = TextSoap.findAndReplace(html,"#aacute;","&aacute;");
