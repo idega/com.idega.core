@@ -57,6 +57,20 @@
 	          <include>**/**</include>
 	        </includes>
 	      </resource>
+	      <resource>
+	       <directory>${basedir}/WEB-INF/tld</directory>
+	       <targetPath>META-INF</targetPath>
+	        <includes>
+	          <include>**/*.tld</include>
+	        </includes>
+	      </resource>
+	      <resource>
+	       <directory>${basedir}/WEB-INF</directory>
+	       <targetPath>META-INF</targetPath>
+	        <includes>
+	          <include>faces-config.xml</include>
+	        </includes>
+	      </resource>
 	    </resources>
     </build>
   <reports>
