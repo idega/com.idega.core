@@ -258,22 +258,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     public void setFullName(String name) {
       if( (name!=null) && (name.length() > 0) ){
         StringTokenizer token = new StringTokenizer(name);
-        int countWithoutLast = token.countTokens()-1;
+        int countWithoutFirstAndLast = token.countTokens()-2;
 
 
         setFirstName(((String)token.nextElement()));
 
-        if( countWithoutLast >= 2 ){
+        if( countWithoutFirstAndLast >= 1 ){
           StringBuffer middleName = new StringBuffer();
 
-          for(int i = 0; i < countWithoutLast; i++) {
+          for(int i = 0; i < countWithoutFirstAndLast; i++) {
             middleName.append((String) token.nextElement());
           }
 
           setMiddleName(middleName.toString());
         }
 
-        if( countWithoutLast >= 1) setLastName((String)token.nextElement());
+        if( countWithoutFirstAndLast >= 0) setLastName((String)token.nextElement());
 
       }
     }
