@@ -2,6 +2,9 @@ package com.idega.user.business;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.util.FileUtil;
@@ -9,7 +12,7 @@ import com.idega.util.FileUtil;
 /**
  * @author Laddi
  */
-public class UserProperties extends IWPropertyList {
+public class UserProperties extends IWPropertyList implements HttpSessionBindingListener {
 
 	public UserProperties(IWMainApplication application,int userID) {
 		super(application.getPropertiesRealPath() + FileUtil.getFileSeparator() + "users", "user_"+String.valueOf(userID)+"_properties.pxml", true);
@@ -24,58 +27,16 @@ public class UserProperties extends IWPropertyList {
 	}
 	
 	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setArrayProperty(String, Object)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueBound(HttpSessionBindingEvent)
 	 */
-	public void setArrayProperty(String key, Object value) {
-		super.setArrayProperty(key, value);
-		store();
+	public void valueBound(HttpSessionBindingEvent arg0) {
 	}
 
 	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperties(Map)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(HttpSessionBindingEvent)
 	 */
-	public void setProperties(Map properties) {
-		super.setProperties(properties);
-		store();
+	public void valueUnbound(HttpSessionBindingEvent arg0) {
+		super.store();
 	}
 
-	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperty(String, boolean)
-	 */
-	public void setProperty(String key, boolean value) {
-		super.setProperty(key, value);
-		store();
-	}
-
-	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperty(String, int)
-	 */
-	public void setProperty(String key, int value) {
-		super.setProperty(key, value);
-		store();
-	}
-
-	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperty(String, Object)
-	 */
-	public void setProperty(String key, Object value) {
-		super.setProperty(key, value);
-		store();
-	}
-
-	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperty(String, Object[])
-	 */
-	public void setProperty(String key, Object[] value) {
-		super.setProperty(key, value);
-		store();
-	}
-
-	/**
-	 * @see com.idega.idegaweb.IWPropertyList#setProperty(String, String)
-	 */
-	public void setProperty(String key, String value) {
-		super.setProperty(key, value);
-		store();
-	}
 }
