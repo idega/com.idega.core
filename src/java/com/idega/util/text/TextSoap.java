@@ -262,10 +262,7 @@ public class TextSoap{
 	}
 
 	public static String findAndReplace(String text, char charToFind, char charReplace){
-
-	    text.replace(charToFind,charReplace);
-
-	    return text;
+	    return text.replace(charToFind,charReplace);
 	}
 
 	public static String findAndReplace(String text, String stringToFind, String stringReplace){
