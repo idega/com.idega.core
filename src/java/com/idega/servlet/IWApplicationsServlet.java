@@ -140,6 +140,7 @@ private IWResourceBundle iwrb;
           login.setUserTextSize(1);
           login.setPasswordTextSize(1);
           login.setHeight("130");
+          login.setWidth("160");
           login.setStyle("font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
           login.setInputLength(13);
           login.setLayout(Login.LAYOUT_STACKED);
