@@ -160,6 +160,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
+	
+	
 	/**
 	 * Meant to be overrided in subclasses to add default attributes
 	 */
@@ -2119,6 +2121,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public int getNumberOfRecords(String CountSQLString) throws SQLException {
 		return getIntTableValue(CountSQLString);
 	}
+	
+	public int getNumberOfRecords(SelectQuery query)throws SQLException{
+	    return getIntTableValue(query.toString(true),query.getValues());
+	}
+	
 	public double getAverage(String averageSQLString) throws SQLException {
 		return getDoubleTableValue(averageSQLString);
 	}
@@ -2185,14 +2192,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public int getIntTableValue(String CountSQLString) throws SQLException {
+	    return getIntTableValue(CountSQLString, null);
+	}
+	
+	public int getIntTableValue(String CountSQLString,List placeHolderValues ) throws SQLException {
 		Connection conn = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		int recordCount = -1;
 		try {
 			conn = getConnection(this.getDatasource());
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(CountSQLString);
+			stmt = conn.prepareStatement(CountSQLString);
+			if(placeHolderValues!=null){
+			    DatastoreInterface dsi = DatastoreInterface.getInstance(this);
+			    dsi.insertIntoPreparedStatement(placeHolderValues,stmt,1);
+			}
+		    	rs = stmt.executeQuery();
 			if (rs.next())
 				recordCount = rs.getInt(1);
 			rs.close();
@@ -4183,6 +4198,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected int idoGetNumberOfRecords(IDOQuery query) throws IDOException {
 		return idoGetNumberOfRecords(query.toString());
+	}
+	
+	/**
+	 * Returns the number of recors for the query sql.
+	 * @param query A count query.
+	 * @return int the count of the records
+	 * @throws IDOException if there was an error with the query or erroraccessing the datastore
+	 */
+	protected int idoGetNumberOfRecords(SelectQuery query) throws IDOException {
+	    try {
+			if (isDebugActive())
+				logSQL(query.toString());
+			return this.getNumberOfRecords(query);
+		} catch (SQLException e) {
+			throw new IDOException(e, this);
+		}
 	}
 
 	/**
