@@ -106,6 +106,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 		addMetaDataRelationship(); //can have extra info in the ic_metadata table
 
+		addIndex("IDX_IC_FILE_1", getColumnNameName());
+
 	}
 
 	public String getEntityName() {
