@@ -267,6 +267,9 @@ LDAPReplicationConstants {
 					uniqueId = value;
 				}
 			}
+			
+			//FIXME this does something to the DN so it get rid of \\ and what nots...
+			Entry entry = new Entry(base);
 		
 			try {
 				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
@@ -349,13 +352,15 @@ LDAPReplicationConstants {
 						isGroupSearch = false;
 					}
 				}
-
+				//FIXME this does something to the DN so it get rid of \\ and what nots...
+				Entry entry = new Entry(base);
+				
 				if (base.getDirectoryString().equals(baseDN) && uniqueId==null) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
 				else {
-					Entry entry = getEntry(base, attributes, uniqueId, isGroupSearch);
+					entry = getEntry(base, attributes, uniqueId, isGroupSearch);
 					entries.add(entry);
 				}
 			}

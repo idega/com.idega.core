@@ -440,10 +440,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		String baseDNString = entryDN.toString();
 		
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchBaseEntry(baseDNString, "objectClass=*", 0, 0);
+			searchResults = jndiOps.searchBaseEntry(baseDNString, LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", 0, 0,null);
 		}
 		else{
-			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", maxEntrylimit, searchTimeLimit);
+			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", maxEntrylimit, searchTimeLimit,null);
 		}
 		
 		if (searchResults != null) {
@@ -492,10 +492,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		NamingEnumeration searchResults = null;
 		String baseDNString = entryDN.toString();
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", maxEntrylimit, searchTimeLimit);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", maxEntrylimit, searchTimeLimit,null);
 		}
 		else{
-			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, maxEntrylimit, searchTimeLimit);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, maxEntrylimit, searchTimeLimit,null);
 		}
 		
 		//NamingEnumeration searchResults = basicOps.searchBaseObject(new
