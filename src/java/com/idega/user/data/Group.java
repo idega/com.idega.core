@@ -19,7 +19,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
  //public com.idega.core.ICTreeNode getChildAtIndex(int p0) throws java.rmi.RemoteException;
  //public int getIndex(com.idega.core.ICTreeNode p0) throws java.rmi.RemoteException;
- public boolean equals(com.idega.data.IDOLegacyEntity p0) throws java.rmi.RemoteException;
+// public boolean equals(com.idega.data.IDOLegacyEntity p0) throws java.rmi.RemoteException;
  //public boolean getAllowsChildren() throws java.rmi.RemoteException;
  public void addGroup(com.idega.user.data.Group p0)throws java.rmi.RemoteException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.List getGroupsContained(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException, java.rmi.RemoteException;

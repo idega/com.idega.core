@@ -2,7 +2,7 @@ package com.idega.user.business;
 
 import java.sql.SQLException;
 import com.idega.user.data.*;
-import com.idega.user.business.UserGroupBusiness;
+import com.idega.user.business.GroupBusiness;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
 import com.idega.util.idegaTimestamp;
@@ -29,13 +29,14 @@ import com.idega.business.*;
 
 import java.rmi.RemoteException;
 
-/**
- * Title:        User
- * Copyright:    Copyright (c) 2000 idega.is All Rights Reserved
- * Company:      idega margmiðlun
- * @author
- * @version 1.0
- */
+ /**
+  * <p>Title: idegaWeb</p>
+  * <p>Description: </p>
+  * <p>Copyright: Copyright (c) 2002</p>
+  * <p>Company: idega Software</p>
+  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+  * @version 1.0
+  */
 
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness{
 
@@ -159,7 +160,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     userToAdd.store();
 
 
-    UserGroupRepresentative group = this.getUserGroupRepresentativeHome().create();
+    UserGroupRepresentative group = (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
     group.setName(userToAdd.getName());
     group.setDescription("User representative in table ic_group");
     group.store();
@@ -254,7 +255,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       LoginDBHandler.deleteUserLogin(userId);
       delUser.remove();
 
-      this.getUserGroupBusiness().deleteGroup(groupId);
+      this.getGroupBusiness().deleteGroup(groupId);
     }
     catch(Exception e){
       throw new RemoveException(e.getMessage());
@@ -570,7 +571,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public  Collection getUsersInGroup(int iGroupId) {
     try {
-      return getUserGroupBusiness().getUsersContained(iGroupId);
+      return getGroupBusiness().getUsersContained(iGroupId);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -580,7 +581,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public  Collection getUsersInGroup(Group group) {
     try {
-      return this.getUserGroupBusiness().getUsersContained(group);  //EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
+      return this.getGroupBusiness().getUsersContained(group);  //EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -642,7 +643,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public  Collection getUserGroupsDirectlyRelated(User user){
     try {
-      return getUserGroupBusiness().getGroupsContainingDirectlyRelated(user.getGroupID()); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
+      return getGroupBusiness().getGroupsContainingDirectlyRelated(user.getGroupID()); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -670,7 +671,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return null;
       }
       */
-      return this.getUserGroupBusiness().getGroupsContainingNotDirectlyRelated(user.getGroupID());
+      return this.getGroupBusiness().getGroupsContainingNotDirectlyRelated(user.getGroupID());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -699,7 +700,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return null;
       }
       */
-      return getUserGroupBusiness().getAllGroupsNotDirectlyRelated(user.getGroupID(),iwc);
+      return getGroupBusiness().getAllGroupsNotDirectlyRelated(user.getGroupID(),iwc);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -720,12 +721,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * @todo replace ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(user.getGroupID()) by user.getGroupID()
    */
   public  Collection getUserGroups(User user, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
-    return getUserGroupBusiness().getGroupsContaining(user.getGroup(),groupTypes, returnSepcifiedGroupTypes);
+    return getGroupBusiness().getGroupsContaining(user.getGroup(),groupTypes, returnSepcifiedGroupTypes);
   }
 
 
-  public UserGroupBusiness getUserGroupBusiness()throws RemoteException{
-    return (UserGroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(),UserGroupBusiness.class);
+  public GroupBusiness getGroupBusiness()throws RemoteException{
+    return (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(),GroupBusiness.class);
   }
 
   public Collection getAllUsersOrderedByFirstName()throws FinderException,RemoteException{

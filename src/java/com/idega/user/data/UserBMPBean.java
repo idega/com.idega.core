@@ -58,8 +58,8 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       this.setNullable(getColumnNameSystemImage(),true);
       this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
       this.setUnique(getColumnNamePersonalID(),true);
-      //temp
-      this.addManyToManyRelationShip(Group.class,"ic_group_user");
+//      //temp
+//      this.addManyToManyRelationShip(Group.class,"ic_group_user");
     }
 
     public void setDefaultValues(){
