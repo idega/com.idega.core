@@ -284,11 +284,13 @@ public class EntityFinder{
                 buffer.append("=");
                 buffer.append(fromEntity.getID());
                 buffer.append(" and ");
+                buffer.append(fromTable);
+                buffer.append(dot);
+                buffer.append(fromEntity.getIDColumnName());
+                buffer.append("=");
                 buffer.append(middleTable);
                 buffer.append(dot);
-                buffer.append(returningEntity.getIDColumnName());
-                buffer.append("=");
-                buffer.append(returningEntity.getID());
+                buffer.append(fromEntity.getIDColumnName());
                 buffer.append(" and ");
                 buffer.append(middleTable);
                 buffer.append(dot);
