@@ -39,6 +39,7 @@ import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
@@ -1244,13 +1245,64 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//          }
 	//
 	//        }
-	public Collection ejbFindAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
-		if (groupTypes != null && groupTypes.length > 0) {
-			String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes, true);
-			return super.idoFindIDsBySQL("select * from " + getEntityName() + " where " + getGroupTypeColumnName() + ((returnSepcifiedGroupTypes) ? " in (" : " not in (") + typeList + ") order by " + getNameColumnName());
-		}
-		return super.idoFindAllIDsOrderedBySQL(getNameColumnName());
+	/**
+	 * This finder returns a collection of all groups of the grouptype(s) that are defined in the groupTypes parameter
+	 * It also returns the groups that are defined as topnodes in the ic_domain_group_relation table
+	 * It excludes groups that have been deleted and don't have any active relations to parent groups
+     * If returnSpecifiedGroupTypes is set as false then it excludes the grouptype(s) defined in the groupTypes paremeter
+	 * excluding user representative groups
+	 * @return all groups of certain type(s) that have not been deleted
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws FinderException {
+	    Table groupTable = new Table(this, "g");
+		Column idCol = new Column(groupTable, getColumnNameGroupID());
+		
+		Table groupRelSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
+		Column relatedGroupIDSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+		Column relationshipTypeSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN);
+		Column groupRelationstatusSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.STATUS_COLUMN);
+		
+		SelectQuery firstSubQuery = new SelectQuery(groupRelSubTable);
+		firstSubQuery.addColumn(relatedGroupIDSubCol);
+		//subQuery.addCriteria(new MatchCriteria(relationshipTypeSubCol, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
+		firstSubQuery.addCriteria(new InCriteria(groupRelationstatusSubCol, new String[]{GroupRelation.STATUS_ACTIVE, GroupRelation.STATUS_PASSIVE_PENDING}));
+		
+		Table groupDomainRelSubTable = new Table(GroupDomainRelationBMPBean.TABLE_NAME, "gdr");
+		Column gdr_RelatedGroupIDSubCol = new Column(groupDomainRelSubTable, GroupDomainRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+		Column gdr_relationshipTypeSubCol = new Column(groupDomainRelSubTable, GroupDomainRelationBMPBean.RELATIONSHIP_TYPE_COLUMN);
+		Column gdr_groupRelationstatusSubCol = new Column(groupDomainRelSubTable, GroupDomainRelationBMPBean.STATUS_COLUMN);
+		
+		SelectQuery secondSubQuery = new SelectQuery(groupDomainRelSubTable);
+		secondSubQuery.addColumn(gdr_RelatedGroupIDSubCol);
+		secondSubQuery.addCriteria(new MatchCriteria(gdr_relationshipTypeSubCol, MatchCriteria.EQUALS, GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE));
+		secondSubQuery.addCriteria(new MatchCriteria(gdr_groupRelationstatusSubCol, MatchCriteria.IS, MatchCriteria.NULL));
+		
+		InCriteria firstInCriteria = new InCriteria(idCol, firstSubQuery);
+		InCriteria secondInCriteria = new InCriteria(idCol, secondSubQuery);
+		
+		SelectQuery query = new SelectQuery(groupTable);
+		query.addColumn(new WildCardColumn(groupTable));
+		if (groupTypes != null && groupTypes.length != 0) {
+		    Column typeCol = new Column(groupTable, getGroupTypeColumnName());
+		    if (groupTypes.length == 1){
+	            query.addCriteria(new MatchCriteria(typeCol, returnSpecifiedGroupTypes?MatchCriteria.EQUALS:MatchCriteria.NOTEQUALS, groupTypes[0]));
+	        } else {
+	            query.addCriteria(new InCriteria(typeCol, groupTypes, !returnSpecifiedGroupTypes));
+	        }
+	    }
+		query.addCriteria(new OR(firstInCriteria, secondInCriteria));
+		query.addOrder(groupTable, getNameColumnName(), true);
+		return this.idoFindPKsByQuery(query);
 	}
+
+//	public Collection ejbFindAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
+//		if (groupTypes != null && groupTypes.length > 0) {
+//			String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes, true);
+//			return super.idoFindIDsBySQL("select * from " + getEntityName() + " where " + getGroupTypeColumnName() + ((returnSepcifiedGroupTypes) ? " in (" : " not in (") + typeList + ") order by " + getNameColumnName());
+//		}
+//		return super.idoFindAllIDsOrderedBySQL(getNameColumnName());
+//	}
 	/**
 	 *
 	 * @return all groups excluding user representative groups
