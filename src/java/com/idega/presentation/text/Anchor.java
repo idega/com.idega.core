@@ -19,4 +19,9 @@ public class Anchor extends Link {
     super("");
     setAttribute("name",anchorName);
   }
+
+  public Anchor(Text text, String anchorName) {
+    super(text);
+    setAttribute("name",anchorName);
+  }
 }
