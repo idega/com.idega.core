@@ -32,7 +32,8 @@ public class SubmitButton extends GenericButton {
 	private String _checkedObjectName;
 	private String _confirmMessage;
 	private String _confirmSingleMessage;
-	private boolean showBusyImageOnSubmit = true;
+	
+	
 	
 
 
@@ -188,78 +189,11 @@ public class SubmitButton extends GenericButton {
 				getScript().addFunction("validateInputs","function validateInputs(inputs) {\n	if (inputs.length > 1) {\n	\tfor (var a = 0; a < inputs.length; a++) {\n	\t\tif (inputs[a].checked == true)\n	\t\t\treturn true;\n	\t}\n	}\n	else {\n	\tif(inputs.checked == true)\n	\t\treturn true;\n	}\n	return false;\n }");
 				getForm().setOnClick("enableButton(findObj('"+_checkedObjectName+"'),findObj('"+getName()+"'));");
 			}
-			// temporary not allowing when event handler used
-			String target = getForm().getTarget();
-			if(showBusyImageOnSubmit && !("iw_event_frame").equals(target)){
-			    getParentPage().getAssociatedScript().addFunction("calculateWindowSize",getWindowSizeScript());
-			    
-				getParentPage().getAssociatedScript().addFunction("showLoadingLayer",getShowLoadingLayerScript());
-				String scr =getParentPage().getAssociatedBodyScript().getFunction("createLoadingLayer");
-				
-				if(scr==null)
-				    getParentPage().getAssociatedBodyScript().addFunction("createLoadingLayer",getCreateLoadingLayerScript(iwc));
-				//setOnClick("this.disabled=true;showLoadingLayer();this.form.submit();");
-				//getForm().setOnSubmit("showLoadingLayer();");
-				setOnSubmitFunction("displayLoadingLayer","function displayLoadingLayer(theInput,message){ \n\t showLoadingLayer();\n\t return true;\n}","");
-				//getParentPage().setOnUnLoad("showLoadingLayer();");
-			}
 			
 		}
 	}
 	
-	private String getWindowSizeScript(){
-	    StringBuffer script = new StringBuffer();
-	    script.append("function window_getSizeWidthAndHeight( oFrame ) { ").append("\n");
-	    script.append("if( !oFrame ) { oFrame = window; } var myWidth = 0, myHeight = 0; ").append("\n");
-	    script.append("if( typeof( oFrame.innerWidth ) == 'number' ) { myWidth = oFrame.innerWidth; myHeight = oFrame.innerHeight; } ").append("\n");
-	    script.append("else if( oFrame.document.documentElement && ( oFrame.document.documentElement.clientWidth || oFrame.document.documentElement.clientHeight ) ) { ").append("\n");
-	    script.append("		myWidth = oFrame.document.documentElement.clientWidth; myHeight = oFrame.document.documentElement.clientHeight; } ").append("\n");
-	    script.append("	else if( oFrame.document.body && ( oFrame.document.body.clientWidth || oFrame.document.body.clientHeight ) ) { ").append("\n");
-	    script.append("myWidth = oFrame.document.body.clientWidth; myHeight = oFrame.document.body.clientHeight; } ").append("\n");
-	    script.append("	return [myWidth,myHeight]; ").append("\n");
-	    script.append("} ").append("\n");
-	    return script.toString();
-	}
 	
-	private String getShowLoadingLayerScript(){
-	    StringBuffer script = new StringBuffer();
-	    script.append(" var loaded = false;");
-	    script.append("function showLoadingLayer(){ ").append("\n");
-	    script.append("var theDiv = findObj( \"busybuddy\" );").append("\n");         
-	    script.append("if( !theDiv ) { ").append("\n");
-	    script.append("return; ").append("\n");
-	    script.append("}").append("\n");      
-	    script.append("if( theDiv.style ) { ").append("\n");
-	    script.append("theDiv.style.visibility = 'visible';").append("\n");
-	    script.append("} else {").append("\n");          
-	    script.append("theDiv.visibility = 'show' ;").append("\n");         
-	    script.append("}").append("\n");
-	    script.append("}").append("\n");
-			
-	    return script.toString();
-	}
-	
-	private String getCreateLoadingLayerScript(IWContext iwc){
-	    StringBuffer script = new StringBuffer();
-	    String imageUrl = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getImageURI("loading.gif");
-	    
-	    script.append("	if(!loaded){ ").append("\n");
-	    script.append("var theWinDimension = window_getSizeWidthAndHeight(); ").append("\n");
-	    script.append("var busyImage = new Image(); ").append("\n");
-	    script.append("busyImage.src = \""+imageUrl+"\"; ").append("\n");
-	    script.append("var imWidth = busyImage.width?busyImage.width:0;").append("\n");
-	    script.append("var imHeight = busyImage.height?busyImage.height:0; ").append("\n");
-	    script.append("var psLeft = (theWinDimension[0]-imWidth)/2; ").append("\n");
-	    script.append("var psTop = (theWinDimension[1]-imHeight)/2; ").append("\n");
-	    //script.append("window.status = 'winwidth='+theWinDimension[0]+' winheight='+theWinDimension[1]+' imagewidht='+imWidth+' imageheight='+imHeight+ ").append("\n");
-	    //script.append("' psLeft='+psLeft+' psTop='+psTop ; ").append("\n");
-	    script.append("document.write('<div id=\"busybuddy\" style=\"width:'+imWidth+'px;position:absolute;left:'+psLeft+'px;top:'+psTop+'px;visibility:hidden;\" >'+ ").append("\n");
-	    script.append("'<img src=\""+imageUrl+"\"></div>') ").append("\n");
-	    script.append("loaded = true; ").append("\n");
-	    script.append("	} ").append("\n");
-	    
-	    return script.toString();
-	}
 
 	/**
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
@@ -370,11 +304,4 @@ public class SubmitButton extends GenericButton {
 		setInputType(INPUT_TYPE_IMAGE);
 	}
 	
-	/**
-	 * Set to show a loading image in middle of window, when button pressed
-	 * @param show
-	 */
-	public void setToShowLoadingOnSubmit(boolean show){
-	    	this.showBusyImageOnSubmit = show;
-	}
 }

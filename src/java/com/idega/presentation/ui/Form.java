@@ -21,6 +21,7 @@ import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWStyleManager;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -66,6 +67,8 @@ public class Form extends InterfaceObject {
 	private boolean _disableObject;
 	private Map _objectsToDisable;
 	private boolean _disableOnSubmit;
+	private boolean showLoadingLayerOnSubmit = true;
+	
 	/**
 	*Defaults to send to the page itself and the POST method
 	**/
@@ -243,7 +246,120 @@ public class Form extends InterfaceObject {
 				}
 			}
 		}
+//		 temporary not allowing when event handler used
 		
+		if(showLoadingLayerOnSubmit ){//&& !("iw_event_frame").equals(target)){
+		    if(getParentPage().getAssociatedBodyScript().getFunction("calculateWindowSize")==null)
+		        getParentPage().getAssociatedScript().addFunction("calculateWindowSize",getWindowSizeScript());
+		   
+		    if(getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer")==null)
+		        getParentPage().getAssociatedScript().addFunction("showLoadingLayer",getShowLoadingLayerScript(iwc));
+			
+			if(getParentPage().getAssociatedBodyScript().getFunction("createLoadingLayer")==null)
+			    getParentPage().getAssociatedBodyScript().addFunction("createLoadingLayer",getCreateLoadingLayerScript(iwc));
+			
+			//getParentPage().setStyleDefinition("DIV.LoadLayer","visibility:hidden;position:absolute;");
+			IWStyleManager manager = IWStyleManager.getInstance();
+			if(!manager.isStyleSet("DIV.LoadLayer"))
+			IWStyleManager.getInstance().setStyle("DIV.LoadLayer","visibility:hidden;position:absolute;font-family: arial;" +
+					"font-size: 9pt;font-weight: bold; background: #ffffff; border-style: ridge;border-color: #cbcbcb;"+
+					"border-width: 2px;padding-top: 4px;padding-left: 8px;padding-right: 12px;padding-bottom:4px");
+			//setOnClick("this.disabled=true;showLoadingLayer();this.form.submit();");
+			//getForm().setOnSubmit("showLoadingLayer();");
+			//setOnSubmitFunction("displayLoadingLayer","function displayLoadingLayer(theInput,message){ \n\t showLoadingLayer();\n\t return true;\n}","");
+			//getParentPage().setOnUnLoad("showLoadingLayer();");
+			setOnSubmit("showLoadingLayer();");
+		}
+		
+	}
+	
+	private String getWindowSizeScript(){
+	    StringBuffer script = new StringBuffer();
+	    script.append("function window_getSizeWidthAndHeight( oFrame ) { ").append("\n");
+	    script.append("if( !oFrame ) { oFrame = window; } var myWidth = 0, myHeight = 0; ").append("\n");
+	    script.append("if( typeof( oFrame.innerWidth ) == 'number' ) { myWidth = oFrame.innerWidth; myHeight = oFrame.innerHeight; } ").append("\n");
+	    script.append("else if( oFrame.document.documentElement && ( oFrame.document.documentElement.clientWidth || oFrame.document.documentElement.clientHeight ) ) { ").append("\n");
+	    script.append("		myWidth = oFrame.document.documentElement.clientWidth; myHeight = oFrame.document.documentElement.clientHeight; } ").append("\n");
+	    script.append("	else if( oFrame.document.body && ( oFrame.document.body.clientWidth || oFrame.document.body.clientHeight ) ) { ").append("\n");
+	    script.append("myWidth = oFrame.document.body.clientWidth; myHeight = oFrame.document.body.clientHeight; } ").append("\n");
+	    script.append("	return [myWidth,myHeight]; ").append("\n");
+	    script.append("} ").append("\n");
+	    return script.toString();
+	}
+	
+	private String getShowLoadingLayerScript(IWContext iwc){
+	    StringBuffer script = new StringBuffer();
+	    String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
+	    script.append(" var loaded = false;");
+	    script.append("function showLoadingLayer(){ ").append("\n");
+	    script.append("var theDiv = findObj( \"busybuddy\" );").append("\n");         
+	    script.append("if( !theDiv ) { ").append("\n");
+	    script.append("return; ").append("\n");
+	    script.append("}").append("\n");
+	    String target = getTarget();
+	    if(target!=null){
+	        script.append(" theTargetFrame = findObj('"+target+"');\n");
+	        script.append(" if(theTargetFrame){");
+	        
+	    }
+	    script.append("var theWinDimension = window_getSizeWidthAndHeight(); ").append("\n");
+	    script.append("var busyImage = new Image(); ").append("\n");
+	    script.append("busyImage.src = \""+imageUrl+"\"; ").append("\n");
+	    script.append("var imWidth = busyImage.width?busyImage.width:0;").append("\n");
+	    script.append("var imHeight = busyImage.height?busyImage.height:0; ").append("\n");
+	    script.append("var psLeft = (theWinDimension[0]-imWidth)/2; ").append("\n");
+	    script.append("var psTop = (theWinDimension[1]-imHeight)/2; ").append("\n");
+	    script.append("if( theDiv.style ) { ").append("\n");
+	    script.append("theDiv.style.visibility = 'visible';").append("\n");
+	    script.append("theDiv.style.zindex = 999999;").append("\n");
+	    script.append("theDiv.style.position = 'absolute';").append("\n");
+	    //script.append("theDiv.style.width = imWidth;").append("\n");
+	    //script.append("theDiv.style.height = imHeight;").append("\n");
+	    script.append("theDiv.style.left = psLeft+'px';").append("\n");
+	    script.append("theDiv.style.top = psTop+'px';").append("\n");
+	    script.append("} else {").append("\n");          
+	    script.append("theDiv.visibility = 'show' ;").append("\n"); 
+	    script.append("theDiv.visibility = 'visible';").append("\n");
+	    script.append("theDiv.zindex = 999999;").append("\n");
+	    script.append("theDiv.position = 'absolute';").append("\n");
+	    //script.append("theDiv.width = imWidth;").append("\n");
+	    //script.append("theDiv.height = imHeight;").append("\n");
+	    script.append("theDiv.left = psLeft+'px';").append("\n");
+	    script.append("theDiv.top = psTop+'px';").append("\n");
+	    script.append("}").append("\n");
+	    
+	    if(target!=null){
+	        script.append(" }\n");
+	    }
+	    script.append("}").append("\n");
+			
+	    return script.toString();
+	}
+	
+	private String getCreateLoadingLayerScript(IWContext iwc){
+	    StringBuffer script = new StringBuffer();
+	    String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
+	    
+	    script.append("	if(!loaded){ ").append("\n");
+	   
+	    //script.append("window.status = 'winwidth='+theWinDimension[0]+' winheight='+theWinDimension[1]+' imagewidht='+imWidth+' imageheight='+imHeight+ ").append("\n");
+	    //script.append("' psLeft='+psLeft+' psTop='+psTop ; ").append("\n");
+	    script.append("document.write('<div id=\"busybuddy\" class=\"LoadLayer\" >");
+	    script.append("<img src=\""+imageUrl+"\">&nbsp;");
+	    script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text","Loading"));
+	    script.append("</div>') ").append("\n");
+	    script.append("loaded = true; ").append("\n");
+	    script.append("	} ").append("\n");
+	    
+	    return script.toString();
+	}
+	
+	/**
+	 * Set to show a loading image in middle of window, when button pressed
+	 * @param show
+	 */
+	public void setToShowLoadingOnSubmit(boolean show){
+	    	this.showLoadingLayerOnSubmit = show;
 	}
 
 	/**
