@@ -156,7 +156,7 @@ public class IDOTableCreator{
         theReturner=false;
       //}
       //else{
-        se.printStackTrace();
+        //se.printStackTrace();
       //}
     }
 
