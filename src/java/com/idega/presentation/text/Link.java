@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.35 2001/12/20 19:16:09 gummi Exp $
+ * $Id: Link.java,v 1.36 2002/01/02 12:15:59 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -420,12 +420,8 @@ public class Link extends Text {
 
 
   public boolean isParameterSet(String prmName){
-    //System.out.println("isParameterSet("+prmName+")");
-    //System.err.println("isParameterSet("+prmName+")");
     if(_parameterString != null){
       if(!(prmName != null && prmName.endsWith(""))){
-        //System.out.println("return true;");
-        //System.err.println("return true;");
         return true;
       }
       String prmString = _parameterString.toString();
@@ -818,7 +814,12 @@ public class Link extends Text {
       url.append('=');
       url.append(page.getID());
       setURL(url.toString());*/
-      this.addParameter(BuilderLogic.IB_PAGE_PARAMETER,page.getID());
+      String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+      if (value != null) {
+        removeParameter(BuilderLogic.IB_PAGE_PARAMETER);
+      }
+
+      addParameter(BuilderLogic.IB_PAGE_PARAMETER,page.getID());
     }
   }
 
@@ -844,12 +845,8 @@ public class Link extends Text {
 
 
   public String getParameterValue(String prmName){
-    //System.out.println("isParameterSet("+prmName+")");
-    //System.err.println("isParameterSet("+prmName+")");
     if(_parameterString != null){
       if(!(prmName != null && prmName.endsWith(""))){
-        //System.out.println("return true;");
-        //System.err.println("return true;");
         return null;
       }
       String prmString = _parameterString.toString();
@@ -868,13 +865,7 @@ public class Link extends Text {
             String value = token.nextToken();
             if(prmName.equals(st)){
               return value;
-              //System.out.println("token "+index+" : "+st+" / true");
-              //System.err.println("token "+index+" : "+st+" / true");
             }
-            //else{
-              //System.out.println("token "+index+" : "+st+" / false");
-              //System.err.println("token "+index+" : "+st+" / false");
-            //}
             index++;
           }
         }
@@ -1533,10 +1524,40 @@ public class Link extends Text {
     dptTemplateId = page.getID();
   }
 
+  public void removeParameter(String prmName){
+    if(_parameterString != null){
+      if (!(prmName != null && prmName.endsWith(""))){
+        return;
+      }
 
+      StringBuffer newBuffer = new StringBuffer();
+      String prmString = _parameterString.toString();
 
-
-
-
+      if (prmString.length() > 0) {
+        if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
+          prmString = prmString.substring(1,prmString.length());
+          newBuffer.append("?");
+        }
+        if ((prmString.charAt(0) == '&') && (prmString.length() > 1)) {
+          prmString = prmString.substring(1,prmString.length());
+          newBuffer.append("&");
+        }
+        StringTokenizer token = new StringTokenizer(prmString,"&",false);
+        while (token.hasMoreTokens()) {
+          String st = token.nextToken();
+          StringTokenizer token2 = new StringTokenizer(st,"=",false);
+          if (token2.hasMoreTokens()) {
+            String name = token2.nextToken();
+            String value = token2.nextToken();
+            if (!name.equals(prmName))
+              newBuffer.append(name + "=" + value);
+          }
+          else
+            newBuffer.append("&" + st);
+        }
+      }
+      _parameterString = newBuffer;
+      return;
+    }
+  }
 }
-
