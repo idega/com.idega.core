@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.41 2003/06/12 13:22:03 laddi Exp $
+ * $Id: Table.java,v 1.42 2003/06/24 10:50:07 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -371,7 +371,7 @@ public class Table extends PresentationObjectContainer {
 		getCellAt(xpos, ypos).setHeightStyle(height);
 	}
 	
-	protected PresentationObject getCellAt(int xpos, int ypos) {
+	protected PresentationObjectContainer getCellAt(int xpos, int ypos) {
 		if (isResizable) {
 			if (xpos > this.getColumns()) {
 				setColumns(xpos);
