@@ -309,6 +309,7 @@ public class FileManager extends Block {
 			row++;
 		}
 		
+		fileTable.setNoWrap();
 		fileTable.setWidth(Table.HUNDRED_PERCENT);
 		fileTable.setWidth(1, "50%");
 		fileTable.setWidth(2, "1%");
