@@ -83,10 +83,10 @@ public class SelectDropdownDouble extends InterfaceObject {
 			if(primaryLabel!=null)
 				table.add(primaryLabel,1,1);
 			if(secondaryLabel!=null)
-				table.add(secondaryLabel,1,2);
+				table.add(secondaryLabel,1,3);
 			table.setHeight(2,verticalSpaceBetween);
 			table.add(getPrimaryDropdown(),3,1);
-			table.add(getSecondaryDropdown(),3,2);
+			table.add(getSecondaryDropdown(),3,3);
 		
 		}
 		
