@@ -334,7 +334,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   }
   
   public int getDeletedBy() {
-    return getIntColumnValue(getColumnNameDeleted());
+    return getIntColumnValue(getColumnNameDeletedBy());
   }
   
   public Timestamp getDeletedWhen() {
