@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.93 2004/06/22 17:43:23 thomas Exp $
+ * $Id: PresentationObject.java,v 1.94 2004/06/24 13:52:37 thomas Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 import com.idega.business.IBOLookup;
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.component.data.ICObject;
@@ -1347,13 +1346,7 @@ implements Cloneable, PresentationObjectType
 		// this.getClassName().substring(this.getClassName().lastIndexOf(".")+1);
 		return this.getBundle(iwuc).getComponentName(this.getClass(), iwuc.getCurrentLocale());
 	}
-	/**
-	 * Returns the page parameter used by idegaWeb Builder
-	 */
-	public String getIBPageParameterName()
-	{
-		return BuilderConstants.IB_PAGE_PARAMETER;
-	}
+
 	public void setWidth(String width)
 	{
 		setMarkupAttribute(WIDTH, width);
