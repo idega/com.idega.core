@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.123 2005/01/06 18:57:56 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.124 2005/01/07 09:49:21 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/06 18:57:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/07 09:49:21 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.123 $
+ * @version $Revision: 1.124 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -1597,7 +1597,7 @@ public class IWMainApplication //{//implements ServletContext{
 			//int pageId = Integer.parseInt(sPageId);
 			BuilderService bService;
 			try {
-				int pageId = Integer.parseInt(sPageId);
+				//int pageId = Integer.parseInt(sPageId);
 				bService = BuilderServiceFactory.getBuilderService(this.getIWApplicationContext());
 				return bService.getPage(sPageId);
 			}

@@ -1260,7 +1260,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		Table groupRelSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
 		Column relatedGroupIDSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
-		Column relationshipTypeSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN);
+		//Column relationshipTypeSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN);
 		Column groupRelationstatusSubCol = new Column(groupRelSubTable, GroupRelationBMPBean.STATUS_COLUMN);
 		
 		SelectQuery firstSubQuery = new SelectQuery(groupRelSubTable);

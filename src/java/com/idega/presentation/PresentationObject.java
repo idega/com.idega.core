@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.123 2005/01/06 02:31:07 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.124 2005/01/07 09:48:06 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -69,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/01/06 02:31:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/01/07 09:48:06 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.123 $
+ * @version $Revision: 1.124 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -869,7 +869,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		{
 			object = this.clone();
 		}
-		PresentationObject obj = (PresentationObject)object;
+		//PresentationObject obj = (PresentationObject)object;
 		//cloneJSFObjects(obj,iwc,askForPermission);
 		return object;
 	}
@@ -2505,11 +2505,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 }
 	 
 	 public void addReflectionProperty(Property property){
-	 	if(this instanceof Block){
+	 	/*if(this instanceof Block){
 	 		if(this.getClass().getName().indexOf("Navigation")!=-1){
 	 			boolean check=true;
 	 		}
-	 	}
+	 	}*/
 	 	List properties = getReflectionProperties();
 	 	if(properties!=null){
 	 		properties.add(property);
@@ -2518,9 +2518,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 }
 	 
 	 protected void restoreFromReflectionProperties(){
- 		if(this.getClass().getName().indexOf("Navigation")!=-1){
+ 		/*if(this.getClass().getName().indexOf("Navigation")!=-1){
  			boolean check=true;
- 		}
+ 		}*/
 	 	List properties = getReflectionProperties();
 	 	if(properties!=null){
 		 	for (Iterator iter = properties.iterator(); iter.hasNext();) {
