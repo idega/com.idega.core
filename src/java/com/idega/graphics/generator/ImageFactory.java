@@ -90,11 +90,11 @@ public class ImageFactory {
     Button button = new Button(textOnButton,defaultFont);
     button.generate(filePath);
 
-    String upName = URLEncoder.encode(button.getUpName());
-    String downName = URLEncoder.encode(button.getDownName());
-    String overName = URLEncoder.encode(button.getOverName());
+    String upName = URLEncoder.encode(fileVirtualPath+button.getUpName());
+    String downName = URLEncoder.encode(fileVirtualPath+button.getDownName());
+    String overName = URLEncoder.encode(fileVirtualPath+button.getOverName());
 
-    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+upName,fileVirtualPath+overName,fileVirtualPath+downName);
+    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),upName,overName,downName);
     image.setWidth(button.getWidth());
     image.setHeight(button.getHeight());
 
@@ -135,11 +135,11 @@ public class ImageFactory {
     tab.flip(flip);
     tab.generate(filePath);
 
-    String upName = URLEncoder.encode(tab.getUpName());
-    String downName = URLEncoder.encode(tab.getDownName());
-    String overName = URLEncoder.encode(tab.getOverName());
+    String upName = URLEncoder.encode(fileVirtualPath+flip+tab.getUpName());
+    String downName = URLEncoder.encode(fileVirtualPath+flip+tab.getDownName());
+    String overName = URLEncoder.encode(fileVirtualPath+flip+tab.getOverName());
 
-    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+flip+upName,fileVirtualPath+flip+overName,fileVirtualPath+flip+downName);
+    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),upName,overName,downName);
     image.setWidth(tab.getWidth());
     image.setHeight(tab.getHeight());
 
