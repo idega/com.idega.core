@@ -1,5 +1,5 @@
 /*
- * $Id: MoonPhase.java,v 1.3 2004/11/02 14:09:22 laddi Exp $
+ * $Id: MoonPhase.java,v 1.4 2004/11/02 15:09:58 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,7 +25,7 @@ import com.idega.util.IWCalendar;
  * Last modified: 02.11.2004 09:39:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MoonPhase extends Widget {
 	
@@ -41,7 +41,7 @@ public class MoonPhase extends Widget {
 		double moonPhase = calendar.getMoonPhase();
 		
 		BigDecimal bd = new BigDecimal(moonPhase);
-    bd = bd.setScale(1, BigDecimal.ROUND_HALF_DOWN);
+    bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
     moonPhase = bd.doubleValue();
     int moon = (int) (moonPhase * 10);
 		
