@@ -210,7 +210,9 @@ public class UserBusiness {
 
   public static Email getUserMail(User user) {
     try {
+      EntityFinder.debug = true;
       List L = EntityFinder.getInstance().findRelated(user,Email.class);
+      EntityFinder.debug = false;
       if(L != null){
         if ( L.size() > 0 )
           return (Email)L.get(0);

@@ -8,7 +8,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
-
+import com.idega.core.accesscontrol.data.LoginTableBMPBean;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import java.util.Iterator;
@@ -494,24 +494,20 @@ public class LoginDBHandler {
     LoginTable loginTable;
     List noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(), userID);
     loginTable = (LoginTable)noLogin.get(0);
+    changePassword(loginTable,password);
+  }
 
-    if(loginTable != null){
-
-      loginTable.setUserPassword(Encrypter.encryptOneWay(password));
-
-      loginTable.update();
+  public static void changePassword(LoginTable login, String password ) throws Exception {
+    if(login != null){
+      login.setUserPassword(Encrypter.encryptOneWay(password));
+      login.update();
 
     } else {
 
       throw new Exception("Cannot update. Login does not exist");
-
     }
 
-
-
   }
-
-
 
   /**
 
@@ -523,6 +519,17 @@ public class LoginDBHandler {
     return getUserLogin(iUserId);
   }
 
+  public static LoginTable getUserLoginByUserName(String userName) {
+    try{
+      LoginTable[] login_table = (LoginTable[]) (LoginTableBMPBean.getStaticInstance()).findAllByColumn(LoginTableBMPBean.getUserLoginColumnName(),userName);
+      if(login_table !=null && login_table.length > 0)
+        return login_table[0];
+    }
+    catch(SQLException ex){
+
+    }
+    return null;
+  }
 
 
   public static LoginTable getUserLogin(int userId){
