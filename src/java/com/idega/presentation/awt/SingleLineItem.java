@@ -136,6 +136,7 @@ public class SingleLineItem extends Container {
       gbc.fill = GridBagConstraints.HORIZONTAL; //take up extra space horizontally*/
 
     }
+      gbc.gridx = nextXpos;
       gbc.gridheight = component.getSize().height;
       gbc.gridwidth = component.getSize().width;
       super.add(component,gbc);
