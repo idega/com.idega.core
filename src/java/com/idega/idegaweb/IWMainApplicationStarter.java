@@ -41,27 +41,52 @@ public class IWMainApplicationStarter {
 		endIdegaWebApplication();
 		//super.destroy();
 	}
-	public void starPoolManDatabasePool() {
+	protected void startDatabasePool(){
+		String separator = FileUtil.getFileSeparator();
+		String poolType = iwma.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
+		if (poolType != null) {
+			if (poolType.equalsIgnoreCase("POOLMAN")) {
+				this.startPoolManDatabasePool(iwma);
+			}
+			else if (poolType.equalsIgnoreCase("IDEGA")) {
+				this.startIdegaDatabasePool(iwma);
+			}
+			else if (poolType.equalsIgnoreCase("JDBC_DATASOURCE")) {
+				this.startJDBCDatasourcePool(iwma);
+			}
+		}
+		else {
+			startIdegaDatabasePool(iwma);
+		}
+	}
+	
+	public void startPoolManDatabasePool(IWMainApplication iwma) {
 		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
 		//String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"poolman.xml";
 		this.propertiesfile = file;
 		sendStartMessage("Reading Databases from file: " + file);
-		sendStartMessage("Starting Datastore ConnectionPool");
+		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
 	}
-	public void startIdegaDatabasePool() {
-		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
-		String separator = FileUtil.getFileSeparator();
-		//ServletContext cont = this.getServletContext();
-		
-		String file = iwma.getPropertiesRealPath() + separator + "db.properties";
-		this.propertiesfile = file;
-		sendStartMessage("Reading Databases from file: " + file);
-		sendStartMessage("Starting Datastore ConnectionPool");
-		PoolManager.getInstance(file);
+	public void startIdegaDatabasePool(IWMainApplication iwma) {
+		String separator = File.separator;
+		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
+		String file = iwma.getPropertiesRealPath()+separator+"db.properties";
+		sendStartMessage("Reading Databases from file: "+file);
+		sendStartMessage("Starting idega Datastore ConnectionPool");
+		PoolManager poolMgr = PoolManager.getInstance(file);	
 	}
+	public void startJDBCDatasourcePool(IWMainApplication iwma){
+		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
+		String url = iwma.getSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
+		if(url!=null){
+			ConnectionBroker.setDefaultJDBCDatasourceURL(url);
+		}
+		sendStartMessage("Starting JDBC Datastore ConnectionPool from url: "+url);
+	}
+	
 	public void endDatabasePool() {
 		//sendShutdownMessage("Stopping Database Pool");
 		try {
@@ -158,18 +183,7 @@ public class IWMainApplicationStarter {
 		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
 			com.idega.presentation.text.Link.usingEventSystem = true;
 		}
-		String poolType = application.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
-		if (poolType != null) {
-			if (poolType.equalsIgnoreCase("poolman")) {
-				this.starPoolManDatabasePool();
-			}
-			else if (poolType.equalsIgnoreCase("idega")) {
-				this.startIdegaDatabasePool();
-			}
-		}
-		else {
-			startIdegaDatabasePool();
-		}
+		this.startDatabasePool();
 		IWStyleManager iwStyleManager = new IWStyleManager(application);
 		iwStyleManager.getStyleSheet();
 		sendStartMessage("Starting IWStyleManager");

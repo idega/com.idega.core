@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.naming.InitialContext;
+import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
@@ -23,12 +24,14 @@ import com.idega.transaction.IdegaTransactionManager;
 */
 public class ConnectionBroker
 {
+	private static Context initialContext;
 	public final static String DEFAULT_POOL = "default";
 	public final static int POOL_MANAGER_TYPE_IDEGA = 1;
 	public final static int POOL_MANAGER_TYPE_POOLMAN = 2;
 	public final static int POOL_MANAGER_TYPE_JDBC_DATASOURCE = 3;
 	//temprorary - change
 	public static int POOL_MANAGER_TYPE = POOL_MANAGER_TYPE_IDEGA; //POOL_MANAGER_TYPE_JDBC_DATASOURCE;
+	private static String DEFAULT_JDBC_JNDI_URL="java:comp/env/DefaultDS";
 	private static DataSource ds;
 	/**	
 	 * Returns a Datastore connection from the default datasource
@@ -387,7 +390,8 @@ public class ConnectionBroker
 			try
 			{
 				//ds = (DataSource) new InitialContext().lookup("java:comp/env/datasource");
-				ds = (DataSource) new InitialContext().lookup("java:/DefaultDS");
+				
+				ds = (DataSource) getInitialContext().lookup(DEFAULT_JDBC_JNDI_URL);
 			}
 			catch (NamingException e)
 			{
@@ -395,5 +399,19 @@ public class ConnectionBroker
 			}
 		}
 		return ds;
+	}
+	/**
+	 * Sets the url to the default datasource if the JDBC datasource is the current pool type
+	 * @param url
+	 */
+	public static void setDefaultJDBCDatasourceURL(String url){
+		DEFAULT_JDBC_JNDI_URL=url;
+	}
+	
+	private static Context getInitialContext()throws NamingException{
+		if(initialContext==null){
+			initialContext = new InitialContext();
+		}
+		return initialContext;
 	}
 }
