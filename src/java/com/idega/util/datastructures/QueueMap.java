@@ -9,6 +9,7 @@ package com.idega.util.datastructures;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,6 +81,10 @@ public class QueueMap extends HashMap implements Map {
 	
 	public Collection values(){
 		return _valueList;
+	}
+	
+	public Iterator iterator() {
+		return _valueList.iterator();
 	}
 	
 }
