@@ -121,6 +121,7 @@ public class Button {
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
       button.setFont(font.deriveFont(Float.parseFloat(args[6])));
+      //button.setFont(font.deriveFont(10f));
       button.onlyCreateUpState(true);
 
       Iterator iter = tokenizers.iterator();
@@ -226,6 +227,7 @@ public class Button {
     image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
 
     g = image.createGraphics();
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
     if( font!= null ) g.setFont(font);
     fitText(g);
