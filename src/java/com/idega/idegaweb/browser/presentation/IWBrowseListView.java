@@ -1,5 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
+import com.idega.event.IWEventModel;
 import com.idega.presentation.ui.Parameter;
 import com.idega.business.IWEventListener;
 import com.idega.presentation.Block;
@@ -16,6 +17,7 @@ import com.idega.presentation.Block;
 public class IWBrowseListView extends Block implements IWBrowserView {
 
   private String _controlTarget = null;
+  private IWEventModel _contolEvent = null;
 
   public IWBrowseListView() {
   }
@@ -26,14 +28,10 @@ public class IWBrowseListView extends Block implements IWBrowserView {
     _controlTarget = controlTarget;
   }
 
-  public void setApplicationParameter(Parameter prm){
-    System.out.println("method setApplicationParameter(Parameter prm) not implemented in " + this.getClassName());
+  public void setControlEventModel(IWEventModel model){
+    _contolEvent = model;
   }
-  public void setSourceParamenter(Parameter prm){
-    System.out.println("method setSourceParamenter(Parameter prm) not implemented in " + this.getClassName());
-  }
-  public void setControlFrameParameter(Parameter prm){
-    System.out.println("method setControlFrameParameter(Parameter prm) not implemented in " + this.getClassName());
-  }
+
+
 
 }

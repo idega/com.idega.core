@@ -1,11 +1,11 @@
 package com.idega.idegaweb.browser.app;
 
+import com.idega.event.*;
 import com.idega.idegaweb.browser.presentation.*;
 import java.rmi.RemoteException;
 import com.idega.business.IWFrameBusiness;
 import com.idega.presentation.ui.Parameter;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.event.IWEventListener;
 import com.idega.presentation.*;
 import com.idega.presentation.app.IWApplication;
 import com.idega.presentation.ui.Window;
@@ -49,6 +49,17 @@ public class IWBrowser extends FrameTable {
   private boolean _showBottomFrame = false;
   private boolean _showLeftMainFrame = true;
   private boolean _showRightMainFrame = false;
+
+  private IWBrowserPresentationState _presentationState = null;
+
+  public void setPresentationState( IWPresentationState state ){
+    if(state instanceof IWBrowserPresentationState){
+      _presentationState = (IWBrowserPresentationState)state;
+    } else {
+      System.err.println("PresentationState not instanceof IWBrowserPresentationState");
+    }
+
+  }
 
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.idegaweb.browser";
 
@@ -192,12 +203,21 @@ public class IWBrowser extends FrameTable {
       //System.out.println("frame.getPresentationObject() = "+obj);
       if(obj instanceof IWBrowserView){
         ((IWBrowserView)obj).setControlTarget(this.getControlframeTarget());
-        Parameter appPrm = new Parameter(IW_FRAMESET_PAGE_PARAMETER,fb.getFrameSetIdentifier(this));
-        ((IWBrowserView)obj).setApplicationParameter(appPrm);
-        Parameter ctrlFP = new Parameter(IW_FRAME_NAME_PARAMETER,getControlframeTarget());
-        ((IWBrowserView)obj).setControlFrameParameter(ctrlFP);
-        Parameter src = new Parameter(PRM_IW_BROWSE_EVENT_SOURCE, frame.getName());
-        ((IWBrowserView)obj).setSourceParamenter(src);
+
+        IWBrowseEvent model = new IWBrowseEvent();
+        model.setApplicationIdentifier(fb.getFrameSetIdentifier(this));
+        model.setControlFrameTarget(getControlframeTarget());
+        model.setSource(frame.getName());
+
+        ((IWBrowserView)obj).setControlEventModel(model);
+
+
+//        Parameter appPrm = new Parameter(IW_FRAMESET_PAGE_PARAMETER,fb.getFrameSetIdentifier(this));
+//        ((IWBrowserView)obj).setApplicationParameter(appPrm);
+//        Parameter ctrlFP = new Parameter(IW_FRAME_NAME_PARAMETER,getControlframeTarget());
+//        ((IWBrowserView)obj).setControlFrameParameter(ctrlFP);
+//        Parameter src = new Parameter(PRM_IW_BROWSE_EVENT_SOURCE, frame.getName());
+//        ((IWBrowserView)obj).setSourceParamenter(src);
       }
     //}
   }

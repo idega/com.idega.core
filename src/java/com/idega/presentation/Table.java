@@ -1,6 +1,6 @@
 /*
 
- * $Id: Table.java,v 1.23 2002/05/22 15:05:12 gummi Exp $
+ * $Id: Table.java,v 1.24 2002/05/28 17:22:27 gummi Exp $
 
  *
 
@@ -311,6 +311,7 @@ public class Table extends PresentationObjectContainer {
       theObjects[xpos-1][ypos-1].add(modObject);
 
       modObject.setParentObject(this);
+      modObject.setLocation(this.getLocation());
 
 
 
@@ -2435,6 +2436,8 @@ public boolean isEmpty(int x, int y){
                             obj.theObjects[x][y]=(PresentationObjectContainer)((PresentationObjectContainer)this.theObjects[x][y]).clone(iwc,askForPermission); // not _clone(m,a) because moduleObject is cunstructed in table class
 
                             obj.theObjects[x][y].setParentObject(obj);
+
+                            obj.theObjects[x][y].setLocation(this.getLocation());
 
                             //obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
 

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.32 2002/05/22 15:05:12 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.33 2002/05/28 17:22:27 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -110,6 +110,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
     String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
     String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
     if (eventClass != null) {
+      System.out.println("IWEventListener: "+ eventClass);
       IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
       listener.actionPerformed(iwc);
     }
@@ -460,6 +461,7 @@ writer.println("-->");
         iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID,historyIDSession);
       }
     }
+
   }
 
   public void handleEvent(IWContext  iwc){

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.72 2002/05/13 13:07:18 palli Exp $
+ * $Id: Link.java,v 1.73 2002/05/28 17:22:27 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1980,4 +1980,14 @@ public class Link extends Text{
       }
     }
   }
+
+
+  public void addEventModel(IWEventModel model){
+    Iterator iter = model.getParameters();
+    while (iter.hasNext()) {
+      Parameter prm = (Parameter)iter.next();
+      this.addParameter(prm);
+    }
+  }
+
 }

@@ -27,7 +27,7 @@ public class LocaleSwitcher implements IWEventListener{
 
 
 
-  public void actionPerformed(IWContext iwc){
+  public boolean actionPerformed(IWContext iwc){
     String localeValue = iwc.getParameter(languageParameterString);
     if(localeValue!=null){
       Locale locale = LocaleUtil.getLocale(localeValue);
@@ -35,6 +35,7 @@ public class LocaleSwitcher implements IWEventListener{
 	iwc.setCurrentLocale(locale);
       }
     }
+    return true;
   }
 
 

@@ -464,6 +464,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     }
   }
 
+  public void setOpenNodes(List openNodeList){
+    openNodes = openNodeList;
+  }
+
   public void updateOpenNodes(IWContext iwc){
     openNodes.clear();
     String[] open = iwc.getParameterValues(PRM_OPEN_TREENODES);

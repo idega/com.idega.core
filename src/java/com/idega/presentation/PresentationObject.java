@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.45 2002/05/27 14:09:52 laddi Exp $
+ * $Id: PresentationObject.java,v 1.46 2002/05/28 17:22:27 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -82,6 +82,8 @@ public class PresentationObject extends Object implements Cloneable {
   private boolean _belongsToParent = false;
   private boolean _changeInstanceIDOnInheritance = false;
   private boolean _allowPagePermissionInheritance = true;
+
+  private String _location = "_top";
 
   private GenericState defaultState = null;
 
@@ -657,6 +659,7 @@ public class PresentationObject extends Object implements Cloneable {
       obj.initializedInMain = this.initializedInMain;
       obj.ic_object_instance_id = this.ic_object_instance_id;
       obj.ic_object_id = this.ic_object_id;
+      obj._location = this._location;
 
 
       //obj.defaultState = this.defaultState;  //same object, unnecessary to clone
@@ -1168,6 +1171,15 @@ public class PresentationObject extends Object implements Cloneable {
 
   protected void setIWUserContext(IWUserContext iwuc){
     _iwuc=iwuc;
+  }
+
+
+  public void setLocation(String target){
+    _location = target;
+  }
+
+  public String getLocation(){
+    return _location;
   }
 
 }

@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.event.IWEventModel;
 import java.io.*;
 import java.util.*;
 import com.idega.presentation.*;
@@ -555,5 +556,15 @@ public void setEventListener(String eventListenerClassName){
       }
     }
   }
+
+
+  public void addEventModel(IWEventModel model){
+    Iterator iter = model.getParameters();
+    while (iter.hasNext()) {
+      Parameter prm = (Parameter)iter.next();
+      this.add(prm);
+    }
+  }
+
 } // Class ends
 

@@ -47,6 +47,9 @@ import com.idega.idegaweb.IWUserContext;
     public void setNameProperty(String frameName){
       this.setName(frameName);
       this.setAttribute("name", frameName);
+      if(_obj != null){
+        _obj.setLocation(frameName);
+      }
     }
 
     public void setNameProperty(int name){
@@ -62,6 +65,10 @@ import com.idega.idegaweb.IWUserContext;
         type = OBJ;
       }
       _obj = obj;
+
+      if(this.getAttribute("name") != null){
+        _obj.setLocation(this.getName());
+      }
     }
 
     public PresentationObject getPresentationObject(){

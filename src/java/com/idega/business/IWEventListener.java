@@ -16,6 +16,12 @@ import com.idega.idegaweb.IWException;
 */
 
 public interface IWEventListener extends EventListener {
-  public void actionPerformed(IWContext iwc)throws IWException;
+  /**
+   *
+   * @param iwc
+   * @return returns true if changes have been made or else false;
+   * @throws IWException
+   */
+  public boolean actionPerformed(IWContext iwc)throws IWException;
 }
 

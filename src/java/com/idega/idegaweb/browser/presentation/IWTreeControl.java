@@ -1,5 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
+import com.idega.event.IWEventModel;
 import com.idega.presentation.ui.AbstractTreeViewer;
 import com.idega.presentation.ui.Parameter;
 import com.idega.business.IWEventListener;
@@ -19,9 +20,21 @@ import com.idega.presentation.IWContext;
 public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
 
   private String _controlTarget = null;
+  private IWEventModel _contolEvent = null;
 
   public IWTreeControl() {
   }
+
+
+  public void setControlTarget(String controlTarget){
+    _controlTarget = controlTarget;
+  }
+
+  public void setControlEventModel(IWEventModel model){
+    _contolEvent = model;
+  }
+
+
 
   public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
     /**@todo: implement this com.idega.presentation.ui.AbstractTreeViewer abstract method*/
@@ -30,19 +43,5 @@ public class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
   }
 
   public IWEventListener getListener(){return null;}
-
-  public void setControlTarget(String controlTarget){
-    _controlTarget = controlTarget;
-  }
-
-  public void setApplicationParameter(Parameter prm){
-    System.out.println("method setApplicationParameter(Parameter prm) not implemented in " + this.getClassName());
-  }
-  public void setSourceParamenter(Parameter prm){
-    System.out.println("method setSourceParamenter(Parameter prm) not implemented in " + this.getClassName());
-  }
-  public void setControlFrameParameter(Parameter prm){
-    System.out.println("method setControlFrameParameter(Parameter prm) not implemented in " + this.getClassName());
-  }
 
 }
