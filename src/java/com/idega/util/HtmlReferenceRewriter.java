@@ -212,7 +212,7 @@ public class HtmlReferenceRewriter {
 		
 		String utfString;
 		try {
-			utfString = new String(outString.toString().getBytes("UTF-8"));
+			utfString = new String(outString.toString().getBytes("UTF-8"),"UTF-8");
 			StringReader sr = new StringReader(utfString);
 			System.out.println("[HTMLReferenceWriter] The final html string in unicode:\n"+utfString);
 			Writer out = getOutput();
