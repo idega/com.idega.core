@@ -128,17 +128,22 @@ public class HtmlPage extends Page {
 	}
 	
 	
-	public HtmlPageRegion getRegion(String regionKey){
-		Integer index = (Integer) getRegionIdsMap().get(regionKey);
-		Object o = getChildren().get(index.intValue());
-		HtmlPageRegion region = (HtmlPageRegion) o;
+	public UIComponent getRegion(String regionKey){
+		//Integer index = (Integer) getRegionIdsMap().get(regionKey);
+		//Object o = getChildren().get(index.intValue());
+		Object o = getFacets().get(regionKey);
+		UIComponent region = (UIComponent) o;
 		return region;
+	}
+	
+	public void setRegion(String regionKey,UIComponent region){
+		getFacets().put(regionKey,region);
 	}
 	
 	
 	public void add(UIComponent component,String regionId){
-		HtmlPageRegion region = getRegion(regionId);
-		region.add(component);
+		UIComponent region = getRegion(regionId);
+		region.getChildren().add(component);
 	}
 
 	
@@ -163,10 +168,7 @@ public class HtmlPage extends Page {
 		return regionMap;
 	}
 
-	/**
-	 * Returns all the regionIds as Strings
-	 * @return
-	 */
+	
 	public Set getRegionIds(){
 		return getRegionIdsMap().keySet();
 	}
@@ -191,7 +193,8 @@ public class HtmlPage extends Page {
 				//instanciate the region in the children list:
 				HtmlPageRegion region = new HtmlPageRegion();
 				region.setRegionId(regionId);
-				getChildren().add(region);
+				setRegion(regionId,region);
+				//getChildren().add(region);
 				//getChildren().set(regionIndex,region);
 				regionIndex++;
 			}
@@ -346,7 +349,7 @@ public class HtmlPage extends Page {
 				//int childNumber = Integer.parseInt(t[0]) - 1;
 
 				try{
-					HtmlPageRegion region = getRegion(regionId);
+					UIComponent region = getRegion(regionId);
 					renderChild(ctx,region);
 				}
 				catch(ClassCastException cce){
