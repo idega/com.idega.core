@@ -103,7 +103,8 @@ public class ImageFactory {
 		Button button = new Button(textOnButton, defaultFont);
 		button.generate(filePath);
 
-		System.out.println("fileVirtualPath :" + fileVirtualPath);
+		if (iwb.getApplication().getSettings().getIfDebug())
+			System.out.println("fileVirtualPath :" + fileVirtualPath);
 
 		String upName = fileVirtualPath + button.getUpName();
 		String downName = fileVirtualPath + button.getDownName();
