@@ -177,20 +177,26 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		
 		List list;
 		try {
-			list = EntityFinder.findAll(this, sql);
-			
+			//list = EntityFinder.findAll(this, sql);
+			String arr[] = SimpleQuerier.executeStringQuery(sql);
+			//well presume that the first result is the primary key of the parent:
+			if(arr.length>0){
+				String parentPk = arr[0];
+				return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(parentPk);
+			}
+			/*
 			if (list != null && !list.isEmpty()) {
 				return (TreeableEntity)list.iterator().next();
 			}
 			else{
 				return null;
-			}
+			}*/
 			
-		} catch (SQLException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 			return null;
 		}
-		
+		return null;
 	}
 
 	public TreeableEntity getParentEntity() {
