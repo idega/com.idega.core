@@ -115,12 +115,11 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
         
 		if(iwc.isIE()) {
 		    String pathToExplorerFixCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_EXPLORER_FIX_FILE_PATH);
-		    parentPage.addStyleSheetURL(pathToExplorerFixCSS);
+		    parentPage.setStyleDefinition("body","behavior:url(\""+pathToExplorerFixCSS+"\");");
 		}
 		
 		String pathToMenuCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_FILE_PATH);
 		parentPage.addStyleSheetURL(pathToMenuCSS);
-		
 		
 		if(addTestData) {
 			//A little test code, 
