@@ -94,7 +94,9 @@ public class QueueMap extends HashMap implements Map {
 	private void removeKey(Object key) {
 		int oldKeyIndex = keyList.indexOf(key);
 		if (oldKeyIndex > -1) {
-			_valueList.remove(oldKeyIndex);
+			if(_valueList.size()>oldKeyIndex){
+				_valueList.remove(oldKeyIndex);
+			}
 			keyList.remove(key);
 			_keySet.remove(key);
 		}
