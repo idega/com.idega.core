@@ -48,7 +48,7 @@ public SubmitButton(Image defaultImage, String name){
 public SubmitButton(Image defaultImage, String name, String value){
 	this(name,value);
 	this.setButtonImage(defaultImage);
-
+  this.setName(this.getID());
         this.parameterName=name;
         this.parameterValue=value;
         usingControlParameter=true;
