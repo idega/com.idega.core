@@ -364,10 +364,10 @@ public class AccessControllerApp extends IWApplication {
 
           switch (intPermissionCategory) {
             case AccessController._CATEGORY_OBJECT_INSTANCE :
-              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getICObjectClassForInstance(Integer.parseInt(identifier)));
+              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier)));
               break;
             case AccessController._CATEGORY_OBJECT :
-              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getICObjectClass(Integer.parseInt(identifier)));
+              keys = iwc.getAccessController().getICObjectPermissionKeys(ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier)));
               break;
             case AccessController._CATEGORY_BUNDLE :
               keys = iwc.getAccessController().getBundlePermissionKeys(identifier);
