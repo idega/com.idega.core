@@ -1,10 +1,10 @@
 package com.idega.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-//import java.util.Iterator;
-import java.util.Collection;
+import java.util.StringTokenizer;
 
 /**
  * Title:        idegaclasses
@@ -103,6 +103,38 @@ public class ListUtil {
 			}
 		}
 		return sList.toString();
+	}
+	
+	/**
+	 * Converts a comma separated string to a list of strings
+	 * @param commaSeparatedString A comma separated string e.g. "value1,value2,value3,..."
+	 * @returns a List of Strings or an empty list if no values where found
+	 */
+	public static List convertCommaSeparatedStringToList(String commaSeparatedString) {
+		return ListUtil.convertTokenSeparatedStringToList(commaSeparatedString,",");
+	}
+	
+	/**
+	 * Converts a [token] separated string to a list of strings
+	 * @param tokenSeparatedString A [token] separated string e.g. "value1[token]value2[token]value3[token]..." like "value1,value2,value3,..." for example
+	 * @param tokenSeparator The separator such as a "," or ";" for example
+	 * @returns a List of Strings or an empty list if no values where found
+	 */
+	public static List convertTokenSeparatedStringToList(String tokenSeparatedString, String tokenSeparator) {
+		List list = new ArrayList();
+		
+		if(tokenSeparatedString!=null && tokenSeparator!=null){
+			StringTokenizer tokens = new StringTokenizer(tokenSeparatedString,tokenSeparator);
+			while (tokens.hasMoreTokens()) {
+				String value = tokens.nextToken();	
+				list.add(value);
+			}
+		}
+		else{
+			System.err.println("[ListUtil] - convertTokenSeparatedStringToList: String or token is null!");
+		}
+		
+		return list;
 	}
 
   private static class EmptyList extends ArrayList{
