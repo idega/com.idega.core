@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.32 2001/12/17 15:48:39 gummi Exp $
+ * $Id: Link.java,v 1.33 2001/12/17 16:33:34 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -132,6 +132,7 @@ public class Link extends Text {
    */
   public Link(Text text) {
     //text.setFontColor("");
+    this.text = text.getText();
     _obj = (PresentationObject)text;
     _obj.setParentObject(this);
     _objectType = OBJECT_TYPE_TEXT;
@@ -160,6 +161,7 @@ public class Link extends Text {
    */
   public Link(Text text, String url) {
     text.setFontColor("");
+    this.text = text.getText();
     _obj = (PresentationObject)text;
 //    System.err.println("setUrl"+url);
     setURL(url);

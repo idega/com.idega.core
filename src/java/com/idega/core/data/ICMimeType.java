@@ -4,6 +4,7 @@ import java.lang.String;
 import java.lang.Integer;
 import java.sql.SQLException;
 import com.idega.data.CacheableEntity;
+import com.idega.idegaweb.IWMainApplication;
 
 
 /**
@@ -81,7 +82,28 @@ public class ICMimeType extends CacheableEntity {
    return  getColumnNameMimeType();
   }
 
-//initial data is inserted in com.idega.block.media.business.MediaBundleStarter
+ /**
+  *Inserts this entity as a record into the datastore and cache
+  */
+  public void insert()throws SQLException{
+    super.insert();
+    IWMainApplication.getIWCacheManager().cacheEntity(IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())),getMimeType());
+  }
 
+  /**
+  *deletes this entity as a record in the datastore and cache
+  */
+  public void delete()throws SQLException{
+    IWMainApplication.getIWCacheManager().removeCachedEntity(getMimeType());
+    super.delete();
+  }
+
+  /**
+  *updates this entity as a record in the datastore and cache
+  */
+  public void update()throws SQLException{
+    IWMainApplication.getIWCacheManager().removeCachedEntity(getMimeType());
+    super.update();
+    IWMainApplication.getIWCacheManager().cacheEntity(IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())) ,getMimeType());
+  }
 }
-

@@ -198,11 +198,32 @@ public class IWCacheManager {
     FileUtil.deleteAllFilesInDirectory( realPath+IW_ROOT_CACHE_DIRECTORY );
   }
 
-
+/** caches a whole table. Must be of type CacheableEntity**/
   public void cacheTable(CacheableEntity entity){
     cacheTable(entity,entity.getCacheKey());
   }
 
+/** caches a single entity of type GenericEntity **/
+  public void cacheEntity(GenericEntity entity, String cacheKey){
+    if( entityMaps == null ){
+      entityMaps = new HashMap();
+    }
+    entityMaps.put(cacheKey, entity);
+  }
+
+  public GenericEntity getCachedEntity(String cacheKey){
+    if( entityMaps != null ){
+      return (GenericEntity) entityMaps.get(cacheKey);
+    }
+    else return null;
+  }
+
+  public void removeCachedEntity(String cacheKey){
+    if( entityMaps != null ){
+      entityMaps.remove(cacheKey);
+    }
+  }
+/** caches a whole table and specifies which column to use for a key. Must be of type CacheableEntity**/
   public void cacheTable(CacheableEntity entity, String columnNameForKey){
     cacheTable(entity,columnNameForKey,null);
   }
