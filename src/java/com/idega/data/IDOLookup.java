@@ -58,6 +58,17 @@ public class IDOLookup{
     return home;
   }
 
+  public static IDOHome getHomeLegacy(Class entityInterfaceClass){
+    try{
+      return getHome(entityInterfaceClass);
+    }
+    catch(RemoteException e){
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+
+
   public static IDOEntity create(Class entityInterfaceClass)throws RemoteException,javax.ejb.CreateException{
     return getHome(entityInterfaceClass).idoCreate();
   }
