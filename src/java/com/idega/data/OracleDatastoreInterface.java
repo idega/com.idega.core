@@ -35,7 +35,7 @@ import oracle.sql.CLOB;
 */
 public class OracleDatastoreInterface extends DatastoreInterface {
 	
-	public OracleDatastoreInterface(){
+	protected OracleDatastoreInterface(){
 		super();	
 		EntityControl.limitTableNameToThirtyCharacters = true;
 	}
