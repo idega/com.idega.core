@@ -25,7 +25,7 @@ import com.idega.util.ThreadContext;
  * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author
+ * @author        <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -156,7 +156,7 @@ public class IDOTableCreator{
         theReturner=false;
       //}
       //else{
-      //  se.printStackTrace();
+        se.printStackTrace();
       //}
     }
 
@@ -193,7 +193,9 @@ public class IDOTableCreator{
             //System.err.println("  Error was: "+e.getMessage());
           //}
           createMiddleTables(entity);
-          entity.insertStartData();
+          if(entity.getIfInsertStartData()){
+            entity.insertStartData();
+          }
         }
 
         this.endEntityCreationTransaction(entity,canCommit,true);
@@ -358,8 +360,25 @@ public class IDOTableCreator{
         Map relMap = relation.getColumnsAndReferencingClasses();
         String tableName = relation.getTableName();
         GenericEntity relatingEntity = null;
+
+
+        boolean doCreateMiddleTable = !doesTableExist(entity,tableName);
+
+        if(doCreateMiddleTable){
+             Set tempSet = relMap.keySet();
+             Iterator tempIter = tempSet.iterator();
+            while (tempIter.hasNext() && doCreateMiddleTable) {
+              String column = (String)tempIter.next();
+              Class relClass = (Class)relMap.get(column);
+              GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+              String referencingTableName = entity1.getTableName();
+              doCreateMiddleTable = doesTableExist(entity,referencingTableName);
+            }
+        }
+
+
         //try{
-          if(!doesTableExist(entity,tableName)){
+          if(doCreateMiddleTable){
             String creationStatement = "CREATE TABLE ";
             creationStatement += tableName;
             creationStatement += "(";
@@ -538,7 +557,7 @@ public class IDOTableCreator{
           }
         }
         catch(Exception e){
-          //e.printStackTrace();
+          e.printStackTrace();
         }
       }
     }

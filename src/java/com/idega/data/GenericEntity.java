@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.80 2002/02/21 17:30:48 eiki Exp $
+ * $Id: GenericEntity.java,v 1.81 2002/03/06 22:24:15 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -53,6 +53,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private static String _defaultString = "default";
   String _cachedColumnNameList;
   private String _lobColumnName;
+  private boolean insertStartData=true;
 
   private int _state;
 
@@ -142,7 +143,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
   /**
-   * Subclasses have to implement this method
+   * Subclasses have to implement this method - this should return the name of the underlying table
 	 */
 	public abstract String getEntityName();
 
@@ -212,11 +213,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public void addAttribute(String attributeName) {
-	    EntityAttribute attribute;
-	    attribute = new EntityAttribute(attributeName.toLowerCase());
-	    attribute.setAsPrimaryKey(true);
-	    attribute.setNullable(false);
-	    addAttribute(attribute);
+            EntityAttribute attribute;
+            attribute = new EntityAttribute(attributeName);
+            attribute.setAsPrimaryKey(true);
+            attribute.setNullable(false);
+            addAttribute(attribute);
 	}
 
 	/**
@@ -236,19 +237,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass) {
+
 	    EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 	    attribute.setLongName(longName);
 	    attribute.setVisible(ifVisible);
 	    attribute.setEditable(ifEditable);
 	    attribute.setStorageClass(storageClass);
 	    addAttribute(attribute);
+
 	}
 
 	/**
 	 * Added by Eirikur Hrafnsson
 	 *
 	 */
-       public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
+       protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength) {
 	  try{
 	    addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength);
 	  }
@@ -258,8 +261,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
        }
 
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength) {
-		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
+	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength) {
+		EntityAttribute attribute = new EntityAttribute(attributeName);
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
@@ -271,12 +274,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	  * @deprecated Replaced with addAttribute()
 	  */
-	public void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
+	protected void addColumnName(String columnName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
 		addAttribute(columnName,longName,ifVisible,ifEditable,storageClassName,relationShipType,relationShipClassName);
 	}
 
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
+	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,String relationShipType,String relationShipClassName) {
 	  try{
 	    addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),relationShipType,Class.forName(relationShipClassName));
 	  }
@@ -285,8 +288,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  }
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,String relationShipType,Class relationShipClass) {
-		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
+	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,String relationShipType,Class relationShipClass) {
+		EntityAttribute attribute = new EntityAttribute(attributeName);
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
@@ -296,7 +299,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		addAttribute(attribute);
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName){
+	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName){
 	  try{
 	    addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength,relationShipType,Class.forName(relationShipClassName));
 	  }
@@ -305,8 +308,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  }
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass){
-		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
+	protected void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass){
+		EntityAttribute attribute = new EntityAttribute(attributeName);
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
 		attribute.setEditable(ifEditable);
@@ -318,11 +321,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public void addAttribute(EntityAttribute attribute){
+	protected void addAttribute(EntityAttribute attribute){
 	    getAttributes().addElement(attribute);
 	}
 
-	public void addLanguageAttribute(){
+	protected void addLanguageAttribute(){
 	  this.addAttribute(getLanguageIDColumnName(),"Tungumál", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.Language");
 	}
 
@@ -334,13 +337,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return getAttribute(columnName);
 	}
 
-	public EntityAttribute getAttribute(String attributeName){
+	protected EntityAttribute getAttribute(String attributeName){
 		//return (EntityAttribute) columns.get(columnName.toLowerCase());
 		EntityAttribute theReturn = null;
 		EntityAttribute tempColumn = null;
 		for (Enumeration enumeration=getAttributes().elements();enumeration.hasMoreElements();){
 			tempColumn = (EntityAttribute)enumeration.nextElement();
-			if (tempColumn.getColumnName().toLowerCase().equals(attributeName.toLowerCase())){
+			if (tempColumn.getColumnName().equalsIgnoreCase(attributeName)){
 				theReturn = tempColumn;
 			}
 		}
@@ -350,23 +353,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return theReturn;
 	}
 
-	public void addOneToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
+	protected void addOneToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
       addOneToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
 	}
 
-	public void addOneToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
+	protected void addOneToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
       addAttribute(relationshipColumnName,description,true,true, Integer.class,GenericEntity.ONE_TO_ONE,relatingEntityClass);
 	}
 
-	public void addManyToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
+	protected void addManyToOneRelationship(String relationshipColumnName,Class relatingEntityClass){
       addManyToOneRelationship(relationshipColumnName,relatingEntityClass.getName(),relatingEntityClass);
 	}
 
-	public void addManyToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
+	protected void addManyToOneRelationship(String relationshipColumnName,String description,Class relatingEntityClass){
       addAttribute(relationshipColumnName,description,true,true, Integer.class,GenericEntity.ONE_TO_MANY,relatingEntityClass);
 	}
 
-	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
+	protected void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
 	  try{
 		EntityAttribute attribute = new EntityAttribute();
 		attribute.setName(relationshipName);
@@ -420,24 +423,30 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
-			_columns.put(columnName.toLowerCase(),columnValue);
-	    this.flagColumnUpdate(columnName);
-			if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
-			  setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-			}
-			else{
-			  this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-			}
-		}
+            //_columns.put(columnName.toLowerCase(),columnValue);
+			_columns.put(columnName.toUpperCase(),columnValue);
+            this.flagColumnUpdate(columnName);
+                        if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+                          setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+                        }
+                        else{
+		          this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+                        }
+                }
+
 	}
 
 	protected Object getValue(String columnName){
-		return _columns.get(columnName.toLowerCase());
+        //return _columns.get(columnName.toLowerCase());
+		return _columns.get(columnName.toUpperCase());
 	}
 
-	public void removeFromColumn(String columnName){
-	  _columns.remove(columnName.toLowerCase());
-	}
+
+        public void removeFromColumn(String columnName){
+          //_columns.remove(columnName.toLowerCase());
+          _columns.remove(columnName.toUpperCase());
+        }
+
 
 	public void setColumn(String columnName,Object columnValue){
 		if (this.getRelationShipClass(columnName)==null){
@@ -835,13 +844,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	*/
 
 	public String getIDColumnName(){
-	  String entityName = getEntityName();
-	  if (entityName.endsWith("_")){
-		  return entityName+"id";
-	  }
-	  else{
-		  return entityName+"_id";
-	  }
+          String entityName = getEntityName();
+          if (entityName.endsWith("_")){
+                  return entityName+"ID";
+                  //return entityName+"id";
+          }
+          else{
+                  return entityName+"_ID";
+                  //return entityName+"_id";
+          }
 	}
 
 	public static String getLanguageIDColumnName(){
@@ -857,10 +868,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		//for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
 		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();i++){
 			EntityAttribute temp = (EntityAttribute)e.nextElement();
-			if (temp.getAttributeType().equals("column")){
-			  vector.addElement(temp.getColumnName().toLowerCase());
-			}
-		}
+                        if (temp.getAttributeType().equals("column")){
+                          //vector.addElement(temp.getColumnName().toLowerCase());
+		                vector.addElement(temp.getColumnName());
+                }
+                }
+
 		if (vector != null){
 			vector.trimToSize();
 			return (String[]) vector.toArray(new String[0]);
@@ -922,12 +935,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			return false;
 		}
 */
-		if (_columns.get(columnName.toLowerCase())== null){
-		  return true;
-		}
-		else{
-		  return false;
-		}
+
+                //if (_columns.get(columnName.toLowerCase())== null){
+                if (_columns.get(columnName.toUpperCase())== null){
+                  return true;
+                }
+                else{
+                  return false;
+                }
+
 
 	}
 
@@ -1185,16 +1201,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
 			//if (RS.getInt(columnName) != -1){
-			int theInt = RS.getInt(columnName);
-			boolean wasNull = RS.wasNull();
-			if(!wasNull){
-			    setColumn(columnName.toLowerCase(),new Integer(theInt));
-			}
+                        int theInt = RS.getInt(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName,new Integer(theInt));
+                            //setColumn(columnName.toLowerCase(),new Integer(theInt));
+                        }
+
 			//}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
 			if (RS.getString(columnName) != null){
-				setColumn(columnName.toLowerCase(),RS.getString(columnName));
+				setColumn(columnName,RS.getString(columnName));
 			}
 
 		}
@@ -1202,54 +1220,63 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			String theString = RS.getString(columnName);
 			if (theString != null){
 				if (theString.equals("Y")){
-					setColumn(columnName.toLowerCase(),new Boolean(true));
+					setColumn(columnName,new Boolean(true));
 				}
 				else if (theString.equals("N")){
-					setColumn(columnName.toLowerCase(),new Boolean(false));
+					setColumn(columnName,new Boolean(false));
 				}
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
-			float theFloat = RS.getFloat(columnName);
-			boolean wasNull = RS.wasNull();
-			if(!wasNull){
-			    setColumn(columnName.toLowerCase(),new Float(theFloat));
-			}
+                        float theFloat = RS.getFloat(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName,new Float(theFloat));
+                            //setColumn(columnName.toLowerCase(),new Float(theFloat));
+                        }
+
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
-			double theDouble = RS.getFloat(columnName);
-			boolean wasNull = RS.wasNull();
-			if(!wasNull){
-			    setColumn(columnName.toLowerCase(),new Double(theDouble));
-			}
+                        double theDouble = RS.getFloat(columnName);
+                        boolean wasNull = RS.wasNull();
+                        if(!wasNull){
+                            setColumn(columnName,new Double(theDouble));
+                            //setColumn(columnName.toLowerCase(),new Double(theDouble));
+                        }
+
 			double doble = RS.getDouble(columnName);
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
 			if (RS.getTimestamp(columnName) != null){
-				setColumn(columnName.toLowerCase(),RS.getTimestamp(columnName));
+				setColumn(columnName,RS.getTimestamp(columnName));
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE){
 			if (RS.getDate(columnName) != null){
-				setColumn(columnName.toLowerCase(),RS.getDate(columnName));
+				setColumn(columnName,RS.getDate(columnName));
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME){
 			java.sql.Date date = RS.getDate(columnName);
-			if (date != null){
-				setColumn(columnName.toLowerCase(),date);
+                        if (date != null){
+				setColumn(columnName,date);
+                //setColumn(columnName.toLowerCase(),date);
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
 			/*if (RS.getDate(columnName) != null){
 				setColumn(columnName.toLowerCase(),RS.getTime(columnName));
 			}*/
-			setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
+                        setColumn(columnName,getEmptyBlob(columnName));
+                        //setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
+
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
 			String gender = RS.getString(columnName);
-			if (gender != null){
-				setColumn(columnName.toLowerCase(),new Gender(gender));
+                        if (gender != null){
+				setColumn(columnName,new Gender(gender));
+                //setColumn(columnName.toLowerCase(),new Gender(gender));
+
 			}
 		}
 
@@ -2603,6 +2630,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    public void debug(String outputString){
     if( com.idega.idegaweb.IWMainApplication.isDebugActive() ){
       System.out.println("[DEBUG] \""+outputString+"\" : "+this.getEntityName());
+
     }
+   }
+
+
+
+   public void setToInsertStartData(boolean ifTrue){
+    this.insertStartData=ifTrue;
+   }
+
+   public boolean getIfInsertStartData(){
+    return insertStartData;
    }
 }
