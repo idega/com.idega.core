@@ -248,7 +248,7 @@ public class Form extends InterfaceObject {
 		}
 //		 temporary not allowing when event handler used
 		
-		if(showLoadingLayerOnSubmit && getTarget()!=null){//&& !("iw_event_frame").equals(target)){
+		if(showLoadingLayerOnSubmit && getTarget()==null){//&& !("iw_event_frame").equals(target)){
 		    if(getParentPage().getAssociatedBodyScript().getFunction("calculateWindowSize")==null)
 		        getParentPage().getAssociatedScript().addFunction("calculateWindowSize",getWindowSizeScript());
 		   
