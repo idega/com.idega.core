@@ -28,9 +28,13 @@ public class OracleAS extends DefaultAppServer {
         return "Oracle";
     }
     /**
-     * This appserver has a bug for this so we return true
+     * This appserver has a bug for this so we return false in special cases
      */
     public boolean getSupportsSettingCharactersetInRequest() {
+        if (getVersion() != null && getVersion().startsWith("9.0.3")) {
+            return false; //this is a special backward compatable case so current Nacka and Taby servers will function
+        }
+        
         return true;
     }    
 }
