@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.56 2004/10/22 13:38:28 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.57 2005/03/24 11:38:30 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -603,7 +603,7 @@ public class LoginDBHandler {
 		ArrayList userNameList = new ArrayList(200);
 		try {
 			String usePidAsGenerated = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getProperty(LOGIN_USE_PID_AS_GENERATED,Boolean.toString(false));
-			if(Boolean.getBoolean(usePidAsGenerated)){
+			if(new Boolean(usePidAsGenerated).booleanValue()){
 				userNameList.add(user.getPersonalID());
 			}
 		} catch (RuntimeException e1) {
