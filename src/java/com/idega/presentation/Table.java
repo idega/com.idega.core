@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.67 2004/07/09 01:28:44 gummi Exp $
+ * $Id: Table.java,v 1.68 2004/07/14 12:37:22 aron Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1345,12 +1345,19 @@ public class Table extends PresentationObjectContainer {
 									}
 									print(LINE_BREAK);
 									printString.append(getCellStartTag(iwc,x,y));
+									int mergeWidth = getWidthOfMergedCell(x, y);
+									int mergeHeight = getHeightOfMergedCell(x, y);
+									theCells[x - 1][y - 1].setMarkupAttribute("colspan",mergeWidth);
+									theCells[x - 1][y - 1].setMarkupAttribute("rowspan",mergeHeight);
 									printString.append(theCells[x - 1][y - 1].getMarkupAttributesString());
+									/*
 									printString.append(" colspan=\"");
-									printString.append(getWidthOfMergedCell(x, y));
+									printString.append(mergeWidth);
 									printString.append("\" rowspan=\"");
-									printString.append(getHeightOfMergedCell(x, y));
+									printString.append(mergeHeight);
+									
 									printString.append("\" ");
+									*/
 									printString.append(TAG_END);
 									println(printString.toString());
 									
@@ -1656,15 +1663,19 @@ public class Table extends PresentationObjectContainer {
 			setRows(Integer.parseInt(values[0]));
 		}
 	}
+	
 
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
+		return clone(iwc,askForPermission,1,getRows());
+	}
+	public Object clone(IWUserContext iwc,boolean askForPermission,int startRow,int endRow){
 		Table obj = null;
 		try {
 			obj = (Table) super.clone(iwc, askForPermission);
 			if (this.theCells != null) {
 				obj.theCells = new TableCell[cols][rows];
 				for (int x = 0; x < theCells.length; x++) {
-					for (int y = 0; y < theCells[x].length; y++) {
+					for (int y = (startRow-1); y < endRow; y++) {
 						if (this.theCells[x][y] != null) {
 							obj.theCells[x][y] = (TableCell) ((TableCell) this.theCells[x][y]).clonePermissionChecked(iwc, askForPermission);
 							obj.theCells[x][y].setParentObject(obj);
