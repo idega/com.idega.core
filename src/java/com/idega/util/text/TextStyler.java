@@ -1,10 +1,5 @@
 package com.idega.util.text;
 
-import java.util.Vector;
-import java.util.StringTokenizer;
-import com.idega.util.text.TextSoap;
-import java.util.Hashtable;
-import java.util.Map;
 /**
  * Title:
  * Description:
@@ -22,21 +17,19 @@ public class TextStyler {
 	public static String FONTSIZE = "font-size";
 	public static String TEXTDECORATION = "text-decoration";
 
-	public static String defaultFontFace = "font-face: Arial, Helvetica, sans-serif";
+	public static String defaultFontFace = "Arial, Helvetica, sans-serif";
 	public static String defaultFontWeight = "bold";
 	public static String defaultColor = "black";
-	public static String defaultFontSize = "8";
+	public static String defaultFontSize = "8pt";
 	public static String defaultTextDecoration = "none";
 
 	public static String getDefaultStyle(){
 		return getStyle(defaultFontFace,defaultFontWeight,defaultColor,defaultFontSize,defaultTextDecoration);
-
 	}
 
 	public static String getStyle(String fontFace,String fontWeight,String Color,String fontSize,String TextDecoration){
 		String colon = ": ";
 		String semicolon = "; ";
-		String comma = ", ";
 		StringBuffer style = new StringBuffer();
 		style.append(FONTFACE);
 		style.append(colon);
@@ -56,7 +49,6 @@ public class TextStyler {
 		style.append(FONTSIZE);
 		style.append(colon);
 		style.append(fontSize !=null?fontSize:defaultFontSize);
-		style.append("pt");
 		style.append(semicolon);
 
 		style.append(TEXTDECORATION);
@@ -65,8 +57,5 @@ public class TextStyler {
 		style.append(semicolon);
 
 		return style.toString();
-
 	}
-
-
 }
