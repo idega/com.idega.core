@@ -9,7 +9,6 @@ import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -141,8 +140,8 @@ public class SubmitButton extends GenericButton {
 		}
 		if (isEnclosedByForm()) {
 			if (_confirmSubmit) {
-				getScript().addFunction("confirmSubmit", "function confirmSubmit(input,message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tinput.form.submit();\n}");
-				setOnClick("confirmSubmit(this,'"+_confirmMessage+"');");
+				getScript().addFunction("confirmSubmit", "function confirmSubmit(message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tfindObj('"+getForm().getName()+"').submit();\n}");
+				setOnClick("confirmSubmit('"+_confirmMessage+"');");
 			}
 			if (_enabledWhenChecked) {
 				getScript().addFunction("enableButton","function enableButton(inputs,button) {\n	\tif (validateInputs(inputs)) \n	\t\tbutton.disabled=eval('false');\n	\telse\n	\t\tbutton.disabled=eval('true');\n }");
@@ -157,8 +156,8 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			/*if (_confirmSubmit)
-				setInputType(INPUT_TYPE_BUTTON);*/
+			if (_confirmSubmit)
+				setInputType(INPUT_TYPE_BUTTON);
 			
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
@@ -202,7 +201,7 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void setSubmitConfirm(String confirmMessage) {
 		_confirmSubmit = true;
-		_confirmMessage = TextSoap.removeLineBreaks(confirmMessage);
+		_confirmMessage = confirmMessage;
 	}
 	
 	/**
