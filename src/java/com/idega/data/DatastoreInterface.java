@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.57 2003/01/21 14:27:46 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.58 2003/01/29 03:06:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -336,7 +336,7 @@ public abstract class DatastoreInterface {
 			statement.append("insert into ");
 			statement.append(entity.getTableName());
 			statement.append("(");
-			statement.append(getCommaDelimitedColumnNames(entity));
+			statement.append(getCommaDelimitedColumnNamesForInsert(entity));
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
@@ -694,7 +694,7 @@ public abstract class DatastoreInterface {
 			statement.append("insert into ");
 			statement.append(entity.getTableName());
 			statement.append("(");
-			statement.append(getCommaDelimitedColumnNames(entity));
+			statement.append(getCommaDelimitedColumnNamesForInsert(entity));
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
@@ -933,7 +933,8 @@ public abstract class DatastoreInterface {
 	 * @return the SQL query string
 	 */
 	protected String getCommaDelimitedColumnNamesForSelect(IDOLegacyEntity entity) {
-		String newCachedColumnNameList = entity.getCachedColumnNamesList();
+		String newCachedColumnNameList =null;
+		//String newCachedColumnNameList = entity.getCachedColumnNamesList();
 		if (newCachedColumnNameList == null) {
 			StringBuffer returnString = null;
 			String[] names = entity.getColumnNames();
@@ -952,8 +953,16 @@ public abstract class DatastoreInterface {
 		}
 		return newCachedColumnNameList;
 	}
-	protected static String getCommaDelimitedColumnNames(IDOLegacyEntity entity) {
-		String newCachedColumnNameList = entity.getCachedColumnNamesList();
+	
+	/**
+	 * Returns a string with all the columns in the enti, which are valid for
+	 * insert (e.g. not null) , comma separated
+	 * @param entity
+	 * @return String
+	 */
+	protected static String getCommaDelimitedColumnNamesForInsert(IDOLegacyEntity entity) {
+		String newCachedColumnNameList =null;
+		//String newCachedColumnNameList = entity.getCachedColumnNamesList();
 		if (newCachedColumnNameList == null) {
 			StringBuffer returnString = null;
 			String[] names = entity.getColumnNames();
