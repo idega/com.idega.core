@@ -1,10 +1,9 @@
 package com.idega.core.data;
 
 import com.idega.data.BlobWrapper;
-import com.idega.core.data.ICLanguage;
+import com.idega.data.TreeableEntityBMPBean;
+
 import java.sql.Timestamp;
-import java.lang.String;
-import java.lang.Integer;
 import java.sql.SQLException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,9 +11,13 @@ import com.idega.data.TreeableEntity;
 import com.idega.core.user.data.User;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
+
+import java.util.Collection;
 import java.util.Iterator;
 import com.idega.idegaweb.IWCacheManager;
 import java.util.Locale;
+
+import javax.ejb.FinderException;
 
 /**
  * Title:        idegaWeb Classes
@@ -25,7 +28,7 @@ import java.util.Locale;
  * @version 1.0
  */
 
-public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.data.ICFile {
+public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity  {
 
   private static final String FILE_VALUE = "file_value";
   public static String IC_ROOT_FOLDER_CACHE_KEY = "ic_root_folder";
@@ -324,6 +327,15 @@ public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
     this.removeAllMetaData();
     this.update();
     super.delete();
+  }
+  
+  
+   public Integer ejbFindByFileName(String name)throws FinderException{
+    Collection files = idoFindAllIDsByColumnBySQL(this.getColumnNameName(),name);
+    if(!files.isEmpty()){
+      return (Integer)files.iterator().next();
+    }
+    else throw new FinderException("File was not found");
   }
 
 }
