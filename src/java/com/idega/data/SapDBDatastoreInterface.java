@@ -6,6 +6,7 @@
 */
 package com.idega.data;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 /**
 *A class for database abstraction for the SapDB Database.
@@ -129,6 +130,69 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
+
+	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
+		Connection conn = null;
+		Statement Stmt = null;
+		ResultSet rs = null;
+		boolean returner = false;
+		try {
+			conn = entity.getConnection();
+			Stmt = conn.createStatement();
+			boolean sequenceExists = false;
+			
+			String seqSQL = "select * from DOMAIN.SEQUENCES where SEQUENCE_NAME = '"+getSequenceName(entity)+"'";
+			try {
+				rs = Stmt.executeQuery(seqSQL.toUpperCase());
+				if (rs != null && rs.next()) {					
+					sequenceExists = true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				log("Error finding sequence table");
+			} finally {
+				rs.close();
+			}
+			
+			if (sequenceExists) {
+				returner = true; 
+			}
+			else if (createIfNot) {				
+				String maxSQL = "select max ("+entity.getIDColumnName()+") as MAX_ID from "+entity.getEntityName();
+				int valueToSet = 1;
+				try {
+					rs = Stmt.executeQuery(maxSQL);
+					if (rs != null && rs.next()) {
+						String sMax = rs.getString("MAX_ID");					
+						if (sMax != null) {
+								valueToSet = Integer.parseInt(sMax);
+						}						
+					}
+					createSequence(entity, valueToSet);
+				}
+				catch (NumberFormatException e) {
+					//UPDATE TRIGGER ignored
+					//Not numeric value in primary key field in table "+entity.getEntityName())
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					rs.close();
+				}
+				returner = true;
+			}
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+		return returner;
+	}
+
 	public void deleteEntityRecord(GenericEntity entity) throws Exception {
 		//deleteTrigger(entity);
 		deleteSequence(entity);
