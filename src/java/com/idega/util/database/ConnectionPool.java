@@ -198,7 +198,7 @@ public class ConnectionPool
 
           }
 
-          catch(SQLException ex){
+          catch(Exception ex){
 
             System.err.println("There was an error in ConnectionPool.refresh() for i="+i+" \n The error was: "+ex.getMessage());
 
