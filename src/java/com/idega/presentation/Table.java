@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.72 2004/08/10 02:43:07 laddi Exp $
+ * $Id: Table.java,v 1.73 2004/09/06 12:30:56 laddi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -309,6 +309,10 @@ public class Table extends PresentationObjectContainer {
 		//this.setAttribute("background", backgroundImageURL);
 		if(!"".equals(backgroundImageURL))
 			setStyleAttribute("background: url('"+backgroundImageURL+"');");
+	}
+	
+	public void setBackgroundRepeat(String repeat) {
+		setStyleAttribute("background-repeat", repeat);
 	}
 	
 	public void setBackgroundImageURL(int xpos, int ypos, String backgroundImageURL) {
