@@ -60,7 +60,7 @@ public class BlobInputStream extends InputStream{
   }
 
   /**
-  *<STRONG>Mandatory</STRONG> to call this function after instanciating this class
+  *<STRONG>Mandatory</STRONG> to call this function using this class
   **/
   public void close() throws IOException {
     try{
@@ -80,7 +80,8 @@ public class BlobInputStream extends InputStream{
     }
     finally{
       if (conn!= null){
-        ConnectionBroker.freeConnection(conn);
+       // ConnectionBroker.freeConnection(conn);
+        PoolManager.getInstance().freeConnection(conn);
       }
     }
   }
@@ -157,7 +158,8 @@ public class BlobInputStream extends InputStream{
   }
 
   private void initConnection() throws SQLException{
-      conn = ConnectionBroker.getConnection();
+    //  conn = ConnectionBroker.getConnection();
+    conn = PoolManager.getInstance().getConnection();
   }
 /*
   protected void finalize()throws Throwable{
