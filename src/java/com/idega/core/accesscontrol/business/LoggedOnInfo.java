@@ -1,8 +1,10 @@
 package com.idega.core.accesscontrol.business;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-
 import com.idega.core.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -25,6 +27,8 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   private int _loginRecordId = -1;
   private String _encryptionType = null;
   private String _loginType = null;
+  private Set _userRoles = null;
+  private Map _loggedOnInfoAttribute = new HashMap();
 
   public LoggedOnInfo() {
 
@@ -163,4 +167,24 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 		_loginTableId = id;
 	}
 
+	/**
+	 * @return Returns the user role String's.
+	 */
+	public Set getUserRoles() {
+		return _userRoles;
+	}
+	/**
+	 * @param roles Collections of the role String's that the user has.
+	 */
+	public void setUserRoles(Set roles) {
+		_userRoles = roles;
+	}
+	
+	public void setAttribute(Object key, Object value){
+		_loggedOnInfoAttribute.put(key,value);
+	}
+	
+	public Object getAttribute(Object key){
+		return _loggedOnInfoAttribute.get(key);
+	}
 }
