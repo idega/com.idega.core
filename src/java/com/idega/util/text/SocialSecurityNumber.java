@@ -2,6 +2,7 @@ package com.idega.util.text;
 
 import java.sql.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import com.idega.util.IWTimestamp;
 
@@ -75,6 +76,17 @@ public class SocialSecurityNumber {
 			return stamp.getDate();
   	}
   	return null;
+	}
+	
+
+	public static boolean isValidSocialSecurityNumber(String ssn,Locale locale){
+		if(locale.equals(new Locale("is","IS"))){
+			return isValidIcelandicSocialSecurityNumber(ssn);
+		}
+		// TODO handle other system locales
+		else
+			return false;
+		
 	}
 
 	/**
