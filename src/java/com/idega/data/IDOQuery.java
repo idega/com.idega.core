@@ -58,6 +58,8 @@ public class IDOQuery {
 	private static final String IS_NULL = " IS NULL ";
 	private static final String ASCENDING = " ASC ";
 	private static final String DESCENDING = " DESC ";
+	private static final String TRUE = "Y";
+	private static final String FALSE = "N";
 
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
@@ -76,11 +78,13 @@ public class IDOQuery {
 	}
 
 	/**
-	 * @see java.lang.StringBuffer#append(boolean)
+	 * Appends an SQL counterpart for a Boolean value (declared by Boolean.class in the BMPBean).
 	 */
 	public IDOQuery append(boolean b) {
-		_buffer.append(b);
-		return this;
+		if (b)
+			return this.appendWithinSingleQuotes(TRUE);
+		else
+			return this.appendWithinSingleQuotes(FALSE);
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(char)
@@ -610,6 +614,13 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery appendWhereEquals(String columnName, boolean columnValue) {
+		appendWhere(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
 	/**
 	 * Appends a where (where columnName=columnValue) with single quotemarks
 	 * @param columnName the name of the field
@@ -676,6 +687,14 @@ public class IDOQuery {
 		return this;
 	}
 
+	public IDOQuery appendEquals(String columnName, boolean columnValue) {
+		this.append(WHITE_SPACE);
+		this.append(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
 	public IDOQuery appendEquals(String columnName, int columnValue) {
 		this.append(WHITE_SPACE);
 		this.append(columnName);
@@ -709,6 +728,14 @@ public class IDOQuery {
 	}
 
 	public IDOQuery appendAndEquals(String columnName, String columnValue) {
+		appendAnd();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(columnValue);
+		return this;
+	}
+
+	public IDOQuery appendAndEquals(String columnName, boolean columnValue) {
 		appendAnd();
 		append(columnName);
 		this.appendEqualSign();
