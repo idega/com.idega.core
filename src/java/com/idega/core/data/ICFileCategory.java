@@ -31,8 +31,8 @@ public class ICFileCategory extends GenericEntity {
     addAttribute(getIDColumnName());
     addAttribute("category_type","Type of category",true,true, String.class,255);
     addAttribute("category_name","File category name",true,true, String.class, 255);
-
-    addManyToManyRelationShip(ICFile.class,"ic_file_file_category");
+    //Temporary Soloution
+    //addManyToManyRelationShip(ICFile.class,"ic_file_file_category");
   }
 
   public String getEntityName() {

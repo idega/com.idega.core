@@ -32,6 +32,8 @@ public class ICObject extends GenericEntity{
         private static final String object_type_column_name = "object_type";
         private static final String class_name_column_name = "class_name";
         private final static String BUNDLE_COLUMN_NAME="bundle";
+        private final static String class_value_column_name = "class_value";
+        private final static String icon_file = "icon_file";
 
 	public ICObject(){
 		super();
@@ -46,14 +48,17 @@ public class ICObject extends GenericEntity{
 		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
 
 		addAttribute(getIDColumnName());
-		addAttribute("object_name","Name",true,true,"java.lang.String");
-		addAttribute(getClassNameColumnName(),"Class Name",true,true,"java.lang.String");
-                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,"java.lang.String",1000);
-                addAttribute(getBundleColumnName(),"Bundle",true,true,"java.lang.String",1000);
-		//addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
+		addAttribute("object_name","Name",true,true,java.lang.String.class);
+		addAttribute(getClassNameColumnName(),"Class Name",true,true,java.lang.String.class);
+                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,1000);
+                addAttribute(getBundleColumnName(),"Bundle",true,true,java.lang.String.class,1000);
+                addAttribute(getColumnClassValue(),"Class File",true,true,java.lang.Integer.class,"one-to-one",ICFile.class);
+                addAttribute(getColumnIcon(),"Icon",true,true,java.lang.Integer.class,"many-to-one",ICFile.class);
+
+                //addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sjálfur",true,true,"java.sql.Blob");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
-		addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer");
+		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 		//addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
 
         }
@@ -64,6 +69,14 @@ public class ICObject extends GenericEntity{
 
         public static String getClassNameColumnName(){
           return class_name_column_name;
+        }
+
+        public static String getColumnClassValue(){
+          return class_value_column_name;
+        }
+
+        public static String getColumnIcon(){
+          return icon_file;
         }
 
         private static List componentList;

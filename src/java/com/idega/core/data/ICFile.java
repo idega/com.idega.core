@@ -42,9 +42,8 @@ public class ICFile extends TreeableEntity {
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
     addAttribute("file_size","file size in bytes",true,true,java.lang.Integer.class);
-
-        addManyToManyRelationShip(ICFileCategory.class,"ic_file_file_category");
     addMetaDataRelationship();//can have extra info in the ic_metadata table
+    addManyToManyRelationShip(ICFileCategory.class,"ic_file_file_category");
 
   }
 
