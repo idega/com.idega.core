@@ -23,6 +23,7 @@ import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.FileUtil;
 import com.idega.util.Index;
 import com.idega.util.IndexComparator;
+import com.idega.util.URLUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -66,6 +67,8 @@ public class PageIncluder extends PresentationObject implements Index{
 
   private boolean changeURL = false;
   private final String symbol = "$";
+
+  private Map allowedDomainsAndIPNumberMap;
 
 
   public PageIncluder(){
@@ -121,6 +124,17 @@ public class PageIncluder extends PresentationObject implements Index{
     instanceId=getICObjectInstanceID();
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
+//  security check to stop hackers from using the pageincluder from a domain that is not allowed
+    if(allowedDomainsAndIPNumberMap!=null){
+    		if( changeURL ){
+    			URLUtil util = new URLUtil(getLocation(iwc));
+    			String domainOrIpPart = util.getHost();
+    			if(!allowedDomainsAndIPNumberMap.containsKey(domainOrIpPart)){
+    				return;//if the domain is not allowed to ask for pageincluding then do nothing
+    			}	
+    		}
+    }	
+    
     if( changeURL && (_sendToPage != null) && iwc.isParameterSet(_sendToPageIfSet) ) {//forwarding
       forwardToIBPage(fromPage,_sendToPage,iwc);
     }
@@ -712,4 +726,15 @@ private void setPrefixes(IWContext iwc)throws Exception{
 		matcher.appendTail(sb);
 		return sb.toString();
 	}
+	
+	public void setToAddRequiredIPOrDomain(String allowedIpOrDomain){
+		
+		if(allowedDomainsAndIPNumberMap==null){
+			allowedDomainsAndIPNumberMap = new HashMap();
+		}
+		
+		allowedDomainsAndIPNumberMap.put(allowedIpOrDomain,allowedIpOrDomain);//map to avoid adding endlessly into a list in the builder
+		
+	}
+	
 }
