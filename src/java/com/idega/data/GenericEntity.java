@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.81 2002/03/06 22:24:15 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.82 2002/03/07 11:50:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -25,6 +25,9 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 /**
+ * A class to serve as a base class for objects mapped to persistent data.
+ *
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>

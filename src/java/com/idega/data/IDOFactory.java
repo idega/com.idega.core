@@ -10,12 +10,12 @@ import java.util.*;
  * Copyright:    Copyright (c) 2001
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
  */
 
 public abstract class IDOFactory implements IDOHome{
 
-  IDOFactory(){
+  protected IDOFactory(){
   }
 
   public static IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
