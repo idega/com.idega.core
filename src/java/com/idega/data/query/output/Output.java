@@ -26,7 +26,17 @@ public class Output implements Flag{
     public String toString() {
         return result.toString();
     }
+    
+    public Output print(Outputable o){
+        writeNewLineIfNeeded();
+        Output out = new Output("");
+        out.flag(this.isFlagged());
+        o.write(out);
+        result.append(out.toString());
+        return this;
+    }
 
+    
     public Output print(Object o) {
         writeNewLineIfNeeded();
         result.append(o);

@@ -320,16 +320,13 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	    }
 	    return list;
 	}
-	
-	private void appendList(Output out, Collection collection, String seperator){
-	    appendList(out,collection,seperator,false);
-	}
+
 
 	/**
 	 * Iterate through a Collection and append all entries (using .toString()) to
 	 * a StringBuffer.
 	 */
-	private void appendList(Output out, Collection collection, String seperator,boolean flag) {
+	private void appendList(Output out, Collection collection, String seperator) {
 		Iterator i = collection.iterator();
 		boolean hasNext = i.hasNext();
 
