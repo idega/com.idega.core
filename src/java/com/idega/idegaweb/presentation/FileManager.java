@@ -78,16 +78,18 @@ public class FileManager extends Block {
 					if(relativePath == true){
 						String appURI = iwc.getIWMainApplication().getApplicationRealPath();
 						currentFolder = appURI+folder;
-						System.out.println("Path is relative to: "+appURI);
+//						System.out.println("Path is relative to: "+appURI);
 						relativePath = false;
 					}else{
-						System.out.println("Path is absolute");
+//						System.out.println("Path is absolute");
 						currentFolder = folder;
 					}
 				}
-			}else{
+			}
+/*			else{
 				currentFolder = topLevelFolder;
 			}
+*/
 			if(iwc.isParameterSet(PRM_FOLDER))
 				currentFolder = iwc.getParameter(PRM_FOLDER);
 			if(iwc.isParameterSet(PRM_FILE))
@@ -95,7 +97,7 @@ public class FileManager extends Block {
 			if(iwc.isParameterSet(PRM_SUB_FOLDER))
 				currentFolder = folder+iwc.getParameter(PRM_SUB_FOLDER);
 			
-			System.out.println("path:"+currentFolder);
+//			System.out.println("path:"+currentFolder);
 			
 			if(iwc.isMultipartFormData()){
 				if(processUpload(iwc))
@@ -183,16 +185,17 @@ public class FileManager extends Block {
 		table.setColor(1,2,headerBackgroundColor);
 		
 		//TODO fix x url
-		String server = iwc.getServerURL();
-		String context = iwc.getIWMainApplication().getApplicationContextURI();
-		String appURI = iwc.getIWMainApplication().getApplicationRealPath();
+		String server = iwc.getServerURL().replace('\\','/');
+		String context = iwc.getIWMainApplication().getApplicationContextURI().replace('\\','/');
+		String appURI = iwc.getIWMainApplication().getApplicationRealPath().replace('\\','/');
 		//String appURI =iwc.getApplication().getApplicationContextURI();
 		//int index = currentFile.indexOf(appURI);
+/*
 		System.out.println("curr file "+currentFile);
 		System.out.println("appURI "+appURI);
 		System.out.println("context "+context);
 		System.out.println("server "+server);
-
+*/
 		String url = currentFile.substring(appURI.length());
 		if(context.endsWith("/"))
 			url = context+url;
@@ -200,7 +203,7 @@ public class FileManager extends Block {
 			url =context+"/"+url;
 			//url ="/"+url;
 		url = server+url;
-		System.out.println("url "+url);
+//		System.out.println("url "+url);
 
 		IFrame frame =new IFrame("fileview",600,600);
 		frame.setSrc(url);
@@ -217,13 +220,17 @@ public class FileManager extends Block {
 	 * @param iwc
 	 */
 	private void presentateFileView(IWContext iwc) {
+		if(null==currentFolder){
+			add(iwrb.getLocalizedString("please_set_the_path_for_this_block","Please set the path for this block"));
+			return;
+		}
 		Table fileTable = new Table();
 		int row = 1;
 		fileTable.add(getHeaderText(iwrb.getLocalizedString("file","File")), 1, row);
 		fileTable.add(getHeaderText(iwrb.getLocalizedString("size","Size")), 2, row);
 		fileTable.add(getHeaderText(iwrb.getLocalizedString("date","Date")), 3, row);
 		row++;
-		System.out.println("Path in present file "+currentFolder);
+//		System.out.println("Path in present file "+currentFolder);
 		File dir = new File(currentFolder);
 		Table table = new Table();
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -247,7 +254,7 @@ public class FileManager extends Block {
 		File file;
 		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT, iwc.getCurrentLocale());
 		if (!isTopLevel(dir)) {
-			String dirPath = dir.getAbsolutePath();
+			String dirPath = dir.getAbsolutePath().replace('\\','/');
 			fileTable.add(getFolderIcon(), 1, row);
 			fileTable.add(getUpFolderLink((dirPath.substring(0, dirPath.lastIndexOf("/"))), iwc), 1, row);
 			fileTable.setColor(1, row, fileBackgroundColor);
@@ -316,8 +323,11 @@ public class FileManager extends Block {
 		headerTable.setWidth(Table.HUNDRED_PERCENT);
 		headerTable.setCellspacing(2);
 		headerTable.add(getText(iwrb.getLocalizedString("current_folder","Current folder")+": "), 1, 1);
-		String absolute = dir.getAbsolutePath();
+		String absolute = dir.getAbsolutePath().replace('\\','/');
 		String shortdir = absolute.substring(absolute.indexOf(topLevelFolder)+topLevelFolder.length());
+		System.out.println("absolute path: "+absolute);
+		System.out.println("top level path: "+topLevelFolder);
+		System.out.println("shortdir path: "+shortdir);
 		if(shortdir.length()==0){
 			shortdir ="/";
 			headerTable.add(getSubFolderLink(shortdir,iwc), 1, 1);
@@ -395,7 +405,7 @@ public class FileManager extends Block {
 		add( form);
 	}
 	private boolean isTopLevel(File file) {
-		String absPath = file.getAbsolutePath();
+		String absPath = file.getAbsolutePath().replace('\\','/');
 		if(topLevelFolder!=null){
 			int toplevel = topLevelFolder.lastIndexOf("/");
 			String top =topLevelFolder.substring(toplevel);
@@ -571,7 +581,7 @@ public class FileManager extends Block {
 	public void setStartingFolderRealPath(String folder) {
 		relativePath = false;
 		this.folder = folder;
-		System.out.println("Path set to "+folder);
+//		System.out.println("Path set to "+folder);
 	}
 
 	/**
@@ -580,7 +590,7 @@ public class FileManager extends Block {
 	public void setStartingFolderRelativePath(String folder) {
 		relativePath = true;
 		this.folder = folder;
-		System.out.println("Path set to "+folder);
+//		System.out.println("Path set to "+folder);
 	}
 
 	public void setFilesDeletable(boolean deletable){
