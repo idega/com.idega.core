@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.1 2004/10/19 10:37:10 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.2 2004/11/01 15:02:44 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.util.StringHandler;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/19 10:37:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/01 15:02:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -37,6 +37,8 @@ public class DefaultViewNode implements ViewNode {
 	private ViewNode parent;
 	private Collection roles;
 	private IWMainApplication iwma;
+	private static String SLASH="/";
+	private static String NODE_SEPARATOR=SLASH;
 	
 	
 	/**
@@ -67,6 +69,27 @@ public class DefaultViewNode implements ViewNode {
 			children=new HashMap();
 		}
 		return children;
+	}
+	
+	public String getURI(){
+		StringBuffer path = new StringBuffer();
+		String contextURI = getIWMainApplication().getApplicationContextURI();
+		
+		ViewNode view = this;
+		while(view!=null){
+			String viewId = view.getViewId();
+			if(!viewId.equals(NODE_SEPARATOR)){
+				path.insert(0,view.getViewId());
+				path.insert(0,NODE_SEPARATOR);
+			}
+			view = view.getParent();
+		}
+		
+		if(contextURI != null ){
+			path.insert(0,contextURI);
+		}
+		
+		return path.toString();
 	}
 	
 	/* (non-Javadoc)

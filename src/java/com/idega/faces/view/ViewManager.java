@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.2 2004/10/25 14:48:52 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.3 2004/11/01 15:02:44 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,7 +14,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import com.idega.faces.view.node.ApplicationViewNode;
 import com.idega.faces.view.node.BuilderPageViewNode;
-import com.idega.faces.view.node.FramedApplicationViewNode;
 import com.idega.faces.view.node.FramedWindowClassViewNode;
 import com.idega.faces.view.node.WindowViewNode;
 import com.idega.idegaweb.IWMainApplication;
@@ -22,10 +21,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/25 14:48:52 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/01 15:02:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ViewManager {
 	
@@ -40,6 +39,11 @@ public class ViewManager {
 			instance = new ViewManager(iwma);
 		}
 		return instance;
+	}
+	
+	public static ViewManager getInstance(FacesContext context){
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		return getInstance(iwma);
 	}
 	
 	private ViewManager(IWMainApplication iwma){
