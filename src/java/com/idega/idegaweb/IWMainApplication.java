@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.115 2004/12/15 22:03:59 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.116 2004/12/16 17:04:48 joakim Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/15 22:03:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/16 17:04:48 $ by $Author: joakim $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.115 $
+ * @version $Revision: 1.116 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -195,7 +195,6 @@ public class IWMainApplication //{//implements ServletContext{
 
     public void loadBundles() {
         bundlesFile = new Properties();
-        loadedBundles = new HashMap();
         try {
             bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this
                     .getPropertiesRealPath(), bundlesFileName);
@@ -204,6 +203,32 @@ public class IWMainApplication //{//implements ServletContext{
             e.printStackTrace();
         }
         checkForInstalledBundles();
+        loadBundlesLocalizationsForJSF();
+    }
+    
+    /*
+     * Returns a Map over the Loaded bundles:
+     * Key is a string (bundle identifier) and value is a IWBundle instance
+     */
+    protected Map getLoadedBundles() {
+    	if(loadedBundles==null) {
+    		 loadedBundles = new HashMap();
+    	}
+    	return loadedBundles;
+    }
+    
+    /*
+     * method that loads the bundle localizations that can be used as value bindings for JSF
+     */
+    private void loadBundlesLocalizationsForJSF() {
+    	Map bundleForLocalizations = new HashMap();
+    	for (Iterator iter = getLoadedBundles().keySet().iterator(); iter.hasNext();) {
+			String bundleIdentifier = (String) iter.next();
+			IWBundle bundle = getBundle(bundleIdentifier);
+			BundleLocalizationMap bLocalizationMap = new BundleLocalizationMap(bundle);
+			bundleForLocalizations.put(bundleIdentifier,bLocalizationMap);
+    	}
+    	this.setAttribute("bundles",bundleForLocalizations);
     }
 
     public void loadViewManager(){
@@ -479,10 +504,10 @@ public class IWMainApplication //{//implements ServletContext{
             //IWCacheManager.deleteCachedBlobs(this);
             //      getImageFactory(true).deleteGeneratedImages(this);
 
-            for (Iterator keyIter = loadedBundles.keySet().iterator(); keyIter
+            for (Iterator keyIter = getLoadedBundles().keySet().iterator(); keyIter
                     .hasNext();) {
                 Object key = keyIter.next();
-                IWBundle bundle = (IWBundle) loadedBundles.get(key);
+                IWBundle bundle = (IWBundle) getLoadedBundles().get(key);
                 bundle.unload();
             }
             loadedBundles=null;
@@ -695,7 +720,7 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
-        IWBundle bundle = (IWBundle) loadedBundles.get(bundleIdentifier);
+        IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
         if (bundle == null) {
         		//if to throw out the IWBundleDoesNotExist exception:
         		boolean throwException=false;
@@ -711,7 +736,7 @@ public class IWMainApplication //{//implements ServletContext{
 	            bundle = new DefaultIWBundle(getBundleRealPath(bundleIdentifier),
 	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
 	                    this, autoCreate);
-	            loadedBundles.put(bundleIdentifier, bundle);
+	            getLoadedBundles().put(bundleIdentifier, bundle);
 	            //must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
 	            bundle.runBundleStarters();
         		}
