@@ -242,7 +242,7 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-    <!--- see comment above -->
+    <!-- see comment above -->
     <dependency>
         <groupId>jai</groupId>
         <artifactId>jai_codec</artifactId>
