@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.101 2004/11/02 15:18:21 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.102 2004/11/14 23:28:59 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import javax.faces.FactoryFinder;
+import javax.faces.application.Application;
+import javax.faces.application.ApplicationFactory;
+import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -31,6 +35,7 @@ import com.idega.core.appserver.AppServer;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.view.ViewManager;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
@@ -46,10 +51,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/11/02 15:18:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/14 23:28:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.101 $
+ * @version $Revision: 1.102 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -177,6 +182,30 @@ public class IWMainApplication {//implements ServletContext{
         checkForInstalledBundles();
     }
 
+    public void loadViewManager(){
+		ApplicationFactory factory = getApplicationFactory();
+		Application app = factory.getApplication();
+		ViewHandler standardViewHandler = app.getViewHandler();
+		//ViewHandler iwViewHandler=origViewHandler;
+		
+		ViewManager viewManager = ViewManager.getInstance(this);
+		viewManager.initializeStandardViews(standardViewHandler);
+		
+		//Note: this ViewHandler instance will be changed later by 
+		// the IWFacesInstaller and IWViewHandlerImpl.
+    }
+    
+    /**
+     * Get the JSF ApplicationFactory
+     * @return
+     */
+    public static ApplicationFactory getApplicationFactory(){
+    		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+		//Application app = factory.getApplication();
+    		return factory;
+    }
+    
+    
     public String getObjectInstanciatorURI(Class className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
 		if(USE_NEW_URL_SCHEME){
