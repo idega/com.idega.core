@@ -120,7 +120,11 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
   	StringBuffer fullAddress = new StringBuffer();
     String streetNameAndNumber = address.getStreetAddress();
     String postalCode = address.getPostalAddress();
-    String country = address.getCountry().getName();
+    Country country = address.getCountry();
+    String countryName = "";
+    if(country!=null) {
+    		countryName = country.getName();
+    }
     
     fullAddress.append(streetNameAndNumber).append(", ")
 	.append(postalCode).append(", ")
