@@ -34,7 +34,7 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
   }
 
   public void _main(IWContext iwc) throws Exception {
-  	
+
   	//added -birna
   	panel = new TabbedPropertyPanel(iwc);
   	
@@ -49,7 +49,7 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
     
     if(panel.justConstructed()){
       panel.setAlignment("center");
-      panel.setVerticalAlignment("middle");
+      panel.setVerticalAlignment("top");
       initializePanel(iwc, panel);
     }
 
@@ -73,7 +73,8 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
     else {
       this.add(panel,iwc);
     }
-    super._main(iwc);
+		super._main(iwc);
+    
 
   }
 

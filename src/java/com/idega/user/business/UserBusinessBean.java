@@ -44,7 +44,6 @@ import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
-//import com.idega.data.IDORelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWBundle;
@@ -52,6 +51,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -2015,7 +2016,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       throw new RuntimeException(ex.getMessage());
     }
     return null;
-  }    
+  }  
+  
+  public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc) {
+  	
+		IWMainApplication application = getIWApplicationContext().getApplication();
+		IWBundle bundle = application.getBundle("com.idega.user");		
+		String styleScript = "UserApplicationStyle.css";
+		String styleSrc = bundle.getVirtualPathWithFileNameString(styleScript);
+		return styleSrc;
+
+  }
+  public Image getTopImage(IWContext iwc) {
+		IWMainApplication application = getIWApplicationContext().getApplication();
+		IWBundle bundle = application.getBundle("com.idega.user");		
+		Image top = bundle.getImage("top.gif");
+		return top;
+  	
+  }
   
 	
    

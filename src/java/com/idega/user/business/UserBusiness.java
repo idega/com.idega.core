@@ -4,13 +4,18 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.ejb.*;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -157,4 +162,18 @@ public interface UserBusiness extends com.idega.business.IBOService
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc);
   public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser);
   public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser);
+  
+  /**
+   * 
+   * Description: Returns the url of the style sheet used <br>
+   * @param parentPage is the parent page. iwb is the bundle containing the style sheet
+   * @author <a href="mailto:birna@idega.is">Birna Iris Jonsdottir</a>
+   */
+  public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc);
+  /**
+   * 
+   * @param iwc
+   * @return the image for the top banner
+   */
+	public Image getTopImage(IWContext iwc);
 }
