@@ -14,13 +14,19 @@ import com.idega.presentation.*;
 */
 public class BackButton extends GenericButton {
 
-	private Image defaultImage;
 	private String howFarBackOrForward = "-1";
 
+	/**
+	 * Constructs a new <code>BackButton</code> with the the default display label.
+	 */
 	public BackButton() {
-		this("<=");
+		this("Back");
 	}
 
+	/**
+	 * Constructs a new <code>BackButton</code> with the display string specified
+	 * @param displayString	The string to display on the button.
+	 */
 	public BackButton(String displayString) {
 		super();
 		setName("");
@@ -29,17 +35,13 @@ public class BackButton extends GenericButton {
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
 	}
 
+	/**
+	 * Constructs a new <code>BackButton</code> with the image specified.
+	 * @param defaultImage	The image to use as the back button.
+	 */
 	public BackButton(Image defaultImage) {
 		super();
+		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
-		this.defaultImage = defaultImage;
-	}
-
-	public void setHistoryMove(String howFarBackOrForward) {
-		this.howFarBackOrForward = howFarBackOrForward;
-	}
-
-	public void setHistoryMove(int howFarBackOrForward) {
-		setHistoryMove(String.valueOf(howFarBackOrForward));
 	}
 }
