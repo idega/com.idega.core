@@ -545,5 +545,14 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 	}
 
-
+	/**
+	 * Overriding store to avoid use of an input stream that can't be read again (it has already been read by the store() method)
+	 **/
+	public void store() throws IDOStoreException {
+		super.store();
+		BlobWrapper wrapper = getBlobColumnValue(getColumnNameFileValue());
+		wrapper.setInputStreamForBlobWrite(null);
+	}
+	
 }
+		
