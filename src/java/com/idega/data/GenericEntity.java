@@ -3117,6 +3117,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			} else if (this.getEntityState() == IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE) {
 				update();
 			}
+			if(this.hasMetaDataRelationship()){
+				this.updateMetaData();
+			}
 		} catch (Exception e) {
 			//e.printStackTrace();
 			throw new IDOStoreException(e.getMessage());
