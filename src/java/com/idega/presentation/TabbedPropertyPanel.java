@@ -95,15 +95,19 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
  //   apply.addIWSubmitListener(this, this,iwc);
     cancel.addIWSubmitListener(this, this,iwc);
   }
-
+  public Help getHelpButton(IWContext iwc) {
+//	added for help-button
+			IWBundle iwb = getBundle(iwc);
+			help = new Help();
+			Image helpImage = iwb.getImage("help.gif");
+			help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+			help.setHelpTextKey(HELP_TEXT_KEY);
+			help.setImage(helpImage);
+			return help;	
+  }
+  
   public void initializeButtons(IWContext iwc){
-  	//added for help-button
-  	IWBundle iwb = getBundle(iwc);
-		help = new Help();
-		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
-		help.setHelpTextKey(HELP_TEXT_KEY);
-		help.setImage(helpImage);
+  	
   	//changed for localized buttons - birna
   	IWResourceBundle iwrb = getResourceBundle(iwc);
 		ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
@@ -281,8 +285,10 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
     buttonTable.setWidth(2,1,"7");
     buttonTable.setWidth(4,1,"7");
+    
+    IWContext iwc = IWContext.getInstance();
 
-    buttonTable.add(help,1,1);
+//    buttonTable.add(getHelpButton(iwc),1,1);
     buttonTable.add(ok,3,1);
     buttonTable.add(cancel,5,1);
 //    buttonTable.add(apply,5,1);
