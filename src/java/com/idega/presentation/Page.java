@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.124 2004/08/31 15:56:11 aron Exp $
+ *  $Id: Page.java,v 1.125 2004/09/01 20:38:43 aron Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -270,6 +270,7 @@ public class Page extends PresentationObjectContainer {
 					buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
 				}
 			}
+			buffer.append("\n");
 			return buffer.toString();
 		}
 		return "";
