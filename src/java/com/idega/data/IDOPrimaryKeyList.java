@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,9 +17,7 @@ import java.util.RandomAccess;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.ejb.FinderException;
-
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.JoinCriteria;
@@ -265,8 +264,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				}
 				RS.close();
 				
-				
-				
 				_entities.setSize(size());
 				_tracker = new LoadTracker(size(),fetchSize);
 	//			_tracker.setSubsetAsLoaded(0,_prefetchSize);
@@ -294,6 +291,15 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 						e.printStackTrace();
 					}
 				}
+				
+//				if(RS!=null){
+//					try {
+//						RS.close();
+//					}
+//					catch (SQLException e) {
+//						e.printStackTrace();
+//					}
+//				}
 				if (conn != null)
 				{
 					_entity.freeConnection(_entity.getDatasource(), conn);
@@ -1120,7 +1126,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //			    debug("[IDOPrimaryKeyList]: _size = "+_size);
 //				debugLoadedSubSets();
 //			}
-			List toReturn = new Vector();
+			List toReturn = new ArrayList();
 			int fIndex = Math.min(fromIndex,toIndex);
 			fIndex = Math.min(fIndex,_size);
 			int tIndex = Math.max(fromIndex,toIndex);
