@@ -45,6 +45,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
           //deprecated column
           addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
           addAttribute(getLastChangedColumnName(),"Síðast breytt",true,true,Timestamp.class);
+          addAttribute(getLoginTypeColumnName(),"Tegund aðgagns",true,true,String.class,32);
           setNullable(getUserLoginColumnName(), false);
           setUnique(getUserLoginColumnName(),true);
 	}
@@ -92,6 +93,12 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
           return("last_changed");
 
         }
+        
+			public static String getLoginTypeColumnName() {
+	
+			  return("login_type");
+	
+			}
 
 
 
@@ -422,5 +429,14 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
             return unEncryptedUserPassword;
           }
         }
+        
+        
+		public void setLoginType(String loginType) {
+			  setColumn(getLoginTypeColumnName(), loginType);
+		}
+	
+		public String getLoginType() {
+			  return getStringColumnValue(getLoginTypeColumnName());
+		}
 }
 

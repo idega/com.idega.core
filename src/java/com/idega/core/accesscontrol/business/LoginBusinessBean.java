@@ -127,6 +127,9 @@ public class LoginBusinessBean implements IWEventListener
 			return false;
 		}
 	}
+	
+	
+	
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
@@ -443,6 +446,10 @@ public class LoginBusinessBean implements IWEventListener
 		lInfo.setTimeOfLogon(IWTimestamp.RightNow());
 		lInfo.setUser(user);
 		lInfo.setLoginRecordId(loginRecordId);
+		String loginType = loginTable.getLoginType();
+		if(loginType!= null && !loginType.equals("")){
+			lInfo.setLoginType(loginType);
+		}
 		getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, iwc);
 
@@ -453,6 +460,7 @@ public class LoginBusinessBean implements IWEventListener
 
 		return true;
 	}
+	
 	private int verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception
 	{
 		LoginTable[] login_table =
@@ -469,9 +477,21 @@ public class LoginBusinessBean implements IWEventListener
 				return STATE_LOGIN_EXPIRED;
 			if (Encrypter.verifyOneWayEncrypted(login_table[0].getUserPassword(), password))
 			{
-				//returner = logIn(iwc, login_table[0], login);
-				if (logIn(iwc, login_table[0], login))
-					return STATE_LOGGED_ON;
+				
+				
+				LoginTable lTable = chooseLoginRecord(iwc, login_table);
+				if(lTable != null){
+//					returner = logIn(iwc, login_table[0], login);
+					if (logIn(iwc, login_table[0], login))
+						return STATE_LOGGED_ON;
+				} else {
+					try {
+						throw new LoginCreateException("No record chosen");
+					} catch (LoginCreateException e1) {
+						e1.printStackTrace();
+					}
+				}
+					
 			}
 			else
 				return STATE_WRONG_PASSW;
@@ -499,7 +519,7 @@ public class LoginBusinessBean implements IWEventListener
 		}
 		return returner;
 	}
-	private void logOut(IWContext iwc) throws Exception
+	protected void logOut(IWContext iwc) throws Exception
 	{
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null)
 		{
@@ -653,9 +673,18 @@ public class LoginBusinessBean implements IWEventListener
 				login);
 		if (login_table != null && login_table.length > 0)
 		{
-			returner = logIn(iwc, login_table[0], login);
-			if (returner)
-				onLoginSuccessful(iwc);
+			LoginTable lTable = chooseLoginRecord(iwc, login_table);
+			if(lTable != null){
+				returner = logIn(iwc, login_table[0], login);
+				if (returner)
+					onLoginSuccessful(iwc);
+			} else {
+				try {
+					throw new LoginCreateException("No record chosen");
+				} catch (LoginCreateException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
 		return returner;
 	}
@@ -672,9 +701,18 @@ public class LoginBusinessBean implements IWEventListener
 					user.getPrimaryKey().toString());
 			if (login_table != null && login_table.length > 0)
 			{
-				returner = logIn(iwc, login_table[0], login_table[0].getUserLogin());
-				if (returner)
-					onLoginSuccessful(iwc);
+				LoginTable lTable = chooseLoginRecord(iwc, login_table);
+				if(lTable != null){
+					returner = logIn(iwc, lTable, lTable.getUserLogin());
+					if (returner)
+						onLoginSuccessful(iwc);
+				} else {
+					try {
+						throw new LoginCreateException("No record chosen");
+					} catch (LoginCreateException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 		}
 		catch (EJBException e)
@@ -682,6 +720,25 @@ public class LoginBusinessBean implements IWEventListener
 			returner = false;
 		}
 		return returner;
+		
+	}
+	
+	/**
+	 * 
+	 * @param loginRecords - all login records for one user
+	 * @return LoginTable record to log on the system
+	 */
+	protected LoginTable chooseLoginRecord(IWContext iwc, LoginTable[] loginRecords) throws Exception{
+		LoginTable chosenRecord = null;
+		if(loginRecords != null)
+		for(int i = 0; i < loginRecords.length; i++){
+			String type = loginRecords[i].getLoginType();
+			if(!(type!= null && !type.equals(""))){
+				chosenRecord = loginRecords[i];
+				break;
+			}
+		}
+		return chosenRecord;
 	}
 
 	public boolean isLoginExpired(LoginTable loginTable)

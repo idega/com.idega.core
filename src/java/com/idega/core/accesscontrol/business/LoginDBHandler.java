@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.41 2003/04/03 20:00:46 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.42 2003/05/27 21:57:34 gummi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -71,11 +71,11 @@ public class LoginDBHandler
 		}
 		else
 		{
-			if (noLogin != null)
-			{
-				throw new UserHasLoginException("User_id : " + userID + " , cannot create new login : user has one already");
-//				throw new Exception("User_id : " + userID + " , cannot create new login : user has one already");
-			}
+//			if (noLogin != null)
+//			{
+//				throw new UserHasLoginException("User_id : " + userID + " , cannot create new login : user has one already");
+				//throw new Exception("User_id : " + userID + " , cannot create new login : user has one already");
+//			}
 			loginTable =
 				((com.idega.core.accesscontrol.data.LoginTableHome) com
 					.idega
@@ -295,7 +295,24 @@ public class LoginDBHandler
 		}
 		return logInfo.getID();
 	}
-	public static void createLogin(
+	
+	public static LoginTable createLogin(
+			int user,
+			String userLogin,
+			String password,
+			Boolean accountEnabled,
+			IWTimestamp modified,
+			int daysOfValidity,
+			Boolean passwordExpires,
+			Boolean userAllowedToChangePassw,
+			Boolean changeNextTime,
+			String encryptionType)
+			throws LoginCreateException, RemoteException
+	{
+		return createLogin(user,userLogin,password,accountEnabled,modified,daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType,null);
+	}
+	
+	public static LoginTable createLogin(
 		com.idega.user.data.User user,
 		String userLogin,
 		String password,
@@ -309,7 +326,7 @@ public class LoginDBHandler
 		throws Exception
 	{
 		int userId = ((Integer) user.getPrimaryKey()).intValue();
-		createLogin(
+		return createLogin(
 			userId,
 			userLogin,
 			password,
@@ -319,8 +336,27 @@ public class LoginDBHandler
 			passwordExpires,
 			userAllowedToChangePassw,
 			changeNextTime,
-			encryptionType);
+			encryptionType,
+			null);
 	}
+	
+	public static LoginTable createLogin(
+			com.idega.user.data.User user,
+			String userLogin,
+			String password,
+			Boolean accountEnabled,
+			IWTimestamp modified,
+			int daysOfValidity,
+			Boolean passwordExpires,
+			Boolean userAllowedToChangePassw,
+			Boolean changeNextTime,
+			String encryptionType,
+			String loginType)
+			throws Exception
+	{
+		return createLogin(user,userLogin,password,accountEnabled,modified,daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType,null);
+	}
+	
 	public static LoginTable createLogin(
 		int userID,
 		String userLogin,
@@ -331,7 +367,8 @@ public class LoginDBHandler
 		Boolean passwordExpires,
 		Boolean userAllowedToChangePassw,
 		Boolean changeNextTime,
-		String encryptionType)
+		String encryptionType,
+		String loginType)
 		throws LoginCreateException, RemoteException
 	{
 		LoginTable login = createUserLogin(false, userID, userLogin, password);

@@ -22,6 +22,8 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   private IWTimestamp _timeOfLogon = null;
   private String _login = null;
   private int _loginRecordId = -1;
+  private String _encryptionType = null;
+  private String _loginType = null;
 
   public LoggedOnInfo() {
 
@@ -48,6 +50,10 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   public void setLoginRecordId(int loginRecordId){
     _loginRecordId = loginRecordId;
   }
+  
+  public void setEncryptionType(String encryptionType){
+  	_encryptionType = encryptionType;
+  }
 
   //getters
   public User getUser(){
@@ -60,6 +66,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   }
 */
 
+
   public IWTimestamp getTimeOfLogon(){
     return _timeOfLogon;
   }
@@ -70,6 +77,10 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   public int getLoginRecordId(){
     return _loginRecordId;
+  }
+
+  public String getEncryptionType(){
+  	return _encryptionType;
   }
 
 
@@ -117,5 +128,20 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 		
 	}
   
-  
+  	
+
+	/**
+	 * @return
+	 */
+	public String getLoginType() {
+		return _loginType;
+	}
+	
+	/**
+	 * @param loginType
+	 */
+	public void setLoginType(String loginType) {
+		_loginType = loginType;
+	}
+
 }

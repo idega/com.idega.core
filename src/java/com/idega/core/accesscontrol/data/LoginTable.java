@@ -14,6 +14,8 @@ public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.uti
  public void setUserLogin(java.lang.String p0);
  public void setUserPassword(java.lang.String p0);
 
+ public void setLoginType(String loginType);
+ public String getLoginType();
 
   /**
   * Sets both the intented encrypted password and the original unencrypted password for temporary retrieval
