@@ -54,7 +54,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 						IWTimestamp whenToActivate = new IWTimestamp(relation.getInitiationDate());
 						if (whenToActivate.isEarlierThan(stamp)) { //activate now
 							relation.setActive();
-							relation.setInitiationDate(stamp.getTimestamp());
+							//relation.setInitiationDate(stamp.getTimestamp());
 							relation.store();
 						}
 					}
@@ -62,7 +62,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 						IWTimestamp whenToPassivate = new IWTimestamp(relation.getTerminationDate());
 						if (whenToPassivate.isEarlierThan(stamp)) { //passivate now
 							relation.setPassive();
-							relation.setTerminationDate(stamp.getTimestamp());
+							//relation.setTerminationDate(stamp.getTimestamp());
 							relation.store();
 						}
 					}

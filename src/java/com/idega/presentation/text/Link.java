@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.89 2003/04/03 20:36:55 laddi Exp $
+ * $Id: Link.java,v 1.90 2003/04/15 08:15:13 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1806,6 +1806,14 @@ public class Link extends Text {
 		//addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
 	}
 
+public void setWindowToOpen(String className) {
+	try {
+		setWindowToOpen(Class.forName(className));
+	}
+	catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	}
+}
 	public void setWindowToOpen(Class windowClass, int instanceId) {
 		//_objectType=OBJECT_TYPE_WINDOW;
 		setWindowToOpen(windowClass);
