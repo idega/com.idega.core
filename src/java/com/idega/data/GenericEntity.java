@@ -4201,6 +4201,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		IDOLegacyEntity legacyEntity = (IDOLegacyEntity) returningEntity;
 		String sqlQuery = this.getFindRelatedSQLQuery(legacyEntity, "", "");
+		
+		debug(sqlQuery);
+		
 		return idoGetRelatedEntities(returningEntity, sqlQuery);
 	}
 	/**
