@@ -224,6 +224,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	private static long twentyMinutes = 60 * 1000 * 20;
+	private IWStyleManager manager;
 
 	public void setCacheable(String cacheKey) {
 		setCacheable(cacheKey, twentyMinutes);
@@ -253,6 +254,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 
 	public void _main(IWContext iwc) throws Exception {
 		editPermission = iwc.hasEditPermission(this);
+		manager = new IWStyleManager();
 
 		if (debugParameters) {
 			debugParameters(iwc);
@@ -270,7 +272,6 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
 
 			Map styles = getStyleNames();
-			IWStyleManager manager = new IWStyleManager();
 			Iterator iter = styles.keySet().iterator();
 			while (iter.hasNext()) {
 				String style = (String) iter.next();
@@ -337,20 +338,41 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * @param styleName
 	 * @return stylename
 	 */
-	public String getStyleName(String styleName){
+	private String getStyleName(String styleName, boolean isLink){
 		if ( getIWUserContext() != null ) {
 			String prefix = getBundle(getIWUserContext()).getBundleName();
 			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER) {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
-				return prefix+styleName;
+				styleName = prefix+styleName;
 			}
 		}
+		if (manager != null) {
+			if (!manager.isStyleSet(styleName))
+				manager.setStyle(styleName, "");
+			if (autoCreateGlobalHoverStyles() && !manager.isStyleSet(styleName + ":hover"))
+				manager.setStyle(styleName + ":hover", "");
+		}
+					
 		return styleName;
 	}
+
+	/**
+	 * Gets a prefixed stylename to use for objects, with prefix specific for the bundle used by this block
+	 * if the block is in the core bundle, no prefix is added
+	 * @param styleName
+	 * @return stylename
+	 */
+	public String getStyleName(String styleName){
+		return getStyleName(styleName, false);
+	}
 	
-	public PresentationObject setStyle(PresentationObject obj, String styleName) {
-		obj.setStyleClass(getStyleName(styleName));
+	private PresentationObject setStyle(PresentationObject obj, String styleName, boolean isLink) {
+		obj.setStyleClass(getStyleName(styleName, isLink));
 		return obj;
+	}
+
+	public PresentationObject setStyle(PresentationObject obj, String styleName) {
+		return setStyle(obj, styleName, false);
 	}
 
 	private boolean isCacheValid(IWContext iwc) {
@@ -614,5 +636,8 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 		return obj;
 	}
-
+	
+	protected boolean autoCreateGlobalHoverStyles() {
+		return false;
+	}
 }
