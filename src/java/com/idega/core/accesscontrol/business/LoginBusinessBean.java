@@ -364,15 +364,26 @@ public class LoginBusinessBean implements IWPageEventListener {
 //					System.out.println("[IWAuthenticator]:Unencoded name: "+username+" and password: " + password);
 					
 					LoginState canLogin = LoginState.LoggedOut;
-					canLogin = verifyPasswordAndLogin(iwc, username, password);
-					if (canLogin.equals(LoginState.LoggedOn)) {
+					
+					LoggedOnInfo lInfo = getLoggedOnInfo(iwc,username);
+					if(!isLoggedOn(iwc) && lInfo != null) {
+						//used for re-logging in clients that do not keep cookies/session
+						LoginSession lSession = getLoginSession(iwc);
+						lSession.setLoggedOnInfo(lInfo);
+						lSession.setUser(lInfo.getUser());
+						//TODO: some more variables need to be set in LoginSession if this is supposed to work for clients with more capability than just webdav-ing.  Needs more refactoring than I have time for now. 
 						onLoginSuccessful(iwc);
 						return true;
 					} else {
-						onLoginFailed(iwc, canLogin, username);
-						return false;
+						canLogin = verifyPasswordAndLogin(iwc, username, password);
+						if (canLogin.equals(LoginState.LoggedOn)) {
+							onLoginSuccessful(iwc);
+							return true;
+						} else {
+							onLoginFailed(iwc, canLogin, username);
+							return false;
+						}
 					}
-					
 				}
 	    		}
     		} catch (Exception ex) {
@@ -572,13 +583,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	protected void storeUserAndGroupInformationInSession(IWContext iwc, User user) throws Exception {
 		List groups = null;
+		LoginSession lSession = getLoginSession(iwc);
 		if(isUsingOldUserSystem()){
 			//Old user system
 			//iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			
 			
 			//LoginBusinessBean.setUser(iwc, user);
-		    getLoginSession(iwc).setUser(user);
+		    lSession.setUser(user);
 			groups = UserBusiness.getUserGroups(user);
 			//Old user system end
 		}
@@ -586,7 +598,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			//New user system
 			//iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			//LoginBusinessBean.setUser(iwc, user);
-		    getLoginSession(iwc).setUser(user);
+			lSession.setUser(user);
 			com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
 			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
 			Collection userGroups = userbusiness.getUserGroups(newUser);
@@ -597,22 +609,22 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		if (groups != null) {
 			//LoginBusinessBean.setPermissionGroups(iwc, groups);
-		    getLoginSession(iwc).setPermissionGroups(groups);
+			lSession.setPermissionGroups(groups);
 		}
 		int userGroupId = user.getGroupID();
 		if (userGroupId != -1) {
 			//LoginBusinessBean.setUserRepresentativeGroup(iwc, ((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
-		    getLoginSession(iwc).setRepresentativeGroup(((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
+			lSession.setRepresentativeGroup(((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
 		}
 		if (user.getPrimaryGroupID() != -1) {
 		    GenericGroup primaryGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHome(GenericGroup.class)).findByPrimaryKey(new Integer(user.getPrimaryGroupID()));
 			//LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
-			getLoginSession(iwc).setPrimaryGroup(primaryGroup);
+		    lSession.setPrimaryGroup(primaryGroup);
 		}
 
 		UserProperties properties = new UserProperties(iwc.getIWMainApplication(), user.getID());
 		//setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
-		getLoginSession(iwc).setUserProperties(properties);
+		lSession.setUserProperties(properties);
 		
 	}
 

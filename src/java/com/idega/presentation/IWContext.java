@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.112 2004/12/14 13:53:54 gummi Exp $
+ * $Id: IWContext.java,v 1.113 2004/12/17 18:04:51 gummi Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -73,10 +73,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/14 13:53:54 $ by $Author: gummi $
+ * Last modified: $Date: 2004/12/17 18:04:51 $ by $Author: gummi $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.112 $
+ * @version $Revision: 1.113 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -127,6 +127,11 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
+		//MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
+		initializeAfterRequestIsSet(request);
+	}
+	
+	protected void initializeAfterRequestIsSet(HttpServletRequest request){
 		//MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		if(getIfSetRequestCharacterEncoding()){
 			try {
@@ -356,8 +361,14 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
-	protected void setRequest(HttpServletRequest request) {
-		this._request = request;	
+	public void setRequest(HttpServletRequest request) {
+		if(_request == null){
+			this._request = request;
+		} else {
+			this._request = request;
+			initializeAfterRequestIsSet(request);
+		}
+			
 	}
 	protected void setResponse(HttpServletResponse response) {
 		this._response = response;
