@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.29 2004/05/24 23:14:21 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.30 2004/05/24 23:45:29 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -391,8 +391,8 @@ public class PresentationObjectContainer extends PresentationObject
 						return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
 					} catch (ClassCastException e1) {
 						e1.printStackTrace();
-						System.out.println(getContainedObject(objectInstanceIDInt));
-						return NULL_CLONE_OBJECT;
+						System.out.println(getContainedObject(objectInstanceIDInt).getClassName()+": "+getContainedObject(objectInstanceIDInt));
+						return (null);
 					}
 				}
 			}
