@@ -147,6 +147,7 @@ public class EntityFinder{
                                 if(vector==null){
                                   vector=new Vector();
                                 }
+                ((GenericEntity)tempobj).setEntityState(GenericEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 				vector.addElement(tempobj);
 
 			}
