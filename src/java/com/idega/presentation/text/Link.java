@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.85 2003/01/02 16:50:43 laddi Exp $
+ * $Id: Link.java,v 1.86 2003/03/14 17:16:34 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2065,7 +2065,18 @@ public class Link extends Text {
 			Parameter prm = (Parameter) iter.next();
 			this.addParameter(prm);
 		}
-	}
+  }
+
+  public void addEventModel(IWPresentationEvent model, IWContext iwc) {
+    Iterator iter = model.getParameters();
+    while (iter.hasNext()) {
+      Parameter prm = (Parameter) iter.next();
+      this.addParameter(prm);
+    }
+    setTarget(model.getEventTarget());
+    setURL(model.getEventHandlerURL(iwc));
+  }
+
 
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
