@@ -841,7 +841,7 @@ public class AccessControl{
 
   public static List getPermissionGroups(User user) throws SQLException{
     //temp - new GenericGroup()
-    return getPermissionGroups(new GenericGroup(user.getID()));
+    return getPermissionGroups(new GenericGroup(user.getGroupID()));
   }
 
   public static List getPermissionGroups(GenericGroup group) throws SQLException{
