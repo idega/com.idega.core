@@ -131,6 +131,10 @@ public IFrame(String name,String URL,int width,int height){
     setAttribute("align",alignment);
   }
 
+  public void setAsTransparent() {
+    setAttribute("ALLOWTRANSPARENCY","true");
+  }
+
   public void print(IWContext iwc)throws IOException{
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
