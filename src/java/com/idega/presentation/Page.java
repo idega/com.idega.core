@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.141 2005/03/06 13:17:37 tryggvil Exp $
+ *  $Id: Page.java,v 1.142 2005/03/08 10:23:07 gimmi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -2093,6 +2093,22 @@ public class Page extends PresentationObjectContainer {
 		return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
 	}
 	
+	/**
+	 * Add javascript urls to page HEAD, comma separated
+	 * @param urls
+	 */
+	public void setJavascriptURLs(String urls) {
+		if (urls != null) {
+			int index = urls.indexOf(",");
+			while (index > -1) {
+				String tmp = urls.substring(0, index);
+				addJavascriptURL(tmp.trim());
+				urls = urls.substring(index+1);
+				index = urls.indexOf(",");
+			}
+			addJavascriptURL(urls.trim());
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
