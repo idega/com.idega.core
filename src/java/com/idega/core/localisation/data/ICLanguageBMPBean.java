@@ -1,7 +1,12 @@
 package com.idega.core.localisation.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Locale;
+
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOQuery;
 
 
 /**
@@ -43,11 +48,11 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
     ICLanguage lang;
     Locale l = null;
     for (int i = 0; i < JavaLocales.length; i++) {
-      lang = ((com.idega.core.localisation.data.ICLanguageHome)com.idega.data.IDOLookup.getHomeLegacy(ICLanguage.class)).createLegacy();
+      lang = ((com.idega.core.localisation.data.ICLanguageHome)com.idega.data.IDOLookup.getHome(ICLanguage.class)).create();
       l = new Locale(JavaLocales[i],"");
       lang.setName(l.getDisplayLanguage(l));
       lang.setIsoAbbreviation(JavaLocales[i]);
-      lang.insert();
+      lang.store();
     }
   }
 
@@ -78,5 +83,10 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
   public void setIsoAbbreviation(String IsoAbbreviation){
     this.setColumn(_COLUMN_ISOabbreviation,IsoAbbreviation);
   }
-
+  
+  public Collection ejbFindAll() throws FinderException {
+  	IDOQuery query = idoQuery();
+  	query.appendSelectAllFrom(this);
+  	return idoFindPKsByQuery(query);
+  }
 }

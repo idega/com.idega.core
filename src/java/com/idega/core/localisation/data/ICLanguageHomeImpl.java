@@ -7,37 +7,23 @@ public class ICLanguageHomeImpl extends com.idega.data.IDOFactory implements ICL
   return ICLanguage.class;
  }
 
+
  public ICLanguage create() throws javax.ejb.CreateException{
-  return (ICLanguage) super.idoCreate();
+  return (ICLanguage) super.createIDO();
  }
 
- public ICLanguage createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
 
- }
-
- public ICLanguage findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (ICLanguage) super.idoFindByPrimaryKey(id);
- }
+public java.util.Collection findAll()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICLanguageBMPBean)entity).ejbFindAll();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public ICLanguage findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (ICLanguage) super.idoFindByPrimaryKey(pk);
+  return (ICLanguage) super.findByPrimaryKeyIDO(pk);
  }
 
- public ICLanguage findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
-
- }
 
 
 }
