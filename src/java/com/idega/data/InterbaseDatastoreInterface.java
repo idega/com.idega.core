@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.12 2001/08/28 08:58:48 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.13 2001/08/28 09:00:27 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,7 +43,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
         theReturn = "VARCHAR("+maxlength+")";
       }
       else {
-        theReturn = "CLOB";
+        theReturn = "BLOB";
       }
     }
     else if (javaClassName.equals("java.lang.Boolean")) {
