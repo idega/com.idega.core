@@ -65,7 +65,7 @@ public class GenericButton extends GenericInput {
 				setOnClick("javascript:window.location='"+BuilderLogic.getInstance().getIBPageURL(iwc, _pageID)+"';");
 			}
 			if (_fileID != -1) {
-				setOnClick("javascript:window.location='"+MediaBusiness.getMediaURL(_fileID, iwc.getApplication())+"';");	
+				setOnClick("javascript:"+Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication())));	
 			}
 			
 			getParentPage();
