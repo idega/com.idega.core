@@ -8,13 +8,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.swing.text.DateFormatter;
-
-import com.idega.block.calendar.presentation.SmallCalendar;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.ui.AbstractChooser;
 
 /**
  * DatePicker is a chooser object used to choose a date from a 
