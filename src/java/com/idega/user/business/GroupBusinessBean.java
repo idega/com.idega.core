@@ -727,9 +727,6 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     }
     // go further
     Collection children = currentGroup.getChildGroups();
-    IWContext iwc = IWContext.getInstance();
-    GroupTreeComparator groupTreeComparator = new GroupTreeComparator(iwc.getCurrentLocale());
-	Collections.sort((List)children,groupTreeComparator);
     Iterator childrenIterator = children.iterator();
     while (childrenIterator.hasNext())  {
       Group child = (Group) childrenIterator.next();
