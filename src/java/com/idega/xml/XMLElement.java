@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.17 2004/11/25 16:59:07 thomas Exp $
+ * $Id: XMLElement.java,v 1.18 2005/01/25 00:38:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
 import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Element;
@@ -25,23 +24,37 @@ import org.jdom.filter.Filter;
  * @version 1.0
  */
 public class XMLElement {
-  Element _element = null;
+  private Element _element = null;
 
   public XMLElement(String name) {
     _element = new Element(name);
   }
 
-  XMLElement(Element element) {
+  /**
+   * This object really only accepts a org.jdom.Element type but is declared Object becaluse of jdom dependency issues.
+   * @param oElement an Element instance
+   * @throws ClassCastException if object not of correct type
+   */
+  public XMLElement(Object oElement) {
+  	Element element = (Element)oElement;
     _element = element;
     if (_element == null)
       System.out.println("Creating XMLElement with element == null");
   }
-
-  Element getElement() {
+  /**
+   * This object really returns a org.jdom.Element type but is declared Object becaluse of jdom dependency issues.
+   * @return the set Element instance
+   */
+  public Object getElement() {
     return(_element);
   }
-
-  void setElement(Element element) {
+  /**
+   * This object really only accepts a org.jdom.Element type but is declared Object becaluse of jdom dependency issues.
+   * @param oElement an Element instance
+   * @throws ClassCastException if object not of correct type
+   */
+  public void setElement(Object oElement) {
+  	Element element = (Element)oElement;
     _element = element;
   }
 
@@ -52,7 +65,7 @@ public class XMLElement {
 
   public XMLElement addContent(XMLElement element) {
     if (_element != null) {
-      Element el = element.getElement();
+      Element el = (Element)element.getElement();
       if (el != null) {
       		_element.addContent(el.detach());
       }
@@ -210,7 +223,7 @@ public class XMLElement {
 
   public boolean removeContent(XMLElement element) {
     if (_element != null) {
-      Element el = element.getElement();
+      Element el = (Element)element.getElement();
       if (el != null)
         return(_element.removeContent(el));
     }
@@ -359,7 +372,7 @@ public class XMLElement {
         Vector res = new Vector();
         while (it.hasNext()) {
           XMLElement xmlel = (XMLElement)it.next();
-          Element el = xmlel.getElement();
+          Element el = (Element)xmlel.getElement();
           if (el != null)
           res.add(el);
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.6 2004/10/11 14:39:00 gummi Exp $
+ * $Id: XMLOutput.java,v 1.7 2005/01/25 00:38:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -68,12 +69,12 @@ public class XMLOutput {
    */
   public void output(XMLDocument document, OutputStream stream) throws IOException {
     if (_output != null)
-      _output.output(document.getDocument(),stream);
+      _output.output((Document)document.getDocument(),stream);
   }
 
   public String outputString(XMLElement element) {
     if (_output != null) {
-      Element el = element.getElement();
+      Element el = (Element)element.getElement();
       if (el != null)
         return(_output.outputString(el));
       else

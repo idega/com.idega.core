@@ -1,5 +1,5 @@
 /*
- * $Id: XMLDocument.java,v 1.4 2003/08/05 10:05:43 gummi Exp $
+ * $Id: XMLDocument.java,v 1.5 2005/01/25 00:38:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,20 +21,34 @@ public class XMLDocument {
   Document _doc = null;
   
   public XMLDocument(XMLElement element) {
-    Element el = element.getElement();
+    Element el = (Element)element.getElement();
     if (el != null)
       _doc = new Document(el);
   }
-
-  XMLDocument(Document doc) {
+  /**
+   * This object really only accepts a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
+   * @param oDocument a Document instance
+   * @throws ClassCastException if object not of correct type
+   */
+  public XMLDocument(Object oDocument) {
+  	Document doc = (Document)oDocument;
     _doc = doc;
   }
 
-  void setDocument(Document doc) {
+  /**
+   * This object really only accepts a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
+   * @param oDocument the Document instance to set
+   * @throws ClassCastException if object not of correct type
+   */  
+  public void setDocument(Object oDocument) {
+  	Document doc = (Document)oDocument;
     _doc = doc;
   }
-
-  Document getDocument() {
+  /**
+   * This object really only returns a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
+   * @return the set Document instance
+   */
+  public Object getDocument() {
     return(_doc);
   }
 
@@ -47,7 +61,7 @@ public class XMLDocument {
 
   public void setRootElement(XMLElement element) {
     if (_doc != null) {
-      Element el = element.getElement();
+      Element el = (Element)element.getElement();
       if (el != null)
         _doc.setRootElement(el);
     }
