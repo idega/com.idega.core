@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.114 2004/12/06 16:37:03 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.115 2004/12/15 22:03:59 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,16 +29,29 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
+import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
+import javax.faces.application.NavigationHandler;
+import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.el.MethodBinding;
+import javax.faces.el.PropertyResolver;
+import javax.faces.el.ReferenceSyntaxException;
+import javax.faces.el.ValueBinding;
+import javax.faces.el.VariableResolver;
+import javax.faces.event.ActionListener;
+import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
@@ -63,12 +77,13 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/06 16:37:03 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/15 22:03:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.114 $
+ * @version $Revision: 1.115 $
  */
-public class IWMainApplication {//implements ServletContext{
+public class IWMainApplication //{//implements ServletContext{
+	extends Application{
 
 	//Static final Contstants:
     public static final String IdegaEventListenerClassParameter = "idegaweb_event_classname";
@@ -192,7 +207,10 @@ public class IWMainApplication {//implements ServletContext{
     }
 
     public void loadViewManager(){
-		ApplicationFactory factory = getApplicationFactory();
+    		
+    		ApplicationFactory factory = getApplicationFactory();
+		replaceJSFApplication(factory);
+		
 		Application app = factory.getApplication();
 		ViewHandler standardViewHandler = app.getViewHandler();
 		//ViewHandler iwViewHandler=origViewHandler;
@@ -204,6 +222,8 @@ public class IWMainApplication {//implements ServletContext{
 		// the IWFacesInstaller and IWViewHandlerImpl.
     }
     
+    
+    
     /**
      * Get the JSF ApplicationFactory
      * @return
@@ -212,6 +232,17 @@ public class IWMainApplication {//implements ServletContext{
     		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
 		//Application app = factory.getApplication();
     		return factory;
+    }
+    
+    /**
+     * Replaces the JSF Application instance set by default in the ApplicationFactory to be an instance of this class.
+     * @param factory
+     */
+    protected void replaceJSFApplication(ApplicationFactory factory){
+    		Application oldApp = factory.getApplication();
+    		this.setRealJSFApplication(oldApp);
+    		factory.setApplication(this);
+    		log("Replaced the JSF Application of instance "+oldApp.getClass()+" with IWMainApplication");      
     }
     
     
@@ -1304,6 +1335,279 @@ public class IWMainApplication {//implements ServletContext{
 		return false;
 	}
 
+	private Application realJSFApplication;
+	protected Application getRealJSFApplication(){
+		return realJSFApplication;
+	}
+	protected void setRealJSFApplication(Application jsfApplication){
+		this.realJSFApplication=jsfApplication;
+	}
+	
+	//Begin JSF Application implementation
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getActionListener()
+	 */
+	public ActionListener getActionListener() {
+		return getRealJSFApplication().getActionListener();
+	}
 
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setActionListener(javax.faces.event.ActionListener)
+	 */
+	public void setActionListener(ActionListener listener) {
+		getRealJSFApplication().setActionListener(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getDefaultLocale()
+	 */
+	public Locale getDefaultLocale() {
+		return getRealJSFApplication().getDefaultLocale();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setDefaultLocale(java.util.Locale)
+	 */
+	public void setDefaultLocale(Locale locale) {
+		getRealJSFApplication().setDefaultLocale(locale);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getDefaultRenderKitId()
+	 */
+	public String getDefaultRenderKitId() {
+		return getRealJSFApplication().getDefaultRenderKitId();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setDefaultRenderKitId(java.lang.String)
+	 */
+	public void setDefaultRenderKitId(String renderKitId) {
+		getRealJSFApplication().setDefaultRenderKitId(renderKitId);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getMessageBundle()
+	 */
+	public String getMessageBundle() {
+		return getRealJSFApplication().getMessageBundle();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setMessageBundle(java.lang.String)
+	 */
+	public void setMessageBundle(String bundle) {
+		getRealJSFApplication().setMessageBundle(bundle);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getNavigationHandler()
+	 */
+	public NavigationHandler getNavigationHandler() {
+		return getRealJSFApplication().getNavigationHandler();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setNavigationHandler(javax.faces.application.NavigationHandler)
+	 */
+	public void setNavigationHandler(NavigationHandler handler) {
+		getRealJSFApplication().setNavigationHandler(handler);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getPropertyResolver()
+	 */
+	public PropertyResolver getPropertyResolver() {
+		return getRealJSFApplication().getPropertyResolver();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setPropertyResolver(javax.faces.el.PropertyResolver)
+	 */
+	public void setPropertyResolver(PropertyResolver resolver) {
+		getRealJSFApplication().setPropertyResolver(resolver);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getVariableResolver()
+	 */
+	public VariableResolver getVariableResolver() {
+		return getRealJSFApplication().getVariableResolver();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setVariableResolver(javax.faces.el.VariableResolver)
+	 */
+	public void setVariableResolver(VariableResolver resolver) {
+		getRealJSFApplication().setVariableResolver(resolver);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getViewHandler()
+	 */
+	public ViewHandler getViewHandler() {
+		return getRealJSFApplication().getViewHandler();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setViewHandler(javax.faces.application.ViewHandler)
+	 */
+	public void setViewHandler(ViewHandler handler) {
+		getRealJSFApplication().setViewHandler(handler);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getStateManager()
+	 */
+	public StateManager getStateManager() {
+		return getRealJSFApplication().getStateManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setStateManager(javax.faces.application.StateManager)
+	 */
+	public void setStateManager(StateManager manager) {
+		getRealJSFApplication().setStateManager(manager);	
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#addComponent(java.lang.String, java.lang.String)
+	 */
+	public void addComponent(String componentType, String componentClass) {
+		getRealJSFApplication().addComponent(componentType,componentClass);		
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createComponent(java.lang.String)
+	 */
+	public UIComponent createComponent(String componentType) throws FacesException {
+		String BUILDER_PREFIX="BuilderPage";
+		if(componentType.startsWith(BUILDER_PREFIX)){
+			String sPageId = componentType.substring(BUILDER_PREFIX.length()+1,componentType.length());
+			//int pageId = Integer.parseInt(sPageId);
+			BuilderService bService;
+			try {
+				bService = BuilderServiceFactory.getBuilderService(this.getIWApplicationContext());
+				return bService.getPage(sPageId);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Failed initializing page with id="+sPageId);
+			}	
+		}
+		else{
+			//The default to fall back to the default JSF application
+			return getRealJSFApplication().createComponent(componentType);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createComponent(javax.faces.el.ValueBinding, javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public UIComponent createComponent(ValueBinding componentBinding, FacesContext context, String componentType) throws FacesException {
+		return getRealJSFApplication().createComponent(componentBinding,context,componentType);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getComponentTypes()
+	 */
+	public Iterator getComponentTypes() {
+		return getRealJSFApplication().getComponentTypes();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#addConverter(java.lang.String, java.lang.String)
+	 */
+	public void addConverter(String converterId, String converterClass) {
+		getRealJSFApplication().addConverter(converterId,converterClass);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#addConverter(java.lang.Class, java.lang.String)
+	 */
+	public void addConverter(Class targetClass, String converterClass) {
+		getRealJSFApplication().addConverter(targetClass,converterClass);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createConverter(java.lang.String)
+	 */
+	public Converter createConverter(String converterId) {
+		return getRealJSFApplication().createConverter(converterId);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createConverter(java.lang.Class)
+	 */
+	public Converter createConverter(Class targetClass) {
+		return getRealJSFApplication().createConverter(targetClass);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getConverterIds()
+	 */
+	public Iterator getConverterIds() {
+		return getRealJSFApplication().getConverterIds();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getConverterTypes()
+	 */
+	public Iterator getConverterTypes() {
+		return getRealJSFApplication().getConverterTypes();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createMethodBinding(java.lang.String, java.lang.Class[])
+	 */
+	public MethodBinding createMethodBinding(String ref, Class[] params) throws ReferenceSyntaxException {
+		return getRealJSFApplication().createMethodBinding(ref,params);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getSupportedLocales()
+	 */
+	public Iterator getSupportedLocales() {
+		return getRealJSFApplication().getSupportedLocales();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#setSupportedLocales(java.util.Collection)
+	 */
+	public void setSupportedLocales(Collection locales) {
+		getRealJSFApplication().setSupportedLocales(locales);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#addValidator(java.lang.String, java.lang.String)
+	 */
+	public void addValidator(String validatorId, String validatorClass) {
+		getRealJSFApplication().addValidator(validatorId,validatorClass);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createValidator(java.lang.String)
+	 */
+	public Validator createValidator(String validatorId) throws FacesException {
+		return getRealJSFApplication().createValidator(validatorId);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#getValidatorIds()
+	 */
+	public Iterator getValidatorIds() {
+		return getRealJSFApplication().getValidatorIds();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.application.Application#createValueBinding(java.lang.String)
+	 */
+	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
+		return getRealJSFApplication().createValueBinding(ref);
+	}
+	
+	//End JSF Application implementation
 
 }
