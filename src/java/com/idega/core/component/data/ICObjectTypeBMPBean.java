@@ -14,7 +14,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import com.idega.core.builder.presentation.ICPropertyHandler;
-import com.idega.core.search.business.Searchable;
+import com.idega.core.search.business.SearchPlugin;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
@@ -50,7 +50,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		{"iw.home","Home", null, IDOHome.class.getName(), null, "find,get"},
 		{"iw.propertyhandler","Property handler", null, ICPropertyHandler.class.getName(), null, "set"},
 		{"iw.plugin.user","User Plugin", null, null, null, null},
-		{"iw.searchable","Search plugin",null,Searchable.class.getName(),null,null}
+		{"iw.searchplugin","Search plugin",null,SearchPlugin.class.getName(),null,null}
   };
   
 

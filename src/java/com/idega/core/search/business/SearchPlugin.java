@@ -1,5 +1,5 @@
 /*
- * $Id: SearchEngine.java,v 1.3 2005/01/18 12:44:05 tryggvil Exp $
+ * $Id: SearchPlugin.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,17 +15,20 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/18 12:44:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
  * 
- * This interface defines methods that have to be implemented to make a resource searchable.<br>
- * Objects implementing this interface should be registered to their bundle as "Searchable" <br>
- * and will then become a search option in the Search block that they can add to a page and <br>
- * the results will be shown in the corresponding SearchResults block that they should also add to a page.
+ * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
+ * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
+ * presentation implementation from com.idega.core.search.presentation. The plugin will then become a search option in the Search block<br>
+ * that they can add to a page and the results will be shown in the corresponding SearchResults block <br>
+ * that they should also add to a page.<br>
+ * Alternatively you can implement your own presentation layer for your own SearchPlugin using the interfaces and basic implementations<br>
+ * in the package com.idega.search.
  * 
- * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.3 $
+ * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.1 $
  */
-public interface SearchEngine {
+public interface SearchPlugin {
 	
 	/**
 	 * This method is called once in the lifetime of the context for each searchable object before any search is done.
@@ -43,7 +46,7 @@ public interface SearchEngine {
 	/**
 	 * Creates a new search for a user with the key=value parameters in the Map.
 	 * @param searchParameters
-	 * @return
+	 * @return a Search object that you use to get some results from
 	 */
 	public Search createSearch(SearchQuery searchQuery);
 	
@@ -62,5 +65,15 @@ public interface SearchEngine {
 	 * @return true if the object implements getAdvancedSearchResults.
 	 */
 	public boolean getSupportsAdvancedSearch();
+	
+	/**
+	 * @return A displayable, preferably localized name, can be null
+	 */
+	public String getSearchName();
+	
+	/**
+	 * @return A displayable, preferably localized name, can be null
+	 */
+	public String getSearchDescription();
 	
 }

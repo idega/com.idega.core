@@ -1,5 +1,5 @@
 /*
- * $Id: Search.java,v 1.1 2005/01/17 19:15:24 eiki Exp $
+ * $Id: Searcher.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,16 +21,16 @@ import com.idega.presentation.ui.TextInput;
 
 
 /**
- *  Last modified: $Date: 2005/01/17 19:15:24 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
  * 
- * This block looks up all Searchable objects registered in bundles and sets up the search form (simple by default or advanced).<br>
- * To view the actual search results you must have a SearchResults block in the page you want to display the results.<br>
+ * This block can use all SearchPlugin objects registered in bundles and sets up the search form (simple by default or advanced).<br>
+ * To view the actual search results you must have a SearchResults block on the page you want to display the results.<br>
  * Use setInputParameterName if you want to have different searches on the same page, remember to set the same parameter<br>
  * for the SearchResults object.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
  * @version $Revision: 1.1 $
  */
-public class Search extends Block {
+public class Searcher extends Block {
 
 	public static final String DEFAULT_STYLE_CLASS = "iw_search";
 	public static final String DEFAULT_INPUT_STYLE_CLASS = "iw_search_input";
@@ -49,7 +49,7 @@ public class Search extends Block {
 	private boolean isAdvancedSearch = false;
 	
 	
-	public Search() {
+	public Searcher() {
 		super();
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResult.java,v 1.4 2005/01/18 12:35:46 tryggvil Exp $
+ * $Id: SearchResult.java,v 1.5 2005/01/19 01:48:30 eiki Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.search.business;
 
 import java.util.Map;
+import javax.faces.component.UIComponent;
 
 
 /**
@@ -17,22 +18,36 @@ import java.util.Map;
  * An instance of this class corresponds to a "search result" i.e. each row of a search result.
  * </p>
  * 
- *  Last modified: $Date: 2005/01/18 12:35:46 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface SearchResult {
 	
 	public String getSearchResultType();
-	public String getSearchResultHeadline();
-	public String getSearchResultDescription();
-	public String getSearchResultAbstract();
 	/**
-	 * The URL to the resource for the search result.
+	 * Used as the name of the link in the default impl.
 	 * @return
 	 */
-	public String getSearchResultURL();
+	public String getSearchResultName();
+	
+	/**
+	 * Used as extra info for the search result item e.g. the modification date of the resource, size etc.
+	 * @return
+	 */
+	public String getSearchResultExtraInformation();
+	
+	/**
+	 * Used as a "teaser" or abstract for the search result item
+	 * @return
+	 */
+	public String getSearchResultAbstract();
+	/**
+	 * The URI to the resource for the search result.
+	 * @return
+	 */
+	public String getSearchResultURI();
 	/**
 	 * Can return any arbitrary non-standard attributes with a Collection of attributeKey=attributeValue.
 	 * @return
