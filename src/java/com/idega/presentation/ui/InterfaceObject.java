@@ -696,7 +696,7 @@ public abstract class InterfaceObject extends PresentationObject {
 		if (getForm() != null) {
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit", "if ("+functionName+"() == false ){\nreturn false;\n}\n");
+			getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+"() == false ){\nreturn false;\n}\n");
 			getScript().addFunction(functionName, function);
 		}
 	}
@@ -729,9 +729,9 @@ public abstract class InterfaceObject extends PresentationObject {
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
 			if (value2 != null)
-				getScript().addToFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
 			else
-				getScript().addToFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
 			getScript().addFunction(functionName, function);
 		}
 	}

@@ -60,6 +60,8 @@ public class Form extends InterfaceObjectContainer {
 	private static String SLASH = "/";
 
 	private boolean _disableObject;
+	private Map _objectsToDisable;
+	private boolean _disableOnSubmit;
 	/**
 	*Defaults to send to the page itself and the POST method
 	**/
@@ -225,6 +227,16 @@ public class Form extends InterfaceObjectContainer {
 		}
 		if (_disableObject) {
 			getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
+			if (_disableOnSubmit) {
+				setOnSubmit("return checkSubmit(this)");
+				Iterator iter = _objectsToDisable.keySet().iterator();
+				while (iter.hasNext()) {
+					String name = (String) iter.next();
+					String values = (String) _objectsToDisable.get(name);
+					setCheckSubmit();
+					getScript().addToFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "')");
+				}
+			}
 		}
 
 	}
@@ -286,6 +298,12 @@ public class Form extends InterfaceObjectContainer {
 		}
 	}
 
+	protected void setCheckSubmit() {
+		if (getScript().getFunction("checkSubmit") == null) {
+			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+		}
+	}
+	
 	/*
 	 *
 	 */
@@ -566,7 +584,7 @@ public class Form extends InterfaceObjectContainer {
 	 */
 	public void setToDisableOnAction(String action, String objectName, boolean disable) {
 		_disableObject = true;
-		setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+		setOnAction(ACTION_ON_SUBMIT, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(objectName) + "')");
 	}
 	
 	/**
@@ -586,7 +604,11 @@ public class Form extends InterfaceObjectContainer {
 	 * @param enable	Set to true to disable, false will enable.
 	 */
 	public void setToDisableOnSubmit(InterfaceObject object, boolean disable) {
-		setToDisableOnAction(ACTION_ON_SUBMIT,object.getName(),disable);
+		_disableOnSubmit = true;
+		_disableObject = true;
+		if (_objectsToDisable == null)
+			_objectsToDisable = new HashMap();
+		_objectsToDisable.put(object.getName(), String.valueOf(disable));
 	}
 	
 	protected void addControlParameter(String parameterName, String parameterValue) {
@@ -712,5 +734,5 @@ public class Form extends InterfaceObjectContainer {
 	public void setToSendToHTTPS(boolean doSendToHTTPS) {
 		sendToHTTPS = doSendToHTTPS;
 	}
-
+	
 } // Class ends
