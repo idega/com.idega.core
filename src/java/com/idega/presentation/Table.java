@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.50 2004/02/05 20:10:27 laddi Exp $
+ * $Id: Table.java,v 1.51 2004/02/05 21:47:20 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,6 +31,16 @@ import com.idega.util.text.TextStyler;
  */
 public class Table extends PresentationObjectContainer {
 
+	public static final String FRAME_VOID = "void";
+	public static final String FRAME_ABOVE = "above";
+	public static final String FRAME_BELOW = "below";
+	public static final String FRAME_TOP_BOTTOM = "hsides";
+	public static final String FRAME_LEFT_RIGHT = "vsides";
+	public static final String FRAME_LEFT = "lhs";
+	public static final String FRAME_RIGHT = "rhs";
+	public static final String FRAME_BOX = "box";
+	public static final String FRAME_BORDER = "border";
+	
 	protected static final String HTML_TABLE_TAG_START = "<table ";
 	protected static final String HTML_TABLE_TAG_END = "</table>";
 	protected static final String HTML_CELL_TAG_START = "<td ";
@@ -453,7 +463,7 @@ public class Table extends PresentationObjectContainer {
 	 * vsides: displays left and right edges
 	 */
 	public void setFrame(String frame) {
-		setMarkupAttribute("FRAME", frame);
+		setMarkupAttribute("frame", frame);
 	}
 	
 	public void setCellspacing(int i) {
@@ -469,7 +479,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellpadding(int column, int row, String padding) {
-		setStyle(column, row, "padding", padding);
+		setStyle(column, row, "padding", padding+"px");
 	}
 	
 	public void setCellpaddingLeft(int column, int row, int padding) {
@@ -477,7 +487,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellpaddingLeft(int column, int row, String padding) {
-		setStyle(column, row, "padding-left", padding);
+		setStyle(column, row, "padding-left", padding+"px");
 	}
 	
 	public void setCellpaddingRight(int column, int row, int padding) {
@@ -485,7 +495,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellpaddingRight(int column, int row, String padding) {
-		setStyle(column, row, "padding-right", padding);
+		setStyle(column, row, "padding-right", padding+"px");
 	}
 	
 	public void setCellpaddingTop(int column, int row, int padding) {
@@ -493,7 +503,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellpaddingTop(int column, int row, String padding) {
-		setStyle(column, row, "padding-top", padding);
+		setStyle(column, row, "padding-top", padding+"px");
 	}
 	
 	public void setCellpaddingBottom(int column, int row, int padding) {
@@ -501,7 +511,7 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellpaddingBottom(int column, int row, String padding) {
-		setStyle(column, row, "padding-bottom", padding);
+		setStyle(column, row, "padding-bottom", padding+"px");
 	}
 	
 	public void setCellpaddingAndCellspacing(int i) {
