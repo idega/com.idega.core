@@ -155,7 +155,7 @@ private void getImage(IWContext iwc) throws SQLException{
   if( useCaching ){
     Cache cachedImage;
 
-     if( usesOldImageTables ){
+     if( usesOldImageTables ){//eiki: could this clash with other cached files and overwrite them?
       cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject(com.idega.jmodule.image.data.ImageEntity.class.getName(),imageId,iwma);
      }
      else{
@@ -583,17 +583,17 @@ public void limitImageWidth( boolean limitImageWidth ){
   * @todo implement in the main method if possible
   */
   public String getMediaURL(){
-    if( imageId!=-1) return MediaBusiness.getMediaURL(imageId,IWContext.getInstance().getApplication());
-    else return getURL();
+    return getMediaURL(IWContext.getInstance());
   }
 
   /**
    * Use this method for getting an images (stored in the database) url
+   * @todo check if fails with usesOldMedia tables
    * @param iwc The IWContext
    * @return
    */
   public String getMediaURL(IWContext iwc){
-    if( imageId!=-1) return MediaBusiness.getMediaURL(imageId,iwc.getApplication());
+    if( imageId!=-1) return MediaBusiness.getMediaURL(imageId, ImageEntity.class, iwc.getApplication());
     else return getURL();
   }
 
