@@ -21,6 +21,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	private boolean _checkDisabled = false;
 	private boolean _inFocus = false;
 	private boolean _changeValue = false;
+	private boolean _selectValues = false;
 	
 	public static final String ACTION_ON_BLUR = "onBlur";
 	public static final String ACTION_ON_CHANGE = "onChange";
@@ -30,6 +31,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	public static final String ACTION_ON_KEY_UP = "onKeyUp";
 	public static final String ACTION_ON_SELECT = "onSelect";
 	public static final String ACTION_ON_SUBMIT = "onSubmit";
+
 
 	public InterfaceObject() {
 		super();
@@ -42,13 +44,8 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return boolean
 	 */
 	protected boolean isEnclosedByForm() {
-		PresentationObject obj = getParentObject();
-		while (obj != null) {
-			if (obj instanceof Form) {
-				return true;
-			}
-			obj = obj.getParentObject();
-		}
+		if (getForm() != null)
+			return true;
 		return false;
 	}
 
@@ -385,6 +382,29 @@ public abstract class InterfaceObject extends PresentationObject {
 	
 	
 	/**
+	 * Sets the given interface object as selected when this object receives the action 
+	 * specified.
+	 * @param action	The action to perform on.
+	 * @param objectToChange	The interface object to set selected value of.
+	 * @param selected	Set true to select, false otherwise.
+	 */
+	public void setSelectedOnAction(String action, InterfaceObject objectToChange, boolean selected) {
+		setSelectedOnAction(action, objectToChange.getName(), selected);
+	}
+	
+	/**
+	 * Sets the interface object with the given name as selected when this object receives 
+	 * the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectName	The name of the interface object to set selected value of.
+	 * @param selected	Set true to select, false otherwise.
+	 */
+	public void setSelectedOnAction(String action, String objectName, boolean selected) {
+		_selectValues = true;
+		setOnAction(action, "selectValues(findObj('"+objectName+"'),'"+selected+"');");
+	}
+	
+	/**
 	 * Sets the interface object in focus on page load.
 	 * @param inFocus	Set to true to set focus on object, false otherwise.
 	 */
@@ -503,6 +523,9 @@ public abstract class InterfaceObject extends PresentationObject {
 			if (_changeValue) {
 				getScript().addFunction("changeValue", "function changeValue (input,newValue) {\n	input.value=newValue;\n}");
 			}
+			if (_selectValues) {
+				getScript().addFunction("selectValues", "function selectValues (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].selected=eval(value);\n	\t}\n	else\n	\tinputs.selected=eval(value);\n}");
+			}
 		}
 		if (_inFocus && hasParentPage()) {
 			getParentPage().setOnLoad("findObj('" + getName() + "').focus();");
@@ -515,13 +538,21 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return Script
 	 */
 	protected Script getScript() {
-		if ( getParentForm() != null ) {
-			if (getParentForm().getAssociatedFormScript() == null) {
-				getParentForm().setAssociatedFormScript(new Script());
+		if ( getForm() != null ) {
+			if (getForm().getAssociatedFormScript() == null) {
+				getForm().setAssociatedFormScript(new Script());
 			}
-			return getParentForm().getAssociatedFormScript();
+			return getForm().getAssociatedFormScript();
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the enclosing form, returns null if no form present.
+	 * @return Form	The form enclosing the interface object.
+	 */
+	public Form getForm() {
+		return getParentForm();
 	}
 
 	/**
