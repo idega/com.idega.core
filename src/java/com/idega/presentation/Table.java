@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.58 2004/04/23 12:49:36 laddi Exp $
+ * $Id: Table.java,v 1.59 2004/04/27 11:04:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -410,7 +410,11 @@ public class Table extends PresentationObjectContainer {
 		add(spacer,xpos,ypos);*/
 		getCellAt(xpos, ypos).setHeightStyle(height);
 	}
-	// Gimmi TEMP
+
+	public void setHeight(int xpos, int ypos, int height) {
+		setHeight(xpos, ypos, String.valueOf(height));
+	}
+
 	public PresentationObjectContainer getCellAt(int xpos, int ypos) {
 		if (isResizable) {
 			if (xpos > this.getColumns()) {
@@ -456,6 +460,24 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setBorder(int i) {
 		setBorder(Integer.toString(i));
+	}
+	
+	public void setCellBorderWidth(int column, int row, int borderWidth) {
+		setStyle(column, row, "border-width", borderWidth+"px");
+	}
+	
+	public void setCellBorderColor(int column, int row, String borderColor) {
+		setStyle(column, row, "border-color", borderColor);
+	}
+	
+	public void setCellBorderStyle(int column, int row, String borderStyle) {
+		setStyle(column, row, "border-style", borderStyle);
+	}
+	
+	public void setCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
+		setCellBorderWidth(column, row, borderWidth);
+		setCellBorderColor(column, row, borderColor);
+		setCellBorderStyle(column, row, borderStyle);
 	}
 	
 	/**
