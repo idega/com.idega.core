@@ -121,10 +121,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
     String streetNameAndNumber = address.getStreetAddress();
     String postalCode = address.getPostalAddress();
     Country country = address.getCountry();
-    String countryName = "";
+    /*String countryName = "";
     if(country!=null) {
     		countryName = country.getName();
-    }
+    }*/
     
     fullAddress.append(streetNameAndNumber).append(", ")
 	.append(postalCode).append(", ")
