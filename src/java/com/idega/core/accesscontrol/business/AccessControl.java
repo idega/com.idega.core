@@ -128,6 +128,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public boolean isAdmin(IWUserContext iwc) throws Exception {
 		//TODO Eiki review bullshit here, there is only one super user!
 		try {
+			//if(hasRole(StandardRoles.ROLE_KEY_ADMIN,iwc)){
+			//	return true;
+			//}
 			Object ob = LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
 			if (ob != null) {
 				return ((Boolean) ob).booleanValue();
@@ -743,6 +746,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					
 				}
 				else {
+					
+					//editor users should always get edit/view permission on pages:
+					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_EDITOR,iwc)){
+						return Boolean.TRUE;
+					}
+					//author users should always get edit/view permission on pages:
+					else if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_AUTHOR,iwc)){
+						return Boolean.TRUE;
+					}
+					
 					//Object instance
 					myPermission=Boolean.FALSE; //TODO: should be set to null and the haspermissionForObjectInstance should return null if there is no permission set and then later return false if still null, because permission could be stored as false permission
 					for (int i = 0; i < arrayLength; i++) {
