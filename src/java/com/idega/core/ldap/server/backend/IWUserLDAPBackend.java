@@ -180,6 +180,7 @@ LDAPReplicationConstants {
 				boolean firstAnd = true;
 				Iterator filters = filter.and.values().iterator();
 				while(filters.hasNext()){
+					//todo only fill the returning entries, that would be much faster and more memory efficient
 					EntrySet matched = get(base, scope, (Filter) filters.next(), false, null);
 					if (firstAnd) {
 						firstAnd = false;
