@@ -18,6 +18,7 @@ import com.idega.core.data.*;
 import com.idega.core.data.Email;
 import com.idega.data.*;
 import com.idega.data.EntityFinder;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.presentation.DataEmailer;
 
 import java.sql.Connection;
@@ -59,6 +60,7 @@ import java.rmi.RemoteException;
 
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness{
 
+	private static final String SESSION_KEY_TOP_NODES =  "top_nodes_for_user";
   private GroupHome groupHome;
   private UserHome userHome;
   private UserGroupRepresentativeHome userRepHome;
@@ -66,7 +68,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private EmailHome emailHome;
   private AddressHome addressHome;
   private PhoneHome phoneHome;
-
+  
   private Gender male,female;
 
   public UserBusinessBean() {
@@ -1425,10 +1427,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user)throws RemoteException{
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
 		Collection topNodes = new Vector();
 		
-		topNodes = (Collection)this.getIWApplicationContext().getApplicationAttribute("top_nodes_for_userid_"+user.getPrimaryKey());
+		topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES);
 		
 		if( topNodes != null ) return topNodes;
 		
@@ -1506,7 +1508,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		}
 		
-		this.getIWApplicationContext().setApplicationAttribute("top_nodes_for_userid_"+user.getPrimaryKey(),topNodes);
+		iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES,topNodes);
 		
 		return 	topNodes;
 	

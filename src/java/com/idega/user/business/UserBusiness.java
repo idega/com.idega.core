@@ -9,6 +9,7 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.data.Address;
 import com.idega.core.data.AddressType;
 import com.idega.core.data.Phone;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -140,7 +141,7 @@ public interface UserBusiness extends com.idega.business.IBOService
 	public  User getUser(String personalID) throws EJBException;
 
 	
-	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user)throws RemoteException;
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException;
 
   public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException;
   public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException;
