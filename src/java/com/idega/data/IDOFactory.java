@@ -184,11 +184,13 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
    */
   protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
     Collection theReturn = new Vector();
-    Iterator iter = collectionOfPrimaryKeys.iterator();
-    while (iter.hasNext()) {
-      Object pk = iter.next();
-      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
-      theReturn.add(entityObject);
+    if (collectionOfPrimaryKeys != null){
+	    Iterator iter = collectionOfPrimaryKeys.iterator();
+	    while (iter.hasNext()) {
+	      Object pk = iter.next();
+	      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+	      theReturn.add(entityObject);
+	    }
     }
     return theReturn;
   }
