@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.ICRoleHome;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.accesscontrol.data.PermissionGroupHome;
+import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
@@ -35,6 +34,7 @@ import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.EncryptionType;
@@ -668,7 +668,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				return myPermission;
 			}
 			//JSP PAGE ENDS
-			else { // if (obj != null)
 
 				//PAGE
 				if (obj instanceof Page && ((Page) obj).getPageID() != _notBuilderPageID) {
@@ -679,7 +678,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						}
 					}
 
-					if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
+					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 
 						// Global - (Page)
 						if (!PermissionCacher.anyInstancePermissionsDefinedForPage((Page) obj, iwc, permissionKey)) {
@@ -737,32 +736,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//Template object instance permission.  Used for DynamicPageTrigger
 					if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
 						PresentationObject currentObject = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
-						Boolean hasRelationToPage = currentObject.hasCurrentUserRelationToContainingDPTPage();  //does not need iwuc because the value is set as null in the clone method in PresentationObject
+						ICDynamicPageTrigger dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().getImplementorOrNull(ICDynamicPageTrigger.class, AccessControl.class);
+						Boolean hasRelationToPage = dynamicPageTrigger.hasRelationTo(currentObject, permissionGroupLists, iwc);
 						String templateID = currentObject.getTemplateId();
-						if(hasRelationToPage==null && templateID!=null) {							
-							//Get ownergroup
-							Group relatedDPTPageGroup = (Group)currentObject.getDPTPageRelationGroup(iwc);
-							//check if user is in ownergroup
-							if(relatedDPTPageGroup != null) {
-								boolean isInOwnerGroup = false;
-								Object pk = relatedDPTPageGroup.getPrimaryKey().toString();
-								for (int i = 0; i < permissionGroupLists.length; i++) {
-									List groupIDs = permissionGroupLists[i];
-									for (Iterator iter = groupIDs.iterator(); iter.hasNext();) {
-										Object gr = iter.next();
-										isInOwnerGroup = pk.equals(gr);
-										if(isInOwnerGroup) {
-											break;
-										}
-									}
-									if(isInOwnerGroup) {
-										break;
-									}
-								}
-								hasRelationToPage = new Boolean(isInOwnerGroup);
-								currentObject.setCurrentUserHasRelationToContainingDPTPage(hasRelationToPage);
-							}		
-						}
 						if(Boolean.TRUE.equals(hasRelationToPage) && templateID!=null) {
 							//if so, check for permission for the template object
 //									List[] permissionOrder = new List[1];
@@ -791,7 +767,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//          }
 					//          //page permission inheritance
 					//
-					if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
+					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 						// Global - (object)
 						if (!PermissionCacher.anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey)) {
 							for (int i = 0; i < arrayLength; i++) {
@@ -807,11 +783,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 					if(myPermission==null) {
 						return Boolean.FALSE;
-					}else {
-						return myPermission;
 					}
+					return myPermission;
 				}
-			}
+
 		}
 		return myPermission;
 	}
