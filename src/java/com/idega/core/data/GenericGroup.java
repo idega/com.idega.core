@@ -129,7 +129,7 @@ public class GenericGroup extends GenericEntity{
           buffer.append("select * from ");
           buffer.append(tableToSelectFrom);
           buffer.append(" where ");
-          buffer.append("CHILD_IC_GROUP_ID");
+          buffer.append("CHILD_GROUP_ID");
           buffer.append("=");
           buffer.append(this.getID());
           String SQLString=buffer.toString();
