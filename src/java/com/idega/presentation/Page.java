@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.117 2004/07/11 15:16:21 gummi Exp $
+ *  $Id: Page.java,v 1.118 2004/07/13 10:53:50 gummi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1264,7 +1264,11 @@ public class Page extends PresentationObjectContainer {
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
-			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
+			if(true){
+				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
+			} else {
+				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
+			}
 			println("<wml>");
 			println("<head>");
 			println("<meta http-equiv=\"cache-control\" content=\"no-cache\"/>");
