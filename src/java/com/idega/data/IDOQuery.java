@@ -53,6 +53,8 @@ public class IDOQuery {
 	private static final String AND = " AND ";
 	private static final String OR = " OR ";
 	private static final String IS_NULL = " IS NULL ";
+	private static final String ASCENDING = " ASC ";
+	private static final String DESCENDING = " DESC ";
 
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
@@ -523,9 +525,32 @@ public class IDOQuery {
 	public IDOQuery appendOrderBy() {
 		return this.append(ORDER_BY);
 	}
+
+	public IDOQuery appendDescending() {
+		return this.append(DESCENDING);
+	}
+
 	public IDOQuery appendOrderBy(String columnName) {
 		this.append(ORDER_BY);
 		this.append(columnName);
+		return this;
+	}
+
+	public IDOQuery appendOrderBy(String[] columnNames) {
+		this.append(ORDER_BY);
+		this.append(IDOUtil.getInstance().convertArrayToCommaseparatedString(columnNames));
+		return this;
+	}
+
+	public IDOQuery appendOrderByDescending(String columnName) {
+		this.appendOrderBy(columnName);
+		this.appendDescending();
+		return this;
+	}
+
+	public IDOQuery appendOrderByDescending(String[] columnNames) {
+		this.appendOrderBy(columnNames);
+		this.appendDescending();
 		return this;
 	}
 
