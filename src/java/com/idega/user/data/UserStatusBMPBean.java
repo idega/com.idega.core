@@ -8,6 +8,10 @@
  */
 package com.idega.user.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 import com.idega.data.GenericEntity;
 
 /**
@@ -81,5 +85,46 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	
 	public void setGroup(Group group) {
 		setColumn(IC_GROUP, group);
+	}	
+	
+	public Collection ejbFindAll() throws FinderException {
+		return super.idoFindAllIDsBySQL();
+	}
+	
+	public Collection ejbFindAllByUserId(int id) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(ENTITY_NAME);
+		sql.append(" where ");
+		sql.append(IC_USER);
+		sql.append(" = ");
+		sql.append(id);
+		
+		return super.idoFindIDsBySQL(sql.toString());
+	}
+	
+	public Collection ejbFindAllByGroupId(int id) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(ENTITY_NAME);
+		sql.append(" where ");
+		sql.append(IC_GROUP);
+		sql.append(" = ");
+		sql.append(id);
+		
+		return super.idoFindIDsBySQL(sql.toString());
+	}	
+	
+	public Collection ejbFindAllByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(ENTITY_NAME);
+		sql.append(" where ");
+		sql.append(IC_USER);
+		sql.append(" = ");
+		sql.append(user_id);
+		sql.append(" and ");
+		sql.append(IC_GROUP);
+		sql.append(" = ");
+		sql.append(group_id);
+		
+		return super.idoFindIDsBySQL(sql.toString());
 	}	
 }
