@@ -104,7 +104,6 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
     return gender;
   }
 
-
   public Collection ejbFindAllGenders()throws FinderException{
     return super.idoFindAllIDsBySQL();
   }

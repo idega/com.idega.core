@@ -22,7 +22,7 @@ import com.idega.data.GenericEntity;
  */
 public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	private static final String ENTITY_NAME = "ic_user_status";
-	private static final String STATUS_LOC_KEY = "status_key";
+	private static final String STATUS_ID = "status_id";
 	private static final String IC_USER = "ic_user_id";
 	private static final String IC_GROUP = "ic_group_id";
 
@@ -42,17 +42,26 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	 */
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
-		addAttribute(STATUS_LOC_KEY,"Localized key to status name",true,true,String.class);
+	
+		addManyToOneRelationship(STATUS_ID,Status.class);
 		addManyToOneRelationship(IC_USER,User.class);
 		addManyToOneRelationship(IC_GROUP,Group.class);
 	}
 
-	public String getStatusKey() {
-		return getStringColumnValue(STATUS_LOC_KEY);
+	public int getStatusId() {
+		return getIntColumnValue(STATUS_ID);
 	}
 	
-	public void setStatusKey(String key) {
-		setColumn(STATUS_LOC_KEY,key);
+	public Status getStatus() {
+		return (Status)getColumn(STATUS_ID);
+	}
+
+	public void setStatusId(String id) {
+		setColumn(STATUS_ID,id);
+	}
+	
+	public void setStatus(Status status) {
+		setColumn(STATUS_ID,status);
 	}
 	
 	public int getUserId() {
