@@ -193,10 +193,20 @@ public class IWCacheManager {
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
     //check if this blob has already been cached
     Cache cache = (Cache) getObject(entityClassString+id);
-    if( cache == null ) {//if null cache it for next time
+    if( cache == null || !isBlobCached(cache)) {//if null cache it for next time
      cache = cacheBlob(entityClassString,id,iwma);
     }
     return cache;
+  }
+  
+  /**
+   * Checks if the blob object is really cached on disk
+ * @param cache
+ * @return true if the cached file exists
+ */
+private boolean isBlobCached(Cache cache){
+  	java.io.File f = new java.io.File(cache.getRealPathToFile());
+    return f.exists();
   }
 
   private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma){
