@@ -118,7 +118,7 @@ public class DataEmailer extends Block {
         ResultSet RS = Stmt.executeQuery(sql);
         int count = RS.getMetaData().getColumnCount();
         StringBuffer letter = new StringBuffer();
-        String newLine = "\n";
+        String newLine = System.getProperty("line.separator");
         letter.append(startData).append(newLine);
         while(RS.next()){
           for (int i = 1; i <= count; i++) {
