@@ -28,7 +28,7 @@ public interface InputHandler {
 	/**
 	 * @return Creates object of the expected datatype from the string value and returns it as an Object
 	 */
-	public Object getResultingObject(String value, IWContext iwc) throws Exception;
+	public Object getResultingObject(String[] value, IWContext iwc) throws Exception;
 	
 	public String getDisplayNameOfValue(Object value, IWContext iwc);
 }
