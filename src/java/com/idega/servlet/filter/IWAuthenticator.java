@@ -18,7 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.core.accesscontrol.jaas.IWJAASAutenticationRequestWrapper;
+import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -86,7 +86,7 @@ public class IWAuthenticator implements Filter {
 			addCookie(iwc);
 		}
 		
-		chain.doFilter(new IWJAASAutenticationRequestWrapper(iwc), response);
+		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
 	}
 
 	/**
