@@ -49,7 +49,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     Map topMenuMap;
    
     
-    private static String prefix = "<div id=\"menu\">\n\t<ul id=\"menuList\">\n";
+    private static String prefix = "<div id=\"menu\">\n<ul id=\"menuList\">\n";
     private static String suffix = "\t</ul>\n</div>";
     private static String CSS_FILE_PATH = "cssmenu/CSSMultiLevelMenu.css";
     private static String CSS_EXPLORER_FIX_FILE_PATH = "cssmenu/csshover.htc";
@@ -179,7 +179,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     public class CSSMenu extends PresentationObjectContainer{
      
 		private static final String UL_END_TAG = "</ul>";
-		private static final String UL_START_TAG = "<ul>";
+		private static final String UL_START_TAG = "\n<ul>";
 		private static final String LI_END_TAG = "</li>";
 		private static final String LI_START_TAG = "<li>";
         private List menuItems;
@@ -234,7 +234,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
             if(children!=null && !children.isEmpty()) {
                 topMenuItem.setStyleClass("submenu");
                 
-                println(LI_START_TAG);
+                print(LI_START_TAG);
                 topMenuItem._print(iwc);
                 println(UL_START_TAG);
                 
@@ -246,7 +246,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
                     if(!(obj instanceof CSSMenu)){
                         print(LI_START_TAG);
                         obj._print(iwc);
-                        print(LI_END_TAG);
+                        println(LI_END_TAG);
                     }
                     else {
                         obj._print(iwc);
