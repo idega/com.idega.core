@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 
@@ -32,7 +33,7 @@ import com.idega.util.SortedProperties;
  */
 
 
-public class MimeTypeUtil{
+public class MimeTypeUtil implements Singleton {
 	
 	
 
@@ -45,7 +46,6 @@ public static final String MIME_TYPE_POWERPOINT = "application/vnd.ms-powerpoint
 public static final String MIME_TYPE_PDF_2 = "application/x-pdf";
 public static final String MIME_TYPE_PDF_1 = "application/pdf";
 
-	private static MimeTypeUtil util;
 	private String pathToConfigFile;
 	private Properties properties;
 	
@@ -321,7 +321,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	
 	public static MimeTypeUtil getInstance(){
 		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
-		util = (MimeTypeUtil) iwac.getApplicationAttribute(MIME_TYPE_PROPS_FILE_NAME);
+		MimeTypeUtil util = (MimeTypeUtil) iwac.getApplicationAttribute(MIME_TYPE_PROPS_FILE_NAME);
 		if(util==null){
 			util = new MimeTypeUtil();
 			iwac.setApplicationAttribute(MIME_TYPE_PROPS_FILE_NAME,util);
