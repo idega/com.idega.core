@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.112 2004/05/19 17:58:51 gummi Exp $
+ * $Id: Link.java,v 1.113 2004/06/22 16:30:20 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.idega.builder.dynamicpagetrigger.util.DPTCrawlable;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -51,7 +50,7 @@ import com.idega.util.text.TextSoap;
  *@version 1.2
  *@modified by  <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public class Link extends Text implements DPTCrawlable {
+public class Link extends Text {
 
 	private PresentationObject _obj;
 	private Window _myWindow = null;
@@ -113,7 +112,6 @@ public class Link extends Text implements DPTCrawlable {
 	private boolean https = false;
 	private String protocol = null;
 
-	private int dptTemplateId = 0;
 	private ICFile file = null;
 	private int fileId = -1;
 
@@ -1745,17 +1743,17 @@ public class Link extends Text implements DPTCrawlable {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
 				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
-				print("<a " + getMarkupAttributesString() + " >");
+				print("<p><a " + getMarkupAttributesString() + " >");
 				print(_myWindow.getName());
-				print("</a>");
+				print("</a></p>");
 			}
 			else {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
-				print("<a " + getMarkupAttributesString() + " >");
+				print("<p><a " + getMarkupAttributesString() + " >");
 				_obj._print(iwc);
-				print("</a>");
+				print("</a></p>");
 			}
 		}
 		/**
@@ -2036,18 +2034,6 @@ public void setWindowToOpen(String className) {
 		setMarkupAttribute("onMouseOut", "swapImgRestore()");
 	}
 
-	public void setDPTTemplateId(int id) {
-		dptTemplateId = id;
-	}
-
-	public int getLinkedDPTTemplateID() {
-		return dptTemplateId;
-	}
-
-	public void setDPTTemplateId(ICPage page) {
-		dptTemplateId = page.getID();
-	}
-
 	public void removeParameter(String prmName) {
 		if (_parameterString != null) {
 			if (!(prmName != null && !prmName.equals(""))) {
@@ -2206,21 +2192,6 @@ public void setWindowToOpen(String className) {
 
 	public String getProtocol() {
 		return this.protocol;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.idega.builder.dynamicpagetrigger.util.DPTCrawlable#setLinkedDPTPage(int)
-	 */
-	public void setLinkedDPTPageID(int pageId) {
-		this.setPage(pageId);
-	}
-	
-	public String getLinkedDPTPageName(IWContext iwc) {
-		String toReturn = this.getText();
-		if(toReturn==null) {
-			toReturn = this.getLocalizedText(iwc);
-		}
-		return toReturn;
 	}
 
 }
