@@ -2337,7 +2337,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			qry = "delete from " + getNameOfMiddleTable(getStaticInstance(entityToRemoveFrom), this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
+			qry = "delete from " + getNameOfMiddleTable(getStaticInstanceIDO(entityToRemoveFrom), this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
 
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 			Stmt.executeUpdate(qry);
