@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.17 2001/11/15 15:02:40 gummi Exp $
+ * $Id: Page.java,v 1.18 2001/11/17 21:33:24 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -338,6 +338,13 @@ public class Page extends PresentationObjectContainer {
     setAttributeMultivalued("onLoad",action);
   }
 
+	/**
+   *
+   */
+  public void setOnBlur(String action) {
+    setAttributeMultivalued("onBlur",action);
+  }
+
   /**
    *
    */
@@ -350,6 +357,13 @@ public class Page extends PresentationObjectContainer {
    */
   public void close() {
     setOnLoad("window.close()");
+  }
+
+	/**
+   * Sets the window to close immediately
+   */
+  public void keepFocus() {
+    setOnBlur("window.focus()");
   }
 
   /**
