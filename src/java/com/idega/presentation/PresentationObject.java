@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.19 2002/02/04 10:59:08 eiki Exp $
+ * $Id: PresentationObject.java,v 1.20 2002/02/04 11:34:37 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -61,8 +61,8 @@ public class PresentationObject extends Object implements Cloneable {
   public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
   public EventListenerList listenerList = null;
   private Hashtable eventAttributes = null;
-  private static long InstnceUniqueID;
-  private String UniqueInstnceName;
+  private static long InstanceUniqueID;
+  private String UniqueInstanceName;
   private boolean listenerAdded = false;
   public String eventLocationString = "";
   private IWContext eventIWContext = null;

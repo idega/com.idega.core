@@ -63,7 +63,7 @@ public Image(String url){
 
 public Image(String url,String name){
 	super();
-        if( "".equalsIgnoreCase(name) ) name = this.getID();
+        if( "".equalsIgnoreCase(name) ) name = this.generateID();
 	setName(name);
 	setURL(url);
 	setBorder(0);
@@ -91,12 +91,12 @@ public Image(String name,String url, String overImageUrl, String downImageUrl){
 
 
 public Image(String url,String name,int width,int height){
-	super();
-	setName(name);
-	setURL(url);
-	setWidth(width);
-	setHeight(height);
-	setBorder(0);
+  super();
+  setName(name);
+  setURL(url);
+  setWidth(width);
+  setHeight(height);
+  setBorder(0);
 }
 /**
 *Fetches an image from the database through the imageservlet or blobcache
@@ -106,7 +106,7 @@ public Image(int imageId) throws SQLException{
   super();
   this.imageId = imageId;
   setBorder(0);
-  setName(this.getID());
+  setName(this.generateID());
 }
 
 
@@ -390,11 +390,12 @@ public String getAlt(){
 private String getHTMLString(){
   StringBuffer sPrint = new StringBuffer();
   sPrint.append("<img ");
+  //alt always added for standards compliancy
+  sPrint.append("alt=\"");
   if( getAlt()!=null ){
-    sPrint.append("alt=\"");
     sPrint.append(getAlt());
-    sPrint.append("\" ");
   }
+  sPrint.append("\" ");
   sPrint.append("name=\"");
   sPrint.append(getName());
   sPrint.append("\"");
