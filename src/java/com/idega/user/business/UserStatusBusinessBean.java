@@ -106,8 +106,14 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		return (StatusHome) getIDOHome(Status.class);
 	}
 	
-	public Status getDeceasedStatus() throws RemoteException,FinderException{
-		return getStatusHome().findByStatusKey(status_deceased);
+	public Status getDeceasedStatus() throws RemoteException{
+		try {
+			return getStatusHome().findByStatusKey(status_deceased);
+		}
+		catch (FinderException e) {
+			
+		}
+		return null;
 	}
 	
 	public Status createDeceasedStatus() throws RemoteException,CreateException{
@@ -117,14 +123,20 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		return status;
 	}
 	
-	public Status getDeceasedStatusCreateIfNone() throws RemoteException,FinderException,CreateException{
+	public Status getDeceasedStatusCreateIfNone() throws RemoteException{
 		Status status = getDeceasedStatus();
 		if(status!=null)
 			return status;
 		else{
-			status = createDeceasedStatus();
-			return status;
+			try {
+				status = createDeceasedStatus();
+				return status;
+			}
+			catch (CreateException e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
 	}
 	
 	public UserStatus getDeceasedUserStatus(Integer userID) throws RemoteException{
@@ -136,15 +148,13 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		catch (EJBException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
 		}
 		catch (FinderException e) {
-			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 		catch (CreateException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 		return null;
 	}
@@ -153,7 +163,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		try {
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();
 			UserStatus dUserStatus = getDeceasedUserStatus(userID);
-			if(dUserStatus !=null){
+			if(dUserStatus ==null){
 				dUserStatus = getUserStatusHome().create();
 				dUserStatus.setUserId(userID.intValue());
 				//dUserStatus.setGroupId(group_id);
@@ -164,20 +174,20 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		catch (IDOStoreException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 	
 		catch (EJBException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 		catch (FinderException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 		catch (CreateException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			
 		}
 		
 	}
