@@ -205,8 +205,10 @@ public class FrameSet extends Window{
       StringBuffer buf = new StringBuffer();
 
       if( !isInAWindow ){
-        buf.append(getStartTag());
-        buf.append(getMetaInformation(iwc));
+		String characterEncoding = iwc.getApplicationSettings().getProperty(Page.CHARACTER_ENCODING, Page.DEFAULT_CHARACTER_ENCODING);
+		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+        buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
+        buf.append(getMetaInformation(markup, characterEncoding));
         buf.append("<title>"+getTitle()+"</title>");
       }
 

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.93 2004/02/04 10:45:55 laddi Exp $
+ *  $Id: Page.java,v 1.94 2004/02/05 21:19:53 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -84,7 +85,8 @@ public class Page extends PresentationObjectContainer {
 	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
 	private ICFile styleFile = null;
-	private static final String CHARACTER_ENCODING = "character_encoding";
+	public static final String CHARACTER_ENCODING = "character_encoding";
+	public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 
 	/**
 	 *  Description of the Field
@@ -116,6 +118,11 @@ public class Page extends PresentationObjectContainer {
 	 */
 	private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
 
+	public final static String MARKUP_LANGUAGE = "markup_language";
+	public final static String HTML = "HTML";
+	public final static String XHTML = "XHTML";
+	public final static String XHTML1_1 = "XHTML1.1";
+	
 	private final static String END_TAG = "</html>";
 	private boolean _isCategory = false;
 	private ICPage _windowToOpenOnLoad;
@@ -192,13 +199,13 @@ public class Page extends PresentationObjectContainer {
 		_styleSheets.add(URL);
 	}
 
-	private String getStyleSheetURL() {
+	private String getStyleSheetURL(String markup) {
 		if (_styleSheets != null) {
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = _styleSheets.iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\">\n");
+				buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" "+(!markup.equals(HTML) ? "/" : "")+">\n");
 			}
 			return buffer.toString();
 		}
@@ -218,7 +225,7 @@ public class Page extends PresentationObjectContainer {
 			Iterator iter = _javascripts.iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				buffer.append("<script language=\"javascript\" src=\"" + URL + "\"></script>\n");
+				buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
 			}
 			return buffer.toString();
 		}
@@ -371,7 +378,7 @@ public class Page extends PresentationObjectContainer {
 	 *
 	 *@return    The metaTags value
 	 */
-	public String getMetaTags() {
+	public String getMetaTags(String markup) {
 		StringBuffer returnString = new StringBuffer();
 		String tagName = "";
 
@@ -388,7 +395,7 @@ public class Page extends PresentationObjectContainer {
 					returnString.append(tagValue);
 					returnString.append("\"");
 				}
-				returnString.append(">\n");
+				returnString.append(" "+(!markup.equals(HTML) ? "/" : "")+">\n");
 			}
 			returnString.append("\n");
 		}
@@ -406,7 +413,7 @@ public class Page extends PresentationObjectContainer {
 					returnString.append(tagValue);
 					returnString.append("\"");
 				}
-				returnString.append(">\n");
+				returnString.append(" "+(!markup.equals(HTML) ? "/" : "")+">\n");
 			}
 			returnString.append("\n");
 		}
@@ -1087,7 +1094,9 @@ public class Page extends PresentationObjectContainer {
 
 		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (!isInsideOtherPage) {
-				println(getStartTag());
+				String characterEncoding = iwc.getApplicationSettings().getProperty(CHARACTER_ENCODING, DEFAULT_CHARACTER_ENCODING);
+				String markup = iwc.getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
+				println(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
 				if (_zeroWait) {
 					setDoPrint(false);
 				}
@@ -1102,8 +1111,8 @@ public class Page extends PresentationObjectContainer {
 //				shortcut icon
 				println(getPrintableSchortCutIconURL(iwc));
 				
-				print(getMetaInformation(iwc));
-				print(getMetaTags());
+				print(getMetaInformation(markup, characterEncoding));
+				print(getMetaTags(markup));
 
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
@@ -1124,7 +1133,7 @@ public class Page extends PresentationObjectContainer {
 						}
 					}
 
-					print("<script type=\"text/javascript\" language=\"javascript\" src=\"" + src + "/iw_core.js\">");
+					print("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 					println("</script>");
 					print(getJavascriptURL());
 				}
@@ -1134,7 +1143,7 @@ public class Page extends PresentationObjectContainer {
 				}
 
 				
-				print(getStyleSheetURL());
+				print(getStyleSheetURL(markup));
 				print(getStyleDefinition());
 
 				//Laddi: Made obsolete with default style sheet
@@ -1220,7 +1229,23 @@ public class Page extends PresentationObjectContainer {
 	/**
 	 *@return    The startTag value
 	 */
-	public static String getStartTag() {
+	public static String getStartTag(Locale locale, String markup, String encoding) {
+		if (markup.equals(XHTML)) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding == null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"").append("\n");
+			buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.toString()+"\" lang=\""+locale.toString()+"\">");
+			return buffer.toString();
+		}
+		else if (markup.equals(XHTML1_1)) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding == null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
+			buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.toString()+"\">");
+			return buffer.toString();
+		}
 		return START_TAG;
 	}
 
@@ -1235,25 +1260,24 @@ public class Page extends PresentationObjectContainer {
 	 *@param  iwc  Description of the Parameter
 	 *@return      The metaInformation value
 	 */
-	public String getMetaInformation(IWContext iwc) {
+	public String getMetaInformation(String markup, String characterEncoding) {
 
 		boolean addIdegaAuthorAndCopyRight = false;
-		String characterEncoding = iwc.getApplicationSettings().getProperty(CHARACTER_ENCODING, "ISO-8859-1");
 		
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset="+characterEncoding+"\">\n<meta name=\"generator\" content=\"idegaWeb 1.3\">\n";
+		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset="+characterEncoding+"\" "+(!markup.equals(HTML) ? "/" : "")+">\n<meta name=\"generator\" content=\"idegaWeb 1.3\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
 
 		//If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 
 		if (notUseProxyCaching) {
-			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\">\n";
+			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
 		}
 		if (getRedirectInfo() != null) {
-			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\">\n";
+			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
 		}
 
 		if (addIdegaAuthorAndCopyRight) {
-			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\">\n";
+			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
 		}
 		return theReturn;
 	}
@@ -1606,7 +1630,7 @@ public class Page extends PresentationObjectContainer {
 			url = getShortCutIconURL();
 		}
 		if(url!=null)
-			return    "<link type=\"shortcut icon\" href=\""+url+"\">";
+			return    "<link type=\"shortcut icon\" href=\""+url+"\" />";
 		return "";
 		//<link rel="shortcut icon" href="/favicon.ico">
 	}

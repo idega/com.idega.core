@@ -1,6 +1,7 @@
 package com.idega.presentation.ui;
 
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 
 /**
  * @author Laddi
@@ -39,7 +40,8 @@ public abstract class GenericInput extends InterfaceObject {
 	
 	public void print(IWContext main) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			print("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
+			String markup = main.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		}
 		else if (getLanguage().equals("WML")) {
 			print("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " />");
