@@ -4,6 +4,7 @@ import java.util.GregorianCalendar;
 import com.idega.jmodule.object.*;
 import java.util.Calendar;
 import java.sql.*;
+import java.util.Locale;
 
 
 
@@ -292,66 +293,82 @@ public class idegaCalendar{
 		return getNameOfMonth(Integer.parseInt(manudur));
 	}
 
+        public String getISLNameOfMonth(int month) {
+            return getNameOfMonth(month);
+        }
+
 	public String getNameOfMonth(int mon){
-	String manudurnafn ="";
-
-
-		switch (mon) {
-			case 0  :
-					manudurnafn=("Desember");
-				break;
-			case 01 :
-					manudurnafn=("Janúar");
-				break;
-			case 02 :
-					manudurnafn=("Febrúar");
-				break;
-			case 03 :
-					manudurnafn=("Mars");
-				break;
-			case 04 :
-					manudurnafn=("Apríl");
-				break;
-			case 05 :
-					manudurnafn=("Maí");
-				break;
-			case 06 :
-					manudurnafn=("Júní");
-				break;
-			case 07 :
-					manudurnafn=("Júlí");
-				break;
-			case 8 :
-					manudurnafn=("Ágúst");
-				break;
-			case 9 :
-					manudurnafn=("September");
-				break;
-			case 10 :
-					manudurnafn=("Október");
-				break;
-			case 11 :
-					manudurnafn=("Nóvember");
-				break;
-			case 12 :
-					manudurnafn=("Desember");
-				break;
-			case 13 :
-					manudurnafn=("Janúar");
-				break;
-		}
-		return manudurnafn;
+    	  String manudurnafn ="";
+          switch (mon) {
+                  case 0  :
+                                  manudurnafn=("Desember");
+                          break;
+                  case 01 :
+                                  manudurnafn=("Janúar");
+                          break;
+                  case 02 :
+                                  manudurnafn=("Febrúar");
+                          break;
+                  case 03 :
+                                  manudurnafn=("Mars");
+                          break;
+                  case 04 :
+                                  manudurnafn=("Apríl");
+                          break;
+                  case 05 :
+                                  manudurnafn=("Maí");
+                          break;
+                  case 06 :
+                                  manudurnafn=("Júní");
+                          break;
+                  case 07 :
+                                  manudurnafn=("Júlí");
+                          break;
+                  case 8 :
+                                  manudurnafn=("Ágúst");
+                          break;
+                  case 9 :
+                                  manudurnafn=("September");
+                          break;
+                  case 10 :
+                                  manudurnafn=("Október");
+                          break;
+                  case 11 :
+                                  manudurnafn=("Nóvember");
+                          break;
+                  case 12 :
+                                  manudurnafn=("Desember");
+                          break;
+                  case 13 :
+                                  manudurnafn=("Janúar");
+                          break;
+            }
+            return manudurnafn;
 	}
 
-	public String getNameOfMonth(int mon, ModuleInfo modinfo){
-	String manudurnafn = getNameOfMonth(mon);
-        String spokenLanguage = modinfo.getSpokenLanguage();
+	public String getNameOfMonth(int month, ModuleInfo modinfo){
+            Locale currentLocale = modinfo.getCurrentLocale();
+            String returner = "";
+
+            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
+                returner = getISLNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.ENGLISH)){
+                returner = getENGNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.UK)){
+                returner = getENGNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.US)){
+                returner = getENGNameOfMonth(month);
+            }else {
+                returner = getENGNameOfMonth(month);
+            }
+
+            return returner;
+        }
 
 
-        if (spokenLanguage != null) {
-        if (spokenLanguage.equals("EN")) {
-
-		switch (mon) {
+        public String getENGNameOfMonth(int month) {
+            String manudurnafn = "";
+		switch (month) {
 			case 0  :
 					manudurnafn=("December");
 				break;
@@ -395,12 +412,6 @@ public class idegaCalendar{
 					manudurnafn=("January");
 				break;
 		}
-	    }
-            }
-            else {
-              manudurnafn = getNameOfMonth(mon);
-            }
-
          	return manudurnafn;
 	}
 
@@ -466,63 +477,82 @@ public class idegaCalendar{
 		return manudurnafn;
 	}
 
-	public String getShortNameOfMonth(int mon, ModuleInfo modinfo){
-	String manudurnafn ="";
-        String spokenLanguage = modinfo.getSpokenLanguage();
+	public String getShortNameOfMonth(int month, ModuleInfo modinfo){
+            Locale currentLocale = modinfo.getCurrentLocale();
+            String returner = "";
+
+            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
+                returner = getShortISLNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.ENGLISH)){
+                returner = getShortENGNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.UK)){
+                returner = getShortENGNameOfMonth(month);
+            }else if (currentLocale.equals(Locale.US)){
+                returner = getShortENGNameOfMonth(month);
+            }else {
+                returner = getShortENGNameOfMonth(month);
+            }
+
+            return returner;
 
 
-        if (spokenLanguage != null) {
-            if (spokenLanguage.equals("EN")) {
-		switch (mon) {
-			case 0  :
-					manudurnafn=("Dec");
-				break;
-			case 01 :
-					manudurnafn=("Jan");
-				break;
-			case 02 :
-					manudurnafn=("Feb");
-				break;
-			case 03 :
-					manudurnafn=("Mar");
-				break;
-			case 04 :
-					manudurnafn=("Apr");
-				break;
-			case 05 :
-					manudurnafn=("May");
-				break;
-			case 06 :
-					manudurnafn=("Jun");
-				break;
-			case 07 :
-					manudurnafn=("Jul");
-				break;
-			case 8 :
-					manudurnafn=("Aug");
-				break;
-			case 9 :
-					manudurnafn=("Sep");
-				break;
-			case 10 :
-					manudurnafn=("Oct");
-				break;
-			case 11 :
-					manudurnafn=("Nov");
-				break;
-			case 12 :
-					manudurnafn=("Dec");
-				break;
-			case 13 :
-					manudurnafn=("Jan");
-				break;
-		}
-              }
-              }
-              else {
-                manudurnafn = getShortNameOfMonth(mon);
-              }
-		return manudurnafn;
+        }
+
+
+        public String getShortISLNameOfMonth(int mon) {
+            return getShortNameOfMonth(mon);
+        }
+
+        public String getShortENGNameOfMonth(int mon) {
+
+
+            String manudurnafn ="";
+
+            switch (mon) {
+              case 0  :
+                              manudurnafn=("Dec");
+                      break;
+              case 01 :
+                              manudurnafn=("Jan");
+                      break;
+              case 02 :
+                              manudurnafn=("Feb");
+                      break;
+              case 03 :
+                              manudurnafn=("Mar");
+                      break;
+              case 04 :
+                              manudurnafn=("Apr");
+                      break;
+              case 05 :
+                              manudurnafn=("May");
+                      break;
+              case 06 :
+                              manudurnafn=("Jun");
+                      break;
+              case 07 :
+                              manudurnafn=("Jul");
+                      break;
+              case 8 :
+                              manudurnafn=("Aug");
+                      break;
+              case 9 :
+                              manudurnafn=("Sep");
+                      break;
+              case 10 :
+                              manudurnafn=("Oct");
+                      break;
+              case 11 :
+                              manudurnafn=("Nov");
+                      break;
+              case 12 :
+                              manudurnafn=("Dec");
+                      break;
+              case 13 :
+                              manudurnafn=("Jan");
+                      break;
+            }
+            return manudurnafn;
 
 	}
 
