@@ -66,7 +66,7 @@ public class DataTable extends PresentationObjectContainer {
       if(titlesVertical)
         contentTable.setColumnColor(1,HEADING_COLOR);
       else
-        contentTable.setRowColor(2,HEADING_COLOR);
+        contentTable.setRowColor(use_top?2:1,HEADING_COLOR);
     }
 
     int lastrow = contentTable.getRows();
@@ -158,9 +158,22 @@ public class DataTable extends PresentationObjectContainer {
   public void setBottomColor(String color){
     BOTTOM_COLOR=color;
   }
+
+  /**
+   * @deprecated  Replaced by {@link #setUseBottom(boolean)}
+   */
   public void addBottom(boolean addBottom){
     _addBottom = addBottom;
     use_bottom = addBottom;
+  }
+
+  public void setUseBottom(boolean useBottom){
+    _addBottom = useBottom;
+    use_bottom = useBottom;
+  }
+
+  public void setUseTop(boolean useTop){
+    use_top = useTop;
   }
 
   public Table getContentTable(){
