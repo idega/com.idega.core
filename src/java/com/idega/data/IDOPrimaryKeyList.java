@@ -16,7 +16,7 @@ import javax.ejb.FinderException;
 
 public class IDOPrimaryKeyList implements List, Runnable {
 
-	private String _sqlQuery;
+	private IDOQuery _sqlQuery;
 	private String _countQuery;
 //	private Statement _Stmt;
 //	private ResultSet _RS;
@@ -26,7 +26,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	private Vector _PKs;
 	private LoadTracker _tracker;
 	private int fetchSize = 1;
-	private int prefetchNumber=100;
+	private int _prefetchSize=100;
 	private boolean isSublist = false;
 	
 
@@ -68,12 +68,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		System.out.println("[IDOPrimaryKeyList]: _PKs content ends");
 	}
 
-	public IDOPrimaryKeyList(String sqlQuery,String countQuery, GenericEntity entity, int size) {
+	public IDOPrimaryKeyList(IDOQuery sqlQuery, GenericEntity entity, int size, int prefetchSize) {
 		_sqlQuery = sqlQuery;
-		_countQuery = countQuery;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
+		_prefetchSize = _prefetchSize;
 		_size = size;
 		_PKs = new Vector(size);
 		_PKs.setSize(size);
@@ -163,8 +163,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 
 				ListIterator iter = setsToLoad.listIterator();
 				//JDBC 1.0
-				ResultSet RS = Stmt.executeQuery(_sqlQuery);
-				System.out.println("EIKI DEBUG: "+_sqlQuery);
+				ResultSet RS = Stmt.executeQuery(_sqlQuery.toString());
+				System.out.println("EIKI DEBUG: "+_sqlQuery.toString());
 
 				int RSpos = -1;
 				while (iter.hasNext())
@@ -418,7 +418,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	if(obj == null){
 		try
 		{
-			loadSubset(index,index+prefetchNumber);
+			loadSubset(index,index+_prefetchSize);
 		}
 		catch (Exception ex)
 		{
@@ -433,7 +433,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	if(obj == null){
 		try
 		{
-			loadSubset(index,index+prefetchNumber);
+			loadSubset(index,index+_prefetchSize);
 		}
 		catch (Exception ex)
 		{

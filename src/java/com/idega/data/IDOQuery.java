@@ -16,7 +16,7 @@ import com.idega.data.query.SelectQuery;
  * @version 1.0
  */
 
-public class IDOQuery {
+public class IDOQuery implements Cloneable {
 
 	StringBuffer _buffer;
 
@@ -1229,7 +1229,7 @@ public class IDOQuery {
 		return this;
 	}
 	
-	public void setToCount() {
+	public IDOQuery setToCount() {
 		if (_buffer != null) {
 			int index = _buffer.indexOf(" from ");
 			if (index < 0) {
@@ -1239,6 +1239,7 @@ public class IDOQuery {
 				_buffer.replace(0, index, this.SELECT_COUNT);
 			}
 		}
+		return this;
 	}
 	
 	protected void setDataStore(DatastoreInterface datastore){
@@ -1249,5 +1250,19 @@ public class IDOQuery {
 		if(this.dataStore==null)
 			this.dataStore = DatastoreInterface.getInstance();
 		return this.dataStore;
+	}
+	
+	public Object clone() {
+		IDOQuery clone = null;
+		try {
+			clone = (IDOQuery)super.clone();
+			clone._buffer = new StringBuffer(this.toString());
+			clone.dataStore = this.dataStore;
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return clone;		
 	}
 }

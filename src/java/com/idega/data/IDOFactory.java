@@ -183,16 +183,20 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
    * @throws FinderException
    */
   protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
-    Collection theReturn = new Vector();
-    if (collectionOfPrimaryKeys != null){
-	    Iterator iter = collectionOfPrimaryKeys.iterator();
-	    while (iter.hasNext()) {
-	      Object pk = iter.next();
-	      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
-	      theReturn.add(entityObject);
+  	if(collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
+  		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
+  	} else {
+	  	Collection theReturn = new Vector();
+	    if (collectionOfPrimaryKeys != null){
+		    Iterator iter = collectionOfPrimaryKeys.iterator();
+		    while (iter.hasNext()) {
+		      Object pk = iter.next();
+		      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+		      theReturn.add(entityObject);
+		    }
 	    }
-    }
-    return theReturn;
+	    return theReturn;
+  	}
   }
 
     /**
@@ -201,7 +205,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  protected Collection getIDOEntityListForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+  private Collection getIDOEntityListForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
     Collection theReturn = new IDOEntityList(collectionOfPrimaryKeys);
 //    Iterator iter = collectionOfPrimaryKeys.iterator();
 //    while (iter.hasNext()) {

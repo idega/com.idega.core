@@ -3306,17 +3306,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
 
-	protected Collection idoFindPKsBySQL(String sqlQuery, String countQuery) throws FinderException, IDOException {
+	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, int prefetchSize) throws FinderException, IDOException {
+		return idoFindPKsByQueryUsingLoadBalance(sqlQuery,null,prefetchSize);
+	}
+	
+	protected Collection idoFindPKsByQueryUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize) throws FinderException, IDOException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 		if (queryCachingActive) {
-			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
+			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery.toString());
 		}
 		if (pkColl == null) {
-			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, countQuery);
+			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, countQuery, prefetchSize);
 			if (queryCachingActive) {
-				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
+				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
 			}
 		} else {
 			if (this.isDebugActive()) {
@@ -3333,23 +3337,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @return IDOPrimaryKeyList
 	 * @throws FinderException
 	 */
-	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, String countQuery) throws FinderException, IDOException {
+	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(IDOQuery sqlQuery, IDOQuery countQuery, int prefetchSize ) throws FinderException, IDOException {
+		IDOQuery idoCountQuery = null;
+		
+		if(countQuery == null) {
+			idoCountQuery = (IDOQuery)sqlQuery.clone();
+			idoCountQuery.setToCount();
+		} else {
+			idoCountQuery = countQuery;
+		}
+		
+		
 		if (this.isDebugActive()) {
-			logSQL(sqlQuery);
+			logSQL(sqlQuery.toString());
 			logSQL("countQuery: " + countQuery);
 
 		}
 		int length = idoGetNumberOfRecords(countQuery);
 		if (length > 0) {
 			if (length < 1000) {
-				return idoFindPKsBySQLIgnoringCache(sqlQuery, -1, -1);
+				return idoFindPKsBySQLIgnoringCache(sqlQuery.toString(), -1, -1);
 			} else {
 				//				try
 				//				{
 				//					conn = getConnection(getDatasource());
 				//					Stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 				//					ResultSet RS = Stmt.executeQuery(sqlQuery);
-				return new IDOPrimaryKeyList(sqlQuery, countQuery, this, length);
+				return new IDOPrimaryKeyList(sqlQuery, this, length,prefetchSize);
 				//				}
 				//				catch (SQLException sqle)
 				//				{
@@ -4125,6 +4139,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	*/
 	protected IDOQuery idoQuery() {
 		IDOQuery query = new IDOQuery();
+		query.setDataStore(DatastoreInterface.getInstance(this));
+		return query;
+	}
+	
+	/**
+	 * 
+	 * @param sqlQuery
+	 * @return IDOQuery with sqlQuery as the query
+	 */
+	protected IDOQuery idoQuery(String sqlQuery) {
+		IDOQuery query = new IDOQuery(sqlQuery);
 		query.setDataStore(DatastoreInterface.getInstance(this));
 		return query;
 	}
