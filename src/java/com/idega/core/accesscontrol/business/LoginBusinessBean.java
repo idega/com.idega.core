@@ -38,7 +38,7 @@ import com.idega.util.reflect.MethodFinder;
  * Description:
  * Copyright:    Copyright (c) 2000-2002 idega.is All Rights Reserved
  * Company:      idega
-  *@author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>,<a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+  *@author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>,<a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.1
 
  */
@@ -72,6 +72,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final int STATE_LOGIN_EXPIRED = 5;
 	public static final int STATE_LOGIN_FAILED = 6;
 	public static final int STATE_LOGIN_DISABLED = 7;
+	public static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
 	
 	public LoginBusinessBean() {
 	}
@@ -420,30 +421,32 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	private int verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception {
 		LoginTable[] login_table = (LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), login);
-		if (login_table == null)
+		if (login_table == null) {
 			return STATE_NO_USER;
-		//if (login_table != null && login_table.length > 0)
+		}
 		if (login_table.length > 0) {
 			LoginTable loginTable = login_table[0];
-			if (isLoginExpired(loginTable))
+			if (isLoginExpired(loginTable)) {
 				return STATE_LOGIN_EXPIRED;
-			if (Encrypter.verifyOneWayEncrypted(login_table[0].getUserPassword(), password)) {
-
-				LoginTable lTable = login_table[0];
-				if (lTable != null) {
-					//					returner = logIn(iwc, login_table[0], login);
-					try {
-						LoginInfoHome loginInfoHome = (LoginInfoHome) IDOLookup.getHome(LoginInfo.class);
-						LoginInfo loginInfo = loginInfoHome.findByPrimaryKey(lTable.getPrimaryKey());
-						if (!loginInfo.getAccountEnabled()) {
-							return STATE_LOGIN_EXPIRED;
-						}
+			}
+			LoginInfo loginInfo = null;
+			try {
+				LoginInfoHome loginInfoHome = (LoginInfoHome) IDOLookup.getHome(LoginInfo.class);
+				loginInfo = loginInfoHome.findByPrimaryKey(loginTable.getPrimaryKey());
+			} catch (FinderException fe) {
+				//Nothing done
+			}
+			if(loginInfo!=null && loginInfo.getAccessClosed()) {
+				return STATE_LOGIN_DISABLED;
+			}
+			if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
+				if (loginTable != null) {
+					if (loginInfo!=null && !loginInfo.getAccountEnabled()) {
+						return STATE_LOGIN_EXPIRED;
 					}
-					catch (FinderException fe) {
-						//Nothing done
-					}
-					if (logIn(iwc, lTable))
+					if (logIn(iwc, loginTable)) {
 						return STATE_LOGGED_ON;
+					}
 				} else {
 					try {
 						throw new LoginCreateException("No record chosen");
@@ -451,14 +454,54 @@ public class LoginBusinessBean implements IWPageEventListener {
 						e1.printStackTrace();
 					}
 				}
-
-			} else
-				return STATE_WRONG_PASSW;
-		} else
+			} else {
+				int returnCode = STATE_WRONG_PASSW;
+				int maxFailedLogginAttempts = 0;
+				try {
+					String maxStr = iwc.getApplication().getBundle("com.idega.core").getProperty("max_failed_login_attempts");
+					maxFailedLogginAttempts = Integer.parseInt(maxStr);
+				} catch(Exception e) {
+					// default used, no maximum
+				}
+				if(maxFailedLogginAttempts!=0) {
+					int failedAttempts = loginInfo.getFailedAttemptCount();
+					failedAttempts++;
+					loginInfo.setFailedAttemptCount(failedAttempts);
+					if(failedAttempts==maxFailedLogginAttempts-1) {
+						returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
+					} else if(failedAttempts>=maxFailedLogginAttempts) {
+						System.out.println("Maximum loggin attemps, closing access to account " + login);
+						loginInfo.setAccessClosed(true);
+					}
+					loginInfo.store();
+				}
+				return returnCode;
+			}
+		} else {
 			return STATE_NO_USER;
+		}
 
 		return STATE_LOGIN_FAILED;
 	}
+	
+	public static void resetPassword(String login, String newPassword, boolean changeNextTime) throws Exception {
+		LoginTable[] loginTables = (LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(
+				com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), login);
+		if (loginTables!=null && loginTables.length > 0) {
+			LoginTable loginTable = loginTables[0];
+			LoginInfoHome loginInfoHome = (LoginInfoHome) IDOLookup.getHome(LoginInfo.class);
+			LoginInfo loginInfo = loginInfoHome.findByPrimaryKey(loginTable.getPrimaryKey());
+			User user = loginTable.getUser();
+			changeUserPassword(user, newPassword);
+			loginInfo.setFailedAttemptCount(0);
+			loginInfo.setAccessClosed(false);
+			if(changeNextTime) {
+				loginInfo.setChangeNextTime(true);
+			}
+			loginInfo.store();
+		}
+	}
+	
 	public static boolean verifyPassword(User user, String login, String password) throws IOException, SQLException {
 		boolean returner = false;
 		LoginTable[] login_table = (LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(), Integer.toString(user.getID()), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), login);
