@@ -20,13 +20,14 @@ import java.util.logging.Logger;
 import com.idega.data.CacheableEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.caching.Cache;
 import com.idega.util.text.TextSoap;
 
 
-public class IWCacheManager {
+public class IWCacheManager implements Singleton {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
   public static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
