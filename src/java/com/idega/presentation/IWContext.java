@@ -263,6 +263,8 @@ private String getRightLanguage(HttpServletRequest Request,HttpServletResponse R
 }
 
 public boolean isParameterSet(String parameterName){
+  if( parameterName==null ) return false;
+
 	boolean theReturn = false;
 	if (getRequest().getParameter(parameterName) != null){
 		theReturn = true;
