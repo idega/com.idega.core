@@ -221,10 +221,11 @@ LDAPReplicationConstants {
 				String value = matchVal.toString();
 				//TODO search for each type separately
 				//FIXME Use the uniqueId variable so that Laddi won't commit it out of the code and make Eiki mad ;)
-				String uniqueId = null;
+				
 				//todo handle uniqueid in search
 				if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(type)) {
-					uniqueId = value;
+					//String uniqueId = value;
+					
 				}
 				else{
 					List alreadyLoaded = new ArrayList();
@@ -264,7 +265,9 @@ LDAPReplicationConstants {
 			
 			//FIXME this does something to the DN so it get rid of \\ and what nots...
 			//FIXME Use the entry variable so that Laddi won't commit it out of the code and make Eiki mad ;)
-			Entry entry = new Entry(base);
+			//Entry entry = new Entry(base);
+			//TODO is this still needed?
+			new Entry(base);
 		
 			try {
 				if (base.getDirectoryString().equals(ldapUtil.getRootDNString()) && uniqueId == null) {
