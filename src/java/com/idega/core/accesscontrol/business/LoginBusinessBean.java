@@ -6,8 +6,9 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.TreeMap;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -158,10 +159,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public static boolean logOutUserOnSessionTimeout(HttpSession session, LoggedOnInfo logOnInfo) {
 		try {
-			List ll = getLoggedOnInfoList(session);
-			int indexOfLoggedOfInfo = ll.indexOf(logOnInfo);
-			if (indexOfLoggedOfInfo > -1) {
-				LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
+			Map m = getLoggedOnInfoMap(session);
+			LoggedOnInfo _logOnInfo = (LoggedOnInfo)m.remove(logOnInfo.getLogin());
+			if (_logOnInfo != null) {
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
 			} else
 				return false;
@@ -279,6 +279,123 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param iwc
+	 * @return Returns null if no basic authentication request was maid.  Login has index = 0 and password = 1.
+	 */
+	public String[] getLoginNameAndPasswordFromBasicAuthenticationRequest(IWContext iwc){
+		String sAuthorizationHeader = iwc.getAuthorizationHeader();
+    		if(sAuthorizationHeader != null) {
+			try {
+				String encodedNamePassword = sAuthorizationHeader.substring(6);
+				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+				int seperator = unencodedNamePassword.indexOf(':');
+				if(seperator != -1){
+					String[] toReturn = new String[2];
+					toReturn[0] = unencodedNamePassword.substring(0,seperator);
+					toReturn[1] = unencodedNamePassword.substring(seperator+1);
+					return toReturn;
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+    		}
+    		return null;
+	}
+	
+	public String getLoginNameFromBasicAuthenticationRequest(IWContext iwc){
+		String sAuthorizationHeader = iwc.getAuthorizationHeader();
+    		if(sAuthorizationHeader != null) {
+			try {
+				String encodedNamePassword = sAuthorizationHeader.substring(6);
+				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+				int seperator = unencodedNamePassword.indexOf(':');
+				if(seperator != -1){
+					return unencodedNamePassword.substring(0,seperator);
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+    		}
+    		return null;
+	}
+	
+	public String getPasswordFromBasicAuthenticationRequest(IWContext iwc){
+		String sAuthorizationHeader = iwc.getAuthorizationHeader();
+    		if(sAuthorizationHeader != null) {
+			try {
+				String encodedNamePassword = sAuthorizationHeader.substring(6);
+				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+				int seperator = unencodedNamePassword.indexOf(':');
+				if(seperator != -1){
+					return unencodedNamePassword.substring(seperator+1);
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+    		}
+    		return null;
+	}
+	
+	/**
+	 * @return Returns true if authentication is successful or else false
+	 */
+	public boolean authenticateBasicAuthenticationRequest(IWContext iwc) {
+		String sAuthorizationHeader = iwc.getAuthorizationHeader();
+	    try {
+	    		if(sAuthorizationHeader != null) {
+	    			
+				String encodedNamePassword = sAuthorizationHeader.substring(6);
+				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+//				System.out.println("[IWAuthenticator]:Unencoded name and password: " + unencodedNamePassword);
+				int seperator = unencodedNamePassword.indexOf(':');
+				if(seperator != -1){
+					String username = unencodedNamePassword.substring(0,seperator);
+					String password = unencodedNamePassword.substring(seperator+1);
+//					System.out.println("[IWAuthenticator]:Unencoded name: "+username+" and password: " + password);
+					
+					LoginState canLogin = LoginState.LoggedOut;
+					canLogin = verifyPasswordAndLogin(iwc, username, password);
+					if (canLogin.equals(LoginState.LoggedOn)) {
+						onLoginSuccessful(iwc);
+						return true;
+					} else {
+						onLoginFailed(iwc, canLogin, username);
+						return false;
+					}
+					
+				}
+	    		}
+    		} catch (Exception ex) {
+			try {
+				logOut(iwc);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace(System.err);
+			//throw (IdegaWebException)ex.fillInStackTrace();
+		}
+		return false;
+	}
+	
+	public void callForBasicAuthentication(IWContext iwc, String message) throws IOException{
+		iwc.getResponse().addHeader("WWW-Authenticate","Basic realm=\"" + "iw_login" + "\"");
+		if(message!=null){
+			iwc.getResponse().sendError(401,message);
+		} else {
+			iwc.getResponse().sendError(401);
+		}
+	}
+	
 	/*
 	
 	  public boolean isAdmin(IWContext iwc)throws Exception{
@@ -518,9 +635,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lInfo.setLoginType(loginType);
 		}
 		
-		List l = getLoggedOnInfoList(iwc);
-		l.remove(lInfo);
-		l.add(lInfo);
+		lInfo.setUserRoles(iwc.getAccessController().getAllRolesForCurrentUser(iwc));
+		
+		Map m = getLoggedOnInfoMap(iwc);
+		m.put(lInfo.getLogin(),lInfo);
 		
 		//getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, iwc);
@@ -644,12 +762,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 			LoggedOnInfo info = getLoggedOnInfo(iwc);
 			if(info!=null){
-				List ll = this.getLoggedOnInfoList(iwc);
-				int indexOfLoggedOfInfo = ll.indexOf(info);
-				if (indexOfLoggedOfInfo > -1) {
-					LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
-					LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
-				}
+				Map lm = getLoggedOnInfoMap(iwc);
+				lm.remove(info.getLogin());
 			}
 
 			UserProperties properties = getUserProperties(iwc);
@@ -666,19 +780,40 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
-	 * returns empty List if no one is logged on
+	 * The key is the login name and the value is com.idega.core.accesscontrol.business.LoggedOnInfo
+	 * @return Returns empty Map if no one is logged on
 	 */
-	public static List getLoggedOnInfoList(IWContext iwc) {
-		List loggedOnList = (List)iwc.getApplicationAttribute(_APPADDRESS_LOGGED_ON_LIST);
-		if (loggedOnList == null) {
-			loggedOnList = new Vector();
-			iwc.setApplicationAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnList);
+	public static Map getLoggedOnInfoMap(IWContext iwc) {
+		Map loggedOnMap = (Map)iwc.getApplicationAttribute(_APPADDRESS_LOGGED_ON_LIST);
+		if (loggedOnMap == null) {
+			loggedOnMap = new TreeMap();
+			iwc.setApplicationAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap);
 		}
-		return loggedOnList;
+		return loggedOnMap;
 	}
+	
+	/**
+	 * @return returns empty Collection if no one is logged on
+	 */
+	public static Collection getLoggedOnInfoCollection(IWContext iwc) {
+		return getLoggedOnInfoMap(iwc).values();
+	}
+	
+	/**
+	 * returns null if user is not logged on
+	 */
+	public static LoggedOnInfo getLoggedOnInfo(IWContext iwc, String loginName) {
+		return (LoggedOnInfo)getLoggedOnInfoMap(iwc).get(loginName);
+	}
+	
+	/**
+	 * The key is the login name and the value is com.idega.core.accesscontrol.business.LoggedOnInfo
+	 * @param session
+	 * @return
+	 */
 
-	public static List getLoggedOnInfoList(HttpSession session) {
-		List loggedOnList = null;
+	public static Map getLoggedOnInfoMap(HttpSession session) {
+		Map loggedOnMap = null;
 		MethodFinder finder = MethodFinder.getInstance();
 		ServletContext context = null;
 
@@ -700,16 +835,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		
 		if (context != null) {
-			loggedOnList = (List)context.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
+			loggedOnMap = (Map)context.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		}
 
-		if (loggedOnList == null) {
-			loggedOnList = new Vector();
+		if (loggedOnMap == null) {
+			loggedOnMap = new TreeMap();
 			if (context != null) {
-				context.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnList);
+				context.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap);
 			}
 		}
-		return loggedOnList;
+		return loggedOnMap;
 	}
 
 	public static LoggedOnInfo getLoggedOnInfo(IWUserContext iwc) {
@@ -839,14 +974,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	    //if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 	    
 	    if(getLoginSession(iwc)!=null){
-	        
-			List ll = this.getLoggedOnInfoList(iwc);
-			int indexOfLoggedOfInfo = ll.indexOf(getLoggedOnInfo(iwc));
-			if (indexOfLoggedOfInfo > -1) {
-				LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
+			Map m = getLoggedOnInfoMap(iwc);
+			LoggedOnInfo _logOnInfo = (LoggedOnInfo)m.remove(getLoggedOnInfo(iwc).getLogin());
+			if ( _logOnInfo != null ) {
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
 			}
-			
 		}
 
 		//login
