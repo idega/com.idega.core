@@ -38,6 +38,8 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
   public static final String PERMISSION_KEY_VIEW = "view";
   public static final String PERMISSION_KEY_EDIT = "edit";
+	public static final String PERMISSION_KEY_DELETE = "delete";
+	public static final String PERMISSION_KEY_CREATE = "create";
   public static final String PERMISSION_KEY_OWNER = "owner";
 
   public static final int CATEGORY_OBJECT_INSTANCE = 0;
@@ -80,8 +82,8 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWUserContext iwc) throws Exception;
   //public boolean hasPermission(Class someClass, int id, IWUserContext iwc) throws Exception;
   public boolean hasPermission(List groupIds,String permissionType, Object obj,IWUserContext iwc) throws Exception;
-
-
+	public boolean hasCreatePermissionFor(Group group,IWUserContext iwuc);
+	public boolean hasDeletePermissionFor(Group group,IWUserContext iwuc);
 
 //  public boolean hasEditPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
 //  public boolean hasViewPermission(PresentationObject obj,IWUserContext iwc);

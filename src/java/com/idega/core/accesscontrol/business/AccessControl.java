@@ -1612,12 +1612,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   public boolean hasEditPermissionFor(Group group,IWUserContext iwuc){
-    /**
-     * @todo: Implement
-     */
-    return true;
+		try{
     
-    
+			return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
     
   }
 
@@ -1632,6 +1634,30 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
     
   }
+  
+	public boolean hasCreatePermissionFor(Group group,IWUserContext iwuc){
+		try{
+    
+			return this.hasPermission(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+    
+	}
+	
+	public boolean hasDeletePermissionFor(Group group,IWUserContext iwuc){
+		try{
+    
+			return this.hasPermission(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+    
+	}
 
 
   public void addEditPermissionFor(Group group,IWUserContext iwuc){
