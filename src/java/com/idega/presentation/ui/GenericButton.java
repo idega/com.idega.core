@@ -153,6 +153,7 @@ public class GenericButton extends GenericInput {
 				defaultImage.setURL(URL);
 				defaultImage.addMarkupAttributes(getMarkupAttributes());
 				defaultImage.setStyleAttribute(buttonImageStyle);
+				defaultImage.setName(getName());
 
 				if (getInputType().equals(INPUT_TYPE_IMAGE)) {
 					setSource(URL);
