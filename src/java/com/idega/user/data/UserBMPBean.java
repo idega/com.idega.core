@@ -1222,7 +1222,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 		
 		if(allowedGroups!=null && allowedGroups.length>0){
-			sql.append(" and g.ic_group_id in ( ")
+			sql.append(" and gr.ic_group_id in ( ")
 			.append(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedGroups))
 			.append(" ) ");
 		}
