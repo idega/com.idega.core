@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.9 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: BuilderService.java,v 1.10 2005/02/24 00:13:03 tryggvil Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -124,6 +124,18 @@ public interface BuilderService extends IBOService
 	 * @throws RemoteException
 	 */
 	public ICTreeNode getPageTree(int startNodeId)throws RemoteException;
+	
+
+	/**
+	 * Gets pageKey for the for the page with the given requestUri 
+	 * @param requestUri for the page request (e.g. '/pages/1234')
+	 * @param serverName the serverName (DNS) name of the request for the server
+	 * @return the string representation of the key
+	 * @throws RemoteException
+	 */	
+	public String getPageKeyByRequestURIAndServerName(String requestUri,String serverName);
+
+	
 	
 	/**
 	 * Unloads all the resources associated with the Builder
