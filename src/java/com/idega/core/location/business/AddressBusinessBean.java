@@ -100,7 +100,6 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			commune = communeHome.findByCommuneCode(Commune);
 		}
 		catch (FinderException e) {
-			e.printStackTrace();
 			commune = communeHome.create();
 			commune.setCommuneCode(Commune);
 			commune.setCommuneName(Commune);
