@@ -18,41 +18,44 @@ import java.util.Vector;
 
 public class ResultOutput extends PresentationObjectContainer {
 
-  Script script;
-  String functionName = "functionName";
-  TextInput resultOutput;
+  String functionName = "resultOutputFunction";
+
   List moduleObjects = new Vector();
   List onChangeVector = new Vector();
   List extraTextVector = new Vector();
+  List operatorVector = new Vector();
+
+  public static final String OPERATOR_PLUS = "+";
+  public static final String OPERATOR_SUBTRACT = "-";
+  public static final String OPERATOR_MULTIPLY = "*";
+  public static final String OPERATOR_DIVIDE = "/";
+
   private int size = -1;
-  private String content = "";
+  private String content;
   private String name;
-  private String theOperator = "+";
 
   private String extraForTotal = "";
   private String extraForEach = "";
 
-  private String finalContent = "";
 
   public ResultOutput() {
     this("unspecified","");
   }
 
   public ResultOutput(String name) {
-    this.functionName = name;
-    this.name = name + "_input";
+    this(name, "");
   }
 
   public ResultOutput(String name, String content) {
     this.functionName = name;
-    this.name = name + "_input";
+    this.name = name + "_RO_input";
     this.content = content;
   }
 
   public void _main(IWContext iwc) {
-      script = getParentPage().getAssociatedScript();
+      Script script = getParentPage().getAssociatedScript();
 
-      resultOutput = new TextInput(name, content);
+      TextInput resultOutput = new TextInput(name, content);
 
       PresentationObject moduleObject = null;
       String extraTxt = "";
@@ -60,9 +63,9 @@ public class ResultOutput extends PresentationObjectContainer {
       if (moduleObjects.size() > 0) {
         StringBuffer theScript = new StringBuffer();
           theScript.append("function "+functionName+"(myForm) {");
-          theScript.append("\n          myForm."+resultOutput.getName()+".value=(");
+          theScript.append("\n  myForm."+resultOutput.getName()+".value=(");
           for (int i = 0; i < moduleObjects.size(); i++) {
-              if (i != 0) theScript.append(theOperator);
+              if (i != 0) theScript.append((String) operatorVector.get(i));
               if (moduleObjects.get(i) instanceof TextInput)
                 moduleObject = (TextInput) moduleObjects.get(i);
               else if (moduleObjects.get(i) instanceof ResultOutput)
@@ -86,7 +89,7 @@ public class ResultOutput extends PresentationObjectContainer {
       resultOutput.setDisabled(true);
       if (this.size > 0) resultOutput.setSize(size);
       for (int i = 0; i < onChangeVector.size(); i++) {
-          resultOutput.setOnChange((String ) onChangeVector.get(i) );
+        resultOutput.setOnChange((String ) onChangeVector.get(i) );
       }
 
       super.add(resultOutput);
@@ -109,10 +112,6 @@ public class ResultOutput extends PresentationObjectContainer {
     return this.name;
   }
 
-  public void setOperator(String operatori) {
-    this.theOperator = operatori;
-  }
-
   public void setExtraForEach(String s) {
     this.extraForEach = s;
   }
@@ -126,29 +125,36 @@ public class ResultOutput extends PresentationObjectContainer {
   }
 
   public void add(PresentationObject mo, String extraText) {
+    add(mo, OPERATOR_PLUS, extraText);
+  }
+
+  public void add(PresentationObject mo, String operatori, String extraText) {
     if (mo instanceof TextInput) {
       TextInput temp = (TextInput) mo;
         temp.setOnChange(functionName+"(this.form)");
         moduleObjects.add(temp);
+        operatorVector.add(operatori);
+        if (extraText == null) extraText = "";
         extraTextVector.add(extraText);
     }
     else if (mo instanceof ResultOutput) {
-      handleAddResultOutput((ResultOutput) mo);
+      handleAddResultOutput((ResultOutput) mo, operatori);
     }
   }
 
 
-  private void handleAddResultOutput(ResultOutput resOut) {
+  private void handleAddResultOutput(ResultOutput resOut, String operatori) {
       List list = resOut.getAddedObjects();
       for ( int a = 0; a < list.size(); a++ ) {
         if (list.get(a) instanceof TextInput) {
           TextInput text = (TextInput) list.get(a);
             text.setOnChange(functionName+"(this.form)");
         }else if (list.get(a) instanceof  ResultOutput) {
-            handleAddResultOutput((ResultOutput) list.get(a) );
+            handleAddResultOutput((ResultOutput) list.get(a), operatori);
         }
       }
       moduleObjects.add(resOut);
+      operatorVector.add(operatori);
   }
 
   public void setContent(String content) {
