@@ -5,6 +5,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
+import com.idega.repository.data.Singleton;
 
 
 /**
@@ -20,11 +21,11 @@ import com.idega.business.IBOLookup;
  */
 
 //TODO remove throwing of IDOLookupException where not needed and change IDOLookupException to inherit from Exception and not RemoteException
-public class IDOLookup extends IBOLookup{
+public class IDOLookup extends IBOLookup implements Singleton {
 
   private static IDOLookup idoInstance;
 
-  private static IDOLookup getIDOLookupInstance(){
+  private static synchronized IDOLookup getIDOLookupInstance(){
     if(idoInstance==null){
       idoInstance = new IDOLookup();
     }
