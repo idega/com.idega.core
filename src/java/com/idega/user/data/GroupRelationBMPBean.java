@@ -37,10 +37,10 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
   protected static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
 
-  private final static String STATUS_ACTIVE="ST_ACTIVE";
-  private final static String STATUS_PASSIVE="ST_PASSIVE";
-	private final static String STATUS_PASSIVE_PENDING="PASS_PEND";
-	private final static String STATUS_ACTIVE_PENDING="ACT_PEND";
+  protected final static String STATUS_ACTIVE="ST_ACTIVE";
+  protected final static String STATUS_PASSIVE="ST_PASSIVE";
+  protected final static String STATUS_PASSIVE_PENDING="PASS_PEND";
+  protected final static String STATUS_ACTIVE_PENDING="ACT_PEND";
 	
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
