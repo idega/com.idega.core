@@ -97,4 +97,11 @@ public TextStyler(String styleString) {
       return value;
     return "";
   }
+  
+  public boolean isStyleSet(String attribute) {
+  	String value = (String) _styleMap.get(attribute);
+  	if (value != null)
+  		return true;
+  	return false;
+  }
 }
