@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 
 /**
@@ -84,6 +87,19 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 			IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
 			if(!LoginBusinessBean.isLoggedOn(iwc)){
 				return false;
+			}
+			else{
+				ViewManager vManager = ViewManager.getInstance(getIWMainApplication(request));
+				ViewNode node = vManager.getViewNodeForUrl(uri);
+				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
+				
+				if(vManager.hasUserAcess(node,iwuc)){
+					return true;
+				}
+				else{
+					return false;
+				}
+				
 			}
 		}
 		else if(uri.startsWith(PAGES_URI)){
