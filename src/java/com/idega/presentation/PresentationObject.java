@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.107 2004/11/14 23:21:37 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.108 2004/11/15 15:59:38 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,10 +64,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/15 15:59:38 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.107 $
+ * @version $Revision: 1.108 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -775,7 +775,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		PresentationObject obj = this;
 		while (obj != null)
 		{
-			if (obj.getICObjectInstanceID() != 0)
+			if (obj.getICObjectInstanceID() > 0)
 			{
 				return obj;
 			}
@@ -958,7 +958,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void _main(IWContext iwc) throws Exception
 	{
 		/*
-		 * if(this.ic_object_instance_id == 0){ initICObjectInstanceId(iwc);
+		 * if(this.ic_object_instance_id <= 0){ initICObjectInstanceId(iwc);
 		 */
 		initVariables(iwc);
 		if (_iwuc == null)
@@ -1069,7 +1069,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public ICObjectInstance getICObjectInstance() throws Exception
 	{
-		if (getICObjectInstanceID() != 0)
+		if (getICObjectInstanceID() > 0)
 		{
 			return (
 				(com.idega.core.component.data.ICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(
@@ -1420,7 +1420,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public boolean equals(PresentationObject obj)
 	{
-		if (this.getICObjectInstanceID() == obj.getICObjectInstanceID() && this.getICObjectInstanceID() != 0)
+		if (this.getICObjectInstanceID() == obj.getICObjectInstanceID() && this.getICObjectInstanceID() > 0)
 		{
 			return true;
 		}
@@ -1609,7 +1609,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				// "+this.getLocation());
 				//<<<<<<< PresentationObject.java
 				//        System.out.println();
-				if (this.getICObjectInstanceID() == 0)
+				if (this.getICObjectInstanceID() <= 0)
 				{
 					if (this.getLocation() != null)
 					{
@@ -1631,7 +1631,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 				//=======
 				//	System.out.println();
-				//	if(this.getICObjectInstanceID() == 0){
+				//	if(this.getICObjectInstanceID() <= 0){
 				//	  if(this.getLocation() != null){
 				//	    _listenerList = machine.getListenersFor(this.getLocation());
 				//	    return _listenerList;
@@ -1841,7 +1841,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		// if there is a object instance id use this one
 		int instanceId;
-		if ((instanceId = getICObjectInstanceID()) != 0)
+		if ((instanceId = getICObjectInstanceID()) > 0)
 			return Integer.toString(instanceId);
 		// first fetch my component id
 		buffer.append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);

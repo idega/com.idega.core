@@ -103,7 +103,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
   public void setSource(PresentationObject source){
     setSource(source.getCompoundId());
-   /* if(source.getICObjectInstanceID() != 0){
+   /* if(source.getICObjectInstanceID() > 0){
       setSource(source.getICObjectInstanceID());
     } else if(source.getLocation() != null){
       setSource(source.getLocation());
@@ -135,7 +135,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 //  }
 //
 //  public void setSource(PresentationObject source){
-//    if(source.getICObjectInstanceID() != 0){
+//    if(source.getICObjectInstanceID() > 0){
 //      this.addParameter(PRM_EVENT_SOURCE, Integer.toString(source.getICObjectInstanceID()));
 //    } else {
 //
