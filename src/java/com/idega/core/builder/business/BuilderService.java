@@ -97,13 +97,6 @@ public interface BuilderService extends IBOService
 	 */
 	public ICTreeNode getPageTree(int startNodeId)throws RemoteException;
 	
-	/** 
-	 * Sets the priority page id.
-	 * @param iwc
-	 * @param pageId
-	 * @throws RemoteException
-	 */
-	public void setPriorityPageId(IWContext iwc, String pageId ) throws RemoteException;
 	/**
 	 * DRAFT OF METHODS TO BE IN THIS CLASS:
 	 * 
