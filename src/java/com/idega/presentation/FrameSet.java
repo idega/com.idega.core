@@ -211,8 +211,9 @@ public class FrameSet extends Window{
 
         if( !isInAWindow ){
   		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
-  		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
-          buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
+		String markup = getMarkupLanguageForPage();
+		String docType = getDocType();
+          buf.append(getStartTag(iwc.getCurrentLocale(), docType, characterEncoding));
           buf.append(getMetaInformation(markup, characterEncoding));
           buf.append("<title>"+getTitle()+"</title>");
         }

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.136 2005/01/31 20:21:21 tryggvil Exp $
+ *  $Id: Page.java,v 1.137 2005/02/01 00:49:43 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -74,7 +74,14 @@ public class Page extends PresentationObjectContainer {
 	 *  By skipping the validation URL XML compliant browser still recognise
 	 *  attributes such as height / width *
 	 */
-	private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
+	public final static String DOCTYPE_HTML_4_0_1_TRANSITIONAL="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">";
+	public final static String DOCTYPE_HTML_4_0_1_STRICT="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
+	public final static String DOCTYPE_XHTML_1_0_TRANSITIONAL="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+	public final static String DOCTYPE_XHTML_1_1="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
+	
+	//private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
+	private final static String START_TAG_HTML_4_0="<html>";
+	
 	public final static String MARKUP_LANGUAGE = "markup_language";
 	public final static String HTML = "HTML";
 	public final static String XHTML = "XHTML";
@@ -83,6 +90,7 @@ public class Page extends PresentationObjectContainer {
 	private static String META_KEYWORDS = "keywords";
 	private static String META_DESCRIPTION = "description";
 	private static String META_HTTP_EQUIV_EXPIRES = "Expires";
+	private final static String NEWLINE="\n";
 	
 	//State held variables:
 	private int _ibPageID;
@@ -130,6 +138,7 @@ public class Page extends PresentationObjectContainer {
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
 	private ICPage forwardPage;
+	private String docType;
 
 
 	/**
@@ -1378,8 +1387,9 @@ public class Page extends PresentationObjectContainer {
 			if (!isInsideOtherPage) {
 				IWMainApplicationSettings settings = iwc.getApplicationSettings();
 				String characterEncoding = settings.getCharacterEncoding(); 
-				String markup = iwc.getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
-				println(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
+				String markup = getMarkupLanguageForPage();
+				String docType = getDocType();
+				println(getStartTag(iwc.getCurrentLocale(), docType, characterEncoding));
 				if (_zeroWait) {
 					setDoPrint(false);
 				}
@@ -1528,24 +1538,49 @@ public class Page extends PresentationObjectContainer {
 	/**
 	 *@return    The startTag value
 	 */
-	public static String getStartTag(Locale locale, String markup, String encoding) {
-		if (markup.equals(XHTML)) {
+	public static String getStartTag(Locale locale, String docType, String encoding) {
+		StringBuffer buffer = new StringBuffer();
+		if(docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)){
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+			buffer.append(docType);
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">");
+			return buffer.toString();
+		}
+		else if(docType.equals(DOCTYPE_XHTML_1_1)){
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+			buffer.append(docType);
+			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">");
+			return buffer.toString();
+		}
+		else{
+			buffer.append(docType);
+			buffer.append(NEWLINE);
+			buffer.append(START_TAG_HTML_4_0);
+			buffer.append(NEWLINE);
+			return buffer.toString();
+		}
+		
+		
+		/*if (markup.equals(XHTML)) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"").append("\n");
-			buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
+			//buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"").append("\n");
+			//buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
+			buffer.append(DOCTYPE_XHTML_1_0_TRANSITIONAL);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
 		else if (markup.equals(XHTML1_1)) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-			buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
-			buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
+			//buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
+			//buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
+			buffer.append(DOCTYPE_XHTML_1_1);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">");
 			return buffer.toString();
 		}
 		return START_TAG;
+		*/
 	}
 
 	/**
@@ -1972,7 +2007,81 @@ public class Page extends PresentationObjectContainer {
 		//this.associatedBodyScript = script;
 		getFacets().put("page_associated_body_script",script);
 	}
+
+
+	/**
+	 * Set the docType for the header of the page. Default it is set to Html 4.0.1. transitional.
+	 * Most commonn doctypes are defined in the static contsants DOCTYPE_... in this class.
+	 * @param docType
+	 */
+	public void setDoctype(String docType){
+		this.docType=docType;
+	}
 	
+	/**
+	 * Get the set docType.
+	 * If no doctype/markupLanguage is set in the page/system then this method returns the HTML 4.0.1 Transitional.
+	 * @return
+	 */
+	public String getDocType(){
+		if(docType==null){
+			String markup = getSetApplicationMarkupLanguage();
+			if(markup.equals(XHTML)){
+				return DOCTYPE_XHTML_1_0_TRANSITIONAL;
+			}
+			else if(markup.equals(XHTML1_1)){
+				return DOCTYPE_XHTML_1_1;
+			}
+			else{
+				return DOCTYPE_HTML_4_0_1_TRANSITIONAL;
+			}
+		}
+		else{
+			return docType;
+		}
+	}
+	
+	/**
+	 * Checks if an XHTML doctype is defined for the page or the system.
+	 * @return True if an XHTML doctype has been set for the document or XHTML markup for the application.
+	 */
+	public boolean isXHtmlDocTypeDeclared(){
+		String docType = getDocType();
+		if(docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)){
+			return true;
+		}
+		else if(docType.equals(DOCTYPE_XHTML_1_1)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	/**
+	 * Gets if the Markup Language for the Page.
+	 * This method uses the set DocType (if any) to calculate the used MarkupLanguage String.
+	 * @return
+	 */
+	public String getMarkupLanguageForPage(){
+		if(docType!=null){
+			if(docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)){
+				return XHTML;
+			}
+			else if(docType.equals(DOCTYPE_XHTML_1_1)){
+				return XHTML1_1;
+			}
+		}
+		return getSetApplicationMarkupLanguage();
+	}
+	
+	/**
+	 * Gets the set Markup Language (HTML/XHTML/XHTML11) for the current IW Application.
+	 * @return
+	 */
+	public String getSetApplicationMarkupLanguage(){
+		return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
+	}
 	
 	
 	/* (non-Javadoc)
@@ -2023,13 +2132,14 @@ public class Page extends PresentationObjectContainer {
 		this._windowWidth=((Integer)values[40]).intValue();
 		this._windowHeight=((Integer)values[41]).intValue();
 		this.forwardPage=(ICPage)values[42];
+		this.docType=(String)values[43];
 	
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[43];
+		Object values[] = new Object[44];
 		values[0] = super.saveState(context);
 		values[1]=new Integer(this._ibPageID);
 		values[2]=this._title;
@@ -2073,9 +2183,8 @@ public class Page extends PresentationObjectContainer {
 		values[40]=new Integer(this._windowWidth);
 		values[41]=new Integer(this._windowHeight);
 		values[42]=this.forwardPage;
+		values[43]=this.docType;
 		return values;
-	}	
-	
-	
+	}
 	
 }
