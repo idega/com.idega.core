@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.143 2004/12/29 14:40:22 tryggvil Exp $
+ * $Id: Link.java,v 1.144 2005/02/10 10:42:47 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1197,7 +1197,7 @@ public class Link extends Text {
 			url.append(page.getID());
 			setURL(url.toString());*/
 			this.ibPage=((Number)page.getPrimaryKey()).intValue();
-			if(IWMainApplication.USE_NEW_URL_SCHEME){
+			if(IWMainApplication.useNewURLScheme){
 				try {
 					this.setURL(this.getBuilderService(getIWApplicationContext()).getPageURI(page));
 				} catch (RemoteException e) {

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.45 2005/01/11 16:31:59 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.46 2005/02/10 10:42:47 thomas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -28,10 +28,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/01/11 16:31:59 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -273,7 +273,7 @@ public class PresentationObjectContainer extends PresentationObject
 			//if (!isEmpty())
 			//{
 			
-			if(IWMainApplication.USE_JSF){
+			if(IWMainApplication.useJSF){
 				//Do not go through the children in JSF as that is done through the encode/begin/children methods:
 				/*Iterator iter = getFacetsAndChildren();
 				while(iter.hasNext()){
@@ -396,7 +396,7 @@ public class PresentationObjectContainer extends PresentationObject
 		//This is a legacy fix to make sure the goneThroughMain variable is reset back for 
 		// components that are stored in session.
 		// For the JSF environment this is done instead in the encodeEnd method.
-		if(!IWMainApplication.USE_JSF){
+		if(!IWMainApplication.useJSF){
 			resetGoneThroughMain();
 		}
 		super.initVariables(iwc);

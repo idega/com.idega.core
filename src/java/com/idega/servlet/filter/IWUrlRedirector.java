@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.8 2005/01/27 14:17:05 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.9 2005/02/10 10:42:47 thomas Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/01/27 14:17:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -98,7 +98,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 	 * @return
 	 */
 	boolean getIfDoRedirect(HttpServletRequest request) {
-		if(IWMainApplication.USE_NEW_URL_SCHEME){
+		if(IWMainApplication.useNewURLScheme){
 			String requestUri = getURIMinusContextPath(request);
 			String oldIdegaWebUriWithSlash = OLD_IDEGAWEB_LOGIN_WITHSLASH;
 			

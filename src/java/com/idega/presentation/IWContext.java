@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.116 2005/01/13 17:05:08 tryggvil Exp $
+ * $Id: IWContext.java,v 1.117 2005/02/10 10:42:47 thomas Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -74,10 +74,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/01/13 17:05:08 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.116 $
+ * @version $Revision: 1.117 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -496,7 +496,7 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	public String getRequestURI() {
-		if(IWMainApplication.USE_JSF){
+		if(IWMainApplication.useJSF){
 			FacesContext facesContext = getRealFacesContext();
 			if(facesContext!=null){
 				return FacesUtil.getRequestUri(facesContext);

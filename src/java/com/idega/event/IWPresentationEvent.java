@@ -294,7 +294,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * @return String
 	 */
 	public static String getEventHandlerFrameURL(IWContext iwc) {
-		if(IWMainApplication.USE_NEW_URL_SCHEME){
+		if(IWMainApplication.useNewURLScheme){
 			return iwc.getIWMainApplication().getWindowOpenerURI(EventViewerPage.class);
 		}
 		else{

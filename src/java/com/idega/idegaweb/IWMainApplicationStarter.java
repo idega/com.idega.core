@@ -8,14 +8,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
@@ -46,11 +43,12 @@ import com.idega.util.database.PoolManager;
  */
 public class IWMainApplicationStarter implements ServletContextListener  {
 	
-	IWMainApplication iwma;
-	private Logger log = Logger.getLogger(IWMainApplicationStarter.class.getName());
+	IWMainApplication iwma = null;
+	// not used
+	//private Logger log = Logger.getLogger(IWMainApplicationStarter.class.getName());
 
 	public IWMainApplicationStarter(){
-	    
+		// empty
 	}
 	
 	public IWMainApplicationStarter(ServletContext context){
@@ -64,6 +62,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		IWMainApplication _iwma = new IWMainApplication(context,appServer);
 		_iwma.setApplicationServer(appServer);
 		iwma=_iwma;
+		
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
 		//sendStartMessage("Initializing IWMainApplicationStarter");
 		String serverInfo = context.getServerInfo();
@@ -99,9 +98,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
         sendShutdownMessage("Destroyed IWMainApplicationStarter");
     }
     
-    //debug
-	private static String propertiesfile;
-	//public PoolManager poolMgr;
 	public void startup() {
 		sendStartMessage("Initializing IdegaWeb");
 		startIdegaWebApplication();
@@ -137,7 +133,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
 		//String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"poolman.xml";
-		propertiesfile = file;
 		sendStartMessage("Reading Databases from file: " + file);
 		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
@@ -193,6 +188,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 	}
 	protected void endPoolManDatabasePool() {
+		// empty
 	}
 	protected void endIdegaDatabasePool() {
 		PoolManager.getInstance().release();
@@ -236,47 +232,43 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (Exception e) {
 			e.printStackTrace(System.err);
 		}
-		
 		// reset singletons
 		iwma.shutdownApplicationServices();
 		// enable singletons
 		SingletonRepository.start();
 		
-		//IWMainApplication application = new IWMainApplication(this.getServletContext());
-		
-		IWMainApplication application = iwma;
-		setApplicationVariables(application);
-		application.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
+		setApplicationVariables(iwma);
+		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		
 		this.startDatabasePool();
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
-		iwStyleManager.getStyleSheet(application);
+		iwStyleManager.getStyleSheet(iwma);
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
-		if(!application.isInDatabaseLessMode()){
+		if(!iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
 		}
 		startTemporaryBundleStarters();
 		
-		if(!application.isInDatabaseLessMode()){
-			application.startAccessController();
+		if(!iwma.isInDatabaseLessMode()){
+			iwma.startAccessController();
 		}
 		
-		if(!application.isInDatabaseLessMode()){
-			application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
+		if(!iwma.isInDatabaseLessMode()){
+			iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		}
 		//if(IWMainApplication.USE_JSF){
-			application.loadViewManager();
+			iwma.loadViewManager();
 			sendStartMessage("Loaded the ViewManager");
 		//}		
 
-		if(!application.isInDatabaseLessMode()){
-			application.loadBundles();
+		if(!iwma.isInDatabaseLessMode()){
+			iwma.loadBundles();
 		}
 
-		executeServices(application);
+		executeServices(iwma);
 		//create ibdomain
 		long end = System.currentTimeMillis();
 		long time = (end - start) / 1000;
@@ -361,12 +353,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
 		if (usingNewURLStructure != null && !"false".equalsIgnoreCase(usingNewURLStructure)) {
 			sendStartMessage("Using new URL Scheme");
-			IWMainApplication.USE_NEW_URL_SCHEME=true;
+			IWMainApplication.useNewURLScheme=true;
 		}
 		String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
 		if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
 			sendStartMessage("Using JavaServer Faces Runtime");
-			IWMainApplication.USE_JSF=true;
+			IWMainApplication.useJSF=true;
 		}
 	}
 	
@@ -554,7 +546,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
-		iwma.unload();
+		iwma.unloadInstanceAndClass();
 		// some bundle starters have initialized threads that are using the database
 		// therefore stop first and then end database pool
 		endDatabasePool();

@@ -346,7 +346,7 @@ public class IWEventProcessor implements Singleton {
 				}
 	        }
 		}
-		else if(IWMainApplication.USE_JSF){
+		else if(IWMainApplication.useJSF){
 			//This is a hack so we don't have to add the myfaces dependency yet
 			FileUploadUtil.handleMyFacesMultiPartRequest(iwc);
 		}

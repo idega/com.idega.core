@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.127 2005/01/19 10:24:07 eiki Exp $
+ * $Id: PresentationObject.java,v 1.128 2005/02/10 10:42:47 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -69,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/01/19 10:24:07 $ by $Author: eiki $
+ * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.127 $
+ * @version $Revision: 1.128 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -559,7 +559,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void print(String string)
 	{
-		if(IWMainApplication.USE_JSF){
+		if(IWMainApplication.useJSF){
 			try {
 				if(string!=null){
 					FacesContext.getCurrentInstance().getResponseWriter().write(string);
@@ -580,7 +580,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void println(String string)
 	{
-		if(IWMainApplication.USE_JSF){
+		if(IWMainApplication.useJSF){
 			try {
 				ResponseWriter writer = FacesContext.getCurrentInstance().getResponseWriter();
 				if(string!=null){
@@ -1682,7 +1682,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			try
 			{
 				IWEventMachine machine = (IWEventMachine) IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
-				if (IWMainApplication.USE_NEW_URL_SCHEME) {
+				if (IWMainApplication.useNewURLScheme) {
 					// register the machine as ApplicationEventListener using the helper bridge
 					iwuc.getApplicationContext().getIWMainApplication().addApplicationEventListener(OldEventSystemHelperBridge.class);
 				}
@@ -2225,7 +2225,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected void renderChild(FacesContext context, UIComponent child) throws IOException {
 		if(child!=null){
-			if(IWMainApplication.USE_JSF){
+			if(IWMainApplication.useJSF){
 				/*if(child.isRendered()){
 					child.encodeBegin(context);
 					if(child.getRendersChildren()){

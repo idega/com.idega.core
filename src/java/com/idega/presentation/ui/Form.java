@@ -831,7 +831,7 @@ public class Form
 	public void setWindowToOpen(Class windowClass) {
 		this.windowClass = windowClass;
 		// setAction(IWMainApplication.windowOpenerURL);
-		if (IWMainApplication.USE_NEW_URL_SCHEME) {
+		if (IWMainApplication.useNewURLScheme) {
 			this.setAction(getIWApplicationContext().getIWMainApplication().getWindowOpenerURI(windowClass));
 		}
 		else {
@@ -850,7 +850,7 @@ public class Form
 
 	public void setPageToSubmitTo(int ibPageID) {
 		// this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
-		if (IWMainApplication.USE_NEW_URL_SCHEME) {
+		if (IWMainApplication.useNewURLScheme) {
 			try {
 				setAction(this.getBuilderService(getIWApplicationContext()).getPageURI(ibPageID));
 			}
