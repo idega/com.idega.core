@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.106 2004/03/18 16:58:44 gimmi Exp $
+ * $Id: Link.java,v 1.107 2004/05/11 14:22:28 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.idega.builder.dynamicpagetrigger.util.DPTCrawlable;
 import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -49,7 +50,7 @@ import com.idega.util.text.TextSoap;
  *@version 1.2
  *@modified by  <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public class Link extends Text {
+public class Link extends Text implements DPTCrawlable {
 
 	private PresentationObject _obj;
 	private Window _myWindow = null;
@@ -1978,7 +1979,7 @@ public void setWindowToOpen(String className) {
 		dptTemplateId = id;
 	}
 
-	public int getDPTTemplateId() {
+	public int getLinkedDPTTemplateID() {
 		return dptTemplateId;
 	}
 
@@ -2144,6 +2145,21 @@ public void setWindowToOpen(String className) {
 
 	public String getProtocol() {
 		return this.protocol;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.builder.dynamicpagetrigger.util.DPTCrawlable#setLinkedDPTPage(com.idega.core.builder.data.ICPage)
+	 */
+	public void setLinkedDPTPage(ICPage page) {
+		this.setPage(page);
+	}
+	
+	public String getLinkedDPTPageName(IWContext iwc) {
+		String toReturn = this.getText();
+		if(toReturn==null) {
+			toReturn = this.getLocalizedText(iwc);
+		}
+		return toReturn;
 	}
 
 }
