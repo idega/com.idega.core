@@ -31,6 +31,12 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
+  </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
 </classpath>
