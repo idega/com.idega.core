@@ -4,7 +4,7 @@
     <organization>
         <name>idega software</name>
         <url>http://www.idega.com</url>
-        <logo>http://maven.idega.com/idega_onwhite_120.gif</logo>
+        <logo>http://developer.idega.com/idega_onwhite_120.gif</logo>
     </organization>
     <inceptionYear>2000</inceptionYear>
     <groupId>bundles</groupId>
@@ -16,10 +16,8 @@
 
   <url>http://maven.idega.com/${pom.groupId}/${pom.artifactId}</url>
   <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
-  <siteAddress>maven.idega.com</siteAddress>
-  <siteDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
-  <distributionSite>maven.idega.com</distributionSite>
-  <distributionDirectory>/var/www/webs/maven.idega.com/maven</distributionDirectory>
+  <siteAddress>developer.idega.com</siteAddress>
+  <siteDirectory>/var/www/webs/developer.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
   <build>
     <nagEmailAddress>tryggvi@idega.is</nagEmailAddress>
   </build> 
