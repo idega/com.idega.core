@@ -47,6 +47,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	int _cols = 1;
 	int _extracols = 1;
 	boolean _nowrap = true;
+	String lastNode = null;
 
 	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
@@ -254,6 +255,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				int rowIndex = getRowIndex();
 				Table treeColumns = this.getTreeTableClone();
 				String anchorName = Integer.toString(item.getNodeID());
+				treeColumns.add(new Anchor(anchorName), 1, 1);
 //				treeColumns.setBorder(1);
 //				frameTable.setBorder(1);
 				if (hasChild) {
@@ -313,7 +315,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (_nowrap)
 										treeColumns.setNoWrap(1, 1);
 									treeColumns.add(p, 1, 1);
-									treeColumns.add(new Anchor(anchorName), 1, 1);
 									newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
 								} else {
 									PresentationObject p = null;
@@ -325,7 +326,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									}
 									if (_nowrap)
 										treeColumns.setNoWrap(1, 1);
-									treeColumns.add(new Anchor(anchorName), 1, 1);
 									treeColumns.add(p, 1, 1);
 								}
 							} else {
@@ -344,7 +344,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 											p = icons[ICONINDEX_F_MINUS];
 										}
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 										newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
 									} else {
 										PresentationObject p = null;
@@ -357,7 +356,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 									}
 								} else {
 									if (_nowrap)
@@ -378,7 +376,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 										newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
 									} else { // if this node is closed
 										PresentationObject p = null;
@@ -391,7 +388,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 									}
 								} else {  //if this node does not have any children
 									if (_nowrap)
@@ -413,7 +409,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 										newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
 									} else { // if this node is closed
 										PresentationObject p = null;
@@ -426,7 +421,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
 										treeColumns.add(p, 1, 1);
-										treeColumns.add(new Anchor(anchorName), 1, 1);
 									}
 								} else { // if this node does not have any children
 									if (_nowrap)
@@ -451,7 +445,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								if (_nowrap)
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
-								treeColumns.add(new Anchor(anchorName), 1, 1);
 								newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
 							} else { // if this node is closed
 								PresentationObject p = null;
@@ -464,7 +457,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								if (_nowrap)
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
-								treeColumns.add(new Anchor(anchorName), 1, 1);
 							}
 						} else {  //if this node does not have any children
 							if (_nowrap)
@@ -485,7 +477,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								if (_nowrap)
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
-								treeColumns.add(new Anchor(anchorName), 1, 1);
 								newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
 							} else { // if this node is closed
 								PresentationObject p = null;
@@ -498,7 +489,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								if (_nowrap)
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
-								treeColumns.add(new Anchor(anchorName), 1, 1);
 							}
 						} else { // if this node does not have any children
 							if (_nowrap)
@@ -581,6 +571,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		//    }
 
 		this.setOpenNodes(state.getOpenNodeList());
+		lastNode = state.getLastOpenedOrClosedNode();
+		state.resetLastOpenedOrClosedNode();
 
 		if (state.setToInitOpenLevel()) {
 			this.setInitOpenLevel();
@@ -593,6 +585,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 		updateOpenNodes(iwc);
 		drawTree(iwc);
+		// Safari is not included because it already works (fluke ?), and will cause an endless reload loop, because location.href
+		// causes a reload of the page and not just jumping to the anchor
+		if (lastNode != null && !iwc.isSafari()) {
+			getParentPage().setOnLoad("location.href='#"+lastNode+"'");
+			
+		}
 		setHeadings();
 		setAlignments();
 	}
