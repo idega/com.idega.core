@@ -12,6 +12,9 @@
     <inceptionYear>2000</inceptionYear>
     <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
     <issueTrackingUrl>http://issues.idega.is</issueTrackingUrl>
+    <repository>
+        <connection>scm:cvs:ext:tryggvil@einstein.idega.is:/idega/cvs:bundles/com.idega.core.bundle</connection>
+    </repository>
     <versions/>
     <branches/>
     <mailingLists>
