@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.88 2003/10/30 16:06:05 laddi Exp $
+ *  $Id: Page.java,v 1.89 2003/11/03 15:14:49 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -272,7 +272,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  tagName   The new hTTPEquivTag value
 	 *@param  tagValue  The new hTTPEquivTag value
 	 */
-	protected void setHTTPEquivTag(String tagName, String tagValue) {
+	public void setHTTPEquivTag(String tagName, String tagValue) {
 		if (_HTTPEquivs == null) {
 			_HTTPEquivs = new Hashtable();
 		}
@@ -414,7 +414,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  tagName  Description of the Parameter
 	 *@return          The hTTPEquivTag value
 	 */
-	protected String getHTTPEquivTag(String tagName) {
+	public String getHTTPEquivTag(String tagName) {
 		if (_HTTPEquivs != null) {
 			return (String) this._HTTPEquivs.get((Object) tagName);
 		}
