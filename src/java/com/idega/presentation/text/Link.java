@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.71 2002/05/05 20:16:05 gummi Exp $
+ * $Id: Link.java,v 1.72 2002/05/13 13:07:18 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1505,42 +1505,30 @@ public class Link extends Text{
       boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
       if(alignSet){
-	print("<div align=\""+getHorizontalAlignment()+"\">");
-	removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+      	print("<div align=\""+getHorizontalAlignment()+"\">");
+      	removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
       }
 
       if(openInNewWindow){
-      //if (_objectType==(OBJECT_TYPE_WINDOW)) {
-       // openInNewWindow=true;
-	/*if (_windowClass == null) {
-	  setFinalUrl("javascript:"+_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
-	} else {
-	  setFinalUrl("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
-	}*/
-	setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
-	//setFinalUrl(HASH);
+      	setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
       }
       else{
-	//Should not happen when a new window is opened
-	if (addParameters) {
-	  setFinalUrl(oldURL+getParameterString(iwc,oldURL));
-	}
+      	//Should not happen when a new window is opened
+      	if (addParameters) {
+	        setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+	      }
       }//end if (_objectType==(OBJECT_TYPE_WINDOW))
 
+    IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
+
+    if (d.getURL() != null) {
+      String attr = getAttribute(HREF_ATTRIBUTE);
+      if (attr.startsWith("/")) {
+        setAttribute(HREF_ATTRIBUTE,d.getURL()+attr);
+      }
+    }
+
 	print("<a "+getAttributeString()+" >");
-	/*
-	if(openInNewWindow){
-	//if (_obj == null) {
-	  if(_obj!=null){
-	    _obj.print(iwc);
-	  }
-	  else{
-	    Text myText = new Text(_myWindow.getName());
-	    myText.print(iwc);
-	  }
-	} else {
-	*/
-	  //if (_objectType==OBJECT_TYPE_TEXT) {
 	  if (this.isText()) {
 	    if ( hasClass ) {
 	      /*if ( displayString != null ) {

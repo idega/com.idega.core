@@ -171,20 +171,28 @@ public void setFullScreen(boolean ifFullScreen){
 //        return true;
 //}
 
-public String getURL(IWContext iwc){
-//	if (isNewURL()){
-//		return url;
-//	}
-//	else{
-//		return encodeSpecialRequestString("window",this.getName(),iwc);
-//	}
-        if(url==null){
-          return iwc.getApplication().getWindowOpenerURI();
-        }
-        else{
-          return url;
-        }
-}
+  public String getURL(IWContext iwc){
+    String ret = null;
+    if (url == null) {
+      ret = iwc.getApplication().getWindowOpenerURI();
+    }
+    else {
+      ret = url;
+    }
+
+System.out.println("ret1 = " + ret);
+
+    com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
+
+    if (d.getURL() != null) {
+      if (ret.startsWith("/")) {
+        ret = d.getURL() + ret;
+      }
+    }
+System.out.println("ret2 = " + ret);
+
+    return ret;
+  }
 
 public void setBackgroundColor(String color){
 	setAttribute("bgcolor",color);

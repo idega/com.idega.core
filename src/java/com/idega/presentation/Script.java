@@ -195,6 +195,14 @@ public void print(IWContext iwc)throws Exception{
 	initVariables(iwc);
 	if (doPrint(iwc)){
 		if (getLanguage().equals("HTML")){
+      com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
+
+      if (d.getURL() != null) {
+        String src = getAttribute("src");
+        if (src != null && src.startsWith("/")) {
+          setAttribute("src",d.getURL()+src);
+        }
+      }
 
 			//if (getInterfaceStyle().equals("something")){
 			//}

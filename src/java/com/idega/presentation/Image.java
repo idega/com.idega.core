@@ -440,7 +440,7 @@ public String getAlt(){
  return getAttribute("alt");
 }
 
-private String getHTMLString(){
+private String getHTMLString(IWContext iwc) {
   StringBuffer sPrint = new StringBuffer();
   sPrint.append("<img ");
   //alt always added for standards compliancy
@@ -453,6 +453,18 @@ private String getHTMLString(){
   sPrint.append("name=\"");
   sPrint.append(getName());
   sPrint.append("\"");
+
+  if (iwc != null) {
+    com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
+
+    if (d.getURL() != null) {
+      String src = getAttribute("src");
+      if (src.startsWith("/")) {
+        setAttribute("src",d.getURL()+src);
+      }
+    }
+  }
+
   sPrint.append(getAttributeString());
   if ( align != null ) {
     sPrint.append(" align=\""+align+"\" ");
@@ -550,37 +562,37 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 	  //should we add the image with a link? or just the image
 	  if( zoomView ){
 	    if ( zoomLink != null ) {
-	      zoomLink.setText(getHTMLString());
+	      zoomLink.setText(getHTMLString(iwc));
 	      imageTable.add(zoomLink,1,1);
 	    }
 	    else {
-	      Link imageLink = new Link(getHTMLString());
+	      Link imageLink = new Link(getHTMLString(iwc));
 	      imageLink.addParameter("image_id",imageId);
 	      imageTable.add(imageLink, 1, 1);
 	    }
 	  }
 	  else if( (!zoomView) && (linkOnImage) ) {
-	    Link imageLink = new Link(getHTMLString(), link);
+	    Link imageLink = new Link(getHTMLString(iwc), link);
 	    imageLink.setTarget("_new");
 	    imageTable.add(imageLink, 1, 1);
 	  }
-	  else imageTable.add(getHTMLString(),1,1);
+	  else imageTable.add(getHTMLString(iwc),1,1);
 
 	}
 	else{//or no link
 
 	  if( zoomView ){
 	    if ( zoomLink != null ) {
-	      zoomLink.setText(getHTMLString());
+	      zoomLink.setText(getHTMLString(iwc));
 	      imageTable.add(zoomLink,1,1);
 	    }
 	    else {
-	      Link imageLink = new Link(getHTMLString());
+	      Link imageLink = new Link(getHTMLString(iwc));
 	      imageLink.addParameter("image_id",imageId);
 	      imageTable.add(imageLink, 1, 1);
 	    }
 	  }
-	  else imageTable.add(getHTMLString(),1,1);
+	  else imageTable.add(getHTMLString(iwc),1,1);
 
 	  imageTable.add(imageText, 1, 2);
 	}
@@ -590,16 +602,16 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
       else  {
 	if(zoomView){
 	  if ( zoomLink != null ) {
-	    zoomLink.setText(getHTMLString());
+	    zoomLink.setText(getHTMLString(iwc));
 	    zoomLink.print(iwc);
 	  }
 	  else {
-	    Link imageLink = new Link(getHTMLString());
+	    Link imageLink = new Link(getHTMLString(iwc));
 	    imageLink.addParameter("image_id",imageId);
 	    imageLink.print(iwc);
 	  }
 	}
-	else print(getHTMLString());
+	else print(getHTMLString(iwc));
       }
     }//end debug
   }
@@ -710,10 +722,10 @@ public void limitImageWidth( boolean limitImageWidth ){
       //Change the imageId so that it is localized
       imageId = this.getImageID(iwc);
       if( imageId == -1 ){//from an url
-	  print(getHTMLString());
+    	  print(getHTMLString(iwc));
       }
       else{//from the database
-	getHTMLImage(iwc);
+      	getHTMLImage(iwc);
       }
     }
   }
