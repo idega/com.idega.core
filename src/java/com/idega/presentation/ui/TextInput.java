@@ -89,12 +89,6 @@ public class TextInput extends GenericInput {
 		setAttribute("maxlength", Integer.toString(maxlength));
 	}
 
-	private void setCheckSubmit() {
-		if (getScript().getFunction("checkSubmit") == null) {
-			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
-		}
-	}
-
 	/**
 	 * @deprecated	Use setAsNotEmpty(String errorMessage)
 	 * Sets the text input so that it can not be empty, displays an alert if the "error"
@@ -197,7 +191,7 @@ public class TextInput extends GenericInput {
 	 * Uses Javascript.
 	 */
 	public void setAsIcelandicSSNumber() {
-		this.setAsFloat("Please only a Icelandic social security number in " + this.getName());
+		setAsIcelandicSSNumber("Please only a Icelandic social security number in " + this.getName());
 	}
 
 	/**
@@ -230,58 +224,29 @@ public class TextInput extends GenericInput {
 		alphabetErrorMessage = errorMessage;
 	}
 
-	public void _main(IWContext iwc) throws Exception {
-		if (getParentForm() != null) {
-			if (isSetAsNotEmpty) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfEmpty (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfEmpty", "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
-			}
+	public void main(IWContext iwc) throws Exception {
+		if (isSetAsNotEmpty)
+			setOnSubmitFunction("warnIfEmpty", "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
 
-			if (isSetAsIntegers) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotIntegers (findObj('" + getName() + "'),'" + integersErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotIntegers", "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}");
-			}
-			if (isSetAsIcelandicSSNumber) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotIcelandicSSNumber (findObj('" + getName() + "'),'" + icelandicSSNumberErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotIcelandicSSNumber","function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 10){ \n       sum = inputbox.value.charAt(0)*3 + inputbox.value.charAt(1)*2 + inputbox.value.charAt(2)*7 + inputbox.value.charAt(3)*6 + inputbox.value.charAt(4)*5 + inputbox.value.charAt(5)*4 + inputbox.value.charAt(6)*3 + inputbox.value.charAt(7)*2; \n       var rule1 = inputbox.value.charAt(8) == 11 - (sum % 11); \n       var rule2 = inputbox.value.charAt(9) == 0; \n       var rule3 = inputbox.value.charAt(9) == 8; \n       var rule4 = inputbox.value.charAt(9) == 9; \n       var subRule = false; \n       if ( rule2 || rule3 || rule4 ) { subRule = true; } \n       if ( rule1  && subRule ){ \n       return true; \n     }\n   } \n  alert ( warnMsg );\n   return false;\n \n }");
-				getScript().addToFunction("checkSubmit", "if (warnIfNotIntegers (findObj('" + getName() + "'),'" + icelandicSSNumberErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotIntegers", "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}");
-			}
-			if (isSetAsCreditCardNumber) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotCreditCardNumber (findObj('" + getName() + "'),'" + notCreditCardErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotCreditCardNumber", "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }");
-				//not fully implemented such as maybe a checksum check could be added??
-			}
-			else if (isSetAsFloat) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				this.setOnBlur("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotFloat (findObj('" + getName() + "'),'" + floatErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg) {\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) { return true;\n	}\n	if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}");
+		if (isSetAsIntegers)
+			setOnSubmitFunction("warnIfNotIntegers", "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", integersErrorMessage);
 
-			}
-			else if (isSetAsAlphabetical) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotAlphabetical (findObj('" + getName() + "'),'" + alphabetErrorMessage + "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotAlphabetical", "function warnIfNotAlphabetical (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if ((inputbox.value.charAt(i) > '0') && (inputbox.value.charAt(i) < '9')){	\n alert ( warnMsg );\n		return false; \n	}  \n } \n  return true;\n\n}");
-			}
+		if (isSetAsIcelandicSSNumber)
+			setOnSubmitFunction("warnIfNotIcelandicSSNumber", "function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 10){ \n       sum = inputbox.value.charAt(0)*3 + inputbox.value.charAt(1)*2 + inputbox.value.charAt(2)*7 + inputbox.value.charAt(3)*6 + inputbox.value.charAt(4)*5 + inputbox.value.charAt(5)*4 + inputbox.value.charAt(6)*3 + inputbox.value.charAt(7)*2; \n       var rule1 = inputbox.value.charAt(8) == 11 - (sum % 11); \n       var rule2 = inputbox.value.charAt(9) == 0; \n       var rule3 = inputbox.value.charAt(9) == 8; \n       var rule4 = inputbox.value.charAt(9) == 9; \n       var subRule = false; \n       if ( rule2 || rule3 || rule4 ) { subRule = true; } \n       if ( rule1  && subRule ){ \n       return true; \n     }\n   } \n  alert ( warnMsg );\n   return false;\n \n }", icelandicSSNumberErrorMessage);
 
-			else if (isSetAsEmail) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfNotEmail (findObj('" + getName() + "'), '" +emailErrorMessage+ "') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfNotEmail", "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}");
-			}
+		if (isSetAsCreditCardNumber)
+			setOnSubmitFunction("warnIfNotCreditCardNumber", "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }", notCreditCardErrorMessage);
+
+		if (isSetAsFloat) {
+			setOnSubmitFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg) {\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) { return true;\n	}\n	if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}", floatErrorMessage);
+			setOnBlur("return checkSubmit(this)");
 		}
+
+		if (isSetAsAlphabetical)
+			setOnSubmitFunction("warnIfNotAlphabetical", "function warnIfNotAlphabetical (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if ((inputbox.value.charAt(i) > '0') && (inputbox.value.charAt(i) < '9')){	\n alert ( warnMsg );\n		return false; \n	}  \n } \n  return true;\n\n}", alphabetErrorMessage);
+
+		if (isSetAsEmail)
+			setOnSubmitFunction("warnIfNotEmail", "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}", emailErrorMessage);
 	}
 
 	public synchronized Object clone() {

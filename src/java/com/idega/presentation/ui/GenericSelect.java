@@ -186,21 +186,9 @@ public class GenericSelect extends InterfaceObject {
 		return false;
 	}
 
-	public void _main(IWContext iwc) throws Exception {
-		if (getParentForm() != null) {
-			if (isSetAsNotEmpty) {
-				getParentForm().setOnSubmit("return checkSubmit(this)");
-				setCheckSubmit();
-				getScript().addToFunction("checkSubmit", "if (warnIfDropdownEmpty (findObj('" + getName() + "'),'" + notEmptyErrorMessage + "', '"+emptyValue+"') == false ){\nreturn false;\n}\n");
-				getScript().addFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}");
-			}
-		}
-	}
-
-	private void setCheckSubmit() {
-		if (getScript().getFunction("checkSubmit") == null) {
-			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
-		}
+	public void main(IWContext iwc) throws Exception {
+		if (isSetAsNotEmpty)
+			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage, emptyValue);
 	}
 
 	/**
