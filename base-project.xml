@@ -31,6 +31,5 @@
     <report>maven-changes-plugin</report>
     <report>maven-license-plugin</report>
     <report>maven-multichanges-plugin</report>
-    <report>maven-javadoc-plugin</report>
   </reports>
 </project>
