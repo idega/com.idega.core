@@ -43,6 +43,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	public void actionPerformed(ActionEvent event) {
 		try {
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
+				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
 				Collection relations = getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome().findAllPendingGroupRelationships();
 				
 				Iterator iter = relations.iterator();
