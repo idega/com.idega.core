@@ -9,12 +9,19 @@ import com.idega.jmodule.object.interfaceobject.PasswordInput;
 import com.idega.jmodule.object.Table;
 import com.idega.jmodule.object.ModuleInfo;
 import com.idega.jmodule.object.textObject.Text;
+import com.idega.jmodule.object.interfaceobject.DropdownMenu;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
+import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.core.data.GenericGroup;
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.util.idegaTimestamp;
 import com.idega.transaction.IdegaTransactionManager;
 import javax.transaction.TransactionManager;
+import java.util.List;
+import java.util.Iterator;
+
 
 import java.sql.SQLException;
 
@@ -43,6 +50,7 @@ public class CreateUser extends Window {
   private Text passwordNeverExpiresText;
   private Text disableAccountText;
   private Text goToPropertiesText;
+  private Text primaryGroupText;
 
   private TextInput firstNameField;
   private TextInput middleNameField;
@@ -58,6 +66,8 @@ public class CreateUser extends Window {
   private CheckBox passwordNeverExpiresField;
   private CheckBox disableAccountField;
   private CheckBox goToPropertiesField;
+
+  private DropdownMenu primaryGroupField;
 
   private SubmitButton okButton;
   private SubmitButton cancelButton;
@@ -82,6 +92,7 @@ public class CreateUser extends Window {
   public static String passwordNeverExpiresFieldParameterName = "neverExpires";
   public static String disableAccountFieldParameterName = "disableAccount";
   public static String goToPropertiesFieldParameterName = "gotoProperties";
+  public static String primaryGroupFieldParameterName = "primarygroup";
 
   private UserBusiness business;
 
@@ -90,7 +101,7 @@ public class CreateUser extends Window {
   public CreateUser() {
     super();
     this.setName("idegaWeb Builder - Stofna félaga");
-    this.setHeight(440);
+    this.setHeight(460);
     this.setWidth(390);
     this.setBackgroundColor("#d4d0c8");
     this.setScrollbar(false);
@@ -118,6 +129,8 @@ public class CreateUser extends Window {
     passwordNeverExpiresText = new Text("Password never expires");
     disableAccountText = new Text("Account is disabled");
     goToPropertiesText = new Text("go to properties");
+
+    primaryGroupText = new Text("Primarygroup");
   }
 
   protected void initializeFields(){
@@ -142,6 +155,27 @@ public class CreateUser extends Window {
     disableAccountField = new CheckBox(disableAccountFieldParameterName);
     goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
 
+    primaryGroupField  = new DropdownMenu(this.primaryGroupFieldParameterName);
+    //primaryGroupField.addMenuElement("","aðalhópur");
+    primaryGroupField.addSeparator();
+
+    try {
+      String[] gr = new String[1];
+      gr[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      List groups = com.idega.core.data.GenericGroup.getAllGroups(gr,false);
+      if(groups != null){
+        groups.removeAll(AccessControl.getStandardGroups());
+        Iterator iter = groups.iterator();
+        while (iter.hasNext()) {
+          GenericGroup item = (GenericGroup)iter.next();
+          primaryGroupField.addMenuElement(item.getID(),item.getName());
+        }
+      }
+    }
+    catch (Exception ex) {
+
+    }
+
     okButton = new SubmitButton("     OK     ",submitButtonParameterName,okButtonParameterValue);
     cancelButton = new SubmitButton(" Cancel ",submitButtonParameterName,cancelButtonParameterValue);
 
@@ -150,7 +184,7 @@ public class CreateUser extends Window {
 
   public void lineUpElements(){
 
-    Table frameTable = new Table(1,5);
+    Table frameTable = new Table(1,6);
     frameTable.setAlignment("center");
     frameTable.setVerticalAlignment("middle");
     frameTable.setCellpadding(0);
@@ -178,6 +212,7 @@ public class CreateUser extends Window {
     loginTable.setHeight(1,rowHeight);
     loginTable.setHeight(2,rowHeight);
     loginTable.setHeight(3,rowHeight);
+    loginTable.setWidth(1,"110");
 
     loginTable.add(this.userLoginText,1,1);
     loginTable.add(this.userLoginField,2,1);
@@ -190,6 +225,17 @@ public class CreateUser extends Window {
     loginTable.add(this.confirmPasswordText,1,3);
     loginTable.add(this.confirmPasswordField,2,3);
     // loginTable end
+
+    // groupTable begin
+    Table groupTable = new Table(2,1);
+    groupTable.setCellpadding(0);
+    groupTable.setCellspacing(0);
+    groupTable.setHeight(1,rowHeight);
+    groupTable.setWidth(1,"110");
+
+    groupTable.add(this.primaryGroupText,1,1);
+    groupTable.add(this.primaryGroupField,2,1);
+    // groupTable end
 
     // AccountPropertyTable begin
     Table AccountPropertyTable = new Table(2,4);
@@ -235,11 +281,12 @@ public class CreateUser extends Window {
 
     frameTable.add(nameTable,1,1);
     frameTable.add(loginTable,1,2);
-    frameTable.add(AccountPropertyTable,1,3);
-    frameTable.add(propertyTable,1,4);
-    frameTable.setAlignment(1,4,"right");
-    frameTable.add(buttonTable,1,5);
+    frameTable.add(groupTable,1,3);
+    frameTable.add(AccountPropertyTable,1,4);
+    frameTable.add(propertyTable,1,5);
     frameTable.setAlignment(1,5,"right");
+    frameTable.add(buttonTable,1,6);
+    frameTable.setAlignment(1,6,"right");
 
     myForm.add(frameTable);
 
@@ -260,11 +307,18 @@ public class CreateUser extends Window {
     String cannotchangePassw = modinfo.getParameter(this.cannotChangePasswordFieldParameterName);
     String passwNeverExpires = modinfo.getParameter(this.passwordNeverExpiresFieldParameterName);
     String disabledAccount = modinfo.getParameter(this.disableAccountFieldParameterName);
+    String primaryGroup = modinfo.getParameter(this.primaryGroupFieldParameterName);
 
     Boolean bMustChage;
     Boolean bAllowedToChangePassw;
     Boolean bPasswNeverExpires;
     Boolean bEnabledAccount;
+
+    Integer primaryGroupId = null;
+
+    if(primaryGroup != null && !primaryGroup.equals("")){
+      primaryGroupId = new Integer(primaryGroup);
+    }
 
     if(mustChage != null && !"".equals(mustChage)){
       bMustChage = Boolean.TRUE;
@@ -300,14 +354,14 @@ public class CreateUser extends Window {
     TransactionManager transaction = IdegaTransactionManager.getInstance();
     try{
       transaction.begin();
-      newUser = business.insertUser( modinfo.getParameter(firstNameFieldParameterName),
+      newUser = business.insertUser(modinfo.getParameter(firstNameFieldParameterName),
                                    modinfo.getParameter(middleNameFieldParameterName),
                                    modinfo.getParameter(lastNameFieldParameterName),
-                                   null,null,null,null);
+                                   null,null,null,null,primaryGroupId);
 
 
       LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,idegaTimestamp.RightNow(),
-                                 5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage);
+                                 5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage,null);
 
       transaction.commit();
     }catch(Exception e){

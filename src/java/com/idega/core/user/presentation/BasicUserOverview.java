@@ -17,6 +17,8 @@ import com.idega.core.user.presentation.UserPropertyWindow;
 import com.idega.jmodule.object.interfaceobject.Window;
 import com.idega.jmodule.object.interfaceobject.SubmitButton;
 import com.idega.jmodule.object.interfaceobject.CloseButton;
+import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.business.UserGroupBusiness;
 
 /**
  * Title:        User
@@ -43,7 +45,12 @@ public class BasicUserOverview extends Page {
   public Table getUsers(ModuleInfo modinfo) throws Exception{
     List users = EntityFinder.findAllOrdered(User.getStaticInstance(),User.getColumnNameFirstName());
     Table userTable = null;
+    List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(AccessControl.getPermissionGroupAdministrator());
+
     if(users != null){
+      if(adminUsers == null){
+        adminUsers = new Vector(0);
+      }
       userTable = new Table(3,(users.size()>8)?users.size():8);
       userTable.setCellspacing(0);
       userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
@@ -57,11 +64,12 @@ public class BasicUserOverview extends Page {
           aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
           userTable.add(aLink,2,i+1);
 
-          Link delLink = new Link(new Text("Delete"));
-          delLink.setWindowToOpen(ConfirmWindow.class);
-          delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
-          userTable.add(delLink,3,i+1);
-
+          if(!adminUsers.contains(tempUser)){
+            Link delLink = new Link(new Text("Delete"));
+            delLink.setWindowToOpen(ConfirmWindow.class);
+            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
+            userTable.add(delLink,3,i+1);
+          }
         }
       }
     }

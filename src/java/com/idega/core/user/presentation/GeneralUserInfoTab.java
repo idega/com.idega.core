@@ -298,7 +298,7 @@ public class GeneralUserInfoTab extends UserTab{
         business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
-                            gen,dateOfBirthTS);
+                            gen,dateOfBirthTS,null);
       }
     }catch(Exception e){
       //return false;

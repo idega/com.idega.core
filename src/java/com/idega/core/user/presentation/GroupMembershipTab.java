@@ -33,14 +33,16 @@ public class GroupMembershipTab extends UserGroupTab {
 
 
   //private Link addLink;
-  private IFrame memberofFrame;
+  private IFrame groupMembersFrame;
+  private IFrame userMembersFrame;
 //  public static final String PARAMETER_GROUP_ID = "ic_group_id";
   public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GMT";
   public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GMT";
   public static final String SESSIONADDRESS_USERS_DIRECTLY_RELATED = "ic_user_ic_group_direct_GMT";
   public static final String SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED = "ic_user_ic_group_not_direct_GMT";
 
-  protected Text memberof;
+  protected Text groupMembers;
+  protected Text userMembers;
 
   public GroupMembershipTab() {
     super();
@@ -55,29 +57,39 @@ public class GroupMembershipTab extends UserGroupTab {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }
   public void initializeFields() {
-    memberofFrame = new IFrame("ic_group_members",GroupMembershipTab.GroupList.class);
-    memberofFrame.setHeight(320);
-    memberofFrame.setWidth(370);
-    memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+    groupMembersFrame = new IFrame("ic_group_group_members",GroupMembershipTab.GroupList.class);
+    groupMembersFrame.setHeight(140);
+    groupMembersFrame.setWidth(370);
+    groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+
+    userMembersFrame = new IFrame("ic_user_group_members",GroupMembershipTab.UserList.class);
+    userMembersFrame.setHeight(140);
+    userMembersFrame.setWidth(370);
+    userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
 
     //addLink = new Link("  Add  ");
 
   }
   public void initializeTexts() {
-    memberof = this.getTextObject();
-    memberof.setText("Members:");
+    groupMembers = this.getTextObject();
+    groupMembers.setText("Groups :");
+    userMembers = this.getTextObject();
+    userMembers.setText("Users :");
   }
   public boolean store(ModuleInfo modinfo) {
     return true;
   }
   public void lineUpFields() {
-    this.resize(1,3);
+    this.resize(1,4);
 
-    this.add(memberof,1,1);
-    this.add(memberofFrame,1,2);
+    this.add(groupMembers,1,1);
+    this.add(groupMembersFrame,1,2);
+    this.add(userMembers,1,3);
+    this.add(userMembersFrame,1,4);
 
     this.setHeight(1,"30");
-    this.setHeight(3,super.columnHeight);
+    this.setHeight(3,super.rowHeight);
+    //this.setHeight(3,super.rowHeight);
 
     //this.add(addLink,1,3);
   }
@@ -97,19 +109,38 @@ public class GroupMembershipTab extends UserGroupTab {
   }
 
   public void main(ModuleInfo modinfo) throws Exception {
-    Object obj = UserGroupBusiness.getAllGroupMembersDirectlyRelated(this.getGroupId());
+    Object obj = UserGroupBusiness.getGroupsContainedDirectlyRelated(this.getGroupId());
     if(obj != null){
       modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
     }else{
       modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = UserGroupBusiness.getAllGroupMembersNotDirectlyRelated(this.getGroupId());
+    Object ob = UserGroupBusiness.getGroupsContainedNotDirectlyRelated(this.getGroupId());
     if(ob != null){
       modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
       modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
     }
+
+    Object obju = UserGroupBusiness.getUsersContainedDirectlyRelated(this.getGroupId());
+    if(obju != null){
+      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED,obju);
+    }else{
+      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
+    }
+
+
+    /**
+     * @todo check
+     */
+    Object obu = UserGroupBusiness.getUsersContainedNotDirectlyRelated(this.getGroupId());
+    if(obu != null){
+      modinfo.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED,obu);
+    }else{
+      modinfo.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
+    }
+
   }
 
 
@@ -172,6 +203,75 @@ public class GroupMembershipTab extends UserGroupTab {
     public void main(ModuleInfo modinfo) throws Exception {
       this.getParentPage().setAllMargins(0);
       Table tb = getGroupTable(modinfo);
+      if(tb != null){
+        this.add(tb);
+      }
+    }
+
+
+
+  } // InnerClass
+
+
+  public static class UserList extends Page {
+
+    private List groups = null;
+
+    public UserList(){
+      super();
+    }
+
+    public Table getUserTable(ModuleInfo modinfo){
+
+      List direct = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED);
+      List notDirect = (List)modinfo.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED);
+
+      Table table = null;
+      Iterator iter = null;
+      int row = 1;
+      if(direct != null && notDirect != null){
+        table = new Table(5,direct.size()+notDirect.size());
+
+        iter = direct.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          table.add("D",1,row);
+          table.add(((User)item).getName(),3,row++);
+        }
+
+        iter = notDirect.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          table.add("E",1,row);
+          table.add(((User)item).getName(),3,row++);
+        }
+
+      } else if(direct != null){
+        table = new Table(5,direct.size());
+        iter = direct.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          table.add("D",1,row);
+          table.add(((User)item).getName(),3,row++);
+        }
+      }
+
+      if(table != null){
+        table.setWidth("100%");
+        table.setWidth(1,"10");
+        table.setWidth(2,"3");
+        table.setWidth(4,"10");
+        table.setWidth(5,"10");
+      }
+
+
+
+      return table;
+    }
+
+    public void main(ModuleInfo modinfo) throws Exception {
+      this.getParentPage().setAllMargins(0);
+      Table tb = getUserTable(modinfo);
       if(tb != null){
         this.add(tb);
       }

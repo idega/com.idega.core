@@ -11,6 +11,7 @@ import com.idega.jmodule.object.interfaceobject.SelectionDoubleBox;
 import com.idega.jmodule.object.interfaceobject.SelectionBox;
 import com.idega.jmodule.object.interfaceobject.SubmitButton;
 import com.idega.jmodule.object.interfaceobject.Form;
+import com.idega.jmodule.object.interfaceobject.DropdownMenu;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.data.User;
@@ -18,6 +19,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Enumeration;
 import com.idega.util.Disposable;
+import java.sql.SQLException;
+import com.idega.event.IWLinkListener;
+import com.idega.event.IWLinkEvent;
 
 /**
  * Title:        User
@@ -28,10 +32,17 @@ import com.idega.util.Disposable;
  * @version 1.0
  */
 
-public class UserGroupList extends UserTab implements Disposable{
+public class UserGroupList extends UserTab implements Disposable, IWLinkListener {
 
   private Link addLink;
   private IFrame memberofFrame;
+
+  private DropdownMenu primaryGroupField;
+
+  private String primaryGroupFieldName;
+
+  private Text primaryGroupText;
+
   public static final String PARAMETER_USER_ID = "ic_user_id";
   public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED = "ic_user_ic_group_direct_UGL";
   public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED = "ic_user_ic_group_not_direct_UGL";
@@ -46,45 +57,93 @@ public class UserGroupList extends UserTab implements Disposable{
   public void initFieldContents() {
     addLink.setWindowToOpen(UserGroupList.UserGroupSetter.class);
     addLink.addParameter(UserGroupList.PARAMETER_USER_ID,this.getUserId());
+    List userGroups = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
+    if(userGroups != null){
+      Iterator iter = userGroups.iterator();
+      while (iter.hasNext()) {
+        GenericGroup item = (GenericGroup)iter.next();
+        primaryGroupField.addMenuElement(item.getID(),item.getName());
+      }
+    }
+    try {
+      User user = new User(this.getUserId());
+      int prgroupid = user.getPrimaryGroupID();
+      fieldValues.put(primaryGroupFieldName, (prgroupid != -1)?Integer.toString(prgroupid):"");
+    }
+    catch (SQLException ex) {
+
+    }
+    updateFieldsDisplayStatus();
   }
   public void updateFieldsDisplayStatus() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
+    primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
   }
   public void initializeFields() {
     memberofFrame = new IFrame("ic_user_memberof_ic_group",UserGroupList.GroupList.class);
-    memberofFrame.setHeight(310);
+    memberofFrame.setHeight(280);
     memberofFrame.setWidth(370);
     memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 
-    addLink = new Link("  Add  ");
+    primaryGroupField = new DropdownMenu(primaryGroupFieldName);
+    primaryGroupField.keepStatusOnAction();
 
+    addLink = new Link("  Add  ");
   }
+
+  public void actionPerformed(IWLinkEvent e){
+    this.collect(e.getModuleInfo());
+  }
+
   public void initializeTexts() {
     memberof = this.getTextObject();
     memberof.setText("Member of:");
+
+    primaryGroupText = this.getTextObject();
+    primaryGroupText.setText("Primarygroup");
   }
   public boolean store(ModuleInfo modinfo) {
-    return true;
+    try {
+      String pr = (String)this.fieldValues.get(this.primaryGroupFieldName);
+      UserBusiness.setPermissionGroup(new User(this.getUserId()), ("".equals(pr))?null:new Integer(pr));
+      return true;
+    }
+    catch (SQLException ex) {
+      return false;
+    }
   }
   public void lineUpFields() {
-    this.resize(1,3);
+    this.resize(1,4);
 
-    this.add(memberof,1,1);
-    this.add(memberofFrame,1,2);
+    Table prTable = new Table(2,1);
+
+    prTable.add(this.primaryGroupText,1,1);
+    prTable.add(this.primaryGroupField,2,1);
+    prTable.setHeight(1,"30");
+    prTable.setWidth(1,"100");
+
+    this.add(prTable,1,1);
+    this.add(memberof,1,2);
+    this.add(memberofFrame,1,3);
 
     this.setHeight(1,"30");
-    this.setHeight(3,super.columnHeight);
+    this.setHeight(2,super.rowHeight);
+    this.setHeight(4,super.rowHeight);
 
-    this.add(addLink,1,3);
+    this.add(addLink,1,4);
   }
   public boolean collect(ModuleInfo modinfo) {
+    String prgroup = modinfo.getParameter(primaryGroupFieldName);
+    if(prgroup != null){
+      fieldValues.put(primaryGroupFieldName,prgroup);
+    }
     return true;
   }
   public void initializeFieldNames() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
+    this.primaryGroupFieldName = "primary_group";
   }
   public void initializeFieldValues() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
+    fieldValues.put(this.primaryGroupFieldName,"");
+    this.updateFieldsDisplayStatus();
   }
 
   public void dispose(ModuleInfo modinfo){
@@ -93,6 +152,19 @@ public class UserGroupList extends UserTab implements Disposable{
   }
 
   public void main(ModuleInfo modinfo) throws Exception {
+    primaryGroupField.removeElements();
+    primaryGroupField.addSeparator();
+    List userGroups = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
+    if(userGroups != null){
+      Iterator iter = userGroups.iterator();
+      while (iter.hasNext()) {
+        GenericGroup item = (GenericGroup)iter.next();
+        primaryGroupField.addMenuElement(item.getID(),item.getName());
+      }
+    }
+    primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
+
+
     Object obj = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
     if(obj != null){
       modinfo.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);

@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionHelper.java,v 1.2 2001/07/16 09:52:10 tryggvil Exp $
+ * $Id: ExceptionHelper.java,v 1.3 2001/09/28 10:34:50 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,7 +10,6 @@
 package com.idega.util;
 
 import java.util.ResourceBundle;
-import java.util.Locale;
 
 /**
  * A class to get the localized version of the exception text.

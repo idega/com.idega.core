@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.Iterator;
 import com.idega.data.GenericEntity;
 import com.idega.core.user.data.User;
+import com.idega.core.accesscontrol.business.AccessControl;
 
 /**
  * Title:        User
@@ -22,6 +23,7 @@ import com.idega.core.user.data.User;
  * @version 1.0
  */
 
+
 public class UserGroupBusiness {
 
   public UserGroupBusiness() {
@@ -30,27 +32,41 @@ public class UserGroupBusiness {
 
   public static List getAllGroups() {
     try {
-      return EntityFinder.findAll(GenericGroup.getStaticInstance());
+      //filter
+      String[] groupsNotToReturn = new String[1];
+      groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      //filter end
+      return UserGroupBusiness.getGroups(groupsNotToReturn,false);
+      //return EntityFinder.findAll(GenericGroup.getStaticInstance());
     }
     catch (SQLException ex) {
       ex.printStackTrace();
       return null;
     }
+  }
+
+  public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
+    List result = GenericGroup.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
+    if(result != null){
+      result.removeAll(AccessControl.getStandardGroups());
+    }
+    return result;
   }
 
   public static void deleteGroup(int groupId) throws SQLException {
     GenericGroup delGroup = new GenericGroup(groupId);
+    deleteGroup(delGroup);
+  }
 
-    delGroup.removeFrom((User)User.getStaticInstance(User.class));
-    delGroup.removeGroup(GenericGroup.getStaticInstance());
-
-    delGroup.delete();
+  public static void deleteGroup(GenericGroup group)throws SQLException {
+    group.removeGroup();
+    group.delete();
   }
 
 
-  public static List getAllGroupsRelated(int uGroupId)throws SQLException{
+  public static List getGroupsContaining(int uGroupId)throws SQLException{
     try {
-      return getAllGroupsRelated(new GenericGroup(uGroupId));
+      return getGroupsContaining(new GenericGroup(uGroupId));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -58,9 +74,9 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getUserGroupsDirectlyRelated(int uGroupId){
+  public static List getGroupsContainingDirectlyRelated(int uGroupId){
     try {
-      return getUserGroupsDirectlyRelated(new GenericGroup(uGroupId));
+      return getGroupsContainingDirectlyRelated(new GenericGroup(uGroupId));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -68,36 +84,9 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getUserGroupsDirectlyRelated(GenericGroup group){
+  public static List getGroupsContainingDirectlyRelated(GenericGroup group){
     try {
       return group.getListOfAllGroupsContainingThis();
-    }
-    catch (SQLException ex) {
-      ex.printStackTrace();
-      return null;
-    }
-  }
-
-  public static List getUserGroupsNotDirectlyRelated(int uGroupId){
-    try {
-      GenericGroup group = new GenericGroup(uGroupId);
-      List isDirectlyRelated = getUserGroupsDirectlyRelated(group);
-      List AllRelatedGroups = getAllGroupsRelated(group);
-
-      if(AllRelatedGroups != null){
-        if(isDirectlyRelated != null){
-          Iterator iter = isDirectlyRelated.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            AllRelatedGroups.remove(item);
-            //while(AllRelatedGroups.remove(item)){}
-          }
-        }
-        AllRelatedGroups.remove(group);
-        return AllRelatedGroups;
-      }else {
-        return null;
-      }
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -108,8 +97,8 @@ public class UserGroupBusiness {
   public static List getAllGroupsNotDirectlyRelated(int uGroupId){
     try {
       GenericGroup group = new GenericGroup(uGroupId);
-      List isDirectlyRelated = getUserGroupsDirectlyRelated(group);
-      List AllGroups = EntityFinder.findAll(GenericGroup.getStaticInstance());
+      List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
+      List AllGroups =  UserGroupBusiness.getAllGroups();// Filters out userrepresentive groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -132,163 +121,244 @@ public class UserGroupBusiness {
     }
   }
 
+  public static List getGroupsContainingNotDirectlyRelated(int uGroupId){
+    try {
+      GenericGroup group = new GenericGroup(uGroupId);
+      List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
+      List AllGroups =  UserGroupBusiness.getGroupsContaining(uGroupId);   //  EntityFinder.findAll(GenericGroup.getStaticInstance());
 
 
-  /**
-   * @todo change implementation. Use List not Array
-   */
-  public static List getAllGroupsRelated(GenericGroup group) throws SQLException{
-      GenericGroup[] groups = group.getAllGroupsContainingThis();
 
-      if (groups != null && groups.length > 0){
-        Hashtable GroupsContaining = new Hashtable();
-
-        String key = "";
-        for (int i = 0; i < groups.length; i++) {
-          key = Integer.toString(groups[i].getID());
-          if(!GroupsContaining.containsKey(key)){
-            GroupsContaining.put(key,groups[i]);
-            putGroupsContaining( (GenericGroup)groups[i], GroupsContaining );
+      if(AllGroups != null){
+        if(isDirectlyRelated != null){
+          Iterator iter = isDirectlyRelated.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            AllGroups.remove(item);
+            //while(AllGroups.remove(item)){}
           }
         }
-
-
-        Vector  groupVector = new Vector();
-        Enumeration e;
-        int i = 0;
-        for ( e = (Enumeration)GroupsContaining.elements(); e.hasMoreElements();){
-          GenericGroup tempObj = (GenericGroup)e.nextElement();
-          if (!tempObj.getGroupType().equals(((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue()))
-            groupVector.add(i++, tempObj);
-        }
-
-        //return (PermissionGroup[])groupVector.toArray((Object[])new PermissionGroup[0]);
-        groupVector.remove(group);
-        return groupVector;
+        AllGroups.remove(group);
+        return AllGroups;
       }else{
         return null;
       }
     }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getGroupsContaining(GenericGroup group) throws SQLException {
+    //filter
+    String[] groupsNotToReturn = new String[1];
+    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    //filter end
+    return UserGroupBusiness.getGroupsContaining(group,groupsNotToReturn,false);
+  }
 
   /**
-   * @todo change implementation. Use List not Array
+   * @todo change implementation: create method getGroupsContaining(List groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
    */
-    private static void putGroupsContaining(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
-      GenericGroup[] pGroups = group.getAllGroupsContainingThis();
-      if (pGroups != null){
-        String key = "";
-        for (int i = 0; i < pGroups.length; i++) {
-          key = Integer.toString(pGroups[i].getID());
-          if(!GroupsContained.containsKey(key)){
-            GroupsContained.put(key,pGroups[i]);
-            putGroupsContaining((GenericGroup)pGroups[i], GroupsContained);
-          }
-        }
-      }
-    }
+  public static List getGroupsContaining(GenericGroup groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException{
+    List groups = groupContained.getListOfAllGroupsContainingThis();
 
-
-
-
-
-
-
-
-
-
-
-
-  public static List getAllGroupMembers(int groupId){
-    return null;
-  }
-
-  public static List getAllUserMembers(int groupId){
-    return null;
-  }
-
-  public static List getAllGroupMembersDirectlyRelated(int groupId){
-    return null;
-  }
-
-  public static List getAllUserMembersDirectlyRelated(int groupId){
-    return null;
-  }
-
-  public static List getAllGroupMembersNotDirectlyRelated(int groupId){
-    return null;
-  }
-
-  public static List getAllUserMembersNotDirectlyRelated(int groupId){
-    return null;
-  }
-
-
-
-
-  public static List getAllGroupMembers(GenericGroup group) throws SQLException{
-    GenericGroup[] groups = group.getAllGroupsContained();
-
-    if (groups != null && groups.length > 0){
+    if (groups != null && groups.size() > 0){
       Hashtable GroupsContained = new Hashtable();
 
       String key = "";
-      for (int i = 0; i < groups.length; i++) {
-        key = Integer.toString(groups[i].getID());
+      Iterator iter = groups.iterator();
+      while (iter.hasNext()) {
+        GenericGroup item = (GenericGroup)iter.next();
+        key = Integer.toString(item.getID());
         if(!GroupsContained.containsKey(key)){
-          GroupsContained.put(key,groups[i]);
-          putGroupsContained( (GenericGroup)groups[i], GroupsContained );
+          GroupsContained.put(key,item);
+          putGroupsContaining( item, GroupsContained );
         }
       }
 
-
-      Vector  groupVector = new Vector();
-      Enumeration e;
-      int i = 0;
-      for ( e = (Enumeration)GroupsContained.elements(); e.hasMoreElements();){
-        GenericGroup tempObj = (GenericGroup)e.nextElement();
-        if (!tempObj.getGroupType().equals(((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue()))
-          groupVector.add(i++, tempObj);
+      List specifiedGroups = new Vector();
+      List notSpecifiedGroups = new Vector();
+      int j = 0;
+      int k = 0;
+      Iterator iter2 = GroupsContained.values().iterator();
+      if(groupTypes != null && groupTypes.length > 0){
+        boolean specified = false;
+        while (iter2.hasNext()) {
+          GenericGroup tempObj = (GenericGroup)iter2.next();
+          for (int i = 0; i < groupTypes.length; i++) {
+            if (tempObj.getGroupType().equals(groupTypes[i])){
+              specifiedGroups.add(j++, tempObj);
+              specified = true;
+            }
+          }
+          if(!specified){
+            notSpecifiedGroups.add(k++, tempObj);
+          }else{
+            specified = false;
+          }
+        }
+        notSpecifiedGroups.remove(groupContained);
+        specifiedGroups.remove(groupContained);
+      } else {
+        while (iter2.hasNext()) {
+          GenericGroup tempObj = (GenericGroup)iter2.next();
+          notSpecifiedGroups.add(j++, tempObj);
+        }
+        notSpecifiedGroups.remove(groupContained);
+        returnSepcifiedGroupTypes = false;
       }
 
-      //return (PermissionGroup[])groupVector.toArray((Object[])new PermissionGroup[0]);
-      groupVector.remove(group);
-      return groupVector;
+      return (returnSepcifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
     }else{
       return null;
     }
   }
 
-  public static List getAllUserMembers(GenericGroup group) throws SQLException{
-    Vector vector = new Vector();
-
-    List list = getAllGroupMembers(group);
-
-    list.add(group);
-
-    if(list != null){
-      Iterator iter = list.iterator();
+  private static void putGroupsContaining(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
+    List pGroups = group.getListOfAllGroupsContainingThis();
+    if (pGroups != null){
+      String key = "";
+      Iterator iter = pGroups.iterator();
       while (iter.hasNext()) {
-        Object item = iter.next();
-        List userList = getAllUserMembersDirectlyRelated((GenericGroup)item);
-        if(userList != null){
-
-          Iterator userIter = userList.iterator();
-          while (userIter.hasNext()) {
-            User userItem = (User)userIter.next();
-            if(!vector.contains(userItem)){
-              vector.add(userItem);
-            }
-          }
+        GenericGroup item = (GenericGroup)iter.next();
+        key = Integer.toString(item.getID());
+        if(!GroupsContained.containsKey(key)){
+          GroupsContained.put(key,item);
+          putGroupsContaining(item, GroupsContained);
         }
       }
     }
-
-    return vector;
   }
 
-  public static List getAllGroupMembersDirectlyRelated(GenericGroup group){
+
+
+
+
+
+
+
+
+
+
+
+  public static List getGroupsContained(int groupId) throws SQLException{
+    return UserGroupBusiness.getGroupsContained(new GenericGroup(groupId));
+  }
+
+  public static List getUsersContained(int groupId) throws SQLException{
+    return UserGroupBusiness.getUsersContained(new GenericGroup(groupId));
+  }
+
+  public static List getGroupsContainedDirectlyRelated(int groupId) throws SQLException{
+    return UserGroupBusiness.getGroupsContainedDirectlyRelated(new GenericGroup(groupId));
+  }
+
+  public static List getUsersContainedDirectlyRelated(int groupId) throws SQLException{
+    return UserGroupBusiness.getUsersContainedDirectlyRelated(new GenericGroup(groupId));
+  }
+
+  public static List getGroupsContainedNotDirectlyRelated(int groupId) throws SQLException{
+    return UserGroupBusiness.getGroupsContainedNotDirectlyRelated(new GenericGroup(groupId));
+  }
+
+  public static List getUsersContainedNotDirectlyRelated(int groupId) throws SQLException{
+    return UserGroupBusiness.getUsersContainedNotDirectlyRelated(new GenericGroup(groupId));
+  }
+
+
+  public static List getGroupsContained(GenericGroup group) throws SQLException{
+    //filter
+    String[] groupsNotToReturn = new String[1];
+    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    //filter end
+
+    return UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,false);
+  }
+
+
+  /**
+   * @todo change implementation: create method getGroupsContained(List groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
+   */
+  public static List getGroupsContained(GenericGroup groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException{
+    List groups = groupContaining.getListOfAllGroupsContained();
+
+    if (groups != null && groups.size() > 0){
+      Hashtable GroupsContained = new Hashtable();
+
+      String key = "";
+      Iterator iter = groups.iterator();
+      while (iter.hasNext()) {
+        GenericGroup item = (GenericGroup)iter.next();
+        key = Integer.toString(item.getID());
+        if(!GroupsContained.containsKey(key)){
+          GroupsContained.put(key,item);
+          putGroupsContained( item, GroupsContained );
+        }
+      }
+
+      List specifiedGroups = new Vector();
+      List notSpecifiedGroups = new Vector();
+      int j = 0;
+      int k = 0;
+      Iterator iter2 = GroupsContained.values().iterator();
+      if(groupTypes != null && groupTypes.length > 0){
+        boolean specified = false;
+        while (iter2.hasNext()) {
+          GenericGroup tempObj = (GenericGroup)iter2.next();
+          for (int i = 0; i < groupTypes.length; i++) {
+            if (tempObj.getGroupType().equals(groupTypes[i])){
+              specifiedGroups.add(j++, tempObj);
+              specified = true;
+            }
+          }
+          if(!specified) {
+            notSpecifiedGroups.add(k++, tempObj);
+          } else {
+            specified = false;
+          }
+        }
+        notSpecifiedGroups.remove(groupContaining);
+        specifiedGroups.remove(groupContaining);
+      } else {
+        while (iter2.hasNext()) {
+          GenericGroup tempObj = (GenericGroup)iter2.next();
+          notSpecifiedGroups.add(j++, tempObj);
+        }
+        notSpecifiedGroups.remove(groupContaining);
+        returnSepcifiedGroupTypes = false;
+      }
+
+      return (returnSepcifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+    }else{
+      return null;
+    }
+  }
+
+
+  public static List getUsersContained(GenericGroup group) throws SQLException{
+    //filter
+    String[] groupsNotToReturn = new String[1];
+    groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    //filter end
+
+    List list = UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,true);
+    return getUsersForUserRepresentiveGroups(list);
+  }
+
+  /**
+   * @todo filter out UserGroupRepresentive groups
+   */
+
+  public static List getGroupsContainedDirectlyRelated(GenericGroup group){
     try {
-      List list = group.getListOfAllGroupsContained();
+      //filter
+      String[] groupsNotToReturn = new String[1];
+      groupsNotToReturn[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      //filter end
+
+      List list = group.getGroupsContained(groupsNotToReturn,false);
       if(list != null){
         list.remove(group);
       }
@@ -300,14 +370,25 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getAllUserMembersDirectlyRelated(GenericGroup group) throws SQLException{
-    return EntityFinder.findRelated(group,(User)User.getStaticInstance(User.class));
+  /**
+   * @todo filter out UserGroupRepresentive groups ? time
+   */
+  public static List getUsersContainedDirectlyRelated(GenericGroup group) throws SQLException{
+    List result = group.getListOfAllGroupsContained();
+    return UserGroupBusiness.getUsersForUserRepresentiveGroups(result);
   }
 
-  public static List getAllGroupMembersNotDirectlyRelated(GenericGroup group) throws SQLException{
+  public static List getGroupsContainedNotDirectlyRelated(GenericGroup group) throws SQLException{
     try {
-      List isDirectlyRelated = getAllGroupMembersDirectlyRelated(group);
-      List AllGroups = getAllGroupMembers(group);
+      List isDirectlyRelated = getGroupsContainedDirectlyRelated(group);
+      List AllGroups = getGroupsContained(group);
+/*
+      if(AllGroups != null){
+        AllGroups.removeAll(isDirectlyRelated);
+        AllGroups.remove(group);
+      }
+      return AllGroups;
+*/
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -323,6 +404,7 @@ public class UserGroupBusiness {
       }else{
         return null;
       }
+
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -330,45 +412,43 @@ public class UserGroupBusiness {
     }
   }
 
-  public static List getAllUserMembersNotDirectlyRelated(GenericGroup group) throws SQLException{
-    Vector vector = new Vector();
+  public static List getUsersContainedNotDirectlyRelated(GenericGroup group) throws SQLException{
 
-    List list = getAllGroupMembers(group);
+    List DirectUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(group);
+    List notDirectUsers = UserGroupBusiness.getUsersContained(group);
 
-    if(list != null){
-      Iterator iter = list.iterator();
-      while (iter.hasNext()) {
-        Object item = iter.next();
-        List userList =  getAllUserMembersDirectlyRelated((GenericGroup)item);
-        if(userList != null){
-
-          Iterator userIter = userList.iterator();
-          while (userIter.hasNext()) {
-            User userItem = (User)userIter.next();
-            if(!vector.contains(userItem)){
-              vector.add(userItem);
-            }
-          }
+    if(notDirectUsers != null){
+      if(DirectUsers != null){
+        Iterator iter = DirectUsers.iterator();
+        while (iter.hasNext()) {
+          Object item = iter.next();
+          notDirectUsers.remove(item);
         }
       }
+      return notDirectUsers;
+    }else{
+      return null;
     }
-
-    return vector;
+    /*
+    if(notDirectUsers != null){
+      notDirectUsers.removeAll(DirectUsers);
+    }
+    return notDirectUsers;
+    */
   }
 
 
-  /**
-   * @todo change implementation. Use List not Array
-   */
   private static void putGroupsContained(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
-    GenericGroup[] pGroups = group.getAllGroupsContainingThis();
+    List pGroups = group.getListOfAllGroupsContained();
     if (pGroups != null){
       String key = "";
-      for (int i = 0; i < pGroups.length; i++) {
-        key = Integer.toString(pGroups[i].getID());
+      Iterator iter = pGroups.iterator();
+      while (iter.hasNext()) {
+        GenericGroup item = (GenericGroup)iter.next();
+        key = Integer.toString(item.getID());
         if(!GroupsContained.containsKey(key)){
-          GroupsContained.put(key,pGroups[i]);
-          putGroupsContaining((GenericGroup)pGroups[i], GroupsContained);
+          GroupsContained.put(key,item);
+          putGroupsContaining(item, GroupsContained);
         }
       }
     }
@@ -393,6 +473,28 @@ public class UserGroupBusiness {
   }
 
 
+  public static List getUsersForUserRepresentiveGroups(List groups)throws SQLException {
+    if(groups != null && groups.size() > 0){
+      String sGroupList = "";
+      Iterator iter = groups.iterator();
+      for (int g=0; iter.hasNext(); g++) {
+        GenericGroup item = (GenericGroup)iter.next();
+        if(g>0){ sGroupList += ", "; }
+        sGroupList += item.getID();
+      }
+      if(!sGroupList.equals("")){
+        User user = User.getStaticInstance();
+        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+user._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+      }
+    }
+    return null;
+  }
+
 
 
 } // Class
+
+/**
+  * @todo move implementation from methodName(GenericGroup group) to methodName(int groupId)
+  * @todo reimplement all methods returning list of users
+  */

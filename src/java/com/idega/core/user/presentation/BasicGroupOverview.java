@@ -18,6 +18,9 @@ import com.idega.jmodule.object.interfaceobject.CloseButton;
 import com.idega.core.business.UserGroupBusiness;
 import java.util.Iterator;
 import java.util.Vector;
+import com.idega.core.accesscontrol.business.AccessControl;
+
+import com.idega.core.user.data.UserGroupRepresentative;
 
 /**
  * Title:        User
@@ -30,7 +33,7 @@ import java.util.Vector;
 
 public class BasicGroupOverview extends Page {
 
-  private static final String PARAMETER_DELETE_GROUP =  "delte_ic_group";
+  private static final String PARAMETER_DELETE_GROUP =  "delete_ic_group";
 
 
   public BasicGroupOverview(){
@@ -39,9 +42,18 @@ public class BasicGroupOverview extends Page {
 
 
   public Table getGroups(ModuleInfo modinfo) throws Exception{
-    List groups = EntityFinder.findAllOrdered(GenericGroup.getStaticInstance(),GenericGroup.getNameColumnName());
+    String[] types = new String[1];
+    types[0] = ((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    List groups = GenericGroup.getAllGroups(types,false);
+
+
+
+    //groups.remove(com.idega.core.accesscontrol.business.AccessControl.getAdministratorGroup())
+
     Table groupTable = null;
     if(groups != null){
+      List notDelet = (List)((Vector)AccessControl.getStandardGroups()).clone();
+      notDelet.add(AccessControl.getPermissionGroupAdministrator());
       groupTable = new Table(3,(groups.size()>8)?groups.size():8);
       groupTable.setCellspacing(0);
       groupTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
@@ -55,12 +67,13 @@ public class BasicGroupOverview extends Page {
           aLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, tempGroup.getID());
           groupTable.add(aLink,2,i+1);
 
-
-          Link delLink = new Link(new Text("Delete"));
-          delLink.setWindowToOpen(ConfirmWindowBGO.class);
-          delLink.addParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP , tempGroup.getID());
-          groupTable.add(delLink,3,i+1);
-
+          //if(!tempGroup.equals(AccessControl.getPermissionGroupAdministrator()) && !tempGroup.equals(AccessControl.getPermissionGroupEveryOne()) && !tempGroup.equals(AccessControl.getPermissionGroupUsers())){
+          if(!notDelet.contains(tempGroup)){
+            Link delLink = new Link(new Text("Delete"));
+            delLink.setWindowToOpen(ConfirmWindowBGO.class);
+            delLink.addParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP , tempGroup.getID());
+            groupTable.add(delLink,3,i+1);
+          }
 
         }
       }

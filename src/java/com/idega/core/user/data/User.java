@@ -43,11 +43,12 @@ public class User extends GenericEntity {
       addAttribute(getColumnNameDateOfBirth(),"Fæðingardagur",true,true,"java.sql.Date");
       addAttribute(getColumnNameGender(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
       addAttribute(getColumnNameSystemImage(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
-      addAttribute(COLUMN_NAME_MAIN_USER_GROUP_ID,"Aðal notendahópur",true,true,Integer.class,"one-to-one",GenericGroup.class);
+      addAttribute(_COLUMNNAME_USER_GROUP_ID,"Notandi",true,true,Integer.class,"one-to-one",GenericGroup.class);
+      addAttribute(_COLUMNNAME_PRIMARY_GROUP_ID,"Aðal notendahópur",true,true,Integer.class,"one-to-one",GenericGroup.class);
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
-      this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
+      //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_user");
     }
 
     public void setDefaultValues(){
@@ -57,6 +58,13 @@ public class User extends GenericEntity {
       User firstUser = new User();
       firstUser.setFirstName(getAdminDefaultName());
       firstUser.insert();
+
+      UserGroupRepresentative re = new UserGroupRepresentative();
+      re.setName("admin");
+      re.insert();
+
+      firstUser.setGroupID(re.getID());
+      firstUser.update();
     }
 
     public String getIDColumnName(){
@@ -85,7 +93,8 @@ public class User extends GenericEntity {
     public static String getColumnNameDateOfBirth(){return "date_of_birth";}
     public static String getColumnNameGender(){return "ic_gender_id";}
     public static String getColumnNameSystemImage(){return "system_image_id";}
-    public static final String COLUMN_NAME_MAIN_USER_GROUP_ID = "ic_group_id";
+    public static final String _COLUMNNAME_USER_GROUP_ID = "user_representive";
+    public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "primary_group";
     /*  ColumNames end   */
 
 
@@ -124,7 +133,11 @@ public class User extends GenericEntity {
     }
 
     public int getGroupID(){
-      return getIntColumnValue(COLUMN_NAME_MAIN_USER_GROUP_ID);
+      return getIntColumnValue(_COLUMNNAME_USER_GROUP_ID);
+    }
+
+    public int getPrimaryGroupID(){
+      return getIntColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
     }
 
     public String getName(){
@@ -196,7 +209,15 @@ public class User extends GenericEntity {
     }
 
     public void setGroupID(int icGroupId){
-      setColumn(COLUMN_NAME_MAIN_USER_GROUP_ID,icGroupId);
+      setColumn(_COLUMNNAME_USER_GROUP_ID,icGroupId);
+    }
+
+    public void setPrimaryGroupID(int icGroupId){
+      setColumn(_COLUMNNAME_PRIMARY_GROUP_ID,icGroupId);
+    }
+
+    public void setPrimaryGroupID(Integer icGroupId){
+      setColumn(_COLUMNNAME_PRIMARY_GROUP_ID,icGroupId);
     }
 
 

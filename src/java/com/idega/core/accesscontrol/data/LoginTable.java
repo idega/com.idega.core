@@ -39,6 +39,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 
         public void insertStartData() throws SQLException {
           LoginTable login = new LoginTable();
+          LoginInfo li = new LoginInfo();
           List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getColumnNameFirstName(),User.getAdminDefaultName());
           User adminUser = null;
           if(user != null){
@@ -50,6 +51,14 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           }
 
           try {
+          /*
+            login.setUserId(adminUser.getID());
+            login.setUserLogin(User.getAdminDefaultName());
+            login.setUserPassword("idega");
+            login.insert();
+            li.setID(login.getID());
+            li.insert();
+            */
             LoginDBHandler.createLogin(adminUser.getID(), User.getAdminDefaultName(), "idega", Boolean.TRUE, null, -1, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, EncryptionType.MD5);
           }
           catch (Exception ex) {

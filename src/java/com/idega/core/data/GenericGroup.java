@@ -5,6 +5,7 @@ import com.idega.data.*;
 import java.util.Vector;
 import com.idega.core.user.data.User;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * Title:        IW Core
@@ -31,8 +32,6 @@ public class GenericGroup extends GenericEntity{
 		addAttribute(getGroupTypeColumnName(),"Hópgerð", true, true, "java.lang.String");
 		addAttribute(getGroupDescriptionColumnName(),"Lýsing", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(),"Auka upplýsingar", true, true, "java.lang.String");
-                this.addManyToManyRelationShip(User.class,"ic_group_user");
-
                 this.addTreeRelationShip();
 	}
 
@@ -131,6 +130,11 @@ public class GenericGroup extends GenericEntity{
         }
 
         public List getListOfAllGroupsContainingThis()throws SQLException{
+          return this.getListOfAllGroupsContaining(this.getID());
+        }
+
+
+        public List getListOfAllGroupsContaining(int group_id)throws SQLException{
           String tableToSelectFrom = "IC_GROUP_TREE";
           StringBuffer buffer=new StringBuffer();
           buffer.append("select * from ");
@@ -138,58 +142,51 @@ public class GenericGroup extends GenericEntity{
           buffer.append(" where ");
           buffer.append("CHILD_IC_GROUP_ID");
           buffer.append("=");
-          buffer.append(this.getID());
+          buffer.append(group_id);
           String SQLString=buffer.toString();
 
-		Connection conn= null;
-		Statement Stmt= null;
-		Vector vector = new Vector();
+          Connection conn= null;
+          Statement Stmt= null;
+          Vector vector = new Vector();
 
-		try
-		{
-			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-			ResultSet RS = Stmt.executeQuery(SQLString);
-			while (RS.next()){
+          try
+          {
+            conn = getConnection(getDatasource());
+            Stmt = conn.createStatement();
+            ResultSet RS = Stmt.executeQuery(SQLString);
+            while (RS.next()){
+              GenericEntity tempobj=null;
+              try{
+                tempobj = (GenericEntity)Class.forName(this.getClass().getName()).newInstance();
+                tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
+              }
+              catch(Exception ex){
+                System.err.println("There was an error in " + this.getClass().getName() +".getAllGroupsContainingThis(): "+ex.getMessage());
+              }
+              vector.addElement(tempobj);
+            }
+            RS.close();
+          }
+          finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+            if (conn != null){
+              freeConnection(getDatasource(),conn);
+            }
+          }
 
-				GenericEntity tempobj=null;
-				try{
-					tempobj = (GenericEntity)Class.forName(this.getClass().getName()).newInstance();
-					tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
-				}
-				catch(Exception ex){
-					System.err.println("There was an error in " + this.getClass().getName() +".getAllGroupsContainingThis(): "+ex.getMessage());
-
-				}
-
-				vector.addElement(tempobj);
-
-			}
-			RS.close();
-
-		}
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				freeConnection(getDatasource(),conn);
-			}
-		}
-
-		if (vector != null){
-			vector.trimToSize();
-                        return vector;
-			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-		}
-		else{
-			return null;
-		}
-
-
-          //return (Group[])this.findReverseRelated(this);
+          if (vector != null){
+            vector.trimToSize();
+            return vector;
+            //return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
+          }
+          else{
+            return null;
+          }
 
         }
+
 
 
         //??
@@ -202,17 +199,19 @@ public class GenericGroup extends GenericEntity{
           }
         }
 
+        /**
+         * @todo change name to getGroupsContained();
+         */
         public List getListOfAllGroupsContained()throws SQLException{
           String tableToSelectFrom = "IC_GROUP_TREE";
           StringBuffer buffer=new StringBuffer();
-          buffer.append("select * from ");
+          buffer.append("select CHILD_IC_GROUP_ID from ");
           buffer.append(tableToSelectFrom);
           buffer.append(" where ");
           buffer.append("IC_GROUP_ID");
           buffer.append("=");
           buffer.append(this.getID());
           String SQLString=buffer.toString();
-
 		Connection conn= null;
 		Statement Stmt= null;
 		Vector vector = new Vector();
@@ -227,7 +226,7 @@ public class GenericGroup extends GenericEntity{
 				GenericEntity tempobj=null;
 				try{
 					tempobj = (GenericEntity)Class.forName(this.getClass().getName()).newInstance();
-					tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
+					tempobj.findByPrimaryKey(RS.getInt("CHILD_IC_GROUP_ID"));
 				}
 				catch(Exception ex){
 					System.err.println("There was an error in " + this.getClass().getName() +".getAllGroupsContainingThis(): "+ex.getMessage());
@@ -263,76 +262,126 @@ public class GenericGroup extends GenericEntity{
 
         }
 
+        /**
+         * @todo change implementation: let the database handle the filtering
+         */
+        public List getGroupsContained(String[] groupTypes, boolean returnSepcifiedGroupTypes)throws SQLException{
+          List list = this.getListOfAllGroupsContained();
+
+          List specifiedGroups = new Vector();
+          List notSpecifiedGroups = new Vector();
+          int j = 0;
+          int k = 0;
+          Iterator iter2 = list.iterator();
+          if(groupTypes != null && groupTypes.length > 0){
+            boolean specified = false;
+            while (iter2.hasNext()) {
+              GenericGroup tempObj = (GenericGroup)iter2.next();
+              for (int i = 0; i < groupTypes.length; i++) {
+                if (tempObj.getGroupType().equals(groupTypes[i])){
+                  specifiedGroups.add(j++, tempObj);
+                  specified = true;
+                }
+              }
+              if(!specified) {
+                notSpecifiedGroups.add(k++, tempObj);
+              } else {
+                specified = false;
+              }
+            }
+            notSpecifiedGroups.remove(this);
+            specifiedGroups.remove(this);
+          } else {
+            while (iter2.hasNext()) {
+              GenericGroup tempObj = (GenericGroup)iter2.next();
+              notSpecifiedGroups.add(j++, tempObj);
+            }
+            notSpecifiedGroups.remove(this);
+            returnSepcifiedGroupTypes = false;
+          }
+
+          return (returnSepcifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+
+        }
 
 
-
-        public GenericGroup[] getAllGroupsContainingUser(User user)throws SQLException{
-          return (GenericGroup[])user.findRelated(this);
+        public List getAllGroupsContainingUser(User user)throws SQLException{
+          return this.getListOfAllGroupsContaining(user.getGroupID());
         }
 
         public void addGroup(GenericGroup groupToAdd )throws SQLException{
-
-		Connection conn= null;
-		Statement Stmt= null;
-		try{
-			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("insert into IC_GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupToAdd.getID()+")");
-		}catch (Exception ex) {
-                    ex.printStackTrace(System.out);
-                }finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				freeConnection(getDatasource(),conn);
-			}
-		}
+          this.addGroup(groupToAdd.getID());
         }
 
+        public void addGroup(int groupId)throws SQLException{
+          Connection conn= null;
+          Statement Stmt= null;
+          try{
+            conn = getConnection(getDatasource());
+            Stmt = conn.createStatement();
+            int i = Stmt.executeUpdate("insert into IC_GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupId+")");
+          }catch (Exception ex) {
+            ex.printStackTrace(System.out);
+          }finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+            if (conn != null){
+              freeConnection(getDatasource(),conn);
+            }
+          }
+        }
 
 
         public void removeGroup(GenericGroup entityToRemoveFrom)throws SQLException{
-
-		Connection conn= null;
-		Statement Stmt= null;
-		try{
-			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-                        String qry;
-                        if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
-                          qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' OR CHILD_IC_GROUP_ID ='"+this.getID()+"'";
-                        else// just removing this particular one
-                          qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' AND CHILD_IC_GROUP_ID ='"+entityToRemoveFrom.getID()+"'";
-
-
-			int i = Stmt.executeUpdate(qry);
-		}catch (Exception ex) {
-                    ex.printStackTrace(System.out);
-                }finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				freeConnection(getDatasource(),conn);
-			}
-		}
+          if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
+            this.removeGroup(entityToRemoveFrom.getID(),true);
+          else// just removing this particular one
+            this.removeGroup(entityToRemoveFrom.getID(),false);
         }
 
 
+        public void removeGroup() throws SQLException{
+          this.removeGroup(-1,true);
+        }
+
+        public void removeGroup(int groupId, boolean AllEntries)throws SQLException{
+          Connection conn= null;
+          Statement Stmt= null;
+          try{
+            conn = getConnection(getDatasource());
+            Stmt = conn.createStatement();
+            String qry;
+            if(AllEntries)//removing all in middle table
+              qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' OR CHILD_IC_GROUP_ID ='"+this.getID()+"'";
+            else// just removing this particular one
+              qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' AND CHILD_IC_GROUP_ID ='"+groupId+"'";
+
+
+            int i = Stmt.executeUpdate(qry);
+          }catch (Exception ex) {
+            ex.printStackTrace(System.out);
+          }finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+            if (conn != null){
+              freeConnection(getDatasource(),conn);
+            }
+          }
+        }
 
 
         public static void addUser(int groupId, User user)throws SQLException{
-          user.addTo(GenericGroup.class, groupId);
+          new GenericGroup(groupId).addGroup(user.getGroupID());
         }
 
-
         public void addUser(User user)throws SQLException{
-          user.addTo(this);
+          this.addGroup(user.getGroupID());
         }
 
         public void removeUser(User user)throws SQLException{
-          user.removeFrom(this);
+          this.removeGroup(user.getGroupID(),false);
         }
 
 
@@ -345,12 +394,25 @@ public class GenericGroup extends GenericEntity{
           }
         }
 
-
+        public static List getAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
+          String typeList = "";
+          if (groupTypes != null && groupTypes.length > 0){
+            for(int g = 0; g < groupTypes.length; g++){
+              if(g>0){ typeList += ", "; }
+              typeList += "'"+groupTypes[g]+"'";
+            }
+            GenericGroup gr = GenericGroup.getStaticInstance();
+            return EntityFinder.findAll(gr,"select * from "+gr.getEntityName()+" where "+GenericGroup.getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?" in (":" not in (")+typeList+") order by "+GenericGroup.getNameColumnName());
+          }
+          return EntityFinder.findAllOrdered(GenericGroup.getStaticInstance(),GenericGroup.getNameColumnName());
+        }
 
         public void insert()throws SQLException{
           try {
-            if(SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'").length > 0){
-              throw new SQLException("group with same name and type already in database");
+            if(!this.getName().equals("")){
+              if(SimpleQuerier.executeStringQuery("select * from "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'").length > 0){
+                throw new SQLException("group with same name and type already in database");
+              }
             }
             super.insert();
           } catch (Exception ex) {
@@ -385,8 +447,6 @@ public class GenericGroup extends GenericEntity{
           }
           return false;
         }
-
-
 
 
 }   // Class Group

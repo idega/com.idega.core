@@ -183,12 +183,7 @@ public class LoginDBHandler {
     return logInfo.getID();
 
   }
-  /**
-   * @deprecated
-   */
-  public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
-      createLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires.booleanValue() ? Boolean.FALSE : Boolean.TRUE, userAllowedToChangePassw, changeNextTime,null);
-  }
+
 
   public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
 

@@ -17,6 +17,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
 import com.idega.data.GenericEntity;
+import com.idega.core.business.UserGroupBusiness;
 
 /**
  * Title:        User
@@ -31,10 +32,7 @@ public class UserBusiness {
   public UserBusiness() {
   }
 
-
-
-
-  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth) throws SQLException{
+  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws SQLException{
     User userToAdd = new User();
 
     if(firstname != null){
@@ -60,11 +58,13 @@ public class UserBusiness {
       userToAdd.setDateOfBirth(date_of_birth.getSQLDate());
     }
 
-
+    if(primary_group != null){
+      userToAdd.setPrimaryGroupID(primary_group);
+    }
 
     userToAdd.insert();
 
-    /*
+
     UserGroupRepresentative group = new UserGroupRepresentative();
     group.setName(userToAdd.getName());
     group.setDescription("User representive in table ic_group");
@@ -73,7 +73,12 @@ public class UserBusiness {
     userToAdd.setGroupID(group.getID());
 
     userToAdd.update();
-*/
+
+    if(primary_group != null){
+      GenericGroup prgr = new GenericGroup(userToAdd.getPrimaryGroupID());
+      prgr.addUser(userToAdd);
+    }
+
     return userToAdd;
 
   }
@@ -82,18 +87,24 @@ public class UserBusiness {
   public static void deleteUser(int userId) throws SQLException {
     User delUser = new User(userId);
 
-    delUser.removeFrom(GenericGroup.getStaticInstance());
+    //delUser.removeFrom(GenericGroup.getStaticInstance());
+    int groupId =delUser.getGroupID();
     delUser.removeFrom((Address)Address.getStaticInstance(Address.class));
     delUser.removeFrom((Email)Email.getStaticInstance(Email.class));
     delUser.removeFrom((Phone)Phone.getStaticInstance(Phone.class));
 
     LoginDBHandler.deleteUserLogin(userId);
-
     delUser.delete();
 
+    UserGroupBusiness.deleteGroup(groupId);
   }
 
-
+  public static void setPermissionGroup(User user, Integer primaryGroupId) throws SQLException {
+    if(primaryGroupId != null){
+      user.setPrimaryGroupID(primaryGroupId);
+      user.update();
+    }
+  }
 
   /**
    * Male: M, male, 0
@@ -268,9 +279,14 @@ public class UserBusiness {
 
   }
 
-
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth) throws SQLException {
+  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group ) throws SQLException {
     User userToUpdate = new User(user_id);
+
+    this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group);
+
+  }
+
+  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group ) throws SQLException {
 
     if(firstname != null){
       userToUpdate.setFirstName(firstname);
@@ -292,6 +308,10 @@ public class UserBusiness {
     }
     if(date_of_birth != null){
       userToUpdate.setDateOfBirth(date_of_birth.getSQLDate());
+    }
+
+    if(primary_group != null){
+      userToUpdate.setPrimaryGroupID(primary_group);
     }
 
     userToUpdate.update();
@@ -342,6 +362,7 @@ public class UserBusiness {
     }
   }
 
+  /*
   public static List listOfGroups(){
     try {
       return EntityFinder.findAll(new GenericGroup());
@@ -350,7 +371,7 @@ public class UserBusiness {
       return null;
     }
   }
-
+  */
 
   /**
    * @deprecated use  getUserGroupsDirectlyRelated(int iUserId)
@@ -362,7 +383,7 @@ public class UserBusiness {
 
   public static List getUserGroups(int iUserId)throws SQLException{
     try {
-      return getUserGroups(new User(iUserId));
+      return getUserGroups(new User(iUserId).getGroupID());
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -372,7 +393,7 @@ public class UserBusiness {
 
   public static List getUsersInGroup(int iGroupId) {
     try {
-      return getUsersInGroup(new GenericGroup(iGroupId));
+      return UserGroupBusiness.getUsersContained(iGroupId);
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -382,7 +403,7 @@ public class UserBusiness {
 
   public static List getUsersInGroup(GenericGroup group) {
     try {
-      return EntityFinder.findRelated(group,User.getStaticInstance());
+      return UserGroupBusiness.getUsersContained(group);  //EntityFinder.findRelated(group,User.getStaticInstance());
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -390,8 +411,12 @@ public class UserBusiness {
     }
   }
 
-  public static List getUsersInNoGroup() {
-    return EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
+  public static List getUsersInNoGroup() throws SQLException  {
+    //return EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
+
+    List nonrelated = EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),GenericGroup.getStaticInstance());
+
+    return UserGroupBusiness.getUsersForUserRepresentiveGroups(nonrelated);
   }
 
   public static List getUserGroupsDirectlyRelated(int iUserId){
@@ -405,19 +430,19 @@ public class UserBusiness {
   }
 
   public static List getUserGroupsDirectlyRelated(User user){
-    try {
-      return EntityFinder.findRelated(user,GenericGroup.getStaticInstance());
-    }
+    //try {
+      return UserGroupBusiness.getGroupsContainingDirectlyRelated(user.getGroupID()); //  EntityFinder.findRelated(user,GenericGroup.getStaticInstance());
+    /*}
     catch (SQLException ex) {
       ex.printStackTrace();
       return null;
-    }
+    }*/
   }
 
   public static List getUserGroupsNotDirectlyRelated(int iUserId){
     try {
       User user = new User(iUserId);
-      List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
+      /*List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
       List AllRelatedGroups = getUserGroups(user);
 
       if(AllRelatedGroups != null){
@@ -433,6 +458,8 @@ public class UserBusiness {
       }else {
         return null;
       }
+      */
+      return UserGroupBusiness.getGroupsContainingNotDirectlyRelated(user.getGroupID());
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -442,9 +469,10 @@ public class UserBusiness {
 
   public static List getAllGroupsNotDirectlyRelated(int iUserId){
     try {
+
       User user = new User(iUserId);
-      List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
-      List AllGroups = EntityFinder.findAll(GenericGroup.getStaticInstance());
+      /*List isDirectlyRelated = getUserGroupsDirectlyRelated(user);
+      List AllGroups = UserGroupBusiness.getAllGroups(); //EntityFinder.findAll(GenericGroup.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -459,6 +487,8 @@ public class UserBusiness {
       }else{
         return null;
       }
+      */
+      return UserGroupBusiness.getAllGroupsNotDirectlyRelated(user.getGroupID());
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -467,58 +497,21 @@ public class UserBusiness {
   }
 
 
-
-  /**
-   * @todo change implementation. Use EntityFinder not GenericEntity
-   */
   public static List getUserGroups(User user) throws SQLException{
-      GenericGroup[] groups = GenericGroup.getStaticInstance().getAllGroupsContainingUser(user);
+    //String[] groupTypesToReturn = new String[2];
 
-      if (groups != null && groups.length > 0){
-        Hashtable GroupsContained = new Hashtable();
-
-        String key = "";
-        for (int i = 0; i < groups.length; i++) {
-          key = Integer.toString(groups[i].getID());
-          if(!GroupsContained.containsKey(key)){
-            GroupsContained.put(key,groups[i]);
-            putGroupsContaining( (GenericGroup)groups[i], GroupsContained );
-          }
-        }
-
-
-        Vector  groupVector = new Vector();
-        Enumeration e;
-        int i = 0;
-        for ( e = (Enumeration)GroupsContained.elements(); e.hasMoreElements();){
-          GenericGroup tempObj = (GenericGroup)e.nextElement();
-          if (!tempObj.getGroupType().equals(((UserGroupRepresentative)UserGroupRepresentative.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue()))
-            groupVector.add(i++, tempObj);
-        }
-
-        //return (PermissionGroup[])groupVector.toArray((Object[])new PermissionGroup[0]);
-        return groupVector;
-      }else{
-        return null;
-      }
-    }
+    //groupTypesToReturn[0] = GenericGroup.getStaticInstance().getGroupTypeValue();
+    //groupTypesToReturn[1] = com.idega.core.accesscontrol.data.PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
+    return UserBusiness.getUserGroups(user,null,false);
+  }
 
   /**
-   * @todo change implementation. Use EntityFinder not GenericEntity
+   * @todo replace new GenericGroup(user.getGroupID()) by user.getGroupID()
    */
-    private static void putGroupsContaining(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
-      GenericGroup[] pGroups = group.getAllGroupsContainingThis();
-      if (pGroups != null){
-        String key = "";
-        for (int i = 0; i < pGroups.length; i++) {
-          key = Integer.toString(pGroups[i].getID());
-          if(!GroupsContained.containsKey(key)){
-            GroupsContained.put(key,pGroups[i]);
-            putGroupsContaining((GenericGroup)pGroups[i], GroupsContained);
-          }
-        }
-      }
-    }
+  public static List getUserGroups(User user, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException{
+    return UserGroupBusiness.getGroupsContaining(new GenericGroup(user.getGroupID()),groupTypes, returnSepcifiedGroupTypes);
+  }
+
 
 
 

@@ -4,7 +4,7 @@ import com.idega.data.*;
 import com.idega.util.idegaTimestamp;
 import java.sql.SQLException;
 import java.sql.Date;
-
+import com.idega.util.EncryptionType;
 
 /**
  * Title:        User
@@ -47,6 +47,7 @@ public class LoginInfo extends GenericEntity {
     this.setDaysOfVality(10000);
     this.setModified(idegaTimestamp.RightNow());
     this.setPasswordExpires(Boolean.FALSE);
+    this.setEncriptionType(EncryptionType.MD5);
   }
 
   public String getEntityName() {

@@ -142,7 +142,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     Table descriptionTable = new Table(1,2);
     descriptionTable.setCellpadding(0);
     descriptionTable.setCellspacing(0);
-    descriptionTable.setHeight(1,columnHeight);
+    descriptionTable.setHeight(1,rowHeight);
     descriptionTable.add(descriptionText,1,1);
     descriptionTable.add(this.descriptionField,1,2);
     this.add(descriptionTable,1,2);
@@ -151,8 +151,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     this.add(memberofFrame,1,4);
 
     this.setHeight(3,"30");
-    this.setHeight(1,super.columnHeight);
-    this.setHeight(5,super.columnHeight);
+    this.setHeight(1,super.rowHeight);
+    this.setHeight(5,super.rowHeight);
 
     this.add(addLink,1,5);
   }
@@ -195,14 +195,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
   public void main(ModuleInfo modinfo) throws Exception {
-    Object obj = UserGroupBusiness.getUserGroupsDirectlyRelated(this.getGroupId());
+    Object obj = UserGroupBusiness.getGroupsContainingDirectlyRelated(this.getGroupId());
     if(obj != null){
       modinfo.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED,obj);
     }else{
       modinfo.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = UserGroupBusiness.getUserGroupsNotDirectlyRelated(this.getGroupId());
+    Object ob = UserGroupBusiness.getGroupsContainingNotDirectlyRelated(this.getGroupId());
     if(ob != null){
       modinfo.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
@@ -320,7 +320,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       int groupId = Integer.parseInt(stringGroupId);
       form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
 
-      List directGroups = UserGroupBusiness.getUserGroupsDirectlyRelated(groupId);
+      List directGroups = UserGroupBusiness.getGroupsContainingDirectlyRelated(groupId);
 
       Iterator iter = null;
       if(directGroups != null){

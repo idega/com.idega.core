@@ -68,7 +68,6 @@ public class GenericFormCollector {
 */
 
   public boolean storeAll(ModuleInfo modinfo){
-    System.err.println(this.getClass().getName() + ": in method storeAll");
     boolean stored = true;
     boolean returned = true;
 
@@ -83,7 +82,6 @@ public class GenericFormCollector {
         returned = false;
       }
     }
-    System.err.println(this.getClass().getName() + ": method storeAll ends");
     return returned;
   }
 

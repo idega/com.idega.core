@@ -20,7 +20,7 @@ public abstract class UserGroupTab extends Table implements Collectable {
 
  private int groupId = -1;
 
-  protected String columnHeight = "40";
+  protected String rowHeight = "40";
   protected int fontSize = 2;
 
   protected Text proxyText;
