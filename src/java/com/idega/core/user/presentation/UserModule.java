@@ -89,13 +89,13 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       tb.add(ifr,2,2);
 
 
-      Link tLink12 = new Link(new Image("/temp_pics/toolbar/toolbar_user_12.gif"));
+      Link tLink12 = new Link(new Image("/idegaweb/bundles/core.bundle/resources/menn_edit.gif"));
       tLink12.setWindowToOpen(CreateUserGroup.class);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(tLink12,1,3);
 
-      Link tLink11 = new Link(new Image("/temp_pics/toolbar/toolbar_user_11.gif"));
+      Link tLink11 = new Link(new Image("/idegaweb/bundles/core.bundle/resources/kall_edit.gif"));
       tLink11.setWindowToOpen(CreateUser.class);
       tb.add(Text.getNonBrakingSpace(),2,3);
       tb.add(Text.getNonBrakingSpace(),2,3);
