@@ -48,9 +48,9 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
     public Iterator getChildren(String orderBy){
       try{
         String thisTable=this.getTableName();
-        String treeTable = thisTable+"_tree";
+        String treeTable = EntityControl.getTreeRelationShipTableName(this);
         String idColumnName = this.getIDColumnName();
-        String childIDColumnName="child_"+idColumnName;
+        String childIDColumnName=EntityControl.getTreeRelationShipChildColumnName(this);
         StringBuffer buffer = new StringBuffer();
           buffer.append("select "+thisTable+".* from "+thisTable+","+treeTable+" where "+thisTable+"."+idColumnName+"="+treeTable+"."+childIDColumnName+" and "+treeTable+"."+idColumnName+"='"+this.getID()+"'");
           if (orderBy != null && !orderBy.equals("")) {
@@ -100,7 +100,7 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
      *    Returns the number of children TreeNodes the receiver contains.
      */
     public int getChildCount(){
-        String treeTableName=this.getTableName()+"_tree";
+        String treeTableName= EntityControl.getTreeRelationShipTableName(this);
         return EntityControl.returnSingleSQLQuery(this,"select count(*) from "+treeTableName+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
     }
 
@@ -116,7 +116,7 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
    */
   public ICTreeNode getParentNode(){
     try{
-      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+this.getEntityName()+"_TREE where child_"+this.getIDColumnName()+"='"+this.getID()+"'");
+      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+EntityControl.getTreeRelationShipTableName(this)+" where "+EntityControl.getTreeRelationShipChildColumnName(this)+"='"+this.getID()+"'");
       if(parent_id!=-1){
         TreeableEntity entity = (TreeableEntity)this.getClass().newInstance();
         entity.findByPrimaryKey(parent_id);
@@ -133,6 +133,10 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
     }
   }
 
+  public TreeableEntity getParent() {
+    return (TreeableEntity) getParentNode();
+  }
+
   public boolean isLeaf(){
     int children = getChildCount();
     if (children > 0){
@@ -143,17 +147,24 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
     }
   }
 
+  public String getTreeRelationshipTableName(TreeableEntity entity) {
+    return EntityControl.getTreeRelationShipTableName(entity);
+  }
+
+  public String getTreeRelationshipChildColumnName(TreeableEntity entity) {
+    return EntityControl.getTreeRelationShipChildColumnName(entity);
+  }
 
   public void addChild(TreeableEntity entity) throws java.sql.SQLException {
-    addTo(entity,"child_"+entity.getIDColumnName());
+    addTo(entity,EntityControl.getTreeRelationShipChildColumnName(entity));
   }
 
   public void removeChild(TreeableEntity entity) throws java.sql.SQLException {
-    removeFrom(entity,"child_"+entity.getIDColumnName());
+    removeFrom(entity,EntityControl.getTreeRelationShipChildColumnName(entity));
   }
 
   public void moveChildrenFrom(TreeableEntity entityFrom) throws java.sql.SQLException {
-    moveChildrenToCurrent(entityFrom,"child_"+entityFrom.getIDColumnName());
+    moveChildrenToCurrent(entityFrom,EntityControl.getTreeRelationShipChildColumnName(entityFrom));
   }
 
   /**
@@ -166,4 +177,5 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
 
     return(parent.getChildCount() - 1);
   }
+
 }
