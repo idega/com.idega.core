@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.7 2003/12/06 20:03:45 gimmi Exp $
+ * $Id: ExceptionWrapper.java,v 1.8 2003/12/11 15:07:10 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -44,15 +44,22 @@ public class ExceptionWrapper extends ExpandContainer {
 		super.initialize(iwc);
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		
-		String errorMessage = iwrb.getLocalizedString("error.exception_thrown","An exception was thrown");
+		String errorMessage = iwrb.getLocalizedString("error.exception_occurred","The following exception occurred");
 		Text error = new Text(errorMessage);
 		if (_exception != null) {
 			PreformattedText stackTrace = new PreformattedText(getStackTrace(_exception));
 			if (_errorStyle != null)
 				stackTrace.setStyleAttribute(_errorStyle);
 			add(stackTrace);
-			String errorString = _exception.getClass().getName();
-			error.addToText(": "+errorString.substring(errorString.lastIndexOf(".") + 1));
+			String exceptionFullClassName = _exception.getClass().getName();
+			String exceptionShortClassName = exceptionFullClassName.substring(exceptionFullClassName.lastIndexOf(".") + 1);
+			String exceptionMessage = _exception.getMessage();
+			if(exceptionMessage==null){
+				error.addToText(": "+exceptionShortClassName);
+			}
+			else{
+				error.addToText(": "+exceptionMessage+" ("+exceptionShortClassName+")");
+			}
 		}
 		setHeader(error);
 	}
