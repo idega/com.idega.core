@@ -1,10 +1,13 @@
 package com.idega.core.accesscontrol.data;
 
+import com.idega.core.user.data.User;
+
 
 public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.util.EncryptionType
 {
  public java.sql.Timestamp getLastChanged();
  public int getUserId();
+ public User getUser();
  public java.lang.String getUserLogin();
  public java.lang.String getUserPassword();
  public void setDefaultValues();

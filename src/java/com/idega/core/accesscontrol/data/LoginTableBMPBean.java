@@ -393,6 +393,10 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 	public int getUserId(){
           return getIntColumnValue(getUserIDColumnName());
 	}
+	
+	public User getUser(){
+		return (User)getColumnValue(getUserIDColumnName());
+	}
 
 	public void setUserId(Integer userId){
           setColumn(getUserIDColumnName(), userId);
