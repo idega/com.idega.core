@@ -1,12 +1,15 @@
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -44,6 +47,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		//TODO eiki cache countries
 		super.main(iwc);
 		List localeCountries = Arrays.asList(Locale.getISOCountries());
+		
 		//List locales = Arrays.asList( java.util.Locale.getAvailableLocales());
 		//List locales = ICLocaleBusiness.listOfAllLocalesJAVA();
 		Locale currentLocale = iwc.getCurrentLocale();
@@ -56,8 +60,10 @@ public class CountryDropdownMenu extends DropdownMenu {
 		Map countries = new HashMap();
 		String lang = currentLocale.getISO3Language();
 		Locale locale;
+		List smallCountries = new Vector();
 		while (iter.hasNext()) {
 			//Locale locale = (Locale) iter.next();
+			
 			String ISOCountry = (String ) iter.next();
 			try {
 				locale = new Locale(lang,ISOCountry);
@@ -67,7 +73,9 @@ public class CountryDropdownMenu extends DropdownMenu {
 				
 				if( countryDisplayName!=null && country!=null && !countries.containsKey(country.getPrimaryKey())){
 					countries.put(country.getPrimaryKey(),country);//cache
-					addMenuElement(((Integer)country.getPrimaryKey()).intValue(),countryDisplayName);
+					SmallCountry sCountry = new SmallCountry((Integer)country.getPrimaryKey(),countryDisplayName,ISOCountry,currentLocale);
+					smallCountries.add(sCountry);
+					//addMenuElement(((Integer)country.getPrimaryKey()).intValue(),countryDisplayName);
 				}
 			}
 			catch (RemoteException e1) {
@@ -79,6 +87,11 @@ public class CountryDropdownMenu extends DropdownMenu {
 			catch (FinderException e1) {
 				//e1.printStackTrace();
 			}
+		}
+		Collections.sort(smallCountries);
+		for (Iterator iterator = smallCountries.iterator(); iterator.hasNext();) {
+			SmallCountry sCountry = (SmallCountry) iterator.next();
+			addMenuElement(sCountry.getID().intValue(),sCountry.getName());
 		}
 		
 		try {
@@ -118,6 +131,55 @@ public class CountryDropdownMenu extends DropdownMenu {
 
 	private AddressBusiness getAddressBusiness(IWApplicationContext iwc) throws RemoteException{
 		return (AddressBusiness) IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
+	}
+	
+	private class SmallCountry implements Comparable{
+		private String name;
+		private Integer ID;
+		private String code;
+		private Locale locale;
+		
+		public SmallCountry(Integer ID,String name,String code,Locale locale){
+			this.name = name;
+			this.ID = ID;
+			this.code = code;
+			this.locale = locale;
+		}
+		
+		
+		
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		public int compareTo(Object o) {
+			// TODO Auto-generated method stub
+			Collator coll = Collator.getInstance(locale);
+			return coll.compare( this.name,((SmallCountry)o).name);
+				
+		}
+
+		/**
+		 * @return
+		 */
+		public String getCode() {
+			return code;
+		}
+
+		/**
+		 * @return
+		 */
+		public Integer getID() {
+			return ID;
+		}
+
+		/**
+		 * @return
+		 */
+		public String getName() {
+			return name;
+		}
+
 	}
 	
 }
