@@ -57,6 +57,8 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * @uml.associationEnd multiplicity="(0 1)"
 	 */
 	private IWContext _iwc = null;
+	
+	private String sourceParameterValue = null;
 
 
 
@@ -112,22 +114,30 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     }
     //this.source = source;*/
   }
+  
+  public String getSourceParameterValue() {
+  	return sourceParameterValue;
+  }
 
   public void setSource(IWLocation source){
-    this.addParameter(PRM_IW_EVENT_SOURCE, source.getLocationString());
+  	sourceParameterValue = source.getLocationString();
+    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
 
   }
 
   public void setSource(int instanceId){
-    this.addParameter(PRM_IW_EVENT_SOURCE,instanceId);
+  	sourceParameterValue = Integer.toString(instanceId);
+    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
   }
 
   public void setSource(ICObjectInstance instance) throws RemoteException {
-    this.addParameter(PRM_IW_EVENT_SOURCE,((Integer)instance.getPrimaryKey()).toString());
+  	sourceParameterValue = ((Integer)instance.getPrimaryKey()).toString();
+    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
   }
 
-  private void setSource(String compoundId) {
-    this.addParameter(PRM_IW_EVENT_SOURCE, compoundId);
+  public void setSource(String compoundId) {
+  	sourceParameterValue = compoundId;
+    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
   }
 
 
