@@ -245,12 +245,24 @@ public class IWLDAPUtil implements IWLDAPConstants{
 //		directoryString.replaceAll("\\<","\\<");
 //		directoryString.replaceAll("\\;","\\;");
 //		directoryString.replaceAll("\\\\","\\\\");
+		
+		
+		directoryString = removeTrailingSpaces(directoryString);
+		
 		directoryString = TextSoap.findAndReplace(directoryString,"\\+","+");
 		directoryString = TextSoap.findAndReplace(directoryString,"+","\\+");
 		return directoryString;
 	}
 	
 	
+	public String removeTrailingSpaces(String directoryString) {
+		while(directoryString.endsWith(" ")){
+			directoryString = directoryString.substring(0,directoryString.length()-1);
+		}
+		
+		return directoryString;
+	}
+
 	/**
 	 * Creates a list of the individual parts of a DN separated by ","
 	 * @param DN
