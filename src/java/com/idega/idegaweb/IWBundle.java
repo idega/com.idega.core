@@ -186,13 +186,17 @@ public class IWBundle implements java.lang.Comparable{
       Iterator iter = list.iterator();
       while (iter.hasNext()) {
         String className = (String)iter.next();
-        ICObject ico = ICObject.getICObject(className);
+        String componentName = getComponentName(className);
+        String componentType = this.getComponentType(className);
+
+        addComponentToDatabase(className,componentType,componentName);
+      /*  ICObject ico = ICObject.getICObject(className);
         if(ico==null){
           try{
             ico = new ICObject();
             ico.setObjectClass(Class.forName(className));
-            ico.setName(this.getComponentName(className));
-            ico.setObjectType(this.getComponentType(className));
+            ico.setName(componentName);
+            ico.setObjectType();
             ico.setBundle(this);
             ico.insert();
           }
@@ -200,6 +204,7 @@ public class IWBundle implements java.lang.Comparable{
             e.printStackTrace();
           }
         }
+        */
       }
 
     }
@@ -599,7 +604,11 @@ public class IWBundle implements java.lang.Comparable{
       prop.setName(className);
       setComponentProperty(prop,COMPONENT_NAME_PROPERTY,componentName);
       setComponentProperty(prop,COMPONENT_TYPE_PROPERTY,componentType);
+      addComponentToDatabase(className,componentType,componentName);
+    }
 
+
+    private void addComponentToDatabase(String className,String componentType,String componentName){
         ICObject ico = ICObject.getICObject(className);
         if(ico==null){
           try{
@@ -609,6 +618,9 @@ public class IWBundle implements java.lang.Comparable{
             ico.setObjectType(componentType);
             ico.setBundle(this);
             ico.insert();
+            if(componentType.equals(ICObject.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObject.COMPONENT_TYPE_BLOCK)){
+              com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
+            }
           }
           catch(Exception e){
             e.printStackTrace();
