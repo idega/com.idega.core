@@ -53,9 +53,10 @@ public interface ICTreeNode {
 	public String getNodeName();
 	
 	/**
-	*  Returns the name of the Node
-	*/
+	 *  Returns the name of the Node localized, if localization possible, else it returns getNodeName()
+	 */
 	public String getNodeName(Locale locale);
+
 
 	/**
 	 * Returns the unique ID of the Node in the tree
