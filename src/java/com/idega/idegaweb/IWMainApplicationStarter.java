@@ -567,9 +567,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// therefore stop first and then end database pool
 		endDatabasePool();
 		sendShutdownMessage("Completed");
+		LogFactory.releaseAll();
+		System.out.println("[IWMainApplicationStarter] LogFactory release");
 		LogFactory factory = LogFactory.getFactory();
 		if (factory != null) {
 			factory.release();
+			System.out.println("[IWMainApplicationStarter] Factory release");
 		}
 	}
 	public void sendStartMessage(String message) {
