@@ -48,7 +48,7 @@ public class LocaleChanger extends Block {
     T.setCellspacing(0);
     int row = 1;
     int col = 1;
-    Iterator iter = ICLocaleBusiness.listOfLocalesJAVA().iterator();
+    Iterator iter = ICLocaleBusiness.getListOfLocalesJAVA().iterator();
     Locale locale;
     Locale currentLocale = iwc.getCurrentLocale();
     if(ImageLocalizationMap !=null){
