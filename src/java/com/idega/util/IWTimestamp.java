@@ -157,6 +157,14 @@ public class IWTimestamp implements Comparable {
 	public void addDays(int numberOfDays) {
 		calendar.add(calendar.DAY_OF_MONTH, numberOfDays);
 	}
+	
+	/**
+	 * Adds weeks to the current date setting.
+	 * @param numberOfWeeks	The number of weeks to add.
+	 */
+	public void addWeeks(int numberOfWeeks) {
+		addDays(numberOfWeeks * 7);
+	}
 
 	/**
 	 * Adds hours to the current date and time setting.
