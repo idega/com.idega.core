@@ -48,7 +48,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
     else{
       theReturn = "";
     }
-    return theReturn;
+irt    return theReturn;
   }*/
 
 
@@ -151,9 +151,9 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
-      deleteTrigger(entity);
+      //deleteTrigger(entity);
       deleteSequence(entity);
-      deleteTable(entity);
+      super.deleteEntityRecord(entity);
 
     }
 

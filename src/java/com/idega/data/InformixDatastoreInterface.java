@@ -164,8 +164,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
        */
       //deleteTrigger(entity);
       deleteSequence(entity);
-      deleteTable(entity);
-
+      super.deleteEntityRecord(entity);
     }
 
       protected void deleteTrigger(GenericEntity entity)throws Exception{

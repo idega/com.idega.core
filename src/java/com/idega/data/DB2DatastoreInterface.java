@@ -152,13 +152,12 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
+      super.deleteEntityRecord(entity);
       /**
        * @todo change
        */
       //deleteTrigger(entity);
       deleteSequence(entity);
-      deleteTable(entity);
-
     }
 
       protected void deleteTrigger(GenericEntity entity)throws Exception{

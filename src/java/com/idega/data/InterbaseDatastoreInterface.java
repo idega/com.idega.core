@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.14 2001/12/06 13:29:01 aron Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.15 2002/01/18 15:13:40 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -168,9 +168,8 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
   }
 
   public void deleteEntityRecord(GenericEntity entity) throws Exception {
-    deleteTrigger(entity);
     deleteGenerator(entity);
-    deleteTable(entity);
+    super.deleteEntityRecord(entity);
   }
 
   protected void deleteGenerator(GenericEntity entity) throws Exception {
@@ -287,7 +286,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
   /**
    * Interbase workaraound because only one connection can be to the database when altering tables
    */
-  public void executeBeforeCreateEntityRecord(GenericEntity entity)throws Exception{
+  public void aExecuteBeforeCreateEntityRecord(GenericEntity entity)throws Exception{
       String datasource = entity.getDatasource();
 
       InterbaseConnectionInfo info = new InterbaseConnectionInfo();
@@ -313,7 +312,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
   /**
    * Interbase workaraound because only one connection can be to the database when altering tables
    */
-  public void executeAfterCreateEntityRecord(GenericEntity entity)throws Exception{
+  public void aExecuteAfterCreateEntityRecord(GenericEntity entity)throws Exception{
       String datasource = entity.getDatasource();
       PoolManager pmgr = PoolManager.getInstance();
 

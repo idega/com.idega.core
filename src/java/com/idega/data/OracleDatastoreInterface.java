@@ -154,10 +154,9 @@ public class OracleDatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
+      super.deleteEntityRecord(entity);
       deleteTrigger(entity);
       deleteSequence(entity);
-      deleteTable(entity);
-
     }
 
       protected void deleteTrigger(GenericEntity entity)throws Exception{
