@@ -189,4 +189,26 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		return null;
 	}
 	
+	/* 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof IDOEntityDefinition) {
+			IDOEntityDefinition compareObject = (IDOEntityDefinition) obj;
+			return compareObject.getSQLTableName().equals(_sqlTableName) && _interfaceClass.equals(compareObject.getInterfaceClass());
+		}
+		return false;
+	}
+	
+	/* 
+	 * @see com.idega.data.IDOEntityDefinition#getMiddleTableNameForRelation(java.lang.String)
+	 */
+	public String getMiddleTableNameForRelation(String relatedTable) {
+		EntityRelationship rel = EntityControl.getManyToManyRelationShip(_sqlTableName, relatedTable);
+		if (rel != null) {
+			return rel.getTableName();
+		} else {
+			return null;
+		}
+	}
 }
