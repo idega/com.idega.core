@@ -1,4 +1,6 @@
 package com.idega.core.user.data;
+import javax.ejb.EJBException;
+import java.rmi.RemoteException;
 
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
@@ -22,6 +24,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 	}
 
  }
+
 
 
 public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
