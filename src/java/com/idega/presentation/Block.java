@@ -184,7 +184,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public void setCacheable(String cacheKey){
     setCacheable(cacheKey,twentyMinutes);
   }
-
+/**@ todo how do this.cacheKey and setCacheKey work together??**/
   public void setCacheable(String cacheKey,long millisecondsInterval){
     cacheable=true;
     this.cacheKey=cacheKey;
@@ -194,7 +194,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public void beginCacheing(IWContext iwc,StringBuffer buffer)throws Exception{
     PrintWriter servletWriter = iwc.getWriter();
     iwc.setCacheing(true);
-    PrintWriter writer = new JModuleCacheWriter(servletWriter,buffer);
+    PrintWriter writer = new BlockCacheWriter(servletWriter,buffer);
     iwc.setCacheWriter(writer);
   }
 
@@ -261,11 +261,26 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     return cacheKey;
   }
 
+  /** cache specifically for view right and for edit rights**/
   private void setCacheKey(IWContext iwc){
+
     //boolean loggedon = LoginBusiness.isLoggedOn(iwc);
-    //if(loggedon){
+     /* public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception{
+    return hasPermission( _PERMISSIONKEY_EDIT , obj, iwc);
+  }*/
+  boolean edit = false;
+
+  try{
+    edit = iwc.hasEditPermission(this);
+  }
+  catch(Exception e){
+    System.err.println("Block: Error checking for edit rights");
+  }
+    this.cacheKey += iwc.getCurrentLocale().toString()+edit;
+
+   // if(loggedon){
       //String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
-      String parametervalue = String.valueOf(getParentObjectInstanceID());
+     // String parametervalue = String.valueOf(getParentObjectInstanceID());
       /*
       if(parameter.equals(AccessControl.CLUB_ADMIN_GROUP)){
         parametervalue = (String)iwc.getSessionAttribute(parameter);
@@ -279,7 +294,6 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       cacheKey = cacheKey+concatter+parameter+concatter+parametervalue;
     }
     */
-    this.cacheKey += iwc.getCurrentLocale().toString();
   }
 
   protected boolean isCacheable(){
@@ -287,13 +301,13 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   }
 
 
-  public class JModuleCacheWriter extends java.io.PrintWriter{
+  public class BlockCacheWriter extends java.io.PrintWriter{
 
     private PrintWriter underlying;
     private StringBuffer buffer;
 
 
-    public JModuleCacheWriter(PrintWriter underlying,StringBuffer buffer){
+    public BlockCacheWriter(PrintWriter underlying,StringBuffer buffer){
       super(underlying);
       this.underlying = underlying;
       this.buffer=buffer;
