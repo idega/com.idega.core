@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.57 2001/10/20 11:03:51 laddi Exp $
+ * $Id: GenericEntity.java,v 1.58 2001/10/23 15:10:21 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2221,7 +2221,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
       String tableToSelectFrom = getNameOfMiddleTable(metadata,this);
       StringBuffer buffer = new StringBuffer();
-      buffer.append("select ic_metadata_id,metadata_name,metadata_value from ");
+      buffer.append("select ic_metadata.ic_metadata_id,metadata_name,metadata_value from ");
       buffer.append(tableToSelectFrom);
       buffer.append(",ic_metadata where ");
       buffer.append(tableToSelectFrom);
@@ -2238,8 +2238,12 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
       buffer.append(".");
       buffer.append(metadataIdColumn);
 
-      //System.err.println(buffer.toString());
-      ResultSet RS = Stmt.executeQuery(buffer.toString());
+
+      String query = buffer.toString();
+
+      //System.out.println("MetadataQuery="+query);
+      ResultSet RS = Stmt.executeQuery(query);
+
 
       while(RS.next()){
         theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
