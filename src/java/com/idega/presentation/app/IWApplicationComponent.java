@@ -1,15 +1,13 @@
 package com.idega.presentation.app;
 
-import com.idega.presentation.*;
-import com.idega.idegaweb.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
 
 /**
  * @deprecated Deprecated class - components should now use the iw_applicationcomponent style class
  * 
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
