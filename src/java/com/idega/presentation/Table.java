@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.43 2003/08/07 16:31:33 laddi Exp $
+ * $Id: Table.java,v 1.44 2003/08/07 19:00:33 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -952,7 +952,7 @@ public class Table extends PresentationObjectContainer {
 					height = height.substring(0,height.indexOf("px"));
 				}
 				
-				if (false) {
+				/*if (false) {
 					//not implemented
 				}
 				else {
@@ -979,8 +979,9 @@ public class Table extends PresentationObjectContainer {
 					}
 					
 					//print(Text.getNonBrakingSpace().getText());
-					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(getNbspWidthAndHeight(iWidth,iPadding)))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(getNbspWidthAndHeight(iHeight,iPadding)))+"\" alt=\"\" />");
-				}
+					//print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(getNbspWidthAndHeight(iWidth,iPadding)))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(getNbspWidthAndHeight(iHeight,iPadding)))+"\" alt=\"\" />");
+				}*/
+				print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\" />");
 			}
 		}
 		else {
@@ -989,12 +990,12 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
-	private int getNbspWidthAndHeight(int dimension, int padding) {
+	/*private int getNbspWidthAndHeight(int dimension, int padding) {
 		dimension = dimension - 2 * padding;
 		if (dimension < 1)
 			dimension = 1;
 		return dimension;
-	}
+	}*/
 
 	protected void printLine(IWContext iwc) throws Exception {
 		//println("\n<tr>");
