@@ -321,30 +321,24 @@ public class TextSoap {
    */
   public static String findAndReplace(String text, String stringToFind, String stringToReplace) {
    // Regex r = new Regex(stringToFind,stringReplace);
-    //return r.replaceAll(text);
+    //return r.replaceAll(text); with regular expr. package called PAT
     StringBuffer buf = new StringBuffer("");
     String returnString;
     int index = text.indexOf(stringToFind);
     int index2 = 0;
-    int length1 = stringToReplace.length();
-    int length2 = stringToFind.length();
-    int length3 = length1 + length2;
+    int length = stringToFind.length();
 
     while (index != -1) {
-      buf.append(text.substring(index2, index));
+      buf.append(text.substring(index2, index));//paste from last index or beginning
       buf.append(stringToReplace);
-      index2 = index;
-      index = text.indexOf(stringToFind, index2 + length3);
-      if (index != -1) {
-        buf.append(text.substring(index2 + length1, index));
-        //paste from last index
-      } else {
-        buf.append(text.substring(index2+1, text.length()));
+      index2 = index+length;
+      index = text.indexOf(stringToFind,index2);
+      if (index == -1) {//paste the last remaining part
+        buf.append(text.substring(index2, text.length()));
       }
     }
 
     returnString = buf.toString();
-
     if(returnString.equals("")){
       returnString = text;
     }
@@ -365,16 +359,7 @@ public class TextSoap {
   public static String findAndInsertAfter(String text,
       String stringToFind,
       String stringInsert) {
-    int index = text.indexOf(stringToFind);
-    while (index != -1) {
-      StringBuffer buf = new StringBuffer();
-      buf.append(text.substring(0, index + stringToFind.length()));
-      buf.append(stringInsert);
-      buf.append(text.substring(index + stringToFind.length(), text.length()));
-      text = buf.toString();
-      index = text.indexOf(stringToFind, index);
-    }
-    return text;
+   return findAndReplace(text,stringToFind,stringToFind+stringInsert);
   }
 
 
@@ -389,33 +374,7 @@ public class TextSoap {
    *@return               Description of the Return Value
    */
   public static String findAndInsertBefore(String text,String stringToFind,String stringInsert) {
-    StringBuffer buf = new StringBuffer();
-    String returnString;
-    int index = text.indexOf(stringToFind);
-    int index2 = 0;
-    int toInsertlength = stringInsert.length();
-    int toFindLength = stringToFind.length();
-    int length = toInsertlength + toFindLength;
-
-    while (index != -1) {
-      buf.append(text.substring(index2, index));
-      buf.append(stringInsert);
-      index2 = index;
-      index = text.indexOf(stringToFind, index2 + length);
-      if (index != -1) {
-        buf.append(text.substring(index2 + toFindLength, index));
-        //paste from last index
-      } else {
-        buf.append(text.substring(index2 + toFindLength, text.length()));
-      }
-    }
-    returnString = buf.toString();
-
-    if(returnString.equals("")){
-      returnString = text;
-    }
-
-    return returnString;
+    return findAndReplace(text,stringToFind,stringInsert+stringToFind);
   }
 
 
