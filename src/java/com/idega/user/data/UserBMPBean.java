@@ -1105,14 +1105,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			.appendWithinSingleQuotes(personalId.substring(0,6)+"%")
 		.appendAnd().append(getColumnNameFirstName())
 		.appendLike()
-		.appendWithinSingleQuotes("%"+first_name+"%")
+		.appendWithinSingleQuotes(first_name)
 		.appendAnd();
 		appendIsNotDeleted(query);
     
 		 Collection users = idoFindPKsByQuery(query);
 
 
-		if (!users.isEmpty())
+		if (users.size() > 1)
+			throw new FinderException("More than one user matched the criteria. Couldn't determine which user to choose");
+		else if (!users.isEmpty())
 			return (Integer) users.iterator().next();
 		else
 			throw new FinderException("No user found");
