@@ -44,6 +44,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	private boolean _nowrap = true;
 	private Layer _nowrapLayer = null;
 	private int _maxNodeNameLength = -1;
+	private String onNodeClickEvent = null;
 
 	public static final String ONCLICK_FUNCTION_NAME = "treenodeselect";
 	public static final String ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME = "iw_node_id";
@@ -144,6 +145,22 @@ public class TreeViewer extends AbstractTreeViewer {
 		Link l = getLinkPrototypeClone(nodeName);
 		if (titleName != null)
 			l.setMarkupAttribute("title",titleName);
+
+		if (onNodeClickEvent != null) {
+			BuilderService bservice;
+			// Currently a bit of a crap hack
+			try
+			{
+				bservice = getBuilderService(iwc);
+				l.setOnClick(onNodeClickEvent+"('"+bservice.getPageURI(node.getNodeID())+"');return false;");
+			}
+			catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		if (_usesOnClick) {
 			l.setURL("#");
 			if (fromEditor){
@@ -326,11 +343,20 @@ public class TreeViewer extends AbstractTreeViewer {
 		getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME, action);
 	}
 	
+	public void setOnNodeClickEvent(String event) {
+		this.onNodeClickEvent = event;
+	}
+	
 	public void setMaxNodeNameLength(int length) {
 		_maxNodeNameLength = length;
 	}
 	
 	public int getMaxNodeNameLength() {
 		return _maxNodeNameLength;
+	}
+	
+	public void setToMaintainParameter(String parameterName, IWContext iwc) {
+		getLinkOpenClosePrototype().maintainParameter(parameterName, iwc);
+		super.setToMaintainParameter(parameterName, iwc);
 	}
 }
