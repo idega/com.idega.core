@@ -13,65 +13,16 @@ public class GroupRelationHomeImpl extends com.idega.data.IDOFactory implements 
  }
 
 
-public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1,p2);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContainingBiDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingBiDirectional(p0,p1,p2);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContaining(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContainingUniDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingUniDirectional(p0,p1,p2);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContaining(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1,p2);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findGroupsRelationshipsContaining(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
 public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsByRelatedGroup(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsByRelatedGroup(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -83,9 +34,30 @@ public java.util.Collection findGroupsRelationshipsContaining(com.idega.user.dat
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsUnder(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsContaining(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsContaining(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -97,9 +69,30 @@ public java.util.Collection findGroupsRelationshipsContaining(int p0,java.lang.S
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findGroupsRelationshipsContaining(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContaining(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findGroupsRelationshipsContainingBiDirectional(int p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingBiDirectional(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsContainingBiDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingBiDirectional(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsContainingUniDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingUniDirectional(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -111,9 +104,16 @@ public java.util.Collection findGroupsRelationshipsContainingUniDirectional(int 
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findGroupsRelationshipsUnder(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsByRelatedGroup(p0,p1,p2);
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

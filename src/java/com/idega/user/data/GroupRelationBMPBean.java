@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import com.idega.data.*;
+import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 //import java.util.Date;
@@ -18,7 +19,7 @@ import javax.ejb.*;
  * @version 1.0
  */
 
-public class GroupRelationBMPBean extends GenericEntity implements GroupRelation{
+public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
 
 
 	private static final String  TABLE_NAME="IC_GROUP_RELATION";
@@ -28,6 +29,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	private static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
 	private static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
 	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+  private static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";
@@ -41,7 +43,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addAttribute(STATUS_COLUMN,"Status",String.class,10);
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
-
+    this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
   }
   public String getEntityName() {
     return TABLE_NAME;
@@ -147,6 +149,14 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   public Timestamp getTerminationDate(){
     return (Timestamp)getColumnValue(this.TERMINATION_DATE_COLUMN);
+  }
+
+  public void setPassiveBy(int userId)  {
+    setColumn(SET_PASSIVE_BY, userId);
+  }
+
+  public int getPassiveBy() { 
+    return getIntColumnValue(SET_PASSIVE_BY);
   }
 
   /**Finders begin**/
@@ -261,13 +271,29 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   }
 
   /**Finders end**/
+  
+  /**
+   * @deprecated Replaced with remove(User)
+   */
+  public void remove()  throws RemoveException  {    
+    User currentUser;
+    try {
+      currentUser = IWContext.getInstance().getCurrentUser();
+    }
+    catch (Exception ex)  {
+    currentUser = null;
+    }
+    removeBy(currentUser);
+  }
 
   /**
-   * Overriding the remove function
+   * 
    */
-  public void remove()throws RemoveException{
+  public void removeBy(User currentUser) throws RemoveException{
+    int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
     this.setPassive();
     this.setTerminationDate(IWTimestamp.getTimestampRightNow());
+    setPassiveBy(userId);
     store();
   }
 }
