@@ -26,7 +26,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
         public static String className = LoginTable.class.getName();
-        public static String _COLUMN_PASSWORD = "usr_password";
+        public static String _COLUMN_PASSWORD = "USR_PASSWORD";
 
         private transient String unEncryptedUserPassword;
 
@@ -78,7 +78,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String getOldUserPasswordColumnName(){
 
-          return "user_password";
+          return "USER_PASSWORD";
 
         }
 
