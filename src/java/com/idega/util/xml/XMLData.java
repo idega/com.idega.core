@@ -18,9 +18,9 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.io.ObjectReader;
-import com.idega.io.Storable;
-import com.idega.io.ObjectWriter;
+import com.idega.io.export.ObjectReader;
+import com.idega.io.export.ObjectWriter;
+import com.idega.io.export.Storable;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
@@ -374,11 +374,11 @@ public class XMLData implements Storable {
   }
   
   
-  public Object write(ObjectWriter writer) throws RemoteException {
-  	return writer.write(this);
+  public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
+  	return writer.write(this, iwc);
   }
 
-  public Object read(ObjectReader reader) throws RemoteException {
-  	return reader.read(this);
+  public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
+  	return reader.read(this, iwc);
   }
 }
