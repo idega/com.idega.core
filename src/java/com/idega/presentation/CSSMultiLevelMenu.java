@@ -16,7 +16,7 @@ import com.idega.presentation.text.Text;
 /**
  * A Javascript style multi level dropdown menu but implemented in pure CSS and HTML! <br>
  * Based on the great work of <a href="http://www.alistapart.com/articles/taminglists/">ALA</a> and <br>
- * <a href="http://www.aplus.co.yu/">Aplus</a>. To customize the look of this component you simply <br>
+ * <a href="http://www.aplus.co.yu/">Aplus</a> (ADxMenu). To customize the look of this component you simply <br>
  * need to copy the default style sheet it uses and change it. The menus can contain any PresentationObject.
  * 
  * Example usage:<br>
@@ -54,7 +54,9 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     private static String prefix = "<div id=\"menu\">\n<ul id=\"menuList\">\n";
     private static String suffix = "\t</ul>\n</div>";
     private static String CSS_FILE_PATH = "cssmenu/CSSMultiLevelMenu.css";
-    private static String CSS_EXPLORER_FIX_FILE_PATH = "cssmenu/csshover.htc";
+    private static String WCH_JAVASCRIPT_FILE_PATH = "cssmenu/WCH.js";//for layering over dropdowns etc.
+    private static String ADxMENU_JAVASCRIPT_FILE_PATH = "cssmenu/ADxMenu.js";//for fixing explorer on windows
+ 
     private boolean addTestData = false;
     
     
@@ -114,13 +116,19 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     public void main(IWContext iwc) throws Exception {
         Page parentPage = this.getParentPage();
         
-		if(iwc.isIE()) {
+        //not needed any more, implementing with ADxMenu 2b
+		/*if(iwc.isIE()) {
 		    String pathToExplorerFixCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_EXPLORER_FIX_FILE_PATH);
 		    parentPage.setStyleDefinition("body","behavior:url(\""+pathToExplorerFixCSS+"\");");
-		}
+		}*/
 		
 		String pathToMenuCSS = this.getBundle(iwc).getVirtualPathWithFileNameString(CSS_FILE_PATH);
+		String pathToWCH = this.getBundle(iwc).getVirtualPathWithFileNameString(WCH_JAVASCRIPT_FILE_PATH);
+		String pathToMainScript= this.getBundle(iwc).getVirtualPathWithFileNameString(ADxMENU_JAVASCRIPT_FILE_PATH);
 		parentPage.addStyleSheetURL(pathToMenuCSS);
+		parentPage.addJavascriptURL(pathToWCH);
+		parentPage.addJavascriptURL(pathToMainScript);
+		
 		
 		if(addTestData) {
 			//A little test code, 
@@ -154,6 +162,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
         
         if(getLanguage().equals("HTML")) {
 	        if(topMenuMap!=null && !topMenuMap.isEmpty()) {
+	        	println("<script type=\"text/javascript\">\n ADXM.Add( \"menuList\", \"H\" ); \n </script>");
 	            print(prefix);
 	        
 	            super.print(iwc);
