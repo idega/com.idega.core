@@ -1,8 +1,12 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
-
+ * $Id: Block.java,v 1.66 2004/12/28 10:29:30 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation;
 
 import java.io.PrintWriter;
@@ -25,12 +29,16 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- *
- * A base class for idegaWeb Blocks
- *
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.3
-*/
+ * This is the base class for all idegaWeb Blocks.<br>
+ * Subclasses of this class should not render themselves out (with the print method), and it is presumed that
+ * their functionality is done with the main() method in old style idegaWeb.
+ * This class has functionality regarding caching and how the main method is processed in JSF.
+ * 
+ * Last modified: $Date: 2004/12/28 10:29:30 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.66 $
+ */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
 	//static variables:
