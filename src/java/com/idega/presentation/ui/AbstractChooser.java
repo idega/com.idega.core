@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.10 2002/03/27 17:23:41 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.11 2002/04/02 12:31:24 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.ui;
 
+import java.net.URLEncoder;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
@@ -240,7 +241,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
   public void setParameterValue(String attributeName, String attributeValue) {
     _attributeName = attributeName;
-    _attributeValue = attributeValue;
+    _attributeValue = URLEncoder.encode(attributeValue);
   }
 
   public void addParameterToChooserLink(String param, String value){
