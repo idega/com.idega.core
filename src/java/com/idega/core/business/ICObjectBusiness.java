@@ -224,7 +224,7 @@ public class ICObjectBusiness {
   }
 
   /**
-   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   * Creates a new empty ICObjectInstance
    */
   public  ICObjectInstance createICObjectInstance(){
     return new ICObjectInstance();
@@ -232,7 +232,7 @@ public class ICObjectBusiness {
 
 
   /**
-   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   * Creates a new empty ICObject
    */
   public  ICObject createICObject(){
     return new ICObject();
