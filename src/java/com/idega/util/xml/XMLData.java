@@ -51,7 +51,11 @@ public class XMLData implements Storable {
   public final String XML_EXTENSION = ".xml";
   
   private XMLDocument document = null;
+ 
+  // xmlFileId and xmlFile are synchronized
   private int xmlFileId = -1;
+  private ICFile xmlFile = null;
+  
   private String name = null;
   private String rootName = null;
   
@@ -250,7 +254,7 @@ public class XMLData implements Storable {
 
   private void initialize(ICFile xmlFile) throws IOException {
   	 name = xmlFile.getName();
-  	 xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
+  	 setXmlFile(xmlFile);
   	 InputStream inputStream = xmlFile.getFileValue();
   	 initialize(inputStream);
   }
@@ -294,6 +298,9 @@ public class XMLData implements Storable {
   	
     
   private ICFile getXMLFile(int fileId)  {
+  	if (xmlFile != null) {
+  		return xmlFile;
+  	}
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
       ICFile xmlFile = home.findByPrimaryKey(new Integer(fileId));
@@ -354,7 +361,18 @@ public class XMLData implements Storable {
   */
   public void setXmlFileId(int i) {
    xmlFileId = i;
+   // check existing file 
+   if ((xmlFile != null) && (((Integer)xmlFile.getPrimaryKey()).intValue() != i)) {
+   	// different file is set therefore set existing xmlFile to null
+   	xmlFile = null;
+   }
   }
+
+  public void setXmlFile(ICFile file) {
+  	this.xmlFile = file;
+  	xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
+  }
+  
   
   public Object write(ObjectWriter writer) throws RemoteException {
   	return writer.write(this);
