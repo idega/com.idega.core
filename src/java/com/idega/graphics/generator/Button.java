@@ -234,7 +234,7 @@ public class Button {
       if( effect == BUTTON_UP ){
         buttonUpName = sName;
       }
-      else if( effect == BUTTON_UP ){
+      else if( effect == BUTTON_DOWN ){
         buttonDownName = sName;
       }
       else{
