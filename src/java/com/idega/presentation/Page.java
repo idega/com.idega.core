@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.128 2004/11/23 14:57:28 tryggvil Exp $
+ *  $Id: Page.java,v 1.129 2004/12/07 15:52:53 eiki Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -201,7 +201,16 @@ public class Page extends PresentationObjectContainer {
 		_styleSheets.put(URL,URL);
 	}
 
-	private String getStyleSheetURL(String markup) {
+	private String getStyleSheetURL(String markup, IWContext iwc) {
+		
+		//The default style sheet MUST come first so we can override it in latter sheets!
+		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
+		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
+			String url = (String) iter.next();
+			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
+			this.addStyleSheetURL(styleSheetURL);
+		}
+		
 		if (_styleSheets != null && !_styleSheets.isEmpty()) {
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = _styleSheets.values().iterator();
@@ -1189,7 +1198,7 @@ public class Page extends PresentationObjectContainer {
 		buf.append(getJavaScriptBeforeJavascriptURLs(iwc));
 		buf.append(getJavascriptURLs(iwc));
 		buf.append(getJavaScriptAfterJavascriptURLs(iwc));
-		buf.append(getStyleSheetURL(markup));
+		buf.append(getStyleSheetURL(markup,iwc));
 		buf.append(getStyleDefinition());	
 		return buf.toString();
 	}
@@ -1277,17 +1286,7 @@ public class Page extends PresentationObjectContainer {
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
 	public void initVariables(IWContext iwc) throws IOException {
-		super.initVariables(iwc);
-		//if (this._styleSheetURL == null)
-		//	_styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
-		
-		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
-		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
-			String url = (String) iter.next();
-			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
-			this.addStyleSheetURL(styleSheetURL);
-		}
-		
+		super.initVariables(iwc);	
 		setDefaultValues();
 		setDefaultAttributes(iwc);
 	}
