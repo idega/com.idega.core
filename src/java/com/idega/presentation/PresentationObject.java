@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.114 2004/11/25 10:26:17 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.115 2004/12/03 01:04:50 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -54,6 +54,7 @@ import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
@@ -64,10 +65,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/25 10:26:17 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/03 01:04:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.114 $
+ * @version $Revision: 1.115 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -98,9 +99,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private transient HttpServletResponse _response;
 	private transient PrintWriter out;
 	private transient String markupLanguage;
-	private transient IWApplicationContext _iwac;
-	private transient IWUserContext _iwuc;
-	private transient IWContext eventIWContext = null;
+	//private transient IWApplicationContext _iwac;
+	//private transient IWUserContext _iwuc;
+	//private transient IWContext eventIWContext = null;
 	private transient PresentationObject _templateObject =null;
 	private transient boolean goneThroughRenderPhase=false;
 	
@@ -232,6 +233,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		this.out = iwc.getWriter();
 	}
+	protected void cleanVariables(IWContext iwc){
+		this._request=null;
+		this._response=null;
+		this.markupLanguage=null;
+		this.out=null;
+	}
+	
 	protected void initInMain(IWContext iwc) throws Exception
 	{
 		initializeInMain(iwc);
@@ -537,7 +545,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void flush()
 	{
-		out.flush();
+		this.getPrintWriter().flush();
 	}
 	/**
 	 * Uses the default PrintWriter object to print out a string
@@ -554,7 +562,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 		}
 		else{
-			out.print(string);
+			getPrintWriter().print(string);
 		}
 	}
 	/**
@@ -575,7 +583,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 		}
 		else{
-			out.println(string);
+			getPrintWriter().println(string);
 		}
 	}
 	public void renderComponent(IWContext iwc) throws Exception
@@ -589,6 +597,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if(!this.goneThroughRenderPhase()){
 			initVariables(iwc);
 			print(iwc);
+			cleanVariables(iwc);
 		}
 	}
 	/**
@@ -608,20 +617,30 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 	}
 	/**
-	 * @deprecated Do not use this function, it is not safe @resturn The
-	 *             Response object for the page
+	 * This method is only used for old idegaWeb style rendering
+	 * @return The esponse object for the page
 	 */
-	public HttpServletRequest getRequest()
+	protected HttpServletRequest getRequest()
 	{
-		return this._request;
+		if(this._request!=null){
+			return this._request;
+		}
+		else{
+			return IWContext.getInstance().getRequest();
+		}
 	}
 	/**
-	 * @deprecated Do not use this function, it is not safe
-	 * @return The Request object for the page
+	 * This method is only used for old idegaWeb style rendering
+	 * @return The esponse object for the page
 	 */
-	public HttpServletResponse getResponse()
+	protected HttpServletResponse getResponse()
 	{
-		return this._response;
+		if(this._response!=null){
+			return this._response;
+		}
+		else{
+			return IWContext.getInstance().getResponse();
+		}
 	}
 	/**
 	 * @deprecated Replaced with getMarkupLanguage().
@@ -650,9 +669,27 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		setMarkupAttribute("id", Integer.toString(ID));
 	}
 
-	public PrintWriter getPrintWriter()
+	/**
+	 * This method is deprecated and only used for old style (pre-JSF) style rendering.
+	 * Get the printWriter for the current render response.
+	 */
+	protected PrintWriter getPrintWriter()
 	{
-		return out;
+		if(out!=null){
+			return out;
+		}
+		else{
+			try {
+				return IWContext.getInstance().getWriter();
+			}
+			catch (UnavailableIWContext e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 	/**
 	 * @return The Class name of the Object
@@ -794,6 +831,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	
 	private void cloneJSFObjects(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF Facets:
+		cloneJSFFacets(obj,iwc,askForPermission);
+		//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
+		
+	}
+	
+	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
 			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
@@ -811,8 +854,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 			}
 		}
-		//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
-		
 	}
 	
 	/**
@@ -827,8 +868,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		Object object = null;
 		if (iwc != null)
 		{
-			this.setIWApplicationContext(iwc.getApplicationContext());
-			this.setIWUserContext(iwc);
+			//this.setIWApplicationContext(iwc.getApplicationContext());
+			//this.setIWUserContext(iwc);
 		}
 		if (askForPermission || iwc != null)
 		{
@@ -941,10 +982,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 * if(this.ic_object_instance_id <= 0){ initICObjectInstanceId(iwc);
 		 */
 		initVariables(iwc);
-		if (_iwuc == null)
-		{
-			this.setIWUserContext(iwc);
-		}
+		//if (_iwuc == null)
+		//{
+		//	this.setIWUserContext(iwc);
+		//}
 		if (!initializedInMain)
 		{
 			this.initInMain(iwc);
@@ -1229,11 +1270,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		return listenerAdded;
 	}
-	public void setIWContext(IWContext iwc)
-	{
-		//  System.err.println(this.getClass().getName() + ": iwc set");
-		eventIWContext = iwc;
-	}
+	//public void setIWContext(IWContext iwc)
+	//{
+	//	//  System.err.println(this.getClass().getName() + ": iwc set");
+	//	eventIWContext = iwc;
+	//}
 	/**
 	 * @deprecated Do not use this function
 	 */
@@ -1250,13 +1291,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @deprecated Do not use this function, it is not safe
 	 */
 	public IWContext getEventIWContext() {
-		return eventIWContext;
+		//return eventIWContext;
+		return IWContext.getInstance();
 	}
 
-	public void _setIWContext(IWContext iwc)
-	{
-		setIWContext(iwc);
-	}
+	//public void _setIWContext(IWContext iwc)
+	//{
+	//	setIWContext(iwc);
+	//}
 	public void setProperty(String key, String values[])
 	{
 	}
@@ -1512,16 +1554,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected IWApplicationContext getIWApplicationContext()
 	{
-		if (_iwac == null)
-		{
-			setIWApplicationContext(IWContext.getInstance());
-		}
-		return _iwac;
+		//if (_iwac == null)
+		//{
+		//	setIWApplicationContext(IWContext.getInstance().getIWMainApplication().getIWApplicationContext());
+		//}
+		//return _iwac;
+		return IWContext.getInstance().getIWMainApplication().getIWApplicationContext();
 	}
-	protected void setIWApplicationContext(IWApplicationContext iwac)
-	{
-		_iwac = iwac;
-	}
+	//protected void setIWApplicationContext(IWApplicationContext iwac)
+	//{
+	//	_iwac = iwac;
+	//}
 	/**
 	 * Returns the IWUserContext that this object is running in.
 	 * 
@@ -1530,16 +1573,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected IWUserContext getIWUserContext()
 	{
-		if (_iwuc == null)
-		{
-			setIWUserContext(IWContext.getInstance());
-		}
-		return _iwuc;
+		//if (_iwuc == null)
+		//{
+		//	setIWUserContext(IWContext.getInstance());
+		//}
+		//return _iwuc;
+		return IWContext.getInstance();
 	}
-	protected void setIWUserContext(IWUserContext iwuc)
-	{
-		_iwuc = iwuc;
-	}
+	//protected void setIWUserContext(IWUserContext iwuc)
+	//{
+	//	_iwuc = iwuc;
+	//}
 	public void setLocation(IWLocation location)
 	{
 		this.setLocation(location, this.getIWUserContext());

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.36 2004/11/14 23:21:37 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.37 2004/12/03 01:04:50 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -25,10 +25,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/03 01:04:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -260,9 +260,10 @@ public class PresentationObjectContainer extends PresentationObject
 			{
 				add(new ExceptionWrapper(ex, this));
 			}
-			if (!isEmpty())
-			{
-				for (int index = 0; index < numberOfObjects(); index++)
+			//if (!isEmpty())
+			//{
+				int numberOfObjects = numberOfObjects();
+				for (int index = 0; index < numberOfObjects; index++)
 				{
 					try{
 						PresentationObject tempobj = (PresentationObject)objectAt(index);
@@ -283,7 +284,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 					catch(ClassCastException cce){}
 				}
-			}
+			//}
 		}
 		goneThroughMain = true;
 	}
@@ -339,8 +340,8 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			iwc.setContentType("text/vnd.wap.wml");
 		}
-		if (!isEmpty())
-		{
+		//if (!isEmpty())
+		//{
 			/*int numberofObjects = numberOfObjects();
 			for (int index = 0; index < numberofObjects; index++)
 			{
@@ -366,7 +367,7 @@ public class PresentationObjectContainer extends PresentationObject
 				UIComponent child = (UIComponent)iter.next();
 				renderChild(iwc,child);
 			}
-		}
+		//}
 	}
 
 	
@@ -556,11 +557,11 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		getChildren().removeAll(c);
 	}
-	public void _setIWContext(IWContext iwc)
+	/*public void _setIWContext(IWContext iwc)
 	{
 		setIWContext(iwc);
-		if (!isEmpty())
-		{
+		//if (!isEmpty())
+		//{
 			for (int index = 0; index < numberOfObjects(); index++)
 			{
 				PresentationObject tempobj = (PresentationObject)objectAt(index);
@@ -572,8 +573,8 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-		}
-	}
+		//}
+	}*/
 	/**
 	 * This method is overrided from the PresentationObject superclass here 
 	 * to call clone(iwc,askForPermission) if askForPermission is true instead of plain clone() to handle children

@@ -643,8 +643,8 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 
 	public synchronized Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission) {
 		if (iwc != null) {
-			this.setIWApplicationContext(iwc.getApplicationContext());
-			this.setIWUserContext(iwc);
+			//this.setIWApplicationContext(iwc.getApplicationContext());
+			//this.setIWUserContext(iwc);
 		}
 		if (askForPermission || iwc != null) {
 			if (iwc.hasViewPermission(this)) {
