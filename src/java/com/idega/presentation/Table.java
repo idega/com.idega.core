@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.28 2002/11/02 21:33:18 laddi Exp $
+ * $Id: Table.java,v 1.29 2002/11/02 21:42:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -900,12 +900,12 @@ public class Table extends PresentationObjectContainer {
 								printString.append("\n<td ");
 								printString.append(theObjects[x - 1][y - 1].getAttributeString());
 								printString.append(" >");
-								print(printString.toString());
+								println(printString.toString());
 								theObjects[x - 1][y - 1]._print(iwc);
 								printNbsp(iwc, x, y);
 							}
 							else {
-								print("\n<td>");
+								println("\n<td>");
 								printNbsp(iwc, x, y);
 							}
 							print("</td>");
@@ -965,10 +965,10 @@ public class Table extends PresentationObjectContainer {
 									printString.append("\" rowspan=\"");
 									printString.append(getHeightOfMergedCell(x, y));
 									printString.append("\" >");
-									print(printString.toString());
+									println(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
-									print("</td>");
+									println("</td>");
 								}
 							}
 							else {
@@ -982,15 +982,15 @@ public class Table extends PresentationObjectContainer {
 									printString.append("\n<td ");
 									printString.append(theObjects[x - 1][y - 1].getAttributeString());
 									printString.append(" >");
-									print(printString.toString());
+									println(printString.toString());
 									theObjects[x - 1][y - 1]._print(iwc);
 									printNbsp(iwc, x, y);
 								}
 								else {
-									print("\n<td>");
+									println("\n<td>");
 									printNbsp(iwc, x, y);
 								}
-								print("</td>");
+								println("</td>");
 							}
 							x++;
 						}
