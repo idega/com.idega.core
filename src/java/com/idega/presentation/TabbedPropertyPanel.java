@@ -68,6 +68,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
   	setName(TAB_FORM_NAME);
+  	addIWSubmitListener(this, iwc);
     frameTable = new Table();
 //		frameTable.setStyleClass("main");
     tpane = IWTabbedPane.getInstance(key,iwc);
