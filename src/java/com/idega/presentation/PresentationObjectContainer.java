@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.2 2001/10/18 11:32:14 palli Exp $
+ * $Id: PresentationObjectContainer.java,v 1.3 2001/10/22 10:07:37 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -236,7 +236,9 @@ public class PresentationObjectContainer extends PresentationObject {
     }
   }
 
-
+  /**
+   *
+   */
   public PresentationObject getContainedObject(int objectInstanceID) {
     List list = this.getAllContainingObjects();
     if (list != null) {
@@ -257,6 +259,9 @@ public class PresentationObjectContainer extends PresentationObject {
     return null;
   }
 
+  /**
+   *
+   */
   public PresentationObject getContainedObject(String objectInstanceID) {
     try {
       try {
@@ -281,6 +286,32 @@ public class PresentationObjectContainer extends PresentationObject {
       return(null);
     }
   }
+
+  /**
+   *
+   */
+  public PresentationObject getContainedLabeledObject(String label) {
+    System.out.println("Trying to find object labeled " + label);
+    List list = getAllContainingObjects();
+    if (list != null) {
+      Iterator iter = list.iterator();
+      while (iter.hasNext()) {
+        PresentationObject item = (PresentationObject)iter.next();
+        if (item instanceof PresentationObjectContainer) {
+          String itemLabel = ((PresentationObjectContainer)item).getLabel();
+          if (itemLabel != null)
+            if (itemLabel.equals(label))
+              return(item);
+          PresentationObject theReturn = ((PresentationObjectContainer)item).getContainedLabeledObject(label);
+          if (theReturn != null){
+            return(theReturn);
+          }
+        }
+      }
+    }
+    return(null);
+  }
+
 
   /*public PresentationObject getContainedObject(String objectTreeID) {
     if (objectTreeID.indexOf(".") == -1) {
