@@ -28,7 +28,7 @@ private String rightWidth = "160";
 private String method = "post";
 private int _cellPadding = 0;
 
-public static String HEADER_COLOR="#0E2456";
+public static String HEADER_COLOR = "#0E2456";
 
   public IWAdminWindow(){
     super();
@@ -77,6 +77,7 @@ public static String HEADER_COLOR="#0E2456";
     if( !displayEmpty ){
       makeTables();
       setAllMargins(0);
+      HEADER_COLOR = iwbCore.getProperty("adminHeaderColor","#0E2456");
 
       if ( merged ){
 	super.add(adminTable);
