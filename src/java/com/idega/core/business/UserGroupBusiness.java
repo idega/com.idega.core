@@ -1,30 +1,26 @@
 package com.idega.core.business;
 
 import java.sql.SQLException;
-import com.idega.core.data.*;
-import com.idega.core.user.data.UserGroupRepresentative;
-import com.idega.core.data.GenericGroup;
-import com.idega.data.EntityFinder;
-import java.util.List;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Iterator;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.core.user.data.User;
-import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.presentation.IWContext;
-import com.idega.core.accesscontrol.data.PermissionGroup;
-
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.core.data.GenericGroup;
+import com.idega.core.user.data.User;
+import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.data.EntityFinder;
+import com.idega.presentation.IWContext;
 
 /**
- * Title:        User
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * Title:        
+ * Description: The main business class for Group management in the idegaWeb User system.
+ * Copyright:    Idega Software Copyright (c) 2001
+ * Company:      Idega Software
+ * @author idega team <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
@@ -225,8 +221,8 @@ public class UserGroupBusiness {
         }
       }
 
-      List specifiedGroups = new Vector();
-      List notSpecifiedGroups = new Vector();
+      List specifiedGroups = new ArrayList();
+      List notSpecifiedGroups = new ArrayList();
       int j = 0;
       int k = 0;
       Iterator iter2 = GroupsContained.values().iterator();
@@ -345,8 +341,8 @@ public class UserGroupBusiness {
         }
       }
 
-      List specifiedGroups = new Vector();
-      List notSpecifiedGroups = new Vector();
+      List specifiedGroups = new ArrayList();
+      List notSpecifiedGroups = new ArrayList();
       int j = 0;
       int k = 0;
       Iterator iter2 = GroupsContained.values().iterator();
@@ -503,7 +499,7 @@ public class UserGroupBusiness {
 
 
   public static List getGroups(String[] groupIDs) throws SQLException {
-    List toReturn = new Vector(0);
+    List toReturn = new ArrayList(0);
 
     String sGroupList = "";
     if (groupIDs != null && groupIDs.length > 0){
