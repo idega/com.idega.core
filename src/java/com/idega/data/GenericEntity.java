@@ -1305,7 +1305,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		catch (Exception ex)
 		{
-			if( debug ) ex.printStackTrace();
+			if( isDebugActive() ) ex.printStackTrace();
 			
 			try
 			{
@@ -1410,7 +1410,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		catch (Exception ex)
 		{
-			if( debug ) ex.printStackTrace();
+			if( isDebugActive() ) ex.printStackTrace();
 			
 			if (ex instanceof SQLException)
 			{
