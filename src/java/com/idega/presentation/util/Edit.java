@@ -1,4 +1,4 @@
-package com.idega.util.text;
+package com.idega.presentation.util;
 
 
 
@@ -73,7 +73,7 @@ public class Edit {
 
 
   public static void setStyle(InterfaceObject O){
-    O.setMarkupAttribute("style",styleAttribute);
+    O.setAttribute("style",styleAttribute);
   }
 
 }

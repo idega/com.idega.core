@@ -9,7 +9,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Parameter;
-import com.idega.util.text.Edit;
+import com.idega.presentation.util.Edit;
 
 /**
  * Title:   idegaclasses

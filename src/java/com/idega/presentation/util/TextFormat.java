@@ -1,4 +1,4 @@
-package com.idega.util.text;
+package com.idega.presentation.util;
 
 
 
