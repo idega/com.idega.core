@@ -5,7 +5,6 @@
 
 package com.idega.presentation;
 
-import com.idega.jmodule.*;
 import java.io.*;
 import java.util.*;
 
@@ -165,7 +164,7 @@ public String getMethod(String methodName) {
 
 public String getMethods(){
 	String returnString="";
-	if ( methods != null ) {	
+	if ( methods != null ) {
 		for (Enumeration e = methods.keys(); e.hasMoreElements(); ) {
 			Object function=e.nextElement();
 			String methodName = (String) function;

@@ -8,7 +8,6 @@ package com.idega.presentation;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
-import com.idega.jmodule.login.business.*;
 import com.idega.presentation.ui.*;
 
 /**

@@ -12,7 +12,7 @@ import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 import com.idega.presentation.*;
 import com.idega.idegaweb.*;
-import com.idega.idegaweb.template.*;
+//import com.idega.idegaweb.template.*;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

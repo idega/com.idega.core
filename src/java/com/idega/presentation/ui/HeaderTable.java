@@ -1,7 +1,7 @@
 // idega 2000 - laddi
 package com.idega.presentation.ui;
 
-import com.idega.jmodule.*;
+
 import com.idega.data.*;
 import java.io.*;
 import com.idega.presentation.ui.*;

@@ -1,7 +1,7 @@
 package com.idega.util;
 
 import com.idega.presentation.*;
-import com.idega.projects.golf.entity.*;
+//import com.idega.projects.golf.entity.*;
 import java.sql.*;
 import java.io.*;
 

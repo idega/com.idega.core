@@ -1,5 +1,5 @@
 /*
- * $Id: EntityUpdater.java,v 1.1 2001/10/05 07:59:19 tryggvil Exp $
+ * $Id: EntityUpdater.java,v 1.2 2001/12/20 14:07:59 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,7 +9,7 @@
  */
 package com.idega.presentation.ui;
 
-import com.idega.jmodule.*;
+
 import com.idega.data.*;
 import java.io.*;
 import com.idega.presentation.text.*;
