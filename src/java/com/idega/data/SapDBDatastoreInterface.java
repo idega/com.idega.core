@@ -76,7 +76,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 
 		}
 		else{
-			theReturn = "LONGVARCHAR("+maxlength+")";
+			theReturn = "LONG VARCHAR";
 		}
 
     }

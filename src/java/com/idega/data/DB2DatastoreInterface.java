@@ -76,7 +76,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 		}
 		else{
-			theReturn = "LONGVARCHAR("+maxlength+")";
+			theReturn = "LONG VARCHAR";
 		}
     }
     else if (javaClassName.equals("java.lang.Boolean")){
