@@ -169,5 +169,6 @@ public interface IDOLegacyEntity extends IDOEntity{
  public void insert(Connection c)throws SQLException;
  public void update(Connection c) throws SQLException;
  public void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException;
+ public void removeFrom(Class classToRemoveFrom) throws SQLException;
  public int getEntityState();
 }
