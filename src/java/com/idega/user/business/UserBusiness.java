@@ -2,6 +2,8 @@ package com.idega.user.business;
 
 import javax.ejb.*;
 
+import com.idega.core.data.Phone;
+
 public interface UserBusiness extends com.idega.business.IBOService
 {
  public java.util.Collection getUsers()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
@@ -52,4 +54,11 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getUsersInGroup(int p0) throws java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException,javax.ejb.CreateException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+
+ public Phone getUsersHomePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
+ public Phone getUsersWorkPhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
+ public Phone getUsersMobilePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
+ public Phone getUsersFaxPhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
+
+
 }

@@ -838,7 +838,67 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   public Collection getAllUsersOrderedByFirstName()throws FinderException,RemoteException{
     return this.getUserHome().findAllUsersOrderedByFirstName();
   }
+  
+  
+  
+	public Email getUserMainEmail(User user)throws NoEmailFoundException{
+		String userString = null;
+		try{
+			userString = user.getName();
+			Collection collection = user.getEmails();
+			for (Iterator iterator = collection.iterator(); iterator.hasNext();)
+			{
+				Email element = (Email) iterator.next();
+				return element;
+			}
+		}
+		catch(Exception e){
+		}
+		throw new NoEmailFoundException(userString);
+	}
 
+	public Phone getUsersHomePhone(User user)throws NoPhoneFoundException{
+		String userString = null;
+		try{
+			userString = user.getName();
+			return getPhoneHome().findUsersHomePhone(user);
+		}
+		catch(Exception e){
+		}
+		throw new NoPhoneFoundException(userString);
+	}
 
+	public Phone getUsersWorkPhone(User user)throws NoPhoneFoundException{
+		String userString = null;
+		try{
+			userString = user.getName();
+			return getPhoneHome().findUsersWorkPhone(user);
+		}
+		catch(Exception e){
+		}
+		throw new NoPhoneFoundException(userString);
+	}
+
+	public Phone getUsersMobilePhone(User user)throws NoPhoneFoundException{
+		String userString = null;
+		try{
+			userString = user.getName();
+			return getPhoneHome().findUsersMobilePhone(user);
+		}
+		catch(Exception e){
+		}
+		throw new NoPhoneFoundException(userString);
+	}
+
+	public Phone getUsersFaxPhone(User user)throws NoPhoneFoundException{
+		String userString = null;
+		try{
+			userString = user.getName();
+			return getPhoneHome().findUsersFaxPhone(user);
+		}
+		catch(Exception e){
+		}
+		throw new NoPhoneFoundException(userString);
+	}
 
 } // Class UserBusiness
