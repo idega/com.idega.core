@@ -191,16 +191,26 @@ public class FileUtil {
     return file;
   }
 
-    /** 
+  /** 
    * Deletes content of folder.
    * !! Be careful !!
    * Returns also false if the specified path doesn't exist.
    * @author thomas
    */
   public static boolean deleteContentOfFolder(String path) {
+  	return FileUtil.deleteContentOfFolder(new File(path));
+  }
+  
+  
+    /** 
+   * Deletes content of folder.
+   * !! Be careful !!
+   * Returns also false if the specified path doesn't exist.
+   * @author thomas
+   */
+  public static boolean deleteContentOfFolder(File folder) {
   	boolean result = true;
   	boolean successful = true;
-  	File folder = new File(path);
   	if (folder.exists() && folder.isDirectory()) {
   		File children[] = folder.listFiles();
   		for (int i = 0; i < children.length; i++) {
@@ -621,10 +631,10 @@ public class FileUtil {
    	}
    	while (backupFile.exists());
    	if (sourceFile.isDirectory()) {
-   		copyDirectoryRecursively(sourceFile, backupFile);
+   		copyDirectoryRecursivelyKeepTimestamps(sourceFile, backupFile);
    	}
    	else {
-   		copyFile(sourceFile, backupFile);
+   		copyFileKeepTimestamp(sourceFile, backupFile);
    	}
    }
    
@@ -633,6 +643,13 @@ public class FileUtil {
     copyFile(sourceFile,newFile);
   }
 
+  public static void copyFileKeepTimestamp(File sourceFile, File newFile) throws FileNotFoundException, IOException {
+  	FileUtil.copyFile(sourceFile, newFile);
+  	long oldTimestamp = sourceFile.lastModified();
+  	newFile.setLastModified(oldTimestamp);
+  }
+  
+  
   public static void copyFile(File sourceFile,File newFile)throws java.io.FileNotFoundException,java.io.IOException{
     java.io.FileInputStream input = new java.io.FileInputStream(sourceFile);
     if(!newFile.exists()){
@@ -675,13 +692,20 @@ public class FileUtil {
     }
   }
 
+  public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
+  	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, true);
+  }
+  
+  public static void copyDirectoryRecursively(File inputDirectory, File outputDirectory) throws IOException {
+  	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, false);
+  }
+  
 
-  public static void copyDirectoryRecursively(File inputDirectory,File outputDirectory)throws java.io.IOException{
+  private static void copyDirectoryRecursively(File inputDirectory,File outputDirectory, boolean keepTimestamp ) throws java.io.IOException{
     if(inputDirectory.isDirectory()){
       if(!outputDirectory.exists()){
         outputDirectory.mkdir();
       }
-
       File tempOutFile;
       File inputFile;
       File[] files = inputDirectory.listFiles();
@@ -690,10 +714,17 @@ public class FileUtil {
         String name = inputFile.getName();
         tempOutFile = new File(outputDirectory,name);
         if(inputFile.isDirectory()){
-          copyDirectoryRecursively(inputFile,tempOutFile);
+          copyDirectoryRecursively(inputFile,tempOutFile,  keepTimestamp);
+          if (keepTimestamp) {
+          	long oldTimestamp = inputFile.lastModified();
+          	tempOutFile.setLastModified(oldTimestamp);
+          }
         }
-        else{
-          copyFile(inputFile,tempOutFile);
+        else if (keepTimestamp) {
+          FileUtil.copyFileKeepTimestamp(inputFile,tempOutFile);
+        }
+        else {
+        	FileUtil.copyFile(inputFile, tempOutFile);
         }
       }
 
