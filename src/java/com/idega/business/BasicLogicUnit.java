@@ -5,9 +5,6 @@
 
 package com.idega.business;
 
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
 import java.util.Hashtable;
 import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IdegaWebException;

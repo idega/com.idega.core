@@ -6,12 +6,13 @@
 package com.idega.data;
 
 
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-import com.idega.util.database.*;
-import com.idega.util.*;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.Vector;
+import com.idega.util.database.ConnectionBroker;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0

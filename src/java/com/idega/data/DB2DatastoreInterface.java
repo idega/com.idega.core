@@ -5,17 +5,8 @@
 
 package com.idega.data;
 
-
-
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-import com.idega.util.database.*;
-import java.io.BufferedInputStream;
-import java.io.OutputStream;
-import oracle.sql.*;
-import oracle.jdbc.driver.*;
+import java.sql.Connection;
+import java.sql.Statement;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

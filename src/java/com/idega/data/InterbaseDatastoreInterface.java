@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.13 2001/08/28 09:00:27 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.14 2001/12/06 13:29:01 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,13 +9,11 @@
  */
 package com.idega.data;
 
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-import com.idega.util.database.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.idega.util.database.PoolManager;
 import com.idega.util.ThreadContext;
 
 /**

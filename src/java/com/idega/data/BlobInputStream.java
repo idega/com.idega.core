@@ -8,7 +8,7 @@ package com.idega.data;
 
 import java.sql.*;
 import java.io.*;
-import javax.sql.*;
+//import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 

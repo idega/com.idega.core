@@ -5,14 +5,6 @@
 
 package com.idega.data;
 
-
-
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-
-
 /**
  *
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

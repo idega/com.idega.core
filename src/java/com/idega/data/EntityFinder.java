@@ -6,10 +6,13 @@
 package com.idega.data;
 
 
-import java.sql.*;
-import javax.naming.*;
-//import javax.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.ResultSetMetaData;
+import java.util.List;
+import java.util.Vector;
 
 
 /**

@@ -5,10 +5,8 @@
 
 package com.idega.business;
 
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import com.idega.idegaweb.*;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWBundle;
 import java.util.Hashtable;
 
 /**
