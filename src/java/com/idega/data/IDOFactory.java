@@ -52,7 +52,7 @@ public abstract class IDOFactory implements IDOHome{
       return idoFindByPrimaryKey(entityInterfaceClass,(Integer)pk);
     }
     else{
-      throw new RuntimeException("[idoFactory] : Primarykey other than type Integer not supported");
+      throw new IDOFinderException("[idoFactory] : Primarykey other than type Integer not supported");
     }
   }
 
@@ -73,7 +73,7 @@ public abstract class IDOFactory implements IDOHome{
   }
 
   public List findAll() throws FinderException{
-    return null;
+    throw new IDOFinderException("[idoFactory] : findAll() Not supported");
   }
 
   /**

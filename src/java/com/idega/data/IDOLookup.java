@@ -91,7 +91,7 @@ public class IDOLookup{
   }
 
   public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,int id)throws RemoteException,javax.ejb.FinderException{
-    return getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+    return getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
   }
 
   public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,Integer id)throws RemoteException,javax.ejb.FinderException{
@@ -139,7 +139,7 @@ public class IDOLookup{
 
   private static IDOLegacyEntity findByPrimaryKeyNew(Class entityInterfaceClass,int id)throws java.sql.SQLException{
     try{
-      return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
+      return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
     }
     catch(Exception e){
       throw new java.sql.SQLException(e.getMessage());
