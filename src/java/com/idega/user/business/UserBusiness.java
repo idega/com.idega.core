@@ -94,4 +94,20 @@ public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFound
   public com.idega.user.business.UserProperties getUserProperties(com.idega.user.data.User user) throws RemoteException;
   public com.idega.user.business.UserProperties getUserProperties(int userID) throws RemoteException;
 
+	/**
+	 * @return the id of the homepage for the user if it is set, else -1
+	 * Finds the homepage set for the user, 
+	 * if none is set it checks on the homepage set for the users primary group, 
+	 * else it returns -1
+	 **/
+	public int getHomePageIDForUser(User user) throws java.rmi.RemoteException;
+
+	/**
+	 * @return the id of the homepage for the user if it is set, else it throws a javax.ejb.FinderException
+	 * Finds the homepage set for the user, 
+	 * if none is set it checks on the homepage set for the users primary group, 
+	 * else it throws a javax.ejb.FinderException
+	 **/
+	public com.idega.builder.data.IBPage getHomePageForUser(User user)throws javax.ejb.FinderException,java.rmi.RemoteException;
+
 }

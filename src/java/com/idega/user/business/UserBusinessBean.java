@@ -1,6 +1,9 @@
 package com.idega.user.business;
 
 import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBPage;
+import com.idega.builder.data.IBPageHome;
+
 import java.sql.SQLException;
 import com.idega.user.data.*;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
@@ -1017,5 +1020,52 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   	return properties;
   }
 
+	/**
+	 * @return the id of the homepage for the user if it is set, else -1
+	 * Finds the homepage set for the user, 
+	 * if none is set it checks on the homepage set for the users primary group, 
+	 * else it returns -1
+	 **/
+	public int getHomePageIDForUser(User user){
+		try{
+			int homeID = user.getHomePageID();
+			if(homeID==-1){
+				homeID = user.getPrimaryGroup().getHomePageID();
+				return homeID;
+			}
+			else{
+				return homeID;	
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();	
+		}
+		return -1;
+	}
+
+	/**
+	 * @return the id of the homepage for the user if it is set, else it throws a javax.ejb.FinderException
+	 * Finds the homepage set for the user, 
+	 * if none is set it checks on the homepage set for the users primary group, 
+	 * else it throws a javax.ejb.FinderException
+	 **/
+	public com.idega.builder.data.IBPage getHomePageForUser(User user)throws javax.ejb.FinderException{
+		try{
+			int homeID = getHomePageIDForUser(user);
+			if(homeID!=-1){
+				return getIBPageHome().findByPrimaryKey(homeID);
+			}
+			else{
+				throw new javax.ejb.FinderException("No homepage found for user");
+			}
+		}
+		catch(Exception e){
+				throw new javax.ejb.FinderException("Error finding homepage for user. Error was:"+e.getClass().getName()+" with message: "+e.getMessage());
+		}
+	}
+	
+	protected IBPageHome getIBPageHome()throws java.rmi.RemoteException{
+		return (IBPageHome)com.idega.data.IDOLookup.getHome(IBPage.class);	
+	}
 
 } // Class UserBusiness
