@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLOutput.java,v 1.3 2002/12/09 18:10:51 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -69,5 +69,15 @@ public class XMLOutput {
     }
     else
       return(null);
+  }
+  
+  public void setEncoding(String encoding) {
+  	if (_output != null)
+  		_output.setEncoding(encoding);
+  }
+  
+  public void setSkipEncoding(boolean skip) {
+  	if (_output != null)
+  		_output.setOmitEncoding(skip);
   }
 }

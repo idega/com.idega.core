@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLParser.java,v 1.3 2002/12/09 18:10:51 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -97,6 +97,7 @@ public class XMLParser {
       doc = _builder.build(file);
     }
     catch(JDOMException e) {
+    	e.getCause().printStackTrace();
       throw new XMLException(e.getMessage());
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLDocument.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLDocument.java,v 1.3 2002/12/09 18:10:51 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,7 +18,7 @@ import org.jdom.Element;
  */
 public class XMLDocument {
   Document _doc = null;
-
+  
   public XMLDocument(XMLElement element) {
     Element el = element.getElement();
     if (el != null)

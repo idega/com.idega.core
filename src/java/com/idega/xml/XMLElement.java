@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.3 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLElement.java,v 1.4 2002/12/09 18:10:51 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,11 +9,14 @@
  */
 package com.idega.xml;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
-import org.jdom.Element;
+
 import org.jdom.Attribute;
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jdom.Text;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -53,7 +56,7 @@ public class XMLElement {
       }
     }
 
-    return(this);
+    return this;
   }
 
   public XMLElement getChild(String name) {
@@ -176,14 +179,70 @@ public class XMLElement {
     if (_element != null)
       _element.setText(text);
 
-    return(this);
+    return this;
   }
 
   public XMLElement addContent(String text) {
     if (_element != null)
       _element.addContent(text);
 
-    return(this);
+    return this;
+  }
+  
+  public XMLElement addContent(XMLCDATA data) {
+  	if (_element != null)
+  		_element.addContent(data.getContentData());
+  		
+  	return this;
+  }
+  
+  /**
+   * A method that returns the first instance of CDATA that exists in this Element.
+   * Return null if none is found. Should rather use getContent and check for
+   * all CDATA content. 
+   * 
+   * @return The first CDATA instance in the content for this Element, null otherwise. 
+   */
+  public XMLCDATA getXMLCDATAContent() {
+  	if (_element == null)
+  		return null;
+
+		List li = _element.getContent();
+		Iterator it = li.iterator();
+		while (it.hasNext()) {
+			Object obj = it.next();
+			if (obj instanceof CDATA) {
+				return new XMLCDATA((CDATA)obj);	
+			}
+		}  	
+		
+		return null;
+  }
+  
+  public List getContent() {
+  	if (_element == null)
+  		return null;
+  		
+		List ret = new Vector();
+		List li = _element.getContent();
+		Iterator it = li.iterator();
+		while (it.hasNext()) {
+			Object obj = it.next();
+			if (obj instanceof Element) {
+				XMLElement el = new XMLElement((Element)obj);
+				ret.add(el);
+			}
+			else if (obj instanceof CDATA) {
+				XMLCDATA data = new XMLCDATA((CDATA)obj);
+				ret.add(data);
+			}
+			else if (obj instanceof Text) {
+				String text = ((Text)obj).getValue();
+				ret.add(text);				
+			}
+		}
+		
+		return ret;
   }
 
   public XMLElement setAttribute(XMLAttribute attribute) {
@@ -193,7 +252,7 @@ public class XMLElement {
         _element.setAttribute(at);
     }
 
-    return(this);
+    return this;
   }
 
   public boolean removeAttribute(String name) {
@@ -234,7 +293,7 @@ public class XMLElement {
       }
     }
 
-    return(this);
+    return this;
   }
 
   public synchronized Object clone() {
@@ -243,6 +302,6 @@ public class XMLElement {
 
     Element el = (Element)_element.clone();
     XMLElement element = new XMLElement(el);
-    return(element);
+    return element;
   }
 }
