@@ -16,7 +16,7 @@ public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.uti
  public void setUserId(int p0);
  public void setUserLogin(java.lang.String p0);
  public void setUserPassword(java.lang.String p0);
-
+ public String getUserPasswordInClearText();
  public void setLoginType(String loginType);
  public String getLoginType();
 

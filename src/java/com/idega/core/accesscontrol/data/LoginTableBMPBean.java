@@ -225,8 +225,12 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
 
-
-
+/**
+ * just returns the password column value as is.
+ */
+    public String getUserPasswordInClearText(){
+    		return getStringColumnValue(getNewUserPasswordColumnName());
+    }
 
 
 	public String getUserPassword(){
