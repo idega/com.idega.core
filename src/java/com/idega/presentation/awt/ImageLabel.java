@@ -309,7 +309,7 @@ public class ImageLabel extends Canvas {
   public Dimension preferredSize() {
     if (!doneLoading)
       waitForImage(false);
-    return(super.getPreferredSize());
+    return(super.preferredSize());
     //return(super.getPreferredSize());
 //  return new Dimension(width,height);
   }
@@ -335,7 +335,7 @@ public class ImageLabel extends Canvas {
    public Dimension minimumSize() {
      if (!doneLoading)
        waitForImage(false);
-     return(super.getMinimumSize());
+     return(super.minimumSize());
 //  return new Dimension(width,height);
    }
 
@@ -368,7 +368,7 @@ public class ImageLabel extends Canvas {
    *
    * @see #reshape
    */
-  public void resize(int width, int height) {
+/*  public void resize(int width, int height) {
     if (!doneLoading) {
       explicitSize=true;
       if (width > 0)
@@ -378,7 +378,7 @@ public class ImageLabel extends Canvas {
     }
 //    super.resize(width, height);
     super.setSize(width, height);
-  }
+  }*/
 
   /** Resizes the ImageLabel. If you don't resize the
    *  label explicitly, then what happens depends on
@@ -402,7 +402,7 @@ public class ImageLabel extends Canvas {
    *
    * @see #resize
    */
-   /*
+
   public void reshape(int x, int y,
                       int width, int height) {
     if (!doneLoading) {
@@ -412,7 +412,7 @@ public class ImageLabel extends Canvas {
       if (height > 0)
         explicitHeight=height;
     }
-//    super.reshape(x, y, width, height);
+    super.reshape(x, y, width, height);
 //    super.setBounds(x, y, width, height);
   }
 

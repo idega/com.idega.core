@@ -29,9 +29,7 @@ private String textBgColor = "#CCCCCC";
 private boolean limitImageWidth = false;
 private boolean zoomView = false;
 private boolean linkOnImage = true;
-//debug
-private boolean useCaching = false;
-//private boolean useCaching = true;
+private boolean useCaching = true;
 
 private String align;
 
