@@ -56,7 +56,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException,javax.ejb.CreateException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
 
-public Email getUserMainEmail(com.idega.user.data.User user)throws NoEmailFoundException,java.rmi.RemoteException;
+public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFoundException,java.rmi.RemoteException;
  public Phone getUsersHomePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
  public Phone getUsersWorkPhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
  public Phone getUsersMobilePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;

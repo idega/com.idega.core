@@ -841,7 +841,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   
   
-	public Email getUserMainEmail(User user)throws NoEmailFoundException{
+	public Email getUsersMainEmail(User user)throws NoEmailFoundException{
 		String userString = null;
 		try{
 			userString = user.getName();
