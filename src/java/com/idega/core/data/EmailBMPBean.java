@@ -65,7 +65,7 @@ public class EmailBMPBean extends com.idega.data.GenericEntity implements com.id
 
     addManyToOneRelationship(getColumnNameEmailTypeId(),"Type",EmailType.class);
 
-    this.addManyToManyRelationShip(User.class,"ic_user_email");
+    //this.addManyToManyRelationShip(User.class,"ic_user_email");
 
   }
 
