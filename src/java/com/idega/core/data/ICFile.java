@@ -38,6 +38,7 @@ public class ICFile extends GenericEntity {
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
     addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFile.class);
+    setNullable("parent_id",false);
   }
 
   public String getEntityName() {
