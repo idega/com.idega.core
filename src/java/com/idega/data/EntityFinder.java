@@ -61,7 +61,7 @@ public class EntityFinder{
 
       if(instance==null){
 
-        instance = new EntityFinder();
+	instance = new EntityFinder();
 
       }
 
@@ -71,15 +71,15 @@ public class EntityFinder{
 
 
 
-        public static boolean debug = false;
+	public static boolean debug = false;
 
 
 
-        /**
+	/**
 
-         * Returns null if there was no match
+	 * Returns null if there was no match
 
-         */
+	 */
 
 	public static List findAll(IDOLegacyEntity entity)throws SQLException{
 		return findAll(entity,"select * from "+entity.getTableName());
@@ -99,21 +99,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass));
+	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass));
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -121,17 +121,17 @@ public class EntityFinder{
 
 
 
-        /**
+	/**
 
-         * Returns null if there was no match
+	 * Returns null if there was no match
 
-         */
+	 */
 
-         public static List findAll(IDOLegacyEntity entity,String SQLString)throws SQLException{
+	 public static List findAll(IDOLegacyEntity entity,String SQLString)throws SQLException{
 
-          return findAll(entity,SQLString,-1);
+	  return findAll(entity,SQLString,-1);
 
-        }
+	}
 
 
 
@@ -145,21 +145,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass),SQLString);
+	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass),SQLString);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -167,25 +167,25 @@ public class EntityFinder{
 
   public static List findAll(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
     if(debug){
-        System.err.println("EntityFinder sql query for class :"+entity.getClass().getName()+":");
-        System.err.println(SQLString );
+	System.err.println("EntityFinder sql query for class :"+entity.getClass().getName()+":");
+	System.err.println(SQLString );
     }
     Class interfaceClass = IDOLookup.getInterfaceClassFor(entity.getClass());
     if(IDOContainer.getInstance().queryCachingActive(interfaceClass)){
       try{
-        Collection c = findAllUsingIDO(interfaceClass,SQLString,returningNumberOfRecords);
-        int size = c.size();
-        //System.out.println("CollectionSize="+size);
-        if(size>0){
-          return ListUtil.convertCollectionToList(c);
-        }
-        else{
-          return null;
-        }
+	Collection c = findAllUsingIDO(interfaceClass,SQLString,returningNumberOfRecords);
+	int size = c.size();
+	//System.out.println("CollectionSize="+size);
+	if(size>0){
+	  return ListUtil.convertCollectionToList(c);
+	}
+	else{
+	  return null;
+	}
       }
       catch(FinderException fe){
-        fe.printStackTrace();
-        throw new SQLException("EntityFinder.findAll(): "+fe.getMessage());
+	fe.printStackTrace();
+	throw new SQLException("EntityFinder.findAll(): "+fe.getMessage());
       }
     }
     else{
@@ -212,15 +212,15 @@ public class EntityFinder{
 
 
 
-        /**
+	/**
 
-         * Returns null if there was no match
+	 * Returns null if there was no match
 
-         */
+	 */
 
 	public static List findAllLegacy(IDOLegacyEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
 
-                Connection conn= null;
+		Connection conn= null;
 
 		Statement Stmt= null;
 
@@ -228,9 +228,9 @@ public class EntityFinder{
 
 		//Vector vector = new Vector();
 
-                Vector vector=null;
+		Vector vector=null;
 
-                boolean check=true;
+		boolean check=true;
 
 		//Vector theIDs = new Vector();
 
@@ -244,21 +244,21 @@ public class EntityFinder{
 
 			metaData = RS.getMetaData();
 
-                        int count = 1;
+			int count = 1;
 
 			while (RS.next() && check){
 
-                          count++;
+			  count++;
 
-                          if(returningNumberOfRecords!=-1){
+			  if(returningNumberOfRecords!=-1){
 
-                            if(count>returningNumberOfRecords){
+			    if(count>returningNumberOfRecords){
 
-                              check=false;
+			      check=false;
 
-                            }
+			    }
 
-                          }
+			  }
 
 
 
@@ -280,25 +280,25 @@ public class EntityFinder{
 
 				if(tempobj != null){
 
-                                  String columnName = null;
+				  String columnName = null;
 
 					for (int i = 1; i <= metaData.getColumnCount(); i++){
 
 
 
-                                          //debug getting an object every time? that sucks tryggvi ;)
+					  //debug getting an object every time? that sucks tryggvi ;)
 
-                                          columnName = metaData.getColumnName(i);
+					  columnName = metaData.getColumnName(i);
 
 						if ( RS.getObject(columnName) != null ){
 
-                                                  //this must be done if using AS in an sql query
+						  //this must be done if using AS in an sql query
 
-                                                  if ( "".equals(columnName) ) columnName = metaData.getColumnLabel(i);
+						  if ( "".equals(columnName) ) columnName = metaData.getColumnLabel(i);
 
 
 
-                                                  tempobj.fillColumn(columnName,RS);
+						  tempobj.fillColumn(columnName,RS);
 
 						}
 
@@ -308,15 +308,15 @@ public class EntityFinder{
 
 				}
 
-                                if(vector==null){
+				if(vector==null){
 
-                                  vector=new Vector();
+				  vector=new Vector();
 
-                                }
+				}
 
-                ((IDOLegacyEntity)tempobj).setDatasource(entity.getDatasource());
+		((IDOLegacyEntity)tempobj).setDatasource(entity.getDatasource());
 
-                ((IDOLegacyEntity)tempobj).setEntityState(com.idega.data.GenericEntity.STATE_IN_SYNCH_WITH_DATASTORE);
+		((IDOLegacyEntity)tempobj).setEntityState(com.idega.data.GenericEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 
 
 
@@ -368,7 +368,7 @@ public class EntityFinder{
 
 			vector.trimToSize();
 
-                        return vector;
+			return vector;
 
 			//return (IDOLegacyEntity[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
 
@@ -396,21 +396,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass),SQLString,returningNumberOfRecords);
+	List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass),SQLString,returningNumberOfRecords);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -442,21 +442,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAssociated(com.idega.data.GenericEntity.getStaticInstance(entityClass),com.idega.data.GenericEntity.getStaticInstance(otherEntityClass));
+	List theReturn = findAssociated(com.idega.data.GenericEntity.getStaticInstance(entityClass),com.idega.data.GenericEntity.getStaticInstance(otherEntityClass));
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -482,21 +482,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAssociatedOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),com.idega.data.GenericEntity.getStaticInstance(otherEntityClass),column_name);
+	List theReturn = findAssociatedOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),com.idega.data.GenericEntity.getStaticInstance(otherEntityClass),column_name);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -522,21 +522,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),orderByColumnName);
+	List theReturn = findAllOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -564,21 +564,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -604,21 +604,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -628,7 +628,7 @@ public class EntityFinder{
 
 
 
- 	public static List findAllByColumnOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
+	public static List findAllByColumnOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 
@@ -646,21 +646,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
+	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -670,7 +670,7 @@ public class EntityFinder{
 
 
 
- 	public static List findAllByColumnOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2, String criteria, String returnColumn)throws SQLException{
+	public static List findAllByColumnOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2, String criteria, String returnColumn)throws SQLException{
 
 		return findAll(fromEntity,"select "+criteria+" "+returnColumn+" from "+fromEntity.getTableName()+" where "+columnName1+" "+condition1+" '"+toFind1+"' and "+columnName2+" "+condition2+" '"+toFind2+"' order by "+orderByColumnName);
 
@@ -690,21 +690,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName,condition1,condition2,criteria,returnColumn);
+	List theReturn = findAllByColumnOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName,condition1,condition2,criteria,returnColumn);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -730,21 +730,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
+	List theReturn = findAllByColumnDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind,orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -752,7 +752,7 @@ public class EntityFinder{
 
 
 
- 	public static List findAllByColumnDescendingOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
+	public static List findAllByColumnDescendingOrdered(IDOLegacyEntity fromEntity,String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName+" desc");
 
@@ -770,21 +770,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumnDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
+	List theReturn = findAllByColumnDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -792,7 +792,7 @@ public class EntityFinder{
 
 
 
- 	public static List findAllDescendingOrdered(IDOLegacyEntity fromEntity,String orderByColumnName)throws SQLException{
+	public static List findAllDescendingOrdered(IDOLegacyEntity fromEntity,String orderByColumnName)throws SQLException{
 
 		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" order by "+orderByColumnName+" desc");
 
@@ -810,21 +810,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),orderByColumnName);
+	List theReturn = findAllDescendingOrdered(com.idega.data.GenericEntity.getStaticInstance(entityClass),orderByColumnName);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -852,21 +852,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind);
+	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -894,21 +894,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind);
+	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName,toFind);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -922,7 +922,7 @@ public class EntityFinder{
 
 		//System.out.println("select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 
-                return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
+		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 
 	}
 
@@ -930,21 +930,21 @@ public class EntityFinder{
 
 
 
-        public static List findAllByColumn(IDOLegacyEntity fromEntity,String columnName1, String toFind1,String columnName2, int toFind2)throws SQLException{
+	public static List findAllByColumn(IDOLegacyEntity fromEntity,String columnName1, String toFind1,String columnName2, int toFind2)throws SQLException{
 
 		//System.out.println("select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 
-                return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" = "+toFind2);
+		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" = "+toFind2);
 
 	}
 
 
 
-        public static List findAllByColumn(IDOLegacyEntity fromEntity,String columnName1, int toFind1,String columnName2, int toFind2)throws SQLException{
+	public static List findAllByColumn(IDOLegacyEntity fromEntity,String columnName1, int toFind1,String columnName2, int toFind2)throws SQLException{
 
 		//System.out.println("select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 
-                return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" = "+toFind1+" and "+columnName2+" = "+toFind2);
+		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" = "+toFind1+" and "+columnName2+" = "+toFind2);
 
 	}
 
@@ -960,21 +960,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2);
+	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -1004,21 +1004,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,columnName3,toFind3);
+	List theReturn = findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(entityClass),columnName1,toFind1,columnName2,toFind2,columnName3,toFind3);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -1044,11 +1044,11 @@ public class EntityFinder{
 
 
 
-        /**
+	/**
 
-         * Returns null if nothing found
+	 * Returns null if nothing found
 
-         */
+	 */
 
 	protected static List findRelated(IDOLegacyEntity fromEntity,IDOLegacyEntity returningEntity,String SQLString)throws SQLException{
 
@@ -1070,7 +1070,7 @@ public class EntityFinder{
 
 		Vector vector=null;
 
-                String tableToSelectFrom = "";
+		String tableToSelectFrom = "";
 
 		if (returningEntity.getTableName().endsWith("_")){
 
@@ -1116,7 +1116,7 @@ public class EntityFinder{
 
 					int id = RS.getInt(returningEntity.getIDColumnName());
 
-                    tempobj.setDatasource(fromEntity.getDatasource());
+		    tempobj.setDatasource(fromEntity.getDatasource());
 
 					tempobj.findByPrimaryKey(id);
 
@@ -1134,11 +1134,11 @@ public class EntityFinder{
 
 				}
 
-                                if(vector==null){
+				if(vector==null){
 
-                                  vector=new Vector();
+				  vector=new Vector();
 
-                                }
+				}
 
 				vector.addElement(tempobj);
 
@@ -1178,9 +1178,9 @@ public class EntityFinder{
 
 			//return vector.toArray(new IDOLegacyEntity[0]);
 
-		        return vector;
+			return vector;
 
-                }
+		}
 
 		else{
 
@@ -1213,6 +1213,10 @@ public class EntityFinder{
     buffer.append("=");
 
     buffer.append(fromEntity.getID());
+
+    buffer.append(" order by ");
+
+    buffer.append(fromEntity.getIDColumnName());
 
     String SQLString=buffer.toString();
 
@@ -1302,9 +1306,9 @@ public class EntityFinder{
 
       List theReturn = findRelated(fromEntity,com.idega.data.GenericEntity.getStaticInstance(returningEntityClass));
 
-          if(theReturn==null){
+	  if(theReturn==null){
 
-        return com.idega.util.ListUtil.getEmptyList();
+	return com.idega.util.ListUtil.getEmptyList();
 
       }
 
@@ -1334,13 +1338,13 @@ public class EntityFinder{
 
 
       StringBuffer buffer=new StringBuffer();
-        buffer.append("select "+returningEntity.getTableName()+".* from ");
-        buffer.append(returningEntity.getTableName());
-        buffer.append(" where ");
-        buffer.append(returningEntity.getIDColumnName());
-        buffer.append(" not in (select "+returningEntity.getIDColumnName()+" from ");
-        buffer.append(tableToSelectFrom);
-        buffer.append(")");
+	buffer.append("select "+returningEntity.getTableName()+".* from ");
+	buffer.append(returningEntity.getTableName());
+	buffer.append(" where ");
+	buffer.append(returningEntity.getIDColumnName());
+	buffer.append(" not in (select "+returningEntity.getIDColumnName()+" from ");
+	buffer.append(tableToSelectFrom);
+	buffer.append(")");
 
       String SQLString=buffer.toString();
 
@@ -1372,21 +1376,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findRelated(fromEntity,com.idega.data.GenericEntity.getStaticInstance(returningEntityClass));
+	List theReturn = findRelated(fromEntity,com.idega.data.GenericEntity.getStaticInstance(returningEntityClass));
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -1398,111 +1402,111 @@ public class EntityFinder{
 
 
 
-        /**
+	/**
 
-         * If ascending==true ordering is descending, else it is ascending
+	 * If ascending==true ordering is descending, else it is ascending
 
-         */
+	 */
 
 	public static List findRelatedOrdered(IDOLegacyEntity fromEntity,IDOLegacyEntity returningEntity,String returningEntityColumnToOrderBy,boolean ascending)throws SQLException{
 
 		String fromTable = fromEntity.getTableName();
 
-                String middleTable = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
+		String middleTable = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
 
-                String returningTable = returningEntity.getTableName();
+		String returningTable = returningEntity.getTableName();
 
-                String comma = ",";
+		String comma = ",";
 
-                String dot = ".";
+		String dot = ".";
 
-                StringBuffer buffer=new StringBuffer();
+		StringBuffer buffer=new StringBuffer();
 
-                buffer.append("select ");
+		buffer.append("select ");
 
-                buffer.append(returningTable);
+		buffer.append(returningTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append("* from ");
+		buffer.append("* from ");
 
-                buffer.append(middleTable);
+		buffer.append(middleTable);
 
-                buffer.append(comma);
+		buffer.append(comma);
 
-                buffer.append(returningTable);
+		buffer.append(returningTable);
 
-                buffer.append(comma);
+		buffer.append(comma);
 
-                buffer.append(fromTable);
+		buffer.append(fromTable);
 
-                buffer.append(" where ");
+		buffer.append(" where ");
 
-                buffer.append(middleTable);
+		buffer.append(middleTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append(fromEntity.getIDColumnName());
+		buffer.append(fromEntity.getIDColumnName());
 
-                buffer.append("=");
+		buffer.append("=");
 
-                buffer.append(fromEntity.getID());
+		buffer.append(fromEntity.getID());
 
-                buffer.append(" and ");
+		buffer.append(" and ");
 
-                buffer.append(fromTable);
+		buffer.append(fromTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append(fromEntity.getIDColumnName());
+		buffer.append(fromEntity.getIDColumnName());
 
-                buffer.append("=");
+		buffer.append("=");
 
-                buffer.append(middleTable);
+		buffer.append(middleTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append(fromEntity.getIDColumnName());
+		buffer.append(fromEntity.getIDColumnName());
 
-                buffer.append(" and ");
+		buffer.append(" and ");
 
-                buffer.append(middleTable);
+		buffer.append(middleTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append(returningEntity.getIDColumnName());
+		buffer.append(returningEntity.getIDColumnName());
 
-                buffer.append("=");
+		buffer.append("=");
 
-                buffer.append(returningTable);
+		buffer.append(returningTable);
 
-                buffer.append(dot);
+		buffer.append(dot);
 
-                buffer.append(returningEntity.getIDColumnName());
+		buffer.append(returningEntity.getIDColumnName());
 
-                buffer.append(" order by ");
+		buffer.append(" order by ");
 
-                buffer.append(returningTable);
+		buffer.append(returningTable);
 
-                buffer.append(".");
+		buffer.append(".");
 
-                buffer.append(returningEntityColumnToOrderBy);
+		buffer.append(returningEntityColumnToOrderBy);
 
-                if(ascending){
+		if(ascending){
 
-                buffer.append(" asc");
+		buffer.append(" asc");
 
-                }
+		}
 
-                else{
+		else{
 
-                buffer.append(" desc");
+		buffer.append(" desc");
 
-                }
+		}
 
-                String SQLString=buffer.toString();
+		String SQLString=buffer.toString();
 
-                return findAll(returningEntity,SQLString);
+		return findAll(returningEntity,SQLString);
 
 	}
 
@@ -1520,21 +1524,21 @@ public class EntityFinder{
 
       try{
 
-    	List theReturn = findRelatedOrdered(fromEntity,com.idega.data.GenericEntity.getStaticInstance(returningEntityClass),returningEntityColumnToOrderBy,ascending);
+	List theReturn = findRelatedOrdered(fromEntity,com.idega.data.GenericEntity.getStaticInstance(returningEntityClass),returningEntityColumnToOrderBy,ascending);
 
 	    if(theReturn==null){
 
-          return com.idega.util.ListUtil.getEmptyList();
+	  return com.idega.util.ListUtil.getEmptyList();
 
-        }
+	}
 
-        return theReturn;
+	return theReturn;
 
       }
 
       catch(SQLException sql){
 
-        throw new IDOFinderException(sql);
+	throw new IDOFinderException(sql);
 
       }
 
@@ -1544,13 +1548,13 @@ public class EntityFinder{
 
 	public static IDOLegacyEntity findByPrimaryKey(String entityClassName,int primaryKeyID)throws Exception{
 
-               IDOLegacyEntity entity = (IDOLegacyEntity)Class.forName(entityClassName).newInstance();
+	       IDOLegacyEntity entity = (IDOLegacyEntity)Class.forName(entityClassName).newInstance();
 
-                return findByPrimaryKey(entity,primaryKeyID);
+		return findByPrimaryKey(entity,primaryKeyID);
 
 
 
-        }
+	}
 
 
 
@@ -1568,23 +1572,23 @@ public class EntityFinder{
 
 			Stmt = conn.createStatement();
 
-                        StringBuffer buffer = new StringBuffer();
+			StringBuffer buffer = new StringBuffer();
 
-                        buffer.append("select * from ");
+			buffer.append("select * from ");
 
-                        buffer.append(entity.getTableName());
+			buffer.append(entity.getTableName());
 
-                        buffer.append(" where ");
+			buffer.append(" where ");
 
-                        buffer.append(entity.getIDColumnName());
+			buffer.append(entity.getIDColumnName());
 
-                        buffer.append("=");
+			buffer.append("=");
 
-                        buffer.append(primaryKeyID);
+			buffer.append(primaryKeyID);
 
 
 
-                        ResultSet RS = Stmt.executeQuery(buffer.toString());
+			ResultSet RS = Stmt.executeQuery(buffer.toString());
 
 
 
@@ -1592,7 +1596,7 @@ public class EntityFinder{
 
 
 
-                        RS.next();
+			RS.next();
 
 			String[] columnNames = entity.getColumnNames();
 
@@ -1600,53 +1604,53 @@ public class EntityFinder{
 
 				try{
 
-                                  if (RS.getString(columnNames[i]) != null){
+				  if (RS.getString(columnNames[i]) != null){
 
-				  	entity.fillColumn(columnNames[i],RS);
+					entity.fillColumn(columnNames[i],RS);
 
-			          }
+				  }
 
-                                }
+				}
 
-                                catch(SQLException ex){
+				catch(SQLException ex){
 
-                                  //NOCATH
+				  //NOCATH
 
-                                  try{
+				  try{
 
-                                    if (RS.getString(columnNames[i].toUpperCase()) != null){
+				    if (RS.getString(columnNames[i].toUpperCase()) != null){
 
-				  	entity.fillColumn(columnNames[i],RS);
+					entity.fillColumn(columnNames[i],RS);
 
-			            }
+				    }
 
-                                  }
+				  }
 
-                                  catch(SQLException exe){
+				  catch(SQLException exe){
 
-                                    try{
+				    try{
 
-                                      if (RS.getString(columnNames[i].toLowerCase()) != null){
+				      if (RS.getString(columnNames[i].toLowerCase()) != null){
 
-				    	  entity.fillColumn(columnNames[i],RS);
+					  entity.fillColumn(columnNames[i],RS);
 
-			                }
+					}
 
-                                      }
+				      }
 
-                                    catch(SQLException exep){
+				    catch(SQLException exep){
 
-                                         System.err.println("Exception in IDOLegacyEntity findByPrimaryKey, RS.getString() not found: "+exep.getMessage());
+					 System.err.println("Exception in IDOLegacyEntity findByPrimaryKey, RS.getString() not found: "+exep.getMessage());
 
-                                          exep.printStackTrace(System.err);
+					  exep.printStackTrace(System.err);
 
-                                    }
+				    }
 
-                                  }
+				  }
 
 
 
-                                }
+				}
 
 
 
@@ -1674,13 +1678,13 @@ public class EntityFinder{
 
 		}
 
-                if(entity.getID() != -1){
+		if(entity.getID() != -1){
 
-                  return entity;
+		  return entity;
 
-                }
+		}
 
-                return null;
+		return null;
 
 	}
 
@@ -1706,9 +1710,9 @@ public class EntityFinder{
 
       while(iter.hasNext()){
 
-        IDOLegacyEntity entity = (IDOLegacyEntity) iter.next();
+	IDOLegacyEntity entity = (IDOLegacyEntity) iter.next();
 
-        map.put(entity.getColumnValue(keyColumnName).toString(),entity);
+	map.put(entity.getColumnValue(keyColumnName).toString(),entity);
 
       }
 
