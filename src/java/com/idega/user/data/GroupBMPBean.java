@@ -42,9 +42,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public static final int GROUP_ID_USERS = -1906;
 
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
-  private static final String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
-  public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
-  public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
+  private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
+  public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
+  public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
 	private static final String EMPTY_STRING = "";
 
 	private static final String COLUMN_GROUP_ID = "ic_group_id";
