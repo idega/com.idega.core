@@ -600,21 +600,52 @@ public class EntityFinder{
   }
 
 
-	/**
-	*Finds all instances of the returningEntityClass where it is associated with the fromEntity, returns empty List if no match
-	**/
-	public List findRelated(GenericEntity fromEntity,Class returningEntityClass)throws IDOFinderException{
-      try{
-    	List theReturn = findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntityClass));
-	    if(theReturn==null){
-          return com.idega.util.ListUtil.getEmptyList();
-        }
-        return theReturn;
-      }
-      catch(SQLException sql){
-        throw new IDOFinderException(sql);
-      }
+  /**
+  *Finds all instances of the returningEntityClass where it is associated with the fromEntity and the column criteria matches the returningEntity, returns empty List if no match
+  **/
+  public List findRelated(GenericEntity fromEntity, Class returningEntityClass, String returningEntityColumnName, String returningEntityColumnValue) throws IDOFinderException {
+    GenericEntity returningEntity = GenericEntity.getStaticInstance(returningEntityClass);
+    String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
+    String returnTableName = returningEntity.getEntityName();
+    StringBuffer buffer=new StringBuffer();
+    buffer.append("select * from ");
+    buffer.append(tableToSelectFrom).append(",").append(returnTableName);
+    buffer.append(" where ");
+    buffer.append(tableToSelectFrom).append(".").append(fromEntity.getIDColumnName());
+    buffer.append("=");
+    buffer.append(fromEntity.getID());
+    buffer.append(" and ");
+    buffer.append(tableToSelectFrom).append(".").append(returningEntity.getIDColumnName());
+    buffer.append("=");
+    buffer.append(returnTableName).append(".").append(returningEntity.getIDColumnName());
+    buffer.append(" and ");
+    buffer.append(returnTableName).append(".").append(returningEntityColumnName);
+    buffer.append("=");
+    buffer.append(returningEntityColumnValue);
+    String SQLString=buffer.toString();
+    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
+    //System.out.println("FindRelated SQLString="+SQLString+"crap");
+    try {
+      return findRelated(fromEntity,returningEntity,SQLString);
+    }catch (SQLException sql) {
+      throw new IDOFinderException(sql);
     }
+  }
+  /**
+  *Finds all instances of the returningEntityClass where it is associated with the fromEntity, returns empty List if no match
+  **/
+  public List findRelated(GenericEntity fromEntity,Class returningEntityClass)throws IDOFinderException{
+    try{
+      List theReturn = findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntityClass));
+          if(theReturn==null){
+        return com.idega.util.ListUtil.getEmptyList();
+      }
+      return theReturn;
+    }
+    catch(SQLException sql){
+      throw new IDOFinderException(sql);
+    }
+  }
 
 
 
