@@ -122,7 +122,11 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	 */
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		//log out!
-		String name = _user.getName();
+		String name = "Unknown";
+		if(_user != null){
+			name = _user.getName();
+		}
+		
 		boolean success = LoginBusinessBean.logOutUserOnSessionTimeout(event.getSession(),this);
 		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
 		

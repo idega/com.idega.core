@@ -396,7 +396,7 @@ public class LoginBusinessBean implements IWEventListener
 	{
 		LoginBusinessBean.setLoginAttribute(PrimaryGroupParameter, value, iwc);
 	}
-	private boolean logIn(IWContext iwc, LoginTable loginTable, String login) throws Exception
+	protected boolean logIn(IWContext iwc, LoginTable loginTable, String login) throws Exception
 	{
 		//New user system
 		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class);
@@ -440,7 +440,7 @@ public class LoginBusinessBean implements IWEventListener
 			LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
 		}
 		int loginRecordId = LoginDBHandler.recordLogin(loginTable.getID(), iwc.getRemoteIpAddress());
-		LoggedOnInfo lInfo = new LoggedOnInfo();
+		LoggedOnInfo lInfo = createLoggedOnInfo(iwc);
 		lInfo.setLogin(login);
 		//lInfo.setSession(iwc.getSession());
 		lInfo.setTimeOfLogon(IWTimestamp.RightNow());
@@ -695,25 +695,24 @@ public class LoginBusinessBean implements IWEventListener
 		try
 		{
 			com.idega.user.data.User user = getUserBusiness(iwc).getUser(personalID);
-			LoginTable[] login_table =
+			LoginTable[] login_table = 
 				(LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(
 					com.idega.core.accesscontrol.data.LoginTableBMPBean.getColumnNameUserID(),
 					user.getPrimaryKey().toString());
-			if (login_table != null && login_table.length > 0)
-			{
-				LoginTable lTable = chooseLoginRecord(iwc, login_table,user);
-				if(lTable != null){
-					returner = logIn(iwc, lTable, lTable.getUserLogin());
-					if (returner)
-						onLoginSuccessful(iwc);
-				} else {
-					try {
-						throw new LoginCreateException("No record chosen");
-					} catch (LoginCreateException e1) {
-						e1.printStackTrace();
-					}
+
+			LoginTable lTable = this.chooseLoginRecord(iwc, login_table,user);
+			if(lTable != null){
+				returner = logIn(iwc, lTable, lTable.getUserLogin());
+				if (returner)
+					onLoginSuccessful(iwc);
+			} else {
+				try {
+					throw new LoginCreateException("No record chosen");
+				} catch (LoginCreateException e1) {
+					e1.printStackTrace();
 				}
 			}
+
 		}
 		catch (EJBException e)
 		{
@@ -728,14 +727,15 @@ public class LoginBusinessBean implements IWEventListener
 	 * @param loginRecords - all login records for one user
 	 * @return LoginTable record to log on the system
 	 */
-	protected LoginTable chooseLoginRecord(IWContext iwc, LoginTable[] loginRecords, User user) throws Exception{
+	public LoginTable chooseLoginRecord(IWContext iwc, LoginTable[] loginRecords, User user) throws Exception{
 		LoginTable chosenRecord = null;
-		if(loginRecords != null)
-		for(int i = 0; i < loginRecords.length; i++){
-			String type = loginRecords[i].getLoginType();
-			if(!(type!= null && !type.equals(""))){
-				chosenRecord = loginRecords[i];
-				break;
+		if(loginRecords != null){
+			for(int i = 0; i < loginRecords.length; i++){
+				String type = loginRecords[i].getLoginType();
+				if(!(type!= null && !type.equals(""))){
+					chosenRecord = loginRecords[i];
+					break;
+				}
 			}
 		}
 		return chosenRecord;
@@ -750,6 +750,10 @@ public class LoginBusinessBean implements IWEventListener
 	protected com.idega.user.business.UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException
 	{
 		return (com.idega.user.business.UserBusiness) IBOLookup.getServiceInstance(iwac, com.idega.user.business.UserBusiness.class);
+	}
+	
+	public LoggedOnInfo createLoggedOnInfo(IWContext iwc){
+		return new LoggedOnInfo();
 	}
 
 }
