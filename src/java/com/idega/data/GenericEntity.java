@@ -86,8 +86,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   protected GenericEntity(String dataSource) {
 	  setDatasource(dataSource);
-	  firstLoadInMemoryCheck();
-	  setDefaultValues();
+	  try{
+            firstLoadInMemoryCheck();
+          }
+          catch(Error e){
+            System.err.println("Error in "+this.getClass().getName()+".firstLoadInMemoryCheck()");
+            e.printStackTrace();
+          }
+          setDefaultValues();
   }
 
   protected GenericEntity(int id) throws SQLException {
@@ -1068,7 +1074,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void insert()throws SQLException{
     try{
       DatastoreInterface.getInstance(this).insert(this);
-      if(IDOContainer.getInstance().beanCachingActive(getInterfaceClass())){
+      if(isBeanCachingActive()){
 	IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).putCachedEntity(getPrimaryKey(),this);
       }
       flushQueryCache();
@@ -1083,7 +1089,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	    throw (SQLException)ex.fillInStackTrace();
       }
       else{
-	    //ex.printStackTrace();
+        //ex.printStackTrace();
 	throw new SQLException(ex.getMessage());
       }
     }
@@ -1279,6 +1285,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE){
+			if (columnValue != null){
+				setColumn(columnName,java.sql.Date.valueOf(columnValue));
+			}
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_UTIL_DATE){
 			if (columnValue != null){
 				setColumn(columnName,java.sql.Date.valueOf(columnValue));
 			}
@@ -2914,7 +2925,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public void unsetEntityContext(){this._entityContext=null;}
 
-  public Object ejbCreate(){return getPrimaryKey();}
+  public Object ejbCreate()throws CreateException{
+    if(this.doInsertInCreate()){
+      this.insertForCreate();
+    }
+    return getPrimaryKey();
+  }
 
   public Object ejbPostCreate(){return getPrimaryKey();}
 
@@ -2922,7 +2938,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public Object ejbPostCreate(Object primaryKey){return primaryKey;}
 */
-  public Object ejbFindByPrimaryKey(Object pk){this.setPrimaryKey(pk); return getPrimaryKey();}
+  public Object ejbFindByPrimaryKey(Object pk)throws FinderException{this.setPrimaryKey(pk); return getPrimaryKey();}
 
 
 
@@ -2997,7 +3013,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    }
 
    private static IDOLegacyEntity instanciateEntity(Class entityInterfaceOrBeanClass){
+    try{
       return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
+    }
+    catch(Exception e1){
+      //Only for legacy beans;
+      try{
+        return (IDOLegacyEntity)entityInterfaceOrBeanClass.newInstance();
+      }
+      catch(Exception e2){
+        throw new RuntimeException(e1.getMessage());
+      }
+    }
    }
 
 
@@ -3420,10 +3447,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
   }
 
+  /**
+   * This method will be changed to return true for "non-legacy" ido beans.<br>
+   * Can be overrided to do an insert (insertForCreate()) when ejbCreate(xx) is called
+   */
+  protected boolean doInsertInCreate(){
+    return false;
+  }
 
-  protected void insertForCreate() throws CreateException{
+  protected Object insertForCreate() throws CreateException{
     try{
       insert();
+      return this.getPrimaryKey();
     }
     catch(SQLException sqle){
       throw new IDOCreateException(sqle);
@@ -3432,5 +3467,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public IDOEntityDefinition getEntityDefinition(){
     throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  private boolean isBeanCachingActive(){
+    try{
+      if(IDOContainer.getInstance().beanCachingActive(getInterfaceClass())){
+        return true;
+      }
+      return false;
+    }
+    catch(Exception ex){
+      return false;
+    }
   }
 }
