@@ -16,14 +16,12 @@ import java.util.Vector;
 
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.io.DownloadWriter;
-import com.idega.io.MediaWritable;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.DownloadLink;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
@@ -60,7 +58,7 @@ public class FileManager extends Block {
 	private String currentFolder =null,currentFile =null;
 	private java.util.List maintainParameterNames =null;
 	private boolean filesDeletable = true;
-	private boolean displayFilesInFrame = true;
+	private boolean displayFilesInFrame = false;
 	private FileIconSupplier iconSupplier =null;
 	private static final String PRM_FOLDER = "iw_b_r_m_dir";
 	private static final String PRM_SUB_FOLDER ="iw_b_r_m_sdir";
@@ -479,9 +477,12 @@ public class FileManager extends Block {
 			return l;
 	    }
 	    else{
+	        DownloadLink l = new DownloadLink(file.getName(),file.getAbsolutePath());
+	        /*
 	        Link l = new Link(file.getName(),iwc.getIWMainApplication().getMediaServletURI());
 	        l.addParameter(MediaWritable.PRM_WRITABLE_CLASS,IWMainApplication.getEncryptedClassName(DownloadWriter.class));
 	        l.addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,file.getAbsolutePath());
+	        */
 	        /*
 	        Link l = new Link(getText(file.getName()),getCurrentFileUrl(iwc,file.getAbsolutePath()));
 	        l.setTarget(Link.TARGET_BLANK_WINDOW);
