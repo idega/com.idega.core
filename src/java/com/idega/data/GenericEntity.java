@@ -3321,8 +3321,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-    protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords)throws FinderException{
-      Collection coll = this.idoFindIDsBySQL(SQLString);
+    /**
+     * Finds one primary key by an SQL query
+     */
+    protected Object idoFindOnePKBySQL(String sqlQuery)throws FinderException{
+      Collection coll = idoFindPKsBySQL(sqlQuery,1);
+      try{
+        if(!coll.isEmpty()){
+          return coll.iterator().next();
+        }
+      }
+      catch(Exception e){
+        throw new IDOFinderException(e);
+      }
+      throw new IDOFinderException("Nothing found");
+    }
+
+    /**
+     * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
+     */
+    protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords)throws FinderException{
+      Collection coll = this.idoFindIDsBySQL(sqlQuery);
       if(returningNumberOfRecords==-1){
 	return coll;
       }
@@ -3337,6 +3356,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         }
         return returningColl;
       }
+    }
+
+    /**
+     *@deprecated replaced with idoFindPKsBySQL
+     */
+    protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords)throws FinderException{
+      return idoFindPKsBySQL(SQLString,returningNumberOfRecords);
     }
 
 	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind)throws FinderException{
