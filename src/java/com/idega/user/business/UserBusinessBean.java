@@ -1693,10 +1693,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return result;
   }
 
-  public Map moveUsers(Collection groupIds, User currentUser) {
+  public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser) {
+    
     Map groupIdGroup = new HashMap();
     Map userParentGroup = new HashMap();
     Map userTargetGroup = new HashMap();
+
     // get all groups 
     try {
       GroupBusiness groupBiz = null;
@@ -1706,7 +1708,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         String groupId = (String) groupIdsIterator.next();
         int id = Integer.parseInt(groupId);
         Group group = groupBiz.getGroupByGroupID(id);
-        groupIdGroup.put(groupId, group);
+        // check if the group id has the specified type 
+        // if the type equals to the specified type iterate over the children
+        if (parentGroupType != null && (parentGroupType.equals(group.getGroupType())))  {
+          Iterator childIterator = groupBiz.getChildGroups(group).iterator();
+          while (childIterator.hasNext()) {
+            Group childGroup = (Group) childIterator.next();
+            String childGroupId = childGroup.getPrimaryKey().toString();
+            groupIdGroup.put(childGroupId, childGroup);
+          }
+        }
+        else {
+          groupIdGroup.put(groupId, group);
+        }
       }
     }
     // Finder and RemoteException
@@ -1714,11 +1728,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       throw new EJBException("Error getting group. Message: "+ex.getMessage());
     }  
     // iterate over all users
-    Iterator groupIdsIterator = groupIds.iterator();
+    Iterator groupIdsIterator = groupIdGroup.entrySet().iterator();
     // iterate over groups
     while (groupIdsIterator.hasNext())  {
-      String parentGroupId = (String) groupIdsIterator.next();
-      Group parentGroup = (Group) groupIdGroup.get(parentGroupId); 
+      Map.Entry entry = (Map.Entry) groupIdsIterator.next();
+      String parentGroupId = (String) entry.getKey();
+      Group parentGroup = (Group) entry.getValue(); 
       Collection userInGroup = getUsersInGroup(parentGroup);
       Iterator userIterator = userInGroup.iterator();
       // iterate over users within a group
@@ -1727,10 +1742,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         boolean possibleTargetAlreadySet = false;
         User user = (User) userIterator.next();
         // test if the user is assignable to one and only one group
-        Iterator targetGroupIds = groupIds.iterator();
+        Iterator targetGroupIds = groupIdGroup.entrySet().iterator();
         while (targetGroupIds.hasNext())  {
-          String targetGroupId = (String) targetGroupIds.next(); 
-          Group targetGroup = (Group) groupIdGroup.get(targetGroupId);
+          Map.Entry targetEntry = (Map.Entry) targetGroupIds.next();
+          String targetGroupId = (String) targetEntry.getKey();
+          Group targetGroup = (Group) targetEntry.getValue();
           boolean result;
           // skip the own group
           if (targetGroupId.equals(parentGroupId)) {

@@ -153,5 +153,5 @@ public interface UserBusiness extends com.idega.business.IBOService
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc);
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc);
   public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser);
-  public Map moveUsers(Collection groupIds, User currentUser);
+  public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser);
 }
