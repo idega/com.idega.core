@@ -1,8 +1,13 @@
 package com.idega.util;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 /**
  * Title:        StringHandler
  * Description:
@@ -240,7 +245,29 @@ public class StringHandler {
     return true;
   }
   
-	public static String replace(String str, String pattern, String replace) {
+  /** Replaces all occurences of the specified pattern in the specified string with the
+   * specified replace, ignores case.
+   * Example: replace("A cat is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
+   * @param str
+   * @param pattern
+   * @param replace
+   * @return modified (new) string
+   * @author thomas 
+   */
+	public static String replaceIgnoreCase(String str, String pattern, String replace)  {
+		return replace(str.toUpperCase(), pattern.toUpperCase(), replace);
+	}
+	
+  /** Replaces all occurences of the specified pattern in the specified string with the
+   * specified replace
+   * Example: replace("A cat is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
+   * @param str
+   * @param pattern
+   * @param replace
+   * @return modified (new) string
+   * @author thomas 
+   */
+	public static String replace(String str, String pattern, String replace)  {
 		int s = 0;
     int e = 0;
     StringBuffer result = new StringBuffer();
@@ -252,7 +279,130 @@ public class StringHandler {
     result.append(str.substring(s));
     return result.toString();
 	}
+	
+  /** Removes all occurences of the specified pattern from the specified string.
+   * Example: replace("A cat is not a caterpillar", "ca") returns "A t is not a terpillar"
+   * @param str
+   * @param pattern
+   * @return modified (new) string
+   * @author thomas 
+   */
+	public static String remove(String str, String pattern)	{
+		int s = 0;
+    int e = 0;
+    StringBuffer result = new StringBuffer();
+    while ((e = str.indexOf(pattern, s)) >= 0) {
+    	result.append(str.substring(s, e));
+      s = e+pattern.length();
+    }
+    result.append(str.substring(s));
+    return result.toString();
+	}
+		
+  /** Removes all occurences of white spaces from the specified string.
+   * Example: replace("A cat is not a caterpillar") returns "Acatisnotacaterpillar"
+   * @param str
+   * @param pattern
+   * @return modified (new) string
+   * @author thomas 
+   */
+	public static String removeWhiteSpace(String str)	{
+		return StringHandler.remove(str, " ");
+	}
+	
+	/** Gets the words that are contained in a string corresponding to a list of allowed words.
+	 * If the string contains a non allowed word an empty list ist returned.
+	 * Ignores case and returns only words in upper case.
+	 * Example:
+	 * list = "(" ")" "or" "xor" "A" "B" 
+	 * getElements("A OR(B xor C)", list, false) returns "(" "A" "OR" "(" "B" "XOR" "C" ")"
+	 * @param str
+	 * @param allowedWords
+	 * @param list of allowed words in str else null
+	 * @param case sensitivity
+	 * @author thomas
+	 */
+	public static List getElementsIgnoreCase(String str, Collection allowedWords) {
+		List words = new ArrayList(allowedWords.size());
+		String string = str.toUpperCase();
+		Iterator iterator = allowedWords.iterator();
+		while (iterator.hasNext()) {
+			String word = (String) iterator.next();
+			words.add(word.toUpperCase());
+		}
+		return getElements(string, words);
+	}
+	
+	
+	
+	
+	
+	/** Gets the words that are contained in a string corresponding to a list of allowed words.
+	 * If the string contains a non allowed word an empty list ist returned.
+	 * Example:
+	 * list = "(" ")" "or" "xor" "A" "B" 
+	 * getElements("A or(B xor C)", list, true) returns "(" "A" "or" "(" "B" "xor" "C" ")"
+	 * @param str
+	 * @param allowedWords
+	 * @param list of allowed words in str else null
+	 * @author thomas
+	 */
+	public static List getElements(String string, Collection allowedWords) {
+		List result = new ArrayList();
+		  // order of conditions
+		SortedSet orderedWords = 
+  		new TreeSet(new Comparator() { 
+  			public int  compare(Object first, Object second) {
+  				int firstLength = ((String) first).length();
+  				int secondLength = ((String) second).length();
+  				if (firstLength < secondLength) {
+  					return 1;
+  				}
+  				else if (firstLength > secondLength) {
+  					return -1;
+  				}
+  				return ((Comparable) first).compareTo((Comparable) second);
+  			}
+  		});
+		orderedWords.addAll(allowedWords);
+		String stringWithoutWhiteSpace = StringHandler.removeWhiteSpace(string);
+		int length = stringWithoutWhiteSpace.length();
+		boolean wordIsRecognized = true;
+		int index = 0;
+		while (index < length && wordIsRecognized) {
+			wordIsRecognized = false;
+			Iterator wordIterator = orderedWords.iterator();
+			while (wordIterator.hasNext() && (! wordIsRecognized) ) {
+				String tempWord = (String) wordIterator.next();
+				if (wordIsRecognized = stringWithoutWhiteSpace.startsWith(tempWord, index)) {
+					result.add(tempWord);
+					index += tempWord.length();
+				}
+			}
+		}
+		if (index != length) {
+			return null;
+		}
+		return result;
+	}
+			
+				
+		
+	
   
+	/** Checks if the specified string contains the specified pattern.
+	 * Example: replace("A cat is not a caterpillar", "ca") returns true
+	 * @param string
+	 * @param pattern
+	 * @return true if the string contains the specified pattern else false.
+	 * @author thomas
+	 */
+	public static boolean contains(String string, String pattern)	{
+		return (string.indexOf(pattern) >= 0);
+	}
+	
+
+		
     
   
   /**
@@ -299,5 +449,6 @@ public class StringHandler {
 			}
 		}
 	}
+	
 	
 } 
