@@ -37,6 +37,9 @@ public class Edit {
   public static Text formatText(String text){
     return getText(text,false,colorTextFont,textFontSize);
   }
+  public static Text formatText(String text,String color){
+    return getText(text,false,color,textFontSize);
+  }
   public static Text formatText(String text,int size){
     return getText(text,true,colorTextFont,size);
   }
