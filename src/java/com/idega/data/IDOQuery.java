@@ -500,6 +500,29 @@ public class IDOQuery {
     this.append(str);
     return this;
   }
+  
+  public IDOQuery appendWhereEqualsQuoted(String columnName,String columnValue){
+  	appendWhere(columnName);
+  	this.appendEqualSign();
+  	this.appendWithinSingleQuotes(columnValue);
+  	return this;
+  }
+  
+  public IDOQuery appendEqualsQuoted(String columnName,String columnValue){
+  	this.append(WHITE_SPACE);
+  	this.append(columnName);
+  	this.appendEqualSign();
+  	this.appendWithinSingleQuotes(columnValue);
+  	return this;
+  }
+
+  public IDOQuery appendAndEqualsQuoted(String columnName,String columnValue){
+  	appendAnd();
+  	append(columnName);
+  	this.appendEqualSign();
+  	this.appendWithinSingleQuotes(columnValue);
+  	return this;
+  }
 
   public IDOQuery appendIn(){
     return this.append(IN);
@@ -518,6 +541,8 @@ public class IDOQuery {
   public IDOQuery appendNotIn(){
     return this.append(NOT_IN);
   }
+  /**
+   * Appends a not in clause within parantheses.   * @param str the String to be inside the not in clause.   * @return IDOQuery Returns this   */
   public IDOQuery appendNotIn(String str){
     this.append(NOT_IN);
     this.appendWithinParentheses(str);
