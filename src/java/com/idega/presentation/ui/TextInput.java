@@ -298,7 +298,7 @@ public class TextInput extends GenericInput {
 			try{
 				setContent(number.format(new Float(getContent())));
 			}catch(IllegalArgumentException ex){ 
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 		}
 		
