@@ -56,6 +56,11 @@ public class ICMimeType extends CacheableEntity {
     setColumn(getColumnNameMimeType(), mimeType);
   }
 
+  public void setMimeTypeAndDescription(String mimeType, String description){
+    setMimeType(mimeType);
+    setDescription(description);
+  }
+
   public String getDescription(){
     return (String) getColumnValue(getColumnNameDescription());
   }
