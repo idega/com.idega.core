@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.6 2004/09/01 20:53:10 aron Exp $
+ * $Id: DefaultIWBundle.java,v 1.7 2004/09/27 13:23:03 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -943,9 +943,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
 			try
 			{
-				ICObject ico = icoHome.findByClassName(className);
+				
 				if (classIsRefactored)
 				{
+				    ICObject ico = icoHome.findByClassName(className);
 					try
 					{
 						ico.setObjectClass(Class.forName(newRefactoredClassName));
