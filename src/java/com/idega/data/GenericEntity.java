@@ -392,7 +392,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		addOneToOneRelationship(relationshipColumnName, relatingEntityClass.getName(), relatingEntityClass);
 	}
 	protected void addOneToOneRelationship(String relationshipColumnName, String description, Class relatingEntityClass) {
-		addAttribute(relationshipColumnName, description, true, true, Integer.class, com.idega.data.GenericEntity.ONE_TO_ONE, relatingEntityClass);
+		try {
+			Class primaryKeyInRelatedClass = IDOLookup.getEntityDefinitionForClass(relatingEntityClass).getPrimaryKeyDefinition().getPrimaryKeyClass();
+			addAttribute(relationshipColumnName, description, true, true, primaryKeyInRelatedClass, com.idega.data.GenericEntity.ONE_TO_ONE, relatingEntityClass);
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
 	}
 	protected void addManyToOneRelationship(String relationshipColumnName, Class relatingEntityClass) {
 		addManyToOneRelationship(relationshipColumnName, relatingEntityClass.getName(), relatingEntityClass);
