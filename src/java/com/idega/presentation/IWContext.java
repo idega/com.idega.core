@@ -33,6 +33,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWSystemProperties;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
@@ -605,6 +606,9 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public IWMainApplicationSettings getApplicationSettings() {
 		return getApplication().getSettings();
 	}
+  public IWSystemProperties getSystemProperties() {
+  	return getApplication().getSystemProperties();
+  }
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {

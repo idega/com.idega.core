@@ -19,6 +19,7 @@ public interface IWApplicationContext extends java.io.Serializable{
 
   public IWMainApplication getApplication();
   public IWMainApplicationSettings getApplicationSettings();
+  public IWSystemProperties getSystemProperties();
   public void setApplicationAttribute(String attributeName,Object attributeValue);
   public Object getApplicationAttribute(String attributeName);
   public void removeApplicationAttribute(String attributeName);
