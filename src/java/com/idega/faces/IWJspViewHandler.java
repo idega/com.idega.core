@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.2 2004/12/31 02:17:29 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.3 2005/01/24 18:31:04 thomas Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.FacesUtil;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/31 02:17:29 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/24 18:31:04 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -116,7 +116,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public UIViewRoot createView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isResourceBased()){
+		if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
 			newViewId=node.getResourceURI();
 		}
 		return super.createView(context, newViewId);
@@ -136,4 +136,23 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	protected ViewManager getViewManager(){
 		return ViewManager.getInstance(IWMainApplication.getDefaultIWMainApplication());
 	}
+
+	private boolean nodeCorrespondsToViewId(ViewNode node, String viewId, FacesContext context) {
+		// does the viewId correspond to the node?
+		String requestServletPath = context.getExternalContext().getRequestServletPath();
+		String requestContextPath = context.getExternalContext().getRequestContextPath();
+		// count the length
+		// e.g. "/cms" + "/workspace"  
+		int length = requestContextPath.length() + requestServletPath.length();
+		String uri = node.getURI();
+		String uriWithoutContextAndServlet = uri.substring(length);
+		int viewIdLength = viewId.length();
+		// remove the slash at the end if necessary
+		if (viewId.endsWith("/")) {
+			viewId = viewId.substring(0, viewIdLength - 1);
+		}
+		return uriWithoutContextAndServlet.equals(viewId);
+	}
+
 }
+
