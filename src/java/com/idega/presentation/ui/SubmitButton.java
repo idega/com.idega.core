@@ -25,8 +25,11 @@ public class SubmitButton extends GenericButton {
 	private boolean asImageButton = false;
 	private boolean encloseByForm = true;
 
+	private boolean _enabledWhenChecked = false;
 	private boolean _confirmSubmit = false;
+	private String _checkedObjectName;
 	private String _confirmMessage;
+
 
 	/**
 	 * Constructs a new <code>SubmitButton</code> with the default name set and value set
@@ -125,6 +128,9 @@ public class SubmitButton extends GenericButton {
 		listenerAdded(true);
 	}
 
+	/**
+	 * @see com.idega.presentation.PresentationObject#main(IWContext)
+	 */
 	public void main(IWContext iwc) {
 		if (usingControlParameter) {
 			if (!parameterName.equals(emptyString)) {
@@ -137,9 +143,17 @@ public class SubmitButton extends GenericButton {
 				getScript().addFunction("confirmSubmit", "function confirmSubmit(input) {\n submit = confirm('"+_confirmMessage+"');\n	if (submit==true)\n		\tinput.form.submit();\n}");
 				setOnClick("confirmSubmit(this);");
 			}
+			if (_enabledWhenChecked) {
+				getScript().addFunction("enableButton","function enableButton(inputs,button) {\n	\tif (validateInputs(inputs)) \n	\t\tbutton.disabled=eval('false');\n	\telse\n	\t\tbutton.disabled=eval('true');\n }");
+				getScript().addFunction("validateInputs","function validateInputs(inputs) {\n	if (inputs.length > 1) {\n	\tfor (var a = 0; a < inputs.length; a++) {\n	\t\tif (inputs[a].checked == true)\n	\t\t\treturn true;\n	\t}\n	}\n	else {\n	\tif(inputs.checked == true)\n	\t\treturn true;\n	}\n	return false;\n }");
+				getForm().setOnClick("enableButton(findObj('"+_checkedObjectName+"'),findObj('"+getName()+"'));");
+			}
 		}
 	}
 
+	/**
+	 * @see com.idega.presentation.PresentationObject#print(IWContext)
+	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
 			if (_confirmSubmit)
@@ -180,8 +194,33 @@ public class SubmitButton extends GenericButton {
 			setInputType(INPUT_TYPE_IMAGE);
 	}
 	
+	/**
+	 * Sets to bring up a confirm window when button is pressed.  Only when 'OK' is pressed
+	 * in the confirm window is the parent <code>Form</code> submitted.
+	 * @param confirmMessage	The message to display in the confirm window.
+	 */
 	public void setSubmitConfirm(String confirmMessage) {
 		_confirmSubmit = true;
 		_confirmMessage = confirmMessage;
+	}
+	
+	/**
+	 * Sets to enable the <code>SubmitButton</code> only when the <code>CheckBox</code> 
+	 * with the name specified is checked. Remains disabled otherwise.
+	 * @param checkedObjectName	The name of the <code>CheckBox</code> that enables the button when checked.
+	 */
+	public void setToEnableWhenChecked(String checkBoxName) {
+		_enabledWhenChecked = true;
+		_checkedObjectName = checkBoxName;
+		setDisabled(true);
+	}
+	
+	/**
+	 * Sets to enable the <code>SubmitButton</code> only when the <code>CheckBox</code> 
+	 * specified is checked. Remains disabled otherwise.
+	 * @param checkBox	The <code>CheckBox</code> that enables the button when checked.
+	 */
+	public void setToEnableWhenChecked(CheckBox checkBox) {
+		setToEnableWhenChecked(checkBox.getName());
 	}
 }
