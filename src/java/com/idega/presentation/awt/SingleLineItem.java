@@ -33,10 +33,11 @@ public class SingleLineItem extends Panel {
 
   public SingleLineItem(Container parent) {
     addMouseListener(new ClickAdapter());
-    setSize(getPreferredSize());
+    //setSize(getPreferredSize());
     GridBagLayout grid = new GridBagLayout();
     setLayout(grid);
     setBackground(bgColor);
+    setForeground(Color.black);
     parentContainer = parent;
   }
 
