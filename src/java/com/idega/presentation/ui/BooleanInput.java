@@ -1,22 +1,45 @@
-//idega 2000 - Tryggvi Larusson
 /*
-
-*Copyright 2000 idega.is All Rights Reserved.
-
-*/
+ * $Id: BooleanInput.java,v 1.11 2005/03/08 19:03:08 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
+import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * This component presents a selection of a boolean value as a dropdown menu and presents the user with values Yes and No.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 19:03:08 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.11 $
+ */
 public class BooleanInput extends DropdownMenu {
 	private static final String NO_KEY = "booleaninput.no";
 	private static final String YES_KEY = "booleaninput.yes";
 	private static final String SELECT_KEY = "booleaninput.select";
 	private boolean _showSelectOption = false;
+	
+
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[2];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(_showSelectOption);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_showSelectOption = ((Boolean) values[1]).booleanValue();
+	}
 	
 	public BooleanInput() {
 		this("booleaninput");
