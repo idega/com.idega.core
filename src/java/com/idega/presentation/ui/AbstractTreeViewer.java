@@ -893,6 +893,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		public String getNodeName() {
 			return name;
 		}
+		
+		/**
+		 *  Returns the name of the Node
+		 */
+		public String getNodeName(Locale locale ) {
+			return getNodeName();
+		}
 
 		/**
 		 * Returns the unique ID of the Node in the tree
