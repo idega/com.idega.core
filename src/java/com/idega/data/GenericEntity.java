@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.53 2001/10/10 12:08:16 palli Exp $
+ * $Id: GenericEntity.java,v 1.54 2001/10/17 11:55:28 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2225,6 +2225,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
       buffer.append(".");
       buffer.append(metadataIdColumn);
 
+      //System.err.println(buffer.toString());
       ResultSet RS = Stmt.executeQuery(buffer.toString());
 
       while(RS.next()){

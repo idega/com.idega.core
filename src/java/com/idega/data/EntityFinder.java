@@ -19,6 +19,7 @@ import java.util.*;
 */
 public class EntityFinder{
 
+        public static boolean debug = false;
 
         /**
          * Returns null if there was no match
@@ -39,7 +40,13 @@ public class EntityFinder{
          * Returns null if there was no match
          */
 	public static List findAll(GenericEntity entity, String SQLString,int returningNumberOfRecords)throws SQLException{
-		Connection conn= null;
+		if(debug){
+                  System.err.println("EntityFinder sql query :");
+                  System.err.println(SQLString );
+		}
+
+
+                Connection conn= null;
 		Statement Stmt= null;
 		ResultSetMetaData metaData;
 		//Vector vector = new Vector();
