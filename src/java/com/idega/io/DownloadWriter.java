@@ -52,8 +52,7 @@ public class DownloadWriter implements MediaWritable {
         if(fileId!=null){
             try {
                 icFile = ((ICFileHome)IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
-                iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + icFile.getName()+ "\"");
-                iwc.getResponse().setContentLength(icFile.getFileSize().intValue());
+                setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
             } catch (Exception e) {
                 icFile=null;
             }
@@ -64,6 +63,7 @@ public class DownloadWriter implements MediaWritable {
             if(file!=null && file.exists() && file.canRead()){
                 iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + file.getName()+ "\"");
             		iwc.getResponse().setContentLength((int) file.length());
+            		setAsDownload(iwc,file.getName(),(int)file.length());
             }
 
         }
@@ -99,6 +99,11 @@ public class DownloadWriter implements MediaWritable {
         else
     			throw new IOException("No file value");
 
+    }
+    
+    public void setAsDownload(IWContext iwc,String filename,int fileLength){
+        iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename+ "\"");
+        iwc.getResponse().setContentLength(fileLength);
     }
 
 }
