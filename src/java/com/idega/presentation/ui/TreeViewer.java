@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.2 2001/10/16 16:59:55 palli Exp $
+ * $Id: TreeViewer.java,v 1.3 2001/10/18 17:25:41 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -179,7 +179,7 @@ public class TreeViewer extends PresentationObjectContainer {
     if(isLeafNode(node)){
         if( _startNode!=node ) image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEW_LINE+typeOfNode+GIF_SUFFIX);
         else{
-          image = bundle.getImage("transparentcell.gif");//if it is the top node
+          image = bundle.getImage("treeviewer_minus_F.gif");//if it is the top node
           image.setWidth(17);
         }
         return image;
