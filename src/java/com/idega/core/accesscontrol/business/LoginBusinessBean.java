@@ -518,7 +518,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected void logOut(IWContext iwc) throws Exception {
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
-			
+
 			LoggedOnInfo info = getLoggedOnInfo(iwc);
 			List ll = this.getLoggedOnInfoList(iwc);
 			int indexOfLoggedOfInfo = ll.indexOf(info);
@@ -534,28 +534,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 			iwc.removeSessionAttribute(LoginAttributeParameter);
 		}
-		
-		/*HttpSession session = iwc.getSession();
-		Enumeration enum = session.getAttributeNames();
-		while(enum.hasMoreElements()) {
-			String attName = (String) enum.nextElement();
-			//boolean dontRemove = LoginAttributeParameter.equals(attName) || LoginStateParameter.equals(attName) ||
-			//                     LoginStateMsgParameter.equals(attName) || UserAttributeParameter.equals(attName); // don't remove these or logout doesn't work
-			//if(!dontRemove) {
-				session.removeAttribute(attName);
-			//}
-		}
-		enum = iwc.getParameterNames();
-		while(enum.hasMoreElements()) {
-			iwc.removeAttribute((String) enum.nextElement());
-		}*/
-		
+
+		HttpSession session = iwc.getSession();
+		session.invalidate();
 	}
 
 	/**
-	
 	 * returns empty List if no one is logged on
-	
 	 */
 	public static List getLoggedOnInfoList(IWContext iwc) {
 		List loggedOnList = (List)iwc.getApplicationAttribute(_APPADDRESS_LOGGED_ON_LIST);
