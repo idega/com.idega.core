@@ -10,13 +10,12 @@
 */
 package com.idega.presentation.ui;
 
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
@@ -52,8 +51,6 @@ public class Window extends Page{
   private int autoXCoordinateOffset = 0;
   private int autoYCoordinateOffset = 0;
   
-  private static Map allOpenedWindowClasses = new Hashtable();
-
   //If this window is constructed to open an instance of an object in a new Window via ObjectInstanciator
   private Class classToInstanciate;
   private Class templatePageClass;
@@ -428,17 +425,21 @@ public static String getCallingScriptString(Class windowClass,IWApplicationConte
 }
 
 public static Window getStaticInstance(Class windowClass){
-  Window windowInstance = (Window)allOpenedWindowClasses.get(windowClass);
+  Window windowInstance = (Window)getIWMainApplication().getStaticWindowInstances().get(windowClass);
   if(windowInstance==null){
     try{
       windowInstance = (Window)windowClass.newInstance();
-      allOpenedWindowClasses.put(windowClass,windowInstance);
+      getIWMainApplication().getStaticWindowInstances().put(windowClass,windowInstance);
     }
     catch(Exception e){
 
     }
   }
   return windowInstance;
+}
+
+protected static IWMainApplication getIWMainApplication(){
+	return IWMainApplication.getDefaultIWMainApplication();
 }
 
 public static String getCallingScriptString(Class windowClass,boolean includeURL,IWApplicationContext iwac){
