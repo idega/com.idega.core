@@ -58,6 +58,12 @@ public interface IWLDAPConstants {
 	 * User login name
 	 */
 	public static final String LDAP_ATTRIBUTE_UID= "uid";
+	
+	/**
+	 * User login name in AD
+	 */
+	public static final String LDAP_ATTRIBUTE_UID_ACTIVE_DIRECTORY= "sAMAccountName";
+	
 	/**
 	 * User password. The value must be prefixed with LDAP_USER_PASSWORD_PREFIX( that is the string {md5} ) or similar<br>
 	userPassword values MUST be represented by following syntax: 
