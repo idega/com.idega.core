@@ -25,7 +25,8 @@ public interface UserBusiness extends com.idega.business.IBOService
  public void updateUserMail(int p0,java.lang.String p1)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection listOfUserEmails(int p0) throws java.rmi.RemoteException;
  public void setUserUnderDomain(com.idega.builder.data.IBDomain p0,com.idega.user.data.User p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
- public void deleteUser(int p0)throws javax.ejb.RemoveException, java.rmi.RemoteException;
+ public void deleteUser(int p0, com.idega.user.data.User p1)throws javax.ejb.RemoveException, java.rmi.RemoteException;
+ public void deleteUser(com.idega.user.data.User p0, com.idega.user.data.User p1)throws javax.ejb.RemoveException, java.rmi.RemoteException; 
  //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Phone getUsersWorkPhone(com.idega.user.data.User p0)throws com.idega.user.business.NoPhoneFoundException, java.rmi.RemoteException;
  //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
