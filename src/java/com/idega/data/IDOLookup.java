@@ -212,6 +212,8 @@ public class IDOLookup extends IBOLookup{
       return instance;
     }
     catch(Exception e){
+	 System.err.println("Exception in IDOLookup#instanciateEntity(Class) for "+entityBeanOrInterfaceClass);
+      e.printStackTrace();
       throw new EJBException(e.getMessage());
     }
   }

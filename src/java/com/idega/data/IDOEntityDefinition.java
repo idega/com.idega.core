@@ -14,5 +14,6 @@ public interface IDOEntityDefinition {
     public String getSQLTableName();
     public IDOEntityDefinition[] getManyToManyRelatedEntities();
     public IDOEntityField[] getFields();
-    public Class getPrimaryKeyClass();
+	public IDOPrimaryKeyDefinition getPrimaryKeyDefinition();
+	public Class getInterfaceClass();
 }

@@ -490,7 +490,7 @@ public class IDOTableCreator{
               String column = (String)iter.next();
               Class relClass = (Class)relMap.get(column);
               //try{
-                IDOLegacyEntity entity1 = (IDOLegacyEntity)relClass.newInstance();
+                IDOLegacyEntity entity1 = (IDOLegacyEntity)IDOLookup.getBeanClassFor(relClass).newInstance();
                 //createEntityRecord(entity1);
                 createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
               //}
@@ -529,7 +529,7 @@ public class IDOTableCreator{
   }
 
 
-  protected void createForeignKeys(IDOLegacyEntity entity) throws Exception {
+  protected void createForeignKeys(IDOEntity entity) throws Exception {
     /*Connection conn = null;
     Statement Stmt = null;
     try {
@@ -555,14 +555,18 @@ public class IDOTableCreator{
         entity.freeConnection(conn);
       }
     }*/
-    String[] names = entity.getColumnNames();
-    for (int i = 0; i < names.length; i++) {
+    //String[] names = entity.getColumnNames();
+    IDOEntityField[] fields = entity.getEntityDefinition().getFields();
+    //for (int i = 0; i < names.length; i++) {
+	for (int i = 0; i < fields.length; i++) {
         //try{
-          Class relationShipClass = entity.getRelationShipClass(names[i]);
-          if (relationShipClass!=null) {
+          //Class relationShipClass = entity.getRelationShipClass(names[i]);
+          //if (relationShipClass!=null) {
+          if(fields[i].isPartOfManyToOneRelationship()){
             //String table1=entity.getTableName();
 
-            Class intefaceClass = IDOLookup.getInterfaceClassFor(relationShipClass);
+            //Class intefaceClass = IDOLookup.getInterfaceClassFor(relationShipClass);
+			Class intefaceClass = fields[i].getManyToOneRelated().getInterfaceClass();
             IDOLegacyEntity entityToReference = (IDOLegacyEntity)IDOLookup.instanciateEntity(intefaceClass);
             //IDOLegacyEntity entityToReference = (IDOLegacyEntity)relationShipClass.newInstance();
             //String tableToReference=entityToReference.getTableName();
@@ -571,7 +575,8 @@ public class IDOTableCreator{
             //}
 
             //String columnInTableToReference=entityToReference.getIDColumnName();
-            String columnName = names[i];
+            //String columnName = names[i];
+			String columnName = fields[i].getSQLFieldName();
             createForeignKey(entity,entityToReference,columnName);
             //createForeignKey(entity,table1,columnName,tableToReference,columnInTableToReference);
           }
@@ -599,8 +604,8 @@ public class IDOTableCreator{
       createForeignKey(entity,referencingEntity,columnName);
   }
 
-  protected void createForeignKey(IDOLegacyEntity entity,IDOLegacyEntity entityToReference,String columnName)throws Exception{
-      createForeignKey(entity,entity.getTableName(),columnName,entityToReference.getTableName(),entityToReference.getIDColumnName());
+  protected void createForeignKey(IDOEntity entity,IDOLegacyEntity entityToReference,String columnName)throws Exception{
+      createForeignKey(entity,entity.getEntityDefinition().getSQLTableName(),columnName,entityToReference.getEntityDefinition().getSQLTableName(),entityToReference.getIDColumnName());
   }
 
   protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName)throws Exception{
@@ -612,7 +617,7 @@ public class IDOTableCreator{
       executeUpdate(entity,SQLCommand);
   }*/
 
-  protected void createForeignKey(IDOLegacyEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  protected void createForeignKey(IDOEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
       _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
