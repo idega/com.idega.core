@@ -351,7 +351,7 @@ public class IDOTableCreator{
             creationStatement += tableName;
             creationStatement += "(";
 
-            String primaryKeyStatement = "alter table "+tableName+" add primary key (";
+            String primaryKeyStatement = "alter table "+tableName+" add constraint primary key (";
 
             Set set;
             Iterator iter;
@@ -496,7 +496,7 @@ public class IDOTableCreator{
   }
 
   protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
-      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       executeUpdate(entity,SQLCommand);
   }
 
@@ -579,12 +579,22 @@ public class IDOTableCreator{
   }
 
   protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
-    String returnString = columnName+" "+_dsi.getSQLType(entity.getStorageClassName(columnName),entity.getMaxLength(columnName));
+    boolean isPrimaryKey = entity.isPrimaryKey(columnName);
+
+    String type;
+    if(isPrimaryKey && entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
+      type = _dsi.getIDColumnType();
+    }
+    else{
+      type = _dsi.getSQLType(entity.getStorageClassName(columnName),entity.getMaxLength(columnName));
+    }
+
+    String returnString = columnName+" "+type;
 
     if (!entity.getIfNullable(columnName)){
       returnString = 	returnString + " NOT NULL";
     }
-    if (entity.isPrimaryKey(columnName)){
+    if (isPrimaryKey){
       returnString = 	returnString + " PRIMARY KEY";
     }
     if (entity.getIfUnique(columnName)){

@@ -15,44 +15,6 @@ import java.sql.Statement;
 public class SapDBDatastoreInterface extends DatastoreInterface{
 
 
-
-  /*public String getSQLType(String javaClassName){
-    String theReturn;
-    if (javaClassName.equals("java.lang.Integer")){
-      theReturn = "NUMBER";
-    }
-    else if (javaClassName.equals("java.lang.String")){
-      theReturn = "VARCHAR2";
-    }
-    else if (javaClassName.equals("java.lang.Boolean")){
-      theReturn = "CHAR";
-    }
-    else if (javaClassName.equals("java.lang.Float")){
-      theReturn = "DOUBLE";
-    }
-    else if (javaClassName.equals("java.lang.Double")){
-      theReturn = "DOUBLE";
-    }
-    else if (javaClassName.equals("java.sql.Timestamp")){
-      theReturn = "DATE";
-    }
-    else if (javaClassName.equals("java.sql.Date")){
-      theReturn = "DATE";
-    }
-    else if (javaClassName.equals("java.sql.Blob")){
-      theReturn = "BLOB";
-    }
-    else if (javaClassName.equals("java.sql.Time")){
-      theReturn = "TIME";
-    }
-    else{
-      theReturn = "";
-    }
-irt    return theReturn;
-  }*/
-
-
-
   public String getSQLType(String javaClassName,int maxlength){
     String theReturn;
     if (javaClassName.equals("java.lang.Integer")){

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.34 2002/01/23 23:31:05 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.35 2002/01/29 12:55:25 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import com.idega.util.database.ConnectionBroker;
 import java.io.InputStream;
+import java.io.IOException;
 
 
 /**
@@ -189,6 +190,10 @@ public abstract class DatastoreInterface{
 
 
   public abstract String getSQLType(String javaClassName,int maxlength);
+
+  public String getIDColumnType(){
+    return "INTEGER";
+  }
 
   public IDOTableCreator getTableCreator(){
     if(_TableCreator==null){
@@ -357,7 +362,7 @@ public abstract class DatastoreInterface{
                   conn = entity.getConnection();
                   //Stmt = conn.createStatement();
                   //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
-                  String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+                  String statement = "insert into "+entity.getTableName()+"("+getCommaDelimitedColumnNames(entity)+") values ("+getQuestionmarksForColumns(entity)+")";
                   //System.out.println(statement);
                   Stmt = conn.prepareStatement (statement);
                   setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
@@ -425,8 +430,9 @@ public abstract class DatastoreInterface{
   }
 
   protected void executeAfterUpdate(GenericEntity entity)throws Exception{
-    //if( entity.hasLobColumn() ) insertBlob(entity); copied from insert not sure if used
-    //if( entity.hasLobColumn() ) insertBlob(entity);
+    if(!supportsBlobInUpdate()){
+      if( entity.hasLobColumn() ) insertBlob(entity);
+    }
     if( entity.hasMetaDataRelationship() ) crunchMetaData(entity);
   }
 
@@ -516,7 +522,9 @@ public abstract class DatastoreInterface{
           PreparedStatement PS = Conn.prepareStatement(statement);
           //System.out.println("bin.available(): "+bin.available());
           //PS.setBinaryStream(1, bin, 0 );
-          PS.setBinaryStream(1, instream, instream.available() );
+          //PS.setBinaryStream(1, instream, instream.available() );
+
+          this.setBlobstreamForStatement(PS,instream,1);
           PS.executeUpdate();
           PS.close();
           //System.out.println("bin.available(): "+bin.available());
@@ -532,8 +540,6 @@ public abstract class DatastoreInterface{
     finally{
       if(Conn != null) entity.freeConnection(Conn);
     }
-
-
   }
 
 
@@ -543,7 +549,7 @@ public abstract class DatastoreInterface{
                 int questionmarkCount=1;
                 if(insertOrUpdate==STATEMENT_UPDATE){
                   for (int i = 0; i < names.length; i++){
-                          if (entity.isValidColumnForUpdateList(names[i])){
+                          if (isValidColumnForUpdateList(entity,names[i])){
                               //if (returnString.equals("")){
                               //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
                               //}
@@ -559,7 +565,7 @@ public abstract class DatastoreInterface{
                 }
                 else if(insertOrUpdate==STATEMENT_INSERT){
                   for (int i = 0; i < names.length; i++){
-                          if (entity.isValidColumnForInsertList(names[i])){
+                          if (isValidColumnForInsertList(entity,names[i])){
                               //if (returnString.equals("")){
                               //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
                               //}
@@ -621,7 +627,7 @@ public abstract class DatastoreInterface{
 
         public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
-          //System.out.println("DatastoreInterface, in handleBlobUpdate");
+          System.out.println("DatastoreInterface, in handleBlobUpdate, columnName="+columnName+" index="+index);
           if(wrapper!=null){
             InputStream stream = wrapper.getInputStreamForBlobWrite();
             //System.out.println("DatastoreInterface, in handleBlobUpdate wrapper!=null");
@@ -632,7 +638,8 @@ public abstract class DatastoreInterface{
                 //statement.setBinaryStream(index, bin, bin.available() );
                 //System.out.println("bin.available(): "+bin.available());
                 //System.out.println("stream.available(): "+stream.available());
-                statement.setBinaryStream(index, stream, stream.available() );
+                //statement.setBinaryStream(index, stream, stream.available() );
+                setBlobstreamForStatement(statement,stream,index);
               }
               catch(Exception e){
                 //System.err.println("Error updating BLOB field in "+entity.getClass().getName());
@@ -643,7 +650,14 @@ public abstract class DatastoreInterface{
 
         }
 
+
+    public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
+      statement.setBinaryStream(index, stream, stream.available() );
+    }
+
 	public void update(GenericEntity entity)throws Exception{
+
+      if(entity.columnsHaveChanged()){
           executeBeforeUpdate(entity);
 		Connection conn= null;
 		PreparedStatement Stmt= null;
@@ -651,7 +665,7 @@ public abstract class DatastoreInterface{
 			conn = entity.getConnection();
 //			Stmt = conn.createStatement();
 
-                                String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                                String statement = "update "+entity.getTableName()+" set "+getAllColumnsAndQuestionMarks(entity)+" where "+entity.getIDColumnName()+"="+entity.getID();
                                 //System.out.println(statement);
 		                Stmt = conn.prepareStatement (statement);
                                 setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
@@ -672,6 +686,7 @@ public abstract class DatastoreInterface{
                 executeAfterUpdate(entity);
 
                 entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+      }
 
 	}
 
@@ -679,7 +694,7 @@ public abstract class DatastoreInterface{
           executeBeforeUpdate(entity);
 		PreparedStatement Stmt = null;
 		try {
-                  String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                  String statement = "update "+entity.getTableName()+" set "+getAllColumnsAndQuestionMarks(entity)+" where "+entity.getIDColumnName()+"="+entity.getID();
                   Stmt = conn.prepareStatement (statement);
                   setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
                   Stmt.execute();
@@ -700,7 +715,7 @@ public abstract class DatastoreInterface{
       PreparedStatement Stmt = null;
       ResultSet RS = null;
       try {
-        String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+        String statement = "insert into "+entity.getTableName()+"("+getCommaDelimitedColumnNames(entity)+") values ("+getQuestionmarksForColumns(entity)+")";
         //System.out.println(statement);
         Stmt = conn.prepareStatement (statement);
         setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
@@ -862,6 +877,154 @@ public abstract class DatastoreInterface{
       }
     }
   }
+
+
+
+  public boolean supportsBlobInUpdate(){
+    return true;
+  }
+
+
+
+	/**
+	*Used to generate the ?,? mark list for preparedstatement
+	**/
+	protected String getQuestionmarksForColumns(GenericEntity entity){
+		String returnString = "";
+		String[] names = entity.getColumnNames();
+		for (int i = 0; i < names.length; i++){
+			if(isValidColumnForInsertList(entity,names[i])){
+      //if (!isNull(names[i])){
+				if (returnString.equals("")){
+					returnString = 	"?";
+				}
+				else{
+					returnString = 	returnString + ",?";
+				}
+			}
+		}
+		return returnString;
+	}
+
+
+  boolean isValidColumnForUpdateList(GenericEntity entity,String columnName){
+    boolean isIDColumn = entity.getIDColumnName().equals(columnName);
+    if(isIDColumn){
+      return false;
+    }
+    else{
+      if(this.supportsBlobInUpdate()){
+        if (entity.isNull(columnName)){
+          return false;
+        }
+        else{
+          if(entity.getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+            BlobWrapper wrapper = (BlobWrapper)entity.getColumnValue(columnName);
+            if(wrapper==null){
+              return false;
+            }
+            else{
+              return wrapper.isReadyForUpdate();
+            }
+          }
+          return true;
+        }
+      }
+      else{
+        if (entity.isNull(columnName)){
+          return false;
+        }
+        else{
+          if(entity.getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+            return false;
+          }
+          return true;
+        }
+      }
+    }
+  }
+
+
+  boolean isValidColumnForInsertList(GenericEntity entity,String columnName){
+      if (entity.isNull(columnName)){
+        return false;
+      }
+      else{
+        if(entity.getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+          return false;
+        }
+        return true;
+      }
+  }
+
+
+  protected String getCommaDelimitedColumnNames(GenericEntity entity){
+    String newCachedColumnNameList = entity.getStaticInstance()._cachedColumnNameList;
+    if(newCachedColumnNameList==null){
+      String returnString = "";
+      String[] names = entity.getColumnNames();
+      for (int i = 0; i < names.length; i++){
+        if (isValidColumnForInsertList(entity,names[i])){
+          if (returnString.equals("")){
+            returnString = names[i];
+          }
+          else{
+            returnString = returnString + "," + names[i];
+          }
+        }
+      }
+      newCachedColumnNameList = returnString;
+    }
+		return newCachedColumnNameList;
+	}
+
+
+
+
+	protected String getCommaDelimitedColumnValues(GenericEntity entity){
+		String returnString = "";
+		String[] names = entity.getColumnNames();
+		for (int i = 0; i < names.length; i++){
+			if (isValidColumnForInsertList(entity,names[i])){
+				if (returnString.equals("")){
+					returnString = 	"'"+entity.getStringColumnValue(names[i])+"'";
+				}
+				else{
+					returnString = 	returnString + ",'" + entity.getStringColumnValue(names[i])+"'";
+				}
+			}
+		}
+		return returnString;
+	}
+
+
+
+        protected String getAllColumnsAndQuestionMarks(GenericEntity entity){
+                StringBuffer returnString= new StringBuffer("");
+                String[] names = entity.getColumnNames();
+                String questionmark = "=?";
+
+                for(int i=0;i<names.length;i++){
+                //for (Enumeration e = columns.keys(); e.hasMoreElements();){
+                //for (Enumeration e = columns.elements(); e.hasMoreElements();){
+                        //String ColumnName = (String)e.nextElement();
+                        String ColumnName = names[i];
+
+                        if (isValidColumnForUpdateList(entity,ColumnName)){
+                                if (returnString.toString().equals("")){
+                                        returnString.append(ColumnName);
+                                        returnString.append(questionmark);
+                                }
+                                else{
+                                        returnString.append(',');
+                                        returnString.append(ColumnName);
+                                        returnString.append(questionmark);;
+                                }
+                        }
+                }
+
+                return returnString.toString();
+        }
 
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.74 2002/01/06 14:12:34 laddi Exp $
+ * $Id: GenericEntity.java,v 1.75 2002/01/29 12:55:25 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -37,6 +37,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   private String _dataStoreType;
   private Hashtable _columns = new Hashtable();
+  private Hashtable _updatedColumns;
   private static Hashtable _theAttributes = new Hashtable();
   private static Hashtable _allStaticClasses = new Hashtable();
 
@@ -50,7 +51,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   private String _dataSource;
   private static String _defaultString = "default";
-  private String _cachedColumnNameList;
+  String _cachedColumnNameList;
   private String _lobColumnName;
 
   private int _state;
@@ -395,6 +396,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
 			_columns.put(columnName.toLowerCase(),columnValue);
+            this.flagColumnUpdate(columnName);
                         if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
                           setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
                         }
@@ -703,7 +705,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
         */
 
-	public Class getRelationShipClass(String columnName){
+
+    /**
+     * Returns null if the specified column does have a relationship Class
+     */
+    public Class getRelationShipClass(String columnName){
           EntityAttribute column = getColumn(columnName);
           if(column!=null){
             return column.getRelationShipClass();
@@ -817,51 +823,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           return "language_id";
         }
 
-	protected String getAllColumnsAndValues(){
-		String returnString="";
-		for (Enumeration e = _columns.keys(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
-			String ColumnName = (String)e.nextElement();
-			if (isValidColumnForUpdateList(ColumnName)){
-				if (returnString.equals("")){
-					returnString = returnString + ColumnName + "='"+getStringColumnValue(ColumnName)+"'";
-				}
-				else{
-					returnString = returnString + "," + ColumnName + "='"+getStringColumnValue(ColumnName)+"'";
-				}
-			}
-		}
-
-		return returnString;
-	}
-
-
-	protected String getAllColumnsAndQuestionMarks(){
-		StringBuffer returnString= new StringBuffer("");
-                String[] names = getColumnNames();
-                String questionmark = "=?";
-
-		for(int i=0;i<names.length;i++){
-                //for (Enumeration e = columns.keys(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
-			//String ColumnName = (String)e.nextElement();
-                        String ColumnName = names[i];
-
-			if (isValidColumnForUpdateList(ColumnName)){
-				if (returnString.toString().equals("")){
-					returnString.append(ColumnName);
-                                        returnString.append(questionmark);
-				}
-				else{
-					returnString.append(',');
-                                        returnString.append(ColumnName);
-                                        returnString.append(questionmark);;
-				}
-			}
-		}
-
-		return returnString.toString();
-	}
 
 
 	public String[] getColumnNames(){
@@ -914,98 +875,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return (String[])theColumns.toArray(new String[0]);
 	}
-
-	/**
-	*Used to generate the ?,? mark list for preparedstatement
-	**/
-	protected String getQuestionmarksForColumns(){
-		String returnString = "";
-		String[] names = getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if(isValidColumnForInsertList(names[i])){
-      //if (!isNull(names[i])){
-				if (returnString.equals("")){
-					returnString = 	"?";
-				}
-				else{
-					returnString = 	returnString + ",?";
-				}
-			}
-		}
-		return returnString;
-	}
-
-
-  boolean isValidColumnForUpdateList(String columnName){
-      if (isNull(columnName)){
-        return false;
-      }
-      else{
-        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
-          BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
-          if(wrapper==null){
-            return false;
-          }
-          else{
-            return wrapper.isReadyForUpdate();
-          }
-        }
-        return true;
-      }
-  }
-
-  boolean isValidColumnForInsertList(String columnName){
-      if (isNull(columnName)){
-        return false;
-      }
-      else{
-        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
-          return false;
-        }
-        return true;
-      }
-  }
-
-
-  protected String getCommaDelimitedColumnNames(){
-    String newCachedColumnNameList = getStaticInstance()._cachedColumnNameList;
-    if(newCachedColumnNameList==null){
-      String returnString = "";
-      String[] names = getColumnNames();
-      for (int i = 0; i < names.length; i++){
-        if (isValidColumnForInsertList(names[i])){
-          if (returnString.equals("")){
-            returnString = names[i];
-          }
-          else{
-            returnString = returnString + "," + names[i];
-          }
-        }
-      }
-      newCachedColumnNameList = returnString;
-    }
-		return newCachedColumnNameList;
-	}
-
-
-
-
-	protected String getCommaDelimitedColumnValues(){
-		String returnString = "";
-		String[] names = getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if (isValidColumnForInsertList(names[i])){
-				if (returnString.equals("")){
-					returnString = 	"'"+getStringColumnValue(names[i])+"'";
-				}
-				else{
-					returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
-				}
-			}
-		}
-		return returnString;
-	}
-
 
 	public boolean isNull(String columnName){
 		/*if (columns.get(columnName) instanceof java.lang.String){
@@ -2269,7 +2138,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         }
 
 
-        private GenericEntity getStaticInstance(){
+        GenericEntity getStaticInstance(){
           return getStaticInstance(this.getClass().getName());
         }
 
@@ -2657,4 +2526,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public void setEntityContext(javax.ejb.EntityContext ctx){}
 
   public void unsetEntityContext(){}
+
+  void flagColumnUpdate(String columnName){
+    if(this._updatedColumns==null){
+      _updatedColumns = new Hashtable();
+    }
+    _updatedColumns.put(columnName,Boolean.TRUE);
+  }
+
+  boolean hasColumnBeenUpdated(String columnName){
+    if(this._updatedColumns==null){
+      return false;
+    }
+    else{
+      return (_updatedColumns.get(columnName)!=null);
+    }
+  }
+
+  boolean columnsHaveChanged(){
+    return (_updatedColumns!=null);
+  }
 }

@@ -219,6 +219,9 @@ public static final int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
               return null;
 	}
 
+    /**
+     * Returns null if relationshipClass is not set
+     */
 	public Class getRelationShipClass(){
             return relationShipClass;
 	}

@@ -259,6 +259,8 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
   */
 
 
+
+
    public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
           //System.out.println("in MySQLhandleBlobUpdate");
@@ -346,5 +348,9 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
   }
 
+
+  public String getIDColumnType(){
+    return "INTEGER AUTO_INCREMENT";
+  }
 
 }
