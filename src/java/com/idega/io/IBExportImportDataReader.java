@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +96,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		while (nonPageIterator.hasNext()) {
 			XMLElement nonPageElement = (XMLElement) nonPageIterator.next();
 			String zipEntryName = nonPageElement.getTextTrim(XMLConstants.FILE_USED_ID);
+			// avoid errors if the metadata is corrupt
 			if (! entryNameHolder.containsKey(zipEntryName)) {
 				StorableHolder holder = references.createSourceFromElement(nonPageElement);
 				ZipInputStreamIgnoreClose inputStream = getZipInputStream(zipEntryName, sourceFile);
@@ -119,7 +121,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		// create pages and templates
 		List pageElements = ((IBExportImportData) storable).getSortedPageElements();
 		createPages(pageElements, sourceFile);
-		entryNameHolder.get("weser");	
+		modifyPages(pageElements, sourceFile);
 	}	
 		
 	private void createPages(List pageFileElements, File sourceFile) throws IOException {
@@ -130,12 +132,27 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		while (pageIterator.hasNext()) {
 			XMLElement pageFileElement = (XMLElement) pageIterator.next();
 			String zipEntryName = pageFileElement.getTextTrim(XMLConstants.FILE_USED_ID);
+			// avoid errors if the metadata is corrupt
 			if (! entryNameHolder.containsKey(zipEntryName)) {
 				createPage(pageFileElement, zipEntryName, sourceFile, pageHelper, pageTree);
 			}
 		}
 	}	
 	
+	private void modifyPages(List pageFileElements, File sourceFile) throws IOException {
+		List localPages = new ArrayList();
+		Iterator pageIterator = pageFileElements.iterator();
+		while (pageIterator.hasNext()) {
+			XMLElement pageFileElement = (XMLElement) pageIterator.next();
+			String zipEntryName = pageFileElement.getTextTrim(XMLConstants.FILE_USED_ID);
+			// avoid errors if the metadata is corrupt
+			if (! localPages.contains(zipEntryName)) {
+				localPages.add(zipEntryName);
+				modifyPageContent(zipEntryName, sourceFile);
+			}
+		}
+	}
+
 	/**
 	 * @param pageFileElement
 	 * @param zipEntryName
@@ -164,10 +181,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		if (exportTemplate != null) {
 			// find new id 
 			StorableHolder templateHolder = (StorableHolder) pageIdHolder.get(exportTemplate);
-			// set template entry in entity bean
 			importTemplateValue = templateHolder.getValue();
-			// set template entry in xml file
-			pageElement.setAttribute(XMLConstants.TEMPLATE_STRING, importTemplateValue);
 		}
 		String type = pageElement.getAttributeValue(XMLConstants.PAGE_TYPE);
 		// set name ---------------------------------------
@@ -177,7 +191,6 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		String parentId = ((IBExportImportData) storable).getParentIdForPageId(exportValue);
 		if (parentId == null && type != null) {
 			if (XMLConstants.PAGE_TYPE_PAGE.equals(type) && parentPageId > -1) {
-				// use parent for pages
 				parentId = Integer.toString(parentPageId);
 			}
 			else if (XMLConstants.PAGE_TYPE_TEMPLATE.equals(type) && parentTemplateId > -1) {
@@ -196,7 +209,35 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		StorableHolder holder = getHolderForPage(currentPageId);
 		entryNameHolder.put(zipEntryName, holder);
 		pageIdHolder.put(exportValue, holder);
+	}
+
+	private void modifyPageContent(String zipEntryName, File sourceFile) throws IOException {
+		XMLData pageData = XMLData.getInstanceWithoutExistingFile();
+		ZipInputStreamIgnoreClose zipInputStream = getZipInputStream(zipEntryName, sourceFile);
+		ReaderFromFile reader = (ReaderFromFile) pageData.read(this);
+		try {
+			reader.readData(zipInputStream);
+		}
+		finally {
+			closeEntry(zipInputStream);
+			closeStream(zipInputStream);
+		}
+		
+		XMLElement pageElement = pageData.getDocument().getRootElement().getChild(XMLConstants.PAGE_STRING);
+		// set template --------------------------------
+		String exportTemplate = pageElement.getAttributeValue(XMLConstants.TEMPLATE_STRING);
+		String importTemplateValue = null;
+		if (exportTemplate != null) {
+			// find new id 
+			StorableHolder templateHolder = (StorableHolder) pageIdHolder.get(exportTemplate);
+			importTemplateValue = templateHolder.getValue();
+			// set template entry in xml file
+			pageElement.setAttribute(XMLConstants.TEMPLATE_STRING, importTemplateValue);
+		}
+		// get the current page
+		StorableHolder holder = (StorableHolder) entryNameHolder.get(zipEntryName);
 		ICPage currentPage = (ICPage) holder.getStorable();
+		int currentPageId = Integer.parseInt(holder.getValue());
 						
 		// change module references -----------------------------------------------
 		// change external references ----------------------------------------------
@@ -220,8 +261,9 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		//TODO: thi: figure out why updatePage doesn't work 
 		PageCacher.flagAllPagesInvalid();
 		//builderLogic.updatePage(currentPageId);
-	}
-
+	}	
+	
+	
 	/** change the module element:
 	 * <module id="11" ic_object_id="63" class="com.idega.block.calendar.presentation.Calendar" />
 	 * id is changed (new ICObjectInstance instance is created)
