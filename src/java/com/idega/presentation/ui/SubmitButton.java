@@ -1,5 +1,5 @@
 /*
- * $Id: SubmitButton.java,v 1.35 2005/03/08 18:28:55 tryggvil Exp $
+ * $Id: SubmitButton.java,v 1.36 2005/03/09 02:07:20 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.Image;
  * <p>
  * This is a component for rendering out a button (input) of type submit.
  * </p>
- *  Last modified: $Date: 2005/03/08 18:28:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/09 02:07:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class SubmitButton extends GenericButton {
 
@@ -56,9 +56,9 @@ public class SubmitButton extends GenericButton {
 		values[6] = Boolean.valueOf(_enabledWhenChecked);
 		values[7] = Boolean.valueOf(_confirmSubmit);
 		values[8] = Boolean.valueOf(_confirmSingleSubmit);
-		values[9] = Boolean.valueOf(_checkedObjectName);
-		values[10] = Boolean.valueOf(_confirmMessage);
-		values[11] = Boolean.valueOf(_confirmSingleMessage);
+		values[9] = _checkedObjectName;
+		values[10] = _confirmMessage;
+		values[11] = _confirmSingleMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.29 2005/03/08 18:15:37 tryggvil Exp $
+ * $Id: GenericButton.java,v 1.30 2005/03/09 02:07:20 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/03/08 18:15:37 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/09 02:07:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class GenericButton extends GenericInput {
 
@@ -79,14 +79,14 @@ public class GenericButton extends GenericInput {
 		_fileID = ((Integer)values[2]).intValue();
 		asImageButton = ((Boolean)values[3]).booleanValue();
 		_windowClassToOpen = (Class)values[4];
-		parameterMap = (Map)values[6];
-		_onClickConfirm = ((Boolean)values[7]).booleanValue();
-		_confirmMessage = (String)values[8];
-		_parentPageID = ((Integer)values[9]).intValue();
-		classToInstanciate = (Class)values[10];
-		templatePageClass = (Class)values[11];
-		templateForObjectInstanciation = (String) values[12];
-		_URL = (String)values[13];
+		parameterMap = (Map)values[5];
+		_onClickConfirm = ((Boolean)values[6]).booleanValue();
+		_confirmMessage = (String)values[7];
+		_parentPageID = ((Integer)values[8]).intValue();
+		classToInstanciate = (Class)values[9];
+		templatePageClass = (Class)values[10];
+		templateForObjectInstanciation = (String) values[11];
+		_URL = (String)values[12];
 	}
 	
 	public GenericButton() {
