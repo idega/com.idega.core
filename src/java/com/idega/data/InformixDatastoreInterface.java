@@ -91,7 +91,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "FLOAT";
     }
     else if (javaClassName.equals("java.sql.Timestamp")){
-      theReturn = "DATE";
+      theReturn = "TIMESTAMP";
     }
     else if (javaClassName.equals("java.sql.Date")){
       theReturn = "DATE";
@@ -115,11 +115,14 @@ public class InformixDatastoreInterface extends DatastoreInterface{
   }
 
 
-
+  /**
+   * Only creates the sequence, not the trigger
+   * @todo implement trigger creation
+   */
   public void createTrigger(GenericEntity entity)throws Exception{
 
                 createSequence(entity);
-
+      /*
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
@@ -135,6 +138,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
+    */
   }
 
 
@@ -159,7 +163,10 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
-      deleteTrigger(entity);
+      /**
+       * @todo change
+       */
+      //deleteTrigger(entity);
       deleteSequence(entity);
       deleteTable(entity);
 
