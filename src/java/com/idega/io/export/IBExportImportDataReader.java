@@ -275,14 +275,14 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 						
 		// change module references -----------------------------------------------
 		// change external references ----------------------------------------------
-		Iterator iterator = pageElement.allChildrenIterator();
+		Iterator iterator = pageElement.allChildrenBreadthFirstIterator();
 		while(iterator.hasNext()) {
 			XMLElement element = (XMLElement) iterator.next();
 			checkModuleEntries(element, currentPageId);
 			checkPropertiesEntries(element);
 		}
 		// change region references
-		iterator = pageElement.allChildrenIterator();
+		iterator = pageElement.allChildrenBreadthFirstIterator();
 		while (iterator.hasNext()) {
 			XMLElement element = (XMLElement) iterator.next();
 			checkRegionEntries(element);
@@ -400,7 +400,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	 * or
 	 * <region id="NEW_VALUE.1.2" label="main" />
 	 */
-	private void checkRegionEntries(XMLElement element) throws IOException {
+	private void checkRegionEntries(XMLElement element) {
 		String nameOfElement = element.getName();
 		// is it a region?
 		if (XMLConstants.REGION_STRING.equalsIgnoreCase(nameOfElement)) {
@@ -414,13 +414,14 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 			// region type: <region id="12.1.2" label="main">     ---> regionIsDotType (that is the id is 12)
 			String id = (regionIsDotType) ? regionId.substring(0, index) : regionId;
 			// look up the new id
-			if (! oldNewInstanceId.containsKey(id)) {
-				throw new IOException("[IBExportImportDataReader] Id of object instance could not be found.");
+			// if the new id can't  be found do not modify the region element 
+			// (sometimes the region refers to a valid element only by the label but not by the id)
+			if (oldNewInstanceId.containsKey(id)) {
+				String newId = (String) oldNewInstanceId.get(id);
+				// set new id
+				String newRegionId = (regionIsDotType) ? StringHandler.concat(newId, regionId.substring(index)) : newId;
+				element.setAttribute(XMLConstants.ID_STRING, newRegionId);
 			}
-			String newId = (String) oldNewInstanceId.get(id);
-			// set new id
-			String newRegionId = (regionIsDotType) ? StringHandler.concat(newId, regionId.substring(index)) : newId;
-			element.setAttribute(XMLConstants.ID_STRING, newRegionId);
 		}
 	}
 
