@@ -477,6 +477,10 @@ public class IDOQuery {
     return this.append(FROM);
   }
 
+  public IDOQuery appendDelete(){
+    return this.append(DELETE);
+  }
+
   public IDOQuery appendStar(){
     return this.append(STAR);
   }
