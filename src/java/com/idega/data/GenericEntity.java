@@ -2688,7 +2688,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ entityToAddTo.getIDColumnName()
 						+ ") values("
 						+ getPrimaryKeyValueSQLString()
-						+ ",'"
+						+ ","
 						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 						+ ")";
 			/*}
@@ -3094,11 +3094,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ extraColumnName1
 						+ ","
 						+ extraColumnName2
-						+ ") values('"
+						+ ") values("
 						+ getPrimaryKeyValueSQLString()
-						+ "','"
+						+ ","
 						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
-						+ "','"
+						+ ",'"
 						+ extraColumnValue
 						+ "','"
 						+ extraColumnValue1
