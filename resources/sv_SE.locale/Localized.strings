@@ -111,6 +111,7 @@ iw.component.se.idega.idegaweb.commune.block.importer.presentation.Importer.name
 iw_updateman_execupdate=Update
 loading_text=Laddar
 locale=Spr\u00E5k
+media_chooser_window.media_chooser=Mediav\u00E4ljaren
 name=Namn
 new=Ny
 new_quote=
@@ -121,6 +122,8 @@ overwrite_file=Skriv \u00F6ver fil om fil med samma namn finns
 page=Sida
 previous=F\u00F6reg\u00E5ende
 save=Spara
+search_results.no_results=Din s\u00F6kning gav inget resultat
+searcher.button=S\u00F6k
 size=Storlek
 submit=Submit
 timeinput.hour=Timme
