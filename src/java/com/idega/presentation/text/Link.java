@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.139 2004/09/29 17:04:23 gimmi Exp $
+ * $Id: Link.java,v 1.140 2004/11/19 10:22:09 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1816,7 +1816,7 @@ public class Link extends Text {
 				String url = getURL();
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
-				System.out.println("Url after setFinalUrl " + getURL());
+				//System.out.println("Url after setFinalUrl " + getURL());
 				print("<a " + getMarkupAttributesString() + " >");
 				print(_myWindow.getName());
 				print("</a>");
@@ -1833,11 +1833,6 @@ public class Link extends Text {
 				print("</a>");
 			}
 		}
-		/**
-		* @todo !!Find out why this is necessary:
-		*/
-		//setURL(oldURL);
-		setFinalUrl(oldURL);
 	}
 
 	/**
@@ -2281,7 +2276,7 @@ public void setWindowToOpen(String className) {
 
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
-			if (this.icObjectInstanceIDForWindow == -1) {
+			if (this.icObjectInstanceIDForWindow <= 0) {
 				setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass));
 			}
 			else {
