@@ -97,6 +97,10 @@ private boolean merged = true;
   }
 
   public void add(ModuleObject obj) {
+    if(adminTable==null){
+      adminTable=new Table();
+      super.add(adminTable);
+    }
     adminTable.add(obj,1,2);
   }
 

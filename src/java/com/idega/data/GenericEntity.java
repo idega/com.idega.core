@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.40 2001/08/27 12:07:54 haffi Exp $
+ * $Id: GenericEntity.java,v 1.41 2001/09/03 10:55:20 haffi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1652,7 +1652,35 @@ public abstract class GenericEntity implements java.io.Serializable {
 		try{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")");
+                        String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")";
+                        System.out.println("statement: "+sql);
+			int i = Stmt.executeUpdate(sql);
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+	}
+
+
+	/**
+	**Default insert behavior with a tree relationship
+	**/
+	public void addTo(GenericEntity entityToAddTo,String entityToAddToColumName)throws SQLException{
+
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+                        String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddToColumName+") values("+getID()+","+entityToAddTo.getID()+")";
+                        System.out.println("statement: "+sql);
+			int i = Stmt.executeUpdate(sql);
 		}
 		finally{
 			if(Stmt != null){
