@@ -12,6 +12,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
 import com.idega.data.EntityControl;
+import com.idega.builder.data.IBDomain;
 
 
 
@@ -161,6 +162,11 @@ public class IWStarterServlet extends GenericServlet
             application.startAccessController();
             application.loadBundles();
             executeServices(application);
+
+
+            //create ibdomain
+            IBDomain domain = new IBDomain();
+
             sendStartMessage("Completed");
         }
 
