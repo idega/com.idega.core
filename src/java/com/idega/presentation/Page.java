@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.137 2005/02/01 00:49:43 tryggvil Exp $
+ *  $Id: Page.java,v 1.138 2005/02/01 17:53:13 thomas Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -310,7 +310,7 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	public void setStyleInStyleSheet(String name, String style) {
-		IWStyleManager manager = new IWStyleManager();
+		IWStyleManager manager = IWStyleManager.getInstance();
 		if (name != null && style != null)
 			manager.setStyle(name, style);
 	}
