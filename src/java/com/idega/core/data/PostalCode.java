@@ -13,4 +13,5 @@ public interface PostalCode extends com.idega.data.IDOEntity
  public int getCountryID() throws java.rmi.RemoteException;
  public void setCountry(com.idega.core.data.Country p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Country getCountry() throws java.rmi.RemoteException;
+ public String getPostalAddress() throws java.rmi.RemoteException;
 }

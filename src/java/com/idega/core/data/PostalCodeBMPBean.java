@@ -120,5 +120,16 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
   public Collection ejbFindAll()throws FinderException,RemoteException{
     return idoFindAllIDsBySQL();
   }
+  
+   public String getPostalAddress(){
+    	StringBuffer addr = new StringBuffer();
+    	String code = getPostalCode();
+    	if(code!=null)
+    		addr.append(code).append(" ");
+    	String name = this.getName();
+    	if(name !=null)
+    		addr.append(name);
+    	return addr.toString();
+    }
 
 }

@@ -174,5 +174,14 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
     	return addr.toString();
     }
     
+    public String getPostalAddress(){
+    	try{
+    		return getPostalCode().getPostalAddress();
+    	}catch(Exception ex){
+    	
+    	}
+    	return "";
+    }
+    
   
 }
