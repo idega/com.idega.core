@@ -1,11 +1,8 @@
 package com.idega.core.user.business;
 
 import java.lang.reflect.InvocationTargetException;
-import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
-
-import javax.ejb.FinderException;
 
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.contact.data.Email;

@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.ejb.FinderException;
-
 import com.idega.core.business.ICTreeNodeLeafComparator;
 import com.idega.core.data.ICTreeNode;
 

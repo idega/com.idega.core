@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.47 2004/02/13 18:07:36 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.48 2004/02/18 12:44:16 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -11,7 +11,6 @@ package com.idega.core.accesscontrol.business;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
