@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.3 2004/07/29 01:12:00 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.4 2004/07/30 12:23:03 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -242,6 +242,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	private void runStartClass()
 	{
+		// starting of default bundle starter
+		// call the default start first because this starter might register some classes that are used by 
+		// the other starters
+		// 
+		startDefaultBundleStarter();
 		// starting starter defined in bundle property
 		String starterClassName = this.getProperty(BUNDLE_STARTER_CLASS);
 		if (starterClassName != null)
@@ -256,25 +261,24 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				log(e);
 			}
 		}
-		// starting of default bundle starter
-		startBundleStarter();
+
 	}
 	
-	private void startBundleStarter() {
-		IWBundleStartable bundleStarter = getBundleStarter();
+	private void startDefaultBundleStarter() {
+		IWBundleStartable bundleStarter = getDefaultBundleStarter();
 		if (bundleStarter != null) {
 			bundleStarter.start(this);
 		}
 	}
 	
-	private void stopBundleStarter() {
-		IWBundleStartable bundleStarter = getBundleStarter();
+	private void stopDefaultBundleStarter() {
+		IWBundleStartable bundleStarter = getDefaultBundleStarter();
 		if (bundleStarter != null) {
 			bundleStarter.stop(this);
 		}
 	}
 	
-	private IWBundleStartable getBundleStarter() {
+	private IWBundleStartable getDefaultBundleStarter() {
 		StringBuffer buffer = new StringBuffer(getBundleName());
 		buffer.append(DOT);
 		buffer.append(IWBundleStartable.DEFAULT_STARTER_CLASS);
@@ -325,7 +329,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			starter.stop(this);
 		}
 		// stopping of default bundle starter
-		stopBundleStarter();
+		stopDefaultBundleStarter();
 	}
 	private void installComponents()
 	{
