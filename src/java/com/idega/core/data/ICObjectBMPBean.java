@@ -12,25 +12,14 @@ package com.idega.core.data;
 
 //import java.util.*;
 
-import java.sql.*;
-
-import com.idega.data.*;
-
-import com.idega.presentation.*;
-
-import com.idega.block.news.presentation.NewsReader;
-
-import com.idega.block.text.presentation.TextReader;
-
-import com.idega.block.login.presentation.Login;
-
-import com.idega.idegaweb.IWBundle;
-
-import com.idega.idegaweb.IWMainApplication;
-
+import java.sql.SQLException;
 import java.util.List;
-
 import java.util.Vector;
+
+import com.idega.data.EntityFinder;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.PresentationObject;
 
 
 

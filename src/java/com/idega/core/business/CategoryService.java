@@ -1,6 +1,5 @@
 package com.idega.core.business;
 
-import javax.ejb.*;
 
 public interface CategoryService extends com.idega.business.IBOService
 {

@@ -1,20 +1,19 @@
 package com.idega.core.accesscontrol.business;
 
-import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
-import com.idega.user.data.Group;
-import com.idega.core.accesscontrol.data.*;
-import com.idega.core.data.ICObject;
-import com.idega.core.business.ICJspHandler;
-import com.idega.presentation.Page;
-import com.idega.data.EntityFinder;
+import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Hashtable;
-import java.sql.SQLException;
 
+import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.business.ICJspHandler;
+import com.idega.core.data.ICObject;
+import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.user.data.Group;
 
 /**
  * Title:        IW Accesscontrol

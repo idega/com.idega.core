@@ -1,29 +1,26 @@
 package com.idega.graphics.generator;
 
-import java.util.Vector;
-import java.util.StringTokenizer;
-import java.util.Iterator;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.Image;
-import java.awt.Graphics2D;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.awt.geom.AffineTransform;
-import java.awt.FontMetrics;
-import java.awt.BasicStroke;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import com.idega.graphics.encoder.gif.Gif89Encoder;
 import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
-import com.idega.util.FileUtil;
-import com.idega.graphics.GIFEncoder;
-import com.idega.graphics.encoder.gif.Gif89Encoder;
 import com.idega.util.text.TextSoap;
-import java.awt.RenderingHints;
-import java.net.URLEncoder;
 
 
 /**

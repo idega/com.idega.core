@@ -1,8 +1,5 @@
 package com.idega.core.data;
 
-import com.idega.data.*;
-import com.idega.core.data.ICProtocol;
-
 import java.sql.SQLException;
 
 /**

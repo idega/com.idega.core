@@ -1,9 +1,9 @@
 package com.idega.data;
 
 import java.util.ListIterator;
+
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-import java.util.Iterator;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -1,26 +1,21 @@
 package com.idega.core.user.presentation;
 
-import com.idega.presentation.PresentationObjectContainer;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import com.idega.core.business.UserGroupBusiness;
+import com.idega.core.data.GenericGroup;
+import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.Page;
-import com.idega.core.user.data.User;
-import com.idega.data.EntityFinder;
-import java.util.List;
-import com.idega.core.user.presentation.UserPropertyWindow;
-import com.idega.core.data.GenericGroup;
-import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.CloseButton;
-import com.idega.core.business.UserGroupBusiness;
-import java.util.Iterator;
-import java.util.Vector;
-import com.idega.core.accesscontrol.business.AccessControl;
-
-import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.presentation.ui.Window;
 
 /**
  * Title:        User

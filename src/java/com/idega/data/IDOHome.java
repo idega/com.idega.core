@@ -1,8 +1,8 @@
 package com.idega.data;
 
-import javax.ejb.*;
-import java.util.List;
-import java.rmi.RemoteException;
+import javax.ejb.CreateException;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.FinderException;
 
 /**
  * Title:        idegaclasses

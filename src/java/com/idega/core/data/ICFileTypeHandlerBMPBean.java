@@ -1,9 +1,14 @@
 package com.idega.core.data;
 
-import com.idega.data.CacheableEntity;
-import java.lang.String;
 import java.sql.SQLException;
-import com.idega.block.media.business.*;
+
+import com.idega.block.media.business.ApplicationTypeHandler;
+import com.idega.block.media.business.AudioTypeHandler;
+import com.idega.block.media.business.DocumentTypeHandler;
+import com.idega.block.media.business.ImageTypeHandler;
+import com.idega.block.media.business.SystemTypeHandler;
+import com.idega.block.media.business.VectorTypeHandler;
+import com.idega.block.media.business.VideoTypeHandler;
 
 /**
  * Title:        idegaWeb Classes

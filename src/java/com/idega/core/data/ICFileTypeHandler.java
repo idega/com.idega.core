@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface ICFileTypeHandler extends com.idega.data.CacheableEntity
 {

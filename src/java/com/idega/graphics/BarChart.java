@@ -1,5 +1,5 @@
 /*
- * $Id: BarChart.java,v 1.4 2002/11/27 19:15:29 tryggvil Exp $
+ * $Id: BarChart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,19 +9,17 @@
  */
 package com.idega.graphics;
 
-import java.util.Vector;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import com.idega.graphics.GIFEncoder;
-import java.io.OutputStream;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.awt.geom.AffineTransform;
-import java.awt.FontMetrics;
-import java.util.Date;
-import java.util.Calendar;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *

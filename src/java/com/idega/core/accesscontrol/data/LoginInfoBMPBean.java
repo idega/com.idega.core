@@ -1,11 +1,10 @@
 package com.idega.core.accesscontrol.data;
 
-import com.idega.data.*;
-import com.idega.util.IWCalendar;
-import com.idega.util.IWTimestamp;
-import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.SQLException;
+
 import com.idega.util.EncryptionType;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:        User

@@ -1,6 +1,5 @@
 package com.idega.data.genericentity;
 
-import javax.ejb.*;
 
 public interface Group extends com.idega.data.IDOLegacyEntity
 {

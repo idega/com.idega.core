@@ -2,12 +2,6 @@ package com.idega.core.data;
 
 
 
-import com.idega.data.IDOLegacyEntity;
-
-import java.lang.String;
-
-import java.lang.Integer;
-
 import java.sql.SQLException;
 
 

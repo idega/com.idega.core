@@ -1,13 +1,10 @@
 package com.idega.core.localisation.presentation;
 
-import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.core.data.ICLocale;
-import com.idega.presentation.ui.DropdownMenu;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Enumeration;
 import java.util.Map;
+
+import com.idega.core.data.ICLocale;
+import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.presentation.ui.DropdownMenu;
 
 /**
  * Title:

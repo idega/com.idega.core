@@ -1,9 +1,7 @@
 package com.idega.core.user.presentation;
 
-import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.TabbedPropertyPanel;
-import com.idega.presentation.PresentationObject;
 
 /**
  * Title:        User

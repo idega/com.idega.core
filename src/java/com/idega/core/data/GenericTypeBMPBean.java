@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import com.idega.data.*;
 import java.sql.SQLException;
 
 

@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface ICFileCategory extends com.idega.data.IDOLegacyEntity
 {

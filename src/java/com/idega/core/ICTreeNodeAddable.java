@@ -1,6 +1,5 @@
 package com.idega.core;
 
-import java.util.Iterator;
 
 /**
  * An abstract data model for implementing Tree structures.

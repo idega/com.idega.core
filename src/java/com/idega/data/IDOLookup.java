@@ -1,8 +1,7 @@
 package com.idega.data;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.rmi.RemoteException;
+
 import javax.ejb.EJBException;
 
 import com.idega.business.IBOLookup;

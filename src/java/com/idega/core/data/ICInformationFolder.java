@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface ICInformationFolder extends com.idega.data.CacheableEntity,com.idega.core.business.InformationFolder
 {

@@ -1,12 +1,10 @@
 package com.idega.core.accesscontrol.business;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
 import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
-import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 /**

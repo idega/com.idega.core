@@ -1,8 +1,6 @@
 package com.idega.core.data;
 
 import java.sql.SQLException;
-import com.idega.builder.data.IBPage;
-import com.idega.core.data.ICNetwork;
 
 /**
  * Title:        IW Core

@@ -1,18 +1,15 @@
 package com.idega.graphics;
 
-import java.util.Vector;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import com.idega.graphics.GIFEncoder;
-import java.io.OutputStream;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.awt.geom.AffineTransform;
-import java.awt.FontMetrics;
-import java.util.Date;
+import java.io.OutputStream;
 import java.util.Calendar;
-import java.text.DecimalFormat;
+import java.util.Date;
 
 /**
  * Title:

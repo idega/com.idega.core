@@ -1,8 +1,15 @@
 package com.idega.data;
 
-import javax.ejb.*;
-import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBMetaData;
+import javax.ejb.FinderException;
+import javax.ejb.Handle;
+import javax.ejb.HomeHandle;
 
 /**
  * Title:        idegaclasses

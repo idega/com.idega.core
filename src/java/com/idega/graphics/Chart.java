@@ -1,5 +1,5 @@
 /*
- * $Id: Chart.java,v 1.4 2002/11/27 19:15:29 tryggvil Exp $
+ * $Id: Chart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,7 +9,6 @@
  */
 package com.idega.graphics;
 
-import java.util.Vector;
 import java.awt.Color;
 
 /**

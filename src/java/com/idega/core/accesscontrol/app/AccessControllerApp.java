@@ -1,49 +1,39 @@
 package com.idega.core.accesscontrol.app;
 
-import com.idega.presentation.app.IWApplication;
-import com.idega.presentation.app.IWApplicationComponent;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.FrameSet;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Table;
-import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.ui.SelectionDoubleBox;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.HiddenInput;
-import com.idega.presentation.ui.SelectionBox;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.Image;
-import com.idega.presentation.ui.CloseButton;
-
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-
-import com.idega.core.data.ICObject;
-import com.idega.data.EntityFinder;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.IBPropertyHandler;
-import com.idega.presentation.IWContext;
-
-import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.business.ICObjectBusiness;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
-
-import com.idega.idegaweb.IWProperty;
-import com.idega.idegaweb.IWPropertyList;
-import com.idega.idegaweb.IWPropertyListIterator;
+import com.idega.core.data.ICObject;
+import com.idega.data.EntityFinder;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
-
-import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Hashtable;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.FrameSet;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.app.IWApplication;
+import com.idega.presentation.app.IWApplicationComponent;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.presentation.ui.SubmitButton;
 
 
 /**

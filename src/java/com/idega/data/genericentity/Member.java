@@ -1,6 +1,5 @@
 package com.idega.data.genericentity;
 
-import javax.ejb.*;
 
 public interface Member extends com.idega.data.IDOLegacyEntity,java.lang.Comparable
 {

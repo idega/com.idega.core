@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface Commune extends com.idega.data.IDOEntity
 {

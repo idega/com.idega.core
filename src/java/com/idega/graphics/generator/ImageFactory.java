@@ -11,19 +11,18 @@ package com.idega.graphics.generator;
  * @version 1.0
  */
 
-import com.idega.idegaweb.IWMainApplication;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.Image;
 import com.idega.util.FileUtil;
-import com.idega.util.text.TextSoap;
-import java.awt.Font;
-import java.util.Locale;
-import java.io.FileInputStream;
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
 
 public class ImageFactory {
 	private static IWMainApplication iwma;

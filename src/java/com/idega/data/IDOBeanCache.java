@@ -1,9 +1,8 @@
 package com.idega.data;
 
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collection;
+import java.util.Map;
 
 import com.idega.util.caching.CacheMap;
 

@@ -1,16 +1,15 @@
 package com.idega.data;
 
-import javax.ejb.EntityContext;
-import javax.ejb.EJBObject;
+import java.rmi.RemoteException;
 import java.security.Identity;
 import java.security.Principal;
-import javax.ejb.EJBHome;
 import java.util.Properties;
-import javax.transaction.UserTransaction;
-import java.rmi.RemoteException;
 
+import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBObject;
+import javax.ejb.EntityContext;
+import javax.transaction.UserTransaction;
 
 
 /**

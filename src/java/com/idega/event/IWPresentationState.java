@@ -1,10 +1,9 @@
 package com.idega.event;
 
+import javax.swing.event.ChangeListener;
+
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
-
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -1,19 +1,27 @@
 package com.idega.event;
 
-import com.idega.presentation.Page;
-import com.idega.business.*;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
 
-import java.rmi.RemoteException;
-import com.idega.presentation.StatefullPresentation;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOSessionBean;
+import com.idega.business.IWFrameBusiness;
 import com.idega.core.data.ICObject;
-import com.idega.data.IDOLookup;
-import java.util.*;
-
-import com.idega.idegaweb.*;
-import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.core.data.ICObjectInstance;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
+import com.idega.presentation.Page;
+import com.idega.presentation.StatefullPresentation;
 
 /**
  * <p>Title: idegaWeb</p>

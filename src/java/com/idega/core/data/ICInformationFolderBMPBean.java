@@ -2,17 +2,11 @@ package com.idega.core.data;
 
 
 
-import java.sql.*;
-
-import com.idega.data.CacheableEntity;
-
-import com.idega.util.IWTimestamp;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import com.idega.core.user.data.User;
-
-import com.idega.core.user.business.UserBusiness;
-
-import com.idega.core.business.InformationFolder;
+import com.idega.util.IWTimestamp;
 
 
 

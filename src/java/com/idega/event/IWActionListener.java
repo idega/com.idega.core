@@ -1,6 +1,6 @@
 package com.idega.event;
-import javax.swing.event.ChangeEvent;
 import java.util.EventListener;
+
 import com.idega.idegaweb.IWException;
 
 /**

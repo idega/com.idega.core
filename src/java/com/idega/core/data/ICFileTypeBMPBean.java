@@ -1,9 +1,7 @@
 package com.idega.core.data;
 
-import com.idega.data.CacheableEntity;
-import java.lang.String;
-import java.lang.Integer;
 import java.sql.SQLException;
+
 import com.idega.idegaweb.IWMainApplication;
 
 

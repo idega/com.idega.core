@@ -1,24 +1,16 @@
 package com.idega.core.user.presentation;
 
-import com.idega.presentation.ui.IFrame;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.Page;
-import com.idega.presentation.Table;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.SelectionDoubleBox;
-import com.idega.presentation.ui.SelectionBox;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Form;
-import com.idega.core.user.business.UserBusiness;
+import java.util.Iterator;
+import java.util.List;
+
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.data.User;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Enumeration;
-import com.idega.util.Disposable;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.IFrame;
 
 /**
  * Title:        User

@@ -1,16 +1,18 @@
 package com.idega.event;
 
 import java.rmi.RemoteException;
-import javax.ejb.FinderException;
-import com.idega.data.IDOLookup;
-import com.idega.core.data.ICObjectInstance;
-import com.idega.idegaweb.*;
-import com.idega.presentation.*;
-import com.idega.presentation.ui.Parameter;
 import java.util.EventObject;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import com.idega.core.data.ICObjectInstance;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.Parameter;
 
 /**
  * <p>Title: idegaWeb</p>

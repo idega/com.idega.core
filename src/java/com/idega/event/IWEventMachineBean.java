@@ -1,15 +1,18 @@
 package com.idega.event;
 
-import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.event.EventListenerList;
+
+import com.idega.business.IBOSessionBean;
+import com.idega.core.data.ICObjectInstance;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWLocation;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
-import com.idega.servlet.IWPresentationServlet;
-import com.idega.idegaweb.IWLocation;
-import com.idega.core.data.ICObjectInstance;
-import javax.swing.event.EventListenerList;
-import com.idega.business.IBOSessionBean;
 
 /**
  * <p>Title: idegaWeb</p>

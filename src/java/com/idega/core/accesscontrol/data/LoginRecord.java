@@ -1,6 +1,5 @@
 package com.idega.core.accesscontrol.data;
 
-import javax.ejb.*;
 
 public interface LoginRecord extends com.idega.data.IDOEntity
 {

@@ -9,7 +9,6 @@ package com.idega.data;
  */
 import java.util.Collection;
 import java.util.Iterator;
-import java.rmi.RemoteException;
 public class IDOUtil {
 	private static IDOUtil instance;
 	private IDOUtil() {

@@ -1,6 +1,5 @@
 package com.idega.core.accesscontrol.data;
 
-import javax.ejb.*;
 
 public interface ICObjectPermission extends com.idega.data.IDOLegacyEntity
 {

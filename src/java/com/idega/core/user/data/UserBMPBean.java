@@ -1,12 +1,9 @@
 package com.idega.core.user.data;
 
-import com.idega.data.*;
-import com.idega.user.data.User;
-import com.idega.core.data.*;
-import com.idega.core.accesscontrol.data.PermissionGroup;
-import java.util.List;
 import java.sql.SQLException;
-import java.sql.Date;
+
+import com.idega.data.IDOStoreException;
+import com.idega.user.data.User;
 
 
 /**

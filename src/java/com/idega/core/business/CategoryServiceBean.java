@@ -16,7 +16,6 @@ import com.idega.core.data.ICCategoryTranslation;
 import com.idega.core.data.ICCategoryTranslationHome;
 import com.idega.core.data.ICObjectInstance;
 import com.idega.core.data.ICObjectInstanceHome;
-import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOLookup;
 import com.idega.util.IWTimestamp;
 

@@ -1,27 +1,27 @@
 package com.idega.core.user.presentation;
 
-import com.idega.presentation.ui.IFrame;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+
+import com.idega.core.data.GenericGroup;
+import com.idega.core.user.business.UserBusiness;
+import com.idega.core.user.data.User;
+import com.idega.event.IWLinkEvent;
+import com.idega.event.IWLinkListener;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.SelectionDoubleBox;
-import com.idega.presentation.ui.SelectionBox;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.DropdownMenu;
-import com.idega.core.user.business.UserBusiness;
-import com.idega.core.data.GenericGroup;
-import com.idega.core.user.data.User;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Enumeration;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.IFrame;
+import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Window;
 import com.idega.util.Disposable;
-import java.sql.SQLException;
-import com.idega.event.IWLinkListener;
-import com.idega.event.IWLinkEvent;
 
 /**
  * Title:        User

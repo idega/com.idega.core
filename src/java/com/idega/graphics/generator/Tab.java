@@ -9,21 +9,10 @@ package com.idega.graphics.generator;
  * @version 1.0
  */
 
-import java.util.Vector;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.Image;
-import java.awt.Graphics2D;
-import com.idega.graphics.GIFEncoder;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.awt.geom.AffineTransform;
-import java.awt.FontMetrics;
-import java.awt.BasicStroke;
 import java.awt.Font;
-import com.idega.util.FileUtil;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
 public class Tab extends Button {

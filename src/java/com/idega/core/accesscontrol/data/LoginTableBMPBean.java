@@ -10,23 +10,10 @@ package com.idega.core.accesscontrol.data;
 
 
 
-import java.sql.*;
-
-import com.idega.data.*;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import com.idega.core.user.data.User;
-
-import com.idega.core.accesscontrol.business.LoginDBHandler;
-
-import com.idega.core.accesscontrol.business.AccessControl;
-
-import com.idega.core.accesscontrol.data.PermissionGroup;
-
-import com.idega.core.data.GenericGroup;
-
-import java.util.List;
-
-import com.idega.util.EncryptionType;
 
 
 

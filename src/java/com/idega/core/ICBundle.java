@@ -14,13 +14,11 @@ package com.idega.core;
 
 
 
-import java.util.*;
-
-import com.idega.presentation.Image;
+import java.util.Hashtable;
+import java.util.Locale;
 
 import com.idega.presentation.IWContext;
-
-import java.io.*;
+import com.idega.presentation.Image;
 
 
 

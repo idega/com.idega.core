@@ -1,22 +1,20 @@
 package com.idega.core.localisation.business;
 
-import com.idega.data.EntityFinder;
-import com.idega.data.IDOFinderException;
-import com.idega.data.IDOLookup;
+import java.sql.SQLException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
 import com.idega.core.data.ICLocale;
 import com.idega.core.data.ICLocaleHome;
-import com.idega.util.LocaleUtil;
-import com.idega.util.IWTimestamp;
+import com.idega.data.EntityFinder;
+import com.idega.data.IDOFinderException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
-
-import java.util.List;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Locale;
-import java.sql.SQLException;
-import java.util.Iterator;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:

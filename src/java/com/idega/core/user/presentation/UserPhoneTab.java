@@ -1,20 +1,16 @@
 package com.idega.core.user.presentation;
 
-import com.idega.presentation.Table;
-import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.text.Text;
-import com.idega.core.user.business.UserBusiness;
-//import com.idega.block.staff.data.StaffInfo;
-import com.idega.util.IWTimestamp;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import com.idega.core.user.presentation.UserTab;
+import java.sql.SQLException;
+
+import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
 import com.idega.core.data.PhoneType;
-import com.idega.core.data.Email;
-import java.sql.SQLException;
+import com.idega.core.user.business.UserBusiness;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.TextInput;
 
 /**
  * Title:        User

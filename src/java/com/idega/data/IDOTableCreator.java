@@ -1,22 +1,18 @@
 package com.idega.data;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.sql.Time;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.idega.util.database.ConnectionBroker;
-import java.io.InputStream;
+import java.util.Vector;
+
 import javax.transaction.TransactionManager;
+
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
 

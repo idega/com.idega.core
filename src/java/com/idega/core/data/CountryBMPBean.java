@@ -1,12 +1,13 @@
 package com.idega.core.data;
 
-import com.idega.data.IDOLookup;
-import java.util.Collection;
 import java.rmi.RemoteException;
-import javax.ejb.FinderException;
-import com.idega.data.IDOLegacyEntity;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Locale;
+
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOLookup;
 
 /**
  * Title:        IW Core

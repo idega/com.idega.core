@@ -12,12 +12,10 @@ package com.idega.core.data;
 
 //import java.util.*;
 
-import java.sql.*;
-
-import com.idega.data.*;
-import com.idega.presentation.*;
+import java.sql.SQLException;
 
 import com.idega.core.business.ICObjectBusiness;
+import com.idega.presentation.PresentationObject;
 
 
 /**

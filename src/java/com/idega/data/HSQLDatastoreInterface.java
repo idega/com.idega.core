@@ -12,12 +12,9 @@ package com.idega.data;
 
 
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.io.BufferedInputStream;
-import java.io.OutputStream;
+import java.sql.Statement;
 
 
 /**

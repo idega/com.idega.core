@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface Province extends com.idega.data.IDOEntity
 {

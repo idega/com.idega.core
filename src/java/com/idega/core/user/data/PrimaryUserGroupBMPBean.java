@@ -1,6 +1,5 @@
 package com.idega.core.user.data;
 
-import com.idega.core.data.GenericGroup;
 import java.sql.SQLException;
 
 /**

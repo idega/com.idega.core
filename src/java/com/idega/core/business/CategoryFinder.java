@@ -1,17 +1,23 @@
 package com.idega.core.business;
 import java.rmi.RemoteException;
-import javax.ejb.FinderException;
-import com.idega.core.data.*;
-import com.idega.data.*;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
+
+import javax.ejb.FinderException;
+
+import com.idega.core.data.ICCategory;
+import com.idega.core.data.ICCategoryHome;
+import com.idega.core.data.ICObjectInstance;
+import com.idega.data.CategoryEntity;
+import com.idega.data.EntityControl;
+import com.idega.data.EntityFinder;
+import com.idega.data.IDOException;
+import com.idega.data.IDOFinderException;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.data.IDOLookup;
 /**
  *  Title: Description: Copyright: Copyright (c) 2000-2001 idega.is All Rights
  *  Reserved Company: idega

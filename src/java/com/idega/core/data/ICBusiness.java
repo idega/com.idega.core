@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface ICBusiness extends com.idega.data.TreeableEntity
 {

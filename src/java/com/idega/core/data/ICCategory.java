@@ -2,7 +2,6 @@ package com.idega.core.data;
 
 import java.rmi.RemoteException;
 import java.util.Locale;
-import javax.ejb.*;
 
 public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core.business.Category
 {

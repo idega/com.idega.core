@@ -1,11 +1,14 @@
 package com.idega.core.data;
 
-import java.sql.SQLException;
-import java.lang.StringBuffer;
 import java.util.List;
-import com.idega.core.business.Category;
+
 import javax.ejb.FinderException;
-import com.idega.data.*;
+
+import com.idega.core.business.Category;
+import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOException;
+import com.idega.data.SimpleQuerier;
 
 
 /**

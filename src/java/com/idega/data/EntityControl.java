@@ -3,14 +3,13 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 package com.idega.data;
-import java.sql.SQLException;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
+
 import com.idega.util.StringHandler;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.util.datastructures.HashtableMultivalued;

@@ -1,25 +1,24 @@
 package com.idega.core.user.business;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import com.idega.core.user.data.*;
-import com.idega.core.accesscontrol.business.LoginDBHandler;
-import com.idega.core.data.*;
-import com.idega.util.IWTimestamp;
+import java.sql.Statement;
 import java.util.List;
+
+import com.idega.block.staff.business.StaffBusiness;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.business.UserGroupBusiness;
+import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.GenericGroup;
+import com.idega.core.data.Phone;
+import com.idega.core.user.data.Gender;
+import com.idega.core.user.data.User;
+import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.data.EntityFinder;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Iterator;
 import com.idega.data.IDOLegacyEntity;
-import com.idega.core.business.UserGroupBusiness;
 import com.idega.presentation.IWContext;
-import com.idega.block.staff.business.StaffBusiness;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:        User

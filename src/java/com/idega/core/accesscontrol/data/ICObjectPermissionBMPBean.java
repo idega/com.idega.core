@@ -2,9 +2,7 @@ package com.idega.core.accesscontrol.data;
 
 
 
-import com.idega.data.*;
-
-import java.sql.*;
+import java.sql.SQLException;
 
 import com.idega.core.data.ICObject;
 

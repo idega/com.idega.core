@@ -1,6 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
 
 public interface Email extends com.idega.data.IDOLegacyEntity,com.idega.core.business.EmailDataView
 {

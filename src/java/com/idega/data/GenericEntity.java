@@ -9,30 +9,29 @@
 package com.idega.data;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
-import javax.ejb.EJBHome; 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.idegaweb.IWMainApplicationSettings;
-import com.idega.util.StringHandler;
 import com.idega.util.database.ConnectionBroker;
 /**
  * A class to serve as a base implementation for objects mapped to persistent data in the IDO Framework.

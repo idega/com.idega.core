@@ -1,6 +1,5 @@
 package com.idega.event;
 
-import javax.ejb.*;
 
 public interface IWEventMachine extends com.idega.business.IBOSession
 {

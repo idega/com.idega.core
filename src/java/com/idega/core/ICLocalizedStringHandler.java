@@ -12,13 +12,8 @@ package com.idega.core;
 
 
 
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.Image;
-
-import java.io.*;
-
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Locale;
 
 
 

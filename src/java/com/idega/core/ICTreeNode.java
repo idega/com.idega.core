@@ -3,8 +3,6 @@
 *Copyright 2001 idega.is All Rights Reserved.
 */
 package com.idega.core;
-import com.idega.presentation.IWContext;
-
 import java.util.Iterator;
 
 /**

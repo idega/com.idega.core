@@ -1,6 +1,5 @@
 package com.idega.data;
 
-import javax.ejb.*;
 
 public interface TreeableEntity extends com.idega.data.IDOLegacyEntity,com.idega.core.ICTreeNode
 {

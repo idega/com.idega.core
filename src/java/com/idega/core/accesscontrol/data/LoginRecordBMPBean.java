@@ -1,9 +1,9 @@
 package com.idega.core.accesscontrol.data;
 
-import com.idega.data.IDOLegacyEntity;
-import java.sql.Timestamp;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
 
 /**

@@ -2,17 +2,14 @@ package com.idega.core.data;
 
 
 
-import com.idega.core.business.EmailDataView;
-
-import com.idega.data.*;
-import com.idega.user.data.UserBMPBean;
-
-import java.sql.SQLException;
-import javax.ejb.FinderException;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.Collection;
 
+import javax.ejb.FinderException;
+
 import com.idega.core.user.data.User;
+import com.idega.user.data.UserBMPBean;
 
 
 

@@ -4,7 +4,6 @@
 */
 package com.idega.data;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -13,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import oracle.jdbc.OracleResultSet; 
+import oracle.jdbc.OracleResultSet;
 import oracle.sql.CLOB;
 
 

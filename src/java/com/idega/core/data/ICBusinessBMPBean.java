@@ -1,7 +1,6 @@
 package com.idega.core.data;
 
-import java.sql.*;
-import com.idega.data.TreeableEntity;
+import java.sql.SQLException;
 
 
 public class ICBusinessBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.data.ICBusiness {

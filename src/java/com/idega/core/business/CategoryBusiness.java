@@ -2,28 +2,21 @@ package com.idega.core.business;
 
 
 
-import com.idega.data.IDOLookup;
-import com.idega.core.data.*;
-
 import java.rmi.RemoteException;
-import java.sql.*;
-
-
-
-
-import com.idega.util.IWTimestamp;
-
-
-
-import java.util.List;
-
-import java.util.Vector;
-
+import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import com.idega.core.data.ICCategory;
+import com.idega.core.data.ICCategoryHome;
+import com.idega.core.data.ICObjectInstance;
+import com.idega.core.data.ICObjectInstanceHome;
+import com.idega.data.IDOLookup;
+import com.idega.util.IWTimestamp;
 
 
 

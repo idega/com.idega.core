@@ -2,14 +2,13 @@ package com.idega.core.user.presentation;
 
 
 
-import com.idega.presentation.*;
-import com.idega.presentation.ui.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.app.*;
-import com.idega.idegaweb.IWConstants;
-import com.idega.core.data.GenericGroup;
-import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.idegaweb.IWBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
+import com.idega.presentation.ui.IFrame;
 
 
 /**

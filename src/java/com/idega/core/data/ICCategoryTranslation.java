@@ -1,7 +1,5 @@
 package com.idega.core.data;
 
-import javax.ejb.*;
-
 import com.idega.data.CategoryEntity;
 
 public interface ICCategoryTranslation extends CategoryEntity
