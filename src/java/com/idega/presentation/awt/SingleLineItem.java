@@ -119,7 +119,7 @@ public class SingleLineItem extends Container {
       gbc.gridx = nextXpos;
       gbc.gridy = nextYpos; //Set at position 0,0
       gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
-      //gbc.anchor = gbc.NORTHWEST;
+      gbc.anchor = gbc.WEST;
       /*
       gbc.fill = GridBagConstraints.NONE;
       gbc.weightx = gbc.weighty = 1.0; //we want component to get all extra space
@@ -151,12 +151,24 @@ public class SingleLineItem extends Container {
     public void mousePressed(MouseEvent e) {
       if( e.getClickCount() > 1){
         isSelected = true;
+
         setBackground(Color.blue);
-        repaint();
+        setForeground(Color.black);
+
         openWindow();
+
+        repaint();
       }
       else{
         isSelected = !isSelected;
+        if( isSelected ) {
+          setBackground(Color.blue);
+          setForeground(Color.white);
+        }
+        else{
+          setBackground(bgColor);
+          setForeground(Color.black);
+        }
         repaint();
       }
 
