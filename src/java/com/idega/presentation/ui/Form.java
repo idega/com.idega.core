@@ -579,11 +579,12 @@ public class Form
 
 	public void print(IWContext iwc) throws Exception {
 		if (getScript().doesFunctionExist("checkSubmit")) {
-			if (printLoadingLayer)
+			if (printLoadingLayer) {
 				getScript().addToFunction("checkSubmit", "showLoadingLayer();");
+			}
 			getScript().addToFunction("checkSubmit", "return true;");
 		}
-		else {
+		else if (printLoadingLayer) {
 			this.setOnSubmit("showLoadingLayer()");
 		}
 		// if ( doPrint(iwc) ){
@@ -834,7 +835,7 @@ public class Form
 			this.setAction(getIWApplicationContext().getIWMainApplication().getWindowOpenerURI(windowClass));
 		}
 		else {
-			addParameter(Page.IW_FRAME_CLASS_PARAMETER, getIWApplicationContext().getIWMainApplication().getEncryptedClassName(windowClass));
+			addParameter(Page.IW_FRAME_CLASS_PARAMETER, IWMainApplication.getEncryptedClassName(windowClass));
 		}
 		setWindow(Window.getStaticInstance(windowClass));
 	}
