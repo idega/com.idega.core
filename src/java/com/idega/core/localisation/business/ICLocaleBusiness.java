@@ -90,16 +90,13 @@ public class ICLocaleBusiness {
       return L;
   }
 
+  /**
+   * @return a list of ICLocales that are in use
+   */
   public static List listOfLocales(){
-    return listOfLocalesInUse();
-    /*
-    try {
-      return EntityFinder.findAll(((com.idega.core.data.ICLocaleHome)com.idega.data.IDOLookup.getHomeLegacy(ICLocale.class)).createLegacy());
-    }
-    catch (SQLException ex) {
-      return null;
-    }
-    */
+    if(usedIcLocales ==null)
+        reload();
+      return usedIcLocales;
   }
 
   public static List listOfAllLocales(){
@@ -107,15 +104,6 @@ public class ICLocaleBusiness {
       reload();
     return allIcLocales;
   }
-
-
-
-  public static List listOfLocalesInUse(){
-    if(usedIcLocales ==null)
-      reload();
-    return usedIcLocales;
-  }
-
 
   public static List listOfLocales(boolean inUse){
     if(inUse){
@@ -130,7 +118,10 @@ public class ICLocaleBusiness {
     }
   }
 
-  public static List listOfLocalesJAVA(){
+  /**
+   * @return a list of Locale object of the locales in use
+   */
+  public static List getListOfLocalesJAVA(){
     List list = listOfLocales();
     List localeList = new Vector();
 
@@ -146,7 +137,10 @@ public class ICLocaleBusiness {
     return localeList;
   }
   
-	public static List listOfAllLocalesJAVA(){
+  /**
+   * @return a list of Locale object of all locales
+   */
+	public static List getListOfAllLocalesJAVA(){
 		List list = listOfAllLocales();
 		List localeList = new Vector();
 
@@ -367,7 +361,7 @@ public class ICLocaleBusiness {
  * e.g. "en_US" for English/US
  */
   public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma,String name){
-    List locales = ICLocaleBusiness.listOfLocalesJAVA();
+    List locales = ICLocaleBusiness.getListOfLocalesJAVA();
     DropdownMenu down = new DropdownMenu(name);
     Iterator iter = locales.iterator();
     while (iter.hasNext()) {
