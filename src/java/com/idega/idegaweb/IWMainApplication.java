@@ -78,6 +78,14 @@ public class IWMainApplication{//implements ServletContext{
     return theReturn;
   }
 
+  public String getBuildNumber(){
+    String theReturn = this.getSettings().getProperty("iw_build_num");
+    if(theReturn == null){
+      theReturn = "220b";
+    }
+    return theReturn;
+  }
+
   private void load(){
     lw=new LogWriter(this.getApplicationRealPath(),LogWriter.INFO);
     this.setPropertiesRealPath();
