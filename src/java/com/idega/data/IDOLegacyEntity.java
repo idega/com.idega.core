@@ -11,6 +11,12 @@ package com.idega.data;
 
 public interface IDOLegacyEntity extends IDOEntity{
 
+ static int STATE_NEW = 0;
+ static int STATE_IN_SYNCH_WITH_DATASTORE = 1;
+ static int STATE_NOT_IN_SYNCH_WITH_DATASTORE = 2;
+ static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE = 3;
+ static int STATE_DELETED = 4;
+
  public void insert()throws java.sql.SQLException;
  public char getCharColumnValue(java.lang.String p0);
  public void setRelationShipClassName(java.lang.String p0,java.lang.String p1);
@@ -147,5 +153,7 @@ public interface IDOLegacyEntity extends IDOEntity{
  public boolean columnsHaveChanged();
  public void setToInsertStartData(boolean ifTrue);
  public boolean getIfInsertStartData();
-
+ public String getTableName();
+ public void setEntityState(int state);
+ public java.util.Vector getAttributes();
 }

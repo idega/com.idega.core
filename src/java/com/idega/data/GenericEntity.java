@@ -64,13 +64,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private boolean insertStartData=true;
 
 
-
+/*
   protected static int STATE_NEW = 0;
   protected static int STATE_IN_SYNCH_WITH_DATASTORE = 1;
   protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE = 2;
   protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE = 3;
   protected static int STATE_DELETED = 4;
-
+*/
   private int _state = STATE_NEW;
   private EntityContext _entityContext;
   private EJBHome _ejbHome;
@@ -152,7 +152,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   }
 
-	protected String getTableName() {
+	public String getTableName() {
 		return getEntityName();
 	}
 
@@ -163,7 +163,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	public abstract void initializeAttributes();
 
-  protected Vector getAttributes() {
+  public Vector getAttributes() {
     //ties the attribute vector to the subclass of GenericEntity because
     //the theAttributes variable is static.
     Vector theReturn = (Vector)_theAttributes.get(this.getClass().getName());
@@ -2393,7 +2393,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	return _state;
       }
 
-      protected void setEntityState(int state){
+      public void setEntityState(int state){
 	_state=state;
       }
 
