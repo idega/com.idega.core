@@ -38,10 +38,10 @@ public class IWEventHandler extends IWPresentationServlet {
        if(this.isChildOfOtherPage()){
          Page parent = this.getParentPage();
          parent.setAllMargins(0);
-         parent.setBackgroundColor("#386CB7");
+         //parent.setBackgroundColor("#386CB7");
        } else {
          setAllMargins(0);
-         setBackgroundColor("#386CB7");
+         //setBackgroundColor("#386CB7");
        }
      }
 
