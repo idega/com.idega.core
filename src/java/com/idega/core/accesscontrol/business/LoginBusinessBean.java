@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
@@ -584,8 +585,8 @@ public class LoginBusinessBean implements IWEventListener {
 		try {
 			com.idega.user.data.User user = getUserBusiness(iwc).getUser(personalID);
 			returner = logInAsAnotherUser(iwc, user);
-		} catch (EJBException e) {
-			e.printStackTrace();
+		} catch (FinderException e) {
+			//e.printStackTrace();
 			returner = false;
 		} catch (RemoteException e) {
 			e.printStackTrace();
