@@ -34,6 +34,7 @@ public class BooleanInput extends DropdownMenu{
     addMenuElement("Y");
   }
 
+
   public void main(IWContext iwc)throws Exception{
     super.main(iwc);
 
@@ -53,11 +54,11 @@ public class BooleanInput extends DropdownMenu{
 public void setSelected(boolean selected){
   if(selected){
     this.setSelectedElement("Y");
-    System.out.println("Setting selected=true for BooleanInput");
+    //System.out.println("Setting selected=true for BooleanInput");
   }
   else{
     this.setSelectedElement("N");
-    System.out.println("Setting selected=false for BooleanInput");
+    //System.out.println("Setting selected=false for BooleanInput");
   }
 }
 
