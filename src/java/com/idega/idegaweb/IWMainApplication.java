@@ -50,7 +50,7 @@ public class IWMainApplication{//implements ServletContext{
   public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
   public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
   public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
-
+  public final static String CORE_DEFAULT_FONT = "default.ttf";
 
   public final static String IW_ACCESSCONTROL_TYPE_PROPERTY="iw_accesscontrol_type";
   public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
