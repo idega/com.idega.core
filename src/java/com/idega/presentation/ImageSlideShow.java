@@ -280,7 +280,7 @@ public class ImageSlideShow extends Block
 	}
 	private String getCallingScript(String name, int step)
 	{
-		return "javascript: slide_" + name + "(" + step + ")";
+		return "javascript: slide_" + name + "('" + step + "')";
 	}
 	private Script getDelayScript(String name)
 	{
@@ -295,7 +295,7 @@ public class ImageSlideShow extends Block
 		String sCurrent = "Current_" + name;
 		String sPicArray = "Pics_" + name;
 		String sAddPic = "addPic" + name;
-		String sCheck = "slide_" + name;
+		String sSlide = "slide_" + name;
 		StringBuffer addPics = new StringBuffer();
 		//addPics.append("var ").append(sDelay).append(" = 0;\n");
 		addPics.append("var ").append(sCurrent).append(" = ").append(delay).append(";\n");
@@ -313,7 +313,7 @@ public class ImageSlideShow extends Block
 			}
 		}
 		addPics.append("\n");
-		addPics.append("function ").append(sCheck).append("(val) {\n\t");
+		addPics.append("function ").append(sSlide).append("(val) {\n\t");
 		addPics.append(sCurrent).append(" = Math.abs((").append(sCurrent).append("+parseInt(val))%");
 		addPics.append(sPicArray).append(".length);\n\t");
 		addPics.append("document.").append(name).append(".src = ");
