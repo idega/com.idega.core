@@ -670,6 +670,44 @@ public class TextSoap {
 		return resultBuff.toString();
 	}
 
+	public static String removeWhiteSpaceFromBeginningOfString(String string) {
+	    if (string == null || string.equals("")) 
+	        return "";
+	    
+	    StringBuffer stringBuff = new StringBuffer(string);
+	    StringBuffer resultBuff = new StringBuffer();
+		for (int i = 0; i < stringBuff.length()-1; i++) {
+		    char c = stringBuff.charAt(i);
+		    if (!(Character.isWhitespace(c) || Character.isSpaceChar(c) )) {
+		        resultBuff = new StringBuffer(stringBuff.substring(i,stringBuff.length()));
+		        break;
+		    } 
+		}
+		return resultBuff.toString();
+	}
+
+	public static String removeWhiteSpaceFromEndOfString(String string) {
+	    if (string == null || string.equals("")) 
+	        return "";
+	    StringBuffer stringBuff = new StringBuffer(string);
+	    StringBuffer resultBuff = new StringBuffer();
+		for (int i = stringBuff.length()-1; i > -1; i--) {
+		    char c = stringBuff.charAt(i);
+		    if (!(Character.isWhitespace(c) || Character.isSpaceChar(c) )) {
+		        resultBuff = new StringBuffer(stringBuff.substring(0,i+1));
+		        break;
+		    } 
+		}
+		return resultBuff.toString();
+	}
+
+	public static String removeWhiteSpaceFromBeginningAndEndOfString(String string) {
+		String returnString = string;
+		returnString = removeWhiteSpaceFromBeginningOfString(returnString);
+		returnString = removeWhiteSpaceFromEndOfString(returnString);
+		return returnString;
+	}
+
 	/**
 	 *  Description of the Method
 	 *
