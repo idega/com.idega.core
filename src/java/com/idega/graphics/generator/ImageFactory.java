@@ -147,8 +147,18 @@ public class ImageFactory {
     filePath = filePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator();
 
     FileUtil.createFolder(filePath);
+    Font tabFont = null;
 
-    Font tabFont = fontbase.deriveFont(Font.PLAIN,12.f);
+    String OS = System.getProperty("os.name","Windows");
+    /**
+     * Special check for point sizing on MacOS
+     */
+    if(OS.startsWith("Mac")){
+      tabFont = fontbase.deriveFont(Font.PLAIN,10);
+    }
+    else{
+      tabFont = fontbase.deriveFont(Font.PLAIN,8.5f);
+    }
 
     Tab tab = new Tab(textOnTab,tabFont);
     tab.flip(flip);

@@ -32,7 +32,7 @@ public class Tab extends Button {
   public static  String BUTTON_DOWN = "_TAB_DOWN";
   protected boolean drawBorder = false;
   protected boolean firstRun = true;
-  protected int height = 20;
+  protected int height = 15;
   private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
   private boolean flip = false;
 
@@ -76,36 +76,74 @@ public class Tab extends Button {
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
 
-    if( flip ){
+    /*if( flip ){
       g.transform(flipTransform);
       if( flip ) textYPos = height-2;
+    }*/
+    if(!flip){
+
+       textYPos = height-1;
+
+      //defaultOverColor==white
+      //defaultHightlightColor = light light gray
+      //defaultFillColor==light gray
+      //defaultUnderColor= gray
+      //defaultBorderColor= dark gray
+
+      g.setColor(overColor);// delete this when transparencies are supported
+      g.fillRect(0,0,width,height);
+
+      if(effect==BUTTON_OVER) {
+        g.setColor(highlightColor);
+      }
+      else if( effect==BUTTON_DOWN ){
+        g.setColor(highlightColor);
+      }
+      else g.setColor(fillColor);
+
+      g.drawRect(2,1,width-4,height);
+      g.fillRect(2,1,width-4,height);
+      g.fillRect(1,2,1,height-2);
+
+      g.setColor(overColor);
+      g.fillRect(0,2,0,height-3);
+      g.fillRect(1,1,0,0);
+      g.fillRect(2,0,width-5,0);
+
+      g.setColor(underColor);
+      g.fillRect(width-2,2,1,height-2);
+
+      g.setColor(borderColor);
+      g.fillRect(width-2,1,0,0);
+      g.fillRect(width-1,2,1,height-2);
     }
-    g.setColor(overColor);// delete this when transparencies are supported
-    g.fillRect(0,0,width,height);
+    else{
+      g.setColor(overColor);// delete this when transparencies are supported
+      g.fillRect(0,0,width,height);
 
-    if(effect==BUTTON_OVER) {
-      g.setColor(highlightColor);
+      if(effect==BUTTON_OVER) {
+        g.setColor(highlightColor);
+      }
+      else if( effect==BUTTON_DOWN ){
+        g.setColor(highlightColor);
+      }
+      else g.setColor(fillColor);
+
+      g.fillRect(1,0,width-doubleBorder,height-doubleBorder);
+
+      g.setColor(overColor);
+      g.drawLine(0,0,0,height-doubleBorder-2);
+      g.drawLine(1,height-doubleBorder-1,2,height-doubleBorder-1);
+
+      g.setColor(underColor);
+      g.drawLine(2,height-doubleBorder-1,width-doubleBorder-1,height-doubleBorder-1);
+      g.drawLine(width-2,height-doubleBorder-2,width-2,0);
+
+      g.setColor(borderColor);
+      g.drawLine(2,height-doubleBorder,width-doubleBorder-1,height-doubleBorder);
+      g.drawLine(width-1,height-doubleBorder-2,width-1,0);
+      g.drawLine(width-2,height-doubleBorder-1,width-2,height-doubleBorder-1);
     }
-    else if( effect==BUTTON_DOWN ){
-      g.setColor(highlightColor);
-    }
-    else g.setColor(fillColor);
-
-    g.fillRect(1,0,width-doubleBorder,height-doubleBorder);
-
-    g.setColor(overColor);
-    g.drawLine(0,0,0,height-doubleBorder-2);
-    g.drawLine(1,height-doubleBorder-1,2,height-doubleBorder-1);
-
-    g.setColor(underColor);
-    g.drawLine(2,height-doubleBorder-1,width-doubleBorder-1,height-doubleBorder-1);
-    g.drawLine(width-2,height-doubleBorder-2,width-2,0);
-
-    g.setColor(borderColor);
-    g.drawLine(2,height-doubleBorder,width-doubleBorder-1,height-doubleBorder);
-    g.drawLine(width-1,height-doubleBorder-2,width-1,0);
-    g.drawLine(width-2,height-doubleBorder-1,width-2,height-doubleBorder-1);
-
     if( effect==BUTTON_DOWN ){
       //textYPos++;
       g.setColor(fontColor);
@@ -115,7 +153,8 @@ public class Tab extends Button {
     }
     else  g.setColor(fontColor);
 
-    if( flip ) g.transform(flipTransform);
+    //if( flip ) g.transform(flipTransform);
+
     g.drawString(text,textXPos,textYPos-3);
 
     encode(image,filename+flip,effect);
