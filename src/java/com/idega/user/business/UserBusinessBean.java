@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1549,7 +1550,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					else{
 						System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
 						Map parents = new HashMap();
-						Map groupMap = new HashMap();
+						Map groupMap = new Hashtable();//we need it to be synchronized so we can remove items while in a iterator
 						Map aliasMap = new HashMap();
 						
 						IDOUtil idoUtil = IDOUtil.getInstance();
