@@ -15,6 +15,7 @@ import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.text.TextSoap;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -312,16 +313,43 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//	fName = "Invalid firstname";
 		//      }
 		//      if(com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(this.getFirstName())){ // if not Administrator
-		setColumn(getColumnNameFirstName(), fName);
+		if( fName == null ){
+			this.removeFromColumn(getColumnNameFirstName());
+		}
+		else{
+			String temp = TextSoap.findAndCut(fName," ");
+			if( temp.equals("")){
+				this.removeFromColumn(getColumnNameFirstName());
+			}
+			else setColumn(getColumnNameFirstName(), fName);
+		}	
 		//      }
 	}
 
 	public void setMiddleName(String mName) {
-		setColumn(getColumnNameMiddleName(), mName);
+		if( mName == null ){
+			this.removeFromColumn(getColumnNameMiddleName());
+		}
+		else{
+			String temp = TextSoap.findAndCut(mName," ");
+			if( temp.equals("")){
+				this.removeFromColumn(getColumnNameMiddleName());
+			}
+			else setColumn(getColumnNameMiddleName(), mName);
+		}	
 	}
 
 	public void setLastName(String lName) {
-		setColumn(getColumnNameLastName(), lName);
+		if( lName == null ){
+			this.removeFromColumn(getColumnNameLastName());
+		}
+		else{
+			String temp = TextSoap.findAndCut(lName," ");
+			if( temp.equals("")){
+				this.removeFromColumn(getColumnNameLastName());
+			}
+			else setColumn(getColumnNameLastName(), lName);
+		}	
 	}
 
 	/**
