@@ -481,7 +481,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 */
 
 /**
- * This methods remoces this useer from all groups and deletes his login.
+ * This methods removes this user from all groups and deletes his login.
  */
   public  void deleteUser(int userId, User currentUser) throws RemoveException {
     User delUser = getUser(userId);
@@ -502,8 +502,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if( groups!=null && !groups.isEmpty() ){
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
-				Group group = (Group) iter.next();
-				removeUserFromGroup(delUser, group, currentUser);
+					Group group = (Group) iter.next();
+					removeUserFromGroup(delUser, group, currentUser);
 				}
 			}
 			
@@ -556,13 +556,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     try{
       GenderHome home = getGenderHome();
 
-      if(gender.equals("M") || gender.equals("male") || gender.equals("0") ){
+      if(gender.equalsIgnoreCase("M") || gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("0") ){
         if(male == null){
           male = home.getMaleGender();
         }
         return (Integer) male.getPrimaryKey();
       }
-      else if(gender.equals("F") || gender.equals("female") || gender.equals("1") ){
+      else if(gender.equalsIgnoreCase("F") || gender.equalsIgnoreCase("female") || gender.equalsIgnoreCase("1") ){
         if(female == null){
           female = home.getFemaleGender();
         }

@@ -148,9 +148,9 @@ public interface UserBusiness extends com.idega.business.IBOService
 
 
 	/**
-	 * Cast a Group that is a "UserReresentative" Group to a User instance.
-	 * @param userGroups An instance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User
-	 * @param userGroup A instnance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User
+	 * Cast a Group that is a "UserRepresentative" Group to a User instance.
+	 * @param userGroups An instance of a Group that is really a "UserRepresentative" group i.e. the Group representation of the User
+	 * @param userGroup A instnance of a Group that is really a "UserRepresentative" group i.e. the Group representation of the User
 	 * @return User
 	 * @throws EJBException If an error occurs casting
 	 */
