@@ -4,8 +4,7 @@
 */
 package com.idega.core;
 
-import java.util.*;
-import com.idega.util.datastructures.idegaTreeNode;
+import java.util.Iterator;
 
 
 /**
@@ -17,7 +16,7 @@ public interface ICTreeNode{
 /**
  * Returns the children of the reciever as an Enumeration.
  */
-public Enumeration children();
+public Iterator getChildren();
 /**
  *  Returns true if the receiver allows children.
  */
@@ -26,7 +25,7 @@ public boolean getAllowsChildren();
 /**
  *  Returns the child TreeNode at index childIndex.
  */
-public ICTreeNode getChildAt(int childIndex);
+public ICTreeNode getChildAtIndex(int childIndex);
 
 /**
  *    Returns the number of children TreeNodes the receiver contains.
@@ -36,12 +35,12 @@ public int getChildCount();
 /**
  * Returns the index of node in the receivers children.
  */
-public int getIndex(idegaTreeNode node);
+public int getIndex(ICTreeNode node);
 
 /**
  *  Returns the parent TreeNode of the receiver.
  */
-public ICTreeNode getParent();
+public ICTreeNode getParentNode();
 
 /**
  *  Returns true if the receiver is a leaf.
@@ -54,5 +53,9 @@ public boolean isLeaf();
 public String getNodeName();
 
 
+/**
+ * Returns the unique ID of the Node in the tree
+ */
+public int getNodeID();
 
 }
