@@ -2358,7 +2358,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return result;
   }
 
-  public Map moveUsers(IWUserContext iwuc, Collection groups, String parentGroupType) {
+  public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong) {
     IWMainApplication application = getIWApplicationContext().getIWMainApplication();
     IWBundle bundle = application.getBundle("com.idega.user");
     Locale locale = application.getSettings().getDefaultLocale();
@@ -2381,28 +2381,30 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
     // get all groups 
     try {
+    	  GroupBusiness groupBiz = getGroupBusiness();
       Iterator groupsIterator = groups.iterator();
-      int while1 = 0; 
-	  int while1b = 0;
+      String[] usrGroupType = new String[] {User.USER_GROUP_TYPE};
       while (groupsIterator.hasNext())  {
       	Group group = (Group) groupsIterator.next();
         String groupId = group.getPrimaryKey().toString();
-        // check if the group id has the specified type 
-        // if the type equals to the specified type iterate over the children
-        if (parentGroupType != null && (parentGroupType.equals(group.getGroupType())))  {
-          //Iterator childIterator = groupBiz.getChildGroups(group).iterator();
-          Iterator childIterator = group.getChildrenIterator();
-          while (childIterator.hasNext()) {
-            Group childGroup = (Group) childIterator.next();
-            String childGroupId = childGroup.getPrimaryKey().toString();
-            fillMaps(childGroup, childGroupId, groupIdGroup, groupIdUsers, groupIdUsersId);
-            while1b++;
-          }
+        String groupType = group.getGroupType();
+        if (groupTypesToMoveAmong == null || (groupTypesToMoveAmong.contains(groupType)))  {
+        		fillMaps(group, groupId, groupIdGroup, groupIdUsers, groupIdUsersId);
         }
-        else {
-          fillMaps(group, groupId, groupIdGroup, groupIdUsers, groupIdUsersId);
+        
+        //Iterator childIterator = groupBiz.getChildGroups(group).iterator();
+        
+        Collection coll = groupBiz.getChildGroupsRecursive(group,usrGroupType,false);
+        if(coll !=null && !coll.isEmpty()){
+	        for(Iterator childIterator=coll.iterator();childIterator.hasNext();) {
+	          Group childGroup = (Group) childIterator.next();
+	          String childGroupType = childGroup.getGroupType();
+	          if (groupTypesToMoveAmong == null || (groupTypesToMoveAmong.contains(childGroupType)))  {
+		          String childGroupId = childGroup.getPrimaryKey().toString();
+		          fillMaps(childGroup, childGroupId, groupIdGroup, groupIdUsers, groupIdUsersId);
+	          }
+	        }
         }
-        while1++;
       }
     }
     // Finder and RemoteException
@@ -2412,10 +2414,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
      
     // iterate over all users
     Iterator groupIdsIterator = groupIdGroup.entrySet().iterator();
-   
-    int while2 = 0;
-    int while2b = 0;
-    int while2c = 0;
     // iterate over groups
     while (groupIdsIterator.hasNext())  {
       Map.Entry entry = (Map.Entry) groupIdsIterator.next();
@@ -2450,18 +2448,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
           	 }
               possibleTargets.add(targetGroup);
           }
-          while2c++;
         }
         userParentGroup.put(user, parentGroup);
         userTargetGroup.put(user, possibleTargets); 
-        while2b++;
       }
-      while2++;
     }
     
     // perform moving
     Map result = new HashMap();
-    int while3 = 0;
     Iterator userIterator = userTargetGroup.entrySet().iterator();
     while (userIterator.hasNext())  {
       Map.Entry entry = (Map.Entry) userIterator.next();
@@ -2505,8 +2499,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       } else {
         map.put(user.getPrimaryKey(), noSuitableGroupMessage);
       }
-      
-      while3++;
     }
     
     return result;
