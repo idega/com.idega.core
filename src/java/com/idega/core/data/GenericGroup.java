@@ -1,7 +1,10 @@
 package com.idega.core.data;
 
 import javax.ejb.*;
-
+/**
+ * 
+ * @deprecated Class replaced with com.idega.user.data.Group
+*/
 public interface GenericGroup extends com.idega.data.IDOLegacyEntity
 {
  public void addGroup(int p0)throws java.sql.SQLException;
