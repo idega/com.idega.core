@@ -10,16 +10,19 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
+import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
@@ -37,6 +40,7 @@ import com.idega.util.text.TextSoap;
 public class DatePicker extends AbstractChooser implements InputHandler {
 
     private static Boolean jsExists = null;
+    private static HashMap langFiles = null;
     private Locale locale = null;
     private boolean useJSCalendar = true;
 
@@ -297,12 +301,22 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 			value.setValue(getChooserValue());
 		}
 		
-		Image button = (bundle.getImage("jscalendar/cal.gif"));
+		Image button = (bundle.getImage("calendar.gif", "Pick date"));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+dateFormatPattern+"','"+value.getID()+"');");
 		
 		Page parentPage = getParentPage();
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
-		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js" ));
+		
+		
+		
+		
+		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
+		
+		//String langScriptURI = "jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js";
+		//String langScriptURI = "jscalendar/calendar_lang.js";
+		//checkOrCreateLanguageScript(iwc,iwrb,langScriptURI);
+		//parentPage.addJavascriptURL(iwrb.getImageURI(langScriptURI ));
+		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang",createCalendarLangScript(iwrb));
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
 		
 		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
@@ -315,6 +329,84 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		
 		
 		return table;
+    }
+    
+    /*
+    public void checkOrCreateLanguageScript(IWContext iwc,IWResourceBundle iwrb, String scriptBundleURI){
+        if(langFiles==null)
+            langFiles = new HashMap(2);
+        if(!langFiles.containsKey(locale.getCountry())){
+	        try {
+	            java.io.File jsFile = new java.io.File(iwc.getIWMainApplication().getRealPath(iwrb.getImageURI(scriptBundleURI)));
+	            if(!jsFile.exists()){
+	               
+	                jsFile.createNewFile();
+	                BufferedWriter writer = new BufferedWriter(new FileWriter(jsFile));
+	                writer.write(createCalendarLangScript(iwrb));
+	                writer.flush();
+	                writer.close();
+	                
+	            }
+	            langFiles.put(locale.getCountry(),"true");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	       
+        }
+   
+    }*/
+    
+    public String createCalendarLangScript(IWResourceBundle iwrb){
+        Locale locale = iwrb.getLocale();
+        IWCalendar cal = new IWCalendar();
+		StringBuffer script = new StringBuffer();
+		script.append("// ** I18N **\n");
+		script.append("Calendar._DN = new Array(");
+		script.append("\"").append(cal.getDayName(1,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(2,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(3,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(4,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(5,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(6,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(7,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getDayName(1,locale,IWCalendar.LONG)).append("\"");
+		script.append(");\n");
+		
+		script.append("Calendar._MN = new Array(");
+		script.append("\"").append(cal.getMonthName(1,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(2,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(3,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(4,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(5,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(6,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(7,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(8,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(9,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(10,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(11,locale,IWCalendar.LONG)).append("\",");
+		script.append("\"").append(cal.getMonthName(12,locale,IWCalendar.LONG)).append("\"");
+		script.append(");\n");
+		
+		
+		//Calendar._DN = new Array("Sunnudagur","Manudagur","Tridjudagur","Midvikudagur","Fimmtudagur","Fostudagur","Laugardagur","Sunnudagur");
+		//Calendar._MN = new Array("januar","februar","mars","april","mai","juni","juli","agust","september","oktober","november","desember");
+
+		script.append("//		 tooltips \n");
+		script.append("Calendar._TT = {};\n");
+		script.append("Calendar._TT[\"TOGGLE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.toggle_first_day_of_week","Toggle first day of week")+"\";\n");
+		script.append("Calendar._TT[\"PREV_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Prev. year (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"PREV_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Prev. month (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"GO_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Go Today")+"\";\n");
+		script.append("Calendar._TT[\"NEXT_MONTH\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Next month (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"NEXT_YEAR\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Next year (hold for menu)")+"\";\n");
+		script.append("Calendar._TT[\"SEL_DATE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Select date")+"\";\n");
+		script.append("Calendar._TT[\"DRAG_TO_MOVE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Drag to move")+"\";\n");
+		script.append("Calendar._TT[\"PART_TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","(today)")+"\";\n");
+		script.append("Calendar._TT[\"MON_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Display Monday first")+"\";\n");
+		script.append("Calendar._TT[\"SUN_FIRST\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Display Sunday first")+"\";\n");
+		script.append("Calendar._TT[\"CLOSE\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Close")+"\";\n");
+		script.append("Calendar._TT[\"TODAY\"] = \""+iwrb.getLocalizedString("jscal.tooltip.","Today")+"\";\n");
+		return script.toString();
     }
 
 }
