@@ -217,11 +217,10 @@ public class Form extends InterfaceObject {
 		//Chech if there is some class set
 		setActionToInstanciatedClass(iwc);
 
-		if (this._submitToPage != -1) {
+		if (this._submitToPage != -1 && !IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getMarkupLanguage())) {
 			//Set a builder page as the action
 			BuilderService bservice = getBuilderService(iwc);
 			this.setAction(bservice.getPageURI(_submitToPage));
-			
 		}
 		if (window != null) {
 			//iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
