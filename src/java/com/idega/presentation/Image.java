@@ -16,6 +16,7 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
+import com.idega.util.text.StyleConstants;
 import com.idega.util.text.TextSoap;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -55,15 +56,19 @@ public class Image extends PresentationObject
 	private int maxImageWidth = 140;
 	//private boolean usesOldImageTables = false;
 	private static String PARAM_IMAGE_ID = FileSystemConstants.PARAM_FILE_ID;
+	
+	private static final String BORDER_COLOR_DEFAULT = "#000000";
+	private static final String BORDER_STYLE_DEFAULT = StyleConstants.BORDER_SOLID;
+	
 	public Image()
 	{
 		this("");
-		//setBorder(0);
+		setBorder(0, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String url)
 	{
 		this(url, "");
-		//setBorder(0);
+		setBorder(0, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String url, String name)
 	{
@@ -73,7 +78,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		//setBorder(0);
+		setBorder(1, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String name, String url, String overImageUrl)
 	{
@@ -81,7 +86,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		//setBorder(0);
+		setBorder(0, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		this.overImageUrl = overImageUrl;
 		setOnMouseOut("swapImgRestore()");
 		setOnMouseOver("swapImage('" + getName() + "','','" + overImageUrl + "',1)");
@@ -101,7 +106,7 @@ public class Image extends PresentationObject
 		setURL(url);
 		setWidth(width);
 		setHeight(height);
-		//setBorder(0);
+		setBorder(0, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
@@ -110,7 +115,7 @@ public class Image extends PresentationObject
 	{
 		super();
 		this.imageId = imageId;
-		//setBorder(0);
+		setBorder(0, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		setName(this.generateID());
 	}
 	public Image(int imageId, String name) throws SQLException
@@ -237,13 +242,24 @@ public class Image extends PresentationObject
 			this.setImageID(Integer.parseInt(values[0]));
 		}
 	}
+	public void setBorder(int size, String color, String style) {
+		setBorder(Integer.toString(size), color, style);
+	}
+	public void setBorder(String size, String color, String style) {
+		setBorder(size);
+		setBorderColor(color);
+		setBorderStyle(style);
+	}
 	public void setBorder(String size)
 	{
-		setStyleAttribute("border-size", size+"px");
+		setStyleAttribute("border-width", size+"px");
 	}
 	public void setBorderColor(String color)
 	{
-		setStyleAttribute("border-color:" + color);
+		setStyleAttribute("border-color", color);
+	}
+	public void setBorderStyle(String style) {
+		setStyleAttribute("border-style", style);
 	}
 	public void setBorder(int i)
 	{
