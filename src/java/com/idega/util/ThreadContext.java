@@ -1,238 +1,139 @@
 //idega 2000 - Tryggvi Larusson
-
 /*
-
 *Copyright 2000 idega.is All Rights Reserved.
-
 */
-
-
-
 package com.idega.util;
-
-
-
-
-
-import java.util.*;
-
-
-
-
-
+import java.util.HashMap;
+import java.util.Map;
 /**
-
 *Class to store objects in context to a thread throughout its execution or some part of it
-
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
 *@version 1.2
-
 */
-
-public class ThreadContext{
-
-
-
-private Hashtable theThreads;
-
-private static ThreadContext instance;
-
-
-
-	private ThreadContext(){
-
-		initHashTable();
-
+public class ThreadContext
+{
+	private Map theThreads;
+	private static ThreadContext instance;
+	private ThreadContext()
+	{
+		initThreadsMap();
 	}
-
-
-
-	/*public ThreadContext(Object obj){
-
-		this(obj.currentThread());
-
-	}
-
-
-
-	public ThreadContext(Thread thread){
-
-
-
-	}*/
-
-
-
-
 
 	/**
-
-
-
 	 * Return a static instance of this class since only one instance is needed in each JVM
-
-
-
-	 */
-
-	public static ThreadContext getInstance(){
-
-		if (instance == null){
-
+	 * */
+	public static ThreadContext getInstance()
+	{
+		if (instance == null)
+		{
 			instance = new ThreadContext();
-
 		}
-
 		return instance;
-
 	}
-
-
-
-	private void initHashTable(){
-
-		if (theThreads == null){
-
-			theThreads = new Hashtable();
-
+	private void initThreadsMap()
+	{
+		if (theThreads == null)
+		{
+			theThreads = new HashMap();
 		}
-
 	}
-
-
-
-	public void putThread(Thread thread){
-
-		theThreads.put(thread,new Hashtable());
-
+	/**
+	 * initializes a Map for the Thread thread to associate objects
+	 * @param thread
+	 */
+	public void putThread(Thread thread)
+	{
+		theThreads.put(thread, new HashMap());
 	}
-
-
-
-
-
-	public void releaseThread(Thread thread){
-
+	/**
+	 * releases all object mapped to the Thread thread
+	 * @param thread
+	 */
+	public void releaseThread(Thread thread)
+	{
 		theThreads.remove(thread);
-
 	}
-
-
-
-	public void setAttribute(Thread thread,String attributeName,Object attribute){
-
-		getThreadAttributes(thread).put(attributeName,attribute);
-
+	/**
+	 * Associates an object attribute to the Thread thread
+	 * @param thread The Thread to associate an object to
+	 * @param attributeName the key name
+	 * @param attribute the Object
+	 */
+	public void setAttribute(Thread thread, String attributeName, Object attribute)
+	{
+		getThreadAttributes(thread).put(attributeName, attribute);
 	}
-
-
-
-	public void setAttribute(String attributeName,Object attribute){
-
-		getThreadAttributes(Thread.currentThread()).put(attributeName,attribute);
-
+	/**
+	 * Associates an object attribute to the current running Thread
+	 * @param attributeName the key name
+	 * @param attribute the Object
+	 */
+	public void setAttribute(String attributeName, Object attribute)
+	{
+		getThreadAttributes(Thread.currentThread()).put(attributeName, attribute);
 	}
-
-
-
-
-
-        public void removeAttribute(Thread thread,String attributeName){
-
+	/**
+	 * Removes an object attribute associated to the Thread thread
+	 * @param thread The Thread to remove an associated object from
+	 * @param attributeName the key name
+	 */
+	public void removeAttribute(Thread thread, String attributeName)
+	{
 		getThreadAttributes(thread).remove(attributeName);
-
 	}
-
-
-
-        public void removeAttribute(String attributeName){
-
+	/**
+	 * Removes an object attribute associated to the current running Thread
+	 * @param attributeName the key name
+	 */
+	public void removeAttribute(String attributeName)
+	{
 		getThreadAttributes(Thread.currentThread()).remove(attributeName);
-
 	}
-
-
-
-
-
-        private Hashtable getThreadAttributes(){
-
-          return getThreadAttributes(Thread.currentThread());
-
-        }
-
-
-
-
-
-        private Hashtable getThreadAttributes(Thread thread){
-
-          Hashtable theReturn = (Hashtable)theThreads.get(thread);
-
-          if (theReturn == null){
-
-            putThread(thread);
-
-            theReturn = (Hashtable)theThreads.get(thread);
-
-          }
-
-          return theReturn;
-
-        }
-
-
-
-	public Object getAttribute(Thread thread,String attributeName){
-
-                Hashtable tempTable = (Hashtable) theThreads.get(thread);
-
-                if (tempTable != null){
-
-                        return tempTable.get(attributeName);
-
-                }
-
-                else{
-
-                        return null;
-
-                }
-
+	private Map getThreadAttributes()
+	{
+		return getThreadAttributes(Thread.currentThread());
 	}
-
-
-
-        public Object getAttribute(String attributeName){
-
-            return getAttribute(Thread.currentThread(),attributeName);
-
+	private Map getThreadAttributes(Thread thread)
+	{
+		Map theReturn = (Map) theThreads.get(thread);
+		if (theReturn == null)
+		{
+			putThread(thread);
+			theReturn = (Map) theThreads.get(thread);
+		}
+		return theReturn;
 	}
-
-
-
-
-
-        public int getSize(){
-
-          return theThreads.size();
-
-        }
-
-
-
-
-
-        public Enumeration getThreadElements(){
-
-          return theThreads.keys();
-
-        }
-
-
-
-
-
+	/**
+	 * Gets an object attribute associated to the Thread thread
+	 * @param thread The Thread to get an associated object from
+	 * @param attributeName the key name
+	 */
+	public Object getAttribute(Thread thread, String attributeName)
+	{
+		Map tempTable = (Map) theThreads.get(thread);
+		if (tempTable != null)
+		{
+			return tempTable.get(attributeName);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	/**
+	 * Gets an object attribute associated to the currently running thread
+	 * @param attributeName the key name
+	 */	
+	public Object getAttribute(String attributeName)
+	{
+		return getAttribute(Thread.currentThread(), attributeName);
+	}
+	/**
+	 * Gets the number of threads with associated objects
+	 * @return the thread count
+	 */
+	public int getSize()
+	{
+		return theThreads.size();
+	}
 }
-
