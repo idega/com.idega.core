@@ -132,19 +132,21 @@ private PresentationObject leftObject,rightObject;
       // layout
         T.mergeCells(1,imageRow,2,imageRow);
 
-        if( size >1 && showButtons ){
+        if( size >1 ){
           if(getParentPage()!=null)
             getParentPage().getAssociatedScript().addFunction("slide"+name,getSlideScript(name,urls));
 
-          T.add(getLeftLink(name),1,buttonRow);
-          T.add(getRightLink(name),2,buttonRow);
-          if((buttonAlign & INNER) != 0){
-           T.setAlignment(1,buttonRow,"right");
-           T.setAlignment(2,buttonRow,"left");
-          }
-          else if((buttonAlign & OUTER) != 0){
-            T.setAlignment(1,buttonRow,"left");
-            T.setAlignment(2,buttonRow,"right");
+          if(showButtons ){
+            T.add(getLeftLink(name),1,buttonRow);
+            T.add(getRightLink(name),2,buttonRow);
+            if((buttonAlign & INNER) != 0){
+             T.setAlignment(1,buttonRow,"right");
+             T.setAlignment(2,buttonRow,"left");
+            }
+            else if((buttonAlign & OUTER) != 0){
+              T.setAlignment(1,buttonRow,"left");
+              T.setAlignment(2,buttonRow,"right");
+            }
           }
         }
         else
