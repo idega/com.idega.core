@@ -18,7 +18,7 @@ import com.idega.presentation.Script;
 public abstract class AbstractChooserWindow extends Window {
 
   String chooserSelectionParameter;
-  protected static String SELECT_FUNCTION_NAME = "chooserSelect";
+  public static String SELECT_FUNCTION_NAME = "chooserSelect";
 
 
   protected static final String DISPLAYSTRING_PARAMETER_NAME = AbstractChooser.DISPLAYSTRING_PARAMETER_NAME;
