@@ -213,7 +213,7 @@
       <url>http://java.sun.com/j2ee/javaserverfaces/</url>
       <properties>
       	<idegaweb.bundle.include>true</idegaweb.bundle.include>
-      <properties/>
+      </properties>
     </dependency>
     <!-- This dependency is necessary because of Myfaces JSF -->
     <dependency>
@@ -224,7 +224,7 @@
         <url>http://java.sun.com/</url>
 	      <properties>
 	      	<idegaweb.bundle.include>true</idegaweb.bundle.include>
-	      <properties/>
+	      </properties>
     </dependency>    
     <dependency>
       <groupId>oracle_jdbc</groupId>
