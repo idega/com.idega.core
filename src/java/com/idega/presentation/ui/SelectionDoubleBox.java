@@ -46,10 +46,10 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-	    leftBox = new SelectionBox(leftName);
-	    rightBox = new SelectionBox(rightName);
-	    toTheRight = new GenericButton("sdb_right", ">>");
-		toTheLeft = new GenericButton("sdb_left", "<<");
+	    leftBox = getLeftBox();
+	    rightBox = getRightBox();
+	    toTheRight = getRightButton();
+		toTheLeft = getLeftButton();
 		
 	    
 		if( leftLabel!=null){
@@ -91,18 +91,22 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 	}
 
 	public SelectionBox getLeftBox() {
-		return leftBox;
+		if( leftBox == null ) leftBox = new SelectionBox(leftName);
+		return leftBox;		
 	}
 
 	public SelectionBox getRightBox() {
+		if( rightBox == null ) rightBox = new SelectionBox(rightName);
 		return rightBox;
 	}
 
 	public GenericButton getLeftButton() {
+		if( toTheLeft == null ) toTheLeft = new GenericButton("sdb_left", "<<");
 		return toTheLeft;
 	}
 
 	public GenericButton getRightButton() {
+		if( toTheRight == null ) toTheRight = new GenericButton("sdb_right", ">>");;
 		return toTheRight;
 	}
 
