@@ -35,11 +35,19 @@ public class CommuneBusinessBean extends IBOServiceBean implements CommuneBusine
 		}	
 	}
 	
-	public Commune getCommune(String code) {
+	public Commune getCommuneByCode(String code) {
 		try {
 			return getCommuneHome().findByCommuneCode(code);
 		} catch (Exception e) {
 			//e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public Commune getCommuneByName(String name) {
+		try {
+			return getCommuneHome().findByCommuneName(name);
+		} catch (Exception e) {
 			return null;
 		}
 	}
