@@ -76,7 +76,7 @@ public class OracleDatastoreInterface extends DatastoreInterface{
 
 		}
 		else{
-			theReturn = "CLOB";
+			theReturn = "LONGVARCHAR("+maxlength+")";
 		}
 
     }

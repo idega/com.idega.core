@@ -76,8 +76,9 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 		}
 		else{
-			theReturn = "CLOB";
+			theReturn = "LONGVARCHAR("+maxlength+")";
 		}
+
 
     }
     else if (javaClassName.equals("java.lang.Boolean")){
