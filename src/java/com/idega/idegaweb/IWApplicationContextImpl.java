@@ -1,8 +1,15 @@
 package com.idega.idegaweb;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.ejb.FinderException;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 
 /**
  * Title:        A default implementation of IWApplicationContext
@@ -15,7 +22,9 @@ import com.idega.data.IDOLookup;
 public class IWApplicationContextImpl implements IWApplicationContext {
 	private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 	private IWMainApplication iwma;
+	private HashMap domainMap = new HashMap();
 	ICDomain domain;
+	private boolean defaultDomainIsInHashmap = false;
 	
 	
 	protected IWApplicationContextImpl(IWMainApplication superApp){
@@ -77,8 +86,36 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getDomain()
-	 */
-	public ICDomain getDomain() {
+	 */	
+	public ICDomain getDomain(){
+		return getDomainByServerURL(null);
+	}
+	
+
+	public ICDomain getDomainByServerURL(String serverUrl) {
+		boolean cachDefaultDomainForThisServerURL = false;
+		try {
+			if(serverUrl!=null && !"".equals(serverUrl)){
+				ICDomain toReturn = (ICDomain)domainMap.get(serverUrl);
+				if(toReturn==null){
+					ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
+					Collection coll = domainHome.findAllDomainsByServerURL(serverUrl);
+					Iterator iter = coll.iterator();
+					if (iter.hasNext()) {
+						toReturn = (ICDomain)iter.next();
+						domainMap.put(serverUrl,toReturn);
+					}
+				}
+				return toReturn;
+			}
+		} catch (IDOLookupException e1) {
+			e1.printStackTrace();
+		} catch (FinderException e1) {
+			//e1.printStackTrace();
+			System.out.println("Couldn't find domain record for serverURL : "+ serverUrl);
+			cachDefaultDomainForThisServerURL=true;
+		}
+		
 		try {
 			String id = (String) this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
 			int domainID = 1;
@@ -92,6 +129,11 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
 				domain = domainHome.findByPrimaryKey(domainID);
 			}
+			
+			if(cachDefaultDomainForThisServerURL){
+				domainMap.put(serverUrl,domain);
+			}
+			
 			return domain;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -59,7 +59,7 @@ public abstract class GenericInput extends InterfaceObject {
 	}
 
 	public String[] getDefinedWmlAttributes() {
-		String[] definedAttributes = {"emptyok","format","maxlength","size","tabindex","title","value","class","id"};
+		String[] definedAttributes = {"emptyok","format","maxlength","size","tabindex","title","class","id"};
 		return definedAttributes;
 	}
 

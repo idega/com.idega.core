@@ -486,8 +486,10 @@ public class Form extends InterfaceObject {
 				print("</form>");
 		}
 		else if (getMarkupLanguage().equals("WML")) {
-			//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
-			setAction(getIdegaSpecialRequestURI(iwc));
+			if (getAction() == null) {
+				//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
+				setAction(getIdegaSpecialRequestURI(iwc));
+			}
 			print("<onevent type=\"onenterforward\" >");
 			print("<refresh>");
 			
@@ -527,7 +529,7 @@ public class Form extends InterfaceObject {
 			print("</fieldset></p>");
 			
 			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
-			print("<p><anchor>"+theButton.getContent());
+			print("<p><do>"+theButton.getContent());
 			print("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
 
 			print(postFields.toString());
@@ -537,7 +539,7 @@ public class Form extends InterfaceObject {
 				child.printWML(iwc);
 			}
 			print("</go>");
-			print("</anchor></p>");
+			print("</do></p>");
 			//print("</do>");
 			
 		}

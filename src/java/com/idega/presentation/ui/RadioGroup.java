@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.9 2004/07/02 01:59:51 tryggvil Exp $
+ * $Id: RadioGroup.java,v 1.10 2004/07/06 10:33:10 gummi Exp $
 
  *
 
@@ -446,8 +446,18 @@ public class RadioGroup extends InterfaceObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getMarkupLanguage())) {
-			print("<select>");
-			super.print(iwc);
+			print("<select name=\""+_name+"\" >");
+				Iterator buttonIter = _buttons.iterator();
+				Iterator textIterator = _texts.iterator();
+				while(buttonIter.hasNext()) {
+					RadioButton button = (RadioButton) buttonIter.next();
+					if(textIterator.hasNext()){
+						Text text = (Text)textIterator.next();
+						print("<option value=\""+button.getValueAsString()+"\">"+text.getText()+"</option>");
+					} else {
+						print("<option value=\""+button.getValueAsString()+"\"></option>");
+					}
+				}
 			print("</select>");
 		} else {
 			super.print(iwc);

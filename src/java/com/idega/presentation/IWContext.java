@@ -838,6 +838,10 @@ implements IWUserContext, IWApplicationContext {
 		return getIWMainApplication().getIWApplicationContext().getDomain();
 	}
 	
+	public ICDomain getDomainByServerURL(String serverURL) {
+		return getIWMainApplication().getIWApplicationContext().getDomainByServerURL(serverURL);
+	}
+	
 	public void forwardToIBPage(Page fromPage, ICPage page){
 		forwardToIBPage(fromPage,((Integer) page.getPrimaryKey()).intValue());
 	}

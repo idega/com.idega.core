@@ -9,5 +9,5 @@ public interface ICDomainHome extends com.idega.data.IDOHome
  public ICDomain findByPrimaryKey(int id) throws javax.ejb.FinderException;
  public ICDomain findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
  public java.util.Collection findAllDomains()throws javax.ejb.FinderException;
-
+ public java.util.Collection findAllDomainsByServerURL(String serverURL)throws javax.ejb.FinderException;
 }

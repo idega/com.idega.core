@@ -69,5 +69,11 @@ public class BackButton extends GenericButton {
 			super.setValue(iwrb.getLocalizedString(BACK_KEY,BACK_KEY_DEFAULT_VALUE));	
 		}
 	}
+	
+	
+	
+	public void printWML(IWContext main) {	
+		print("<do type=\"prev\" label=\""+getContent()+"\"><prev/></do>");
+	}
 
 }
