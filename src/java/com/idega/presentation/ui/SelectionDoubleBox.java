@@ -131,4 +131,12 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		}
 		return obj;
 	}*/
+	
+	public void setLeftName(String name) {
+		getLeftBox().setName(name);	
+	}
+	
+	public void setRightName(String name) {
+		getRightBox().setName(name);	
+	}
 }
