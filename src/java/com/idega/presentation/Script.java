@@ -111,6 +111,30 @@ public void addToFunction(String functionName,String scriptString){
 	}
 }
 
+public void addToBeginningOfFunction(String functionName,String scriptString){
+
+	if (scriptCode != null){
+		String functionCode = (String) scriptCode.get(functionName);
+
+		if ( functionCode != null){
+
+			String beginString;
+			String endString;
+			String returnString;
+
+			int firstBracket;
+			firstBracket = functionCode.indexOf("{") + 1;
+
+			beginString = functionCode.substring(0,firstBracket);
+			endString = functionCode.substring(firstBracket + 1);
+
+			returnString = beginString + "\n" + scriptString + "\n" + endString;
+
+			scriptCode.put(functionName,returnString);
+		}
+	}
+}
+
 
 public void addFunction(String functionName,String scriptString){
 	scriptCode.put(functionName,scriptString);
