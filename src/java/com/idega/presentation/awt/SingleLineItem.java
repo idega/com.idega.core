@@ -8,7 +8,8 @@ import java.util.Vector;
 /**
  * Title: SingleLineItem
  * Description: SingleLineItem an awt component used in implementations of lists/menus/standalone/buttons
- * i.e. As a Label with an image and textlabel or as an image button. It can except a number of events
+ * i.e. As a Label with an image and textlabel or as an image button. It exepts mouse events
+ * it can be fed a Dialog
  * Copyright:    Copyright (c) 2001
  * Company:      idega software
  * @author Eirikur S. Hrafnsson eiki@idega.is
@@ -21,6 +22,7 @@ public class SingleLineItem extends Component {
   private int componentOffset = 5;
   private ActionListener actionListener = null;
   private boolean isSelected = false;
+  private Window window;
 
 
   public SingleLineItem() {
@@ -71,6 +73,7 @@ public class SingleLineItem extends Component {
           g.setColor(Color.black);
           g.drawString("OFF",10,10);
         }
+
        /* if (isEnabled()) {
             if (pressed) {
 
@@ -99,6 +102,13 @@ public class SingleLineItem extends Component {
    return this.isSelected;
   }
 
+  public void setWindowToOpen(Window window){
+    this.window = window;
+  }
+
+  private void openWindow(){
+    if(window!=null) window.setVisible(true);
+  }
 
   /*public Image getGrayImage() {
     return(grayImage);
@@ -107,23 +117,26 @@ public class SingleLineItem extends Component {
 
   private final class ClickAdapter extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
-     // if( contains(e.getX(),e.getY()) ){
+      if( e.getClickCount() > 1){
+        isSelected = true;
+        openWindow();
+      }
+      else{
         isSelected = !isSelected;
         repaint();
-     // }
-    }
+      }
 
+    }
+/*
     public void mouseReleased(MouseEvent e) {
-    // if( contains(e.getX(),e.getY()) ){
         isSelected = !isSelected;
         repaint();
 
         if (actionListener != null) {
             actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, ""));
         }
-    //  }
 
-    }
+    }*/
 
   }
 
