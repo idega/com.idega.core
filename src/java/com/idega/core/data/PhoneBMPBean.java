@@ -203,9 +203,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	protected String getSelectWithPhoneType(int userID,int phoneTypeID){
 			
 			StringBuffer buf = new StringBuffer();
-			buf.append("select p.");
-			buf.append(getIDColumnName());
-			buf.append(" from ");
+			buf.append("select p.* from ");
 			buf.append(this.getTableName());
 			buf.append(" p,");
 			buf.append(getUserRelationshipTableName());
@@ -213,13 +211,14 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 			buf.append(getIDColumnName());
 			buf.append("=p.");
 			buf.append(getIDColumnName());
-			buf.append("and rel.user_id=");
+			buf.append(" and rel.ic_user_id=");
 			buf.append(userID);
 			buf.append(" and p.");
 			buf.append(getColumnNamePhoneTypeId());
 			buf.append("=");
 			buf.append(getHomeNumberID());
 				
+			System.out.println(buf.toString());
 			return buf.toString();
 	}
 
