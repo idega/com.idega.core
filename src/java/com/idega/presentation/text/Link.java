@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.20 2001/11/03 13:45:54 gummi Exp $
+ * $Id: Link.java,v 1.21 2001/11/03 13:51:14 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -804,6 +804,26 @@ public class Link extends Text {
    */
   private void addTheMaintainedParameters(IWContext iwc) {
     List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
+    if (list != null) {
+      Iterator iter = list.iterator();
+      while(iter.hasNext()) {
+        String parameterName = (String)iter.next();
+        String parameterValue = iwc.getParameter(parameterName);
+        if (parameterValue != null) {
+          if(!this.isParameterSet(parameterName)){
+            addParameter(parameterName,parameterValue);
+          }
+        }
+      }
+    }
+  }
+
+
+    /*
+   *
+   */
+  private void addTheMaintainedBuilderParameters(IWContext iwc) {
+    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
     System.out.println("--------------------------------------");
     System.out.println("builderPrm");
     if (list != null) {
@@ -816,31 +836,11 @@ public class Link extends Text {
           if(!this.isParameterSet(parameterName)){
             System.out.println("false");
             addParameter(parameterName,parameterValue);
-          } else {
+          } else{
             System.out.println("true");
           }
-        } else{
+        }else{
           System.out.println("null");
-        }
-      }
-    }
-  }
-
-
-    /*
-   *
-   */
-  private void addTheMaintainedBuilderParameters(IWContext iwc) {
-    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
-    if (list != null) {
-      Iterator iter = list.iterator();
-      while(iter.hasNext()) {
-        String parameterName = (String)iter.next();
-        String parameterValue = iwc.getParameter(parameterName);
-        if (parameterValue != null) {
-          if(!this.isParameterSet(parameterName)){
-            addParameter(parameterName,parameterValue);
-          }
         }
       }
     }
