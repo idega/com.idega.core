@@ -47,6 +47,57 @@ public class IDOUtil {
 		}
 		return sList.toString();
 	}
+	
+	/**
+	 * @param Collection A collection of Strings
+	 *
+	 * @returns a String with comma separated values within quotationmarks e.g. 'asdf','asdf'
+	 */
+	public String convertCollectionOfStringsToCommaseparatedString(Collection list) {
+		StringBuffer sList = new StringBuffer();
+		if (list != null && !list.isEmpty()) {
+			//String sGroupList = "";
+			Iterator iter = list.iterator();
+			for (int g = 0; iter.hasNext(); g++) {
+				String item = (String) iter.next();
+				if (g > 0) {
+					sList.append(COMMA_AND_SPACE);
+				}
+				
+				if(item!=null) {
+					sList.append("'").append(item).append("'");
+				}
+				
+			}
+		}
+		return sList.toString();
+	}
+	
+	/**
+	 * @param Collection A list of Integers
+	 *
+	 * @returns a String with comma separated values e.g. 123,3,234
+	 */
+	public String convertCollectionOfIntegersToCommaseparatedString(Collection list) {
+		StringBuffer sList = new StringBuffer();
+		if (list != null && !list.isEmpty()) {
+			//String sGroupList = "";
+			Iterator iter = list.iterator();
+			for (int g = 0; iter.hasNext(); g++) {
+				Integer item = (Integer) iter.next();
+				if (g > 0) {
+					sList.append(COMMA_AND_SPACE);
+				}
+				
+				if(item!=null) {
+					sList.append(item);
+				}
+				
+			}
+		}
+		return sList.toString();
+	}
+	
 	/**
 	 * @param sArray An array of string primary keys
 	 *

@@ -994,6 +994,14 @@ public class IDOQuery {
 	public IDOQuery appendInCollectionWithSingleQuotes(Collection coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
 	}
+	
+	public IDOQuery appendInForStringCollectionWithSingleQuotes(Collection coll) {
+		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfStringsToCommaseparatedString(coll));
+	}
+	
+	public IDOQuery appendInForIntegerCollectionWithSingleQuotes(Collection coll) {
+		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(coll));
+	}
 
 
 	public IDOQuery appendNotInArray(String[] array) {
