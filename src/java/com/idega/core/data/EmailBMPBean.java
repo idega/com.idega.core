@@ -118,8 +118,8 @@ public class EmailBMPBean extends com.idega.data.GenericEntity implements com.id
 
   public Collection ejbFindEmailsForUser(int iUserId)throws FinderException{
     StringBuffer sql = new StringBuffer("select ie.* ");
-    sql.append("from").append(getTableName()).append(" ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
-    sql.append("where ie.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID");
+    sql.append(" from ").append(getTableName()).append(" ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
+    sql.append(" where ie.").append(getIDColumnName()).append(" = iue.").append(getIDColumnName());
     sql.append(" and iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = ");
     sql.append(iUserId);
     return super.idoFindIDsBySQL(sql.toString());
