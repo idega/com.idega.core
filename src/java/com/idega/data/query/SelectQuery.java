@@ -63,6 +63,10 @@ public class SelectQuery implements Outputable {
 	public void removeColumn(Column column) {
 		columns.remove(column);
 	}
+	
+	public void removeAllColumns() {
+		columns.clear();
+	}
 
 	public List listColumns() {
 		return Collections.unmodifiableList(columns);
