@@ -69,12 +69,14 @@ public class IWStarterServlet extends GenericServlet
         protected void addToClassPath(){
           File webINF = new File(this.getServletContext().getRealPath("/WEB-INF/classes"));
           File[] subfiles = webINF.listFiles();
-          for (int i = 0; i < subfiles.length; i++) {
-            if(subfiles[i].isFile()){
-              String jarEnding = ".jar";
-              String fileName = subfiles[i].getAbsolutePath();
-              if(fileName.endsWith(jarEnding)){
-                addToClassPath(fileName);
+          if(subfiles!=null){
+            for (int i = 0; i < subfiles.length; i++) {
+              if(subfiles[i].isFile()){
+                String jarEnding = ".jar";
+                String fileName = subfiles[i].getAbsolutePath();
+                if(fileName.endsWith(jarEnding)){
+                  addToClassPath(fileName);
+                }
               }
             }
           }
@@ -90,7 +92,12 @@ public class IWStarterServlet extends GenericServlet
         }
 
         public void startIdegaWebApplication(){
-            addToClassPath();
+            try{
+              addToClassPath();
+            }
+            catch(Exception e){
+              e.printStackTrace();
+            }
             IWMainApplication application = new IWMainApplication(this.getServletContext());
             if(application.getSettings().getIfEntityAutoCreate()){
               EntityControl.setAutoCreationOfEntities(true);
