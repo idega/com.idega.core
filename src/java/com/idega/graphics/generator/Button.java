@@ -132,15 +132,15 @@ public class Button {
     underColor = color;
   }
 
-  public String getButtonUpName(){
+  public String getUpName(){
     return buttonUpName;
   }
 
-  public String getButtonOverName(){
+  public String getOverName(){
     return buttonOverName;
   }
 
-  public String getButtonDownName(){
+  public String getDownName(){
     return buttonDownName;
   }
 

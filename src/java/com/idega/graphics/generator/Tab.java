@@ -24,14 +24,18 @@ import java.awt.FontMetrics;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import com.idega.util.FileUtil;
+import java.awt.geom.AffineTransform;
 
 public class Tab extends Button {
   public static String BUTTON_UP = "_TAB_UP";
   public static  String BUTTON_OVER = "_TAB_OVER";
   public static  String BUTTON_DOWN = "_TAB_DOWN";
   protected boolean drawBorder = false;
+  protected boolean firstRun = true;
   protected int width = 54;
   protected int height = 20;
+  private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
+  private boolean flip = false;
 
   public Tab() {
     super();
@@ -39,7 +43,6 @@ public class Tab extends Button {
 
   public Tab(String text) {
     super(text);
-    super.height = this.height;
   }
 
   public Tab(String text, Font font) {
@@ -67,8 +70,15 @@ public class Tab extends Button {
     System.exit(0);
   }
 
-  public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
+  public void generate(String filePath){
+    super.height = this.height;
+    super.width = this.width;
+    super.generate(filePath);
 
+  }
+
+  public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
+    if( flip ) g.transform(flipTransform);
 
     g.setColor(overColor);// delete this when transparencies are supported
     g.fillRect(0,0,width,height);
@@ -104,23 +114,8 @@ public class Tab extends Button {
     }
     else  g.setColor(fontColor);
 
+    if( flip ) g.transform(flipTransform);
     g.drawString(text,textXPos,textYPos-3);
-
-
-   // g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
-   //g.fillRect(0,0,width,height);
-
-/*
-
-    if(effect==BUTTON_DOWN) g.setColor(overColor);
-    else g.setColor(underColor);
-
-    g.drawLine(borderSize,height-doubleBorder,width-borderSize-1,height-doubleBorder);
-    g.drawLine(width-borderSize-1,height-doubleBorder,width-borderSize-1,doubleBorder-1);
-
-    if( effect==BUTTON_DOWN ) textYPos++;
-    g.setColor(fontColor);
-    g.drawString(text,textXPos,textYPos);*/
 
     encode(image,filename,effect);
 
@@ -136,6 +131,10 @@ public class Tab extends Button {
 
   public String getStaticButtonOverString(){
     return Tab.BUTTON_OVER;
+  }
+
+  public void flip(boolean flip){
+   this.flip = flip;
   }
 
 }

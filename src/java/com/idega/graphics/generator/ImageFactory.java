@@ -84,7 +84,7 @@ public class ImageFactory {
     Button button = new Button(textOnButton,defaultFont);
     button.generate(filePath);
 
-    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
+    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getUpName(),fileVirtualPath+button.getOverName(),fileVirtualPath+button.getDownName());
     image.setWidth(button.getWidth());
     image.setHeight(button.getHeight());
 
@@ -93,6 +93,49 @@ public class ImageFactory {
     }
     else{
       images.put(textOnButton,image);
+    }
+    return image;
+  }
+
+  public Image createTab(String textOnTab, IWBundle iwb, boolean flip){
+    return createTab(textOnTab,iwb,null,flip);
+  }
+
+  public Image createTab(String textOnTab, IWBundle iwb, Locale local, boolean flip){
+    String filePath;
+    String fileVirtualPath;
+    Image image;
+
+    if( local!=null ){
+      image = (Image) images.get(textOnTab+local.toString());
+      if( image != null ) return image;
+      filePath = iwb.getResourcesRealPath(local);
+      fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
+    }
+    else{
+      image = (Image) images.get(textOnTab);
+      if( image != null ) return image;
+      filePath = iwb.getResourcesRealPath();
+      fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
+    }
+
+    filePath = filePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator();
+
+    FileUtil.createFolder(filePath);
+
+    Tab tab = new Tab(textOnTab,defaultFont);
+    tab.flip(flip);
+    tab.generate(filePath);
+
+    image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+tab.getUpName(),fileVirtualPath+tab.getOverName(),fileVirtualPath+tab.getDownName());
+    image.setWidth(tab.getWidth());
+    image.setHeight(tab.getHeight());
+
+    if( local!=null){
+      images.put(textOnTab+local.toString(),image);
+    }
+    else{
+      images.put(textOnTab,image);
     }
     return image;
   }
