@@ -146,6 +146,14 @@ public class Button {
     return buttonDownName;
   }
 
+  public int getWidth(){
+    return width;
+  }
+
+  public int getHeight(){
+    return height;
+  }
+
 /*
   public Color getHighlightColor(){
         highlightColor = color;
@@ -226,6 +234,7 @@ public class Button {
     //g.setStroke(new BasicStroke(2f));
     //g.drawLine(0,height,width,0);
 
+    if( effect==BUTTON_DOWN ) textYPos++;
     g.setColor(fontColor);
     g.drawString(text,textXPos,textYPos);
 

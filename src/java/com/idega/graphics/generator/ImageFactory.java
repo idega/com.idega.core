@@ -78,6 +78,8 @@ public class ImageFactory {
     button.generate(filePath);
 
     image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
+    image.setWidth(button.getWidth());
+    image.setHeight(button.getHeight());
 
     return image;
   }
