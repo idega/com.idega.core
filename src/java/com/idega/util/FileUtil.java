@@ -664,7 +664,7 @@ public class FileUtil {
       long tb = (long) Math.pow(2, 40);
       
       NumberFormat nf = NumberFormat.getNumberInstance();
-      nf.setMaximumFractionDigits(3);
+      nf.setMaximumFractionDigits(1);
       double relSize = 0.0d;
       long abytes = Math.abs(bytes);
       String id = "";
@@ -686,6 +686,6 @@ public class FileUtil {
           relSize = abytes;
           id = "b";
       }
-      return nf.format((bytes < 0 ? -1 : 1) * relSize) + id;
+      return nf.format((bytes < 0 ? -1 : 1) * relSize) + " "+id;
   }
 }
