@@ -14,7 +14,6 @@ import com.idega.presentation.text.*;
 import com.idega.util.text.Edit;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
-
 import java.util.Vector;
 import java.util.List;
 import java.util.Collection;
@@ -38,15 +37,15 @@ public class BlockMenu extends Block {
   private Collection paramtersToMainTain = null;
   private String prmObjectClass = "obj_clss";
   private Class defaultClass = null;
+  private String fontStyle = "color:#000000;font-size:8pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
 
   protected void control(IWContext iwc){
     iwrb = getResourceBundle(iwc);
     iwb = getBundle(iwc);
-
-    Table T = new Table();
+    Table T = new Table(1,2);
     T.setWidth("100%");
     T.setCellpadding(0);
-    T.setCellspacing(0);
+    T.setCellspacing(10);
 
     String className = null;
     if(iwc.isParameterSet(prmObjectClass)){
@@ -83,6 +82,10 @@ public class BlockMenu extends Block {
     this.defaultClass = defaultClass;
   }
 
+  public void setFontStyle(String style){
+
+  }
+
   public PresentationObject getBoxedLinks(IWContext iwc,String currentClassName){
     Table frame = new Table(3,3);
     frame.setWidth("100%");
@@ -94,7 +97,7 @@ public class BlockMenu extends Block {
         Block obj;
         while(I.hasNext()){
           obj = (Block) I.next();
-          box.add(getLink(obj.getClass(),obj.getLocalizedName(iwc)),1,row++);
+          box.add(getLink(obj.getClass(),formatText(obj.getLocalizedName(iwc))),1,row++);
         }
       }
       box.setColor(Edit.colorLight);
@@ -117,16 +120,25 @@ public class BlockMenu extends Block {
           Block obj;
           while(I.hasNext()){
             obj = (Block) I.next();
-            frame.add(getLink(obj.getClass(),obj.getLocalizedName(iwc)),col,row);
+            frame.add(getLink(obj.getClass(),formatText(obj.getLocalizedName(iwc))),col,row);
             col++;
-            frame.add(Edit.formatText("|"),col,row);
+            frame.add(formatText("|"),col,row);
             col++;
           }
         }
       return frame;
   }
 
-  public Link getLink(Class cl,String name){
+  private Text formatText(String text){
+    if ( text == null ) text = "";
+    Text T =new Text(text);
+    T.setFontStyle(fontStyle);
+
+    return T;
+  }
+
+
+  public Link getLink(Class cl,Text name){
     Link L = new Link(name);
     L.addParameter(getObjectParameter(cl));
     if(paramtersToMainTain !=null){

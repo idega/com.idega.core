@@ -27,6 +27,7 @@ public class DataTable extends PresentationObjectContainer {
   private String sWidth = "";
   private String buttonAlign  = "right";
   private Vector buttons = null;
+  private int bottomHeight = 3;
 
   private String DARKBLUE = "#27334B";
   private String DARKGREY = "#D7DADF";
@@ -42,7 +43,7 @@ public class DataTable extends PresentationObjectContainer {
   }
   private void drawTables(IWContext iwc){
     com.idega.presentation.Image image = Table.getTransparentCell(iwc);
-    image.setHeight(6);
+    image.setHeight(bottomHeight);
 
     contentTable.setWidth(this.sWidth);
     contentTable.setHeight(this.sHeight);
@@ -57,7 +58,7 @@ public class DataTable extends PresentationObjectContainer {
         contentTable.setRowColor(2,DARKGREY);
     }
 
-    int lastrow = contentTable.getRows();
+    int lastrow = contentTable.getRows()+1;
     int lastcol = contentTable.getColumns();
     contentTable.mergeCells(1,1,contentTable.getColumns(),1);
     contentTable.setColor(1,1,DARKBLUE);
@@ -85,7 +86,7 @@ public class DataTable extends PresentationObjectContainer {
   public void setTitlesVertical(boolean vertical){
     titlesVertical = vertical;
   }
-  public void setTitlesHorisontal(boolean horizontal){
+  public void setTitlesHorizontal(boolean horizontal){
     infoTitles = true;
     titlesVertical = !horizontal;
   }
@@ -104,6 +105,9 @@ public class DataTable extends PresentationObjectContainer {
     if(buttons ==null)
       buttons = new Vector();
     buttons.add(objectToAdd);
+  }
+   public void setBottomHeight(int height){
+    this.bottomHeight=height;
   }
   public void setWidth(int tableWidth){
     this.sWidth=String.valueOf(tableWidth);
