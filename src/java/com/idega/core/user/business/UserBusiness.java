@@ -1,8 +1,11 @@
 package com.idega.core.user.business;
 
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.ejb.FinderException;
 
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.contact.data.Email;
@@ -522,7 +525,17 @@ public class UserBusiness {
     return null;
   }
 
-
+  	/**
+	 *  Returns User from personal id returns null if not found
+	 */
+	public  User getUser(String personalID) {
+		try {
+			return ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPersonalID(personalID);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
   public static List getUsersInNoGroup() throws SQLException  {
     //return EntityFinder.findNonRelated(com.idega.core.data.GenericGroupBMPBean.getStaticInstance(),com.idega.core.user.data.UserBMPBean.getStaticInstance());
