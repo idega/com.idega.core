@@ -1,6 +1,6 @@
 /*
- * $Id: AddressCoordinateHomeImpl.java,v 1.1 2005/01/20 09:42:13 gimmi Exp $
- * Created on 20.1.2005
+ * $Id: AddressCoordinateHomeImpl.java,v 1.2 2005/02/04 00:08:31 gimmi Exp $
+ * Created on 3.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/20 09:42:13 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/02/04 00:08:31 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:gimmi@idega.com">gimmi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AddressCoordinateHomeImpl extends IDOFactory implements AddressCoordinateHome {
 
