@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.47 2001/09/28 15:14:06 gummi Exp $
+ * $Id: GenericEntity.java,v 1.48 2001/09/28 17:03:26 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1579,7 +1579,7 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 	public GenericEntity[] findAll(String SQLString,int returningNumberOfRecords)throws SQLException{
-          System.err.println("GenericEntity.findAll(\""+SQLString+"\");");
+          //System.err.println("GenericEntity.findAll(\""+SQLString+"\");");
         /*
         	Connection conn= null;
 		Statement Stmt= null;
@@ -1667,7 +1667,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
                         String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")";
-                        System.out.println("statement: "+sql);
+                        //System.out.println("statement: "+sql);
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally{
@@ -1693,7 +1693,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
                         String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddToColumName+") values("+getID()+","+entityToAddTo.getID()+")";
-                        System.out.println("statement: "+sql);
+                        //System.out.println("statement: "+sql);
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally{
