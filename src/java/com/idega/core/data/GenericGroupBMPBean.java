@@ -39,9 +39,8 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	public String getEntityName() {
 		return "ic_group";
 	}
-	public String getNameOfMiddleTable(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
-		return "ic_group_user";
-	}
+
+  
 	public void setDefaultValues() {
 		setGroupType(getGroupTypeValue());
 	}
