@@ -10,6 +10,7 @@ package com.idega.data;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -691,6 +692,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 		return returnValueIfNull;
+	}
+	public Date getDateColumnValue(String columnName) {
+		return (Date)getValue(columnName);
 	}
 	public void setLongName(String columnName, String longName) {
 		getColumn(columnName).setLongName(longName);
