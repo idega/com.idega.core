@@ -74,7 +74,6 @@ import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.TopNodeGroup;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
-import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -1898,8 +1897,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public boolean hasTopNodes(User user, IWUserContext iwuc) {
 		try {
-			Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
-			return !topNodes.isEmpty();
+			//super admin check is done first
+			boolean isSuperUser = iwuc.isSuperAdmin();
+			if((isSuperUser && user == null) || (isSuperUser && iwuc.getCurrentUser().equals(user))) {
+				return true;
+			}
+			else{
+				Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
+				return !topNodes.isEmpty();
+			}
 		}
 		catch (RemoteException re) {
 			return false;
@@ -2824,14 +2830,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String grouptype = targetGroup.getGroupType();
 			Collection plugins = (Collection) pluginsForGroupTypeCachMap.get(grouptype);
 			if (plugins == null) {
-				plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(grouptype);
+				plugins = getGroupBusiness().getUserGroupPluginsForGroupType(grouptype);
 				pluginsForGroupTypeCachMap.put(grouptype, plugins);
 			}
 			Iterator iter = plugins.iterator();
 			while (iter.hasNext()) {
-				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(
-						getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
 				String message;
 				if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {
 					return message;
