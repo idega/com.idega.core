@@ -6,11 +6,7 @@
  */
 package com.idega.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
 
 /**
  * This class is to merge files from many bundles (WEB-INF/web.xml's primarily)
