@@ -452,6 +452,7 @@ private String getHTMLString(IWContext iwc) {
     sPrint.append(getAlt());
   }
   sPrint.append("\" ");
+  removeAttribute("alt");
   sPrint.append("name=\"");
   sPrint.append(getName());
   sPrint.append("\"");
