@@ -521,6 +521,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void setColumn(String columnName, Boolean columnValue) {
 		setValue(columnName, columnValue);
 	}
+	public void setColumn(String columnName, char columnValue) {
+		setValue(columnName, String.valueOf(columnValue));
+	}
   
   public void setColumn(String columnName, double columnValue)  {
     setColumn(columnName, new Double(columnValue));
