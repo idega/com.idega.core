@@ -1,0 +1,64 @@
+/*** idegaWeb Core CSS classes ***/
+
+
+/** Searcher and SearchResults classes **/
+
+.iw_search_results{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+.iw_search_name{
+	margin-left:5px;
+	margin-top:2px;
+	padding:3px;
+	font-size: 11px;
+	font-weight: bold;
+	background-color: #DFDFDF;
+ 	display:block;
+}
+
+.iw_search_results_row_odd{
+	display:block;
+	margin-left:5px;
+	#background-color: #DEDEDE;
+ 	border-bottom: 1px dotted;
+ 	border-color: black;
+}
+
+.iw_search_results_row_even{
+	display:block;
+	margin-left:5px;
+	#background-color: #EDEDED;
+ 	border-bottom: 1px dotted;
+ 	border-color: black;
+}
+
+.iw_search_result_link{
+	font-size: 10px;
+	font-weight: bold;
+	margin-bottom:2px;
+	text-decoration: underline;
+ 	display:block;
+ 	color: red;
+}
+
+.iw_search_result_link:hover{
+	font-size: 10px;
+	font-weight: bold;
+ 	font-style: italic;
+	text-decoration: underline;
+	margin-bottom:2px;
+ 	display:block;
+ 	color: red;
+}
+
+.iw_search_result_abstract{
+	margin-bottom:1px;
+ 	display:block;
+}
+
+.iw_search_result_extra_info{
+	margin-bottom:2px;
+ 	display:block;
+}
