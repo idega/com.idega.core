@@ -6,6 +6,7 @@ import com.idega.data.IDOContainer;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWService;
+import com.idega.idegaweb.IWStyleManager;
 import com.idega.util.FileUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
@@ -196,6 +197,10 @@ public class IWStarterServlet extends GenericServlet
 	    else{
 	      startIdegaDatabasePool();
 	    }
+	    
+	    IWStyleManager iwStyleManager = new IWStyleManager(application);
+	    iwStyleManager.getStyleSheet();
+	    sendStartMessage("Starting IWStyleManager");
 
 	    application.startAccessController();
 	    application.createMediaTables();//added by Eiki to ensure that ic_file is created before ib_page
@@ -237,6 +242,9 @@ public class IWStarterServlet extends GenericServlet
             application.getSettings().setProperty("last_shutdown",com.idega.util.IWTimestamp.RightNow().toString());
 	    application.unload();
 	    endDatabasePool();
+	    IWStyleManager iwStyleManager = new IWStyleManager(application);
+	    iwStyleManager.writeStyleSheet();
+	    sendShutdownMessage("Saving style sheet");
 	    sendShutdownMessage("Completed");
 	}
 
