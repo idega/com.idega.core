@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusiness.java,v 1.46 2004/10/19 19:54:41 eiki Exp $
- * Created on Oct 18, 2004
+ * $Id: GroupBusiness.java,v 1.47 2004/11/16 12:36:21 laddi Exp $
+ * Created on 16.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -13,12 +13,15 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -49,11 +52,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 
 /**
+ * Last modified: 16.11.2004 13:37:12 by laddi
  * 
- *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
- * 
- * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.46 $
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.47 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -90,8 +92,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroups
 	 */
-	public Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception,
-			java.rmi.RemoteException;
+	public Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
@@ -136,8 +137,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups) throws EJBException,
-			java.rmi.RemoteException;
+	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserRepresentativeGroupTypeStringArray
@@ -147,8 +147,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
-			throws EJBException, java.rmi.RemoteException;
+	public Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsers
@@ -158,20 +157,17 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
 	 */
-	public Collection getUsersDirectlyRelated(int groupId) throws EJBException, FinderException,
-			java.rmi.RemoteException;
+	public Collection getUsersDirectlyRelated(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersNotDirectlyRelated
 	 */
-	public Collection getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException,
-			java.rmi.RemoteException;
+	public Collection getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
 	 */
-	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException,
-			java.rmi.RemoteException;
+	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
@@ -181,8 +177,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
 	 */
-	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
-			throws EJBException, java.rmi.RemoteException;
+	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsers
@@ -207,14 +202,12 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString,
-			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
-			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
@@ -224,13 +217,22 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
 	 */
-	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString,
-			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
 	 */
 	public Collection getChildGroups(Group aGroup) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
+	 */
+	public Collection getChildGroups(Group aGroup, Collection groupTypes, boolean returnSpecifiedGroupTypes) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
+	 */
+	public Collection getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
@@ -240,8 +242,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
 	 */
-	public Collection getChildGroupsInDirect(int groupId) throws EJBException, FinderException,
-			java.rmi.RemoteException;
+	public Collection getChildGroupsInDirect(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
@@ -266,8 +267,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateUsersInGroup
 	 */
-	public void updateUsersInGroup(int groupId, String[] usrGroupIdsInGroup, User currentUser) throws RemoteException,
-			FinderException;
+	public void updateUsersInGroup(int groupId, String[] usrGroupIdsInGroup, User currentUser) throws RemoteException, FinderException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupByGroupID
@@ -307,8 +307,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
 	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, boolean createUnderRootDomainGroup,
-			Group parentGroup) throws CreateException, NamingException, RemoteException;
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, boolean createUnderRootDomainGroup, Group parentGroup) throws CreateException, NamingException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupByDNOrUniqueId
@@ -323,20 +322,17 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#setMetaDataFromLDAPAttributes
 	 */
-	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes)
-			throws java.rmi.RemoteException;
+	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
 	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes) throws CreateException,
-			NamingException, RemoteException;
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes) throws CreateException, NamingException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
 	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, Group parentGroup)
-			throws CreateException, NamingException, RemoteException;
+	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, Group parentGroup) throws CreateException, NamingException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroup
@@ -356,38 +352,32 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroup
 	 */
-	public Group createGroup(String name, String description, String type, boolean createUnderDomainRoot)
-			throws CreateException, RemoteException;
+	public Group createGroup(String name, String description, String type, boolean createUnderDomainRoot) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
 	 */
-	public Group createGroupUnder(String name, String description, String type, Group parentGroup)
-			throws CreateException, RemoteException;
+	public Group createGroupUnder(String name, String description, String type, Group parentGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
 	 */
-	public Group createGroupUnder(String name, String description, Group parentGroup) throws CreateException,
-			RemoteException;
+	public Group createGroupUnder(String name, String description, Group parentGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroup
 	 */
-	public Group createGroup(String name, String description, String type, int homePageID) throws CreateException,
-			RemoteException;
+	public Group createGroup(String name, String description, String type, int homePageID) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroup
 	 */
-	public Group createGroup(String name, String description, String type, int homePageID, int aliasID)
-			throws CreateException, RemoteException;
+	public Group createGroup(String name, String description, String type, int homePageID, int aliasID) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroupUnder
 	 */
-	public Group createGroupUnder(String name, String description, String type, int homePageID, int aliasID,
-			Group parentGroup) throws CreateException, RemoteException;
+	public Group createGroupUnder(String name, String description, String type, int homePageID, int aliasID, Group parentGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getICFileHome
@@ -402,14 +392,12 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
 	 */
-	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)
-			throws java.rmi.RemoteException;
+	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
 	 */
-	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc)
-			throws java.rmi.RemoteException;
+	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#addGroupTypeChildren
@@ -459,15 +447,12 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#addGroupUnderDomain
 	 */
-	public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException,
-			RemoteException;
+	public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateGroupMainAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber,
-			Integer postalCodeId, String countryName, String city, String province, String poBox)
-			throws CreateException, RemoteException;
+	public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAddressBusiness
@@ -477,8 +462,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupMainAddress
 	 */
-	public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException,
-			IDOCompositePrimaryKeyException, IDORelationshipException;
+	public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAddressHome
@@ -508,8 +492,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateGroupPhone
 	 */
-	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException,
-			java.rmi.RemoteException;
+	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupPhone
@@ -539,8 +522,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
 	 */
-	public String getNameOfGroupWithParentName(Group group, Map cachedParents, Map cachedGroups)
-			throws java.rmi.RemoteException;
+	public String getNameOfGroupWithParentName(Group group, Map cachedParents, Map cachedGroups) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createVisibleGroupType
@@ -555,8 +537,7 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups
 	 */
-	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc, Group group)
-			throws RemoteException;
+	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc, Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyUserAsGroupsOwner
@@ -571,32 +552,27 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup
 	 */
-	public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group)
-			throws java.rmi.RemoteException;
+	public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToUsersPrimaryGroup
 	 */
-	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user)
-			throws java.rmi.RemoteException;
+	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToGroup
 	 */
-	public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo,
-			Group groupToGetPermissions) throws java.rmi.RemoteException;
+	public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo, Group groupToGetPermissions) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyPermissionControllingFromGroupToGroup
 	 */
-	public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom,
-			Group groupToInheritPermissions) throws java.rmi.RemoteException;
+	public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup
 	 */
-	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,
-			Group newlyCreatedGroup, User user) throws RemoteException;
+	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc, Group newlyCreatedGroup, User user) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyInheritedPermissionsToGroup
@@ -637,4 +613,5 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.GroupBusinessBean#userGroupTreeImageProcedureTopNodeSearch
 	 */
 	public boolean userGroupTreeImageProcedureTopNodeSearch() throws java.rmi.RemoteException;
+
 }

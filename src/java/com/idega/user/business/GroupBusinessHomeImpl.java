@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusinessHomeImpl.java,v 1.6 2004/10/19 19:54:41 eiki Exp $
- * Created on Oct 18, 2004
+ * $Id: GroupBusinessHomeImpl.java,v 1.7 2004/11/16 12:36:21 laddi Exp $
+ * Created on 16.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -9,15 +9,17 @@
  */
 package com.idega.user.business;
 
+
+
+
 import com.idega.business.IBOHomeImpl;
 
 
 /**
+ * Last modified: 16.11.2004 13:37:28 by laddi
  * 
- *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
- * 
- * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.6 $
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.7 $
  */
 public class GroupBusinessHomeImpl extends IBOHomeImpl implements GroupBusinessHome {
 
@@ -28,4 +30,5 @@ public class GroupBusinessHomeImpl extends IBOHomeImpl implements GroupBusinessH
 	public GroupBusiness create() throws javax.ejb.CreateException {
 		return (GroupBusiness) super.createIBO();
 	}
+
 }

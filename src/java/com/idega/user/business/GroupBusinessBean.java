@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -19,7 +20,9 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -766,9 +769,16 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 /**
  * Returns all the groups that are direct children groups of group aGroup. * @param aGroup a group to find children groups for * @return Collection of Groups that are Direct children of group aGroup */
   public  Collection getChildGroups(Group aGroup){
-  //public  Collection getGroupsContainedDirectlyRelated(Group group){
+    return getChildGroups(aGroup, getUserRepresentativeGroupTypeStringArray(),false);
+  }
+
+  public Collection getChildGroups(Group aGroup, Collection groupTypes, boolean returnSpecifiedGroupTypes) {
+  		return getChildGroups(aGroup, ((String[]) groupTypes.toArray(new String[groupTypes.size()])), returnSpecifiedGroupTypes);
+  }
+  
+  public Collection getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) {
     try {
-      Collection list = aGroup.getChildGroups(getUserRepresentativeGroupTypeStringArray(),false);
+      Collection list = aGroup.getChildGroups(groupTypes,returnSpecifiedGroupTypes);
       if(list != null){
         list.remove(aGroup);
       }
@@ -2399,10 +2409,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/28 11:59:02 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/11/16 12:36:21 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.82 $
+	 * @version $Revision: 1.83 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
