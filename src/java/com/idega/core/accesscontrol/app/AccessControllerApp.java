@@ -109,7 +109,6 @@ public class AccessControllerApp extends IWApplication {
         footerTable.setCellpadding(0);
         footerTable.setCellspacing(0);
         footerTable.setWidth(2,"20");
-        //footerTable.setAlignment("right");
         footerTable.setHeight("100%");
         footerTable.setVerticalAlignment(1,1,"middle");
         /*SubmitButton close = new SubmitButton(" Close ");
@@ -334,7 +333,6 @@ public class AccessControllerApp extends IWApplication {
         if(identifier != null && category != null){
           int intPermissionCategory = Integer.parseInt(category);
 
-          //frameTable.setAlignment("center");
           frameTable.setVerticalAlignment("middle");
           frameTable.setAlignment(1,1,"left");
           frameTable.setAlignment(1,2,"left");
@@ -486,14 +484,13 @@ public class AccessControllerApp extends IWApplication {
           frameTable.add(new HiddenInput(lastPermissionKeyParameterString, permissionType ));
 
         }
-        myTable.add(frameTable);
+        myTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
+        myTable.add(frameTable, 1, 1);
         return myTable;
       }
 
       public void showMessage(String message){
         Table t = new Table();
-        t.setVerticalAlignment("middle");
-        //t.setAlignment("center");
         Text messageText = new Text(message,true,false,false);
         messageText.setFontSize(3);
         t.add(messageText);
