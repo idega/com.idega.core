@@ -394,7 +394,6 @@ public String getOverImageURL(){
 }
 
 public void setAttributes(Map attributeMap){
-  System.out.println("Setting image attributes");
   if ( attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE) && attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE) ) {
     zoomImageID = attributeMap.containsKey(ImageAttributeSetter.ZOOMIMAGE)?(String)attributeMap.get(ImageAttributeSetter.ZOOMIMAGE):null;
     zoomPageID = attributeMap.containsKey(ImageAttributeSetter.ZOOMPAGE)?(String)attributeMap.get(ImageAttributeSetter.ZOOMPAGE):null;
@@ -551,7 +550,6 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 	  //should we add the image with a link? or just the image
 	  if( zoomView ){
 	    if ( zoomLink != null ) {
-	      System.out.println("Setting zoom view");
 	      zoomLink.setText(getHTMLString());
 	      imageTable.add(zoomLink,1,1);
 	    }
@@ -573,7 +571,6 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 
 	  if( zoomView ){
 	    if ( zoomLink != null ) {
-	      System.out.println("Setting zoom view");
 	      zoomLink.setText(getHTMLString());
 	      imageTable.add(zoomLink,1,1);
 	    }
@@ -593,7 +590,6 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
       else  {
 	if(zoomView){
 	  if ( zoomLink != null ) {
-	    System.out.println("Setting zoom view");
 	    zoomLink.setText(getHTMLString());
 	    zoomLink.print(iwc);
 	  }
