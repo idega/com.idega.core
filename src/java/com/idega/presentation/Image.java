@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
@@ -41,7 +43,6 @@ public class Image extends PresentationObject
 	private static final int BORDER_WIDTH_DEFAULT = 0;
 	
 	//member variables:
-	private Script theAssociatedScript;
 	private String overImageUrl;
 	private String downImageUrl;
 
@@ -54,18 +55,53 @@ public class Image extends PresentationObject
 	private boolean linkOnImage = true;
 	protected boolean useCaching = true;
 	private String align;
-	private Link zoomLink;
 	private String zoomImageID;
 	private String zoomPageID;
 	private String zoomImageWidth;
 	private String zoomImageHeight;
 	protected int imageId = -1;
-	//private ImageEntity image;
-	//**@todo: remove this when no longer needed
-	//private com.idega.jmodule.image.data.ImageEntity image2;
 	private int maxImageWidth = 140;
-	//private boolean usesOldImageTables = false;
 	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[6];
+		values[0] = super.saveState(ctx);
+		values[1] = overImageUrl;
+		values[2] = downImageUrl;
+		values[3] = _ImageLocalizationMap;
+		values[4] = _overImageLocalizationMap;
+		values[5] = textBgColor;
+		values[6] = Boolean.valueOf(limitImageWidth);
+		values[7] = Boolean.valueOf(zoomView);
+		values[8] = Boolean.valueOf(linkOnImage);
+		values[9] = Boolean.valueOf(useCaching);
+		values[10] = align;
+		values[11] = zoomPageID;
+		values[12] = zoomImageWidth;
+		values[13] = zoomImageHeight;
+		values[14] = new Integer(imageId);
+		values[15] = new Integer(maxImageWidth);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		overImageUrl = (String) values[1];
+		downImageUrl = (String) values[2];
+		_ImageLocalizationMap = (Map) values[3];
+		_overImageLocalizationMap = (Map) values[4];
+		textBgColor = (String) values[5];
+		limitImageWidth = ((Boolean)values[6]).booleanValue();
+		zoomView = ((Boolean)values[7]).booleanValue();
+		linkOnImage = ((Boolean)values[8]).booleanValue();
+		useCaching = ((Boolean)values[9]).booleanValue();
+		align = (String)values[10];
+		zoomImageID = (String)values[11];
+		zoomPageID = (String)values[12];
+		zoomImageWidth = (String)values[13];
+		zoomImageHeight = (String)values[14];
+		imageId = ((Integer)values[15]).intValue();
+		maxImageWidth = ((Integer)values[16]).intValue();
+	}
 	
 	public Image()
 	{
@@ -435,25 +471,55 @@ public class Image extends PresentationObject
 
 		super.addMarkupAttributes(attributeMap);
 	}
+	//TODO: remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Script theOldAssociatedScript;
 	public void setAssociatedScript(Script myScript)
 	{
-		theAssociatedScript = myScript;
+		if(IWMainApplication.useJSF){
+			getFacets().put("image_associatedscript",myScript);
+		}
+		else{
+			theOldAssociatedScript = myScript;
+		}
+	}
+	public Script getAssociatedScript()
+	{
+		if(IWMainApplication.useJSF){
+			return (Script)getFacet("image_associatedscript");
+		}
+		else{
+			return this.theOldAssociatedScript;
+		}
 	}
 	public void setAlignment(String alignment)
 	{
 		align = alignment;
 	}
-	public Script getAssociatedScript()
-	{
-		return theAssociatedScript;
-	}
+
 	public void setImageLinkZoomView()
 	{
 		this.zoomView = true;
 	}
+	//TODO remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Link theOldZoomLink;
 	public void setImageZoomLink(Link link)
 	{
-		this.zoomLink = link;
+		if(IWMainApplication.useJSF){
+			getFacets().put("zoomlink",link);
+		}
+		else{
+			this.theOldZoomLink = link;
+		}
+	}
+	public Link getImageZoomLink(){
+		if(IWMainApplication.useJSF){
+			return (Link)getFacet("zoomlink");
+		}
+		else{
+			return this.theOldZoomLink;
+		}
 	}
 	public void setNoImageLink()
 	{
@@ -585,10 +651,11 @@ public class Image extends PresentationObject
 						//should we add the image with a link? or just the image
 						if (zoomView)
 						{
-							if (zoomLink != null)
+							Link zoomViewLink = getImageZoomLink();
+							if (zoomViewLink != null)
 							{
-								zoomLink.setText(getHTMLString(iwc));
-								imageTable.add(zoomLink, 1, 1);
+								zoomViewLink.setText(getHTMLString(iwc));
+								imageTable.add(zoomViewLink, 1, 1);
 							}
 							else
 							{
@@ -610,10 +677,11 @@ public class Image extends PresentationObject
 					{ //or no link
 						if (zoomView)
 						{
-							if (zoomLink != null)
+							Link zoomViewLink = getImageZoomLink();
+							if (zoomViewLink != null)
 							{
-								zoomLink.setText(getHTMLString(iwc));
-								imageTable.add(zoomLink, 1, 1);
+								zoomViewLink.setText(getHTMLString(iwc));
+								imageTable.add(zoomViewLink, 1, 1);
 							}
 							else
 							{
@@ -626,16 +694,17 @@ public class Image extends PresentationObject
 							imageTable.add(getHTMLString(iwc), 1, 1);
 						imageTable.add(imageText, 1, 2);
 					}
-					imageTable._print(iwc);
+					renderChild(iwc,imageTable);
 				}
 				else
 				{
 					if (zoomView)
 					{
-						if (zoomLink != null)
+						Link zoomViewLink = getImageZoomLink();
+						if (zoomViewLink != null)
 						{
-							zoomLink.setText(getHTMLString(iwc));
-							zoomLink._print(iwc);
+							zoomViewLink.setText(getHTMLString(iwc));
+							zoomViewLink._print(iwc);
 						}
 						else
 						{
@@ -721,9 +790,9 @@ public class Image extends PresentationObject
 		try
 		{
 			obj = (Image) super.clone();
-			if (theAssociatedScript != null)
+			if (theOldAssociatedScript != null)
 			{
-				obj.theAssociatedScript = (Script) this.theAssociatedScript.clone();
+				obj.theOldAssociatedScript = (Script) this.theOldAssociatedScript.clone();
 			}
 			obj.overImageUrl = this.overImageUrl;
 			obj.textBgColor = this.textBgColor;
