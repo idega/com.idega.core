@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.3 2004/12/02 23:11:19 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.4 2004/12/20 08:54:56 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2004/12/02 23:11:19 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ViewManager {
 	
@@ -64,7 +64,7 @@ public class ViewManager {
 			Class applicationClass = Class.forName("com.idega.builder.app.IBApplication");
 			FramedWindowClassViewNode builderNode = new FramedWindowClassViewNode("builder",getWorkspaceRoot());
 			builderNode.setWindowClass(applicationClass);
-			builderNode.setJspUri(getWorkspaceRoot().getJSPURI());
+			builderNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -75,7 +75,7 @@ public class ViewManager {
 			Class applicationClass = Class.forName("com.idega.user.app.UserApplication");
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
 			userNode.setWindowClass(applicationClass);
-			userNode.setJspUri(getWorkspaceRoot().getJSPURI());
+			userNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -86,7 +86,7 @@ public class ViewManager {
 			Class applicationClass = Class.forName("com.idega.development.presentation.IWDeveloper");
 			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
 			developerNode.setWindowClass(applicationClass);
-			developerNode.setJspUri(getWorkspaceRoot().getJSPURI());
+			developerNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -175,10 +175,12 @@ public class ViewManager {
 	 * @param ctx
 	 * @return
 	 */
-	protected String getRequestUrl(FacesContext ctx) {
+	public String getRequestUrl(FacesContext ctx) {
 		HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
-		String contextPath = request.getContextPath();
-		String fullRequestUri = request.getRequestURI();
+		//String contextPath = request.getContextPath();
+		//String fullRequestUri = request.getRequestURI();
+		String contextPath = "/";
+		String fullRequestUri = ctx.getExternalContext().getRequestServletPath()+ctx.getExternalContext().getRequestPathInfo();
 		if(contextPath.equals("/")){
 			return fullRequestUri;
 		}

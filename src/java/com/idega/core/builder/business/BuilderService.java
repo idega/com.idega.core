@@ -1,5 +1,11 @@
 /*
- * Created on 8.7.2003 by  tryggvil in project com.project
+ * $Id: BuilderService.java,v 1.9 2004/12/20 08:54:56 tryggvil Exp $
+ * Created on 8.7.2003
+ *
+ * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.core.builder.business;
 
@@ -53,13 +59,20 @@ public interface BuilderService extends IBOService
 	 * @return The Page on this webserver
 	 * @throws RemoteException
 	 */	
-	public Page getPage(String pageID)throws RemoteException;
+	public Page getPage(String pageKey)throws RemoteException;
 	/**
 	 * Gets the id of the Root page for the current application
 	 * @return the id of an IBPage
 	 * @throws RemoteException
 	 */	
 	public int getRootPageId()throws RemoteException;
+	/**
+	 * Gets the key for the requested page
+	 * @param iwc the IWContext of the request
+	 * @return the id of the currently requested page
+	 * @throws RemoteException
+	 */	
+	public String getRootPageKey()throws RemoteException;
 	/**
 	 * Gets the Root page for the current application
 	 * @return the IBPage for the root page
@@ -73,6 +86,13 @@ public interface BuilderService extends IBOService
 	 * @throws RemoteException
 	 */	
 	public int getCurrentPageId(IWContext iwc)throws RemoteException;
+	/**
+	 * Gets the Key for the requested page
+	 * @param iwc the IWContext of the request
+	 * @return the id of the currently requested page
+	 * @throws RemoteException
+	 */	
+	public String getCurrentPageKey(IWContext iwc)throws RemoteException;
 	/**
 	 * Gets the requested page
 	 * @param iwc the IWContext of the request

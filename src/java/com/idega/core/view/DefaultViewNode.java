@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.2 2004/12/17 14:24:07 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.3 2004/12/20 08:54:56 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.StringHandler;
 
@@ -21,20 +23,20 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2004/12/17 14:24:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DefaultViewNode implements ViewNode {
 
 	private String viewId;
 	private Map children;
 	private ViewHandler viewHandler;
-	private boolean isJSP;
-	private boolean isCBP;
+	private boolean isResourceBased;
+	private boolean isComponentBased;
 	private Class componentClass;
-	private String jspUri;
+	private String resourceUri;
 	private ViewNode parent;
 	private Collection roles;
 	private IWMainApplication iwma;
@@ -65,7 +67,7 @@ public class DefaultViewNode implements ViewNode {
 		this.viewId=viewId;
 	}
 
-	private Map getChildrenMap(){
+	protected Map getChildrenMap(){
 		if(children==null){
 			children=new HashMap();
 		}
@@ -109,11 +111,62 @@ public class DefaultViewNode implements ViewNode {
 		return getChildrenMap().values();
 	}
 
+	/**
+	 * This method retorns a child that is a direct child of this instance (not a child of a child).
+	 * This method assumes that childId does not contain the / (SLASH) character.
+	 * @param childId
+	 * @return
+	 */
+	protected ViewNode getDirectChild(String realChildId){
+		ViewNode theReturn = (ViewNode)getChildrenMap().get(realChildId);
+		if(theReturn==null){
+			theReturn = loadChild(realChildId);
+			if(theReturn!=null){
+				getChildrenMap().put(realChildId,theReturn);	
+				return theReturn;
+			}
+		}
+		else{
+			return theReturn;
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getChild(java.lang.String)
 	 */
 	public ViewNode getChild(String childViewId) {
+		
 		if(childViewId!=null){
+			String realChildId=childViewId;
+			String childrenOfChildId = null;
+			if(childViewId.indexOf(SLASH)!=-1){
+				String[] childArray = parseChildren(childViewId);
+				realChildId=childArray[0];
+				if(childArray.length==2){
+					//In this case the '/' character must have been somewhere in the middle of the string
+					//If however this is NOT case the '/' must have been in the beginning of the string, and thus only one element in the array.
+					childrenOfChildId = childArray[1];
+				}
+			}
+			ViewNode directChild = getDirectChild(realChildId);
+			if(directChild!=null){
+				if(childrenOfChildId!=null){
+					return directChild.getChild(childrenOfChildId);
+				}
+				else{
+					return directChild;
+				}
+			}
+			
+		}
+		return this;
+		
+		/*
+		if(newChildViewId.equals(StringHandler.SLASH)){
+			return this;
+		}
+		 elseif(childViewId!=null){
 			int slashIndex = childViewId.indexOf(StringHandler.SLASH);
 			if(childViewId.equals(StringHandler.SLASH)){
 				return this;
@@ -190,7 +243,104 @@ public class DefaultViewNode implements ViewNode {
 				return child;
 			}
 		}
+		*/
+	}
+	
+	
+	/**
+	 * This method is called if a node instance is not found in the map.
+	 * This can be overrided in suclasses and can be a relatively expensive operation, 
+	 * therefore is only called the first time (lazy-loading) when getting the child and after that accessed from the map instance variable.
+	 */
+	protected ViewNode loadChild(String childId){
 		return null;
+	}
+	
+	/**
+	 * This method parses the childViewId with the first separating slash found.<br>
+	 * This method should return either an array of size 1 or 2 depending on if the '/' is in the middle of the string or in the beginning.
+	 * @param childViewId
+	 * @return
+	 */
+	protected String[] parseChildren(String childViewId){
+		
+		
+		if(childViewId!=null){
+			int slashIndex = childViewId.indexOf(StringHandler.SLASH);
+			//if(childViewId.equals(StringHandler.SLASH)){
+			//	return this;
+			//}
+			if (slashIndex!=-1){
+					//String[] split = StringHandler.breakDownURL(childViewId);
+					String[] split;
+					if(slashIndex==0){
+						//This case is when the '/' is in the beginning of the string.
+						//This results that the array returned out of s.split(s,i) returns an empty string as the first result:
+						String[] firstSplit = split= childViewId.split(StringHandler.SLASH,3);
+						//So we shift the results that we want
+						if(firstSplit.length==3){
+							if(firstSplit[2].equals("")){
+								//In this case there are empty strings in indexes 0 and 2
+								split = new String[1];
+								split[0]=firstSplit[1];
+							}
+							else{
+								split = new String[2];
+								split[0]=firstSplit[1];
+								split[1]=firstSplit[2];
+							}
+						}
+						else if(firstSplit.length==2){
+							split = new String[1];
+							split[0]=firstSplit[1];
+						}
+						else{
+							split = new String[2];
+							split[0]=firstSplit[1];
+							split[1]=firstSplit[2];
+						}
+					}
+					else{
+						split= childViewId.split(StringHandler.SLASH,2);
+					}
+					
+					//int length = split.length;
+					
+					
+					return split;
+					
+					/*
+					if(length==2){
+						//In this case the '/' character must have been somewhere in the middle of the string
+						String prefix = split[0];
+						String rest = split[1];
+						//ViewNode child = (ViewNode)getChildrenMap().get(prefix);
+						//if(child==null){
+						//	//Instead of returning null we return this if no chid is found
+						//	return this;
+						//}
+						//else{
+						//	return child.getChild(rest);
+						//}
+						
+						return prefix;
+					}
+					else if(length==1){
+						String prefix = split[0];
+						//In this case the '/' must have been in the beginning of the string
+						//ViewNode theReturn = (ViewNode)getChildrenMap().get(prefix);
+						//if(theReturn==null){
+						//	//Instead of returning null we return this if no chid is found
+						//	theReturn = this;
+						//	
+						//}
+						//return theReturn;
+						return prefix;
+					}*/
+			}
+		}
+		return null;
+		
 	}
 
 	/**
@@ -214,29 +364,30 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#isJSP()
 	 */
-	public boolean isJSP() {
-		return isJSP;
+	public boolean isResourceBased() {
+		return isResourceBased;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#isCBP()
 	 */
-	public boolean isCBP() {
-		return isCBP;
+	public boolean isComponentBased() {
+		return isComponentBased;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getJSPURI()
 	 */
-	public String getJSPURI() {
-		return jspUri;
+	public String getResourceURI() {
+		return resourceUri;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getComponentClass()
 	 */
-	public Class getComponentClass() {
-		return componentClass;
+	public UIComponent createComponent(FacesContext context) {
+		//return componentClass;
+		return null;
 	}
 
 
@@ -290,31 +441,25 @@ public class DefaultViewNode implements ViewNode {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/**
-	 * @param componentClass The componentClass to set.
-	 */
-	public void setComponentClass(Class componentClass) {
-		this.setCBP(true);
-		this.componentClass = componentClass;
-	}
+
 	/**
 	 * @param isCBP The isCBP to set.
 	 */
-	public void setCBP(boolean isCBP) {
-		this.isCBP = isCBP;
+	public void setComponentBased(boolean isCBP) {
+		this.isComponentBased = isCBP;
 	}
 	/**
 	 * @param isJSP The isJSP to set.
 	 */
-	public void setJSP(boolean isJSP) {
-		this.isJSP = isJSP;
+	public void setResourceBased(boolean isJSP) {
+		this.isResourceBased = isJSP;
 	}
 	/**
 	 * @param jspUri The jspUri to set.
 	 */
 	public void setJspUri(String jspUri) {
-		this.setJSP(true);
-		this.jspUri = jspUri;
+		this.setResourceBased(true);
+		this.resourceUri = jspUri;
 	}
 	/**
 	 * @return Returns the parent.

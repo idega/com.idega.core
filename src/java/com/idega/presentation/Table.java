@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.83 2004/12/12 23:27:19 tryggvil Exp $
+ * $Id: Table.java,v 1.84 2004/12/20 08:54:56 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -165,9 +165,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * This method will be used in the JSF transition and will be removed when the theCells[] array is finally removed.
 	 * @return true if Facets are used
 	 */
-	private boolean useFacetBasedCells(){
+	protected boolean useFacetBasedCells(){
 		return PresentationObject.USE_JSF_RENDERING;
-		//return false;
 	}
 	
 	/**
@@ -1911,7 +1910,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 		try {
 			obj = (Table) super.clone(iwc, askForPermission);
 			if(useFacetBasedCells()){
-				cloneJSFFacets(obj,iwc,askForPermission);
+				//Facets have already been cloned here in super.clone(iwc, askForPermission);
+				//cloneJSFFacets(obj,iwc,askForPermission);
 			}
 			else{
 				if (this.theCells != null) {

@@ -20,6 +20,7 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity
  public java.io.OutputStream getPageValueForWrite();
  public java.lang.String getSubType();
  public int getTemplateId();
+ public String getTemplateKey();
  public java.lang.String getType();
  public boolean isDraft();
  public boolean isDynamicTriggeredPage();
@@ -41,6 +42,7 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity
  public void setPageValue(java.io.InputStream p0);
  public void setSubType(java.lang.String p0);
  public void setTemplateId(int p0);
+ public void setTemplateKey(String templateKey);
  public void setType(java.lang.String p0);
  public void setTreeOrder(int p0);
  public void setTreeOrder(java.lang.Integer p0);
@@ -51,4 +53,10 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity
 	public String getFormat();
 	public boolean getIsFormattedInIBXML();
 	public boolean getIsFormattedInHTML();
+	public boolean getIsFormattedInJSP();
+	/**
+	 * Gets the id/key of the page as a String
+	 * @return
+	 */
+	 public String getPageKey();
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.39 2004/12/20 01:14:02 eiki Exp $
+ * $Id: PresentationObjectContainer.java,v 1.40 2004/12/20 08:54:56 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.event.IWPresentationState;
@@ -25,10 +26,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/20 01:14:02 $ by $Author: eiki $
+ * Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -645,31 +646,8 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 					obj.setChildren(clonedChildren);
 				*/
-				
-				//Cloning the JSF children:
-				if(this.childrenList!=null){
-					//First clone the children List instance itself:
-					obj.childrenList=(List) ((PresentationObjectComponentList)this.childrenList).clone();
-					((PresentationObjectComponentList)obj.childrenList).setComponent(obj);
-					
-					//Iterate over the children to clone each child:
-					ListIterator iter = obj.getChildren().listIterator();
-					while (iter.hasNext())
-					{
-						int index = iter.nextIndex();
-						Object item = iter.next();
-						//Object item = obj.theObjects.elementAt(index);
-						if (item instanceof PresentationObject)
-						{
-							PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
-							//newObject.setParentObject(obj);
-							//newObject.setLocation(this.getLocation());
-							obj.getChildren().set(index, newObject);
-							//newObject.setParent(obj);
-						}
-						
-					}
-				}
+			cloneJSFChildrenAndFacets(obj,iwc,askForPermission);
+
 				//}
 			//}
 		}
@@ -680,6 +658,63 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return obj;
 	}
+	
+	private void cloneJSFChildrenAndFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//Cloning the JSF Facets:
+		cloneJSFChildren(obj,iwc,askForPermission);
+		cloneJSFFacets(obj,iwc,askForPermission);
+		//TODO: move the cloning of this to PresentationObject. Now it is inside PresentationObjectContainer
+		
+	}
+
+	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//Cloning the JSF children:
+		if(this.childrenList!=null){
+			//First clone the children List instance itself:
+			obj.childrenList=(List) ((PresentationObjectComponentList)this.childrenList).clone();
+			((PresentationObjectComponentList)obj.childrenList).setComponent(obj);
+			
+			//Iterate over the children to clone each child:
+			ListIterator iter = obj.getChildren().listIterator();
+			while (iter.hasNext())
+			{
+				int index = iter.nextIndex();
+				Object item = iter.next();
+				//Object item = obj.theObjects.elementAt(index);
+				if (item instanceof PresentationObject)
+				{
+					PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
+					//newObject.setParentObject(obj);
+					//newObject.setLocation(this.getLocation());
+					obj.getChildren().set(index, newObject);
+					//newObject.setParent(obj);
+				}
+				
+			}
+		}
+	}
+	
+	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//First clone the facet Map:
+		if(this.facetMap!=null){
+			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+			
+			//Iterate over the children to clone each child:
+			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				UIComponent component = getFacet(key);
+				if(component instanceof PresentationObject){
+					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
+					newObject.setParentObject(obj);
+					newObject.setLocation(this.getLocation());
+					obj.getFacets().put(key,newObject);
+				}
+			}
+		}
+	}
+	
+	
 	public boolean remove(PresentationObject obj)
 	{
 		return getChildren().remove(obj);

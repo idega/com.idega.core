@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.115 2004/12/03 01:04:50 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.116 2004/12/20 08:54:56 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -65,10 +65,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/03 01:04:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.115 $
+ * @version $Revision: 1.116 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -829,33 +829,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	
 	
-	private void cloneJSFObjects(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
-		//Cloning the JSF Facets:
-		cloneJSFFacets(obj,iwc,askForPermission);
-		//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
-		
-	}
-	
-	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
-		//First clone the facet Map:
-		if(this.facetMap!=null){
-			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
-			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-			
-			//Iterate over the children to clone each child:
-			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-				UIComponent component = getFacet(key);
-				if(component instanceof PresentationObject){
-					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
-					newObject.setParentObject(obj);
-					newObject.setLocation(this.getLocation());
-					obj.getFacets().put(key,newObject);
-				}
-			}
-		}
-	}
-	
+
 	/**
 	 * This clone method checks for permission for "this" instance if askForPermission is true
 	 * This method should generally not be overridden unless there is need to alter the default permission behaviour.
@@ -889,7 +863,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			object = this.clone();
 		}
 		PresentationObject obj = (PresentationObject)object;
-		cloneJSFObjects(obj,iwc,askForPermission);
+		//cloneJSFObjects(obj,iwc,askForPermission);
 		return object;
 	}
 	/**

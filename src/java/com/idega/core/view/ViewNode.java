@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.1 2004/11/14 23:24:47 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.2 2004/12/20 08:54:56 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,6 +12,8 @@ package com.idega.core.view;
 import java.util.Collection;
 import java.util.Locale;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 
 /**
@@ -23,10 +25,10 @@ import javax.faces.application.ViewHandler;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.
  * 
- *  Last modified: $Date: 2004/11/14 23:24:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface ViewNode {
 	
@@ -52,10 +54,26 @@ public interface ViewNode {
 	
 	//ViewHandler/JSF properties
 	public ViewHandler getViewHandler();
-	public boolean isJSP();
-	public boolean isCBP();
-	public String getJSPURI();
-	public Class getComponentClass();
+	/**
+	 * Returns true if the node is resource based wich means that it will be served (dispatched) from a resource
+	 * (e.g. a JSP page) on a given URI on the sever. A viewNode can not be both resource based or component based at the same time.
+	 * @return
+	 */
+	public boolean isResourceBased();
+	/**
+	 * Returns true if the node represents a component (UIComponent) and will be created with createComponent() 
+	 * typically called from a ViewHandler.
+	 * A viewNode can not be both resource based or component based at the same time.
+	 * @return
+	 */
+	public boolean isComponentBased();
+	public String getResourceURI();
+	//public Class getComponentClass();
+	/**
+	 * Creates a new instance of the component for this node.
+	 */
+	public UIComponent createComponent(FacesContext context);
+	
 	
 	//Accesscontrol properties
 	public Collection getAuthorizedRoles();
