@@ -1,13 +1,14 @@
 package com.idega.core.location.data;
 
 import java.util.Collection;
-
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.user.data.Group;
 
 
 public class CommuneBMPBean extends GenericEntity implements Commune {
@@ -18,9 +19,12 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 	private static String COLUMN_COMMUNE = "commune";
 	private static String COLUMN_COMMUNE_CODE = "commune_code";
 	private static String COLUMN_PROVINCE_ID = "ic_province_id";
+	private static String COLUMN_GROUP_ID = "ic_group_id";
 	private static String COLUMN_DEFAULT = "default_commune";
 	private static String COLUMN_VALID = "IS_VALID";
 
+	private static String OTHER = "Other";
+	
 	public CommuneBMPBean(){
 		super();
 	}
@@ -31,6 +35,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 		addAttribute(COLUMN_COMMUNE, "Commune name uppercase", true, true, String.class, 50);
 		addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 20);
 		addManyToOneRelationship(COLUMN_PROVINCE_ID, "Province", Province.class);
+		addManyToOneRelationship(COLUMN_GROUP_ID, "Group", Group.class);
 		addAttribute(COLUMN_DEFAULT, "Default commune", true, true, Boolean.class);
 		addAttribute(COLUMN_VALID, "valid", true, true, Boolean.class);
 	}
@@ -77,6 +82,22 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 
 	public int getProvinceID(){
 		return getIntColumnValue(COLUMN_PROVINCE_ID);
+	}
+  
+	public void setGroup(Group group){
+		setColumn(COLUMN_GROUP_ID,group);
+	}
+
+	public Group getGroup(){
+		return (Group)getColumnValue(COLUMN_GROUP_ID);
+	}
+
+	public void setGroupID(int group_id){
+		setColumn(COLUMN_GROUP_ID,group_id);
+	}
+
+	public int getGroupID(){
+		return getIntColumnValue(COLUMN_GROUP_ID);
 	}
   
 	public boolean getIsValid() {
@@ -152,7 +173,24 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y");
 		return (Integer) idoFindOnePKByQuery(query);
 	}
-  
+
+	public Object ejbFindOtherCommmuneCreateIfNotExist() throws IDOLookupException, CreateException, FinderException {
+		CommuneHome communeHome = (CommuneHome)IDOLookup.getHome(Commune.class);
+
+		Commune commune;
+		try {
+			commune = communeHome.findByCommuneCode(OTHER);
+		}
+		catch (FinderException e) {
+			commune = communeHome.create();
+			commune.setCommuneCode(OTHER);
+			commune.setCommuneName(OTHER);
+			commune.setIsValid(true);
+			commune.store();
+		}
+		return commune;
+	}
+	
 	public void remove() {
 		setIsValid(false);
 		store();

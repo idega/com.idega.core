@@ -1,13 +1,17 @@
 package com.idega.core.location.business;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Vector;
-
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.CommuneHome;
+import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.user.data.Group;
 
 /**
  * @author Gimmi
@@ -59,6 +63,18 @@ public class CommuneBusinessBean extends IBOServiceBean implements CommuneBusine
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public Commune getOtherCommuneCreateIfNotExist() throws CreateException, FinderException, RemoteException {
+		return getCommuneHome().findOtherCommmuneCreateIfNotExist();
+	}
+
+	public Group getGroup(Commune commune) {
+		return commune.getGroup();
+	}
+	
+	public Commune getCommuneByPostalCode(PostalCode postalCode) {
+		return postalCode.getCommune();
 	}
 	
 	public CommuneHome getCommuneHome() throws IDOLookupException {

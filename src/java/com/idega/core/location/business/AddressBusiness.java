@@ -1,6 +1,6 @@
 /*
- * $Id: AddressBusiness.java,v 1.4 2004/09/13 15:09:50 joakim Exp $
- * Created on 13.9.2004
+ * $Id: AddressBusiness.java,v 1.5 2004/09/14 15:04:06 joakim Exp $
+ * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -11,10 +11,12 @@ package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
 import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import com.idega.business.IBOService;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
@@ -24,10 +26,10 @@ import com.idega.core.location.data.PostalCodeHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/13 15:09:50 $ by $Author: joakim $
+ *  Last modified: $Date: 2004/09/14 15:04:06 $ by $Author: joakim $
  * 
  * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface AddressBusiness extends IBOService {
 
@@ -67,6 +69,16 @@ public interface AddressBusiness extends IBOService {
 	 */
 	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws RemoteException,
 			CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#createCommuneIfNotExisting
+	 */
+	public Commune createCommuneIfNotExisting(String Commune) throws RemoteException, CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getOtherCommuneCreateIfNotExist
+	 */
+	public Commune getOtherCommuneCreateIfNotExist() throws CreateException, FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.core.location.business.AddressBusinessBean#changePostalCodeNameWhenOnlyOneAddressRelated

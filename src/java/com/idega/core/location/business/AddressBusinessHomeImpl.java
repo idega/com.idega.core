@@ -1,6 +1,6 @@
 /*
- * $Id: AddressBusinessHomeImpl.java,v 1.2 2004/09/13 15:09:50 joakim Exp $
- * Created on 13.9.2004
+ * $Id: AddressBusinessHomeImpl.java,v 1.3 2004/09/14 15:04:06 joakim Exp $
+ * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHomeImpl;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/13 15:09:50 $ by $Author: joakim $
+ *  Last modified: $Date: 2004/09/14 15:04:06 $ by $Author: joakim $
  * 
  * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class AddressBusinessHomeImpl extends IBOHomeImpl implements AddressBusinessHome {
 

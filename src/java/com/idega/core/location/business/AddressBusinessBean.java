@@ -94,6 +94,19 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * This is a simplification since we didn't have that data for Iceland
 	 */
 	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws RemoteException, CreateException {
+		Commune commune = createCommuneIfNotExisting(Commune);
+		postalCode.setCommune(commune);
+		postalCode.store();
+	}
+	
+	
+  /**
+	 * @param Commune
+	 * @return
+	 * @throws RemoteException
+	 * @throws CreateException
+	 */
+	public Commune createCommuneIfNotExisting(String Commune) throws RemoteException, CreateException {
 		CommuneHome communeHome = getCommuneHome();
 		Commune commune;
 		try {
@@ -106,12 +119,14 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			commune.setIsValid(true);
 			commune.store();
 		}
-		postalCode.setCommune(commune);
-		postalCode.store();
+		return commune;
 	}
 	
-	
-  /**
+	public Commune getOtherCommuneCreateIfNotExist() throws CreateException, FinderException, RemoteException {
+		return getCommuneHome().findOtherCommmuneCreateIfNotExist();
+	}
+
+/**
    * Change postal code name when only one address is related to the postalcode
    */
   public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode,String newName){
