@@ -1,14 +1,11 @@
 package com.idega.presentation;
 
 import com.idega.block.IWBlock;
-import com.idega.block.finance.business.*;
-import com.idega.block.finance.data.*;
 import com.idega.presentation.Block;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.Image;
-import com.idega.presentation.ui.*;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.text.*;
 import com.idega.util.text.Edit;
@@ -17,7 +14,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import java.util.Vector;
 import java.util.List;
 import java.util.Collection;
-import java.text.DateFormat;
+import com.idega.idegaweb.IWMainApplication;
 
 /**
  * Title:   idegaclasses
@@ -37,13 +34,14 @@ public class BlockMenu extends Block {
   private Collection paramtersToMainTain = null;
   private String prmObjectClass = "obj_clss";
   private Class defaultClass = null;
+  private boolean showLinks = true;
   private String fontStyle = "color:#000000;font-size:8pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
   private String fontStyle2 = "color:#942829;font-size:9pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
 
   protected void control(IWContext iwc){
     iwrb = getResourceBundle(iwc);
     iwb = getBundle(iwc);
-    Table T = new Table(1,2);
+    Table T = new Table();
     T.setWidth("100%");
     T.setCellpadding(0);
     T.setCellspacing(10);
@@ -57,13 +55,19 @@ public class BlockMenu extends Block {
       className = (String) iwc.getSessionAttribute(prmObjectClass);
     }
     else if(defaultClass !=null){
-      className = defaultClass.getName();
+      className = String.valueOf(defaultClass.hashCode());
     }
+
+    if(paramtersToMainTain!=null)
+      System.err.println("parameter collection size is "+paramtersToMainTain.size());
+    else
+      System.err.println("parameter collection size is null");
 
     if(className !=null){
       try{
-      T.add(getLinkTable(iwc,className),1,1);
-      Object obj =  Class.forName(className).newInstance();
+      if(showLinks)
+        T.add(getLinkTable(iwc,className),1,1);
+      Object obj =  Class.forName(IWMainApplication.decryptClassName(className)).newInstance();
       if(obj instanceof Block)
         T.add((Block)obj,1,2);
       }
@@ -119,10 +123,13 @@ public class BlockMenu extends Block {
           col++;
           java.util.Iterator I = objects.iterator();
           Block obj;
+          String decryptedClassName ;
           boolean highlight;
           while(I.hasNext()){
             obj = (Block) I.next();
-            highlight = obj.getClassName().equals(currentClassName);
+            // shorted
+            decryptedClassName = String.valueOf(obj.getClass().hashCode());
+            highlight = decryptedClassName.equals(currentClassName);
             frame.add(getLink(obj.getClass(),formatText(obj.getLocalizedName(iwc)),highlight),col,row);
             col++;
             frame.add(formatText("|"),col,row);
@@ -180,8 +187,12 @@ public class BlockMenu extends Block {
     paramtersToMainTain.add(prm);
   }
 
-  public Parameter getObjectParameter(Class financeClass){
-    return new Parameter(prmObjectClass,financeClass.getName());
+  public Parameter getObjectParameter(Class objectClass){
+    return new Parameter(prmObjectClass,IWMainApplication.getEncryptedClassName(objectClass));
+  }
+
+  public void setShowLinks(boolean show){
+    showLinks = show;
   }
 
   public void addBlock(Class obj){
@@ -216,7 +227,7 @@ public class BlockMenu extends Block {
     try {
       obj = (BlockMenu)super.clone();
       obj.objects  = objects;
-
+      obj.paramtersToMainTain = paramtersToMainTain;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);

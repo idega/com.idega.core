@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.12 2001/12/03 16:20:17 palli Exp $
+ * $Id: IWPropertyList.java,v 1.13 2002/02/10 21:55:33 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -52,6 +52,7 @@ public class IWPropertyList{
    static String typeTag = "type";
    static String stringTag = "string";
    static String stringString = "java.lang.String";
+   static String backupEnding = ".bak";
 
   IWPropertyList(){
   }
@@ -72,7 +73,10 @@ public class IWPropertyList{
     if(createFileAndFolder){
       try{
         file = new File(path,fileNameWithoutFullPath);
-        if(!file.exists()){
+        // added 08.02.2002 by aron: was before
+        // if(!file.exists() )
+        if(!file.exists() || file.length()==0){
+          System.err.println("Creating new "+fileNameWithoutFullPath);
           file = FileUtil.getFileAndCreateIfNotExists(path,fileNameWithoutFullPath);
           FileOutputStream stream = new FileOutputStream(file);
           char[] array = ((String)"<"+rootElementTag+"></"+rootElementTag+">").toCharArray();

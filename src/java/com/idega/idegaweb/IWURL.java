@@ -91,7 +91,7 @@ public class IWURL {
   }
 
   public void addPageClassParameter(Class pageClass){
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,pageClass.getName());
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,IWMainApplication.getEncryptedClassName(pageClass));
   }
 
   public void addParameter(String parameterName,String parameterValue){

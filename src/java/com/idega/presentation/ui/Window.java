@@ -274,7 +274,7 @@ public static String getWindowURL(Class windowClass){
   url+="?";
   url+=IW_FRAME_CLASS_PARAMETER;
   url+="=";
-  url+=windowClass.getName();
+  url+=IWMainApplication.getEncryptedClassName(windowClass);
   return url;
 }
 

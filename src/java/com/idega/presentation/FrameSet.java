@@ -14,6 +14,7 @@ import java.util.*;
 
 import com.idega.idegaweb.IWURL;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -210,7 +211,7 @@ public class FrameSet extends Window{
     }*/
 
     private static String getFrameURI(Class pageClass,IWContext iwc){
-      String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+pageClass.getName();
+      String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
       return uri;
     }
 

@@ -576,7 +576,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public static String getHashCode(Class classObject){
     String hashcode = Integer.toString(classObject.hashCode());
-    System.err.println(classObject.getName()+" "+hashcode);
+    //System.err.println(classObject.getName()+" "+hashcode);
     if(hashClasses==null)
       hashClasses = new Hashtable();
     if(!hashClasses.containsKey(hashcode) ){

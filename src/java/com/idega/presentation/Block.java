@@ -76,7 +76,6 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   }
 
   public boolean isTarget(){
-    System.err.println("targetObjInstset "+targetObjInstset+" targetObjInst"+ targetObjInst);
     return this.targetObjInstset==this.targetObjInst;
   }
   /////// target code ends ////////////
