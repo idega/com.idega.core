@@ -310,7 +310,8 @@ public class SmallCalendar extends Block {
 			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() + 1));
 			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
 		}
-		//L.addParameter(CalendarBusiness.PARAMETER_DAY,String.valueOf(idts.getDay()));
+		L.addParameter(CalendarParameters.PARAMETER_DAY,String.valueOf(idts.getDay()));
+//		L.addParameter(CalendarBusiness.PARAMETER_DAY,String.valueOf(idts.getDay()));
 	}
 
 	public void addLastMonthPrm(Link L, IWTimestamp idts) {
@@ -322,6 +323,7 @@ public class SmallCalendar extends Block {
 			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() - 1));
 			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
 		}
+		L.addParameter(CalendarParameters.PARAMETER_DAY,String.valueOf(idts.getDay()));
 		//L.addParameter(CalendarBusiness.PARAMETER_DAY,String.valueOf(idts.getDay()));
 	}
 
