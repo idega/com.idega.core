@@ -303,7 +303,7 @@ public class Form
 			// return true;\n}","");
 			// getParentPage().setOnUnLoad("showLoadingLayer();");
 			// /setOnSubmit("showLoadingLayer();");
-			setCheckSubmit();
+			//setCheckSubmit();
 			printLoadingLayer = true;
 		}
 	}
@@ -582,6 +582,9 @@ public class Form
 			if (printLoadingLayer)
 				getScript().addToFunction("checkSubmit", "showLoadingLayer();");
 			getScript().addToFunction("checkSubmit", "return true;");
+		}
+		else {
+			this.setOnSubmit("showLoadingLayer()");
 		}
 		// if ( doPrint(iwc) ){
 
