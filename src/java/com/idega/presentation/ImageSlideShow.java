@@ -121,7 +121,9 @@ private PresentationObject leftObject,rightObject;
       while (iter.hasNext()) {
         fileImage = (ICFile)iter.next();
         try{
-          urls.add(image.getServletURL(fileImage.getID()));
+          String url = image.getServletURL(fileImage.getID());
+          if(!urls.contains(url))
+            urls.add(url);
         }
         catch(Exception ex){
           ex.printStackTrace(System.err);
@@ -132,9 +134,10 @@ private PresentationObject leftObject,rightObject;
       // layout
         T.mergeCells(1,imageRow,2,imageRow);
 
-        if(getParentPage()!=null)
-          getParentPage().getAssociatedScript().addFunction("slide"+name,getSlideScript(name,urls));
-        if(showButtons && size >1){
+        if( size >1 && showButtons ){
+          if(getParentPage()!=null)
+            getParentPage().getAssociatedScript().addFunction("slide"+name,getSlideScript(name,urls));
+
           T.add(getLeftLink(name),1,buttonRow);
           T.add(getRightLink(name),2,buttonRow);
           if((buttonAlign & INNER) != 0){
@@ -148,6 +151,8 @@ private PresentationObject leftObject,rightObject;
         }
         else
            T.mergeCells(1,2,2,2);
+
+
 
         T.setCellpadding(0);
         T.setCellspacing(0);
