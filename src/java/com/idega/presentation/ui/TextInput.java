@@ -5,6 +5,7 @@
 package com.idega.presentation.ui;
 
 import java.text.NumberFormat;
+import javax.faces.context.FacesContext;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
@@ -14,51 +15,86 @@ import com.idega.util.text.TextSoap;
  * @version 1.2
  */
 public class TextInput extends GenericInput {
-
     private boolean isSetAsIntegers;
-
     private boolean isSetAsPosNegIntegers;
-
     private boolean isSetAsPosIntegers;
-
     private boolean isSetAsFloat;
-
     private boolean isSetAsDouble;
-
     private boolean isSetAsAlphabetical;
-
     private boolean isSetAsEmail;
-
     private boolean isSetAsNotEmpty;
-
     private boolean isSetAsIcelandicSSNumber;
-
     private boolean isSetAsCreditCardNumber;
-
     private boolean isSetMinimumLength;
-
     private String integersErrorMessage;
-
     private String floatErrorMessage;
-
     private String alphabetErrorMessage;
-
     private String emailErrorMessage;
-
     private String notEmptyErrorMessage;
-
     private String posIntegersErrorMessage;
-
     private String icelandicSSNumberErrorMessage;
-
     private String notCreditCardErrorMessage;
-
     private String minimumLengthErrorMessage;
-
     private int minimumLength;
-
     private int decimals = -1;
-
+	
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[23];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(isSetAsIntegers);
+		values[2] = Boolean.valueOf(isSetAsPosNegIntegers);
+		values[3] = Boolean.valueOf(isSetAsPosIntegers);
+		values[4] = Boolean.valueOf(isSetAsFloat);
+		values[5] = Boolean.valueOf(isSetAsDouble);
+		values[6] = Boolean.valueOf(isSetAsAlphabetical);
+		values[7] = Boolean.valueOf(isSetAsEmail);
+		values[8] = Boolean.valueOf(isSetAsNotEmpty);
+		values[9] = Boolean.valueOf(isSetAsIcelandicSSNumber);
+		values[10] = Boolean.valueOf(isSetAsCreditCardNumber);
+		values[11] = Boolean.valueOf(isSetMinimumLength);
+		values[12] = integersErrorMessage;
+		values[13] = floatErrorMessage;
+		values[14] = alphabetErrorMessage;
+		values[15] = emailErrorMessage;
+		values[16] = notEmptyErrorMessage;
+		values[17] = posIntegersErrorMessage;
+		values[18] = icelandicSSNumberErrorMessage;
+		values[19] = notCreditCardErrorMessage;
+		values[20] = minimumLengthErrorMessage;
+		values[21] = new Integer(minimumLength);
+		values[22] = new Integer(decimals);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		isSetAsIntegers = ((Boolean) values[1]).booleanValue();
+		isSetAsPosIntegers = ((Boolean) values[2]).booleanValue();
+		isSetAsPosIntegers = ((Boolean) values[3]).booleanValue();
+		isSetAsFloat = ((Boolean) values[4]).booleanValue();
+		isSetAsDouble = ((Boolean) values[5]).booleanValue();
+		isSetAsAlphabetical = ((Boolean) values[6]).booleanValue();
+		isSetAsEmail = ((Boolean) values[7]).booleanValue();
+		isSetAsNotEmpty = ((Boolean) values[8]).booleanValue();
+		isSetAsIcelandicSSNumber = ((Boolean) values[9]).booleanValue();
+		isSetAsCreditCardNumber = ((Boolean) values[10]).booleanValue();
+		isSetMinimumLength = ((Boolean) values[11]).booleanValue();
+		integersErrorMessage = (String) values[12];
+		floatErrorMessage = (String) values[13];
+		alphabetErrorMessage = (String) values[14];
+		emailErrorMessage = (String) values[15];
+		notEmptyErrorMessage = (String) values[16];
+		posIntegersErrorMessage = (String) values[17];
+		icelandicSSNumberErrorMessage = (String) values[18];
+		notCreditCardErrorMessage = (String) values[19];
+		minimumLengthErrorMessage = (String) values[20];
+		minimumLength = ((Integer)values[21]).intValue();
+		decimals = ((Integer)values[22]).intValue();
+	}	
+	
+	
+	
     /**
      * Constructs a new <code>TextInput</code> with the name "untitled".
      */
