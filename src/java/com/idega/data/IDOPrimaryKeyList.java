@@ -39,6 +39,10 @@ import com.idega.util.logging.LoggingHelper;
 
 public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
+	//TODO gummi: replace GenericEntity with IDOEntity and IDOContainer
+	
+	private String _dataSource = GenericEntity.DEFAULT_DATASOURCE;
+	
 	private SelectQuery _sqlQuery;
 	private SelectQuery _loadQueryBase;
 	private GenericEntity _entity;
@@ -117,6 +121,15 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		_prefetchSize = prefetchSize;
 		initialize(primaryKeyList);
     }
+	
+	public IDOPrimaryKeyList(Collection primaryKeyList, Class entityInterfaceClass, int prefetchSize) throws IDOFinderException {
+		_sqlQuery = null;
+//		_Stmt = Stmt;
+//		_RS = RS;
+		_entity = (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceClass);
+		_prefetchSize = prefetchSize;
+		initialize(primaryKeyList);
+    }
 
 	private void loadInBackground(){
 	    Thread thread = new Thread(this);
@@ -170,7 +183,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		}
 		
 		if(primaryKeyCollection != null){
-			debug("[IDOPrimaryKeyList - Initialize - primary key list added]: length"+ primaryKeyCollection.size());
+			debug("[IDOPrimaryKeyList - Initialize - primary key list added]: length "+ primaryKeyCollection.size());
 			super.addAll(primaryKeyCollection);
 			_entities = new Vector();
 			_entities.setSize(size());
@@ -368,7 +381,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
-			conn = proxyEntity.getConnection(proxyEntity.getDatasource());
+			conn = proxyEntity.getConnection(_dataSource);
 			Stmt = conn.createStatement();
 			
 			if (_entity.isDebugActive())
@@ -379,6 +392,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    
 		    int total = 0;
 		    int no = 0;
+		    IDOHome home = (IDOHome)proxyEntity.getEJBLocalHome();
+			Class interfaceClass = proxyEntity.getInterfaceClass();
 		    if(_loadQueryBase==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
 		    		HashMap mapOfEntities = new HashMap();
 		    		while(RS.next())
@@ -387,7 +402,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					if (pk != null)
 					{
 						try {
-							IDOEntity bean = proxyEntity.prefetchBeanFromResultSet(pk, RS,proxyEntity.getDatasource());
+							IDOEntity bean = IDOContainer.getInstance().findByPrimaryKey(interfaceClass, pk, RS, home,_dataSource);
+							//IDOEntity bean = proxyEntity.prefetchBeanFromResultSet(pk, RS,);
 							mapOfEntities.put(pk,bean);
 						} catch (FinderException e) {
 							//The row must have been deleted from database
@@ -416,7 +432,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					if (pk != null)
 					{
 						try {
-							_entities.set(i,proxyEntity.prefetchBeanFromResultSet(pk, RS,proxyEntity.getDatasource()));
+							IDOEntity bean = IDOContainer.getInstance().findByPrimaryKey(interfaceClass, pk, RS, home,_dataSource);
+							_entities.set(i,bean);
 							if(!pk.equals(this.get(i))){
 	//							logError("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
 								no++;
@@ -519,7 +536,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	 * @param msg The message to log out
 	 */
 	protected void logDebug(String msg) {
-		System.err.println(msg);
+		//System.err.println(msg);
 		getLogger().log(getDebugLogLevel(),msg);
 	}
 	
@@ -693,20 +710,17 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   	return true;  	
   }
   
-  public boolean contains(Object o) {
-  	if(o instanceof IDOEntity){
-  		if(_tracker.getLoadRatio() != 1){
-	  		try {
-				loadSubset(0,size());
-			} catch (IDOFinderException e) {
-				logError("[WARNING!!!][IDOPrimaryKeyList]: failed to load entities and can therefore return incorrect result");
-				e.printStackTrace();
-			}
-  		}
-  		return _entities.contains(o);
-  	} else {
-  		return super.contains(o);
-  	}
+  
+  boolean containsIDOEntity(Object o) {
+	if(_tracker.getLoadRatio() != 1){
+  		try {
+			loadSubset(0,size());
+		} catch (IDOFinderException e) {
+			logError("[WARNING!!!][IDOPrimaryKeyList]: failed to load entities and can therefore return incorrect result");
+			e.printStackTrace();
+		}
+	}
+	return _entities.contains(o);
   }
   
   Object[] toIDOEntityArray() {
