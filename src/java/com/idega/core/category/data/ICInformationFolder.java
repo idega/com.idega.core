@@ -23,6 +23,7 @@ public interface ICInformationFolder extends com.idega.data.CacheableEntity,com.
  public void setName(java.lang.String p0);
  public void setOwnerGroupID(int p0);
  public void setParentId(int p0);
+ public ICInformationFolder getParent();
  public void setType(java.lang.String p0);
  public void setValid(boolean p0);
 }

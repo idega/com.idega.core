@@ -258,6 +258,15 @@ public class ICInformationFolderBMPBean extends com.idega.data.CacheableEntityBM
 	public int getParentId() {
 		return getIntColumnValue(getColumnParentFolderId());
 	}
+	
+	/**
+	 *  Gets the parent attribute of the ICInformationFolder object
+	 *
+	 *@return    The parent
+	 */
+	public ICInformationFolder getParent() {
+		return (ICInformationFolder)getColumnValue(getColumnParentFolderId());
+	}
 
 	/**
 	 *  Sets the parentId attribute of the ICInformationFolder object

@@ -100,5 +100,6 @@ public interface InformationFolder {
     
     
     public ICInformationFolder getEntity();
+	public ICInformationFolder getParent();
 }
 
