@@ -18,7 +18,7 @@ public interface AppServer {
     public String getName();
 
     /**
-     * Gets the name of the product, e.g. Apache Foundation
+     * Gets the name of the vendor, e.g. Apache Foundation
      */
     public String getVendor();
 
