@@ -348,8 +348,10 @@ public class Form
 
 		script.append("	if(!loaded){ ").append("\n");
 		script.append("document.write('<div id=\"busybuddy\" class=\"LoadLayer\" >");
+		script.append("<div id=\"busybuddy-contents\" class=\"LoadLayerContents\" >");
 		script.append("<img src=\"" + imageUrl + "\" onError=\"this.width=1;this.height=1;\">&nbsp;");
 		script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading"));
+		script.append("</div>");
 		script.append("</div>') ").append("\n");
 		script.append("loaded = true; ").append("\n");
 		script.append("	} ").append("\n");
