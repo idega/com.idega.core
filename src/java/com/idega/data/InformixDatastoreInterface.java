@@ -386,10 +386,10 @@ public class InformixDatastoreInterface extends DatastoreInterface{
         }
 */
 
-  public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
-    IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
-    infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
-  }
+  //public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
+  //  IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
+  //  infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
+  //}
 
 
   public boolean supportsBlobInUpdate(){
