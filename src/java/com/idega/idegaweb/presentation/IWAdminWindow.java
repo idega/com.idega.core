@@ -25,6 +25,8 @@ private boolean merged = true;
 private String rightWidth = "160";
 private String method = "post";
 
+public static String HEADER_COLOR="#0E2456";
+
   public IWAdminWindow() {
   }
 
@@ -57,7 +59,7 @@ private String method = "post";
       adminTable.setWidth("100%");
       adminTable.setHeight("100%");
       adminTable.setHeight(2,"100%");
-      adminTable.setColor(1,1,"#0E2456");
+      adminTable.setColor(1,1,HEADER_COLOR);
       adminTable.setColor(1,2,"#FFFFFF");
       if ( !merged ) {
         adminTable.setColor(2,2,"#EFEFEF");
