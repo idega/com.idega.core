@@ -40,10 +40,22 @@ public interface IWLDAPConstants {
 	 */
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID= "personalId";
 	
+	
+	/**
+	 * The users gender, male/female
+	 */
+	public static final String LDAP_ATTRIBUTE_IDEGAWEB_GENDER = "gender";
+	
 	/**
 	 * User id
 	 */
 	public static final String LDAP_ATTRIBUTE_UID= "uid";
+	
+	/**
+	 * Used to separate the users name and his personal id in a dn
+	 */
+	public static final String LDAP_USER_DIRECTORY_STRING_SEPARATOR = "#";
+	
 	/**
 	 * Used for group names
 	 */
@@ -53,9 +65,14 @@ public interface IWLDAPConstants {
 	public static final String LDAP_ATTRIBUTE_OBJECT_CLASS = "objectClass";
 	public static final String LDAP_ATTRIBUTE_DESCRIPTION = "description";
 	public static final String LDAP_ATTRIBUTE_TELEPHONE_NUMBER = "telephoneNumber";
+	public static final String LDAP_ATTRIBUTE_FAX_NUMBER = "facsimileTelephoneNumber";
+	public static final String LDAP_ATTRIBUTE_MOBILE_NUMBER = "mobile";
 	public static final String LDAP_ATTRIBUTE_REGISTERED_ADDRESS = "registeredAddress";
+	public static final String LDAP_ATTRIBUTE_ADDRESS_STREET_NAME_AND_NUMBER = "street";
+	public static final String LDAP_ATTRIBUTE_ADDRESS_POSTAL_CODE = "postalCode";
+	public static final String LDAP_ATTRIBUTE_CO_ADDRESS = "co";
 	public static final String LDAP_ATTRIBUTE_EMAIL = "mail";
 	public static final String LDAP_ATTRIBUTE_LOCATION = "l";
-	public static final String LDAP_USER_DIRECTORY_STRING_SEPARATOR = "-";
+
 
 }
