@@ -52,6 +52,9 @@ public class GroupComparator extends GenericGroupComparator{
     	
     	return super.compare(((Collection)groupAOrCollectionOfGroupA).iterator().next(),((Collection)groupBOrCollectionOfGroupB).iterator().next());
     }
+    else if( groupAOrCollectionOfGroupA instanceof Group ){
+        return compareGroups(groupAOrCollectionOfGroupA, groupBOrCollectionOfGroupB);
+    }
     else{
     	return super.compare(groupAOrCollectionOfGroupA,groupBOrCollectionOfGroupB);
     }
@@ -104,6 +107,63 @@ public class GroupComparator extends GenericGroupComparator{
 		}
 		return comp;
 	}
+
+	/**
+	 * Compares groups
+	 * @param groupAOrCollectionOfGroupA
+	 * @param groupBOrCollectionOfGroupB
+	 * @return
+	 */
+	private int compareGroups(Object groupA, Object groupB) {
+	    int comp = 0;
+	    CachedGroup cachedGroupA = null;
+	    CachedGroup cachedGroupB = null;
+		try {
+		    applicationCachedGroups = (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE);
+		    if(applicationCachedGroups == null){
+		        applicationCachedGroups = new HashMap();
+		        _iwc.getApplicationContext().setApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE, applicationCachedGroups);
+		    }
+
+		    cachedGroupA = new CachedGroup((Group)groupA);
+		    cachedGroupB = new CachedGroup((Group)groupB);
+		    String keyA = cachedGroupA.getPrimaryKey().toString();
+		    String keyB = cachedGroupB.getPrimaryKey().toString();
+		    
+		    if (applicationCachedGroups.containsKey(keyA)) {
+		        applicationCachedGroups.put(keyA, cachedGroupA);
+		    }
+		    if (applicationCachedGroups.containsKey(keyB)) {
+		        applicationCachedGroups.put(keyB, cachedGroupB);
+		    }
+			if (sortByParents) {
+			     applicationCachedParents= (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE);
+			    if(applicationCachedParents == null){
+			        applicationCachedParents = new HashMap();
+			        _iwc.getApplicationContext().setApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE, applicationCachedParents);
+			    }
+			    
+			    Collection parentsA = getParentGroupsRecursive(cachedGroupA);
+			    Collection parentsB = getParentGroupsRecursive(cachedGroupB);
+			    comp = compareRecursive(parentsA, parentsB);
+			}
+		}
+		catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (comp == 0){
+		    Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+		    comp = collator.compare(cachedGroupA.getName(), cachedGroupB.getName()); 
+		}
+		return comp;
+	}
+
 
 	/**
      * @param cachedGroup
@@ -232,8 +292,7 @@ public class GroupComparator extends GenericGroupComparator{
         int comp = 0;
         Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
         String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(cachedGroupA.getGroupType());
-        String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(cachedGroupA.getGroupType());
-        
+        String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(cachedGroupB.getGroupType());
         if (groupType1 != null && groupType2 == null) {
             comp = -1;
         } else if (groupType1 == null && groupType2 != null) {
