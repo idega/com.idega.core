@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.38 2002/01/09 12:41:46 tryggvil Exp $
+ * $Id: Link.java,v 1.39 2002/01/09 16:03:41 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -745,9 +745,19 @@ public class Link extends Text {
       this.text = text;
     }
     else{
+      setText(new Text(text));
       this.text = text;
     }
   }
+
+    /**
+   *
+   */
+  public void setText(Text text) {
+    this._objectType=this.OBJECT_TYPE_TEXT;
+    _obj=text;
+  }
+
 
   public void setLocalizedText(String localeString,String text){
       if (isText()){
