@@ -4,6 +4,9 @@
 package com.idega.util.reflect;
 
 import java.lang.reflect.Field;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * A utility class to get access to class/object fields by reflection.
@@ -13,10 +16,10 @@ import java.lang.reflect.Field;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class FieldAccessor
+public class FieldAccessor implements Singleton
 {
 
-	private static FieldAccessor instance;
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new FieldAccessor();}};
 
 	/**
 	 * 
@@ -28,10 +31,7 @@ public class FieldAccessor
 	}
 	
 	public static FieldAccessor getInstance(){
-		if(instance==null){
-			instance = new FieldAccessor();
-		}
-		return instance;
+		return (FieldAccessor) SingletonRepository.getRepository().getInstance(FieldAccessor.class, instantiator);
 	}
 
 	public Object getFieldValue(Object instance,String fieldName) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException{

@@ -14,27 +14,29 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 import com.idega.util.caching.CacheMap;
-public class MethodFinder
+public class MethodFinder implements Singleton
 {
 	static final String separator = ":";
 	static final String methodString = "method";
-	private static MethodFinder instance;
+	
+	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new MethodFinder();}};
+	
 	private Map methodCache;
 	private Map classMethodCache;
 	
 	private MethodFinder()
 	{
 	}
-	public static MethodFinder getInstance()
-	{
-		if (instance == null)
-		{
-			instance = new MethodFinder();
-		}
-		return instance;
+	
+	public static MethodFinder getInstance() {
+		return (MethodFinder) SingletonRepository.getRepository().getInstance(MethodFinder.class, instantiator);
 	}
+
 	private Map getMethodCache()
 	{
 		if (methodCache == null)

@@ -1,6 +1,10 @@
 package com.idega.util.reflect;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.Singleton;
+import com.idega.repository.data.SingletonRepository;
 
 /**
  * A utility class to invoke methods by reflection.
@@ -12,9 +16,9 @@ import java.lang.reflect.*;
  * @version 1.1
  */
 
-public class MethodInvoker {
+public class MethodInvoker implements Singleton {
 
-  private static MethodInvoker instance;
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new MethodInvoker();}};
 
   private MethodInvoker(){
   }
@@ -23,10 +27,7 @@ public class MethodInvoker {
   * @return the singleton instance of this class
   */
   public static MethodInvoker getInstance(){
-    if(instance==null){
-      instance = new MethodInvoker();
-    }
-    return instance;
+  	return (MethodInvoker) SingletonRepository.getRepository().getInstance(MethodInvoker.class, instantiator);
   }
 
 
