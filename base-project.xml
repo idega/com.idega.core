@@ -18,6 +18,7 @@
   <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
   <siteAddress>maven.idega.com</siteAddress>
   <siteDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
-  <distributionDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/builds</distributionDirectory>
+  <distributionSite>maven.idega.com</distributionSite>
+  <distributionDirectory>/var/www/webs/maven.idega.com/maven</distributionDirectory>
 
 </project>
