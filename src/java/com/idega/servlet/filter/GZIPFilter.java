@@ -15,6 +15,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * USAGE:
+ * Add the following to your web.xml (under /WEB-INF):
+ * 		
+ * 	<filter>
+ * 		<filter-name>Compress</filter-name>
+ * 		<filter-class>com.idega.servlet.filter.GZIPFilter</filter-class>
+ * 	</filter>
+ * 
+ * And then you can specify what to compress:
+ *
+ * 	<filter-mapping>
+ *	   	<filter-name>Compress</filter-name>
+ * 		<url-pattern>*.jsp</url-pattern>
+ * 	</filter-mapping>
+ *
+ * 	<filter-mapping>
+ * 		<filter-name>Compress</filter-name>
+ * 		<url-pattern>*.html</url-pattern>
+ * 	</filter-mapping>
+ *	
+ * 	<filter-mapping>
+ * 		<filter-name>Compress</filter-name>
+ * 		<url-pattern>/servlet/*</url-pattern>
+ * 	</filter-mapping>
+ * 
  * @author laddi
  */
 public class GZIPFilter implements Filter {
