@@ -27,7 +27,7 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	private DropdownMenu primary = null;
 	private DropdownMenu secondary = null;
 	private Collection _primaryCollection;
-	private Map _secondaryMap;
+	protected Map _secondaryMap;
 	
 	private int _spaceBetween = 3;
 	private SelectDropdownDouble _objectToDisable;
@@ -117,9 +117,10 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 				
 				Iterator iterator = map.keySet().iterator();
 				while (iterator.hasNext()) {
-					String element = (String) iterator.next();
-					String value = (String) map.get(element);
-					s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+element+"');").append("\n\t");
+					Object element = iterator.next();
+					String secondKey = getKey(element);
+					String value = getValue(map.get(element));
+					s.append("dropdownValues[\""+key+"\"]["+column+++"] = new Option('"+value+"','"+secondKey+"');").append("\n\t");
 				}
 			}
 		}
@@ -138,6 +139,14 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		s.append("}").append("\n").append("}");
 
 		return s.toString();
+	}
+	
+	protected String getKey(Object key) {
+		return (String) key;
+	}
+	
+	protected String getValue(Object value) {
+		return (String) value;
 	}
 	
 	public void addMenuElement(String value, String name, Map values) {
@@ -220,4 +229,12 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	public void setStyleClass(String styleClass) {
 		_styleClass = styleClass;
 	}
+	
+	/**
+	 * @return
+	 */
+	protected Map getSecondaryMap() {
+		return _secondaryMap;
+	}
+
 }
