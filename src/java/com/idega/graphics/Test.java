@@ -1,7 +1,6 @@
 package com.idega.graphics;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -37,7 +36,6 @@ public class Test {
     BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
     AffineTransform trans = new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
     Graphics2D g = null;
-    FontMetrics fm = null;
 
     g = image.createGraphics();
     g.setTransform(trans);

@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.35 2003/04/03 10:08:16 laddi Exp $
+ * $Id: Table.java,v 1.36 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -703,7 +703,6 @@ public class Table extends PresentationObjectContainer {
 			int xlength;
 			Integer temp3 = (Integer) beginMergedypos.elementAt(i);
 			Integer temp4 = (Integer) endMergedypos.elementAt(i);
-			int ylength;
 			int lowerx = 0;
 			int lowery = 0;
 			if (temp1.intValue() <= temp2.intValue()) {
@@ -716,11 +715,9 @@ public class Table extends PresentationObjectContainer {
 			}
 			if (temp3.intValue() <= temp4.intValue()) {
 				lowery = temp3.intValue();
-				ylength = temp4.intValue() - temp3.intValue();
 			}
 			else {
 				lowery = temp4.intValue();
-				ylength = temp3.intValue() - temp4.intValue();
 			}
 			if (lowerx == startxpos && lowery == startypos) {
 				returnint = xlength + 1;
@@ -736,7 +733,6 @@ public class Table extends PresentationObjectContainer {
 		for (Enumeration e = beginMergedxpos.elements(); e.hasMoreElements();) {
 			Integer temp1 = (Integer) e.nextElement();
 			Integer temp2 = (Integer) endMergedxpos.elementAt(i);
-			int xlength;
 			Integer temp3 = (Integer) beginMergedypos.elementAt(i);
 			Integer temp4 = (Integer) endMergedypos.elementAt(i);
 			int ylength;
@@ -744,11 +740,9 @@ public class Table extends PresentationObjectContainer {
 			int lowery = 0;
 			if (temp1.intValue() <= temp2.intValue()) {
 				lowerx = temp1.intValue();
-				xlength = temp2.intValue() - temp1.intValue();
 			}
 			else {
 				lowerx = temp2.intValue();
-				xlength = temp1.intValue() - temp2.intValue();
 			}
 			if (temp3.intValue() <= temp4.intValue()) {
 				lowery = temp3.intValue();
@@ -776,27 +770,21 @@ public class Table extends PresentationObjectContainer {
 			for (Enumeration e = beginMergedxpos.elements(); e.hasMoreElements();) {
 				Integer temp1 = (Integer) e.nextElement();
 				Integer temp2 = (Integer) endMergedxpos.elementAt(i);
-				int xlength;
 				Integer temp3 = (Integer) beginMergedypos.elementAt(i);
 				Integer temp4 = (Integer) endMergedypos.elementAt(i);
-				int ylength;
 				int lowerx = 0;
 				int lowery = 0;
 				if (temp1.intValue() <= temp2.intValue()) {
 					lowerx = temp1.intValue();
-					xlength = temp2.intValue() - temp1.intValue();
 				}
 				else {
 					lowerx = temp2.intValue();
-					xlength = temp1.intValue() - temp2.intValue();
 				}
 				if (temp3.intValue() <= temp4.intValue()) {
 					lowery = temp3.intValue();
-					ylength = temp4.intValue() - temp3.intValue();
 				}
 				else {
 					lowery = temp4.intValue();
-					ylength = temp3.intValue() - temp4.intValue();
 				}
 				if ((lowerx == xpos) && (lowery == ypos)) {
 					theReturn = true;

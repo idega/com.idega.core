@@ -473,10 +473,6 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 
     public void setSelectedIndex(int index) {
 
-        int oldIndex = model.getSelectedIndex();
-
-
-
         model.setSelectedIndex(index);
 
 
@@ -594,10 +590,6 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
             setSelectedIndex(selected - 1);
 
         }
-
-
-
-        PresentationObject moduleobject = getComponentAt(index);
 
 
 

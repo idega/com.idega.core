@@ -107,7 +107,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
       Iterator iter = set.iterator();
       int counter = 1;
       while (iter.hasNext()) {
-        Object item = iter.next();
+        iter.next();
 //        System.out.println("_stateMap key"+counter+" contained = "+item);
 //        System.out.println("_stateMap key"+counter+".hashCode() = "+item.hashCode());
 //        System.out.println("_stateMap key"+counter+".getClass() = "+item.getClass());

@@ -33,7 +33,7 @@ public class PDFOutput extends HttpServlet
       String spath = (String)request.getParameter("dir");
       if (spath == null || spath.trim().length() <= 0)
         spath = "[ specify a message in the 'msg' argument on the URL ]";
-      FilePermission FP = new FilePermission(spath,"read,execute");
+      new FilePermission(spath,"read,execute");
       // create simple doc and write to a ByteArrayOutputStream
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.10 2003/04/03 10:08:17 laddi Exp $
+ * $Id: LinkContainer.java,v 1.11 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -103,7 +103,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
-						String value = token.nextToken();
+						token.nextToken();
 						if (prmName.equals(st)) {
 							return true;
 							//System.out.println("token "+index+" : "+st+" / true");

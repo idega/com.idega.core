@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.73 2003/04/03 10:08:16 laddi Exp $
+ *  $Id: Page.java,v 1.74 2003/04/03 20:36:55 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -982,7 +982,6 @@ public class Page extends PresentationObjectContainer {
 	 *@return    The childOfOtherPage value
 	 */
 	protected boolean isChildOfOtherPage() {
-		boolean isInsideOtherPage = false;
 		PresentationObject parent = getParentObject();
 		if (parent != null) {
 			if (parent instanceof Page) {

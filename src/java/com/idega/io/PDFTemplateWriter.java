@@ -37,7 +37,7 @@ public class PDFTemplateWriter {
 		MemoryFileBuffer bout = new MemoryFileBuffer();
 		OutputStream OS = new MemoryOutputStream(bout);
 		InputStream IS = new MemoryInputStream(bout);
-		PdfWriter writer = PdfWriter.getInstance(document, OS);
+		PdfWriter.getInstance(document, OS);
 		document.open();
 		
 		parseTagMap(document,tagmap, xmlTemplateFileURL);

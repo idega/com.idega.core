@@ -404,11 +404,11 @@ public static String getWindowCallingScript(String url,String name,boolean tool,
   String yes = "1";
   String sp = "'";
   StringBuffer buf = new StringBuffer("openwindow('").append(url).append("','").append(name).append("',");
-  buf.append("'").append(tool?yes:no).append("','").append(loc?yes:no).append("',");
-  buf.append("'").append(dir?yes:no).append("','").append(stat?yes:no).append("',");
-  buf.append("'").append(menu?yes:no).append("','").append(title?yes:no).append("',");
-  buf.append("'").append(scroll?yes:no).append("','").append(resize?yes:no).append("',");
-  buf.append("'").append(theWidth).append("','").append(theHeight).append("')");
+  buf.append(sp).append(tool?yes:no).append("','").append(loc?yes:no).append("',");
+  buf.append(sp).append(dir?yes:no).append("','").append(stat?yes:no).append("',");
+  buf.append(sp).append(menu?yes:no).append("','").append(title?yes:no).append("',");
+  buf.append(sp).append(scroll?yes:no).append("','").append(resize?yes:no).append("',");
+  buf.append(sp).append(theWidth).append("','").append(theHeight).append("')");
   return buf.toString();
 }
 

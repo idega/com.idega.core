@@ -65,7 +65,6 @@ public String getScriptCode(IWContext iwc){
 	for (Enumeration e = scriptCode.keys(); e.hasMoreElements();){
 
 		Object function=e.nextElement();
-		String functionName = (String) function;
 		String functionCode = (String) scriptCode.get(function);
 
 		returnString.append(functionCode + "\n");

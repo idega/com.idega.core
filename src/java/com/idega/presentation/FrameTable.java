@@ -111,7 +111,7 @@ public class FrameTable extends Window{
         }
       }
       catch(Exception ex) {
-        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+        //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
       }
     }else{
       // super.add() but does not set Location = this.location;
@@ -126,7 +126,7 @@ public class FrameTable extends Window{
         }
       }
       catch(Exception ex) {
-        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+        //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
       }
     }
 
@@ -156,7 +156,7 @@ public class FrameTable extends Window{
         }
       }
       catch(Exception ex) {
-        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+        //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
       }
     }else{
       // super.add() but does not set Location = this.location;
@@ -171,7 +171,7 @@ public class FrameTable extends Window{
         }
       }
       catch(Exception ex) {
-        ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+        //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
       }
     }
   }

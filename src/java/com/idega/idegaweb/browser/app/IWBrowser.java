@@ -404,7 +404,7 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 //      System.out.println("IWBrowser: addChangeListener ...0");
       if(ctrlFrameObject instanceof IWBrowseControl){
 //        System.out.println("IWBrowser: addChangeListener ...1");
-        ChangeListener ctrlFrameListener = ((IWBrowseControl)ctrlFrameObject).getChangeControler();
+        //ChangeListener ctrlFrameListener = ((IWBrowseControl)ctrlFrameObject).getChangeControler();
         List l = this.getAllContainedFrames();
         if(l != null){
 //          System.out.println("IWBrowser: addChangeListener ...2");

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.88 2003/04/02 12:49:39 gimmi Exp $
+ * $Id: Link.java,v 1.89 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -553,7 +553,7 @@ public class Link extends Text {
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
-						String value = token.nextToken();
+						token.nextToken();
 						if (prmName.equals(st)) {
 							return true;
 							//System.out.println("token "+index+" : "+st+" / true");

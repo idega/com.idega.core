@@ -20,8 +20,6 @@ public class IWEventHandler extends IWPresentationServlet {
   
   
   public void initializePage(){
-    IWContext iwc = getIWContext();
-    
     Page page = new EventViewer();
     //page.add("EventHandler");
     setPage(page);

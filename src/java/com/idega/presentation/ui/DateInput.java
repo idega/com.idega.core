@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.26 2003/03/26 10:07:56 laddi Exp $
+ * $Id: DateInput.java,v 1.27 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -379,7 +379,6 @@ public class DateInput extends InterfaceObjectContainer {
   }
 
   private void setSetValues() {
-    Form form = getParentForm();
     dropDownMenusUpToDate = true; // because this method was called
     if (_setMonth != null) {
       _theMonth.setSelectedElement(_setMonth);

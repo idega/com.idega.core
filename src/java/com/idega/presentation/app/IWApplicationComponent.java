@@ -63,7 +63,6 @@ public class IWApplicationComponent extends Page {
 
   public void setImages(IWContext iwc){
     if(!imagesSet){
-      IWBundle iwb = this.getBundle(iwc);
 
         /*topleft = iwb.getImage("iwapplication/component_topleft.gif");
         topright =iwb.getImage("iwapplication/component_topright.gif");

@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.user.data.GroupRelationType;
@@ -44,7 +43,6 @@ public class IWMainApplicationStarter {
 	}
 	public void starPoolManDatabasePool() {
 		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
-		String separator = FileUtil.getFileSeparator();
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
 		//String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"poolman.xml";
@@ -61,9 +59,8 @@ public class IWMainApplicationStarter {
 		String file = iwma.getPropertiesRealPath() + separator + "db.properties";
 		this.propertiesfile = file;
 		sendStartMessage("Reading Databases from file: " + file);
-		PoolManager poolMgr;
 		sendStartMessage("Starting Datastore ConnectionPool");
-		poolMgr = PoolManager.getInstance(file);
+		PoolManager.getInstance(file);
 	}
 	public void endDatabasePool() {
 		//sendShutdownMessage("Stopping Database Pool");
@@ -182,9 +179,6 @@ public class IWMainApplicationStarter {
 		application.loadBundles();
 		executeServices(application);
 		//create ibdomain
-		IBDomain domain =
-			((com.idega.builder.data.IBDomainHome) com.idega.data.IDOLookup.getHomeLegacy(IBDomain.class))
-				.createLegacy();
 		long end = System.currentTimeMillis();
 		long time = (end - start) / 1000;
 		sendStartMessage("Completed in " + time + " seconds");

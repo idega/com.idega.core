@@ -504,14 +504,12 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
 
       String texti = null;
       String link = null;
-      String name = null;
-      String width = null;
+     String width = null;
       String height = null;
 
       if( usesOldImageTables ){
 	texti = image2.getText();
 	link = image2.getLink();
-	name = image2.getName();
 	width = image2.getWidth();
 	height = image2.getHeight();
       }
@@ -519,7 +517,6 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
       {
 	//texti = image.getDescription();
 	//link = image.getLink();
-	name = image.getName();
        // width = image.getWidth();
        // height = image.getHeight();
       }

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.65 2003/04/03 10:08:16 laddi Exp $
+ * $Id: PresentationObject.java,v 1.66 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -734,7 +733,6 @@ public class PresentationObject extends Object implements Cloneable {
       obj.setName(this.name);
       //obj.setParentObject(this.parentObject);
       this.prepareClone(obj);
-      Vector vector;
       obj.initializedInMain = this.initializedInMain;
       obj.ic_object_instance_id = this.ic_object_instance_id;
       obj.ic_object_id = this.ic_object_id;
@@ -900,7 +898,7 @@ public class PresentationObject extends Object implements Cloneable {
       return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID(iwc));
     }
     catch (Exception excep) {
-      IWException exep = new IWException(excep.getMessage());
+      //IWException exep = new IWException(excep.getMessage());
       throw (IWException) excep.fillInStackTrace();
     }
   }
@@ -1467,7 +1465,6 @@ public class PresentationObject extends Object implements Cloneable {
 	{
 		try
 		{
-			int w = Integer.parseInt(width);
 			this.setStyleAttribute("width:" + width + "px");
 		}
 		catch (NumberFormatException e)
@@ -1483,7 +1480,6 @@ public class PresentationObject extends Object implements Cloneable {
 	{
 		try
 		{
-			int h = Integer.parseInt(height);
 			this.setStyleAttribute("height:" + height + "px");
 		}
 		catch (NumberFormatException e)

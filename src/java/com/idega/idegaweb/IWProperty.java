@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.9 2003/04/03 09:53:23 laddi Exp $
+ * $Id: IWProperty.java,v 1.10 2003/04/03 20:36:55 laddi Exp $
 
  *
 
@@ -392,7 +392,7 @@ public class IWProperty{
 
       if(typeElement.getText().equals(arrayTag)){
 
-        XMLElement valueElement = keyElement.getChild(valueTag);
+        keyElement.getChild(valueTag);
 
       }
 

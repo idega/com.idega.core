@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.45 2003/03/07 12:53:34 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.46 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,7 +10,6 @@
 package com.idega.servlet;
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
@@ -496,9 +495,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 					//        System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
 					ListIterator iter2 = state.listIterator();
 					while (iter2.hasNext()) {
-						Object item = iter2.next();
-						int index = iter2.nextIndex() - 1;
-						//System.err.println("PresentationServelt - State index : "+index+" = "+item);
+						iter2.next();
 					}
 					if (!listJustConstructed && state.contains(historyID)) {
 						// go back in history
@@ -586,10 +583,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		MultipartParser mp = new MultipartParser(iwc.getRequest(), iwc.getRequest().getContentLength());
 		/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/
 		Part part;
-		File dir = null;
-		String value = null;
 		while ((part = mp.readNextPart()) != null) {
-			String name = part.getName();
 			if (part.isParam()) {
 				ParamPart paramPart = (ParamPart) part;
 				iwc.setMultipartParameter(paramPart.getName(), paramPart.getStringValue());

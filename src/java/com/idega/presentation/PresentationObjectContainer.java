@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.20 2003/04/03 10:08:16 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.21 2003/04/03 20:36:55 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -50,7 +50,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
     }
     catch(Exception ex) {
-      ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
     }
   }
 
@@ -69,7 +69,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
     }
     catch(Exception ex) {
-      ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
     }
   }
 
@@ -456,7 +456,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
     }
     catch(Exception ex) {
-      ExceptionWrapper exep = new ExceptionWrapper(ex,this);
+      //ExceptionWrapper exep = new ExceptionWrapper(ex,this);
     }
   }
 

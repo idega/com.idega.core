@@ -93,8 +93,6 @@ public void print(IWContext iwc)throws Exception{
 
 				URL url = new URL(getURL());
 
-				String qry = "";
-
                                 String returnString = "";
 
 			         //URL url = new URL("http://localhost/servlet/plainTextModule");

@@ -99,13 +99,9 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
    */
 
  public void begin()throws NotSupportedException,SystemException{
-  boolean transactionAlreadyBegun=false;
   Transaction trans=null;
   try{
     trans = getTransaction();
-    if(trans!=null){
-      transactionAlreadyBegun=true;
-    }
   }
   catch(Exception ex){
   }
@@ -206,7 +202,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
                    SystemException{
 
-  Transaction trans = getTransaction();
+  //Transaction trans = getTransaction();
 
  }
 
@@ -251,7 +247,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
  public void setTransactionTimeout(int seconds)throws SystemException{
 
-  Transaction trans = getTransaction();
+  //Transaction trans = getTransaction();
 
  }
 

@@ -64,7 +64,7 @@ public class FileSaver {
 
             // the part actually contained a file
 
-            long size = filePart.writeTo(dir);
+            filePart.writeTo(dir);
 
           }
 
@@ -118,7 +118,7 @@ public class FileSaver {
 
             // the part actually contained a file
 
-            long size = filePart.writeTo(dir);
+            filePart.writeTo(dir);
 
           }
 

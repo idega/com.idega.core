@@ -58,8 +58,6 @@ public String getModule(Connection conn, String region_id)	{
 
 	String object_url;
 
-	String object_attributes;
-
 	String base_ref = "";
 
 

@@ -150,7 +150,6 @@ public class IWPresentationLocation implements IWLocation {
   }
 
   public boolean equals(IWLocation location){
-    boolean r = this.getLocationString().equals(location.getLocationString());
 //      System.out.println("type = IWLocation");
 //      System.out.println("equals = "+r);
 //      return r;

@@ -53,7 +53,6 @@ public class IWStyleManager {
 
 	public void getStyleSheet() {
 		if ( application != null ) {
-			boolean createNew = false;
 			String URL = application.getApplicationRealPath() + FileUtil.getFileSeparator() + "idegaweb" + FileUtil.getFileSeparator() + "style" + FileUtil.getFileSeparator() + "style.css";
 			Vector vector = null;
 	
