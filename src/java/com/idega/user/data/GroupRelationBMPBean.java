@@ -37,7 +37,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
     this.addManyToOneRelationship(GROUP_ID_COLUMN,"Type",Group.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
-    this.addManyToOneRelationship(RELATIONSHIP_TYPE_COLUMN,"Type",GroupRelationType.class);
+    this.addAttribute(RELATIONSHIP_TYPE_COLUMN,"Type",true,true,String.class,15,MANY_TO_ONE,GroupRelationType.class);
     this.addAttribute(STATUS_COLUMN,"Status",String.class,10);
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
