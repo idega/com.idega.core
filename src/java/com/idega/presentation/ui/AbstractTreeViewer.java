@@ -10,7 +10,7 @@ import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.text.Text;
-import com.idega.user.business.GroupTreeComparator;
+import com.idega.user.presentation.GroupTreeComparator;
 
 /**
  * Title:        idegaWeb
