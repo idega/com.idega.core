@@ -1898,19 +1898,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		buffer.append("select e.* from ");
 		buffer.append(tableToSelectFrom + " middle, " + entity.getEntityName() + " e");
 		buffer.append(" where ");
-		buffer.append("middle." + this.getIDColumnName());
-		buffer.append("=");
-
-		buffer.append(primaryValue);
 		
-		buffer.append(" and ");
-		buffer.append("middle." + entity.getIDColumnName());
+		if( isColumnValueNotEmpty(primaryValue) ){
+			buffer.append("middle." + this.getIDColumnName());
+			buffer.append("=");
+			buffer.append(primaryValue);
+			buffer.append(" and ");
+		}
+			
+		buffer.append(" middle." + entity.getIDColumnName());
 		buffer.append("=");
 		buffer.append("e." + entity.getIDColumnName());
 		
 		primaryValue = this.getKeyValueSQLString(entity.getPrimaryKeyValue());
 		
-		if( !primaryValue.equals("-1") && !primaryValue.equals("'-1'") ){
+		if( isColumnValueNotEmpty(primaryValue) ){
 			buffer.append(" and ");
 			buffer.append("middle." + entity.getIDColumnName());
 			buffer.append("=");
@@ -1936,6 +1938,61 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String SQLString = buffer.toString();
 		return SQLString;
 	}
+	
+	private String getFindReverseRelatedSQLQuery(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue)
+	{
+		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
+		String primaryValue = getPrimaryKeyValueSQLString();
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("select e.* from ");
+		buffer.append(tableToSelectFrom + " middle, " + this.getEntityName() + " e");
+		buffer.append(" where ");
+		
+		if( isColumnValueNotEmpty(primaryValue) ){
+			buffer.append("middle." + this.getIDColumnName());
+			buffer.append("=");
+			buffer.append(primaryValue);
+			buffer.append(" and ");
+		}
+			
+		buffer.append(" middle." + this.getIDColumnName());
+		buffer.append("=");
+		buffer.append("e." + this.getIDColumnName());
+		
+		primaryValue = this.getKeyValueSQLString(entity.getPrimaryKeyValue());
+		
+		if( isColumnValueNotEmpty(primaryValue) ){
+			buffer.append(" and ");
+			buffer.append("middle." + entity.getIDColumnName());
+			buffer.append("=");
+			buffer.append(primaryValue);
+		}
+
+		
+		if (entityColumnName != null)
+			if (!entityColumnName.equals(""))
+			{
+				buffer.append(" and ");
+				buffer.append("e." + entityColumnName);
+				if (entityColumnValue != null)
+				{
+					buffer.append(" = ");
+					buffer.append("'" + entityColumnValue + "'");
+				}
+				else
+				{
+					buffer.append(" is null");
+				}
+			}
+		String SQLString = buffer.toString();
+		return SQLString;
+	}
+	
+	
+	
+	
+	
 	/**
 	 * @deprecated replaced with idoGetRelated()
 	 */
@@ -4206,6 +4263,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		
 		return idoGetRelatedEntities(returningEntity, sqlQuery);
 	}
+	
+	/**
+	 * Returns a collection of entity(this) instances
+	 *
+	 * @throws IDORelationshipException if the relatedEntity has no relationship defined with this bean or an error with the query
+	 */
+	protected Collection idoGetReverseRelatedEntities(IDOEntity relatedEntity) throws IDORelationshipException
+	{
+		IDOLegacyEntity legacyEntity = (IDOLegacyEntity) relatedEntity;
+		String sqlQuery = this.getFindReverseRelatedSQLQuery(legacyEntity, "", "");
+		
+		debug(sqlQuery);
+		
+		return idoGetRelatedEntities(this, sqlQuery);
+		
+	}
+	
+	
+	
 	/**
 	 * Returns a collection of returningEntity instances
 	 *

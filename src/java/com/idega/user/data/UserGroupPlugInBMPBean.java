@@ -59,7 +59,7 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
   }
   
   public Collection ejbFindRegisteredPlugInsForGroupType(GroupType groupType)throws FinderException, IDORelationshipException{
-    return this.idoGetRelatedEntities(groupType);
+    return this.idoGetReverseRelatedEntities(groupType);
   }
   
   public Collection ejbFindRegisteredPlugInsForGroupType(String groupType)throws RemoteException, FinderException, IDORelationshipException{
