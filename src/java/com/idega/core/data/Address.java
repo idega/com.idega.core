@@ -32,5 +32,6 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public java.lang.String getProvince();
  public String getStreetAddress();
  public String getPostalAddress();
+ public String getStreetNameAndNumber();
 
 }
