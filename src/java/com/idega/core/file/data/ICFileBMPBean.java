@@ -343,7 +343,8 @@ private static final String FILE_VALUE = "FILE_VALUE";
   
   
    public Integer ejbFindByFileName(String name)throws FinderException{
-    Collection files = idoFindAllIDsByColumnBySQL(this.getColumnNameName(),name);
+   	Collection files = idoFindIDsBySQL("select * from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " like '" 
+   			+ name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or "+ ICFileBMPBean.getColumnDeleted() + " is null)"); 
     if(!files.isEmpty()){
       return (Integer)files.iterator().next();
     }
