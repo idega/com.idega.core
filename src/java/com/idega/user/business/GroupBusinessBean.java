@@ -72,6 +72,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   private AddressHome addressHome;
   private EmailHome emailHome;
   private PhoneHome phoneHome;
+  private String[] userRepresentativeType;
 
 
   public GroupBusinessBean() {
@@ -130,13 +131,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
    * Get all groups in the system that are not UserRepresentative groups   * @return Collection With all grops in the system that are not UserRepresentative groups   */
   public Collection getAllGroups() {
     try {
-      //filter
-      String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-      //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-      //filter end
-      return getGroups(groupsNotToReturn,false);
-      //return EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
+      return getGroups(getUserRepresentativeGroupTypeStringArray(),false);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -171,9 +166,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
  * @return Collection of Groups
  * @throws Exception If an error occured
  */
-  public  Collection getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws Exception {
-    Collection result = getGroupHome().findAllGroups(groupTypes,returnSepcifiedGroupTypes);
-//    com.idega.user.data.GroupBMPBean.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
+  public  Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception {
+    Collection result = getGroupHome().findAllGroups(groupTypes,returnSpecifiedGroupTypes);
     if(result != null){
       result.removeAll(getAccessController().getStandardGroups());
     }
@@ -214,7 +208,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 
 /**
- * Returns all the groups that are not a direct parent of the Group with id uGroupId. That is both groups that are indirect parents of the group or not at all parents of the group. * @see com.idega.user.business.GroupBusiness#getAllGroupsNotDirectlyRelated(int)
+ * Returns all the groups that are not a direct parent of the Group with id uGroupId. That is both groups that are indirect parents of the group or not at all parents of the group. * @see com.idega.user.business.GroupBusiness#getNonParentGroups(int)
  * @return Collection of non direct parent groups */
   public  Collection getNonParentGroups(int uGroupId){
 //  public  Collection getAllGroupsNotDirectlyRelated(int uGroupId){
@@ -225,12 +219,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
-          Iterator iter = isDirectlyRelated.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            if(item!=null) AllGroups.remove(item); //DEBUG why can this be null FIX
-            //while(AllGroups.remove(item)){}
-          }
+						AllGroups.remove(isDirectlyRelated);
         }
         AllGroups.remove(group);
         return AllGroups;
@@ -256,12 +245,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
-          Iterator iter = isDirectlyRelated.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            AllGroups.remove(item);
-            //while(AllGroups.remove(item)){}
-          }
+            AllGroups.remove(isDirectlyRelated);
         }
         AllGroups.remove(group);
         return AllGroups;
@@ -328,33 +312,25 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * Returns recursively up the group tree parents of group aGroup * @param aGroup The Group to be found parents recursively for. * @return Collection of Groups found recursively up the tree
  * @throws EJBException If an error occured */
 	public  Collection getParentGroupsRecursive(Group aGroup) throws EJBException {
-		String[] groupsNotToReturn = new String[1];
-		//groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-		groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-		//filter end
-		return getParentGroupsRecursive(aGroup,groupsNotToReturn,false);
+
+		return getParentGroupsRecursive(aGroup,getUserRepresentativeGroupTypeStringArray(),false);
   }
 
+	public String[] getUserRepresentativeGroupTypeStringArray(){
+		if(userRepresentativeType == null){
+			userRepresentativeType = new String[1];
+			userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
+		}
+		return userRepresentativeType;
+	}
 
-/**
- * Returns recursively up the group tree parents of group aGroup with filtered out with specified groupTypes
- * @param aGroup a Group to find parents for
- * @param groupTypes the Groups a String array of group types of which the Groups that are returned must be.
- * @return Collection of Groups found recursively up the tree
- * @throws EJBException If an error occured
- */
-  public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes) throws EJBException{
-  		return getParentGroupsRecursive(aGroup,groupTypes,true);
-  }
 
 
 /**
  * Returns recursively up the group tree parents of group aGroup with filtered out with specified groupTypes * @param aGroup a Group to find parents for * @param groupTypes the Groups a String array of group types to be filtered with * @param returnSpecifiedGroupTypes if true it returns the Collection with all the groups that are of the types specified in  groupTypes[], else it returns the opposite (all the groups that are not of any of the types specified by groupTypes[]) * @return Collection of Groups found recursively up the tree * @throws EJBException If an error occured */
   public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
   //public  Collection getGroupsContaining(Group groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException,RemoteException{
-	/**
-   * @todo change implementation: create method getGroupsContaining(List groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
-   */
+
 	Collection groups = aGroup.getParentGroups();
 	
 	if (groups != null && groups.size() > 0){
@@ -368,51 +344,54 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	    	key = item.getPrimaryKey().toString();
 	   		if(!GroupsContained.containsKey(key)){
 	      		GroupsContained.put(key,item);
-	      		putGroupsContaining( item, GroupsContained );
+	      		putGroupsContaining( item, GroupsContained,groupTypes, returnSpecifiedGroupTypes );
 	    	}
 	   	}
 	  }
-	
-	  List specifiedGroups = new ArrayList();
-	  List notSpecifiedGroups = new ArrayList();
-	  int j = 0;
-	  int k = 0;
-	  Iterator iter2 = GroupsContained.values().iterator();
-	  if(groupTypes != null && groupTypes.length > 0){
-	    boolean specified = false;
-	    while (iter2.hasNext()) {
-	      Group tempObj = (Group)iter2.next();
-	      for (int i = 0; i < groupTypes.length; i++) {
-	        if (tempObj.getGroupType().equals(groupTypes[i])){
-	          specifiedGroups.add(j++, tempObj);
-	          specified = true;
-	        }
-	      }
-	      if(!specified){
-	        notSpecifiedGroups.add(k++, tempObj);
-	      }else{
-	        specified = false;
-	      }
-	    }
-	    notSpecifiedGroups.remove(aGroup);
-	    specifiedGroups.remove(aGroup);
-	  } else {
-	    while (iter2.hasNext()) {
-	      Group tempObj = (Group)iter2.next();
-	      notSpecifiedGroups.add(j++, tempObj);
-	    }
-	    notSpecifiedGroups.remove(aGroup);
-	    returnSpecifiedGroupTypes = false;
-	  }
-	
-	  return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+	  
+		List specifiedGroups = new ArrayList();
+		List notSpecifiedGroups = new ArrayList();
+		int j = 0;
+		int k = 0;
+		Iterator iter2 = GroupsContained.values().iterator();
+		if(groupTypes != null && groupTypes.length > 0){
+			boolean specified = false;
+			while (iter2.hasNext()) {
+				Group tempObj = (Group)iter2.next();
+				for (int i = 0; i < groupTypes.length; i++) {
+					if (tempObj.getGroupType().equals(groupTypes[i])){
+						specifiedGroups.add(j++, tempObj);
+						specified = true;
+					}
+				}
+				if(!specified){
+					notSpecifiedGroups.add(k++, tempObj);
+				}else{
+					specified = false;
+				}
+			}
+			notSpecifiedGroups.remove(aGroup);
+			specifiedGroups.remove(aGroup);
+		} else {
+			while (iter2.hasNext()) {
+				Group tempObj = (Group)iter2.next();
+				notSpecifiedGroups.add(j++, tempObj);
+			}
+			notSpecifiedGroups.remove(aGroup);
+			returnSpecifiedGroupTypes = false;
+		}
+		
+		return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+		
+		/////REMOVE AFTER IMPLEMENTING PUTGROUPSCONTAINED BETTER
+	  
 	}else{
 	  return null;
 	}
   }
 
-  private  void putGroupsContaining(Group group, Map GroupsContained ) {
-  	Collection pGroups = group.getParentGroups();
+  private  void putGroupsContaining(Group group, Map GroupsContained , String[] groupTypes, boolean returnGroupTypes ) {
+  	Collection pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
 		if (pGroups != null ){
 		  String key = "";
 		  Iterator iter = pGroups.iterator();
@@ -423,7 +402,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 		      
 		      if(!GroupsContained.containsKey(key)){
 		        GroupsContained.put(key,item);
-		        putGroupsContaining(item, GroupsContained);
+		        putGroupsContaining(item, GroupsContained,groupTypes,returnGroupTypes);
 		      }
 		    }
 		  }
@@ -490,26 +469,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * @throws EJBException If an error occured
  */
    public  Collection getChildGroupsRecursive(Group aGroup) throws EJBException{
-  //public  Collection getGroupsContained(Group group) throws EJBException,RemoteException{
-  	String[] groupsNotToReturn = new String[1];
-		groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-		//groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-		//filter end
-		return getChildGroupsRecursive(aGroup,groupsNotToReturn,false);
+		return getChildGroupsRecursive(aGroup,getUserRepresentativeGroupTypeStringArray(),false);
   }
 
 
-
-/**
- * Returns recursively down the group tree children of group aGroup with filtered with specified groupTypes
- * @param aGroup a Group to find children for
- * @param groupTypes the Groups a String array of group types of which the returned Groups must by.
- * @return Collection of Groups found recursively down the tree
- * @throws EJBException If an error occured
- */
-  public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes) throws EJBException{
-  	return getChildGroupsRecursive(aGroup,groupTypes,true);
-  }
 
 /**
  * Returns recursively down the group tree children of group aGroup with filtered out with specified groupTypes
@@ -523,70 +486,29 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{
   //public Collection getGroupsContained(Group groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
   try{
-	  /**
-	   * @todo change implementation: create method getGroupsContained(List groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
-	   */
-	    Collection groups = aGroup.getChildGroups();
-	
+
+			Map GroupsContained = new HashMap();//to avoid duplicates
+	    
+	    Collection groups = aGroup.getChildGroups(groupTypes,returnSpecifiedGroupTypes);
+	    
+			int j = 0;
+			
 	    if (groups != null && !groups.isEmpty() ){
-	      Map GroupsContained = new HashMap();
 	
 	      String key = "";
 	      Iterator iter = groups.iterator();
 	      while (iter.hasNext()) {
 	        Group item = (Group)iter.next();
 	        if(item!=null){
-		        key = item.getPrimaryKey().toString();
-		        if(!GroupsContained.containsKey(key)){// isn't this slow? why not just put the value
+		        key = item.getPrimaryKey().toString();     
+		        if(!GroupsContained.containsKey(key)){
 		          GroupsContained.put(key,item);
-		          putGroupsContained( item, GroupsContained );
+		          putGroupsContained( item, GroupsContained,groupTypes ,returnSpecifiedGroupTypes);
 		        }
 	        }
 	      }
-	
-	      List returnGroups = new ArrayList();
 
-	      int j = 0;
-	      Iterator iter2 = GroupsContained.values().iterator();
-	      if(groupTypes != null && groupTypes.length > 0){
-	    
-	        while (iter2.hasNext()) {
-	          Group tempObj = (Group)iter2.next();
-	          try {
-	
-	            String tempObjGroupType = tempObj.getGroupType();//This generates a database find!! why not simply select the correct groups right away
-	            
-							boolean sameType = false;
-	            for (int i = 0; (i < groupTypes.length) && !sameType ; i++) {
-	            	 sameType = groupTypes[i].equals(tempObjGroupType);
-	            }
-	            
-              if ( sameType && returnSpecifiedGroupTypes){
-                returnGroups.add(j++, tempObj);
-              }
-              else if(!sameType && !returnSpecifiedGroupTypes){
-								returnGroups.add(j++, tempObj);
-              }
-	              
-	            
-	          }
-	          catch (Exception ex) {
-	            ex.printStackTrace();
-	          }
-	        }
-	    
-	      } else {//athuga vel
-	        while (iter2.hasNext()) {
-	          Group tempObj = (Group)iter2.next();
-	          returnGroups.add(j++, tempObj);
-	        }
-					
-	        returnSpecifiedGroupTypes = false;
-	      }
-	      
-				returnGroups.remove(aGroup);
-	
-	      return returnGroups;
+	      return new ArrayList(GroupsContained.values());
 	    }else{
 	      return null;
 	    }
@@ -596,7 +518,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   	}
   
   }
-
+  
 
 /**
  * Return all the user directly under(related to) this group.
@@ -606,8 +528,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   public Collection getUsers(Group group) throws FinderException{
 	try{
 	    //filter
-	    String[] groupTypeToReturn = new String[1];
-	    groupTypeToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
+	    String[] groupTypeToReturn = getUserRepresentativeGroupTypeStringArray();
 	
 	    Collection list = group.getChildGroups(groupTypeToReturn,true);
 	    if(list != null && !list.isEmpty()){
@@ -631,11 +552,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  */
   public Collection getUsersRecursive(Group group) throws FinderException{
 	try{
-	    //filter
-	    String[] groupTypeToReturn = new String[1];
-	    groupTypeToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-	
-	    Collection list = getChildGroupsRecursive(group,groupTypeToReturn,true);
+	    Collection list = getChildGroupsRecursive(group,getUserRepresentativeGroupTypeStringArray(),true);
 	    if(list != null && !list.isEmpty()){
 	      return getUsersForUserRepresentativeGroups(list);
 	    } else {
@@ -683,16 +600,8 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * Returns all the groups that are direct children groups of group aGroup. * @param aGroup a group to find children groups for * @return Collection of Groups that are Direct children of group aGroup */
   public  Collection getChildGroups(Group aGroup){
   //public  Collection getGroupsContainedDirectlyRelated(Group group){
-   /**
-   * @todo filter out UserGroupRepresentative groups
-   */
     try {
-      //filter
-      String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = this.getUserGroupRepresentativeHome().getGroupType();
-      //groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-      //filter end
-      Collection list = aGroup.getChildGroups(groupsNotToReturn,false);
+      Collection list = aGroup.getChildGroups(getUserRepresentativeGroupTypeStringArray(),false);
       if(list != null){
         list.remove(aGroup);
       }
@@ -704,10 +613,9 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     }
   }
 
-  /**
-   * @todo filter out UserGroupRepresentative groups ? time
-   */
+
   public  Collection getUsersDirectlyRelated(Group group) throws EJBException,RemoteException,FinderException{
+  	//TODO GET USERS DIRECTLY
     Collection result = group.getChildGroups();
     return getUsersForUserRepresentativeGroups(result);
   }
@@ -735,22 +643,10 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     try {
       Collection isDirectlyRelated = getChildGroups(group);
       Collection AllGroups = getChildGroupsRecursive(group);
-/*
-      if(AllGroups != null){
-        AllGroups.removeAll(isDirectlyRelated);
-        AllGroups.remove(group);
-      }
-      return AllGroups;
-*/
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
-          Iterator iter = isDirectlyRelated.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            AllGroups.remove(item);
-            //while(AllGroups.remove(item)){}
-          }
+        	AllGroups.removeAll(isDirectlyRelated);
         }
         AllGroups.remove(group);
         return AllGroups;
@@ -791,21 +687,23 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
-  private  void putGroupsContained(Group group,Map GroupsContained ) throws EJBException,RemoteException{
-    Collection pGroups = group.getChildGroups();
-    if (pGroups != null){
+  private  void putGroupsContained(Group group,Map GroupsContained, String[] groupTypes, boolean returnGroupTypes ) throws RemoteException{
+    Collection childGroups = group.getChildGroups(groupTypes,returnGroupTypes);
+    if (childGroups != null && !childGroups.isEmpty() ){
       String key = "";
-      Iterator iter = pGroups.iterator();
+      Iterator iter = childGroups.iterator();
       while (iter.hasNext()) {
         Group item = (Group)iter.next();
         key = item.getPrimaryKey().toString();
         if(!GroupsContained.containsKey(key)){
           GroupsContained.put(key,item);
-          putGroupsContaining(item, GroupsContained);
+					putGroupsContained(item, GroupsContained, groupTypes, returnGroupTypes);
         }
       }
     }
+    
   }
+ 
 
 
 /**

@@ -16,7 +16,6 @@ public interface GroupBusiness extends com.idega.business.IBOService
  public java.util.Collection getParentGroupsRecursive(int p0)throws javax.ejb.FinderException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getParentGroupsRecursive(com.idega.user.data.Group p0)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getParentGroupsRecursive(com.idega.user.data.Group p0,java.lang.String[] p1,boolean p2)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
- public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes) throws EJBException,RemoteException;
  
 
  public com.idega.user.data.GroupType getGroupTypeFromString(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
@@ -61,7 +60,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  * @return Collection of Groups found recursively down the tree
  * @throws EJBException If an error occured
  */
-  public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes) throws EJBException,RemoteException;
+
  
  public void addGroupUnderDomain(com.idega.builder.data.IBDomain p0,com.idega.user.data.Group p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  //public java.util.Collection getRegisteredGroups(com.idega.presentation.IWContext p0) throws java.rmi.RemoteException;

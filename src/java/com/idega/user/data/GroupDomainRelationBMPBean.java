@@ -153,12 +153,16 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 
   public Collection ejbFindGroupsRelationshipsUnder(int domainID)throws FinderException{
     //return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domainID);
-    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ (Integer.toString(domainID)) +" and "+  " GROUP_RELATION_STATUS IS NULL");
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ Integer.toString(domainID) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
+  
+	public Collection ejbFindGroupsRelationshipsUnderDomainByRelationshipType(int domainID, String relationType )throws FinderException{
+		return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ Integer.toString(domainID)+" and "+RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+ STATUS_COLUMN+" IS NULL");
+	}
 
   public Collection ejbFindDomainsRelationshipsContaining(int groupID)throws FinderException{
     //return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,groupID);
-    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+RELATED_GROUP_ID_COLUMN+"="+ (Integer.toString(groupID)) +" and "+  " GROUP_RELATION_STATUS IS NULL");
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+RELATED_GROUP_ID_COLUMN+"="+ Integer.toString(groupID) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindGroupsRelationshipsContaining(int domainID,int relatedGroupID)throws FinderException{

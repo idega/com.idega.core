@@ -41,13 +41,6 @@ public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)thro
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0,p1);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
 public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
@@ -55,9 +48,23 @@ public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnder(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsRelationshipsUnderDomainByRelationshipType(int p0,java.lang.String p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupDomainRelationBMPBean)entity).ejbFindGroupsRelationshipsUnderDomainByRelationshipType(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

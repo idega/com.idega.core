@@ -230,9 +230,40 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * Finds all active relationships specified only in one direction with groupID and relationType as specified
    */
   public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID
-    +" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
+    return this.idoFindPKsBySQL(ejbHomeGetFindGroupsRelationshipsContainingSQL(groupID,relationType));
   }
+  
+  public String ejbHomeGetFindGroupsRelationshipsContainingSQL(int groupId, String relationType){
+  	StringBuffer sql = new StringBuffer();
+  	sql.append("select * from ")
+  	.append(this.getEntityName())
+  	.append(" where ")
+  	.append(GROUP_ID_COLUMN).append("=").append(groupId)
+  	.append(" and ")
+  	.append(RELATIONSHIP_TYPE_COLUMN).append("='").append(relationType).append("'")
+  	.append(" and ( ")
+  	.append(STATUS_COLUMN).append("='").append(STATUS_ACTIVE).append("'")
+  	.append(" or ")
+  	.append(STATUS_COLUMN).append("='").append(STATUS_PASSIVE_PENDING).append("' ) ");
+  	
+  	return sql.toString();
+  }
+  
+	public String ejbHomeGetFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int groupId, String relationType){
+		StringBuffer sql = new StringBuffer();
+		sql.append("select ").append(RELATED_GROUP_ID_COLUMN).append(" from ")
+		.append(this.getEntityName())
+		.append(" where ")
+		.append(GROUP_ID_COLUMN).append("=").append(groupId)
+		.append(" and ")
+		.append(RELATIONSHIP_TYPE_COLUMN).append("='").append(relationType).append("'")
+		.append(" and ( ")
+		.append(STATUS_COLUMN).append("='").append(STATUS_ACTIVE).append("'")
+		.append(" or ")
+		.append(STATUS_COLUMN).append("='").append(STATUS_PASSIVE_PENDING).append("' ) ");
+  	
+		return sql.toString();
+	}
   
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null

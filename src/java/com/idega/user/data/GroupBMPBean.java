@@ -56,6 +56,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	private static final String COLUMN_HOME_PAGE_ID = "home_page_id";
 	private static final String COLUMN_ALIAS_TO_GROUP = "alias_id";
 
+	private static List userGroupTypeSingletonList;
+	
+	private List userRepresentativeGroupTypeList;
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
@@ -272,6 +275,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		//null type is included as relation type for backwards compatability.
 		return this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), RELATION_TYPE_GROUP_PARENT, null);
 	}
+	
 
 	/**
 	 * Finds all the GroupRelations that point to groups that "this" group is a direct child of
@@ -379,63 +383,57 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//          }
 	//
 	//        }
-	/**
-	 * @todo change name to getChildGroups();
-	 */
+
 	public List getChildGroups() throws EJBException {
 		List theReturn = new ArrayList();
+		
 		try {
-			Collection relations = this.getParentalGroupRelationships();
-			Iterator iter = relations.iterator();
-			while (iter.hasNext()) {
-				GroupRelation item = (GroupRelation) iter.next();
-				//Group related = item.getGroup();
-				Group related = item.getRelatedGroup();
-				theReturn.add(related);
-			}
+			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this,getUserGroupTypeList(),false));
 		}
-		catch (Exception e) {
-			throw new EJBException(e.getMessage());
+		catch (FinderException e) {
+			e.printStackTrace();
+			return theReturn;
 		}
-		return theReturn;
+		
 	}
+	
+
+	
+	/**
+	 * Gets the children of the containingGroup
+	 * @param containingGroup
+	 * @param groupTypes
+	 * @param returnTypes
+	 * @return
+	 * @throws FinderException
+	 */
 	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
 
-		//was this.getParentalGroupRelationships() but "this" has the id -1
-		//should this method be public and not protected?
-		//this casting of group to groupbmpbean can be dangerous for users (Group)
-		Collection relations = ((GroupBMPBean) containingGroup).getParentalGroupRelationships();
-		Iterator iter = relations.iterator();
-		Collection PKs = new ArrayList();
-		while (iter.hasNext()) {
-			GroupRelation item = (GroupRelation) iter.next();
-			PKs.add(item.getRelatedGroupPK());
-		}
-		if (groupTypes.size() > 0 && PKs.size() > 0) {
+		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(),RELATION_TYPE_GROUP_PARENT);
+		
 			IDOQuery query = idoQuery();
-			query.appendSelectAllFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
-			IDOQuery subQuery = idoQuery();
-			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
-			if (returnTypes) {
-				query.appendIn(subQuery);
+			query.appendSelectAllFrom(getEntityName());
+			if (groupTypes!=null && groupTypes.size()>0) {
+				query.appendWhere(COLUMN_GROUP_TYPE);
+				
+				IDOQuery subQuery = idoQuery();
+				subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+				if (returnTypes) {
+					query.appendIn(subQuery);
+				}
+				else {
+					query.appendNotIn(subQuery);
+				}
+				query.appendAnd();
 			}
-			else {
-				query.appendNotIn(subQuery);
-			}
-			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = idoQuery();
-			subQuery2.appendCommaDelimited(PKs);
-			query.appendIn(subQuery2);
+			query.appendIn(findGroupRelationsSQL);
 			query.appendOrderBy(this.COLUMN_NAME);
-			//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
-			return this.idoFindPKsBySQL(query.toString());
-		}
-		else {
-			return ListUtil.getEmptyList();
-		}
+			
+			return idoFindPKsBySQL(query.toString());
+			
 	}
+	
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws  FinderException, IDOException {
 		Collection relations = ((GroupBMPBean) containingGroup).getParentalGroupRelationships();
     Iterator iter = relations.iterator();
@@ -605,42 +603,22 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @todo change implementation: let the database handle the filtering
 	
 	 */
-	public List getChildGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException {
-		List list = this.getChildGroups();
-		List specifiedGroups = new ArrayList();
-		List notSpecifiedGroups = new ArrayList();
-		int j = 0;
-		int k = 0;
-		Iterator iter2 = list.iterator();
-		if (groupTypes != null && groupTypes.length > 0) {
-			boolean specified = false;
-			while (iter2.hasNext()) {
-				Group tempObj = (Group) iter2.next();
-				for (int i = 0; i < groupTypes.length; i++) {
-					if (tempObj.getGroupType().equals(groupTypes[i])) {
-						specifiedGroups.add(j++, tempObj);
-						specified = true;
-					}
-				}
-				if (!specified) {
-					notSpecifiedGroups.add(k++, tempObj);
-				}
-				else {
-					specified = false;
-				}
-			}
-			notSpecifiedGroups.remove(this);
-			specifiedGroups.remove(this);
+	public List getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+		List theReturn = new ArrayList();
+		
+		List types = null;
+		
+		if(groupTypes!=null && groupTypes.length>0){
+			types = ListUtil.convertStringArrayToList(groupTypes);
 		}
-		else {
-			while (iter2.hasNext()) {
-				Group tempObj = (Group) iter2.next();
-				notSpecifiedGroups.add(j++, tempObj);
-			}
-			notSpecifiedGroups.remove(this);
-			returnSepcifiedGroupTypes = false;
+		
+		try {
+			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this,types,returnSpecifiedGroupTypes));
 		}
-		return (returnSepcifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+		catch (FinderException e) {
+			e.printStackTrace();
+			return theReturn;
+		}
 	}
 	public Collection getAllGroupsContainingUser(User user) throws EJBException{
 		return this.getListOfAllGroupsContaining(user.getGroupID());
@@ -867,12 +845,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//
 	//        }
 	public Collection ejbFindAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
-		//          String typeList = "";
 		if (groupTypes != null && groupTypes.length > 0) {
-			//            for(int g = 0; g < groupTypes.length; g++){
-			//              if(g>0){ typeList += ", "; }
-			//              typeList += "'"+groupTypes[g]+"'";
-			//            }
 			String typeList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupTypes, true);
 			return super.idoFindIDsBySQL(
 				"select * from " + getEntityName() + " where " + getGroupTypeColumnName() + ((returnSepcifiedGroupTypes) ? " in (" : " not in (") + typeList + ") order by " + getNameColumnName());
@@ -1023,6 +996,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Integer ejbFindSystemUsersGroup() throws FinderException {
 		return new Integer(this.GROUP_ID_USERS);
 	}
+	
 	private GroupTypeHome getGroupTypeHome(){
 		try {
 			return ((GroupTypeHome) IDOLookup.getHome(GroupType.class));
@@ -1032,6 +1006,27 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return null;
 	}
+	
+	private UserHome getUserHome(){
+		
+		try {
+			return (UserHome)IDOLookup.getHome(User.class);
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private List getUserGroupTypeList(){
+		if(userGroupTypeSingletonList==null){
+			userGroupTypeSingletonList = new ArrayList();
+			userGroupTypeSingletonList.add(getUserHome().getGroupType());
+		}
+		
+		return userGroupTypeSingletonList;
+	}
+	
 	/**
 	 * Method hasRelationTo.
 	 * @param group
@@ -1074,7 +1069,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	public Iterator getChildren() {
 		/**
-		 * @todo: Change implementation
+		 * @todo: Change implementation this first part may not be needed. (Eiki,gummi)
 		 *
 		 */
 		if (this.getID() == this.GROUP_ID_USERS) {
@@ -1089,13 +1084,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 		}
 		else {
-			try {
-				Collection types = this.getGroupTypeHome().findVisibleGroupTypes();
-				return this.getGroupHome().findGroupsContained(this, types, true).iterator();
-			}
-			catch (FinderException e) {
-				throw new EJBException(e);
-			}
+			return getChildGroups().iterator();//only returns groups not users
 		}
 	}
 	public boolean getAllowsChildren() {

@@ -26,7 +26,7 @@ public class GroupDomainRelationTypeBMPBean extends GenericEntity implements Gro
 	private static final String  TYPE_COLUMN="RELATION_TYPE";
 	private static final String  DESCRIPTION_COLUMN="DESCRIPTION";
 
-  private static final String RELATION_TYPE_TOP_NODE = "TOP_NODE";
+  public static final String RELATION_TYPE_TOP_NODE = "TOP_NODE";
 //  private static final String RELATION_TYPE_CREATION_LOCATION = "CREATION_LOCATION";
 
 

@@ -9,8 +9,9 @@ public interface GroupDomainRelationHome extends com.idega.data.IDOHome
  public java.util.Collection findDomainsRelationshipsContaining(com.idega.builder.data.IBDomain p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException;
  public java.util.Collection findDomainsRelationshipsContaining(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException;
- public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0)throws javax.ejb.FinderException;
+ public java.util.Collection findGroupsRelationshipsUnder(com.idega.builder.data.IBDomain p0,com.idega.user.data.GroupDomainRelationType p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException;
+ public java.util.Collection findGroupsRelationshipsUnderDomainByRelationshipType(int p0,java.lang.String p1)throws javax.ejb.FinderException;
 
 }
