@@ -5,6 +5,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.Script;
+import com.idega.idegaweb.presentation.IWAdminWindow;
 
 /**
  * Title:        idegaclasses
@@ -15,7 +16,7 @@ import com.idega.presentation.Script;
  * @version 1.0
  */
 
-public abstract class AbstractChooserWindow extends Window {
+public abstract class AbstractChooserWindow extends IWAdminWindow {
 
   String chooserSelectionParameter;
   public static String SELECT_FUNCTION_NAME = "chooserSelect";
@@ -26,7 +27,15 @@ public abstract class AbstractChooserWindow extends Window {
   protected static final String SCRIPT_PREFIX_PARAMETER = AbstractChooser.SCRIPT_PREFIX_PARAMETER;
   protected static final String SCRIPT_SUFFIX_PARAMETER = AbstractChooser.SCRIPT_SUFFIX_PARAMETER;
 
+  protected static final String SCRIPT_PREFIX_IN_A_FRAME = "top.";
+
+  private boolean isInAFrame = false;
+
   public AbstractChooserWindow(){
+  }
+
+  public AbstractChooserWindow(boolean isInAFrame){
+    this.isInAFrame(isInAFrame);
   }
 
 
@@ -39,7 +48,12 @@ public abstract class AbstractChooserWindow extends Window {
     String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
     //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
-    script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){"+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
+    if( isInAFrame ){
+      script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;window.close();return false;}");
+    }
+    else{
+      script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
+    }
 
     displaySelection(iwc);
   }
@@ -58,6 +72,10 @@ public abstract class AbstractChooserWindow extends Window {
 
   public String getSelectionParameter(IWContext iwc){
     return iwc.getParameter(chooserSelectionParameter);
+  }
+
+  public void isInAFrame(boolean isInAFrame){
+    this.isInAFrame = isInAFrame;
   }
 
 }
