@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.22 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.23 2004/01/14 15:15:23 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -162,6 +162,19 @@ public class PresentationObjectContainer extends PresentationObject
 	public List getAllContainingObjects()
 	{
 		return theObjects;
+	}
+	public PresentationObject getContainedObject(Class objectClass) {
+		List objects = getAllContainingObjects();
+		if (objects != null) {
+			Iterator iter = objects.iterator();
+			while (iter.hasNext()) {
+				Object element = (Object) iter.next();
+				if (element.getClass() == objectClass) {
+					return (PresentationObject) element;
+				}
+			}
+		}
+		return null;
 	}
 	public List getAllContainedObjectsRecursive()
 	{
