@@ -187,7 +187,7 @@ public class IWTimestamp {
 			calendar.setTime(Date.valueOf(SQLFormat));
 			isDate = true;
 		}
-		if (SQLFormat.length() == 8) {
+		else if (SQLFormat.length() == 8) {
 			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
 			calendar.setTime(Time.valueOf(SQLFormat));
 			isTime = true;
