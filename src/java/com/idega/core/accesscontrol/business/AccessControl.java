@@ -137,15 +137,15 @@ public class AccessControl{
       } else { // if (obj != null)
 
         if(obj instanceof Page){
-          myPermission = PermissionCasher.hasPermissionForPage(obj,modinfo,permissionType,tempGroupList);
+          myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,tempGroupList);
         }else{
           //instance
-          myPermission = PermissionCasher.hasPermissionForObjectInstance(obj,modinfo,permissionType,tempGroupList);
+          myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,tempGroupList);
           //instance
 
           // Bundle
           if (myPermission == null){
-            myPermission = PermissionCasher.hasPermissionForBundle(obj,modinfo,permissionType,tempGroupList);
+            myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,tempGroupList);
           }else{
             return myPermission.booleanValue();
           } // Bundle
@@ -153,7 +153,7 @@ public class AccessControl{
 
           // Global - (object)
           if (myPermission == null){
-            myPermission = PermissionCasher.hasPermissionForObject(obj,modinfo,permissionType,tempGroupList);
+            myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,tempGroupList);
           }else{
             return myPermission.booleanValue();
           } // Global - (object)
@@ -324,7 +324,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
-      PermissionCasher.updateJSPPagePermissions(PageContextValue,permissionType,modinfo);
+      PermissionCacher.updateJSPPagePermissions(PageContextValue,permissionType,modinfo);
     }
 
     public void setObjectPermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
@@ -350,7 +350,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
-      PermissionCasher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,modinfo);
+      PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,modinfo);
     }
 
 
@@ -377,7 +377,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
-      PermissionCasher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,modinfo);
+      PermissionCacher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,modinfo);
     }
 
 
@@ -399,7 +399,7 @@ public class AccessControl{
         try {
           boolean done = SimpleQuerier.execute("DELETE FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionKey + "' AND " + permission.getGroupIDColumnName() + " IN (" + sGroupList + ")" );
           if(done){
-            PermissionCasher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,modinfo);
+            PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionKey,modinfo);
           }
           return done;
         }
@@ -435,7 +435,7 @@ public class AccessControl{
         permission.setPermissionValue(permissionValue);
         permission.update();
       }
-      PermissionCasher.updateObjectInstancePermissions(ObjectInstanceId,permissionType,modinfo);
+      PermissionCacher.updateObjectInstancePermissions(ObjectInstanceId,permissionType,modinfo);
     }
 
 
