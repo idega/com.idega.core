@@ -466,6 +466,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = symbolReplace(html,"Oslash;");
 
     html = TextSoap.findAndReplace(html," "+symbol+" "," & ");
+    html = TextSoap.findAndReplace(html,symbol+" ","& ");
 
 //islenskir broddstafir
     html = symbolReplace(html,"aacute;");
