@@ -49,6 +49,10 @@ public class RefactorClassRegistry
 		return (String)getRefactoredClassNames().get(oldClassName);
 	}
 	
+	public void registerRefactoredClass(String oldClassName, Class validClass) {
+		registerRefactoredClass(oldClassName, validClass.getName());
+	}
+	
 	public void registerRefactoredClass(String oldClassName,String newClassName){
 		getRefactoredClassNames().put(oldClassName,newClassName);
 	}
