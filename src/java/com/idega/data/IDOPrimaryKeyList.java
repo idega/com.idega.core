@@ -1,6 +1,7 @@
 package com.idega.data;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -226,10 +227,11 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			
 			Connection conn = null;
 			Statement Stmt = null;
+			ResultSet RS=null;
 			try
 			{
 				conn = _entity.getConnection(_entity.getDatasource());
-				Stmt = conn.createStatement();
+				Stmt = null;//conn.createStatement();
 					
 				if (_entity.isDebugActive())
 				{
@@ -237,7 +239,19 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					debug("[IDOPrimaryKeyList - Initialize - modified query]: "+ initialQuery.toString());
 					debug("[IDOPrimaryKeyList - Initialize - load query base]: "+ _loadQueryBase.toString());
 				}
-				ResultSet RS=Stmt.executeQuery(initialQuery.toString());
+				List placeHolderValues = initialQuery.getPlaceHolderValues();
+			    if(placeHolderValues==null || placeHolderValues.isEmpty()){
+				    Stmt = conn.createStatement();
+				    RS = Stmt.executeQuery(initialQuery.toString());
+				}
+				// use PreparedStatement
+				else{
+				    Stmt = conn.prepareStatement(initialQuery.toString());
+				    DatastoreInterface dsi = DatastoreInterface.getInstance(_entity);
+				    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
+				    	RS = ((PreparedStatement)Stmt).executeQuery();
+				}
+				//ResultSet RS=Stmt.executeQuery(initialQuery.toString());
 				_entities = new Vector();
 					
 	//			int fetchIndex = 0;
