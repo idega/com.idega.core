@@ -340,12 +340,12 @@ public class LoginBusinessBean implements IWEventListener {
 	}
 	protected boolean logIn(IWContext iwc, LoginTable loginTable) throws Exception {
 		//New user system
-//		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHome(User.class);
-//		User user = uHome.findByPrimaryKey(loginTable.getUserId());
+		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHome(User.class);
+		User user = uHome.findByPrimaryKey(loginTable.getUserId());
 		//New user system end
 		
 		//Old user system
-		User user = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(loginTable.getUserId());
+//		User user = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(loginTable.getUserId());
 		//Old user system end
 
 		storeUserAndGroupInformationInSession(iwc, user);
