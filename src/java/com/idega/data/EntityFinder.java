@@ -271,23 +271,24 @@ public class EntityFinder{
 
 
 
-	public static List findRelated(GenericEntity fromEntity,GenericEntity returningEntity)throws SQLException{
-		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
-                StringBuffer buffer=new StringBuffer();
-                buffer.append("select * from ");
-                buffer.append(tableToSelectFrom);
-                buffer.append(" where ");
-                buffer.append(fromEntity.getIDColumnName());
-                buffer.append("=");
-                buffer.append(fromEntity.getID());
-                String SQLString=buffer.toString();
+  public static List findRelated(GenericEntity fromEntity,GenericEntity returningEntity)throws SQLException{
+    String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
+    StringBuffer buffer=new StringBuffer();
+    buffer.append("select * from ");
+    buffer.append(tableToSelectFrom);
+    buffer.append(" where ");
+    buffer.append(fromEntity.getIDColumnName());
+    buffer.append("=");
+    buffer.append(fromEntity.getID());
+    String SQLString=buffer.toString();
+    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
+    //System.out.println("FindRelated SQLString="+SQLString+"crap");
+    return findRelated(fromEntity,returningEntity,SQLString);
+  }
 
-		//String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
-
-                //System.out.println("FindRelated SQLString="+SQLString+"crap");
-                return findRelated(fromEntity,returningEntity,SQLString);
-	}
-
+  public static List findRelated(GenericEntity fromEntity,Class returningEntity)throws SQLException{
+    return findRelated(fromEntity,GenericEntity.getStaticInstance(returningEntity));
+  }
 
   public static List findNonRelated(GenericEntity fromEntity,GenericEntity returningEntity) {
 		try {
