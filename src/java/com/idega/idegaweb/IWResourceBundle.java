@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.24 2003/05/30 21:04:50 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.25 2003/06/02 18:02:58 palli Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -9,13 +9,6 @@
  */
 package com.idega.idegaweb;
 
-
-import com.idega.exception.IWBundleDoesNotExist;
-import com.idega.presentation.Image;
-import com.idega.util.SortedProperties;
-
-import java.io.InputStream;
-import java.io.IOException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +25,7 @@ import java.util.TreeMap;
 
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
+import com.idega.util.SortedProperties;
 
 /**
  * Title:        idega Framework
