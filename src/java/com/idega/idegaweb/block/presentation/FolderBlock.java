@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import java.util.List;
 
+import com.idega.block.presentation.CategoryBlock;
 import com.idega.core.business.InformationCategory;
 
 import com.idega.core.business.InformationFolder;
@@ -79,7 +80,6 @@ public class FolderBlock extends Block {
      */
 
     public FolderBlock() { }
-
 
 
 
