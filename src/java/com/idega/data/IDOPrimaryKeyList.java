@@ -3,6 +3,8 @@ package com.idega.data;
 import java.sql.*;
 import java.util.*;
 
+import javax.ejb.FinderException;
+
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -25,11 +27,16 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	private LoadTracker _tracker;
 	private int fetchSize = 1;
 	private int prefetchNumber=100;
+	private boolean isSublist = false;
 	
 
 	private IDOPrimaryKeyList() {
 	}
 
+	private IDOPrimaryKeyList(Vector sublist) {
+		_PKs = sublist;
+		isSublist = true;
+	}
 
 //	private void reloadResultSet(){
 //
@@ -72,6 +79,11 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		_PKs.setSize(size);
 		_tracker = new LoadTracker(size,fetchSize);
     }
+	
+	
+	List getListOfEntities() {
+		return _PKs;
+	}
 
 	private void loadInBackground(){
 	    Thread thread = new Thread(this);
@@ -195,8 +207,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 						if (pk != null)
 						{
 							//Integer pk = new Integer(id);
-							//_entity.prefetchBeanFromResultSet(pk, RS);
-							_PKs.set(RSpos,pk);
+							
+							try {
+								_PKs.set(RSpos,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
+							} catch (FinderException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					_tracker.addLoadedSubSet(fIndex,tIndex);
@@ -389,7 +405,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		{
 			ex.printStackTrace();
 		}
-		return _PKs.subList(fromIndex, toIndex);
+		return new IDOPrimaryKeyList((Vector)_PKs.subList(fromIndex, toIndex));
 	}
 
 
@@ -409,7 +425,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 			ex.printStackTrace();
 		}
 	}
-	return _PKs.get(index);
+	return ((IDOEntity)_PKs.get(index)).getPrimaryKey();
   }
   public Object remove(int index) {
     /**@todo: Implement this java.util.List method*/

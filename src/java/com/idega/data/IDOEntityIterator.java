@@ -2,8 +2,6 @@ package com.idega.data;
 
 import java.util.ListIterator;
 
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -16,55 +14,38 @@ import javax.ejb.FinderException;
 
 public class IDOEntityIterator implements ListIterator {
 
-  private IDOFactory _factory;
-  private ListIterator _PKs;
+  private ListIterator _entities;
 
   private IDOEntityIterator() {
   }
 
-  public IDOEntityIterator(IDOFactory factory, ListIterator PKs) {
-    _factory = factory;
-    _PKs = PKs;
+  public IDOEntityIterator( ListIterator entities) {
+    _entities = entities;
   }
 
   public boolean hasNext() {
-    return _PKs.hasNext();
+    return _entities.hasNext();
   }
 
   public Object next() {
-    try {
-      Object pk = _PKs.next();
-      IDOEntity entityObject = _factory.idoFindByPrimaryKey(pk);
-      return entityObject;
-    }
-    catch (FinderException ex) {
-	  ex.printStackTrace();
-      throw new EJBException(ex);
-    }
+      return _entities.next();
   }
 
   public void remove() {
-    _PKs.remove();
+    _entities.remove();
   }
 
   public boolean hasPrevious() {
-    return _PKs.hasPrevious();
+    return _entities.hasPrevious();
   }
   public Object previous() {
-    try {
-      Object pk = _PKs.previous();
-      IDOEntity entityObject = _factory.idoFindByPrimaryKey(pk);
-      return entityObject;
-    }
-    catch (FinderException ex) {
-      throw new EJBException(ex);
-    }
+    return _entities.previous();
   }
   public int nextIndex() {
-    return _PKs.nextIndex();
+    return _entities.nextIndex();
   }
   public int previousIndex() {
-    return _PKs.previousIndex();
+    return _entities.previousIndex();
   }
   public void set(Object o) {
     throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");

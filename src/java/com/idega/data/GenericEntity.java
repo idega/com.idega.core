@@ -3835,12 +3835,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return false;
 	}
-	void prefetchBeanFromResultSet(Object pk, ResultSet rs) {
-		try {
-			IDOContainer.getInstance().findByPrimaryKey(this.getInterfaceClass(), pk, rs, (IDOHome)this.getEJBLocalHome());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	IDOEntity prefetchBeanFromResultSet(Object pk, ResultSet rs, String dataSourceName) throws FinderException {
+			return IDOContainer.getInstance().findByPrimaryKey(this.getInterfaceClass(), pk, rs, (IDOHome)this.getEJBLocalHome(),dataSourceName);
+
 	}
 	/**
 	 * Meant to be overrided in subclasses, returns default Integer.class

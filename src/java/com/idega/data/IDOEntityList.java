@@ -1,129 +1,106 @@
 package com.idega.data;
 
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
-import com.idega.util.ListUtil;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 
 public class IDOEntityList implements List {
 
-  private IDOFactory _factory;
-  private List _PKs;
-//  private Collection collectionOfEntities = null;
+  private IDOPrimaryKeyList _entities;
 
   private IDOEntityList(){
   }
 
-  public IDOEntityList(IDOFactory factory, Collection PKs) {
-    _factory = factory;
-    _PKs = ListUtil.convertCollectionToList(PKs);;
+  public IDOEntityList(Collection idoPrimaryKeyList) {
+
+    _entities = (IDOPrimaryKeyList)idoPrimaryKeyList;
   }
 
-  public IDOFactory getFactory(){
-    return _factory;
-  }
 
   public int size() {
-    return _PKs.size();
+    return _entities.size();
   }
   public boolean isEmpty() {
-    return _PKs.isEmpty();
+    return _entities.isEmpty();
   }
   public Iterator iterator() {
-    return new IDOEntityIterator(_factory, _PKs.listIterator());
+    return new IDOEntityIterator(_entities.getListOfEntities().listIterator());
   }
 
   public void clear() {
-    _PKs.clear();
+    _entities.clear();
   }
   public boolean equals(Object o) {
     if(o instanceof IDOEntityList){
-      return _factory.equals( ((IDOEntityList)o)._factory ) && _PKs.equals(((IDOEntityList)o)._PKs);
+      return _entities.equals(((IDOEntityList)o)._entities);
     }
     return false;
   }
 
   public List subList(int fromIndex, int toIndex){
-    return new IDOEntityList(_factory,_PKs.subList(fromIndex,toIndex));
+    return new IDOEntityList(_entities.subList(fromIndex,toIndex));
   }
 
   public Object get(int index) {
-    try {
-      Object pk = _PKs.get(index);
-      IDOEntity entityObject = _factory.idoFindByPrimaryKey(pk);
-      return entityObject;
-    }
-    catch (FinderException ex) {
-      throw new EJBException(ex);
-    }
+      return _entities.get(index);
   }
 
   public Object remove(int index) {
-    return _PKs.remove(index);
+    return _entities.remove(index);
   }
   public ListIterator listIterator() {
-    return new IDOEntityIterator(_factory, _PKs.listIterator());
+    return new IDOEntityIterator(_entities.getListOfEntities().listIterator());
   }
   public ListIterator listIterator(int index) {
-    return new IDOEntityIterator(_factory, _PKs.listIterator(index));
+    return new IDOEntityIterator(_entities.getListOfEntities().listIterator(index));
   }
 
   public boolean contains(Object o) {
   	if (o instanceof IDOEntity)
-  		return _PKs.contains(((IDOEntity)o).getPrimaryKey());
+  		return _entities.contains(((IDOEntity)o));
   	else
-  		return _PKs.contains(o);
+  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public Object[] toArray() {
-  	try {
-  		IDOEntity[] entities = new IDOEntity[size()];
-	  	int i = 0;
-	  	for (Iterator iter = _PKs.iterator(); iter.hasNext(); ) {
-				Object pk = (Object) iter.next();
-				entities[i++] = _factory.idoFindByPrimaryKey(pk);
-	  	}
-	  	return entities;
-		}
-  	catch (FinderException ex) {
-  		throw new EJBException(ex);
+	IDOEntity[] entities = new IDOEntity[size()];
+  	int i = 0;
+  	for (Iterator iter = _entities.iterator(); iter.hasNext(); ) {
+  		entities[i++] = (IDOEntity)iter.next();
   	}
+  	return entities;
   }
   
   public Object[] toArray(Object[] a) {
-  	try {
-  		int i = 0;
-  		for (Iterator iter = _PKs.iterator(); iter.hasNext(); ) {
-  			Object pk = (Object) iter.next();
-  			a[i++] = _factory.idoFindByPrimaryKey(pk);
-  		}
-  		return a;
-  	}
-  	catch (FinderException ex) {
-  		throw new EJBException(ex);
-  	}
+	int i = 0;
+	for (Iterator iter = _entities.iterator(); iter.hasNext(); ) {
+		a[i++] =  (Object) iter.next();
+	}
+	return a;
   }
   
   public boolean add(Object o) {
   	if (o instanceof IDOEntity)
-  		return _PKs.add(((IDOEntity)o).getPrimaryKey());
+  		return _entities.add(((IDOEntity)o));
   	return false;
   }
 
   public boolean remove(Object o) {
   	if (o instanceof IDOEntity)
-  		return _PKs.remove(((IDOEntity)o).getPrimaryKey());
+  		return _entities.remove(((IDOEntity)o));
   	else
-  		return _PKs.remove(o);
+  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public boolean containsAll(Collection c) {
@@ -172,47 +149,47 @@ public class IDOEntityList implements List {
   }
   
   public boolean retainAll(Collection c) {
-  	List PKs = new ArrayList(_PKs);
-  	int size = PKs.size();
+  	List entities = new ArrayList(_entities);
+  	int size = entities.size();
   	
   	Iterator iter = c.iterator();
 		while (iter.hasNext()) {
 			Object element = iter.next();
 			if (element instanceof IDOEntity)
-				PKs.remove(((IDOEntity)element).getPrimaryKey());
+				entities.remove(((IDOEntity)element));
 			else
-				PKs.remove(element);
+				throw new RuntimeException(this.getClass()+": element is not IDOEntity");
 		}
-		_PKs.removeAll(PKs);
+		_entities.removeAll(entities);
 		
-		return size == _PKs.size();
+		return size == _entities.size();
   }
   
   public Object set(int index, Object element) {
   	if (element instanceof IDOEntity)
-  		return _PKs.set(index, ((IDOEntity)element).getPrimaryKey());
+  		return _entities.set(index, ((IDOEntity)element));
   	else
-  		return _PKs.set(index, element);
+  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public void add(int index, Object element) {
   	if (element instanceof IDOEntity)
-  		_PKs.add(index, ((IDOEntity)element).getPrimaryKey());
+  		_entities.add(index, ((IDOEntity)element));
   	else
-  		_PKs.add(index, element);
+  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public int indexOf(Object o) {
 	 	if (o instanceof IDOEntity)
-	 		return _PKs.indexOf(((IDOEntity)o).getPrimaryKey());
+	 		return _entities.indexOf(((IDOEntity)o));
 	 	else
-	 		return _PKs.indexOf(o);
+	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public int lastIndexOf(Object o) {
   	if (o instanceof IDOEntity)
-  		return _PKs.lastIndexOf(((IDOEntity)o).getPrimaryKey());
+  		return _entities.lastIndexOf(((IDOEntity)o));
   	else
-  		return _PKs.lastIndexOf(o);
+  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 }

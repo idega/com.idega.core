@@ -202,7 +202,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
    * @throws FinderException
    */
   protected Collection getIDOEntityListForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
-    Collection theReturn = new IDOEntityList(this,collectionOfPrimaryKeys);
+    Collection theReturn = new IDOEntityList(collectionOfPrimaryKeys);
 //    Iterator iter = collectionOfPrimaryKeys.iterator();
 //    while (iter.hasNext()) {
 //      Object pk = iter.next();
