@@ -179,4 +179,5 @@ public interface UserBusiness extends com.idega.business.IBOService
    * @return the image for the top banner
    */
 	public Image getTopImage(IWContext iwc);
+	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
 }

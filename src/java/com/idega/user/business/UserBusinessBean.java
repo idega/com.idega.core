@@ -37,6 +37,8 @@ import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
 import com.idega.core.location.data.AddressType;
+import com.idega.core.location.data.Commune;
+import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
@@ -2063,9 +2065,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return top;
   	
   }
-  
-	
-   
-   
 
+	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
+		Address address = getUsersMainAddress(user);
+		Commune commmune = getCommuneHome().findByPrimaryKey(new Integer(address.getCommuneID()));
+		return commmune.getIsDefault();
+	}
+	
+	private CommuneHome getCommuneHome() throws RemoteException {
+		return (CommuneHome) IDOLookup.getHome(Commune.class);
+	}
+									
 } // Class UserBusiness
