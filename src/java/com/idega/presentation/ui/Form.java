@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.builder.data.IBPage;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
@@ -600,6 +601,10 @@ public class Form extends InterfaceObjectContainer {
 	public void setPageToSubmitTo(int ibPageID) {
 		//this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
 		this._submitToPage = ibPageID;
+	}
+
+	public void setPageToSubmitTo(IBPage page) {
+		setPageToSubmitTo(((Integer)page.getPrimaryKey()).intValue());
 	}
 
 	public void setClassToInstanciateAndSendTo(Class presentationObjectClass) {
