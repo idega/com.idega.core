@@ -29,6 +29,7 @@ public class AccessControl{
 
     private static PermissionGroup AdministratorPermissionGroup = null;
     private static PermissionGroup PermissionGroupEveryOne = null;
+    private static PermissionGroup PermissionGroupUsers = null;
 
     public static final String _PARAMETERSTRING_IDENTIFIER = "ic_permissionobj_identifier";
     public static final String _PARAMETERSTRING_PERMISSION_CATEGORY = "ic_permission_category";
@@ -41,6 +42,7 @@ public class AccessControl{
     public static final int _CATEGORY_JSP_PAGE = 5;
 
     private static final int _GROUP_ID_EVERYONE = -7913;
+    private static final int _GROUP_ID_USERS = -1906;
 
 
     static{
@@ -67,6 +69,17 @@ public class AccessControl{
         }
       }
 
+      try {
+        PermissionGroupUsers = new PermissionGroup(_GROUP_ID_USERS);
+      }
+      catch (SQLException e) {
+        try {
+          initPermissionGroupUsers();
+        }
+        catch (Exception ex) {
+          System.err.println("AccessControl: PermissionGroup Users not created");
+        }
+      }
     }
 
     private static void initAdministratorPermissionGroup() throws SQLException {
@@ -90,11 +103,27 @@ public class AccessControl{
       PermissionGroupEveryOne = permission;
     }
 
+    private static void initPermissionGroupUsers() throws SQLException {
+      PermissionGroup permission = new PermissionGroup();
+      permission.setID(_GROUP_ID_USERS);
+      permission.setName("Users");
+      permission.setDescription("Permission if logged on");
+      permission.insert();
+      PermissionGroupUsers = permission;
+    }
+
     public static PermissionGroup getPermissionGroupEveryOne() throws SQLException {
       if(PermissionGroupEveryOne == null){
         initPermissionGroupEveryone();
       }
       return PermissionGroupEveryOne;
+    }
+
+    public static PermissionGroup getPermissionGroupUsers() throws SQLException {
+      if(PermissionGroupUsers == null){
+        initPermissionGroupUsers();
+      }
+      return PermissionGroupUsers;
     }
 
     public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
@@ -146,12 +175,12 @@ public class AccessControl{
       PermissionGroup[] groups = null;
       String sGroupList = "";
       List tempGroupList = new Vector();
-      List[] permissionOreder = null; // Everyone, user, primaryGroup, otherGroups
+      List[] permissionOrder = null; // Everyone, user, primaryGroup, otherGroups
 
       if (user == null){
-        permissionOreder = new List[1];
-        permissionOreder[0] = new Vector();
-        ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
+        permissionOrder = new List[1];
+        permissionOrder[0] = new Vector();
+        ((List)permissionOrder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
       } else {
 
         groups = LoginBusiness.getPermissionGroups(modinfo);
@@ -162,14 +191,18 @@ public class AccessControl{
             tempGroupList.add( Integer.toString(groups[g].getID()));
             sGroupList += Integer.toString(groups[g].getID());
           }
-          permissionOreder = new List[2];
-          permissionOreder[0] = new Vector();
-          ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
-          permissionOreder[1] = tempGroupList;
+          permissionOrder = new List[3];
+          permissionOrder[0] = new Vector();
+          ((List)permissionOrder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
+          permissionOrder[1] = new Vector();
+          ((List)permissionOrder[1]).add( Integer.toString(getPermissionGroupUsers().getID()));
+          permissionOrder[2] = tempGroupList;
         } else {
-          permissionOreder = new List[1];
-          permissionOreder[0] = new Vector();
-          ((List)permissionOreder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
+          permissionOrder = new List[2];
+          permissionOrder[0] = new Vector();
+          ((List)permissionOrder[0]).add( Integer.toString(getPermissionGroupEveryOne().getID()));
+          permissionOrder[1] = new Vector();
+          ((List)permissionOrder[1]).add( Integer.toString(getPermissionGroupUsers().getID()));
         }
       }
 
@@ -177,33 +210,36 @@ public class AccessControl{
 
 
 
-      for (int i = 0; i < permissionOreder.length; i++) { // Everyone, user, primaryGroup, otherGroups
+      for (int i = 0; i < permissionOrder.length; i++) { // Everyone, user, primaryGroup, otherGroups
         if (obj == null){ // JSP page
-          myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionOreder[i]);
+          myPermission = PermissionCacher.hasPermissionForJSPPage(obj,modinfo,permissionType,permissionOrder[i]);
         } else { // if (obj != null)
 
           if(obj instanceof Page){
-            myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionOreder[i]);
+            myPermission = PermissionCacher.hasPermissionForPage(obj,modinfo,permissionType,permissionOrder[i]);
 
           }else{
             //instance
-            myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionOreder[i]);
+            myPermission = PermissionCacher.hasPermissionForObjectInstance(obj,modinfo,permissionType,permissionOrder[i]);
             //instance
+
+            // Global - (object)
+            if (myPermission == null){
+              myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionOrder[i]);
+            }else{
+              return myPermission.booleanValue();
+            } // Global - (object)
+
+
 
             // Bundle
             if (myPermission == null){
-              myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionOreder[i]);
+              myPermission = PermissionCacher.hasPermissionForBundle(obj,modinfo,permissionType,permissionOrder[i]);
             }else{
               return myPermission.booleanValue();
             }// Bundle
 
 
-            // Global - (object)
-            if (myPermission == null){
-              myPermission = PermissionCacher.hasPermissionForObject(obj,modinfo,permissionType,permissionOreder[i]);
-            }else{
-              return myPermission.booleanValue();
-            } // Global - (object)
           }
 
 
@@ -329,10 +365,11 @@ public class AccessControl{
 
     public static boolean hasViewPermission(ModuleObject obj,ModuleInfo modinfo){
       try {
-        boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
+        /*boolean permission = hasPermission( getViewPermissionString(), obj, modinfo);
         System.err.println(obj.getClass().getName()+" has permission: " + permission);
         return permission;
-        //return hasPermission( getViewPermissionString(), obj, modinfo);
+        */
+        return hasPermission( getViewPermissionString(), obj, modinfo);
       }
       catch (SQLException ex) {
         return false;
@@ -791,11 +828,11 @@ public class AccessControl{
 
 
     public static String[] getICObjectPermissionKeys(Class ICObject){
-      String[] keys = new String[3];
+      String[] keys = new String[2];
 
       keys[0] = getViewPermissionString();
       keys[1] = getEditPermissionString();
-      keys[2] = getDeletePermissionString();
+      //keys[2] = getDeletePermissionString();
 
       return keys;
 
@@ -804,11 +841,11 @@ public class AccessControl{
 
 
     public static String[] getBundlePermissionKeys(Class ICObject){
-      String[] keys = new String[3];
+      String[] keys = new String[2];
 
       keys[0] = getViewPermissionString();
       keys[1] = getEditPermissionString();
-      keys[2] = getDeletePermissionString();
+      //keys[2] = getDeletePermissionString();
 
       return keys;
 
