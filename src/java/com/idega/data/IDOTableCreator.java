@@ -922,36 +922,13 @@ public class IDOTableCreator{
   }
 
   private void addColumn(String columnName,GenericEntity entity)throws Exception{
-    String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
-    executeUpdate(entity,SQLString);
+    //String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
+    String SQLString = _dsi.getAddColumnCommand(columnName,entity);
+  	executeUpdate(entity,SQLString);
   }
 
   protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
-    boolean isPrimaryKey = entity.isPrimaryKey(columnName);
-    boolean isCompositePK = entity.getEntityDefinition().getPrimaryKeyDefinition().isComposite();
-
-    String type;
-    
-    if(isPrimaryKey && !isCompositePK &&entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
-      type = _dsi.getIDColumnType();
-    }
-    else{
-      type = _dsi.getSQLType(entity.getStorageClassName(columnName),entity.getMaxLength(columnName));
-    }
-
-    String returnString = columnName+" "+type;
-
-    if (!entity.getIfNullable(columnName)){
-      returnString = 	returnString + " NOT NULL";
-    }
-    /* DOES NOT WORK WITH COMPOSITE PKS, MOVED TO getCreationStatement(entity)
-    if (isPrimaryKey) {
-      returnString = 	returnString + " PRIMARY KEY";
-    }*/
-    if (entity.getIfUnique(columnName)){
-      returnString = 	returnString + " UNIQUE";
-    }
-    return returnString;
+  	return _dsi.getColumnSQLDefinition(columnName,entity);
   }
 
   private boolean doesColumnHaveRelationship(String columnName,GenericEntity entity){

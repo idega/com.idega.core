@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.103 2004/07/13 12:32:06 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.104 2004/07/14 01:11:13 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1917,6 +1917,50 @@ public abstract class DatastoreInterface {
 	 */
 	public String getCreateTableCommand(String tableName){
 		return "CREATE TABLE "+tableName;
+	}
+
+	/**
+	 * Returns the command for "ALTER TABLE [tableName] ADD [columnName] [dataType] by default.<br>
+	 * This is done to be overrided for some databases, such as HSQLDB.
+	 * @param columnName
+	 * @param entity
+	 * @return
+	 */
+	public String getAddColumnCommand(String columnName, GenericEntity entity) {
+		String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
+		return SQLString;
+	}
+	
+	protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
+	    boolean isPrimaryKey = entity.isPrimaryKey(columnName);
+	    boolean isCompositePK = entity.getEntityDefinition().getPrimaryKeyDefinition().isComposite();
+
+	    String type;
+	    
+	    if(isPrimaryKey && !isCompositePK &&entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
+	      type = getIDColumnType();
+	    }
+	    else{
+	      type = getSQLType(entity.getStorageClassName(columnName),entity.getMaxLength(columnName));
+	    }
+
+	    String returnString = columnName+" "+type;
+
+	    if (!entity.getIfNullable(columnName)){
+	      returnString = 	returnString + " NOT NULL";
+	    }
+	    /* DOES NOT WORK WITH COMPOSITE PKS, MOVED TO getCreationStatement(entity)
+	    if (isPrimaryKey) {
+	      returnString = 	returnString + " PRIMARY KEY";
+	    }*/
+	    if (entity.getIfUnique(columnName)&&supportsUniqueConstraintInColumnDefinition()){
+	      returnString = 	returnString + " UNIQUE";
+	    }
+	    return returnString;
+	  }
+	
+	public boolean supportsUniqueConstraintInColumnDefinition(){
+		return true;
 	}
 	
 }

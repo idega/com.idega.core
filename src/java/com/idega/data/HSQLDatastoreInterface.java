@@ -28,19 +28,18 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 			if (maxlength < 0) {
 				theReturn = "VARCHAR(255)";
 			}
-			//else if (maxlength<=4000){
-			/*
-			 * else{ theReturn = "VARCHAR("+maxlength+")"; }
-			 */
+			else if (maxlength<=4000){
+				theReturn = "VARCHAR("+maxlength+")";
+			}
 			else {
 				theReturn = "LONGVARCHAR";
 			}
 		} else if (javaClassName.equals("java.lang.Boolean")) {
 			theReturn = "CHAR(1)";
 		} else if (javaClassName.equals("java.lang.Float")) {
-			theReturn = "REAL";
+			theReturn = "DOUBLE";
 		} else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "REAL";
+			theReturn = "DOUBLE";
 		} else if (javaClassName.equals("java.sql.Timestamp")) {
 			theReturn = "TIMESTAMP";
 		} else if (javaClassName.equals("java.sql.Date")
@@ -167,8 +166,10 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 			Connection conn) {
 		int id;
 		try {
-			id = this.getCreatedUniqueId(entity,conn);
-			entity.setID(id);
+			if(entity.getEntityDefinition().getPrimaryKeyDefinition().getPrimaryKeyClass()==Integer.class){
+				id = this.getCreatedUniqueId(entity,conn);
+				entity.setID(id);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -221,5 +222,22 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		}
 	}	
 	
+	
+	/**
+	 * Returns the command for "ALTER TABLE [tableName] ADD <strong>COLUMN</strong> [columnName] [dataType] by default.<br>
+	 * This is overrided from the superclass.
+	 * @param columnName
+	 * @param entity
+	 * @return
+	 */
+	public String getAddColumnCommand(String columnName, GenericEntity entity) {
+		String SQLString = "alter table "+entity.getTableName()+" add column "+getColumnSQLDefinition(columnName,entity);
+		return SQLString;
+	}
+	
+	public boolean supportsUniqueConstraintInColumnDefinition(){
+		//TODO: Implement support for UNIQUE for HSQLDB
+		return false;
+	}
 
 }
