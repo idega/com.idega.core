@@ -29,8 +29,8 @@ public class AnchorLink extends Link {
     this.anchorName = anchorname;
   }
 
-  public void addCurrentURLToLink(boolean setToSubmit) {
-  	addCurrentURLToLink = setToSubmit;
+  public void addCurrentURLToLink(boolean addCurrentURLToLink) {
+  	this.addCurrentURLToLink = addCurrentURLToLink;
   }
 
   public void setAnchorName(String anchorName){
