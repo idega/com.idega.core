@@ -15,6 +15,7 @@ import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
+import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -96,6 +97,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addMetaDataRelationship();
 		//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
 		// this.setUnique(getColumnNamePersonalID(),true);
+    
+    //Added by Laddi 17.10.2003
+    addManyToOneRelationship(getColumnNameNativeLanguage(), ICLanguage.class);
 
 	}
 
@@ -186,6 +190,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     return "DELETED_WHEN";
   }
   
+	public static String getColumnNameNativeLanguage() {
+		return "IC_LANGUAGE_ID";
+	}
 	/**
 	 * @depricated
 	 */
@@ -237,6 +244,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public Group getPrimaryGroup() {
 		return (Group) getColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
+	}
+
+	public ICLanguage getNativeLanguage() {
+		return (ICLanguage) getColumnValue(getColumnNameNativeLanguage());
+	}
+
+	public void setNativeLanguage(int ICLanguageID) {
+		setColumn(getColumnNameNativeLanguage(), ICLanguageID);
+	}
+
+	public void setNativeLanguage(ICLanguage language) {
+		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
 	public String getName() {
