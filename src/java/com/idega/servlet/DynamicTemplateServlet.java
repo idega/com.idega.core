@@ -32,9 +32,9 @@ public class DynamicTemplateServlet extends PageJSPModule{
         //in IWPresentationServlet
             IWContext iwc = getIWContext();
             String templateClassName=iwc.getParameter(IWMainApplication.templateClassParameter);
-            if(templateClassName!=null){
+            /*if(templateClassName!=null){
               setTemplateClassName(templateClassName);
-            }
+            }*/
             String templateName=iwc.getParameter(IWMainApplication.templateParameter);
             if(templateName!=null){
               //Properties prop = getDefaultProperties();
@@ -44,7 +44,7 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
       //String servletName = this.getServletConfig().getServletName();
       //System.out.println("Inside initializePage for "+servletName);
-      setPage(getThisPage());
+      setPage(getThisPage(templateClassName));
     }
     catch(Exception ex){
       ex.printStackTrace(System.err);
@@ -119,8 +119,8 @@ public class DynamicTemplateServlet extends PageJSPModule{
 
 
 
-        public Page getThisPage()throws Exception{
-          String className = getTemplateClassName();
+        public Page getThisPage(String className)throws Exception{
+          //String className = getTemplateClassName();
           if(className==null){
             className = getFirstTemplatePageClass();
             if(className==null){
