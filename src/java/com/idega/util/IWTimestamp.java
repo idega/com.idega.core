@@ -387,6 +387,52 @@ public class IWTimestamp implements Comparable,Cloneable {
 		}
 		return false;
 	}
+	
+	
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isDatePartEarlierThan(IWTimestamp compareStamp) {
+		if (this.getYear() < compareStamp.getYear())
+			return true;
+		if (this.getYear() > compareStamp.getYear())
+			return false;
+		if (this.getMonth() < compareStamp.getMonth())
+			return true;
+		if (this.getMonth() > compareStamp.getMonth())
+			return false;
+		if (this.getDay() < compareStamp.getDay())
+			return true;
+		if (this.getDay() > compareStamp.getDay())
+			return false;
+		return false;
+	}
+	
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isTimePartEarlierThan(IWTimestamp compareStamp) {
+		if (this.getHour() < compareStamp.getHour())
+			return true;
+		if (this.getHour() > compareStamp.getHour())
+			return false;
+		if (this.getMinute() < compareStamp.getMinute())
+			return true;
+		if (this.getMinute() > compareStamp.getMinute())
+			return false;
+		if (this.getSecond() < compareStamp.getSecond())
+			return true;
+		if (this.getSecond() > compareStamp.getSecond())
+			return false;
+		return false;
+	}
+	
 
 	/**
 	 * Returns true if this <code>IWTimestamp</code> object is equal to the given 
@@ -471,6 +517,50 @@ public class IWTimestamp implements Comparable,Cloneable {
 			if (this.getSecond() < compareStamp.getSecond())
 				return false;
 		}
+		return false;
+	}
+	
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isDatePartLaterThan(IWTimestamp compareStamp) {
+		if (this.getYear() > compareStamp.getYear())
+			return true;
+		if (this.getYear() < compareStamp.getYear())
+			return false;
+		if (this.getMonth() > compareStamp.getMonth())
+			return true;
+		if (this.getMonth() < compareStamp.getMonth())
+			return false;
+		if (this.getDay() > compareStamp.getDay())
+			return true;
+		if (this.getDay() < compareStamp.getDay())
+			return false;
+		return false;
+	}
+	
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isTimePartLaterThan(IWTimestamp compareStamp) {
+		if (this.getHour() > compareStamp.getHour())
+			return true;
+		if (this.getHour() < compareStamp.getHour())
+			return false;
+		if (this.getMinute() > compareStamp.getMinute())
+			return true;
+		if (this.getMinute() < compareStamp.getMinute())
+			return false;
+		if (this.getSecond() > compareStamp.getSecond())
+			return true;
+		if (this.getSecond() < compareStamp.getSecond())
+			return false;
 		return false;
 	}
 
