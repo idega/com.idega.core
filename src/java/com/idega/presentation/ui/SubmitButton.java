@@ -5,6 +5,8 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.builder.data.IBDomain;
+import com.idega.builder.business.BuilderLogic;
 import java.io.*;
 import java.util.*;
 import com.idega.presentation.*;
@@ -49,9 +51,9 @@ public SubmitButton(Image defaultImage, String name, String value){
 	this(name,value);
 	this.setButtonImage(defaultImage);
   this.setName(this.getID());
-        this.parameterName=name;
-        this.parameterValue=value;
-        usingControlParameter=true;
+	this.parameterName=name;
+	this.parameterValue=value;
+	usingControlParameter=true;
 }
 
 /**
@@ -149,22 +151,22 @@ public void setStyle(String style) {
 public void main(IWContext iwc){
   if (usingControlParameter){
     if(!parameterName.equals(emptyString)){
-        this.getParentForm().addControlParameter(parameterName,emptyString);
-        this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
+	this.getParentForm().addControlParameter(parameterName,emptyString);
+	this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
       /*if(this.defaultImage==null){
-        this.getParentForm().setControlParameter(parameterName,emptyString);
-        this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
+	this.getParentForm().setControlParameter(parameterName,emptyString);
+	this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
       }
       else{
-        Form form = getParentForm();
-        form.setControlParameter(parameterName,emptyString);
-        Parameter par = form.getControlParameter();
-        if(par!=null){
-          this.setOnClick("this.form."+par.getID()+".value='"+parameterValue+"'");
-        }
-        else{
-          throw new RuntimeException("ControlParameter is null in parent form");
-        }
+	Form form = getParentForm();
+	form.setControlParameter(parameterName,emptyString);
+	Parameter par = form.getControlParameter();
+	if(par!=null){
+	  this.setOnClick("this.form."+par.getID()+".value='"+parameterValue+"'");
+	}
+	else{
+	  throw new RuntimeException("ControlParameter is null in parent form");
+	}
       }*/
 
     }
@@ -183,13 +185,21 @@ private void printButton(IWContext iwc) throws IOException{
 	if (defaultImage == null){
 
 		print("<input type=\"submit\" name=\""+getName()+"\" "+getAttributeString()+" >");
-        }
+	}
 	else{
 		setAttribute("border","0");
-                String URL = defaultImage.getURL();
-                if ( URL == null ){
-                  URL = defaultImage.getMediaURL(iwc);
-                }
+		String URL = defaultImage.getURL();
+		if ( URL == null ){
+		  URL = defaultImage.getMediaURL(iwc);
+		}
+
+		IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
+		if (d.getURL() != null) {
+		  if (URL.startsWith("/")) {
+		    URL = d.getURL() + URL;
+		  }
+		}
+
 		print("<input type=\"image\" src=\""+URL+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
 	}
 }
