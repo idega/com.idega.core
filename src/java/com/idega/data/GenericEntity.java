@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.34 2001/08/13 12:14:10 gummi Exp $
+ * $Id: GenericEntity.java,v 1.35 2001/08/22 20:21:49 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,6 +28,12 @@ public abstract class GenericEntity implements java.io.Serializable {
   public Hashtable columns=new Hashtable();
   private static Hashtable theAttributes=new Hashtable();
   private static Hashtable allStaticClasses=new Hashtable();
+
+  private Hashtable theMetaDataAttributes;
+  private Hashtable insertMetaDataAttributes;
+  private Hashtable updateMetaDataAttributes;
+  private Hashtable deleteMetaDataAttributes;
+
   private String dataSource;
   private static String defaultString="default";
   private String cachedColumnNameList;
@@ -43,28 +49,28 @@ public abstract class GenericEntity implements java.io.Serializable {
   protected static int STATE_DELETED=3;
 
 
-	public GenericEntity() {
-		this(defaultString);
-	}
+  public GenericEntity() {
+          this(defaultString);
+  }
 
-	public GenericEntity(String dataSource) {
-		setDatasource(dataSource);
-                firstLoadInMemoryCheck();
-		setDefaultValues();
-	}
+  public GenericEntity(String dataSource) {
+          setDatasource(dataSource);
+          firstLoadInMemoryCheck();
+          setDefaultValues();
+  }
 
-	public GenericEntity(int id) throws SQLException {
-		this(id,defaultString);
-	}
+  public GenericEntity(int id) throws SQLException {
+          this(id,defaultString);
+  }
 
-	public GenericEntity(int id,String dataSource) throws SQLException {
-		//this(dataSource);
-                setDatasource(dataSource);
-		//setColumn(getIDColumnName(),new Integer(id));
-                firstLoadInMemoryCheck();
-		//findByPrimaryKey(getID());
-                findByPrimaryKey(id);
-	}
+  public GenericEntity(int id,String dataSource) throws SQLException {
+          //this(dataSource);
+          setDatasource(dataSource);
+          //setColumn(getIDColumnName(),new Integer(id));
+          firstLoadInMemoryCheck();
+          //findByPrimaryKey(getID());
+          findByPrimaryKey(id);
+  }
 
 
   private void firstLoadInMemoryCheck() {
@@ -884,18 +890,18 @@ public abstract class GenericEntity implements java.io.Serializable {
   }
 
 
-	protected String getCommaDelimitedColumnNames(){
+  protected String getCommaDelimitedColumnNames(){
     String newCachedColumnNameList = getStaticInstance().cachedColumnNameList;
-		if(newCachedColumnNameList==null){
+    if(newCachedColumnNameList==null){
       String returnString = "";
       String[] names = getColumnNames();
       for (int i = 0; i < names.length; i++){
         if (isValidColumnForInsertList(names[i])){
           if (returnString.equals("")){
-            returnString = 	names[i];
+            returnString = names[i];
           }
           else{
-            returnString = 	returnString + "," + names[i];
+            returnString = returnString + "," + names[i];
           }
         }
       }
@@ -1941,6 +1947,7 @@ public abstract class GenericEntity implements java.io.Serializable {
       }
 
   public void addMetaDataRelationship(){
+    addManyToManyRelationShip(MetaData.class);
     this.hasMetaDataRelationship = true;
   }
 
@@ -1948,18 +1955,97 @@ public abstract class GenericEntity implements java.io.Serializable {
     return this.hasMetaDataRelationship;
   }
 
-// fetches the metadata for this id and puts it in a Map
-  private boolean getMetaData(){
+  public Hashtable getMetaDataMap(){
+    return this.theMetaDataAttributes;
+  }
 
+// fetches the metadata for this id and puts it in a HashTable
+  private boolean getMetaData(){
+    Connection conn= null;
+    Statement Stmt= null;
+    try{
+      conn = getConnection(getDatasource());
+      Stmt = conn.createStatement();
+
+      MetaData metadata = (MetaData) getStaticInstance(MetaData.class);
+      String metadataIdColumn = metadata.getIDColumnName();
+
+      String tableToSelectFrom = getNameOfMiddleTable(metadata,this);
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("select metadata_name,metadata_value from ");
+      buffer.append(tableToSelectFrom);
+      buffer.append(",ic_metadata where ");
+      buffer.append(tableToSelectFrom);
+      buffer.append(".");
+      buffer.append(getIDColumnName());
+      buffer.append("=");
+      buffer.append(this.getID());
+      buffer.append(" and ");
+      buffer.append(tableToSelectFrom);
+      buffer.append(".");
+      buffer.append(metadataIdColumn);
+      buffer.append("=");
+      buffer.append(metadata.getEntityName());
+      buffer.append(".");
+      buffer.append(metadataIdColumn);
+
+      ResultSet RS = Stmt.executeQuery(buffer.toString());
+
+      while(RS.next()){
+        if( theMetaDataAttributes == null ) theMetaDataAttributes = new Hashtable();
+        theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
+      }
+
+      RS.close();
+
+    }
+    catch(SQLException ex){
+      System.err.println("Exception in "+this.getClass().getName()+" gettingMetaData "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+    finally{
+    try{
+     if(Stmt != null){
+      Stmt.close();
+      }
+    }
+    catch(SQLException ex){
+      System.err.println("Exception in "+this.getClass().getName()+" gettingMetaData "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+    if (conn != null){
+      freeConnection(getDatasource(),conn);
+    }
+
+    }
 
     return true;
   }
 
-  public String getMetaDataValue(String metaDataKey){
-    return "Metadata";
+  public String getMetaData(String metaDataKey){
+    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+    return (String) theMetaDataAttributes.get(metaDataKey);
   }
 
-  public void setMetaDataValue(String metaDataKey, String metaDataValue){
+  private void insertAndUpdateAndDeleteMetaData(){
 
+  }
+
+  public void setMetaData(String metaDataKey, String metaDataValue){
+    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+
+    Object obj = theMetaDataAttributes.put(metaDataKey,metaDataValue);
+    if( obj == null ){
+      if( insertMetaDataAttributes == null ) insertMetaDataAttributes = new Hashtable();
+     // insertMetaDataAttributes.get();
+      insertMetaDataAttributes.put(metaDataKey,metaDataValue);
+    }else{
+      if( updateMetaDataAttributes == null ) updateMetaDataAttributes = new Hashtable();
+      updateMetaDataAttributes.put(metaDataKey,metaDataValue);
+    }
+  }
+
+  public void removeMetaData(String metaDataKey){
+    //deleteMetaDataAttributes.
   }
 }
