@@ -30,7 +30,7 @@ public class ICObjectInstance extends GenericEntity{
 
 		addAttribute(getIDColumnName());
 		addAttribute("ic_object_id","Module",true,true,Integer.class,"many-to-one",ICObject.class);
-                addAttribute("ib_page_id","Page",true,true,Integer.class,"many-to-one",com.idega.builder.data.IBPage.class);
+    addAttribute("ib_page_id","Page",true,true,Integer.class,"many-to-one",com.idega.builder.data.IBPage.class);
 
 	}
 

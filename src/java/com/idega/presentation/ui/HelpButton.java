@@ -39,7 +39,7 @@ protected IWResourceBundle iwrb;
 
   public void main(IWContext iwc) {
     iwrb = getResourceBundle(iwc);
-
+		if(iwrb != null)
     this.setPresentationObject(iwrb.getImage("/help/help.gif",text));
     this.addParameter(PARAMETERSTRING_HEADLINE,headline);
     this.addParameter(PARAMETERSTRING_TEXT,text);
@@ -47,8 +47,8 @@ protected IWResourceBundle iwrb;
     this.setWindowToOpen(HelpWindow.class);
   }
 
-  public String getBundleIdentifier(){
-    return IW_BUNDLE_IDENTIFIER;
-  }
+ // public String getBundleIdentifier(){
+ //   return IW_BUNDLE_IDENTIFIER;
+ // }
 
 }
