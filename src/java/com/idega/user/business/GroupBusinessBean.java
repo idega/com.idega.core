@@ -220,7 +220,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
           Iterator iter = isDirectlyRelated.iterator();
           while (iter.hasNext()) {
             Object item = iter.next();
-            AllGroups.remove(item);
+            if(item!=null) AllGroups.remove(item); //DEBUG why can this be null FIX
             //while(AllGroups.remove(item)){}
           }
         }
