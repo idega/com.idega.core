@@ -74,6 +74,10 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 		return _primaryKeyClass;
 	}
 	
+	public Class setPrimaryKeyClass(Class pkClass) {
+		return _primaryKeyClass=pkClass;
+	}
+	
 	public void setDeclaredEntity(GenericEntityDefinition definition) {
 		this._entityDefinition=definition;
 	}

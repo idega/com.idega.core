@@ -113,6 +113,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			entityDefinition = new GenericEntityDefinition();
 			entityDefinition.setSQLTableName(this.getEntityName());
 			entityDefinition.setUniqueEntityName(this.getEntityName());
+			((PrimaryKeyDefinition)entityDefinition.getPrimaryKeyDefinition()).setPrimaryKeyClass(this.getPrimaryKeyClass());
 			this.setGenericEntityDefinition(entityDefinition);
 			//IDOEntityDefinition ends
 
