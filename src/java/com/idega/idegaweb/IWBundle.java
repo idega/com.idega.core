@@ -19,6 +19,7 @@ import com.idega.presentation.Block;
 
 import com.idega.data.IDOFinderException;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOLookup;
 
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.
@@ -180,8 +181,9 @@ public class IWBundle implements java.lang.Comparable {
 	  ICObject ico = (ICObject)iter.next();
 	  try{
 	    Class c = ico.getObjectClass();
-	    c.newInstance();
-	  }
+	    //c.newInstance();
+	    IDOLookup.createLegacy(c);
+          }
 	  catch(Exception e){
 	    e.printStackTrace();
 	  }
