@@ -142,7 +142,7 @@ private IWResourceBundle iwrb;
           login.setPasswordTextSize(1);
           login.setHeight("130");
           login.setWidth("160");
-          login.setStyle("font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
+          login.setStyle("font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
           login.setInputLength(13);
           login.setLayout(Login.LAYOUT_STACKED);
           loginTable.add(login,1,1);
@@ -159,7 +159,7 @@ private IWResourceBundle iwrb;
         Form myForm = new Form();
           myForm.setEventListener(com.idega.core.localisation.business.LocaleSwitcher.class.getName());
         DropdownMenu dropdown = Localizer.getAvailableLocalesDropdown(iwc);
-          dropdown.setAttribute("style","font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
+          dropdown.setStyleAttribute("font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
           myForm.add(dropdown);
           dropdownTable.add(myForm);
 
