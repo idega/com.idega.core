@@ -209,7 +209,6 @@ public class FileUtil {
   	return false;
   }
 
-  
   /** Deletes all files and folders in the specified folder that are older than the
    * specified time in milliseconds. Only the time of the files and folders in the specified folder
    * are checked not the time of files or folders that belong to subfolders. 
@@ -219,8 +218,23 @@ public class FileUtil {
    * @author thomas
    */
   public static void deleteAllFilesAndFolderInFolderOlderThan(String folderPath, long timeInMillis) {
-    File[] files = FileUtil.getAllFilesInDirectory(folderPath);
-    
+  	FileUtil.deleteAllFilesAndFolderInFolderOlderThan(new File(folderPath), timeInMillis);
+  }
+ 
+  
+  /** Deletes all files and folders in the specified folder that are older than the
+   * specified time in milliseconds. Only the time of the files and folders in the specified folder
+   * are checked not the time of files or folders that belong to subfolders. 
+   * !! Be careful !!
+   * @param folderPath
+   * @param timeInMillis
+   * @author thomas
+   */
+  public static void deleteAllFilesAndFolderInFolderOlderThan(File folder, long timeInMillis) {
+  	if (! folder.exists()) {
+  		return;
+  	}
+    File[] files = folder.listFiles();
     if(files!=null){
     	long currentTime = System.currentTimeMillis();
   	    for (int i = 0; i < files.length; i++) {
@@ -346,13 +360,27 @@ public class FileUtil {
     return buffer.toString();
   }
 
-  
-  public static File getFileRelativeToFile(File file, String relativeUnixPath) {
+  /** Gets a file relative to the specified file according the specified path.
+   * Note: Works with windows or unix separators.
+   * E.g.
+   * file = "/a/b/c.txt" (is a file)
+   * path = "../d/e.txt"
+   * returns file = "/a/d/e.txt"
+   * E.g.
+   * file = "/a/b/c" (is a folder)
+   * path = "../d/e.txt"
+   * returns file = "/a/b/d/e.txt"
+   * @param file
+   * @param relativeUnixPath
+   * @return
+   */
+  public static File getFileRelativeToFile(File file, String relativePath) {
+  	char[] separators = {UNIX_FILE_SEPARATOR , WINDOWS_FILE_SEPARATOR};
   	File result = file;
   	if (result.isFile()) {
   		result = result.getParentFile();
   	}
-  	StringTokenizer tokenizer = new StringTokenizer(relativeUnixPath, String.valueOf(UNIX_FILE_SEPARATOR));
+  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators.toString());
   	while (tokenizer.hasMoreTokens()) {
   		String token = tokenizer.nextToken();
   		if (".".equals(token)) {
