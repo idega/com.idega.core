@@ -399,7 +399,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginBusinessBean.setUser(iwc, user);
 			com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
 			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
-			groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
+			Collection userGroups = userbusiness.getUserGroups(newUser);
+			if(userGroups!=null)
+			    groups = ListUtil.convertCollectionToList(userGroups);
 			//New user system end
 		}
 
