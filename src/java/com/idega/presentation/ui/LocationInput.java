@@ -1,52 +1,57 @@
 package com.idega.presentation.ui;
 
 import java.util.Collection;
+import java.util.Iterator;
+import javax.ejb.FinderException;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.remotescripting.RemoteScriptHandler;
 import com.idega.presentation.ui.util.SelectorUtility;
-
-
 
 /**
  * @author gimmi
  */
 public class LocationInput extends InterfaceObject {
 
-	private static final String ID_LAYER_ID = "loc_res_id";
-	private static final String NAME_LAYER_ID = "loc_res_name";
-
-	public static final String PARAMETER_NAME_COUNTRIES = "par_con";
-	public static final String PARAMETER_NAME_ZIPS = "par_zip";
+	public static final String PARAMETER_ACTION = "p_act";
+	public static final String ACTION_UPDATE_CITIES = "a_uc";
+	public static final String ACTION_UPDATE_POSTAL_CODE = "a_upc";
 	
-	private static final String PARAMETER_REMOTE_CALL = "par_rmc";
+	public static final String PARAMETER_COUNTRY_ID = "pcd_";
 	
-	private String selectedCountryID = null;
-	private String selectedZipID = null;
+	private String specifiedCountryID = null;
+	private String specifiedCityName =  null;
+	private String specifiedZipID = null;
 	
 	private String parCountryID = null;
+	private String parCityName = null;
 	private String parZipID = null;
 	
 	private DropdownMenu countryDrop = null;
+	private DropdownMenu cityDrop = null;
 	private DropdownMenu zipDrop = null;
 	
 	private String iframeName = "tmpFrame";
 	private String separator = " ";
 	
 	public LocationInput() {
-		this("lipc", "lipz");
+		this("lipc", "lipci", "lipz");
 	}
 	
-	public LocationInput(String countryParameterName, String postalCodeParameterName) {
+	public LocationInput(String countryParameterName, String cityParameterName, String postalCodeParameterName) {
 		parCountryID = countryParameterName;
+		parCityName = cityParameterName;
 		parZipID = postalCodeParameterName;
-		iframeName = parCountryID + "_" + zipDrop;
+		
+		iframeName = parCountryID + "_" + parCityName + "_" + zipDrop;
 		
 		countryDrop = new DropdownMenu(parCountryID);
+		cityDrop = new DropdownMenu(parCityName);
 		zipDrop = new DropdownMenu(parZipID);
 	}
 	
@@ -54,6 +59,9 @@ public class LocationInput extends InterfaceObject {
 		LocationInput inp = (LocationInput) super.clone();
 		if (countryDrop != null) {
 			inp.countryDrop = (DropdownMenu) countryDrop.clone();
+		}
+		if (cityDrop != null) {
+			inp.cityDrop = (DropdownMenu) cityDrop.clone();
 		}
 		if (zipDrop != null) {
 			inp.zipDrop = (DropdownMenu) zipDrop.clone();
@@ -66,160 +74,114 @@ public class LocationInput extends InterfaceObject {
 		return countryDrop;
 	}
 	
+	public DropdownMenu getCityDropdown() {
+		return cityDrop;
+	}
+	
 	public DropdownMenu getPostalCodeDropdown() {
 		return zipDrop;
 	}
 	
 	public void main(IWContext iwc) throws Exception {
 
-		getForm().addParameter(PARAMETER_NAME_COUNTRIES, parCountryID);
-		getForm().addParameter(PARAMETER_NAME_ZIPS, parZipID);
+		String usedCountryID = iwc.getParameter(parCountryID);
+		String usedCityName = iwc.getParameter(parCityName);
+		String usedZipID = iwc.getParameter(parZipID);
 		
-		selectedCountryID = iwc.getParameter(parCountryID);
-		selectedZipID = iwc.getParameter(parZipID);
+		if (specifiedCountryID != null) {
+			usedCountryID = specifiedCountryID;
+		}
+		if (specifiedCityName != null) {
+			usedCityName = specifiedCityName;
+		}
+		if (specifiedZipID != null) {
+			usedZipID = specifiedZipID;
+		}
 
 		CountryHome countryHome = (CountryHome) IDOLookup.getHome(Country.class);
+		PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
 		Collection countries = countryHome.findAll();
 		Collection postalCodes = null;
+		Collection cities = null;
 
 		SelectorUtility su = new SelectorUtility();
 		
 		countryDrop.addMenuElements(countries);
-		if (selectedCountryID != null) {
-			PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
-			postalCodes = pcHome.findAllByCountryIdOrderedByPostalCode(Integer.parseInt(selectedCountryID));
-			countryDrop.setSelectedElement(selectedCountryID);
+		if (usedCountryID != null) {
+			cities = pcHome.getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(Integer.parseInt(usedCountryID));
+			countryDrop.setSelectedElement(usedCountryID);
 		}
 		
-		
-		zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(zipDrop, postalCodes, "getPostalAddress");
-		if (postalCodes == null) {
-			zipDrop.addFirstOption(new SelectOption("Select a country", "-1"));
+		if (cities != null) {
+			Iterator iter = cities.iterator();
+			while (iter.hasNext()) {
+				String city = (String) iter.next();
+				cityDrop.addMenuElement(city, city);
+			}
 		}
-		if (selectedZipID != null) {
-			zipDrop.setSelectedElement(selectedZipID);
+		if (cities == null) {
+			cityDrop.addFirstOption(new SelectOption("Select a country", "-1"));
+		} 
+		
+		if (usedCityName != null) {
+			postalCodes = pcHome.findByNameAndCountry(usedCityName,new Integer(usedCountryID));
+			cityDrop.setSelectedElement(usedCityName);
 		}
 
-		RemoteScriptHandler rsh = new RemoteScriptHandler(countryDrop, zipDrop);
+		zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(zipDrop, postalCodes, "getPostalAddress");
+		if (postalCodes == null) {
+			zipDrop.addFirstOption(new SelectOption("Select a city", "-1"));
+		}
+		if (usedZipID != null) {
+			zipDrop.setSelectedElement(usedZipID);
+		}
+				
+		boolean addSeparator = false;
+		if (countryDrop.getParent() == null) {
+			add(countryDrop);
+			addSeparator = true;
+		}
+		if (cityDrop.getParent() == null) {
+			if (addSeparator) {
+				add(separator);
+			}
+			add(cityDrop);
+		}
+		if (zipDrop.getParent() == null) {
+			if (addSeparator) {
+				add(separator);
+			}
+			add(zipDrop);
+		}
+
+		RemoteScriptHandler rsh = new RemoteScriptHandler(countryDrop, cityDrop);
 		rsh.setRemoteScriptCollectionClass(LocationInputCollectionHandler.class);
+		rsh.addParameter(PARAMETER_ACTION, ACTION_UPDATE_CITIES);
+		rsh.setToClear(zipDrop, "Select a city");
 		add(rsh);
 			
-			
-//			IFrame iFrame = addRemoteScriptingScripts(getForm(), zipDrop, url);
-//			add(iFrame);
-//
-//	    boolean addCountryDrop = countryDrop.getParent()==null;
-//	    boolean addZipDrop = zipDrop.getParent()==null;
-//	    
-//	    if (addCountryDrop) {
-//	    	add(countryDrop);
-//	    }
-//	    
-//	    if (addCountryDrop && addZipDrop) {
-//	    	add(separator);
-//	    }
-//	    
-//	    if (addZipDrop) {
-//	    	add(zipDrop);
-//	    }
+		RemoteScriptHandler rsh2 = new RemoteScriptHandler(cityDrop, zipDrop);
+		rsh2.setRemoteScriptCollectionClass(LocationInputCollectionHandler.class);
+		rsh2.addParameter(PARAMETER_ACTION, ACTION_UPDATE_POSTAL_CODE);
+		rsh2.addParameter(PARAMETER_COUNTRY_ID, parCountryID);
+		add(rsh2);
+		
 	}
-//	
-//	public void handleKeepStatus(IWContext iwc) {
-//  }
-//
-//	private IFrame addRemoteScriptingScripts(Form form, DropdownMenu res, String remotePageURL) {
-//		getAssociatedScript().addFunction("handleResponse", "function handleResponse(doc) {\n" +
-//				"  var namesEl = document.getElementById('"+countryDrop.getID()+"');\n"+   // Hard coded ...
-//				"  var zipEl = document.getElementById('"+zipDrop.getID()+"');\n"+ 
-//				"  zipEl.options.length = 0; \n"+
-//				"  var dataElID = doc.getElementById('"+ID_LAYER_ID+"');\n" + 
-//				"  var dataElName = doc.getElementById('"+NAME_LAYER_ID+"');\n" + 
-//				"  namesColl = dataElName.childNodes; \n"+
-//				"  idsColl = dataElID.childNodes; \n" +
-//				"  var numNames = namesColl.length; \n"+
-//				"  var str = '';\n"+
-//				"  var ids = '';\n"+
-//				"  for (var q=0; q<numNames; q++) {\n"+
-//				"    if (namesColl[q].nodeType!=1) continue; // it's not an element node, let's skedaddle\n"+
-//				"    str = namesColl[q].id;\n"+
-//				"    ids = idsColl[q].id;\n"+
-//				"    zipEl.options[zipEl.options.length] = new Option(str, ids);\n" +
-//				"  }\n" +
-//		"}\n");
-//		
-//		getAssociatedScript().addFunction("buildQueryString(theFormName)", "function buildQueryString(theFormName){ \n"
-//				+"  theForm = document.forms[theFormName];\n"
-//				+"  var qs = ''\n"
-//				+"  for (e=0;e<theForm.elements.length;e++) {\n"
-//				+"    if (theForm.elements[e].name!='') {\n"
-//				+"      qs+='&'\n"
-//				+"      qs+=theForm.elements[e].name+'='+escape(theForm.elements[e].value)\n"
-//				+"      }\n"
-//				+"    }\n"
-//				+"  return qs\n}\n");
-//		
-//		
-//		IFrame iframe = new IFrame(iframeName);
-//		iframe.setID(iframeName);
-//		iframe.setHeight(0);
-//		iframe.setWidth(0);
-//		iframe.setBorder(0);
-//		iframe.setSrc("blank.html");
-//		return iframe;
-//	}
-//
-//	
-//	public void handleRemoteCall(IWContext iwc) {
-//		String countryParName = iwc.getParameter(LocationInput.PARAMETER_NAME_COUNTRIES);
-//		String countryID = iwc.getParameter(countryParName);
-//	
-//	  this.getParentPage().setOnLoad("if (parent != self) parent.handleResponse(document)");
-//	
-//	
-//	  if (countryID != null) {
-//	    
-//			try {
-//				PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
-//				Collection countryZips = pcHome.findAllByCountryIdOrderedByPostalCode(Integer.parseInt(countryID));
-//	
-//		    Vector ids = new Vector();
-//		    Vector names = new Vector();
-//		    
-//		    Iterator itZips = countryZips.iterator();
-//		    while (itZips.hasNext()) {
-//		    	PostalCode p = (PostalCode) itZips.next();
-//		    	ids.add(p.getPrimaryKey().toString());
-//		    	names.add(p.getPostalAddress());
-//		    }
-//		    
-//		    if (countryZips.isEmpty()) {
-//		    	ids.add("-1");
-//		    	names.add("Unavailable");
-//		    }
-//		    
-//		    
-//		    RemoteScriptingResults rsr = new RemoteScriptingResults(ID_LAYER_ID, ids);
-//		    rsr.addLayer(NAME_LAYER_ID, names);
-//	
-//		    add(rsr);
-//			}
-//			catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-// 
-//	}
-//	
-//
-//	public String getRemoteUrl(IWContext iwc) {
-//		String url = iwc.getIWMainApplication().getObjectInstanciatorURI(getClass().getName());
-//		url += "&"+PARAMETER_REMOTE_CALL+"=true";
-//		return url;
-//	}
-//
-//	public boolean isRemoteCall(IWContext iwc) {
-//		return iwc.isParameterSet(PARAMETER_REMOTE_CALL);
-//	}
+	
+	public void setSelectedPostalCode(Object postalCodePK) throws FinderException {
+		try {
+			PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
+			PostalCode pc = pcHome.findByPrimaryKey(postalCodePK);
+			
+			specifiedCountryID = new Integer(pc.getCountryID()).toString();
+			specifiedCityName = pc.getName();
+			specifiedZipID = postalCodePK.toString();
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		} 
+		
+	}
+
 	public boolean isContainer() {
 		return false;
 	}	
