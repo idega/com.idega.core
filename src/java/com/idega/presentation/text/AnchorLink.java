@@ -13,6 +13,7 @@ import com.idega.presentation.PresentationObject;
 public class AnchorLink extends Link {
   private PresentationObject obj;
   private String anchorName;
+  private boolean addCurrentURLToLink = false;
 
   public AnchorLink() {
     super();
@@ -28,13 +29,21 @@ public class AnchorLink extends Link {
     this.anchorName = anchorname;
   }
 
+  public void addCurrentURLToLink(boolean setToSubmit) {
+  	addCurrentURLToLink = setToSubmit;
+  }
+
   public void setAnchorName(String anchorName){
    this.anchorName = anchorName;
   }
 
   protected void setFinalUrl(String url) {
     if (anchorName != null) {
-      super.setFinalUrl("#"+anchorName);
+    	if (addCurrentURLToLink) {
+    		super.setFinalUrl(url+"#"+anchorName);
+    	} else {
+        super.setFinalUrl("#"+anchorName);
+    	}
     }else {
       super.setFinalUrl(url);
     }
