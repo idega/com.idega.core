@@ -1630,7 +1630,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return found;
 	}
 	
-	private Collection searchForTopNodes(Collection permissions, Collection initialTopNodes) throws EJBException, RemoteException, FinderException{
+	private Collection searchForTopNodes(Collection permissions, Collection initialTopNodes, User user) throws EJBException, RemoteException, FinderException{
 		if(permissions==null || permissions.isEmpty()){
 			return ListUtil.getEmptyList();
 		}
@@ -1662,16 +1662,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					break;
 				}
 			}
-			if(!isChild && groupTree.contains(sGroup)){
-				Set newSubset = groupTree.subSet(sGroup);
-				for (Iterator keyIter = topNodesSubTrees.keySet().iterator(); keyIter.hasNext();) {
-					String topNode = (String) keyIter.next();
-					if(newSubset.contains(topNode)){  // if the new topnode is parent of another "topnode" then that node is not topnode and is removed
-						keyIter.remove();
+			if(!isChild){
+				if(groupTree.contains(sGroup)){
+					Set newSubset = groupTree.subSet(sGroup);
+					for (Iterator keyIter = topNodesSubTrees.keySet().iterator(); keyIter.hasNext();) {
+						String topNode = (String) keyIter.next();
+						if(newSubset.contains(topNode)){  // if the new topnode is parent of another "topnode" then that node is not topnode and is removed
+							keyIter.remove();
+						}
 					}
+					topNodesSubTrees.put(sGroup,newSubset);
+					topNodeSubTreesEntrySet = topNodesSubTrees.entrySet();
+				} else {
+					log("[UserBusinessBean]: Topnode "+sGroup+" dose not exist in the tree but is set in the permissions for the user "+user);
 				}
-				topNodesSubTrees.put(sGroup,newSubset);
-				topNodeSubTreesEntrySet = topNodesSubTrees.entrySet();
 			}
 			
 		}
@@ -1684,13 +1688,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		for (Iterator iterator = topNodes.iterator(); iterator.hasNext();) {
 			Group group = (Group) iterator.next();
 			if(group.isAlias() && topNodes.contains(group.getAlias())){
-				iter.remove();
+				iterator.remove();
 			} else if(group.isAlias()){
 				Set subTree = groupTree.subSet(String.valueOf(group.getAliasID()));
-				for (Iterator keyIter = topNodes.iterator(); keyIter.hasNext();) {
-					String topNode = String.valueOf(((Group) keyIter.next()).getPrimaryKey());
+				for (Iterator topIter = topNodes.iterator(); topIter.hasNext();) {
+					String topNode = String.valueOf(((Group) topIter.next()).getPrimaryKey());
 					if(subTree.contains(topNode)){  // if the new topnode is parent of another "topnode" then that node is not topnode and is removed
-						keyIter.remove();
+						topIter.remove();
 					}
 				}
 			}
@@ -1815,7 +1819,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						
 		
 						try {
-							topNodes = searchForTopNodes(allPermissions,null);
+							topNodes = searchForTopNodes(allPermissions,null,user);
 //							topNodes = searchForTopNodes(viewPermissions,searchForTopNodes(ownedPermissions,null));
 
 							for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
@@ -2053,8 +2057,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				
 				totalTime.stop();
 				log("[UserBusinessBean]: topnode....(...) ends "+ totalTime.getTimeString());
-				log("\n");
-
 			}
 			
 			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
