@@ -280,14 +280,22 @@ public class IWMainApplicationStarter {
 				}
 	}
 	
+	
+	private void startTemporaryBundleStarters() {
+		startTemporaryBundleStarter("com.idega.block.category.IWBundleStarter");
+		startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
+		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
+	}
+	
+	
 	/**
 	 * Category bundle is not registered in many web applications (but used) because category wasn't a bundle in the past
 	 * Call BundleStarter directly because the bundle is not loaded by old web applications! 
 	 */
-	private void startTemporaryBundleStarters(){
+	private void startTemporaryBundleStarter(String starterName) {
 	    IWBundleStartable starter;
         try {
-            starter = (IWBundleStartable) Class.forName("com.idega.block.category.IWBundleStarter").newInstance();
+            starter = (IWBundleStartable) Class.forName(starterName).newInstance();
             starter.start(null);
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
