@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.43 2003/01/02 16:48:10 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.44 2003/01/07 11:44:55 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -201,8 +201,14 @@ public class IWPresentationServlet extends IWCoreServlet {
 			try {
 				handleLocaleParameter(iwc);
 				writer = iwc.getWriter(); //get the writer
-				processBusinessEvent(iwc);
-				processApplicationEvents(iwc);
+				try{
+					processBusinessEvent(iwc);
+					processApplicationEvents(iwc);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+
 				initializePage();
 				processPresentationEvent(iwc);
 				//added by gummi@idega.is
