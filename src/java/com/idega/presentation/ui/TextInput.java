@@ -223,7 +223,7 @@ public void _main(IWContext iwc)throws Exception{
 		else if(isSetAsEmail){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			getScript().addToFunction("checkSubmit","if (warnIfNotEmail (findObj('"+getName()+"') == false ){\nreturn false;\n}\n");
+			getScript().addToFunction("checkSubmit","if (warnIfNotEmail (findObj('"+getName()+"')) == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotEmail","function warnIfNotEmail (inputbox) { \n\n	var emailVal = inputbox.value; \n\n	var atI = emailVal.indexOf (\"@\"); \n\n	var dotI = emailVal.indexOf (\".\"); \n\n	var warnMsg = \""+emailErrorMessage+"\\n\";\n\n	if (  atI && dotI ){\n		return true;\n	}\n	else{\n		alert(warnMsg);\n		return false;\n	}\n}");
 			//Not finished  yet
 		}
