@@ -462,7 +462,8 @@ private String getHTMLString(IWContext iwc) {
     if (d.getURL() != null) {
       String src = getAttribute("src");
       if (src.startsWith("/")) {
-	setAttribute("src",d.getURL()+src);
+        String protocol = iwc.getRequest().isSecure()? "https://" : "http://";
+	setAttribute("src", protocol+d.getURL()+src);
       }
     }
   }
