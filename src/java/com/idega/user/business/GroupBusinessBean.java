@@ -740,6 +740,22 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
   }
   
+  
+  /**
+ * Method getUserGroupPluginsForUser.
+ * @param groupType
+ * @return Collection of plugins or null if no found or error occured
+ */
+  public Collection getUserGroupPluginsForUser(User user){
+  	try {
+  		//finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
+		return getUserGroupPlugInHome().findAllPlugIns();
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+  }
+  
   public GroupTypeHome getGroupTypeHome() throws RemoteException{
   	return  (GroupTypeHome) this.getIDOHome(GroupType.class);
   }

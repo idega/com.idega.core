@@ -1,14 +1,16 @@
 package com.idega.user.business;
 
-import com.idega.presentation.PresentationObject;
-import com.idega.user.data.*;
-import com.idega.user.presentation.*;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.List;
+
+import javax.ejb.CreateException;
+import javax.ejb.RemoveException;
 
 import com.idega.business.IBOService;
-
-import java.rmi.RemoteException;
-import javax.ejb.*;
-import java.util.Collection;
+import com.idega.presentation.PresentationObject;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 /**
  * Title:        idegaWeb User Subsystem
@@ -34,6 +36,9 @@ public interface UserGroupPlugInBusiness extends IBOService {
 	*/
 	public PresentationObject instanciateEditor(Group group)throws RemoteException;
     public PresentationObject instanciateViewer(Group group)throws RemoteException;
+    
+    public List getUserPropertiesTabs(User user) throws RemoteException;
+    public List getGroupPropertiesTabs(Group group) throws RemoteException;
 
     /**
      * Returns a Collection of ListViewerField Objects
