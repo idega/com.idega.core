@@ -37,7 +37,7 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 			while (iter.hasNext()) {
 				PostalCode element = (PostalCode) iter.next();
 				int id = ((Integer)element.getPrimaryKey()).intValue();
-				String code = element.getPostalCode();
+				String code = element.getPostalAddress();
 				if( code!=null ) addMenuElement(id,code);						
 			}
 		}
