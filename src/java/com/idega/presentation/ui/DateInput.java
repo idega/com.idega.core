@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.22 2002/12/11 13:59:51 laddi Exp $
+ * $Id: DateInput.java,v 1.23 2003/03/12 15:50:51 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,6 +51,16 @@ public class DateInput extends InterfaceObject {
   final static String DAY_KEY_S = "dateinput.day_short";
   final static String MONTH_KEY_S = "dateinput.month_short";
   final static String YEAR_KEY_S = "dateinput.year_short";
+  // added by thomas
+  // Flag that indicates if the drop down menus are up to date or not
+  // This flag is set to true if and only if 
+  // the method setSetValues was called.
+  // The flag is set to false if one of the methods 
+  // setDay, setMonth, setYear and setYearRange is called.
+  // Within the print method the flag is checked. If it is false 
+  // the method setSetValues is invoked. The problem is that
+  // TabbedPropertyWindow seems not to call the main method. 
+  private boolean dropDownMenusUpToDate = true;
 
   /**
    * Creates a new DateInput object.
@@ -226,6 +236,7 @@ public class DateInput extends InterfaceObject {
   }
 
   public void setYear(int year) {
+    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     // Gimmi 13.10.2002
@@ -263,19 +274,12 @@ public class DateInput extends InterfaceObject {
 	 * @param month
 	 */
   public void setMonth(String month) {
+    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     if (month.length() > 1) {
-      if (_theMonth != null) {
-        _theMonth.setSelectedElement(month);
-      }
-
       _setMonth = month;
     } else {
-      if (_theMonth != null) {
-        _theMonth.setSelectedElement("0" + month);
-      }
-
       _setMonth = "0" + month;
     }
   }
@@ -285,12 +289,13 @@ public class DateInput extends InterfaceObject {
   }
 
   public void setDay(String day) {
+    dropDownMenusUpToDate = false;
     _setCheck = true;
 
     if (day.length() > 1) {
       _setDay = day;
     } else {
-      _setDay = "0" + day;
+       _setDay = "0" + day;
     }
   }
 
@@ -311,6 +316,7 @@ public class DateInput extends InterfaceObject {
   }
 
   public void setYearRange(int _fromYear, int _toYear) {
+    dropDownMenusUpToDate = false;
     this._fromYear = _fromYear;
     this._toYear = _toYear;
   }
@@ -357,8 +363,9 @@ public class DateInput extends InterfaceObject {
   }
 
   private void setSetValues() {
+    dropDownMenusUpToDate = true; // because this method was called
     if (_setMonth != null) {
-      this.setMonth(_setMonth);
+      _theMonth.setSelectedElement(_setMonth);
     }
 
     if (_setDay != null) {
@@ -483,6 +490,9 @@ public class DateInput extends InterfaceObject {
   }
 
   public void print(IWContext iwc) throws Exception {
+    if (!dropDownMenusUpToDate)
+      setSetValues();
+      
     super.print(iwc);
 
     if (_isDisabled) {
