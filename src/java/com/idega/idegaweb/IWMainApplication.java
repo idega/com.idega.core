@@ -609,19 +609,19 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public static String getHashCode(Class classObject){
-    String hashcode = Integer.toString(classObject.hashCode());
-    //System.err.println(classObject.getName()+" "+hashcode);
-    if(cryptoProps==null)
-      cryptoProps = new Properties();
 
-    if(!cryptoProps.containsKey(hashcode) ){
-      cryptoProps.put(hashcode,classObject.getName());
+    String hashcode;
+    if(cryptoCodes.containsKey(classObject.getName())){
+      hashcode = (String) cryptoCodes.get(classObject.getName());
     }
-    if(cryptoCodes == null)
-      cryptoCodes = new Properties();
-    if(!cryptoCodes.containsKey(classObject.getName())){
+    else{
+      hashcode = Integer.toString(classObject.hashCode());
       cryptoCodes.put(classObject.getName(),hashcode);
     }
+
+      cryptoProps.put(hashcode,classObject.getName());
+
+
     return hashcode;
   }
 
