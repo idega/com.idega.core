@@ -124,6 +124,11 @@ public static String HEADER_COLOR="#0E2456";
       leftTable.setCellpadding(_cellPadding);
       leftTable.setAlignment("center");
       leftTable.setWidth("100%");
+      if ( merged ) {
+	leftTable.setHeight("100%");
+	leftTable.setCellspacing(0);
+	leftTable.setVerticalAlignment(1,1,"top");
+      }
       adminTable.add(leftTable,1,2);
 
     rightTable = new Table();

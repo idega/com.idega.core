@@ -40,5 +40,5 @@ public class IWConstants{
   public static final String BUILDER_FONT_STYLE_LARGE = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#000000;";
   public static final String BUILDER_FONT_STYLE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000000;";
   public static final String BUILDER_FONT_STYLE_TITLE = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
-
+  public static final String BUILDER_FONT_STYLE_INTERFACE = "font-size: 8pt; border: 1 solid #000000;";
 }

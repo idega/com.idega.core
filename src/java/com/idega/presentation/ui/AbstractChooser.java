@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.6 2002/01/10 19:40:12 gimmi Exp $
+ * $Id: AbstractChooser.java,v 1.7 2002/03/09 17:42:23 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.ui;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -36,7 +37,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private boolean  _addTextInput = true;
   private Form _form = null;
   private Image _buttonImage = null;
-  private String _style;
+  private String _style = IWConstants.BUILDER_FONT_STYLE_INTERFACE;
   private String _stringValue;
   private String _stringDisplay;
   private String _attributeValue;
@@ -168,7 +169,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       link.addParameter(DISPLAYSTRING_PARAMETER_NAME,input.getName());
       link.addParameter(VALUE_PARAMETER_NAME,value.getName());
       if ( _attributeName != null && _attributeValue != null ) {
-        link.addParameter(_attributeName,_attributeValue);
+	link.addParameter(_attributeName,_attributeValue);
       }
       table.add(link,2,1);
     }
@@ -194,10 +195,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
     if (obj.getParentObject() != null) {
       Object newObj = obj.getParentObject();
       if (!(newObj instanceof Form)) {
-        returnString = getParentFormString((PresentationObject)newObj);
+	returnString = getParentFormString((PresentationObject)newObj);
       }
       else {
-        returnString =  ((PresentationObject)newObj).getID()+".";
+	returnString =  ((PresentationObject)newObj).getID()+".";
       }
     }
 
@@ -228,10 +229,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private Link getLink(){
     if( link==null ){
       if (_buttonImage == null){
-        link = new Link("Choose");
+	link = new Link("Choose");
       }
       else{
-        link = new Link(_buttonImage);
+	_buttonImage.setHorizontalSpacing(3);
+	link = new Link(_buttonImage);
       }
     }
 
