@@ -19,6 +19,12 @@ public class FileInput extends InterfaceObject {
 		this(FILE_INPUT_DEFAULT_PARAMETER_NAME);
 	}
 
+	/**
+	 * This constructor will not work in JSF, use the JSF upload component OR use the default constructor.
+	 * The name of the field will then be "fileupload" or use the static variable FILE_INPUT_DEFAULT_PARAMETER_NAME
+	 * @param name
+	 * @deprecated
+	 */
 	public FileInput(String name) {
 		this.setName(name);
 	}
