@@ -280,7 +280,7 @@ private void setDefaultAttributes(IWContext iwc){
 
 }
 
-  public synchronized Object clone() {
+  public Object clone() {
     Text obj = null;
     try {
       obj = (Text)super.clone();

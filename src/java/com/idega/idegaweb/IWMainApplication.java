@@ -33,7 +33,7 @@ public class IWMainApplication{//implements ServletContext{
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
   public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
 
-  public static String windowOpenerURL="/servlet/WindowOpener";
+  private static String windowOpenerURL="/servlet/WindowOpener";
   private static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
@@ -44,6 +44,9 @@ public class IWMainApplication{//implements ServletContext{
   public static String templateParameter="idegaweb_template";
   public static String templateClassParameter="idegaweb_template_class";
   public static String classToInstanciateParameter="idegaweb_instance_class";
+
+  private static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
+
   private Hashtable loadedBundles;
   private Properties bundlesFile;
   private File bundlesFileFile;
@@ -765,6 +768,14 @@ public class IWMainApplication{//implements ServletContext{
 
   public String getWindowOpenerURI(){
     return getTranslatedURLWithContext(this.windowOpenerURL);
+  }
+
+  public  String getWindowOpenerURI(Class windowToOpen){
+    return getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+  }
+
+  public  String getWindowOpenerURI(Class windowToOpen,int ICObjectInstanceIDToOpen){
+    return getWindowOpenerURI(windowToOpen)+"&"+_PARAMETER_IC_OBJECT_INSTANCE_ID+"="+ICObjectInstanceIDToOpen;
   }
 
   public String getObjectInstanciatorURI(){

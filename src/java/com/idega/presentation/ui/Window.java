@@ -74,8 +74,11 @@ public Window(String name,int width,int height){
 	//this.width=width;
 	//newURL=false;
 	//setSettings();
-        this(name,width,height,IWMainApplication.windowOpenerURL);
+        //this(name,width,height,IWMainApplication.windowOpenerURL);
 
+    this.setName(name);
+    this.setWidth(width);
+    this.setHeight(height);
 }
 
 public Window(String name,String url){
@@ -176,7 +179,7 @@ public String getURL(IWContext iwc){
 //		return encodeSpecialRequestString("window",this.getName(),iwc);
 //	}
         if(url==null){
-          return IWMainApplication.windowOpenerURL;
+          return iwc.getApplication().getWindowOpenerURI();
         }
         else{
           return url;
@@ -307,17 +310,13 @@ private String returnFullScreen() {
     return "";
 }
 
-public static String getWindowURL(Class windowClass){
-  String url = IWMainApplication.windowOpenerURL;
-  url+="?";
-  url+=IW_FRAME_CLASS_PARAMETER;
-  url+="=";
-  url+=IWMainApplication.getEncryptedClassName(windowClass);
-  return url;
+public static String getWindowURL(Class windowClass,IWApplicationContext iwc){
+  //String url = IWMainApplication.windowOpenerURL;
+  return iwc.getApplication().getWindowOpenerURI(windowClass);
 }
 
-public static String getCallingScriptString(Class windowClass){
-  return getCallingScriptString(windowClass,true);
+public static String getCallingScriptString(Class windowClass,IWApplicationContext iwac){
+  return getCallingScriptString(windowClass,true,iwac);
 }
 
 public static Window getStaticInstance(Class windowClass){
@@ -334,13 +333,13 @@ public static Window getStaticInstance(Class windowClass){
   return windowInstance;
 }
 
-public static String getCallingScriptString(Class windowClass,boolean includeURL){
-  String url = getWindowURL(windowClass);
-  return getCallingScriptString(windowClass,url,includeURL);
+public static String getCallingScriptString(Class windowClass,boolean includeURL,IWApplicationContext iwac){
+  String url = getWindowURL(windowClass,iwac);
+  return getCallingScriptString(windowClass,url,includeURL,iwac);
 }
 
 
-public static String getCallingScriptString(Class windowClass,String url,boolean includeURL){
+public static String getCallingScriptString(Class windowClass,String url,boolean includeURL,IWApplicationContext iwac){
   String theURL=null;
   Window win = getStaticInstance(windowClass);
   if(includeURL){

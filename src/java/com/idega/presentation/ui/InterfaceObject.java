@@ -236,7 +236,7 @@ public void print(IWContext iwc)throws Exception{
 }
 
 
-  public synchronized Object clone() {
+  public Object clone() {
     InterfaceObject obj = null;
     try {
       obj = (InterfaceObject)super.clone();

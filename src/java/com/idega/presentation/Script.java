@@ -221,7 +221,7 @@ public void print(IWContext iwc)throws Exception{
 }
 
 
-  public synchronized Object clone() {
+  public Object clone() {
     Script obj = null;
     try {
       obj = (Script)super.clone();

@@ -123,11 +123,11 @@ public class IWURL {
     return null;
   }
 
-  public static IWURL getWindowOpenerURL(Class windowClass){
+  /*public static IWURL getWindowOpenerURL(Class windowClass){
     IWURL url = getURL(IWMainApplication.windowOpenerURL);
     url.addParameter("","");
     return url;
-  }
+  }*/
 
   /*public static IWURL getBuilderURL(int pageID){
     return getBuilderURL(Integer.toString(pageID));

@@ -273,7 +273,7 @@ public void print(IWContext iwc)throws IOException{
 }
 
 
-  public synchronized Object clone() {
+  public Object clone() {
     DropdownMenu obj = null;
     try {
       obj = (DropdownMenu)super.clone();

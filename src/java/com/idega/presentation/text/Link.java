@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.61 2002/03/26 17:59:41 tryggvil Exp $
+ * $Id: Link.java,v 1.62 2002/03/26 19:01:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,6 +51,7 @@ public class Link extends Text{
   private Window _myWindow = null;
   private Form _formToSubmit;
   private Class _windowClass = null;
+  private int icObjectInstanceIDForWindow=-1;
 
   private Map _ImageLocalizationMap;
 
@@ -377,6 +378,7 @@ public class Link extends Text{
   public void main(IWContext iwc)throws Exception {
     if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
     setURIToClassToInstanciate(iwc);
+    setURIToWindowOpenerClass(iwc);
     //Builder edit mode
     if(iwc.isInEditMode()){
      addParameter("view","builder");/**@todo this doesn't update all the frames**/
@@ -386,7 +388,8 @@ public class Link extends Text{
 
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_myWindow != null) {
-	if (_myWindow.getURL(iwc).indexOf(IWMainApplication.windowOpenerURL) != -1) {
+    String windowOpenerURI = iwc.getApplication().getWindowOpenerURI();
+	if (_myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
 	  String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc,_myWindow);
 	  addParameter(_sessionStorageName,sessionParameterName);
 	}
@@ -1438,7 +1441,7 @@ public class Link extends Text{
 	return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
       }
       else {
-	return Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true);
+	return Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true,iwc);
       }
     }
     return "";
@@ -1708,16 +1711,17 @@ public class Link extends Text{
   public void setWindowToOpen(Class windowClass) {
     //_objectType=OBJECT_TYPE_WINDOW;
     _windowClass=windowClass;
-    setURL(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
+    //setURL(IWMainApplication.windowOpenerURL);
+    //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
   }
 
   public void setWindowToOpen(Class windowClass, int instanceId) {
     //_objectType=OBJECT_TYPE_WINDOW;
-    _windowClass=windowClass;
-    setURL(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
-    this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
+    setWindowToOpen(windowClass);
+    //setURL(IWMainApplication.windowOpenerURL);
+    //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
+    //this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
+    icObjectInstanceIDForWindow=instanceId;
   }
 
   public void setNoTextObject(boolean noText) {
@@ -1888,7 +1892,7 @@ public class Link extends Text{
 	if (_windowClass == null) {
 	   return ("javascript:"+_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
 	} else {
-	  return ("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
+	  return ("javascript:"+Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true,iwc));
 	}
     }
     else{
@@ -1938,6 +1942,21 @@ public class Link extends Text{
       }
       else{
         this.setURL(iwc.getApplication().getObjectInstanciatorURI(classToInstanciate));
+      }
+    }
+  }
+
+  private void setURIToWindowOpenerClass(IWContext iwc){
+    if(this._windowClass!=null){
+
+      //setURL(iwc.getApplication().getWindowOpenerURI());
+      //addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
+      if(this.icObjectInstanceIDForWindow==-1){
+          setURL(iwc.getApplication().getWindowOpenerURI(_windowClass));
+      }
+      else{
+        setURL(iwc.getApplication().getWindowOpenerURI(_windowClass,icObjectInstanceIDForWindow));
+        //this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
       }
     }
   }

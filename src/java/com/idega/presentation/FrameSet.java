@@ -236,12 +236,12 @@ public class FrameSet extends Window{
       return url;
     }
 
-    public static IWURL getFrameURL(Class pageClass){
+    /*public static IWURL getFrameURL(Class pageClass){
       String baseURL = IWConstants.SERVLET_WINDOWOPENER_URL;
       IWURL url = new IWURL(baseURL);
       url.addPageClassParameter(pageClass);
       return url;
-    }
+    }*/
 
     public void setFrameBorder(int width){
       setFrameSetProperty("frameborder",Integer.toString(width));

@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObjectContainer.java,v 1.2 2002/01/23 15:01:54 palli Exp $
+ * $Id: InterfaceObjectContainer.java,v 1.3 2002/03/26 19:01:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,7 +26,7 @@ public class InterfaceObjectContainer extends PresentationObjectContainer{
   /**
    *
    */
-  public synchronized Object clone() {
+  /*public synchronized Object clone() {
     InterfaceObjectContainer obj = null;
     try {
       obj = (InterfaceObjectContainer)super.clone();
@@ -36,5 +36,5 @@ public class InterfaceObjectContainer extends PresentationObjectContainer{
     }
 
     return(obj);
-  }
+  }*/
 }

@@ -25,6 +25,7 @@ private PresentationObject submitToObject;
 //private Parameter controlParameter;
 private Map controlParameters;
 private Class windowClass;
+private int icObjectInstanceIDForWindow=-1;
 private Class classToInstanciateAndSubmitTo;
 private int _submitToPage = -1;
 
@@ -507,17 +508,17 @@ public void setEventListener(String eventListenerClassName){
 
   public void setWindowToOpen(Class windowClass){
     this.windowClass=windowClass;
-    setAction(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    //setAction(IWMainApplication.windowOpenerURL);
+    //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
     setWindow(Window.getStaticInstance(windowClass));
   }
 
   public void setWindowToOpen(Class windowClass, int instanceId){
-    this.windowClass=windowClass;
-    setAction(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
-    this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
-    setWindow(Window.getStaticInstance(windowClass));
+    setWindowToOpen(windowClass);
+    //setAction(IWMainApplication.windowOpenerURL);
+    //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    //this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
+    this.icObjectInstanceIDForWindow=instanceId;
   }
 
 
@@ -538,6 +539,20 @@ public void setEventListener(String eventListenerClassName){
   private void setActionToInstanciatedClass(IWContext iwc){
     if(this.classToInstanciateAndSubmitTo!=null){
         this.setAction(iwc.getApplication().getObjectInstanciatorURI(classToInstanciateAndSubmitTo));
+    }
+  }
+
+  private void setURIToWindowOpenerClass(IWContext iwc){
+    if(this.windowClass!=null){
+      //setURL(iwc.getApplication().getWindowOpenerURI());
+      //addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
+      if(this.icObjectInstanceIDForWindow==-1){
+          setAction(iwc.getApplication().getWindowOpenerURI(windowClass));
+      }
+      else{
+        setAction(iwc.getApplication().getWindowOpenerURI(windowClass,icObjectInstanceIDForWindow));
+        //this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+      }
     }
   }
 } // Class ends
