@@ -378,6 +378,50 @@ public class StringHandler {
 	}
 	
 	/** Returns a string with an added or increased counter depending on the 
+	 * specified token. The returned string  is unique regarding the specified collection of strings.
+	 * If the string is already unique the string is not modified. 
+	 * Null strings are handled like empty strings.
+	 * If the collectionOfString parameter is null the specified string is
+	 * returned. 
+	 * Examples: 
+	 * addOrIncreaseCounterIfNecessary("fileName", "_", ("fileName", "fileName_1", "fileName_3") 
+	 * 	returns "fileName_2"
+	 * addOrIncreaseCounterIfNecessary("fileName", "_", ("fileName_5", "fileName_1", "fileName_3") 
+	 * 	returns "fileName"
+	 * addOrIncreaseCounterIfNecessary("fileName", "_", null ) 
+	 * 	returns "fileName"
+	 * @param string
+	 * @param token
+	 * @param collection of strings
+	 * @return string with added or increased counter if necessary
+	 */
+	public static String addOrIncreaseCounterIfNecessary(String string, String token, Collection collectionOfStrings) {
+		if (string == null) {
+			string = "";
+		}
+		if (collectionOfStrings == null) {
+			return string;
+		}
+		boolean stop = false;
+		do {
+			stop = false;
+			Iterator iterator = collectionOfStrings.iterator();
+			while (stop == false && iterator.hasNext()) {
+				String name = (String) iterator.next();
+				if (string.equals(name)) {
+					string = addOrIncreaseCounter(string, token);
+					stop = true;
+				}
+			}
+		}
+		while (stop == true);
+		return string;
+		}
+				
+	
+	
+	
+	/** Returns a string with an added or increased counter depending on the 
 	 * specified token. Null strings are handled like empty strings. 
 	 * Examples: 
 	 * addOrIncreaseCounter("fileName_13", "_") returns "fileName_14"
