@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.64 2004/12/09 14:01:03 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.65 2005/03/09 00:59:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -350,19 +350,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 		getPage().renderComponent(iwc);
 		//System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
-	private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response) {
-		if (request.getParameter("idega_special_form_event") != null) {
-			//if (true){
-			return true;
-			//}
-			//else{
-			//	return false;
-			//}
-		}
-		else {
-			return false;
-		}
-	}
+
 	//public void actionPerformed(ModuleEvent e)throws Exception{
 	//try{
 	//	__theService(e.getRequest(),e.getResponse());
