@@ -2031,7 +2031,13 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL, yearOfBirthTo));
 	  }
 	  if (gender != null) {
-	      query.addCriteria(new MatchCriteria(userTable, getColumnNameGender(),MatchCriteria.EQUALS, gender));
+	      int genderNumber = -1;
+	      if (gender.equals("m")) {
+	          genderNumber = 1;
+	      } else if (gender.equals("f")) {
+	          genderNumber = 2;
+	      }
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameGender(),MatchCriteria.EQUALS, genderNumber));
 	  }
 //	  query.addOrder(groupTable, getColumnNameUserID(), true);
 	  return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
