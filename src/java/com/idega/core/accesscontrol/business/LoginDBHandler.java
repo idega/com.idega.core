@@ -564,7 +564,7 @@ public class LoginDBHandler {
 
       LoginTable l = LoginTable.getStaticInstance();
 
-      List list = EntityFinder.findAllByColumn(l,l.getUserIDColumnName(),userId);
+      List list = EntityFinder.findAllByColumn(l,LoginTable.getUserIDColumnName(),userId);
 
       if(list != null){
 
