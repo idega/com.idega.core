@@ -5,6 +5,7 @@
 package com.idega.presentation.ui;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
@@ -288,7 +289,8 @@ public class TextInput extends GenericInput {
 			setOnBlur("return warnIfNotFloat(this, '"+ floatErrorMessage +"', false)");
 
 			//formating decimal sign (for default Locale) and number of decimals
-			NumberFormat number = NumberFormat.getInstance(); 
+			
+			NumberFormat number = NumberFormat.getInstance(iwc.getCurrentLocale()); 
 			number.setGroupingUsed(false); 
 			if (decimals >= 0){
 				number.setMaximumFractionDigits(decimals);
