@@ -42,6 +42,8 @@ public static final String FONT_FAMILY_GENEVA = "Geneva,Arial,Helvetica,sans-ser
 public static final String FONT_FAMILY_GEORGIA = "Georgia,Times New Roman,Times,serif";
 public static final String FONT_FAMILY_TIMES = "Times New Roman,Times,serif";
 public static final String FONT_FAMILY_VERDANA = "Verdana,Arial,Helvetica,sans-serif";
+public static final String FONT_FAMILY_TREBUCHET = "Trebuchet,Verdana,Arial,Helvetica,sans-serif";
+public static final String FONT_FAMILY_TAHOMA = "Tahoma,Verdana,Arial,Helvetica,sans-serif";
 
 public static final String FONT_STRETCH_NORMAL = "normal";
 public static final String FONT_STRETCH_WIDER = "wider";
