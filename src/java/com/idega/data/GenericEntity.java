@@ -169,10 +169,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   /**
    * Subclasses have to implement this method - this should return the name of the underlying table
-	 */
-	public abstract String getEntityName();
+   */
+  public abstract String getEntityName();
 
-	public abstract void initializeAttributes();
+  public abstract void initializeAttributes();
 
   public Vector getAttributes() {
     //ties the attribute vector to the subclass of IDOLegacyEntity because
