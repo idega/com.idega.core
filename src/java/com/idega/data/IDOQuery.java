@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.util.IWTimestamp;
-
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
