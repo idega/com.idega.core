@@ -8,13 +8,15 @@ public class MemoryOutputStream extends OutputStream{
   private int position=0;
 
 
-  MemoryOutputStream(MemoryFileBuffer buffer){
+  public MemoryOutputStream(MemoryFileBuffer buffer){
     this.buffer=buffer;
   }
 
   public void close(){
+    System.out.println("Calling close on MemoryOutputStream");
     isClosed=true;
   }
+
   /**
   * @todo IMPLEMENT
   */
@@ -31,6 +33,7 @@ public class MemoryOutputStream extends OutputStream{
   }
 
   public void write(byte[] b, int off, int len){
+  System.out.println("Calling write on MemoryOutputStream");
     if(!isClosed){
       buffer.write(b,off,len);
     }

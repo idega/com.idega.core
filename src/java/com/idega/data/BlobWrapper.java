@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.4 2001/05/17 17:59:19 palli Exp $
+ * $Id: BlobWrapper.java,v 1.5 2001/07/16 09:53:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,6 +19,9 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.sql.PreparedStatement;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryOutputStream;
+import com.idega.io.MemoryInputStream;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -75,14 +78,20 @@ public class BlobWrapper {
     }
     return readOutputStream;
   }
-
+*/
 	public OutputStream getOutputStreamForBlobWrite() {
 		if (writeOutputStream == null) {
-
-		}
+                    /*writeOutputStream=new StreamConnectorOutputStream();
+                    writeInputStream = ((StreamConnectorOutputStream)writeOutputStream).getNewConnectedInputStream();
+		    */
+                    MemoryFileBuffer buf = new MemoryFileBuffer();
+                    writeOutputStream = new MemoryOutputStream(buf);
+                    writeInputStream = new MemoryInputStream(buf);
+                }
 		return writeOutputStream;
-	}
 
+	}
+/*
 	public void setOutputStreamForBlobWrite(OutputStream stream) {
 		writeOutputStream = stream;
 	}
@@ -105,13 +114,13 @@ public class BlobWrapper {
       ex.printStackTrace(System.err);
     }
 
-	  return readInputStream;
-	}*/
+    return readInputStream;
+  }*/
 
 
   public BlobInputStream getBlobInputStream() throws SQLException, IOException {
-	  return(new BlobInputStream(this.entity,this.getTableColumnName()));
-	}
+    return(new BlobInputStream(this.entity,this.getTableColumnName()));
+  }
 
   //public void populate() {
   //  DatastoreInterface.getInstance(conn).populateBlob(this);
@@ -125,21 +134,21 @@ public class BlobWrapper {
     return this.entity;
   }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+  public void setStatus(int status) {
+          this.status = status;
+  }
 
-	public int getStatus() {
-		return status;
-	}
+  public int getStatus() {
+          return status;
+  }
 
-	protected void setTableColumnName(String columnName) {
-		this.columnName = columnName;
-	}
+  protected void setTableColumnName(String columnName) {
+          this.columnName = columnName;
+  }
 
-	protected String getTableColumnName() {
-		return this.columnName;
-	}
+  protected String getTableColumnName() {
+          return this.columnName;
+  }
 
   protected void setTableName(String tableName) {
     this.tableName = tableName;
@@ -187,6 +196,8 @@ public class BlobWrapper {
     this.setStatus(this.IS_CLOSED);
   }
 
+
+  /*
    public  int insertBlob(){
     int id = -1;
 
@@ -199,12 +210,12 @@ public class BlobWrapper {
       if (Conn!=null) dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
       else dataBaseType="oracle";
 
-/*      if( dataBaseType.equals("oracle") ) {
-        id = saveToOracleDB();
-      }//other databases
-      else {
-        id = saveToDB();
-      }*/
+//      if( dataBaseType.equals("oracle") ) {
+//        id = saveToOracleDB();
+//      }//other databases
+//      else {
+//        id = saveToDB();
+//      }
       saveToDB();
     }
     catch(Exception e){
@@ -216,9 +227,9 @@ public class BlobWrapper {
     }
 
     return id;
-  }
+  }*/
 
-  public void saveToDB(){
+  /*public void saveToDB(){
 
     String statement ;
     Connection Conn = null;
@@ -228,14 +239,14 @@ public class BlobWrapper {
       if(Conn== null) return;
 
       statement = "update " + entity.getTableName() + " set " + getTableColumnName() + "=? where " + entity.getIDColumnName() + " = " + entity.getID();
-      Conn.setAutoCommit(false);
+      //Conn.setAutoCommit(false);
       BufferedInputStream bin = new BufferedInputStream(writeInputStream);
       PreparedStatement PS = Conn.prepareStatement(statement);
       PS.setBinaryStream(1, bin, bin.available() );
       PS.execute();
       PS.close();
-      Conn.commit();
-      Conn.setAutoCommit(true);
+      //Conn.commit();
+      //Conn.setAutoCommit(true);
 
     }
     catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
@@ -243,7 +254,7 @@ public class BlobWrapper {
     finally{
       if(Conn != null) entity.freeConnection(Conn);
     }
-  }
+  }*/
 
 /*  public  int saveToOracleDB(){
     int id = -1;
@@ -337,5 +348,9 @@ public class BlobWrapper {
       close();
     }
     super.finalize();
+  }
+
+  public boolean isReadyForUpdate(){
+    return (!(writeInputStream==null));
   }
 }

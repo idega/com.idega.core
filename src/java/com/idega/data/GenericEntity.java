@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.26 2001/07/05 18:26:53 bjarni Exp $
+ * $Id: GenericEntity.java,v 1.27 2001/07/16 09:53:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import java.util.*;
 import com.idega.util.database.*;
 import com.idega.util.*;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -364,6 +365,19 @@ public abstract class GenericEntity implements java.io.Serializable {
 		setValue(columnName,columnValue);
 	}
 
+  /**
+   * The Outputstream must be completele written to when insert() or update() is executed on the Entity Class
+   */
+  public OutputStream getColumnOutputStream(String columnName){
+    BlobWrapper wrapper = getBlobColumnValue(columnName);
+    if(wrapper==null){
+      wrapper = new BlobWrapper(this,columnName);
+      setColumn(columnName,wrapper);
+    }
+    return wrapper.getOutputStreamForBlobWrite();
+  }
+
+
   public void setColumn(String columnName,InputStream streamForBlobWrite){
     BlobWrapper wrapper = getBlobColumnValue(columnName);
     if(wrapper!=null){
@@ -663,7 +677,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		for (Enumeration e = columns.keys(); e.hasMoreElements();){
 		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 			String ColumnName = (String)e.nextElement();
-			if (! isNull(ColumnName)){
+			if (isValidColumnForUpdateList(ColumnName)){
 				if (returnString.equals("")){
 					returnString = returnString + ColumnName + "='"+getStringColumnValue(ColumnName)+"'";
 				}
@@ -688,7 +702,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			//String ColumnName = (String)e.nextElement();
                         String ColumnName = names[i];
 
-			if ( !isNull(ColumnName) ){
+			if (isValidColumnForUpdateList(ColumnName)){
 				if (returnString.toString().equals("")){
 					returnString.append(ColumnName);
                                         returnString.append(questionmark);
@@ -763,7 +777,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		String returnString = "";
 		String[] names = getColumnNames();
 		for (int i = 0; i < names.length; i++){
-			if(isValidColumnForList(names[i])){
+			if(isValidColumnForInsertList(names[i])){
       //if (!isNull(names[i])){
 				if (returnString.equals("")){
 					returnString = 	"?";
@@ -776,14 +790,35 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return returnString;
 	}
 
-  private boolean isValidColumnForList(String columnName){
-      if (!isNull(columnName)){
+
+  boolean isValidColumnForUpdateList(String columnName){
+      if (isNull(columnName)){
+        return false;
+      }
+      else{
+        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+          BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
+          if(wrapper==null){
+            return false;
+          }
+          else{
+            return wrapper.isReadyForUpdate();
+          }
+        }
+        return true;
+      }
+  }
+
+  boolean isValidColumnForInsertList(String columnName){
+      if (isNull(columnName)){
+        return false;
+      }
+      else{
         if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
           return false;
         }
         return true;
       }
-      return false;
   }
 
 
@@ -793,7 +828,7 @@ public abstract class GenericEntity implements java.io.Serializable {
       String returnString = "";
       String[] names = getColumnNames();
       for (int i = 0; i < names.length; i++){
-        if (isValidColumnForList(names[i])){
+        if (isValidColumnForInsertList(names[i])){
           if (returnString.equals("")){
             returnString = 	names[i];
           }
@@ -814,7 +849,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 		String returnString = "";
 		String[] names = getColumnNames();
 		for (int i = 0; i < names.length; i++){
-			if (isValidColumnForList(names[i])){
+			if (isValidColumnForInsertList(names[i])){
 				if (returnString.equals("")){
 					returnString = 	"'"+getStringColumnValue(names[i])+"'";
 				}
@@ -1614,7 +1649,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 			int count = 0;
                         for (int i = 0; i < entityToRemoveFrom.length; i++) {
                             count += Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"'");
-                        if( entityToRemoveFrom[i].getID()==-1)//removing all in middle table
+                        if( (entityToRemoveFrom[i].getID()==-1) || (entityToRemoveFrom[i].getID()==0))//removing all in middle table
 			  count +=  Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"'");
                         else// just removing this particular one
                           count +=  Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom[i],this)+" where "+idColumnName+"='"+id+"' AND "+entityToRemoveFrom[i].getIDColumnName()+"='"+entityToRemoveFrom[i].getID()+"'");
@@ -1730,7 +1765,9 @@ public abstract class GenericEntity implements java.io.Serializable {
             return theReturn;
         }
 
-
+        public static GenericEntity getStaticInstance(Class entityClass){
+            return getStaticInstance(entityClass.getName());
+        }
 
       public void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName){
             addManyToManyRelationShip(relatingEntity.getClass().getName(),relationShipTableName);
@@ -1774,11 +1811,23 @@ public abstract class GenericEntity implements java.io.Serializable {
       }
 
 
-      public static GenericEntity getInitializedEntity(String entityClassString, int id){
+      public static GenericEntity getEntityInstance(Class entityClass, int id){
         GenericEntity entity = null;
         try{
-          entity = (GenericEntity) Class.forName(entityClassString).newInstance();
+          entity = (GenericEntity) entityClass.newInstance();
           entity.findByPrimaryKey(id);
+        }
+        catch(Exception e){
+         e.printStackTrace(System.err);
+         System.err.println("GenericEntity: error initializing entity");
+        }
+       return entity;
+      }
+
+      public static GenericEntity getEntityInstance(Class entityClass){
+        GenericEntity entity = null;
+        try{
+          entity = (GenericEntity) entityClass.newInstance();
         }
         catch(Exception e){
          e.printStackTrace(System.err);

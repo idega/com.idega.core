@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.8 2001/06/18 15:49:46 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.9 2001/07/16 09:53:22 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 import java.io.BufferedInputStream;
+import java.io.InputStream;
 import com.idega.util.ThreadContext;
 
 /**
@@ -238,26 +239,31 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     Connection Conn = null;
 
     try{
-      Conn = entity.getConnection();
-      if(Conn== null) return;
+
 
       statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = " + entity.getID();
-
 
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
       if(wrapper!=null){
         //Conn.setAutoCommit(false);
-        BufferedInputStream bin = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
-        PreparedStatement PS = Conn.prepareStatement(statement);
-        PS.setBinaryStream(1, bin, bin.available() );
-        PS.execute();
-        PS.close();
+        InputStream instream = wrapper.getInputStreamForBlobWrite();
+        if(instream!=null){
+          Conn = entity.getConnection();
+          if(Conn== null) return;
+          //BufferedInputStream bin = new BufferedInputStream(instream);
+          PreparedStatement PS = Conn.prepareStatement(statement);
+          //PS.setBinaryStream(1, bin, bin.available() );
+          PS.setBinaryStream(1, instream, instream.available() );
+          PS.execute();
+          PS.close();
+        }
         //Conn.commit();
         //Conn.setAutoCommit(true);
       }
 
+
     }
-    catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
+    catch(SQLException ex){ex.printStackTrace(); System.err.println( "error uploading blob to db for "+entity.getClass().getName());}
     catch(Exception ex){ex.printStackTrace();}
     finally{
       if(Conn != null) entity.freeConnection(Conn);

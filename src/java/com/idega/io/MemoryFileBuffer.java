@@ -14,23 +14,33 @@ public class MemoryFileBuffer{
   }
 
   protected synchronized byte read(int position){
+    try{
      return buffer[position];
+    }
+    catch(ArrayIndexOutOfBoundsException e){
+      return (byte)-1;
+    }
   }
 
-  protected synchronized byte[] read(int position,int lengthOfArray){
+  /*protected synchronized byte[] read(int position,int lengthOfArray){
     byte[] newArray = new byte[lengthOfArray];
     System.arraycopy(buffer,position,newArray,0,lengthOfArray);
     return newArray;
-  }
+  }*/
 
-  protected synchronized int read(int position,byte[] buffer){
+  protected synchronized int read(byte[] buffer,int position){
     System.arraycopy(this.buffer,position,buffer,0,buffer.length);
     return 1;
   }
 
   protected synchronized int read(byte[] b, int off, int len){
-    System.arraycopy(this.buffer,off,b,0,len);
-    return 1;
+    try{
+      System.arraycopy(this.buffer,off,b,0,len);
+      return len;
+    }
+    catch(Exception e){
+      return -1;
+    }
   }
 
 
@@ -64,9 +74,14 @@ public class MemoryFileBuffer{
   public String getMimeType(){
     return mimeType;
   }
+
+  /**
+   * The length of the Buffer in bytes
+   */
   public int length(){
     return this.buffer.length;
   }
+
   public byte[] buffer(){
     return this.buffer;
   }

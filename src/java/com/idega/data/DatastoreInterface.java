@@ -29,6 +29,9 @@ public abstract class DatastoreInterface{
   private static Hashtable interfacesHashtable;
   private static String recordCreationKey="datastoreinterface_entity_record_creation";
 
+  private final static int STATEMENT_INSERT=1;
+  private final static int STATEMENT_UPDATE=2;
+
   public static DatastoreInterface getInstance(String datastoreType){
     DatastoreInterface theReturn = null;
     String className;
@@ -623,7 +626,7 @@ public abstract class DatastoreInterface{
                   String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
                   //System.out.println(statement);
                   Stmt = conn.prepareStatement (statement);
-                  setForPreparedStatement(Stmt,entity);
+                  setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
                   Stmt.execute();
 		}
 		finally{
@@ -700,23 +703,42 @@ public abstract class DatastoreInterface{
   }
 
 
-	protected String setForPreparedStatement(PreparedStatement statement,GenericEntity entity)throws SQLException{
+	protected String setForPreparedStatement(int insertOrUpdate,PreparedStatement statement,GenericEntity entity)throws SQLException{
 		String returnString = "";
 		String[] names = entity.getColumnNames();
                 int questionmarkCount=1;
-		for (int i = 0; i < names.length; i++){
-			if (!entity.isNull(names[i])){
-          //if (returnString.equals("")){
-          //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
-          //}
-          //else{
-          //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
-          //}
-          insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
-          questionmarkCount++;
+                if(insertOrUpdate==STATEMENT_UPDATE){
+                  for (int i = 0; i < names.length; i++){
+                          if (entity.isValidColumnForUpdateList(names[i])){
+                              //if (returnString.equals("")){
+                              //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
+                              //}
+                              //else{
+                              //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
+                              //}
+                              System.out.println(names[i]);
+                              insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
+                              questionmarkCount++;
 
-      }
-		}
+                          }
+                  }
+                }
+                else if(insertOrUpdate==STATEMENT_INSERT){
+                  for (int i = 0; i < names.length; i++){
+                          if (entity.isValidColumnForInsertList(names[i])){
+                              //if (returnString.equals("")){
+                              //	returnString = 	"'"+getStringColumnValue(names[i])+"'";
+                              //}
+                              //else{
+                              //	returnString = 	returnString + ",'" + getStringColumnValue(names[i])+"'";
+                              //}
+                              System.out.println(names[i]);
+                              insertIntoPreparedStatement(names[i],statement,questionmarkCount,entity);
+                              questionmarkCount++;
+
+                          }
+                  }
+                }
 		return returnString;
 	}
 
@@ -756,13 +778,32 @@ public abstract class DatastoreInterface{
                     statement.setString(index,entity.getColumnValue(columnName).toString());
 		}
 		else if (storageClassName.equals("com.idega.data.BlobWrapper")){
-
+                    handleBlobUpdate(columnName,statement,index,entity);
                     //statement.setDate(index,(java.sql.Date)getColumnValue(columnName));
 		}
 		else{
 		  statement.setObject(index,entity.getColumnValue(columnName));
 		}
 	}
+
+        public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
+          BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
+          if(wrapper!=null){
+            InputStream stream = wrapper.getInputStreamForBlobWrite();
+            if(stream!=null){
+              try{
+                //BufferedInputStream bin = new BufferedInputStream( stream );
+                //statement.setBinaryStream(index, bin, bin.available() );
+                statement.setBinaryStream(index, stream, stream.available() );
+              }
+              catch(Exception e){
+                System.err.println("Error updating BLOB field in "+entity.getClass().getName());
+                e.printStackTrace();
+              }
+            }
+          }
+
+        }
 
 	public void update(GenericEntity entity)throws Exception{
 		Connection conn= null;
@@ -774,7 +815,7 @@ public abstract class DatastoreInterface{
                                 String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
                                 //System.out.println(statement);
 		                Stmt = conn.prepareStatement (statement);
-                                setForPreparedStatement(Stmt,entity);
+                                setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
                                 Stmt.execute();
 
 			//int i = Stmt.executeUpdate("update "+entity.getEntityName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
@@ -793,10 +834,10 @@ public abstract class DatastoreInterface{
 	public void update(GenericEntity entity, Connection conn)throws Exception{
 		PreparedStatement Stmt = null;
 		try {
-      String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
-      Stmt = conn.prepareStatement (statement);
-      setForPreparedStatement(Stmt,entity);
-      Stmt.execute();
+                  String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+                  Stmt = conn.prepareStatement (statement);
+                  setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
+                  Stmt.execute();
 		}
 		finally{
 			if(Stmt != null){
@@ -815,7 +856,7 @@ public abstract class DatastoreInterface{
         String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
         //System.out.println(statement);
         Stmt = conn.prepareStatement (statement);
-        setForPreparedStatement(Stmt,entity);
+        setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
         Stmt.execute();
       }
       finally {
@@ -829,5 +870,6 @@ public abstract class DatastoreInterface{
       executeAfterInsert(entity);
       entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
     }
+
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionHelper.java,v 1.1 2001/05/15 09:38:31 palli Exp $
+ * $Id: ExceptionHelper.java,v 1.2 2001/07/16 09:52:10 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,7 +23,7 @@ public class ExceptionHelper {
   private ResourceBundle bundle = null;
 
   public ExceptionHelper() {
-    bundle = ResourceBundle.getBundle("com.idega.exception.ExceptionText",Locale.getDefault());
+    //bundle = ResourceBundle.getBundle("com.idega.exception.ExceptionText",Locale.getDefault());
   }
 
   public String getExceptionText(String key) {
