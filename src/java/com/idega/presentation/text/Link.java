@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.145 2005/03/02 12:04:24 tryggvil Exp $
+ * $Id: Link.java,v 1.146 2005/03/09 01:44:40 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -106,7 +106,6 @@ public class Link extends Text {
 	private List maintainedParameters = null;
 	private boolean https = false;
 	private String protocol = null;
-	private ICFile file = null;
 	private int fileId = -1;
 	private final static String DEFAULT_TEXT_STRING = "No text";
 	public static boolean usingEventSystem = false;
