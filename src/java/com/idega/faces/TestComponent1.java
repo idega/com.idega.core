@@ -7,6 +7,7 @@ import javax.faces.component.UIComponent;
 
 //import com.idega.block.login.presentation.Login;
 //import com.idega.block.news.presentation.News;
+import com.idega.presentation.IWBaseComponent;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.app.IWControlCenter;
