@@ -248,9 +248,9 @@ public class Block extends PresentationObjectContainer implements IWBlock{
       if(isCacheValid(iwc)){
       }
       else{
-        //beginCacheing(iwc);
-        super._main(iwc);
-        //endCacheing(iwc);
+	//beginCacheing(iwc);
+	super._main(iwc);
+	//endCacheing(iwc);
       }
     }
     else{
@@ -264,14 +264,14 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public final void print(IWContext iwc)throws Exception{
     if(this.isCacheable()){
       if(isCacheValid(iwc)){
-        StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey());
-        iwc.getWriter().print(buffer.toString());
+	StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey());
+	iwc.getWriter().print(buffer.toString());
       }
       else{
-        StringBuffer buffer = new StringBuffer();
-        beginCacheing(iwc,buffer);
-        super.print(iwc);
-        endCacheing(iwc,buffer);
+	StringBuffer buffer = new StringBuffer();
+	beginCacheing(iwc,buffer);
+	super.print(iwc);
+	endCacheing(iwc,buffer);
       }
     }
     else{
@@ -284,7 +284,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     boolean valid = false;
     if( cacheable ){
       if(getDerivedCacheKey()!=null){
-        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey());
+	valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey());
       }
     }
 
@@ -494,21 +494,23 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public static Block getCacheableObject(PresentationObject objectToCache, String cacheKey, long millisecondsInterval) {
       Block obj = new Block();
-        obj.add(objectToCache);
-        obj.setCacheable(cacheKey, millisecondsInterval);
+	obj.add(objectToCache);
+	obj.setCacheable(cacheKey, millisecondsInterval);
       return obj;
   }
 
 
 
   public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
-    this.setIWApplicationContext(iwc.getApplicationContext());
-    this.setIWUserContext(iwc);
-    if(askForPermission){
+    if ( iwc != null ) {
+      this.setIWApplicationContext(iwc.getApplicationContext());
+      this.setIWUserContext(iwc);
+    }
+    if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
-        return this.clone();
+	return this.clone();
       } else {
-        return NULL_CLONE_OBJECT;
+	return NULL_CLONE_OBJECT;
       }
     } else {
       return this.clone();
