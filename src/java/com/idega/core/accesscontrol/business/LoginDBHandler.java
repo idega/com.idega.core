@@ -404,60 +404,37 @@ public class LoginDBHandler {
 
 
 
+  public static void createLogin(com.idega.user.data.User user, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
+    int userId = ((Integer)user.getPrimaryKey()).intValue();
+    createLogin(userId,userLogin,password,accountEnabled,modified,daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType);
+  }
 
-
-  public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
-
-
-
+  public static void createLogin(int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
       int loginTableID = createLogin( false, userID, userLogin, password);
-
       try {
-
-        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfVality, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
-
+        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
       }
-
       catch (Exception e) {
-
         if ("LoginInfo creation failed. ".equals(e.getMessage())){
-
           try {
-
             ((com.idega.core.accesscontrol.data.LoginTableHome)com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).findByPrimaryKeyLegacy(loginTableID).delete();
-
             throw new Exception(e.getMessage()+"LoginTable entry was removed");
-
           }
-
           catch(SQLException sql){
-
             sql.printStackTrace();
-
             throw new Exception(e.getMessage()+"Transaction faild: LoginTable entry failed to remove");
-
           }
-
         }else{
-
           throw e;
-
         }
-
       }
-
-
-
   }
 
 
 
   /**
-
    * @deprecated
-
    */
-
   public static void updateLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
 
     updateLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, null);
@@ -491,46 +468,32 @@ public class LoginDBHandler {
 
 
   public static void updateLoginInfo(int loginTableID ,Boolean accoutEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
-
     createLoginInfo(true, loginTableID ,accoutEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
-
   }
 
 
 
+  public static void createLogin(com.idega.user.data.User user, String userLogin, String password) throws Exception {
+    int userID = ((Integer)user.getPrimaryKey()).intValue();
+    createLogin(userID, userLogin, password);
+  }
 
 
   public static void createLogin( int userID, String userLogin, String password) throws Exception {
-
     createLogin(userID, userLogin, password,null,null,-1,null,null,null,null);
-
   }
 
 
-
-
-
   public static void updateLogin( int userID, String userLogin, String password) throws Exception {
-
     createLogin( true, userID, userLogin, password);
-
   }
 
 
 
   public static void changePassword(int userID, String password ) throws Exception {
-
-
-
     LoginTable loginTable;
-
-
-
     List noLogin = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(), com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(), userID);
-
     loginTable = (LoginTable)noLogin.get(0);
-
-
 
     if(loginTable != null){
 
@@ -557,29 +520,19 @@ public class LoginDBHandler {
    */
 
   public static LoginTable findUserLogin(int iUserId){
-
     return getUserLogin(iUserId);
-
   }
 
 
 
   public static LoginTable getUserLogin(int userId){
-
     LoginTable LT = null;
-
     try {
-
       LoginTable l = com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance();
-
       List list = EntityFinder.findAllByColumn(l,com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(),userId);
-
       if(list != null){
-
         LT = (LoginTable) list.get(0);
-
       }
-
     }
 
     catch (SQLException ex) {

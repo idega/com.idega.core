@@ -67,7 +67,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     PermissionGroup permission = ((com.idega.core.accesscontrol.data.PermissionGroupHome)com.idega.data.IDOLookup.getHomeLegacy(PermissionGroup.class)).createLegacy();
     permission.setName(AccessControl.getAdministratorGroupName());
     permission.setDescription("Administrator permission");
-    permission.insert();
+    permission.store();
     AdministratorPermissionGroup = permission;
   }
 
@@ -76,7 +76,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     permission.setID(_GROUP_ID_EVERYONE);
     permission.setName("Everyone");
     permission.setDescription("Permission if not logged on");
-    permission.insert();
+    permission.store();
     PermissionGroupEveryOne = permission;
   }
 

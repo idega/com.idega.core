@@ -1,19 +1,15 @@
 package com.idega.core.accesscontrol.data;
 
 
-public class PermissionGroupHomeImpl extends com.idega.data.IDOFactory implements PermissionGroupHome
+public class PermissionGroupHomeImpl extends com.idega.user.data.GroupHomeImpl implements PermissionGroupHome
 {
  protected Class getEntityInterfaceClass(){
   return PermissionGroup.class;
  }
 
- public PermissionGroup create() throws javax.ejb.CreateException{
-  return (PermissionGroup) super.idoCreate();
- }
-
  public PermissionGroup createLegacy(){
 	try{
-		return create();
+		return (PermissionGroup)create();
 	}
 	catch(javax.ejb.CreateException ce){
 		throw new RuntimeException("CreateException:"+ce.getMessage());
@@ -21,13 +17,11 @@ public class PermissionGroupHomeImpl extends com.idega.data.IDOFactory implement
 
  }
 
+
  public PermissionGroup findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (PermissionGroup) super.idoFindByPrimaryKey(id);
+  return (PermissionGroup) super.findByPrimaryKeyIDO(id);
  }
 
- public PermissionGroup findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (PermissionGroup) super.idoFindByPrimaryKey(pk);
- }
 
  public PermissionGroup findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
@@ -38,6 +32,7 @@ public class PermissionGroupHomeImpl extends com.idega.data.IDOFactory implement
 	}
 
  }
+
 
 
 }

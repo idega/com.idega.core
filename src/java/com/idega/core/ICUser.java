@@ -27,22 +27,11 @@ package com.idega.core;
 public interface ICUser{
 
 
-
     public String getName();
-
-
-
     public int getID();
 
-
-
     //public boolean verifyUser(ICUser user);
-
-
-
     public boolean hasPermissionFor(ICComponent component);
-
-
 
 }
 

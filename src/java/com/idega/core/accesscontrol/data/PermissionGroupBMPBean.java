@@ -28,25 +28,19 @@ import java.sql.*;
 
 
 
-public class PermissionGroupBMPBean extends com.idega.user.data.GroupBMPBean implements com.idega.core.accesscontrol.data.PermissionGroup {
+public class PermissionGroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements com.idega.core.accesscontrol.data.PermissionGroup {
+//public class PermissionGroupBMPBean extends com.idega.user.data.GroupBMPBean implements com.idega.core.accesscontrol.data.PermissionGroup {
 
 
 
 
-
+  /*
   public PermissionGroupBMPBean() {
-
     super();
-
   }
-
-
-
   public PermissionGroupBMPBean(int id) throws SQLException{
-
     super(id);
-
-  }
+  }*/
 
 
 

@@ -28,15 +28,8 @@ import java.util.List;
 
 public interface ICApplication extends ICComponent{
 
-
-
       public List getBundlesRegistered();
-
-
-
       public ICBundle getBundle(String bundleName);
-
-
 
 }
 

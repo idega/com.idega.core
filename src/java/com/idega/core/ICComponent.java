@@ -26,39 +26,14 @@ package com.idega.core;
 
 public interface ICComponent{
 
-
-
     public int getID(ICSession session);
-
-
-
     public String getName();
-
-
-
     public String getBundleName();
-
-
-
     public ICBundle getBundle(ICApplication application);
-
-
-
     public ICComponent getInstance();
-
-
-
     public void setProperty(ICProperty property);
-
-
-
     public void setProperty(String propertyName,Object propertyValue);
-
-
-
     public Object getProperty(String propertyName);
-
-
 
 }
 
