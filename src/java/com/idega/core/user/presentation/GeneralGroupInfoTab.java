@@ -92,7 +92,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     memberofFrame.setWidth(367);
     memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 
-    addLink = new Link("  Add  ");
+    addLink = new Link("  Add/Remove  ");
 
   }
   public void initializeTexts() {

@@ -87,7 +87,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     primaryGroupField = new DropdownMenu(primaryGroupFieldName);
     primaryGroupField.keepStatusOnAction();
 
-    addLink = new Link("  Add  ");
+    addLink = new Link("  Add/Remove  ");
   }
 
   public void actionPerformed(IWLinkEvent e){

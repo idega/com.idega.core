@@ -14,6 +14,10 @@ import com.idega.data.GenericEntity;
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.presentation.IWContext;
+import com.idega.core.accesscontrol.data.PermissionGroup;
+
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Title:        User
@@ -39,6 +43,21 @@ public class UserGroupBusiness {
       //filter end
       return UserGroupBusiness.getGroups(groupsNotToReturn,false,iwc);
       //return EntityFinder.findAll(GenericGroup.getStaticInstance());
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getRegisteredGroups(IWContext iwc){
+    try {
+      //filter
+      String[] groupsNotToReturn = new String[2];
+      groupsNotToReturn[0] = ((GenericGroup)GenericGroup.getStaticInstance(GenericGroup.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((PermissionGroup)PermissionGroup.getStaticInstance(PermissionGroup.class)).getGroupTypeValue();
+      //filter end
+      return UserGroupBusiness.getGroups(groupsNotToReturn,true,iwc);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -100,6 +119,33 @@ public class UserGroupBusiness {
       GenericGroup group = new GenericGroup(uGroupId);
       List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
       List AllGroups =  UserGroupBusiness.getAllGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
+
+      if(AllGroups != null){
+        if(isDirectlyRelated != null){
+          Iterator iter = isDirectlyRelated.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            AllGroups.remove(item);
+            //while(AllGroups.remove(item)){}
+          }
+        }
+        AllGroups.remove(group);
+        return AllGroups;
+      }else{
+        return null;
+      }
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getRegisteredGroupsNotDirectlyRelated(int uGroupId,IWContext iwc){
+    try {
+      GenericGroup group = new GenericGroup(uGroupId);
+      List isDirectlyRelated = getGroupsContainingDirectlyRelated(group);
+      List AllGroups =  UserGroupBusiness.getRegisteredGroups(iwc);// Filters out userrepresentative groups //  EntityFinder.findAll(GenericGroup.getStaticInstance());
 
       if(AllGroups != null){
         if(isDirectlyRelated != null){
@@ -489,6 +535,63 @@ public class UserGroupBusiness {
       }
     }
     return null;
+  }
+
+
+  public static void updateUsersInGroup( int groupId, String[] usrGroupIdsInGroup) throws SQLException {
+
+    if(groupId != -1){
+      GenericGroup group = new GenericGroup(groupId);
+      System.out.println("before");
+      List lDirect = com.idega.core.business.UserGroupBusiness.getUsersContainedDirectlyRelated(groupId);
+      Set direct = new HashSet();
+      if(lDirect != null){
+        Iterator iter = lDirect.iterator();
+        while (iter.hasNext()) {
+          User item = (User)iter.next();
+          direct.add(Integer.toString(item.getGroupID()));
+          System.out.println("id: "+ item.getGroupID());
+        }
+      }
+
+      System.out.println("after");
+      Set toRemove = (Set)((HashSet)direct).clone();
+      Set toAdd = new HashSet();
+
+      if(usrGroupIdsInGroup != null){
+        for (int i = 0; i < usrGroupIdsInGroup.length; i++) {
+
+          if(direct.contains(usrGroupIdsInGroup[i])){
+            toRemove.remove(usrGroupIdsInGroup[i]);
+          } else {
+            toAdd.add(usrGroupIdsInGroup[i]);
+          }
+
+          System.out.println("id: "+ usrGroupIdsInGroup[i]);
+        }
+      }
+
+      System.out.println("toRemove");
+      Iterator iter2 = toRemove.iterator();
+      while (iter2.hasNext()) {
+        String item = (String)iter2.next();
+        System.out.println("id: "+ item);
+        group.removeGroup(Integer.parseInt(item), false);
+      }
+
+      System.out.println("toAdd");
+      Iterator iter3 = toAdd.iterator();
+      while (iter3.hasNext()) {
+        String item = (String)iter3.next();
+        System.out.println("id: "+ item);
+        group.addGroup(Integer.parseInt(item));
+      }
+
+    }else{
+      System.out.println("groupId = "+ groupId + ", usrGroupIdsInGroup = "+ usrGroupIdsInGroup);
+    }
+
+
   }
 
 

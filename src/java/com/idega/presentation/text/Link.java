@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.42 2002/01/16 21:24:14 gummi Exp $
+ * $Id: Link.java,v 1.43 2002/02/07 00:36:59 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -757,7 +757,11 @@ public class Link extends Text {
   }
 
   public String getText(){
-    return this.text;
+    String toReturn = this.text;
+    if(toReturn == null && this._obj == null && this._obj instanceof Text && !(this._obj instanceof Link)){
+      toReturn = ((Text)_obj).getText();
+    }
+    return toReturn;
   }
 
     /**
