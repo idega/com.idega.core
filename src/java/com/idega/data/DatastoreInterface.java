@@ -427,45 +427,46 @@ public abstract class DatastoreInterface{
         String tableName = relation.getTableName();
         GenericEntity relatingEntity = null;
         try{
-          String creationStatement = "CREATE TABLE ";
-          creationStatement += tableName;
-          creationStatement += "(";
+          if(!doesTableExist(entity,tableName)){
+            String creationStatement = "CREATE TABLE ";
+            creationStatement += tableName;
+            creationStatement += "(";
 
-          Set set;
-          Iterator iter;
+            Set set;
+            Iterator iter;
 
-          set = relMap.keySet();
-          iter = set.iterator();
-          boolean mayAddComma = false;
-          while (iter.hasNext()) {
-            if(mayAddComma){
-              creationStatement += ",";
+            set = relMap.keySet();
+            iter = set.iterator();
+            boolean mayAddComma = false;
+            while (iter.hasNext()) {
+              if(mayAddComma){
+                creationStatement += ",";
+              }
+              String column = (String)iter.next();
+              creationStatement += column + " INTEGER NOT NULL";
+              mayAddComma = true;
             }
-            String column = (String)iter.next();
-            creationStatement += column + " INTEGER NOT NULL";
-            mayAddComma = true;
-          }
-          creationStatement += ")";
-          executeUpdate(entity,creationStatement);
+            creationStatement += ")";
+            executeUpdate(entity,creationStatement);
 
 
 
-           set = relMap.keySet();
-           iter = set.iterator();
-          while (iter.hasNext()) {
-            String column = (String)iter.next();
-            Class relClass = (Class)relMap.get(column);
-            try{
-              GenericEntity entity1 = (GenericEntity)relClass.newInstance();
-              createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
+             set = relMap.keySet();
+             iter = set.iterator();
+            while (iter.hasNext()) {
+              String column = (String)iter.next();
+              Class relClass = (Class)relMap.get(column);
+              try{
+                GenericEntity entity1 = (GenericEntity)relClass.newInstance();
+                createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
+              }
+              catch(Exception e){
+                e.printStackTrace();
+              }
             }
-            catch(Exception e){
-              e.printStackTrace();
-            }
-          }
 
 
-
+        }
 
 
 
