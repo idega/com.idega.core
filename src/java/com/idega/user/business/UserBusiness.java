@@ -122,4 +122,5 @@ public interface UserBusiness extends com.idega.business.IBOService
   public Collection getUsers(String[] userIDs) throws EJBException,RemoteException;
 	public  Phone[] getUserPhones(User user)throws RemoteException;
 	public Collection getUsers(com.idega.data.IDOQuery query) throws EJBException,RemoteException;
+	public Collection getUsersMainAddresses(com.idega.data.IDOQuery query) throws EJBException,RemoteException;
 }

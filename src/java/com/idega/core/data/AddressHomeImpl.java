@@ -73,5 +73,10 @@ public java.util.Collection findPrimaryUserAddresses(String[] userIDs)throws jav
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-
+public java.util.Collection findPrimaryUserAddresses(com.idega.data.IDOQuery query)throws javax.ejb.FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((AddressBMPBean)entity).ejbFindPrimaryUserAddresses(query);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 }

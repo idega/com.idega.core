@@ -628,6 +628,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   	}
   }
   
+	public Collection getUsersMainAddresses(IDOQuery query) throws EJBException,RemoteException{
+		try {
+			return getAddressHome().findPrimaryUserAddresses(query);
+		}
+		catch (FinderException fe) {
+			return null;
+		}
+	}
+  
   /**
    * Gets the users main address and returns it.
    * @returns the address if found or null if not.
