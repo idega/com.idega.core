@@ -57,6 +57,8 @@ import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupRelation;
+import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserHome;
@@ -1668,25 +1670,65 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
   public Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser) {
+    IWMainApplication application = getIWApplicationContext().getApplication();
+    IWBundle bundle = application.getBundle("com.idega.user");
+    Locale locale = application.getSettings().getDefaultLocale();
+    IWResourceBundle iwrb = bundle.getResourceBundle(locale);
     Map result = new HashMap();
-    GroupBusiness groupBiz = null;
-    Group targetGroup = null;
-    try {
-      groupBiz = getGroupBusiness();
-      targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
-    }
-    catch (FinderException ex)  {
-      throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    Iterator iterator = userIds.iterator();
+
+    // check if the source and the target are the same
+    
+    if (parentGroup != null) { 
+      int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
+      // target and source are the same do nothing
+      if (parentGroupId == targetGroupId) {
+        String message = iwrb.getLocalizedString("user_source_and_target_are_the_same", "Source group and target group are the same");
+        // fill the result map
+        Iterator iterator = userIds.iterator();
+        while (iterator.hasNext())  {
+          String userIdAsString = (String) iterator.next();
+          Integer userId = new Integer(userIdAsString);
+          result.put(userId, message);
+        }
+        return result;
+      }
+    }  
+   
+   GroupBusiness groupBiz = null;
+   Group targetGroup = null;
+   try {
+     groupBiz = getGroupBusiness();
+     targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
+   }
+   catch (FinderException ex)  {
+     throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
+   }
+   catch (RemoteException ex)  {
+     throw new RuntimeException(ex.getMessage());
+   }
+   
+   String userIsAlreadyAMemberOfTheGroupMessage = iwrb.getLocalizedString("user_already_member_of_the_target_group", "The user is already a member of the target group"); 
+ 
+   // finally perform moving 
+   
+   Iterator iterator = userIds.iterator();
     while (iterator.hasNext()) {
+      String message;
       String userIdAsString = (String) iterator.next();
       Integer userId = new Integer(userIdAsString); 
       User user = getUser(userId);
-      String message = moveUser(user, parentGroup, targetGroup, currentUser);
+      // first check
+      if (isMemberOfGroup(targetGroupId, user)) {
+        message = userIsAlreadyAMemberOfTheGroupMessage;
+      }
+      // second check
+      else {
+        message = isUserSuitedForGroup(user, targetGroup);
+      }
+      // if there is not any problem the message is null
+      if (message == null)  {
+        message = moveUserWithoutTest(user, parentGroup, targetGroup, currentUser);
+      }
       // if the user was sucessfully moved the message is null
       result.put(userId, message);
     }
@@ -1694,7 +1736,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser) {
-    
+    IWMainApplication application = getIWApplicationContext().getApplication();
+    IWBundle bundle = application.getBundle("com.idega.user");
+    Locale locale = application.getSettings().getDefaultLocale();
+    IWResourceBundle iwrb = bundle.getResourceBundle(locale);
+    String noSuitableGroupMessage = iwrb.getLocalizedString("user_suitable_group_could_not_be_found", "A suitable group for the user could not be found.");
+   
     // key groups id, value group
     Map groupIdGroup = new HashMap();
     // key group id, value users
@@ -1706,7 +1753,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     Map userParentGroup = new HashMap();
     // key user id, value user's target group
     Map userTargetGroup = new HashMap();
-
 
     // get all groups 
     try {
@@ -1810,7 +1856,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         }
       }
       else {
-        map.put(user.getPrimaryKey(), "");
+        map.put(user.getPrimaryKey(), noSuitableGroupMessage);
       }
     }
     return result;
@@ -1828,19 +1874,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     groupIdUsersId.put(groupId, userIds);
   }
-   
-  /**
-   * @param currentUser user that is responsible for the action
-   */ 
-  private String moveUser(User user, Group parentGroup, Group targetGroup, User currentUser)  {
- 
-    // it is allowed to add this user to the group?
-    // check age and gender, check if source and target are the same
-    String message;
-    if ((message = isUserAssignableToGroup(user, parentGroup, targetGroup)) != null) {
-      return message;
+  
+  private boolean isMemberOfGroup(int parentGroupToTest, User user)  {
+    Group group = user.getPrimaryGroup();
+    int primaryGroupId = ((Integer) group.getPrimaryKey()).intValue();
+    if (parentGroupToTest == primaryGroupId)  {
+      return true;
     }
-    return moveUserWithoutTest(user, parentGroup, targetGroup, currentUser);
+    int userId = ((Integer) user.getPrimaryKey()).intValue();
+    Collection coll;
+    try{
+      GroupRelationHome groupRelationHome = (GroupRelationHome)IDOLookup.getHome(GroupRelation.class);
+      GroupHome groupHome = (GroupHome) IDOLookup.getHome(Group.class);
+      String parentRelation = groupHome.getRelationTypeGroupParent();
+      coll = groupRelationHome.findGroupsRelationshipsContainingUniDirectional(parentGroupToTest, userId, parentRelation);
+    }
+    // Remote and FinderException
+    catch(Exception rme)  {
+       throw new RuntimeException(rme.getMessage());
+    }
+    return ! coll.isEmpty();
   }
     
     
@@ -1905,63 +1958,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return null;
   }
 
-  private String isUserAssignableToGroup(User user, Group parentGroup, Group targetGroup) {
-    IWMainApplication application = getIWApplicationContext().getApplication();
-    IWBundle bundle = application.getBundle("is.idega.idegaweb.member");
-    Locale locale = application.getSettings().getDefaultLocale();
-    IWResourceBundle iwrb = bundle.getResourceBundle(locale);
-    int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
-    
-    // check if the source and the target are the same
-    if (parentGroup != null) { 
-      int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
-      // target and source are the same do nothing
-      if (parentGroupId == targetGroupId) {
-        return iwrb.getLocalizedString("age_gender_source_and_target_are_the_same", "Source group and target group are the same");
-      }
-    }   
-    
-    // is the user already a member of the target group?
-    Collection coll;
-    try {
-      coll = getGroupBusiness().getParentGroups(user);
-    }
-    catch (Exception ex)  {
-      throw new RuntimeException("[UserBusiness]: Can't get parent groups. Message is: " + ex.getMessage());
-    }
 
-    
-    Iterator iteratorUserGroups = coll.iterator();
-    while (iteratorUserGroups.hasNext())  {
-      Group group = (Group) iteratorUserGroups.next();
-      // this is really stupid testing but the method above returns sometimes a collection with null values
-      if (group != null) {
-        int id = ((Integer) group.getPrimaryKey()).intValue();
-        if (id == targetGroupId)  {
-          return iwrb.getLocalizedString("age_gender_user_already_member_of_the_target_group", "The user is already a member of the target group");
-        }
-      }
-    }
-    try {
-      Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
-      Iterator iter = plugins.iterator();
-      while (iter.hasNext()) {
-        UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-        UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), Class.forName(element.getBusinessICObject().getClassName()));
-        String message;
-        if ((message = pluginBiz.isUserAssignableFromGroupToGroup(user, parentGroup, targetGroup)) != null) {  
-          return message;
-        }    
-      }
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    catch (ClassNotFoundException cex)  {
-      throw new RuntimeException("[UserBusiness]: Class was not found. Message is: "+ cex.getMessage());
-    }
-    return null;
-  }
 
   private String isUserSuitedForGroup(User user, Group targetGroup) {
     try {
@@ -1981,6 +1978,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return null;
   }    
-    
+   
 
 } // Class UserBusiness
