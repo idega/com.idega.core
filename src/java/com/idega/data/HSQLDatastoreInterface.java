@@ -175,4 +175,16 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		// you can cast row[i] given your knowledge of what the table
 		// format is.
 	}
+	
+	
+	/**
+	 * Returns the string "CREATE CACHED TABLE [tableName]".<br>
+	 * This is overrided from the superclass.
+	 * @param tableName
+	 * @return
+	 */
+	public String getCreateTableCommand(String tableName){
+		return "CREATE CACHED TABLE "+tableName;
+	}
+	
 }

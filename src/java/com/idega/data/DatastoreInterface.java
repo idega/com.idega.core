@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.102 2004/06/08 11:43:46 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.103 2004/07/13 12:32:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1909,4 +1909,14 @@ public abstract class DatastoreInterface {
 		return " '" + (stamp.toSQLString()) + "' ";
 	}
 
+	/**
+	 * Returns the string "CREATE TABLE [tableName]" by default.<br>
+	 * This is done to be overrided for some databases, such as HSQLDB.
+	 * @param tableName
+	 * @return
+	 */
+	public String getCreateTableCommand(String tableName){
+		return "CREATE TABLE "+tableName;
+	}
+	
 }

@@ -374,8 +374,10 @@ public class IDOTableCreator{
 
   protected String getCreationStatement(GenericEntity entity){
   	IDOEntityField[] pkFields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
-  	StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
-		String[] names = entity.getColumnNames();
+  	//StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
+	String tableName = entity.getEntityDefinition().getSQLTableName();
+  	StringBuffer returnString = new StringBuffer(_dsi.getCreateTableCommand(tableName)).append("(");
+  		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
                     String columnName = names[i];
                     returnString.append(getColumnSQLDefinition(columnName,entity));
@@ -548,8 +550,9 @@ public class IDOTableCreator{
 
         //try{
           if(doCreateMiddleTable){
-            String creationStatement = "CREATE TABLE ";
-            creationStatement += tableName;
+            //String creationStatement = "CREATE TABLE ";
+            //creationStatement += tableName;
+            String creationStatement = _dsi.getCreateTableCommand(tableName);
             creationStatement += "(";
 
             String primaryKeyStatement = _dsi.getCreatePrimaryKeyStatementBeginning(tableName);
