@@ -151,6 +151,10 @@ public class Form extends InterfaceObject {
 	public void setTarget(String target) {
 		setMarkupAttribute("target", target);
 	}
+	
+	public String getTarget(){
+	    return getMarkupAttribute("target");
+	}
 
 	protected void setWindow(Window window) {
 		this.window = window;
