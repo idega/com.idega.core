@@ -868,15 +868,16 @@ public abstract class DatastoreInterface{
           System.out.println("In insertBlob() in DatastoreInterface instream != null");
           Conn = entity.getConnection();
           if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
-          BufferedInputStream bin = new BufferedInputStream(instream);
+          //BufferedInputStream bin = new BufferedInputStream(instream);
           PreparedStatement PS = Conn.prepareStatement(statement);
-          System.out.println("bin.available(): "+bin.available());
-          PS.setBinaryStream(1, bin, 0 );
-          //PS.setBinaryStream(1, instream, instream.available() );
+          //System.out.println("bin.available(): "+bin.available());
+          //PS.setBinaryStream(1, bin, 0 );
+          PS.setBinaryStream(1, instream, instream.available() );
           PS.executeUpdate();
           PS.close();
-          System.out.println("bin.available(): "+bin.available());
+        //  System.out.println("bin.available(): "+bin.available());
           instream.close();
+         // bin.close();
         }
         //Conn.commit();
         //Conn.setAutoCommit(true);

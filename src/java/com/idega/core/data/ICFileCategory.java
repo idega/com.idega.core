@@ -14,7 +14,9 @@ import java.sql.SQLException;
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
-
+/**@todo : add localization support for category names
+ *
+ */
 public class ICFileCategory extends GenericEntity {
 
   public ICFileCategory() {
@@ -29,8 +31,6 @@ public class ICFileCategory extends GenericEntity {
     addAttribute(getIDColumnName());
     addAttribute("category_type","Type of category",true,true, String.class,255);
     addAttribute("category_name","File category name",true,true, String.class, 255);
-    addAttribute("parent_id","Parent",true,true, Integer.class,"many-to-one",ICFileCategory.class);
-    setNullable("parent_id",true);
 
     addManyToManyRelationShip(ICFile.class,"ic_file_file_category");
   }
@@ -71,40 +71,84 @@ public class ICFileCategory extends GenericEntity {
     setFileCategoryType(fileCategoryType);
   }
 
-  public void setParentID(int parentID){
-    setColumn("parent_id", new Integer(parentID));
-  }
-
-  public int getParentID(){
-    return getIntColumnValue("parent_id");
-  }
 
   public void insertStartData() {
     try {
       ICFileCategory cat;
-      cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_IMAGES");
-      cat.insert();
+      ICFile file;
 
       cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_MOVIES");
+      cat.setName("Applications");
+      cat.setType("IC_CATEGORY_APPLICATIONS");
       cat.insert();
 
-      cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_AUDIO");
-      cat.insert();
+      file = new ICFile();
+      file.setName("Applications");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for applications");
+      file.insert();
+      file.addTo(cat);
 
       cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_DOCUMENTS");
+      cat.setName("Audio");
+      cat.setType("IC_CATEGORY_AUDIO");
       cat.insert();
 
-      cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_FLASH");
-      cat.insert();
+      file = new ICFile();
+      file.setName("Audio");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for audio and music");
+      file.insert();
+      file.addTo(cat);
 
       cat = new ICFileCategory();
-      cat.setName("IC_CATEGORY_OTHER");
+      cat.setName("Documents");
+      cat.setType("IC_CATEGORY_DOCUMENTS");
       cat.insert();
+
+      file = new ICFile();
+      file.setName("Documents");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for documents");
+      file.insert();
+      file.addTo(cat);
+
+      cat = new ICFileCategory();
+      cat.setName("Flash");
+      cat.setType("IC_CATEGORY_FLASH");
+      cat.insert();
+
+      file = new ICFile();
+      file.setName("Flash");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for flash movies");
+      file.insert();
+      file.addTo(cat);
+
+      cat = new ICFileCategory();
+      cat.setName("Images");
+      cat.setType("IC_CATEGORY_IMAGES");
+      cat.insert();
+
+      file = new ICFile();
+      file.setName("Images");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for images");
+      file.insert();
+      file.addTo(cat);
+
+      cat = new ICFileCategory();
+      cat.setName("Movies");
+      cat.setType("IC_CATEGORY_MOVIES");
+      cat.insert();
+
+      file = new ICFile();
+      file.setName("Movies");
+      file.setMimeType("IC_FOLDER");
+      file.setDescription("The default folder for movies");
+      file.insert();
+      file.addTo(cat);
+
     }
     catch (SQLException sql) {
       sql.printStackTrace(System.err);

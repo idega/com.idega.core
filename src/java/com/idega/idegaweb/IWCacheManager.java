@@ -20,7 +20,7 @@ import com.idega.data.GenericEntity;
 public class IWCacheManager {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
-  private static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
+  public static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
 
   //private static IWCacheManager instance;
   private Map objectsMap;

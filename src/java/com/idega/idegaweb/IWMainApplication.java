@@ -34,6 +34,7 @@ public class IWMainApplication{//implements ServletContext{
   public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
+  public static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
   public static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
 
   public static String templateParameter="idegaweb_template";

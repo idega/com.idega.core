@@ -41,7 +41,7 @@ public class ICFile extends TreeableEntity {
     addAttribute(getColumnFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
     addAttribute("modification_date","Modification date",true,true, java.sql.Timestamp.class);
-    addAttribute("file_size","file size in bytes",true,true,java.lang.Long.class);
+    addAttribute("file_size","file size in bytes",true,true,java.lang.Integer.class);
 
     addMetaDataRelationship();//can have extra info in the ic_metadata table
 
@@ -110,7 +110,12 @@ public class ICFile extends TreeableEntity {
     setColumn("description", description);
   }
 
-  public void setFileSize(Long fileSize){
+  public void setFileSize(Integer fileSize){
+    setColumn("file_size", fileSize);
+  }
+
+
+  public void setFileSize(int fileSize){
     setColumn("file_size", fileSize);
   }
 /*
