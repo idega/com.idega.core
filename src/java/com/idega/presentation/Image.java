@@ -364,9 +364,9 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
 
       String texti = null;
       String link = null;
-      String name;
-      String width;
-      String height;
+      String name = null;
+      String width = null;
+      String height = null;
 
       if( usesOldImageTables ){
         texti = image2.getText();
@@ -379,8 +379,8 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
         //texti = image.getDescription();
         //link = image.getLink();
         name = image.getName();
-        width = image.getWidth();
-        height = image.getHeight();
+       // width = image.getWidth();
+       // height = image.getHeight();
       }
 
      // if( getName() != null && name != null ) setName(name);
