@@ -585,14 +585,14 @@ public class Form extends InterfaceObjectContainer {
 		}
 	}
 
-	public void addEventModel(IWPresentationEvent model) {
+	public void addEventModel(IWPresentationEvent model, IWContext iwc) {
 		Iterator iter = model.getParameters();
 		while (iter.hasNext()) {
 			Parameter prm = (Parameter) iter.next();
 			this.add(prm);
 		}
     setTarget(model.getEventTarget());
-    setAction(model.getEventHandlerURL());
+    setAction(model.getEventHandlerURL(iwc));
 	}
 
 	/**
