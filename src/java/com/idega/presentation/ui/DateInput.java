@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.35 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: DateInput.java,v 1.36 2004/02/18 08:48:20 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -533,7 +533,7 @@ public class DateInput extends InterfaceObjectContainer {
 				buffer.append("var month = dateString.substring(5,7) - 1;").append("\n\t\t");
 				buffer.append("var newDate = new Date(dateString.substring(0,4),month,dateString.substring(8,10));").append("\n\t\t");
 				buffer.append("var difference = oldDate - newDate;").append("\n\t\t");
-				buffer.append("if (difference > 0)").append("\n\t\t\t");
+				buffer.append("if (difference >= 0)").append("\n\t\t\t");
 				buffer.append("returnBoolean = false;").append("\n\t");
 				buffer.append("}").append("\n\n\t");
 				buffer.append("if (!returnBoolean)").append("\n\t\t");
