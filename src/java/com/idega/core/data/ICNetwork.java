@@ -1,0 +1,38 @@
+package com.idega.core.data;
+
+import com.idega.data.*;
+
+import java.sql.SQLException;
+
+/**
+ * Title:        IW Core
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ */
+
+public class ICNetwork extends GenericEntity {
+
+  public final static String _COLUMNNAME_IPADDRESS = "ipaddress";
+  public final static String _COLUMNNAME_SUBNET_MASK = "subnet_mask";
+
+  public ICNetwork() {
+    super();
+  }
+
+  public ICNetwork(int id)  throws SQLException {
+    super(id);
+  }
+
+  public void initializeAttributes() {
+    this.addAttribute(this.getIDColumnName());
+    this.addAttribute(_COLUMNNAME_IPADDRESS,"IP Address",true,true,String.class,15);
+    this.addAttribute(_COLUMNNAME_SUBNET_MASK,"Subnet Mask",true,true,String.class,15);
+    this.addManyToManyRelationShip(GenericGroup.class,"ic_group_network");
+  }
+  public String getEntityName() {
+    return "ic_network";
+  }
+}

@@ -32,6 +32,8 @@ public class GenericGroup extends GenericEntity{
 		addAttribute(getGroupTypeColumnName(),"Hópgerð", true, true, "java.lang.String");
 		addAttribute(getGroupDescriptionColumnName(),"Lýsing", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(),"Auka upplýsingar", true, true, "java.lang.String");
+                this.addManyToManyRelationShip(ICNetwork.class,"ic_group_network");
+                this.addManyToManyRelationShip(ICProtocol.class,"ic_group_protocol");
                 this.addTreeRelationShip();
 	}
 
