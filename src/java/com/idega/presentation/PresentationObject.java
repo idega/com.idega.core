@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.84 2004/02/23 13:36:56 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.85 2004/02/26 09:12:42 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -2040,6 +2040,10 @@ implements Cloneable{//,UIComponent{
 	//		 System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getClassName());
 	//	 }
 	// }
+	 
+	 public boolean isContainer() {
+	 	return false;
+	 }
 
 
 

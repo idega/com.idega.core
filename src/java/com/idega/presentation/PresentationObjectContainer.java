@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.26 2004/02/23 13:36:56 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.27 2004/02/26 09:13:08 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -735,4 +735,10 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return true;
+	}
 }
