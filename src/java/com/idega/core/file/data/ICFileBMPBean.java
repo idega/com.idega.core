@@ -140,7 +140,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return "IC_LOCALE_ID";
 	}
 	public static String getColumnNameLocalizationKey() {
-		return "IC_LOCALEIZATION_KEY";
+		return "IC_LOCALIZATION_KEY";
 	}
 	public static String getColumnDeleted() {
 		return "DELETED";
