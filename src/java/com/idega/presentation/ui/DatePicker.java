@@ -87,7 +87,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public void main(IWContext iwc) {
         empty();
         IWBundle iwb = getBundle(iwc);
-        setChooseButtonImage(iwb.getImage("calendar.gif", "Pick date"));
+        IWResourceBundle iwrb = this.getResourceBundle(iwc);
+        setChooseButtonImage(iwb.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
         if (locale == null) {
             locale = iwc.getCurrentLocale();
         }
@@ -301,6 +302,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * @see com.idega.presentation.ui.AbstractChooser#getTable(com.idega.presentation.IWContext, com.idega.idegaweb.IWBundle)
      */
     public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
+        IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
         if(!useJSCalendar(bundle))
           return super.getTable(iwc, bundle);
         
@@ -314,7 +316,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 			value.setValue(getChooserValue());
 		}
 		
-		Image button = (bundle.getImage("calendar.gif", "Pick date"));
+		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+dateFormatPattern+"','"+value.getID()+"');");
 		
 		Page parentPage = getParentPage();
@@ -323,7 +325,6 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		
 		
 		
-		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		
 		//String langScriptURI = "jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js";
 		//String langScriptURI = "jscalendar/calendar_lang.js";
