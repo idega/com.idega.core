@@ -202,12 +202,8 @@ public class GenericSelect extends InterfaceObject {
 			Iterator iter = theElements.iterator();
 			while (iter.hasNext()) {
 				SelectOption option = (SelectOption) iter.next();
-				if (_allSelected)
-					option.setSelected(true);
-				else {
-					if (selectedElements.contains(option.getValue()))
-						option.setSelected(true);
-				}
+				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValue()));
+				option.setSelected(setSelected);
 				option._print(iwc);
 			}
 
