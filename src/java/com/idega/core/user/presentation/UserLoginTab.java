@@ -266,7 +266,7 @@ public class UserLoginTab extends UserTab {
       String passwExpires = iwc.getParameter(this._PARAM_PASSWORD_NEVER_EXPIRES);
       String accountDisabled = iwc.getParameter(this._PARAM_DISABLE_ACCOUNT);
 
-      if(((passw != null && !passw.equals(""))&&((confirmedpassw != null && !confirmedpassw.equals("")))) ){
+      if(((passw != null && !passw.equals("")) || ((confirmedpassw != null && !confirmedpassw.equals("")))) ){
         if(login != null && !login.equals("")){
           LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
           String oldLogin = null;
@@ -293,21 +293,33 @@ public class UserLoginTab extends UserTab {
 
         if(passw != null && confirmedpassw != null && passw.equals(confirmedpassw)){
           fieldValues.put(this._PARAM_PASSWORD,passw);
+          fieldValues.put(this._PARAM_CONFIRM_PASSWORD,confirmedpassw);
         } else {
           this.addErrorMessage("password and confirmed password not valid or not the same");
+          fieldValues.put(this._PARAM_PASSWORD,"");
+          fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
         }
+      }else{
+        fieldValues.put(this._PARAM_PASSWORD,"");
+        fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
       }
 
-      if(mustChangePassw != null){
+      if(cannotChangePassw != null && mustChangePassw != null){
+        this.addErrorMessage("'User must change password at next login' and 'User cannot change password' cannot both be checked");
         fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
-      } else {
-        fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
-      }
-
-      if(cannotChangePassw != null){
-        fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
-      }else {
         fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+      } else {
+        if(mustChangePassw != null){
+          fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
+        } else {
+          fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
+        }
+
+        if(cannotChangePassw != null){
+          fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
+        }else {
+          fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+        }
       }
 
       if(passwExpires != null){
@@ -325,6 +337,8 @@ public class UserLoginTab extends UserTab {
       this.updateFieldsDisplayStatus();
 
       if(someErrors()){
+        fieldValues.put(this._PARAM_PASSWORD,"");
+        fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
         presentErrorMessage(this.clearErrorMessages());
         return false;
       }else{
@@ -334,6 +348,8 @@ public class UserLoginTab extends UserTab {
     }
     this.addErrorMessage("IWContext is null");
     if(someErrors()){
+      fieldValues.put(this._PARAM_PASSWORD,"");
+      fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
       presentErrorMessage(this.clearErrorMessages());
       return false;
     }else{
