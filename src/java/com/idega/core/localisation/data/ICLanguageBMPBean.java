@@ -38,6 +38,7 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
     addAttribute(_COLUMN_LanguageName,"Name",true,true, "java.lang.String");
     addAttribute(_COLUMN_LanguageDescription,"Description",true,true, "java.lang.String", 510);
     addAttribute(_COLUMN_ISOabbreviation,"ISO abbreviation",true,true,String.class,10);
+    this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
   public String getEntityName() {
     return "ic_language";

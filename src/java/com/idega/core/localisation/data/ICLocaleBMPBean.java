@@ -28,6 +28,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity implements com
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
     this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class);
+    this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
   public void insertStartData() throws Exception{

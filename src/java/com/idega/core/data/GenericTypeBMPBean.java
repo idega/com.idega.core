@@ -24,9 +24,10 @@ public abstract class GenericTypeBMPBean extends com.idega.data.GenericEntity im
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameDisplayName(),"Nafn",true,true,String.class,255);
-    this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
+    this.addAttribute(getColumnNameDisplayName(),"Name",true,true,String.class,255);
+    this.addAttribute(getColumnNameDescription(),"Description",true,true,String.class,500);
     this.addAttribute(getColumnNameUniqueName(),"unique name",true,true,String.class,255);
+    this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
   public static String getColumnNameDisplayName(){return "type_display_name";}

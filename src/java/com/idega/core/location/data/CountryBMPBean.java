@@ -33,6 +33,7 @@ public class CountryBMPBean extends com.idega.data.GenericEntity implements com.
     this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
     this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
     this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammstöfun",true,true,String.class,10);
+    this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
   public String getEntityName() {
