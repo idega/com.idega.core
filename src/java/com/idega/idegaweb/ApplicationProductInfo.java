@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.3 2005/01/06 18:22:59 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.4 2005/02/16 09:27:51 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/01/06 18:22:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/16 09:27:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ApplicationProductInfo {
 	
@@ -174,8 +174,24 @@ public class ApplicationProductInfo {
 		this.version = version;
 	}
 	
-	
 	public String getCopyrightText(){
 		return "Copyright (c) "+getInceptionYear()+"-"+IWTimestamp.RightNow().getYear()+" "+getVendor()+" All rights reserved";
 	}
+
+	/**
+	 * Gets the major version (the first integer in the version number)
+	 * @return
+	 */
+	public int getMajorVersion(){
+		String version = getVersion();
+		int dotIndex = version.indexOf(".");
+		String sMVersion = version.substring(0,dotIndex);
+		return Integer.parseInt(sMVersion);
+	}
+	
+	public boolean isMajorVersionEqualOrHigherThan(int version){
+		int majorVersion = getMajorVersion();
+		return (version>=majorVersion);
+	}
+	
 }
