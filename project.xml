@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <extend>${base.project.dir}/base-project.xmlend>
+  <extend>${base.project.dir}/base-project.xml</extend>
   <name>idegaWeb JavaServer Faces</name>
   <artifactId>com.idega.faces</artifactId>
   <currentVersion>0.9.1-SNAPSHOT</currentVersion>
