@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.4 2001/05/17 23:02:44 eiki Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.5 2001/05/18 13:31:35 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -223,7 +223,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 
 
   protected void insertBlob(GenericEntity entity)throws Exception{
-    /*String statement ;
+    String statement ;
     Connection Conn = null;
 
     try{
@@ -233,7 +233,10 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
       statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = " + entity.getID();
       Conn.setAutoCommit(false);
 
-      BufferedInputStream bin = new BufferedInputStream( entity.getV writeInputStream );
+      BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
+
+
+      BufferedInputStream bin = new BufferedInputStream( wrapper.getInputStreamForBlobWrite() );
       PreparedStatement PS = Conn.prepareStatement(statement);
       PS.setBinaryStream(1, bin, bin.available() );
       PS.execute();
@@ -247,7 +250,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
     finally{
       if(Conn != null) entity.freeConnection(Conn);
     }
-*/
+
   }
 
 

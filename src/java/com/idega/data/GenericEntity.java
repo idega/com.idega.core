@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.10 2001/05/17 23:02:44 eiki Exp $
+ * $Id: GenericEntity.java,v 1.11 2001/05/18 13:31:35 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
 import com.idega.util.*;
+import java.io.InputStream;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -346,6 +347,33 @@ public abstract class GenericEntity implements java.io.Serializable {
 	public void setColumn(String columnName,Boolean columnValue){
 		setValue(columnName,columnValue);
 	}
+
+        public void setColumn(String columnName,InputStream streamForBlobWrite){
+          BlobWrapper wrapper = getBlobColumnValue(columnName);
+          if(wrapper!=null){
+             wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
+          }
+          else{
+            wrapper = new BlobWrapper(this,columnName);
+            setColumn(columnName,wrapper);
+          }
+        }
+
+        public BlobWrapper getBlobColumnValue(String columnName){
+          return (BlobWrapper) getColumnValue(columnName);
+        }
+
+
+        /**
+         * Returns null if no BlobWrapper is present
+         */
+        public InputStream getInputStreamColumnValue(String columnName)throws Exception{
+          BlobWrapper wrapper = getBlobColumnValue(columnName);
+          if(wrapper!=null){
+            return wrapper.getBlobInputStream();
+          }
+          return null;
+        }
 
 
 	public Object getColumnValue(String columnName){
