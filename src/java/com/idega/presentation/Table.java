@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.33 2003/03/30 11:36:17 laddi Exp $
+ * $Id: Table.java,v 1.34 2003/03/30 11:56:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1334,7 +1334,9 @@ public class Table extends PresentationObjectContainer {
 		}
 		else {
 			TextStyler styler = new TextStyler(cont.getStyleAttribute());
-			return styler.getStyleValue("background-color");
+			if (styler.isStyleSet("background-color"))
+				return styler.getStyleValue("background-color");
+			return null;
 		}
 	}
 
