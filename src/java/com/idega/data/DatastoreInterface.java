@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.90 2004/01/12 16:37:41 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.91 2004/02/28 19:11:34 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1291,14 +1291,70 @@ public abstract class DatastoreInterface {
 	 * @throws Exception
 	 */
 	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
-		String checkQuery = "select count(*) from " + tableName;
-		try {
-			executeQuery(dataSourceName, checkQuery);
-			return true;
-		} catch (Exception e) {
-			//e.printStackTrace();
+		
+	/*
+	 old impl
+	 String checkQuery = "select count(*) from " + tableName;
+	try {
+		executeQuery(dataSourceName, checkQuery);	
+		return true;
+	} catch (Exception e) {
+		//e.printStackTrace();
+	}
+	*/
+		//A connection friendler version and faster
+		String[] tablesTypes = {"TABLE",  "VIEW"};
+		Connection conn = null;
+		boolean tableExists = false;
+		try{
+			
+			conn = ConnectionBroker.getConnection(dataSourceName);
+			DatabaseMetaData dbMetaData = conn.getMetaData();
+			ResultSet rs = null;
+			
+			//Check for upper case
+			rs = dbMetaData.getTables(null,null,tableName.toUpperCase(),tablesTypes);
+			if(rs.next()){
+				//table exists
+				tableExists = true;
+			}
+			rs.close();
+			
+			//Check for lower case
+			if(!tableExists){
+				rs = dbMetaData.getTables(null,null,tableName.toLowerCase(),tablesTypes);
+				if(rs.next()){
+					//table exists
+					tableExists = true;
+				}
+				rs.close();
+			}
+			
+			//Check without any case manipulating, this can be removed if we always force uppercase		
+			if(!tableExists){
+
+				rs = dbMetaData.getTables(null,null,tableName,tablesTypes);
+				if(rs.next()){
+					//table exists
+					tableExists = true;
+				}
+				rs.close();
+			}
+			
+
+		
+			
 		}
-		return false;
+		catch(SQLException e){
+			  e.printStackTrace();
+		}
+		finally{
+		  if(conn!=null){
+			ConnectionBroker.freeConnection(conn);
+		  }
+		}
+		
+		return tableExists;
 	}
 	
 	private String[] getColumnArrayFromMetaData(String dataSourceName,String tableName){
@@ -1311,7 +1367,7 @@ public abstract class DatastoreInterface {
 		  
 		  //String tableName = entity.getTableName();
 		  java.sql.DatabaseMetaData metadata = conn.getMetaData();
-		  rs = metadata.getColumns("","",tableName.toLowerCase(),"%");
+		  rs = metadata.getColumns(null,null,tableName.toUpperCase(),"%");
 		  //System.out.println("Table: "+tableName+" has the following columns:");
 		  while (rs.next()) {
 			String column = rs.getString("COLUMN_NAME");
@@ -1320,7 +1376,7 @@ public abstract class DatastoreInterface {
 		  }
 		  rs.close();
 		  if(v.isEmpty()){
-			rs = metadata.getColumns("","",tableName.toUpperCase(),"%");
+			rs = metadata.getColumns(null,null,tableName.toLowerCase(),"%");
 			//System.out.println("Table: "+tableName+" has the following columns:");
 			while (rs.next()) {
 			  String column = rs.getString("COLUMN_NAME");
