@@ -50,19 +50,22 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		}
 		catch (IOException e)
 		{
-			System.err.println("Error executing update to directory: "+directory);
+			log("Error executing update to directory: "+directory);
 			e.printStackTrace();
 			return false;
 		}
 	}
 	
-	private int executeCVSCommand(String command,String[] args,String directory) throws IOException{
+	private int executeCVSCommand(String command,String[] envp,String directory) throws IOException{
+		//if(envp==null || envp.length==0){
+			String[] envp2 = {"CVS_RSH=ssh"};
+		//}
 		int returnValue=-1;
 		String cmd = "cvs "+command;
-		File dir = new File(directory,null);
-		System.out.println("Executing command:"+cmd+" in dir="+directory);
+		File dir = new File(directory);
+		debug("Executing command:"+cmd+" in dir="+directory);
 		Runtime runtime = Runtime.getRuntime();
-		Process process = runtime.exec(cmd,args,dir);
+		Process process = runtime.exec(cmd,envp2,dir);
 		InputStream input = process.getInputStream();
 		InputStream err = process.getErrorStream();
 		try
