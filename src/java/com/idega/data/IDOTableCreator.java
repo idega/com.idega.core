@@ -310,8 +310,16 @@ public class IDOTableCreator{
             //System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
             //System.err.println("  Error was: "+e.getMessage());
           }
-          createIndexes(entity);
-					createMiddleTables(entity);
+          
+          try{
+          	createIndexes(entity);
+          }
+          catch(Exception e){
+            e.printStackTrace();
+             //this can fail but don't kill the transaction then!
+           }
+          
+          createMiddleTables(entity);
           if(entity.getIfInsertStartData()){
 	      		_entityWithStartData.add(entity);
           }
