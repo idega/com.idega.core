@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectUtil.java,v 1.1 2004/11/24 23:04:20 tryggvil Exp $
+ * $Id: PresentationObjectUtil.java,v 1.2 2004/11/25 09:59:32 tryggvil Exp $
  * Created on 24.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import javax.faces.component.UIComponent;
  * This class contains utility methods moved from PresentationObjects to
  * be more easier accessible from classes not extending PresentationObject.
  * 
- *  Last modified: $Date: 2004/11/24 23:04:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/25 09:59:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class PresentationObjectUtil {
 	
@@ -31,15 +31,15 @@ public class PresentationObjectUtil {
 		{
 			obj = ((IFrameContent) obj).getOwnerInstance();
 		}
-		else
-		{
+		//else
+		//{
 			//try{
-				obj = obj.getParent();
+			//	obj = obj.getParent();
 			//}
 			//catch(ClassCastException cce){
 			//	obj=null;
 			//}
-		}
+		//}
 		while (obj != null)
 		{
 			if (obj instanceof Page)
