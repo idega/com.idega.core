@@ -313,14 +313,12 @@ public class PageIncluder extends PresentationObject implements Index{
 
         out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
         out = preProcess(out);
-        out = changeAHrefAttributes(out);
-        out = changeFormActionAttributes(out);
-        out = changeSrcAttributes(out);
-
         if( forceFrame ){
           out = encodeQueryStrings(out);
         }
-
+        out = changeSrcAttributes(out);
+        out = changeAHrefAttributes(out);
+        out = changeFormActionAttributes(out);
         out = postProcess(out);
   }
 
