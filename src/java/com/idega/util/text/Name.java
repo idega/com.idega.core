@@ -80,7 +80,7 @@ import java.util.*;
 
 				}
 
-				this.middleName = middleName.toString());
+				this.middleName = middleName.toString();
 			}
 			else { //set middle name == null
 				this.middleName = null;
@@ -94,6 +94,4 @@ import java.util.*;
 			}
 		}
 	}
-    }
-
   }
