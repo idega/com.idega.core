@@ -58,8 +58,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
       String item = (String) tokens.nextElement();
       try{
         Integer.parseInt(item);
+        return buf.toString();
       }
-      catch(Exception e ){
+      catch(NumberFormatException e ){
         buf.append(item);
         buf.append(' ');//behind last one also :(
       }
@@ -71,21 +72,20 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
   public String getStreetNumberFromAddressString(String addressString){
     StringTokenizer tokens = new StringTokenizer(addressString);
-    StringBuffer buf = new StringBuffer();
 
     while( tokens.hasMoreElements() ){
       String item = (String) tokens.nextElement();
       try{
         Integer.parseInt(item);
-        buf.append(item);
-        buf.append(' ');//behind last one also :(
+        return addressString.substring(addressString.indexOf(item),addressString.length());
       }
-      catch(Exception e ){
+      catch(NumberFormatException e ){
+        //skip the first strings
       }
+
     }
 
-    return buf.toString();
-
+    return null;
   }
 
 } // Class AddressBusinessBean
