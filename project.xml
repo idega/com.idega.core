@@ -61,13 +61,6 @@
       <roles/>
     </developer>
     <developer>
-      <name>Aron Birkir Gudmundsson</name>
-      <id>aron</id>
-      <email>aron@idega.is</email>
-      <organization>idega software</organization>
-      <roles/>
-    </developer>
-    <developer>
       <name>Gudmundur Agust Saemundsson</name>
       <id>gummi</id>
       <email>gummi@idega.is</email>
@@ -78,13 +71,6 @@
       <name>Grimur Jonsson</name>
       <id>gimmi</id>
       <email>gimmi@idega.is</email>
-      <organization>idega software</organization>
-      <roles/>
-    </developer>
-    <developer>
-      <name>Jonas Blandon</name>
-      <id>jonas</id>
-      <email>jonas@idega.is</email>
       <organization>idega software</organization>
       <roles/>
     </developer>
