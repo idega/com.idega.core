@@ -1,0 +1,31 @@
+
+package com.idega.util;
+
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.Locale;
+
+import com.idega.core.data.GenericGroup;
+
+/**
+ * A very simple class that compares two strings alphabetically by their local.
+ * @author Eiki
+ *
+ */
+public class StringAlphabeticalComparator implements Comparator {
+
+	private Locale _locale;
+	
+	public StringAlphabeticalComparator(Locale locale) {
+		_locale = locale;
+	}
+
+	/**
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	public int compare(Object o1, Object o2) {
+		Collator collator = Collator.getInstance(_locale);		
+		return collator.compare((String)o1,(String)o1);
+	}
+
+}
