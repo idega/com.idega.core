@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.2 2005/01/28 00:52:42 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.3 2005/01/31 12:11:23 laddi Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/01/28 00:52:42 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/31 12:11:23 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -202,7 +202,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		if(bundleDir.endsWith(BUNDLE_SUFFIX)){
 			bundleIdentifier = bundleDir.substring(0,bundleDir.indexOf(BUNDLE_SUFFIX));
 		}
-		String start = BUNDLES_STANDARD_DIR+bundleDir;
+		//String start = BUNDLES_STANDARD_DIR+bundleDir;
 		String restUrl =  urlBeginningWithBundle.substring(bundleDir.length(),urlBeginningWithBundle.length());
 		
 		String[] theReturn = {bundleIdentifier,restUrl};
