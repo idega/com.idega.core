@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.1 2004/11/14 23:26:06 tryggvil Exp $
+ * $Id: IWApplicationStarter.java,v 1.2 2004/12/02 20:34:18 tryggvil Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -37,7 +37,7 @@ public class IWApplicationStarter implements ServletContextListener {
 	 * initialize jsf environment
 	 */
 	public void contextInitialized(ServletContextEvent event) {
-		System.out.println("IWApplicationListener.contextInitialized");
+		System.out.println("IWApplicationStarter.contextInitialized");
 		//getDefaultLifecycle().addPhaseListener(new IWPhaseListener());
 		ServletContext sContext = event.getServletContext();
 		//installViewHandler(sContext);
@@ -58,6 +58,7 @@ public class IWApplicationStarter implements ServletContextListener {
 	 */
 	public void contextDestroyed(ServletContextEvent arg0) {
 		starter.shutdown();
+		starter=null;
 	}
 	
 	public static void installViewHandler(ServletContext context) {
