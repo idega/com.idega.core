@@ -218,7 +218,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 			buf.append("=");
 			buf.append(getHomeNumberID());
 				
-			System.out.println(buf.toString());
+			//System.out.println(buf.toString());
 			return buf.toString();
 	}
 
