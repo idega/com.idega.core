@@ -59,9 +59,9 @@ public class ConnectionRefresher implements Runnable {
 			datastoreNotReachable=true;
 			System.err.println("There was an IDONoDatastoreError in ConnectionRefresher.run() The error was: " + ex.getMessage());
 		}
-		catch (Throwable th) {
-			datastoreNotReachable=true;
-			System.err.println("There was a Throwable caught in ConnectionRefresher.run() The error was: " + th.getClass().getName()+" : "+th.getMessage());
+		//catch (Throwable th) {
+		//	datastoreNotReachable=true;
+		//	System.err.println("There was a Throwable caught in ConnectionRefresher.run() The error was: " + th.getClass().getName()+" : "+th.getMessage());
 			// See description of class ThreadDeath:
 			// An application should catch instances of this class only if it must clean up after being terminated asynchronously. 
 			// If ThreadDeath is caught by a method, it is important that it be rethrown so that the thread actually dies.
@@ -69,11 +69,11 @@ public class ConnectionRefresher implements Runnable {
 			//
 			// !!!! Do not change this code. If this thread never dies the application will not restart proper !!!
 			// 
-			if (th instanceof ThreadDeath) {
-				System.out.println("Killing ConnectionRefresher (caused by ThreadDeath)");
-				throw (Error) th;
-			}
-		}
+		//	if (th instanceof ThreadDeath) {
+		//		System.out.println("Killing ConnectionRefresher (caused by ThreadDeath)");
+		//		throw (Error) th;
+		//	}
+		//}
 	}
 	
 	private long getSleepTime() {
