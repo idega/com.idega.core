@@ -126,7 +126,7 @@ public class SubmitButton extends GenericButton {
 		if (usingControlParameter) {
 			if (!parameterName.equals(emptyString)) {
 				getParentForm().addControlParameter(parameterName, emptyString);
-				setOnClick("findObj('" + parameterName + "').value='" + parameterValue + "'");
+				setValueOnClick(parameterName, parameterValue);
 			}
 		}
 	}
