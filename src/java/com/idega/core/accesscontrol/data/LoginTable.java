@@ -35,6 +35,7 @@ public class LoginTable extends GenericEntity implements EncryptionType{
           //deprecated column
           addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
           addAttribute(getLastChangedColumnName(),"Síðast breytt",true,true,Timestamp.class);
+          setNullable(getUserLoginColumnName(), false);
           setUnique(getUserLoginColumnName(),true);
 
 	}
