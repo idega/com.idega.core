@@ -1912,6 +1912,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     IWResourceBundle iwrb = bundle.getResourceBundle(locale);
     int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
     
+    // check if the source and the target are the same
+    if (parentGroup != null) { 
+      int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
+      // target and source are the same do nothing
+      if (parentGroupId == targetGroupId) {
+        return iwrb.getLocalizedString("age_gender_source_and_target_are_the_same", "Source group and target group are the same");
+      }
+    }   
+    
     // is the user already a member of the target group?
     Collection coll;
     try {
