@@ -106,7 +106,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
     Object realPK = primaryKey;
     if(primaryKey instanceof IDOEntity){
     	try{
-				throw new FinderException("Argument of type: "+primaryKey.getClass()+" is currently supported for findByPrimaryKey() but should not be used. Please remove this usage !!!");
+				throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
     	}
     	catch(FinderException fe){
     		fe.printStackTrace(System.err);
