@@ -3003,6 +3003,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		//the description
 		user.setDescription(description);
 		
+		user.store();
+		
 		//the email
 		updateUserMail(user, email);
 		
@@ -3039,7 +3041,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			
 		//set all the attributes as metadata also
 		setMetaDataFromLDAPAttributes(user, distinguishedName, attributes);
-		user.store();
+		
 			
 		
 //			TODO Eiki make a method updatePhones(home,fax,mobile) DO in
