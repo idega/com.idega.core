@@ -145,6 +145,22 @@ public class ICLocaleBusiness {
     }
     return localeList;
   }
+  
+	public static List listOfAllLocalesJAVA(){
+		List list = listOfAllLocales();
+		List localeList = new Vector();
+
+		if ( list != null ) {
+			Iterator iter = list.iterator();
+			while (iter.hasNext()) {
+			 ICLocale item = (ICLocale) iter.next();
+			 Locale locale = getLocaleFromLocaleString(item.getLocale());
+			 if ( locale != null )
+				localeList.add(locale);
+			}
+		}
+		return localeList;
+	}
 
   private static void makeHashtables(){
     List L = listOfAllLocales();
