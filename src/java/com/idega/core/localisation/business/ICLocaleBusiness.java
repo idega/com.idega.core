@@ -4,6 +4,9 @@ import com.idega.data.EntityFinder;
 import com.idega.core.data.ICLocale;
 import com.idega.util.LocaleUtil;
 import com.idega.util.idegaTimestamp;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.ui.DropdownMenu;
+
 import java.util.List;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -257,4 +260,22 @@ public class ICLocaleBusiness {
       reload();
     }
   }
+
+
+  /**
+ * In the DropdownMenu the keys (values) are the locale-stringrepresentations
+ * e.g. "en_US" for English/US
+ */
+  public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma,String name){
+    List locales = ICLocaleBusiness.listOfLocalesJAVA();
+    DropdownMenu down = new DropdownMenu(name);
+    Iterator iter = locales.iterator();
+    while (iter.hasNext()) {
+      Locale item = (Locale)iter.next();
+      down.addMenuElement(item.toString(),item.getDisplayLanguage());
+    }
+    return down;
+  }
+
+
 }
