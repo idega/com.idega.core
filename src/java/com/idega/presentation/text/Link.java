@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.83 2002/12/10 12:46:54 palli Exp $
+ * $Id: Link.java,v 1.84 2002/12/27 12:20:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -384,6 +384,10 @@ public class Link extends Text {
 		if (iwc.isInEditMode()) {
 			addParameter("view", "builder"); /**@todo this doesn't update all the frames**/
 
+		}
+
+		if (!isParameterSet(LocaleSwitcher.languageParameterString)) {
+			setLocale(iwc.getCurrentLocale());
 		}
 
 		//if (_objectType==(OBJECT_TYPE_WINDOW)) {
