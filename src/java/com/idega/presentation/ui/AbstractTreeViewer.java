@@ -788,7 +788,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
     public DefaultTreeNode(String nodeName, int id){
       name = nodeName;
-      id = id;
+	  this.id = id;
     }
 
     /**

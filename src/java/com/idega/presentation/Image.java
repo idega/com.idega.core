@@ -378,7 +378,7 @@ public void setOnClickImage(Image image) {
 }
 
 public void setOverImageURL(String overImageURL){
-	this.overImageUrl = overImageUrl;
+	this.overImageUrl = overImageURL;
 }
 
 public void setOverImage(Image image){

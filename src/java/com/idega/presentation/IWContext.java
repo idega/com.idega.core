@@ -412,7 +412,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	 * @deprecated
 	 */
 	public void setConnection(Connection conn) {
-		this.Conn = Conn;
+		this.Conn = conn;
 	}
 	public void setDefaultBackgroundColor(String s) {
 		setPreference("DefaultBackgroundColor", s);

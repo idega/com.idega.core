@@ -266,7 +266,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 
     public void setAddedTabs(Vector tabs){
 
-      tabs = tabs;
+      this.tabs = tabs;
 
     }
 
