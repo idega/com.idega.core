@@ -19,8 +19,10 @@ import com.idega.idegaweb.presentation.DataEmailer;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -583,35 +585,62 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   /**
-   * @depricated Use getUsersMainAddress(user) instead.
+   * @deprecated user getUsersMainAddress instead.
+   * Gets the users main address and returns it.
+   * @returns the address if found or null if not.
    */
-  public Address getUserAddress1(int userId) throws EJBException,RemoteException{
-    User user = this.getUser(userId);
-    if( user!=null ){
-      return this.getUsersMainAddress(user);
-    }
-   else return null;
+  public Address getUserAddress1(int userID) throws EJBException,RemoteException{
+ 		return getUsersMainAddress(userID);
   }
-
+  
+  /**
+   * Gets the users main address and returns it.
+   * @returns the address if found or null if not.
+   */
+  public Address getUsersMainAddress(int userID) throws EJBException,RemoteException{
+  	try {
+  		return getAddressHome().findPrimaryUserAddress(userID);
+  	}
+  	catch (FinderException fe) {
+  		return null;
+  	}
+  }
+  
+  /**
+   * Gets the users main addresses and returns them.
+   * @returns a collection of addresses if found or null if not.
+   */
+  public Collection getUsersMainAddresses(String[] userIDs) throws EJBException,RemoteException{
+  	try {
+  		return getAddressHome().findPrimaryUserAddresses(userIDs);
+  	}
+  	catch (FinderException fe) {
+  		return null;
+  	}
+  }
+  
   /**
    * Gets the users main address and returns it.
    * @returns the address if found or null if not.
    */
   public Address getUsersMainAddress(User user) throws RemoteException{
-    AddressType addressType1 = this.getAddressHome().getAddressType1();
-    Collection addresses = user.getAddresses();
-    if(addresses != null){
-      Iterator iter = addresses.iterator();
-      while (iter.hasNext()) {
-        Address item = (Address)iter.next();
-        if(item.getAddressType().equals(addressType1))
-          return item;
-      }
-    }
-    return null;
+    return getUsersMainAddress(((Integer)user.getPrimaryKey()).intValue());
   }
 
 
+  /**
+   * Gets the users and returns them.
+   * @returns a collection of users if found or null if not.
+   */
+  public Collection getUsers(String[] userIDs) throws EJBException,RemoteException{
+  	try {
+  		return getUserHome().findUsers(userIDs);
+  	}
+  	catch (FinderException fe) {
+  		return null;
+  	}
+  }
+  
 	/**
 	 * Method updateUsersMainAddressOrCreateIfDoesNotExist. This method can both be used to update the user main address or to create one<br>
 	 * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.

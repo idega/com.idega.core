@@ -934,4 +934,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	//        }
 	//      }
 
+  public Collection ejbFindUsers(String[] userIDs) throws FinderException {
+  	IDOQuery query = new IDOQuery();
+  	query.appendSelectAllFrom(this).appendWhere().append(getColumnNameUserID()).appendInArray(userIDs);
+  	
+  	return super.idoFindPKsBySQL(query.toString());
+  }
 }
