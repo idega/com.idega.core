@@ -154,7 +154,7 @@ public class IWStyleManager {
 			Iterator iter = getStyleMap().keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
-				if (name.length() > 0 && name.indexOf(":") == -1) {
+				if (name.length() > 0) {
 					if (name.indexOf(".") != -1) {
 						name = name.substring(name.indexOf(".") + 1);
 					}
