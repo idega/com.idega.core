@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.user.presentation.StyledIWAdminWindow;
 
@@ -14,7 +15,7 @@ import com.idega.user.presentation.StyledIWAdminWindow;
  * Title:        IW
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -48,7 +49,7 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
 		panel = TabbedPropertyPanel.getInstance(getSessionAddressString(), iwc );
     
     if(panel.justConstructed()){
-      panel.setAlignment("center");
+      panel.setAlignment("left");
       panel.setVerticalAlignment("top");
       initializePanel(iwc, panel);
     }
@@ -74,7 +75,6 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
       this.add(panel,iwc);
     }
 		super._main(iwc);
-    
 
   }
 

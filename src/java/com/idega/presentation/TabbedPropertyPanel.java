@@ -26,7 +26,7 @@ import com.idega.util.datastructures.Collectable;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -48,7 +48,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private SubmitButton ok;
   private SubmitButton cancel;
-	private Help help;
 //  private SubmitButton apply;
 
 //	private final static String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
@@ -68,9 +67,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
     frameTable = new Table();
-//    frameTable.setStyleClass("back");
-//    this.setMethod("get");
-//    frameTable.setBorder(1);  // temp
+//		frameTable.setStyleClass("main");
     tpane = IWTabbedPane.getInstance(key,iwc);
     tpane.addChangeListener(this);
     // add all change listeners
@@ -96,16 +93,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
  //   apply.addIWSubmitListener(this, this,iwc);
     cancel.addIWSubmitListener(this, this,iwc);
   }
-//  public Help getHelpButton(IWContext iwc) {
-////	added for help-button
-//			IWBundle iwb = getBundle(iwc);
-//			help = new Help();
-//			Image helpImage = iwb.getImage("help.gif");
-//			help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
-//			help.setHelpTextKey(HELP_TEXT_KEY);
-//			help.setImage(helpImage);
-//			return help;	
-//  }
+
   
   public void initializeButtons(IWContext iwc){
     	//changed for localized buttons - birna
@@ -166,6 +154,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     frameTable.resize(1,2);
     frameTable.add(tpane,1,1);
     frameTable.setAlignment(1,1,"center");
+    frameTable.setWidth(470);
+//    frameTable.setHeight(500);
   }
 
   public void setAlignment(String align){

@@ -308,7 +308,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       this();
       this.setColor(color);
       this.setCellpadding(0);
-      this.setCellspacing(10); //changed from (0) - birna
+      this.setCellspacing(0); 
       this.setWidth("100%");
       initilizePage();
     }
@@ -319,7 +319,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
     	
     	this.setWidth("100%");
     	this.setHeight("100%");
-    	this.setStyleClass("back");
+//    	this.setStyleClass("back");
 			this.setAlignment(1,1,"center"); //changed from ...ment(3,1,"center");
 			this.setVerticalAlignment(1,1,"middle");
 
