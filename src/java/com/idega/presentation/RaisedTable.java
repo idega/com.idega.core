@@ -30,8 +30,8 @@ public class RaisedTable extends PresentationObjectContainer {
   private Table getIWACTable(){
     if(iwacTable == null){
       iwacTable = new Table(3,3);
-      iwacTable.setHeight("100%");
-      iwacTable.setWidth("100%");
+      iwacTable.setHeight(150);
+      iwacTable.setWidth(150);
       iwacTable.setCellpadding(0);
       iwacTable.setCellspacing(0);
       iwacTable.setHeight(1,"1");
