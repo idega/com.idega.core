@@ -4,6 +4,9 @@ import com.idega.core.data.*;
 import com.idega.presentation.PresentationObject;
 import java.sql.SQLException;
 
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWBundle;
+
 /**
  * Title:        IW Core
  * Description:
@@ -83,6 +86,45 @@ public class ICObjectBusiness {
       return inst;
   }
 
+
+  public static IWBundle getBundleForInstance(String icObjectInstanceID,IWMainApplication iwma){
+    return getBundleForInstance(Integer.parseInt(icObjectInstanceID),iwma);
+  }
+
+  public static IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
+    try{
+      ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
+      return instance.getObject().getBundle(iwma);
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+
+  public static Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
+    return getClassForInstance(Integer.parseInt(icObjectInstanceID));
+  }
+
+
+  public static Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
+    return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+  }
+
+
+  public static ICObjectInstance getICObjectInstance(String icObjectInstanceID){
+    return getICObjectInstance(Integer.parseInt(icObjectInstanceID));
+  }
+
+  public static ICObjectInstance getICObjectInstance(int icObjectInstanceID){
+    try{
+      return new ICObjectInstance(icObjectInstanceID);
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.getMessage());
+    }
+  }
 
 
 } // Class

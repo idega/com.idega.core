@@ -200,6 +200,11 @@ public class MethodFinder {
     return theReturn;
   }
 
+
+  public Class[] getArgumentClasses(String methodIdentifier)throws ClassNotFoundException{
+    return getArgumentClasses(getIdentifierAsArray(methodIdentifier));
+  }
+
   public Class[] getArgumentClasses(String[] identifierArray)throws ClassNotFoundException{
     String[] strings =  getArgumentClassNames(identifierArray);
     Class[] theReturn = new Class[strings.length];
