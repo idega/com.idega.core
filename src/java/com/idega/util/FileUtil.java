@@ -325,7 +325,30 @@ public class FileUtil {
     return buffer.toString();
   }
 
-
+  
+  public static File getFileRelativeToFile(File file, String relativeUnixPath) {
+  	File result = file;
+  	if (result.isFile()) {
+  		result = result.getParentFile();
+  	}
+  	StringTokenizer tokenizer = new StringTokenizer(relativeUnixPath, String.valueOf(UNIX_FILE_SEPARATOR));
+  	while (tokenizer.hasMoreTokens()) {
+  		String token = tokenizer.nextToken();
+  		if (".".equals(token)) {
+  			// do nothing
+  		}
+  		else if ("..".equals(token)) {
+  			// go to parent
+			result = result.getParentFile();
+  		}
+  		else {
+  			// go to child
+  			result = new File(result, token);
+  		}
+  	}
+  	return result;
+  }
+  
 
 
 /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
