@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.131 2004/08/11 07:59:47 laddi Exp $
+ * $Id: Link.java,v 1.132 2004/08/11 08:07:38 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1872,11 +1872,11 @@ public class Link extends Text {
 		method.append("function submitForm(formID) {").append("\n\t");
 		if (useFormValidation) {
 			method.append("if (checkSubmit(document.forms[formID])) {").append("\n\t\t");
-			method.append("document.forms[formID]).submit();").append("\n\t");
+			method.append("document.forms[formID].submit();").append("\n\t");
 			method.append("}").append("\n");
 		}
 		else {
-			method.append("document.forms[formID]).submit();").append("\n");
+			method.append("document.forms[formID].submit();").append("\n");
 		}
 		method.append("}");
 		
