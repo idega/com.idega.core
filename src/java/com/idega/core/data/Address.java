@@ -30,11 +30,14 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public int getPostalCodeID();
  public void setCity(java.lang.String p0);
  public java.lang.String getProvince();
- public String getStreetAddress();
- public String getPostalAddress();
-    /**
+     /**
      * Gets the street name together with the number
      */
- public String getStreetNameAndNumber();
+ public String getStreetAddress();
+     
+     /**
+     * Gets the postal code together with its name
+     */
+ public String getPostalAddress();
 
 }

@@ -162,7 +162,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
       throw new RemoteException(e.getMessage());
     }
   }
-    
+     /**
+     * Gets the street name together with the number
+     */
     public String getStreetAddress(){
     	StringBuffer addr = new StringBuffer();
     	String street = getStreetName();
@@ -174,6 +176,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
     	return addr.toString();
     }
     
+     /**
+     * Gets the postal code together with its name
+     */
     public String getPostalAddress(){
     	try{
     		return getPostalCode().getPostalAddress();
@@ -181,20 +186,6 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
     	
     	}
     	return "";
-    }
-    
-    /**
-     * Gets the street name together with the number
-     */
-    public String getStreetNameAndNumber(){
-    	String streetName = getStreetName();
-    	String streetNumber = getStreetNumber();
-    	if(streetNumber!=null){
-    		return streetName + " " + getStreetNumber();
-    	}
-    	else{
-    		return streetName;	
-    	}
     }
     
   
