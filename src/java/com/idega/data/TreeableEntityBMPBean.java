@@ -1,5 +1,6 @@
 package com.idega.data;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -142,12 +143,12 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	}
 
 	/**
-	 * DOES NOT WORK FOR STRING PRIMARY KEYS YET
+	 * 
 	 *  Returns the parent TreeNode of the receiver. Return null if none
 	 */
 	public ICTreeNode getParentNode() {
 		
-		//TODO MAKE THIS WORK FOR STRING PRIMARYKEYS ALSO!
+		
 		String sql = null;
 		
 		if(this.getPrimaryKey() instanceof Integer){
@@ -157,18 +158,19 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey()+"'";
 		}
 		
+		List list;
 		try {
-			int parent_id = EntityControl.returnSingleSQLQuery(this, sql);
-			if (parent_id != -1) {
-				GenericEntity entity = (GenericEntity)this.getClass().newInstance();
-				entity.findByPrimaryKey(parent_id);
-				return (TreeableEntity)entity;
-			} else {
+			list = EntityFinder.findAll(this, sql);
+			
+			if (list != null && !list.isEmpty()) {
+				return (TreeableEntity)list.iterator().next();
+			}
+			else{
 				return null;
 			}
-		} catch (Exception e) {
-			System.err.println("There was an error in com.idega.data.TreeableEntityBMPBean.getParentNode() " + e.getMessage());
-			e.printStackTrace(System.err);
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 			return null;
 		}
 		
