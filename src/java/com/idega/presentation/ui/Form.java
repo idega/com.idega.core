@@ -240,9 +240,7 @@ public class Form extends InterfaceObject {
 			}
 		}
 		
-		if (getScript().doesFunctionExist("checkSubmit")) {
-			getScript().addToFunction("checkSubmit", "return true;");
-		}
+		getScript().addToFunction("checkSubmit", "return true;");
 	}
 
 	/**
