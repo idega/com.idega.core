@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.120 2004/06/30 23:58:25 jonas Exp $
+ * $Id: Link.java,v 1.121 2004/07/01 00:50:55 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -408,6 +408,14 @@ public class Link extends Text {
 		String hostname = iwc.getParameter("CL_DM");
 		if(hostname!=null && hostname.length()>0) {
 			_hostname = hostname;
+		}
+		String cPageId = iwc.getParameter("CL_PA_ID");
+		if(cPageId!=null && cPageId.length()>0) {
+			try {
+				ibPage = Integer.parseInt(cPageId);
+			} catch(Exception e) {
+				System.out.println("calling page id not integer, " + cPageId);
+			}
 		}
 		if (fileId != -1){
 			ICFileSystem fsystem = getICFileSystem(iwc);
