@@ -404,6 +404,21 @@ public abstract class InterfaceObject extends PresentationObject {
 	
 	/**
 	 * Sets the value of the interface object with the given namewhen this object receives 
+	 * the action specified. Adds the specified script. 
+	 * @param action	The action to perform on.
+	 * @param objectName	The name of the interface object to change value of.
+	 * @param value	The new value to set.
+	 * @param script the sript to be added
+	 */
+	public void setValueOnActionFollowedByScript(String action, String objectName, String value, String script) {
+		_changeValue = true;
+		StringBuffer buffer = new StringBuffer("changeValue(findObj('");
+		buffer.append(objectName).append("'),'").append(value).append("');").append(script);
+		setOnAction(action, buffer.toString());
+	}
+	
+	/**
+	 * Sets the value of the interface object with the given namewhen this object receives 
 	 * the action specified.
 	 * @param action	The action to perform on.
 	 * @param objectName	The name of the interface object to change value of.
@@ -421,6 +436,17 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setValueOnClick(InterfaceObject objectToChange, String value) {
 		setValueOnAction(ACTION_ON_CLICK, objectToChange.getName(), value);
+	}
+	
+	/**
+	 * Sets the value of the interface object with the given name when this object is clicked.
+	 * Adds the specified script at the end.
+	 * @param objectName	The name of the interface object to change value of.
+	 * @param value	The new value to set.
+	 * @param script the script to be added
+	 */
+	public void setValueOnClickFollowedByScript(String objectName, String value, String script) {
+		setValueOnActionFollowedByScript(ACTION_ON_CLICK, objectName, value, script);
 	}
 	
 	/**

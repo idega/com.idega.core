@@ -20,9 +20,10 @@ public class SubmitButton extends GenericButton {
 
 	private String parameterName;
 	private String parameterValue;
+	private String onClickScript = null;
 
 	private boolean usingControlParameter = false;
-	private boolean asImageButton = false;
+	// not used private boolean asImageButton = false;
 	private boolean encloseByForm = true;
 
 	private boolean _enabledWhenChecked = false;
@@ -77,6 +78,19 @@ public class SubmitButton extends GenericButton {
 	}
 
 	/**
+	 * Constructs a new <code>SubmitButton</code> with the given name and value set and 
+	 * displays the image specified. 
+	 * Adds the specified script as "onClick" value at the end(!) of the "changeValue" function script, 
+	 * that is set as "onClick" attribute by this class. See main method of this class.
+	 * The method setOnClick(String) adds also a script, but it is not predictable if the script is added before or after adding the 
+	 * "changeValue" function.  
+	 */
+	public SubmitButton(Image defaultImage, String name, String value, String onClickScript) {
+		this(defaultImage, name, value);
+		this.onClickScript = onClickScript;
+	}
+
+	/**
 	 * Constructs a new <code>SubmitButton</code> with the given name and value set and
 	 * draws the button with the label specified in displayText.
 	 */
@@ -87,6 +101,19 @@ public class SubmitButton extends GenericButton {
 		usingControlParameter = true;
 	}
 
+	/**
+	 * Constructs a new <code>SubmitButton</code> with the given name and value set and
+	 * draws the button with the label specified in displayText. 
+	 * Adds the specified script as "onClick" value at the end(!) of the "changeValue" function script, 
+	 * that is set as "onClick" attribute by this class. See main method of this class.
+	 * The method setOnClick(String) adds also a script, but it is not predictable if the script is added before or after adding the
+	 * "changeValue" function.  
+	 */
+	public SubmitButton(String displayText, String parameterName, String parameterValue, String onClickScript) {
+		this(displayText, parameterName, parameterValue);
+		this.onClickScript = onClickScript;
+	}
+	
 	/**
 	 * Constructs a new <code>SubmitButton</code> with the default name and value set and
 	 * draws the button with the label specified in displayText.
@@ -138,7 +165,12 @@ public class SubmitButton extends GenericButton {
 		if (usingControlParameter) {
 			if (!parameterName.equals(emptyString)) {
 				getParentForm().addControlParameter(parameterName, emptyString);
-				setValueOnClick(parameterName, parameterValue);
+				if (onClickScript == null) {
+					setValueOnClick(parameterName, parameterValue);
+				}
+				else {
+					setValueOnClickFollowedByScript(parameterName, parameterValue, onClickScript);
+				}
 			}
 		}
 		if (isEnclosedByForm()) {
