@@ -306,7 +306,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         
     }
     
-    public void main(IWContext iwc) {
+    public void main(IWContext iwc) throws Exception{
         
         if(stateChanged){
             
@@ -316,7 +316,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             }
             stateChanged = false;
         }
-        
+        super.main(iwc);
         /*    if(this.justConstructed()){
          lineUpButtons();
          ok.addIWSubmitListener(this, this,iwc);
