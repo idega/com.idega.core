@@ -44,8 +44,14 @@ public class ImageFactory {
     String filePath;
     String fileVirtualPath;
 
-    if( local!=null ) filePath = iwb.getResourcesRealPath(local);
-    else filePath = iwb.getResourcesRealPath();
+    if( local!=null ){
+      filePath = iwb.getResourcesRealPath(local);
+      fileVirtualPath = iwb.getResourcesURL(local)+"/"+GENERATED_IMAGES_FOLDER+"/";
+    }
+    else{
+      filePath = iwb.getResourcesRealPath();
+      fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
+    }
 
     filePath = filePath+FileUtil.getFileSeparator()+GENERATED_IMAGES_FOLDER+FileUtil.getFileSeparator();
 
@@ -54,8 +60,7 @@ public class ImageFactory {
     Button button = new Button(textOnButton);
     button.generate(filePath);
 
-    fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
-    image = new Image("test",fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName());
+    image = new Image(Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
 
     return image;
   }

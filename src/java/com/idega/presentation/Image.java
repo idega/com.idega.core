@@ -25,6 +25,8 @@ public class Image extends PresentationObject{
 
 private Script theAssociatedScript;
 private String overImageUrl;
+private String downImageUrl;
+
 private String textBgColor = "#CCCCCC";
 private boolean limitImageWidth = false;
 private boolean zoomView = false;
@@ -70,6 +72,14 @@ public Image(String name,String url, String overImageUrl){
   setAttribute("onMouseOut","swapImgRestore()");
   setAttribute("onMouseOver","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
+
+public Image(String name,String url, String overImageUrl, String downImageUrl){
+  this(name,url,overImageUrl);
+
+  this.downImageUrl=downImageUrl;
+  setAttribute("onClick","swapImage('"+getName()+"','','"+downImageUrl+"',1)");
+}
+
 
 public Image(String url,String name,int width,int height){
 	super();
