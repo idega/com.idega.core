@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.data.IDOLookupException;
+import com.idega.util.IWTimestamp;
+
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 {
@@ -173,6 +176,15 @@ public java.lang.String getGroupType(){
 	java.lang.String theReturn = ((UserBMPBean)entity).ejbHomeGetGroupType();
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
+}
+
+
+public java.util.Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByCreationTime(firstCreationTime,lastCreationTime);
+	this.idoCheckInPooledEntity(entity);
+	//return this.getEntityCollectionForPrimaryKeys(ids);
+	return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 

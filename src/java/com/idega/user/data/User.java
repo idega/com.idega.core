@@ -1,7 +1,9 @@
 package com.idega.user.data;
 
+import com.idega.data.IDOReportableEntity;
 
-public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User
+
+public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User, IDOReportableEntity
 {
  public void setPrimaryGroupID(java.lang.Integer p0);
  public int getHomePageID();

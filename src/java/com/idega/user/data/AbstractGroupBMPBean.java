@@ -12,8 +12,12 @@ import javax.ejb.RemoveException;
 
 import com.idega.core.ICTreeNode;
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOCompositPrimaryKeyException;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.data.IDOQuery;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOStoreException;
 
@@ -29,6 +33,20 @@ import com.idega.data.IDOStoreException;
 public abstract class AbstractGroupBMPBean extends GenericEntity implements Group {
 
 	protected Group _group;
+
+	protected static final String GENERAL_GROUP_COLUMN_GROUP_ID = GroupBMPBean.COLUMN_GROUP_ID;
+	protected static final String GENERAL_GROUP_COLUMN_NAME = GroupBMPBean.COLUMN_NAME;
+	protected static final String GENERAL_GROUP_COLUMN_GROUP_TYPE = GroupBMPBean.COLUMN_GROUP_TYPE;
+	protected static final String GENERAL_GROUP_COLUMN_DESCRIPTION = GroupBMPBean.COLUMN_DESCRIPTION;
+	protected static final String GENERAL_GROUP_COLUMN_EXTRA_INFO = GroupBMPBean.COLUMN_EXTRA_INFO;
+	protected static final String GENERAL_GROUP_COLUMN_CREATED = GroupBMPBean.COLUMN_CREATED;
+	protected static final String GENERAL_GROUP_COLUMN_HOME_PAGE_ID = GroupBMPBean.COLUMN_HOME_PAGE_ID;
+	protected static final String GENERAL_GROUP_COLUMN_ALIAS_TO_GROUP = GroupBMPBean.COLUMN_ALIAS_TO_GROUP;
+	protected static final String GENERAL_GROUP_COLUMN_SHORT_NAME = GroupBMPBean.COLUMN_SHORT_NAME;
+	protected static final String GENERAL_GROUP_COLUMN_ABBREVATION = GroupBMPBean.COLUMN_ABBREVATION;
+
+	protected static final String SQL_JOINT_VARIABLE_GROUP = "t1";
+	protected static final String SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP = "t2";
 
 	/**
 	 * Returns a unique Key to identify this GroupType
@@ -439,8 +457,43 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGeneralGroup().getSiblingCount();
 	}
 
+
 	/**
 	 * ICTreeNode implementation ends
 	 */
+	
+	
+	/**
+	 * Creates the begining of a query: "select t2.* from #Group.tablename# t1, #this.tablename# t2 WHERE t1.#primarykey#=gr.#primaryKey#"
+	 * Grouptable is t1 and this table is t2
+	 * To add conditions to this query you should append AND first and then the conditions
+	 * @return Returns IDOQuery that contains begining of a joint-query between Group and this entiy
+	 * @throws IDOLookupException
+	 * @throws IDOCompositPrimaryKeyException
+	 */
+	protected IDOQuery idoQueryJointGroupQuery() throws IDOLookupException, IDOCompositPrimaryKeyException{
+		IDOQuery query = idoQuery();
+		query.appendSelect();
+		query.append(SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+".*");
+		query.appendFrom();
+		
+		IDOEntityDefinition groupDefinition = IDOLookup.getEntityDefinitionForClass(Group.class);
+		query.append(groupDefinition.getSQLTableName());
+		query.append(" "+SQL_JOINT_VARIABLE_GROUP+", ");
+		
+		query.append(this.getEntityName());
+		query.append(" "+SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+" ");
+
+
+		query.appendWhere(" "+SQL_JOINT_VARIABLE_GROUP+".");
+		query.append(groupDefinition.getPrimaryKeyDefinition().getField().getSQLFieldName());
+		query.appendEqualSign();
+		query.append(SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+".");
+		query.append(this.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+		
+		return query;
+	}
+	
+	
 
 }

@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.data.IDOLookupException;
+import com.idega.util.IWTimestamp;
+
 
 public interface UserHome extends com.idega.data.IDOHome
 {
@@ -30,4 +33,5 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd) throws FinderException, RemoteException;
  public Collection findUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd) throws FinderException, RemoteException;
  public Collection findUsersByMetaData(String key, String value) throws FinderException;
+ public java.util.Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException;
 }

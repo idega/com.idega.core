@@ -21,8 +21,10 @@ import com.idega.core.data.EmailBMPBean;
 import com.idega.core.data.Phone;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOCompositPrimaryKeyException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
@@ -36,7 +38,7 @@ import com.idega.util.text.TextSoap;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0 
  */
 
@@ -1356,6 +1358,36 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     appendIsNotDeleted(sql);
         return idoFindIDsBySQL (sql.toString ());
     }
+  
+  
+  public Collection ejbFindUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException{
+		try {
+			IDOQuery query = idoQueryJointGroupQuery();					
+			query.appendAnd();
+			query.append(SQL_JOINT_VARIABLE_GROUP);
+			query.append(".");
+			query.append(GENERAL_GROUP_COLUMN_CREATED);
+			query.appendGreaterThanOrEqualsSign();
+			query.appendWithinSingleQuotes(firstCreationTime.toSQLString());
+			
+			query.appendAnd();
+			query.append(SQL_JOINT_VARIABLE_GROUP);
+			query.append(".");
+			query.append(GENERAL_GROUP_COLUMN_CREATED);
+			query.appendLessThanOrEqualsSign();
+			query.appendWithinSingleQuotes(lastCreationTime.toSQLString());
+
+			System.out.println("SQL -> "+this.getClass()+":"+query);
+			// AND created > '18.11.2002 16:31:06'
+			//select gr.created,usr.* from IC_USER usr, IC_GROUP gr WHERE usr.IC_USER_ID=gr.IC_GROUP_ID AND created > '18.11.2002 16:31:06' ORDER BY gr.CREATED  desc
+					return idoFindPKsByQuery(query); 
+		} catch (IDOCompositPrimaryKeyException e) {
+			e.printStackTrace();
+			return ListUtil.getEmptyList();
+		}
+  }
+  
+  
   
   /**
    * add condition if column deleted equals 'N' or is null
