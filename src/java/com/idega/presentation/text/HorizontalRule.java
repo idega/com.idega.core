@@ -83,6 +83,10 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
       setAttribute("noshade");
   }
 
+  public void setColor(String color) {
+    setAttribute("color",color);
+  }
+
   public void setNoShade() {
     setNoShade(true);
   }
