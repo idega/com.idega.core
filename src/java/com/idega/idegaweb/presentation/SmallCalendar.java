@@ -58,6 +58,7 @@ public class SmallCalendar extends Block {
 	private String backgroundStyleClass;
 	private String todayBackgroundStyleClass;
 	private String selectedBackgroundStyleClass;
+	private String monthTextStyleClass;
 	
 	private String width = "110";
 	private String height = "60";
@@ -166,6 +167,7 @@ public class SmallCalendar extends Block {
 		setAsObjectInstanceTarget(left);
 
 		Table T2 = new Table(3, 2);
+		T.setCellpadding(iCellpadding);
 		T2.setCellpadding(0);
 		T2.mergeCells(1, 2, 3, 2);
 		T2.setCellspacing(0);
@@ -173,9 +175,9 @@ public class SmallCalendar extends Block {
 		T.setWidth(width);
 		T2.setHeight(height);
 		T.setHeight(height);
-		T2.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
+		T2.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		T2.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
-		T2.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		T2.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		
 		if (backgroundStyleClass != null) {
 			T2.setStyleClass(getStyleName(backgroundStyleClass));
@@ -183,8 +185,8 @@ public class SmallCalendar extends Block {
 			T2.setColor(backgroundColor);
 		}
 
-		T2.setColumnAlignment(1, "center");
-		T2.setColumnVerticalAlignment(1, "middle");
+		//T2.setAlignment(1, "center");
+		//T2.setColumnVerticalAlignment(1, "middle");
 
 		//T.setColor(inactiveCellColor);
 
@@ -363,7 +365,6 @@ public class SmallCalendar extends Block {
 	public void initialize() {
 		today = new IWTimestamp();
 		T = new Table();
-		T.setCellpadding(iCellpadding);
 		T.setCellspacing(0);
 		T.setWidth(width);
 	}
@@ -395,6 +396,19 @@ public class SmallCalendar extends Block {
 		Text text = new Text(content);
 		if (headerTextStyleClass != null) {
 			text.setStyleClass(headerTextStyleClass);
+		} else {
+			text.setFontColor(headerTextColor);
+			text.setFontSize(2);
+			text.setBold();
+			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + headerTextColor + "; font-size: 8pt; text-decoration: none;");
+		}
+		return text;
+	}
+	
+	private Text getMonthText(String content) {
+		Text text = new Text(content);
+		if (monthTextStyleClass != null) {
+			text.setStyleClass(monthTextStyleClass);
 		} else {
 			text.setFontColor(headerTextColor);
 			text.setFontSize(2);
@@ -988,5 +1002,8 @@ public class SmallCalendar extends Block {
 	}
 	public void setCellpadding(int cellpadding) {
 		iCellpadding = cellpadding;
+	}
+	public void setMonthTextStyleClass(String monthTextStyleClass) {
+		this.monthTextStyleClass = monthTextStyleClass;
 	}
 }
