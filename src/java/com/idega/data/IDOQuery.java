@@ -54,6 +54,7 @@ public class IDOQuery implements Cloneable {
 	private static final String DELETE = "DELETE ";
 	private static final String INSERT = "INSERT ";
 	private static final String UPDATE = "UPDATE ";
+	private static final String SET = "SET ";
 	private static final String IN = " IN ";
 	private static final String NOT_IN = " NOT IN ";
 	private static final String VALUES = " VALUES ";
@@ -163,6 +164,17 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 	
+	/**
+	 * Appends quoted string like 'anObject'
+	 * @param string
+	 * @return 
+	 */
+	public IDOQuery appendQuoted(Object anObject) {
+		_buffer.append(QUOTATION_MARK);
+		_buffer.append(anObject);
+		_buffer.append(QUOTATION_MARK);
+		return this;
+	}
 	
 	public IDOQuery append(IDOEntityField field){
 		return this.append(field.getSQLFieldName());
@@ -552,6 +564,16 @@ public class IDOQuery implements Cloneable {
 		return this.appendSelectSumFrom(columnName, entity.getEntityDefinition().getSQLTableName());
 	}
 
+	/**
+	 * Create Query like "UPDATE tableName SET "
+	 * @param entity
+	 * @return
+	 */
+	public IDOQuery appendUpdateSet(IDOEntity entity) {
+		String tableName = entity.getEntityDefinition().getSQLTableName();
+		return append(UPDATE).append(tableName).append(WHITE_SPACE).append(SET);
+	}
+	
 	public IDOQuery appendFrom() {
 			return this.append(FROM);
 	}
@@ -573,7 +595,10 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 	
-
+	public IDOQuery appendWhiteSpace() {
+		return this.append(WHITE_SPACE);
+	}
+	
 	public IDOQuery appendDelete() {
 		return this.append(DELETE);
 	}
