@@ -27,7 +27,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(getColumnNameAddressTypeId(), "Address type", AddressType.class);
-		addAttribute("street_name", "Street Name", true, true, String.class, 80);
+		addAttribute("street_name", "Street Name", true, true, String.class, 100);
 		addAttribute("street_number", "Street number", true, true, String.class, 30);
 		addAttribute("city", "City", true, true, String.class, 50);
 		addAttribute("province", "Province", true, true, String.class, 50);
