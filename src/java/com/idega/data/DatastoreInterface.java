@@ -113,8 +113,12 @@ public abstract class DatastoreInterface{
     entity.freeConnection(conn);
 
     }
-    catch(SQLException ex){
-      System.err.println("Exception in DatastoreInterface.getInstance(GenericEntity entity): "+ex.getMessage());
+    catch(Exception ex){
+    //  System.err.println("Exception in DatastoreInterface.getInstance(GenericEntity entity): "+ex.getMessage());
+    //}
+    //catch(NullPointerException npe){
+    //
+      throw new IDONoDatastoreError();
     }
 
     return getInstance(datastoreType);
