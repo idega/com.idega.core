@@ -108,7 +108,7 @@ public class SelectQuery implements Outputable {
 				}
 			}
 
-			addManyToManyJoin(srcTable, source, destTable, destination);
+			addManyToManyJoin(srcTable, destTable);
 		}
 		throw new IDORelationshipException("No relation found between tables!");
 	}
@@ -131,30 +131,35 @@ public class SelectQuery implements Outputable {
 				}
 			}
 
-			addManyToManyJoin(srcTable, source, destTable, destination);
+			addManyToManyJoin(srcTable, destTable);
 		}
 		throw new IDORelationshipException("No relation found between tables!");
 	}
 	
-	private void addManyToManyJoin(Table srcTable, IDOEntityDefinition source, Table destTable, IDOEntityDefinition destination) throws IDORelationshipException {
-		IDOEntityDefinition[] definitions = source.getManyToManyRelatedEntities();
-		if (definitions != null && definitions.length > 0) {
-			for (int i = 0; i < definitions.length; i++) {
-				IDOEntityDefinition definition = definitions[i];
-				if (destination.equals(definition)) {
-					try {
-						String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
-						if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables."); }
+	public void addManyToManyJoin(Table srcTable, Table destTable) throws IDORelationshipException {
+		if (srcTable.hasEntityDefinition() && destTable.hasEntityDefinition()) {
+			IDOEntityDefinition source = srcTable.getEntityDefinition();
+			IDOEntityDefinition destination = destTable.getEntityDefinition();
 
-						Table middleTable = new Table(middleTableName);
-
-						addCriteria(new JoinCriteria(srcTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), middleTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
-						addCriteria(new JoinCriteria(middleTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), destTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
+			IDOEntityDefinition[] definitions = source.getManyToManyRelatedEntities();
+			if (definitions != null && definitions.length > 0) {
+				for (int i = 0; i < definitions.length; i++) {
+					IDOEntityDefinition definition = definitions[i];
+					if (destination.equals(definition)) {
+						try {
+							String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
+							if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables."); }
+	
+							Table middleTable = new Table(middleTableName);
+	
+							addCriteria(new JoinCriteria(srcTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), middleTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
+							addCriteria(new JoinCriteria(middleTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), destTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
+						}
+						catch (IDOCompositePrimaryKeyException e) {
+							throw new IDORelationshipException(e.getMessage());
+						}
+						return;
 					}
-					catch (IDOCompositePrimaryKeyException e) {
-						throw new IDORelationshipException(e.getMessage());
-					}
-					return;
 				}
 			}
 		}
