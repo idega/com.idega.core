@@ -817,7 +817,7 @@ public class TextSoap {
 
 	/**
 	 * Changes all the special characters in the given string to their corresponding symbolic value.
-	 * For example: & => &amp;, < = &lt;
+	 * For example: '& => &amp;', '< = &lt;'
 	 * @param stringToConvert	The string to convert.
 	 * @return String
 	 */
