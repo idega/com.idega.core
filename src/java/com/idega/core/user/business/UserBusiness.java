@@ -364,46 +364,35 @@ public class UserBusiness {
     Connection conn= null;
     Statement Stmt= null;
     try {
-      Email eEmail = new Email();
-      eEmail.setEmailAddress(sNewEmailAddress);
-      eEmail.insert();
-      eEmail.getID();
+      Email eEmail = lookupEmail(sNewEmailAddress);
+      if(eEmail!=null){
+        eEmail = new Email();
+        eEmail.setEmailAddress(sNewEmailAddress);
+        eEmail.insert();
+      }
 
       User U = getUser(iUserId);
       eEmail.addTo(User.class,iUserId);
-      /*
-      conn = com.idega.util.database.ConnectionBroker.getConnection();
-      Stmt = conn.createStatement();
-      String table
-      Stmt.executeUpdate("insert into IC_USER_EMAIL (IC_USER_ID, IC_EMAIL_ADDRESS) values("+String.valueOf(iUserId)+","+String.valueOf(eEmail.getID())+")");
-      */
+
     }
     catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-    finally{
-      if(Stmt != null){
-        try{
-        Stmt.close();
-        }
-        catch(SQLException ex){}
-      }
-      if (conn != null){
-        com.idega.util.database.ConnectionBroker.freeConnection(conn);
-      }
+
     }
   }
 
-  /*
-  public static List listOfGroups(){
+  public static Email lookupEmail(String EmailAddress){
     try {
-      return EntityFinder.findAll(new GenericGroup());
+      EntityFinder.debug = true;
+      java.util.List c = EntityFinder.getInstance().findAllByColumn(Email.class,Email.getColumnNameAddress(),EmailAddress);
+      EntityFinder.debug = false;
+      if(c!=null && c.size() > 0)
+        return (Email) c.get(0);
     }
-    catch (SQLException ex) {
-      return null;
+    catch (Exception ex) {
+
     }
+    return null;
   }
-  */
 
   /**
    * @deprecated use  getUserGroupsDirectlyRelated(int iUserId)

@@ -375,7 +375,7 @@ public class CategoryFinder {
     sql.append(" and ").append(catEntity.getEntityName()).append(".").append(catEntity.getIDColumnName());
     sql.append(" = ").append(entity.getEntityName()).append(".").append(EntityColumn);
 
-    System.err.println(sql.toString());
+    //System.err.println(sql.toString());
     return sql.toString();
   }
 
