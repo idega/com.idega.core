@@ -1356,6 +1356,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//to benefit from the IDOEntityList features
 		
 		int loadBalancePrefetchSize = 100;
+		if(this.isDebugActive()){
+			System.out.println("[ejbFindUsersByConditions-sql]: "+query);
+		}
 		return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
 
 	}
