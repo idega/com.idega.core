@@ -66,32 +66,35 @@ import java.util.*;
 		if ((name != null) && (name.length() > 0)) {
 			StringTokenizer token = new StringTokenizer(name);
 			int countWithoutFirstAndLast = token.countTokens() - 2;
-
-			firstName = (((String) token.nextElement()));
-
-			if (countWithoutFirstAndLast >= 1) {
-				StringBuffer middleName = new StringBuffer();
-
-				for (int i = 0; i < countWithoutFirstAndLast; i++) {
-					middleName.append((String) token.nextElement());
-
-					if (i != (countWithoutFirstAndLast - 1))
-						middleName.append(" ");
-
+			
+			if( token.hasMoreTokens() ){
+				firstName = token.nextToken();
+	
+				if (countWithoutFirstAndLast >= 1) {
+					StringBuffer middleName = new StringBuffer();
+	
+					for (int i = 0; i < countWithoutFirstAndLast; i++) {
+						middleName.append(token.nextToken());
+	
+						if (i != (countWithoutFirstAndLast - 1))
+							middleName.append(" ");
+	
+					}
+	
+					this.middleName = middleName.toString();
 				}
-
-				this.middleName = middleName.toString();
+				else { //set middle name == null
+					this.middleName = null;
+				}
+	
+				if (countWithoutFirstAndLast >= 0) {
+					lastName = token.nextToken();
+				}
+				else { //remove last name
+					this.lastName = null;
+				}
 			}
-			else { //set middle name == null
-				this.middleName = null;
-			}
-
-			if (countWithoutFirstAndLast >= 0) {
-				lastName = (String) token.nextElement();
-			}
-			else { //remove last name
-				this.lastName = null;
-			}
+			else System.out.println("com.idega.util.text.Name fullname is an empty string!");
 		}
 	}
   }
