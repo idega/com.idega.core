@@ -1092,6 +1092,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	
 	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
 		IDOQuery query = idoQuery();
+		boolean firstOperatorAdded = false;
 		
 		final String operator = useAnd ? " AND " : " OR ";
 		
@@ -1099,28 +1100,31 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		query.append(" ( ");
 		//name	
-		if(userName!=null){
+		if(userName!=null && !userName.equals("") ){
 			query.append(" ( ")
 			.append(getUserNameSearchString(userName))
 			.append(" ) ");
+			
+			firstOperatorAdded = true;
 		}
 				
 		if( (startAge > 0) && (endAge >startAge) ){
-			query.appendAnd()
-			.append(" ( ")
+			if(firstOperatorAdded ) query.appendAnd();
+			
+			query.append(" ( ")
 			.append(getUserDateOfBirthSearchString(startAge, endAge))
 			.append(" ) ");
 		}
 		
 		//not deleted
-		query.appendAnd();
+		if(firstOperatorAdded) query.appendAnd();
 		appendIsNotDeleted(query);
 		
 		
 		query.append(" ) ");
 		
 		//personalId
-		if(personalId!=null){
+		if(personalId!=null && !personalId.equals("") ){
 			query.append(operator)
 			.append(" ( ")
 			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
@@ -1128,7 +1132,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 			
 		//address
-		if(streetName!=null){
+		if(streetName!=null && !streetName.equals("")  ){
 			query.append(operator)
 			.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
 		}
