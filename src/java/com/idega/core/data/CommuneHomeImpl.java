@@ -27,6 +27,13 @@ public Commune findByCommuneNameAndProvince(java.lang.String p0,java.lang.Object
 	return this.findByPrimaryKey(pk);
 }
 
+public Commune findDefaultCommune()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((CommuneBMPBean)entity).ejbFindDefaultCommune();
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
  public Commune findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (Commune) super.findByPrimaryKeyIDO(pk);
  }
