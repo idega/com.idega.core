@@ -971,18 +971,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004
 	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
-	 * This has not yet been implemented in this class. Only in GroupBMPBean
-	 * This was added to this method to conform to the Group interface
 	 */
-	public List getParentGroups(Map p0, Map p1)  {
+	public List getParentGroups(Map cachedParents, Map cachedGroups)  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
 		try{
-			List l = getGeneralGroup().getParentGroups();
-			Group primaryGroup = this.getPrimaryGroup();
-			if(primaryGroup!=null && !l.contains(primaryGroup)){
-				l.add(primaryGroup);
-			}
+			List l = getGeneralGroup().getParentGroups(cachedParents, cachedGroups);
+    		//The next 4 lines perform the same actions as have already been performed in GroupBMPBean.getParentGroups() and are therefore unnecessary.
+			//Group primaryGroup = this.getPrimaryGroup();
+			//if(primaryGroup!=null && !l.contains(primaryGroup)){
+			//	l.add(primaryGroup);
+			//}
 			return l;
 		}
 		catch(Exception e){

@@ -390,7 +390,20 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			if (isUser()) {
 				try {
                     User user = getUserForGroup();
-                    Group usersPrimaryGroup = user.getPrimaryGroup();
+	                Group usersPrimaryGroup = null;
+                    key = String.valueOf(user.getPrimaryGroupID());
+        	        if (cachedGroups != null) {
+        	        	if (cachedGroups.containsKey(key))
+        	        	    usersPrimaryGroup = (Group)cachedGroups.get(key);
+        	        	else
+        	        	{	
+        	        	    usersPrimaryGroup = user.getPrimaryGroup();
+        	        		cachedGroups.put(key, usersPrimaryGroup);
+        	        	}
+        	        }
+        	        else {
+        	            usersPrimaryGroup = user.getPrimaryGroup();;
+        	        }
                     if (usersPrimaryGroup!=null && !theReturn.contains(usersPrimaryGroup)) {
                     	theReturn.add(usersPrimaryGroup);
                     }

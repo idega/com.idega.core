@@ -559,7 +559,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private Collection getParentGroupsAndPermissionControllingParentGroups(String permissionKey, IWUserContext iwc) throws RemoteException {
 		Collection groups;
 		//must be slow optimize
-		groups = getGroupBusiness(iwc).getParentGroups(iwc.getCurrentUser()); //com.idega.user.data.User
+		Map cachedParents = new HashMap();
+		Map cachedGroups = new HashMap();
+		groups = getGroupBusiness(iwc).getParentGroups(iwc.getCurrentUser(), cachedParents, cachedGroups); //com.idega.user.data.User
 
 		Vector groupsToCheckForPermissions = new Vector();
 		Iterator iter = groups.iterator();
