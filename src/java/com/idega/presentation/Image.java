@@ -820,7 +820,7 @@ public class Image extends PresentationObject
 			setImageZoomLink(link);
 			setImageLinkZoomView();
 		}
-		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML))
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML))
 		{
 			//added by eiki
 			//Change the imageId so that it is localized
@@ -834,7 +834,7 @@ public class Image extends PresentationObject
 				getHTMLImage(iwc);
 			}
 		}
-		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML))
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML))
 		{
 			setURL(iwc.getServerURL() + getMediaURL(iwc));
 			String markup = getHTMLString(iwc);

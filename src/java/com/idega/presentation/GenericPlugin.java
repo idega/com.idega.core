@@ -156,7 +156,7 @@ public class GenericPlugin extends PresentationObject
 				String url = getICFileSystem(iwc).getFileURI(file);
 				setURL(url);
 			}
-			if (getLanguage().equals("HTML"))
+			if (getMarkupLanguage().equals("HTML"))
 			{
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("<object classid=\"clsid:");

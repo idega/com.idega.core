@@ -82,7 +82,7 @@ public class TextEditor extends PresentationObject {
 
   public void print(IWContext iwc)throws Exception{
 
-    if (getLanguage().equals("HTML")){
+    if (getMarkupLanguage().equals("HTML")){
 
       if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
 

@@ -28,7 +28,7 @@ public class FileInput extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws IOException {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			println("<input type=\"file\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " ></input>");
 		}
 	}

@@ -97,12 +97,12 @@ public class TextArea extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws IOException {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			print("<textarea name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
 			print(getContent());
 			print("</textarea>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			print("<input type=\"text\" name=\"" + getName() + "\" value=\"" + getContent() + "\" >");
 			print("</input>");
 		}

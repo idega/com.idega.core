@@ -141,7 +141,7 @@ public class Applet extends PresentationObject {
 	}
 	public void print(IWContext iwc) throws IOException {
 		if (doPrint(iwc)) {
-			if (getLanguage().equals("HTML")) {
+			if (getMarkupLanguage().equals("HTML")) {
 				print("<APPLET");
 				print(getMarkupAttributesString());
 				print(" >\n");

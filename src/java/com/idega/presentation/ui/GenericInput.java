@@ -40,11 +40,11 @@ public abstract class GenericInput extends InterfaceObject {
 	}
 	
 	public void print(IWContext main) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			String markup = main.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		}
-		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			if(normalPrintSequence()) {
 				printWML(main);
 			}

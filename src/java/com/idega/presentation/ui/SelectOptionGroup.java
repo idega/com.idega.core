@@ -18,12 +18,12 @@ public class SelectOptionGroup extends InterfaceObject {
 	}
 	
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			print("<optgroup " + getMarkupAttributesString() + " >");
 			super.print(iwc);
 			println("</optgroup>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			print("<optgroup " + getMarkupAttributesString() + " >");
 			super.print(iwc);
 			println("</optgroup>");

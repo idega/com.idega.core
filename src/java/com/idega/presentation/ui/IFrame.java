@@ -189,7 +189,7 @@ public class IFrame extends InterfaceObject {
 			this.setSrc(bservice.getPageURI(ibPageId));
 		}
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			print("<iframe name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
 			String content = super.getContent();
 			if (content != null) {

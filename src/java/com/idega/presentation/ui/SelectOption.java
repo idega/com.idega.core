@@ -61,12 +61,12 @@ public class SelectOption extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			print("<option " + getMarkupAttributesString() + " >");
 			print(getName());
 			println("</option>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			print("<option value=\"" + getValueAsString() + "\" >");
 			print(getName());
 			println("</option>");

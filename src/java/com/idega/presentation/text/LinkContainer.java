@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.19 2004/06/28 17:07:02 thomas Exp $
+ * $Id: LinkContainer.java,v 1.20 2004/07/02 02:27:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -471,7 +471,7 @@ public class LinkContainer extends PresentationObjectContainer {
 			addParameters = false;
 		}
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			if (openInNewWindow) {
 				String URL = getURL();
 				if (getPage() != 0)
@@ -516,7 +516,7 @@ public class LinkContainer extends PresentationObjectContainer {
 			print("</a>");
 		}
 		else
-			if (getLanguage().equals("WML")) {
+			if (getMarkupLanguage().equals("WML")) {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}

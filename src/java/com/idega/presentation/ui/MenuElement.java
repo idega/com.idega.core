@@ -1,5 +1,5 @@
 /*
- * $Id: MenuElement.java,v 1.9 2004/02/26 09:09:53 laddi Exp $
+ * $Id: MenuElement.java,v 1.10 2004/07/02 02:27:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -71,7 +71,7 @@ public class MenuElement extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws IOException {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			String disabledString = emptyString;
 			String selectedString = emptyString;
 			if (isSelected()) {
@@ -84,7 +84,7 @@ public class MenuElement extends InterfaceObject {
 			print(getName());
 			print("</option>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			print("<option name=\"" + getName() + "\" value=\"" + getValueAsString() + "\" >");
 			print(getName());
 			print("</option>");

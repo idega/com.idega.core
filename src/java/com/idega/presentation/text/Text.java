@@ -346,7 +346,7 @@ public class Text extends PresentationObject {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (attributeSet) {
 				print("<span " + getMarkupAttributesString() + " >");
 				print(getLocalizedText(iwc));
@@ -356,14 +356,14 @@ public class Text extends PresentationObject {
 				print(getLocalizedText(iwc));
 			}
 		}
-		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)) {
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)) {
 			String attributes = getMarkupAttributesString();
 
 			print("<paragraph " + attributes + ">");
 			print(getLocalizedText(iwc));
 			print("</paragraph>");
 		}
-		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			String text = getLocalizedText(iwc);
 			print(text);
 		}

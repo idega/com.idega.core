@@ -119,7 +119,7 @@ public class GenericButton extends GenericInput {
 	}
 	
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			if (asImageButton) {
 				defaultImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
 			}

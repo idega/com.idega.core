@@ -472,7 +472,7 @@ public class Form extends InterfaceObject {
 			convertActionToHTTPS(iwc);
 		}
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 			//String Action = getAction();
 			//if (Action.indexOf("idega_session_id") == -1){
@@ -485,7 +485,7 @@ public class Form extends InterfaceObject {
 				super.print(iwc);
 				print("</form>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 			setAction(getIdegaSpecialRequestURI(iwc));
 			print("<onevent type=\"onenterforward\" >");

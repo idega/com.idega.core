@@ -107,7 +107,7 @@ public void print(IWContext iwc)throws IOException{
 
 	//if ( doPrint(iwc) ){
 
-		if (getLanguage().equals("HTML")){
+		if (getMarkupLanguage().equals("HTML")){
 
 
 
@@ -133,7 +133,7 @@ public void print(IWContext iwc)throws IOException{
 
 
 
-		else if (getLanguage().equals("WML")){
+		else if (getMarkupLanguage().equals("WML")){
 
 			print("<input type=\"text\" format=\"*N\" name=\""+getName()+"\" value=\""+getValueAsString()+"\" />");
 

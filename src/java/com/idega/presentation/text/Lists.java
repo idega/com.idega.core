@@ -92,7 +92,7 @@ public class Lists extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 		getBullet();
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			if (!compact) {
 				println("<" + getListType() + " " + getMarkupAttributesString() + ">");
 			}
@@ -130,7 +130,7 @@ public class Lists extends PresentationObjectContainer {
 				println("</" + getListType() + ">");
 			}
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			println("<ul>");
 			super.print(iwc);
 			println("</ul>");

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.114 2004/06/24 20:12:24 tryggvil Exp $
+ *  $Id: Page.java,v 1.115 2004/07/02 02:27:49 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1190,7 +1190,7 @@ public class Page extends PresentationObjectContainer {
 
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
-		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (!isInsideOtherPage) {
 				IWMainApplicationSettings settings = iwc.getApplicationSettings();
 				String characterEncoding = settings.getCharacterEncoding(); 
@@ -1258,7 +1258,7 @@ public class Page extends PresentationObjectContainer {
 				println(getEndTag());
 			}
 		}
-		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
 			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
 			println("<wml>");
@@ -1280,7 +1280,7 @@ public class Page extends PresentationObjectContainer {
 			println("</card>");
 			println("</wml>");
 		}
-		else if(getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
+		else if(getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
 			println("<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>");
 			//println("<!DOCTYPE ITEXT SYSTEM \"http://www.lowagie.com/iText/itext.dtd\">");
 			println("<itext producer=\"Idega Software, http://www.idega.com\">");

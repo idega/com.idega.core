@@ -214,7 +214,7 @@ public String getFunction(String functionName){
 
 public void print(IWContext iwc)throws Exception{
   if (doPrint(iwc)){
-    if (getLanguage().equals("HTML")){
+    if (getMarkupLanguage().equals("HTML")){
       com.idega.core.builder.data.ICDomain d = iwc.getDomain();
 
       if (d.getURL() != null) {
@@ -239,7 +239,7 @@ public void print(IWContext iwc)throws Exception{
 				//flush();
 			//}
       }
-      else if (getLanguage().equals("WML")){
+      else if (getMarkupLanguage().equals("WML")){
 			println("");
       }
     }

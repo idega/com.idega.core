@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.122 2004/07/01 01:04:11 jonas Exp $
+ * $Id: Link.java,v 1.123 2004/07/02 02:27:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1666,7 +1666,7 @@ public class Link extends Text {
 			addParameters = false;
 		}
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			boolean openInNewWindow = isOpeningInNewWindow();
 			boolean alignSet = isMarkupAttributeSet(HORIZONTAL_ALIGNMENT);
 
@@ -1773,7 +1773,7 @@ public class Link extends Text {
 			print("</a>");
 			}*/
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			if (_myWindow != null) {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
 				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????

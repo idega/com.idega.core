@@ -193,7 +193,7 @@ public class SubmitButton extends GenericButton {
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
 					super.print(iwc);

@@ -265,12 +265,12 @@ public class GenericSelect extends InterfaceObject {
 			}
 		}
 
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 			super.print(iwc);
 			print("</select>");
 		}
-		else if (getLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals("WML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 			super.print(iwc);
 			println("</select>");

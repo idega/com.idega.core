@@ -31,11 +31,11 @@ public class Break extends PresentationObject {
 
 	public void print(IWContext iwc) {
 		for (int a = 1; a <= _numberOfBreaks; a++) {
-			if (getLanguage().equals("HTML")) {
+			if (getMarkupLanguage().equals("HTML")) {
 				String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
 				print("<br " + (!markup.equals(Page.HTML) ? "/" : "") + ">");
 			}
-			else if (getLanguage().equals("WML")) {
+			else if (getMarkupLanguage().equals("WML")) {
 				if(!((this.getParent() instanceof Page) || (this.getParent() instanceof Block))){
 					print("<br />");
 				}

@@ -52,7 +52,7 @@ public class Layer extends PresentationObjectContainer {
 
 	public void print(IWContext iwc) throws Exception {
 		if (doPrint(iwc)) {
-			if (getLanguage().equals("HTML")) {
+			if (getMarkupLanguage().equals("HTML")) {
 				print("<" + layerType + " ");
 				print(getMarkupAttributesString() + ">");
 				super.print(iwc);

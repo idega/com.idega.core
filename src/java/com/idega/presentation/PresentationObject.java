@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.100 2004/07/02 01:59:51 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.101 2004/07/02 02:27:49 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -80,7 +80,7 @@ implements Cloneable, PresentationObjectType
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private PrintWriter out;
-	private String language;
+	private String markupLanguage;
 	public Map attributes;
 	private String name;
 	//protected UIComponent parentObject;
@@ -214,10 +214,10 @@ implements Cloneable, PresentationObjectType
 	{
 		this._request = iwc.getRequest();
 		this._response = iwc.getResponse();
-		this.language = iwc.getMarkupLanguage();
-		if (language == null)
+		this.markupLanguage = iwc.getMarkupLanguage();
+		if (markupLanguage == null)
 		{
-			language = IWConstants.MARKUP_LANGUAGE_HTML;
+			markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 		this.out = iwc.getWriter();
 	}
@@ -571,15 +571,21 @@ implements Cloneable, PresentationObjectType
 	{
 		return this._response;
 	}
-
+	/**
+	 * @deprecated Replaced with getMarkupLanguage().
+	 * Only preserved for backwards compatability.
+	 */
+	public String getLanguage() {
+	    return getMarkupLanguage();
+	}
+	
 	/**
 	 * @return The "layout" language used and supplied by the IWContext
 	 * 
-	 * @uml.property name="language"
 	 */
-	public String getLanguage() {
-		if (language != null)
-			return this.language;
+	public String getMarkupLanguage() {
+		if (markupLanguage != null)
+			return this.markupLanguage;
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
 

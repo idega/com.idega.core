@@ -77,7 +77,7 @@ public void print(IWContext iwc)throws Exception{
 
 	if (doPrint(iwc)){
 
-		if (getLanguage().equals("HTML")){
+		if (getMarkupLanguage().equals("HTML")){
 
 
 
@@ -165,7 +165,7 @@ public void print(IWContext iwc)throws Exception{
 
 		}
 
-		else if (getLanguage().equals("WML")){
+		else if (getMarkupLanguage().equals("WML")){
 
 
 

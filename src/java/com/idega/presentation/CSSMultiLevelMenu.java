@@ -160,7 +160,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      */
     public void print(IWContext iwc) throws Exception {
         
-        if(getLanguage().equals("HTML")) {
+        if(getMarkupLanguage().equals("HTML")) {
 	        if(topMenuMap!=null && !topMenuMap.isEmpty()) {
 	        	println("<script type=\"text/javascript\">\n ADXM.Add( \"menuList\", \"H\" ); \n </script>");
 	            print(prefix);

@@ -23,12 +23,12 @@ public class PreformattedText extends PresentationObject {
 	}
 
 	public void print(IWContext iwc)throws Exception{
-		if (getLanguage().equals("HTML")){
+		if (getMarkupLanguage().equals("HTML")){
 			print("<pre "+getMarkupAttributesString()+" >");
 			print(getText());
 			print("</pre>");
 		}
-		else if (getLanguage().equals("WML")){
+		else if (getMarkupLanguage().equals("WML")){
 			print(getText());
 		}
 	}

@@ -420,7 +420,7 @@ public class SelectionBox extends InterfaceObject
 				theHeader._print(iwc);
 			}
 			//if ( doPrint(iwc) ){
-			if (getLanguage().equals("HTML"))
+			if (getMarkupLanguage().equals("HTML"))
 			{
 				if (this.keepStatus == true)
 				{
@@ -440,7 +440,7 @@ public class SelectionBox extends InterfaceObject
 						tempobj._print(iwc);
 					}
 					println("</select>");
-			} else if (getLanguage().equals("WML"))
+			} else if (getMarkupLanguage().equals("WML"))
 			{
 				if (this.keepStatus == true)
 				{

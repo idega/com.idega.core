@@ -208,7 +208,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
   public void print(IWContext iwc)throws IOException{
 
 
-    if (getLanguage().equals("HTML")){
+    if (getMarkupLanguage().equals("HTML")){
 
       print("<hr "+getMarkupAttributesString()+" >");
 

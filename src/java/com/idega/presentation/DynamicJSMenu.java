@@ -342,7 +342,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	public void print(IWContext main) throws Exception {
-		if (getLanguage().equals("HTML")){
+		if (getMarkupLanguage().equals("HTML")){
 		    
 		    print(getTableWithLayer(iwc));
 			
@@ -383,7 +383,7 @@ public class DynamicJSMenu extends PresentationObject {
 			print(_menuObjectName + ".construct()\n\n");
 			print("</script>");			
 		}
-		else if (getLanguage().equals("WML")){
+		else if (getMarkupLanguage().equals("WML")){
 			println("");
 		}
 	}

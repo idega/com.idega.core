@@ -27,11 +27,11 @@ public class Label extends InterfaceObject {
 	}
 	
 	public void print(IWContext iwc) throws Exception {
-		if (getLanguage().equals("HTML")) {
+		if (getMarkupLanguage().equals("HTML")) {
 			print("<label "+getMarkupAttributesString()+" >");
 			print(_label);
 			println("</label>");	
-		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getLanguage())) {
+		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {
 			println("<br/>");	
 			print(_label);
 			println("<br/>");	
