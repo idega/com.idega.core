@@ -2,7 +2,6 @@
 package com.idega.idegaweb.template;
 
 import com.idega.presentation.*;
-import com.idega.jmodule.login.business.AccessControl;
 
 /**
  * Title:
@@ -59,7 +58,7 @@ public class TemplatePage extends Page {
    * <H2>Unimplemented</H2>
    */
   public boolean isAdministrator(IWContext iwc)throws Exception{
-    return AccessControl.isAdmin(iwc);
+    return iwc.hasEditPermission(this);
   }
   /**
    * <H2>Unimplemented</H2>

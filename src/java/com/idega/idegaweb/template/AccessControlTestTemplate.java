@@ -1,10 +1,8 @@
 package com.idega.idegaweb.template;
 
-import com.idega.jmodule.forum.presentation.GrayForums;
-import com.idega.core.accesscontrol.business.AccessController;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
-import com.idega.jmodule.login.*;
 
 
 /**
@@ -18,19 +16,22 @@ import com.idega.jmodule.login.*;
 
 
 public class AccessControlTestTemplate extends TemplatePage {
-  GrayForums myForums;
+
 
   public AccessControlTestTemplate() throws Exception{
-    myForums = new GrayForums();
+
   }
 
   public void main(IWContext iwc) throws Exception {
-    if(iwc.getAccessController().hasPermission(AccessController._PERMISSIONKEY_VIEW,myForums,iwc)){
+    /*
+    if(iwc.hasEditPermission(this)){
       this.add(myForums);
-    }else{
+    }else
+    */{
+
       this.add(new Text("ekki leyfi!"));
     }
-      this.add(new Login());
+     // this.add(new Login());
   }
 
 
