@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.81 2002/09/05 14:08:30 eiki Exp $
+ * $Id: Link.java,v 1.82 2002/12/09 19:01:26 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -437,7 +437,7 @@ public class Link extends Text{
 	setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text,text));
       }
       else{
-	setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(text));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getImageButton(getLocalizedText(iwc)));
       }
     }
     else if( isImageTab ){//get a generated button gif image
@@ -445,7 +445,7 @@ public class Link extends Text{
 	setPresentationObject(iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip));
       }
       else{
-	setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(text,flip));
+	setPresentationObject(iwc.getApplication().getCoreBundle().getImageTab(getLocalizedText(iwc),flip));
       }
     }
 
