@@ -1351,10 +1351,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
       p.setPermissionValue(permission.getPermissionValue());
 
-      // gorupID changes
+      // groupID changes
       p.setGroupID(group.getID());
 
       p.insert();
+
+      //PermissionCacher.updatePermissions(,p.getContextValue(),permissionType,iwc);
       return true;
     }
     catch (Exception ex) {
