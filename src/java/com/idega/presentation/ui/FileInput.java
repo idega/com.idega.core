@@ -38,4 +38,15 @@ public class FileInput extends InterfaceObject {
 	 */
 	public void handleKeepStatus(IWContext iwc) {
 	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
+	 */
+	public void main(IWContext iwc) throws Exception {
+		super.main(iwc);
+		Form parentForm = getParentForm();
+		if(parentForm!=null) {
+			parentForm.setMultiPart();
+		}
+	}
+
 }
