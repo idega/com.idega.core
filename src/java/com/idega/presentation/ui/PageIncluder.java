@@ -117,6 +117,9 @@ public class PageIncluder extends PresentationObject{
           iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
 
           loc = TextSoap.findAndReplace(loc,token,sessionId);
+          loc = TextSoap.findAndCut(loc,"\r\n");
+          loc = TextSoap.findAndCut(loc,"\n");
+
 
         }
         else if( (sessionId!=null) && (token!=null)){
