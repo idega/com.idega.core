@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.117 2005/02/10 10:42:47 thomas Exp $
+ * $Id: IWContext.java,v 1.118 2005/03/02 12:04:24 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -45,6 +45,7 @@ import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
 import com.idega.event.IWEventProcessor;
@@ -74,18 +75,23 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
+ * Last modified: $Date: 2005/03/02 12:04:24 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.117 $
+ * @version $Revision: 1.118 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
 implements IWUserContext, IWApplicationContext {
 
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3761970466885022262L;
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
+	public final static String IDEGA_SESSION_KEY="idega_session_id";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
 	private String markupLanguage; //Variable to set the language i.e. HTML
@@ -1246,4 +1252,13 @@ implements IWUserContext, IWApplicationContext {
 		return getRequest().getRemoteUser();
 	}
 
+	public String getIdegaSessionId(){
+		String sessionId = (String) getSessionAttribute(IDEGA_SESSION_KEY);
+		if(sessionId==null){
+			sessionId = UUIDGenerator.getInstance().generateUUID();
+			setSessionAttribute(IDEGA_SESSION_KEY,sessionId);
+		}
+		return sessionId;
+	}
+	
 }
