@@ -1,219 +1,333 @@
-/*
- * $Id:$
- *
- * Copyright (C) 2000 Idega hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- *
- */
 package com.idega.util;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
 import com.idega.presentation.IWContext;
+import com.idega.util.text.TextSoap;
 
 /**
- * @author idega 2000 - idega team
- * @version 1.0
+ * <code>IWTimestamp</code> is a class that can be used when working with SQL date/time
+ * strings and dates/time in general.  Has numerous features to compare dates and can also
+ * return a vast number of different date and time based objects.  It can also return
+ * rightly formatted SQL date strings.
+ *
+ * Copyright (C) 2000 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ **
+ * @author idega 2002 - idega team
+ * @version 1.1
  */
 public class IWTimestamp {
+	
+	/**
+	 * A time string representing the time at the first second of a day.
+	 */
 	public static final String FIRST_SECOND_OF_DAY = "00:00:00.0000";
+
+	/**
+	 * A time string representing the time at the last second of a day.
+	 */
 	public static final String LAST_SECOND_OF_DAY = "23:59:59.9999";
 
-	private GregorianCalendar Calendar;
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * four digit year.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String YEAR = "yyyy";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit year.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String YEAR_TWO_DIGITS = "yy";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit month.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String MONTH = "MM";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit day.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String DAY = "dd";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit hour (0-23).
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String HOUR = "kk";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit minute.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String MINUTE = "mm";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * two digit second.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String SECOND = "ss";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * x digit milliseconds.
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String MILLISECOND = "S";
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * date string like the following: 1970-10-06
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String DATE_PATTERN = YEAR + "-" + MONTH + "-" + DAY;
+
+	/**
+	 * A format setting for use with getDateString. Represents the pattern to display a
+	 * date string like the following: 12:45:30.323
+	 * @see IWTimestamp#getDateString(String pattern)
+	 */
+	public static final String TIME_PATTERN = HOUR + ":" + MINUTE + ":" + SECOND + "." + MILLISECOND;
+
+	private GregorianCalendar calendar;
 	private boolean isDate;
 	private boolean isTime;
 
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the current date and time settings.
+	 */
 	public IWTimestamp() {
-		Calendar = new GregorianCalendar();
+		calendar = new GregorianCalendar();
 	}
 
 	/**
-	 * utfærir smiðinn Timestamp(long time).
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and time settings of the given <code>long</code> number.
 	 */
 	public IWTimestamp(long time) {
 		this(new Timestamp(time));
 	}
 
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and/or time settings of the given <code>IWTimestamp</code> object.
+	 */
 	public IWTimestamp(IWTimestamp time) {
-		Calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
+		calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
 	}
 
 	/**
-	 * GregorianCalendar geymir manuði frá 0 til 11 en IWTimestamp frá 1 til 12. Ekki þarf að taka tillit til þess þvi klasinn leiðrettir það sjalfur.
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and time settings of the given <code>GregorianCalendar</code> object.
 	 */
 	public IWTimestamp(GregorianCalendar theCalendar) {
-		Calendar = theCalendar;
-	}
-
-	public IWTimestamp(Timestamp time) {
-		String TimeString = time.toString();
-
-		StringTokenizer tokens = new StringTokenizer(TimeString);
-		//yyyy-mm-dd hh:mm:ss.fffffffff
-
-		int year = Integer.parseInt(tokens.nextToken("-"));
-		int month = Integer.parseInt(tokens.nextToken("-"));
-		int date = Integer.parseInt(tokens.nextToken(" -"));
-		int hour = Integer.parseInt(tokens.nextToken(" :"));
-		int minute = Integer.parseInt(tokens.nextToken(":"));
-		int second = Integer.parseInt(tokens.nextToken(":."));
-
-		Calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
+		calendar = theCalendar;
 	}
 
 	/**
-	 * setur 0 fyrir hour, minute og second og lætur is_SQLDate() skila true. toString() skilar einnig aðeins Date-hlutanum
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and time settings of the given <code>Timestamp</code> object.
 	 */
-	public IWTimestamp(java.sql.Date date) {
-		isDate = true;
-
-		String TimeString = date.toString();
-
-		int year = Integer.parseInt(TimeString.substring(0, 4));
-		int month = Integer.parseInt(TimeString.substring(5, 7));
-		int day = Integer.parseInt(TimeString.substring(8, 10));
-
-		Calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
-	}
-
-	public IWTimestamp(int day, int month, int year) {
-		isDate = true;
-		Calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
-	}
-
-	public IWTimestamp(String day, String month, String year) {
-		isDate = true;
-		Calendar = new GregorianCalendar(Integer.parseInt(year), (Integer.parseInt(month) - 1), Integer.parseInt(day), 0, 0, 0);
+	public IWTimestamp(Timestamp time) {
+		this();
+		calendar.setTime(time);
 	}
 
 	/**
-	 * setur 1 fyrir year, month og date og lætur is_SQLTime() skila true. toString() skilar einnig aðeins Time-hlutanum
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date settings of the given <code>Date</code> object.  Time settings are
+	 * disgarded.
+	 */
+	public IWTimestamp(Date date) {
+		this();
+		isDate = true;
+		calendar.setTime(date);
+	}
+
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the time settings of the given <code>Time</code> object.  Date settings are
+	 * disgarded.
 	 */
 	public IWTimestamp(Time time) {
+		this();
 		isTime = true;
-
-		String TimeString = time.toString();
-
-		int hour = Integer.parseInt(TimeString.substring(0, 2));
-		int minute = Integer.parseInt(TimeString.substring(3, 5));
-		int second = Integer.parseInt(TimeString.substring(6, 7));
-
-		Calendar = new GregorianCalendar(1, 1, 1, hour, minute, second);
+		calendar.setTime(time);
 	}
 
 	/**
-	 * String-format 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss'
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and/or time settings given in the constructor.<br>
+	 * Available string formats are: 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss'
 	 */
 	public IWTimestamp(String SQLFormat) {
 		this();
 		String TimeString = SQLFormat;
 
 		if (TimeString.length() == 10) {
-			Calendar = new IWTimestamp(java.sql.Date.valueOf(SQLFormat)).getGregorianCalendar();
+			calendar = new IWTimestamp(Date.valueOf(SQLFormat)).getGregorianCalendar();
 			isDate = true;
 		}
 		else if (TimeString.length() == 8) {
-			Calendar = new IWTimestamp(Time.valueOf(SQLFormat)).getGregorianCalendar();
+			calendar = new IWTimestamp(Time.valueOf(SQLFormat)).getGregorianCalendar();
 			isTime = true;
 		}
 		else
-			Calendar = new IWTimestamp(Timestamp.valueOf(SQLFormat)).getGregorianCalendar();
+			calendar = new IWTimestamp(Timestamp.valueOf(SQLFormat)).getGregorianCalendar();
 	}
 
 	/**
-	 *   Her skal skrifa numer manaðar frá 1 til 12
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date settings given in the constructor.  All time settings will be set to 0.
+	 */
+	public IWTimestamp(int day, int month, int year) {
+		isDate = true;
+		calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
+	}
+
+	/**
+	 * Construct a new <code>IWTimestamp</code> object that is initialized to
+	 * the date and time settings given in the constructor.
 	 */
 	public IWTimestamp(int year, int month, int date, int hour, int minute, int second) {
-		Calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
+		calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
 	}
 
-	// ###########################
-	/// ####  Private - Föll #####
-	//// #########################
+	//Static methods
+	/**
+	 * Returns an <code>Timestamp</code> object with date and time settings set to
+	 * match the current date and time.
+	 * @return IWTimestamp
+	 */
+	public static Timestamp getTimestampRightNow() {
+		IWTimestamp stamp = RightNow();
+		return stamp.getTimestamp();
+	}
 
 	/**
-	* breytir x < 10 í "0X" 
-	*/
-	private String addZeros(int numberToFix) {
-		String FixedNumber;
-		if (numberToFix < 10)
-			FixedNumber = "0";
-		else
-			FixedNumber = "";
-
-		return FixedNumber + numberToFix;
+	 * Returns an <code>IWTimestamp</code> object with date and time settings set to
+	 * match the current date and time.
+	 * @return IWTimestamp
+	 */
+	public static IWTimestamp RightNow() {
+		GregorianCalendar myCalendar = new GregorianCalendar();
+		return new IWTimestamp(myCalendar);
 	}
 
-	// ###########################
-	/// ####  Public - Föll  #####
-	//// #########################
+	/**
+	 * Returns the days between the given <code>IWTimestamp</code> objects.  If
+	 * the first one is later than the second a negative value is returned.
+	 * @param before		The first IWTimestamp to use.
+	 * @param after		The second IWTimestamp to use.
+	 * @return int
+	 */
+	public static int getDaysBetween(IWTimestamp before, IWTimestamp after) {
+		return (int) (getMilliSecondsBetween(before, after) / 86400000);
+	}
 
-	public boolean is_SQLDate() {
+	/**
+	 * Returns the minutes between the given <code>IWTimestamp</code> objects.  If
+	 * the first one is later than the second a negative value is returned.
+	 * @param before		The first IWTimestamp to use.
+	 * @param after		The second IWTimestamp to use.
+	 * @return int
+	 */
+	public static int getMinutesBetween(IWTimestamp before, IWTimestamp after) {
+		return (int) (getMilliSecondsBetween(before, after) / 60000);
+	}
+
+	/**
+	 * Returns the milliseconds between the given <code>IWTimestamp</code> objects.  If
+	 * the first one is later than the second a negative value is returned.
+	 * @param before		The first IWTimestamp to use.
+	 * @param after		The second IWTimestamp to use.
+	 * @return int
+	 */
+	public static int getMilliSecondsBetween(IWTimestamp before, IWTimestamp after) {
+		if (before.isTime || after.isTime) {
+			before.setDay(1);
+			before.setMonth(2);
+			before.setYear(1);
+			after.setDay(1);
+			after.setMonth(2);
+			after.setYear(1);
+		}
+		long lBefore = before.getGregorianCalendar().getTime().getTime();
+		long lAfter = after.getGregorianCalendar().getTime().getTime();
+
+		long diff = lAfter - lBefore;
+
+		return (int) diff;
+	}
+
+	//Boolean methods
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object only contains a date setting.
+	 * @return boolean
+	 */
+	public boolean isDate() {
 		if (isDate)
 			return true;
-		else
-			return false;
-	}
-
-	public boolean is_SQLTime() {
-		if (isTime)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean is_idegaTimestamp() {
-		if (isTime || isDate)
-			return false;
-		else
-			return true;
-	}
-
-	public void setAsDate() {
-		isDate = true;
-		isTime = false;
-	}
-
-	public void setAsTime() {
-		isDate = false;
-		isTime = true;
-	}
-	public boolean equals(Object object) {
-		if (object instanceof IWTimestamp) {
-			return equals((IWTimestamp) object);
-		}
-		else {
-			return super.equals(object);
-		}
-	}
-	public boolean equals(IWTimestamp compareStamp) {
-		if (!this.isTime && !this.isDate) {
-			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
-		}
-		if (!this.isTime) {
-			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay());
-		}
-		if (!this.isDate) {
-			return (this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
-		}
 		return false;
 	}
+
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object only contains a time setting.
+	 * @return boolean
+	 */
+	public boolean isTime() {
+		if (isTime)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object contains a date and/or
+	 * time setting.
+	 * @return boolean
+	 */
+	public boolean isIWTimestamp() {
+		if (isTime || isDate)
+			return false;
+		return true;
+}
+
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is later than or equal to 
+	 * the given <code>IWTimestamp</code> object.
+	 * @param compareStamp
+	 * @return boolean
+	 */
 	public boolean isLaterThanOrEquals(IWTimestamp compareStamp) {
 		return (isLaterThan(compareStamp) || equals(compareStamp));
 	}
 
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
 	public boolean isLaterThan(IWTimestamp compareStamp) {
-		if (compareStamp == null) {
-			System.err.println("[IWTimestamp] \"compateStamp == NULL\"");
-		}
-
 		if (!this.isTime) {
 			if (this.getYear() > compareStamp.getYear())
 				return true;
@@ -223,9 +337,9 @@ public class IWTimestamp {
 				return true;
 			if (this.getMonth() < compareStamp.getMonth())
 				return false;
-			if (this.getDate() > compareStamp.getDate())
+			if (this.getDay() > compareStamp.getDay())
 				return true;
-			if (this.getDate() < compareStamp.getDate())
+			if (this.getDay() < compareStamp.getDay())
 				return false;
 		}
 
@@ -246,799 +360,474 @@ public class IWTimestamp {
 		return false;
 	}
 
-	public IWTimestamp isLater(IWTimestamp time, IWTimestamp time2) {
+	/**
+	 * Returns the <code>IWTimestamp</code> object of the one who is later of the two
+	 * given <code>IWTimestamp</code> objects.
+	 * @param timestamp1		The first IWTimestamp to compare.
+	 * @param timestamp2		The second IWTimestamp to compare.
+	 * @return IWTimestamp
+	 */
+	public IWTimestamp isLater(IWTimestamp timestamp1, IWTimestamp timestamp2) {
+		if (timestamp1.getYear() > timestamp2.getYear())
+			return timestamp1;
+		if (timestamp1.getMonth() > timestamp2.getMonth())
+			return timestamp1;
+		if (this.getDay() > timestamp2.getDay())
+			return timestamp1;
+		if (timestamp1.getHour() > timestamp2.getHour())
+			return timestamp1;
+		if (timestamp1.getMinute() > timestamp2.getMinute())
+			return timestamp1;
+		if (timestamp1.getSecond() > timestamp2.getSecond())
+			return timestamp1;
 
-		if (time.getYear() > time2.getYear())
-			return time;
-		if (time.getMonth() > time2.getMonth())
-			return time;
-		if (this.getDate() > time2.getDate())
-			return time;
-		if (time.getHour() > time2.getHour())
-			return time;
-		if (time.getMinute() > time2.getMinute())
-			return time;
-		if (time.getSecond() > time2.getSecond())
-			return time;
-
-		return time2;
-	}
-
-	public IWTimestamp isEarlier(IWTimestamp time, IWTimestamp time2) {
-
-		if (time.getYear() < time2.getYear())
-			return time;
-		if (time.getMonth() < time2.getMonth())
-			return time;
-		if (this.getDate() < time2.getDate())
-			return time;
-		if (time.getHour() < time2.getHour())
-			return time;
-		if (time.getMinute() < time2.getMinute())
-			return time;
-		if (time.getSecond() < time2.getSecond())
-			return time;
-
-		return time2;
-	}
-
-	public Time isEarlier(Time time_, Time time2_) {
-		IWTimestamp time = new IWTimestamp(time_);
-		IWTimestamp time2 = new IWTimestamp(time2_);
-
-		if (time.getHour() < time2.getHour())
-			return time.getSQLTime();
-		if (time.getMinute() < time2.getMinute())
-			return time.getSQLTime();
-		if (time.getSecond() < time2.getSecond())
-			return time.getSQLTime();
-
-		return time2.getSQLTime();
-	}
-
-	public java.sql.Date isEarlier(java.sql.Date date, java.sql.Date date2) {
-		IWTimestamp time = new IWTimestamp(date);
-		IWTimestamp time2 = new IWTimestamp(date2);
-
-		if (time.getYear() < time2.getYear())
-			return time.getSQLDate();
-		if (time.getMonth() < time2.getMonth())
-			return time.getSQLDate();
-		if (this.getDate() < time2.getDate())
-			return time.getSQLDate();
-
-		return time2.getSQLDate();
+		return timestamp2;
 	}
 
 	/**
-	 * til að berasaman Date-hlutann er sett '????.eqals(?????.getSQLDate());
+	 * Returns the <code>IWTimestamp</code> object of the one who is earlier of the two
+	 * given <code>IWTimestamp</code> objects.
+	 * @param timestamp1		The first IWTimestamp to compare.
+	 * @param timestamp2		The second IWTimestamp to compare.
+	 * @return IWTimestamp
 	 */
+	public IWTimestamp isEarlier(IWTimestamp timestamp1, IWTimestamp timestamp2) {
+		if ( isDate() ) {
+			if (timestamp1.getYear() < timestamp2.getYear())
+				return timestamp1;
+			if (timestamp1.getMonth() < timestamp2.getMonth())
+				return timestamp1;
+			if (this.getDay() < timestamp2.getDay())
+				return timestamp1;
+		}
+		if ( isTime() ) {
+			if (timestamp1.getHour() < timestamp2.getHour())
+				return timestamp1;
+			if (timestamp1.getMinute() < timestamp2.getMinute())
+				return timestamp1;
+			if (timestamp1.getSecond() < timestamp2.getSecond())
+				return timestamp1;
+		}
 
-	public boolean equals(java.sql.Date date) {
+		return timestamp2;
+	}
+
+	/**
+	 * Returns the <code>Time</code> object of the one who is earlier of the two given
+	 * Time objects.
+	 * @param time1		The first date to compare.
+	 * @param time2		The second date to compare.
+	 * @return Time
+	 */
+	public Time isEarlier(Time time1, Time time2) {
+		return isEarlier(new IWTimestamp(time1),new IWTimestamp(time2)).getTime();
+	}
+
+	/**
+	 * Returns the <code>Date</code> object of the one who is earlier of the two given
+	 * Date objects.
+	 * @param date1		The first date to compare.
+	 * @param date2		The second date to compare.
+	 * @return Date
+	 */
+	public Date isEarlier(Date date1, Date date2) {
+		return isEarlier(new IWTimestamp(date1),new IWTimestamp(date2)).getDate();
+	}
+
+	/**
+	 * @see java.lang.Object#equals(Object)
+	 * @see IWTimestamp#equals(IWTimestamp compareStamp)
+	 */
+	public boolean equals(Object object) {
+		if (object instanceof IWTimestamp) {
+			return equals((IWTimestamp) object);
+		}
+		else {
+			return super.equals(object);
+		}
+	}
+
+	/**
+	 * Returns true if the current date and time settings are identical to the date 
+	 * settings of the <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with the current date setting.
+	 * @return boolean
+	 */
+	public boolean equals(IWTimestamp compareStamp) {
+		if (!this.isTime && !this.isDate) {
+			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
+		}
+		if (!this.isTime) {
+			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay());
+		}
+		if (!this.isDate) {
+			return (this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if the current date setting is identical to the date setting of the
+	 * <code>Date</code> object.
+	 * @param date		The date to compare with the current date setting.
+	 * @return boolean
+	 */
+	public boolean equals(Date date) {
 		return toSQLDateString().equals(date.toString());
 	}
 
 	/**
-	 * til að berasaman Time-hlutann er sett '????.eqals(?????.getSQLTime());
+	 * Returns true if the current time setting is identical to the time setting of the
+	 * <code>Time</code> object.
+	 * @param time		The time to compare with the current time setting.
+	 * @return boolean
 	 */
-
 	public boolean equals(Time time) {
 		return toSQLTimeString().equals(time.toString());
 	}
 
+	//Get methods
+	/**
+	 * Returns a <code>GregorianCalendar</code> object with the current date/time settings.
+	 * @return GregorianCalendar
+	 */
 	public GregorianCalendar getGregorianCalendar() {
-		return Calendar;
+		return calendar;
 	}
-
-	/*public Date getSQLDate(){
-	  //Date date = new Date();
-	  String M, D;
-	
-	  if (getMonth() < 10)
-	    M = "0" + getMonth();
-	  else
-	    M = "" + getMonth();
-	
-	  if (getDate() < 10)
-	    D = "0" + getDate();
-	  else
-	    D = "" + getDate();
-	  return Date.valueOf(getYear() + "-" + M + "-" + D);
-	}*/
-
-	public Timestamp getTimestamp() {
-		//Timestamp newStamp = new Timestamp(0);
-
-		String M, D, H, MIN, S;
-
-		if (getMonth() < 10)
-			M = "0" + getMonth();
-		else
-			M = "" + getMonth();
-
-		if (getDate() < 10)
-			D = "0" + getDate();
-		else
-			D = "" + getDate();
-
-		if (getHour() < 10)
-			H = "0" + getHour();
-		else
-			H = "" + getHour();
-
-		if (getMinute() < 10)
-			MIN = "0" + getMinute();
-		else
-			MIN = "" + getMinute();
-
-		if (getSecond() < 10)
-			S = "0" + getSecond();
-		else
-			S = "" + getSecond();
-
-		return Timestamp.valueOf(getYear() + "-" + M + "-" + D + " " + H + ":" + MIN + ":" + S + ".0");
-	}
-
-	public java.sql.Date getSQLDate() {
-		//java.sql.Date newDate = new java.sql.Date(0);
-		return java.sql.Date.valueOf(toSQLDateString());
-	}
-
-	public Time getSQLTime() {
-		//Time newTime = new Time(0);
-		return Time.valueOf(toSQLTimeString());
-	}
-
-	public int getYear() {
-		return Calendar.get(Calendar.YEAR);
-	}
-
-	public int getMonth() {
-		return Calendar.get(Calendar.MONTH) + 1;
-	}
-
-	public int getDay() {
-		return Calendar.get(Calendar.DAY_OF_MONTH);
-	}
-
-	public int getDate() {
-		return Calendar.get(Calendar.DATE);
-	}
-
-	public int getHour() {
-		return Calendar.get(Calendar.HOUR_OF_DAY);
-	}
-
-	public int getMinute() {
-		return Calendar.get(Calendar.MINUTE);
-	}
-
-	public int getSecond() {
-		return Calendar.get(Calendar.SECOND);
-	}
-
-	public int getDayOfWeek() {
-		return Calendar.get(Calendar.DAY_OF_WEEK);
-	}
-
-	public int getWeekOfYear() {
-		return Calendar.get(Calendar.WEEK_OF_YEAR);
-	}
-
-	public void setYear(int year) {
-		Calendar = new GregorianCalendar(year, getMonth() - 1, getDate(), getHour(), getMinute(), getSecond());
-	}
-
-	public void setMonth(int month) {
-		Calendar = new GregorianCalendar(getYear(), month - 1, getDate(), getHour(), getMinute(), getSecond());
-	}
-
-	public void setDate(int date) {
-		Calendar = new GregorianCalendar(getYear(), getMonth() - 1, date, getHour(), getMinute(), getSecond());
-	}
-
-	public void setHour(int hour) {
-		Calendar = new GregorianCalendar(getYear(), getMonth() - 1, getDate(), hour, getMinute(), getSecond());
-	}
-
-	public void setMinute(int minute) {
-		Calendar = new GregorianCalendar(getYear(), getMonth() - 1, getDate(), getHour(), minute, getSecond());
-	}
-
-	public void setSecond(int second) {
-		Calendar = new GregorianCalendar(getYear(), getMonth() - 1, getDate(), getHour(), getMinute(), second);
-	}
-
-	/*
-	  //  Virkar ekki alveg rett, leggur við hlutinn en skilar ekki bara.
-	  public IWTimestamp getNextDay(){
-	    GregorianCalendar myCalendar = Calendar;
-	    myCalendar.add(myCalendar.DATE, 1 );
-	    return new IWTimestamp( myCalendar );
-	  }
-	*/
 
 	/**
-	 * Gefur dagsetingu + eða - dögum fra gildi idegaTimestampsins
+	 * Returns a <code>TimeStamp</code> object with the current date/time settings.
+	 * @return TimeStamp
 	 */
-
-	public void addDays(int num_of_days) {
-		Calendar.add(Calendar.DATE, num_of_days);
+	public Timestamp getTimestamp() {
+		String pattern = DATE_PATTERN + " " + TIME_PATTERN;
+		return Timestamp.valueOf(getDateString(pattern));
 	}
 
-	public void addMinutes(int num_of_minutes) {
-		Calendar.add(Calendar.MINUTE, num_of_minutes);
+	/**
+	 * @deprecated
+	 * @see IWTimestamp#getDate()
+	 */
+	public Date getSQLDate() {
+		return getDate();
 	}
 
-	public void addMonths(int num_of_months) {
-		Calendar.add(Calendar.MONTH, num_of_months);
+	/**
+	 * Returns a <code>Date</code> object with the current date/time settings.
+	 * @return Date
+	 */
+	public Date getDate() {
+		return new Date(getTimestamp().getTime());
 	}
 
-	public void addYears(int num_of_years) {
-		Calendar.add(Calendar.YEAR, num_of_years);
+	/**
+	 * @deprecated
+	 * @see IWTimestamp#getTime()
+	 */
+	public Time getSQLTime() {
+		return getTime();
 	}
 
+	/**
+	 * Returns a <code>Time</code> object with the current date/time settings.
+	 * @return Time
+	 */
+	public Time getTime() {
+		return new Time(getTimestamp().getTime());
+	}
+
+	/**
+	 * Returns the year (????) from the default date setting.
+	 * @return int
+	 */
+	public int getYear() {
+		return calendar.get(calendar.YEAR);
+	}
+
+	/**
+	 * Returns the month (1-12) from the default date setting.
+	 * @return int
+	 */
+	public int getMonth() {
+		return calendar.get(calendar.MONTH) + 1;
+	}
+
+	/**
+	 * Returns the day (1-31) from the default date setting.
+	 * @return int
+	 */
+	public int getDay() {
+		return calendar.get(calendar.DATE);
+	}
+
+	/**
+	 * Returns the minute (0-23) from the default time setting.
+	 * @return int
+	 */
+	public int getHour() {
+		return calendar.get(calendar.HOUR_OF_DAY);
+	}
+
+	/**
+	 * Returns the minute (0-59) from the default time setting.
+	 * @return int
+	 */
+	public int getMinute() {
+		return calendar.get(calendar.MINUTE);
+	}
+
+	/**
+	 * Returns the second (0-59) from the default time setting.
+	 * @return int
+	 */
+	public int getSecond() {
+		return calendar.get(calendar.SECOND);
+	}
+
+	/**
+	 * Returns the day of the week (Sunday = 1) from the default date setting.
+	 * @return int
+	 */
+	public int getDayOfWeek() {
+		return calendar.get(calendar.DAY_OF_WEEK);
+	}
+
+	/**
+	 * Returns the week of the year from the current date setting (1-52/53).
+	 * @return int
+	 */
+	public int getWeekOfYear() {
+		return calendar.get(calendar.WEEK_OF_YEAR);
+	}
+
+	/**
+	 * Returns an <code>IWTimestamp</code> with the next day from the current date setting.
+	 * @return IWTimestamp
+	 */
+	public IWTimestamp getNextDay() {
+		GregorianCalendar myCalendar = (GregorianCalendar) calendar.clone();
+		myCalendar.add(myCalendar.DATE, 1);
+		return new IWTimestamp(myCalendar);
+	}
+
+	/**
+	 * @deprecated
+	 * @see IWCalendar#getLocaleDate()
+	 */
 	public String getLocaleDate(IWContext iwc) {
 		Locale currentLocale = iwc.getCurrentLocale();
 		return getLocaleDate(currentLocale);
 	}
 
-	public String getLocaleDate(Locale currentLocale) {
-		String returner = getENGDate();
-
-		if (currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())) {
-			returner = getISLDate();
-		}
-		else if (currentLocale.equals(Locale.ENGLISH)) {
-			returner = getENGDate();
-		}
-		else if (currentLocale.equals(Locale.UK)) {
-			returner = getENGDate();
-		}
-		else if (currentLocale.equals(Locale.US)) {
-			returner = getENGDate();
-		}
-		else {
-			returner = getENGDate();
-		}
-
-		return returner;
+	/**
+	 * @deprecated
+	 * @see IWCalendar#getLocaleDate()
+	 */
+	public String getLocaleDate(Locale locale) {
+		IWCalendar iwCalendar = new IWCalendar(locale, calendar);
+		return iwCalendar.getLocaleDate();
 	}
 
 	/**
-	 * @Deprecated
+	 * @deprecated
+	 * @see IWTimestamp#getDateString(String pattern)
 	 */
-	public String getISLDate() {
-		return getDate() + "." + getNameOfMonth(getMonth()) + " " + getYear();
-	}
-
-	/**
-	 * @Deprecated
-	 */
-	public String getENGDate() {
-
-		String englishDate = getEnglishNameOfMonth(getMonth()) + " " + getDate();
-
-		if (getDate() == 1) {
-			englishDate = englishDate + "st " + getYear();
-		}
-		else if (getDate() == 2) {
-			englishDate = englishDate + "nd " + getYear();
-		}
-		else if (getDate() == 3) {
-			englishDate = englishDate + "rd " + getYear();
-		}
-		else if (getDate() == 21) {
-			englishDate = englishDate + "st" + getYear();
-		}
-		else if (getDate() == 22) {
-			englishDate = englishDate + "nd " + getYear();
-		}
-		else if (getDate() == 31) {
-			englishDate = englishDate + "st " + getYear();
-		}
-		else {
-			englishDate = englishDate + "th " + getYear();
-		}
-
-		return englishDate;
-	}
-
 	public String getISLDate(String spacer, boolean withYear) {
+		String pattern = DAY + spacer + MONTH;
 		if (withYear)
-			return getDate() + spacer + getMonth() + spacer + getYear();
-		else
-			return getDate() + spacer + getMonth();
+			pattern = pattern + spacer + YEAR;
+		return getDateString(pattern);
 	}
 
-	/*
-	  public int getYear_int( int num_of_last_char ){
-	    if (num_of_last_char < 1)
-	      return -1;
-	
-	    String year = "" + getYear();
-	    String temp = "";
-	    for (int i = 1; i <= num_of_last_char; i++ ){
-	      if ( i > year.length())
-	        continue;
-	      temp = year.charAt(year.length() - i) + temp;
-	    }
-	    return Integer.parseInt(temp);
-	  }*/
-
-	public String getYear(int num_of_last_char) {
-
-		if (num_of_last_char < 1)
-			return "Error";
-
-		String year = "" + getYear();
-		String temp = "";
-		for (int i = 1; i <= num_of_last_char; i++) {
-			if (i > year.length())
-				continue;
-			temp = year.charAt(year.length() - i) + temp;
-		}
-		return temp;
+	/**
+	 * Returns a date string according to the supplied pattern.<br><br>
+	 * Examples:<br>
+	 * yyyy-MM-dd kk:mm:ss.S => 1970-10-06 03:00:00.0<br>
+	 * "yyyy.MM.dd G 'at' HH:mm:ss z" => 2001.07.04 AD at 12:08:56 PDT<br>
+	 * "EEE, MMM d, ''yy" => Wed, Jul 4, '01<br>
+	 * "h:mm a" => 12:08 PM<br>
+	 * "hh 'o''clock' a, zzzz" => 12 o'clock PM, Pacific Daylight Time<br>
+	 * "K:mm a, z" => 0:08 PM, PDT<br>
+	 * "yyyyy.MMMMM.dd GGG hh:mm aaa" => 02001.July.04 AD 12:08 PM <br>
+	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br> 
+	 * "yyMMddHHmmssZ" => 010704120856-0700<br><br>
+	 * See <code>SimpleDateFormat</code> for more details on available pattern symbols.
+	 * 
+	 * @param pattern		The pattern to use to format the current date
+	 * @return String
+	 * @see SimpleDateFormat
+	 */
+	public String getDateString(String pattern) {
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		return format.format(calendar.getTime());
 	}
 
-	//  public String toISLString(){}
 
-	//  ###########  Gimma - föll ########
-
-	private int getLengthOfMonth(int mon, int year) {
-
-		int dagarman = 31;
-
-		switch (mon) {
-			case 0 :
-				dagarman = 31;
-				break;
-			case 1 :
-				dagarman = 31;
-				break;
-			case 2 :
-				if (Calendar.isLeapYear(year)) {
-					dagarman = 29;
-				}
-				else {
-					dagarman = 28;
-				}
-				break;
-			case 3 :
-				dagarman = 31;
-				break;
-			case 4 :
-				dagarman = 30;
-				break;
-			case 5 :
-				dagarman = 31;
-				break;
-			case 6 :
-				dagarman = 30;
-				break;
-			case 7 :
-				dagarman = 31;
-				break;
-			case 8 :
-				dagarman = 31;
-				break;
-			case 9 :
-				dagarman = 30;
-				break;
-			case 10 :
-				dagarman = 31;
-				break;
-			case 11 :
-				dagarman = 30;
-				break;
-			case 12 :
-				dagarman = 31;
-				break;
-			case 13 :
-				dagarman = 31;
-				break;
-
-		}
-		return dagarman;
+	//Add methods
+	/**
+	 * Adds seconds to the current date and time setting.
+	 * @param numberOfSeconds	The number of seconds to add.
+	 */
+	public void addSeconds(int numberOfSeconds) {
+		calendar.add(calendar.SECOND, numberOfSeconds);
 	}
 
-	private String getNameOfMonth(int month) {
-		String manudurnafn = "";
-
-		switch (month) {
-			case 0 :
-				manudurnafn = ("desember");
-				break;
-			case 01 :
-				manudurnafn = ("janúar");
-				break;
-			case 02 :
-				manudurnafn = ("febrúar");
-				break;
-			case 03 :
-				manudurnafn = ("mars");
-				break;
-			case 04 :
-				manudurnafn = ("apríl");
-				break;
-			case 05 :
-				manudurnafn = ("maí");
-				break;
-			case 06 :
-				manudurnafn = ("júní");
-				break;
-			case 07 :
-				manudurnafn = ("júlí");
-				break;
-			case 8 :
-				manudurnafn = ("ágúst");
-				break;
-			case 9 :
-				manudurnafn = ("september");
-				break;
-			case 10 :
-				manudurnafn = ("október");
-				break;
-			case 11 :
-				manudurnafn = ("nóvember");
-				break;
-			case 12 :
-				manudurnafn = ("desember");
-				break;
-			case 13 :
-				manudurnafn = ("janúar");
-				break;
-		}
-		return manudurnafn;
+	/**
+	 * Adds minutes to the current date and time setting.
+	 * @param numberOfMinutes	The number of minutes to add.
+	 */
+	public void addMinutes(int numberOfMinutes) {
+		calendar.add(calendar.MINUTE, numberOfMinutes);
 	}
 
-	private String getEnglishNameOfMonth(int month) {
-		String manudurnafn = "";
-
-		switch (month) {
-			case 0 :
-				manudurnafn = ("December");
-				break;
-			case 01 :
-				manudurnafn = ("January");
-				break;
-			case 02 :
-				manudurnafn = ("February");
-				break;
-			case 03 :
-				manudurnafn = ("March");
-				break;
-			case 04 :
-				manudurnafn = ("April");
-				break;
-			case 05 :
-				manudurnafn = ("May");
-				break;
-			case 06 :
-				manudurnafn = ("June");
-				break;
-			case 07 :
-				manudurnafn = ("July");
-				break;
-			case 8 :
-				manudurnafn = ("August");
-				break;
-			case 9 :
-				manudurnafn = ("September");
-				break;
-			case 10 :
-				manudurnafn = ("October");
-				break;
-			case 11 :
-				manudurnafn = ("November");
-				break;
-			case 12 :
-				manudurnafn = ("December");
-				break;
-			case 13 :
-				manudurnafn = ("January");
-				break;
-		}
-		return manudurnafn;
+	/**
+	 * Adds hours to the current date and time setting.
+	 * @param numberOfHours	The number of hours to add.
+	 */
+	public void addHours(int numberOfHours) {
+		calendar.add(calendar.HOUR, numberOfHours);
 	}
 
-	/*
-	public String getNameOfMonth(int month) {
-	    if(month < 1 || month > 12)
-	        return "";
-	    DateFormatSymbols months = new DateFormatSymbols(getIceland());
-	    return months.getMonths()[month-1];
-	}*/
-
-	private String getNameOfDay(int dagur) {
-		String nafn = "";
-
-		switch (dagur) {
-			case 1 :
-				nafn = ("Sunnudagur");
-				break;
-			case 2 :
-				nafn = ("Mánudagur");
-				break;
-			case 3 :
-				nafn = ("Þriðjudagur");
-				break;
-			case 4 :
-				nafn = ("Miðvikudagur");
-				break;
-			case 5 :
-				nafn = ("Fimmtudagur");
-				break;
-			case 6 :
-				nafn = ("Föstudagur");
-				break;
-			case 7 :
-				nafn = ("Laugardagur");
-				break;
-		}
-		return nafn;
+	/**
+	 * Adds days to the current date setting.
+	 * @param numberOfDays	The number of days to add.
+	 */
+	public void addDays(int numberOfDays) {
+		calendar.add(calendar.DATE, numberOfDays);
 	}
 
-	private String getEnglishNameOfDay(int dagur) {
-		String nafn = "";
-
-		switch (dagur) {
-			case 1 :
-				nafn = ("Sunday");
-				break;
-			case 2 :
-				nafn = ("Monday");
-				break;
-			case 3 :
-				nafn = ("Tuesday");
-				break;
-			case 4 :
-				nafn = ("Wednesday");
-				break;
-			case 5 :
-				nafn = ("Thursday");
-				break;
-			case 6 :
-				nafn = ("Friday");
-				break;
-			case 7 :
-				nafn = ("Saturday");
-				break;
-		}
-		return nafn;
+	/**
+	 * Adds months to the current date setting.
+	 * @param numberOfMonths	The number of months to add.
+	 */
+	public void addMonths(int numberOfMonths) {
+		calendar.add(calendar.MONTH, numberOfMonths);
 	}
 
-	private int getDayOfWeek(int ar, int manudur, int dagur) {
-
-		GregorianCalendar myCalendar = new GregorianCalendar(ar, manudur - 1, dagur);
-
-		int vdagur = myCalendar.get(Calendar.DAY_OF_WEEK);
-
-		return vdagur;
+	/**
+	 * Adds years to the current date setting.
+	 * @param numberOfYears	The number of years to add.
+	 */
+	public void addYears(int numberOfYears) {
+		calendar.add(calendar.YEAR, numberOfYears);
 	}
 
-	private boolean getHoliday(int ar, int manudur, int dagur) {
-
-		boolean svara = false;
-
-		/*			if ( (getDayOfWeek(ar,manudur,dagur) == 1) || (getDayOfWeek(ar,manudur,dagur) == 7) )  {
-						svara = true;
-					}*/
-
-		if (getDayOfWeek(ar, manudur, dagur) == 1) {
-			svara = true;
-		}
-
-		if (!(svara))
-			switch (manudur) {
-				case 1 :
-					if (dagur == 1)
-						svara = true;
-					break;
-				case 2 :
-					break;
-				case 3 :
-					break;
-				case 4 :
-					break;
-				case 5 :
-					if (dagur == 1)
-						svara = true;
-					break;
-				case 6 :
-					if (dagur == 17)
-						svara = true;
-					break;
-				case 7 :
-					break;
-				case 8 :
-					break;
-				case 9 :
-					break;
-				case 10 :
-					break;
-				case 11 :
-					break;
-				case 12 :
-					break;
-
-			}
-
-		return svara;
+	//Set methods
+	/**
+	 * Sets the <code>IWTimestamp</code> to use only the date settings.
+	 */
+	public void setAsDate() {
+		isDate = true;
+		isTime = false;
 	}
 
-	//  ####  Gimma - föll enda  ####
-
-	/*
-		public static Timestamp getTimestampRightNow(){
-			//Needs to change because Timestamp constructor is depricated
-		  GregorianCalendar myCalendar = new GregorianCalendar();
-		  return new Timestamp(myCalendar.get(myCalendar.YEAR)-1900, myCalendar.get(myCalendar.MONTH), myCalendar.get(myCalendar.DATE), myCalendar.get(myCalendar.HOUR_OF_DAY), myCalendar.get(myCalendar.MINUTE), myCalendar.get(myCalendar.SECOND),0);
-		}
-	*/
-	public static Timestamp getTimestampRightNow() {
-		IWTimestamp stamp = RightNow();
-		return stamp.getTimestamp();
+	/**
+	 * Sets the <code>IWTimestamp</code> to use only the time settings.
+	 */
+	public void setAsTime() {
+		isDate = false;
+		isTime = true;
 	}
 
-	public static IWTimestamp RightNow() {
-		GregorianCalendar myCalendar = new GregorianCalendar();
-		//return new IWTimestamp(myCalendar.get(myCalendar.YEAR), myCalendar.get(myCalendar.MONTH)+1, myCalendar.get(myCalendar.DATE), myCalendar.get(myCalendar.HOUR_OF_DAY), myCalendar.get(myCalendar.MINUTE), myCalendar.get(myCalendar.SECOND));
-		return new IWTimestamp(myCalendar);
+	/**
+	 * Sets the year of the date setting.
+	 * @param year		The year to set
+	 */
+	public void setYear(int year) {
+		calendar.set(calendar.YEAR, year);
 	}
 
+	/**
+	 * Sets the month of the date setting.
+	 * @param month		The month to set
+	 */
+	public void setMonth(int month) {
+		calendar.set(calendar.MONTH, month - 1);
+	}
+
+	/**
+	 * Sets the hour of the date setting.
+	 * @param day		The day to set
+	 */
+	public void setDay(int day) {
+		calendar.set(calendar.DATE, day);
+	}
+
+	/**
+	 * Sets the hour of the time setting.
+	 * @param hour		The hour to set
+	 */
+	public void setHour(int hour) {
+		calendar.set(calendar.HOUR, hour);
+	}
+
+	/**
+	 * Sets the minute of the time setting.
+	 * @param minute		The minute to set
+	 */
+	public void setMinute(int minute) {
+		calendar.set(calendar.MINUTE, minute);
+	}
+
+	/**
+	 * Sets the second of the time setting.
+	 * @param second		The second to set
+	 */
+	public void setSecond(int second) {
+		calendar.set(calendar.SECOND, second);
+	}
+
+	/**
+	 * Returns an SQL string for the given date and time settings.
+	 * @return String
+	 * @see java.lang.Object#toString()
+	 */
+	//To methods
+	public String toString() {
+		return this.getTimestamp().toString();
+	}
+
+	/**
+	 * Returns an SQL string for the given settings.  If the IWTimestamp is a date setting
+	 * it will return a date string, if it's a time setting, a time string.
+	 * @return String
+	 */
 	public String toSQLString() {
-		if (is_SQLDate())
+		if (isDate())
 			return toSQLDateString();
-		else if (is_SQLTime())
+		else if (isTime())
 			return toSQLTimeString();
 		else
 			return getTimestamp().toString();
 	}
 
-	public String toOracleString() {
-		String toReturn = " TO_DATE('";
-		//  TO_DATE('1998 05 20 12:12','YYYY MM DD HH:MI'))
-		//date
-		toReturn += getYear() + " " + addZeros(getMonth()) + " " + addZeros(getDate());
-		//time
-		toReturn += " " + addZeros(getHour()) + ":" + addZeros(getMinute());
-
-		//if (Sec) toReturn += "." + addZeros(getSecond());
-		return toReturn + "','YYYY MM DD HH24:MI') ";
-	}
-
-	public String toString() {
-		return this.getTimestamp().toString();
-	}
-
+	/**
+	 * Returns an SQL string for the given date setting.
+	 * @return String
+	 */
 	public String toSQLDateString() {
-		StringTokenizer tokens = new StringTokenizer(getTimestamp().toString());
-		return tokens.nextToken();
+		return getDateString(DATE_PATTERN);
 	}
 
+	/**
+	 * Returns an SQL string for the given time setting.
+	 * @return String
+	 */
 	public String toSQLTimeString() {
-		StringTokenizer tokens = new StringTokenizer(getTimestamp().toString());
-		String temp = tokens.nextToken();
-
-		return tokens.nextToken();
+		return getDateString(TIME_PATTERN);
 	}
 
-	public String toString(boolean Days_before_Months, boolean FourDigitYear, boolean Sec) {
-
-		String toReturn = "";
-
-		if (Days_before_Months) {
-			toReturn += addZeros(getDate()) + "." + addZeros(getMonth());
-		}
-		else {
-			toReturn += addZeros(getMonth()) + "." + addZeros(getDate());
-		}
-
-		if (FourDigitYear) {
-			toReturn += "." + getYear();
-		}
-		else {
-			toReturn += "." + getYear(2);
-		}
-
-		toReturn += " " + addZeros(getHour()) + ":" + addZeros(getMinute());
-
-		if (Sec)
-			toReturn += "." + addZeros(getSecond());
-
-		return toReturn;
+	/**
+	 * Returns an Oracle SQL string for the given date and time setting. The format is: 
+	 * "TO_DATE('1970 10 06 03:00','YYYY MM DD HH:MI')"
+	 * @return String
+	 */
+	public String toOracleString() {
+		String pattern = YEAR + " " + MONTH + " " + DAY + " " + HOUR + ":" + MINUTE;
+		StringBuffer toReturn = new StringBuffer();
+		toReturn.append(" TO_DATE('");
+		toReturn.append(getDateString(pattern));
+		toReturn.append("','YYYY MM DD HH24:MI') ");
+		return toReturn.toString();
 	}
-
-	public static Locale getIceland() {
-		return new Locale("is", "IS");
-	}
-
-	public static int getDaysBetween(IWTimestamp before, IWTimestamp after) {
-		long lBefore = before.getGregorianCalendar().getTime().getTime();
-		long lAfter = after.getGregorianCalendar().getTime().getTime();
-
-		long diff = lAfter - lBefore;
-
-		return (int) (diff / 86400000);
-	}
-
-	public static int getMinutesBetween(IWTimestamp before, IWTimestamp after) {
-		if (before.isTime || after.isTime) {
-			before.setDate(1);
-			before.setMonth(2);
-			before.setYear(1);
-			after.setDate(1);
-			after.setMonth(2);
-			after.setYear(1);
-		}
-		long lBefore = before.getGregorianCalendar().getTime().getTime();
-		long lAfter = after.getGregorianCalendar().getTime().getTime();
-
-		long diff = lAfter - lBefore;
-
-		return (int) (diff / 60000);
-	}
-
-	public static boolean isInTimeframe(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly) {
-		return isBetween(from, to, stampToCheck, yearly, true);
-	}
-	/*
-	  public static boolean isBetween(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly) {
-	    return isBetween(from, to, stampToCheck, yearly, false);
-	  }
-	*/
-	private static boolean isBetween(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly, boolean bordersCount) {
-		from.setAsDate();
-		to.setAsDate();
-		if (yearly) {
-			IWTimestamp temp = new IWTimestamp(stampToCheck);
-			temp.setAsDate();
-			if (from.getYear() == to.getYear()) {
-				temp.setYear(from.getYear());
-				if (bordersCount) {
-					return (temp.isLaterThanOrEquals(from) && to.isLaterThanOrEquals(temp));
-				}
-				else {
-					return (temp.isLaterThan(from) && to.isLaterThan(temp));
-				}
-			}
-			else {
-				if (temp.getYear() >= to.getYear()) {
-					if (temp.getMonth() > to.getMonth()) {
-						temp.setYear(from.getYear());
-					}
-					else {
-						temp.setYear(to.getYear());
-					}
-				}
-				return isBetween(from, to, temp, false, bordersCount);
-			}
-		}
-		else {
-			if (bordersCount) {
-				return (stampToCheck.isLaterThanOrEquals(from) && to.isLaterThanOrEquals(stampToCheck));
-			}
-			else {
-				return (stampToCheck.isLaterThan(from) && to.isLaterThan(stampToCheck));
-			}
-		}
-	}
-	public String getDateString(boolean withYear, IWContext modinfo) {
-		String spacer = " ";
-		if (withYear)
-			return getDate() + "." + spacer + getNameOfMonth(getMonth(), modinfo) + spacer + getYear();
-		else
-			return getDate() + "." + spacer + getNameOfMonth(getMonth(), modinfo);
-	}
-	public String getNameOfMonth(int month, IWContext modinfo) {
-		Locale currentLocale = modinfo.getCurrentLocale();
-		String returner = "";
-		DateFormatSymbols dfs = new DateFormatSymbols(modinfo.getCurrentLocale());
-		String[] months = dfs.getMonths();
-		if (months != null) {
-			returner = months[month - 1];
-		}
-		return returner;
-	}
-} // class IWTimestamp
+}
