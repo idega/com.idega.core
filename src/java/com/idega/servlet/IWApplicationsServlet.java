@@ -166,7 +166,7 @@ private IWResourceBundle iwrb;
 
         headerImage = iwrb.getImage("/login/header.jpg","",323,196);
       }
-       Link lheaderLink = new Link(headerImage,"/index.jsp");
+       Link lheaderLink = new Link(headerImage,iwc.getApplication().getApplicationContextURI());
       //mainTable.add(headerImage,1,1);
       mainTable.add(lheaderLink,1,1);
       thePage.add(frameTable);
