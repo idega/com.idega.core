@@ -28,6 +28,7 @@ public static final String SCROLLING_NO = "no";
 public static final String SCROLLING_AUTO = "auto";
 public static final int FRAMEBORDER_ON = 1;
 public static final int FRAMEBORDER_OFF = 0;
+private boolean transparent = false;
 
 public IFrame(){
 	this("untitled");
@@ -132,11 +133,11 @@ public IFrame(String name,String URL,int width,int height){
   }
 
   public void setAsTransparent(boolean transparent) {
-    if(transparent) setAttribute("ALLOWTRANSPARENCY","true");
-    else setAttribute("ALLOWTRANSPARENCY","false");
+    this.transparent = transparent;
   }
 
   public void print(IWContext iwc)throws IOException{
+    if(transparent) setAttribute("ALLOWTRANSPARENCY","true");
     initVariables(iwc);
     if (getLanguage().equals("HTML")){
       print("<iframe name=\""+getName()+"\""+getAttributeString()+" >");
