@@ -8,6 +8,8 @@ package com.idega.core.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -121,6 +123,30 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
   public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{
     return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId),COLUMN_POSTAL_CODE);
+  }
+  
+  public Collection ejbHomeFindByName(String name) throws FinderException {
+  	return this.idoFindAllIDsByColumnBySQL(COLUMN_NAME, name);
+  }
+  
+  public Collection ejbHomeFindAllUniqueNames() throws RemoteException, FinderException {
+  	Collection all = ejbFindAll();
+  	Collection names = new Vector();
+  	Collection pks = new Vector();
+  	if (all != null && !all.isEmpty()) {
+  		Iterator iter = all.iterator();
+  		PostalCode pc;
+  		while (iter.hasNext()) {
+  			pc = ((PostalCodeHome) this.getEJBLocalHome()).findByPrimaryKey(iter.next());
+  			if (!names.contains(pc.getName())) {
+					names.add(pc.getName());
+					pks.add(pc.getPrimaryKey());
+  			} 
+  		}
+
+		}
+  	
+  	return pks;
   }
 
 
