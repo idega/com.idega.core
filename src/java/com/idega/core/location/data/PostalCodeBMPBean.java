@@ -78,9 +78,15 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   public String getEntityName(){
     return TABLE_NAME;
   }
+  
+  private String stripWhitespace(String strip){
+  		String s = strip;
+  		return s.replaceAll("\\s","");
+  }
 
   public void setPostalCode(String code){
-    setColumn(COLUMN_POSTAL_CODE, code);
+  	// remove all whitespace from postal code
+    setColumn(COLUMN_POSTAL_CODE, stripWhitespace(code));
   }
 
   public String getPostalCode(){
@@ -117,7 +123,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
  
 
   public Integer ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException,RemoteException{
-    Collection codes = idoFindAllIDsByColumnsBySQL(COLUMN_POSTAL_CODE,code, COLUMN_COUNTRY_ID, Integer.toString(countryId));
+  	IDOQuery query = idoQueryGetSelect().appendWhereEquals(COLUMN_COUNTRY_ID,countryId).appendAndEqualsQuoted(COLUMN_POSTAL_CODE,stripWhitespace(code));
+	Collection codes = idoFindPKsByQuery(query);
     if(!codes.isEmpty()){
       return (Integer)codes.iterator().next();
     }
