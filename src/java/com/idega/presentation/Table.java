@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.64 2004/06/23 23:00:29 gimmi Exp $
+ * $Id: Table.java,v 1.65 2004/06/24 20:12:24 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWUserContext;
@@ -80,12 +82,37 @@ public class Table extends PresentationObjectContainer {
 	protected TableCell theCells[][];
 	protected int cols = 0;
 	protected int rows = 0;
+
+	/**
+	 * 
+	 * @uml.property name="beginMergedxpos"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
+	 */
 	//Variables to hold coordinates of merge point of cells
 	//Initialized only if needed
 	protected Vector beginMergedxpos;
+
+	/**
+	 * 
+	 * @uml.property name="beginMergedypos"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
+	 */
 	protected Vector beginMergedypos;
+
+	/**
+	 * 
+	 * @uml.property name="endMergedxpos"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
+	 */
 	protected Vector endMergedxpos;
+
+	/**
+	 * 
+	 * @uml.property name="endMergedypos"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.Integer"
+	 */
 	protected Vector endMergedypos;
+
 	protected boolean isResizable;
 	protected boolean cellsAreMerged;
 	protected static final String COLOR_ATTRIBUTE = "bgcolor";
@@ -350,10 +377,15 @@ public class Table extends PresentationObjectContainer {
 	public void setRows(int rows) {
 		resize(this.cols, rows);
 	}
-	
+
+	/**
+	 * 
+	 * @uml.property name="rows"
+	 */
 	public int getRows() {
 		return this.rows;
 	}
+
 	
 	public void mergeCells(int beginxpos, int beginypos, int endxpos, int endypos) {
 		if (beginMergedxpos == null && beginMergedypos == null && endMergedxpos == null && endMergedypos == null) {
@@ -1236,7 +1268,10 @@ public class Table extends PresentationObjectContainer {
 								printString.append(theCells[x - 1][y - 1].getMarkupAttributesString());
 								printString.append(TAG_END);
 								println(printString.toString());
-								theCells[x - 1][y - 1]._print(iwc);
+
+								UIComponent child = theCells[x - 1][y - 1];
+								renderChild(iwc,child);
+								//theObjects[x - 1][y - 1]._print(iwc);
 								printNbsp(iwc, x, y);
 							}
 							else {
@@ -1309,7 +1344,11 @@ public class Table extends PresentationObjectContainer {
 									printString.append("\" ");
 									printString.append(TAG_END);
 									println(printString.toString());
-									theCells[x - 1][y - 1]._print(iwc);
+									
+									UIComponent child = theCells[x - 1][y - 1];
+									renderChild(iwc,child);
+									//theObjects[x - 1][y - 1]._print(iwc);
+
 									printNbsp(iwc, x, y);
 									println(getCellEndTag(iwc,x,y));
 								}
@@ -1328,7 +1367,11 @@ public class Table extends PresentationObjectContainer {
 									printString.append(" ");
 									printString.append(TAG_END);
 									println(printString.toString());
-									theCells[x - 1][y - 1]._print(iwc);
+									
+									UIComponent child = theCells[x - 1][y - 1];
+									renderChild(iwc,child);
+									//theObjects[x - 1][y - 1]._print(iwc);
+									
 									printNbsp(iwc, x, y);
 								}
 								else {
@@ -1386,7 +1429,9 @@ public class Table extends PresentationObjectContainer {
 			for (int y = 1; y <= rows;) {
 				for (int x = 1; x <= cols;) {
 					if (theCells[x - 1][y - 1] != null) {
-						theCells[x - 1][y - 1]._print(iwc);
+						UIComponent child = theCells[x - 1][y - 1];
+						renderChild(iwc,child);
+						//theObjects[x - 1][y - 1]._print(iwc);
 					}
 					x++;
 				}
@@ -1397,7 +1442,9 @@ public class Table extends PresentationObjectContainer {
 			for (int y = 1; y <= rows;) {
 				for (int x = 1; x <= cols;) {
 					if (theCells[x - 1][y - 1] != null) {
-						theCells[x - 1][y - 1]._print(iwc);
+						UIComponent child = theCells[x - 1][y - 1];
+						renderChild(iwc,child);
+						//theObjects[x - 1][y - 1]._print(iwc);
 					}
 					x++;
 				}
@@ -1501,7 +1548,7 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 
-	public PresentationObject objectAt(int index) {
+	public UIComponent objectAt(int index) {
 		if (theCells != null) {
 			if (rows != 0) {
 				int x = Math.round(index / rows);
@@ -1751,13 +1798,22 @@ public class Table extends PresentationObjectContainer {
 		addLinesBottom = value;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="lineColor"
+	 */
 	public void setLineColor(String color) {
 		lineColor = color;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="lineHeight"
+	 */
 	public void setLineHeight(String height) {
 		lineHeight = height;
 	}
+
 
 	public void setVerticatLinesBetween(boolean value) {
 		addVerticalLinesBetween = value;
@@ -1771,6 +1827,10 @@ public class Table extends PresentationObjectContainer {
 		addLineLeft = value;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="lineWidth"
+	 */
 	public void setLineWidth(String width) {
 		lineWidth = width;
 	}
@@ -1866,6 +1926,17 @@ public class Table extends PresentationObjectContainer {
 			return super.set(index,child);
 		}
 	}
+	
+	public void encodeBegin(FacesContext fc)throws IOException{
+		//Does nothing here. insted encodeChildren calles the print(iwc) method.
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
+	 */
+	public void encodeChildren(FacesContext context) throws IOException {
+		super.encodeChildren(context);
+	}	
 	
 	/*
 	 * End JSF SPECIFIC IMPLEMENTAION METHODS

@@ -29,7 +29,14 @@ public class Text extends PresentationObject {
 	private static Text HTMLnbsp;
 
 	protected String text;
+
+	/**
+	 * 
+	 * @uml.property name="localizationMap"
+	 * @uml.associationEnd multiplicity="(0 1)" qualifier="locale:java.util.Locale text:java.lang.String"
+	 */
 	protected Map localizationMap;
+
 	protected boolean attributeSet;
 	protected boolean teletype;
 
@@ -111,10 +118,17 @@ public class Text extends PresentationObject {
 		boolean returnBool = false;
 		PresentationObject obj = getParentObject();
 		while (obj != null) {
-			if (obj.getClassName().equals("com.idega.presentation.text.Paragraph")) {
+			//if (obj.getClassName().equals("com.idega.presentation.text.Paragraph")) {
+			if(obj instanceof Paragraph){
 				returnBool = true;
 			}
-			obj = obj.getParentObject();
+			//obj = obj.getParentObject();
+			try{
+				obj=(PresentationObject)obj.getParent();
+			}
+			catch(ClassCastException cse){
+				obj=null;
+			}
 		}
 		return returnBool;
 	}
@@ -158,9 +172,14 @@ public class Text extends PresentationObject {
 		}
 	}
 
+	/**
+	 * 
+	 * @uml.property name="text"
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
+
 
 	public void setLocalizedText(String localeString, String text) {
 		setLocalizedText(ICLocaleBusiness.getLocaleFromLocaleString(localeString), text);
@@ -174,12 +193,17 @@ public class Text extends PresentationObject {
 		getLocalizationMap().put(locale, text);
 	}
 
+	/**
+	 * 
+	 * @uml.property name="localizationMap"
+	 */
 	private Map getLocalizationMap() {
 		if (localizationMap == null) {
 			localizationMap = new HashMap();
 		}
 		return localizationMap;
 	}
+
 
 	public void addBreak() {
 		addToText(BREAK);
@@ -228,6 +252,10 @@ public class Text extends PresentationObject {
 		}
 	}
 
+	/**
+	 * 
+	 * @uml.property name="text"
+	 */
 	public String getText() {
 		return this.text;
 	}

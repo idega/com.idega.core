@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.115 2004/06/24 14:01:51 thomas Exp $
+ * $Id: Link.java,v 1.116 2004/06/24 20:12:25 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -59,14 +59,12 @@ public class Link extends Text {
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
-
 	private Map _ImageLocalizationMap;
 
 	private StringBuffer _parameterString;
 	//private String displayString;
 	private String _objectType;
 	private String windowOpenerJavascriptString = null;
-
 	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
 	
 	private static final String IB_PAGE_PARAMETER;
@@ -93,22 +91,22 @@ public class Link extends Text {
 	private boolean useTextAsLocalizedTextKey = false;
 	private boolean flip = true;
 	private boolean isOutgoing = false;
-
 	private boolean hasClass = false;
 	private boolean _maintainAllGlobalParameters = false;
 	private boolean _maintainBuilderParameters = true;
 	private boolean _addSessionId = true;
 	private boolean _maintainAllParameters = false;
-
 	private int _imageId;
+	
 	private int _onMouseOverImageId;
 	private int _onClickImageId;
 	private Image _onMouseOverImage = null;
 	private Image _onClickImage = null;
 
+
 	//If Link is constructed to open an instance of an object in a new page via ObjectInstanciator
 	private Class classToInstanciate;
-	private Class templatePageClass;
+	//private Class templatePageClass;
 	private String templateForObjectInstanciation;
 
 	private List listenerInstances = null;
@@ -118,11 +116,14 @@ public class Link extends Text {
 	private String protocol = null;
 
 	private ICFile file = null;
+
 	private int fileId = -1;
 
 	private final static String DEFAULT_TEXT_STRING = "No text";
 
 	public static boolean usingEventSystem = false;
+	//A BuilderPage to link to:
+	private int ibPage=0;
 
 	static {
 		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, Link.class);
@@ -276,17 +277,16 @@ public class Link extends Text {
 
 	}
 
-	/**
-	 *
-	 */
+	/*
 	public Link(PresentationObject mo, Class classToInstanciate, Class templatePageClass) {
 		//this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
 		this.setPresentationObject(mo);
 		this.setClassToInstanciate(classToInstanciate, templatePageClass);
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
+		//if(_parameterString == null){
+		//  _parameterString = new StringBuffer();
+		//}
 	}
+	*/
 
 	public Link(Class classToInstanciate) {
 		//this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
@@ -1171,12 +1171,21 @@ public class Link extends Text {
 			url.append('=');
 			url.append(page.getID());
 			setURL(url.toString());*/
-			String value = this.getParameterValue(IB_PAGE_PARAMETER);
-			if (value != null) {
-				removeParameter(IB_PAGE_PARAMETER);
+			this.ibPage=((Number)page.getPrimaryKey()).intValue();
+			if(IWMainApplication.USE_NEW_URL_SCHEME){
+				try {
+					this.setURL(this.getBuilderService(getIWApplicationContext()).getPageURI(page));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
-			
-			addParameter(IB_PAGE_PARAMETER, Integer.toString(page.getID()));
+			else{
+				String value = this.getParameterValue(IB_PAGE_PARAMETER);
+				if (value != null) {
+					removeParameter(IB_PAGE_PARAMETER);
+				}
+				addParameter(IB_PAGE_PARAMETER, page.getPrimaryKey().toString());
+			}
 		}
 	}
 	
@@ -1193,13 +1202,15 @@ public class Link extends Text {
 	}
 
 	public int getPage() {
+		/*
 		String value = this.getParameterValue(IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}
 		else {
 			return 0;
-		}
+		}*/
+		return ibPage;
 	}
 
 	public String getParameterValue(String prmName) {
@@ -1300,7 +1311,7 @@ public class Link extends Text {
 			linkObj.flip = flip;
 			linkObj.classToInstanciate = this.classToInstanciate;
 			linkObj.templateForObjectInstanciation = this.templateForObjectInstanciation;
-			linkObj.templatePageClass = this.templatePageClass;
+			//linkObj.templatePageClass = this.templatePageClass;
 			linkObj.protocol = this.protocol;
 
 			if (_parameterString != null) {
@@ -2040,9 +2051,14 @@ public void setWindowToOpen(String className) {
 		return listenerInstances;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="https"
+	 */
 	public void setHttps(boolean useHttps) {
 		this.https = useHttps;
 	}
+
 
 	public void setOnMouseOverImage(Image image, Image mouseOverImage) {
 		image.setOverImage(mouseOverImage);
@@ -2138,14 +2154,19 @@ public void setWindowToOpen(String className) {
 
 	}
 
+	/**
+	 * 
+	 * @uml.property name="classToInstanciate"
+	 */
 	public void setClassToInstanciate(Class presentationObjectClass) {
 		this.classToInstanciate = presentationObjectClass;
 	}
 
+	/*
 	public void setClassToInstanciate(Class presentationObjectClass, Class pageTemplateClass) {
 		setClassToInstanciate(presentationObjectClass);
 		this.templatePageClass = pageTemplateClass;
-	}
+	}*/
 
 	public void setClassToInstanciate(Class presentationObjectClass, String template) {
 		setClassToInstanciate(presentationObjectClass);
@@ -2154,10 +2175,11 @@ public void setWindowToOpen(String className) {
 
 	private void setURIToClassToInstanciate(IWContext iwc) {
 		if (this.classToInstanciate != null) {
-			if (this.templatePageClass != null) {
-				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass));
-			}
-			else if (this.templateForObjectInstanciation != null) {
+			//if (this.templatePageClass != null) {
+			//	this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass));
+			//}
+			//else
+			if (this.templateForObjectInstanciation != null) {
 				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
 			}
 			else {
@@ -2203,10 +2225,18 @@ public void setWindowToOpen(String className) {
 		this.isOutgoing = outgoing;	
 	}
 
+	/**
+	 * 
+	 * @uml.property name="protocol"
+	 */
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="protocol"
+	 */
 	public String getProtocol() {
 		return this.protocol;
 	}

@@ -23,7 +23,13 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
   //private final static String IW_FRAME_CONTENT = "iw_frame_content";
   private final static String SLASH = "/";
 
-  private Hashtable frameStorage = new Hashtable();
+	/**
+	 * 
+	 * @uml.property name="frameStorage"
+	 * @uml.associationEnd multiplicity="(0 1)" qualifier="identifier:java.lang.String
+	 * frame:com.idega.presentation.FrameTable"
+	 */
+	private Hashtable frameStorage = new Hashtable();
 
   public IWFrameBusinessBean() {
 

@@ -7,7 +7,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import com.idega.idegaweb.IWMainApplicationStarter;
-import com.idega.idegaweb.IWMainApplication;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
@@ -16,11 +15,7 @@ public class IWStarterServlet extends GenericServlet {
 	IWMainApplicationStarter starter;
 	
 	public void init() throws ServletException {
-		IWMainApplication iwma = new IWMainApplication(this.getServletContext());
-		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
-		sendStartMessage("Initializing IdegaWebStarterServlet");
-		starter = new IWMainApplicationStarter(iwma);
-		starter.startup();
+		starter = new IWMainApplicationStarter(this.getServletContext());
 	}
 	
 	public void service(ServletRequest _req, ServletResponse _res) throws IOException {

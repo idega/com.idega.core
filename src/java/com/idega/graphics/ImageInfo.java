@@ -228,7 +228,14 @@ public class ImageInfo {
 	private InputStream in;
 	private DataInput din;
 	private boolean collectComments = true;
+
+	/**
+	 * 
+	 * @uml.property name="comments"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.String"
+	 */
 	private Vector comments;
+
 	private boolean determineNumberOfImages;
 	private int numberOfImages;
 	private int physicalHeightDpi;
@@ -769,14 +776,17 @@ public class ImageInfo {
 		return true;
 	}
 
-	/** 
+	/**
 	 * If {@link #check()} was successful, returns the image's number of bits per pixel.
 	 * Does not include transparency information like the alpha channel.
 	 * @return number of bits per image pixel
+	 * 
+	 * @uml.property name="bitsPerPixel"
 	 */
 	public int getBitsPerPixel() {
 		return bitsPerPixel;
 	}
+
 
 	/**
 	 * Returns the index'th comment retrieved from the image.
@@ -796,10 +806,13 @@ public class ImageInfo {
 	 * of the FORMAT_xyz constants from this class.
 	 * Use {@link #getFormatName()} to get a textual description of the file format.
 	 * @return file format as a FORMAT_xyz constant
+	 * 
+	 * @uml.property name="format"
 	 */
 	public int getFormat() {
 		return format;
 	}
+
 
 	/**
 	 * If {@link #check()} was successful, returns the image format's name.
@@ -814,14 +827,17 @@ public class ImageInfo {
 		}
 	}
 
-	/** 
+	/**
 	 * If {@link #check()} was successful, returns one the image's vertical
 	 * resolution in pixels.
 	 * @return image height in pixels
+	 * 
+	 * @uml.property name="height"
 	 */
 	public int getHeight() {
 		return height;
 	}
+
 
 	private int getIntBigEndian(byte[] a, int offs) {
 		return
@@ -879,9 +895,10 @@ public class ImageInfo {
 	 * a successful call to {@link #check()}.
 	 * This value can currently be only different from <code>1</code> for GIF images.
 	 * @return number of images in file
+	 * 
+	 * @uml.property name="numberOfImages"
 	 */
-	public int getNumberOfImages()
-	{
+	public int getNumberOfImages() {
 		return numberOfImages;
 	}
 
@@ -892,10 +909,13 @@ public class ImageInfo {
 	 * @return physical height (in dpi)
 	 * @see #getPhysicalWidthDpi()
 	 * @see #getPhysicalHeightInch()
+	 * 
+	 * @uml.property name="physicalHeightDpi"
 	 */
 	public int getPhysicalHeightDpi() {
 		return physicalHeightDpi;
 	}
+
 
 	/**
 	 * If {@link #check()} was successful, returns the physical width of this image in dpi (dots per inch)
@@ -922,10 +942,13 @@ public class ImageInfo {
 	 * @see #getPhysicalHeightDpi()
 	 * @see #getPhysicalWidthInch()
 	 * @see #getPhysicalHeightInch()
+	 * 
+	 * @uml.property name="physicalWidthDpi"
 	 */
 	public int getPhysicalWidthDpi() {
 		return physicalWidthDpi;
 	}
+
 
 	/**
 	 * Returns the physical width of an image in inches, or
@@ -955,14 +978,17 @@ public class ImageInfo {
 		return (a[offs] & 0xff) | (a[offs + 1] & 0xff) << 8;
 	}
 
-	/** 
+	/**
 	 * If {@link #check()} was successful, returns one the image's horizontal
 	 * resolution in pixels.
 	 * @return image width in pixels
+	 * 
+	 * @uml.property name="width"
 	 */
 	public int getWidth() {
 		return width;
 	}
+
 
 	/**
 	 * Returns whether the image is stored in a progressive (also called: interlaced) way.
@@ -1218,9 +1244,10 @@ public class ImageInfo {
 	 * @param newValue if <code>true</code>, this class will read comments
 	 * @see #getNumberOfComments
 	 * @see #getComment
+	 * 
+	 * @uml.property name="collectComments"
 	 */
-	public void setCollectComments(boolean newValue)
-	{
+	public void setCollectComments(boolean newValue) {
 		collectComments = newValue;
 	}
 

@@ -114,13 +114,13 @@ public Window(String name,String classToInstanciate,String template){
       throw new RuntimeException(e.toString()+e.getMessage());
     }
 }
-
+/*
 public Window(String name,Class classToInstanciate,Class template){
 	//this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
     this(name,400,400);
     this.setClassToInstanciate(classToInstanciate,template);
 }
-
+*/
 public Window(String name,Class classToInstanciate){
 	//this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
 }
@@ -550,6 +550,7 @@ public boolean doPrint(IWContext iwc){
 	if (iwc.getParameter("idegaspecialrequesttype") == null){
 	/*no special request*/
 		/*Check if there is a parent object*/
+		
 		if (getParentObject() == null){
 		/*if there is no parent object then do print directly out*/
 			returnBoole = true;
@@ -608,11 +609,12 @@ public String getTarget(){
     this.setURL(IWContext.getInstance().getIWMainApplication().getObjectInstanciatorURI(presentationObjectClass));
   }
 
+  /*
   public void setClassToInstanciate(Class presentationObjectClass,Class pageTemplateClass){
     setClassToInstanciate(presentationObjectClass);
     this.templatePageClass=pageTemplateClass;
     this.setURL(IWContext.getInstance().getIWMainApplication().getObjectInstanciatorURI(presentationObjectClass,pageTemplateClass));
-  }
+  }*/
 
   public void setClassToInstanciate(Class presentationObjectClass,String template){
     setClassToInstanciate(presentationObjectClass);

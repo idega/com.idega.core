@@ -35,17 +35,38 @@ public class Image extends PresentationObject
 	public static final String ALIGNMENT_ABSOLUTE_BOTTOM = "absbottom";
 	public static final String ALIGNMENT_BASELINE = "baseline";
 	public static final String ALIGNMENT_TEXT_TOP = "texttop";
+
+	/**
+	 * 
+	 * @uml.property name="theAssociatedScript"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
 	private Script theAssociatedScript;
+
 	private String overImageUrl;
 	private String downImageUrl;
+
+	/**
+	 * 
+	 * @uml.property name="_ImageLocalizationMap"
+	 * @uml.associationEnd multiplicity="(0 1)" qualifier="locale:java.util.Locale new:java.lang.Integer"
+	 */
 	private Map _ImageLocalizationMap;
+
 	private String textBgColor = "#CCCCCC";
 	private boolean limitImageWidth = false;
 	private boolean zoomView = false;
 	private boolean linkOnImage = true;
 	protected boolean useCaching = true;
 	private String align;
+
+	/**
+	 * 
+	 * @uml.property name="zoomLink"
+	 * @uml.associationEnd multiplicity="(0 1)" inverse="_onClickImage:com.idega.presentation.text.Link"
+	 */
 	private Link zoomLink;
+
 	private String zoomImageID;
 	private String zoomPageID;
 	private String zoomImageWidth;
@@ -682,11 +703,16 @@ public class Image extends PresentationObject
 			System.out.println(e.getMessage());
 		}
 	}
-	public void setMaxImageWidth(int maxImageWidth)
-	{
+
+	/**
+	 * 
+	 * @uml.property name="maxImageWidth"
+	 */
+	public void setMaxImageWidth(int maxImageWidth) {
 		this.limitImageWidth = true;
 		this.maxImageWidth = maxImageWidth;
 	}
+
 	public void limitImageWidth(boolean limitImageWidth)
 	{
 		this.limitImageWidth = limitImageWidth;

@@ -1,5 +1,5 @@
 /*
- * $Id: CreateChart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
+ * $Id: CreateChart.java,v 1.6 2004/06/24 20:12:24 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,10 +27,17 @@ public class CreateChart {
    * The legend for the data
    */
   private String legend_[] = null;
-  /*
-   * The chart itself
-   */
-  private Chart chart_ = null;
+
+	/**
+	 * 
+	 * @uml.property name="chart_"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	/*
+	 * The chart itself
+	 */
+	private Chart chart_ = null;
+
   /*
    * The background colour for the picture
    */

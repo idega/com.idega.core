@@ -70,9 +70,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="cacheKey"
+	 */
 	public String getCacheKey() {
 		return IW_BLOCK_CACHE_KEY;
 	}
+
 
 	public String getLocalizedNameKey() {
 		return "block";
@@ -194,9 +199,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
+	/**
+	 * 
+	 * @uml.property name="permissionKeyMap"
+	 */
 	private Map getPermissionKeyMap() {
 		return permissionKeyMap;
 	}
+
 	/*
 	  private Map getPermissionKeyClassMap(){
 	    Map m = (Map)getPermissionKeyMap().get(this.getClass());
@@ -224,7 +234,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	private static long twentyMinutes = 60 * 1000 * 20;
+
+	/**
+	 * 
+	 * @uml.property name="manager"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
 	private IWStyleManager manager;
+
 
 	public void setCacheable(String cacheKey) {
 		setCacheable(cacheKey, twentyMinutes);
@@ -390,9 +407,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return valid;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="derivedCacheKey"
+	 */
 	protected String getDerivedCacheKey() {
 		return derivedCacheKey;
 	}
+
 
 	private String getOriginalCacheKey() {
 		return cacheKey;
@@ -432,6 +454,10 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return this.cacheable;
 	}
 
+	/**
+	 * 
+	 * @uml.property name="cacheable"
+	 */
 	public void setCacheable(boolean cacheable) {
 		this.cacheable = cacheable;
 	}
@@ -646,7 +672,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	/*
-	 * Overrided methods from JSF's UIComponent:
+	 * Begin Overrided methods from JSF's UIComponent:
 	 */	
 	
 	public String getComponentType(){
@@ -654,67 +680,37 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public void decode(FacesContext fc){
-		/*try {
-			IWContext iwc = castToIWContext(fc);
-			
-			
-			editPermission = iwc.hasEditPermission(this);
-			manager = new IWStyleManager();
-
-			if (debugParameters) {
-				debugParameters(iwc);
-			}
-
-			if (iwc.isParameterSet(TARGET_OBJ_INS))
-				targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));
-
-			if (targetObjInst <= 0)
-				targetObjInst = getParentObjectInstanceID();
-
-			if (getStyleNames() != null) {
-				String prefix = getBundle(this.getIWUserContext()).getBundleName();
-				if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER)
-					prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
-
-				Map styles = getStyleNames();
-				Iterator iter = styles.keySet().iterator();
-				while (iter.hasNext()) {
-					String style = (String) iter.next();
-					if (!manager.isStyleSet(prefix + style))
-						manager.setStyle(prefix + style, (String) styles.get(style));
-				}
-			}
-
-			if (this.isCacheable()) {
-				setCacheKey(iwc);
-				if (isCacheValid(iwc)) {
-				}
-				else {
-					//beginCacheing(iwc);
-					//super._main(iwc);
-					main(iwc);
-					//endCacheing(iwc);
-				}
-			}
-			else {
-				//super._main(iwc);
-				main(iwc);
-			}
-			
-			
-			//this.main(castToIWContext(fc));
-		}
-		catch (Exception e) {
-			if(e instanceof RuntimeException){
-				throw (RuntimeException)e;
-			}
-			else{
-				throw new RuntimeException(e.getMessage());
-			}
-		}
-		*/
 		super.decode(fc);
 	}
+	
+	/*
+	 * End Overrided methods from JSF's UIComponent:
+	 */		
+	
+	/*
+	 * Begin idegaWeb specific JSF Stuff
+	 */		
+	
+	/**
+	 * This method is the bridge between old idegaWeb and new JSF support and 
+	 * calls the main(IWContext) method and necessary initializing.
+	 * 
+	 * This funcion is invoked on each request by the user (before print(iwc) )
+	 * on a PresentationObject Instance.
+	 */
+	public void facesMain(IWContext iwc) throws Exception
+	{
+		//if(!this.goneThroughMain){
+			this.empty();
+			this.initializeInMain(iwc);
+			main(iwc);
+			goneThroughMain=true;
+		//}
+	}
+		
+	/*
+	 * End idegaWeb specific JSF Stuff
+	 */	
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()

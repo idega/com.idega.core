@@ -149,7 +149,8 @@ public class IWApplication extends FrameSet
 	{
 		if (isChildOfOtherPage())
 		{
-			getIWApplicationIcon(this.getClass(), iwc).print(iwc);
+			//getIWApplicationIcon(this.getClass(), iwc).print(iwc);
+			this.renderChild(iwc,getIWApplicationIcon(this.getClass(), iwc));
 		}
 		else
 		{

@@ -34,7 +34,14 @@ import com.idega.presentation.StatefullPresentation;
 public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine {
 
   private int _historyID = 0;
-  private Map _stateMap = new Hashtable();
+
+	/**
+	 * 
+	 * @uml.property name="_stateMap"
+	 * @uml.associationEnd multiplicity="(0 -1)" ordering="ordered" elementType="com.idega.event.IWPresentationState"
+	 * qualifier="location:com.idega.idegaweb.IWLocation state:com.idega.idegaweb.browser.presentation.IWControlFramePresentationState"
+	 */
+	private Map _stateMap = new Hashtable();
 
   public void setHistoryID(int historyId ){
     _historyID = historyId;

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.33 2004/06/10 19:55:02 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.34 2004/06/24 20:12:24 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -8,12 +8,14 @@
  *  
  */
 package com.idega.presentation;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
@@ -27,8 +29,21 @@ import com.idega.presentation.text.Text;
  */
 public class PresentationObjectContainer extends PresentationObject
 {
+
+	/**
+	 * 
+	 * @uml.property name="children"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.PresentationObject"
+	 */
 	private List children;
+
+	/**
+	 * 
+	 * @uml.property name="allObjects"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.PresentationObject"
+	 */
 	protected List allObjects = null;
+
 	protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
 	protected String _label = null;
@@ -39,6 +54,7 @@ public class PresentationObjectContainer extends PresentationObject
 	public PresentationObjectContainer()
 	{
 	}
+	
 	public List getChildren(){
 		if (this.children == null)
 		{
@@ -47,6 +63,7 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return this.children;
 	}
+
 	/**
 	 * Add an object inside this container
 	 */
@@ -253,21 +270,24 @@ public class PresentationObjectContainer extends PresentationObject
 			{
 				for (int index = 0; index < numberOfObjects(); index++)
 				{
-					PresentationObject tempobj = objectAt(index);
-					try
-					{
-						if (tempobj != null)
+					try{
+						PresentationObject tempobj = (PresentationObject)objectAt(index);
+						try
 						{
-							if (tempobj != this)
+							if (tempobj != null)
 							{
-								tempobj._main(iwc);
+								if (tempobj != this)
+								{
+									tempobj._main(iwc);
+								}
 							}
 						}
+						catch (Exception ex)
+						{
+							add(new ExceptionWrapper(ex, this));
+						}
 					}
-					catch (Exception ex)
-					{
-						add(new ExceptionWrapper(ex, this));
-					}
+					catch(ClassCastException cce){}
 				}
 			}
 		}
@@ -281,10 +301,15 @@ public class PresentationObjectContainer extends PresentationObject
 		getChildren().clear();
 		//theObjects.removeAll(theObjects);
 	}
-	protected void setChildren(List newChildren)
-	{
+
+	/**
+	 * 
+	 * @uml.property name="children"
+	 */
+	protected void setChildren(List newChildren) {
 		this.children = newChildren;
 	}
+
 	/*
 	 * protected void prepareClone(PresentationObject newObjToCreate){ int
 	 * number = numberOfObjects(); for (int i = 0; i < number; i++) {
@@ -293,11 +318,12 @@ public class PresentationObjectContainer extends PresentationObject
 	 *  // if (this.theObjects!=null){
 	 * //((PresentationObjectContainer)newObjToCreate).setObjects((Vector)this.theObjects.clone()); // }
 	 */
-	public void _print(IWContext iwc) throws Exception
+	
+	/*public void _print(IWContext iwc) throws Exception
 	{
 		goneThroughMain = false;
 		super._print(iwc);
-	}
+	}*/
 	/**
 	 * The default implementation for the print function for a container.
 	 * 
@@ -307,6 +333,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * Override this function where it is needed to print out the specified
 	 * content. This function should only be overrided in idegaWeb Elements.
 	 */
+	
 	public void print(IWContext iwc) throws Exception
 	{
 		initVariables(iwc);
@@ -319,15 +346,17 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		if (!isEmpty())
 		{
-			int numberofObjects = numberOfObjects();
+			/*int numberofObjects = numberOfObjects();
 			for (int index = 0; index < numberofObjects; index++)
 			{
-				PresentationObject tempobj = objectAt(index);
+				UIComponent tempobj = objectAt(index);
 				try
 				{
 					if (tempobj != null)
 					{
-						tempobj._print(iwc);
+						//TL JSF Change:
+						//tempobj._print(iwc);
+						this.renderChild(iwc,tempobj);
 						flush();
 					}
 				}
@@ -336,8 +365,22 @@ public class PresentationObjectContainer extends PresentationObject
 					ExceptionWrapper exep = new ExceptionWrapper(ex, this);
 					exep._print(iwc);
 				}
+			}*/
+			Iterator iter = this.getChildren().iterator();
+			while(iter.hasNext()){
+				UIComponent child = (UIComponent)iter.next();
+				renderChild(iwc,child);
 			}
 		}
+	}
+
+	
+	/**
+	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
+	 */
+	public void initVariables(IWContext iwc) throws IOException {
+		goneThroughMain = false;
+		super.initVariables(iwc);
 	}
 	/**
 	 *  
@@ -387,7 +430,7 @@ public class PresentationObjectContainer extends PresentationObject
 					String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
 					if (index.indexOf(".") == -1)
 					{
-						return (((PresentationObjectContainer) getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
+						return (PresentationObject)(((PresentationObjectContainer) getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
 					}
 					else
 					{
@@ -472,9 +515,9 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return getChildren().size();
 	}
-	public PresentationObject objectAt(int index)
+	protected UIComponent objectAt(int index)
 	{
-		return (PresentationObject)getChildren().get(index);
+		return (UIComponent)getChildren().get(index);
 	}
 	public int getIndex(PresentationObject ob)
 	{
@@ -525,7 +568,7 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			for (int index = 0; index < numberOfObjects(); index++)
 			{
-				PresentationObject tempobj = objectAt(index);
+				PresentationObject tempobj = (PresentationObject)objectAt(index);
 				if (tempobj != null)
 				{
 					if (tempobj != this)
@@ -745,6 +788,16 @@ public class PresentationObjectContainer extends PresentationObject
 
 	public void remove(UIComponent child){
 		this.remove((PresentationObject)child);
+	}
+	
+	public void encodeBegin(FacesContext context)throws IOException{
+		//Does nothing here
+		//super.encodeBegin(context);
+	}
+
+	public void encodeChildren(FacesContext context) throws IOException{
+		//super.encodeChildren(context);
+		callPrint(context);
 	}
 	
 	protected class PresentationObjectList extends ArrayList{

@@ -62,11 +62,11 @@ public static String HEADER_COLOR = "#0E2456";
   public IWAdminWindow(String name,String classToInstanciate,String template){
     super(name,classToInstanciate,template);
   }
-
+/*
   public IWAdminWindow(String name,Class classToInstanciate,Class template){
     super(name,classToInstanciate,template);
   }
-
+*/
   public IWAdminWindow(String name,Class classToInstanciate){
     super(name,classToInstanciate);
   }

@@ -31,7 +31,13 @@ import java.sql.*;
 
   private static String transaction_attribute_name = IdegaTransactionManager.transaction_attribute_name;
 
-  private Synchronization syncronization;
+	/**
+	 * 
+	 * @uml.property name="syncronization"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	private Synchronization syncronization;
+
   private int status=IdegaTransactionStatus.STATUS_NO_TRANSACTION;
   private boolean isRollBackOnly=false;
   private Connection _conn;
@@ -161,13 +167,16 @@ public  boolean enlistResource(XAResource xaRes)throws RollbackException,
   return false;
 }
 
+/**
+ * 
+ * @uml.property name="status"
+ */
+public int getStatus() throws SystemException {
 
-
-public int getStatus()throws SystemException{
-
-  return this.status;
+	return this.status;
 
 }
+
 
 
 
@@ -256,13 +265,13 @@ private Synchronization getSynchronization(){
   return syncronization;
 }
 
-
-
-private void setStatus(int status){
-  this.status=status;
+/**
+ * 
+ * @uml.property name="status"
+ */
+private void setStatus(int status) {
+	this.status = status;
 }
-
-
 
 private Connection getFirstConnection(){
   //Connection conn = ConnectionBroker.getConnection(false);

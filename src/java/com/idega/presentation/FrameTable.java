@@ -532,8 +532,9 @@ public class FrameTable extends Window{
     }*/
 
     private static String getFrameURI(Class pageClass,IWContext iwc){
-      String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
-      return uri;
+    		//String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
+    		String uri = iwc.getIWMainApplication().getWindowOpenerURI(pageClass);
+    		return uri;
     }
 
     private String getFrameURI(String framePath, String frameName, IWContext iwc){

@@ -10,45 +10,11 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 //==============================================================================
-/** First off, just to dispel any doubt, this class and its subclasses have
- *  nothing to do with GUI "frames" such as java.awt.Frame.  We merely use the
- *  term in its very common sense of a still picture in an animation sequence.
- *  It's hoped that the restricted context will prevent any confusion.
- *  <p>
- *  An instance of this class is used in conjunction with a Gif89Encoder object
- *  to represent and encode a single static image and its associated "control"
- *  data.  A Gif89Frame doesn't know or care whether it is encoding one of the
- *  many animation frames in a GIF movie, or the single bitmap in a "normal"
- *  GIF. (FYI, this design mirrors the encoded GIF structure.)
- *  <p>
- *  Since Gif89Frame is an abstract class we don't instantiate it directly, but
- *  instead create instances of its concrete subclasses, IndexGif89Frame and
- *  DirectGif89Frame.  From the API standpoint, these subclasses differ only
- *  in the sort of data their instances are constructed from.  Most folks will
- *  probably work with DirectGif89Frame, since it can be constructed from a
- *  java.awt.Image object, but the lower-level IndexGif89Frame class offers
- *  advantages in specialized circumstances.  (Of course, in routine situations
- *  you might not explicitly instantiate any frames at all, instead letting
- *  Gif89Encoder's convenience methods do the honors.)
- *  <p>
- *  As far as the public API is concerned, objects in the Gif89Frame hierarchy
- *  interact with a Gif89Encoder only via the latter's methods for adding and
- *  querying frames.  (As a side note, you should know that while Gif89Encoder
- *  objects are permanently modified by the addition of Gif89Frames, the reverse
- *  is NOT true.  That is, even though the ultimate encoding of a Gif89Frame may
- *  be affected by the context its parent encoder object provides, it retains
- *  its original condition and can be reused in a different context.)
- *  <p>
- *  The core pixel-encoding code in this class was essentially lifted from
- *  Jef Poskanzer's well-known <cite>Acme GifEncoder</cite>, so please see the
- *  <a href="../readme.txt">readme</a> containing his notice.
- *
- * @version 0.90 beta (15-Jul-2000)
- * @author J. M. G. Elliott (tep@jmge.net)
- * @see Gif89Encoder
- * @see DirectGif89Frame
- * @see IndexGif89Frame
+
+/**
+ * First off, just to dispel any doubt, this class and its subclasses have *  nothing to do with GUI "frames" such as java.awt.Frame.  We merely use the *  term in its very common sense of a still picture in an animation sequence. *  It's hoped that the restricted context will prevent any confusion. *  <p> *  An instance of this class is used in conjunction with a Gif89Encoder object *  to represent and encode a single static image and its associated "control" *  data.  A Gif89Frame doesn't know or care whether it is encoding one of the *  many animation frames in a GIF movie, or the single bitmap in a "normal" *  GIF. (FYI, this design mirrors the encoded GIF structure.) *  <p> *  Since Gif89Frame is an abstract class we don't instantiate it directly, but *  instead create instances of its concrete subclasses, IndexGif89Frame and *  DirectGif89Frame.  From the API standpoint, these subclasses differ only *  in the sort of data their instances are constructed from.  Most folks will *  probably work with DirectGif89Frame, since it can be constructed from a *  java.awt.Image object, but the lower-level IndexGif89Frame class offers *  advantages in specialized circumstances.  (Of course, in routine situations *  you might not explicitly instantiate any frames at all, instead letting *  Gif89Encoder's convenience methods do the honors.) *  <p> *  As far as the public API is concerned, objects in the Gif89Frame hierarchy *  interact with a Gif89Encoder only via the latter's methods for adding and *  querying frames.  (As a side note, you should know that while Gif89Encoder *  objects are permanently modified by the addition of Gif89Frames, the reverse *  is NOT true.  That is, even though the ultimate encoding of a Gif89Frame may *  be affected by the context its parent encoder object provides, it retains *  its original condition and can be reused in a different context.) *  <p> *  The core pixel-encoding code in this class was essentially lifted from *  Jef Poskanzer's well-known <cite>Acme GifEncoder</cite>, so please see the *  <a href="../readme.txt">readme</a> containing his notice. *  * @version 0.90 beta (15-Jul-2000) * @author J. M. G. Elliott (tep@jmge.net) * @see Gif89Encoder * @see DirectGif89Frame * @see IndexGif89Frame
  */
+
 public abstract class Gif89Frame {
 
   //// Public "Disposal Mode" constants ////
@@ -141,8 +107,14 @@ public abstract class Gif89Frame {
   //----------------------------------------------------------------------------
   Gif89Frame() {}  // package-visible default constructor
 
-  //----------------------------------------------------------------------------
-  abstract Object getPixelSource();  
+	/**
+	 * 
+	 * @uml.property name="pixelSource"
+	 */
+	//----------------------------------------------------------------------------
+	abstract Object getPixelSource();
+
+  
 
   //----------------------------------------------------------------------------
   int getWidth() { return theWidth; }
@@ -198,14 +170,16 @@ class GifPixelsEncoder {
 
   private static final int EOF = -1;
 
-  private int     imgW, imgH;
+  private int imgW;
+  private int imgH;
   private byte[]  pixAry;
   private boolean wantInterlaced;
   private int     initCodeSize;
 
   // raster data navigators
   private int     countDown;
-  private int     xCur, yCur; 
+  private int xCur;
+  private int yCur; 
   private int     curPass;  
 
   //----------------------------------------------------------------------------
@@ -376,8 +350,17 @@ class GifPixelsEncoder {
 
   int g_init_bits;
 
-  int ClearCode;
-  int EOFCode;
+	/**
+	 * 
+	 * @uml.property name="clearCode"
+	 */
+	int ClearCode;
+
+	/**
+	 * 
+	 * @uml.property name="eOFCode"
+	 */
+	int EOFCode;
 
   void compress( int init_bits, OutputStream outs ) throws IOException
       {

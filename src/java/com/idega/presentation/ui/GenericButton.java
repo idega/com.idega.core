@@ -313,7 +313,8 @@ public class GenericButton extends GenericInput {
 	private String getURIToClassToInstanciate(IWContext iwc) {
 		if (this.classToInstanciate != null) {
 			if (this.templatePageClass != null) {
-				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass))+getParameters();
+				//return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass))+getParameters();
+				return(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate))+getParameters();
 			}
 			else if (this.templateForObjectInstanciation != null) {
 				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation))+getParameters();

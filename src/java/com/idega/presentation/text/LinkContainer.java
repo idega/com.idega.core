@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.17 2004/06/24 14:01:51 thomas Exp $
+ * $Id: LinkContainer.java,v 1.18 2004/06/24 20:12:25 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,10 +9,10 @@
  */
 package com.idega.presentation.text;
 
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
 
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICBuilderConstants;
@@ -56,6 +56,8 @@ public class LinkContainer extends PresentationObjectContainer {
 	private String _windowWidth, _windowHeight, _windowName;
 	private boolean _toolbar, _location, _directories, _status, _menu, _title, _scroll, _resize, _fullscreen = false;
 	private ICFile _file;
+	//A BuilderPage to link to:
+	private int ibPage=0;	
 	/**
 	 *
 	 */
@@ -201,22 +203,34 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			String value = this.getParameterValue(IB_PAGE_PARAMETER);
-			if (value != null) {
-				removeParameter(IB_PAGE_PARAMETER);
+			ibPage=((Number)page.getPrimaryKey()).intValue();
+			if(IWMainApplication.USE_NEW_URL_SCHEME){
+				try {
+					setURL(getBuilderService(this.getIWApplicationContext()).getPageURI(page));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
-			addParameter(IB_PAGE_PARAMETER, page.getID());
+			else{
+				String value = this.getParameterValue(IB_PAGE_PARAMETER);
+				if (value != null) {
+					removeParameter(IB_PAGE_PARAMETER);
+				}
+				addParameter(IB_PAGE_PARAMETER, page.getID());
+			}
 		}
 	}
 
 	public int getPage() {
+		/*
 		String value = this.getParameterValue(IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}
 		else {
 			return 0;
-		}
+		}*/
+		return ibPage;
 	}
 
 	public String getParameterValue(String prmName) {

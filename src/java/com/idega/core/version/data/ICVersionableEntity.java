@@ -16,17 +16,20 @@ import com.idega.data.IDOEntity;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
+
 public interface ICVersionableEntity extends IDOEntity {
-	
+
 	/**
-	 * 
 	 * @return versionID, returns null if is not a version
+	 * 
+	 * @uml.property name="versionPrimaryKey"
 	 */
 	public Object getVersionPrimaryKey();
-	
+
 	/**
-	 * 
 	 * @return itemID, returns null if is not an item
+	 * 
+	 * @uml.property name="itemPrimaryKey"
 	 */
 	public Object getItemPrimaryKey();
 

@@ -11,18 +11,27 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.FileUtil;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.LocaleUtil;
+import com.oreilly.servlet.multipart.FilePart;
+import com.oreilly.servlet.multipart.MultipartParser;
+import com.oreilly.servlet.multipart.ParamPart;
+import com.oreilly.servlet.multipart.Part;
 /**
  * IWEventProcessor //TODO: tryggvil Describe class 
  * Copyright (C) idega software 2004
@@ -68,22 +77,16 @@ public class IWEventProcessor {
 			increaseHistoryID(iwc);
 			handleEvent(iwc);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IWException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ServletException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
@@ -285,4 +288,58 @@ public class IWEventProcessor {
 	public Page getPage() {
 		return getPage(IWContext.getInstance());
 	}
+
+
+	public void handleMultipartFormData(IWContext iwc) throws Exception {
+		String sep = FileUtil.getFileSeparator();
+		StringBuffer pathToFile = new StringBuffer();
+		pathToFile.append(iwc.getIWMainApplication().getApplicationRealPath());
+		pathToFile.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+		pathToFile.append(sep);
+		pathToFile.append("upload");
+		pathToFile.append(sep);
+		FileUtil.createFolder(pathToFile.toString());
+		int maxSize = iwc.getRequest().getContentLength();
+		System.out.println("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
+		MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
+		/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/ 
+		Part part;
+		while ((part = mp.readNextPart()) != null) {
+			if (part.isParam()) {
+				ParamPart paramPart = (ParamPart) part;
+				iwc.setMultipartParameter(paramPart.getName(), paramPart.getStringValue());
+				//System.out.println(" PARAMETERS "+paramPart.getName()+" : "+paramPart.getStringValue());
+			}
+			else if (part.isFile()) {
+				// it's a file part
+				FilePart filePart = (FilePart) part;
+				String fileName = filePart.getFileName();
+				if (fileName != null) {
+					pathToFile.append(fileName);
+					String filePath = pathToFile.toString();
+					StringBuffer webPath = new StringBuffer();
+					webPath.append('/');
+					webPath.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+					webPath.append('/');
+					webPath.append("upload");
+					webPath.append('/');
+					webPath.append(fileName);
+					// Opera mimetype fix ( aron@idega.is )
+					String mimetype = filePart.getContentType();
+					if (mimetype != null) {
+						StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
+						if (tokenizer.hasMoreTokens())
+							mimetype = tokenizer.nextToken();
+					}
+					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+					long size = filePart.writeTo(file);
+					file.setSize(size);
+					iwc.setUploadedFile(file);
+				}
+			}
+		}
+	}
+
+
+
 }

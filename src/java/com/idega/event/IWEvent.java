@@ -18,8 +18,12 @@ public class IWEvent extends AWTEvent implements ActiveEvent, IWModuleEvent{
 
   public static final int IWEVENT_RESERVED_ID_MAX = AWTEvent.RESERVED_ID_MAX + 1000;
 
-  public IWContext myModinfo = null;
-
+	/**
+	 * 
+	 * @uml.property name="myModinfo"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	public IWContext myModinfo = null;
 
   public IWEvent(Object source, int id) {
     super(source, id);

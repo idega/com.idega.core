@@ -19,19 +19,42 @@ import javax.swing.event.*;
 
 public abstract class IWPresentationStateImpl implements IWPresentationState {
 
-  protected EventListenerList listenerList = new EventListenerList();
+	/**
+	 * 
+	 * @uml.property name="listenerList"
+	 * @uml.associationEnd multiplicity="(1 1)"
+	 */
+	protected EventListenerList listenerList = new EventListenerList();
+
 
   protected boolean _stateHasChanged = false;
 
-  protected ChangeEvent changeEvent = null;
+	/**
+	 * 
+	 * @uml.property name="changeEvent"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	protected ChangeEvent changeEvent = null;
 
-  protected IWLocation _location = new IWPresentationLocation();
+	/**
+	 * 
+	 * @uml.property name="_location"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	protected IWLocation _location = new IWPresentationLocation();
+
   
   // compoundId of the corresponding presentation object
   protected String compoundId = null;
   protected String artificialCompoundId = null;
-  
-  protected IWUserContext iwuc = null;
+
+	/**
+	 * 
+	 * @uml.property name="iwuc"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	protected IWUserContext iwuc = null;
+
  
   public IWPresentationStateImpl() {
   }
@@ -156,6 +179,8 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 	/**
 	 * Sets the artificialCompoundId.
 	 * @param artificialCompoundId The artificialCompoundId to set
+	 * 
+	 * @uml.property name="artificialCompoundId"
 	 */
 	public void setArtificialCompoundId(String artificialCompoundId) {
 		this.artificialCompoundId = artificialCompoundId;
@@ -164,6 +189,8 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 	/**
 	 * Returns the artificialCompoundId.
 	 * @return String
+	 * 
+	 * @uml.property name="artificialCompoundId"
 	 */
 	public String getArtificialCompoundId() {
 		return artificialCompoundId;

@@ -11,7 +11,20 @@ import com.idega.presentation.IWContext;
  * @version 1.0
  */
 
+
 public interface IWModuleEvent {
-  public void setIWContext(IWContext iwc);
-  public IWContext getIWContext();
+
+	/**
+	 * 
+	 * @uml.property name="iWContext"
+	 */
+	public void setIWContext(IWContext iwc);
+
+	/**
+	 * 
+	 * @uml.property name="iWContext"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	public IWContext getIWContext();
+
 }

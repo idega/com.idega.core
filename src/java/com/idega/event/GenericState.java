@@ -23,9 +23,14 @@ public class GenericState extends Object implements Cloneable {
   public final static String STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR = ";";
   public final static String STATESTRING_NOVALUE = "null";
 
-  //private static Hashtable _theAttributes = new Hashtable();
+	/**
+	 * 
+	 * @uml.property name="state"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="java.lang.String"
+	 */
+	//private static Hashtable _theAttributes = new Hashtable();
+	List state = null;
 
-  List state = null;
 //  List defaultStage = null;
   int pageKey;
   int instanceId;

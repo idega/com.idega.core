@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.94 2004/06/24 13:52:37 thomas Exp $
+ * $Id: PresentationObject.java,v 1.95 2004/06/24 20:12:24 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -128,11 +128,12 @@ implements Cloneable, PresentationObjectType
 	private String formerCompoundId = null;
 	
 	private TextStyler _styler;
-	private boolean goneThroughRenderPhase=false;	
+	private boolean goneThroughRenderPhase=false;
 	private String _objTemplateID = null;
 	private PresentationObject _templateObject =null;
+
 	//This is a temporary solution should be removed when JSF implementation is done:
-	private static boolean USE_JSF_RENDERING=false;
+	public static boolean USE_JSF_RENDERING=false;
 
 	/**
 	 * Default constructor.
@@ -143,11 +144,20 @@ implements Cloneable, PresentationObjectType
 	}
 	/**
 	 * @return The parent (subclass of PresentationObjectContainer) of the
-	 *         current object
+	 *         current object.
+	 * If the parent is not an instance of PresentationObject then this method will return null
+	 * to maintain backwards compatability.
 	 */
-	public PresentationObject getParentObject()
+	protected PresentationObject getParentObject()
 	{
-		return (PresentationObject)getParent();
+		try{
+			return (PresentationObject)getParent();
+		}
+		catch(ClassCastException e){
+			//If the parent is not a PresentationObject then return null
+			//to maintain backwards compatability.
+			return null;
+		}
 	}
 	protected String generateID()
 	{
@@ -176,7 +186,11 @@ implements Cloneable, PresentationObjectType
 	}
 	public PresentationObject getRootParent()
 	{
-		PresentationObject tempobj = getParentObject();
+		PresentationObject tempobj=null;
+		try{
+			tempobj = getParentObject();
+		}
+		catch(ClassCastException cce){}
 		if (tempobj == null)
 		{
 			return null;
@@ -211,6 +225,7 @@ implements Cloneable, PresentationObjectType
 		{
 			interfaceStyle = "default";
 		}
+		this.out = iwc.getWriter();
 	}
 	protected void initInMain(IWContext iwc) throws Exception
 	{
@@ -223,10 +238,15 @@ implements Cloneable, PresentationObjectType
 	public void initializeInMain(IWContext iwc) throws Exception
 	{
 	}
-	public void setDoPrint(boolean ifDoPrint)
-	{
+
+	/**
+	 * 
+	 * @uml.property name="doPrint"
+	 */
+	public void setDoPrint(boolean ifDoPrint) {
 		this.doPrint = ifDoPrint;
 	}
+
 	public boolean doPrint(IWContext iwc)
 	{
 		if (this.doPrint)
@@ -471,20 +491,25 @@ implements Cloneable, PresentationObjectType
 		 */
 		return getAttributesString(this.attributes);
 	}
+
 	/**
 	 * Gets the name of this object
+	 * 
+	 * @uml.property name="name"
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return this.name;
 	}
+
 	/**
 	 * Sets the name of this object
+	 * 
+	 * @uml.property name="name"
 	 */
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
+
 	/**
 	 * Flushes the buffer in the printwriter out
 	 */
@@ -507,16 +532,20 @@ implements Cloneable, PresentationObjectType
 	{
 		out.println(string);
 	}
-	public void _initPrinting(IWContext iwc) throws Exception
+	public void renderComponent(IWContext iwc) throws Exception
 	{
 		//this.out = iwc.getWriter();
-		_print(iwc);
+		//_print(iwc);
+		this.encodeBegin(iwc);
+		this.encodeChildren(iwc);
+		this.encodeEnd(iwc);
 	}
 	public void _print(IWContext iwc) throws Exception
 	{
-		initVariables(iwc);
-		this.out = iwc.getWriter();
-		print(iwc);
+		if(!this.goneThroughRenderPhase()){
+			initVariables(iwc);
+			print(iwc);
+		}
 	}
 	/**
 	 * The default implementation for the print function
@@ -550,15 +579,18 @@ implements Cloneable, PresentationObjectType
 	{
 		return this._response;
 	}
+
 	/**
 	 * @return The "layout" language used and supplied by the IWContext
+	 * 
+	 * @uml.property name="language"
 	 */
-	public String getLanguage()
-	{
+	public String getLanguage() {
 		if (language != null)
 			return this.language;
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
+
 	public void setID(String ID)
 	{
 		setMarkupAttribute("id", ID);
@@ -567,13 +599,16 @@ implements Cloneable, PresentationObjectType
 	{
 		setMarkupAttribute("id", Integer.toString(ID));
 	}
+
 	/**
 	 * @return The interface style supplied by the IWContext (optional)
+	 * 
+	 * @uml.property name="interfaceStyle"
 	 */
-	public String getInterfaceStyle()
-	{
+	public String getInterfaceStyle() {
 		return this.interfaceStyle;
 	}
+
 	public PrintWriter getPrintWriter()
 	{
 		return out;
@@ -626,14 +661,19 @@ implements Cloneable, PresentationObjectType
 	public Page getParentPage()
 	{
 		Page returnPage = null;
-		PresentationObject obj = null;
+		UIComponent obj = null;
 		if (this instanceof IFrameContent)
 		{
 			obj = ((IFrameContent) this).getOwnerInstance();
 		}
 		else
 		{
-			obj = this.getParentObject();
+			//try{
+				obj = this.getParent();
+			//}
+			//catch(ClassCastException cce){
+			//	obj=null;
+			//}
 		}
 		while (obj != null)
 		{
@@ -647,7 +687,7 @@ implements Cloneable, PresentationObjectType
 			}
 			else
 			{
-				obj = obj.getParentObject();
+				obj = obj.getParent();
 			}
 		}
 		if ((returnPage == null) && (this instanceof Page))
@@ -706,7 +746,12 @@ implements Cloneable, PresentationObjectType
 			}
 			else
 			{
-				obj = obj.getParentObject();
+				try{
+					obj = obj.getParentObject();
+				}
+				catch(ClassCastException cce){
+					obj=null;
+				}
 			}
 		}
 		return null;
@@ -742,8 +787,11 @@ implements Cloneable, PresentationObjectType
 	 */
 	public void facesMain(IWContext iwc) throws Exception
 	{
-		this.initializeInMain(iwc);
-		main(iwc);
+		//if(!this.goneThroughMain){
+			this.initializeInMain(iwc);
+			main(iwc);
+			goneThroughMain=true;
+		//}
 	}
 	
 	protected void prepareClone(PresentationObject newObjToCreate)
@@ -868,14 +916,23 @@ implements Cloneable, PresentationObjectType
 		}
 		goneThroughMain = true;
 	}
-	protected void setErrorMessage(String errorMessage)
-	{
+
+	/**
+	 * 
+	 * @uml.property name="errorMessage"
+	 */
+	protected void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	protected String getErrorMessage()
-	{
+
+	/**
+	 * 
+	 * @uml.property name="errorMessage"
+	 */
+	protected String getErrorMessage() {
 		return this.errorMessage;
 	}
+
 	public void setAsPrinted(boolean printed)
 	{
 		doPrint = printed;
@@ -896,7 +953,7 @@ implements Cloneable, PresentationObjectType
 				_templateObject.ic_object_instance_id = Integer.parseInt(this._objTemplateID);
 			} catch (NumberFormatException e) {
 				_templateObject.ic_object_instance_id=-1;
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		return _templateObject;
@@ -979,7 +1036,7 @@ implements Cloneable, PresentationObjectType
 	public int getICObjectID()
 	{
 		return ic_object_id;
-	}
+	}	
 	public ICObject getICObject() throws Exception
 	{
 		return this.getICObject(this.getClass());
@@ -994,7 +1051,9 @@ implements Cloneable, PresentationObjectType
 		}
 		catch (Exception e)
 		{
-			throw new ICObjectNotInstalledException(c.getName());
+			//throw new ICObjectNotInstalledException(c.getName());
+			e.printStackTrace();
+			return null;
 		}
 	}
 	public ICObjectInstance getICInstance(IWContext iwc) throws IWException
@@ -1147,13 +1206,14 @@ implements Cloneable, PresentationObjectType
 		}
 		return listenerList;
 	}
+
 	/**
 	 * @deprecated Do not use this function, it is not safe
 	 */
-	public IWContext getEventIWContext()
-	{
+	public IWContext getEventIWContext() {
 		return eventIWContext;
 	}
+
 	public void _setIWContext(IWContext iwc)
 	{
 		setIWContext(iwc);
@@ -1294,7 +1354,10 @@ implements Cloneable, PresentationObjectType
 	}
 	public GenericState getDefaultState()
 	{
-		return (GenericState) defaultState.clone();
+		if(defaultState!=null){
+			return (GenericState) defaultState.clone();
+		}
+		return null;
 	}
 	public boolean equals(PresentationObject obj)
 	{
@@ -1678,7 +1741,11 @@ implements Cloneable, PresentationObjectType
 		String id = IWMainApplication.getEncryptedClassName(this.getClass());
 		if (artificialCompoundId != null)
 			return id;
-		PresentationObject mother = getParentObject();
+		PresentationObject mother=null;
+		try{
+			mother= getParentObject();
+		}
+		catch(ClassCastException cse){}
 		// keep in mind that a parent object is not necessarily a container.
 		// Therefore check if a cast is possible.
 		if (mother != null && (PresentationObjectContainer.class).isAssignableFrom(mother.getClass()))
@@ -1721,11 +1788,16 @@ implements Cloneable, PresentationObjectType
 		buffer.append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
 		buffer.append(getComponentId());
 		// now add the compound id of my mother at the beginning
-		PresentationObject mother = getParentObject();
+		PresentationObject mother = null;
+		try{
+			mother = getParentObject();
+		}
+		catch(ClassCastException cse){}
 		if (mother != null)
 			buffer.insert(0, mother.calculateCompoundId());
 		return buffer.toString();
 	}
+
 	/**
 	 * something has changed, therefore change ALSO the value of the
 	 * presentation state object if formerCompoundId equals null the compoundId
@@ -1737,9 +1809,12 @@ implements Cloneable, PresentationObjectType
 	 * 
 	 * @param artificialCompoundId
 	 * @param iwuc
+	 * 
+	 * @uml.property name="artificialCompoundId"
 	 */
-	public void setArtificialCompoundId(String artificialCompoundId, IWUserContext iwuc)
-	{
+	public void setArtificialCompoundId(
+		String artificialCompoundId,
+		IWUserContext iwuc) {
 		this.artificialCompoundId = artificialCompoundId;
 		// something has changed, therefore change also the value of the
 		// presentation state object
@@ -1751,22 +1826,23 @@ implements Cloneable, PresentationObjectType
 		// and then call the getPresentationState() method.
 		// The part of this method that calls the state mashine is only for old
 		// code!
-		if (formerCompoundId != null && this instanceof StatefullPresentation)
-		{
-			try
-			{
-				Class stateClass = ((StatefullPresentation) this).getPresentationStateClass();
-				IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
-				IWPresentationState state = stateMachine.getStateFor(formerCompoundId, stateClass);
+		if (formerCompoundId != null && this instanceof StatefullPresentation) {
+			try {
+				Class stateClass = ((StatefullPresentation) this)
+					.getPresentationStateClass();
+				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
+					.getSessionInstance(iwuc, IWStateMachine.class);
+				IWPresentationState state = stateMachine.getStateFor(
+					formerCompoundId,
+					stateClass);
 				// update compoundId
 				state.setArtificialCompoundId(artificialCompoundId);
-			}
-			catch (RemoteException re)
-			{
+			} catch (RemoteException re) {
 				throw new RuntimeException(re.getMessage());
 			}
 		}
 	}
+
 	public String getCompoundId()
 	{
 		// wrap the private method to do something...
@@ -1915,11 +1991,11 @@ implements Cloneable, PresentationObjectType
 	 */
 	protected void callPrint(FacesContext fc)throws IOException{
 		try {
-			if(!goneThroughRenderPhase()){
+			//if(!goneThroughRenderPhase()){
 				IWContext iwc = castToIWContext(fc);
 				initVariables(iwc);
 				this.print(iwc);
-			}
+			//}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2008,8 +2084,14 @@ implements Cloneable, PresentationObjectType
 	
 	public String getFamily(){
 		return "idegaweb";
-	}	
+	}
 	
+	
+	/*
+	 * END JSF METHODS
+	 */
+
+
 	/**
 	 * Default idegaWeb JSF id generation mechanism
 	 * @return
@@ -2026,7 +2108,7 @@ implements Cloneable, PresentationObjectType
 	protected void setRenderedPhaseDone(){
 		goneThroughRenderPhase=true;
 	}
-	
+
 	protected void setRenderedPhaseNotDone(){
 		goneThroughRenderPhase=false;
 	}	
@@ -2034,11 +2116,6 @@ implements Cloneable, PresentationObjectType
 	protected boolean goneThroughRenderPhase(){
 		return goneThroughRenderPhase;
 	}
-	
-	/*
-	 * END JSF METHODS
-	 */
-	
 	
 	/*
 	 * END JSF SPECIFIC IMPLEMENTAION METHODS

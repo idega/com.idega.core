@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.113 2004/06/23 17:14:49 palli Exp $
+ *  $Id: Page.java,v 1.114 2004/06/24 20:12:24 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -16,6 +16,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
@@ -1096,7 +1100,7 @@ public class Page extends PresentationObjectContainer {
 	 *@return    The childOfOtherPage value
 	 */
 	protected boolean isChildOfOtherPage() {
-		PresentationObject parent = getParentObject();
+		UIComponent parent = getParent();
 		if (parent != null) {
 			if (parent instanceof Page) {
 				if (parent instanceof FrameSet) {
@@ -1105,6 +1109,9 @@ public class Page extends PresentationObjectContainer {
 				else {
 					return true;
 				}
+			}
+			else if (parent instanceof UIViewRoot) {
+				return false;
 			}
 			else {
 				return true;
@@ -1120,7 +1127,7 @@ public class Page extends PresentationObjectContainer {
 	 * @return a boolean wether (this) has a parent that is a FrameSet
 	 */
 	protected boolean isInFrameSet() {
-		PresentationObject parent = getParentObject();
+		UIComponent parent = getParent();
 		if (parent != null) {
 			if (parent instanceof FrameSet || parent instanceof Frame) {
 				return true;

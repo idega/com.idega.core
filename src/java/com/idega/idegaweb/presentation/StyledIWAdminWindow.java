@@ -78,11 +78,11 @@ private Image helpImage = null;
 	public StyledIWAdminWindow(String name,String classToInstanciate,String template){
 		super(name,classToInstanciate,template);
 	}
-
+/*
 	public StyledIWAdminWindow(String name,Class classToInstanciate,Class template){
 		super(name,classToInstanciate,template);
 	}
-
+*/
 	public StyledIWAdminWindow(String name,Class classToInstanciate){
 		super(name,classToInstanciate);
 	}

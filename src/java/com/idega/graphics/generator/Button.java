@@ -153,33 +153,62 @@ public class Button {
     System.exit(0);
   }
 
-  public void setFontColor(Color color){
-    fontColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="fontColor"
+	 */
+	public void setFontColor(Color color) {
+		fontColor = color;
+	}
 
-  public void setFont(Font theFont){
-    font = theFont;
-  }
+	/**
+	 * 
+	 * @uml.property name="font"
+	 */
+	public void setFont(Font theFont) {
+		font = theFont;
+	}
 
-  public void setFillColor(Color color){
-    fillColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="fillColor"
+	 */
+	public void setFillColor(Color color) {
+		fillColor = color;
+	}
 
-  public void setHighlightColor(Color color){
-    highlightColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="highlightColor"
+	 */
+	public void setHighlightColor(Color color) {
+		highlightColor = color;
+	}
 
-  public void setBorderColor(Color color){
-    borderColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="borderColor"
+	 */
+	public void setBorderColor(Color color) {
+		borderColor = color;
+	}
 
-  public void setOverColor(Color color){
-    overColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="overColor"
+	 */
+	public void setOverColor(Color color) {
+		overColor = color;
+	}
 
-  public void setUnderColor(Color color){
-    underColor = color;
-  }
+	/**
+	 * 
+	 * @uml.property name="underColor"
+	 */
+	public void setUnderColor(Color color) {
+		underColor = color;
+	}
+
 
   public void onlyCreateUpState(boolean onlyCreateUpState){
     this.onlyCreateUpState = onlyCreateUpState;
@@ -209,13 +238,22 @@ public class Button {
     return BUTTON_OVER;
   }
 
-  public int getWidth(){
-    return width;
-  }
+	/**
+	 * 
+	 * @uml.property name="width"
+	 */
+	public int getWidth() {
+		return width;
+	}
 
-  public int getHeight(){
-    return height;
-  }
+	/**
+	 * 
+	 * @uml.property name="height"
+	 */
+	public int getHeight() {
+		return height;
+	}
+
 
 /*
   public Color getHighlightColor(){
@@ -371,8 +409,11 @@ public class Button {
     }
 
   }
+
 /**
  * @return
+ * 
+ * @uml.property name="font"
  */
 public Font getFont() {
 	return font;

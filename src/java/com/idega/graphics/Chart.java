@@ -1,5 +1,5 @@
 /*
- * $Id: Chart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
+ * $Id: Chart.java,v 1.6 2004/06/24 20:12:24 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,10 +27,16 @@ public abstract class Chart {
    * The legend for the data
    */
   protected String legend_[] = null;
-  /*
-   * The URL for the chart created
-   */
-  protected String URL_ = null;
+
+	/**
+	 * 
+	 * @uml.property name="uRL_"
+	 */
+	/*
+	 * The URL for the chart created
+	 */
+	protected String URL_ = null;
+
   /*
    * The background colour for the chart
    */

@@ -25,7 +25,13 @@ import com.idega.presentation.Page;
 
 public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine {
 
-  private Map _stateMap = new Hashtable();
+	/**
+	 * 
+	 * @uml.property name="_stateMap"
+	 * @uml.associationEnd multiplicity="(0 1)" qualifier="idObj:java.lang.Object list:javax.swing.event.EventListenerList"
+	 */
+	private Map _stateMap = new Hashtable();
+
 //
 //  private int _historyID = 0;
 //

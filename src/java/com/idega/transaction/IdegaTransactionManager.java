@@ -54,7 +54,12 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
   private static IdegaTransactionManager instance;
 
-  private GenericEntity _entity;
+	/**
+	 * 
+	 * @uml.property name="_entity"
+	 * @uml.associationEnd multiplicity="(1 1)"
+	 */
+	private GenericEntity _entity;
 
   String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 

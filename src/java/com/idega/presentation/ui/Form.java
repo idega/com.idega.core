@@ -5,6 +5,8 @@
 
 package com.idega.presentation.ui;
 
+
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -671,7 +673,12 @@ public class Form extends InterfaceObject {
 	public void setWindowToOpen(Class windowClass) {
 		this.windowClass = windowClass;
 		//setAction(IWMainApplication.windowOpenerURL);
-		addParameter(Page.IW_FRAME_CLASS_PARAMETER, getIWApplicationContext().getIWMainApplication().getEncryptedClassName(windowClass));
+		if(IWMainApplication.USE_NEW_URL_SCHEME){
+			this.setAction(getIWApplicationContext().getIWMainApplication().getWindowOpenerURI(windowClass));
+		}
+		else{
+			addParameter(Page.IW_FRAME_CLASS_PARAMETER, getIWApplicationContext().getIWMainApplication().getEncryptedClassName(windowClass));
+		}
 		setWindow(Window.getStaticInstance(windowClass));
 	}
 
@@ -685,7 +692,16 @@ public class Form extends InterfaceObject {
 
 	public void setPageToSubmitTo(int ibPageID) {
 		//this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
-		this._submitToPage = ibPageID;
+		if(IWMainApplication.USE_NEW_URL_SCHEME){
+			try {
+				setAction(this.getBuilderService(getIWApplicationContext()).getPageURI(ibPageID));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		else{
+			this._submitToPage = ibPageID;
+		}
 	}
 
 	public void setPageToSubmitTo(ICPage page) {

@@ -36,10 +36,28 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   private String eventTarget = null;
   
   public static String EVENT_CONTROLLER = "event_controller";
-  
-  private List _parameters = new Vector();
-  private Page _page = null;
-  private IWContext _iwc = null;
+
+	/**
+	 * 
+	 * @uml.property name="_parameters"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.ui.Parameter"
+	 */
+	private List _parameters = new Vector();
+
+	/**
+	 * 
+	 * @uml.property name="_page"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	private Page _page = null;
+
+	/**
+	 * 
+	 * @uml.property name="_iwc"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	private IWContext _iwc = null;
+
 
 
   public IWPresentationEvent(){
@@ -268,6 +286,8 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	/**
 	 * Sets the eventHandlerURL.
 	 * @param eventHandlerURL The eventHandlerURL to set
+	 * 
+	 * @uml.property name="eventHandlerURL"
 	 */
 	public void setEventHandlerURL(String eventHandlerURL) {
 		this.eventHandlerURL = eventHandlerURL;
@@ -276,16 +296,20 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	/**
 	 * Returns the eventTarget.
 	 * @return String
+	 * 
+	 * @uml.property name="eventTarget"
 	 */
 	public String getEventTarget() {
-    if (eventTarget == null) 
-      eventTarget = DEFAULT_IW_EVENT_TARGET;
+		if (eventTarget == null)
+			eventTarget = DEFAULT_IW_EVENT_TARGET;
 		return eventTarget;
 	}
 
 	/**
 	 * Sets the eventTarget.
 	 * @param eventTarget The eventTarget to set
+	 * 
+	 * @uml.property name="eventTarget"
 	 */
 	public void setEventTarget(String eventTarget) {
 		this.eventTarget = eventTarget;

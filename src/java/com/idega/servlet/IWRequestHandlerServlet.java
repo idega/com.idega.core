@@ -150,7 +150,7 @@ public class IWRequestHandlerServlet extends IWCoreServlet {
 	}
 	protected void processBuilderPageRequest(HttpServletRequest servReq, HttpServletResponse servRes)
 		throws ServletException, IOException {
-		String redirectURI = this.getApplication().getBuilderServletURI();
+		String redirectURI = this.getApplication().getBuilderPagePrefixURI();
 		System.out.println("IWRequestHandlerServlet.processBuilderPageRequest(): redirectURI=" + redirectURI);
 		servReq.getRequestDispatcher(redirectURI).forward(servReq, servRes);
 		//servReq.getRequestDispatcher(redirectURI).include(servReq, servRes);

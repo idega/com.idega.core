@@ -1,11 +1,13 @@
 /*
- * $Id: AbstractChooser.java,v 1.21 2004/06/02 15:42:28 birna Exp $
+ * $Id: AbstractChooser.java,v 1.22 2004/06/24 20:12:25 tryggvil Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
 package com.idega.presentation.ui;
 
 import java.net.URLEncoder;
+
+import javax.faces.component.UIComponent;
 
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -246,14 +248,15 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	private String getParentFormString(PresentationObject obj) {
 		String returnString = "";
-
-		if (obj.getParentObject() != null) {
-			Object newObj = obj.getParentObject();
-			if (!(newObj instanceof Form)) {
-				returnString = getParentFormString((PresentationObject) newObj);
-			}
-			else {
-				returnString = ((PresentationObject) newObj).getID() + ".";
+		UIComponent parent = obj.getParent();
+		if (parent != null) {
+			if(parent instanceof PresentationObject){
+				if (!(parent instanceof Form)) {
+					returnString = getParentFormString((PresentationObject) parent);
+				}
+				else {
+					returnString = ((PresentationObject) parent).getID() + ".";
+				}
 			}
 		}
 

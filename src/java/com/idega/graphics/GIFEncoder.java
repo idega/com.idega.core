@@ -46,12 +46,25 @@ import java.awt.image.*;
  * @version 0.90 21 Apr 1996
  * @author <A HREF="http://www.cs.brown.edu/people/amd/">Adam Doppelt</A> */
 public class GIFEncoder {
-  short width_, height_;
+  short width_;
+  short height_;
   int numColors_;
-  byte pixels_[], colors_[];
+  byte pixels_[];
+  byte colors_[];
 
-  ScreenDescriptor sd_;
-  ImageDescriptor id_;
+	/**
+	 * 
+	 * @uml.property name="sd_"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	ScreenDescriptor sd_;
+
+	/**
+	 * 
+	 * @uml.property name="id_"
+	 * @uml.associationEnd multiplicity="(0 1)"
+	 */
+	ImageDescriptor id_;
 
   /**
    * Construct a GIFEncoder. The constructor will convert the image to
@@ -183,7 +196,8 @@ public class GIFEncoder {
   class BitFile {
     OutputStream output_;
     byte buffer_[];
-    int index_, bitsLeft_;
+    int index_;
+    int bitsLeft_;
 
     public BitFile(OutputStream output) {
 	    output_ = output;
@@ -352,9 +366,11 @@ public class GIFEncoder {
   }
 
   class ScreenDescriptor {
-    public short localScreenWidth_, localScreenHeight_;
+    public short localScreenWidth_;
+    public short localScreenHeight_;
     private byte byte_;
-    public byte backgroundColorIndex_, pixelAspectRatio_;
+    public byte backgroundColorIndex_;
+    public byte pixelAspectRatio_;
 
     public ScreenDescriptor(short width, short height, int numColors) {
 	    localScreenWidth_ = width;
@@ -394,7 +410,10 @@ public class GIFEncoder {
 
   class ImageDescriptor {
     public byte separator_;
-    public short leftPosition_, topPosition_, width_, height_;
+    public short leftPosition_;
+    public short topPosition_;
+    public short width_;
+    public short height_;
     private byte byte_;
 
     public ImageDescriptor(short width, short height, char separator) {

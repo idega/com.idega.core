@@ -245,8 +245,9 @@ public class FrameSet extends Window{
     }*/
 
     private static String getFrameURI(Class pageClass,IWContext iwc){
-      String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
-      return uri;
+    		//String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
+    		String uri = iwc.getIWMainApplication().getWindowOpenerURI(pageClass);
+    		return uri;
     }
 
     public static IWURL getFrameURL(Class pageClass,IWContext iwc){
