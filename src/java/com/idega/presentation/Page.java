@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.111 2004/06/22 17:25:57 gummi Exp $
+ *  $Id: Page.java,v 1.112 2004/06/22 17:51:15 thomas Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -16,14 +16,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.ejb.EJBException;
-
-import com.idega.builder.dynamicpagetrigger.business.DPTTriggerBusiness;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.business.ICFileSystem;
@@ -37,8 +33,8 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.servlet.IWCoreServlet;
-import com.idega.user.data.Group;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
 import com.idega.util.URLUtil;
@@ -82,7 +78,6 @@ public class Page extends PresentationObjectContainer {
 	private boolean _isDraft = false;
 	private boolean _isExtendingTemplate = false;
 	private String _templateId = null;
-	private int _dpt_root_page = -1;
 	private Hashtable _styleDefinitions;
 	private Hashtable _metaTags;
 	private QueueMap _styleSheets;
@@ -99,6 +94,8 @@ public class Page extends PresentationObjectContainer {
 	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
 	private ICFile styleFile = null;
+	
+	private ICDynamicPageTrigger dynamicPageTrigger = null;
 
 
 	/**
@@ -142,14 +139,6 @@ public class Page extends PresentationObjectContainer {
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
 	
-	/**
-	 * The variable _currentUserHasRelationToContainingDPTPage is set as null in the clone method 
-	 * because it should be set ones each time a DPT page is printed out.  It is used to speed up 
-	 * accesscontroling so its only necessary to go ones through the users groups for eash page rendering
-	 * to see if one of them matches the group attached to the DPT page tree (or root page).
-	 */
-	private Boolean _currentUserHasRelationToContainingDPTPage = null;
-	private Object dptOwnerGroup = null;
 
 	/**
 	 */
@@ -1035,8 +1024,7 @@ public class Page extends PresentationObjectContainer {
 				obj._styleSheets = _styleSheets;
 			if (_styleDefinitions != null)
 				obj._styleDefinitions = _styleDefinitions;
-			obj.dptOwnerGroup=dptOwnerGroup;
-			_currentUserHasRelationToContainingDPTPage=null;
+			obj.dynamicPageTrigger = (ICDynamicPageTrigger) dynamicPageTrigger.clone(); 
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
@@ -1648,14 +1636,6 @@ public class Page extends PresentationObjectContainer {
 		_templateId = id;
 	}
 	
-	public void setDPTRootPage(String id) {
-		if(id != null){
-			_dpt_root_page = Integer.parseInt(id);
-		}else {
-			_dpt_root_page = -1;
-		}
-	}
-
 	/**
 	 *  Gets the templateId attribute of the Page object
 	 *
@@ -1665,11 +1645,6 @@ public class Page extends PresentationObjectContainer {
 		return (_templateId);
 	}
 
-	
-	public int getDPTRootPageID() {
-		return (_dpt_root_page);
-	}
-	
 	
 	/**
 	 *  Used to add source of scriptfiles (JavaScript) The file url should end on
@@ -1733,43 +1708,12 @@ public class Page extends PresentationObjectContainer {
 		//<link rel="shortcut icon" href="/favicon.ico">
 	}
 
-	 
-	 //METHODS FOR DPT PAGES
-	 /**
-	  * If a user is in the returned group, then he is elidgable to get the permissions on this page as they are set in the template.
-	  * To get inherited permission for object on a DPT page one has to have permission for the object in the template, just like 
-	  * on ordinary pages, and also have a relation to the group representing the current instance of the generated DPT page tree 
-	  * as stored in the com.idega.builder.dynamicpagetrigger.data.PageLink and returned by this method.
-	  * @return Returns the DPT page relation group 
-	  */
-	public Object getDPTPageRelationGroup(IWUserContext iwuc) {
-	 	if(dptOwnerGroup == null && getDPTRootPageID()!=-1) {
-	 		try {
-				Group gr = ((DPTTriggerBusiness)IBOLookup.getServiceInstance(iwuc.getApplicationContext(),DPTTriggerBusiness.class)).getOwnerGroupFromRootPageID(getDPTRootPageID());
-				dptOwnerGroup=gr;;
-			} catch (IBOLookupException e) {
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (EJBException e) {
-				e.printStackTrace();
-			}
-	 	}
-	 	return dptOwnerGroup;
-	 }
-	 
-	 public void setCurrentUserHasRelationToContainingDPTPage(Boolean value) {
-	 	_currentUserHasRelationToContainingDPTPage = value;
-	 }
-	 
-	 /**
-	  * 
-	  * @return returns null if it has not been checked and set yet. It is set in the Accesscontrol class.
-	  */
-	 public Boolean hasCurrentUserRelationToContainingDPTPage() {
-	 	return _currentUserHasRelationToContainingDPTPage;
-	 }
-
-	 //METHODS FOR DPT PAGES END
+	
+	public ICDynamicPageTrigger getDynamicPageTrigger() {
+		if (dynamicPageTrigger == null) {
+			dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().getImplementorOrNull(ICDynamicPageTrigger.class, this.getClass());
+		}
+		return dynamicPageTrigger;
+	}
 	
 }
