@@ -1,0 +1,61 @@
+/*
+ * $Id: LoggedOnOffImage.java,v 1.1 2004/11/01 18:46:40 laddi Exp $
+ * Created on 1.11.2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
+package com.idega.idegaweb.widget.user;
+
+import com.idega.idegaweb.widget.Widget;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+
+
+/**
+ * Shows an image when user is logged on/off.
+ * 
+ * Last modified: 1.11.2004 18:16:35 by laddi
+ * 
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.1 $
+ */
+public class LoggedOnOffImage extends Widget {
+
+	private Image iLoggedOnImage;
+	private Image iLoggedOffImage;
+	
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.widget.Widget#getWidget(com.idega.presentation.IWContext)
+	 */
+	protected PresentationObject getWidget(IWContext iwc) {
+		if (iwc.isLoggedOn()) {
+			if (iLoggedOnImage != null) {
+				return iLoggedOnImage;
+			}
+		}
+		else {
+			if (iLoggedOffImage != null) {
+				return iLoggedOffImage;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param loggedOffImage The loggedOffImage to set.
+	 */
+	public void setLoggedOffImage(Image loggedOffImage) {
+		iLoggedOffImage = loggedOffImage;
+	}
+	
+	/**
+	 * @param loggedOnImage The loggedOnImage to set.
+	 */
+	public void setLoggedOnImage(Image loggedOnImage) {
+		iLoggedOnImage = loggedOnImage;
+	}
+}
