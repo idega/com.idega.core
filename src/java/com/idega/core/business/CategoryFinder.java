@@ -316,6 +316,8 @@ public class CategoryFinder {
 
       ICObjectInstance obj = ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
 
+			if(obj== null)
+				System.err.println("ic_object is null "+iObjectInstanceId);
       id = getObjectInstanceCategoryId(obj);
 
       if (id <= 0 && CreateNew) {
@@ -608,10 +610,10 @@ public class CategoryFinder {
   public List listOfCategoryForObjectInstanceId(ICObjectInstance obj) {
 
     try {
-      ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
-      return home.getListOfCategoryForObjectInstance(obj);
-//      List L = EntityFinder.getInstance().findRelated(obj,(ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
-//      return L;
+      //ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+      //return home.getListOfCategoryForObjectInstance(obj);
+      List L = EntityFinder.getInstance().findRelated(obj,(ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class));
+      return L;
 
     } catch (Exception ex) {
 
@@ -639,10 +641,10 @@ public class CategoryFinder {
 
 //<<<<<<< CategoryFinder.java
   private String getRelatedSQL(int iObjectInstanceId) {
-    try {
+    /*try {
       ICCategoryICObjectInstanceHome home = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
       return home.getRelatedSQL(iObjectInstanceId);
-    }catch (RemoteException rm) {
+    }catch (RemoteException rm)*/ {
       // Gamla dótið, fyrir Grím
       StringBuffer sql = new StringBuffer("select ");
       sql.append(((ICCategory) com.idega.core.data.ICCategoryBMPBean.getStaticInstance(ICCategory.class)).getIDColumnName());

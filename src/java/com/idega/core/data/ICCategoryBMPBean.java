@@ -15,6 +15,7 @@ import com.idega.data.TreeableEntity;
 public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.data.ICCategory,com.idega.core.business.Category {
 
 
+	public static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
 
   public ICCategoryBMPBean(){
 
@@ -54,7 +55,19 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 
   }
 
+	public void insertStartData(){
+		String table = com.idega.data.EntityControl.getManyToManyRelationShipTableName(ICCategory.class, ICObjectInstance.class);
+		String sql = "ALTER TABLE "+ table.toUpperCase()+" ADD "+TREE_ORDER_COLUMN_NAME +" INTEGER";
+		System.out.println(sql);
+		try {
+			idoExecuteTableUpdate(sql);
 
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
 
   public static String getEntityTableName(){return "IC_CATEGORY";}
 

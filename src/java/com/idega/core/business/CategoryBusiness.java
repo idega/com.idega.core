@@ -234,7 +234,7 @@ public class CategoryBusiness{
   }
 
   public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int iObjectInstanceId,String type,boolean allowMultible){
-    return saveCategory(iCategoryId, sName, sDesc, 0, type, allowMultible);
+    return saveCategory(iCategoryId, sName, sDesc, 0,iObjectInstanceId, type, allowMultible);
   }
   public ICCategory saveCategory(int iCategoryId,String sName,String sDesc,int orderNumber, int iObjectInstanceId,String type,boolean allowMultible){
 
@@ -331,9 +331,9 @@ public class CategoryBusiness{
 
       if(iObjectInstanceId > 0){
 
-        ICCategoryICObjectInstanceHome catObjInstHome = ((com.idega.core.data.ICCategoryICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class));
+        //ICCategoryICObjectInstanceHome catObjInstHome = ((com.idega.core.data.ICCategoryICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class));
         ICObjectInstance objIns = ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
-        catObjInstHome.setOrderNumber(Cat, objIns, orderNumber);
+        //catObjInstHome.setOrderNumber(Cat, objIns, orderNumber);
 
         // Allows only one category per instanceId
 
@@ -341,7 +341,7 @@ public class CategoryBusiness{
 
           objIns.removeFrom((ICCategory)com.idega.core.data.ICCategoryBMPBean.getEntityInstance(ICCategory.class));
 
-        Cat.addTo(objIns);
+        Cat.addTo(objIns,"TREE_ORDER",String.valueOf(orderNumber));
 
       }
 
