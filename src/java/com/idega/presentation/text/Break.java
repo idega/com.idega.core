@@ -14,8 +14,22 @@ import com.idega.presentation.IWContext;
 
 public class Break extends Block {
 
+private int _numberOfBreaks = 1;
+
   public Break() {
-    super.add(Text.getBreak());
   }
 
+  public Break(int numberOfBreaks) {
+    _numberOfBreaks = numberOfBreaks;
+  }
+
+  public void main(IWContext iwc) {
+    for ( int a = 1; a <= _numberOfBreaks; a++ ) {
+      super.add(Text.getBreak());
+    }
+  }
+
+  public void setNumberOfBreaks(int numberOfBreaks) {
+    _numberOfBreaks = numberOfBreaks;
+  }
 }
