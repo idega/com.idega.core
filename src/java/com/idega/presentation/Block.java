@@ -474,7 +474,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
 
   public synchronized Object clone(){
-    Block obj = (Block)super.clone(null,false);
+    Block obj = (Block)super.clone();
 
     obj.cacheable = this.cacheable;
     obj.cacheInterval = this.cacheInterval;
