@@ -14,7 +14,8 @@ public class ICCategory extends CacheableEntity{
   }
   public void initializeAttributes(){
     addAttribute(getIDColumnName());
-    addAttribute(getColumnBusinessId(),"Business id", true, true, Integer.class,"many-to-one",com.idega.core.data.ICBusiness.class);
+    addAttribute(getColumnBusinessId(),"Business id", true, true, Integer.class,MANY_TO_ONE,com.idega.core.data.ICBusiness.class);
+    addAttribute(getColumnOwnerGroup(),"Owner group", true, true, Integer.class);
     addAttribute(getColumnName(),"Name", true, true, String.class);
     addAttribute(getColumnDescription(),"Description", true, true, String.class);
     addAttribute(getColumnType(),"Type", true, true, String.class);
@@ -23,16 +24,6 @@ public class ICCategory extends CacheableEntity{
     addManyToManyRelationShip(com.idega.core.data.ICObjectInstance.class);
   }
 
-  /*
-  public void insertStartData()throws Exception{
-    NewsCategory cat = new NewsCategory();
-    cat.setName("Default");
-    cat.setValid(true);
-    cat.setDescription("Default Category for idegaWeb");
-    cat.insert();
-
-  }
-*/
   public static String getEntityTableName(){return "IC_CATEGORY";}
   public static String getColumnBusinessId(){return "IC_BUSINESS_ID";}
   public static String getColumnName(){return "NAME";}
@@ -40,6 +31,7 @@ public class ICCategory extends CacheableEntity{
   public static String getColumnType(){return "CAT_TYPE";}
   public static String getColumnCreated(){return "CREATED";}
   public static String getColumnValid(){return "VALID";}
+  public static String getColumnOwnerGroup(){return "OWNER_GROUP";}
 
   public String getEntityName(){
     return getEntityTableName();
@@ -86,5 +78,9 @@ public class ICCategory extends CacheableEntity{
 
   public String getCategoryType(){
     return "no_type";
+  }
+
+  public void setDefaultValues(){
+    setType(getCategoryType());
   }
 }

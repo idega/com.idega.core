@@ -19,7 +19,7 @@ import java.util.Collections;
 
 public abstract class CategoryEntity extends GenericEntity {
 
-  public String getColumnCategoryId(){return "IC_CATEGORY_ID";}
+  public static String getColumnCategoryId(){return "IC_CATEGORY_ID";}
 
   public CategoryEntity(){
     super();
