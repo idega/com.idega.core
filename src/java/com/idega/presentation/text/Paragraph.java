@@ -155,14 +155,17 @@ public void print(IWContext iwc)throws Exception{
 		}
 
 		else if (getMarkupLanguage().equals("WML")){
-
-			println("<p>");
-
-			super.print(iwc);
-
-			println("</p>");		}
-
-	        }
+			if(this.isEmpty()){
+				print("<p/>");
+			} else {
+				print("<p>");
+	
+				super.print(iwc);
+	
+				print("</p>");		
+			}
+		}
+	}
 
 
 
