@@ -120,8 +120,11 @@ public class SingleLineItem extends Component {
   }
 
   public void add(Object component){
-    if( components == null ) components = new Vector();
-    components.add(component);
+    if( component!= null ){
+      if( components == null ) components = new Vector();
+
+      components.add(component);
+    }
   }
 
   /*public Image getGrayImage() {
