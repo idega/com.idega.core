@@ -37,7 +37,7 @@ public class IWBundle{
 
   private Hashtable localePaths;
   private Hashtable resourceBundles;
-  private boolean autoCreate=false;
+  private boolean autoCreate=true;
 
   private Hashtable handlers;
   //private static Hashtable instances;
