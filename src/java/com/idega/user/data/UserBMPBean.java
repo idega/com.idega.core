@@ -646,26 +646,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(getEntityName());
-		query.appendWhere(this.getIDColumnName());
-		//		  IDOQuery subQuery = idoQuery();
-		//		  try{
-		//            subQuery.appendCommaDelimited(groupList);
-		//          }
-		//          catch(RemoteException rme){
-		//            throw new EJBException(rme);
-		//          }
+		query.appendWhere();
+		
+		if(groupList!=null && !groupList.isEmpty()){
+			query.append(getIDColumnName());
+			query.appendIn(sGroupList);
+    	query.appendAnd();
+    	appendIsNotDeleted(query);
+			query.appendOrderBy(this.getColumnNameFirstName());
 
-		query.appendIn(sGroupList);
-    query.appendAnd();
-    appendIsNotDeleted(query);
-		query.appendOrderBy(this.getColumnNameFirstName());
-
-		IDOQuery countQuery = idoQuery();
-		countQuery.appendSelectCountFrom(getEntityName());
-		countQuery.appendWhere(this.getIDColumnName());
-		countQuery.appendIn(sGroupList);
-    countQuery.appendAnd();
-    appendIsNotDeleted(countQuery);
+			IDOQuery countQuery = idoQuery();
+			countQuery.appendSelectCountFrom(getEntityName());
+			countQuery.appendWhere(this.getIDColumnName());
+			countQuery.appendIn(sGroupList);
+    	countQuery.appendAnd();
+    	appendIsNotDeleted(countQuery);
 		//	  return this.idoFindPKsBySQL(query.toString());
 				
 		try {
@@ -673,6 +668,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 		catch (IDOException ex) {
 			throw new EJBException(ex);
+		}
+		
+		}
+		else{
+			System.err.println("UserBMPBean: ejbFindUsersForUserRepresentativeGroups : groupList is NULL or empty!!");
+			return null;
 		}
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}

@@ -384,6 +384,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//
 	//        }
 
+/**
+ * @return A list of groups (not users) under this group
+ */
 	public List getChildGroups() throws EJBException {
 		List theReturn = new ArrayList();
 		
