@@ -1782,7 +1782,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									Integer aliasGroupsId = (Integer)aliasMap.get(topNodeId);
 									if(aliasGroupsId!=null){
 										if(!groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
-											groupMap.remove(topNodeId);
+//											groupMap.remove(topNodeId);
+											System.out.println("Here is the code that once returned concurrentException");
 										}
 									}
 								}
