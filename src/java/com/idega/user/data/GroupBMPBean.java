@@ -1045,6 +1045,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   private GroupTypeHome getGroupTypeHome() throws RemoteException {
     return ((GroupTypeHome)IDOLookup.getHome(GroupType.class));
   }
+  
+/**
+ * Method hasRelationTo.
+ * @param group
+ * @return boolean
+ * @throws RemoteException
+ */
+  public boolean hasRelationTo(Group group) throws RemoteException{
+  	 int myId = ((Integer) this.getPrimaryKey()).intValue();
+  	 int groupId =  ((Integer) group.getPrimaryKey()).intValue();
+  	 Collection relations = new Vector();
+  	 try{
+  	 	relations = this.getGroupRelationHome().findGroupsRelationshipsContainingUniDirectional(groupId,myId);
+  	 }
+  	 catch(FinderException ex){ex.printStackTrace();}
+  	 return !relations.isEmpty();
+  }
 
   public Iterator getChildren() {
     /**

@@ -59,5 +59,5 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
 
   public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
   public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
-
+  public boolean hasRelationTo(Group group) throws  java.rmi.RemoteException;
  }

@@ -318,6 +318,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   public void removeGroup()throws javax.ejb.EJBException, java.rmi.RemoteException{
     this.getGeneralGroup().removeGroup();
   }
+  
+  public boolean hasRelationTo(Group group)throws java.rmi.RemoteException{
+  	return this.getGeneralGroup().hasRelationTo(group);
+  }
 
   public boolean equals(com.idega.user.data.Group obj) throws java.rmi.RemoteException{
 //    System.out.println("AbstractPratyBMPBean in equals(com.idega.user.data.Group p0)");

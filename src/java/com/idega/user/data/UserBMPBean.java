@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 
 
+
 /**
  * Title:        User
  * Copyright:    Copyright (c) 2001
