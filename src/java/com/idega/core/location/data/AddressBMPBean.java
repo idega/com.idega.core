@@ -270,9 +270,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 	public Integer ejbFindUserAddressByAddressType(int userID, AddressType type) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
-		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
-		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(((Integer) type.getPrimaryKey()).intValue());
+		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ")
+		.append("ic_user_address iua ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id")
+		.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(((Integer) type.getPrimaryKey()).intValue());
 
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
 	}
