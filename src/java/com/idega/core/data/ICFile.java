@@ -32,7 +32,7 @@ public class ICFile extends GenericEntity {
     addAttribute(getIDColumnName());
     addAttribute("ic_language_id","Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
     addAttribute("mime_type","Type of file",true,true, String.class,20);
-    addAttribute("name","Nafn",true,true, String.class, 20);
+    addAttribute("name","File name",true,true, String.class, 20);
     addAttribute("description","Description",true,true, String.class, 1000);
     addAttribute("file_value","The file value",true,true, com.idega.data.BlobWrapper.class);
     addAttribute("creation_date","Creation date",true,true, java.sql.Timestamp.class);
