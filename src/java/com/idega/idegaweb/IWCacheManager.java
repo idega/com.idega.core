@@ -8,13 +8,19 @@ package com.idega.idegaweb;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.*;
 import java.io.PrintWriter;
+import com.idega.util.caching.Cache;
+import com.idega.util.FileUtil;
+import com.idega.data.GenericEntity;
+
 
 public class IWCacheManager {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
+  private static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
 
   //private static IWCacheManager instance;
   private Map objectsMap;
@@ -51,7 +57,7 @@ public class IWCacheManager {
        //System.out.println("Current     : "+currentTime);
        //System.out.println("Invalidation: "+invalidation);
 
-      if(currentTime > invalidation){
+      if( (currentTime > invalidation) && (invalidation!=0) ){//invalidation==0 cache forever or until app.server shuts down
         //System.out.println(" currentTime > invalidation ");
         return false;
       }
@@ -135,6 +141,61 @@ public class IWCacheManager {
     }
     return intervalsMap;
   }
+//added by Eirikur Hrafnsson, eiki@idega.is
+  public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
+    //check if this blob has already been cached
+    Cache cache = (Cache) getObject(entityClassString+id);
+    if( cache == null ) {//if null cache it for next time
+     cache = cacheBlob(entityClassString,id,iwma);
+    }
+    return cache;
+  }
 
+  private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma){
+    InputStream input = null;
+    GenericEntity entity;
+    Cache cacheObject = null;
+    try{
+      entity = GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
+      input = entity.getInputStreamColumnValue(entity.getLobColumnName());
+      String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
+      String virtualPath = "/"+IW_ROOT_CACHE_DIRECTORY;
+      String fileName = entity.getID()+"_"+entity.getName();
 
+      if(input != null ){
+        FileUtil.streamToFile(input,realPath,fileName);
+        cacheObject = new Cache();
+        cacheObject.setEntity(entity);
+        cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
+        cacheObject.setVirtualPathToFile(virtualPath+"/"+java.net.URLEncoder.encode(fileName));
+        setObject(entityClassString+id,cacheObject,0);
+      }
+
+    }
+    catch( Exception e ){
+     e.printStackTrace(System.err);
+     System.err.println("IWCacheManager : error getting stream from blob");
+    }
+    finally{
+      try{
+       if (input != null ) input.close();
+      }
+      catch(IOException e){
+        e.printStackTrace(System.err);
+        System.err.println("IWCacheManager : error closing stream");
+      }
+    }
+
+    return cacheObject;
+  }
+
+  public static void deleteCachedBlobs(IWMainApplication iwma){
+    String realPath = iwma.getApplicationRealPath();
+    FileUtil.deleteAllFilesInDirectory( realPath+IW_ROOT_CACHE_DIRECTORY );
+  }
+
+  // not done yet
+  private static void deleteCachedBlob(String pathAndFileName){
+     FileUtil.delete(pathAndFileName);
+  }
 }

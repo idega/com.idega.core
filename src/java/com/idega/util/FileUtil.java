@@ -101,7 +101,7 @@ public class FileUtil {
 }
 
 /*
-* streams an inputstream to a file and closes the input stream
+* streams an inputstream to a file
 */
   public static void streamToFile( InputStream input, String filePath, String fileName){
     try{
@@ -138,7 +138,24 @@ public class FileUtil {
         System.err.println("FileUtil : Error closing the inputstream");
       }
     }
+
   }
 
+    /**
+   * deletes entire contents of a folder. Returns true if deletion successful, false otherwise
+   */
+  public static boolean deleteAllFilesInDirectory(String path){
+    File folder = new File(path);
+    if(folder.exists()){
+      File[] files = folder.listFiles();
+      for (int i = 0; i < files.length; i++) {
+       files[i].delete();
+      }
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
 
 }
