@@ -28,6 +28,8 @@ public class TopNodeGroupBMPBean extends GenericEntity  implements TopNodeGroup{
     public final static String TABLE_NAME = "IC_USER_TOPNODES";
     public final static String COLUMN_USER_ID = "USER_ID";
     public final static String COLUMN_GROUP_ID = "GROUP_ID";
+    public final static String COLUMN_LOGIN_DURATION = "LOGIN_DURATION";
+    public final static String COLUMN_NUMBER_OF_PERMISSIONS = "NUMBER_OF_PERMISSIONS";
     public final static String COLUMN_LASTCHANGED = "LAST_CHANGED";
     public final static String COLUMN_COMMENT = "TN_COMMENT";
     
@@ -45,6 +47,8 @@ public class TopNodeGroupBMPBean extends GenericEntity  implements TopNodeGroup{
     public void initializeAttributes() {
         addAttribute(COLUMN_USER_ID,"User id",true,true,Integer.class);
         addAttribute(COLUMN_GROUP_ID,"Group id",true,true,Integer.class);
+        addAttribute(COLUMN_LOGIN_DURATION,"Login duration",true,true,String.class);
+        addAttribute(COLUMN_NUMBER_OF_PERMISSIONS,"Number of permissions",true,true,Integer.class);
         addAttribute(COLUMN_LASTCHANGED,"Last changed",true,true,Timestamp.class);
         addAttribute(COLUMN_COMMENT,"Comment",true,true,String.class);
         
@@ -115,6 +119,22 @@ public class TopNodeGroupBMPBean extends GenericEntity  implements TopNodeGroup{
         setColumn(COLUMN_COMMENT,comment);
     }
     
+    public String getLoginDuration() {
+        return getStringColumnValue(COLUMN_LOGIN_DURATION);
+    }
+
+    public void setLoginDuration(String login_duration) {
+        setColumn(COLUMN_LOGIN_DURATION, login_duration);
+    }
+
+    public void setNumberOfPermissions(Integer number_of_permissions) {
+        setColumn(COLUMN_NUMBER_OF_PERMISSIONS, number_of_permissions);
+    }
+
+    public Integer getNumberOfPermissions() {
+        return getIntegerColumnValue(COLUMN_NUMBER_OF_PERMISSIONS);
+    }
+
     public Collection ejbFindByUser(Integer userID)throws FinderException{
         return super.idoFindPKsByQuery(idoQueryGetSelect().appendWhereEquals(COLUMN_USER_ID,userID));
     }

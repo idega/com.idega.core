@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.79 2004/10/18 17:21:36 eiki Exp $
+ * $Id: UserBusiness.java,v 1.80 2004/10/25 18:15:32 sigtryggur Exp $
  * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -52,10 +52,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/18 17:21:36 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/25 18:15:32 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.79 $
+ * @version $Revision: 1.80 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -707,7 +707,7 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserTopGroupNodes
 	 */
-	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, String comment)
+	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions, String loginDuration, String comment)
 			throws java.rmi.RemoteException;
 
 	/**

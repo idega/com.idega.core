@@ -64,4 +64,23 @@ public interface TopNodeGroup extends IDOEntity {
      */
     public void setComment(String comment);
 
+    /**
+     * @see com.idega.user.data.TopNodeGroupBMPBean#getLoginDuration
+     */
+    public String getLoginDuration();
+
+    /**
+     * @see com.idega.user.data.TopNodeGroupBMPBean#setLoginDuration
+     */
+    public void setLoginDuration(String login_duration);
+
+    /**
+     * @see com.idega.user.data.TopNodeGroupBMPBean#getNumberOfPermissions
+     */
+    public Integer getNumberOfPermissions();
+
+    /**
+     * @see com.idega.user.data.TopNodeGroupBMPBean#setNumberOfPermissions
+     */
+    public void setNumberOfPermissions(Integer number_of_permissions);
 }

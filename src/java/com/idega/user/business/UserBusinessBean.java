@@ -1987,6 +1987,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
 				Timer totalTime = new Timer();
 				totalTime.start();
+				Collection allViewAndOwnerPermissionGroups = new ArrayList();
 				try {
 					GroupBusiness groupBiz = getGroupBusiness();
 					if (false) {//(groupBiz.userGroupTreeImageProcedureTopNodeSearch())
@@ -2067,7 +2068,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						// double entries thank you
 						addGroupPKsToCollectionFromICPermissionCollection(ownedPermissions,
 								allViewAndOwnerPermissionGroupPKs);
-						Collection allViewAndOwnerPermissionGroups = new ArrayList();
 						try {
 							allViewAndOwnerPermissionGroups = grHome.findByPrimaryKeyCollection(allViewAndOwnerPermissionGroupPKs);
 						}
@@ -2284,9 +2284,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 				totalTime.stop();
 				log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
+				storeUserTopGroupNodes(user, topNodes, allViewAndOwnerPermissionGroups.size(), totalTime.getTimeString(), null);
 			}
 			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
-			storeUserTopGroupNodes(user, topNodes, null);
 		}
 		return topNodes;
 	}
@@ -2348,10 +2348,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param nodeGroupIds
 	 * @param comment
 	 */
-	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, String comment) {
-		if (true) //TODO Sigtryggur This is temporarly disabled, untill
-			// decaching has been enabled
-			return true;
+	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions, String totalLoginTime, String comment) {
 		javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
 		try {
 			transactionManager.begin();
@@ -2363,6 +2360,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (comment != null)
 					topNode.setComment(comment);
 				topNode.setLastChanged(IWTimestamp.getTimestampRightNow());
+				topNode.setNumberOfPermissions(new Integer(numberOfPermissions));
+				topNode.setLoginDuration(totalLoginTime);
 				topNode.store();
 			}
 			transactionManager.commit();
