@@ -331,15 +331,25 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return (Link) setStyle(link,styleName);	
 	}
 	
-	public PresentationObject setStyle(PresentationObject obj, String styleName) {
-		obj.setStyleClass(styleName);
+	/**
+	 * Gets a prefixed stylename to use for objects, with prefix specific for the bundle used by this block
+	 * if the block is in the core bundle, no prefix is added
+	 * @param styleName
+	 * @return stylename
+	 */
+	public String getStyleName(String styleName){
 		if ( getIWUserContext() != null ) {
 			String prefix = getBundle(getIWUserContext()).getBundleName();
 			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER) {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
-				obj.setStyleClass(prefix + styleName);
+				return prefix+styleName;
 			}
 		}
+		return styleName;
+	}
+	
+	public PresentationObject setStyle(PresentationObject obj, String styleName) {
+		obj.setStyleClass(getStyleName(styleName));
 		return obj;
 	}
 
