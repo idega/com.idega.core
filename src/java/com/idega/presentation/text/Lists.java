@@ -1,5 +1,5 @@
 /*
- * $Id: Lists.java,v 1.13 2005/02/17 11:12:12 tryggvil Exp $
+ * $Id: Lists.java,v 1.14 2005/03/08 20:09:54 tryggvil Exp $
  * Created in 2000 Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,8 @@ package com.idega.presentation.text;
 
 import java.util.Iterator;
 import java.util.List;
+import javax.faces.context.FacesContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -20,10 +22,10 @@ import com.idega.presentation.PresentationObjectContainer;
  * <p>
  * A UIComponent class to render out a "List" or <code>ul</code> or <code>ol</code> html tag.
  * </p>
- *  Last modified: $Date: 2005/02/17 11:12:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 20:09:54 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class Lists extends PresentationObjectContainer {
 
@@ -39,11 +41,24 @@ public class Lists extends PresentationObjectContainer {
 
 	private boolean compact = false;
 	private boolean ordered = false;
-
-	private Image bullet;
-
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[3];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(compact);
+		values[2] = Boolean.valueOf(ordered);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		compact = ((Boolean)values[1]).booleanValue();
+		ordered = ((Boolean)values[2]).booleanValue();
+	}
+	
 	public Lists() {
 		super();
+		setTransient(false);
 	}
 
 	/**
@@ -79,10 +94,26 @@ public class Lists extends PresentationObjectContainer {
 		this.ordered = ordered;
 	}
 
+	//TODO remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Image oldBullet;
 	public void setBulletImage(Image image) {
-		bullet = image;
+		if(IWMainApplication.useJSF){
+			getFacets().put("bulletimage",image);
+		}
+		else{
+			oldBullet=image;
+		}
 	}
-
+	protected Image getBulletImage(){
+		if(IWMainApplication.useJSF){
+			return (Image)getFacet("bulletimage");
+		}
+		else{
+			return oldBullet;
+		}
+	}
+	
 	private String getListType() {
 		if (ordered) {
 			return "ol";
@@ -92,7 +123,10 @@ public class Lists extends PresentationObjectContainer {
 
 	}
 
-	private void getBullet() {
+	
+	
+	private void initializeBulletImage() {
+		Image bullet = getBulletImage();
 		if (bullet != null) {
 			/** todo use MediaBusiness.getMediaURL(fileid,iwma);* */
 			String styleString = "list-style-image: url(" + bullet.getMediaURL() + ");";
@@ -101,7 +135,7 @@ public class Lists extends PresentationObjectContainer {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		getBullet();
+		initializeBulletImage();
 
 		if (getMarkupLanguage().equals("HTML")) {
 			if (!compact) {
