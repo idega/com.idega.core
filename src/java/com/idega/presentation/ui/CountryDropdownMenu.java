@@ -32,6 +32,7 @@ import com.idega.presentation.IWContext;
  * The default parameter it submits is the public static string IW_COUNTRY_MENU_PARAM_NAME and is the id for the Country
  * 
  * @author <a href= "eiki@idega.is">Eirikur S. Hrafnsson</a>
+ * @author <a href= "aron@idega.is">Aron Birkir</a>
  */
 
 public class CountryDropdownMenu extends DropdownMenu {
@@ -120,9 +121,12 @@ public class CountryDropdownMenu extends DropdownMenu {
 			}
 		}
 		Collections.sort(smallCountries);
+		
 		for (Iterator iterator = smallCountries.iterator(); iterator.hasNext();) {
 			SmallCountry sCountry = (SmallCountry) iterator.next();
-			addMenuElement(sCountry.getID().intValue(),sCountry.getName());
+			// we dont want the ISO code into the list
+			if(!sCountry.name .equalsIgnoreCase(sCountry.code))
+				addMenuElement(sCountry.getID().intValue(),sCountry.getName());
 		}
 		
 		try {
