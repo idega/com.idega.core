@@ -42,7 +42,7 @@ import java.rmi.RemoteException;
   * <p>Description: </p>
   * <p>Copyright: Copyright (c) 2002</p>
   * <p>Company: idega Software</p>
-  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+  * @author <a href="gummi@idega.is">Gu?mundur ?g?st S?mundsson</a>
   * @version 1.0
   */
 
@@ -208,7 +208,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
        /**
        * @todo Using setFullName in stead
-       * is this ok and should it be done also in updateUser (I don´t think so)?
+       * is this ok and should it be done also in updateUser (I don?t think so)?
        * @modified by Eirikur Hrafnsson
        */
 
@@ -1217,6 +1217,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		catch(Exception e){
 			throw new IBORuntimeException(e,this);
 		}
+	}
+	
+	public boolean hasUserLogin(User user)throws RemoteException{
+		LoginTable lt = LoginDBHandler.getUserLogin(((Integer)user.getPrimaryKey()).intValue());
+		return lt!=null;
+	}
+	
+	public boolean hasUserLogin(int userID)throws RemoteException{
+		LoginTable lt = LoginDBHandler.getUserLogin(userID);
+		return lt!=null;
 	}
 	
 

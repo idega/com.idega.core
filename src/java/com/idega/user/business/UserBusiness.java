@@ -110,4 +110,6 @@ public interface UserBusiness extends com.idega.business.IBOService
 	 * @throws EJBException If an error occurs casting
 	 */
 	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException,RemoteException;
+	public boolean hasUserLogin(User user) throws RemoteException;
+	public boolean hasUserLogin(int userID) throws RemoteException;
 }
