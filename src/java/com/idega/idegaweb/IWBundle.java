@@ -94,6 +94,8 @@ public class IWBundle{
 
     public void reloadBundle(){
       loadBundle();
+      resourceBundles.clear();
+      localizableStrings=null;
     }
 
    private void loadBundle(){
