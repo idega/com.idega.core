@@ -743,7 +743,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		sql.append(SQL_RELATION_EMAIL).append(" iue ");
 		sql.append(" where ie.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID = ");
 		sql.append("iue.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID  and ");
-		sql.append("iue.").append(getIDColumnName()).append(" = iu").append(getIDColumnName());
+		sql.append("iue.").append(getIDColumnName()).append(" = iu.").append(getIDColumnName());
 		sql.append(" and ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL).append(" = '");
 		sql.append(emailAddress).append("'");
 		return (Integer) super.idoFindOnePKBySQL(sql.toString());
