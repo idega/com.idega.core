@@ -68,7 +68,7 @@ public class LoginDBHandler {
       if(userLogin != null && !"".equals(userLogin)){
         if (!loginTable.getUserLogin().equals(userLogin)) {
           noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getStaticInstance().getUserLoginColumnName(), userLogin);
-          if (noLogin != null && noLogin.size() > 0) {
+          if (noLogin != null && (noLogin.size() > 0 && ((LoginTable)noLogin.get(0)).getUserId() != userID)) {
             LoginTable tempLoginTable = (LoginTable) noLogin.get(0);
             if (tempLoginTable.getUserId() != userID)
             throw new Exception("login not valid : in use");
