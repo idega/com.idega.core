@@ -835,12 +835,13 @@ public void setCacheWriter(PrintWriter writer){
 
   public boolean isSuperAdmin(){
     try {
-      return this.getUser().equals(this.getAccessController().getAdministratorUser());
+      if(this.isLoggedOn())
+        return this.getUser().equals(this.getAccessController().getAdministratorUser());
     }
     catch (Exception ex) {
       ex.printStackTrace();
-      return false;
     }
+    return false;
   }
 
   public boolean isLoggedOn(){
