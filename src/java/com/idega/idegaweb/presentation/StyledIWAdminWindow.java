@@ -50,6 +50,7 @@ private Image helpImage = null;
 
 	public StyledIWAdminWindow(){
 		super();
+		setScrollbar(true);
 	}
 
 	public StyledIWAdminWindow(String name){
