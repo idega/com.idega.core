@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.106 2004/12/03 03:50:38 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.107 2004/12/03 04:50:43 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -33,6 +33,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -42,6 +43,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.view.ViewManager;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookup;
+import com.idega.event.IWStateMachine;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
@@ -58,10 +60,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 03:50:38 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 04:50:43 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.106 $
+ * @version $Revision: 1.107 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -468,6 +470,12 @@ public class IWMainApplication {//implements ServletContext{
     public void shutdownApplicationServices(){
     		ICLocaleBusiness.unload();
     		ImageFactory.getStaticInstance(this).unload();
+    		try {
+				((IWStateMachine)IBOLookup.getServiceInstance(this.getIWApplicationContext(),IWStateMachine.class)).unload();
+			}
+			catch (IBOLookupException e1) {
+				e1.printStackTrace();
+			}
     		try {
 			BuilderServiceFactory.getBuilderService(this.getIWApplicationContext()).unload();
 		}
