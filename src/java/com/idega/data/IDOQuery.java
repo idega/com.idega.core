@@ -1,8 +1,7 @@
 package com.idega.data;
+
 import java.util.Collection;
 import java.util.Iterator;
-import java.rmi.RemoteException;
-import java.lang.StringBuffer;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -316,7 +315,7 @@ public class IDOQuery {
     }
     return this;
   }
-  public IDOQuery appendCommaDelimited(Collection collection) throws RemoteException{
+  public IDOQuery appendCommaDelimited(Collection collection) {
     Iterator iter = collection.iterator();
     boolean first = true;
     while (iter.hasNext()) {
@@ -345,7 +344,7 @@ public class IDOQuery {
     }
     return this;
   }
-  public IDOQuery appendCommaDelimitedWithinSingleQuotes(Collection collection) throws RemoteException{
+  public IDOQuery appendCommaDelimitedWithinSingleQuotes(Collection collection) {
     Iterator iter = collection.iterator();
     boolean first = true;
     while (iter.hasNext()) {
@@ -373,7 +372,7 @@ public class IDOQuery {
     }
     return this;
   }
-  public IDOQuery appendCommaDelimitedWithinDoubleQuotes(Collection collection) throws RemoteException{
+  public IDOQuery appendCommaDelimitedWithinDoubleQuotes(Collection collection) {
     Iterator iter = collection.iterator();
     boolean first = true;
     while (iter.hasNext()) {
@@ -443,7 +442,7 @@ public class IDOQuery {
   public IDOQuery appendSelectAllFrom(){
     return this.append(SELECT_ALL_FROM);
   }
-  public IDOQuery appendSelectAllFrom(IDOEntity entity) throws RemoteException {
+  public IDOQuery appendSelectAllFrom(IDOEntity entity) {
   	return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
     //return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
   }
@@ -457,7 +456,7 @@ public class IDOQuery {
   public IDOQuery appendSelectCountFrom(){
     return this.append(SELECT_COUNT_FROM);
   }
-  public IDOQuery appendSelectCountFrom(IDOEntity entity) throws RemoteException {
+  public IDOQuery appendSelectCountFrom(IDOEntity entity) {
     return this.appendSelectCountFrom(((IDOLegacyEntity)entity).getTableName());
     //return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
     
