@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.23 2004/01/08 02:57:21 gummi Exp $
+ * $Id: DropdownMenu.java,v 1.24 2004/01/13 15:50:46 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -139,6 +139,13 @@ public class DropdownMenu extends GenericSelect {
 	 **/
 	public void setSelectedElement(int elementValue) {
 		setSelectedElement(Integer.toString(elementValue));
+	}
+	
+	/**
+	 * Sets the element by value elementValue as selected if it is found in this menu
+	 **/
+	public void setSelectedElement(char elementValue) {
+		setSelectedElement(String.valueOf(elementValue));
 	}
 
 	/**
