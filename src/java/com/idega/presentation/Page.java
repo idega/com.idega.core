@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.3 2001/10/11 16:13:04 palli Exp $
+ * $Id: Page.java,v 1.4 2001/10/16 14:39:47 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -707,9 +707,10 @@ public class Page extends PresentationObjectContainer {
           //this.ib_object_instance_id = Integer.parseInt(sID);
           System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
           System.err.println("getICObjectInstanceID: "+page.getICObjectInstanceID());
-        }else{
-          System.err.println("sID == null");
         }
+/*        else{
+          System.err.println("sID == null");
+        }*/
       }
       catch (NumberFormatException ex) {
         System.err.println(page+": cannot init ic_object_instance_id");
