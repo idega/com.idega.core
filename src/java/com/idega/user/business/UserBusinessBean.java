@@ -1076,16 +1076,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 	/**
-	 *  Returns User from personal id, throws EJBException if not found
+	 *  Returns User from personal id returns null if not found
 	 */
-	public  User getUser(String personalID) throws EJBException {
-		try {
-			return getUserHome().findByPersonalID(personalID);
-		}
-		catch (Exception ex) {
-			throw new EJBException("Error getting user for personal id: "+personalID+" Message: "+ex.getMessage());
-		}
-		//return null;
+	public  User getUser(String personalID) throws FinderException {
+		return getUserHome().findByPersonalID(personalID);
 	}
 	
 

@@ -141,9 +141,9 @@ public interface UserBusiness extends com.idega.business.IBOService
 	public Collection getUsers(com.idega.data.IDOQuery query) throws EJBException,RemoteException;
 	public Collection getUsersMainAddresses(com.idega.data.IDOQuery query) throws EJBException,RemoteException;
 	/**
-	 *  Returns User from personal id, throws EJBException if not found
+	 *  Returns User from personal id returns null if not found
 	 */
-	public  User getUser(String personalID) throws EJBException;
+	public  User getUser(String personalID) throws FinderException;
 
 	
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException;
