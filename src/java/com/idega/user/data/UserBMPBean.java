@@ -1140,9 +1140,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return ejbFindUsersBySearchCondition(condition, null, orderLastFirst);
 	}
 	
-	public Collection ejbFindUsersBySearchCondition(String condition, boolean orderLastFirst, int maxAge) throws FinderException, RemoteException {
-			return ejbFindUsersBySearchCondition(condition, null, orderLastFirst, maxAge);
-		}
 	
 	/**
 	 * 
@@ -1153,11 +1150,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @throws RemoteException
 	 */
 	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException, RemoteException {
-		return ejbFindUsersBySearchCondition(condition, userIds, orderLastFirst, -1);
-	}
 		
-	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst, int maxAge) throws FinderException, RemoteException {				
-		int endAge = 200;
 		//strange stuff...examine
 		if (userIds != null && userIds.length == 0) {
 			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"}, orderLastFirst);
@@ -1168,9 +1161,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return ejbFindUsers(userIds);
 			}
 		}else {
-			if (maxAge != -1)
-				endAge = maxAge;											
-			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,endAge,null,userIds,false, orderLastFirst);
+			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,200,null,userIds,false, orderLastFirst);
 		}
 	}
 	
