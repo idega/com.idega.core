@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.68 2003/06/07 11:11:03 aron Exp $
+ * $Id: PresentationObject.java,v 1.69 2003/08/05 19:45:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -24,12 +25,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.business.GenericState;
 import com.idega.business.IBOLookup;
+import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.data.ICObject;
+import com.idega.core.data.ICObjectHome;
 import com.idega.core.data.ICObjectInstance;
-import com.idega.data.EntityFinder;
+import com.idega.core.data.ICObjectInstanceHome;
+import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWEvent;
 import com.idega.event.IWEventMachine;
@@ -879,27 +885,31 @@ public class PresentationObject extends Object implements Cloneable {
     return ic_object_id;
   }
 
-  public ICObject getICObject() throws SQLException {
+  public ICObject getICObject() throws Exception {
     return this.getICObject(this.getClass());
   }
 
-  protected ICObject getICObject(Class c) throws SQLException {
-    List result = EntityFinder.findAllByColumn(com.idega.core.data.ICObjectBMPBean.getStaticInstance(ICObject.class),"class_name",c.getName());
-    if(result != null && result.size() > 0){
-      return (ICObject)result.get(0);
-    }else{
-      throw new ICObjectNotInstalledException(this.getClass().getName());
-    }
+  protected ICObject getICObject(Class c) throws Exception {
+  	try{
+		ICObjectHome icohome = (ICObjectHome)com.idega.data.IDOLookup.getHome(ICObject.class);
+		ICObject ico = icohome.findByClassName(c.getName());
+		return ico;
+	}
+	catch(Exception e){
+		throw new ICObjectNotInstalledException(c.getName());
+	}
   }
 
 
   public ICObjectInstance getICInstance(IWContext iwc) throws IWException {
     try {
-      return ((com.idega.core.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(getICObjectInstanceID(iwc));
+    	ICObjectInstanceHome icoihome = (ICObjectInstanceHome)com.idega.data.IDOLookup.getHome(ICObjectInstance.class);
+      	return icoihome.findByPrimaryKey(getICObjectInstanceID(iwc));
     }
     catch (Exception excep) {
-      //IWException exep = new IWException(excep.getMessage());
-      throw (IWException) excep.fillInStackTrace();
+      IWException iwexcep = new IWException("Exception in PresentationObject.getICInstance(): "+excep.getClass().getName()+" : "+excep.getMessage());
+      throw iwexcep;
+      //throw (IWException) excep.fillInStackTrace();
     }
   }
   /**
@@ -1224,7 +1234,7 @@ public class PresentationObject extends Object implements Cloneable {
     * Returns the page parameter used by idegaWeb Builder
     */
    public String getIBPageParameterName(){
-     return BuilderLogic.IB_PAGE_PARAMETER;
+     return BuilderConstants.IB_PAGE_PARAMETER;
    }
 
 
@@ -1600,6 +1610,26 @@ public class PresentationObject extends Object implements Cloneable {
     // Do not forget: set former compound id to the new one 
     formerCompoundId = calculatedCompoundId;
     return calculatedCompoundId;  
+  }
+  
+  /**
+   * Convenience method to return the instance of BuilderService
+   * @param iwc
+   * @return
+   * @throws RemoteException
+   */
+  protected BuilderService getBuilderService(IWApplicationContext iwc)throws RemoteException{
+  	return BuilderServiceFactory.getBuilderService(iwc);
+  }
+  
+  /**
+   * Convenience method to return the instance of ICFileSystem
+   * @param iwc
+   * @return
+   * @throws RemoteException
+   */
+  protected ICFileSystem getICFileSystem(IWApplicationContext iwc)throws RemoteException{
+	return ICFileSystemFactory.getFileSystem(iwc);
   }
   
 }

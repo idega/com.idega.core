@@ -1,8 +1,9 @@
 package com.idega.presentation.ui;
 
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.PageTreeNode;
+import java.rmi.RemoteException;
+
 import com.idega.core.ICTreeNode;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -123,10 +124,10 @@ public class TreeViewer extends AbstractTreeViewer {
 	public PresentationObject getSecondColumnObject(ICTreeNode node, IWContext iwc, boolean fromEditor) {
 		String nodeName = null;
 		String titleName = null;
-		if (node instanceof PageTreeNode)
-			nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
-		else
-			nodeName = node.getNodeName();
+		//if (node instanceof ICTreeNode)
+		//	nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
+		//else
+			nodeName = node.getNodeName(iwc.getCurrentLocale());
 			
 		titleName = nodeName;
 		if(!getShortenedNodeName(nodeName))
@@ -145,10 +146,22 @@ public class TreeViewer extends AbstractTreeViewer {
 			l.setAttribute("title",titleName);
 		if (_usesOnClick) {
 			l.setURL("#");
-			if (fromEditor)
-				l.setOnClick("save('http://" + iwc.getServerName() + BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID()) + "','_self')");
-			else
+			if (fromEditor){
+				BuilderService bservice;
+				try
+				{
+					bservice = getBuilderService(iwc);
+					l.setOnClick("save('http://" + iwc.getServerName() + bservice.getPageURI(node.getNodeID()) + "','_self')");
+				}
+				catch (RemoteException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else{
 				l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeID() + "')");
+			}
 		}
 		else if (nodeActionPrm != null) {
 			l.addParameter(nodeActionPrm, node.getNodeID());

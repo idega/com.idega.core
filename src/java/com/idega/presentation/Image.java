@@ -4,7 +4,8 @@
 
 package com.idega.presentation;
 
-//import java.io.*;
+
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,6 +15,9 @@ import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.presentation.ImageAttributeSetter;
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.block.media.servlet.MediaServlet;
+
+import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWConstants;
@@ -450,7 +454,7 @@ public String getAlt(){
  return getAttribute("alt");
 }
 
-private String getHTMLString(IWContext iwc) {
+private String getHTMLString(IWContext iwc) throws RemoteException {
   StringBuffer sPrint = new StringBuffer();
   sPrint.append("<img ");
   //alt always added for standards compliancy
@@ -466,7 +470,8 @@ private String getHTMLString(IWContext iwc) {
   sPrint.append("\"");
 
   if (iwc != null) {
-    com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
+  	BuilderService bs = getBuilderService(iwc);
+    IBDomain d = bs.getCurrentDomain();
 
     if (d.getURL() != null) {
       String src = getAttribute("src");

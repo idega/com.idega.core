@@ -43,6 +43,33 @@ public class MethodInvoker {
 	return invokeMethod(instance,MethodFinder.getInstance().getMethodWithNameAndNoParameters(instance.getClass(),methodName),null);
   }
   /**
+   * Invoke the static method of class objectClass of name methodName, where that method does not take any arguments
+   * @param objectClass The class to invoke a method in.
+   * @param methodName the name of the method to invoke (without parentheses)
+   * @return the return of the method invokation
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   */
+  public Object invokeStaticMethodWithNoParameters(Class objectClass,String methodName)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+	Method method = MethodFinder.getInstance().getMethodWithNameAndNoParameters(objectClass,methodName);
+	return this.invokeStaticMethod(method,null);
+  }
+  /**
+   * Invoke the static method of class of name objectClassName of name methodName, where that method does not take any arguments
+   * @param objectClassName The fully qualified class name to invoke a method in.
+   * @param methodName the name of the method to invoke (without parentheses)
+   * @return the return of the method invokation
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   * @throws ClassNotFoundException
+   */
+  public Object invokeStaticMethodWithNoParameters(String objectClassName,String methodName)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException{
+	Class objectClass = Class.forName(objectClassName);
+	return invokeStaticMethodWithNoParameters(objectClass,methodName);
+  }
+  /**
    * Invoke a method of object instance of name methodName, where that method does take in one argument of type int
    * @param instance The instance of the object to invoke a method in.
    * @param methodName the name of the method to invoke (without parentheses)

@@ -196,7 +196,7 @@ public String getFunction(String functionName){
 public void print(IWContext iwc)throws Exception{
   if (doPrint(iwc)){
     if (getLanguage().equals("HTML")){
-      com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
+      com.idega.builder.data.IBDomain d = iwc.getDomain();
 
       if (d.getURL() != null) {
 	String src = getAttribute("src");

@@ -7,6 +7,7 @@ package com.idega.presentation.ui;
 
 import java.io.IOException;
 
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.presentation.IWContext;
 
@@ -183,8 +184,9 @@ public class IFrame extends InterfaceObject {
 		if (transparent)
 			setAttribute("ALLOWTRANSPARENCY", "true");
 		if (ibPageId > 0) {
+			BuilderService bservice = getBuilderService(iwc);
 			//setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
-			this.setSrc(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc, ibPageId));
+			this.setSrc(bservice.getPageURI(ibPageId));
 		}
 
 		if (getLanguage().equals("HTML")) {

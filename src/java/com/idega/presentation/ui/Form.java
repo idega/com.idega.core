@@ -6,6 +6,7 @@
 package com.idega.presentation.ui;
 
 import com.idega.builder.data.IBPage;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
@@ -207,13 +208,14 @@ public class Form extends InterfaceObjectContainer {
 		}
 	}
 
-	public void main(IWContext iwc) {
+	public void main(IWContext iwc) throws Exception {
 		//Chech if there is some class set
 		setActionToInstanciatedClass(iwc);
 
 		if (this._submitToPage != -1) {
 			//Set a builder page as the action
-			this.setAction(com.idega.builder.business.BuilderLogic.getInstance().getIBPageURL(iwc, _submitToPage));
+			BuilderService bservice = getBuilderService(iwc);
+			this.setAction(bservice.getPageURI(_submitToPage));
 		}
 		if (window != null) {
 			//iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.79 2003/07/01 14:07:19 gummi Exp $
+ *  $Id: Page.java,v 1.80 2003/08/05 19:45:36 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,19 +9,20 @@
  */
 package com.idega.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWFrameBusiness;
+import com.idega.core.ICTreeNode;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.data.ICFile;
+import com.idega.core.file.business.ICFileSystem;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
@@ -528,11 +529,23 @@ public class Page extends PresentationObjectContainer {
 
 
 	public String getLocalizedTitle(IWContext iwc) {
-		Map tree = PageTreeNode.getTree(iwc);
-		
-		PageTreeNode node = (PageTreeNode)tree.get(new Integer(BuilderLogic.getInstance().getCurrentIBPageID(iwc)));
+		//Map tree = PageTreeNode.getTree(iwc);
+		BuilderService bservice;
+		ICTreeNode node=null;
+		try
+		{
+			bservice = getBuilderService(iwc);
+			int pageId = bservice.getCurrentPageId(iwc);
+			node = (ICTreeNode)bservice.getPageTree(pageId,iwc.getCurrentUserId());
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		if (node != null) {
-			String locName = node.getLocalizedNodeName(iwc);
+			String locName = node.getNodeName(iwc.getCurrentLocale());
 			if (locName != null && !locName.equals("")) {
 				return locName;
 			}
@@ -854,34 +867,39 @@ public class Page extends PresentationObjectContainer {
 			}
 			else {
 				if (!NULL_CLONE_PAGE_INITIALIZED) {
-
-					IWContext iwc = IWContext.getInstance();
-					//Text pageNotFound = new Text("No permission", true, false, false);
-					//pageNotFound.setFontSize(4);
-					//NULL_CLONE_PAGE.add(pageNotFound);
-					
-					Image noPermissionImage = getBundle(iwc).getImage("shared/stopalert.gif");
-					NULL_CLONE_PAGE.add(noPermissionImage);
-
-					
-					if (iwc != null) {
-						int pageId = 1;
-						String page = null;
-						// getProperty  //iwc.getParameter(_PRM_PAGE_ID);
-						if (page != null) {
-							try {
-								pageId = Integer.parseInt(page);
+					try{
+						IWContext iwc = IWContext.getInstance();
+						//Text pageNotFound = new Text("No permission", true, false, false);
+						//pageNotFound.setFontSize(4);
+						//NULL_CLONE_PAGE.add(pageNotFound);
+						
+						Image noPermissionImage = getBundle(iwc).getImage("shared/stopalert.gif");
+						NULL_CLONE_PAGE.add(noPermissionImage);
+	
+						
+						if (iwc != null) {
+							BuilderService bservice = getBuilderService(iwc);
+							int pageId = 1;
+							String page = null;
+							// getProperty  //iwc.getParameter(_PRM_PAGE_ID);
+							if (page != null) {
+								try {
+									pageId = Integer.parseInt(page);
+								}
+								catch (NumberFormatException ex) {
+									pageId = bservice.getRootPageId();
+								}
 							}
-							catch (NumberFormatException ex) {
-								pageId = BuilderLogic.getStartPageId(iwc);
+							else {
+								pageId = bservice.getRootPageId();
 							}
+							NULL_CLONE_PAGE.setOnLoad("document.location='" + bservice.getPageURI(pageId) + "'");
 						}
-						else {
-							pageId = BuilderLogic.getStartPageId(iwc);
-						}
-						NULL_CLONE_PAGE.setOnLoad("document.location='" + BuilderLogic.getInstance().getIBPageURL(iwc, pageId) + "'");
+						NULL_CLONE_PAGE_INITIALIZED = true;
 					}
-					NULL_CLONE_PAGE_INITIALIZED = true;
+					catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 				return NULL_CLONE_PAGE;
 			}
@@ -972,7 +990,9 @@ public class Page extends PresentationObjectContainer {
 
 		/* get the files cached url */
 		if (styleFile != null) {
-			setStyleSheetURL(MediaBusiness.getMediaURL(((Integer)styleFile.getPrimaryKey()).intValue(), iwc.getApplication()));
+			ICFileSystem fsystem = getICFileSystem(iwc);
+			String styleSheetURL =  fsystem.getFileURI(((Integer)styleFile.getPrimaryKey()).intValue());
+			setStyleSheetURL(styleSheetURL);
 		}
 	}
 
@@ -1051,7 +1071,7 @@ public class Page extends PresentationObjectContainer {
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
 					String src = iwc.getApplication().getCoreBundle().getResourcesURL();
-					IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
+					IBDomain d = iwc.getDomain();
 
 					if (d.getURL() != null) {
 						if (src.startsWith("/")) {
@@ -1528,10 +1548,11 @@ public class Page extends PresentationObjectContainer {
 		_shortCutIconURL = url;
 	}
 	
-	private String getPrintableSchortCutIconURL(IWContext iwc){
+	private String getPrintableSchortCutIconURL(IWContext iwc)throws Exception{
 		String url = null;
 		if(getShortCutIconID()>0){
-			url =  MediaBusiness.getMediaURL(getShortCutIconID(),iwc.getApplication());
+			ICFileSystem fsystem = getICFileSystem(iwc);
+			url =  fsystem.getFileURI(getShortCutIconID());
 		}
 		else if(getShortCutIconURL()!=null){
 			url = getShortCutIconURL();

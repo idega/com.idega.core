@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.file.business.ICFileSystem;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
@@ -84,7 +84,8 @@ public class GenericButton extends GenericInput {
 				addFunction = true;
 			}
 			if (_fileID != -1) {
-				buffer.append(Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication()))).append(";\n");
+				ICFileSystem fsystem = getICFileSystem(iwc);
+				buffer.append(Window.getCallingScript(fsystem.getFileURI(_fileID))).append(";\n");
 				addFunction = true;
 			}
 
@@ -111,7 +112,8 @@ public class GenericButton extends GenericInput {
 					setOnClick("javascript:window.location='"+getURLString(iwc, true)+"';");
 				}
 				if (_fileID != -1) {
-					setOnClick("javascript:"+Window.getCallingScript(MediaBusiness.getMediaURL(_fileID, iwc.getApplication())));	
+					ICFileSystem fsystem = getICFileSystem(iwc);
+					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(_fileID)));	
 				}
 			}
 			
@@ -126,7 +128,7 @@ public class GenericButton extends GenericInput {
 					URL = defaultImage.getMediaURL(iwc);
 				}
 
-				IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
+				IBDomain d = iwc.getDomain();
 				if (d.getURL() != null) {
 					if (URL.startsWith("/")) {
 						String protocol;
@@ -220,8 +222,9 @@ public class GenericButton extends GenericInput {
 		return TextSoap.convertSpecialCharacters(returnString.toString());
 	}
 	
-	private String getURLString(IWContext iwc, boolean convert) {
-		URLUtil url = new URLUtil(BuilderLogic.getInstance().getIBPageURL(iwc, _pageID), convert);
+	private String getURLString(IWContext iwc, boolean convert) throws Exception{
+		BuilderService bservice = getBuilderService(iwc);
+		URLUtil url = new URLUtil(bservice.getPageURI(_pageID), convert);
 		if (parameterMap != null) {
 			Iterator iter = parameterMap.keySet().iterator();
 			while (iter.hasNext()) {

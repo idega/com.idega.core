@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -11,8 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBPage;
+import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -93,7 +95,7 @@ public class PageIncluder extends PresentationObject implements Index{
       try {
 	item.process(iwc);
       }
-      catch (IOException ex) {
+      catch (Exception ex) {
 	ex.printStackTrace(System.err);
       }
     }
@@ -128,7 +130,7 @@ public class PageIncluder extends PresentationObject implements Index{
     }
   }
 
-  protected void process(IWContext iwc)throws IOException{
+  protected void process(IWContext iwc)throws Exception{
     serverName = iwc.getServerName();
     instanceId=getICObjectInstanceID();
 
@@ -312,14 +314,13 @@ public class PageIncluder extends PresentationObject implements Index{
     return html;
   }
 
-  protected String getCurrentIBPageIDToURLString(IWContext iwc){
-    BuilderLogic bill = BuilderLogic.getInstance();
-    return bill.IB_PAGE_PARAMETER+"="+bill.getCurrentIBPageID(iwc);
+  protected String getCurrentIBPageIDToURLString(IWContext iwc)throws Exception{
+  	BuilderService bservice = getBuilderService(iwc);
+    return BuilderConstants.IB_PAGE_PARAMETER+"="+bservice.getCurrentPageId(iwc);
   }
 
   protected String getSendToPageURLString(){
-    BuilderLogic bill = BuilderLogic.getInstance();
-    return bill.IB_PAGE_PARAMETER+"="+_sendToPage.getID();
+    return BuilderConstants.IB_PAGE_PARAMETER+"="+_sendToPage.getID();
   }
 
   protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){
@@ -498,9 +499,10 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToPageIfSet;
   }
 
-  public void forwardToIBPage(Page fromPage ,IBPage page, IWContext iwc){
+  public void forwardToIBPage(Page fromPage ,IBPage page, IWContext iwc) throws Exception{
     StringBuffer URL = new StringBuffer();
-    URL.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+	BuilderService bservice = getBuilderService(iwc);
+    URL.append(bservice.getPageURI(((Integer)page.getPrimaryKeyValue()).intValue()));
     URL.append('&');
     String query = getRequest().getQueryString();
     if( _sendToLabel != null ){
@@ -572,7 +574,7 @@ public class PageIncluder extends PresentationObject implements Index{
     return location.toString();
    }
 
-  private void setPrefixes(IWContext iwc){
+  private void setPrefixes(IWContext iwc)throws Exception{
     if (forceFrame ) {
       StringBuffer buf = new StringBuffer();
       String uri = iwc.getRequestURI();

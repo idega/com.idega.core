@@ -47,8 +47,8 @@ public class LoginBusinessBean implements IWEventListener {
 	public static String PermissionGroupParameter = "user_permission_groups";
 	public static String LoginStateParameter = "login_state";
 	public static String LoginStateMsgParameter = "login_state_msg";
-	public static String LoginRedirectPageParameter = "login_redirect_page";
-	public static String LoginFailedRedirectPageParameter = "login_failed_redirect_page";
+	//public static String LoginRedirectPageParameter = "login_redirect_page";
+	//public static String LoginFailedRedirectPageParameter = "login_failed_redirect_page";
 	private static String LoginAttributeParameter = "login_attributes";
 	private static String prmReservedLoginSessionAttribute = "reserved_login_attributes";
 	private static String UserGroupRepresentativeParameter = "ic_user_representative_group";
@@ -225,19 +225,19 @@ public class LoginBusinessBean implements IWEventListener {
 							//isLoggedOn(iwc);
 							//internalSetState(iwc,"loggedon");
 							// addon
-							if (iwc.isParameterSet(LoginRedirectPageParameter)) {
+							/*if (iwc.isParameterSet(LoginRedirectPageParameter)) {
 								//System.err.println("redirect parameter is set");
 								BuilderLogic.getInstance().setCurrentPriorityPageID(iwc, iwc.getParameter(LoginRedirectPageParameter));
-							}
+							}*/
 							onLoginSuccessful(iwc);
 						} else {
 							//logOut(iwc);
 							//internalSetState(iwc,"loginfailed");
 							
-							if(iwc.isParameterSet(LoginFailedRedirectPageParameter)){
+							/*if(iwc.isParameterSet(LoginFailedRedirectPageParameter)){
 								BuilderLogic.getInstance().setCurrentPriorityPageID(iwc, iwc.getParameter(LoginFailedRedirectPageParameter));
 								iwc.setSessionAttribute(SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN,username);
-							}
+							}*/
 							onLoginFailed(iwc, canLogin);
 						}
 					}

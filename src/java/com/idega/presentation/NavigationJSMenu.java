@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.PageTreeNode;
+
 import com.idega.builder.data.IBPage;
+import com.idega.core.ICTreeNode;
+import com.idega.core.builder.business.BuilderService;
 
 /**
  * Title:
@@ -45,10 +46,11 @@ public class NavigationJSMenu extends Block {
 	public NavigationJSMenu() {
 	}
 
-	public void main(IWContext iwc) {
+	public void main(IWContext iwc) throws Exception {
 		if (!iwc.isInEditMode()) {
+			BuilderService bservice = getBuilderService(iwc);
 			if (rootNode == -1) {
-				rootNode = BuilderLogic.getStartPageId(iwc);
+				rootNode = bservice.getRootPageId();
 			}
 			
 			getParentPage().setStyleDefinition("A.subMenu", linkStyle);
@@ -65,13 +67,13 @@ public class NavigationJSMenu extends Block {
 			buffer.append("var yOverlap  = ").append(yOffset).append(";").append("\n\n");
 			buffer.append("menuContent = new Array ();\n\n");
 			
-			PageTreeNode node = new PageTreeNode(rootNode, iwc);
+			ICTreeNode node = bservice.getPageTree(rootNode, iwc.getCurrentUserId());
 			Iterator iterator = node.getChildren();
 			row = 0;
 			int parentRow = -1;
 			while (iterator.hasNext()) {
 				parentRow = -1;
-				PageTreeNode child = (PageTreeNode) iterator.next();
+				ICTreeNode child = (ICTreeNode) iterator.next();
 				addRow(iwc, parentRow, 0, child, buffer);
 			}
 			buffer.append("\n").append("createMenuTree();").append("\n\n");
@@ -84,9 +86,10 @@ public class NavigationJSMenu extends Block {
 		}
 	}
 	
-	public void addRow(IWContext iwc, int parentRow, int subRow, PageTreeNode parent, StringBuffer buffer) {
+	public void addRow(IWContext iwc, int parentRow, int subRow, ICTreeNode parent, StringBuffer buffer) throws Exception{
 		int subSubRow = 0;
 		if (parent.getChildCount() > 0) {
+			BuilderService bs = getBuilderService(iwc);
 			buffer.append("menuContent [").append(row++).append("] = new Array(");
 			buffer.append(parentRow).append(",");
 			if (parentRow == -1)
@@ -113,9 +116,9 @@ public class NavigationJSMenu extends Block {
 			
 			Iterator iterator = parent.getChildren();
 			while (iterator.hasNext()) {
-				PageTreeNode grandChild = (PageTreeNode) iterator.next();
-				buffer.append("'").append(grandChild.getLocalizedNodeName(iwc)).append("',");
-				buffer.append("'").append(BuilderLogic.getInstance().getIBPageURL(iwc, grandChild.getNodeID())).append("'");
+				ICTreeNode grandChild = (ICTreeNode) iterator.next();
+				buffer.append("'").append(grandChild.getNodeName(iwc.getCurrentLocale())).append("',");
+				buffer.append("'").append(bs.getPageURI(grandChild.getNodeID())).append("'");
 				if (iterator.hasNext())
 					buffer.append(",");
 				else
@@ -125,7 +128,7 @@ public class NavigationJSMenu extends Block {
 	
 			Iterator iterator2 = parent.getChildren();
 			while (iterator2.hasNext()) {
-				addRow(iwc, (row - 1), subSubRow, (PageTreeNode) iterator2.next(), buffer);
+				addRow(iwc, (row - 1), subSubRow, (ICTreeNode) iterator2.next(), buffer);
 				subSubRow++;
 			}
 		}

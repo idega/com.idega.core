@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.92 2003/07/01 14:07:20 gummi Exp $
+ * $Id: Link.java,v 1.93 2003/08/05 19:45:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,14 +9,15 @@
  */
 package com.idega.presentation.text;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICObjectInstance;
+import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.business.LocaleSwitcher;
+import com.idega.event.EventLogic;
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.event.IWPresentationEvent;
@@ -377,8 +378,12 @@ public class Link extends Text {
 	 *
 	 */
 	public void main(IWContext iwc) throws Exception {
-		if (fileId != -1)
-			setURL(MediaBusiness.getMediaURL(fileId, iwc.getApplication()));
+		if (fileId != -1){
+			ICFileSystem fsystem = getICFileSystem(iwc);
+			String fileURL = fsystem.getFileURI(fileId);
+			//setURL(MediaBusiness.getMediaURL(fileId, iwc.getApplication()));
+			setURL(fileURL);
+		}
 		setURIToClassToInstanciate(iwc);
 		setURIToWindowOpenerClass(iwc);
 		//Builder edit mode
@@ -1094,12 +1099,12 @@ public class Link extends Text {
 			url.append('=');
 			url.append(page.getID());
 			setURL(url.toString());*/
-			String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+			String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
 			if (value != null) {
-				removeParameter(BuilderLogic.IB_PAGE_PARAMETER);
+				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
 			}
 
-			addParameter(BuilderLogic.IB_PAGE_PARAMETER, page.getID());
+			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getID());
 		}
 	}
 
@@ -1115,7 +1120,7 @@ public class Link extends Text {
 	}
 
 	public int getPage() {
-		String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+		String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}
@@ -1309,8 +1314,8 @@ public class Link extends Text {
 	protected String getParameterString(IWContext iwc, String URL) {
 		if (usingEventSystem) {
 			//if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
-			this.removeParameter(BuilderLogic.PRM_HISTORY_ID);
-			this.addParameter(BuilderLogic.PRM_HISTORY_ID, (String) iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID));
+			this.removeParameter(BuilderConstants.PRM_HISTORY_ID);
+			this.addParameter(BuilderConstants.PRM_HISTORY_ID, (String) iwc.getSessionAttribute(BuilderConstants.PRM_HISTORY_ID));
 			//this.addParameter(BuilderLogic.PRM_HISTORY_ID,"1000");
 			//}
 		}
@@ -1335,7 +1340,7 @@ public class Link extends Text {
 		List l = getIWPOListeners();
 		if (l != null) {
 			int size = l.size();
-			BuilderLogic logic = BuilderLogic.getInstance();
+			//BuilderLogic logic = BuilderLogic.getInstance();
 			if (size > 1) {
 				int[] pages = new int[size];
 				int[] inst = new int[size];
@@ -1362,14 +1367,14 @@ public class Link extends Text {
 						inst[index] = obj.getParentObjectInstanceID();
 					}
 				}
-				logic.setICObjectInstanceListeners(this, pages, inst);
-				logic.setICObjectInstanceEventSource(this, this.getParentPageID(), this.getParentObjectInstanceID());
+				EventLogic.setICObjectInstanceListeners(this, pages, inst);
+				EventLogic.setICObjectInstanceEventSource(this, this.getParentPageID(), this.getParentObjectInstanceID());
 			}
 			else if (size == 1) {
 				PresentationObject obj = (PresentationObject) l.get(0);
 				if (obj != null) {
-					logic.setICObjectInstanceListener(this, obj.getParentPageID(), obj.getParentObjectInstanceID());
-					logic.setICObjectInstanceEventSource(this, this.getParentPageID(), this.getParentObjectInstanceID());
+					EventLogic.setICObjectInstanceListener(this, obj.getParentPageID(), obj.getParentObjectInstanceID());
+					EventLogic.setICObjectInstanceEventSource(this, this.getParentPageID(), this.getParentObjectInstanceID());
 				}
 			}
 		}
@@ -1568,7 +1573,7 @@ public class Link extends Text {
 				}
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
-			IBDomain d = BuilderLogic.getInstance().getCurrentDomain(iwc);
+			IBDomain d = iwc.getDomain();
 
 			if (d.getURL() != null) {
 				String attr = getAttribute(HREF_ATTRIBUTE);

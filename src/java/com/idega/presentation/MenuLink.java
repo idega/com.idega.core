@@ -1,11 +1,8 @@
 package com.idega.presentation;
 
 import com.idega.presentation.text.Link;
-import com.idega.presentation.Table;
-import com.idega.presentation.Image;
-import com.idega.presentation.IWContext;
 import com.idega.builder.data.IBPage;
-import com.idega.builder.business.BuilderLogic;
+import com.idega.core.builder.business.BuilderService;
 
 /**
  * Title:
@@ -89,10 +86,10 @@ public class MenuLink extends Block {
     container.setCellspacing(0);
   }
 
-  public void main(IWContext iwc){
+  public void main(IWContext iwc)throws Exception{
     initContainer();
-
-    int sessId=BuilderLogic.getInstance().getCurrentIBPageID(iwc);
+	BuilderService bs = getBuilderService(iwc);
+    int sessId=bs.getCurrentPageId(iwc);
     if(stateImage!=null && pageId == sessId){
       menuLink1.setImage(stateImage);
     }

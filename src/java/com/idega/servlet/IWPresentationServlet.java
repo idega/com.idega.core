@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.50 2003/05/27 21:40:28 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.51 2003/08/05 19:45:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,10 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWEventListener;
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
+import com.idega.event.EventLogic;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWModuleEvent;
 import com.idega.event.IWPresentationEvent;
@@ -52,6 +53,7 @@ import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 /**
+ * This is the base abstract servlet for presenting pages built with com.idega.presentation.PresentationObject objects and subclasses of that base class.
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
@@ -94,16 +96,10 @@ public class IWPresentationServlet extends IWCoreServlet {
 		if (!hasCheckedCurrentAppContext()) {
 			this.getApplication().setApplicationContextURI(request.getContextPath());
 		}
-		//IWContext iwc = (IWContext)request.getSession().getAttribute("idega_special_iwc");
-		if (iwc == null) {
-			iwc = new IWContext(request, response);
-			iwc.setServletContext(getServletContext());
-			request.getSession().setAttribute("idega_special_iwc", iwc);
-		}
-		else {
-			iwc.setRequest(request);
-			iwc.setResponse(response);
-		}
+
+		iwc = new IWContext(request, response);
+		iwc.setServletContext(getServletContext());
+
 		if (iwc.isMultipartFormData()) {
 			//writer.println("form is multipart");
 			handleMultipartFormData(iwc);
@@ -195,6 +191,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 			//com.idega.core.accesscontrol.business.AccessControl._COUNTER = 0;
 			__initializeIWC(request, response);
 			IWContext iwc = getIWContext();
+			com.idega.util.ThreadContext tc = this.getThreadContext();
+			tc.getAttribute("");
 			//try {
 				handleLocaleParameter(iwc);
 				//writer = iwc.getWriter(); //get the writer
@@ -460,20 +458,20 @@ public class IWPresentationServlet extends IWCoreServlet {
 		return null;
 	}
 	public void increaseHistoryID(IWContext iwc) {
-		String historyIDSession = (String) iwc.getSessionAttribute(BuilderLogic.PRM_HISTORY_ID);
+		String historyIDSession = (String) iwc.getSessionAttribute(BuilderConstants.PRM_HISTORY_ID);
 		if (historyIDSession == null) {
 			historyIDSession = Integer.toString((int) (Math.random() * 1000));
-			iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID, historyIDSession);
+			iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
 		}
 		else {
 			try {
 				historyIDSession = Integer.toString(Integer.parseInt(historyIDSession) + 1);
-				iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID, historyIDSession);
+				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
 			}
 			catch (NumberFormatException ex) {
 				//System.err.print("NumberformatException when trying to increase historyID, historyIDSession:"+historyIDSession);
 				historyIDSession = Integer.toString((int) (Math.random() * 1000));
-				iwc.setSessionAttribute(BuilderLogic.PRM_HISTORY_ID, historyIDSession);
+				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
 			}
 		}
 	}
@@ -492,11 +490,10 @@ public class IWPresentationServlet extends IWCoreServlet {
 		try {
 			//    System.err.println("-------------------------------------");
 			//    System.err.println("handleEvent begin");
-			String historyID = iwc.getParameter(BuilderLogic.PRM_HISTORY_ID);
+			String historyID = iwc.getParameter(BuilderConstants.PRM_HISTORY_ID);
 			if (historyID != null) {
-				BuilderLogic logic = BuilderLogic.getInstance();
-				PresentationObject[] listeners = logic.getIWPOListeners(iwc);
-				LinkedList state = (LinkedList) iwc.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+				PresentationObject[] listeners = EventLogic.getIWPOListeners(iwc);
+				LinkedList state = (LinkedList) iwc.getSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE);
 				int historySize = 5;
 				boolean listJustConstructed = false;
 				//      System.err.println("PresentationServelt - State = "+ state);
@@ -504,7 +501,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 					state = new LinkedList();
 					state.addLast(historyID);
 					state.addLast(new Hashtable());
-					iwc.setSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE, state);
+					iwc.setSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE, state);
 					listJustConstructed = true;
 				}
 				synchronized (state) {
@@ -528,7 +525,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 							state.removeFirst();
 						}
 						int copyFrom = state.size() - 1;
-						state.addLast(iwc.getParameter(BuilderLogic.PRM_HISTORY_ID));
+						state.addLast(iwc.getParameter(BuilderConstants.PRM_HISTORY_ID));
 						if (copyFrom >= 1) {
 							try {
 								state.addLast(((Hashtable) state.get(copyFrom)).clone());
@@ -547,7 +544,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 						 */
 						Map newStateMap = (Map) state.getLast();
 						//Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
-						Map pageObjectInstances = logic.getCashedObjectInstancesForPage(this.getPage().getPageID());
+						Map pageObjectInstances = EventLogic.getCashedObjectInstancesForPage(this.getPage().getPageID());
 						//System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
 						Iterator iter = newStateMap.keySet().iterator();
 						while (iter.hasNext()) {
@@ -564,7 +561,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 					}
 				}
 				if (listeners != null && listeners.length > 0) {
-					PresentationObject source = logic.getIWPOEventSource(iwc);
+					PresentationObject source = EventLogic.getIWPOEventSource(iwc);
 					for (int i = 0; i < listeners.length; i++) {
 						//System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
 						//System.err.println("newStateString = "+listeners[i].changeState(source,iwc));

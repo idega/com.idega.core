@@ -10,7 +10,7 @@ package com.idega.idegaweb;
  */
 
 import com.idega.presentation.ui.Parameter;
-import com.idega.idegaweb.IWMainApplication;
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.presentation.Page;
 import com.idega.presentation.IWContext;
 
@@ -38,7 +38,7 @@ public class IWURL {
     globalMaintainedParameters.add(IWMainApplication.classToInstanciateParameter);
 
     globalMaintainedBuilderParameters = new Vector();
-    globalMaintainedBuilderParameters.add(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER);
+    globalMaintainedBuilderParameters.add(BuilderConstants.IB_PAGE_PARAMETER);
   }
 
   private Map parametersMap;

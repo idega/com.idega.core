@@ -42,7 +42,6 @@ public class IWMainApplicationStarter {
 		//super.destroy();
 	}
 	protected void startDatabasePool(){
-		String separator = FileUtil.getFileSeparator();
 		String poolType = iwma.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
 		if (poolType != null) {
 			if (poolType.equalsIgnoreCase("POOLMAN")) {
@@ -60,7 +59,7 @@ public class IWMainApplicationStarter {
 		}
 	}
 	
-	public void startPoolManDatabasePool(IWMainApplication iwma) {
+	protected void startPoolManDatabasePool(IWMainApplication iwma) {
 		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
@@ -70,15 +69,15 @@ public class IWMainApplicationStarter {
 		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
 	}
-	public void startIdegaDatabasePool(IWMainApplication iwma) {
+	protected void startIdegaDatabasePool(IWMainApplication iwma) {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
 		String file = iwma.getPropertiesRealPath()+separator+"db.properties";
 		sendStartMessage("Reading Databases from file: "+file);
 		sendStartMessage("Starting idega Datastore ConnectionPool");
-		PoolManager poolMgr = PoolManager.getInstance(file);	
+		PoolManager.getInstance(file);	
 	}
-	public void startJDBCDatasourcePool(IWMainApplication iwma){
+	protected void startJDBCDatasourcePool(IWMainApplication iwma){
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
 		String url = iwma.getSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
 		if(url!=null){
@@ -102,9 +101,9 @@ public class IWMainApplicationStarter {
 			e.printStackTrace();
 		}
 	}
-	public void endPoolManDatabasePool() {
+	protected void endPoolManDatabasePool() {
 	}
-	public void endIdegaDatabasePool() {
+	protected void endIdegaDatabasePool() {
 		PoolManager.getInstance().release();
 	}
 	/**

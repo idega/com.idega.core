@@ -3,9 +3,9 @@ package com.idega.presentation;
 import java.util.Iterator;
 import java.util.Vector;
 
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.data.IBPage;
+import com.idega.core.ICTreeNode;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
@@ -30,13 +30,14 @@ public class NavigationPulldownMenu extends Block {
   public NavigationPulldownMenu() {
   }
 
-  public void main(IWContext iwc){
+  public void main(IWContext iwc)throws Exception{
     if ( !iwc.isInEditMode() ) {
+		BuilderService bservice = getBuilderService(iwc);
       if ( rootNode == -1 ) {
-	rootNode = BuilderLogic.getStartPageId(iwc);
+		rootNode = bservice.getRootPageId();
       }
 
-      PageTreeNode node = new PageTreeNode(rootNode, iwc);
+      ICTreeNode node = bservice.getPageTree(rootNode, iwc.getCurrentUserId());
 
       if ( iwc.isIE() ) {
 	getParentPage().setOnLoad("InitMenu()");
@@ -53,7 +54,7 @@ public class NavigationPulldownMenu extends Block {
       }
       Iterator iter = node.getChildren();
       while (iter.hasNext())
-	nodeVector.add((PageTreeNode) iter.next());
+	nodeVector.add((ICTreeNode) iter.next());
       if ( withRootAsHome && !left )
 	nodeVector.add(node);
 
@@ -73,22 +74,22 @@ public class NavigationPulldownMenu extends Block {
       Iterator iterator = nodeVector.iterator();
       int column = 1;
       while (iterator.hasNext()) {
-	PageTreeNode n = (PageTreeNode) iterator.next();
+	ICTreeNode n = (ICTreeNode) iterator.next();
 	Layer subLayer = new Layer(Layer.DIV);
 	  subLayer.setID("page"+String.valueOf(n.getNodeID()));
 	  subLayer.setAttribute("class","Bar");
-	  subLayer.setAttribute("title",n.getLocalizedNodeName(iwc));
-	  subLayer.setAttribute("cmd",BuilderLogic.getInstance().getIBPageURL(iwc,n.getNodeID()));
+	  subLayer.setAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
+	  subLayer.setAttribute("cmd",bservice.getPageURI(n.getNodeID()));
 	  subLayer.setNoStyle(true);
 
 	if ( rootLinks ) {
-	  Link link = new Link(n.getLocalizedNodeName(iwc));
+	  Link link = new Link(n.getNodeName(iwc.getCurrentLocale()));
 	    link.setPage(n.getNodeID());
 	    link.setFontStyle(_fontStyle);
 	  subLayer.add(link);
 	}
 	else {
-	  subLayer.add(n.getLocalizedNodeName(iwc));
+	  subLayer.add(n.getNodeName(iwc.getCurrentLocale()));
 	}
 
 	if ( iwc.isIE() ) {
@@ -105,7 +106,8 @@ public class NavigationPulldownMenu extends Block {
     }
   }
 
-  private void addSubMenu(IWContext iwc,Table table,PageTreeNode node) {
+  private void addSubMenu(IWContext iwc,Table table,ICTreeNode node) throws Exception{
+	BuilderService bservice = getBuilderService(iwc);
     Layer layer = new Layer(Layer.DIV);
       layer.setID("menu"+String.valueOf(node.getNodeID()));
       layer.setAttribute("class","menu");
@@ -114,14 +116,14 @@ public class NavigationPulldownMenu extends Block {
 
     Iterator iterator = node.getChildren();
     while (iterator.hasNext()) {
-      PageTreeNode n = (PageTreeNode) iterator.next();
+		ICTreeNode n = (ICTreeNode) iterator.next();
       Layer subLayer = new Layer(Layer.DIV);
 	subLayer.setID("page"+String.valueOf(n.getNodeID()));
 	subLayer.setAttribute("class","menuItem");
-	subLayer.setAttribute("title",n.getLocalizedNodeName(iwc));
-	subLayer.setAttribute("cmd",BuilderLogic.getInstance().getIBPageURL(iwc,n.getNodeID()));
+	subLayer.setAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
+	subLayer.setAttribute("cmd",bservice.getPageURI(n.getNodeID()));
 	subLayer.setNoStyle(true);
-	subLayer.add(n.getLocalizedNodeName(iwc));
+	subLayer.add(n.getNodeName(iwc.getCurrentLocale()));
       layer.add(subLayer);
 
       if ( n.getChildCount() > 0 ) {

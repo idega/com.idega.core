@@ -5,6 +5,8 @@
 package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -20,11 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.data.ICObject;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
@@ -40,6 +44,8 @@ import com.idega.presentation.ui.Parameter;
 import com.idega.user.Converter;
 import com.idega.user.business.UserProperties;
 import com.idega.util.datastructures.HashtableMultivalued;
+import com.idega.util.reflect.MethodFinder;
+import com.idega.util.reflect.MethodInvoker;
 /**
  * A class to serve as the context of a user request in an idegaWeb application.
  * <br>
@@ -73,6 +79,10 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	private PrintWriter writer = null;
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
+	//Defined as private static variables to speed up reflection:
+	private static Object builderLogicInstance;
+	private static Method methodIsBuilderApplicationRunning;
+	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 	/**
 	 *Default constructor
@@ -835,13 +845,13 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	* @todo implement
 	*/
 	public String getCurrentState(int instanceId) {
-		String historyId = this.getParameter(BuilderLogic.PRM_HISTORY_ID);
+		String historyId = this.getParameter(BuilderConstants.PRM_HISTORY_ID);
 		//System.err.println("in iwc.getCurrentState()");
 		if (historyId != null) {
 			//System.err.println("historyId != null");
 			HttpSession s = this.getSession();
 			//System.err.println(" - from Session.hashCode() -> "+s.hashCode());
-			List historyList = (List) s.getAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+			List historyList = (List) s.getAttribute(BuilderConstants.SESSION_OBJECT_STATE);
 			//List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
 			if (historyList != null && historyList.contains(historyId)) {
 				int index = historyList.indexOf(historyId);
@@ -858,10 +868,14 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public IWApplicationContext getApplicationContext() {
 		return this;
 	}
+	/**
+	 * Gets if this object is in "Preview" mode in the Builder or in regular view not inside the Builder.
+	 * @return true if in preview mode
+	 */
 	public boolean isInPreviewMode() {
 		boolean preview = false;
 		if (isParameterSet("view")) {
-			if (BuilderLogic.getInstance().isBuilderApplicationRunning(this)) {
+			if (isBuilderApplicationRunning()) {
 				String view = getParameter("view");
 				if (view.equals("preview"))
 					preview = true;
@@ -869,10 +883,14 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return (preview);
 	}
+	/**
+	 * Gets if this object is in "Edit" mode in the Builder
+	 * @return true if in edit mode
+	 */
 	public boolean isInEditMode() {
 		boolean edit = false;
 		if (isParameterSet("view")) {
-			if (BuilderLogic.getInstance().isBuilderApplicationRunning(this)) {
+			if (isBuilderApplicationRunning()) {
 				String view = getParameter("view");
 				if (view.equals("builder"))
 					edit = true;
@@ -880,6 +898,27 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return (edit);
 	}
+	private boolean isBuilderApplicationRunning(){
+		//Reflection workaround:
+		try{
+			if(builderLogicInstance==null){
+				MethodInvoker invoker = MethodInvoker.getInstance();
+				MethodFinder finder = MethodFinder.getInstance();
+				Class builderLogicClass = Class.forName("com.idega.builder.business.BuilderLogic");
+				builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
+				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
+			}
+			Object[] args = {this};
+			methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args);
+		}
+		catch(Throwable e){
+			e.printStackTrace();
+		}
+		/*return(BuilderLogic.getInstance().isBuilderApplicationRunning(this));
+		*/
+		return false;
+	}
+	
 	/**
 	 * @return true if the client is a handheld device such as a PalmPilot, a PocketPC device or a phone
 	 */
@@ -931,11 +970,22 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 
 		*/
 		StringBuffer URL = new StringBuffer();
-		URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(), pageID));
-		URL.append('&');
-		URL.append(getRequest().getQueryString());
-		fromPage.setToRedirect(URL.toString());
-		fromPage.empty();
+		BuilderService bs;
+		try
+		{
+			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+			URL.append(bs.getPageURI(pageID));
+			URL.append('&');
+			URL.append(getRequest().getQueryString());
+			fromPage.setToRedirect(URL.toString());
+			fromPage.empty();
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(), pageID));
 	}
 
 	/*
@@ -981,14 +1031,37 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		}
 		return null;
   }
-  
+
+	/**
+	 * Gets the Id of the current user associated with this context
+	 * <br>This method is meant to replace getUserId()
+	 * @return The Id of the current user. If there is one associated with the current context. If there is none the method returns -1.
+	 **/
+	public int getCurrentUserId(){
+		com.idega.user.data.User user = getCurrentUser();
+		if(user!=null){
+			return ((Integer)user.getPrimaryKey()).intValue();
+		}
+		return -1;
+	}
   
   /**
    * TODO reimplement
-   * @return
+   * @return The pageId for the current IBPage that is being displayed. Returns -1 if an error occurred.
    */
   public int getCurrentIBPageID(){
-	return BuilderLogic.getInstance().getCurrentIBPageID(this);
+	BuilderService bs;
+	try
+	{
+		bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+		return bs.getCurrentPageId(this);
+	}
+	catch (RemoteException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return -1;
   }
 
 	public boolean isSecure(){

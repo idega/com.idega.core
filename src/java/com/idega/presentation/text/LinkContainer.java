@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.12 2003/05/03 02:19:48 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.13 2003/08/05 19:45:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,10 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.builder.business.BuilderLogic;
+
 import com.idega.builder.data.IBPage;
+import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.data.ICFile;
+import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
@@ -196,16 +198,16 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setPage(IBPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+			String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
 			if (value != null) {
-				removeParameter(BuilderLogic.IB_PAGE_PARAMETER);
+				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
 			}
-			addParameter(BuilderLogic.IB_PAGE_PARAMETER, page.getID());
+			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getID());
 		}
 	}
 
 	public int getPage() {
-		String value = this.getParameterValue(BuilderLogic.IB_PAGE_PARAMETER);
+		String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}
@@ -458,10 +460,14 @@ public class LinkContainer extends PresentationObjectContainer {
 			if (openInNewWindow) {
 				String URL = getURL();
 				if (getPage() != 0)
-					URL = BuilderLogic.getInstance().getIBPageURL(iwc, getPage());
-				else
+				{
+					BuilderService bservice = getBuilderService(iwc);
+					URL = bservice.getPageURI(getPage());
+				}
+				else{
 					URL = URL + getParameterString(iwc, URL);
-
+				}
+				
 				if (_windowName == null)
 					_windowName = "Popup";
 				if (_windowWidth == null)
@@ -473,7 +479,8 @@ public class LinkContainer extends PresentationObjectContainer {
 			}
 			else {
 				if (_file != null) {
-					setFinalUrl(MediaBusiness.getMediaURL(_file, iwc.getApplication()));
+					ICFileSystem fsystem = getICFileSystem(iwc);
+					setFinalUrl(fsystem.getFileURI(_file));
 				}
 				else {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
