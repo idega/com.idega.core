@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.26 2002/01/14 09:31:30 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.27 2002/02/11 17:15:21 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -432,8 +432,8 @@ writer.println("-->");
 
   public void handleEvent(IWContext  iwc){
   try {
-    //System.err.println("-------------------------------------");
-    //System.err.println("handleEvent begin");
+//    System.err.println("-------------------------------------");
+//    System.err.println("handleEvent begin");
     String historyID = iwc.getParameter(BuilderLogic.PRM_HISTORY_ID);
     if( historyID != null ){
       BuilderLogic logic = BuilderLogic.getInstance();
@@ -441,7 +441,7 @@ writer.println("-->");
       LinkedList state = (LinkedList)iwc.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
       int historySize = 5;
       boolean listJustConstructed = false;
-      //System.err.println("PresentationServelt - State = "+ state);
+//      System.err.println("PresentationServelt - State = "+ state);
       if(state == null){
 
         state = new LinkedList();
@@ -452,16 +452,16 @@ writer.println("-->");
       }
       synchronized (state){
 
-        //System.err.println("PresentationServelt - !listJustConstructed = "+ !listJustConstructed);
-        //System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
-/*
+//        System.err.println("PresentationServelt - !listJustConstructed = "+ !listJustConstructed);
+//        System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
+
         ListIterator iter2 = state.listIterator();
         while (iter2.hasNext()) {
           Object item = iter2.next();
           int index = iter2.nextIndex()-1;
-          System.err.println("PresentationServelt - State index : "+index+" = "+item);
+          //System.err.println("PresentationServelt - State index : "+index+" = "+item);
         }
-*/
+
         if(!listJustConstructed && state.contains(historyID)){
           // go back in history
           int index = state.indexOf(historyID);
@@ -495,7 +495,8 @@ writer.println("-->");
            * @todo handle pages in frames or iframes with different pageIds
            */
           Map newStateMap = (Map)state.getLast();
-          Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
+          //Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
+          Map pageObjectInstances = logic.getCashedObjectInstancesForPage(this.getPage().getPageID());
 
           //System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
 
