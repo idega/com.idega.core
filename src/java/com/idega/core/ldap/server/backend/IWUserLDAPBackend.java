@@ -3,7 +3,6 @@
  */
 package com.idega.core.ldap.server.backend;
 
-import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -147,6 +146,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		EntrySet results = null;
 		List entries = new ArrayList();
 		String uniqueId = null;
+		
 		if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
 			DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
 			DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
@@ -263,6 +263,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			}
 		}
 		else if (scope == SearchRequestEnum.SINGLELEVEL) {
+//			this forces the directorystring to be in the current encoding
+			base = getDirectoryStringForIdentifier(base.getDirectoryString());
+			
 			try {
 				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
 					addTopGroupsToEntries(base, entries);
@@ -320,7 +323,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		else if (scope == SearchRequestEnum.BASEOBJECT) {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
-				//String baseString = new String(base.getDirectoryString().getBytes(),UNICODE_ENCODING);
+//				this forces the directorystring to be in the current encoding
+				base = getDirectoryStringForIdentifier(base.getDirectoryString());
+				
 				if (base.getDirectoryString().equals(baseDN)) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
@@ -342,70 +347,62 @@ private static final String UNICODE_ENCODING = "UTF-8";
 	private List doSubStringSearch(DirectoryString base, List entries, List alreadyLoaded, String type, String searchWord) throws FinderException, RemoteException, InvalidDNException {
 			//we only allow substring searches for these attributes
 			//(|(givenName=Fred*)(sn=Fred*)(cn=Fred*)(mail=Fred*))
-		try {
-			searchWord = new String(searchWord.getBytes(),UNICODE_ENCODING);
-		}
-		catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		
 		type = type.toLowerCase();
+//		this forces the directorystring to be in the current encoding
+		base = getDirectoryStringForIdentifier(base.getDirectoryString());
+		
+		Collection col = null;
+		
 		if(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase().equals(type) || LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase().equals(type)){
 			//look by the personal id
-			Collection col = getUserBusiness().getUserHome().findUsersByConditions(null,null,null,searchWord,null,null,-1,-1,-1,-1,null,null,false,false);
-			Iterator users = col.iterator();
-			while (users.hasNext()) {
-				User user = (User) users.next();
-				String identifier = getUserIdentifier(user, base);
-				if(!alreadyLoaded.contains(identifier)){
-					alreadyLoaded.add(identifier);
-					Entry userEntry = new Entry(new DirectoryString(identifier));
-					fillUserEntry(user, userEntry);
-					entries.add(userEntry);
-				}
-			}
+			col = getUserBusiness().getUserHome().findUsersByConditions(null,null,null,searchWord,null,null,-1,-1,-1,-1,null,null,false,false);
 		}
 		else if(LDAP_ATTRIBUTE_SURNAME.toLowerCase().equals(type) ){
-			Collection col = getUserBusiness().getUserHome().findUsersByConditions(null,null,searchWord,null,null,null,-1,-1,-1,-1,null,null,false,false);
-			Iterator users = col.iterator();
-			while (users.hasNext()) {
-				User user = (User) users.next();
-				String identifier = getUserIdentifier(user, base);
-				if(!alreadyLoaded.contains(identifier)){
-					alreadyLoaded.add(identifier);
-					Entry userEntry = new Entry(new DirectoryString(identifier));
-					fillUserEntry(user, userEntry);
-					entries.add(userEntry);
-				}
-			}
+			col = getUserBusiness().getUserHome().findUsersByConditions(null,null,searchWord,null,null,null,-1,-1,-1,-1,null,null,false,false);
 		}
 		else if(LDAP_ATTRIBUTE_GIVEN_NAME.toLowerCase().equals(type)){
 			//what about middle name?
-			Collection col = getUserBusiness().getUserHome().findUsersByConditions(searchWord,null,null,null,null,null,-1,-1,-1,-1,null,null,false,false);
-			Iterator users = col.iterator();
-			while (users.hasNext()) {
-				User user = (User) users.next();
-				String identifier = getUserIdentifier(user, base);
-				if(!alreadyLoaded.contains(identifier)){
-					alreadyLoaded.add(identifier);
-					Entry userEntry = new Entry(new DirectoryString(identifier));
-					fillUserEntry(user, userEntry);
-					entries.add(userEntry);
-				}
-			}
+			col = getUserBusiness().getUserHome().findUsersByConditions(searchWord,null,null,null,null,null,-1,-1,-1,-1,null,null,false,false);
 		}
 		else if(LDAP_ATTRIBUTE_EMAIL.toLowerCase().equals(type)){
 			User user = getUserBusiness().getUserHome().findUserFromEmail(searchWord);
 			String identifier = getUserIdentifier(user, base);
 			if(!alreadyLoaded.contains(identifier)){
 				alreadyLoaded.add(identifier);
-				Entry userEntry = new Entry(new DirectoryString(identifier));
+				Entry userEntry = new Entry(getDirectoryStringForIdentifier(identifier));
 				fillUserEntry(user, userEntry);
 				entries.add(userEntry);
 			}
 		}
 		
+		if(col!=null && !col.isEmpty()){
+			Iterator users = col.iterator();
+			while (users.hasNext()) {
+				User user = (User) users.next();
+				String identifier = getUserIdentifier(user, base);
+				if(!alreadyLoaded.contains(identifier)){
+					alreadyLoaded.add(identifier);
+					Entry userEntry = new Entry(getDirectoryStringForIdentifier(identifier));
+					fillUserEntry(user, userEntry);
+					entries.add(userEntry);
+				}
+			}
+		}
+		
+		
 		return entries;
+	}
+
+	private DirectoryString getDirectoryStringForIdentifier(String identifier) {
+		return new DirectoryString(identifier);
+//		We only have to create a new DirectoryString from the base and java will encode it for us
+//		try {
+//			return new DirectoryString(new String(identifier.getBytes(),UNICODE_ENCODING));
+//		}
+//		catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//			return new DirectoryString(identifier);
+//		}
 	}
 
 	/*
@@ -415,7 +412,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 	 */
 	public Entry getByDN(DirectoryString dn) throws DirectoryException {
 		try {
-			return getEntry(dn, null, null);
+			//this may seem strange but is needed so the DN is converted to the current encoding
+			DirectoryString converted = getDirectoryStringForIdentifier(dn.getDirectoryString());
+			return getEntry(converted, null, null);
 		}
 		catch (Exception e) {
 			throw new DirectoryException(e.getMessage());
@@ -484,9 +483,10 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		return super.rename(oldname, newname);
 	}
 	
-	public Entry getEntry(DirectoryString base, List attributes, String uniqueId) throws InvalidDNException,
-	RemoteException {
+	public Entry getEntry(DirectoryString base, List attributes, String uniqueId) throws InvalidDNException,RemoteException {
+		
 		Entry entry = new Entry(base);
+		
 		if (ldapUtil.isUser(base)) {
 			User user = getUser(base, uniqueId);
 			if (user == null) {
@@ -547,13 +547,13 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		if (group instanceof User) {
 			User user = (User) group;
 			String identifier = getUserIdentifier(user, base);
-			DirectoryString childDN = new DirectoryString(identifier);
+			DirectoryString childDN = getDirectoryStringForIdentifier(identifier);
 			entry = new Entry(childDN);
 			fillUserEntry(user, entry);
 		}
 		else {
 			String identifier = getGroupIdentifier(group, base);
-			DirectoryString childDN = new DirectoryString(identifier);
+			DirectoryString childDN = getDirectoryStringForIdentifier(identifier);
 			entry = new Entry(childDN);
 			fillGroupEntry(group, entry);
 		}
@@ -564,14 +564,14 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		String identifier = "cn=";
 		String fullName = user.getName();
 		String personalId = user.getPersonalID();
-		identifier = identifier + fullName + LDAP_USER_DIRECTORY_STRING_SEPARATOR + personalId + "," + base.toString();
+		identifier = identifier + fullName + LDAP_USER_DIRECTORY_STRING_SEPARATOR + personalId + "," + base.getDirectoryString();
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
 	
 	private String getGroupIdentifier(Group group, DirectoryString base) {
 		String identifier = "ou=";
 		String name = getGroupName(group);
-		identifier = identifier + name + "," + base.toString();
+		identifier = identifier + name + "," + base.getDirectoryString();
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
 	
@@ -627,24 +627,24 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		String uuid = user.getUniqueId();
 		String description = user.getDescription();
 		List name = getAttributeListForSingleEntry(cn);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_COMMON_NAME), name);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_COMMON_NAME), name);
 		List userPIN = getAttributeListForSingleEntry(personalId);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID), userPIN);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID), userPIN);
 		//SHOULD WE ADD IT EMPTY TO REMOVE THE VALUE ON THE OTHER END?
 		if (uuid != null) {
 			List uniqueID = getAttributeListForSingleEntry(uuid);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
 		}
 		if (description != null) {
 			List descriptionV = getAttributeListForSingleEntry(description);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION), descriptionV);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_DESCRIPTION), descriptionV);
 		}
 		List firstName = getAttributeListForSingleEntry(fName);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_GIVEN_NAME), firstName);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_GIVEN_NAME), firstName);
 		List lastName = getAttributeListForSingleEntry(lName);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_SURNAME), lastName);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_SURNAME), lastName);
 		List uid = getAttributeListForSingleEntry(user.getPrimaryKey().toString());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_UID), uid);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_UID), uid);
 		
 		//emails
 		addEmailsToEntry(user, entry);
@@ -661,9 +661,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		//the ldap attribute is called "jpegPhoto"
 		
 		List objectClasses = new ArrayList();
-		objectClasses.add(new DirectoryString(LDAP_SCHEMA_PERSON));
-		objectClasses.add(new DirectoryString(LDAP_SCHEMA_INET_ORG_PERSON));
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
+		objectClasses.add(getDirectoryStringForIdentifier(LDAP_SCHEMA_PERSON));
+		objectClasses.add(getDirectoryStringForIdentifier(LDAP_SCHEMA_INET_ORG_PERSON));
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
 	
 	private void addGenderToEntry(User user, Entry entry) {
@@ -677,7 +677,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 				gender="female";
 			}
 			List genderAtt = getAttributeListForSingleEntry(gender);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_GENDER), genderAtt);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_GENDER), genderAtt);
 			
 		}
 		catch (RemoteException e) {
@@ -695,7 +695,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 				Phone fax;
 				fax = getUserBusiness().getPhoneHome().findUsersFaxPhone(user);
 				List faxNumber = getAttributeListForSingleEntry(fax.getNumber());
-				entry.put(new DirectoryString(LDAP_ATTRIBUTE_FAX_NUMBER), faxNumber);
+				entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_FAX_NUMBER), faxNumber);
 			}
 			catch (FinderException e1) {
 				//e1.printStackTrace();
@@ -705,7 +705,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			try {
 				Phone home = getUserBusiness().getPhoneHome().findUsersHomePhone(user);
 				List homeNumber = getAttributeListForSingleEntry(home.getNumber());
-				entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), homeNumber);
+				entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), homeNumber);
 			}
 			catch (FinderException e1) {
 				//e1.printStackTrace();
@@ -713,7 +713,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			try {
 				Phone mobile = getUserBusiness().getPhoneHome().findUsersMobilePhone(user);
 				List mobileNumber = getAttributeListForSingleEntry(mobile.getNumber());
-				entry.put(new DirectoryString(LDAP_ATTRIBUTE_MOBILE_NUMBER), mobileNumber);	
+				entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_MOBILE_NUMBER), mobileNumber);	
 			}
 			catch (FinderException e1) {
 				//e1.printStackTrace();
@@ -753,7 +753,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			addressString = getAddressBusiness().getFullAddressString(address);
 			List registeredAddress = getAttributeListForSingleEntry(addressString);
 			//full address
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_REGISTERED_ADDRESS), registeredAddress);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_REGISTERED_ADDRESS), registeredAddress);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -762,11 +762,11 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		//partial
 		String streetAndNumber = address.getStreetAddress();
 		List street = getAttributeListForSingleEntry(streetAndNumber);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ADDRESS_STREET_NAME_AND_NUMBER), street);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_ADDRESS_STREET_NAME_AND_NUMBER), street);
 		
 		String postalCode = address.getPostalAddress();
 		List postal = getAttributeListForSingleEntry(postalCode);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ADDRESS_POSTAL_CODE), postal);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_ADDRESS_POSTAL_CODE), postal);
 	}
 	
 	private void addEmailsToEntry(User user, Entry entry) {
@@ -777,9 +777,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			Iterator iter = emails.iterator();
 			while (iter.hasNext()) {
 				Email email = (Email) iter.next();
-				emailValues.add(new DirectoryString(email.getEmailAddress()));
+				emailValues.add(getDirectoryStringForIdentifier(email.getEmailAddress()));
 			}
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL), emailValues);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_EMAIL), emailValues);
 		}
 	}
 	
@@ -795,17 +795,17 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		String uuid = group.getUniqueId();
 		//could need to escape all values??
 		List names = getAttributeListForSingleEntry(name);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT), names);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_ORGANIZATION_UNIT), names);
 		if (desc != null) {
 			List description = getAttributeListForSingleEntry(desc);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION), description);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_DESCRIPTION), description);
 		}
 		if (uuid != null) {
 			List uniqueID = getAttributeListForSingleEntry(group.getUniqueId());
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
 		}
 		List groupType = getAttributeListForSingleEntry(group.getGroupType());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE), groupType);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE), groupType);
 		
 		
 		//emails
@@ -820,8 +820,8 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		addMetaDataFromGroup(group, entry);
 		
 		List objectClasses = new ArrayList();
-		objectClasses.add(new DirectoryString(LDAP_SCHEMA_ORGANIZATIONAL_UNIT));
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
+		objectClasses.add(getDirectoryStringForIdentifier(LDAP_SCHEMA_ORGANIZATIONAL_UNIT));
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
 	
 	private void addEmailsToEntry(Group group, Entry entry) {
@@ -832,9 +832,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			Iterator iter = emails.iterator();
 			while (iter.hasNext()) {
 				Email email = (Email) iter.next();
-				emailValues.add(new DirectoryString(email.getEmailAddress()));
+				emailValues.add(getDirectoryStringForIdentifier(email.getEmailAddress()));
 			}
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL), emailValues);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_EMAIL), emailValues);
 		}
 	}
 	
@@ -846,9 +846,9 @@ private static final String UNICODE_ENCODING = "UTF-8";
 			Iterator iter = phones.iterator();
 			while (iter.hasNext()) {
 				Phone phone = (Phone) iter.next();
-				phoneValues.add(new DirectoryString(phone.getNumber()));
+				phoneValues.add(getDirectoryStringForIdentifier(phone.getNumber()));
 			}
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), phoneValues);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), phoneValues);
 		}
 	}
 	
@@ -877,7 +877,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 				String metaValue = (String) metadata.get(metaKey);
 				if (metaValue != null) {
 					List metaDataValue = getAttributeListForSingleEntry(metaValue);
-					entry.put(new DirectoryString(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
+					entry.put(getDirectoryStringForIdentifier(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
 				}
 			}
 		}
@@ -886,12 +886,7 @@ private static final String UNICODE_ENCODING = "UTF-8";
 	private List getAttributeListForSingleEntry(String value) {
 		List attributes = new ArrayList();
 		if (value != null) {
-			try {
-				attributes.add(new DirectoryString(new String(value.getBytes(),UNICODE_ENCODING)));
-			}
-			catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			attributes.add(getDirectoryStringForIdentifier(value));
 		}
 		return attributes;
 	}
@@ -904,7 +899,8 @@ private static final String UNICODE_ENCODING = "UTF-8";
 		while (iter.hasNext()) {
 			Group group = (Group) iter.next();
 			String identifier = getGroupIdentifier(group, base);
-			DirectoryString dn = new DirectoryString(identifier);
+			DirectoryString dn = getDirectoryStringForIdentifier(identifier);
+			
 			Entry entry = new Entry(dn);
 			fillGroupEntry(group, entry);
 			entries.add(entry);
