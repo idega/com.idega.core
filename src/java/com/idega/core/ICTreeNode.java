@@ -1,27 +1,17 @@
 //idega 2001 - Tryggvi Larusson
 
 /*
-
 *Copyright 2001 idega.is All Rights Reserved.
-
 */
 
 package com.idega.core;
-
-
-
 import java.util.Iterator;
 
 
 
-
-
 /**
-
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
 *@version 1.0
-
 */
 
 public interface ICTreeNode{
@@ -29,29 +19,19 @@ public interface ICTreeNode{
 
 
 /**
-
  * Returns the children of the reciever as an Enumeration.
-
  */
-
 public Iterator getChildren();
 
 /**
-
  *  Returns true if the receiver allows children.
-
  */
-
 public boolean getAllowsChildren();
 
 
-
 /**
-
  *  Returns the child TreeNode at index childIndex.
-
  */
-
 public ICTreeNode getChildAtIndex(int childIndex);
 
 
