@@ -3350,8 +3350,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		
 		if (this.isDebugActive()) {
 			logSQL(sqlQuery.toString());
-			logSQL("countQuery: " + countQuery);
-
+			logSQL("countQuery: " + idoCountQuery);
+			
 		}
 		int length = idoGetNumberOfRecords(idoCountQuery);
 		if (length > 0) {
