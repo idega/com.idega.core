@@ -18,6 +18,7 @@ import com.idega.util.text.TextSoap;
  */
 public class GenericSelect extends InterfaceObject {
 
+	private boolean _isSetToSubmit;
 	private boolean _isSetToDisable;
 	private boolean _isSetAsNotEmpty;
 	private String _notEmptyErrorMessage;
@@ -68,6 +69,15 @@ public class GenericSelect extends InterfaceObject {
 			setAttribute("onChange", "this.form.submit()");
 		else
 			removeAttribute("onChange");
+	}
+
+	/**
+	 * Sets the select to submit when the specified option is seleced.
+	 * Must add to a form before this function is used!!!!
+	 */
+	public void setToSubmit(String optionValue) {
+		_isSetToSubmit = true;
+		setOnChange("submitWhenSelected(this,'"+optionValue+"')");
 	}
 
 	/**
@@ -201,6 +211,8 @@ public class GenericSelect extends InterfaceObject {
 			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", _notEmptyErrorMessage, _emptyValue);
 		if (_isSetToDisable)
 			getScript().addFunction("disableObjectByDropdown", "function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\nelse {\n\tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=!eval(value);\n	\t\t}\n	\t\tinputs.disabled=!eval(value);\n}\n}");
+		if (_isSetToSubmit)
+			getScript().addFunction("submitWhenSelected", "function submitWhenSelected (dropdown,selectedValue) {\n\tif (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue))\n\t\tdropdown.form.submit();\n}");
 	}
 
 	/**
