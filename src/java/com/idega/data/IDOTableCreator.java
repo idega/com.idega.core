@@ -14,6 +14,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.transaction.TransactionManager;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
@@ -284,10 +285,12 @@ public class IDOTableCreator{
     if(!doesTableExist(entity,entity.getTableName())){
 		//if(this.isDebugActive())
     	debug("Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+    	
+    	boolean canCommit=false;
+    	canCommit = this.startEntityCreationTransaction(entity,canCommit);
 
-      boolean canCommit=false;
-      canCommit = this.startEntityCreationTransaction(entity,canCommit);
 
+      
       try{
 
         //Create the records of all referenced entities (which this entity has dependent relationships on)
@@ -327,12 +330,21 @@ public class IDOTableCreator{
       	this.endEntityCreationTransaction(entity,canCommit,true);
 
       	try {
-	      	if (canCommit || !_dsi.useTransactionsInEntityCreation && !_entityWithStartData.isEmpty()) {
+      		boolean notUseTransactions = !_dsi.useTransactionsInEntityCreation;
+      		boolean entitiesInList = !_entityWithStartData.isEmpty();
+      		
+      		if (entitiesInList) {
+	      	//if (canCommit || notUseTransactions && entitiesInList) {
 	      		Iterator iter = _entityWithStartData.iterator();
 	      		while (iter.hasNext()) {
 	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
-		      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
-	      			((GenericEntity) tmpEnt).insertStartData();
+	        			try{
+			      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
+		      			((GenericEntity) tmpEnt).insertStartData();
+	        			}
+	        			catch(Exception e){
+	        				e.printStackTrace();
+	        			}
 	      		}
 	      		_entityWithStartData = new Stack();
 	      	}
