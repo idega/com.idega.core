@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.69 2001/11/21 17:46:55 aron Exp $
+ * $Id: GenericEntity.java,v 1.70 2001/11/21 17:53:12 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1384,8 +1384,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			String[] columnNames = getColumnNames();
 			for (int i = 0; i < columnNames.length; i++){
 				try{
-
-					System.err.println("Column : "+columnNames[i]);
 						if (RS.getString(columnNames[i]) != null){
 				  	  fillColumn(columnNames[i],RS);
 						}
