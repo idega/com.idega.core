@@ -599,13 +599,29 @@ public class TextSoap {
 		return text;
 	}
 
+	
+	 /**
+	   *  Note: Former method of the class TextFormatter, unchanged name. 
+	   *
+	   *@param  textBody       Description of the Parameter
+	   *@return                Description of the Return Value
+	   */
+	public static String formatText(String textBody) {
+		textBody = TextSoap.findAndReplaceOnPrefixCondition(textBody, "\r\n", ">","<br/>",true);
+	    textBody = TextSoap.findAndReplace(textBody, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	    return textBody;
+	}	
+	
+	
 	/**
-	 *  Description of the Method
+	 *  Note: Former name: "formatText"
+	 * 	Name was changed because method formatText of the class TextFormatter
+	 * 	was moved to this class.
 	 *
 	 *@param  text_body  Description of the Parameter
 	 *@return            Description of the Return Value
 	 */
-	public static String formatText(String text_body) {
+	public static String formatTabsAndReturnsToHtml(String text_body) {
 		if (text_body == null || text_body.equals("")) {
 			text_body = "";
 		}
