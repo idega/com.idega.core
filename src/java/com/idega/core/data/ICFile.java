@@ -147,4 +147,14 @@ public class ICFile extends TreeableEntity {
   public void setModificationDate(Timestamp modificationDate){
     setColumn(getColumnNameModificationDate(), modificationDate);
   }
+
+  public void insert()throws SQLException{
+    this.setCreationDate(com.idega.util.idegaTimestamp.getTimestampRightNow());
+    super.insert();
+  }
+
+  public void update()throws SQLException{
+    this.setModificationDate(com.idega.util.idegaTimestamp.getTimestampRightNow());
+    super.update();
+  }
 }
