@@ -5,14 +5,16 @@
 
 */
 package com.idega.core.component.data;
+import java.sql.SQLException;
+
 import com.idega.core.component.business.ICObjectBusiness;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.presentation.PresentationObject;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.3
 */
-public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implements com.idega.core.component.data.ICObjectInstance
-{
+public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implements ICObjectInstance{
 	public ICObjectInstanceBMPBean()
 	{
 		super();
@@ -89,5 +91,14 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		{
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	
+	public void ejbHomeRemoveRelation(ICObjectInstance instance,Class relatedEntity )throws IDORemoveRelationshipException{
+	    try {
+            instance.removeFrom(relatedEntity);
+        } catch (SQLException e) {
+           throw new IDORemoveRelationshipException(e.getMessage());
+        }
 	}
 }
