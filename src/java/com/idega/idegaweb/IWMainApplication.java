@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.128 2005/01/14 16:51:31 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.129 2005/01/20 00:14:33 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/14 16:51:31 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/20 00:14:33 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.128 $
+ * @version $Revision: 1.129 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -1615,27 +1615,60 @@ public class IWMainApplication //{//implements ServletContext{
 		getRealJSFApplication().addComponent(componentType,componentClass);		
 	}
 
+	//TODO: Move this logic to the builder package.
+	static String BUILDER_PAGE_PREFIX="BuilderPage";
+	static String BUILDER_MODULE_PREFIX="BuilderModule";
+	static String BUILDER_PREFIX="Builder";
+	
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createComponent(java.lang.String)
 	 */
 	public UIComponent createComponent(String componentType) throws FacesException {
-		String BUILDER_PREFIX="BuilderPage";
+		
 		if(componentType.startsWith(BUILDER_PREFIX)){
-			String sPageId = componentType.substring(BUILDER_PREFIX.length()+1,componentType.length());
-			//int pageId = Integer.parseInt(sPageId);
-			BuilderService bService;
-			try {
+			if(componentType.startsWith(BUILDER_PAGE_PREFIX)){
+				String sPageId = componentType.substring(BUILDER_PAGE_PREFIX.length()+1,componentType.length());
 				//int pageId = Integer.parseInt(sPageId);
-				bService = BuilderServiceFactory.getBuilderService(this.getIWApplicationContext());
-				return bService.getPage(sPageId);
+				BuilderService bService;
+				try {
+					//int pageId = Integer.parseInt(sPageId);
+					bService = BuilderServiceFactory.getBuilderService(this.getIWApplicationContext());
+					return bService.getPage(sPageId);
+				}
+				catch (NumberFormatException e) {
+					return new Page();
+				}
+				catch (RemoteException e) {
+					e.printStackTrace();
+					throw new RuntimeException("Failed initializing page with id="+sPageId);
+				}
 			}
-			catch (NumberFormatException e) {
-				return new Page();
+			else if(componentType.startsWith(BUILDER_MODULE_PREFIX)){
+				String separator = "_";
+				String[] parameters = componentType.split(separator);
+				String moduleId=parameters[1];
+				String icObjectId=parameters[2];
+				String componentClass=parameters[3];
+
+				
+				try {
+					Object instance = Class.forName(componentClass).newInstance();
+					UIComponent uicomp = (UIComponent)instance;
+					uicomp.setId(moduleId);
+					return uicomp;
+				}
+				catch (InstantiationException e) {
+					e.printStackTrace();
+				}
+				catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				
 			}
-			catch (RemoteException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Failed initializing page with id="+sPageId);
-			}	
+			throw new RuntimeException("Error creating component for componentType: "+componentType);
 		}
 		else{
 			//The default to fall back to the default JSF application
