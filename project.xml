@@ -9,7 +9,6 @@
         <connection>scm:cvs:ext:idegaweb@einstein.idega.is:/idega/cvs:bundles/com.idega.core.bundle</connection>
         <developerConnection>scm:cvs:ext:idegaweb@einstein.idega.is:/idega/cvs:bundles/com.idega.core.bundle</developerConnection>
     </repository>
-    <url>http://support.idega.is/core</url>
     <versions/>
     <branches/>
     <mailingLists>
