@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -17,7 +16,6 @@ import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
@@ -25,6 +23,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
 import com.idega.util.logging.LoggingHelper;
 
 /**
@@ -114,7 +113,13 @@ public class IBOServiceBean implements IBOService, SessionBean {
   }
 
   public void setIWApplicationContext(IWApplicationContext iwac){
-    this.iwac=iwac;
+  	if(iwac instanceof IWContext){
+  		IWContext iwc = (IWContext)iwac;
+  		this.iwac=iwc.getIWMainApplication().getIWApplicationContext();
+  	}
+  	else{
+  		this.iwac=iwac;
+  	}
   }
 
   public IWApplicationContext getIWApplicationContext(){
