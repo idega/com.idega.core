@@ -106,8 +106,7 @@ public class PageIncluder extends PresentationObject implements Index{
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
     if( changeURL && (_sendToPage != null) && iwc.isParameterSet(_sendToPageIfSet) ) {//forwarding
-      iwc.forwardToIBPage(fromPage,_sendToPage);
-      debug("PAGEINCLUDER FORWARDING2");
+      forwardToIBPage(fromPage,_sendToPage,iwc);
     }
     else if(out==null) sortAndProcess(iwc);//ususal
 
@@ -168,7 +167,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	  }
 
 	  pageIncluderPrefix = buf.toString();
-	  System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+	  //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
       }
       else {
 	pageIncluderPrefix ="";
@@ -177,7 +176,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	//after clicking a link and submitting a form
 	// check if the action is for this page includer
 	if ( changeURL ) {
-	  System.out.println("Changing!");
+	  //System.out.println("Changing!");
 
 	  //get all parameters even from post actions
 	  Enumeration enum = iwc.getParameterNames();
@@ -187,7 +186,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	    if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
 	      URL = decodeQueryString(iwc.getParameter(param));
 	      location.append(URL);
-	      System.out.println("Changing location to:"+location.toString());
+	      //System.out.println("Changing location to:"+location.toString());
 	    }
 	    else{
 	      if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
@@ -227,7 +226,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	}
 
 	String loc = location.toString();
-	System.out.println("Loc = "+loc);
+	//System.out.println("Loc = "+loc);
 
 	if( (sessionURL!=null) && (token!=null) ){
 
@@ -515,9 +514,9 @@ public class PageIncluder extends PresentationObject implements Index{
     return _sendToPageIfSet;
   }
 
-  public void forwardToIBPage(Page fromPage ,IBPage page){
+  public void forwardToIBPage(Page fromPage ,IBPage page, IWContext iwc){
     StringBuffer URL = new StringBuffer();
-    URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+    URL.append(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
     URL.append('&');
     String query = getRequest().getQueryString();
     if( _sendToLabel != null ){
