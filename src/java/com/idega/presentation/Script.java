@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import javax.faces.context.FacesContext;
 
 
 /**
@@ -273,5 +274,30 @@ public void print(IWContext iwc)throws Exception{
 
     return obj;
   }
+  
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.scriptType = (String) values[1];
+		this.scriptCode = (LinkedHashMap) values[2];
+		this.variables = (Hashtable) values[3];
+		this.methods = (Hashtable) values[4];
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[5];
+		values[0] = super.saveState(context);
+		values[1] = scriptType;
+		values[2] = scriptCode;
+		values[3] = variables;
+		values[4]= methods;
+		return values;
+	}
+  
 
 }//End class
