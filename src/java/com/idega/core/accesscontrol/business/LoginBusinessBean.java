@@ -13,8 +13,6 @@ import javax.ejb.EJBException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import com.idega.block.login.business.LoginContext;
-import com.idega.block.login.business.LoginCreator;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWEventListener;

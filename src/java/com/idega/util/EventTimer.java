@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.AWTEventMulticaster;
 
 /**
- * Title:        com.idega.block.messenger.business
  * Description:  A threaded event dispatcher class. add an actionlistener to it and it calls
  * it's public synchronized void actionPerformed(ActionEvent e) method with a named actioncommand (default name
  * is "iw_event_timer" and default time is 5 seconds). Just add this line in your actionPerformed method and then parse the string to match your set
