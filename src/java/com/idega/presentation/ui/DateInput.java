@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.8 2002/02/18 12:29:48 tryggvil Exp $
+ * $Id: DateInput.java,v 1.9 2002/02/19 13:13:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -44,7 +44,8 @@ protected boolean _justConstructed = false;
 private boolean _showYear=true;
 private boolean _displayDayLast=false;
 
-
+private String _setDay;
+private String _setMonth;
 
 final static String DAY_KEY = "dateinput.day_long";
 final static String MONTH_KEY = "dateinput.month_long";
@@ -354,11 +355,13 @@ public void setMonth(int month){
 public void setMonth(String month){
 	_setCheck=true;
 	if (month.length() > 1){
-		_theMonth.setSelectedElement(month);
+		//_theMonth.setSelectedElement(month);
+        _setMonth=month;
 	}
 	else{
-		_theMonth.setSelectedElement("0"+month);
-	}
+		//_theMonth.setSelectedElement("0"+month);
+	  _setMonth="0"+_setMonth;
+    }
 }
 
 public void setDay(int day){
@@ -366,13 +369,17 @@ public void setDay(int day){
 }
 
 public void setDay(String day){
+
 	_setCheck=true;
 	if (day.length() > 1 ){
-		_theDay.setSelectedElement(day);
-	}
+		//_theDay.setSelectedElement(day);
+	  _setDay=day;
+    }
 	else{
-		_theDay.setSelectedElement("0"+day);
-	}
+		//_theDay.setSelectedElement("0"+day);
+	    _setDay="0"+day;
+    }
+
 }
 
 public void setDate(java.sql.Date date){
@@ -457,9 +464,19 @@ private void constructInputs(){
   }
 }
 
+private void setSetValues(){
+  if(_setMonth!=null){
+    this._theMonth.setSelectedElement(_setMonth);
+  }
+  if(_setDay!=null){
+    this._theDay.setSelectedElement(_setDay);
+  }
+}
+
 public void main(IWContext iwc)throws Exception{
 
   constructInputs();
+  setSetValues();
 
   if(_justConstructed){
     if(_displayDayLast){
