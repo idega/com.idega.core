@@ -1,6 +1,10 @@
 package com.idega.io;
 
 import java.io.File;
+import java.rmi.RemoteException;
+
+import com.idega.io.export.*;
+import com.idega.presentation.IWContext;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -11,7 +15,7 @@ import java.io.File;
  * @version 1.0
  */
 
-public class UploadFile extends File {
+public class UploadFile extends File implements Storable {
 
   private String _sName,_sMimeType,_sRealPath, _sWebPath;
   private long lSize;
@@ -77,6 +81,22 @@ public class UploadFile extends File {
   public int getId(){
     return _fileDBId;
   }
+
+	/* (non-Javadoc)
+	 * @see com.idega.io.Storable#write(com.idega.io.ObjectWriter)
+	 */
+	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
+		return writer.write(this, iwc);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.io.Storable#read(com.idega.io.ObjectReader)
+	 */
+	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
+		return reader.read(this, iwc);
+	}
+
+
 
 
 }
