@@ -173,7 +173,8 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 			// avoid errors if the metadata is corrupt
 			if (! localPages.contains(zipEntryName)) {
 				localPages.add(zipEntryName);
-				modifyPageContent(zipEntryName, sourceFile);
+				String originalName = pageFileElement.getTextTrim(XMLConstants.FILE_ORIGINAL_NAME);
+				modifyPageContent(zipEntryName, originalName, sourceFile);
 			}
 		}
 	}
@@ -188,6 +189,8 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	 * @throws RemoteException
 	 */
 	private void createPage(XMLElement pageFileElement, String zipEntryName, File sourceFile, IBPageHelper pageHelper, Map pageTree) throws IOException, RemoteException {
+		// note: here the page data is never stored! It is just used to get some data for creating the page entity!
+		// the content of the xml file is stored in the method modify page content!
 		XMLData pageData = XMLData.getInstanceWithoutExistingFile();
 		ZipInputStreamIgnoreClose zipInputStream = getZipInputStream(zipEntryName, sourceFile);
 		ReaderFromFile reader = (ReaderFromFile) pageData.read(this,iwc);
@@ -242,8 +245,10 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		pageIdHolder.put(exportValue, holder);
 	}
 
-	private void modifyPageContent(String zipEntryName, File sourceFile) throws IOException {
+	private void modifyPageContent(String zipEntryName, String originalName, File sourceFile) throws IOException {
 		XMLData pageData = XMLData.getInstanceWithoutExistingFile();
+		pageData.setName(originalName);
+		// we do not have to set the mimetype, XMLData is always xml mimetype 
 		ZipInputStreamIgnoreClose zipInputStream = getZipInputStream(zipEntryName, sourceFile);
 		ReaderFromFile reader = (ReaderFromFile) pageData.read(this, iwc);
 		try {
