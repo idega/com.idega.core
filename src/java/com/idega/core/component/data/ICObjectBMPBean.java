@@ -43,6 +43,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	public static final String COMPONENT_TYPE_HOME = "iw.home";
 	public static final String COMPONENT_TYPE_PROPERTYHANDLER = "iw.propertyhandler";
 	public static final String COMPONENT_TYPE_INPUTHANDLER = "iw.inputhandler";
+	public static final String COMPONENT_TYPE_SEARCHABLE = "iw.searchable";
+	
 	private static final String object_type_column_name = "OBJECT_TYPE";
 	private static final String class_name_column_name = "CLASS_NAME";
 	private final static String BUNDLE_COLUMN_NAME = "BUNDLE";
@@ -124,6 +126,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 			componentList.add(com.idega.core.component.data.ICObjectBMPBean.COMPONENT_TYPE_DATA);
 			componentList.add(com.idega.core.component.data.ICObjectBMPBean.COMPONENT_TYPE_HOME);
 			componentList.add(com.idega.core.component.data.ICObjectBMPBean.COMPONENT_TYPE_PROPERTYHANDLER);
+			componentList.add(com.idega.core.component.data.ICObjectBMPBean.COMPONENT_TYPE_SEARCHABLE);
 		}
 		return componentList;
 	}
