@@ -2519,7 +2519,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	public boolean equals(IDOEntity entity) {
 		if (entity != null) {
-			if (entity.getClass().equals(this.getClass())) {
+			if (entity.getEntityDefinition().getSQLTableName().equalsIgnoreCase(this.getEntityDefinition().getSQLTableName())) {
+			//if (entity.getClass().equals(this.getClass())) {
 				Object entityPK = null;
 				//try
 				//{
