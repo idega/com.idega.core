@@ -136,7 +136,31 @@ public class IWBundle{
       System.setProperty("java.class.path",newClassPath);
 
       installComponents();
+      try{
+        createDataRecords();
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
    }
+
+   private void createDataRecords()throws Exception{
+      List entities = com.idega.data.EntityFinder.findAllByColumn(ICObject.getStaticInstance(ICObject.class),ICObject.getObjectTypeColumnName(),ICObject.COMPONENT_TYPE_DATA,ICObject.getBundleColumnName(),this.getBundleIdentifier());
+      if(entities!=null){
+        Iterator iter = entities.iterator();
+        while (iter.hasNext()) {
+          ICObject ico = (ICObject)iter.next();
+          try{
+            Class c = ico.getObjectClass();
+            c.newInstance();
+          }
+          catch(Exception e){
+            e.printStackTrace();
+          }
+        }
+      }
+   }
+
 
     private void installComponents(){
       List list = this.getComponentKeys();

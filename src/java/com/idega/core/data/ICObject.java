@@ -27,6 +27,7 @@ public class ICObject extends GenericEntity{
         public static final String COMPONENT_TYPE_BLOCK = "iw.block";
         public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
         public static final String COMPONENT_TYPE_APPLICATION_COMPONENT = "iw.application.component";
+        public static final String COMPONENT_TYPE_DATA = "iw.data";
 
         private static final String object_type_column_name = "object_type";
         private static final String class_name_column_name = "class_name";
@@ -74,7 +75,7 @@ public class ICObject extends GenericEntity{
             componentList.add(ICObject.COMPONENT_TYPE_BLOCK);
             componentList.add(ICObject.COMPONENT_TYPE_APPLICATION);
             componentList.add(ICObject.COMPONENT_TYPE_APPLICATION_COMPONENT);
-
+            componentList.add(ICObject.COMPONENT_TYPE_DATA);
           }
           return componentList;
         }
