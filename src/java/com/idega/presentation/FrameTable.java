@@ -813,7 +813,8 @@ public class FrameTable extends Window{
         while (iter.hasNext()) {
           Object item = iter.next();
           //if(item instanceof Frame){
-            if(frameName.equals(((Frame)item).getName())){
+            String frameItemName = ((Frame)item).getName();
+            if(frameName.equals(frameItemName)){
               return ((Frame)item).getPage(iwc, askForPermission);
             }
           //}

@@ -39,11 +39,13 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
   public String getFrameSetIdentifier(FrameTable frame){
     int id = frame.getICObjectInstanceID();
     String identifier;
-    if(id == 0){
-      identifier = (0+SLASH+IWMainApplication.getEncryptedClassName(frame.getClass()));
-    } else {
-      identifier = Integer.toString(id);
+    if(id>0){
+    		identifier = Integer.toString(id);
     }
+    else {
+        identifier = (0+SLASH+IWMainApplication.getEncryptedClassName(frame.getClass()));
+    	}
+
     return identifier;
   }
 
