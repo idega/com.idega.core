@@ -223,4 +223,12 @@ public class SubmitButton extends GenericButton {
 	public void setToEnableWhenChecked(CheckBox checkBox) {
 		setToEnableWhenChecked(checkBox.getName());
 	}
+	
+	/**
+	 * @see com.idega.presentation.ui.GenericButton#setButtonImage(Image)
+	 */
+	public void setButtonImage(Image image) {
+		super.setButtonImage(image);
+		setInputType(INPUT_TYPE_IMAGE);
+	}
 }
