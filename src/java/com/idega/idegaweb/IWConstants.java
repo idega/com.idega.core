@@ -22,8 +22,8 @@ public class IWConstants{
   public final static String MIDDLE_ALIGNMENT="middle";
 
   public static final String BODY_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:10pt;";
-  public static final String LINK_STYLE = "color:#000000;font-size:10pt;text-decoration:none;";
-  public static final String LINK_HOVER_STYLE = "color:#000000;font-size:10pt;text-decoration:none;";
+  public static final String LINK_STYLE = "color:#000000;font-size:10pt;text-decoration:underline;";
+  public static final String LINK_HOVER_STYLE = "color:#000000;font-size:10pt;text-decoration:underline;";
 
   //public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#D4D0C8";
   //public final static String DEFAULT_DARK_INTERFACE_COLOR="gray";
