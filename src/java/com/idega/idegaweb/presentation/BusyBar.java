@@ -144,15 +144,15 @@ public class BusyBar extends Block {
 
   private String getDisabledScript(PresentationObject obj){
     if(obj instanceof InterfaceObject){
-      return "document.forms['"+obj.getParentForm().getID()+"']."+obj.getID()+".disabled = true";
+      return "document.getElementById('"+obj.getID()+"').disabled = true";
     } else {
-      return "findObj("+obj.getID()+", null).disabled = true";
+      return "document.getElementById('"+obj.getID()+"').disabled = true";
     }
     //return "document.getElementById("+obj.getID()+").disabled = true";
   }
 
   private String getCallingScript(){
-    return "document.images['"+name+"'].src='"+_url+"'";
+    return "document.getElementById('"+name+"').src='"+_url+"'";
   }
 
 
