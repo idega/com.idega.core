@@ -197,7 +197,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       user = getUserHome().findByPersonalID(personalID);
       user.setFullName(fullName);
       
+      if(gender!=null)
       user.setGender( (Integer)gender.getPrimaryKey() );
+      if(dateOfBirth!=null)
       user.setDateOfBirth(dateOfBirth.getDate());
       user.store();
     }
