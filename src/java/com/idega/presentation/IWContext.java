@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.111 2004/12/13 11:51:48 gummi Exp $
+ * $Id: IWContext.java,v 1.112 2004/12/14 13:53:54 gummi Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -72,10 +73,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/13 11:51:48 $ by $Author: gummi $
+ * Last modified: $Date: 2004/12/14 13:53:54 $ by $Author: gummi $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.111 $
+ * @version $Revision: 1.112 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -666,9 +667,6 @@ implements IWUserContext, IWApplicationContext {
 	public String getRemoteHostName() {
 		return getRequest().getRemoteHost();
 	}
-	public String getRemoteUser() {
-		return getRequest().getRemoteUser();
-	}
 	public boolean hasPermission(String permissionKey, PresentationObject obj) {
 		try {
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
@@ -1168,6 +1166,27 @@ implements IWUserContext, IWApplicationContext {
 	 */
 	public String getAuthorizationHeader(){
 		return getRequest().getHeader("Authorization");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWUserContext#getUserPrincipal()
+	 */
+	public Principal getUserPrincipal() {
+		return getRequest().getUserPrincipal();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWUserContext#isUserInRole(java.lang.String)
+	 */
+	public boolean isUserInRole(String role) {
+		return getRequest().isUserInRole(role);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWUserContext#getRemoteUser()
+	 */
+	public String getRemoteUser() {
+		return getRequest().getRemoteUser();
 	}
 
 }
