@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Iterator;
 import javax.ejb.*;
 import java.rmi.RemoteException;
+import java.util.Enumeration;
+import com.idega.util.datastructures.idegaTreeNode;
+import com.idega.core.ICTreeNode;
 
 
 /**
@@ -31,7 +34,11 @@ import java.rmi.RemoteException;
 
 
 
-public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements com.idega.user.data.Group {
+public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group,ICTreeNode {
+
+
+    public static final int GROUP_ID_EVERYONE = -7913;
+    public static final int GROUP_ID_USERS = - 1906;
 
 
 	public void initializeAttributes(){
@@ -40,7 +47,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(getGroupTypeColumnName(),"Group type", true, true, "java.lang.String");
 		addAttribute(getGroupDescriptionColumnName(),"Description", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(),"Extra information", true, true, "java.lang.String");
+                /**
+                 * @todo: Disable!
+                 */
                 this.addTreeRelationShip();
+
                 this.addManyToManyRelationShip(ICNetwork.class,"ic_group_network");
                 this.addManyToManyRelationShip(ICProtocol.class,"ic_group_protocol");
 
@@ -167,68 +178,64 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
         public List getListOfAllGroupsContainingThis()throws EJBException{
-
-          return this.getListOfAllGroupsContaining(this.getID());
-
+          List theReturn = new Vector();
+          try{
+            Collection relations = this.getGroupRelationHome().findGroupsRelationshipsContaining(this);
+            Iterator iter = relations.iterator();
+            while (iter.hasNext()) {
+              GroupRelation item = (GroupRelation)iter.next();
+              Group related = item.getRelatedGroup();
+              theReturn.add(related);
+            }
+          }
+          catch(Exception e){
+            throw new EJBException(e.getMessage());
+          }
+          return theReturn;
         }
 
 
-
-
-
+        /**
+         * @deprecated
+         */
         public List getListOfAllGroupsContaining(int group_id)throws EJBException{
+          try{
+            Group group = this.getGroupHome().findByPrimaryKey(new Integer(group_id));
+            return group.getListOfAllGroupsContainingThis();
+          }
+          catch(Exception e){
+            throw new EJBException(e.getMessage());
+          }
+        }
 
+        private List getListOfAllGroupsContainingLegacy(int group_id)throws EJBException{
           String tableToSelectFrom = "IC_GROUP_TREE";
-
           StringBuffer buffer=new StringBuffer();
-
           buffer.append("select * from ");
-
           buffer.append(tableToSelectFrom);
-
           buffer.append(" where ");
-
           buffer.append("CHILD_IC_GROUP_ID");
-
           buffer.append("=");
-
           buffer.append(group_id);
-
           String SQLString=buffer.toString();
-
-
           Connection conn= null;
           Statement Stmt= null;
           Vector vector = new Vector();
-
           try
           {
             conn = getConnection(getDatasource());
-
             Stmt = conn.createStatement();
-
             ResultSet RS = Stmt.executeQuery(SQLString);
-
             while (RS.next()){
-
               IDOLegacyEntity tempobj=null;
-
               try{
-
                 tempobj = (IDOLegacyEntity)Class.forName(this.getClass().getName()).newInstance();
-
                 tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
-
               }
-
               catch(Exception ex){
-
                 System.err.println("There was an error in " + this.getClass().getName() +".getAllGroupsContainingThis(): "+ex.getMessage());
-
               }
-
               vector.addElement(tempobj);
-
             }
 
             RS.close();
@@ -249,26 +256,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
             }
           }
 
-
-
           if (vector != null){
-
             vector.trimToSize();
-
             return vector;
-
             //return (Group[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-
           }
-
           else{
-
             return null;
-
           }
-
-
-
         }
 
 
@@ -298,29 +293,38 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
         /**
-
          * @todo change name to getGroupsContained();
-
          */
-
         public List getListOfAllGroupsContained()throws EJBException{
+          List theReturn = new Vector();
+          try{
+            Collection relations = this.getGroupRelationHome().findGroupsRelationshipsUnder(this);
+            Iterator iter = relations.iterator();
+            while (iter.hasNext()) {
+              GroupRelation item = (GroupRelation)iter.next();
+              Group related = item.getRelatedGroup();
+              theReturn.add(related);
+            }
+          }
+          catch(Exception e){
+            throw new EJBException(e.getMessage());
+          }
+          return theReturn;
+        }
 
+
+        /**
+         * @todo change name to getGroupsContained();
+         */
+        private List getListOfAllGroupsContainedLegacy()throws EJBException{
           String tableToSelectFrom = "IC_GROUP_TREE";
-
           StringBuffer buffer=new StringBuffer();
-
           buffer.append("select CHILD_IC_GROUP_ID from ");
-
           buffer.append(tableToSelectFrom);
-
           buffer.append(" where ");
-
           buffer.append("IC_GROUP_ID");
-
           buffer.append("=");
-
           buffer.append(this.getID());
-
           String SQLString=buffer.toString();
 		Connection conn= null;
 		Statement Stmt= null;
@@ -387,26 +391,15 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
         public List getGroupsContained(String[] groupTypes, boolean returnSepcifiedGroupTypes)throws EJBException{
           List list = this.getListOfAllGroupsContained();
-
-
           List specifiedGroups = new Vector();
-
           List notSpecifiedGroups = new Vector();
-
           int j = 0;
-
           int k = 0;
-
           Iterator iter2 = list.iterator();
-
           if(groupTypes != null && groupTypes.length > 0){
-
             boolean specified = false;
-
             while (iter2.hasNext()) {
-
               Group tempObj = (Group)iter2.next();
-
               for (int i = 0; i < groupTypes.length; i++) {
                 try{
                   if (tempObj.getGroupType().equals(groupTypes[i])){
@@ -415,7 +408,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
                   }
                 }
                 catch(RemoteException rme){
-
                 }
               }
               if(!specified) {
@@ -452,48 +444,41 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
         }
 
 
-
         public void addGroup(int groupId)throws EJBException{
-
-          Connection conn= null;
-
-          Statement Stmt= null;
-
           try{
+            GroupRelation rel = this.getGroupRelationHome().create();
+            rel.setGroup(this);
+            rel.setRelatedGroup(groupId);
+            rel.store();
+          }
+          catch(Exception e){
+            throw new EJBException(e.getMessage());
+          }
+        }
 
+        private void addGroupLegacy(int groupId)throws EJBException{
+          Connection conn= null;
+          Statement Stmt= null;
+          try{
             conn = getConnection(getDatasource());
-
             Stmt = conn.createStatement();
-
             String sql = "insert into IC_GROUP_TREE ("+getIDColumnName()+", CHILD_IC_GROUP_ID) values("+getID()+","+groupId+")";
-
             //System.err.println(sql);
-
             int i = Stmt.executeUpdate(sql);
-
             //System.err.println(sql);
-
           }catch (Exception ex) {
-
             ex.printStackTrace(System.out);
-
           }finally{
-
             if(Stmt != null){
               try{
                 Stmt.close();
               }
               catch(SQLException sqle){}
             }
-
             if (conn != null){
-
               freeConnection(getDatasource(),conn);
-
             }
-
           }
-
         }
 
 
@@ -512,7 +497,27 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
           this.removeGroup(-1,true);
         }
 
-        public void removeGroup(int groupId, boolean AllEntries)throws EJBException{
+        public void removeGroup(int relatedGroupId, boolean AllEntries)throws EJBException{
+          try{
+            Collection rels = null;
+            if(AllEntries){
+              rels = this.getGroupRelationHome().findGroupsRelationshipsUnder(this);
+            }
+            else{
+              rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(),relatedGroupId);
+            }
+            Iterator iter = rels.iterator();
+            while (iter.hasNext()) {
+              GroupRelation item = (GroupRelation)iter.next();
+              item.remove();
+            }
+          }
+          catch(Exception e){
+            throw new EJBException(e.getMessage());
+          }
+        }
+
+        private void removeGroupLegacy(int groupId, boolean AllEntries)throws EJBException{
           Connection conn= null;
           Statement Stmt= null;
           try{
@@ -559,9 +564,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
         public void removeUser(User user)throws RemoteException{
-
           this.removeGroup(user.getGroupID(),false);
-
         }
 
 
@@ -667,29 +670,16 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
         }
 
 
-
-
-
         public boolean equals(IDOLegacyEntity entity){
-
           if(entity != null){
-
             if(entity instanceof Group){
-
               return this.equals((Group)entity);
-
             } else {
-
               return super.equals(entity);
-
             }
-
           }
-
           return false;
-
         }
-
 
 
         public boolean equals(Group group){
@@ -717,9 +707,19 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
             return -1;
         }
 
+  private GroupHome getGroupHome(){
+    return ((GroupHome)this.getEJBHome());
+  }
+
+  private GroupRelationHome getGroupRelationHome()throws RemoteException{
+    return ((GroupRelationHome)IDOLookup.getHome(GroupRelation.class));
+  }
+
   public String ejbHomeGetGroupType(){
    return this.getGroupTypeValue();
   }
+
+
 
   public  Collection ejbFindGroups(String[] groupIDs) throws FinderException {
     Collection toReturn = new Vector(0);
@@ -738,5 +738,66 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return toReturn;
   }
 
+
+  public Integer ejbFindSystemUsersGroup()throws FinderException{
+    return new Integer(this.GROUP_ID_USERS);
+  }
+
+
+  public Iterator getChildren() {
+    /**
+     * @todo: Change implementation
+     *
+     */
+    if(this.getID()==this.GROUP_ID_USERS){
+      String[] groupTypes = {"ic_user_representative"};
+      try{
+        return this.getGroupHome().findGroups(groupTypes).iterator();
+      }
+      catch(Exception e){
+        throw new RuntimeException(e.getMessage());
+      }
+    }
+    else{
+      return this.getListOfAllGroupsContained().iterator();
+    }
+  }
+  public boolean getAllowsChildren() {
+    return true;
+  }
+  public ICTreeNode getChildAtIndex(int childIndex) {
+    try{
+      return ((GroupHome)this.getEJBHome()).findByPrimaryKey(new Integer(childIndex));
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+  public int getChildCount() {
+    return this.getListOfAllGroupsContained().size();
+  }
+  public int getIndex(ICTreeNode node) {
+    return node.getNodeID();
+  }
+  public ICTreeNode getParentNode() {
+    ICTreeNode parent = null;;
+    try{
+      parent = (ICTreeNode)this.getListOfAllGroupsContainingThis().iterator().next();
+    }
+    catch(Exception e){}
+    return parent;
+  }
+  public boolean isLeaf() {
+    return getChildren().hasNext();
+  }
+  public String getNodeName() {
+    return this.getName();
+  }
+  public int getNodeID() {
+    return ((Integer)this.getPrimaryKey()).intValue();
+  }
+  public int getSiblingCount() {
+    return getParentNode().getChildCount();
+  }
 }   // Class Group
 

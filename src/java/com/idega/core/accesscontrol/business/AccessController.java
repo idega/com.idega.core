@@ -9,6 +9,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.idegaweb.IWUserContext;
 import java.util.List;
+import com.idega.user.data.Group;
 
 /**
  * Title:        idegaWeb
@@ -100,6 +101,16 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public String[] getBundlePermissionKeys(Class ICObject);
   public String[] getBundlePermissionKeys(String BundleIdentifier);
   public String[] getPagePermissionKeys();
+
+
+
+  public boolean hasEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+  public boolean hasViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+  public void addEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+  public void revokeEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+  public void addViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+  public void revokeViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
+
 
 /*
   public static List getPermissionGroups(User user) throws Exception;

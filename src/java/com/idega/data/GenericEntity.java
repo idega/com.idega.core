@@ -3082,7 +3082,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
   /**
+   * Finds all relationships this entity bean instane has with ALL returningEntityInterfaceClass  beans
    * Returns a collection of returningEntity instances
+   *
+   * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
    */
   protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass)throws IDORelationshipException{
     try{
@@ -3106,6 +3109,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   /**
    * Returns a collection of returningEntity instances
+   *
+   * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
    */
   protected Collection idoGetRelatedEntities(IDOEntity returningEntity)throws IDORelationshipException{
 	IDOLegacyEntity legacyEntity = (IDOLegacyEntity)returningEntity;
@@ -3116,6 +3121,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   /**
    * Returns a collection of returningEntity instances
+   *
+   * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
    */
   private Collection idoGetRelatedEntities(IDOEntity returningEntity,String sqlQuery)throws IDORelationshipException{
     Vector vector = new Vector();
@@ -3145,6 +3152,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   /**
    * Returns a collection of returningEntity primary keys
+   *
+   * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
    */
   protected Collection idoGetRelatedEntityPKs(IDOEntity returningEntity)throws IDORelationshipException{
 	IDOLegacyEntity legacyEntity = (IDOLegacyEntity)returningEntity;
@@ -3318,7 +3327,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     **Default remove behavior with a many-to-many relationship
     ** Deletes <b>ALL</b> records of relation with all instances of entityInterfaceClass with this entity bean instance
     *
-    * @throws IDORemoveRelationshipException if there is no relationship with the given entity or there is an error accessing it
+    * @throws IDORemoveRelationshipException if there is no relationship defined with the given entity class or there is an error accessing it
     **/
     protected void idoRemoveFrom(Class entityInterfaceClass) throws IDORemoveRelationshipException{
       /**
@@ -3338,7 +3347,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     **Default remove behavior with a many-to-many relationship
     ** deletes only one line in middle table if the genericentity wa consructed with a value
     *
-    * @throws IDORemoveRelationshipException if there is no relationship with the given entity or there is an error accessing it
+    * @throws IDORemoveRelationshipException if there is no relationship defined with the given entity class or there is an error accessing it
     **/
     protected void idoRemoveFrom(IDOEntity entity) throws IDORemoveRelationshipException{
       /**

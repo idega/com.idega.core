@@ -24,7 +24,7 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Map;
-
+import com.idega.util.ListUtil;
 import javax.ejb.FinderException;
 
 
@@ -177,7 +177,7 @@ public class EntityFinder{
         int size = c.size();
         //System.out.println("CollectionSize="+size);
         if(size>0){
-          return (List)c;
+          return ListUtil.convertCollectionToList(c);
         }
         else{
           return null;

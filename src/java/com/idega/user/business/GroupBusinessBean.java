@@ -39,6 +39,25 @@ public class GroupBusinessBean extends IBOServiceBean implements GroupBusiness{
   }
 
 
+  /**
+   * Not yet implemented
+   */
+  public GroupHome getGroupHome(String groupType){
+    if(groupHome==null){
+      try{
+        /**
+         * @todo: implement
+         */
+        groupHome = (GroupHome)IDOLookup.getHome(Group.class);
+      }
+      catch(RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return groupHome;
+  }
+
+
   public Group createGroup(String name,String description,String type)throws CreateException,RemoteException{
     Group newGroup;
     newGroup =  getGroupHome().create();

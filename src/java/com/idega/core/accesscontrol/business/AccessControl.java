@@ -22,7 +22,10 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.builder.data.IBPage;
+import com.idega.user.data.Group;
+import com.idega.data.IDOLookup;
 
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -51,8 +54,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   private static final String _ADMINISTRATOR_NAME = "Administrator";
 
 
-  private static final int _GROUP_ID_EVERYONE = -7913;
-  private static final int _GROUP_ID_USERS = -1906;
+  //private static final int _GROUP_ID_EVERYONE = -7913;
+  //private static final int _GROUP_ID_USERS = -1906;
+
+  private static final int _GROUP_ID_EVERYONE = com.idega.user.data.GroupBMPBean.GROUP_ID_EVERYONE;
+  private static final int _GROUP_ID_USERS = com.idega.user.data.GroupBMPBean.GROUP_ID_USERS;
+
 
   private static final int _notBuilderPageID = 0;
 
@@ -64,7 +71,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
   private void initAdministratorPermissionGroup() throws Exception {
-    PermissionGroup permission = ((com.idega.core.accesscontrol.data.PermissionGroupHome)com.idega.data.IDOLookup.getHomeLegacy(PermissionGroup.class)).createLegacy();
+    PermissionGroup permission = getPermissionGroupHome().create();
     permission.setName(AccessControl.getAdministratorGroupName());
     permission.setDescription("Administrator permission");
     permission.store();
@@ -72,7 +79,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   private void initPermissionGroupEveryone() throws Exception {
-    PermissionGroup permission = ((com.idega.core.accesscontrol.data.PermissionGroupHome)com.idega.data.IDOLookup.getHomeLegacy(PermissionGroup.class)).createLegacy();
+    PermissionGroup permission = getPermissionGroupHome().create();
     permission.setID(_GROUP_ID_EVERYONE);
     permission.setName("Everyone");
     permission.setDescription("Permission if not logged on");
@@ -81,7 +88,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   private void initPermissionGroupUsers() throws Exception {
-    PermissionGroup permission = ((com.idega.core.accesscontrol.data.PermissionGroupHome)com.idega.data.IDOLookup.getHomeLegacy(PermissionGroup.class)).createLegacy();
+    PermissionGroup permission = getPermissionGroupHome().create();
     permission.setID(_GROUP_ID_USERS);
     permission.setName("Users");
     permission.setDescription("Permission if logged on");
@@ -730,7 +737,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
-      permission = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      permission = getPermissionHome().create();
       update = false;
     }
 
@@ -757,7 +764,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getICObjectID() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
-      permission = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      permission = getPermissionHome().create();
       update = false;
     }
 
@@ -784,7 +791,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = '" + obj.getBundleIdentifier() + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
-      permission = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      permission = getPermissionHome().create();
       update = false;
     }
 
@@ -917,7 +924,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
     }
     catch (Exception ex) {
-      permission = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      permission = getPermissionHome().create();
       update = false;
     }
 
@@ -968,7 +975,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName() + " = " + ObjectInstanceId + " AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + com.idega.core.accesscontrol.data.ICPermissionBMPBean.getGroupIDColumnName() + " = " + permissionGroupId))[0];
     }
     catch (Exception ex) {
-      permission = ((com.idega.core.accesscontrol.data.ICPermissionHome)com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+      permission = getPermissionHome().create();
       update = false;
     }
 
@@ -992,7 +999,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
   public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws Exception{
-    PermissionGroup newGroup = ((com.idega.core.accesscontrol.data.PermissionGroupHome)com.idega.data.IDOLookup.getHomeLegacy(PermissionGroup.class)).createLegacy();
+    PermissionGroup newGroup = getPermissionGroupHome().create();
 
     if(GroupName != null)
       newGroup.setName(GroupName);
@@ -1568,9 +1575,53 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
   }
 
+  public boolean hasEditPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+    return true;
+  }
+
+  public boolean hasViewPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+    return true;
+  }
 
 
+  public void addEditPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+  }
 
+  public void revokeEditPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+  }
+
+
+  public void addViewPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+  }
+
+  public void revokeViewPermissionFor(Group group,IWUserContext iwuc){
+    /**
+     * @todo: Implement
+     */
+  }
+
+  private PermissionGroupHome getPermissionGroupHome()throws RemoteException{
+    return (PermissionGroupHome)IDOLookup.getHome(PermissionGroup.class);
+  }
+
+  private ICPermissionHome getPermissionHome()throws RemoteException{
+    return (ICPermissionHome)IDOLookup.getHome(ICPermission.class);
+  }
 
 
 

@@ -13,6 +13,13 @@ public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHom
  }
 
 
+public Group findSystemUsersGroup()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((GroupBMPBean)entity).ejbFindSystemUsersGroup();
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
 public java.util.Collection findGroups(java.lang.String[] p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroups(p0);
