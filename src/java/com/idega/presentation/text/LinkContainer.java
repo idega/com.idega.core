@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.5 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.6 2002/06/11 15:08:26 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -461,11 +461,13 @@ public class LinkContainer extends PresentationObjectContainer {
       if(openInNewWindow){
 	String URL = getURL();
 	if ( getPage() != 0 ) URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
+	else URL = URL + getParameterString(iwc,URL);
+
 	if ( _windowName == null ) _windowName = "Popup";
 	if ( _windowWidth == null ) _windowWidth = "400";
 	if ( _windowHeight == null ) _windowHeight = "400";
 
-	setFinalUrl("javascript:"+Window.getWindowCallingScript(URL+getParameterString(iwc,URL),_windowName,_toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
+	setFinalUrl("javascript:"+Window.getWindowCallingScript(URL,_windowName,_toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
       }
       else {
 	if ( _file != null ) {
