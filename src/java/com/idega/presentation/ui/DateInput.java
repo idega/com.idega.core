@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.47 2004/03/29 11:51:54 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.48 2004/04/16 10:39:22 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,6 +55,9 @@ public class DateInput extends InterfaceObject implements InputHandler{
   final static String DAY_KEY_S = "dateinput.day_short";
   final static String MONTH_KEY_S = "dateinput.month_short";
   final static String YEAR_KEY_S = "dateinput.year_short";
+  private String dayString;
+  private String monthString;
+  private String yearString;
   
   final static int SYSTEM_LAUNCH_YEAR = 2004;
   
@@ -495,11 +498,11 @@ public class DateInput extends InterfaceObject implements InputHandler{
   public void addScriptElements(IWContext iwc) {
     if (_isShowDay) {
       if (_showYear) {
-        _theYear.setOnChange("iwPopulateDaysWithYear(this,this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ");iwSetValueOfHiddenDateWithAllInputs(this.form." + _theYear.getName() + ",this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
-        _theMonth.setOnChange("iwPopulateDaysWithYear(this.form." + _theYear.getName() + ",this,this.form." + _theDay.getName() + ");iwSetValueOfHiddenDateWithAllInputs(this.form." + _theYear.getName() + ",this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
+        _theYear.setOnChange("iwPopulateDaysWithYear(this,this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",'"+dayString+"');iwSetValueOfHiddenDateWithAllInputs(this.form." + _theYear.getName() + ",this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
+        _theMonth.setOnChange("iwPopulateDaysWithYear(this.form." + _theYear.getName() + ",this,this.form." + _theDay.getName() + ",'"+dayString+"');iwSetValueOfHiddenDateWithAllInputs(this.form." + _theYear.getName() + ",this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
         _theDay.setOnChange("iwSetValueOfHiddenDateWithAllInputs(this.form." + _theYear.getName() + ",this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
       } else {
-        _theMonth.setOnChange("iwPopulateDaysWithMonth('" + this._selectedYear + "',this,this.form." + _theDay.getName() + ");iwSetValueOfHiddenDateWithDay('" + this._selectedYear + "',this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
+        _theMonth.setOnChange("iwPopulateDaysWithMonth('" + this._selectedYear + "',this,this.form." + _theDay.getName() + ",'"+dayString+"');iwSetValueOfHiddenDateWithDay('" + this._selectedYear + "',this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
         _theDay.setOnChange("iwSetValueOfHiddenDateWithDay('" + this._selectedYear + "',this.form." + _theMonth.getName() + ",this.form." + _theDay.getName() + ",this.form." + _theWholeDate.getName() + ");");
       }
     } else {
@@ -606,9 +609,6 @@ public class DateInput extends InterfaceObject implements InputHandler{
     IWBundle iwb = this.getBundle(iwc);
     IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
     String[] monthStrings;
-    String dayString;
-    String monthString;
-    String yearString;
 
     if (showNullValue) {
       if (_inShort) {
