@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -653,7 +654,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	/**
 	 * Construct a new <code>IWTimestamp</code> object that is initialized to
 	 * the date and/or time settings given in the constructor.<br>
-	 * Available string formats are: 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss'
+	 * Available string formats are: 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss || ddmmyy'
 	 */
 	public IWTimestamp(String SQLFormat) {
 		this();
@@ -667,6 +668,15 @@ public class IWTimestamp implements Comparable,Cloneable {
 			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
 			calendar.setTime(Time.valueOf(SQLFormat));
 			setAsTime();
+		}
+		else if(SQLFormat.length() == 6) {
+			DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
+			try {
+				calendar.setTime(dateFormatddmmyy.parse(SQLFormat));
+			}
+			catch (ParseException e) {
+				throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
+			}
 		}
 		else
 			calendar.setTime(Timestamp.valueOf(SQLFormat));
