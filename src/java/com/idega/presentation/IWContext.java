@@ -952,7 +952,11 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		forwardToIBPage(fromPage,((Integer) page.getPrimaryKeyValue()).intValue());
 	}
 	
-	public void forwardToIBPage(Page fromPage, int pageID) {
+	public void forwardToIBPage(Page fromPage, int pageID){
+		forwardToIBPage(fromPage,pageID,0);
+	}
+		
+	public void forwardToIBPage(Page fromPage, int pageID,int secondInterval) {
 		/**@todo temporary workaround find out why this doesn't work
 		 * This is supposed to work but I always get: IllegalStateException: cannot forward because writer or stream has been obtained.
 		 */
@@ -977,7 +981,10 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 			URL.append(bs.getPageURI(pageID));
 			URL.append('&');
 			URL.append(getRequest().getQueryString());
-			fromPage.setToRedirect(URL.toString());
+			if(secondInterval>0)
+				fromPage.setToRedirect(URL.toString(),secondInterval);
+			else
+				fromPage.setToRedirect(URL.toString());
 			fromPage.empty();
 		}
 		catch (RemoteException e)
