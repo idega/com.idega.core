@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.8 2001/10/24 15:09:19 eiki Exp $
+ * $Id: Link.java,v 1.9 2001/10/24 16:43:05 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -60,6 +60,8 @@ public class Link extends Text {
   private boolean isImageButton = false;
   private boolean isImageTab = false;
   private boolean useTextAsLocalizedTextKey = false;
+  private boolean flip = true;
+
   private boolean hasClass = false;
   private boolean _maintainAllGlobalParameters = false;
   private boolean _addSessionId = true;
@@ -286,10 +288,10 @@ public class Link extends Text {
     }
     else if( isImageTab ){//get a generated button gif image
       if(useTextAsLocalizedTextKey){//the text entered is a local key
-        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,false);
+        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,flip);
       }
       else{
-        _obj = iwc.getApplication().getCoreBundle().getImageTab(text,false);
+        _obj = iwc.getApplication().getCoreBundle().getImageTab(text,flip);
       }
       _obj.setParentObject(this);
       _objectType = OBJECT_TYPE_MODULEOBJECT;
@@ -1157,17 +1159,20 @@ public class Link extends Text {
     setAsLocalizedImageButton(useTextAsLocalizedTextKey);
   }
 
-  public void setAsImageTab(boolean isImageTab){
+  public void setAsImageTab(boolean isImageTab, boolean flip){
    this.isImageTab = isImageTab;
+   this.flip = flip;
   }
 
-  public void setAsLocalizedImageTab( boolean useTextAsLocalizedTextKey ){
+  public void setAsLocalizedImageTab( boolean useTextAsLocalizedTextKey, boolean flip){
     this.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
+    this.flip = flip;
   }
 
-  public void setAsImageTab(boolean isImageTab, boolean useTextAsLocalizedTextKey ){
-    setAsImageTab(isImageTab);
-    setAsLocalizedImageTab(useTextAsLocalizedTextKey);
+  public void setAsImageTab(boolean isImageTab, boolean useTextAsLocalizedTextKey, boolean flip){
+    setAsImageTab(isImageTab,flip);
+    setAsLocalizedImageTab(useTextAsLocalizedTextKey,flip);
+    this.flip = flip;
   }
 }
 

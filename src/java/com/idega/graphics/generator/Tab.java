@@ -32,7 +32,6 @@ public class Tab extends Button {
   public static  String BUTTON_DOWN = "_TAB_DOWN";
   protected boolean drawBorder = false;
   protected boolean firstRun = true;
-  protected int width = 54;
   protected int height = 20;
   private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
   private boolean flip = false;
@@ -72,9 +71,7 @@ public class Tab extends Button {
 
   public void generate(String filePath){
     super.height = this.height;
-    super.width = this.width;
     super.generate(filePath);
-
   }
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){

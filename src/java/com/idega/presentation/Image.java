@@ -78,7 +78,7 @@ public Image(String name,String url, String overImageUrl, String downImageUrl){
 
   this.downImageUrl=downImageUrl;
   setAttribute("onMouseDown","swapImage('"+getName()+"','','"+downImageUrl+"',1)");
-  setAttribute("onMouseUp","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
+  //setAttribute("onMouseUp","swapImage('"+getName()+"','','"+overImageUrl+"',1)");
 }
 
 

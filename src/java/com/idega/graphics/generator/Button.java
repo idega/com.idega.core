@@ -55,9 +55,9 @@ public class Button {
   protected int textYPos = 10;
   protected int verticalPadding = 5;
 
-  protected String buttonUpName;
-  protected String buttonDownName;
-  protected String buttonOverName;
+  public String buttonUpName;
+  public String buttonDownName;
+  public String buttonOverName;
 
   private String text;
   private Font font;
@@ -66,6 +66,7 @@ public class Button {
   private boolean resize = false;
 
   public Button() {
+    this("");
   }
 
   public Button(String text) {
@@ -108,8 +109,8 @@ public class Button {
     fontColor = color;
   }
 
-  public void setFont(Font font){
-    this.font = font;
+  public void setFont(Font theFont){
+    font = theFont;
   }
 
   public void setFillColor(Color color){
@@ -233,7 +234,7 @@ public class Button {
 
     g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
 
-    if(effect==BUTTON_OVER) g.setColor(this.highlightColor);
+    if(effect==BUTTON_OVER) g.setColor(highlightColor);
     else g.setColor(fillColor);
     g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
 
@@ -260,7 +261,7 @@ public class Button {
       GIFEncoder encode = new GIFEncoder(image);
 
       StringBuffer name = new StringBuffer();
-      name.append(this.hashCode());
+      name.append(hashCode());
       name.append(width);
       name.append("x");
       name.append(height);
@@ -271,10 +272,10 @@ public class Button {
 
       path+=name.toString();
 
-      if( effect == BUTTON_UP ){
+      if( effect == getStaticButtonUpString() ){
         buttonUpName = sName;
       }
-      else if( effect == BUTTON_DOWN ){
+      else if( effect == getStaticButtonDownString() ){
         buttonDownName = sName;
       }
       else{

@@ -127,6 +127,10 @@ public class ImageFactory {
     tab.flip(flip);
     tab.generate(filePath);
 
+    System.out.println(" up "+fileVirtualPath+tab.getUpName());
+    System.out.println(" over "+fileVirtualPath+tab.getOverName());
+    System.out.println(" down "+fileVirtualPath+tab.getDownName());
+
     image = new Image("iw_generated_"+Integer.toString(tab.hashCode()),fileVirtualPath+tab.getUpName(),fileVirtualPath+tab.getOverName(),fileVirtualPath+tab.getDownName());
     image.setWidth(tab.getWidth());
     image.setHeight(tab.getHeight());
