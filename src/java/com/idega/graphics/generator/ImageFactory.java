@@ -20,6 +20,7 @@ import com.idega.util.FileUtil;
 import java.awt.Font;
 import java.util.Locale;
 import java.io.FileInputStream;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
@@ -50,8 +51,13 @@ public class ImageFactory {
     images = new HashMap();
     String folderPath = coreBundle.getResourcesRealPath()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
     try {
-      fontbase = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+iwma.CORE_DEFAULT_FONT));
-      defaultFont = fontbase.deriveFont(Font.PLAIN,10.f);
+    System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
+      File file = new File(folderPath+iwma.CORE_DEFAULT_FONT);
+      FileInputStream fis = new FileInputStream(file);
+
+
+      fontbase = Font.createFont(Font.TRUETYPE_FONT,fis);
+      defaultFont = fontbase.deriveFont(Font.PLAIN,8.5f);
     }
     catch (Exception ex) {
       System.err.println("ImageFactory : default font is missing using default java font instead");

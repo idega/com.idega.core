@@ -234,7 +234,11 @@ public class Button {
     g = image.createGraphics();
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-    if( font!= null ) g.setFont(font);
+    if( font!= null ){
+      g.setFont(font);
+    }
+    else System.out.println("FONT IS NULL");
+
     fitText(g);
 
     if( resize ){
