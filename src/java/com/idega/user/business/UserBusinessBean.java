@@ -1575,7 +1575,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);				
 						allViewAndOwnerPermissions.addAll(viewPermissions);
 											
-						ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( user );
+						ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup( user );
 						//allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
 						allViewAndOwnerPermissions.addAll(ownedPermissions);
 						
@@ -1746,7 +1746,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       throw new RuntimeException(ex.getMessage());
     }
     
-    Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(user);
+    Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
     List parentGroupsList = user.getParentGroups();
     
       Collection editPermissions = AccessControl.getAllGroupEditPermissions(parentGroupsList);
@@ -1792,7 +1792,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			throw new RuntimeException(ex.getMessage());
 		}
 		
-		Collection permissions = AccessControl.getAllGroupPermissionsOwnedByGroup(user);
+		Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 		List parentGroupsList = user.getParentGroups();
     
 			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(parentGroupsList);

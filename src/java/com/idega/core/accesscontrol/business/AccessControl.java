@@ -2379,6 +2379,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 	}
+	
+	/*
+	 * The permission to give other groups permissions to this group
+	 */
+	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc) {
+		try {
+
+			return this.hasPermission(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+	}
 
 	public boolean hasViewPermissionFor(Group group, IWUserContext iwuc) {
 		try {
@@ -2604,7 +2619,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_CREATE);
 	}
 
-	public static Collection getAllGroupPermissionsOwnedByGroup(Group group) {
+	public static Collection getAllGroupOwnerPermissionsByGroup(Group group) {
 		Collection returnCol = new Vector(); //empty
 		try {
 			returnCol =
@@ -2623,6 +2638,50 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return returnCol;
 
 	}
+	
+	public static Collection getAllGroupPermitPermissionsByGroup(Group group) {
+		Collection returnCol = new Vector(); //empty
+		try {
+			returnCol =
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+					group,
+					AccessControl.PERMISSION_KEY_PERMIT,
+					AccessControl.CATEGORY_STRING_GROUP_ID);
+		}
+		catch (FinderException ex) {
+			ex.printStackTrace();
+		}
+		catch (RemoteException x) {
+			x.printStackTrace();
+		}
+
+		return returnCol;
+
+	}
+	
+	/**
+	 * @param groups
+	 * @return all ICPermissions owned by these groups
+	 */
+	public static Collection getAllGroupPermitPermissions(Collection groups) {
+		Collection returnCol = null;
+		try {
+			returnCol =
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+					groups,
+					AccessControl.PERMISSION_KEY_PERMIT,
+					AccessControl.CATEGORY_STRING_GROUP_ID);
+		}
+		catch (FinderException ex) {
+			returnCol = new Vector(); //empty
+		}
+		catch (RemoteException x) {
+			x.printStackTrace();
+			returnCol = new Vector(); //empty
+		}
+		return returnCol;
+	}
+
 
 	public static Collection getAllGroupViewPermissions(Group group) {
 		Collection returnCol = null;

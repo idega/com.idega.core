@@ -44,10 +44,11 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   
   public static final String PERMISSION_KEY_VIEW = "view";
   public static final String PERMISSION_KEY_EDIT = "edit";
-	public static final String PERMISSION_KEY_DELETE = "delete";
-	public static final String PERMISSION_KEY_CREATE = "create";
+  public static final String PERMISSION_KEY_DELETE = "delete";
+  public static final String PERMISSION_KEY_CREATE = "create";
   public static final String PERMISSION_KEY_OWNER = "owner";
-
+  public static final String PERMISSION_KEY_PERMIT = "permit";
+	
   public static final int CATEGORY_OBJECT_INSTANCE = 0;
   public static final int CATEGORY_OBJECT = 1;
   public static final int CATEGORY_BUNDLE = 2;
@@ -119,9 +120,9 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
 
 
 
-  public boolean hasEditPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  public boolean hasViewPermissionFor(Group group,IWUserContext iwuc)throws Exception;
-  
+  public boolean hasEditPermissionFor(Group group,IWUserContext iwuc);
+  public boolean hasViewPermissionFor(Group group,IWUserContext iwuc);
+  public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc);
   public boolean hasRole(String roleKey, IWUserContext iwuc);
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
   public boolean isRoleMaster(IWUserContext iwuc);
