@@ -17,6 +17,14 @@ import com.idega.util.IWTimestamp;
 
 public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.LoginInfo {
 
+  private static final String ENTITY_NAME = "IC_LOGIN_INFO";
+  private static final String COLUMN_ACCOUNT_ENABLED = "ACCOUNT_ENABLED";
+  private static final String COLUMN_MODIFIED = "MODIFIED";
+  private static final String COLUMN_DAYS_OF_VALITY = "DAYS_OF_VALITY";
+  private static final String COLUMN_PASSWD_EXPIRES = "PASSWD_EXPIRES";
+  private static final String COLUMN_ALLOWED_TO_CHANGE = "ALLOWED_TO_CHANGE";
+  private static final String COLUMN_CHANGE_NEXT_TIME = "CHANGE_NEXT_TIME";
+  private static final String COLUMN_ENCRYPTION_TYPE = "ENCRYPTION_TYPE";
   public static String className = LoginInfo.class.getName();
 
   public LoginInfoBMPBean() {
@@ -51,7 +59,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   }
 
   public String getEntityName() {
-    return "ic_login_info";
+    return ENTITY_NAME;
   }
 
   public String getIDColumnName(){
@@ -70,19 +78,19 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   }
 
   public static String getAccountEnabledColumnName(){
-    return "account_enabled";
+    return COLUMN_ACCOUNT_ENABLED;
   }
 
   public static String getModifiedColumnName(){
-    return "modified";
+    return COLUMN_MODIFIED;
   }
 
   public static String getDaysOfValityColumnName(){
-    return "days_of_vality";
+    return COLUMN_DAYS_OF_VALITY;
   }
 
   public static String getPasswordExpiresColumnName(){
-    return "passwd_expires";
+    return COLUMN_PASSWD_EXPIRES;
   }
   /**
    * @deprecated
@@ -92,15 +100,15 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   }
 
   public static String getAllowedToChangeColumnName(){
-    return "allowed_to_change";
+    return COLUMN_ALLOWED_TO_CHANGE;
   }
 
   public static String getChangeNextTimeColumnName(){
-    return "change_next_time";
+    return COLUMN_CHANGE_NEXT_TIME;
   }
 
   public static String getEncryptionTypeColumnName(){
-    return "ENCRYPTION_TYPE";
+    return COLUMN_ENCRYPTION_TYPE;
   }
 
   /*  ColumNames end   */
