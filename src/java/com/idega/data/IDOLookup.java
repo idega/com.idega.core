@@ -47,7 +47,7 @@ public class IDOLookup{
     return Class.forName(homeClassName);
   }
 
-  static Class getBeanClassFor(Class entityInterfaceClass){
+  public static Class getBeanClassFor(Class entityInterfaceClass){
     try{
       String className = entityInterfaceClass.getName();
       String homeClassName = className + BEAN_SUFFIX;

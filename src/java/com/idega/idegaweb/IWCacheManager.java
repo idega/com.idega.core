@@ -331,7 +331,7 @@ public class IWCacheManager {
     GenericEntity entity = null;
 
     if( entityMaps != null ){
-      Map entityMap = (Map)entityMaps.get(entityClass);
+      Map entityMap = getEntityMap(entityClass);
       if( entityMap != null ){
        entity = (GenericEntity) entityMap.get(value);
       }
@@ -347,7 +347,11 @@ public class IWCacheManager {
   public Map getEntityMap(Class entityClass){
     Map entityMap = null;
     if( entityMaps != null ){
-      entityMap = (Map) entityMaps.get(entityClass);
+      Class entityBeanClass = entityClass;
+      if(entityClass.isInterface()){
+        entityBeanClass = com.idega.data.IDOLookup.getBeanClassFor(entityClass);
+      }
+      entityMap = (Map) entityMaps.get(entityBeanClass);
     }//else System.out.println("IWCacheManager entityMaps is null!");
     return entityMap;
   }
