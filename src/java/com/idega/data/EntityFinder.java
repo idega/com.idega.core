@@ -218,14 +218,15 @@ public class EntityFinder{
 			conn = fromEntity.getConnection();
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(SQLString);
-			while (RS.next()){
+			while (RS !=null && RS.next()){
 
 				GenericEntity tempobj=null;
 				try{
 					tempobj = (GenericEntity)Class.forName(returningEntity.getClass().getName()).newInstance();
 				  if(debug)
-					System.err.println("Entity "+returningEntity.getEntityName()+ "Id Columnname "+returningEntity.getIDColumnName()) ;
-					tempobj.findByPrimaryKey(RS.getInt(returningEntity.getIDColumnName()));
+					System.err.println("Entity "+returningEntity.getEntityName()+ " Id Columnname "+returningEntity.getIDColumnName()) ;
+					int id = RS.getInt(returningEntity.getIDColumnName());
+					tempobj.findByPrimaryKey(id);
 				}
 				catch(Exception ex){
 
