@@ -7,11 +7,11 @@
       </currentbuildstatusbootstrapper>
     </bootstrappers>
     <modificationset>
-      <cvs localWorkingCopy="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core/.bundle" cvsroot=":ext:idegaweb@einstein.idega.is:/idega/cvs">
+      <cvs localWorkingCopy="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core.bundle" cvsroot=":ext:idegaweb@einstein.idega.is:/idega/cvs">
       </cvs>
     </modificationset>
-    <schedule interval="300">
-      <maven goal="scm:update-project|clean test|site:deploy" projectfile="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core/.bundle/project.xml" mavenscript="/usr/local/maven/bin/maven">
+    <schedule interval="180">
+      <maven goal="scm:update-project|clean test|site:deploy" projectfile="/home/idegaweb/maven/bundles/com.idega.core.bundle/checkout/bundles/com.idega.core.bundle/project.xml" mavenscript="/usr/local/maven/bin/maven">
       </maven>
     </schedule>
     <log dir="/home/idegaweb/maven/bundles/com.idega.core.bundle/target/cc-logs/com.idega.core">

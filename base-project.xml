@@ -20,5 +20,7 @@
   <siteDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
   <distributionSite>maven.idega.com</distributionSite>
   <distributionDirectory>/var/www/webs/maven.idega.com/maven</distributionDirectory>
-
+  <build>
+    <nagEmailAdress>tryggvi@idega.is</nagEmailAdress>
+  </build> 
 </project>
