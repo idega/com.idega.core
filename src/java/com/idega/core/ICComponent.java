@@ -26,7 +26,7 @@ package com.idega.core;
 
 public interface ICComponent{
 
-    public int getID(ICSession session);
+//    public int getID(ICSession session);
     public String getName();
     public String getBundleName();
     public ICBundle getBundle(ICApplication application);
