@@ -168,21 +168,25 @@ public class PoolManager implements Singleton
 				{
 					logWriter.log("No URL specified for " + poolName, LogWriter.ERROR);
 					continue;
-				}else {
-//				  replace the {iw_application_path} variable with the real path to the applications we folder
-				    if(iwma!=null) {
-				        String applicationRealPath = iwma.getApplicationRealPath();
-				        String bundlesRealPath = iwma.getBundlesRealPath();
-				        //does not work because the string must be an expression 
-				        //url.replaceAll(IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
-				        if(url.indexOf(IW_APPLICATION_PATH_PLACE_HOLDER)!=-1){
-				        		url = TextSoap.findAndReplace(url,IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
-				        }
-				        else if(url.indexOf(IW_BUNDLES_PATH_PLACE_HOLDER)!=-1){
-				        		url = TextSoap.findAndReplace(url,IW_BUNDLES_PATH_PLACE_HOLDER, bundlesRealPath);
-				        }
-				    }
 				}
+				
+				if (pools.containsKey(poolName)) {
+					logWriter.log("[PoolManager] Pool '" + poolName + "'already exists", LogWriter.ERROR);
+					continue;
+				}
+//				  replace the {iw_application_path} variable with the real path to the applications we folder
+			    if(iwma!=null) {
+			        String applicationRealPath = iwma.getApplicationRealPath();
+			        String bundlesRealPath = iwma.getBundlesRealPath();
+			        //does not work because the string must be an expression 
+			        //url.replaceAll(IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+			        if(url.indexOf(IW_APPLICATION_PATH_PLACE_HOLDER)!=-1){
+			        		url = TextSoap.findAndReplace(url,IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+			        }
+			        else if(url.indexOf(IW_BUNDLES_PATH_PLACE_HOLDER)!=-1){
+			        		url = TextSoap.findAndReplace(url,IW_BUNDLES_PATH_PLACE_HOLDER, bundlesRealPath);
+			        }
+			    }
 				String user = props.getProperty(poolName + ".user");
 				String password = props.getProperty(poolName + ".password");
 				String maxConns = props.getProperty(poolName + ".maxconns", "0");
