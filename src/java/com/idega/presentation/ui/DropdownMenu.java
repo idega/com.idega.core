@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.20 2003/07/23 11:39:22 gimmi Exp $
+ * $Id: DropdownMenu.java,v 1.21 2003/07/23 11:40:38 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.presentation.ui;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 
 /**
@@ -110,14 +111,15 @@ public class DropdownMenu extends GenericSelect {
 	*/
 	public void addMenuElements(Collection entityList) {
 		if (entityList != null) {
-			IDOLegacyEntity entity = null;
+			IDOEntity entity = null;
 			Iterator iter = entityList.iterator();
 			while (iter.hasNext()) {
-				entity = (IDOLegacyEntity) iter.next();
-				addMenuElement(entity.getID(), entity.getName());
+				entity = (IDOEntity) iter.next();
+				
+				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
 			}
 			if (getName().equals(untitled) && entity != null)
-				setName(entity.getEntityName());
+				setName(entity.getEntityDefinition().getUniqueEntityName());
 		}
 	}
 
