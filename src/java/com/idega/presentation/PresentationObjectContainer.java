@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.8 2002/02/25 15:51:24 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.9 2002/02/25 18:07:20 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -479,19 +479,23 @@ public class PresentationObjectContainer extends PresentationObject {
   }
 
 
-  public Object _clone(IWContext iwc, boolean askForPermission){
-    if(askForPermission){
-      if(iwc!=null && iwc.hasViewPermission(this)){
-        return this.clone(iwc,askForPermission);
+public synchronized Object _clone(IWContext iwc, boolean askForPermission){
+    if(askForPermission||iwc!=null){
+      if(iwc.hasViewPermission(this)){
+	return this.clone(iwc,askForPermission);
       } else {
-        return NULL_CLONE_OBJECT;
+	return NULL_CLONE_OBJECT;
       }
     } else {
       return this.clone();
     }
   }
 
- public Object clone(IWContext iwc, boolean askForPermission) {
+  public synchronized Object clone() {
+    return this.clone(null,false);
+  }
+
+ public synchronized Object clone(IWContext iwc, boolean askForPermission) {
     PresentationObjectContainer obj = null;
     try {
       obj = (PresentationObjectContainer)super.clone();
@@ -520,7 +524,6 @@ public class PresentationObjectContainer extends PresentationObject {
     }
     return obj;
   }
-
 
 
   public boolean remove(PresentationObject obj){

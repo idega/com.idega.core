@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.28 2002/02/25 15:59:07 gummi Exp $
+ * $Id: PresentationObject.java,v 1.29 2002/02/25 18:07:20 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -560,10 +560,10 @@ public class PresentationObject extends Object implements Cloneable {
   protected void prepareClone(PresentationObject newObjToCreate) {
   }
 
-  public Object _clone(IWContext iwc, boolean askForPermission){
-    //System.out.println("Caling _clone(iwc,boolean) for: "+this.getClass().getName());
-    if(askForPermission){
-      if(iwc!=null && iwc.hasViewPermission(this)){
+  public synchronized Object _clone(IWContext iwc, boolean askForPermission){
+    if(askForPermission||iwc!=null){
+      if(iwc.hasViewPermission(this)){
+	//return this.clone(iwc,askForPermission);
         return this.clone();
       } else {
 	return NULL_CLONE_OBJECT;
@@ -573,15 +573,14 @@ public class PresentationObject extends Object implements Cloneable {
     }
   }
 
-  public Object clone(IWContext iwc) {
+  public synchronized Object clone(IWContext iwc) {
     return this._clone(iwc,true);
   }
-/*
-  public  Object clone(IWContext iwc, boolean askForPermission) {
+
+/*  public synchronized Object clone(IWContext iwc, boolean askForPermission) {
     return this.clone();
   }
 */
-
   /*
   public synchronized Object clone() {
     PresentationObject obj = null;
@@ -606,10 +605,15 @@ public class PresentationObject extends Object implements Cloneable {
   }
   */
 
-  public Object clone() {
-
+  public synchronized Object clone() {
     PresentationObject obj = null;
+/*    System.err.println("--");
+    System.err.println("Cloning class of type: "+ this.getClassName());
+    System.err.println("--");
+*/
     try {
+      //This is forbidden in clone i.e. "new":
+      //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
       obj = (PresentationObject)super.clone();
       if (this.attributes != null) {
 	obj.setAttribute((Hashtable)this.attributes.clone());
@@ -633,9 +637,9 @@ public class PresentationObject extends Object implements Cloneable {
 
 
     return obj;
-    //return (PresentationObject)this.clone();
-    //return this.doRealClone();
   }
+
+
 /*
   protected void initICObjectInstanceId(IWContext iwc){
     String sID = iwc.getParameter(_PARAMETER_IC_OBJECT_INSTANCE_ID);
