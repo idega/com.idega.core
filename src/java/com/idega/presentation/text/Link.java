@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.54 2002/03/15 19:58:32 eiki Exp $
+ * $Id: Link.java,v 1.55 2002/03/15 20:31:38 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -99,6 +99,7 @@ public class Link extends Text{
 
   private int dptTemplateId = 0;
   private ICFile file = null;
+  private int fileId = -1;
 
 
   private final static String DEFAULT_TEXT_STRING = "No text";
@@ -334,7 +335,7 @@ public class Link extends Text{
    *
    */
   public void main(IWContext iwc)throws Exception {
-    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
+    if(fileId!=-1) setURL(MediaBusiness.getMediaURL(fileId,iwc.getApplication()));
 
 
     //if (_objectType==(OBJECT_TYPE_WINDOW)) {
@@ -1077,7 +1078,14 @@ public class Link extends Text{
    * the url generation is done in the main method
    */
   public void setFile(ICFile file) {
-    this.file = file;
+    this.fileId = file.getID();
+  }
+
+  /**
+   * @todo reimplement
+   */
+  public void setFile(int fileId) {
+    this.fileId = fileId;
   }
 
   /**
@@ -1127,7 +1135,6 @@ public class Link extends Text{
       linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
       linkObj.isImageTab = isImageTab;
       linkObj.flip = flip;
-      linkObj.file = file;
 
       if (_parameterString != null) {
 	linkObj._parameterString = new StringBuffer(_parameterString.toString());
