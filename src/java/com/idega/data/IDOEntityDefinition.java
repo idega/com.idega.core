@@ -29,5 +29,9 @@ public interface IDOEntityDefinition {
 	public HashMap getIndexes() throws NoIndexException;
 	public boolean hasAutoIncrementColumn();
 	public void setHasAutoIncrementColumn(boolean autoIncrementColumn);
-	
+	/**
+	 * @return Boolean.TRUE if active by default, Boolean.FALSE if inactive by default, null if system-default
+	 */
+	public Boolean isBeanCachingActive();
+	public void setBeanCachingActiveByDefault(boolean value);
 }

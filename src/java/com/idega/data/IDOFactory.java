@@ -74,6 +74,8 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
       throw new IDOFinderException("[idoFactory] : Primarykey other than type Integer not supported");
     }*/
   }
+  
+  
 
 
   public IDOEntity createIDO() throws CreateException{
@@ -119,6 +121,13 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
+  
+  public java.util.Collection findByPrimaryKeyCollection(java.util.Collection p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GenericEntity)entity).ejbFindByPrimaryKeyCollection(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
 
   /**
@@ -235,6 +244,11 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
   
 	public Object decode(String pkString){
+		IDOEntity theReturn = this.idoCheckOutPooledEntity();
+		return theReturn.decode(pkString);	
+	}
+	
+	public Collection decode(String[] pkString){
 		IDOEntity theReturn = this.idoCheckOutPooledEntity();
 		return theReturn.decode(pkString);	
 	}

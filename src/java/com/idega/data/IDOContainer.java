@@ -25,6 +25,7 @@ public class IDOContainer {
 
   private Map emptyBeanInstances;
   private Map beanCacheMap;
+  private Map isBeanCacheActive;
 
   private IDOContainer() {
   }
@@ -50,6 +51,12 @@ public class IDOContainer {
     return beanCacheMap;
   }
 
+  protected Map getIsBeanCachActiveMap(){
+  	if(isBeanCacheActive==null){
+  		isBeanCacheActive=new HashMap();
+  	}
+  	return isBeanCacheActive;
+  }
 
   protected IDOBeanCache getBeanCache(Class entityInterfaceClass){
     IDOBeanCache idobc = (IDOBeanCache)getBeanCacheMap().get(entityInterfaceClass);
@@ -196,14 +203,35 @@ public class IDOContainer {
     this.beanCachingActive=onOrOff;
   }
 
-  protected boolean beanCachingActive(Class entityInterfaceClass){
-    return this.beanCachingActive;
+  /**
+   * 
+   * @param entityInterfaceClass
+   * @return returns true if bean cashing is active for all entities or if it is active for this entityInterfaceClass
+   */
+  protected boolean beanCachingActive(Class entityInterfaceClass) {
+  	Boolean isActive = (Boolean)getIsBeanCachActiveMap().get(entityInterfaceClass);
+	if(isActive==null){
+	  	try {
+			IDOEntityDefinition def = IDOLookup.getEntityDefinitionForClass(entityInterfaceClass);
+			isActive = def.isBeanCachingActive();
+		} catch (IDOLookupException t) {
+			System.err.println("Error looking up entity defitition for bean: "	+ entityInterfaceClass.getName());
+			t.printStackTrace();
+		}
+		
+		if(isActive==null){ // still null, use system-default
+			isActive = ((beanCachingActive)?Boolean.TRUE:Boolean.FALSE);
+		}
+		getIsBeanCachActiveMap().put(entityInterfaceClass,isActive);
+    }
+	return isActive.booleanValue();
   }
 
   public synchronized void setQueryCaching(boolean onOrOff){
     if(!onOrOff){
       this.flushAllQueryCache();
     }
+    isBeanCacheActive=null;  //remove at least all elements useing system-default (queryCachingActive)
     this.queryCachingActive=onOrOff;
   }
 

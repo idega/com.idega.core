@@ -27,12 +27,14 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-		this.addAttribute("plug_in_name","Plug-In name",String.class);
+	this.addAttribute("plug_in_name","Plug-In name",String.class);
     this.addAttribute("plug_in_desc","Plug-In desc",String.class);
     this.addAttribute("plug_in_type","Plug-In Type",String.class);
     this.addManyToOneRelationship("business_ic_object",ICObject.class);
     this.addManyToOneRelationship("presentation_ic_object",ICObject.class);
     this.addManyToManyRelationShip(GroupType.class);
+    
+    getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
   public String getEntityName() {

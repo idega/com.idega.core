@@ -1596,10 +1596,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
 	}
 	
-	public Collection ejbFindByPrimaryKeyCollection(Collection primaryKeys) throws FinderException{
-		return idoFindByPrimaryKeyList(primaryKeys,1000);
-	}
-	
 	public SelectQuery getSelectQueryConstraints(){
 		return null;
 	}

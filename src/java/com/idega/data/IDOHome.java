@@ -1,5 +1,7 @@
 package com.idega.data;
 
+import java.util.Collection;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
@@ -21,8 +23,10 @@ public interface IDOHome extends EJBLocalHome{//EJBHome {
   
   /*public IDOEntity idoFindByPrimaryKey(int primaryKey) throws RemoteException, FinderException;*/
   public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
+  public Collection findByPrimaryKeyCollection(Collection primaryKey) throws FinderException;
   //public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
   
   /*public List findAll() throws RemoteException, FinderException;*/
   public Object decode(String pkString);
+  public Collection decode(String[] primaryKeys);
 }

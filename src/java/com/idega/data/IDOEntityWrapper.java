@@ -8,6 +8,8 @@ package com.idega.data;
 
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -428,6 +430,19 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	**/
 	public Object decode(String pkString){
 		return Integer.decode(pkString);
+	}
+	
+	/**
+	* Decodes a String into a primaryKey Object.
+	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
+	*  @see com.idega.data.GenericEntity#toString()
+	**/
+	public Collection decode(String[] primaryKeys){
+		Collection c = new ArrayList();
+		for (int i = 0; i < primaryKeys.length; i++) {
+			c.add(decode(primaryKeys[i]));
+		}
+		return c;
 	}
 
 }

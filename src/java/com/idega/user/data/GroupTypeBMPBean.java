@@ -62,6 +62,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		this.addIndex("IDX_IC_GROUP_TYPE2", TYPE_COLUMN);
 		this.addIndex("IDX_IC_GROUP_TYPE3", new String[]{COLUMN_IS_VISIBLE, TYPE_COLUMN});
 		
+		getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
 

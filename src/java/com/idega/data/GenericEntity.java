@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -266,6 +267,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	**/
 	public Object decode(String pkString){
 		return Integer.decode(pkString);
+	}
+	
+	/**
+	* Decodes a String into a primaryKey Object.
+	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
+	*  @see com.idega.data.GenericEntity#toString()
+	**/
+	public Collection decode(String[] primaryKeys){
+		Collection c = new ArrayList();
+		for (int i = 0; i < primaryKeys.length; i++) {
+			c.add(decode(primaryKeys[i]));
+		}
+		return c;
 	}
 	
 	/**
@@ -3468,8 +3482,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return pkColl;
 	}
 	
-	protected Collection idoFindByPrimaryKeyList(Collection primaryKeys, int prefetchSize ) throws FinderException {
+	protected Collection idoFindByPrimaryKeyCollection(Collection primaryKeys, int prefetchSize ) throws FinderException {
 		return new IDOPrimaryKeyList(primaryKeys, this,prefetchSize);
+	}
+	
+	public Collection ejbFindByPrimaryKeyCollection(Collection primaryKeys) throws FinderException{
+		return idoFindByPrimaryKeyCollection(primaryKeys,1000);
 	}
 
 

@@ -30,6 +30,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private Class _interfaceClass=null;
 	private Class _beanClass = null;
 	private boolean _hasAutoIncrementColumn = true;
+	private Boolean _isBeanCachingActive = null;
 	/**
 	 * 
 	 */
@@ -273,5 +274,16 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 */
 	public void setHasAutoIncrementColumn(boolean autoIncrementColumn) {
 		_hasAutoIncrementColumn = autoIncrementColumn;
+	}
+
+	/**
+	 * @return Boolean.TRUE if active by default, Boolean.FALSE if inactive by default, null if system-default
+	 */
+	public Boolean isBeanCachingActive() {
+		return _isBeanCachingActive;
+	}
+	
+	public void setBeanCachingActiveByDefault(boolean value){
+		_isBeanCachingActive = ((value)?Boolean.TRUE:Boolean.FALSE);
 	}
 }
