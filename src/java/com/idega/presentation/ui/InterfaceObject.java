@@ -470,10 +470,10 @@ public abstract class InterfaceObject extends PresentationObject {
 		keepStatusOnAction(true);
 	}
 
-	public void print(IWContext iwc) throws Exception {
+	public void _print(IWContext iwc) throws Exception {
 		if (statusKeptOnAction())
 			handleKeepStatus(iwc);
-		super.print(iwc);
+		super._print(iwc);
 	}
 
 	public Object clone() {
