@@ -126,13 +126,15 @@ public class ICObjectBusiness {
    */
   public  PresentationObject getNewObjectInstance(int icObjectInstanceID){
       PresentationObject inst = null;
-      try{
-        ICObjectInstance ico = this.getICObjectInstance(icObjectInstanceID);
-        inst = ico.getNewInstance();
-        inst.setICObjectInstance(ico);
-      }
-      catch(Exception e){
-        e.printStackTrace();
+      if (icObjectInstanceID > -1) {
+	      try{
+  	      ICObjectInstance ico = this.getICObjectInstance(icObjectInstanceID);
+    	    inst = ico.getNewInstance();
+      	  inst.setICObjectInstance(ico);
+	      }
+  	    catch(Exception e){
+    	    e.printStackTrace();
+      	}
       }
       return inst;
   }

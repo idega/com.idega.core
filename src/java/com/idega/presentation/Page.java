@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.68 2002/12/10 18:33:31 palli Exp $
+ *  $Id: Page.java,v 1.69 2002/12/20 15:38:35 palli Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,18 +9,14 @@
  */
 package com.idega.presentation;
 
-import com.idega.util.IWColor;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWFrameBusiness;
 import com.idega.core.data.ICFile;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
@@ -29,6 +25,15 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
+import com.idega.util.IWColor;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -65,6 +70,7 @@ public class Page extends PresentationObjectContainer {
 	private Vector _styleSheets;
 	private Vector _javascripts;
 	private Hashtable _HTTPEquivs;
+	protected Map _localizationMap;
 
 	private boolean addGlobalScript = true;
 	private static String META_KEYWORDS = "keywords";
@@ -129,13 +135,12 @@ public class Page extends PresentationObjectContainer {
 		setAttribute("bgcolor", color);
 	}
 
-        /**
-	 *@param  color  The new backgroundColor value
-	 */
+	/**
+	*@param  color  The new backgroundColor value
+	*/
 	public void setBackgroundColor(IWColor color) {
 		setAttribute("bgcolor", color.getHexColorString());
 	}
-
 
 	/**
 	 *@param  color  The new textColor value
@@ -220,10 +225,10 @@ public class Page extends PresentationObjectContainer {
 	public void setLinkStyle(String style) {
 		setStyleDefinition("A", style);
 	}
-	
-	public void setStyleInStyleSheet(String name,String style) {
+
+	public void setStyleInStyleSheet(String name, String style) {
 		IWStyleManager manager = new IWStyleManager();
-		if ( name != null && style != null )
+		if (name != null && style != null)
 			manager.setStyle(name, style);
 	}
 
@@ -518,6 +523,24 @@ public class Page extends PresentationObjectContainer {
 		setName(title);
 	}
 
+	public void setLocalizedTitle(String text) {
+	}
+
+
+	public String getLocalizedTitle(IWContext iwc) {
+		Map tree = PageTreeNode.getTree(iwc);
+		
+		PageTreeNode node = (PageTreeNode)tree.get(new Integer(BuilderLogic.getInstance().getCurrentIBPageID(iwc)));
+		if (node != null) {
+			String locName = node.getLocalizedNodeName(iwc);
+			if (locName != null && !locName.equals("")) {
+				return locName;
+			}
+		}
+		
+		return getTitle();
+	}
+
 	/**
 	 *@param  width  The new marginWidth value
 	 */
@@ -633,13 +656,13 @@ public class Page extends PresentationObjectContainer {
 	public void setOnLoad(String action) {
 		setAttributeMultivalued("onLoad", action);
 	}
-	
+
 	/**
 	 * Sets an alert that is displayed on page load,
 	 * @param alert	The alert to display.
 	 */
 	public void setAlertOnLoad(String alert) {
-		setOnLoad("alert('"+alert+"');");	
+		setOnLoad("alert('" + alert + "');");
 	}
 
 	/**
@@ -661,7 +684,7 @@ public class Page extends PresentationObjectContainer {
 	 * @param alert	The alert to display.
 	 */
 	public void setAlertOnUnLoad(String alert) {
-		setOnUnLoad("alert('"+alert+"');");	
+		setOnUnLoad("alert('" + alert + "');");
 	}
 
 	/**
@@ -980,7 +1003,6 @@ public class Page extends PresentationObjectContainer {
 		setDefaultValues();
 		setDefaultAttributes(iwc);
 
-
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
 		if (getLanguage().equals("HTML")) {
@@ -991,7 +1013,7 @@ public class Page extends PresentationObjectContainer {
 				}
 
 				println("<head>");
-				println("<title>" + getTitle() + "</title>\n");
+				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
@@ -1000,15 +1022,15 @@ public class Page extends PresentationObjectContainer {
 
 					if (d.getURL() != null) {
 						if (src.startsWith("/")) {
-                                                  String protocol;
-                                                  /**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
-                                                  if( iwc.getRequest().isSecure() ){
-                                                    protocol = "https://";
-                                                  }
-                                                  else{
-                                                    protocol = "http://";
-                                                  }
-                                                  src = protocol+d.getURL()+src;
+							String protocol;
+							/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
+							if (iwc.getRequest().isSecure()) {
+								protocol = "https://";
+							}
+							else {
+								protocol = "http://";
+							}
+							src = protocol + d.getURL() + src;
 						}
 					}
 
@@ -1065,7 +1087,7 @@ public class Page extends PresentationObjectContainer {
 			println("<?xml version=\"1.0\"?>");
 			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
 			println("<wml>");
-			println("<card title=\"" + getTitle() + "\" id=\"card1\">");
+			println("<card title=\"" + getLocalizedTitle(iwc) + "\" id=\"card1\">");
 
 			//Catch all exceptions that are thrown in print functions of objects stored inside
 			try {

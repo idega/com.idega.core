@@ -4,6 +4,7 @@ import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.business.PageTreeNode;
 import com.idega.core.ICTreeNode;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
@@ -207,9 +208,13 @@ public class TreeViewer extends AbstractTreeViewer {
             }
         }
       case 2:
-        Link l = this.getLinkPrototypeClone(node.getNodeName());
+      	String nodeName = null;
+      	if (node instanceof PageTreeNode)
+      		nodeName = ((PageTreeNode)node).getLocalizedNodeName(iwc);
+      	else
+      		nodeName = node.getNodeName();
+        Link l = this.getLinkPrototypeClone(nodeName);
         if(_usesOnClick){
-          String nodeName = node.getNodeName();
           l.setURL("#");
           if ( fromEditor )
           	l.setOnClick("save('http://"+iwc.getServerName()+BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID())+"','_self')");

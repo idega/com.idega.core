@@ -77,18 +77,18 @@ public class NavigationPulldownMenu extends Block {
 	Layer subLayer = new Layer(Layer.DIV);
 	  subLayer.setID("page"+String.valueOf(n.getNodeID()));
 	  subLayer.setAttribute("class","Bar");
-	  subLayer.setAttribute("title",n.getNodeName());
+	  subLayer.setAttribute("title",n.getLocalizedNodeName(iwc));
 	  subLayer.setAttribute("cmd",BuilderLogic.getInstance().getIBPageURL(iwc,n.getNodeID()));
 	  subLayer.setNoStyle(true);
 
 	if ( rootLinks ) {
-	  Link link = new Link(n.getNodeName());
+	  Link link = new Link(n.getLocalizedNodeName(iwc));
 	    link.setPage(n.getNodeID());
 	    link.setFontStyle(_fontStyle);
 	  subLayer.add(link);
 	}
 	else {
-	  subLayer.add(n.getNodeName());
+	  subLayer.add(n.getLocalizedNodeName(iwc));
 	}
 
 	if ( iwc.isIE() ) {
@@ -118,10 +118,10 @@ public class NavigationPulldownMenu extends Block {
       Layer subLayer = new Layer(Layer.DIV);
 	subLayer.setID("page"+String.valueOf(n.getNodeID()));
 	subLayer.setAttribute("class","menuItem");
-	subLayer.setAttribute("title",n.getNodeName());
+	subLayer.setAttribute("title",n.getLocalizedNodeName(iwc));
 	subLayer.setAttribute("cmd",BuilderLogic.getInstance().getIBPageURL(iwc,n.getNodeID()));
 	subLayer.setNoStyle(true);
-	subLayer.add(n.getNodeName());
+	subLayer.add(n.getLocalizedNodeName(iwc));
       layer.add(subLayer);
 
       if ( n.getChildCount() > 0 ) {
