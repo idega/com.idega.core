@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.59 2004/04/27 11:04:42 laddi Exp $
+ * $Id: Table.java,v 1.60 2004/04/28 14:53:09 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -655,6 +655,10 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
+	public void setColumnStyleClass(int xpos, String styleClass) {
+		setColumnAttribute(xpos, "class", styleClass);
+	}
+	
 	public void setColumnStyle(int xpos, String styleAttribute, String styleValue) {
 		for (int temp = 1; temp <= rows;) {
 			setStyle(xpos, temp, styleAttribute, styleValue);
@@ -688,6 +692,10 @@ public class Table extends PresentationObjectContainer {
 			setStyle(temp, ypos, styleAttribute, styleValue);
 			temp++;
 		}
+	}
+	
+	public void setRowStyleClass(int ypos, String styleClass) {
+		setRowAttribute(ypos, "class", styleClass);
 	}
 	
 	public void setRowWidth(int ypos, String width) {
