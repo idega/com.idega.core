@@ -57,7 +57,7 @@ public class IBOLookup
 	
 	protected IBOLookup()
 	{}
-	protected static EJBHome getHomeForClass(Class beanInterfaceClass) throws RemoteException
+	protected static Object getHomeForClass(Class beanInterfaceClass) throws RemoteException
 	{
 		return getInstance().getEJBHomeInstance(beanInterfaceClass);
 	}
@@ -211,12 +211,14 @@ public class IBOLookup
 	 * <br>The object retured can then needs to be casted to the specific home interface for the bean.
 	 * @param entityInterfaceClass i the (Remote) interface of the data bean.
 	 */
-	protected EJBHome getEJBHomeInstance(Class entityBeanOrInterfaceClass) throws RemoteException
+	protected Object getEJBHomeInstance(Class entityBeanOrInterfaceClass) throws RemoteException
 	{
 		//Double check so it is not the bean class that is sent into the methods below
 		Class entityInterfaceClass = getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
 			
-		EJBHome home = (EJBHome) homes.get(entityInterfaceClass);
+		//EJBHome home = (EJBHome) homes.get(entityInterfaceClass);
+		Object home = homes.get(entityInterfaceClass);
+		
 		if (home == null)
 		{
 			try
@@ -224,11 +226,11 @@ public class IBOLookup
 				if(doLookupOverJNDI(entityInterfaceClass)){
 					//home = (EJBHome) getHomeThroughJNDI(getInterfaceClassForNonStatic(entityInterfaceClass));
 					
-					home = (EJBHome) getHomeThroughJNDI(entityInterfaceClass);
+					home = getHomeThroughJNDI(entityInterfaceClass);
 				}
 				else{
 					Class factoryClass = getFactoryClassFor(entityInterfaceClass);
-					home = (EJBHome) factoryClass.newInstance();
+					home = factoryClass.newInstance();
 				}
 				homes.put(entityInterfaceClass, home);
 			}

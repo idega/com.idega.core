@@ -1,7 +1,7 @@
 package com.idega.data;
 
-import javax.ejb.EJBObject;
-import java.rmi.RemoteException;
+//import javax.ejb.EJBObject;
+//import java.rmi.RemoteException;
 
 /**
  * Title:        idega Data Objects
@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  * @version 1.0
  */
 
-public interface IDOEntity extends EJBObject,javax.ejb.EJBLocalObject{
+public interface IDOEntity extends javax.ejb.EJBLocalObject{
 
   //public Object getId() throws RemoteException;
   //public String getName() throws RemoteException;
@@ -20,7 +20,11 @@ public interface IDOEntity extends EJBObject,javax.ejb.EJBLocalObject{
   /*public void addTo(IDOEntity entity) throws RemoteException;
   public void removeFrom(IDOEntity entity) throws RemoteException;
   */
-  public void store() throws IDOStoreException,RemoteException;
+  
+  public void store() throws IDOStoreException;
+  //public void store() throws IDOStoreException,RemoteException;
   //public void remove() throws javax.ejb.RemoveException,RemoteException;
-  public IDOEntityDefinition getEntityDefinition() throws RemoteException;
+  
+  public IDOEntityDefinition getEntityDefinition();
+  //public IDOEntityDefinition getEntityDefinition() throws RemoteException;
 }

@@ -190,7 +190,7 @@ public class IDOLookup extends IBOLookup{
       }
       IDOLegacyEntity instance = (IDOLegacyEntity)beanClass.newInstance();
       try{
-      ((IDOEntityBean)instance).setEJBHome(getHome(entityBeanOrInterfaceClass));
+      ((IDOEntityBean)instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass));
       }
       catch(Exception e){
       	//do nothing

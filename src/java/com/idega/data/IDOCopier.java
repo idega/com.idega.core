@@ -98,7 +98,7 @@ public class IDOCopier {
 	}
 	private void copyAllData(IDOLegacyEntity fromInstance, IDOLegacyEntity toInstance, boolean maintainIDs) {
 		try {
-			IDOEntityCopyInfo info = new IDOEntityCopyInfo(fromInstance.getClass(), fromInstance.getTableName());
+			IDOEntityCopyInfo info = getIDOEntityCopyInfo(fromInstance.getClass(), fromInstance.getTableName());
 			if (!isTableAlreadyCopied(info)) {
 				System.out.println("[idoCopier] Copying data for " + fromInstance.getClass().getName());
 				List l = null;
@@ -199,7 +199,7 @@ public class IDOCopier {
 		}
 	}
 	private IDOEntityCopyInfo addToCopiedEntityList(IDOLegacyEntity entity) {
-		IDOEntityCopyInfo cInfo = new IDOEntityCopyInfo(entity.getClass(), entity.getTableName());
+		IDOEntityCopyInfo cInfo = getIDOEntityCopyInfo(entity.getClass(), entity.getTableName());
 		copiedEntites.add(cInfo);
 		//copiedEntityClasses.add(entity.getClass());
 		List relations = EntityControl.getManyToManyRelationShips(entity);
@@ -293,7 +293,17 @@ public class IDOCopier {
 			}
 		}
 	}
-	private class IDOEntityRelationshipCopyInfo {
+	
+	protected IDOEntityRelationshipCopyInfo getIDOEntityRelationshipCopyInfoInstance(){
+		return new IDOEntityRelationshipCopyInfo();	
+	}
+	
+	
+	protected IDOEntityCopyInfo getIDOEntityCopyInfo(Class entityClass, String tableName){
+		return new IDOEntityCopyInfo(entityClass,tableName);	
+	}
+	
+	protected class IDOEntityRelationshipCopyInfo {
 		EntityRelationship relation;
 		boolean copied = false;
 		/*String fromTableName;
@@ -313,13 +323,13 @@ public class IDOCopier {
 			return false;
 		}
 	}
-	private class IDOEntityCopyInfo {
-		IDOEntityCopyInfo(Class entityClass, String tableName) {
+	protected class IDOEntityCopyInfo {
+		protected IDOEntityCopyInfo(Class entityClass, String tableName) {
 			this.entityClass = entityClass;
 			this.tableName = tableName;
 		}
-		Class entityClass;
-		String tableName;
+		public Class entityClass;
+		public String tableName;
 		public boolean equals(Object o) {
 			if (o != null) {
 				if (o instanceof IDOEntityCopyInfo) {
@@ -404,7 +414,7 @@ public class IDOCopier {
 		return false;
 	}
 	protected boolean isTableAlreadyCopied(IDOLegacyEntity entity) {
-		IDOEntityCopyInfo info = new IDOEntityCopyInfo(entity.getClass(), entity.getTableName());
+		IDOEntityCopyInfo info = getIDOEntityCopyInfo(entity.getClass(), entity.getTableName());
 		return isTableAlreadyCopied(info);
 	}
 	protected boolean isTableAlreadyCopied(IDOEntityCopyInfo cInfo) {

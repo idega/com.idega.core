@@ -126,11 +126,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setColumn(getNameColumnName(), name);
 	}
 	public String getGroupType() {
-		try {
+		//try {
 			return (String) ((GroupType) getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
-		} catch (RemoteException ex) {
-			throw new EJBException(ex);
-		}
+		//} catch (RemoteException ex) {
+		//	throw new EJBException(ex);
+		//}
 	}
 	public void setGroupType(String groupType) {
 		setColumn(getGroupTypeColumnName(), groupType);
@@ -920,7 +920,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			return -1;
 	}
 	private GroupHome getGroupHome() {
-		return ((GroupHome) this.getEJBHome());
+		return ((GroupHome) this.getEJBLocalHome());
 	}
 	private GroupRelationHome getGroupRelationHome() throws RemoteException {
 		return ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
@@ -1003,7 +1003,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		try {
-			return ((GroupHome) this.getEJBHome()).findByPrimaryKey(new Integer(childIndex));
+			return ((GroupHome) this.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex));
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}

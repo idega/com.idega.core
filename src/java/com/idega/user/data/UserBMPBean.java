@@ -562,15 +562,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
 	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
-		try{
+		//try{
 			String sGroupPK = userRepGroup.getPrimaryKey().toString();
 			IDOQuery query = idoQueryGetSelect();
 			query.appendWhereEqualsQuoted(this.getIDColumnName(),sGroupPK);
 			return (Integer)this.idoFindOnePKByQuery(query);
-		}
-		catch(RemoteException rme){
-			throw new IDOFinderException(rme);
-		}
+		//}
+		//catch(RemoteException rme){
+		//	throw new IDOFinderException(rme);
+		//}
 	}
 
 	public Collection ejbFindAllUsers() throws FinderException {
@@ -822,7 +822,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @throws FinderException If an error occurs or no user is found for the Group
 	 */
 	public Integer ejbFindUserForUserGroup(Group userRepGroup) throws FinderException {
-		try{
+		//try{
 			try{
 				int groupID = ((Integer) userRepGroup.getPrimaryKey()).intValue();
 				return this.ejbFindUserForUserGroup(groupID);
@@ -837,10 +837,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				}
 			}
 
-		}
-		catch(RemoteException rme){
-			throw new IDOFinderException(rme);
-		}
+		//}
+		//catch(RemoteException rme){
+		//	throw new IDOFinderException(rme);
+		//}
 	}
 
 	/*  Finders end   */

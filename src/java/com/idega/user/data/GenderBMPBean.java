@@ -83,11 +83,11 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
   public Gender ejbHomeGetMaleGender() throws FinderException,RemoteException{
-    return ((GenderHome)this.getEJBHome()).findByGenderName(NAME_MALE);
+    return ((GenderHome)this.getEJBLocalHome()).findByGenderName(NAME_MALE);
   }
 
   public Gender ejbHomeGetFemaleGender() throws FinderException,RemoteException{
-    return ((GenderHome)this.getEJBHome()).findByGenderName(NAME_FEMALE);
+    return ((GenderHome)this.getEJBLocalHome()).findByGenderName(NAME_FEMALE);
   }
 
   public Integer ejbFindByGenderName(String name) throws FinderException,RemoteException{

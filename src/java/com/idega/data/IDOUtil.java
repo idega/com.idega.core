@@ -35,11 +35,11 @@ public class IDOUtil {
 				if (g > 0) {
 					sList += ", ";
 				}
-				try {
+				//try {
 					sList += item.getPrimaryKey();
-				} catch (RemoteException rme) {
-					rme.printStackTrace();
-				}
+				//} catch (RemoteException rme) {
+				//	rme.printStackTrace();
+				//}
 			}
 		}
 		return sList;

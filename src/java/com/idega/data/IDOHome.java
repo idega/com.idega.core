@@ -13,11 +13,16 @@ import java.rmi.RemoteException;
  * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
  */
 
-public interface IDOHome extends EJBHome {
+public interface IDOHome extends EJBLocalHome{//EJBHome {
 
-  public IDOEntity createIDO() throws CreateException, RemoteException;
+  public IDOEntity createIDO() throws CreateException;
+  //public IDOEntity createIDO() throws CreateException, RemoteException;
+    
+  
   /*public IDOEntity idoFindByPrimaryKey(int primaryKey) throws RemoteException, FinderException;*/
-  public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
+  public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
+  //public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
+  
   /*public List findAll() throws RemoteException, FinderException;*/
 
 }

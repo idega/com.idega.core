@@ -57,7 +57,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	private String _dataSource;
 	String _cachedColumnNameList;
 	private EntityContext _entityContext;
-	private EJBHome _ejbHome;
+	//private EJBHome _ejbHome;
+	private EJBLocalHome _ejbHome;
 	private Object _primaryKey;
 	private Hashtable _theMetaDataAttributes;
 	private Vector _insertMetaDataVector;
@@ -3411,12 +3412,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			if (entity.getClass().equals(this.getClass()))
 			{
 				Object entityPK= null;
-				try
-				{
+				//try
+				//{
 					entityPK = entity.getPrimaryKey();
-				}
-				catch (RemoteException e)
-				{}
+				//}
+				//catch (RemoteException e)
+				//{}
 				if (entityPK != null && entityPK.equals(this.getPrimaryKey()))
 				{
 					return true;
@@ -3810,10 +3811,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		_metaDataHasChanged = metaDataHasChanged;
 	}
+
+	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome)
+	{
+		_ejbHome = ejbHome;
+	}
+
+/*
 	public void setEJBHome(javax.ejb.EJBHome ejbHome)
 	{
 		_ejbHome = ejbHome;
 	}
+	
 	public javax.ejb.EJBHome getEJBHome()
 	{
 		if(_ejbHome==null){
@@ -3826,6 +3835,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		return _ejbHome;
 	}
+	
+	public EJBLocalHome getEJBLocalHome()
+	{
+		return (EJBLocalHome) this.getEJBHome();
+	}
+	
+
+	public javax.ejb.EJBHome getEJBHome()
+	{
+		return (javax.ejb.EJBHome)getEJBLocalHome();
+	}
+	
+	*/
+
+	public javax.ejb.EJBLocalHome getEJBLocalHome()
+	{
+		if(_ejbHome==null){
+			try{
+				_ejbHome = IDOLookup.getHome(this.getClass());
+			}
+			catch(Exception e){
+				throw new EJBException("Lookup for home for: "+this.getClass().getName()+" failed. Errormessage was: "+e.getMessage());
+			}
+		}
+		return _ejbHome;
+	}
+
 	/**
 	 * Not implemented
 	 * @todo: implement
@@ -4306,7 +4342,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		Iterator iter = ids.iterator();
 		try
 		{
-			IDOHome home = (IDOHome) returningEntity.getEJBHome();
+			IDOHome home = (IDOHome) returningEntity.getEJBLocalHome();
 			while (iter.hasNext())
 			{
 				try
@@ -4350,7 +4386,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		Vector vector = new Vector();
 		try
 		{
-			IDOHome home = (IDOHome) returningEntity.getEJBHome();
+			IDOHome home = (IDOHome) returningEntity.getEJBLocalHome();
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
@@ -4537,7 +4573,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		try
 		{
-			IDOContainer.getInstance().findByPrimaryKey(this.getInterfaceClass(), pk, rs, (IDOHome) this.getEJBHome());
+			IDOContainer.getInstance().findByPrimaryKey(this.getInterfaceClass(), pk, rs, (IDOHome) this.getEJBLocalHome());
 		}
 		catch (Exception e)
 		{
@@ -4735,10 +4771,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		return this.equals(obj);
 	}
-	public EJBLocalHome getEJBLocalHome()
-	{
-		return (EJBLocalHome) this.getEJBHome();
-	}
+
 	
 	/**
 	 * Method getPrimaryKeyValueSQLString. Gets the primarykey for this record and returns it value to be added to an sql query.<br>

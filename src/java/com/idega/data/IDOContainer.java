@@ -176,7 +176,7 @@ public class IDOContainer {
          }
          ((IDOEntityBean)entity).ejbLoad();
       }
-      ((IDOEntityBean)entity).setEJBHome(home);
+      ((IDOEntityBean)entity).setEJBLocalHome(home);
       if(useBeanCaching){
         cache.putCachedEntity(pk,entity);
       }

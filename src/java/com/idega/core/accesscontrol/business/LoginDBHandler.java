@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.35 2002/11/13 22:24:41 gimmi Exp $
+ * $Id: LoginDBHandler.java,v 1.36 2002/11/21 15:57:45 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -621,10 +621,10 @@ public class LoginDBHandler
 					((LoginRecord) iter.next()).remove();
 				}
 			}
-			catch (RemoteException ex)
-			{
-				ex.printStackTrace();
-			}
+			//catch (RemoteException ex)
+			//{
+			//	ex.printStackTrace();
+			//}
 			catch (RemoveException exc)
 			{
 				exc.printStackTrace();
@@ -643,10 +643,10 @@ public class LoginDBHandler
 						login.getID());
 				li.remove();
 			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-			}
+			//catch (RemoteException e)
+			//{
+			//	e.printStackTrace();
+			//}
 			catch (SQLException sql)
 			{
 				sql.printStackTrace();
@@ -663,10 +663,10 @@ public class LoginDBHandler
 			{
 				login.remove();
 			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-			}
+			//catch (RemoteException e)
+			//{
+			//	e.printStackTrace();
+			//}
 			catch (RemoveException ex)
 			{
 				ex.printStackTrace();
@@ -679,8 +679,8 @@ public class LoginDBHandler
 	 */
 	public static int recordLogin(int iLoginId, String IPAddress)
 	{
-		try
-		{
+		//try
+		//{
 			LoginRecord inRec =
 				((com.idega.core.accesscontrol.data.LoginRecordHome) com
 					.idega
@@ -694,11 +694,11 @@ public class LoginDBHandler
 			inRec.store();
 			Integer id = (Integer) inRec.getPrimaryKey();
 			return id.intValue();
-		}
-		catch (RemoteException ex)
-		{
-			return (-1);
-		}
+		//}
+		//catch (RemoteException ex)
+		//{
+		//	return (-1);
+		//}
 	}
 	/**
 	 *  Records a logout record, returns true if succeeds
@@ -718,10 +718,10 @@ public class LoginDBHandler
 		{
 			ex.printStackTrace();
 		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+		//catch (RemoteException e)
+		//{
+		//	e.printStackTrace();
+		//}
 		return false;
 	}
 	public static boolean verifyPassword(String user, String password) throws Exception

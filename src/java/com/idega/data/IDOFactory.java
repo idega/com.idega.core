@@ -29,7 +29,7 @@ public abstract class IDOFactory implements IDOHome{
         System.err.println("Error creating bean for : "+this.getClass().getName());
         e.printStackTrace();
       }
-      entity.setEJBHome(this);
+      entity.setEJBLocalHome(this);
       return (IDOEntity)entity;
       //return (IDOEntity)beanClass.newInstance();
     }

@@ -39,12 +39,12 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 //  }
 
   public EventListenerList getListenersFor(ICObjectInstance instance){
-    try {
+    //try {
       return getListenersFor((Object)instance.getPrimaryKey());
-    }
-    catch (RemoteException ex) {
-      throw new RuntimeException(ex.getMessage());
-    }
+    //}
+    //catch (RemoteException ex) {
+    //  throw new RuntimeException(ex.getMessage());
+    //}
   }
 
 //  private EventListenerList getListenersFor(int idObj){

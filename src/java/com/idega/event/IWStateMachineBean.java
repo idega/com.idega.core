@@ -239,7 +239,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
   public IWPresentationState getStateFor(ICObjectInstance idObj){
 //    System.out.println("---------------getStateFor------------------");
 //    System.out.println("StateMachineBean.getStateFor("+idObj+")");
-    try {
+    //try {
       IWPresentationState state = (IWPresentationState)this.getUserStatesMap().get(idObj.getPrimaryKey());
 //      System.out.println("IWPresentationState - STATE = "+state);
       if(state==null){
@@ -269,10 +269,10 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
         this.getUserStatesMap().put(idObj.getPrimaryKey(),state);
       }
       return state;
-    }
-    catch (RemoteException ex) {
-      throw new RuntimeException(ex.getMessage());
-    }
+    //}
+    //catch (RemoteException ex) {
+    //  throw new RuntimeException(ex.getMessage());
+    //}
   }
 
 
