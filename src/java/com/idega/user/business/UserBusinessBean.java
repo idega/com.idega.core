@@ -1517,6 +1517,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * the other groups' parents. If another group has this group as a parent it is removed and its parent list<br>
 	 * and we move on to the next key. This way the map we iterate through will always get smaller until only the<br>
 	 * top node groups are left.
+	 * 
+	 * Finally we check for the special case that the remaining top nodes have a shortcut that is not a top node <br>
+	 * and if so we need to remove that node unless there is only one node left or if the alias and the real group <br>
+	 * are both top nodes.
 	 * @param user
 	 * @return
 	 * @throws RemoteException
@@ -1642,7 +1646,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						
 						//Now we have to check if the remaining top nodes have a shortcut 
 						//that is not a top node and if so we need to remove that node 
-						//unless there is only one node left
+						//unless there is only one node left or if the alias and the real group are both top nodes
 						if(groupMap!=null && groupMap.size()>1){
 							if(!aliasMap.isEmpty()){
 								Iterator keyIter = groupMap.keySet().iterator();
