@@ -130,7 +130,7 @@ public class Button {
 
         while(tokens.hasMoreTokens()){
           button.name = tokens.nextToken();
-          button.text = tokens.nextToken();
+          button.text = tokens.nextToken().toUpperCase();
         }
         button.generate();
       }
@@ -318,10 +318,10 @@ public class Button {
       else {
         sName = name;
         if( effect != getStaticButtonUpString() ){
-          sName.concat(effect);
+          sName+=effect;
         }
 
-        sName.concat(".gif");
+        sName+=".gif";
       }
       path+=sName;
 
