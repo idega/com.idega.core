@@ -901,7 +901,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		sql.append(emailAddress).append("'");
     // append is not deleted
     sql
-      .append(" and iu.");
+      .append(" and ");//iu.");
     appendIsNotDeleted(sql);
  		return (Integer) super.idoFindOnePKBySQL(sql.toString());
 	}
