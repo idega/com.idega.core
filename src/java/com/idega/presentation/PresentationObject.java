@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.101 2004/07/02 02:27:49 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.102 2004/07/14 12:35:15 aron Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -358,6 +358,14 @@ implements Cloneable, PresentationObjectType
 		if (isMarkupAttributeSet("style"))
 			return this.getMarkupAttribute("style");
 		return "";
+	}
+	public void removeStyleAttribute(String styleAttribute){
+		if(_styler==null)
+			_styler = new TextStyler();
+		_styler.parseStyleString(getStyleAttribute());
+		_styler.removeStyleValue(styleAttribute);
+		setMarkupAttribute("style",_styler.getStyleString());
+		
 	}
 	public void setToolTip(String toolTip)
 	{
