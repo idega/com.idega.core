@@ -22,7 +22,7 @@ public class SetIterator implements ListIterator  {
 
   public final static String SET_ITERATOR_STATE_KEY = "set_iterator_state_key";
   
-  private final static String STATE_STRING_DELIMITER = "&";
+  private final static String STATE_STRING_DELIMITER = ":";
   
   private List list = null; 
 
