@@ -30,6 +30,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	protected static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
 	protected static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
   protected static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
+  protected static final String RELATED_GROUP_TYPE_COLUMN = "RELATED_GROUP_TYPE";
   
   protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
   protected static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
@@ -50,6 +51,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
     this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
     this.addAttribute(INITIATION_MODIFICATION_DATE_COLUMN, "Initiation modification date", Timestamp.class);
+    this.addAttribute(RELATED_GROUP_TYPE_COLUMN, "Related group type", String.class);
 		this.addAttribute(TERMINATION_MODIFICATION_DATE_COLUMN, "Termination modification date", Timestamp.class);
  		this.addMetaDataRelationship();
  		
@@ -221,6 +223,14 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return getIntColumnValue(SET_PASSIVE_BY);
   }
 
+  public void setRelatedGroupType(String groupType)  {
+    setColumn(RELATED_GROUP_TYPE_COLUMN, groupType);
+  }
+
+  public String getRelatedGroupType() { 
+  	return getStringColumnValue(RELATED_GROUP_TYPE_COLUMN);
+  }
+
   /**Finders begin**/
 
   public Collection ejbFindGroupsRelationshipsUnder(Group group)throws FinderException{
@@ -390,6 +400,15 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		*/
 	 public Collection ejbFindAllPendingGroupRelationships()throws FinderException{
 		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE_PENDING+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"'");
+	 }
+	 
+	 /**
+		* Finds all relationships with null values in related_group_type column 
+		* That is a new column in ic_group_relation that is a duplicate of the value in group_type column in ic_group for the related group
+		* Created 9.7.2000 by Sigtryggur for optimising purposes
+		*/
+	 public Collection ejbFindAllGroupsWithoutRelatedGroupType()throws FinderException{
+		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_TYPE_COLUMN+" is null");
 	 }
 
   /**Finders end**/

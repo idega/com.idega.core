@@ -47,6 +47,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public void setPassivePending();
  public void setRelatedGroup(int p0);
  public void setRelatedGroup(com.idega.user.data.Group p0);
+ public void setRelatedGroupType(java.lang.String p0);
  public void setRelatedUser(com.idega.user.data.User p0);
  public void setRelationship(com.idega.user.data.GroupRelationType p0);
  public void setRelationshipType(java.lang.String p0);
