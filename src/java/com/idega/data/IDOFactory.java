@@ -108,4 +108,25 @@ public abstract class IDOFactory implements IDOHome{
 
   protected abstract Class getEntityInterfaceClass();
 
+  protected Class getEntityBeanClass(){
+    return IDOLookup.getBeanClassFor(getEntityInterfaceClass());
+  }
+
+  /**
+   *
+   * @param collectionOfPrimaryKeys
+   * @return Collection of IDOEntity objects for this Factory
+   * @throws FinderException
+   */
+  protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+    Collection theReturn = new Vector();
+    Iterator iter = collectionOfPrimaryKeys.iterator();
+    while (iter.hasNext()) {
+      Object pk = iter.next();
+      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+      theReturn.add(entityObject);
+    }
+    return theReturn;
+  }
+
 }

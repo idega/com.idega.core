@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.ejb.EntityContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+import java.util.Collection;
 
 /**
  * A class to serve as a base class for objects mapped to persistent data.
@@ -2824,5 +2826,42 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     GenericEntity returnEntity = IDOLookup.findByPrimaryKeyLegacy(entityInterfaceOrBeanClass,id);
     returnEntity.setDatasource(this.getDatasource());
     return returnEntity;
+  }
+
+
+  protected Collection idoFindIDsBySQL(String sqlQuery)throws FinderException{
+		Connection conn= null;
+		Statement Stmt= null;
+		int length;
+		Vector vector = new Vector();
+		try {
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			ResultSet RS = Stmt.executeQuery(sqlQuery);
+			while (RS.next()){
+			  vector.addElement(RS.getObject(getIDColumnName()));
+			}
+			RS.close();
+
+		}
+                catch(SQLException sqle){
+                  throw new IDOFinderException(sqle);
+                }
+		finally{
+			if(Stmt != null){
+                              try{
+				Stmt.close();
+			    }
+                            catch(SQLException e){
+                              e.printStackTrace();
+                            }
+                        }
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+		return vector;
+
   }
 }
