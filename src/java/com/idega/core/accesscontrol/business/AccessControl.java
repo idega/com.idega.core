@@ -12,6 +12,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.*;
+import com.idega.util.datastructures.HashtableDoubleKeyed;
 
 /**
  * @todo move com.idega.builder.business.IBJspHandler to com.idega.core.business.ICJspHandler
@@ -23,7 +24,7 @@ import com.idega.core.business.*;
  * Description:
  * Copyright:    Copyright (c) 2001 idega.is All Rights Reserved
  * Company:      idega margmiðlun
- * @author idega 2001 - <a href="mailto:idega@idega.is">idega team</a>
+ * @author       <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
@@ -31,13 +32,20 @@ public class AccessControl{
 
 
     public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
-      PermissionGroup[] groups = LoginBusiness.getPermissionGroups(modinfo);
-      if (groups != null){
-        for(int i = 0; i < groups.length ; i++){
-          if (getAdministratorGroupName().equals(groups[i].getName()))
-                return true;
+      Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), modinfo);
+      if(ob != null){
+        return ((Boolean)ob).booleanValue();
+      }else{
+        PermissionGroup[] groups = LoginBusiness.getPermissionGroups(modinfo);
+        if (groups != null){
+          for(int i = 0; i < groups.length ; i++){
+            if (getAdministratorGroupName().equals(groups[i].getName()))
+              LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.TRUE,modinfo);
+              return true;
+          }
         }
       }
+      LoginBusiness.setLoginAttribute(getAdministratorGroupName(),Boolean.FALSE,modinfo);
       return false;
     }
 
@@ -78,7 +86,7 @@ public class AccessControl{
           return false;
         }
 
-        if (obj == null){ // page
+        if (obj == null){ // JSP page
           Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + ICJspHandler.getJspPageInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")");
           if (Permissions != null){
             for (int i = 0; i < Permissions.length; i++){
@@ -87,6 +95,8 @@ public class AccessControl{
             }
           }
         } else { // if (obj != null)
+
+
 
           // instance
           Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectInstanceID(modinfo) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")" );
@@ -99,6 +109,21 @@ public class AccessControl{
                 }
             } // for
           } // instance
+
+
+          // Bundle
+          if (myPermission == null){
+            Permissions = (ICPermission[])permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getBundleIdentifier() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " in (" + sGroupList + ")" );
+            for (int k = 0; k < Permissions.length; k++) {
+              if (Permissions != null){
+                  if (Permissions[k].getPermissionValue() == true )
+                    return true;
+              }
+            }
+          }else{
+            return myPermission.booleanValue();
+          } // Bundle
+
 
           // Global
           if (myPermission == null){
@@ -137,6 +162,14 @@ public class AccessControl{
      */
     public static String getObjectIdString(){
       return "ic_object_id";
+    }
+
+    /**
+     * use this method when writing to database to avoid errors in database.
+     * If the name-string changes this will be the only method to change.
+     */
+    public static String getBundleIdentifierString(){
+      return "iw_bundle_identifier";
     }
 
 
@@ -280,6 +313,33 @@ public class AccessControl{
         permission.update();
       }
     }
+
+
+    public void setBundlePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+      ICPermission permission = ICPermission.getStaticInstance();
+      boolean update = true;
+      try {
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getBundleIdentifier() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+      }
+      catch (Exception ex) {
+        permission = new ICPermission();
+        update = false;
+      }
+
+      if(!update){
+        permission.setContextType(AccessControl.getBundleIdentifierString());
+        permission.setContextValue(obj.getICObject().getBundleIdentifier());
+        permission.setGroupID(new Integer(group.getID()));
+        permission.setPermissionString(permissionType);
+//        permission.setPermissionStringValue();
+        permission.setPermissionValue(permissionValue);
+        permission.insert();
+      } else{
+        permission.setPermissionValue(permissionValue);
+        permission.update();
+      }
+    }
+
 
     public void setObjectInstacePermission(ModuleInfo modinfo, PermissionGroup group, ModuleObject obj, String permissionType, Boolean permissionValue)throws SQLException{
       ICPermission permission = ICPermission.getStaticInstance();

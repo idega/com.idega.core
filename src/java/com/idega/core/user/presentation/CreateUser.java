@@ -92,6 +92,7 @@ public class CreateUser extends Window {
     this.setName("idegaWeb Builder - Stofna félaga");
     this.setHeight(440);
     this.setWidth(390);
+    this.setBackgroundColor("#d4d0c8");
     myForm = new Form();
     this.add(myForm);
     business = new UserBusiness();

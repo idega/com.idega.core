@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.14 2001/07/25 17:16:17 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.15 2001/08/23 20:43:49 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,7 +22,7 @@ import java.awt.EventQueue;
 import java.awt.ActiveEvent;
 import java.awt.Toolkit;
 import java.awt.AWTEvent;
-import com.idega.event.IWEvent;
+import com.idega.event.IWModuleEvent;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -108,7 +108,11 @@ public  class IWPresentationServlet extends IWCoreServlet{
                 __theService(request,response);
               }
             theServiceDone = true;
-            this.getPage()._setModuleInfo(moduleinfo);
+            if(obj instanceof IWModuleEvent){
+              ((IWModuleEvent)obj).setModuleInfo(moduleinfo);
+            }else{
+              this.getPage()._setModuleInfo(moduleinfo);
+            }
             ((ActiveEvent)obj).dispatch();
           /* Kommentað út þar til kerfið ræður við þræði
             EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();

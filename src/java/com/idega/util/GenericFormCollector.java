@@ -36,10 +36,9 @@ public class GenericFormCollector {
   public void setSelectedIndex(int index, ModuleInfo modinfo, boolean collect, boolean store){
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
       if(collect && selectedIndex != index ){
-        System.err.println("collecting : " + this.selectedIndex);
         ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(modinfo);
       }
-      if(store || selectedIndex != index ){
+      if(store && selectedIndex != index ){
         ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(modinfo);
       }
     }

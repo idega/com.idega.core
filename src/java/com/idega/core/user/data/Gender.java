@@ -15,6 +15,9 @@ import java.sql.SQLException;
 
 public class Gender extends GenericEntity {
 
+  public static final String NAME_MALE="male";
+  public static final String NAME_FEMALE="female";
+
   public Gender() {
     super();
   }
@@ -35,11 +38,11 @@ public class Gender extends GenericEntity {
 
   public void insertStartData() throws SQLException {
     Gender male = new Gender();
-    male.setName("male");
+    male.setName(NAME_MALE);
     male.insert();
 
     Gender female = new Gender();
-    female.setName("female");
+    female.setName(NAME_FEMALE);
     female.insert();
 
   }

@@ -14,6 +14,8 @@ import com.idega.util.idegaTimestamp;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import com.idega.core.user.data.Gender;
+
 
 /**
  * Title:        User
@@ -23,7 +25,7 @@ import java.util.StringTokenizer;
  * @version 1.0
  */
 
-public class GeneralUserInfoTab extends Table implements Collectable{
+public class GeneralUserInfoTab extends UserTab{
 
   private UserBusiness business;
 
@@ -34,9 +36,6 @@ public class GeneralUserInfoTab extends Table implements Collectable{
   private TextArea descriptionField;
   private DateInput dateOfBirthField;
   private DropdownMenu genderField;
-
-  private int userId = -1;
-  private int userIdOld = -1;
 
   private String firstNameFieldName = "UMfname";
   private String middleNameFieldName = "UMmname";
@@ -59,28 +58,9 @@ public class GeneralUserInfoTab extends Table implements Collectable{
   private Hashtable fieldValues;
 
 
-  private String columnHeight = "37";
-  private int fontSize = 2;
-
-
   public GeneralUserInfoTab() {
     super();
-    business = new UserBusiness();
-    this.setCellpadding(0);
-    this.setCellspacing(0);
     this.setName("General");
-    this.setWidth("370");
-    firstNameFieldName += this.getID();
-    middleNameFieldName += this.getID();
-    lastNameFieldName += this.getID();
-    displayNameFieldName += this.getID();
-    descriptionFieldName += this.getID();
-    dateOfBirthFieldName += this.getID();
-    genderFieldName += this.getID();
-    initializeFields();
-    initializeTexts();
-    initializeFieldValues();
-    lineUpFields();
   }
 
   public GeneralUserInfoTab(int userId){
@@ -88,8 +68,30 @@ public class GeneralUserInfoTab extends Table implements Collectable{
     this.setUserID(userId);
   }
 
-  public void initializeFieldValues(){
+  public void init(){
+    business = new UserBusiness();
+  }
 
+  public void initializeFieldNames(){
+    firstNameFieldName = "UMfname";
+    middleNameFieldName = "UMmname";
+    lastNameFieldName = "UMlname";
+    displayNameFieldName = "UMdname";
+    descriptionFieldName = "UMdesc";
+    dateOfBirthFieldName = "UMdateofbirth";
+    genderFieldName = "UMgender";
+/*
+    firstNameFieldName += this.getID();
+    middleNameFieldName += this.getID();
+    lastNameFieldName += this.getID();
+    displayNameFieldName += this.getID();
+    descriptionFieldName += this.getID();
+    dateOfBirthFieldName += this.getID();
+    genderFieldName += this.getID();
+*/
+  }
+
+  public void initializeFieldValues(){
     fieldValues = new Hashtable();
     fieldValues.put(this.firstNameFieldName,"");
     fieldValues.put(this.middleNameFieldName,"");
@@ -114,18 +116,23 @@ public class GeneralUserInfoTab extends Table implements Collectable{
     descriptionField.setContent((String)fieldValues.get(this.descriptionFieldName));
 
     StringTokenizer date = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
-    System.err.println("Date : "+(String)fieldValues.get(this.dateOfBirthFieldName));
+//    StringTokenizer date2 = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
+
     if(date.hasMoreTokens()){
+//      System.err.println("Year: "+ date2.nextToken());
       dateOfBirthField.setYear(date.nextToken());
     }
     if(date.hasMoreTokens()){
-      dateOfBirthField.setDay(date.nextToken());
-    }
-    if(date.hasMoreTokens()){
+//      System.err.println("Month: "+ date2.nextToken());
       dateOfBirthField.setMonth(date.nextToken());
     }
+    if(date.hasMoreTokens()){
+//      System.err.println("Day: "+ date2.nextToken());
+      dateOfBirthField.setDay(date.nextToken());
+    }
 
-    genderField.setContent((String)fieldValues.get(this.genderFieldName));
+    genderField.setSelectedElement((String)fieldValues.get(this.genderFieldName));
+
   }
 
 
@@ -152,9 +159,23 @@ public class GeneralUserInfoTab extends Table implements Collectable{
     dateOfBirthField.setYearRange(time.getYear(),time.getYear()-100);
 
     genderField = new DropdownMenu(genderFieldName);
-    genderField.addMenuElement("M","Male");
-    genderField.addMenuElement("F", "Female");
+    genderField.addMenuElement("","Gender");
 
+    Gender[] genders = null;
+    try {
+      Gender g = (Gender)Gender.getStaticInstance(Gender.class);
+      genders = (Gender[])g.findAll();
+    }
+    catch (Exception ex) {
+      // do nothing
+    }
+
+    if(genders != null){
+      for (int i = 0; i < genders.length; i++) {
+        genderField.addMenuElement(genders[i].getID(),genders[i].getName());
+      }
+
+    }
   }
 
   public void initializeTexts(){
@@ -230,11 +251,12 @@ public class GeneralUserInfoTab extends Table implements Collectable{
 
 
   public boolean collect(ModuleInfo modinfo){
-
     if(modinfo != null){
+
       String fname = modinfo.getParameter(this.firstNameFieldName);
       String mname = modinfo.getParameter(this.middleNameFieldName);
       String lname = modinfo.getParameter(this.lastNameFieldName);
+
       String dname = modinfo.getParameter(this.displayNameFieldName);
       String desc = modinfo.getParameter(this.descriptionFieldName);
       String dateofbirth = modinfo.getParameter(this.dateOfBirthFieldName);
@@ -271,27 +293,31 @@ public class GeneralUserInfoTab extends Table implements Collectable{
 
   public boolean store(ModuleInfo modinfo){
     try{
-      if(userId > -1){
-        business.updateUser(userId,(String)fieldValues.get(this.firstNameFieldName),
+      if(getUserId() > -1){
+        idegaTimestamp dateOfBirthTS = null;
+        String st = (String)fieldValues.get(this.dateOfBirthFieldName);
+        Integer gen = (fieldValues.get(this.genderFieldName).equals(""))? null : new Integer((String)fieldValues.get(this.genderFieldName));
+        if( st != null && !st.equals("")){
+          dateOfBirthTS = new idegaTimestamp(st);
+        }
+        business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
-                            Integer.decode((String)fieldValues.get(this.genderFieldName)),new idegaTimestamp((String)fieldValues.get(this.dateOfBirthFieldName)));
+                            gen,dateOfBirthTS);
       }
     }catch(Exception e){
-      return true;
+      //return false;
+      e.printStackTrace(System.err);
+      throw new RuntimeException("update user exception");
     }
-    return false;
+    return true;
   }
 
-  public void setUserID(int id){
-    userId = id;
-    initFieldContents();
-  }
 
-  protected void initFieldContents(){
+  public void initFieldContents(){
 
     try{
-      User user = new User(userId);
+      User user = new User(getUserId());
 
       fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
       fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );
@@ -303,7 +329,7 @@ public class GeneralUserInfoTab extends Table implements Collectable{
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
-      System.err.println("GeneralUserInfoTab error initFieldContents, userId : " + userId);
+      System.err.println("GeneralUserInfoTab error initFieldContents, userId : " + getUserId());
     }
 
 
