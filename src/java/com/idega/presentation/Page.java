@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.107 2004/05/26 12:53:08 eiki Exp $
+ *  $Id: Page.java,v 1.108 2004/06/08 01:37:40 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -766,6 +766,10 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void setParentToReload() {
 		setOnUnLoad("window.opener.location.reload()");
+	}
+	
+	public void setParentToReloadWithURL(String url) {
+		setOnUnLoad("window.opener.location.href='"+url+"'");
 	}
 
 	/**
