@@ -25,6 +25,7 @@ public class IWConstants{
   public static final String LINK_STYLE = "color:#000000;font-size:12px;text-decoration:underline;";
   public static final String LINK_HOVER_STYLE = "color:#000000;font-size:12px;text-decoration:underline;";
   public static final String FORM_STYLE = "margin-top:0px;margin-bottom:0px";
+  public static final String IMAGE_STYLE = "border:0px solid #000000;";
   
   public static String HEADER_STYLE_1 = "font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000000; font-weight: bold";
   public static final String HEADER_STYLE_1_NAME = "HeaderText1";
