@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.17 2003/04/03 20:36:55 laddi Exp $
+ * $Id: DropdownMenu.java,v 1.18 2003/06/13 09:55:53 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -78,6 +78,26 @@ public class DropdownMenu extends GenericSelect {
 	}
 
 	public void addDisabledMenuElement(String value, String displayString) {
+		addDisabledOption(new SelectOption(displayString,value));
+	}
+
+	public void setMenuElementFirst(String value, String displayString) {
+		addFirstOption(new SelectOption(displayString, value));
+	}
+
+	public void setMenuElement(String value, String displayString) {
+		addOption(new SelectOption(displayString, value));
+	}
+
+	public void setMenuElement(int value, String displayString) {
+		addOption(new SelectOption(displayString, value));
+	}
+
+	public void setMenuElement(String value) {
+		addOption(new SelectOption(value, value));
+	}
+
+	public void setDisabledMenuElement(String value, String displayString) {
 		addDisabledOption(new SelectOption(displayString,value));
 	}
 

@@ -91,6 +91,14 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	/**
+	 * Adds a <code>SelectOption</code> to the select object.
+	 * @param option	The <code>SelectOption</code> to add.
+	 */
+	public void setSelectOption(SelectOption option) {
+		addOption(option);
+	}
+
+	/**
 	 * Adds a <code>SelectOption</code> to the select object as the first option.
 	 * @param option	The <code>SelectOption</code> to add.
 	 */
@@ -98,6 +106,14 @@ public class GenericSelect extends InterfaceObject {
 		theElements.add(0, option);
 		if (option.getSelected())
 			setSelectedOption(option.getValue());
+	}
+	
+	/**
+	 * Adds a <code>SelectOption</code> to the select object as the first option.
+	 * @param option	The <code>SelectOption</code> to add.
+	 */
+	public void setFirstSelectOption(SelectOption option) {
+		addFirstOption(option);
 	}
 	
 	/**
@@ -118,6 +134,14 @@ public class GenericSelect extends InterfaceObject {
 		theElements.add(option);
 		if (option.getSelected())
 			setSelectedOption(option.getValue());
+	}
+
+	/**
+	 * Adds a disabled <code>SelectOption</code> to the select object.
+	 * @param option	The disabled <code>SelectOption</code> to add.
+	 */
+	public void setDisabledSelectOption(SelectOption option) {
+		addDisabledOption(option);
 	}
 
 	/**
