@@ -156,8 +156,8 @@ public class IDOTableCreator{
    * Creates an entity record (table) that represents the entity in the datastore
    */
   public void createEntityRecord(GenericEntity entity)throws Exception{
-    System.out.println("[idoTableCreator]  Trying to create record for "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
     if(!doesTableExist(entity,entity.getTableName())){
+    System.out.println("[idoTableCreator]  Trying to create record for "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
 
       boolean canCommit=false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
@@ -196,6 +196,8 @@ public class IDOTableCreator{
       }
     }
     else{
+      System.out.println("[idoTableCreator]  Trying to update record for "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
+
       boolean canCommit = false;
       canCommit = this.startEntityCreationTransaction(entity,canCommit);
       updateColumns(entity);
