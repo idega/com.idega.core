@@ -25,7 +25,7 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public java.lang.String getStreetNumber();
  public com.idega.core.data.AddressTypeHome getAddressTypeHome()throws java.rmi.RemoteException;
  public java.lang.String getStreetName();
- public com.idega.core.data.PostalCode getPostalCode()throws java.sql.SQLException;
+ public com.idega.core.data.PostalCode getPostalCode();
  public void setAddressType(com.idega.core.data.AddressType p0);
  public void setStreetName(java.lang.String p0);
  public void setProvince(java.lang.String p0);

@@ -102,7 +102,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		setColumn("p_o_box", p_o_box);
 	}
 
-	public PostalCode getPostalCode() throws SQLException {
+	public PostalCode getPostalCode() {
 		return (PostalCode) getColumnValue("postal_code_id");
 	}
 
