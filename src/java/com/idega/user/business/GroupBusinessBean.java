@@ -581,23 +581,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  * @see com.idega.user.business.GroupBusiness#getUsersContained(Group)
  */
   public Collection getUsers(Group group) throws FinderException{
-	try{
-	    //filter
-	    String[] groupTypeToReturn = getUserRepresentativeGroupTypeStringArray();
-	
-	    Collection list = group.getChildGroups(groupTypeToReturn,true);
-	    if(list != null && !list.isEmpty()){
-	      
-	      return getUsersForUserRepresentativeGroups(list);
-	    
-	    
-	    } else {
-	      return ListUtil.getEmptyList();
-	    }
-	}
-	catch(RemoteException e){
-		throw new IBORuntimeException(e,this);	
-	}
+    //filter
+    User groupTypeProxy = (User)IDOLookup.instanciateEntity(User.class);
+
+    return group.getChildGroups(groupTypeProxy);
   }
   
   /**

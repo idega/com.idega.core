@@ -154,13 +154,6 @@ public interface UserBusiness extends com.idega.business.IBOService
 	 */
 	public User castUserGroupToUser(Group userGroup)throws EJBException,RemoteException;
 
-	/**
-	 * Cast a Group that is a "UserReresentative" Group to a User instance.
-	 * @param userGroupCollection A Collection with instnances of a Group that are really a "UserReresentative" groups i.e. the Group representation of the User
-	 * @return Collection of user instances representing the Groups
-	 * @throws EJBException If an error occurs casting
-	 */
-	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException,RemoteException;
 	public boolean hasUserLogin(User user) throws RemoteException;
 	public boolean hasUserLogin(int userID) throws RemoteException;
 	 public Address getUserAddressByAddressType(int userID,AddressType type) throws EJBException,RemoteException;

@@ -16,7 +16,10 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
+import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
+import com.idega.data.query.JoinCriteria;
+import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
@@ -34,10 +37,15 @@ import com.idega.util.Timer;
 public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	private SelectQuery _sqlQuery;
+	private SelectQuery _loadQueryBase;
 	private GenericEntity _entity;
 	private Class allowedPrimaryKeyClass; // varaable set in the initialize method where it is fetched ones from the variable _entity for optimizing reasons
 	private String pkColumnName;
 	private Table sqlQueryTable;
+	private GenericEntity _returnProxy;
+	private String _returnProxyPkColumnName;
+	private Table _returnProxySqlQueryTable; 
+	private SelectQuery _returnProxyQueryConstraints;
 	
 	private int _cursor = 0;
 	//This Vector contains the loaded IDOEntities but the super list of this object contains list of all primary keys
@@ -83,11 +91,18 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	}
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize) throws IDOFinderException {
+		this(sqlQuery,entity,null,null,prefetchSize);
+    }
+	
+	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, GenericEntity returnProxy, SelectQuery proxyQueryConstraints, int prefetchSize) throws IDOFinderException {
 		_sqlQuery = sqlQuery;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
 		_prefetchSize = prefetchSize;
+		_returnProxy = returnProxy;
+		_returnProxyQueryConstraints = proxyQueryConstraints;
+		
 		initialize(null);
     }
 	
@@ -143,6 +158,16 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		
 		sqlQueryTable = new Table(_entity);
 		
+		if(_returnProxy!=null){
+			IDOPrimaryKeyDefinition proxyPkDefinition = _returnProxy.getEntityDefinition().getPrimaryKeyDefinition();
+			IDOEntityField[] proxyPkFields = proxyPkDefinition.getFields();
+			if(pkFields==null || pkFields.length>1){
+				throw new UnsupportedOperationException("IDOPrimaryKeyList is capable of handling entities whith one primary key only, this entity: "+_returnProxy.getClass().getName()+" has "+ ((pkFields==null)?"none":String.valueOf(pkFields.length)));
+			}
+			_returnProxyPkColumnName = proxyPkFields[0].getSQLFieldName();	
+			_returnProxySqlQueryTable = new Table(_returnProxy);
+		}
+		
 		if(primaryKeyCollection != null){
 			System.out.println("[IDOPrimaryKeyList - Initialize - primary key list added]: length"+ primaryKeyCollection.size());
 			super.addAll(primaryKeyCollection);
@@ -151,9 +176,39 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			_tracker = new LoadTracker(size(),fetchSize);
 		} else {
 			SelectQuery initialQuery = (SelectQuery)_sqlQuery.clone();
-			initialQuery.addOrder(sqlQueryTable,pkColumnName,true);
+			_loadQueryBase = (SelectQuery)_sqlQuery.clone();
 			initialQuery.removeAllColumns();
 			initialQuery.addColumn(sqlQueryTable,pkColumnName);
+			
+			if(_returnProxy!=null && _returnProxyQueryConstraints!=null){
+				boolean join = false;
+				
+				Collection criteria = _returnProxyQueryConstraints.getCriteria();
+				if(criteria!=null && !criteria.isEmpty()){
+					for (Iterator iter = criteria.iterator(); iter.hasNext();) {
+						Criteria cr = (Criteria) iter.next();
+						initialQuery.addCriteria(cr);
+					}
+					join = true;
+				}
+				
+				Collection order = _returnProxyQueryConstraints.getOrder();
+				if(order!=null && !order.isEmpty()){
+					for (Iterator iter = order.iterator(); iter.hasNext();) {
+						Order o = (Order) iter.next();
+						initialQuery.addOrder(o);
+						_loadQueryBase.addOrder(o);
+					}
+					join = true;
+				}
+				
+				if(join){
+					initialQuery.addJoin(sqlQueryTable,pkColumnName,_returnProxySqlQueryTable,_returnProxyPkColumnName);
+				}
+			}
+			
+			initialQuery.addOrder(sqlQueryTable,pkColumnName,true);
+			_loadQueryBase.addOrder(sqlQueryTable,pkColumnName,true);
 			
 			Connection conn = null;
 			Statement Stmt = null;
@@ -166,6 +221,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				{
 					System.out.println("[IDOPrimaryKeyList - Initialize - orginal query]: "+ _sqlQuery.toString());
 					System.out.println("[IDOPrimaryKeyList - Initialize - modified query]: "+ initialQuery.toString());
+					System.out.println("[IDOPrimaryKeyList - Initialize - load query base]: "+ _loadQueryBase.toString());
 				}
 				ResultSet RS=Stmt.executeQuery(initialQuery.toString());
 				_entities = new Vector();
@@ -189,8 +245,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			}
 			catch (SQLException sqle)
 			{
-				System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + _sqlQuery);
-				sqle.printStackTrace();
+				System.err.println("[IDOPrimaryKeyList]: Went to database for SQL query: " + initialQuery);
 				throw new IDOFinderException(sqle);
 			} 
 	//		catch (FinderException e) {
@@ -282,21 +337,28 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		Timer timer = new Timer();
 		timer.start();
 		SelectQuery subsetQuery = null;
-		if(_sqlQuery==null){
+		GenericEntity proxyEntity = _entity;
+		if(_loadQueryBase==null){
 			subsetQuery = new SelectQuery(sqlQueryTable);
 			subsetQuery.addColumn(new WildCardColumn(sqlQueryTable));
 			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
 		} else {
-			subsetQuery = (SelectQuery)_sqlQuery.clone();
+			subsetQuery = (SelectQuery)_loadQueryBase.clone();
 			subsetQuery.removeAllCriteria();
 			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
-			subsetQuery.addOrder(sqlQueryTable,pkColumnName,true);
+			
+			if(_returnProxy!=null){
+				subsetQuery.removeAllColumns();
+				subsetQuery.addColumn(new WildCardColumn(_returnProxySqlQueryTable));
+				subsetQuery.addCriteria(new JoinCriteria(sqlQueryTable.getColumn(pkColumnName),_returnProxySqlQueryTable.getColumn(_returnProxyPkColumnName)));
+				proxyEntity = _returnProxy;
+			}
 		}
 		
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
-			conn = _entity.getConnection(_entity.getDatasource());
+			conn = proxyEntity.getConnection(proxyEntity.getDatasource());
 			Stmt = conn.createStatement();
 			
 			if (_entity.isDebugActive())
@@ -307,15 +369,15 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    
 		    int total = 0;
 		    int no = 0;
-		    if(_sqlQuery==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
+		    if(_loadQueryBase==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
 		    		HashMap mapOfEntities = new HashMap();
 		    		while(RS.next())
 				{
-					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
+					Object pk = proxyEntity.getPrimaryKeyFromResultSet(RS);
 					if (pk != null)
 					{
 						try {
-							IDOEntity bean = _entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource());
+							IDOEntity bean = proxyEntity.prefetchBeanFromResultSet(pk, RS,proxyEntity.getDatasource());
 							mapOfEntities.put(pk,bean);
 						} catch (FinderException e) {
 							//The row must have been deleted from database
@@ -330,27 +392,27 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					Object pk = (Object) iter.next();
 					_entities.set(i,mapOfEntities.get(pk));
 //					_tracker.setAsLoaded(firstIndex+i);
-//					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
-//						no++;
-//						System.err.println("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
-//						System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
-//					} 
+					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
+						no++;
+						System.err.println("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+						System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+					} 
 				}
 		    		_tracker.setSubsetAsLoaded(firstIndex,firstIndex+listOfPrimaryKeys.size());
 		    } else {
 			    	for(int i = firstIndex; RS.next(); i++)
 				{
-					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
+					Object pk = proxyEntity.getPrimaryKeyFromResultSet(RS);
 					if (pk != null)
 					{
 						try {
-							_entities.set(i,_entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource()));
-//							if(!pk.equals(this.get(i))){
-//	//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
-//								no++;
-//								System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
-//								System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
-//							}
+							_entities.set(i,proxyEntity.prefetchBeanFromResultSet(pk, RS,proxyEntity.getDatasource()));
+							if(!pk.equals(this.get(i))){
+	//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
+								no++;
+								System.err.println("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+								System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+							}
 						} catch (FinderException e) {
 							//The row must have been deleted from database
 	//						this.remove(pk);
@@ -380,7 +442,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				}
 			}
 			if (conn != null) {
-				_entity.freeConnection(_entity.getDatasource(), conn);
+				proxyEntity.freeConnection(proxyEntity.getDatasource(), conn);
 			}
 		}
 		timer.stop();

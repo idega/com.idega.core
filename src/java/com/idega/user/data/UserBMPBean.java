@@ -780,6 +780,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}
+	
+	public SelectQuery getSelectQueryConstraints(){
+		SelectQuery query = idoSelectQuery();
+    	
+		query.addCriteria(getNotDeletedCriteria());
+		addOrderByName(query,false,true);
+		return query;
+	}
 
 	public void addOrderByName(SelectQuery query, boolean lastnameFirst, boolean ascending){
 		query.addOrder(idoQueryTable(),((lastnameFirst)?getColumnNameLastName():getColumnNameFirstName()),ascending);

@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 
+
 public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHome
 {
  protected Class getEntityInterfaceClass(){
@@ -95,6 +96,13 @@ public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ej
 public java.util.Collection findGroupsContained(com.idega.user.data.Group p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsContained(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findGroupsContained(com.idega.user.data.Group p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroupsContained(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

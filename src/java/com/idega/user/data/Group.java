@@ -3,6 +3,7 @@ package com.idega.user.data;
 import java.sql.Timestamp;
 
 import com.idega.core.file.data.ICFile;
+import com.idega.data.query.SelectQuery;
 
 
 public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable
@@ -27,6 +28,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public com.idega.core.data.ICTreeNode getChildAtIndex(int p0);
  public int getChildCount();
  public java.util.List getChildGroups()throws javax.ejb.EJBException;
+ public java.util.Collection getChildGroups(Group p0)throws javax.ejb.EJBException;
  public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
  public java.util.Iterator getChildren();
  public java.sql.Timestamp getCreated();
@@ -95,4 +97,5 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public void setHomeFolderID(int fileID);
  public void setHomeFolderID(Integer fileID);
  public void setHomeFolder(ICFile file);
+ public SelectQuery getSelectQueryConstraints();
 }

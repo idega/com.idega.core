@@ -3459,6 +3459,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize ) throws FinderException {
 			return new IDOPrimaryKeyList(sqlQuery, this,prefetchSize);
 	}
+	
+	/**
+	 *
+	 * @param sqlQuery
+	 * @param returnProxy If this entity and the returnProxy have one-to-one related primary keys, that is they have the same primaryKeys, 
+	 * 			then this method is able to return IDOPriamryKeyList that will return IDEntities of the same type as returnProxy when wrapped into IDOEntityList
+	 * 			although the SelectQuery only uses this entity
+	 * @return IDOPrimaryKeyList
+	 * @throws FinderException
+	 */
+	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(SelectQuery sqlQuery, GenericEntity returnProxy, SelectQuery proxyQueryConstraints, int prefetchSize ) throws FinderException {
+			return new IDOPrimaryKeyList(sqlQuery, this,returnProxy,proxyQueryConstraints,prefetchSize);
+	}
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
 		//if (this.isDebugActive()) {

@@ -25,6 +25,7 @@ import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.net.data.ICNetwork;
 import com.idega.core.net.data.ICProtocol;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
@@ -39,6 +40,7 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.query.AND;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
+import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
@@ -604,6 +606,29 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());
 	}
+	
+	/**
+	 * Gets the children of the containingGroup
+	 * @param containingGroup
+	 * @param groupTypeProxy group type to return
+	 * @param returnTypes
+	 * @return
+	 * @throws FinderException
+	 */
+	public Collection ejbFindGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
+
+		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria( new MatchCriteria(idoQueryTable(),COLUMN_GROUP_TYPE,MatchCriteria.LIKE,groupTypeProxy.getGroupTypeKey()));
+		query.addCriteria(new InCriteria(idoQueryTable(),COLUMN_GROUP_ID,findGroupRelationsSQL));
+			
+		query.addOrder(idoQueryTable(),COLUMN_NAME,true);
+		
+		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query, (GenericEntity)groupTypeProxy, groupTypeProxy.getSelectQueryConstraints(), PREFETCH_SIZE);
+		//return idoFindPKsBySQL(query.toString());
+	}
+
 
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
 		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
@@ -818,6 +843,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			return theReturn;
 		}
 	}
+	
+	/**
+	 * Returns collection of Childs that match the type of 'groupTypeProxy' and according to groupTypeProxy.getSelectQueryConstrains().
+	 * The objects in the collection will be of the same class as 'groupTypeProxy' i.e. if groupTypeProxy implements User then it will be collection of User elements
+	 */
+	public Collection getChildGroups(Group groupTypeProxy) throws EJBException {
+
+		try {
+			return getGroupHome().findGroupsContained(this, groupTypeProxy);
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			return ListUtil.getEmptyList();
+		}
+	}
+	
+	
 	public Collection getAllGroupsContainingUser(User user) throws EJBException {
 		return this.getListOfAllGroupsContaining(user.getGroupID());
 	}
@@ -1556,6 +1598,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	
 	public Collection ejbFindByPrimaryKeyCollection(Collection primaryKeys) throws FinderException{
 		return idoFindByPrimaryKeyList(primaryKeys,1000);
+	}
+	
+	public SelectQuery getSelectQueryConstraints(){
+		return null;
 	}
 	
 } // Class Group

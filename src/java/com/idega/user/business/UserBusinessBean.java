@@ -1137,9 +1137,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
  */
   public Collection getUsersInGroup(int iGroupId) {
     try{
-    	//EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
-    	Collection groupList = this.getGroupBusiness().getUsers(iGroupId);
-      	return castUserGroupsToUsers(groupList);
+	    	//EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
+	    	return this.getGroupBusiness().getUsers(iGroupId);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -1152,8 +1151,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
  * @return Collection of User objects. * @see com.idega.user.business.UserBusiness#getUsersInGroup(Group) */
   public Collection getUsersInGroup(Group aGroup) {
     try {
-    	int groupID = ((Integer)aGroup.getPrimaryKey()).intValue();
-    	return getUsersInGroup(groupID);
+	    	int groupID = ((Integer)aGroup.getPrimaryKey()).intValue();
+	    	return getUsersInGroup(groupID);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -1539,41 +1538,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 	
 
-	/**
-	 * Cast a Collection of Groups that is a "UserReresentative" Group to a User instance.
-	 * @param userGroupCollection A Collection with instnances of a Group that are really a "UserReresentative" groups i.e. the Group representation of the User
-	 * @return Collection of user instances representing the Groups
-	 * @throws EJBException If an error occurs casting
-	 */
-	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException{
-		/**
-		 *@todo: Possible backwards compatability bug here.
-		 * Look into this (If no user_representative field set for the User)
-		 **/
-		try{
-			boolean mayReturnWholeCollection=true;
-			for (Iterator iter = userGroupCollection.iterator(); iter.hasNext();) {
-				Group userGroup = (Group) iter.next();
-				if(userGroup instanceof User){
-					//nothing
-				}
-				else{
-					mayReturnWholeCollection=false;
-					break;	
-				}
-			}
-			
-			if(mayReturnWholeCollection){
-				return userGroupCollection;
-			}
-			else{
-				return this.getUserHome().findUsersForUserRepresentativeGroups(userGroupCollection);
-			}
-		}
-		catch(Exception e){
-			throw new IBORuntimeException(e,this);
-		}
-	}
 	
 	public boolean hasUserLogin(User user)throws RemoteException{
 		LoginTable lt = LoginDBHandler.getUserLogin(((Integer)user.getPrimaryKey()).intValue());

@@ -21,6 +21,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOStoreException;
+import com.idega.data.query.SelectQuery;
 import com.idega.idegaweb.IWApplicationContext;
 
 /**
@@ -346,6 +347,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public java.util.List getChildGroups() throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups();
 	}
+	
+	public java.util.Collection getChildGroups(Group returnProxy) throws javax.ejb.EJBException{
+		return this.getGeneralGroup().getChildGroups(returnProxy);
+	}
 
 	public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)
 		throws javax.ejb.EJBException{
@@ -565,6 +570,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		query.append(this.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
 		
 		return query;
+	}
+	
+	public SelectQuery getSelectQueryConstraints(){
+		return null;
 	}
 	
 	

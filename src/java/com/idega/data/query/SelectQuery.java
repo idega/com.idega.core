@@ -408,6 +408,12 @@ public class SelectQuery implements Outputable, Cloneable {
 		return obj;
 	}
 	
-
+	public Collection getCriteria(){
+		return criteria;
+	}
+	
+	public Collection getOrder(){
+		return order;
+	}
 	
 }
