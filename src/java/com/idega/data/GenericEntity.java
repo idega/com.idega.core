@@ -4178,29 +4178,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	protected Collection idoFindPKsBySQL(String sqlQuery) throws FinderException
 	{
-		Collection pkColl = null;
-		Class interfaceClass = this.getInterfaceClass();
-		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
-		if (queryCachingActive)
-		{
-			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
-		}
-		if (pkColl == null)
-		{
-			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery);
-			if (queryCachingActive)
-			{
-				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
-			}
-		}
-		else
-		{
-			if (this.isDebugActive())
-			{
-				this.debug("Cache hit for SQL query: " + sqlQuery);
-			}
-		}
-		return pkColl;
+		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
 
 
@@ -4251,7 +4229,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		int length = idoGetNumberOfRecords(countQuery);
 		if(length > 0){
 			if(length < 1000){
-			  return idoFindPKsBySQLIgnoringCache(sqlQuery);
+			  return idoFindPKsBySQLIgnoringCache(sqlQuery, -1, -1);
 			}
 			else
 			{
@@ -4271,12 +4249,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return new Vector();
 	}
 
-	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery) throws FinderException
+	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException
 	{
 		if (this.isDebugActive())
 		{
 			this.debug("Going to Datastore for SQL query: " + sqlQuery);
 		}
+		
+		if (startingEntry < 0)
+			startingEntry = 0;
+		if (returningNumber < 0)
+			returningNumber = 0;
+		
 		Connection conn = null;
 		Statement Stmt = null;
 		int length;
@@ -4286,17 +4270,30 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
+			int counter = 0;
+			boolean addEntity = false;
 			while (RS.next())
 			{
-				//int id = RS.getInt(getIDColumnName());
-				Object pk = this.getPrimaryKeyFromResultSet(RS);
-				if (pk != null)
-				{
-					//Integer pk = new Integer(id);
-					prefetchBeanFromResultSet(pk, RS);
-					vector.addElement(pk);
+				if (startingEntry <= counter) {
+					if (returningNumber > 0) {
+						if (counter < (returningNumber+startingEntry))
+							addEntity = true;
+						else
+							addEntity = false;
+					}
+					else {
+						addEntity = true;
+					}
+
+					if (addEntity) {
+						Object pk = this.getPrimaryKeyFromResultSet(RS);
+						if (pk != null) {
+							prefetchBeanFromResultSet(pk, RS);
+							vector.addElement(pk);
+						}
+					}
 				}
-				//vector.addElement(RS.(getIDColumnName()));
+				counter++;
 			}
 			RS.close();
 		}
@@ -4511,24 +4508,37 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 */
 	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException
 	{
-		Collection coll = this.idoFindIDsBySQL(sqlQuery);
-		if (returningNumberOfRecords == -1)
+		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, -1);
+	}
+
+	/**
+	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
+	 */
+	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException
+	{
+		Collection pkColl = null;
+		Class interfaceClass = this.getInterfaceClass();
+		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
+		if (queryCachingActive)
 		{
-			return coll;
+			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
+		}
+		if (pkColl == null)
+		{
+			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry);
+			if (queryCachingActive)
+			{
+				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
+			}
 		}
 		else
 		{
-			Collection returningColl = new Vector();
-			Iterator iter = coll.iterator();
-			int counter = 1;
-			while (iter.hasNext() && (counter <= returningNumberOfRecords))
+			if (this.isDebugActive())
 			{
-				Integer item = (Integer) iter.next();
-				returningColl.add(item);
-				counter++;
+				this.debug("Cache hit for SQL query: " + sqlQuery);
 			}
-			return returningColl;
 		}
+		return pkColl;
 	}
 	/**
 	 *@deprecated replaced with idoFindPKsBySQL
@@ -4941,6 +4951,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
        {
                return idoFindPKsBySQL(query.toString());
        }
+ 
+		/**
+		 * Method idoFindPKsByQuery. Gets the result of the query.
+		 * @param query an IDOQuery for this entity.
+		 * @return Collection of Primary keys which is a result from the query.
+		 * @throws FinderException if there is an error with the query.
+		 */
+		protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities)throws FinderException
+		{
+						return idoFindPKsBySQL(query.toString(), returningNumberOfEntities);
+		}
+ 
+		/**
+		 * Method idoFindPKsByQuery. Gets the result of the query.
+		 * @param query an IDOQuery for this entity.
+		 * @return Collection of Primary keys which is a result from the query.
+		 * @throws FinderException if there is an error with the query.
+		 */
+		protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry)throws FinderException
+		{
+						return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry);
+		}
  
        /**
         * Method idoFindOnePKByQuery. Gets the one primary key of the query or the first result if there are many results.* @param query an IDOQuery for this entity.
