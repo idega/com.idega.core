@@ -123,7 +123,7 @@ public class PageIncluder extends PresentationObject{
           loc = TextSoap.findAndReplace(loc,token,sessionId);
         }
 
-
+        debug("Location url is: "+loc);
 
         String html = FileUtil.getStringFromURL(loc);
 
