@@ -61,28 +61,27 @@ public class ImplementorRepository {
 		addImplementorForCaller(interfaceClass, null, implementationClass);
 	}
 	
-	public Object getImplementor(Class interfaceClass, Class callerClass) throws ClassNotFoundException {
+	public Object getImplementor(Class interfaceClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		List implementors = getValidImplementorClasses(interfaceClass, callerClass);
 		// get the first one
 		if (implementors == null) {
 			throw new ClassNotFoundException("[ImplementorRepository] ImImplementor for interface " + interfaceClass.getName() + "could not be found");
 		}
 		Class implementorClass = (Class) implementors.get(0);
-		try {
-			return implementorClass.newInstance();
-		} 
-		catch (InstantiationException e) {
-			throw new ClassNotFoundException("[ImplementorRepository] Implementor for interface " + interfaceClass.getName() + "could not be created");		
-		} 
-		catch (IllegalAccessException e) {
-			throw new ClassNotFoundException("[ImplementorRepository] None implementor for interface " + interfaceClass.getName() + "could not be created because of access problems");		
-		}
+		return implementorClass.newInstance();
 	}
 	
 	public Object getImplementorOrNull(Class interfaceClass, Class callerClass) {
 		try {
 			return getImplementor(interfaceClass, callerClass);
-		} catch (ClassNotFoundException e) {
+		} 
+		catch (ClassNotFoundException e) {
+			return null;
+		}
+		catch (InstantiationException e) {
+			return null;
+		}
+		catch (IllegalAccessException e) {
 			return null;
 		}
 	}

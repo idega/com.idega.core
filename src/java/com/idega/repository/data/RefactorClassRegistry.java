@@ -19,6 +19,7 @@ public class RefactorClassRegistry
 	
 	//This constructor should not be called
 	private RefactorClassRegistry(){
+		// default constructor
 	}
 
 	
@@ -87,5 +88,42 @@ public class RefactorClassRegistry
 	
 	public boolean isClassRefactored(String oldClassName){
 		return getRefactoredClassName(oldClassName)!=null;
+	}
+	
+	public Object newInstance(String className, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Class myClass = classForName(className);
+		return newInstance(myClass, callerClass);
+		
+	}
+	
+	public Object newInstance(Class aClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if (aClass.isInterface()) {
+			return ImplementorRepository.getInstance().getImplementor(aClass, callerClass);
+		}
+		return aClass.newInstance();
+	}
+	
+	public Class classForName(String className) throws ClassNotFoundException {
+		// first try to find the class
+		try {
+			return Class.forName(className);
+		}
+		catch (ClassNotFoundException classNotFoundEx) {
+			// bad luck
+			// is the class refactored?
+			String refactoredClassName = getRefactoredClassName(className);
+			if (refactoredClassName == null) {
+				// nothing found, throw exception
+				throw classNotFoundEx;
+			}
+			// something was found...but does the class exist?
+			try {
+				return Class.forName(refactoredClassName);
+			}
+			catch (ClassNotFoundException refactoredClassNotFoundEx) {
+				// that is really bad luck (and strange)
+				throw new ClassNotFoundException("[RefactoredClassName] Refactored class ( "+ refactoredClassName+" ) was not found. Original class name: "+className, classNotFoundEx);
+			}
+		}
 	}
 }
