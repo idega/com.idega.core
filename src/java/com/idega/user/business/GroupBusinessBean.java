@@ -2173,23 +2173,31 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/08 01:36:49 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/09/08 01:47:25 $ by $Author: gummi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.70 $
+	 * @version $Revision: 1.71 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
+		private int randID;
 		/**
 		 * 
 		 */
 		public GroupTreeRefreshThread() {
-			super();
+			this("GroupTreeRefreshThread-",(int)(Math.random()*1000));
+		}
+		
+		private GroupTreeRefreshThread(String name, int rand){
+			super(name+rand);
+			randID=rand;
 		}
 		
 		public void run() {
 			try {
+				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:"+randID+"'");
 				refreshGroupTreeSnapShot();
+				log("[GroupBusiness]: fetch grouptree, thread done 'randID:"+randID+"'");
 			}
 			catch (EJBException e) {
 				e.printStackTrace();
