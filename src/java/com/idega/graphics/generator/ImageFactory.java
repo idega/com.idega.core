@@ -31,6 +31,7 @@ public class ImageFactory {
   private static String fontPath;
   private static Font defaultFont;
   private static HashMap images;
+  private static Font fontbase;
 
   private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 
@@ -46,7 +47,7 @@ public class ImageFactory {
     images = new HashMap();
     String folderPath = coreBundle.getResourcesRealPath()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
     try {
-      Font fontbase = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+iwma.CORE_DEFAULT_FONT));
+      fontbase = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+iwma.CORE_DEFAULT_FONT));
       defaultFont = fontbase.deriveFont(Font.PLAIN,10.f);
     }
     catch (Exception ex) {
@@ -125,7 +126,9 @@ public class ImageFactory {
 
     FileUtil.createFolder(filePath);
 
-    Tab tab = new Tab(textOnTab,defaultFont);
+    Font tabFont = fontbase.deriveFont(Font.PLAIN,12.f);
+
+    Tab tab = new Tab(textOnTab,tabFont);
     tab.flip(flip);
     tab.generate(filePath);
 
