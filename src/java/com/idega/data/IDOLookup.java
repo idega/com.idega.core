@@ -1,5 +1,6 @@
 package com.idega.data;
 
+import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -22,9 +23,6 @@ import com.idega.business.IBOLookup;
 public class IDOLookup extends IBOLookup{
 
   private static IDOLookup idoInstance;
-  private static IDOLookup getInstance(){
-    return getIDOLookupInstance();
-  }
 
   private static IDOLookup getIDOLookupInstance(){
     if(idoInstance==null){
@@ -222,6 +220,29 @@ public class IDOLookup extends IBOLookup{
       e.printStackTrace();
       throw new EJBException(e.getMessage());
     }
+  }
+  
+  protected IBOLookup getIBOLookup(){
+  	return IBOLookup.getInstance();
+  }
+  /**
+   * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
+   */
+  public Map getBeanClassesMap(){
+  	return getIBOLookup().getBeanClassesMap();
+  }
+  /**
+   * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
+   */
+  public Map getInterfaceClassesMap(){
+  	return getIBOLookup().getInterfaceClassesMap();
+  }
+  
+  /**
+   * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
+   */
+  public Map getHomesMap(){
+  	return getIBOLookup().getHomesMap();
   }
 
 }
