@@ -14,6 +14,8 @@ import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -455,6 +457,20 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 			return true;
 		}
 		return false;
+	}
+	
+	public Collection ejbFindByTypeAndValueAndKey(String type,String value,String key)throws FinderException{
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    if(type!=null)
+	        query.addCriteria(new MatchCriteria(table,getContextTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    if(value!=null)
+	    query.addCriteria(new MatchCriteria(table,getContextValueColumnName(),MatchCriteria.EQUALS,type,true));
+	    if(key!=null)
+	        query.addCriteria(new MatchCriteria(table,getPermissionStringColumnName(),MatchCriteria.EQUALS,type,true));
+	    return idoFindPKsByQuery(query);
+	    
 	}
 	
 } // Class ends
