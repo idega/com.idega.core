@@ -121,8 +121,9 @@ public class SingleLineItem extends Panel {
       gbc.gridx = nextXpos;
       gbc.gridy = nextYpos; //Set at position 0,0
       gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
-      gbc.anchor = gbc.WEST;
-      gbc.fill = GridBagConstraints.BOTH;
+      //gbc.anchor = gbc.SOUTHWEST;
+      gbc.fill = GridBagConstraints.NONE;
+
       /*
       gbc.fill = GridBagConstraints.NONE;
       gbc.weightx = gbc.weighty = 1.0; //we want component to get all extra space
