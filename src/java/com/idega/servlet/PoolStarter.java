@@ -11,7 +11,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 import com.idega.util.database.*;
-import javax.sql.*;
+//import javax.sql.*;
 
 
 /**

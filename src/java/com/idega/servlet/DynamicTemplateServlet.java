@@ -185,15 +185,15 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet{
 
 
 
-
+/*
     public TemplatePage getTemplatePage(){
       return (TemplatePage) getPage();
     }
-
+*/
   /*methods from com.idega.idegaweb.template.TemplatePage*/
 
 
-
+/*
   public void add2(PresentationObject obj){
     getTemplatePage().add2(obj);
   }
@@ -246,7 +246,7 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet{
     return this.getTemplatePage().hasPermission(permissionType, iwc, obj);
   }
 
-
+*/
 
 
 }   // Class DynamicTemplateServlet
