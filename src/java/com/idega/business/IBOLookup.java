@@ -4,21 +4,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
-import java.rmi.RemoteException;
-import javax.ejb.*;
+
+import javax.ejb.CreateException;
+import javax.ejb.RemoveException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
-import com.idega.data.IDOEntity;
-import com.idega.data.IDOEntityBean;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.data.IDOHome;
-import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.util.reflect.MethodFinder;
 /**
  * Title:        idega Business Objects

@@ -1,22 +1,17 @@
 package com.idega.business;
 
-import javax.ejb.EJBHome;
-import javax.ejb.Handle;
-import javax.ejb.EJBObject;
+import java.rmi.RemoteException;
+
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import java.rmi.RemoteException;
-
-import com.idega.user.data.User;
-
-import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.User;
 
 /**
  * Title:        idega Business Objects

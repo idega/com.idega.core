@@ -1,14 +1,12 @@
 package com.idega.business;
 
-import com.idega.idegaweb.IWLocation;
-import com.idega.idegaweb.browser.app.IWBrowser;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.FrameTable;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.Page;
-import com.idega.presentation.IWContext;
+import java.util.Hashtable;
 
-import java.util.*;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.browser.app.IWBrowser;
+import com.idega.presentation.FrameTable;
+import com.idega.presentation.Page;
 
 /**
  * <p>Title: idegaWeb</p>

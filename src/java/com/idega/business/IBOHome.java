@@ -1,8 +1,6 @@
 package com.idega.business;
 
-import javax.ejb.*;
-import java.util.List;
-import java.rmi.RemoteException;
+import javax.ejb.EJBHome;
 
 /**
  * Title:        idega Business Objects

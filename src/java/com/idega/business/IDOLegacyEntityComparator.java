@@ -1,14 +1,14 @@
 
 package com.idega.business;
 
-import com.idega.util.IsCollator;
-import java.util.*;
-import java.util.Comparator;
-import com.idega.data.IDOLegacyEntity;
-import com.idega.data.EntityAttribute;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Comparator;
+
+import com.idega.data.EntityAttribute;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.util.IsCollator;
 
 
 /**

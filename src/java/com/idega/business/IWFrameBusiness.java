@@ -1,6 +1,5 @@
 package com.idega.business;
 
-import javax.ejb.*;
 
 public interface IWFrameBusiness extends com.idega.business.IBOSession
 {
