@@ -1123,9 +1123,10 @@ public void setCacheWriter(PrintWriter writer){
 
     StringBuffer URL = new StringBuffer();
     URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
-    URL.append('?');
+    URL.append('&');
     URL.append(getRequest().getQueryString());
     fromPage.setToRedirect(URL.toString());
+    fromPage.empty();
 
 
    }
