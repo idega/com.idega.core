@@ -37,7 +37,7 @@ public class Layer extends PresentationObjectContainer {
 	public static final String WHITESPACE = "white-space";
 	public static final String ZINDEX = "z-index";
 
-	String layerType;
+	String layerType = DIV;
 
 	public Layer() {
 		this(DIV);
