@@ -21,7 +21,7 @@ import com.idega.data.GenericEntity;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UserStatusBMPBean extends GenericEntity implements UserStatus {
-	private static final String ENTITY_NAME = "ic_user_status";
+	private static final String ENTITY_NAME = "ic_usergroup_status";
 	private static final String STATUS_ID = "status_id";
 	private static final String IC_USER = "ic_user_id";
 	private static final String IC_GROUP = "ic_group_id";
