@@ -232,6 +232,16 @@ public class GenericButton extends GenericInput {
 		parameterMap.put(name, value);
 	}
 	
+	/**
+	 * Adds a whole map of parameters to the button
+	 * @param parameterMap 
+	 */
+	public void addParameters(Map parameterMap){
+	    if (parameterMap == null)
+			parameterMap = new HashMap();
+		parameterMap.putAll(parameterMap);
+	}
+	
 	public void addParameter(String name, int value) {
 		addParameter(name, String.valueOf(value));
 	}
