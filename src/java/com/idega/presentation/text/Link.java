@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.3 2001/10/10 11:18:53 gimmi Exp $
+ * $Id: Link.java,v 1.4 2001/10/10 12:34:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1054,6 +1054,14 @@ public class Link extends Text {
     _windowClass=windowClass;
     setURL(IWMainApplication.windowOpenerURL);
     addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+  }
+
+  public void setWindowToOpen(Class windowClass, int instanceId) {
+    _objectType=OBJECT_TYPE_WINDOW;
+    _windowClass=windowClass;
+    setURL(IWMainApplication.windowOpenerURL);
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
   }
 
   public void setNoTextObject(boolean noText) {

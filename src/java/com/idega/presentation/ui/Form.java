@@ -188,6 +188,14 @@ public void addParameter(String parameterName,String parameterValue){
   add(new Parameter(parameterName,parameterValue));
 }
 
+/**
+ *
+ */
+public void addParameter(String parameterName, int parameterValue) {
+  addParameter(parameterName,Integer.toString(parameterValue));
+}
+
+
 public void maintainAllParameters(){
 	maintainAllParameters=true;
 }
@@ -410,6 +418,14 @@ public void setEventListener(String eventListenerClassName){
     this.windowClass=windowClass;
     setAction(IWMainApplication.windowOpenerURL);
     addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    setWindow(Window.getStaticInstance(windowClass));
+  }
+
+  public void setWindowToOpen(Class windowClass, int instanceId){
+    this.windowClass=windowClass;
+    setAction(IWMainApplication.windowOpenerURL);
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
     setWindow(Window.getStaticInstance(windowClass));
   }
 

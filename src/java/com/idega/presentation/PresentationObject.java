@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.1 2001/10/05 07:59:08 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.2 2001/10/10 12:34:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -54,7 +54,8 @@ public class PresentationObject extends Object implements Cloneable {
   protected boolean hasBeenAdded = false;
   protected String treeID;
   private boolean goneThroughMain = false;
-  private int ib_object_instance_id;
+  private int ic_object_instance_id;
+  private int ic_object_id;
   private static String emptyString = "";
   public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
   public EventListenerList listenerList = null;
@@ -454,11 +455,33 @@ public class PresentationObject extends Object implements Cloneable {
 
     return obj;
   }
+/*
+  protected void initICObjectInstanceId(IWContext iwc){
+    String sID = iwc.getParameter(_PARAMETER_IC_OBJECT_INSTANCE_ID);
+    try {
+      if(sID != null){
+        System.err.println("sID: "+sID);
+        this.setICObjectInstanceID(Integer.parseInt(sID));
+        //this.ic_object_instance_id = Integer.parseInt(sID);
+        System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
+        System.err.println("getICObjectInstanceID: "+this.getICObjectInstanceID());
+      }else{
+        System.err.println("sID == null");
+      }
+    }
+    catch (NumberFormatException ex) {
+      System.err.println(this+": cannot init ic_object_instance_id");
+    }
 
+  }
+*/
   /**
    * Function invoked before the print function
    */
   public void _main(IWContext iwc) throws Exception {
+    /*if(this.ic_object_instance_id == 0){
+      initICObjectInstanceId(iwc);
+    }*/
     if (!goneThroughMain) {
       initVariables(iwc);
       main(iwc);
@@ -489,12 +512,20 @@ public class PresentationObject extends Object implements Cloneable {
 
 
   public void setICObjectInstanceID(int id) {
-    this.ib_object_instance_id = id;
+    this.ic_object_instance_id = id;
   }
 
 
   public void setICObjectInstance(ICObjectInstance instance) {
-    this.ib_object_instance_id = instance.getID();
+    this.ic_object_instance_id = instance.getID();
+  }
+
+  public void setICObjectID(int id) {
+    this.ic_object_id = id;
+  }
+
+  public void setICObject(ICObject obj) {
+    this.ic_object_id = obj.getID();
   }
 
   /**
@@ -506,7 +537,7 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public int getICObjectInstanceID(){
-    return this.ib_object_instance_id;
+    return this.ic_object_instance_id;
   }
 
   public ICObjectInstance getICObjectInstance(IWContext iwc) throws SQLException {
@@ -514,7 +545,30 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public ICObjectInstance getICObjectInstance()throws SQLException{
-    return new ICObjectInstance(getICObjectInstanceID());
+    if(getICObjectInstanceID() != 0){
+      return new ICObjectInstance(getICObjectInstanceID());
+    } else {
+      return null;
+    }
+  }
+
+  public int getICObjectID(IWContext iwc) throws SQLException {
+    return ic_object_id;
+    /*ICObjectInstance inst = this.getICObjectInstance();
+
+    System.out.println("Getting ICObjectInstance");
+    if(inst != null){
+
+      ICObject ob = inst.getObject();
+      if(ob != null){
+        return ob.getID();
+      }
+    }
+    return 0;*/
+  }
+
+  public int getICObjectID(){
+    return ic_object_id;
   }
 
   public ICObject getICObject() throws SQLException {

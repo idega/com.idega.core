@@ -719,7 +719,11 @@ public void setCacheWriter(PrintWriter writer){
   }
 
   public int getUserId() {
-    return(getUser().getID());
+    User usr = getUser();
+    if(usr != null){
+      return(usr.getID());
+    }
+    return -1;
   }
 }
 

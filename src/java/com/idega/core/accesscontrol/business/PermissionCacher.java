@@ -47,9 +47,9 @@ public class PermissionCacher {
       if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
         identifier = Integer.toString(obj.getICObjectInstanceID(iwc));
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
-          identifier = Integer.toString(obj.getICObject().getID());
+          identifier = Integer.toString(obj.getICObjectID(iwc));
       } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
-          identifier = obj.getICObject().getBundleIdentifier();
+          identifier = obj.getBundleIdentifier();
       }
 
       if(identifier != null){
@@ -89,9 +89,9 @@ public class PermissionCacher {
     if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT_INSTANCE)){
       identifier = Integer.toString(obj.getICObjectInstanceID(iwc));
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT)){
-        identifier = Integer.toString(obj.getICObject().getID());
+        identifier = Integer.toString(obj.getICObjectID(iwc));
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
-        identifier = obj.getICObject().getBundleIdentifier();
+        identifier = obj.getBundleIdentifier();
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
         //identifier = ((Page)obj).getIBPageId();
         //temp

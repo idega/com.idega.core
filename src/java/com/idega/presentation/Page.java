@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.1 2001/10/05 07:59:08 tryggvil Exp $
+ * $Id: Page.java,v 1.2 2001/10/10 12:34:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -699,6 +699,21 @@ public class Page extends PresentationObjectContainer{
     else if(classKey!=null){
       try{
       Page page = (Page)Class.forName(classKey).newInstance();
+      String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
+      try {
+        if(sID != null){
+          System.err.println("sID: "+sID);
+          page.setICObjectInstanceID(Integer.parseInt(sID));
+          //this.ib_object_instance_id = Integer.parseInt(sID);
+          System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
+          System.err.println("getICObjectInstanceID: "+page.getICObjectInstanceID());
+        }else{
+          System.err.println("sID == null");
+        }
+      }
+      catch (NumberFormatException ex) {
+        System.err.println(page+": cannot init ic_object_instance_id");
+      }
       return page;
       }
       catch(Exception e){

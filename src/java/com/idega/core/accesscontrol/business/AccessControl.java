@@ -205,7 +205,7 @@ public class AccessControl{
 
     // Default permission: view == true if not Page, else false
     // If no permission set, view = true for all objects other than Page objects
-    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
+    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page && !(obj instanceof BlockWindow)) ){
       // if some view permission for object, bundle, ... are set
       // then do nothing
       // else true
@@ -275,7 +275,7 @@ public class AccessControl{
 
     // Default permission: view == true if not Page, else false
     // If no permission set, view = true for all objects other than Page objects
-    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page) ){
+    if( getViewPermissionString().equals(permissionType) && obj != null && !(obj instanceof Page && !(obj instanceof BlockWindow)) ){
       // if some view permission for object, bundle, ... are set
       // then do nothing
       // else true
@@ -347,7 +347,7 @@ public class AccessControl{
       return myPermission;
     } else { // if (obj != null)
 
-      if(obj instanceof Page){
+      if(obj instanceof Page && !(obj instanceof BlockWindow)){
         myPermission = PermissionCacher.hasPermissionForPage(obj,iwc,permissionType,permissionGroups);
 
         return myPermission;
@@ -559,7 +559,7 @@ public class AccessControl{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getID() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectID(iwc) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = new ICPermission();
@@ -568,7 +568,7 @@ public class AccessControl{
 
     if(!update){
       permission.setContextType(AccessControl.getObjectIdString());
-      permission.setContextValue(Integer.toString(obj.getICObject().getID()));
+      permission.setContextValue(Integer.toString(obj.getICObjectID(iwc)));
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
 //        permission.setPermissionStringValue();
@@ -578,7 +578,7 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObject().getID()),permissionType,iwc);
+    PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID(iwc)),permissionType,iwc);
   }
 
 
@@ -586,7 +586,7 @@ public class AccessControl{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
-      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getBundleIdentifier() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getBundleIdentifierString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getBundleIdentifier() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
     }
     catch (Exception ex) {
       permission = new ICPermission();
@@ -595,7 +595,7 @@ public class AccessControl{
 
     if(!update){
       permission.setContextType(AccessControl.getBundleIdentifierString());
-      permission.setContextValue(obj.getICObject().getBundleIdentifier());
+      permission.setContextValue(obj.getBundleIdentifier());
       permission.setGroupID(new Integer(group.getID()));
       permission.setPermissionString(permissionType);
   //        permission.setPermissionStringValue();
@@ -605,7 +605,7 @@ public class AccessControl{
       permission.setPermissionValue(permissionValue);
       permission.update();
     }
-    PermissionCacher.updateBundlePermissions(obj.getICObject().getBundleIdentifier(),permissionType,iwc);
+    PermissionCacher.updateBundlePermissions(obj.getBundleIdentifier(),permissionType,iwc);
   }
 
 
