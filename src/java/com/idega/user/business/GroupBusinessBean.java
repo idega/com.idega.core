@@ -1145,7 +1145,8 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	}
 
 /**
- * Adds all the ldap attributes as metadata-fields to the group
+ * Adds or changes the groups current metadata with metadatafields contained in the attributes.
+ * It does not currently remove any existing metadata unless the value in the attributes is an empty string ("")
 	 * @param group
 	 * @param distinguishedName
 	 * @param attributes
@@ -1175,6 +1176,9 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 								value = ldapUtil.getSingleValueOfAttributeByAttributeKey(keyWithPrefix, attributes);
 								
 								if(value.length()<=2000){
+									if("".equals(value)){
+										value = null;
+									}
 									group.setMetaData(key,value);
 								}
 								else{
@@ -2437,10 +2441,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/23 17:11:08 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/11/24 13:11:43 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.86 $
+	 * @version $Revision: 1.87 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
