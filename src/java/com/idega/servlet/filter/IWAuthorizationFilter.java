@@ -57,7 +57,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	}
 	
 	protected boolean getIfUserHasPermission(HttpServletRequest request,HttpServletResponse response){
-		String uri = getURLMinusContextPath(request);
+		String uri = getURIMinusContextPath(request);
 		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
 			IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
 			if(!LoginBusinessBean.isLoggedOn(iwc)){

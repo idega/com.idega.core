@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.5 2005/01/24 18:24:25 thomas Exp $
+ * $Id: BaseFilter.java,v 1.6 2005/01/27 14:17:05 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,15 +12,16 @@ package com.idega.servlet.filter;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.RequestUtil;
 
 
 /**
  *  Class that holds basic functionality used by many filters.<br>
  * 
- *  Last modified: $Date: 2005/01/24 18:24:25 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/01/27 14:17:05 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public abstract class BaseFilter implements Filter{
 	
@@ -63,25 +64,8 @@ public abstract class BaseFilter implements Filter{
 		//return NEW_IDEGAWEB_LOGIN;
 	}
 	
-	protected String getURLMinusContextPath(HttpServletRequest request) {
-		//IWMainApplication iwma = getIWMainApplication(request);
-		
-		//String appUri = iwma.getApplicationContextURI();
-		String appUri = request.getContextPath();
-		String requestUri = request.getRequestURI();
-	
-		if(!appUri.endsWith(SLASH)){
-			appUri =appUri+SLASH;
-		}
-		
-		if(appUri.equals(SLASH)){
-			return requestUri;
-		}
-		else{
-			//Here we set -1 because we want to keep the "/" character in the beginning
-			String newUri = requestUri.substring(appUri.length()-1);
-			return newUri;
-		}
+	protected String getURIMinusContextPath(HttpServletRequest request) {
+		return RequestUtil.getURIMinusContextPath(request);
 		
 	}
 

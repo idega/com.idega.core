@@ -116,6 +116,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- The IWBundleResourceFilter Filter -->
+    <filter>
+        <filter-name>IWBundleResourceFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWBundleResourceFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWBundleResourceFilter</filter-name>
+        <url-pattern>/idegaweb/*</url-pattern>
+    </filter-mapping>
 
     <!-- The IWWelcomeFilter Filter -->
     <filter>
