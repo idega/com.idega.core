@@ -275,9 +275,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
           setMiddleName(middleName.toString());
         }
+        else{//set middle name == null
+          this.removeFromColumn(this.getColumnNameMiddleName());
+        }
 
-        if( countWithoutFirstAndLast >= 0) setLastName((String)token.nextElement());
-
+        if( countWithoutFirstAndLast >= 0){
+          setLastName((String)token.nextElement());
+        }
+        else{ //remove last name
+          this.removeFromColumn(this.getColumnNameLastName());
+        }
       }
     }
 
