@@ -177,6 +177,8 @@ private String getIdegaSpecialRequestURI(IWContext iwc){
 }
 
 
+
+
 public void main(IWContext iwc){
   if(window!=null){
    //iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
@@ -214,47 +216,68 @@ public void maintainParameter(String parameterName){
 
 
 
-private void addGloballyMaintainedParameters(IWContext iwc){
+/*
+ *
+ */
+private void addGloballyMaintainedParameters(IWContext iwc) {
   List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
-  if(list!=null){
+  if (list != null) {
     Iterator iter = list.iterator();
-    while (iter.hasNext()) {
+    while(iter.hasNext()) {
       String parameterName = (String)iter.next();
       String parameterValue = iwc.getParameter(parameterName);
-      if(parameterValue!=null){
-        addParameter(parameterName,parameterValue);
+      if (parameterValue != null) {
+        if(!this.isParameterSet(parameterName)){
+          addParameter(parameterName,parameterValue);
+        }
       }
     }
   }
 }
 
 
-  /*
-   *
-   */
-  private void addTheMaintainedBuilderParameters(IWContext iwc) {
-    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
-    if (list != null) {
-      Iterator iter = list.iterator();
-      while(iter.hasNext()) {
-        String parameterName = (String)iter.next();
-        String parameterValue = iwc.getParameter(parameterName);
-        if (parameterValue != null) {
-          if(!this.isParameterSet(parameterName)){
-            addParameter(parameterName,parameterValue);
-          }
+ /*
+ *
+ */
+private void addTheMaintainedBuilderParameters(IWContext iwc) {
+  List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
+  //System.out.println("--------------------------------------");
+  //System.out.println("builderPrm");
+  if (list != null) {
+    Iterator iter = list.iterator();
+    while(iter.hasNext()) {
+      String parameterName = (String)iter.next();
+      String parameterValue = iwc.getParameter(parameterName);
+      //System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
+      if (parameterValue != null) {
+        if(!this.isParameterSet(parameterName)){
+          //System.out.println("false");
+          addParameter(parameterName,parameterValue);
+        } else{
+          //System.out.println("true");
         }
+      }else{
+        //System.out.println("null");
       }
     }
   }
+}
 
   /**
    * temp implementation
    */
   public boolean isParameterSet(String prmName){
+    if(this.theObjects != null){
+      Iterator iter = this.theObjects.iterator();
+      while (iter.hasNext()) {
+        PresentationObject item = (PresentationObject)iter.next();
+        if(prmName.equals(item.getName())){
+          return true;
+        }
+      }
+    }
     return false;
   }
-
 
 
 /**
