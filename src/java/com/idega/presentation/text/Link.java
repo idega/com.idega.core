@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.123 2004/07/02 02:27:49 tryggvil Exp $
+ * $Id: Link.java,v 1.124 2004/07/07 23:31:36 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1778,6 +1778,12 @@ public class Link extends Text {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
 				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
+				String url = getURL();
+				// @TODO temp sysouts, session stuff not fully tested
+				System.out.println("Url before encoding " + url);
+				url = iwc.getResponse().encodeURL(url);
+				System.out.println("Url after encoding " + url);
+				setFinalUrl(url);
 				print("<p><a " + getMarkupAttributesString() + " >");
 				print(_myWindow.getName());
 				print("</a></p>");
@@ -1786,6 +1792,9 @@ public class Link extends Text {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
+				String url = getURL();
+				url = iwc.getResponse().encodeURL(url);
+				setFinalUrl(url);
 				print("<p><a " + getMarkupAttributesString() + " >");
 				_obj._print(iwc);
 				print("</a></p>");

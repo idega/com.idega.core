@@ -519,8 +519,6 @@ public class Form extends InterfaceObject {
 				if(allInterfaceObjects[j] instanceof SubmitButton) {
 					theButton = (SubmitButton)allInterfaceObjects[j];
 				}
-				
-				
 			}
 //			print("</refresh>");
 //			print("</onevent>");
@@ -529,9 +527,12 @@ public class Form extends InterfaceObject {
 			print("</fieldset></p>");
 			
 			print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
-			//print("<p><anchor>"+theButton.getContent());
-			print("<go href=\"" + getAction() + "\" method=\"" + getMethod() + "\" >");
-
+			String url = getAction();
+			// @TODO temp sysouts, session stuff not fully tested
+			System.out.println("Url before encoding " + url);
+			url = iwc.getResponse().encodeURL(url);
+			System.out.println("Url after encoding " + url);
+			print("<go href=\"" + url + "\" method=\"" + getMethod() + "\" >");
 			print(postFields.toString());
 			
 			for (Iterator iter = parameters.iterator(); iter.hasNext();) {
