@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.82 2005/03/09 01:33:11 tryggvil Exp $
+ * $Id: Form.java,v 1.83 2005/03/09 01:56:15 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/03/09 01:33:11 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/09 01:56:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.82 $
+ * @version $Revision: 1.83 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -993,7 +993,8 @@ public class Form
 			associatedScript = oldAssociatedScript;
 		}
 		if (associatedScript == null) {
-			setAssociatedFormScript(new Script());
+			associatedScript = new Script();
+			setAssociatedFormScript(associatedScript);
 		}
 		return associatedScript;
 	}
