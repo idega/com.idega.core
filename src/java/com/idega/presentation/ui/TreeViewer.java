@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.3 2001/10/18 17:25:41 laddi Exp $
+ * $Id: TreeViewer.java,v 1.4 2001/10/18 20:44:56 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,6 +10,9 @@
 package com.idega.presentation.ui;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import com.idega.presentation.text.Link;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
@@ -45,7 +48,8 @@ public class TreeViewer extends PresentationObjectContainer {
   public static final String ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME = "iw_node_id";
   public static final String ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME = "iw_node_name";
 
-  private ICTreeNode _startNode;
+  //private ICTreeNode _startNode;
+  private List _startNodes;
   private Table _mainTable;
   private int _nestLevelAtOpen = 0;
   private Link _linkPrototype;
@@ -57,8 +61,8 @@ public class TreeViewer extends PresentationObjectContainer {
   private Link _linesLink;
   private String _linkStyle;
 
-  private TreeViewer(ICTreeNode startNode){
-    _startNode=startNode;
+  private TreeViewer(ICTreeNode rootNode){
+    this.addRootNode(rootNode);
   }
 
   public static TreeViewer getTreeViewerInstance(ICTreeNode node,IWContext iwc){
@@ -66,8 +70,38 @@ public class TreeViewer extends PresentationObjectContainer {
       return viewer;
   }
 
-  private ICTreeNode getStartNode(){
-    return _startNode;
+  //private ICTreeNode getStartNode(){
+  //  return _startNode;
+  //}
+
+  /**
+   * Sets the Root nodes , takes in a List of ICTreeNode Objects
+   */
+  public void setRootNodes(List nodes){
+    this._startNodes=nodes;
+  }
+
+  private boolean hasOneRoot(){
+    List nodes = this.getRootNodeList();
+    if(nodes.size()==1){
+     return true;
+    }
+    return false;
+  }
+
+  public void addRootNode(ICTreeNode node){
+    getRootNodeList().add(node);
+  }
+
+  private List getRootNodeList(){
+    if(this._startNodes==null){
+      _startNodes=new Vector();
+    }
+    return _startNodes;
+  }
+
+  private boolean isRootNode(ICTreeNode node){
+    return getRootNodeList().contains(node);
   }
 
   private Table getTable(){
@@ -85,9 +119,18 @@ public class TreeViewer extends PresentationObjectContainer {
       IWBundle bundle = getBundle(iwc);
       Table tab = getTable();
       add(tab);
-      ICTreeNode startNode = getStartNode();
-      int[] parentArray = {};
-      addNode(iwc,tab,1,1,startNode,parentArray,'F',0,bundle);
+      List startNodes = this.getRootNodeList();
+      Iterator iter = startNodes.iterator();
+      while (iter.hasNext()) {
+        if(this.hasOneRoot())this._nestLevelAtOpen=1;
+
+        ICTreeNode startNode = (ICTreeNode)iter.next();
+        //ICTreeNode startNode = getStartNode();
+        int[] parentArray = {};
+        addNode(iwc,tab,1,1,startNode,parentArray,'F',0,bundle);
+      }
+
+
   }
   /**@todo : find a better and faster way to store the Parent id's and use them to
    * keep the tree open
@@ -137,7 +180,7 @@ public class TreeViewer extends PresentationObjectContainer {
 
 
     if(this.isLeafNode(node)){
-      if( _startNode!= node ) image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEWER_NODE_LEAF+GIF_SUFFIX);
+      if( isRootNode(node) ) image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEWER_NODE_LEAF+GIF_SUFFIX);
       else image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEWER_NODE_CLOSED+GIF_SUFFIX);
     }
     else if(nodeIsOpen){
@@ -175,16 +218,32 @@ public class TreeViewer extends PresentationObjectContainer {
 
 
   private PresentationObject getTreeLines(ICTreeNode node,boolean nodeOpen, int[] parentarray,char typeOfNode,IWBundle bundle){
-    Image image;
+    Image image=null;
     if(isLeafNode(node)){
-        if( _startNode!=node ) image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEW_LINE+typeOfNode+GIF_SUFFIX);
+        if( isRootNode(node) )
+        {
+          if(this.hasOneRoot()){
+            image = null;
+          }
+          else{
+            image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEW_LINE+typeOfNode+GIF_SUFFIX);
+          }
+        }
         else{
-          image = bundle.getImage("treeviewer_minus_F.gif");//if it is the top node
-          image.setWidth(17);
+          //if(this.hasMoreThanOneRoot()){
+            image = bundle.getImage("treeviewer_minus_F.gif");//if it is the top node
+            image.setWidth(17);
+          //}
         }
         return image;
     }
     else{
+      if( isRootNode(node) ){
+          if(hasOneRoot()){
+            return null;
+          }
+      }
+
       if(nodeOpen){
         image = bundle.getImage(TREEVIEW_PREFIX+TREEVIEW_MINUS+typeOfNode+GIF_SUFFIX);
         Link link = getLinesLinkCloned();
@@ -242,7 +301,10 @@ public class TreeViewer extends PresentationObjectContainer {
     table.setAlignment(xpos+2,ypos,"left");
     table.mergeCells(xpos+2,_tableRows,_tableColumns,_tableRows);
 
-    table.add(getTreeLines(node,nodeIsOpen,parentarray,typeOfNode,bundle),xpos,ypos);
+    PresentationObject line = getTreeLines(node,nodeIsOpen,parentarray,typeOfNode,bundle);
+    if(line!=null){
+      table.add(line,xpos,ypos);
+    }
     if (recurseLevel > 0) {
       int dummy = ypos - 1;
       while (table.containerAt(xpos,dummy).isEmpty()) {
