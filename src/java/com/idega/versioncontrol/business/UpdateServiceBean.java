@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.util.LocaleUtil;
 
 /**
