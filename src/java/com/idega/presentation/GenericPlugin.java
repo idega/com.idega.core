@@ -158,6 +158,8 @@ public String getPluginSpace(String pluginspace){
 public void print(IWContext iwc)throws IOException{
   initVariables(iwc);
   if( doPrint(iwc) ){
+    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
+
     if (getLanguage().equals("HTML")){
       StringBuffer buffer = new StringBuffer();
       buffer.append("<object classid=\"clsid:");
@@ -183,11 +185,6 @@ public void print(IWContext iwc)throws IOException{
 
   public void setFile(ICFile file) {
     this.file = file;
-  }
-
-  public void main(IWContext iwc) throws Exception  {
-    /** could do this in print also**/
-    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
   }
 
   public synchronized Object clone() {
