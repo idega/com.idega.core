@@ -1281,7 +1281,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
    */
-  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {}
+  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {
+    throw new Exception(this.getClass().getName()+".setAsOwner(...) : not implemented");
+  }
 
 
 
@@ -1309,11 +1311,43 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         first = false;
       }
     }
+    String SQLString = null;
     if(!instanceIds.equals("")){
-      permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + category + "' AND " + permission.getContextValueColumnName() + " in(" + instanceIds + ") AND " + permission.getGroupIDColumnName() + " = " + group.getID());
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("SELECT * FROM ");
+      buffer.append(permission.getEntityName());
+      buffer.append(" WHERE ");
+      buffer.append(permission.getContextTypeColumnName());
+      buffer.append(" = '");
+      buffer.append(category);
+      buffer.append("' AND ");
+      buffer.append(permission.getContextValueColumnName());
+      if(identifiers.size() > 1){
+        buffer.append(" in(");
+        buffer.append(instanceIds);
+        buffer.append(")");
+      } else {
+        buffer.append(" = '");
+        buffer.append(instanceIds);
+        buffer.append("'");
+      }
+      buffer.append(" AND ");
+      buffer.append(permission.getGroupIDColumnName());
+      buffer.append(" = ");
+      buffer.append(group.getID());
+
+
+      SQLString = buffer.toString();
+
+      if(SQLString != null){
+        permissions = EntityFinder.findAll(permission,SQLString);
+      }
+
+      //permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + category + "' AND " + permission.getContextValueColumnName() + " in(" + instanceIds + ") AND " + permission.getGroupIDColumnName() + " = " + group.getID());
+
     }
-//    System.err.println("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + category + "' AND " + permission.getContextValueColumnName() + " in(" + instanceIds + ") AND " + permission.getGroupIDColumnName() + " = " + group.getID());
-//    System.err.println(" = " + permissions);
+    //System.err.println(SQLString);
+    //System.err.println(" = " + permissions);
     return permissions;
   }
 

@@ -542,7 +542,7 @@ public class UserGroupBusiness {
 
     if(groupId != -1){
       GenericGroup group = new GenericGroup(groupId);
-      System.out.println("before");
+      //System.out.println("before");
       List lDirect = com.idega.core.business.UserGroupBusiness.getUsersContainedDirectlyRelated(groupId);
       Set direct = new HashSet();
       if(lDirect != null){
@@ -550,11 +550,11 @@ public class UserGroupBusiness {
         while (iter.hasNext()) {
           User item = (User)iter.next();
           direct.add(Integer.toString(item.getGroupID()));
-          System.out.println("id: "+ item.getGroupID());
+          //System.out.println("id: "+ item.getGroupID());
         }
       }
 
-      System.out.println("after");
+      //System.out.println("after");
       Set toRemove = (Set)((HashSet)direct).clone();
       Set toAdd = new HashSet();
 
@@ -567,28 +567,28 @@ public class UserGroupBusiness {
             toAdd.add(usrGroupIdsInGroup[i]);
           }
 
-          System.out.println("id: "+ usrGroupIdsInGroup[i]);
+          //System.out.println("id: "+ usrGroupIdsInGroup[i]);
         }
       }
 
-      System.out.println("toRemove");
+      //System.out.println("toRemove");
       Iterator iter2 = toRemove.iterator();
       while (iter2.hasNext()) {
         String item = (String)iter2.next();
-        System.out.println("id: "+ item);
+        //System.out.println("id: "+ item);
         group.removeGroup(Integer.parseInt(item), false);
       }
 
-      System.out.println("toAdd");
+      //System.out.println("toAdd");
       Iterator iter3 = toAdd.iterator();
       while (iter3.hasNext()) {
         String item = (String)iter3.next();
-        System.out.println("id: "+ item);
+        //System.out.println("id: "+ item);
         group.addGroup(Integer.parseInt(item));
       }
 
     }else{
-      System.out.println("groupId = "+ groupId + ", usrGroupIdsInGroup = "+ usrGroupIdsInGroup);
+      //System.out.println("groupId = "+ groupId + ", usrGroupIdsInGroup = "+ usrGroupIdsInGroup);
     }
 
 
