@@ -36,6 +36,8 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   private boolean editPermission = false;
 
+  private boolean debugParameters = false;
+
   private static final String concatter = "_";
   private static final String newline = "\n";
 
@@ -92,6 +94,12 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     return this.targetObjInstset==this.targetObjInst;
   }
   /////// target code ends ////////////
+
+  ////// debugging parameters /////////
+
+  public void setToDebugParameters(boolean debugPrm){
+    this.debugParameters = debugPrm;
+  }
 
 
   public boolean deleteBlock(int ICObjectInstanceId){
@@ -236,6 +244,10 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public void _main(IWContext iwc)throws Exception{
     editPermission = iwc.hasEditPermission(this);
+
+    if(debugParameters){
+      debugParameters(iwc);
+    }
 
     if(iwc.isParameterSet(TARGET_OBJ_INS))
       targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));

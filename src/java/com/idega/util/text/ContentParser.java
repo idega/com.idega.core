@@ -1,6 +1,6 @@
 package com.idega.util.text;
 
-
+import com.idega.idegaweb.IWApplicationContext;
 
 import java.util.*;
 
@@ -44,13 +44,13 @@ public class ContentParser {
 
      */
 
-    public String parse(ContentParsable parsableObject, String text) {
+    public String parse(IWApplicationContext iwac,ContentParsable parsableObject, String text) {
 
         StringBuffer finalText = new StringBuffer();
 
         StringTokenizer st = new StringTokenizer(text, "[]");
 
-        Map M = getMappedParseStrings(parsableObject);
+        Map M = getMappedParseStrings(iwac,parsableObject);
 
         while (st.hasMoreTokens()) {
 
@@ -84,7 +84,7 @@ public class ContentParser {
 
      */
 
-    private Map getMappedParseStrings(ContentParsable parsableObject) {
+    private Map getMappedParseStrings(IWApplicationContext iwac,ContentParsable parsableObject) {
 
         Hashtable H = new Hashtable();
 
@@ -94,7 +94,7 @@ public class ContentParser {
 
         for (int i = 0; i < tags.length; i++) {
 
-            value = parsableObject.getParsedString(tags[i]);
+            value = parsableObject.getParsedString(iwac,tags[i]);
 
             if (value != null) {
 
