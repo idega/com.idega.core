@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.1 2004/09/02 12:28:21 tryggvil Exp $
+ * $Id: RenderUtils.java,v 1.2 2004/11/14 23:31:11 tryggvil Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import javax.faces.context.FacesContext;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/02 12:28:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/11/14 23:31:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RenderUtils {
 	
@@ -38,20 +38,24 @@ public class RenderUtils {
 		//child.encodeBegin(context);
 		//child.encodeChildren(context);
 		//child.encodeEnd(context);
-		if(child.isRendered()){
-			child.encodeBegin(context);
-			if(child.getRendersChildren()){
-				child.encodeChildren(context);
-			}
-			else if(child instanceof UIForm){
-				//Special case for forms:
-				Collection fChildren = child.getChildren();
-				for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
-					UIComponent fChild = (UIComponent) iter.next();
-					renderChild(context,fChild);
+		if(child!=null){
+			if(child.isRendered()){
+				child.encodeBegin(context);
+				if(child.getRendersChildren()){
+					child.encodeChildren(context);
 				}
+				else
+				//if(child instanceof UIForm)
+				{
+					//Special case for forms:
+					Collection fChildren = child.getChildren();
+					for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+						UIComponent fChild = (UIComponent) iter.next();
+						renderChild(context,fChild);
+					}
+				}
+				child.encodeEnd(context);
 			}
-			child.encodeEnd(context);
 		}
 	
 	
