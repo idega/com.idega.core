@@ -40,11 +40,19 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public static boolean DEBUG_FLAG = false;
 	public static boolean CREATE_STRINGS = false;
 	public static boolean CREATE_PROPERTIES = false;
-
+	
+	//instance variables:
+	private IWMainApplication application;
 	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		super(application.getPropertiesRealPath(), "idegaweb.pxml", true);
+		this.application=application;	
 	}
+	
+	private IWMainApplication getApplication(){
+		return application;
+	}
+	
 	public void setDefaultTemplate(String templateName, String classname) {
 		setProperty(DEFAULT_TEMPLATE_NAME, templateName);
 		setProperty(DEFAULT_TEMPLATE_CLASS, classname);
@@ -100,30 +108,31 @@ public class IWMainApplicationSettings extends IWPropertyList {
 			locale = LocaleUtil.getLocale(localeIdentifier);
 		}
 		
-		List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
-		
-		//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
-		if(localesInUse.contains(locale)){
-			if(firstTimeSave){
-				setDefaultLocale(locale);
-			}
-			return locale;
-		}
-		else{
-			if(localesInUse.contains(englishLocal)){
-				//try to use the english one
-				locale = englishLocal;
+		if(!getApplication().isInDatabaseLessMode()){
+			List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
+			//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
+			if(localesInUse.contains(locale)){
+				if(firstTimeSave){
+					setDefaultLocale(locale);
+				}
 			}
 			else{
-				//else just the first we find
-				locale = (Locale)localesInUse.iterator().next();
+				if(localesInUse.contains(englishLocal)){
+					//try to use the english one
+					locale = englishLocal;
+				}
+				else{
+					//else just the first we find
+					locale = (Locale)localesInUse.iterator().next();
+				}
+				setDefaultLocale(locale);//to fix the default locale or set it for the first time
 			}
-			setDefaultLocale(locale);//to fix the default locale or set it for the first time
-			
-			return locale;
 		}
-		
+		return locale;
 	}
+	
+	
+	
 	public AccessController getDefaultAccessController() {
 		return (AccessController) new com
 			.idega
