@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ejb.*;
 
@@ -152,4 +153,5 @@ public interface UserBusiness extends com.idega.business.IBOService
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc);
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc);
   public Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, User currentUser);
+  public Map moveUsers(Group parentGroup, int targetGroupId, User currentUser);
 }

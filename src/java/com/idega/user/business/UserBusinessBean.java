@@ -55,7 +55,6 @@ import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
-import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.Name;
@@ -81,7 +80,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   private GroupHome groupHome;
   private UserHome userHome;
-  private UserGroupRepresentativeHome userRepHome;
 
   private EmailHome emailHome;
   private AddressHome addressHome;
@@ -1690,6 +1688,44 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return notMovedUsers;
   }
+
+  public Map moveUsers(Group parentGroup, int targetGroupId, User currentUser) {
+    Collection notMovedUsers = new ArrayList();
+    GroupBusiness groupBiz = null;
+    Group targetGroup = null;
+    try {
+      groupBiz = getGroupBusiness();
+      targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
+    }
+    catch (FinderException ex)  {
+      throw new EJBException("Error getting group for id: "+ targetGroupId +" Message: "+ex.getMessage());
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Collection usersTemp =  getUsersInGroup(parentGroup);
+    // we need remove all
+    Collection users = new ArrayList();
+    users.addAll(usersTemp);
+    Iterator iterator = users.iterator();
+    while (iterator.hasNext()) {
+      User user = (User) iterator.next();
+      boolean successfull = moveUser(user, parentGroup, targetGroup, currentUser);
+      if (! successfull)  {
+        notMovedUsers.add(user);
+      }
+    }
+    users.removeAll(notMovedUsers);
+    Map map = new HashMap();
+    map.put("moved",users);
+    map.put("not_moved",notMovedUsers);    
+    return map;
+  }
+
+
+
+
+
    
   /**
    * @param currentUser user that is responsible for the action
