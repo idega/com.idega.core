@@ -174,16 +174,16 @@ public class SingleLineItem extends Container {
       repaint();
 
     }
-/*
+
     public void mouseReleased(MouseEvent e) {
-        isSelected = !isSelected;
+       // isSelected = !isSelected;
         repaint();
 
         if (actionListener != null) {
             actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, ""));
         }
 
-    }*/
+    }
 
   }
 
