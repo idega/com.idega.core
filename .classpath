@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <classpath>
-  <classpathentry excluding="" kind="src" path="src\java">
+  <classpathentry excluding="" kind="src" path="src/java">
   </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
@@ -15,7 +15,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/cos/jars/cos-05Nov2002.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/servlets.com/jars/cos-05Nov2002.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/jsf-api-1.0.jar">
   </classpathentry>
@@ -25,6 +25,6 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
   </classpathentry>
-  <classpathentry kind="output" path="target\classes">
+  <classpathentry kind="output" path="target/classes">
   </classpathentry>
 </classpath>
