@@ -189,6 +189,7 @@ public class IBOLookup
 				if(iwac!=null){
 					((IBOServiceBean) service).setIWApplicationContext(iwac);
 				}
+				service.initializeBean();
 				getServicesMap(iwac).put(beanInterfaceClass, service);
 			}
 			catch (CreateException cre)

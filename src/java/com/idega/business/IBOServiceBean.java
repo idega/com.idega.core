@@ -1,5 +1,11 @@
 package com.idega.business;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,20 +13,19 @@ import java.util.logging.Logger;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
-import javax.ejb.Handle;
 import javax.ejb.EJBObject;
-import javax.ejb.SessionContext;
+import javax.ejb.Handle;
 import javax.ejb.SessionBean;
-import java.rmi.RemoteException;
+import javax.ejb.SessionContext;
 
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.data.IDOHome;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.logging.LoggingHelper;
-import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.data.IDOHome;
-import com.idega.data.IDOLookup;
 
 /**
  * Title:        idega Business Objects
@@ -34,6 +39,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
   private static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
+  private List actionListeners = new ArrayList();
 
   public IBOServiceBean() {
   }
@@ -44,6 +50,9 @@ public class IBOServiceBean implements IBOService, SessionBean {
   public void ejbCreate()throws CreateException{
   }
   public void ejbPostCreate(){
+  }
+  
+  public void initializeBean() {
   }
   
   public void ejbHomeIboCreate() throws CreateException{
@@ -276,6 +285,20 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	 */
 	protected Level getErrorLogLevel(){
 		return Level.WARNING;
+	}
+	
+	public void addActionListener(ActionListener listener) {
+		if (!actionListeners.contains(listener)) {
+			actionListeners.add(listener);
+		}
+	}
+	
+	public void triggerActionEvent(String command) {
+		ActionEvent e = new ActionEvent(this, 0, command);
+		Iterator iter = actionListeners.iterator();
+		while (iter.hasNext()) {
+			((ActionListener) iter.next()).actionPerformed(e);
+		}
 	}
 
   	//END STANDARD LOGGING METHODS
