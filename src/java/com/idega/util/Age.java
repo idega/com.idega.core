@@ -31,9 +31,14 @@ public class Age {
     return now.get(now.YEAR)- startDate.get(startDate.YEAR);
   }
 
+	public int getMonths(){
+		GregorianCalendar now = new GregorianCalendar();
+		return now.get(now.MONTH)- startDate.get(startDate.MONTH);
+	}
+
   public int getDays(){
     GregorianCalendar now = new GregorianCalendar();
-    return now.get(now.YEAR)- startDate.get(startDate.YEAR);
+    return now.get(now.DATE)- startDate.get(startDate.DATE);
   }
 
   public long getMinutes(){
@@ -53,5 +58,14 @@ public class Age {
 
   public Date getStartDate(){
     return this.startDate.getTime();
+  }
+  
+  public boolean isOlder(Age age) {
+  	boolean isOlder = false;
+
+  	if (getStartDate().before(age.getStartDate()))
+  		isOlder = true;
+  	
+  	return isOlder;
   }
 }
