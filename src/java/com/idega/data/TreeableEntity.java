@@ -133,7 +133,7 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
     }
   }
 
-  public TreeableEntity getParent() {
+  public TreeableEntity getParentEntity() {
     return (TreeableEntity) getParentNode();
   }
 
