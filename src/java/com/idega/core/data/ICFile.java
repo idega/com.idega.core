@@ -9,6 +9,11 @@ import java.sql.SQLException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import com.idega.data.TreeableEntity;
+import com.idega.core.user.data.User;
+import com.idega.presentation.IWContext;
+import com.idega.util.idegaTimestamp;
+import java.util.Iterator;
+import com.idega.idegaweb.IWCacheManager;
 
 
 /**
@@ -23,6 +28,12 @@ import com.idega.data.TreeableEntity;
 public class ICFile extends TreeableEntity {
 
   private static final String FILE_VALUE = "file_value";
+  public static String IC_ROOT_FOLDER_CACHE_KEY = "ic_root_folder";
+  public static String IC_ROOT_FOLDER_NAME = "ICROOT";
+
+  public final static String DELETED = "Y";
+  public final static String NOT_DELETED = "N";
+
 
   public ICFile() {
     super();
@@ -45,6 +56,11 @@ public class ICFile extends TreeableEntity {
     addAttribute(getColumnNameModificationDate(),"Modification date",true,true, java.sql.Timestamp.class);
     addAttribute(getColumnNameFileSize(),"file size in bytes",true,true,java.lang.Integer.class);
 
+    addAttribute(getColumnDeleted(),"Deleted",true,true,String.class,1);
+    addAttribute(getColumnDeletedBy(),"Deleted by",true,true,Integer.class,"many-to-one",User.class);
+    addAttribute(getColumnDeletedWhen(),"Deleted when",true,true,Timestamp.class);
+
+
     addMetaDataRelationship();//can have extra info in the ic_metadata table
 
   }
@@ -63,6 +79,9 @@ public class ICFile extends TreeableEntity {
   public static String getColumnNameModificationDate(){return "MODIFICATION_DATE";}
   public static String getColumnNameFileSize(){return "FILE_SIZE";}
   public static String getColumnNameLanguageId(){return "IC_LANGUAGE_ID";}
+  public static String getColumnDeleted() {return "DELETED";}
+  public static String getColumnDeletedBy() {return "DELETED_BY";}
+  public static String getColumnDeletedWhen() {return "DELETED_WHEN";}
 
   public static String getColumnFileValue(){
     return FILE_VALUE;
@@ -160,6 +179,7 @@ public class ICFile extends TreeableEntity {
     super.update();
   }
 
+// and here are the delete functions
 
   public boolean isLeaf(){
     if(ICMimeType.IC_MIME_TYPE_FOLDER.equalsIgnoreCase(this.getMimeType())){
@@ -169,50 +189,109 @@ public class ICFile extends TreeableEntity {
   }
 
 
-        /*
-      file = new ICFile();
-      file.setName("Audio");
-      file.setMimeType("IC_FOLDER");
-      file.setDescription("The default folder for audio and music");
-      file.insert();
+  public boolean getDeleted() {
+    String deleted = getStringColumnValue(getColumnDeleted());
 
-      file = new ICFile();
-      file.setName("Documents");
-      file.setMimeType("IC_FOLDER");
-      file.setDescription("The default folder for documents");
-      file.insert();
+    if ((deleted == null) || (deleted.equals(NOT_DELETED)))
+      return(false);
+    else if (deleted.equals(DELETED))
+      return(true);
+    else
+      return(false);
+  }
 
+  public void setDeleted(boolean deleted) {
+    if (deleted) {
+      setColumn(getColumnDeleted(),DELETED);
+    }
+    else {
+      setColumn(getColumnDeleted(),NOT_DELETED);
+    }
+  }
 
-      file = new ICFile();
-      file.setName("Flash");
-      file.setMimeType("IC_FOLDER");
-      file.setDescription("The default folder for flash movies");
-      file.insert();
+  public int getDeletedByUserId() {
+    return(getIntColumnValue(getColumnDeletedBy()));
+  }
 
-      file = new ICFile();
-      file.setName("Applications");
-      //file.setMimeType(ICFile.);
-      file.setDescription("The default folder for applications");
-      file.insert();
-      file.addTo(cat);
-
-
-      file = new ICFile();
-      file.setName("Images");
-      file.setMimeType("IC_FOLDER");
-      file.setDescription("The default folder for images");
-      file.insert();
+  private void setDeletedByUserId(int id) {
+    setColumn(getColumnDeletedBy(),id);
+  }
 
 
-      file = new ICFile();
-      file.setName("Movies");
-      file.setMimeType("IC_FOLDER");
-      file.setDescription("The default folder for movies");
-      file.insert();
+  public Timestamp getDeletedWhen() {
+    return((Timestamp)getColumnValue(getColumnDeletedWhen()));
+  }
 
-*/
+  private void setDeletedWhen(Timestamp when) {
+    setColumn(getColumnDeletedWhen(),when);
+  }
 
+  /**
+   * Overrides the delete function because we keep all files
+   * throws every child into the trash also. Recursive function if the file has children
+   */
+  public void delete() throws SQLException {
+    setDeleted(true);
+    setDeletedWhen(idegaTimestamp.getTimestampRightNow());
+    try{
+      IWContext iwc = IWContext.getInstance();
+      setDeletedByUserId(iwc.getUserId());
+    }
+    catch(Exception e){
+     e.printStackTrace(System.err);
+    }
 
+    ICFile file = (ICFile) getParentNode();
+    if( file!= null ) file.removeChild(this);
 
+    Iterator iter = getChildren();
+    if( iter != null ){
+      while (iter.hasNext()) {
+        ICFile item = (ICFile) iter.next();
+        item.delete();
+      }
+    }
+
+    update();
+
+  }
+  /** undeletes this file **/
+  public void unDelete(boolean setICRootAsParent) throws SQLException {
+    setDeleted(false);
+    setDeletedWhen(idegaTimestamp.getTimestampRightNow());
+    try{
+      IWContext iwc = IWContext.getInstance();
+      setDeletedByUserId(iwc.getUserId());
+      if( setICRootAsParent ){
+        IWCacheManager cm = iwc.getApplication().getIWCacheManager();
+        ICFile parent = (ICFile) cm.getCachedEntity(ICFile.IC_ROOT_FOLDER_CACHE_KEY);
+        if( parent!= null ) parent.addChild(this);
+      }
+    }
+    catch(Exception e){
+     e.printStackTrace(System.err);
+    }
+
+    update();
+
+  }
+
+  /**
+   * This method delete the file from the database permenantly. Recursive function if the file has children.
+   * Use with caution!
+   */
+  public void superDelete() throws SQLException {
+    ICFile file = (ICFile) getParentNode();
+    if( file!= null ) file.removeChild(this);
+
+    Iterator iter = getChildren();
+    if( iter != null ){
+      while (iter.hasNext()) {
+        ICFile item = (ICFile) iter.next();
+        item.superDelete();
+      }
+    }
+    super.delete();
+  }
 
 }
