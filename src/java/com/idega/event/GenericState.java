@@ -147,7 +147,7 @@ public class GenericState extends Object implements Cloneable,Serializable {
     state = new Vector();
     while (stoken.hasMoreTokens()) {
       String token = stoken.nextToken();
-      StringTokenizer tmpToken = new StringTokenizer(token,this.STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR);
+      StringTokenizer tmpToken = new StringTokenizer(token,STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR);
       int tokenCount = tmpToken.countTokens();
       if(tokenCount > 1){
         String[] sArray = new String[tokenCount];
