@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.27 2002/02/11 17:15:21 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.28 2002/02/18 12:31:42 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -81,7 +81,12 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
 
           storeObject(IW_MODULEINFO_KEY,iwc);
-          processBusinessEvent(iwc);
+          try{
+            processBusinessEvent(iwc);
+          }
+          catch(ClassNotFoundException ex){
+
+          }
           initializePage();
 	}
 
@@ -93,14 +98,14 @@ public  class IWPresentationServlet extends IWCoreServlet{
 		__main(servReq,servRes);
 	}
 
-        public void processBusinessEvent(IWContext iwc)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
-          String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
-          String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
-          if (eventClass != null) {
-            IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
-            listener.actionPerformed(iwc);
-          }
-        }
+  public void processBusinessEvent(IWContext iwc)throws ClassNotFoundException,IllegalAccessException,IWException,InstantiationException{
+    String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
+    String eventClass = IWMainApplication.decryptClassName(eventClassEncr);
+    if (eventClass != null) {
+      IWEventListener listener = (IWEventListener)Class.forName(eventClass).newInstance();
+      listener.actionPerformed(iwc);
+    }
+  }
 
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
           try {
