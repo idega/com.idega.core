@@ -415,6 +415,10 @@ public class idegaTimestamp{
 
 
   public boolean isLaterThan( idegaTimestamp compareStamp ){
+    if (compareStamp == null) {
+      System.err.println("[idegaTimestamp] \"compateStamp == NULL\"");
+    }
+
 
     if(!this.isTime){
 
