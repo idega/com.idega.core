@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.111 2004/12/03 11:44:08 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.112 2004/12/03 18:35:15 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -14,9 +14,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -33,25 +33,25 @@ import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
-import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.view.ViewManager;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookup;
-import com.idega.event.IWStateMachine;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
 import com.idega.util.LogWriter;
 import com.idega.util.ThreadContext;
+import com.idega.util.reflect.MethodFinder;
+import com.idega.util.reflect.MethodInvoker;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -60,10 +60,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 11:44:08 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 18:35:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.111 $
+ * @version $Revision: 1.112 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -1274,4 +1274,38 @@ public class IWMainApplication {//implements ServletContext{
     		}
     		return windowClassesStaticInstances;
     }
+
+
+
+	//Defined as private variables to speed up reflection:
+	private Object builderLogicInstance;
+	private Method methodIsBuilderApplicationRunning;
+    /**
+     * Returns true if the Builder Application is running for the user.
+     * @return
+     */	
+	public boolean isBuilderApplicationRunning(IWUserContext iwuc){
+		//This method was moved from IWContext but moved here because of static references
+		//Reflection workaround:
+		try{
+			if(builderLogicInstance==null){
+				MethodInvoker invoker = MethodInvoker.getInstance();
+				MethodFinder finder = MethodFinder.getInstance();
+				Class builderLogicClass = Class.forName("com.idega.builder.business.BuilderLogic");
+				builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
+				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
+			}
+			Object[] args = {iwuc};
+			return ((Boolean) methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args)).booleanValue();
+		}
+		catch(Throwable e){
+			e.printStackTrace();
+		}
+		/*return(BuilderLogic.getInstance().isBuilderApplicationRunning(this));
+		 */
+		return false;
+	}
+
+
+
 }
