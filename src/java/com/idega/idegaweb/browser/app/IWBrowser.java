@@ -9,6 +9,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.*;
 import com.idega.presentation.app.IWApplication;
 import com.idega.presentation.ui.Window;
+import com.idega.idegaweb.browser.event.*;
 
 /**
  * <p>Title: idegaWeb</p>
