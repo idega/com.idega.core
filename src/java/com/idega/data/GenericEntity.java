@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.23 2001/06/26 19:01:08 eiki Exp $
+ * $Id: GenericEntity.java,v 1.24 2001/06/28 10:38:04 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -472,6 +472,11 @@ public abstract class GenericEntity implements java.io.Serializable {
 			return -1;
 		}
 	}
+
+
+        public Integer getIntegerColumnValue(String columnName){
+            return (Integer) getValue(columnName);
+        }
 
 	public int getIntColumnValue(String columnName){
 		Integer tempInt = (Integer) getValue(columnName);
