@@ -71,6 +71,7 @@ public class IWMainApplication{//implements ServletContext{
   private LogWriter lw;
   private static IWCacheManager cacheManager;
 
+  public static boolean DEBUG_FLAG = false;
 
   public IWMainApplication(ServletContext application){
     this.application=application;
@@ -595,6 +596,14 @@ public class IWMainApplication{//implements ServletContext{
      return (String)hashClasses.get(hashcode);
     else
      return hashcode;
+  }
+
+  public static void setDebugMode(boolean debugFlag){
+    DEBUG_FLAG = debugFlag;
+  }
+
+  public static boolean isDebugActive(){
+    return DEBUG_FLAG;
   }
 
 }

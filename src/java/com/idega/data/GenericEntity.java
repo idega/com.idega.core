@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.79 2002/02/20 00:03:36 eiki Exp $
+ * $Id: GenericEntity.java,v 1.80 2002/02/21 17:30:48 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2595,4 +2595,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   boolean columnsHaveChanged(){
     return (_updatedColumns!=null);
   }
+
+   /**
+    * This method outputs the outputString to System.out if the Application property
+    * "debug" is set to "TRUE"
+    */
+   public void debug(String outputString){
+    if( com.idega.idegaweb.IWMainApplication.isDebugActive() ){
+      System.out.println("[DEBUG] \""+outputString+"\" : "+this.getEntityName());
+    }
+   }
 }

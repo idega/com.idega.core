@@ -151,5 +151,15 @@ public class IWMainApplicationSettings extends IWPropertyList{
       }
     }
 
+    public boolean getIfDebug(){
+      String value = getProperty("debug");
+      if(value==null){
+        return false;
+      }
+      else{
+        return Boolean.valueOf(value).booleanValue();
+      }
+    }
+
 
 }

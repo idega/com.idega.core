@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.21 2002/02/08 09:55:22 aron Exp $
+ * $Id: PresentationObject.java,v 1.22 2002/02/21 17:30:54 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1043,7 +1043,7 @@ public class PresentationObject extends Object implements Cloneable {
    *  Parameter debugger
    */
    public void debugParameters(IWContext iwc){
-    System.err.println("Parameter debugging : "+this.getClassName());
+    System.err.println("DEBUG: Parameter debugging : "+this.getClassName());
     java.util.Enumeration enum = iwc.getParameterNames();
     String prm;
     while(enum.hasMoreElements()){
@@ -1051,6 +1051,16 @@ public class PresentationObject extends Object implements Cloneable {
       System.err.println("Name: "+prm+"\t Value: "+iwc.getParameter(prm));
     }
     System.err.println();
+   }
+
+   /**
+    * This method outputs the outputString to System.out if the Application property
+    * "debug" is set to "TRUE"
+    */
+   public void debug(String outputString){
+    if( IWMainApplication.isDebugActive() ){
+      System.out.println("[DEBUG] \""+outputString+"\" : "+this.getClassName());
+    }
    }
 
 

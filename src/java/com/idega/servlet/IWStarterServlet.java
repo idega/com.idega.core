@@ -135,6 +135,11 @@ public class IWStarterServlet extends GenericServlet
               e.printStackTrace();
             }
             IWMainApplication application = new IWMainApplication(this.getServletContext());
+            if(application.getSettings().getIfDebug()){
+              IWMainApplication.setDebugMode(true);
+              sendStartMessage("Debug mode is active");
+            }
+
             if(application.getSettings().getIfEntityAutoCreate()){
               EntityControl.setAutoCreationOfEntities(true);
               sendStartMessage("EntityAutoCreation Active");

@@ -276,7 +276,12 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   catch(Exception e){
     System.err.println("Block: Error checking for edit rights");
   }
-    this.cacheKey += iwc.getCurrentLocale().toString()+edit+iwc.getQueryString();
+
+  String locale = iwc.getCurrentLocale().toString();
+  cacheKey += this.getCacheState(iwc,locale+edit,locale,edit);
+
+  /**@todo remove debug**/
+  debug("cachKey = "+cacheKey);
 
    // if(loggedon){
       //String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
@@ -298,6 +303,24 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   protected boolean isCacheable(){
     return this.cacheable;
+  }
+
+  /**
+   * Override this method for correct caching. The cacheStateprefix will always be <br>
+   * of the form CurrentLocal+edit(boolean). It is better to return a string with that <br>
+   * string prefixed to it unless the block output is the same for every local and edit/view rights.
+   * @return cacheStatePrefix
+   */
+  private String getCacheState(IWContext iwc, String cacheStatePrefix, String locale, boolean edit){
+    return cacheStatePrefix;
+  }
+
+  /**
+   * Override this method to invalidate something other than the current state.
+   * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
+   */
+  private void invalidateCache(IWContext iwc){
+    if( cacheKey!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
   }
 
 
