@@ -13,25 +13,32 @@ public class PostalCodeHomeImpl extends com.idega.data.IDOFactory implements Pos
  }
 
 
-public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws java.rmi.RemoteException,javax.ejb.FinderException{
+public java.util.Collection findAllOrdererByCode()throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	Object pk = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0,p1);
+	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindAllOrdererByCode();
 	this.idoCheckInPooledEntity(entity);
-	return this.findByPrimaryKey(pk);
+	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findAll()throws java.rmi.RemoteException,javax.ejb.FinderException{
+public java.util.Collection findAll()throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindAll();
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findByPostalCodeAndCountryId(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
+public java.util.Collection findByPostalCodeAndCountryId(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
 }
 
  public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException{

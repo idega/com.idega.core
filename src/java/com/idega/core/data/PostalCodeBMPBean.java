@@ -19,6 +19,15 @@ import com.idega.data.*;
 
 public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.data.PostalCode {
 
+	static final String TABLE_NAME="IC_POSTAL_CODE";
+	 
+	 static final String COLUMN_POSTAL_CODE_ID="IC_POSTAL_CODE_ID";
+	 static final String COLUMN_POSTAL_CODE="POSTAL_CODE";
+	 static final String COLUMN_NAME="NAME";
+	 static final String COLUMN_COUNTRY_ID="IC_COUNTRY_ID";
+
+	 
+	 
 
 
   public PostalCodeBMPBean(){
@@ -35,9 +44,9 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
 
   public void initializeAttributes(){
     addAttribute(getIDColumnName());
-    addAttribute("postal_code", "Postalcode", true, true, String.class,50);
-    addAttribute("name", "Name", true, true, String.class,50);
-    addManyToOneRelationship("ic_country_id", "Country", Country.class);
+    addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class,50);
+    addAttribute(COLUMN_NAME, "Name", true, true, String.class,50);
+    addManyToOneRelationship(COLUMN_NAME, "Country", Country.class);
   }
 
 
@@ -66,46 +75,46 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
   }
 
   public String getEntityName(){
-    return "ic_postal_code";
+    return TABLE_NAME;
   }
 
   public void setPostalCode(String code){
-    setColumn("postal_code", code);
+    setColumn(COLUMN_POSTAL_CODE, code);
   }
 
   public String getPostalCode(){
-    return getStringColumnValue("postal_code");
+    return getStringColumnValue(COLUMN_POSTAL_CODE);
   }
 
   /**
    * All names are stored in uppercase, uses String.toUpperCase();
    */
   public void setName(String name){
-    setColumn("name", name.toUpperCase());
+    setColumn(COLUMN_NAME, name.toUpperCase());
   }
 
   public String getName(){
-    return getStringColumnValue("name");
+    return getStringColumnValue(COLUMN_NAME);
   }
 
   public void setCountry(Country country){
-    setColumn("ic_country_id",country);
+    setColumn(COLUMN_COUNTRY_ID,country);
   }
 
   public Country getCountry(){
-    return (Country)getColumnValue("ic_country_id");
+    return (Country)getColumnValue(COLUMN_COUNTRY_ID);
   }
 
   public void setCountryID(int country_id){
-    setColumn("ic_country_id",country_id);
+    setColumn(COLUMN_COUNTRY_ID,country_id);
   }
 
   public int getCountryID(){
-    return getIntColumnValue("ic_country_id");
+    return getIntColumnValue(COLUMN_COUNTRY_ID);
   }
 
   public Integer ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException,RemoteException{
-    Collection codes = idoFindAllIDsByColumnsBySQL("postal_code",code, "ic_country_id", Integer.toString(countryId));
+    Collection codes = idoFindAllIDsByColumnsBySQL(COLUMN_POSTAL_CODE,code, COLUMN_COUNTRY_ID, Integer.toString(countryId));
     if(!codes.isEmpty()){
       return (Integer)codes.iterator().next();
     }
@@ -113,12 +122,16 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
   }
 
   public Collection ejbFindByPostalCodeAndCountryId(int countryId)throws FinderException,RemoteException{
-    return idoFindAllIDsByColumnBySQL("ic_country_id", Integer.toString(countryId));
+    return idoFindAllIDsByColumnBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId));
   }
 
 
   public Collection ejbFindAll()throws FinderException,RemoteException{
     return idoFindAllIDsBySQL();
+  }
+  
+  public Collection ejbFindAllOrdererByCode()throws FinderException,RemoteException{
+    return super.idoFindAllIDsOrderedBySQL(COLUMN_POSTAL_CODE);
   }
   
    public String getPostalAddress(){
