@@ -232,30 +232,36 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 			return IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 	}
+	
+	
 	public boolean isParameterSet(String parameterName) {
 		if (parameterName == null)
 			return false;
 		boolean theReturn = false;
-		if (getRequest().getParameter(parameterName) != null && getRequest().getParameter(parameterName).length() > 0) {
+		String value = getParameter(parameterName) ;
+		
+		if (value!= null && value.length() > 0) {
 			theReturn = true;
 		}
-		if (getRequest().getParameter(parameterName + ".x") != null && getRequest().getParameter(parameterName + ".x").length() > 0) {
+		
+		value = getParameter(parameterName + ".x");
+		
+		if(  value != null && value.length() > 0) {
 			theReturn = true;
 		}
 		return theReturn;
 	}
+	
+	
 	public boolean isParameterSet(Parameter parameter) {
-		boolean theReturn = false;
-		if (getRequest().getParameter(parameter.getName()) != null) {
-			theReturn = true;
-		}
-		return theReturn;
+		return isParameterSet( parameter.getName() );
 	}
+	
 	public boolean parameterEquals(Parameter parameter) {
 		boolean theReturn = false;
 		if (parameter != null) {
-			if (getRequest().getParameter(parameter.getName()) != null) {
-				if (getRequest().getParameter(parameter.getName()).equals(parameter.getValue())) {
+			if (getParameter(parameter.getName()) != null) {
+				if (getParameter(parameter.getName()).equals(parameter.getValue())) {
 					theReturn = true;
 				}
 			}
@@ -264,8 +270,8 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	}
 	public boolean parameterEquals(String parameterName, String parameterValue) {
 		boolean theReturn = false;
-		if (getRequest().getParameter(parameterName) != null) {
-			if (getRequest().getParameter(parameterName).equals(parameterValue)) {
+		if (getParameter(parameterName) != null) {
+			if (getParameter(parameterName).equals(parameterValue)) {
 				theReturn = true;
 			}
 		}
