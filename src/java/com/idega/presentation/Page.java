@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.101 2004/03/23 09:39:49 gimmi Exp $
+ *  $Id: Page.java,v 1.102 2004/03/31 22:41:52 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,7 +15,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
@@ -36,6 +35,7 @@ import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
 import com.idega.util.URLUtil;
+import com.idega.util.datastructures.QueueMap;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -71,8 +71,8 @@ public class Page extends PresentationObjectContainer {
 	private String _templateId = null;
 	private Hashtable _styleDefinitions;
 	private Hashtable _metaTags;
-	private Vector _styleSheets;
-	private Vector _javascripts;
+	private QueueMap _styleSheets;
+	private QueueMap _javascripts;
 	private Hashtable _HTTPEquivs;
 	protected Map _localizationMap;
 
@@ -194,15 +194,15 @@ public class Page extends PresentationObjectContainer {
 
 	public void addStyleSheetURL(String URL) {
 		if (_styleSheets == null) {
-			_styleSheets = new Vector();
+			_styleSheets = new QueueMap();
 		}
-		_styleSheets.add(URL);
+		_styleSheets.put(URL,URL);
 	}
 
 	private String getStyleSheetURL(String markup) {
-		if (_styleSheets != null) {
+		if (_styleSheets != null && !_styleSheets.isEmpty()) {
 			StringBuffer buffer = new StringBuffer();
-			Iterator iter = _styleSheets.iterator();
+			Iterator iter = _styleSheets.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
 				buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" "+(!markup.equals(HTML) ? "/" : "")+">\n");
@@ -214,15 +214,15 @@ public class Page extends PresentationObjectContainer {
 
 	public void addJavascriptURL(String URL) {
 		if (_javascripts == null) {
-			_javascripts = new Vector();
+			_javascripts = new QueueMap();
 		}
-		_javascripts.add(URL);
+		_javascripts.put(URL,URL);
 	}
 
 	private String getJavascriptURL() {
-		if (_javascripts != null) {
+		if (_javascripts != null && !_javascripts.isEmpty()) {
 			StringBuffer buffer = new StringBuffer();
-			Iterator iter = _javascripts.iterator();
+			Iterator iter = _javascripts.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
 				buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
