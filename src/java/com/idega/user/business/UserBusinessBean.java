@@ -1904,9 +1904,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     Iterator iteratorUserGroups = coll.iterator();
     while (iteratorUserGroups.hasNext())  {
       Group group = (Group) iteratorUserGroups.next();
-      int id = ((Integer) group.getPrimaryKey()).intValue();
-      if (id == targetGroupId)  {
-        return iwrb.getLocalizedString("age_gender_user_already_member_of_the_target_group", "The user is already a member of the target group");
+      // this is really stupid testing but the method above returns sometimes a collection with null values
+      if (group != null) {
+        int id = ((Integer) group.getPrimaryKey()).intValue();
+        if (id == targetGroupId)  {
+          return iwrb.getLocalizedString("age_gender_user_already_member_of_the_target_group", "The user is already a member of the target group");
+        }
       }
     }
     try {
