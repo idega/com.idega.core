@@ -32,5 +32,12 @@ public boolean updateClassReferences(java.lang.String p0,java.lang.Class p1)thro
 	return theReturn;
 }
 
+public boolean updateStartData()throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	boolean theReturn = ((ICObjectTypeBMPBean)entity).ejbHomeUpdateStartData();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

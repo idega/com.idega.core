@@ -1,7 +1,7 @@
 package com.idega.core.component.data;
 
 
-public interface ICObjectType extends com.idega.data.IDOEntity,com.idega.core.component.data.BundleComponent
+public interface ICObjectType extends com.idega.data.IDOEntity, BundleComponent
 {
  public java.lang.Class getFinalReflectionClass();
  public java.lang.String getFinalReflectionClassName();

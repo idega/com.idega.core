@@ -7,13 +7,12 @@
 package com.idega.core.component.data;
 
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
@@ -40,6 +39,18 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
   private static final String COLUMN_REQUIRED_INTERFACES = "REQ_INTERFACES";
   private static final String COLUMN_METHOD_START_FILTERS = "METHOD_START_FILTERS";
 
+  // be careful when changing the order of the columns because of the methods insertData and updateStartData
+  private static final String[][] startData = {
+  		{ "iw.element","Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{"iw.block","Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{"iw.application","Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{"iw.application.component","Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{"iw.data","Data", null, IDOEntity.class.getName(), null, "get,set"},
+		{"iw.home","Home", null, IDOHome.class.getName(), null, "find,get"},
+		{"iw.propertyhandler","Property handler", null, ICPropertyHandler.class.getName(), null, "set"},
+		{"iw.plugin.user","User Plugin", null, null, null, null}
+  };
+  
 
 	public String getEntityName() {
 		return TABLE_NAME;
@@ -58,14 +69,11 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 
 
 	public void insertStartData(){
-		insertData("iw.element","Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
-		insertData("iw.block","Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
-		insertData("iw.application","Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
-		insertData("iw.application.component","Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set");
-		insertData("iw.data","Data", null, IDOEntity.class.getName(), null, "get,set");
-		insertData("iw.home","Home", null, IDOHome.class.getName(), null, "find,get");
-		insertData("iw.propertyhandler","Property handler", null, ICPropertyHandler.class.getName(), null, "set");
+		for (int i=0; i < startData.length; i++) {
+			insertData(startData[i][0], startData[i][1], startData[i][2], startData[i][3], startData[i][4], startData[i][5]);
+		}
 	}
+
 
 	private void insertData(String objectType, String objectName, String superClass, String interfaces, String reflection, String filters) {
 		try {
@@ -88,7 +96,6 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		}
 	}
 	
-
 	public String getName() {
 		return getStringColumnValue(COLUMN_NAME);
 	}
@@ -169,6 +176,25 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		return idoExecuteTableUpdate(query.toString());
 	}
 	
+	public boolean ejbHomeUpdateStartData() throws IDOException  {
+		boolean updated = false;
+		for (int i=0; i < startData.length; i++) {
+			String objectType = startData[i][0];
+			int number;
+			try {
+				number = getNumberOfRecordsForStringColumn(COLUMN_TYPE,"=",objectType);
+			}
+			catch (SQLException e) {
+				throw new IDOException(e, this);
+			}
+			// does this object type already exist? if not create it.
+			if (number < 1) {
+				updated = true;
+				insertData(objectType, startData[i][1], startData[i][2], startData[i][3], startData[i][4], startData[i][5]);
+			}
+		}
+		return updated;
+	}
 	
 	public String type() {
 		return getType();
