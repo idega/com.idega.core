@@ -63,8 +63,9 @@ public Image(String url){
 
 public Image(String url,String name){
 	super();
-        if( "".equalsIgnoreCase(name) ) name = this.generateID();
+	if( "".equalsIgnoreCase(name) ) name = this.generateID();
 	setName(name);
+	setAlt(name);
 	setURL(url);
 	setBorder(0);
 }
@@ -72,6 +73,7 @@ public Image(String url,String name){
 public Image(String name,String url, String overImageUrl){
 	super();
 	setName(name);
+	setAlt(name);
 	setURL(url);
 	setBorder(0);
 
@@ -93,6 +95,7 @@ public Image(String name,String url, String overImageUrl, String downImageUrl){
 public Image(String url,String name,int width,int height){
   super();
   setName(name);
+  setAlt(name);
   setURL(url);
   setWidth(width);
   setHeight(height);
@@ -113,6 +116,7 @@ public Image(int imageId) throws SQLException{
 public Image(int imageId, String name) throws SQLException{
   this(imageId);
   setName(name);
+  setAlt(name);
 }
 
 public Image(int imageId, int width, int height) throws SQLException{
@@ -150,11 +154,11 @@ private void getImage(IWContext iwc) throws SQLException{
   //**@todo: remove this when no longer needed
 
       if( usesOldImageTables ){
-        image2 = (com.idega.jmodule.image.data.ImageEntity) cachedImage.getEntity();
+	image2 = (com.idega.jmodule.image.data.ImageEntity) cachedImage.getEntity();
       }
       else
       {
-        image = (ImageEntity) cachedImage.getEntity();
+	image = (ImageEntity) cachedImage.getEntity();
       }
 
       setURL(cachedImage.getVirtualPathToFile());
@@ -286,13 +290,13 @@ public int getImageID(IWContext iwc){
 
       Integer localizedImageID = (Integer)this.getImageLocalizationMap().get(currLocale);
       if(localizedImageID!=null){
-        return localizedImageID;
+	return localizedImageID;
       }
       else{
-        Integer defImageID = (Integer)this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
-        if(defImageID!=null){
-          return defImageID;
-        }
+	Integer defImageID = (Integer)this.getImageLocalizationMap().get(iwc.getApplication().getSettings().getDefaultLocale());
+	if(defImageID!=null){
+	  return defImageID;
+	}
       }
     }
     return null;
@@ -392,7 +396,8 @@ private String getHTMLString(){
   sPrint.append("<img ");
   //alt always added for standards compliancy
   sPrint.append("alt=\"");
-  if( getAlt()!=null ){
+  /** @todo Fix this shitty mix!!! */
+  if( getAlt()!=null && (getAlt().length() > 2 && !getAlt().substring(0,2).equals("id")) ){
     sPrint.append(getAlt());
   }
   sPrint.append("\" ");
@@ -430,17 +435,17 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
       String height = null;
 
       if( usesOldImageTables ){
-        texti = image2.getText();
-        link = image2.getLink();
-        name = image2.getName();
-        width = image2.getWidth();
-        height = image2.getHeight();
+	texti = image2.getText();
+	link = image2.getLink();
+	name = image2.getName();
+	width = image2.getWidth();
+	height = image2.getHeight();
       }
       else
       {
-        //texti = image.getDescription();
-        //link = image.getLink();
-        name = image.getName();
+	//texti = image.getDescription();
+	//link = image.getLink();
+	name = image.getName();
        // width = image.getWidth();
        // height = image.getHeight();
       }
@@ -448,86 +453,86 @@ if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()
      // if( getName() != null && name != null ) setName(name);
 
       if(!limitImageWidth){
-        if( (width!=null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")) ) {
-          setWidth(width);
-        }
-        if( (height!=null) && (!height.equalsIgnoreCase("")) && (!height.equalsIgnoreCase("-1")) ) {
-          setHeight(height);
-        }
+	if( (width!=null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")) ) {
+	  setWidth(width);
+	}
+	if( (height!=null) && (!height.equalsIgnoreCase("")) && (!height.equalsIgnoreCase("-1")) ) {
+	  setHeight(height);
+	}
       }
       else{
-        if ( (width!=null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")) ) {
-          if ( Integer.parseInt(width) > maxImageWidth ) {
-            setWidth(maxImageWidth);
-          }
-        }
-        else {
-          setWidth(maxImageWidth);
-        }
+	if ( (width!=null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")) ) {
+	  if ( Integer.parseInt(width) > maxImageWidth ) {
+	    setWidth(maxImageWidth);
+	  }
+	}
+	else {
+	  setWidth(maxImageWidth);
+	}
       }
 
       if ( (texti!=null) && (!"".equalsIgnoreCase(texti)) ){
-        Table imageTable = new Table(1, 2);
-        imageTable.setAlignment("center");
-        imageTable.setAlignment(1,1,"center");
-        imageTable.setAlignment(1,2,"left");
-        imageTable.setVerticalAlignment("top");
-        //imageTable.setCellpadding(0);
-        //imageTable.setCellspacing(0);
-        imageTable.setColor(1,2,textBgColor);
-        String sWidth = getWidth();
+	Table imageTable = new Table(1, 2);
+	imageTable.setAlignment("center");
+	imageTable.setAlignment(1,1,"center");
+	imageTable.setAlignment(1,2,"left");
+	imageTable.setVerticalAlignment("top");
+	//imageTable.setCellpadding(0);
+	//imageTable.setCellspacing(0);
+	imageTable.setColor(1,2,textBgColor);
+	String sWidth = getWidth();
 
-        if( (sWidth!=null) && (!sWidth.equalsIgnoreCase(""))  && (!limitImageWidth) ){
-          imageTable.setWidth(sWidth);
-        }
-        else if( limitImageWidth ){
-          imageTable.setWidth(maxImageWidth);
-        }
+	if( (sWidth!=null) && (!sWidth.equalsIgnoreCase(""))  && (!limitImageWidth) ){
+	  imageTable.setWidth(sWidth);
+	}
+	else if( limitImageWidth ){
+	  imageTable.setWidth(maxImageWidth);
+	}
 
-        Text imageText = new Text(texti);
-        imageText.setFontSize(1);
+	Text imageText = new Text(texti);
+	imageText.setFontSize(1);
 
-        if ( (link!=null) && (!"".equalsIgnoreCase(link)) ){//has a link
-          Link textLink = new Link(imageText,link);
-          textLink.setTarget("_new");
-          textLink.setFontSize(1);
-          imageTable.add(textLink, 1, 2);//add the text with the link on it
+	if ( (link!=null) && (!"".equalsIgnoreCase(link)) ){//has a link
+	  Link textLink = new Link(imageText,link);
+	  textLink.setTarget("_new");
+	  textLink.setFontSize(1);
+	  imageTable.add(textLink, 1, 2);//add the text with the link on it
 
-          //should we add the image with a link? or just the image
-          if( zoomView ){
-            Link imageLink = new Link(getHTMLString());
-            imageLink.addParameter("image_id",imageId);
-            imageTable.add(imageLink, 1, 1);
-          }
-          else if( (!zoomView) && (linkOnImage) ) {
-            Link imageLink = new Link(getHTMLString(), link);
-            imageLink.setTarget("_new");
-            imageTable.add(imageLink, 1, 1);
-          }
-          else imageTable.add(getHTMLString(),1,1);
+	  //should we add the image with a link? or just the image
+	  if( zoomView ){
+	    Link imageLink = new Link(getHTMLString());
+	    imageLink.addParameter("image_id",imageId);
+	    imageTable.add(imageLink, 1, 1);
+	  }
+	  else if( (!zoomView) && (linkOnImage) ) {
+	    Link imageLink = new Link(getHTMLString(), link);
+	    imageLink.setTarget("_new");
+	    imageTable.add(imageLink, 1, 1);
+	  }
+	  else imageTable.add(getHTMLString(),1,1);
 
-        }
-        else{//or no link
+	}
+	else{//or no link
 
-          if( zoomView ){
-            Link imageLink = new Link(getHTMLString());
-            imageLink.addParameter("image_id",imageId);
-            imageTable.add(imageLink, 1, 1);
-          }
-          else imageTable.add(getHTMLString(),1,1);
+	  if( zoomView ){
+	    Link imageLink = new Link(getHTMLString());
+	    imageLink.addParameter("image_id",imageId);
+	    imageTable.add(imageLink, 1, 1);
+	  }
+	  else imageTable.add(getHTMLString(),1,1);
 
-          imageTable.add(imageText, 1, 2);
-        }
+	  imageTable.add(imageText, 1, 2);
+	}
 
-        imageTable.print(iwc);
+	imageTable.print(iwc);
       }
       else  {
-        if(zoomView){
-          Link imageLink = new Link(getHTMLString());
-          imageLink.addParameter("image_id",imageId);
-          imageLink.print(iwc);
-        }
-        else print(getHTMLString());
+	if(zoomView){
+	  Link imageLink = new Link(getHTMLString());
+	  imageLink.addParameter("image_id",imageId);
+	  imageLink.print(iwc);
+	}
+	else print(getHTMLString());
       }
     }//end debug
   }
@@ -598,7 +603,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     try {
       obj = (Image)super.clone();
       if(theAssociatedScript != null){
-        obj.theAssociatedScript = (Script)this.theAssociatedScript.clone();
+	obj.theAssociatedScript = (Script)this.theAssociatedScript.clone();
       }
 
       obj.overImageUrl = this.overImageUrl;
@@ -621,14 +626,14 @@ public void limitImageWidth( boolean limitImageWidth ){
     if( this.overImageUrl != null ){
       Page parent = getParentPage();
       if( parent!=null ){
-        Script rollOverScript = parent.getAssociatedScript();
-        rollOverScript.addFunction("swapImgRestore()","function swapImgRestore() {var i,x,a=document.sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;}");
-        rollOverScript.addFunction("preLoadImages()","function preLoadImages(){var d=document; if(d.images){ if(!d.p) d.p=new Array(); var i,j=d.p.length,a=preLoadImages.arguments; for(i=0; i<a.length; i++)  if (a[i].indexOf(\"#\")!=0){ d.p[j]=new Image; d.p[j++].src=a[i];}}}");
-        rollOverScript.addFunction("findObj(n, d)","function findObj(n, d){var p,i,x;  if(!d) d=document; if((p=n.indexOf(\"?\"))>0&&parent.frames.length) {  d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=findObj(n,d.layers[i].document); return x;}");
-        rollOverScript.addFunction("swapImage()","function swapImage(){ var i,j=0,x,a=swapImage.arguments; document.sr=new Array; for(i=0;i<(a.length-2);i+=3) if ((x=findObj(a[i]))!=null){document.sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}}");
+	Script rollOverScript = parent.getAssociatedScript();
+	rollOverScript.addFunction("swapImgRestore()","function swapImgRestore() {var i,x,a=document.sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;}");
+	rollOverScript.addFunction("preLoadImages()","function preLoadImages(){var d=document; if(d.images){ if(!d.p) d.p=new Array(); var i,j=d.p.length,a=preLoadImages.arguments; for(i=0; i<a.length; i++)  if (a[i].indexOf(\"#\")!=0){ d.p[j]=new Image; d.p[j++].src=a[i];}}}");
+	rollOverScript.addFunction("findObj(n, d)","function findObj(n, d){var p,i,x;  if(!d) d=document; if((p=n.indexOf(\"?\"))>0&&parent.frames.length) {  d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=findObj(n,d.layers[i].document); return x;}");
+	rollOverScript.addFunction("swapImage()","function swapImage(){ var i,j=0,x,a=swapImage.arguments; document.sr=new Array; for(i=0;i<(a.length-2);i+=3) if ((x=findObj(a[i]))!=null){document.sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}}");
 
-        parent.setAssociatedScript(rollOverScript);
-        parent.setOnLoad("preLoadImages('"+overImageUrl+"')");
+	parent.setAssociatedScript(rollOverScript);
+	parent.setOnLoad("preLoadImages('"+overImageUrl+"')");
       }
     }
   }
@@ -641,10 +646,10 @@ public void limitImageWidth( boolean limitImageWidth ){
       //Change the imageId so that it is localized
       imageId = this.getImageID(iwc);
       if( imageId == -1 ){//from an url
-          print(getHTMLString());
+	  print(getHTMLString());
       }
       else{//from the database
-        getHTMLImage(iwc);
+	getHTMLImage(iwc);
       }
     }
   }

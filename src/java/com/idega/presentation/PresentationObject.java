@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.22 2002/02/21 17:30:54 eiki Exp $
+ * $Id: PresentationObject.java,v 1.23 2002/02/22 12:38:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,6 +26,7 @@ import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.data.EntityFinder;
 import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.presentation.ui.Form;
@@ -125,7 +126,7 @@ public class PresentationObject extends Object implements Cloneable {
     }
     else {
       while (tempobj.getParentObject() != null ) {
-        tempobj = tempobj.getParentObject();
+	tempobj = tempobj.getParentObject();
       }
       return tempobj;
     }
@@ -172,10 +173,10 @@ public class PresentationObject extends Object implements Cloneable {
     if (this.doPrint) {
       PresentationObject parent = getParentObject();
       if (parent == null) {
-        return this.doPrint;
+	return this.doPrint;
       }
       else {
-        return parent.doPrint(iwc);
+	return parent.doPrint(iwc);
       }
     }
     else {
@@ -237,11 +238,11 @@ public class PresentationObject extends Object implements Cloneable {
     if(attributeString !=  null && attributeString.length() > 1){
       StringTokenizer tokens = new StringTokenizer(attributeString),tok;
       while(tokens.hasMoreTokens()){
-        String s = tokens.nextToken();//.replace('"',' ');
-        tok = new StringTokenizer(s,"=\"");
-        if(tok.countTokens() == 2){
-          map.put(tok.nextToken(),tok.nextToken());
-        }
+	String s = tokens.nextToken();//.replace('"',' ');
+	tok = new StringTokenizer(s,"=\"");
+	if(tok.countTokens() == 2){
+	  map.put(tok.nextToken(),tok.nextToken());
+	}
       }
     }
     return map;
@@ -287,17 +288,17 @@ public class PresentationObject extends Object implements Cloneable {
     if (map != null) {
       Iterator i = map.entrySet().iterator();
       while (i.hasNext()) {
-        mapEntry = (Map.Entry) i.next();
-        Attribute = (String) mapEntry.getKey();
-        returnString.append(" ");
-        returnString.append(Attribute);
-        attributeValue = (String) mapEntry.getValue();
-        if(!attributeValue.equals(slash)){
-          returnString.append("=\"");
-          returnString.append(attributeValue);
-          returnString.append("\"");
-        }
-        returnString.append("");
+	mapEntry = (Map.Entry) i.next();
+	Attribute = (String) mapEntry.getKey();
+	returnString.append(" ");
+	returnString.append(Attribute);
+	attributeValue = (String) mapEntry.getValue();
+	if(!attributeValue.equals(slash)){
+	  returnString.append("=\"");
+	  returnString.append(attributeValue);
+	  returnString.append("\"");
+	}
+	returnString.append("");
       }
     }
     return returnString.toString();
@@ -311,16 +312,16 @@ public class PresentationObject extends Object implements Cloneable {
     if (this.attributes != null) {
       Enumeration e = attributes.keys();
       while (e.hasMoreElements()) {
-        Attribute = (String)e.nextElement();
-        returnString.append(" ");
-        returnString.append(Attribute);
-        String attributeValue=getAttribute(Attribute);
-        if(!attributeValue.equals(slash)){
-          returnString.append("=\"");
-          returnString.append(attributeValue);
-          returnString.append("\"");
-        }
-        returnString.append("");
+	Attribute = (String)e.nextElement();
+	returnString.append(" ");
+	returnString.append(Attribute);
+	String attributeValue=getAttribute(Attribute);
+	if(!attributeValue.equals(slash)){
+	  returnString.append("=\"");
+	  returnString.append(attributeValue);
+	  returnString.append("\"");
+	}
+	returnString.append("");
       }
     }
 
@@ -482,12 +483,12 @@ public class PresentationObject extends Object implements Cloneable {
     }
     while (obj != null) {
       if (obj instanceof Page) {
-        returnPage = (Page)obj;
+	returnPage = (Page)obj;
       }
       if(obj instanceof IFrameContent){
-        obj = ((IFrameContent)obj).getOwnerInstance();
+	obj = ((IFrameContent)obj).getOwnerInstance();
       }else {
-        obj = obj.getParentObject();
+	obj = obj.getParentObject();
       }
     }
 
@@ -515,7 +516,7 @@ public class PresentationObject extends Object implements Cloneable {
     PresentationObject obj = getParentObject();
     while (obj != null) {
       if (obj instanceof Form) {
-        returnForm = (Form)obj;
+	returnForm = (Form)obj;
       }
       obj = obj.getParentObject();
     }
@@ -530,17 +531,17 @@ public class PresentationObject extends Object implements Cloneable {
     PresentationObject obj = this;
     while (obj != null) {
       if (obj.getICObjectInstanceID() != 0) {
-        return obj;
+	return obj;
       }
       if(obj instanceof IFrameContent){
-        obj = ((IFrameContent)obj).getOwnerInstance();
+	obj = ((IFrameContent)obj).getOwnerInstance();
       }else {
-        obj = obj.getParentObject();
+	obj = obj.getParentObject();
       }
     }
     return null;
   }
-        // getContainingObjectInstanceID
+	// getContainingObjectInstanceID
   public int getParentObjectInstanceID() {
     PresentationObject obj = getParentObjectInstance();
     if(obj != null){
@@ -561,9 +562,9 @@ public class PresentationObject extends Object implements Cloneable {
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
     if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
-        return this.clone(iwc,askForPermission);
+	return this.clone(iwc,askForPermission);
       } else {
-        return NULL_CLONE_OBJECT;
+	return NULL_CLONE_OBJECT;
       }
     } else {
       return this.clone();
@@ -586,7 +587,7 @@ public class PresentationObject extends Object implements Cloneable {
       //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
       obj = (PresentationObject)super.clone();
       if (this.attributes != null) {
-        obj.setAttribute((Hashtable)this.attributes.clone());
+	obj.setAttribute((Hashtable)this.attributes.clone());
       }
       obj.setName(this.name);
       //obj.setParentObject(this.parentObject);
@@ -613,7 +614,7 @@ public class PresentationObject extends Object implements Cloneable {
       //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
       obj = (PresentationObject)super.clone();
       if (this.attributes != null) {
-        obj.setAttribute((Hashtable)this.attributes.clone());
+	obj.setAttribute((Hashtable)this.attributes.clone());
       }
       obj.setName(this.name);
       //obj.setParentObject(this.parentObject);
@@ -640,13 +641,13 @@ public class PresentationObject extends Object implements Cloneable {
     String sID = iwc.getParameter(_PARAMETER_IC_OBJECT_INSTANCE_ID);
     try {
       if(sID != null){
-        System.err.println("sID: "+sID);
-        this.setICObjectInstanceID(Integer.parseInt(sID));
-        //this.ic_object_instance_id = Integer.parseInt(sID);
-        System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
-        System.err.println("getICObjectInstanceID: "+this.getICObjectInstanceID());
+	System.err.println("sID: "+sID);
+	this.setICObjectInstanceID(Integer.parseInt(sID));
+	//this.ic_object_instance_id = Integer.parseInt(sID);
+	System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
+	System.err.println("getICObjectInstanceID: "+this.getICObjectInstanceID());
       }else{
-        System.err.println("sID == null");
+	System.err.println("sID == null");
       }
     }
     catch (NumberFormatException ex) {
@@ -745,7 +746,7 @@ public class PresentationObject extends Object implements Cloneable {
 
       ICObject ob = inst.getObject();
       if(ob != null){
-        return ob.getID();
+	return ob.getID();
       }
     }
     return 0;*/
@@ -799,7 +800,7 @@ public class PresentationObject extends Object implements Cloneable {
 
     public IWSubmitListener[] getIWSubmitListeners(){
       if (listenerList == null){
-        listenerList = new EventListenerList();
+	listenerList = new EventListenerList();
       }
       return (IWSubmitListener[])listenerList.getListeners(IWSubmitListener.class);
     }
@@ -814,52 +815,52 @@ public class PresentationObject extends Object implements Cloneable {
 
     public Object getEventAttribute(String attributeName){
       if (this.eventAttributes != null){
-        return this.eventAttributes.get((Object) attributeName);
+	return this.eventAttributes.get((Object) attributeName);
       }
       else{
-        return null;
+	return null;
       }
     }
 
 
 
      public void dispatchEvent(IWEvent e) {
-          processEvent(e);
+	  processEvent(e);
     }
 
 
       protected void processEvent(IWEvent e) {
 
-          if (e instanceof IWLinkEvent) {
-              processIWLinkEvent((IWLinkEvent)e);
+	  if (e instanceof IWLinkEvent) {
+	      processIWLinkEvent((IWLinkEvent)e);
 
-          } else if (e instanceof IWSubmitEvent) {
-              processIWSubmitEvent((IWSubmitEvent)e);
-          } else{
-              System.err.println("unable to prosess event: " + e);
-          }
+	  } else if (e instanceof IWSubmitEvent) {
+	      processIWSubmitEvent((IWSubmitEvent)e);
+	  } else{
+	      System.err.println("unable to prosess event: " + e);
+	  }
       }
 
       protected void processIWLinkEvent(IWLinkEvent e) {
-        PresentationObject obj = (PresentationObject)e.getSource();
-        // Guaranteed to return a non-null array
-        IWLinkListener[] listeners = obj.getIWLinkListeners();
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-1; i>=0; i--) {
-          ((IWLinkListener)listeners[i]).actionPerformed(e);
-        }
+	PresentationObject obj = (PresentationObject)e.getSource();
+	// Guaranteed to return a non-null array
+	IWLinkListener[] listeners = obj.getIWLinkListeners();
+	// Process the listeners last to first, notifying
+	// those that are interested in this event
+	for (int i = listeners.length-1; i>=0; i--) {
+	  ((IWLinkListener)listeners[i]).actionPerformed(e);
+	}
       }
 
       protected void processIWSubmitEvent(IWSubmitEvent e) {
-        PresentationObject obj = (PresentationObject)e.getSource();
-        // Guaranteed to return a non-null array
-        IWSubmitListener[] listeners = obj.getIWSubmitListeners();
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-1; i>=0; i--) {
-          ((IWSubmitListener)listeners[i]).actionPerformed(e);
-        }
+	PresentationObject obj = (PresentationObject)e.getSource();
+	// Guaranteed to return a non-null array
+	IWSubmitListener[] listeners = obj.getIWSubmitListeners();
+	// Process the listeners last to first, notifying
+	// those that are interested in this event
+	for (int i = listeners.length-1; i>=0; i--) {
+	  ((IWSubmitListener)listeners[i]).actionPerformed(e);
+	}
       }
 
 
@@ -890,7 +891,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   public EventListenerList getEventListenerList(){
     if (listenerList == null){
-        listenerList = new EventListenerList();
+	listenerList = new EventListenerList();
     }
     return listenerList;
   }
@@ -1007,7 +1008,7 @@ public class PresentationObject extends Object implements Cloneable {
     if(stateString != null){
       state = getStateInstance(iwc);
       if(state != null){
-        state.updateState(stateString);
+	state.updateState(stateString);
       }
     }else {
       state = getDefaultState();
@@ -1061,6 +1062,10 @@ public class PresentationObject extends Object implements Cloneable {
     if( IWMainApplication.isDebugActive() ){
       System.out.println("[DEBUG] \""+outputString+"\" : "+this.getClassName());
     }
+   }
+
+   public String getBuilderName(IWUserContext iwc) {
+      return this.getClassName().substring(this.getClassName().lastIndexOf(".")+1);
    }
 
 
