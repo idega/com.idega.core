@@ -785,7 +785,7 @@ public void setCacheWriter(PrintWriter writer){
 
 
   /**
-   * Expensive function, not recommended to use frequently
+   * Expensive method, not recommended to use frequently
    */
   public static IWContext getInstance(){
     return com.idega.servlet.IWPresentationServlet.getIWContext();
