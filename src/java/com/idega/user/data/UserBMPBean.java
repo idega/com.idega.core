@@ -256,7 +256,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
      * and uses setFirstName(),setMiddleName() and setLastName().
      */
     public void setFullName(String name) {
-      if( name.length() > 0 ){
+      if( (name!=null) && (name.length() > 0) ){
         StringTokenizer token = new StringTokenizer(name);
         int countWithoutLast = token.countTokens()-1;
 
