@@ -53,8 +53,8 @@ import com.idega.xml.XMLElement;
  */
 public class IBExportImportDataReader extends ReaderFromFile implements ObjectReader {
 	
-	// moduleName :  propertyName : value -> zipEntryName
-	private HashMatrix modulePropertyValueEntryName = null;
+	// moduleName :  propertyName : parameterId : value -> zipEntryName
+	private HashMatrix modulePropertyParameterIdValueEntryName = null;
 	private Map entryNameHolder = null;
 	private Map pageIdHolder = null;
 	private Map oldNewInstanceId = null;
@@ -107,7 +107,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 	}	
 		
 	private void createExternalData(File sourceFile) throws IOException, RemoteException {
-		modulePropertyValueEntryName = new HashMatrix();
+		modulePropertyParameterIdValueEntryName = new HashMatrix();
 		IBReferences references = new IBReferences(iwc);
 		List nonPages = ((IBExportImportData) storable).getNonPageFileElements();
 		Iterator nonPageIterator = nonPages.iterator();
@@ -134,17 +134,18 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 			}
 			String moduleName = nonPageElement.getTextTrim(XMLConstants.FILE_MODULE);
 			String propertyName = nonPageElement.getTextTrim(XMLConstants.FILE_NAME);
+			String parameterId = nonPageElement.getTextTrim(XMLConstants.FILE_PARAMETER_ID);
 			String value = nonPageElement.getTextTrim(XMLConstants.FILE_VALUE);
-			Map entryMap = null;
-			if (modulePropertyValueEntryName.containsKey(moduleName, propertyName)) {
-				entryMap = (Map) modulePropertyValueEntryName.get(moduleName, propertyName);
+			HashMatrix  parameterIdValueEntryMap = null;
+			if (modulePropertyParameterIdValueEntryName.containsKey(moduleName, propertyName)) {
+				parameterIdValueEntryMap = (HashMatrix) modulePropertyParameterIdValueEntryName.get(moduleName, propertyName);
 			}
 			else {
-				entryMap = new HashMap();
-				modulePropertyValueEntryName.put(moduleName, propertyName, entryMap);
+				parameterIdValueEntryMap = new HashMatrix();
+				modulePropertyParameterIdValueEntryName.put(moduleName, propertyName, parameterIdValueEntryMap);
 			}
-			if (! entryMap.containsKey(value)) {
-				entryMap.put(value, zipEntryName);
+			if (! parameterIdValueEntryMap.containsKey(parameterId, value)) {
+				parameterIdValueEntryMap.put(parameterId, value, zipEntryName);
 			}
 		}
 	}
@@ -380,17 +381,24 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 			}
 			// ask for the name of the property
 			String propertyName = element.getTextTrim(XMLConstants.NAME_STRING);
-			// do we have a reference with that source and name?
-			if (modulePropertyValueEntryName.containsKey(moduleName, propertyName)) {
-				Map valueEntryName = (Map) modulePropertyValueEntryName.get(moduleName, propertyName);
-				// ask for the value
-				String value = element.getTextTrim(XMLConstants.VALUE_STRING);
-				if (valueEntryName.containsKey(value)) {
-					String entryName = (String) valueEntryName.get(value);
-					StorableHolder holder = (StorableHolder) entryNameHolder.get(entryName);
-					// set the value
-					String newValue = holder.getValue();
-					element.setContent(XMLConstants.VALUE_STRING, newValue);
+			// does a reference with that source and name exist?
+			if (modulePropertyParameterIdValueEntryName.containsKey(moduleName, propertyName)) {
+				HashMatrix parameterIdValueEntryNameMap = (HashMatrix) modulePropertyParameterIdValueEntryName.get(moduleName, propertyName);
+				List values = element.getChildren(XMLConstants.VALUE_STRING);
+				Iterator valuesIterator = values.iterator();
+				int index = 1;
+				while (valuesIterator.hasNext()) {
+					XMLElement valueElement = (XMLElement) valuesIterator.next();
+					// ask for the value
+					String parameterId = Integer.toString(index++);
+					String value = valueElement.getTextTrim();
+					if (parameterIdValueEntryNameMap.containsKey(parameterId, value)) {
+						String entryName = (String) parameterIdValueEntryNameMap.get(parameterId, value);
+						StorableHolder holder = (StorableHolder) entryNameHolder.get(entryName);
+						// set the value
+						String newValue = holder.getValue();
+						valueElement.setText(newValue);
+					}
 				}
 			}
 		}
