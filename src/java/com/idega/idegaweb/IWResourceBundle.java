@@ -137,17 +137,28 @@ public class IWResourceBundle extends ResourceBundle {
 
     public void storeState() {
       try {
-	properties.clear();
-	if ( lookup != null )
-	  properties.putAll(lookup);
-	properties.store(new FileOutputStream(file),null);
-	//lookup.store(new FileOutputStream(file),null);
+	    properties.clear();
+	    if ( lookup != null ){
+          Iterator iter = lookup.keySet().iterator();
+          while (iter.hasNext()) {
+            Object key = iter.next();
+            if(key!=null){
+              Object value = lookup.get(key);
+              if(value!=null){
+                properties.put(key,value);
+              }
+            }
+          }
+	      //properties.putAll(lookup);
+	      properties.store(new FileOutputStream(file),null);
+        }
+	  //lookup.store(new FileOutputStream(file),null);
       }
       catch(FileNotFoundException e){
-	  e.printStackTrace();
+	    e.printStackTrace();
       }
       catch(IOException ex){
-	ex.printStackTrace();
+	    ex.printStackTrace();
       }
     }
 
