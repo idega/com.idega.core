@@ -364,6 +364,14 @@ public static String getCallingScriptString(Class windowClass,String url,boolean
   return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight());
 }
 
+public static String getCallingScript(String URL, int width, int height) {
+	return getWindowCallingScript(URL,"Window",true,true,true,true,true,true,true,true,false,width,height);
+}
+
+public static String getCallingScript(String URL) {
+	return getCallingScript(URL,500,500);
+}
+
 public String getCallingScriptString(IWContext iwc,String url){
   //return "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
   return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
