@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.80 2003/08/05 16:27:28 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.81 2003/09/11 16:28:49 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -208,12 +208,24 @@ public abstract class DatastoreInterface {
 	 * @param a well formatted SQL command string
 	 */
 	protected Object executeQuery(GenericEntity entity, String SQLCommand) throws Exception {
+		return executeQuery(entity.getDatasource(),SQLCommand);
+	}
+	
+	/**
+	 * Executes a query to the  datasource and returns the first result (ResultSet.getObject(1)).
+	 * Returns null if there was no result.
+	 * @param dataSourceName
+	 * @param SQLCommand
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object executeQuery(String dataSourceName, String SQLCommand) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		ResultSet rs = null;
 		Object theReturn = null;
 		try {
-			conn = entity.getConnection();
+			conn = ConnectionBroker.getConnection(dataSourceName);
 			Stmt = conn.createStatement();
 			//System.out.println(SQLCommand);
 			rs = Stmt.executeQuery(SQLCommand);
@@ -228,7 +240,7 @@ public abstract class DatastoreInterface {
 				Stmt.close();
 			}
 			if (conn != null) {
-				entity.freeConnection(conn);
+				ConnectionBroker.freeConnection(conn);
 			}
 		}
 		return theReturn;
@@ -1236,13 +1248,74 @@ public abstract class DatastoreInterface {
 		return IWMainApplicationSettings.isDebugActive();
 	}
 
-	public boolean doesTableExist(GenericEntity entity, String tableName) throws Exception {
+	/**
+	 * Queries given datasource for table existance
+	 * @param dataSourceName
+	 * @param tableName
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
 		String checkQuery = "select count(*) from " + tableName;
 		try {
-			executeQuery(entity, checkQuery);
+			executeQuery(dataSourceName, checkQuery);
 			return true;
 		} catch (Exception e) {
+			//e.printStackTrace();
 		}
 		return false;
 	}
+	
+	private String[] getColumnArrayFromMetaData(String dataSourceName,String tableName){
+		Connection conn = null;
+		ResultSet rs = null;
+		Vector v = new Vector();
+		try{
+		  conn = ConnectionBroker.getConnection(dataSourceName);
+		  //conn = entity.getConnection();
+		  
+		  //String tableName = entity.getTableName();
+		  java.sql.DatabaseMetaData metadata = conn.getMetaData();
+		  rs = metadata.getColumns("","",tableName.toLowerCase(),"%");
+		  //System.out.println("Table: "+tableName+" has the following columns:");
+		  while (rs.next()) {
+			String column = rs.getString("COLUMN_NAME");
+			v.add(column);
+			//System.out.println("\t\t"+column);
+		  }
+		  rs.close();
+		  if(v.isEmpty()){
+			rs = metadata.getColumns("","",tableName.toUpperCase(),"%");
+			//System.out.println("Table: "+tableName+" has the following columns:");
+			while (rs.next()) {
+			  String column = rs.getString("COLUMN_NAME");
+			  v.add(column);
+			  //System.out.println("\t\t"+column);
+			}
+			rs.close();
+		  }
+		  
+		}
+		catch(SQLException e){
+		  e.printStackTrace();
+		}
+		finally{
+		  if(conn!=null){
+			ConnectionBroker.freeConnection(conn);
+		  }
+		}
+		if(v!=null && !v.isEmpty())
+			return (String[])v.toArray(new String[0]);
+		return null;
+	  }
+	  /**
+	   * Queries the given data source for table columns
+	   * using database metadata by default
+	   * @param dataSourceName
+	   * @param tableName
+	   * @return
+	   */
+	  public String[] getTableColumnNames(String dataSourceName,String tableName){
+	  	return getColumnArrayFromMetaData(dataSourceName,tableName);
+	  }
 }

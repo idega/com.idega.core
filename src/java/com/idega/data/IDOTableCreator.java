@@ -2,7 +2,6 @@ package com.idega.data;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -181,7 +180,7 @@ public class IDOTableCreator{
   }
   
   private void doTableCheckDatastoreInterface(GenericEntity entity,String tableName)throws Exception{
-	  if(!_dsi.doesTableExist(entity,tableName))
+	  if(!_dsi.doesTableExist(entity.getDatasource(),tableName))
 	  	throw new Exception("Table "+tableName+"does not exists");
   }
 
@@ -265,7 +264,7 @@ public class IDOTableCreator{
             ((GenericEntity)entity).insertStartData();
           }
         }
-
+		
         this.endEntityCreationTransaction(entity,canCommit,true);
       }
       catch(Exception ex){
@@ -294,6 +293,8 @@ public class IDOTableCreator{
       createMiddleTables(entity);
       this.endEntityCreationTransaction(entity,canCommit,true);
     }//End if(!doesTableExist())
+    
+	
   }
 
 
@@ -632,7 +633,7 @@ public class IDOTableCreator{
   }
 
   protected void updateColumns(GenericEntity entity)throws Exception{
-    String[] columnArrayFromDB = getColumnArrayFromMetaData(entity);
+    String[] columnArrayFromDB = getColumnArrayFromDataBase(entity);
     String[] columnArrayFromEntity = entity.getColumnNames();
     for (int i = 0; i < columnArrayFromEntity.length; i++) {
       String column = columnArrayFromEntity[i];
@@ -650,45 +651,10 @@ public class IDOTableCreator{
     }
   }
 
-  private String[] getColumnArrayFromMetaData(GenericEntity entity){
-    Connection conn = null;
-    ResultSet rs = null;
-    try{
-      conn = entity.getConnection();
-      Vector v = new Vector();
-      String tableName = entity.getTableName();
-      java.sql.DatabaseMetaData metadata = conn.getMetaData();
-      rs = metadata.getColumns("","",tableName.toLowerCase(),"%");
-      //System.out.println("Table: "+tableName+" has the following columns:");
-      while (rs.next()) {
-        String column = rs.getString("COLUMN_NAME");
-        v.add(column);
-        //System.out.println("\t\t"+column);
-      }
-      rs.close();
-      if(v.isEmpty()){
-        rs = metadata.getColumns("","",tableName.toUpperCase(),"%");
-        //System.out.println("Table: "+tableName+" has the following columns:");
-        while (rs.next()) {
-          String column = rs.getString("COLUMN_NAME");
-          v.add(column);
-          //System.out.println("\t\t"+column);
-        }
-        rs.close();
-      }
-      return (String[])v.toArray(new String[0]);
-    }
-    catch(SQLException e){
-      e.printStackTrace();
-    }
-    finally{
-      if(conn!=null){
-        entity.freeConnection(conn);
-      }
-    }
-    return null;
+  
+  private String[] getColumnArrayFromDataBase(GenericEntity entity){
+  	return _dsi.getTableColumnNames(entity.getDatasource(),entity.getTableName());
   }
-
 
   private boolean hasEntityColumn(String columnName,String[] columnsFromDB){
     String currentColumn = null;
