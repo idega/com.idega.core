@@ -13,8 +13,8 @@ package com.idega.transaction;
 *@version 0.5
 *UNDER CONSTRUCTION - NOT FINISHED
 */
-import com.idega.util.*;
-import com.idega.util.database.*;
+
+import com.idega.util.database.ConnectionBroker;
 import javax.transaction.*;
 import javax.transaction.xa.*;
 import java.sql.*;
@@ -36,28 +36,37 @@ private Connection conn;
                    HeuristicRollbackException,
                    java.lang.SecurityException,
                    SystemException{
-
-    Synchronization sync = getSynchronization();
-    if(sync!=null){
-      sync.beforeCompletion();
+    if(this.isRollBackOnly){
+      //Do nothing
+      //
+      throw new RollbackException("Transaction Rollback only");
+      /**
+       * @todo: Should this throw an exception?
+       */
     }
+    else{
+      Synchronization sync = getSynchronization();
+      if(sync!=null){
+        sync.beforeCompletion();
+      }
 
-    setStatus(IdegaTransactionStatus.STATUS_PREPARING);
+      setStatus(IdegaTransactionStatus.STATUS_PREPARING);
 
-    setStatus(IdegaTransactionStatus.STATUS_PREPARED);
+      setStatus(IdegaTransactionStatus.STATUS_PREPARED);
 
-    setStatus(IdegaTransactionStatus.STATUS_COMMITTING);
-    try{
-      this.conn.commit();
-    }
-    catch(SQLException ex){
-        SystemException exeption = new SystemException(ex.getMessage());
-        throw (SystemException)exeption.fillInStackTrace();
-    }
-    setStatus(IdegaTransactionStatus.STATUS_COMMITTED);
+      setStatus(IdegaTransactionStatus.STATUS_COMMITTING);
+      try{
+        this.conn.commit();
+      }
+      catch(SQLException ex){
+          SystemException exeption = new SystemException(ex.getMessage());
+          throw (SystemException)exeption.fillInStackTrace();
+      }
+      setStatus(IdegaTransactionStatus.STATUS_COMMITTED);
 
-    if(sync!=null){
-      sync.afterCompletion(getStatus());
+      if(sync!=null){
+        sync.afterCompletion(getStatus());
+      }
     }
 
 }
@@ -143,7 +152,7 @@ private void setStatus(int status){
 }
 
 private Connection getFirstConnection(){
-  Connection conn = PoolManager.getInstance().getConnection();
+  Connection conn = ConnectionBroker.getConnection(false);
   try{
     conn.setAutoCommit(false);
   }
@@ -164,7 +173,7 @@ public void freeConnection(Connection conn){
   catch(SQLException ex){
     ex.printStackTrace(System.err);
   }
-  PoolManager.getInstance().freeConnection(conn);
+  ConnectionBroker.freeConnection(conn,false);
   this.conn=null;
 }
 

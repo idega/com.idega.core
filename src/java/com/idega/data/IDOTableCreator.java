@@ -115,16 +115,27 @@ public class IDOTableCreator{
         if(_dsi.useTransactionsInEntityCreation){
           if(canCommit){
             if(transactionSuccessful){
+              System.out.println("\t\t\tCommitting!!!!");
               trans.commit();
               registerEndOfCreatingEntity(entity);
             }
             else{
+              System.out.println("\t\t\tRollbacking!!!!");
               trans.rollback();
               registerEndOfCreatingEntity(entity);
             }
             ThreadContext.getInstance().removeAttribute(recordCreationKey);
             _dsi.executeAfterCreateEntityRecord(entity);
             //ThreadContext.getInstance().releaseThread(Thread.currentThread());
+          }
+          else{
+            if(transactionSuccessful){
+              System.out.println("\t\t\tNot permitted to commit!!");
+            }
+            else{
+              trans.setRollbackOnly();
+              System.out.println("\t\t\tNot permitted to Rollback!!");
+            }
           }
         }
       }

@@ -70,8 +70,14 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
                    java.lang.IllegalStateException,
                    SystemException{
   Transaction transaction = getTransaction();
-  transaction.commit();
-  endTransaction((IdegaTransaction)transaction);
+  try{
+    transaction.commit();
+    endTransaction((IdegaTransaction)transaction);
+  }
+  catch(RollbackException e){
+    endTransaction((IdegaTransaction)transaction);
+    throw (RollbackException)e.fillInStackTrace();
+  }
  }
 
  public int getStatus() throws SystemException{
@@ -156,7 +162,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   catch(Exception ex){
     return false;
   }
-  
+
  }
 
 
