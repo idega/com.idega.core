@@ -260,6 +260,8 @@ implements IWUserContext, IWApplicationContext {
 		String user_agent = Request.getHeader("User-agent");
 		if (user_agent != null) {
 			//Sets for WML browser
+			//TL: WML detection disabled:
+			/*
 			if (user_agent.indexOf("UPG1") != -1) {
 				return IWConstants.MARKUP_LANGUAGE_WML;
 			} else if (user_agent.toLowerCase().indexOf("wap") != -1) {
@@ -272,9 +274,9 @@ implements IWUserContext, IWApplicationContext {
 				return IWConstants.MARKUP_LANGUAGE_WML;
 			} else if (user_agent.toLowerCase().indexOf("wapman") != -1) {
 				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else {
+			} else {*/
 				return IWConstants.MARKUP_LANGUAGE_HTML;
-			}
+			//}
 		} else {
 			return IWConstants.MARKUP_LANGUAGE_HTML;
 		}
