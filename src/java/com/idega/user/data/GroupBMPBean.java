@@ -636,7 +636,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @see com.idega.user.data.Group#addGroup(Group)
 	 */
 	public void addGroup(Group groupToAdd) throws EJBException, RemoteException {
-		if (!hasRelationTo(groupToAdd))
 			this.addGroup(this.getGroupIDFromGroup(groupToAdd));
 	}
 	/**
@@ -649,7 +648,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			//rel.setGroup(this);
 			//rel.setRelatedGroup(groupId);
 			//rel.store();
-			addRelation(groupId,RELATION_TYPE_GROUP_PARENT);
+			addUniqueRelation(groupId,RELATION_TYPE_GROUP_PARENT);
+			
+			
 		} catch (Exception e) {
 			throw new EJBException(e.getMessage());
 		}
@@ -675,6 +676,30 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		//  throw new EJBException(e.getMessage());
 		//}
 	}
+	/**
+	 * Only adds a relation if one does not exist already
+	 * @param relatedGroupId
+	 * @param relationType
+	 * @throws CreateException
+	 * @throws RemoteException
+	 */
+	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
+		//try{
+		if(!hasRelationTo(relatedGroupId)){//should check also for relationtype!
+		
+			GroupRelation rel = this.getGroupRelationHome().create();
+			rel.setGroup(this);
+			rel.setRelatedGroup(relatedGroupId);
+			rel.setRelationshipType(relationType);
+			rel.store();
+		}
+		//}
+		//catch(Exception e){
+		//  throw new EJBException(e.getMessage());
+		//}
+	}
+	
+	
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException, RemoteException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType);
@@ -993,8 +1018,15 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws RemoteException
 	 */
 	public boolean hasRelationTo(Group group) throws RemoteException {
+		
+		return hasRelationTo(((Integer) group.getPrimaryKey()).intValue());
+		
+	}
+	/**
+	 * 
+	 */
+	public boolean hasRelationTo(int groupId) throws RemoteException {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
-		int groupId = ((Integer) group.getPrimaryKey()).intValue();
 		Collection relations = new ArrayList();
 		try {
 			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingUniDirectional(groupId, myId);
@@ -1003,6 +1035,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return !relations.isEmpty();
 	}
+	
+	
 	public Iterator getChildren() {
 		/**
 		 * @todo: Change implementation
