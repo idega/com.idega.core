@@ -1,6 +1,6 @@
 /*
- * $Id: LDAPReplicationBusiness.java,v 1.3 2004/10/28 11:49:08 eiki Exp $
- * Created on Oct 25, 2004
+ * $Id: LDAPReplicationBusiness.java,v 1.4 2004/10/31 22:35:21 eiki Exp $
+ * Created on Oct 31, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.core.ldap.util.IWLDAPConstants;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/28 11:49:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/31 22:35:21 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationConstants, IWLDAPConstants {
 
@@ -34,6 +34,17 @@ public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationCons
 	 */
 	public void copyPropertyBetweenReplicators(String key, int copyFromReplicatorNumber, int copyToReplicatorNumber)
 			throws IOException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#setReplicationProperty
+	 */
+	public void setReplicationProperty(String key, int replicatorNumber, String value) throws IOException,
+			java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#getReplicationProperty
+	 */
+	public String getReplicationProperty(String key, int replicatorNumber) throws IOException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#removeAllPropertiesOfReplicator

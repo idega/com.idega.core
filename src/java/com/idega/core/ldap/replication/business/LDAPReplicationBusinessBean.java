@@ -220,9 +220,13 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		final String schedulerCronString = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_SCHEDULER_STRING);
 		final String repeat = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber+ PROPS_REPLICATOR_REPEAT);
 		
-//		Todo eiki ldap implement
 		final String searchEntryLimit = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT);
+		final int maxEntrylimit = (searchEntryLimit!=null && !"".equals(searchEntryLimit))? Integer.parseInt(searchEntryLimit) : 0;
+				
 		final String searchTimeLimitInMs = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_SEARCH_TIMEOUT_MS);
+		final int searchTimeLimit = (searchTimeLimitInMs!=null && !"".equals(searchTimeLimitInMs))? Integer.parseInt(searchTimeLimitInMs) : 0;
+
+		//Todo eiki ldap implement
 		final String matchByUUID = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID);
 		
 		//do stuff
@@ -251,7 +255,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 						}
 					}
 					
-					return executeReplicator(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBaseRDN, baseUniqueId, intervalMinute,schedulerCronString,repeat,parentGroup,baseGroup);
+					return executeReplicator(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBaseRDN, baseUniqueId, intervalMinute,schedulerCronString,repeat,parentGroup,baseGroup,maxEntrylimit,searchTimeLimit);
 				}
 				else {
 					logWarning("Replicator : " + repNum + " already started!");
@@ -300,10 +304,14 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	 * @param intervalMinute
 	 * @param schedulerString overrides intervalMinute
 	 * @param repeat
-	 * @return
+	 * @param parentGroup
+	 * @param baseGroupToOverwrite
+	 * @param maxEntrylimit
+	 * @param searchTimeLimit
+	 * @return true if the replicator worked
 	 * @throws PastDateException
 	 */
-	protected boolean executeReplicator(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final String replicateBaseRDN, final String baseUniqueId, final String intervalMinute, final String schedulerString, final String repeatReplication, final Group parentGroup, final Group baseGroupToOverwrite) throws PastDateException {
+	protected boolean executeReplicator(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final String replicateBaseRDN, final String baseUniqueId, final String intervalMinute, final String schedulerString, final String repeatReplication, final Group parentGroup, final Group baseGroupToOverwrite, final int maxEntrylimit,final int searchTimeLimit) throws PastDateException {
 		//don't run again if running
 		if(!getReplicatorConnectionsMap().containsKey(repNum)){
 					
@@ -331,7 +339,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 							catch (IOException e1) {
 								e1.printStackTrace();
 							}
-							replicate(replicatorNumber, repNum, host, port, userName, password, baseRDN,replicateBase, baseUniqueId, parentGroup, baseGroupToOverwrite, entry);
+							replicate(replicatorNumber, repNum, host, port, userName, password, baseRDN,replicateBase, baseUniqueId, parentGroup, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit, entry);
 							//todo figure out the next replication date
 							//probably from the entry.get...
 //							try {
@@ -362,7 +370,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 							e1.printStackTrace();
 						}
 						
-						replicate(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBase, baseUniqueId, parentGroup, baseGroupToOverwrite, entry);
+						replicate(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBase, baseUniqueId, parentGroup, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit, entry);
 						
 						try {
 							IWTimestamp stamp = new IWTimestamp(getReplicationProperty(PROPS_REPLICATOR_LAST_REPLICATED,replicatorNumber));
@@ -426,7 +434,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		startOrStopAllReplicators(STOP_REPLICATOR);
 	}
 	
-	protected Group replicateOneGroupEntry(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId, Group baseGroupToOverwrite) throws RemoteException, CreateException, NamingException {
+	protected Group replicateOneGroupEntry(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId, Group baseGroupToOverwrite, int maxEntrylimit, int searchTimeLimit) throws RemoteException, CreateException, NamingException {
 		Group group = null;
 		NamingEnumeration searchResults = null;
 		String baseDNString = entryDN.toString();
@@ -435,7 +443,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			searchResults = jndiOps.searchBaseEntry(baseDNString, "objectClass=*", 0, 0);
 		}
 		else{
-			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", 0, 0);
+			searchResults = jndiOps.searchBaseEntry(baseDNString, "(&("+LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId+")("+LDAP_ATTRIBUTE_OBJECT_CLASS+"="+LDAP_SCHEMA_ORGANIZATIONAL_UNIT+"))", maxEntrylimit, searchTimeLimit);
 		}
 		
 		if (searchResults != null) {
@@ -466,7 +474,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	}
 	
 	
-	protected void replicateChildEntriesRecursively(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId) throws RemoteException, CreateException, NamingException {
+	protected void replicateChildEntriesRecursively(DN entryDN, JNDIOps jndiOps, Group parentGroup, String baseUniqueId, int maxEntrylimit, int searchTimeLimit) throws RemoteException, CreateException, NamingException {
 		//SearchControls searchControl = new SearchControls();
 		//SearchControls.OBJECT_SCOPE; get info on the object itself
 		//SearchControls.ONELEVEL_SCOPE; search children
@@ -484,10 +492,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		NamingEnumeration searchResults = null;
 		String baseDNString = entryDN.toString();
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", 0, 0);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_OBJECT_CLASS+"=*", maxEntrylimit, searchTimeLimit);
 		}
 		else{
-			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, 0, 0);
+			searchResults = jndiOps.searchOneLevel(baseDNString,LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, maxEntrylimit, searchTimeLimit);
 		}
 		
 		//NamingEnumeration searchResults = basicOps.searchBaseObject(new
@@ -529,7 +537,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					
 					if(childGroup!=null){
 						String UUID = childGroup.getUniqueId();
-						replicateChildEntriesRecursively(childDN, jndiOps,childGroup,UUID);
+						replicateChildEntriesRecursively(childDN, jndiOps, childGroup, UUID, maxEntrylimit, searchTimeLimit);
 					}
 			}
 		}
@@ -784,7 +792,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		return replicatorTimerMap;
 	}
 
-	private void replicate(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final boolean replicateBaseRDN, final String baseUniqueId, final Group parentGroup, final Group baseGroupToOverwrite, TimerEntry entry) {
+	private void replicate(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final boolean replicateBaseRDN, final String baseUniqueId, final Group parentGroup, final Group baseGroupToOverwrite, final int maxEntrylimit, final int searchTimeLimit, TimerEntry entry) {
 		//so it does not run again until we are done.
 		entry.setCanRun(false);
 		
@@ -794,11 +802,11 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
 			replicatorConnectionsMap.put(repNum, jndiOps);
 			if(replicateBaseRDN){
-				Group updatedParent = replicateOneGroupEntry(new DN(baseRDN), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite);
-				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,baseUniqueId);	
+				Group updatedParent = replicateOneGroupEntry(new DN(baseRDN), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit);
+				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps,updatedParent,baseUniqueId, maxEntrylimit, searchTimeLimit);	
 			}
 			else{
-				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps, parentGroup,baseUniqueId);
+				replicateChildEntriesRecursively(new DN(baseRDN), jndiOps, parentGroup,baseUniqueId, maxEntrylimit, searchTimeLimit);
 			}
 			
 			try {
