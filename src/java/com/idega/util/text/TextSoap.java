@@ -8,7 +8,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.ibm.icu.text.UnicodeToHexTransliterator;
+import com.ibm.icu.text.Transliterator;
 //@todo use regular expressions such as import com.stevesoft.pat.*;
 
 /**
@@ -897,7 +897,7 @@ public class TextSoap {
 	 * @return String
 	 */
 	public static String convertSpecialCharacters(String stringToConvert) {
-		UnicodeToHexTransliterator transliterator = new UnicodeToHexTransliterator();
+		Transliterator transliterator = Transliterator.getInstance("Any-Hex");
 		StringBuffer sb = new StringBuffer();
 		int n = stringToConvert.length();
 		for (int i = 0; i < n; i++) {
@@ -980,42 +980,6 @@ public class TextSoap {
 		return sb.toString();
 	}
 
-	/**
-	 * Changes all the special characters in the given string to their corresponding numeric value.
-	 * For example: '& => &amp;', '< = &lt;'
-	 * @param stringToConvert	The string to convert.
-	 * @return String
-	 */
-	public static String convertSpecialCharactersToNumeric(String stringToConvert) {
-		UnicodeToHexTransliterator transliterator = new UnicodeToHexTransliterator();
-		StringBuffer sb = new StringBuffer();
-		int n = stringToConvert.length();
-		for (int i = 0; i < n; i++) {
-			char c = stringToConvert.charAt(i);
-			String unicode = transliterator.transliterate(String.valueOf(c));
-			
-			if (unicode.equals("\\u00E4"))
-				sb.append("&#228;");
-			else if (unicode.equals("\\u00C4"))
-				sb.append("&#196;");
-			else if (unicode.equals("\\u00E5"))
-				sb.append("&#229;");
-			else if (unicode.equals("\\u00C5"))
-				sb.append("&#197;");
-			else if (unicode.equals("\\u00FC"))
-				sb.append("&#252;");
-			else if (unicode.equals("\\u00DC"))
-				sb.append("&#220;");
-			else if (unicode.equals("\\u00F6"))
-				sb.append("&#246;");
-			else if (unicode.equals("\\u00D6"))
-				sb.append("&#214;");
-			else
-				sb.append(c);
-		}
-		return sb.toString();
-	}
-	
 	public static String encodeToValidExcelSheetName(String sheetName) {
 		String encodedString = new String(sheetName);
 		encodedString = findAndReplace(encodedString, "\\", " ");
