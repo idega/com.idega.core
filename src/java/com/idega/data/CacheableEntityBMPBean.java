@@ -1,9 +1,7 @@
 package com.idega.data;
 
-import java.lang.String;
-import java.lang.Integer;
 import java.sql.SQLException;
-import com.idega.data.IDOLegacyEntity;
+
 import com.idega.idegaweb.IWMainApplication;
 
 

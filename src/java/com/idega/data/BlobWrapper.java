@@ -1,6 +1,6 @@
 /*
 
- * $Id: BlobWrapper.java,v 1.11 2002/08/12 12:59:35 palli Exp $
+ * $Id: BlobWrapper.java,v 1.12 2003/04/03 09:43:39 laddi Exp $
 
  *
 
@@ -20,31 +20,14 @@ package com.idega.data;
 
 
 
-import java.sql.Connection;
-
-import java.sql.ResultSet;
-
-import java.sql.Statement;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 
-import java.sql.Blob;
-
-import java.io.InputStream;
-
-import java.io.OutputStream;
-
-import java.io.IOException;
-
-import java.io.BufferedInputStream;
-
-import java.sql.PreparedStatement;
-
 import com.idega.io.MemoryFileBuffer;
-
-import com.idega.io.MemoryOutputStream;
-
 import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 
 
 

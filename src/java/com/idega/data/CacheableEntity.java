@@ -1,6 +1,5 @@
 package com.idega.data;
 
-import javax.ejb.*;
 
 public interface CacheableEntity extends com.idega.data.IDOLegacyEntity
 {

@@ -1,11 +1,5 @@
 package com.idega.data;
 
-import com.idega.core.ICTreeNode;
-import com.idega.core.business.ICTreeNodeLeafComparator;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Collections;
 
 
 /**
