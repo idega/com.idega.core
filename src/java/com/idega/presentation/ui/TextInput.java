@@ -16,6 +16,7 @@ import com.idega.util.text.TextSoap;
 public class TextInput extends GenericInput {
 
 	private boolean isSetAsIntegers;
+	private boolean isSetAsPosNegIntegers;
 	private boolean isSetAsFloat;
 	private boolean isSetAsAlphabetical;
 	private boolean isSetAsEmail;
@@ -66,6 +67,7 @@ public class TextInput extends GenericInput {
 		setInputType(INPUT_TYPE_TEXT);
 
 		isSetAsIntegers = false;
+		isSetAsPosNegIntegers = false;
 		isSetAsFloat = false;
 		isSetAsAlphabetical = false;
 		isSetAsEmail = false;
@@ -186,6 +188,17 @@ public class TextInput extends GenericInput {
 		isSetAsIntegers = true;
 		integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
+	
+	/**
+	 * Sets the text input so that it must contain a positive or negative integer or zero, displays an alert with the 
+	 * given error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsPosNegIntegers(String errorMessage) {
+		isSetAsPosNegIntegers = true;
+		integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
+		
 
 	/**
 	 * @deprecated	Use setAsFloat(String errorMessage)
@@ -277,6 +290,9 @@ public class TextInput extends GenericInput {
 		if (isSetAsIntegers)
 			setOnSubmitFunction("warnIfNotIntegers", "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", integersErrorMessage);
 
+		if (isSetAsPosNegIntegers)
+			setOnSubmitFunction("warnIfNotPosNegIntegers", "function warnIfNotPosNegIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	        if (i==0){\n            if (inputbox.value.charAt(0) == '-'){\n                continue;\n            }\n        }\n        if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}", integersErrorMessage);
+			
 		if (isSetAsIcelandicSSNumber)
 			setOnSubmitFunction("warnIfNotIcelandicSSNumber", "function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n\tif (inputbox.value.length == 10){ \n\t\tvar var1 = inputbox.value.charAt(0);\n\t\tvar var2 = inputbox.value.charAt(1);\n\t\t\n\t\tvar var3 = inputbox.value.charAt(2);\n\t\tvar var4 = inputbox.value.charAt(3);\n\t\tvar var5 = inputbox.value.charAt(4);\n\t\tvar var6 = inputbox.value.charAt(5);\n\t\tvar var7 = inputbox.value.charAt(6);\n\t\tvar var8 = inputbox.value.charAt(7);\n\t\tvar var9 = inputbox.value.charAt(8);\n\n\t\tvar sum = (3 * var1) + (2 * var2) + (7 * var3) + (6 * var4) + (5 * var5) + (4 * var6) + (3 * var7) + (2 * var8);\n\n\t\tvar result = sum % 11;\n\t\tvar variable = 11 - result;\n\n\t\tif (variable == 10) {\n\t\t\tvariable = 1;\n\t\t}\n\t\telse if (variable == 11) {\n\t\t\tvariable = 0;\n\t\t}\n\n\t\tif (var9 == variable) {\n\t\t\treturn (true);\n\t\t}\n\t}  \n\telse if (inputbox.value.length == 0){\n\t\treturn (true)\n\t}   \n\talert ( warnMsg );\n\treturn false;\n}", icelandicSSNumberErrorMessage);
 
@@ -318,6 +334,7 @@ public class TextInput extends GenericInput {
 		try {
 			obj = (TextInput) super.clone();
 			obj.isSetAsIntegers = this.isSetAsIntegers;
+			obj.isSetAsPosNegIntegers = this.isSetAsPosNegIntegers;			
 			obj.isSetAsFloat = this.isSetAsFloat;
 			obj.isSetAsAlphabetical = this.isSetAsAlphabetical;
 			obj.isSetAsEmail = this.isSetAsEmail;
