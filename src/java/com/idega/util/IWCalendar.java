@@ -213,7 +213,7 @@ public class IWCalendar {
 	 */
 	public int getWeekOfYear(int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(day, month - 1, day);
-		return calendar.get(calendar.WEEK_OF_YEAR) + 2;
+		return calendar.get(calendar.WEEK_OF_YEAR);
 	}
 
 	/**
