@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.39 2002/02/25 14:09:53 tryggvil Exp $
+ * $Id: Page.java,v 1.40 2002/02/26 15:02:23 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import com.idega.idegaweb.IWMainApplication;
 
 import com.idega.builder.business.BuilderLogic;
@@ -52,10 +53,12 @@ public class Page extends PresentationObjectContainer {
   private String _templateId = null;
   private Hashtable _styleDefinitions;
   private Hashtable _metaTags;
+  private Hashtable _HTTPEquivs;
 
   private boolean addGlobalScript=true;
   private static String META_KEYWORDS = "keywords";
   private static String META_DESCRIPTION = "description";
+  private static String META_HTTP_EQUIV_EXPIRES = "Expires";
 
   private static Page NULL_CLONE_PAGE = new Page();
   private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
@@ -141,12 +144,23 @@ public class Page extends PresentationObjectContainer {
     _metaTags.put(tagName,tagValue);
   }
 
+  protected void setHTTPEquivTag(String tagName, String tagValue) {
+    if (_HTTPEquivs == null) {
+      _HTTPEquivs = new Hashtable();
+    }
+    _HTTPEquivs.put(tagName,tagValue);
+  }
+
   public void setKeywordsMetaTag(String wordsCommaSeparated) {
     setMetaTag(META_KEYWORDS,wordsCommaSeparated);
   }
 
   public void setDescriptionMetaTag(String wordsCommaSeparated) {
     setMetaTag(META_DESCRIPTION,wordsCommaSeparated);
+  }
+
+  public void setExpiryDate(String dateString) {
+    this.setHTTPEquivTag(META_HTTP_EQUIV_EXPIRES,dateString);
   }
 
   private void setDefaultValues() {
@@ -212,8 +226,35 @@ public class Page extends PresentationObjectContainer {
       }
     }
 
+    if (this._HTTPEquivs != null) {
+      Enumeration e = _HTTPEquivs.keys();
+      while (e.hasMoreElements()) {
+        tagName = (String)e.nextElement();
+        returnString.append("<meta http-equiv=\"");
+        returnString.append(tagName);
+        returnString.append("\" ");
+        String tagValue=getHTTPEquivTag(tagName);
+        if(tagValue != null){
+          returnString.append(" content=\"");
+          returnString.append(tagValue);
+          returnString.append("\"");
+        }
+        returnString.append(">\n");
+      }
+    }
+
     return returnString.toString();
   }
+
+  protected String getHTTPEquivTag(String tagName) {
+    if (_HTTPEquivs != null){
+      return (String)this._HTTPEquivs.get((Object)tagName);
+    }
+    else {
+      return null;
+    }
+  }
+
 
   public String getMetaTag(String tagName) {
     if (_metaTags != null){
