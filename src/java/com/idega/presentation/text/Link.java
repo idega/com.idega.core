@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.27 2001/11/26 16:55:37 gimmi Exp $
+ * $Id: Link.java,v 1.28 2001/11/26 20:03:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -358,6 +358,10 @@ public class Link extends Text {
     }else {
       return(getAttribute(HREF_ATTRIBUTE));
     }
+  }
+
+  public String getURL() {
+    return(getAttribute(HREF_ATTRIBUTE));
   }
 
   /**
