@@ -575,9 +575,8 @@ public class IWMainApplication {//implements ServletContext{
 
     
     /**
-     * Regsters and loads a IWBundle with the abstact pathname relative to
-     * /idegaweb on the WebServer and the identifier specified by
-     * bundleIdentifier autoCr
+     * Regsters and loads a IWBundle with the default bundlePath and the bundle
+     * is automatically created if it does not exist and autoCreate==true
      */
     public boolean registerBundle(String bundleIdentifier, boolean autoCreate) {
 		String bundleDir = bundleIdentifier + ".bundle";
