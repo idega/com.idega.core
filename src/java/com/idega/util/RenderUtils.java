@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.3 2004/11/14 23:31:31 tryggvil Exp $
+ * $Id: RenderUtils.java,v 1.4 2004/12/30 22:07:00 tryggvil Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,11 +17,12 @@ import javax.faces.context.FacesContext;
 
 
 /**
+ * Utility class for rendering logic in JSF.
  * 
- *  Last modified: $Date: 2004/11/14 23:31:31 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/30 22:07:00 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class RenderUtils {
 	
