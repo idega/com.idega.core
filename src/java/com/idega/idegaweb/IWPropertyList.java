@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.19 2004/02/04 10:44:52 laddi Exp $
+ * $Id: IWPropertyList.java,v 1.20 2004/08/06 10:01:33 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -168,7 +168,10 @@ public class IWPropertyList {
 				String sKey = oKey.toString();
 				Object oValue = properties.get(oKey);
 				if (oValue instanceof Map) {
-					IWPropertyList iwp = this.getNewPropertyList(sKey);
+					IWPropertyList iwp = this.getPropertyList(sKey);
+					if (iwp == null) {
+						iwp = this.getNewPropertyList(sKey);
+					}
 					iwp.setProperties((Map) oValue);
 				}
 				else {
