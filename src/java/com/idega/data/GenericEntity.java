@@ -3852,11 +3852,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindAllIDsBySQL() throws FinderException {
 		return this.idoFindIDsBySQL("select * from " + getTableName());
 	}
+	
 	/**
 	 * Finds one primary key by an SQL query
 	 */
 	protected Object idoFindOnePKBySQL(String sqlQuery) throws FinderException {
-		Collection coll = idoFindPKsBySQL(sqlQuery, 1);
+	    return idoFindOnePKBySQL(sqlQuery,(List)null);
+	}
+	/**
+	 * Finds one primary key by an SQL query
+	 */
+	private  Object idoFindOnePKBySQL(String sqlQuery,List placeHolderValues) throws FinderException {
+		Collection coll = idoFindPKsBySQL(sqlQuery, 1,-1,placeHolderValues);
 		try {
 			if (!coll.isEmpty()) {
 				return coll.iterator().next();
@@ -4428,6 +4435,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsByQuery(IDOQuery query) throws FinderException {
 		return idoFindPKsByQuery(query,-1,-1);
 	}
+	
+	/**
+	 * Method idoFindPKsByQuery. Gets the result of the query.
+	 * @param query an IDOQuery for this entity.
+	 * @return Collection of Primary keys which is a result from the query.
+	 * @throws FinderException if there is an error with the query.
+	 */
+	protected Collection idoFindPKsByQuery(SelectQuery query) throws FinderException {
+		return idoFindPKsByQuery(query,-1,-1);
+	}
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
@@ -4436,7 +4453,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
-		return idoFindPKsByQuery(query, returningNumberOfEntities);
+		return idoFindPKsByQuery(query, returningNumberOfEntities,-1);
+	}
+	
+	/**
+	 * Method idoFindPKsByQuery. Gets the result of the query.
+	 * @param query an SelectQuery for this entity.
+	 * @return Collection of Primary keys which is a result from the query.
+	 * @throws FinderException if there is an error with the query.
+	 */
+	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities) throws FinderException {
+		return idoFindPKsByQuery(query, returningNumberOfEntities,-1);
 	}
 
 	/**
@@ -4448,6 +4475,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getObjectValues());
 	}
+	
+	/**
+	 * Method idoFindPKsByQuery. Gets the result of the query.
+	 * @param query an SelectQuery for this entity.
+	 * @return Collection of Primary keys which is a result from the query.
+	 * @throws FinderException if there is an error with the query.
+	 */
+	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
+		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getPlaceHolderValues());
+	}
 
 	/**
 	 * Method idoFindOnePKByQuery. Gets the one primary key of the query or the first result if there are many results.* @param query an IDOQuery for this entity.
@@ -4455,7 +4492,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByQuery(IDOQuery query) throws FinderException {
-		return idoFindOnePKBySQL(query.toString());
+		return idoFindOnePKBySQL(query.toString(),query.getObjectValues());
+	}
+	
+	/**
+	 * Method idoFindOnePKBySelectQuery. Gets the one primary key of the query or the first result if there are many results.* @param query an IDOQuery for this entity.
+	 * @return Object which is the primary key of the object found from the query.
+	 * @throws FinderException if nothing found or there is an error with the query.
+	 */
+	protected Object idoFindOnePKByQuery(SelectQuery query) throws FinderException {
+		return idoFindOnePKBySQL(query.toString(),query.getPlaceHolderValues());
 	}
 	
 	/**
