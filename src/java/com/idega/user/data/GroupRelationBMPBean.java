@@ -11,12 +11,11 @@ import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 /**
- * Title:
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author
- * @version 1.0
+ * Description: This bean is used to connect groups together and to keep track of their relations
+ * Copyright: Idega Software   Copyright (c) 2001
+ * Company: Idega Software
+ * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
+ * @version 1.1
  */
 
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
@@ -33,7 +32,9 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   private final static String STATUS_ACTIVE="ST_ACTIVE";
   private final static String STATUS_PASSIVE="ST_PASSIVE";
-
+	private final static String STATUS_PASSIVE_PENDING="ST_PASSIVE_PENDING";
+	private final static String STATUS_ACTIVE_PENDING="ST_ACTIVE_PENDING";
+	
   public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
 
@@ -127,7 +128,30 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     }
     return false;
   }
+  
+	public boolean isActivePending(){
+		String status = this.getStatus();
+		if(status != null && status.equals(STATUS_ACTIVE_PENDING) ){
+			return true;
+		}
+		return false;
+	}
 
+	public boolean isPassivePending(){
+		String status = this.getStatus();
+		if(status != null && status.equals(STATUS_PASSIVE_PENDING) ){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isPending(){
+		String status = this.getStatus();
+		if(status != null && ( status.equals(STATUS_ACTIVE_PENDING) || status.equals(STATUS_PASSIVE_PENDING) ) ){
+			return true;
+		}
+		return false;
+	}
   public void setActive(){
     this.setStatus(STATUS_ACTIVE);
   }
@@ -135,7 +159,15 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   public void setPassive(){
     this.setStatus(STATUS_PASSIVE);
   }
+  
+	public void setPassivePending(){
+		this.setStatus(STATUS_PASSIVE_PENDING);
+	}
 
+	public void setActivePending(){
+		this.setStatus(STATUS_ACTIVE_PENDING);
+	}
+	
   public void setInitiationDate(Timestamp stamp){
     this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
   }
@@ -270,6 +302,13 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
+  
+	/**
+		* Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
+		*/
+	 public Collection ejbFindAllPendingGroupRelationships()throws FinderException{
+		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE_PENDING+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"'");
+	 }
 
   /**Finders end**/
   
