@@ -273,7 +273,6 @@ public class HtmlPage extends Page {
 				out.write(htmlBody[index++]);
 			}
 			body = htmlBody[index];
-			System.out.println("BODY: " + body);
 			
 			String attributes = body.substring(0, body.indexOf(">"));
 			Map attributeMap = AttributeParser.parse(attributes);
