@@ -16,13 +16,13 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.ThreadContext;
 import com.idega.util.database.ConnectionBroker;
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.2
-
+ * This servlet is an abstract servlet and is meant to be extended by other servlets in idegaWeb.
+* @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+* @version 1.3
 */
-public class IWCoreServlet extends HttpServlet implements SingleThreadModel {
+public class IWCoreServlet extends HttpServlet 
+//implements SingleThreadModel 
+{
 	//public  class IWCoreServlet extends HttpServlet{
 	//protected Hashtable objects;
 	//private ThreadContext threadcontext;
@@ -44,17 +44,56 @@ public class IWCoreServlet extends HttpServlet implements SingleThreadModel {
 		//initializeThreadContext();
 	
 	}*/
-	public void service(ServletRequest _req, ServletResponse _res) throws ServletException, IOException {
-		ThreadContext context = getThreadContext();
+	private boolean synchronizeFirstAccess=true;
+	private boolean isFirstAccessor=true;
+
+	/**
+	 * This Service method by default synchronizes the first access to it for performance/caching reasons
+	 */
+	public void service(ServletRequest _req, ServletResponse _res)
+	throws ServletException, IOException{
+		if(getIfSyncronizeAccess(_req,_res)){
+			synchronized(this){
+				unSynchronizedService(_req,_res);
+				unSetSyncronizedAccess(_req,_res);
+			}
+		}
+		else{
+			unSynchronizedService(_req,_res);
+		}
+	}
+	
+	/**
+	 * The real service method implementation besides synchronization
+	 */
+	protected void unSynchronizedService(ServletRequest _req, ServletResponse _res)
+	throws ServletException, IOException{
+				ThreadContext context = getThreadContext();
 		context.putThread(Thread.currentThread());
-		super.service(_req, _res);
-		/*if (connectionRequested()){
-		
-				freeConnection();
-		
-		}*/
+		super.service(_req,_res);
 		context.releaseThread(Thread.currentThread());
 	}
+	
+	/**
+	 * This method can be overrided in subclasses. Checks if the current access to service should be synchronized
+	 * @param _req
+	 * @param _res
+	 * @return true if the current service access sould be synchronized, false otherwise.
+	 */
+	protected boolean getIfSyncronizeAccess(ServletRequest _req, ServletResponse _res){
+		return synchronizeFirstAccess&&isFirstAccessor;
+	}
+	/**
+	 * This method can be overrided in sublcasses. Unsets syncronization for the current access to service.
+	 * @param _req 
+	 * @param _res
+	 * @return true if successfully unSet.
+	 */
+	protected boolean unSetSyncronizedAccess(ServletRequest _req, ServletResponse _res){
+		return isFirstAccessor=true;
+	}
+	
+	
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		super.doGet(servReq, servRes);
 	}
