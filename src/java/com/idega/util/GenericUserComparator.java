@@ -1,7 +1,7 @@
 
 package com.idega.util;
 
-import com.idega.util.IsCollator;
+import java.text.Collator;
 import java.util.*;
 import java.util.Comparator;
 import com.idega.core.user.data.User;
@@ -25,9 +25,15 @@ public class GenericUserComparator implements Comparator {
 
 
   private int sortBy;
+  private Locale locale;
+  private Collator collator;
 
   public GenericUserComparator() {
       sortBy = NAME;
+  }
+
+  public GenericUserComparator(Locale locale) {
+  	locale = locale;
   }
 
   public GenericUserComparator(int toSortBy) {
@@ -39,19 +45,34 @@ public class GenericUserComparator implements Comparator {
   }
 
   public int compare(Object o1, Object o2) {
+  	if ( locale != null )
+  		collator = Collator.getInstance(locale);
+  	else
+  		collator = IsCollator.getIsCollator();
+  		
       User p1 = (User) o1;
       User p2 = (User) o2;
       int result = 0;
 
       switch (this.sortBy) {
-        case NAME     : result = nameSort(o1, o2);
-        break;
-        case FIRSTLASTMIDDLE   : result = this.nameSort(o1,o2);
-        break;
-        case LASTFIRSTMIDDLE   : result = this.nameSortLastFirst(o1,o2);
-        break;
-        case FIRSTMIDDLELAST   : result = this.nameSortFirstMiddleLast(o1,o2);
-        break;
+        case NAME: 
+	        if ( locale != null ) {
+		        if ( locale.getLanguage().equalsIgnoreCase("is") ) {
+			        result = nameSort(o1, o2);
+			       	break; 
+		        }
+	        }
+	      	result = nameSortLastFirst(o1,o2);
+	        break;
+        case FIRSTLASTMIDDLE:
+	        result = this.nameSort(o1,o2);
+	        break;
+        case LASTFIRSTMIDDLE:
+					result = this.nameSortLastFirst(o1,o2);
+	        break;
+        case FIRSTMIDDLELAST:
+	        result = this.nameSortFirstMiddleLast(o1,o2);
+	        break;
       }
 
       return result;
@@ -66,7 +87,7 @@ public class GenericUserComparator implements Comparator {
       //int result = p1.getFirstName().compareTo(p2.getFirstName());
       String one = p1.getFirstName()!=null?p1.getFirstName():"";
       String two = p2.getFirstName()!=null?p2.getFirstName():"";
-      int result = IsCollator.getIsCollator().compare(one,two);
+      int result = collator.compare(one,two);
 
       // if equal, check last name...
       if (result == 0){
@@ -80,7 +101,7 @@ public class GenericUserComparator implements Comparator {
           one = p1.getMiddleName()!=null?p1.getMiddleName():"";
           two = p2.getMiddleName()!=null?p2.getMiddleName():"";
           //result = p1.getMiddleName().compareTo(p2.getMiddleName());
-          result = IsCollator.getIsCollator().compare(one,two);
+          result = collator.compare(one,two);
       }
       return result;
   }
@@ -108,7 +129,7 @@ public class GenericUserComparator implements Comparator {
         //result = p1.getMiddleName().compareTo(p2.getMiddleName());
         one = p1.getMiddleName()!=null?p1.getMiddleName():"";
         two = p2.getMiddleName()!=null?p2.getMiddleName():"";
-        result = IsCollator.getIsCollator().compare(one,two);
+        result = collator.compare(one,two);
       }
 
       return result;
@@ -132,7 +153,7 @@ public class GenericUserComparator implements Comparator {
       if (result == 0){
         one = p1.getLastName()!=null?p1.getLastName():"";
         two = p2.getLastName()!=null?p2.getLastName():"";
-        result = IsCollator.getIsCollator().compare(one,two);
+        result = collator.compare(one,two);
       }
       return result;
   }
