@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.122 2005/01/05 01:23:44 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.123 2005/01/06 18:57:56 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,15 +77,21 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/05 01:23:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/06 18:57:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.122 $
+ * @version $Revision: 1.123 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
 
 	//Static final Contstants:
+	/**
+	 * This is the id used to store the IWMainApplication instance in the (servlet) context<br>.
+	 * In JSF this can also be used to reference the instance as a ManagedBean.
+	 */
+	public final static String APPLICATION_BEAN_ID = "idegaweb_application";
+	
     public static final String IdegaEventListenerClassParameter = "idegaweb_event_classname";
     public static final String ApplicationEventListenersParameter = "idegaweb_application_events";
     public static final String IWEventSessionAddressParameter = "iw_event_address"; // added
@@ -107,7 +113,7 @@ public class IWMainApplication //{//implements ServletContext{
     public final static String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
     private final static String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
     private final static String bundlesFileName = "bundles.properties";
-    public final static String ApplicationStorageParameterName = "idegaweb_application";
+    
     private static final String APACHE_RESTART_PARAMETER = "restart_apache";
     private static final String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
 	public static final String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
@@ -157,7 +163,7 @@ public class IWMainApplication //{//implements ServletContext{
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
         setApplicationServer(appserver);        
-        application.setAttribute(ApplicationStorageParameterName, this);
+        application.setAttribute(APPLICATION_BEAN_ID, this);
         //set the default application instance to this
         if(defaultIWMainApplication==null){
         		defaultIWMainApplication=this;
@@ -454,7 +460,7 @@ public class IWMainApplication //{//implements ServletContext{
     public static IWMainApplication getIWMainApplication(
             ServletContext application) {
         return (IWMainApplication) application
-                .getAttribute(IWMainApplication.ApplicationStorageParameterName);
+                .getAttribute(IWMainApplication.APPLICATION_BEAN_ID);
     }
 
     /**
@@ -546,7 +552,7 @@ public class IWMainApplication //{//implements ServletContext{
             cacheManager=null;
             windowClassesStaticInstances=null;
             shutdownApplicationServices();
-            application.removeAttribute(ApplicationStorageParameterName);
+            application.removeAttribute(APPLICATION_BEAN_ID);
 
             removeAllApplicationAttributes();
             
