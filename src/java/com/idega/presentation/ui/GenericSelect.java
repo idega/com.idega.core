@@ -51,6 +51,9 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void removeElements() {
 		this.getChildren().clear();
+		if(selectedElements!=null){
+			selectedElements.clear();
+		}
 	}
 
 	/**
