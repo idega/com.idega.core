@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
+import com.idega.builder.business.BuilderLogic;
 import com.idega.core.ICTreeNode;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
@@ -211,7 +212,7 @@ public class TreeViewer extends AbstractTreeViewer {
           String nodeName = node.getNodeName();
           l.setURL("#");
           if ( fromEditor )
-          	l.setOnClick("save('http://"+iwc.getServerName()+"/servlet/IBMainServlet?ib_page="+node.getNodeID()+"','_self')");
+          	l.setOnClick("save('http://"+iwc.getServerName()+BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID())+"','_self')");
           else
           	l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
         } else if(nodeActionPrm != null){
