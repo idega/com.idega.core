@@ -487,7 +487,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				setValue(columnName, (String)columnValue);
 			}
 			//else if (columnValue instanceof IDOLegacyEntity){
-			else {
+			else if (columnValue == null)  {
+        setValue(columnName, columnValue);
+      }
+      else 
+      {
 				setValue(columnName, ((IDOEntity)columnValue).getPrimaryKey());
 			}
 		}
