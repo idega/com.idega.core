@@ -163,6 +163,19 @@ public String getReferer(){
 	return getRequest().getHeader("Referer");
 }
 
+public boolean isMacOS(){
+  boolean isMac = false;
+  if(getUserAgent().indexOf("Mac") != -1){
+    isMac = true;
+  }
+  else if(getUserAgent().indexOf("mac") !=-1 ){
+    isMac = true;
+  }
+
+  return isMac;
+}
+
+
 public boolean isNetscape(){
 	if (getUserAgent().indexOf("Mozilla") != -1){
 		//if not Internet Explorer then Netscape :)

@@ -77,7 +77,7 @@ public class TextEditor extends PresentationObject {
 
     if (getLanguage().equals("HTML")){
 
-      if( iwc.isIE() ){//and is windows
+      if( iwc.isIE() && (!iwc.isMacOS()) ){//and is windows
 
         /*
         var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
