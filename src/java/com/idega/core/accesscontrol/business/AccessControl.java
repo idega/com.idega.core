@@ -737,6 +737,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
 						PresentationObject currentObject = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
 						ICDynamicPageTrigger dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, AccessControl.class);
+						if (dynamicPageTrigger == null) {
+							throw new RuntimeException("[AccessControl] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
+						}
+
 						Boolean hasRelationToPage = dynamicPageTrigger.hasRelationTo(currentObject, permissionGroupLists, iwc);
 						String templateID = currentObject.getTemplateId();
 						if(Boolean.TRUE.equals(hasRelationToPage) && templateID!=null) {

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.119 2004/07/22 11:02:52 thomas Exp $
+ *  $Id: Page.java,v 1.120 2004/07/30 14:15:20 thomas Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1744,6 +1744,9 @@ public class Page extends PresentationObjectContainer {
 	public ICDynamicPageTrigger getDynamicPageTrigger() {
 		if (dynamicPageTrigger == null) {
 			dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, this.getClass());
+			if (dynamicPageTrigger == null) {
+				throw new RuntimeException("[Page] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
+			}
 		}
 		return dynamicPageTrigger;
 	}
