@@ -16,8 +16,6 @@ public abstract class IWService{
 
   IWMainApplication application;
 
-
-
   public abstract void executeService();
   public abstract String getServiceName();
 

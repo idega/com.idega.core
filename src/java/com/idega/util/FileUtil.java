@@ -1,0 +1,86 @@
+package com.idega.util;
+
+/**
+ * Title:        idega Framework
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega
+ * @author <a href=mailto:"tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.0
+ */
+
+ import java.io.File;
+ import java.io.IOException;
+
+public class FileUtil {
+
+
+
+
+  private FileUtil() {
+  }
+
+  public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
+
+    createFolder(path);
+    String filePath = getFileNameWithPath(path,fileNameWithoutFullPath);
+    createFile(filePath);
+
+  }
+
+  /**
+   * Creates a folder if it does not exists. Returns true if creation successful, false otherwise
+   */
+  public static boolean createFolder(String path){
+    File folder = new File(path);
+    if(!folder.exists()){
+      folder.mkdirs();
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  public static boolean createFile(String fileNameWithFullPath){
+      File file = new File(fileNameWithFullPath);
+      try{
+        return file.createNewFile();
+      }
+      catch(IOException ex){
+        return false;
+      }
+  }
+
+  /**
+   * Gets the System wide path separator
+   */
+  public static String getFileSeparator(){
+    return System.getProperty(systemSeparatorString);
+  }
+
+  public static String getFileNameWithPath(String path,String fileNameWithoutFullPath){
+    return path+getFileSeparator()+fileNameWithoutFullPath;
+  }
+
+  /**
+   * Returns a File Object. Creates the File and parent folders if they do not exist.
+   */
+  public static File getFileAndCreateIfNotExists(String path,String fileNameWithoutFullPath)throws IOException{
+    createFolder(path);
+    String fullPath = getFileNameWithPath(path,fileNameWithoutFullPath);
+    return getFileAndCreateIfNotExists(fullPath);
+  }
+
+  /**
+   * Returns a File Object. Creates the File if it does not exist.
+   */
+  public static File getFileAndCreateIfNotExists(String fileNameWithFullPath)throws IOException{
+      File file = new File(fileNameWithFullPath);
+      file.createNewFile();
+      return file;
+  }
+
+  private static String systemSeparatorString =  "file.separator";
+
+}

@@ -12,6 +12,8 @@ import java.sql.*;
 import com.idega.util.database.*;
 import javax.sql.*;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.FileUtil;
+import com.idega.idegaweb.IWService;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -23,9 +25,8 @@ public class IWStarterServlet extends GenericServlet
 	//public PoolManager poolMgr;
 
 	public void init() throws ServletException{
-          System.out.println("Initializing IdegaWebStarter");
-          startDatabasePool();
-          startIdegaWebApplication();
+              System.out.println("Initializing IdegaWebStarter");
+              startIdegaWebApplication();
 	}
 
 
@@ -40,15 +41,15 @@ public class IWStarterServlet extends GenericServlet
 
 		System.out.println("destroying IdegaWebStarter");
                       endIdegaWebApplication();
-                      endDatabasePool();
+
 		//super.destroy();
 	}
 
 
         public void startDatabasePool(){
-                // gimmi 06.02.2001
-                String separator = System.getProperty("file.separator");
-		String file = getServletContext().getRealPath("/")+separator+"db"+separator+"db.properties";
+                String separator = FileUtil.getFileSeparator();
+		//String file = getServletContext().getRealPath("/")+separator+"db"+separator+"db.properties";
+                    String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
                 System.out.println("DB : "+file);
                 PoolManager poolMgr;
 		//String file = "db/db.properties";
@@ -64,12 +65,37 @@ public class IWStarterServlet extends GenericServlet
 
         public void startIdegaWebApplication(){
             IWMainApplication application = new IWMainApplication(this.getServletContext());
+            startDatabasePool();
+            executeServices(application);
         }
 
+        /**
+         * Not Implemented fully
+         */
+        public void executeServices(IWMainApplication application){
+            List list = application.getSettings().getServiceClasses();
+            if(list!=null){
+                Iterator iter = list.iterator();
+                while (iter.hasNext()) {
+                  Object item = iter.next();
+                  try{
+                    Class theClass = (Class)item;
+                    IWService theService = (IWService)theClass.newInstance();
+                    theService.startService(application);
+                  }
+                  catch(Exception ex){
+                    ex.printStackTrace();
+                  }
+
+
+                }
+            }
+        }
 
         public void endIdegaWebApplication(){
             IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
             application.unload();
+            endDatabasePool();
         }
 
 

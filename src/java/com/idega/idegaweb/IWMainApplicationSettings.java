@@ -7,6 +7,10 @@ package com.idega.idegaweb;
 
 
 import java.util.Locale;
+import java.io.File;
+import com.idega.util.FileUtil;
+import java.util.List;
+import com.idega.util.LocaleUtil;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -14,7 +18,7 @@ import java.util.Locale;
 */
 public class IWMainApplicationSettings extends IWPropertyList{
 
-
+  private static String IW_SERVICE_CLASS_NAME="iw_service_class_name";
   private static String DEFAULT_TEMPLATE_NAME="defaulttemplatename";
   private static String DEFAULT_TEMPLATE_CLASS="defaulttemplateclass";
   private static String DEFAULT_FONT="defaultfont";
@@ -23,10 +27,8 @@ public class IWMainApplicationSettings extends IWPropertyList{
 
 
   public IWMainApplicationSettings(IWMainApplication application){
-    super(application.getApplicationSpecialPath()+"/idegaweb.xml");
+    super(application.getPropertiesRealPath(),"idegaweb.pxml",true);
   }
-
-
 
     public void setDefaultTemplate(String templateName,String classname){
       setProperty(DEFAULT_TEMPLATE_NAME,templateName);
@@ -62,16 +64,45 @@ public class IWMainApplicationSettings extends IWPropertyList{
         setProperty(DEFAULT_LOCALE,locale.toString());
     }*/
 
-    public void setDefaultLocale(String localeString){
-        setProperty(DEFAULT_LOCALE,localeString);
+    public void setDefaultLocale(Locale locale){
+        setProperty(DEFAULT_LOCALE,locale.toString());
     }
 
     /*public Locale getDefaultLocale(){
       return (new Locale(getProperty(DEFAULT_LOCALE)));
     }*/
 
-    public String getDefaultLocaleString(){
-      return getProperty(DEFAULT_LOCALE);
+    public Locale getDefaultLocale(){
+      String localeIdentifier = getProperty(DEFAULT_LOCALE);
+      Locale locale = null;
+      if(localeIdentifier==null){
+          localeIdentifier=LocaleUtil.getIcelandicLocale().toString();
+          locale = LocaleUtil.getLocale(localeIdentifier);
+          setDefaultLocale(locale);
+      }
+      locale = LocaleUtil.getLocale(localeIdentifier);
+      return locale;
+    }
+
+    /**
+     * Returns false if the removing fails
+     */
+    public boolean removeIWService(Class serviceClass){
+        return false;
+    }
+
+    /**
+     * Returns false if the class is wrong or it fails
+     */
+    public boolean addIWService(Class serviceClass){
+      return false;
+    }
+
+    /**
+     * Returns a list of Class objects corresponding to the IWService Classes
+     */
+    public List getServiceClasses(){
+      return null;
     }
 
 

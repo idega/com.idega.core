@@ -1,0 +1,166 @@
+
+package com.idega.idegaweb;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import com.idega.jmodule.object.Image;
+import java.io.FileNotFoundException;
+import java.util.MissingResourceException;
+
+/**
+ * Title:        idega Framework
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega
+ * @author <a href=mailto:"tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.0
+ */
+public class IWResourceBundle extends ResourceBundle {
+
+    // ==================privates====================
+
+    private Properties lookup = new Properties();
+    //private Properties lookup;
+    private Locale locale;
+    private File file;
+    private IWBundle iwBundleParent;
+    private String resourcesURL;
+    private static String slash = "/";
+
+
+    /**
+     * Creates a IWResourceBundle for a specific Locale
+     * @param file file to read from.
+     * @param parent Parent IWBundle to instanciate from
+     * @param locale Locale to create from
+     */
+    public IWResourceBundle (IWBundle parent,File file,Locale locale) throws IOException {
+        setIWBundleParent(parent);
+        setLocale(locale);
+        this.file = file;
+        lookup.load(new FileInputStream(file));
+        setResourcesURL(parent.getResourcesVirtualPath()+"/"+locale.toString()+".locale");
+    }
+
+    /**
+     * Override of ResourceBundle, same semantics
+     */
+    public Object handleGetObject(String key) {
+        Object obj = lookup.get(key);
+        return obj; // once serialization is in place, you can do non-strings
+    }
+
+    /**
+     * Implementation of ResourceBundle.getKeys.
+     */
+    public Enumeration getKeys() {
+        Enumeration result = null;
+        if (parent != null) {
+            final Enumeration myKeys = lookup.keys();
+            final Enumeration parentKeys = parent.getKeys();
+
+            result = new Enumeration() {
+                public boolean hasMoreElements() {
+                    if (temp == null)
+                        nextElement();
+                    return temp != null;
+                }
+
+                public Object nextElement() {
+                    Object returnVal = temp;
+                    if (myKeys.hasMoreElements())
+                        temp = myKeys.nextElement();
+                    else {
+                        temp = null;
+                        while (temp == null && parentKeys.hasMoreElements()) {
+                            temp = parentKeys.nextElement();
+                            if (lookup.containsKey(temp))
+                                temp = null;
+                        }
+                    }
+                    return returnVal;
+                }
+
+                Object temp = null;
+            };
+        } else {
+            result = lookup.keys();
+        }
+        return result;
+    }
+
+    public Locale getLocale(){
+      return locale;
+    }
+
+    private void setLocale(Locale locale){
+      this.locale=locale;
+    }
+
+    public void storeState(){
+        try{
+          lookup.store(new FileOutputStream(file),null);
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(IOException ex){
+          ex.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Uses getString but returns null if resource is not found
+     */
+    public String getLocalizedString(String key){
+      try{
+        return super.getString(key);
+      }
+      catch(MissingResourceException e){
+        return null;
+      }
+    }
+
+    /**
+     *@deprecated Replaced with getLocalizedString(key)
+     */
+    public String getStringChecked(String key){
+      return getLocalizedString(key);
+    }
+
+    public void setString(String key,String value){
+      lookup.setProperty(key,value);
+      String string = this.iwBundleParent.getLocalizableStringsProperties().getProperty(key);
+      if(string==null){
+        this.iwBundleParent.getLocalizableStringsProperties().setProperty(key,value);
+      }
+    }
+
+    private void setIWBundleParent(IWBundle parent){
+      this.iwBundleParent=parent;
+    }
+
+    public IWBundle getIWBundleParent(){
+      return iwBundleParent;
+    }
+
+    public Image getImage(String name){
+      return new Image(getResourcesURL()+slash+name);
+    }
+
+    private void setResourcesURL(String url){
+      resourcesURL=url;
+    }
+
+    public String getResourcesURL(){
+      return resourcesURL;
+    }
+
+}

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.8 2001/05/18 14:36:17 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.9 2001/05/18 19:48:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,7 +28,27 @@ import com.idega.event.IWEvent;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class IWPresentationServlet extends IWCoreServlet {
+
+public  class IWPresentationServlet extends IWCoreServlet{
+
+  private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
+
+
+	/*
+	public void init(ServletConfig config)
+          throws ServletException{
+		super.init(config);
+
+	}*/
+
+	/*public void init()throws ServletException{
+                //System.out.println("Inside init() for "+getServletConfig().getServletName());
+		super.init();
+                String servletName = this.getServletConfig().getServletName();
+                System.out.println("Inside init for "+servletName);
+                initializePage();
+	}*/
+
 	private void __initialize(HttpServletRequest request, HttpServletResponse response) throws Exception {
     //TODO
     //Find a better solution for this:
@@ -49,6 +69,7 @@ public class IWPresentationServlet extends IWCoreServlet {
     if(markup != null) {
       moduleinfo.setLanguage(markup);
     }
+
 
 		storeObject("idega_moduleinfo",moduleinfo);
 		initializePage();
@@ -310,4 +331,33 @@ public class IWPresentationServlet extends IWCoreServlet {
           Text text = new Text(thrower.getClass().getName());
           add(new ExceptionWrapper(ex,text));
         }
+
+
+
+  public String getBundleIdentifier(){
+    return IW_BUNDLE_IDENTIFIER;
+  }
+
+
+  public IWBundle getBundle(ModuleInfo modinfo){
+    IWMainApplication iwma = modinfo.getApplication();
+    return iwma.getBundle(getBundleIdentifier());
+  }
+
+  public IWResourceBundle getResourceBundle(ModuleInfo modinfo){
+    IWBundle bundle = getBundle(modinfo);
+    if(bundle!=null){
+      return bundle.getResourceBundle(modinfo.getCurrentLocale());
+    }
+    return null;
+  }
+
+  public String getLocalizedString(String key,ModuleInfo modinfo){
+    IWResourceBundle bundle = getResourceBundle(modinfo);
+    if(bundle!=null){
+      return bundle.getStringChecked(key);
+    }
+    return null;
+  }
+
 }

@@ -74,8 +74,7 @@ public class PoolManager
       catch (Exception e)
       {
 
-         logWriter.log("Can't read the properties file. " +
-            "Make sure db.properties is in the CLASSPATH",
+         logWriter.log("Can't read the properties file from the specified location",
             LogWriter.ERROR);
          return;
       }

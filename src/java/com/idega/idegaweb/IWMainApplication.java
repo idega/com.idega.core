@@ -10,6 +10,7 @@ import java.util.*;
 import javax.servlet.*;
 import java.net.*;
 import com.idega.util.*;
+import com.idega.util.FileUtil;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -20,15 +21,24 @@ public class IWMainApplication{//implements ServletContext{
 
   public static String IdegaEventListenerClassParameter="idegaweb_event_classname";
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
-  public static String windowOpenerURL="/common/windowopener.jsp";
+  public static String windowOpenerURL="/servlet/WindowOpener";
   public static String windowOpenerParameter="idegaweb_window_for_page";
-  public static String objectInstanciatorURL="/common/instanciator.jsp";
+  public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
+  public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
+  public static String FILE_SERVLET_URL="/servlet/FileServlet/";
+  public static String BUILDER_SERVLET_URL="/servlet/BuilderServlet/";
+
   public static String templateParameter="idegaweb_template";
   public static String templateClassParameter="idegaweb_template_class";
   public static String classToInstanciateParameter="idegaweb_instance_class";
+  private Hashtable loadedBundles;
+  private Properties bundlesFile;
+  private File bundlesFileFile;
+  private String propertiesRealPath;
 
 
   private static String SETTINGS_STORAGE_PARAMETER="idegaweb_main_application_settings";
+  private static String bundlesFileName="bundles.properties";
 
 
   private String defaultLightInterfaceColor=IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
@@ -43,12 +53,33 @@ public class IWMainApplication{//implements ServletContext{
   public IWMainApplication(ServletContext application){
     this.application=application;
     application.setAttribute(ApplicationStorageParameterName,this);
-    IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
-    application.setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
-    lw=new LogWriter(this.getApplicationPath(),LogWriter.INFO);
+    load();
   }
 
+  public String getVersion(){
+    String theReturn = this.getSettings().getProperty("version");
+    if(theReturn == null){
+      theReturn = "1.0";
+    }
+    return theReturn;
+  }
 
+  private void load(){
+    lw=new LogWriter(this.getApplicationRealPath(),LogWriter.INFO);
+    this.setPropertiesRealPath();
+    IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
+    setAttribute(SETTINGS_STORAGE_PARAMETER,settings);
+    bundlesFile = new Properties();
+    loadedBundles = new Hashtable();
+    try{
+    bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this.getPropertiesRealPath(),bundlesFileName);
+    bundlesFile.load(new FileInputStream(bundlesFileFile));
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+    System.out.println("Starting the IdegaWEB Application Framework - Version "+this.getVersion());
+  }
 
   public static String getObjectInstanciatorURL(Class className,String templateName){
     return getObjectInstanciatorURL(className.getName(),templateName);
@@ -187,9 +218,7 @@ public class IWMainApplication{//implements ServletContext{
     defaultLightInterfaceColor=color;
   }
 
-  /**
-   * @deprecated Replaced with getSettings()
-   */
+
   /*public Properties getDefaultProperties(){
     IdegaWebProperties properties = (IdegaWebProperties)application.getAttribute(this.DefaultPropertiesStorageParameterName);
     //if (properties==null){
@@ -206,9 +235,17 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   /**
+   * @deprecated replaced with getApplicationRealPath()
    * Returns the real path to the WebApplication
    */
   public String getApplicationPath(){
+    return application.getRealPath("/");
+  }
+
+  /**
+   * Returns the real path to the WebApplication
+   */
+  public String getApplicationRealPath(){
     return application.getRealPath("/");
   }
 
@@ -217,8 +254,12 @@ public class IWMainApplication{//implements ServletContext{
     return lw;
   }
 
-  public String getApplicationSpecialPath(){
-    return this.getApplicationPath()+"/idegaweb";
+  public String getApplicationSpecialRealPath(){
+    return this.getApplicationRealPath()+getApplicationSpecialVirtualPath();
+  }
+
+  public String getApplicationSpecialVirtualPath(){
+    return FileUtil.getFileSeparator()+"idegaweb";
   }
 
   //public IWBundleList getBundlesRegistered(){
@@ -229,8 +270,84 @@ public class IWMainApplication{//implements ServletContext{
    * Should be called before the application is put out of service
    */
   public void unload(){
-      getSettings().store();
-      //getBundleList().store();
+    storeStatus();
   }
+
+
+  public void storeStatus(){
+      getSettings().store();
+      try{
+      getBundlesFile().store(new FileOutputStream(bundlesFileFile),null);
+      }
+      catch(Exception ex){
+          ex.printStackTrace();
+      }
+      for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
+        Object key = enum.nextElement();
+        IWBundle bundle = (IWBundle)loadedBundles.get(key);
+        bundle.storeState();
+      }
+  }
+
+  private Properties getBundlesFile(){
+    return bundlesFile;
+  }
+
+
+  private String getBundleVirtualPath(String bundleIdentifier){
+    String path = this.getApplicationSpecialVirtualPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier);
+    return path;
+  }
+
+  private void setPropertiesRealPath(){
+      this.propertiesRealPath=this.getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+"properties";
+  }
+
+  public String getPropertiesRealPath(){
+      return propertiesRealPath;
+  }
+
+  private String getBundleRealPath(String bundleIdentifier){
+      return this.getApplicationRealPath()+FileUtil.getFileSeparator()+getBundleVirtualPath(bundleIdentifier);
+  }
+
+  public IWBundle getBundle(String bundleIdentifier){
+    IWBundle bundle = (IWBundle)loadedBundles.get(bundleIdentifier);
+    if(bundle == null){
+      bundle = new IWBundle(getBundleRealPath(bundleIdentifier),getBundleVirtualPath(bundleIdentifier),bundleIdentifier,this);
+      loadedBundles.put(bundleIdentifier,bundle);
+    }
+    return bundle;
+  }
+
+  public boolean registerBundle(String bundleIdentifier,String bundlesPath){
+    bundlesFile.setProperty(bundleIdentifier,bundlesPath);
+    return true;
+  }
+
+  /**
+   * Returns a List of IWBundle Objects
+   */
+  public List getRegisteredBundles(){
+      Vector vector = new Vector();
+      Iterator iter = bundlesFile.keySet().iterator();
+      while (iter.hasNext()) {
+        String key = (String)iter.next();
+        vector.add(getBundle(key));
+      }
+      return vector;
+  }
+
+
+    /**
+   * Returns a List of Locale Objects
+   */
+  public List getAvailableLocales(){
+    Vector vector = new Vector();
+    vector.add(LocaleUtil.getIcelandicLocale());
+    vector.add(Locale.ENGLISH);
+    return vector;
+  }
+
 
 }
