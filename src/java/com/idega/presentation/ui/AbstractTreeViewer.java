@@ -44,6 +44,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                       "treeviewer_L_line.gif","treeviewer_L_minus.gif","treeviewer_L_plus.gif",
                       "treeviewer_M_line.gif","treeviewer_M_minus.gif","treeviewer_M_plus.gif",
                       "treeviewer_F_line.gif","treeviewer_F_minus.gif","treeviewer_F_plus.gif"};
+
+  private String trancparentImageUrl = "treeviewer_trancparent.gif";
   private static final int ICONINDEX_TRANCPARENT = 0;
   private static final int ICONINDEX_LINE = 1;
   private static final int ICONINDEX_ROOT_LINE = 2;
@@ -78,7 +80,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private boolean _showSuperRootNode = false;
   private String _superRootNodeName = "Root";
   private Image _superRootNodeIcon = null;
-
+  private boolean _showTreeIcons = false;
+  private boolean _showTreeIcons_changed = false;
 
   public AbstractTreeViewer() {
     super();
@@ -119,13 +122,26 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   public void initIcons(IWContext iwc){
     IWBundle bundle = getBundle(iwc);
-    for (int i = 0; i < icons.length; i++) {
-      if(icons[i] == null){
-        icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+iconNames[i]);
+    if(_showTreeIcons){
+      for (int i = 0; i < icons.length; i++) {
+        if(icons[i] == null){
+          icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+iconNames[i]);
+        }
+      }
+    }else {
+      for (int i = 0; i < icons.length; i++) {
+        if(icons[i] == null){
+          icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+trancparentImageUrl);
+        }
       }
     }
-
+    _showTreeIcons_changed = false;
     updateIconDimansions();
+  }
+
+  public void setToShowTreeIcons(boolean value){
+    _showTreeIcons = value;
+    _showTreeIcons_changed = true;
   }
 
   public void initializeInMain(IWContext iwc){
@@ -212,14 +228,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
             if(i == 0 && !iter.hasNext()){
               if(hasChild){
                 if(isOpen){
-                  Link l = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_MINUS] );
-                  setLinkToOpenOrCloseNode(l,item,isOpen);
-                  nodeTable.add(l,1,1);
+                  PresentationObject p = null;
+                  if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_MINUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                  }else{
+                    p = icons[ICONINDEX_ROOT_MINUS];
+                  }
+                  nodeTable.add(p,1,1);
                   newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                 } else {
-                  Link l = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_PLUS] );
-                  setLinkToOpenOrCloseNode(l,item,isOpen);
-                  nodeTable.add(l,1,1);
+                  PresentationObject p = null;
+                  if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_PLUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                  }else{
+                    p = icons[ICONINDEX_ROOT_PLUS];
+                  }
+                  nodeTable.add(p,1,1);
                 }
               } else {
                 nodeTable.add(icons[ICONINDEX_ROOT_LINE],1,1);
@@ -229,14 +255,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
               if(i == 0){
                 if(hasChild){
                   if(isOpen){
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_F_MINUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_F_MINUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    }else{
+                      p = icons[ICONINDEX_F_MINUS];
+                    }
+                    nodeTable.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
                   } else {
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_F_PLUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_F_PLUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    }else{
+                      p = icons[ICONINDEX_F_PLUS];
+                    }
+                    nodeTable.add(p,1,1);
                   }
                 } else {
                   nodeTable.add(icons[ICONINDEX_F_LINE],1,1);
@@ -245,14 +281,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
               } else if(hasChild){
                 if(!item.isLeaf()){
                   if(isOpen){
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    }else{
+                      p = icons[ICONINDEX_L_MINUS];
+                    }
+                    nodeTable.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                   } else{
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    }else{
+                      p = icons[ICONINDEX_L_PLUS];
+                    }
+                    nodeTable.add(p,1,1);
                   }
                 } else {
                   nodeTable.add(icons[ICONINDEX_L_LINE],1,1);
@@ -261,14 +307,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
               } else {
                 if(hasChild){
                   if(isOpen){
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
+                    }else{
+                      p = icons[ICONINDEX_M_MINUS];
+                    }
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    nodeTable.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
                   } else {
-                    Link l = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
-                    setLinkToOpenOrCloseNode(l,item,isOpen);
-                    nodeTable.add(l,1,1);
+                    PresentationObject p = null;
+                    if(_showTreeIcons){
+                    p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
+                    }else{
+                      p = icons[ICONINDEX_M_PLUS];
+                    }
+                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                    nodeTable.add(p,1,1);
                   }
                 } else {
                   nodeTable.add(icons[ICONINDEX_M_LINE],1,1);
@@ -281,14 +337,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
           if(!iter.hasNext()){
             if(hasChild){
               if(isOpen){
-                Link l = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
-                setLinkToOpenOrCloseNode(l,item,isOpen);
-                nodeTable.add(l,1,1);
+                PresentationObject p = null;
+                if(_showTreeIcons){
+                p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
+                setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                }else{
+                  p = icons[ICONINDEX_L_MINUS];
+                }
+                nodeTable.add(p,1,1);
                 newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
               } else {
-                Link l = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
-                setLinkToOpenOrCloseNode(l,item,isOpen);
-                nodeTable.add(l,1,1);
+                PresentationObject p = null;
+                if(_showTreeIcons){
+                p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
+                setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                }else{
+                  p = icons[ICONINDEX_L_PLUS];
+                }
+                nodeTable.add(p,1,1);
               }
             } else {
               nodeTable.add(icons[ICONINDEX_L_LINE],1,1);
@@ -297,14 +363,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
           } else{
             if(hasChild){
               if(isOpen){
-                Link l = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
-                setLinkToOpenOrCloseNode(l,item,isOpen);
-                nodeTable.add(l,1,1);
+                PresentationObject p = null;
+                if(_showTreeIcons){
+                  p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
+                  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                }else{
+                  p = icons[ICONINDEX_M_MINUS];
+                }
+                nodeTable.add(p,1,1);
                 newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
               } else {
-                Link l = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
-                setLinkToOpenOrCloseNode(l,item,isOpen);
-                nodeTable.add(l,1,1);
+                PresentationObject p = null;
+                if(_showTreeIcons){
+                  p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
+                  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+                }else{
+                  p = icons[ICONINDEX_M_PLUS];
+                }
+                nodeTable.add(p,1,1);
               }
             } else {
               nodeTable.add(icons[ICONINDEX_M_LINE],1,1);
@@ -381,6 +457,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
   public void main(IWContext iwc) throws Exception {
+    if(_showTreeIcons_changed){
+      initIcons(iwc);
+    }
     updateOpenNodes(iwc);
     drawTree(iwc);
 
