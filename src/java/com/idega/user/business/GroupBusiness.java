@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -467,4 +468,16 @@ public interface GroupBusiness extends com.idega.business.IBOService {
 	public ICFile createGroupHomeFolder(Group group) throws CreateException;
   public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException,  IDORelationshipException;
 
+	/**
+	 * Optimized version of getParentGroups(Group group) by Gummi 25.08.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 */
+	public  Collection getParentGroups(Group group,Map cachedParents, Map cachedGroups) throws RemoteException;
+	
+	public	 String getNameOfGroupWithParentName(Group group, Collection parentGroups) throws RemoteException;
+	/**
+	 * Optimized version of getNameOfGroupWithParentName(Group group) by Gummi 25.08.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 */
+	  public String getNameOfGroupWithParentName(Group group,Map cachedParents, Map cachedGroups) throws RemoteException;
 }

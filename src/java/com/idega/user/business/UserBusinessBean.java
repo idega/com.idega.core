@@ -46,7 +46,6 @@ import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCreateException;
-import com.idega.data.IDOEntityList;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
@@ -2028,18 +2027,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(parentGroupsList);
 		 // permissions.removeAll(editPermissions); // avoid double entries
 		// permissions.addAll(viewPermissions); //Sigtryggur: this caused an error because both of the collection are now prefetched and are therefore IDOPrimaryKeyLists, not normal collections
-//		Collection allPermissions = new ArrayList();
-//		allPermissions.addAll(permissions);
-//		allPermissions.addAll(viewPermissions);
+		Collection allPermissions = new ArrayList();
+		allPermissions.addAll(permissions);
+		allPermissions.addAll(viewPermissions);
 
-		Collection allPermissions = null;
-		try {
-			allPermissions = IDOEntityList.merge(permissions,viewPermissions);
-		} catch (FinderException e) {
-			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. merge failed");
-			e.printStackTrace();
-			return ListUtil.getEmptyList();
-		}	
+//		Collection allPermissions = null;
+//		try {
+//			allPermissions = IDOEntityList.merge(permissions,viewPermissions);
+//		} catch (FinderException e) {
+//			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. merge failed");
+//			e.printStackTrace();
+//			return ListUtil.getEmptyList();
+//		}	
 		Iterator iterator = allPermissions.iterator();
 		while (iterator.hasNext()) {
 			ICPermission perm = (ICPermission) iterator.next();

@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -306,6 +307,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    int total = 0;
 		    int no = 0;
 		    if(_sqlQuery==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
+		    		HashMap mapOfEntities = new HashMap();
 		    		while(RS.next())
 				{
 					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
@@ -313,26 +315,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					{
 						try {
 							IDOEntity bean = _entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource());
-							int index = listOfPrimaryKeys.indexOf(pk);
-							if(index < 0){
-								System.err.println("[IDOPrimaryKeyList]: LoadSubset, entity with primary key "+pk+" not found in pkList, indexOf(pk) returns "+index);
-							}
-							else 
-//							while (index >= 0) 
-								{
-								_entities.set(firstIndex+index,bean);
-								_tracker.setAsLoaded(firstIndex+index);
-								if(!pk.equals(this.get(firstIndex+index))){
-		//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
-									no++;
-									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(index)+" at that index");
-									System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
-								} 
-//								else {
-//									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk);
-//								}
-//								index = listOfPrimaryKeys.indexOf(pk,index+1);
-							}
+							mapOfEntities.put(pk,bean);
 						} catch (FinderException e) {
 							//The row must have been deleted from database
 	//						this.remove(pk);
@@ -341,6 +324,18 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					}
 					total++;
 				}
+		    		Iterator iter = listOfPrimaryKeys.iterator();
+		    		for (int i = firstIndex; iter.hasNext();i++) {
+					Object pk = (Object) iter.next();
+					_entities.set(i,mapOfEntities.get(pk));
+//					_tracker.setAsLoaded(firstIndex+i);
+					if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
+						no++;
+						System.err.println("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
+						System.err.println("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
+					} 
+				}
+		    		_tracker.setSubsetAsLoaded(firstIndex,firstIndex+listOfPrimaryKeys.size());
 		    } else {
 			    	for(int i = firstIndex; RS.next(); i++)
 				{

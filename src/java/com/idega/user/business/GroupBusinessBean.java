@@ -216,6 +216,22 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
       return null;
     }
   }
+  
+	/**
+	 * Optimized version of getParentGroups(Group group) by Gummi 25.08.2004
+	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+	 */
+	public  Collection getParentGroups(Group group,Map cachedParents, Map cachedGroups){
+	//public  Collection getGroupsContainingDirectlyRelated(Group group){
+	  try {
+	    return group.getParentGroups(cachedParents,cachedGroups);
+	  }
+	  catch (Exception ex) {
+	    ex.printStackTrace();
+	    return null;
+	  }
+	}
+
 
 
 /**
@@ -1558,9 +1574,9 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     } 
   }
  
-  public String getNameOfGroupWithParentName(Group group) {
+  public String getNameOfGroupWithParentName(Group group, Collection parentGroups) {
     StringBuffer buffer = new StringBuffer();    
-    Collection parents = getParentGroups(group);
+    Collection parents = parentGroups;
     buffer.append(group.getName()).append(" ");
 		if(parents!=null && !parents.isEmpty()) {
 		  Iterator par = parents.iterator();
@@ -1570,8 +1586,19 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		
 		return buffer.toString();
   }
-
-
+  
+  public String getNameOfGroupWithParentName(Group group) {  
+    return getNameOfGroupWithParentName(group,getParentGroups(group));
+  }
+  
+  
+/**
+ * Optimized version of getNameOfGroupWithParentName(Group group) by Gummi 25.08.2004
+ * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
+ */
+  public String getNameOfGroupWithParentName(Group group,Map cachedParents, Map cachedGroups) {  
+    return getNameOfGroupWithParentName(group,getParentGroups(group,cachedParents,cachedGroups));
+  }
 
  
   private UserBusiness getUserBusiness() {
