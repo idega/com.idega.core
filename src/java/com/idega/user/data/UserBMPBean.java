@@ -2091,6 +2091,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	throw new UnsupportedOperationException();
   }
 
+  /**
+   * Unsupported.
+   * 
+   */ 
+    public Collection getChildren() {
+        throw new UnsupportedOperationException("Method getChildren() not implemented");
+    }
+
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
 		String addressTypeTableName = addressType.getEntityName();
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();

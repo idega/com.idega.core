@@ -3,6 +3,7 @@
 *Copyright 2001 idega.is All Rights Reserved.
 */
 package com.idega.core.data;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -15,6 +16,11 @@ import com.idega.idegaweb.IWApplicationContext;
 */
 public interface ICTreeNode {
 
+	/**
+	 * Returns the children of the reciever as an Collection.
+	 */
+	public Collection getChildren();
+    
 	/**
 	 * Returns the children of the reciever as an Enumeration.
 	 */

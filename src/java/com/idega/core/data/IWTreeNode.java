@@ -1,4 +1,5 @@
 package com.idega.core.data;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -75,10 +76,16 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		this.childs.add(new IWTreeNode(name,id));
 	}
 	/**
+	 * @see com.idega.core.ICTreeNode#getChildren()
+	 */
+	public Collection getChildren() {
+		return this.childs;
+	}
+	/**
 	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
 	public Iterator getChildrenIterator() {
-		return this.childs.iterator();
+		return getChildren().iterator();
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#getAllowsChildren()

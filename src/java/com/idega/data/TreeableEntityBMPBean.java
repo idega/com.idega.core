@@ -1,6 +1,7 @@
 package com.idega.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -65,10 +66,19 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 * Returns the children of the reciever as an Iterator. Returns null if no children found
 	 */
 	public Iterator getChildrenIterator() {
-		return getChildren(null);
+		return getChildrenIterator(null);
 	}
-
-	public Iterator getChildren(String orderBy) {
+	public Iterator getChildrenIterator(String orderBy) {
+	    Iterator it = null;
+	    if (getChildren(orderBy) != null) {
+	        it = getChildren(orderBy).iterator();
+	    }
+	    return it; 
+	}
+	public Collection getChildren() {
+	    return getChildren(null);
+	}
+	public Collection getChildren(String orderBy) {
 		try {
 			String thisTable = this.getTableName();
 			String treeTable = EntityControl.getTreeRelationShipTableName(this);
@@ -94,7 +104,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 					ICTreeNodeLeafComparator c = new ICTreeNodeLeafComparator(_leafsFirst);
 					Collections.sort(list, c);
 				}
-				return list.iterator();
+				return list;
 			} else {
 				return null;
 			}

@@ -10,6 +10,7 @@ import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.core.data.ICTreeNode;
 import com.idega.presentation.text.Text;
+import com.idega.user.business.GroupTreeComparator;
 
 /**
  * Title:        idegaWeb
@@ -481,7 +482,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				frameTable.add(treeColumns, 1, rowIndex);
 
 				if (hasChild && isOpen) {
-					drawTree(item.getChildrenIterator(), newCollectedIcons, iwc);
+				    Collection children = item.getChildren();
+				    Collections.sort((List)children, new GroupTreeComparator(iwc.getCurrentLocale()) );
+				    drawTree(children.iterator(), newCollectedIcons, iwc);
 				}
 			}
 		}
@@ -851,11 +854,18 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 
 		/**
-		 * Returns the children of the reciever as an Enumeration.
+		 * Returns the children of the reciever as an Iterator.
 		 */
 		public Iterator getChildrenIterator() {
+			return getChildren().iterator();
+		}
+
+		/**
+		 * Returns the children of the reciever as a Collection.
+		 */
+		public Collection getChildren() {
 			if (childrens != null) {
-				return childrens.iterator();
+				return childrens;
 			} else {
 				return null;
 			}

@@ -1390,6 +1390,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Iterator getChildrenIterator() {
+		Iterator it = null;
+		if (getChildren() != null) {
+		    it = getChildren().iterator();
+		}
+	    return it;
+	}
+
+	public Collection getChildren() {
 		/**
 		 * @todo: Change implementation this first part may not be needed. (Eiki,gummi)
 		 *
@@ -1399,14 +1407,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			try {
 				String[] groupTypes = new String[1];
 				groupTypes[0] = ((GroupHome)IDOLookup.getHome(User.class)).getGroupType();
-				return this.getGroupHome().findGroups(groupTypes).iterator();
+				return this.getGroupHome().findGroups(groupTypes);
 			}
 			catch (Exception e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		}
 		else {
-			return getChildGroups().iterator(); //only returns groups not users
+			return getChildGroups(); //only returns groups not users
 		}
 	}
 	public boolean getAllowsChildren() {

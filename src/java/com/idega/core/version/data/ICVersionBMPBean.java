@@ -227,23 +227,29 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	//ICTreeNode methods begin
 
 	/* (non-Javadoc)
-	 * @see com.idega.core.ICTreeNode#getChildren()
+	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
 	public Iterator getChildrenIterator() {
-		Iterator iter = null;
+	    Iterator it = null;
+	    if (getChildren() != null)
+	        it = getChildren().iterator();
+	    return it;
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getChildren()
+	 */
+	public Collection getChildren() {
+		Collection coll = null;
 		try {
 			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
-			Collection coll = versionHome.findChildrens(this);
-			if(coll.size()>0){
-				iter = coll.iterator();
-			}
+			coll = versionHome.findChildrens(this);
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
 		
-		return iter;
+		return coll;
 	}
 
 	/* (non-Javadoc)

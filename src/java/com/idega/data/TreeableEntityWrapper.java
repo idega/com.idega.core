@@ -7,6 +7,7 @@
 package com.idega.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -77,17 +78,24 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.data.TreeableEntity#getChildren(java.lang.String)
+	 * @see com.idega.data.TreeableEntity#getChildrenItarator<<s(java.lang.String)
 	 */
-	public Iterator getChildren(String p0) {
-		return ((TreeableEntity)this.getMainEntity()).getChildren(p0);
+	public Iterator getChildrenIterator(String p0) {
+		return ((TreeableEntity)this.getMainEntity()).getChildrenIterator(p0);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.core.ICTreeNode#getChildren()
+	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
 	public Iterator getChildrenIterator() {
 		return ((TreeableEntity)this.getMainEntity()).getChildrenIterator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.core.ICTreeNode#getChildren()
+	 */
+	public Collection getChildren() {
+		return ((TreeableEntity)this.getMainEntity()).getChildren();
 	}
 
 	/* (non-Javadoc)
