@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.17 2001/09/19 12:39:49 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.18 2001/10/01 12:06:15 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -96,6 +96,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
 	public void __main(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
           try {
 
+long time1 = System.currentTimeMillis();
 
             __initialize(request,response);
             ModuleInfo moduleinfo = getModuleInfo();
@@ -146,6 +147,13 @@ public  class IWPresentationServlet extends IWCoreServlet{
             _main(moduleinfo);
 
             __print(moduleinfo);
+
+long time2 = System.currentTimeMillis();
+PrintWriter writer = moduleinfo.getWriter();
+writer.println("<!-- --------------------------------------- -->");
+writer.println("<!-- Printing page: "+ (time2 - time1 )+ " ms -->");
+writer.println("<!-- --------------------------------------- -->");
+
             /*if (connectionRequested()){
                             freeConnection();
             }*/
