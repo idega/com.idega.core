@@ -60,7 +60,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private String _dataSource;
   private static String DEFAULT_DATASOURCE = "default";
   String _cachedColumnNameList;
-  private String _lobColumnName;
+  public String _lobColumnName;
   private boolean insertStartData=true;
 
 
@@ -1006,7 +1006,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 	}
 
-    boolean hasBeenSetNull(String columnName){
+    public boolean hasBeenSetNull(String columnName){
       if(this.hasColumnBeenUpdated(columnName)){
         return this.isNull(columnName);
       }
@@ -2296,32 +2296,36 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	GenericEntity getStaticInstance(){
+	public IDOLegacyEntity getStaticInstance(){
 	  return getStaticInstance(this.getClass().getName());
 	}
 
 	protected boolean hasLobColumn()throws Exception{
-	  String lobColumnName = this.getStaticInstance()._lobColumnName;
-	  if(lobColumnName==null){
+	  String lobColumnName = this.getLobColumnName();
+          //String lobColumnName = this.getStaticInstance()._lobColumnName;
+          if(lobColumnName==null){
 	    return false;
 	  }
 	  return true;
 	}
 
+        private void setLobColumnName(String lobColumnName){
+          ((GenericEntity)this.getStaticInstance())._lobColumnName=lobColumnName;
+        }
 
 	private void setLobColumnName(){
-	  if( this.getStaticInstance()._lobColumnName == null ) {
+	  if( getLobColumnName() == null ) {
 	    String[] columnNames = this.getColumnNames();
 	    for (int i = 0; i < columnNames.length; i++) {
 	      if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
-		this.getStaticInstance()._lobColumnName = columnNames[i];
+		setLobColumnName(columnNames[i]);
 	      }
 	    }
 	  }
 	}
 
 	public String getLobColumnName(){
-	  return  this.getStaticInstance()._lobColumnName;
+	  return  ((GenericEntity)this.getStaticInstance())._lobColumnName;
 	}
 
 	public static GenericEntity getStaticInstance(String entityClassName){
@@ -2748,6 +2752,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         setColumn(getIDColumnName(),(Integer)pk);
       }
       this._primaryKey=pk;
+   }
+
+   public String getCachedColumnNamesList(){
+    return ((GenericEntity)getStaticInstance())._cachedColumnNameList;
    }
 
 }

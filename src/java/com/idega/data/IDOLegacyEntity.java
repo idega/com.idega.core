@@ -156,4 +156,7 @@ public interface IDOLegacyEntity extends IDOEntity{
  public String getTableName();
  public void setEntityState(int state);
  public java.util.Vector getAttributes();
+ public IDOLegacyEntity getStaticInstance();
+ public String getCachedColumnNamesList();
+ public boolean hasBeenSetNull(String columnName);
 }
