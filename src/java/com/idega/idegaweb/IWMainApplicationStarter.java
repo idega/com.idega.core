@@ -367,12 +367,14 @@ public class IWMainApplicationStarter {
 		
 		// perhaps this entry is not neccessary (by thomas)
 		rfregistry.registerRefactoredClass("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class.getName());
+		rfregistry.registerRefactoredClass("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class.getName());
 	}
 
 	private void updateClassReferencesInDatabase() {
 		try {
 			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
 			home.updateClassReferences("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class);
+			home.updateClassReferences("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class);
 		} 
 		catch (IDOLookupException e) {
 			// TODO Auto-generated catch block
