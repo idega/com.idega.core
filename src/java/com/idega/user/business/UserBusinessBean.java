@@ -349,28 +349,37 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),dateOfBirth,null);
   }
 
-  public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
-      UserTransaction transaction = this.getSessionContext().getUserTransaction();
-      try{
-        transaction.begin();
-        User newUser;
-        // added by Aron 07.01.2002 ( aron@idega.is )
-        if(primary_group==null)
-        	primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
-        newUser = insertUser(firstname,middlename, lastname,null,null,null,null,primary_group);
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException {
+		UserTransaction transaction = this.getSessionContext().getUserTransaction();
+		try{
+			transaction.begin();
+			User newUser;
+			// added by Aron 07.01.2002 ( aron@idega.is )
+			if(primary_group==null)
+				primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
+        
+			//newUser = insertUser(firstname,middlename, lastname,null,null,null,null,primary_group);
+			newUser = createUser(firstname,middlename,lastname,displayname,SSN,description,gender,date_of_birth,primary_group);
 
-        LoginDBHandler.createLogin(newUser,userLogin,password,accountEnabled,modified,
-                                 daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType);
-        transaction.commit();
-        return newUser;
-      }
-      catch(Exception e){
-        try{
-          transaction.rollback();
-        }
-        catch(SystemException se){}
-        throw new CreateException(e.getMessage());
-      }
+			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
+				LoginDBHandler.createLogin(newUser,userLogin,password,accountEnabled,modified,
+																	 daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType);
+			}
+			transaction.commit();
+			return newUser;
+		}
+		catch(Exception e){
+			try{
+				transaction.rollback();
+			}
+			catch(SystemException se){}
+			throw new CreateException(e.getMessage());
+		}
+		
+	}
+
+  public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
+  	return createUserWithLogin(firstname,middlename,lastname,null,displayname,description,gender,date_of_birth,primary_group,userLogin,password,accountEnabled,modified,daysOfValidity,passwordExpires,userAllowedToChangePassw,changeNextTime,encryptionType);
   }
 
 

@@ -18,7 +18,7 @@ public class IDOEntityList implements List {
 
   private IDOFactory _factory;
   private List _PKs;
-  private Collection collectionOfEntities = null;
+//  private Collection collectionOfEntities = null;
 
   private IDOEntityList(){
   }
@@ -91,7 +91,8 @@ public class IDOEntityList implements List {
     throw new UnsupportedOperationException("Method add(Object o) not yet implemented.");
   }
   public boolean remove(Object o) {
-    throw new UnsupportedOperationException("Method remove(Object o) not yet implemented.");
+  	return _PKs.remove(o);
+//    throw new UnsupportedOperationException("Method remove(Object o) not yet implemented.");
   }
   public boolean containsAll(Collection c) {
     throw new UnsupportedOperationException("Method containsAll(Collection c) not yet implemented.");

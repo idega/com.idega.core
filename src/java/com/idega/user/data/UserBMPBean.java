@@ -586,6 +586,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		countQuery.appendWhere(this.getIDColumnName());
 		countQuery.appendIn(sGroupList);
 		//	  return this.idoFindPKsBySQL(query.toString());
+				
 		try {
 			return this.idoFindPKsBySQL(query.toString(), countQuery.toString());
 		}
