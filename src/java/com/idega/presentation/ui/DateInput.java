@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.32 2003/08/07 16:03:17 laddi Exp $
+ * $Id: DateInput.java,v 1.33 2003/10/06 15:21:17 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,11 +55,11 @@ public class DateInput extends InterfaceObjectContainer {
   // added by thomas
   // Flag that indicates if the drop down menus are up to date or not
   // This flag is set to true if and only if 
-  // the method setSetValues was called.
+  // the method initilizeValues was called.
   // The flag is set to false if one of the methods 
   // setDay, setMonth, setYear and setYearRange is called.
   // Within the print method the flag is checked. If it is false 
-  // the method setSetValues is invoked. The problem is that
+  // the method initilizeValues is invoked. The problem is that
   // TabbedPropertyWindow seems not to call the main method. 
   private boolean dropDownMenusUpToDate = true;
   // added by thomas
@@ -393,7 +393,7 @@ public class DateInput extends InterfaceObjectContainer {
     }
   }
 
-  private void setSetValues() {
+  private void initilizeValues() {
     dropDownMenusUpToDate = true; // because this method was called
     if (_setMonth != null) {
       _theMonth.setSelectedElement(_setMonth);
@@ -407,8 +407,11 @@ public class DateInput extends InterfaceObjectContainer {
 
     if (this._justConstructed) {
       if (this._showYear) {
+      	//hack to avoid duplicate values
+      	_theYear.removeElements();
         if (_fromYear < _toYear) {
           for (int i = _fromYear; i <= _toYear; i++) {
+          
             _theYear.addMenuElement(Integer.toString(i));
           }
         } else {
@@ -435,7 +438,7 @@ public class DateInput extends InterfaceObjectContainer {
 
   public void main(IWContext iwc) throws Exception {
   	this.empty();
-    setSetValues();
+    initilizeValues();
     addLocalized(iwc);
     addScriptElements(iwc);
     _justConstructed = false;
@@ -702,7 +705,7 @@ public class DateInput extends InterfaceObjectContainer {
       _theYear.handleKeepStatus(iwc);
 
     _setCheck = true;
-    setSetValues();
+    initilizeValues();
   }
   
   public void keepStatusOnAction(boolean keepStatus) {
