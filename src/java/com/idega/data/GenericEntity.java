@@ -2027,6 +2027,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public int getNumberOfRecords(String CountSQLString) throws SQLException {
 		return getIntTableValue(CountSQLString);
 	}
+	public double getAverage(String averageSQLString) throws SQLException {
+		return getDoubleTableValue(averageSQLString);
+	}
 	
 	/** Checks if the value of the specified columnName in the database is null.
 	 * 	Use this method for columns where the storage type is a blob, because
@@ -3921,6 +3924,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			if (isDebugActive())
 				logSQL(sql);
 			return this.getNumberOfRecords(sql);
+		} catch (SQLException e) {
+			throw new IDOException(e, this);
+		}
+	}
+	
+	protected double idoGetAverage(String sql) throws IDOException {
+		try {
+			if (isDebugActive())
+				logSQL(sql);
+			return this.getAverage(sql);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
 		}
