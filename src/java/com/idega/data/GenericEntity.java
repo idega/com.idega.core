@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.62 2001/10/25 12:39:18 palli Exp $
+ * $Id: GenericEntity.java,v 1.63 2001/10/26 16:40:32 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -162,6 +162,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public int getID() {
 		return getIntColumnValue(getIDColumnName());
 	}
+
+        public Object getPrimaryKeyValue(){
+            return getColumnValue(getIDColumnName());
+        }
 
 	public Integer getIDInteger() {
 		return (Integer)getColumnValue(getIDColumnName());
@@ -412,7 +416,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			setValue(columnName,columnValue);
 		}
 		else{
-			setValue(columnName,((GenericEntity)columnValue).getIDInteger());
+			setValue(columnName,((GenericEntity)columnValue).getPrimaryKeyValue());
 		}
 	}
 

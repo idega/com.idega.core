@@ -40,6 +40,7 @@ public abstract class DatastoreInterface{
     if (interfacesHashtable == null){
       interfacesHashtable = new Hashtable();
     }
+    System.out.println("DatastoreInterface,datastoreType="+datastoreType);
 
     if (datastoreType.equals("oracle")){
        className = "com.idega.data.OracleDatastoreInterface";
@@ -109,16 +110,16 @@ public abstract class DatastoreInterface{
   public static DatastoreInterface getInstance(GenericEntity entity){
     String datastoreType=null;
     try{
-    Connection conn = entity.getConnection();
-    datastoreType=getDataStoreType(conn);
-    entity.freeConnection(conn);
-
+      Connection conn = entity.getConnection();
+      datastoreType=getDataStoreType(conn);
+      entity.freeConnection(conn);
     }
     catch(Exception ex){
     //  System.err.println("Exception in DatastoreInterface.getInstance(GenericEntity entity): "+ex.getMessage());
     //}
     //catch(NullPointerException npe){
     //
+      ex.printStackTrace();
       throw new IDONoDatastoreError();
     }
 
@@ -137,25 +138,36 @@ public abstract class DatastoreInterface{
 					return getDataStoreType(((DatastoreConnection)connection).getUnderLyingConnection());
 				}
 				else{
-					if (connection.getClass().getName().indexOf("oracle") != -1 ){
+
+                                        String checkString = null;
+                                        try{
+                                          checkString = connection.getMetaData().getDatabaseProductName().toLowerCase();
+                                        }
+                                        catch(SQLException e){
+                                          //Old Check
+                                          e.printStackTrace();
+                                          checkString = connection.getClass().getName();
+                                        }
+                                        System.out.println("DatastoreIterface,checkString="+checkString);
+					if (checkString.indexOf("oracle") != -1 ){
 						dataStoreType = "oracle";
 					}
-					else if (connection.getClass().getName().indexOf("interbase") != -1 ){
+					else if (checkString.indexOf("interbase") != -1 ){
 						dataStoreType = "interbase";
 					}
-					else if (connection.getClass().getName().indexOf("mysql") != -1 ){
+					else if (checkString.indexOf("mysql") != -1 ){
 						dataStoreType =  "mysql";
 					}
-					else if (connection.getClass().getName().toLowerCase().indexOf("sap") != -1 ){
+					else if (checkString.indexOf("sap") != -1 ){
 						dataStoreType =  "sapdb";
 					}
-					else if (connection.getClass().getName().toLowerCase().indexOf("db2") != -1 ){
+					else if (checkString.indexOf("db2") != -1 ){
 						dataStoreType =  "db2";
 					}
-					else if (connection.getClass().getName().toLowerCase().indexOf("informix") != -1 ){
+					else if (checkString.indexOf("informix") != -1 ){
 						dataStoreType =  "informix";
 					}
-            				else if (connection.getClass().getName().indexOf("idega") != -1 ){
+            				else if (checkString.indexOf("idega") != -1 ){
                					dataStoreType = "idega";
             				}
 					else{
