@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.16 2002/03/07 11:43:27 tryggvil Exp $
+ * $Id: Table.java,v 1.18 2002/03/09 19:22:00 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,11 +19,13 @@ import com.idega.idegaweb.IWMainApplication;
 import java.util.Iterator;
 
 /**
- * A class to use for cell (grid) layout. Note xpos is in [1:cols]
- *                     ypos is in [1:rows]
+ * A class to use for presentation of 2 dimensional (grid) layout.
+ *
+ *   Note: xpos is in [1:cols]
+ *    ,ypos is in [1:rows]
  *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.2
+ * @version 1.3
  */
 public class Table extends PresentationObjectContainer {
   protected static Image transparentcell;
@@ -64,6 +66,13 @@ public class Table extends PresentationObjectContainer {
   protected static final String HTML_TR_START="\n<tr>";
   protected static final String HTML_TR_END = "\n</tr>";
 
+  public static final String HUNDRED_PERCENT = "100%";
+  public static final String VERTICAL_ALIGN_TOP = "top";
+  public static final String VERTICAL_ALIGN_MIDDLE = "middle";
+  public static final String VERTICAL_ALIGN_BOTTOM = "bottom";
+  public static final String HORIZONTAL_ALIGN_LEFT = "left";
+  public static final String HORIZONTAL_ALIGN_RIGHT = "right";
+  public static final String HORIZONTAL_ALIGN_CENTER = "center";
 
   /**
    * Constructor that defaults with 1 column and 1 row
@@ -456,6 +465,10 @@ public class Table extends PresentationObjectContainer {
 
   public void setHeight(int ypos, String s){
     setRowAttribute(ypos,"height",s);
+  }
+
+  public void setHeight(int ypos, int height){
+    setRowAttribute(ypos,"height",String.valueOf(height));
   }
 
   public void setAlignment(String align){
