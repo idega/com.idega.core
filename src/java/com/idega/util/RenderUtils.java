@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.4 2004/12/30 22:07:00 tryggvil Exp $
+ * $Id: RenderUtils.java,v 1.5 2005/02/04 14:32:38 gummi Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import javax.faces.context.FacesContext;
 /**
  * Utility class for rendering logic in JSF.
  * 
- *  Last modified: $Date: 2004/12/30 22:07:00 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/04 14:32:38 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class RenderUtils {
 	
@@ -68,7 +68,9 @@ public class RenderUtils {
 		UIComponent facet = (UIComponent) (component.getFacets().get(facetName));
 		if (facet != null) {
 			facet.encodeBegin(context);
-			facet.encodeChildren(context);
+			if(facet.getRendersChildren()){
+				facet.encodeChildren(context);
+			}
 			facet.encodeEnd(context);
 		}
 	}	
