@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.51 2002/06/12 18:28:22 laddi Exp $
+ * $Id: PresentationObject.java,v 1.52 2002/06/13 14:06:21 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -412,7 +412,7 @@ public class PresentationObject extends Object implements Cloneable {
    */
   public void print(IWContext iwc) throws Exception {
     if (iwc.getLanguage().equals("WML")) {
-      getResponse().setContentType("text/vnd.wap.wml");
+      iwc.setContentType("text/vnd.wap.wml");
     }
   }
 
