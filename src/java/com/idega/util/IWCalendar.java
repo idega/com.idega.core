@@ -1,6 +1,7 @@
 package com.idega.util;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -47,6 +48,22 @@ public class IWCalendar {
 
 	/**
 	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given calendar from the constructed IWTimestamp and default locale.
+	 */
+	public IWCalendar(IWTimestamp timestamp) {
+		this(LocaleUtil.getIcelandicLocale(), timestamp.getGregorianCalendar());
+	}
+
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given locale and calendar from the constructed IWTimestamp.
+	 */
+	public IWCalendar(Locale locale, IWTimestamp timestamp) {
+		this(locale, timestamp.getGregorianCalendar());
+	}
+
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
 	 * the given calendar and locale.
 	 */
 	public IWCalendar(Locale locale, GregorianCalendar calendar) {
@@ -55,20 +72,38 @@ public class IWCalendar {
 	}
 
 	/**
-	 * A type setting for use with getDayName and getMonthName. Represents an abbreviated
-	 * return type.
+	 * A type setting for use with getDayName, getMonthName and getLocaleDate.<br>
+	 * getLocaleDate: SHORT is completely numeric, such as 12.13.52 or 3:30pm.<br>
+	 * getDayName/getMonthName: SHORT is abbreviated name, such as Jan or Dec.
 	 * @see IWCalendar#getDayName(int day)
 	 * @see IWCalendar#getMonthName(int month)
+	 * @see IWCalendar#getLocaleDate(Locale locale, int format, int year, int month, int day)
 	 */
-	public static final int SHORT = 1;
+	public static final int SHORT = DateFormat.SHORT;
 
 	/**
-	 * A type setting for use with getDayName and getMonthName. Represents a full
-	 * return type.
+	 * A type setting for use with getLocaleDate.<br>
+	 * MEDIUM is longer, such as Jan 12, 1952
+	 * @see IWCalendar#getLocaleDate(Locale locale, int format, int year, int month, int day)
+	 */
+	public static final int MEDIUM = DateFormat.MEDIUM;
+
+	/**
+	 * A type setting for use with getDayName, getMonthName and getLocaleDate.<br>
+	 * getLocaleDate: LONG is longer, such as January 12, 1952 or 3:30:32pm<br>
+	 * getDayName/getMonthName: LONG is full name, such as January or December.
 	 * @see IWCalendar#getDayName(int day)
 	 * @see IWCalendar#getMonthName(int month)
+	 * @see IWCalendar#getLocaleDate(Locale locale, int format, int year, int month, int day)
 	 */
-	public static final int LONG = 2;
+	public static final int LONG = DateFormat.LONG;
+
+	/**
+	 * A type setting for use with getLocaleDate.<br>
+	 * FULL is pretty completely specified, such as Tuesday, April 12, 1952 AD or 3:30:42pm PST.
+	 * @see IWCalendar#getLocaleDate(Locale locale, int format, int year, int month, int day)
+	 */
+	public static final int FULL = DateFormat.FULL;
 
 	/**
 	 * The value of the moonphase when the moon is new.
@@ -123,9 +158,6 @@ public class IWCalendar {
 
 	/**
 	 * Returns the day of the week (Sunday = 1). Uses the default date settings.
-	 * @param year					The year to use.
-	 * @param month				The month to use (January = 1).
-	 * @param day					The day to use.
 	 * @return int
 	 */
 	public int getDayOfWeek() {
@@ -239,8 +271,8 @@ public class IWCalendar {
 	/**
 	 * Returns the name of the specified month. Uses default locale settings.
 	 * @param month			The month (January = 1).
-	 * @param type				The type of string to return.  LONG (2) returns the full
-	 * 												localized name whereas SHORT (1) returns abbreviated names
+	 * @param type				The type of string to return.  LONG returns the full
+	 * 												localized name whereas SHORT returns abbreviated names
 	 * 												(three letters).  All other values return LONG.
 	 * @return String
 	 */
@@ -252,8 +284,8 @@ public class IWCalendar {
 	 * Returns the name of the specified month for the given locale.
 	 * @param month			The month (January = 1).
 	 * @param locale			The locale to use.
-	 * @param type				The type of string to return.  LONG (2) returns the full
-	 * 										localized name whereas SHORT (1) returns abbreviated names
+	 * @param type				The type of string to return.  LONG returns the full
+	 * 										localized name whereas SHORT returns abbreviated names
 	 * 										(three letters).  All other values return LONG.
 	 * @return String
 	 */
@@ -334,6 +366,54 @@ public class IWCalendar {
 		}
 
 		return returner;
+	}
+
+	/**
+	 * Returns the default date as a localized date string with the default locale.
+	 * Uses the default format (LONG).
+	 * @return String
+	 */
+	public String getLocaleDate() {
+		return getLocaleDate(_locale, DateFormat.LONG, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns the default date as a localized date string with the default locale and
+	 * specified format.
+	 * @param format		The format to use (SHORT/MEDIUM/LONG/FULL).
+	 * @return String
+	 */
+	public String getLocaleDate(int format) {
+		return getLocaleDate(_locale, format, getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * Returns the specified date as a localized date string with the default locale and
+	 * specified format.
+	 * @param format		The format to use (SHORT/MEDIUM/LONG/FULL).
+	 * @param year			The year to use.
+	 * @param month		The month to use.
+	 * @param day			The day to use.
+	 * @return String
+	 */
+	public String getLocaleDate(int format, int year, int month, int day) {
+		return getLocaleDate(_locale, format, year, month, day);
+	}
+
+	/**
+	 * Returns the specified date as a localized date string with the given locale and
+	 * format.
+	 * @param locale		The locale to use.
+	 * @param format		The format to use (SHORT/MEDIUM/LONG/FULL).
+	 * @param year			The year to use.
+	 * @param month		The month to use.
+	 * @param day			The day to use.
+	 * @return String
+	 */
+	public String getLocaleDate(Locale locale, int format, int year, int month, int day) {
+		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		DateFormat dateFormat = DateFormat.getDateInstance(format, locale);
+		return dateFormat.format(_calendar.getTime());
 	}
 
 	/**
@@ -639,5 +719,81 @@ public class IWCalendar {
 	 */
 	public Date toDate() {
 		return _calendar.getTime();
+	}
+
+	/**
+	 * Returns the calendar.
+	 * @return GregorianCalendar
+	 */
+	public GregorianCalendar getCalendar() {
+		return _calendar;
+	}
+
+	/**
+	 * Returns the locale.
+	 * @return Locale
+	 */
+	public Locale getLocale() {
+		return _locale;
+	}
+
+	/**
+	 * Sets the calendar.
+	 * @param calendar The calendar to set
+	 */
+	public void setCalendar(GregorianCalendar calendar) {
+		_calendar = calendar;
+	}
+
+	/**
+	 * Sets the calendar from the construced IWTimestamp.
+	 * @param timestamp The timestamp to get the calendar from
+	 */
+	public void setCalendar(IWTimestamp timestamp) {
+		_calendar = timestamp.getGregorianCalendar();
+	}
+
+	/**
+	 * Sets the locale.
+	 * @param locale The locale to set
+	 */
+	public void setLocale(Locale locale) {
+		_locale = locale;
+	}
+	
+	/**
+	 * Sets the day of the current date.
+	 * @param day The day to set
+	 */
+	public void setDay(int day) {
+		_calendar.set(_calendar.DATE, day);	
+	}
+
+	/**
+	 * Sets the month of the current date (January = 1).
+	 * @param month The month to set
+	 */
+	public void setMonth(int month) {
+		_calendar.set(_calendar.MONTH, month - 1);	
+	}
+
+	/**
+	 * Sets the year of the current date.
+	 * @param year The year to set
+	 */
+	public void setYear(int year) {
+		_calendar.set(_calendar.YEAR, year);	
+	}
+
+	/**
+	 * Sets the current date (January = 1).
+	 * @param year The day to year
+	 * @param month The month to set
+	 * @param day The day to set
+	 */
+	public void setDate(int year, int month, int day) {
+		_calendar.set(_calendar.YEAR, year);	
+		_calendar.set(_calendar.MONTH, month - 1);	
+		_calendar.set(_calendar.DATE, day);	
 	}
 }
