@@ -70,6 +70,9 @@ public class StringHandler {
      
   
 	public static String alfabet= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	//Alphabet+Numbers without ambigous characters such as 0 O and I l and 1
+	public static String alphabetNonAmbigous= "ABCDEFGHJKLMNPQRSTUVWXYZabcdefhijkmnoprstuvwxyz23456789";
+	
 	public static final String EMPTY_STRING= "";
 	public static final String DASH= "-";
 	
@@ -84,6 +87,19 @@ public class StringHandler {
 		}
 		return buffer.toString();
 	}
+	/**
+	 * Returns an random String with the desired length with the Roman
+	 * alphabet (upper and lower case) without ambigous characters (which can
+	 * be confused together) and numbers 2-9
+	 */
+	public static String getRandomStringNonAmbiguous(int length) {
+		StringBuffer buffer= new StringBuffer();
+		for (int i= 0; i < length; i++) {
+			buffer.append(alphabetNonAmbigous.charAt((int) (alphabetNonAmbigous.length() * Math.random())));
+		}
+		return buffer.toString();
+	}
+	
 	/**
 	 * Concatenates two strings to after alphabetical comparison
 	 */
