@@ -211,7 +211,10 @@ public void _main(IWContext iwc)throws Exception{
 		}
 		else if(isSetAsFloat){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
-			//Not implemented yet
+			setCheckSubmit();
+			getScript().addToFunction("checkSubmit","if (warnIfNotFloat (findObj('"+getName()+"'),'"+floatErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addFunction("warnIfNotFloat","function warnIfNotFloat(inputbox,warnMsg) {\n	if (inputbox.value.length == 0) { return true;\n	}\n	if (isNaN(parseFloat(inputbox.value))){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}");
+
 		}
 		else if(isSetAsAlphabetical){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
