@@ -2,10 +2,13 @@
  * Created on May 2, 2004
  */
 package com.idega.core.ldap.server.backend;
+
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.ejb.FinderException;
@@ -47,44 +50,46 @@ import com.idega.user.data.User;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson </a>
  *  
  */
-public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPConstants,EmbeddedLDAPServerConstants,LDAPReplicationConstants {
+public class IWUserLDAPBackend extends BaseBackend implements Backend, IWLDAPConstants, EmbeddedLDAPServerConstants,
+		LDAPReplicationConstants {
 
 	Vector exactIndexes = null;
+
 	String baseDN = null;
+
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
+
 	private LDAPReplicationBusiness ldapReplicationBiz;
+
 	private IWLDAPUtil ldapUtil;
-	
+
 	/**
 	 *  
 	 */
 	public IWUserLDAPBackend() {
 		super();
-		
 		ldapUtil = IWLDAPUtil.getInstance();
 		// The list of supported attributes to search for
 		exactIndexes = new Vector();
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_COMMON_NAME ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_SURNAME ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_GIVEN_NAME ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_UID ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_ORGANIZATION_UNIT ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_ORGANIZATION ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_OBJECT_CLASS ) );
-		exactIndexes.addElement( new DirectoryString( LDAP_ATTRIBUTE_DESCRIPTION) );
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_COMMON_NAME));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_SURNAME));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_GIVEN_NAME));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_UID));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS));
+		exactIndexes.addElement(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION));
 		//exactIndexes.addElement( new DirectoryString( "seealso" ) );
-		
-		
 		try {
-			baseDN = getEmbeddedLDAPServerBusiness(IWMainApplication.getDefaultIWApplicationContext()).getBackendSettings().getProperty(PROPS_BACKEND_ZERO_ROOT);
-		} catch (Exception e) {
+			baseDN = getEmbeddedLDAPServerBusiness(IWMainApplication.getDefaultIWApplicationContext()).getBackendSettings().getProperty(
+					PROPS_BACKEND_ZERO_ROOT);
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -94,6 +99,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		System.out.println(entryToAdd.getName().toString());
 		return super.add(entryToAdd);
 	}
+
 	/**
 	 * Not supported yet, dangerous so it really needs to check permissions
 	 */
@@ -101,6 +107,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		System.out.println(dn.toString());
 		return super.delete(dn);
 	}
+
 	/**
 	 *  Does the ldap search based on the filter, scope and base object. This method is recursive if the scope is SearchRequestEnum.WHOLESUBTREE
 	 * 
@@ -110,111 +117,186 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	public EntrySet get(DirectoryString base, int scope, Filter filter, boolean typesOnly, Vector attributes) throws DirectoryException {
 		EntrySet results = null;
-		//System.out.println("Current encoding: "+System.getProperty("file.encoding"));
 		Vector entries = new Vector();
-			
-		//String filtStr = constructFilter(filter);
 		String uniqueId = null;
-		//switch (currentFilter.choiceId) {
-		if(filter.choiceId==Filter.EQUALITYMATCH_CID){
-			DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
-			DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
-			if(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(matchType.toString())){
-				uniqueId = matchVal.toString();
+	
+		
+		//TODO finish implementing regular searches by filter.choiceId
+		//Do a regular search
+		if (filter.choiceId == Filter.OR_CID) {
+			//any matching attribute
+			for (Enumeration orEnum = filter.or.elements(); orEnum.hasMoreElements();) {
+				EntrySet matched = get(base, scope, (Filter) orEnum.nextElement(), false, null);
+				while (matched.hasMore()) {
+					Entry entry = matched.getNext();
+					if (!entries.contains(entry)) {
+						entries.addElement(entry);
+					}
+				}
 			}
 		}
+		else if (filter.choiceId == Filter.AND_CID) {
+			boolean firstAnd = true;
+			for (Enumeration andEnum = filter.and.elements(); andEnum.hasMoreElements();) {
+				EntrySet matched = get(base, scope, (Filter) andEnum.nextElement(), false, null);
+				if (firstAnd) {
+					firstAnd = false;
+					while (matched.hasMore()) {
+						entries.addElement(matched.getNext());
+					}
+				}
+				else {
+					Vector inBoth = new Vector();
+					while (matched.hasMore()) {
+						Entry entry = matched.getNext();
+						if (entries.contains(entry)) {
+							inBoth.addElement(entry);
+						}
+					}
+					entries = inBoth;
+				}
+			}
+		}
+		else if (filter.choiceId == Filter.SUBSTRINGS_CID) {
+			//eiki@idega.is temp test to get the address book in osx lookup to work
+			List alreadyLoaded = new ArrayList();
+			for (Enumeration subStringEnum = filter.substrings.substrings.elements(); subStringEnum.hasMoreElements();) {
+				SubstringFilterSeqOfChoice choice = (SubstringFilterSeqOfChoice) subStringEnum.nextElement();
+				String type = new String(filter.substrings.type);
+				byte[] bytes = choice.initial;
+				if(bytes==null){
+					bytes = choice.any;
+					if(bytes==null){
+						bytes = choice.final1;
+					}
+				}
+				
+				String searchWord = new String(bytes);
+				System.out.println("type: " + type + " searchword:" + searchWord);
+				try {
+					//TODO search for each type separately
+					Collection col = getUserBusiness().getUserHome().findUsersByConditions(searchWord,searchWord,searchWord,searchWord,-1,-1,-1,-1,null,null,false,false);
+					Iterator users = col.iterator();
+					while (users.hasNext()) {
+						User user = (User) users.next();
+						String identifier = getUserIdentifier(user, base);
+						if(!alreadyLoaded.contains(identifier)){
+							alreadyLoaded.add(identifier);
+							Entry userEntry = new Entry(new DirectoryString(identifier));
+							fillUserEntry(user, userEntry);
+							entries.add(userEntry);
+						}
+					}
+					
+					results = new GroupEntrySet(this, entries);
+				}
+				catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				catch (FinderException e) {
+					//
+				}
+			}
+		}
+		else if (filter.choiceId == Filter.EQUALITYMATCH_CID) {
+			DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
+			DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+
+			//TODO search for each type separately
+			if (LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(matchType.toString())) {
+				uniqueId = matchVal.toString();
+			}
+//			
+//			User user = getUserBusiness().getUser(searchWord);
+//			String identifier = getUserIdentifier(user, base);
+//			Entry userEntry = new Entry(new DirectoryString(identifier));
+//			fillUserEntry(user, userEntry);
+//			entries.add(userEntry);
+		}
 		
+		//TODO the scope check should be inside substring/exact match
+	
 		if (scope == SearchRequestEnum.WHOLESUBTREE) {
 			//Same as singlelevel only recursive?
 			//or just single search thingy
 			//NOT IMPLEMENTED YET
-			
-		} else if (scope == SearchRequestEnum.SINGLELEVEL) {
-			
+		}
+		else if (scope == SearchRequestEnum.SINGLELEVEL) {
 			try {
-				if(base.getDirectoryString().equals(baseDN) && uniqueId==null) {
+				if (base.getDirectoryString().equals(baseDN) && uniqueId == null) {
 					addTopGroupsToEntries(base, entries);
 				}
 				else {
 					//get children if a group
-					if(ldapUtil.isGroup(base) || uniqueId!=null) {
-						
+					if (ldapUtil.isGroup(base) || uniqueId != null) {
 						Group group = null;
-						
-						if(uniqueId!=null){
-							try{
+						if (uniqueId != null) {
+							try {
 								group = getGroupBusiness().getGroupHome().findGroupByUniqueId(uniqueId);
 							}
-							catch(FinderException e){
-							//	e.printStackTrace();
-								System.err.println("[IWUserLDAPBackend] Could not find the group with the unique id:"+uniqueId+" trying directory string");
+							catch (FinderException e) {
+								//	e.printStackTrace();
+								System.err.println("[IWUserLDAPBackend] Could not find the group with the unique id:"
+										+ uniqueId + " trying directory string");
 							}
 						}
-						
-						if(group==null){
+						if (group == null) {
 							group = getGroupBusiness().getGroupByDirectoryString(base);
 						}
 						//handle when group is not found specially, code to send??
-						if(group!=null){
+						if (group != null) {
 							Collection groups = group.getChildGroups();
 							Collection users = getUserBusiness().getUsersInGroup(group);
-							
-							if(groups!=null && !groups.isEmpty()) {
+							if (groups != null && !groups.isEmpty()) {
 								Iterator groupIter = groups.iterator();
 								while (groupIter.hasNext()) {
 									Group childGroup = (Group) groupIter.next();
-									Entry childEntry = getChildEntry(base,childGroup);
+									Entry childEntry = getChildEntry(base, childGroup);
 									entries.add(childEntry);
 								}
 							}
-							
-							if(users!=null && !users.isEmpty()) {
+							if (users != null && !users.isEmpty()) {
 								Iterator userIter = users.iterator();
 								while (userIter.hasNext()) {
 									User childUser = (User) userIter.next();
-									Entry childEntry = getChildEntry(base,childUser);
+									Entry childEntry = getChildEntry(base, childUser);
 									entries.add(childEntry);
 								}
 							}
-					}
-					else{
-						//temp
-						System.err.println("[IWUserLDAPBackend] No group found for unique id: "+uniqueId+" OR DN : "+base.toString());
-						
-					}
-						
+						}
+						else {
+							//temp
+							System.err.println("[IWUserLDAPBackend] No group found for unique id: " + uniqueId
+									+ " OR DN : " + base.toString());
+						}
 					}
 				}
-				
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if(scope == SearchRequestEnum.BASEOBJECT){
+		}
+		else if (scope == SearchRequestEnum.BASEOBJECT) {
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
-				
-				if(base.getDirectoryString().equals(baseDN)) {
-					
+				if (base.getDirectoryString().equals(baseDN)) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
 				else {
-					Entry entry = getEntry(base,attributes,uniqueId);
+					Entry entry = getEntry(base, attributes, uniqueId);
 					entries.add(entry);
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 		}
-		
-		
-		
 		//here we return the search result that could be an empty set
 		results = new GroupEntrySet(this, entries);
-		
 		return results;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,19 +304,20 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	public Entry getByDN(DirectoryString dn) throws DirectoryException {
 		try {
-			return getEntry(dn,null,null);
-		} catch (Exception e) {
+			return getEntry(dn, null, null);
+		}
+		catch (Exception e) {
 			throw new DirectoryException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * NOT USED, just returns an empty Entry (calls BaseBackend.getByID())
 	 */
 	public Entry getByID(Long id) {
 		return super.getByID(id);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -242,9 +325,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 *      java.util.Vector)
 	 */
 	public void modify(DirectoryString base, Vector changeEntries) throws DirectoryException {
-	
-		if(ldapUtil.isUser(base)) {
-			
+		if (ldapUtil.isUser(base)) {
 			User user = null;
 			try {
 				user = getUser(base, null);
@@ -253,16 +334,15 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 				e.printStackTrace();
 				super.modify(base, changeEntries);
 			}
-			
-			if(user==null){
-				System.err.println("[IWUserLDAPBackend] No user found for DN : "+base.toString());
+			if (user == null) {
+				System.err.println("[IWUserLDAPBackend] No user found for DN : " + base.toString());
 				super.modify(base, changeEntries);
-			}else{
+			}
+			else {
 				//TODO modify the record
 			}
-			
 		}
-		else if(ldapUtil.isGroup(base)){
+		else if (ldapUtil.isGroup(base)) {
 			Group group = null;
 			try {
 				group = getGroup(base, null);
@@ -271,20 +351,16 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 				e.printStackTrace();
 				super.modify(base, changeEntries);
 			}
-			
-			if(group==null){
-				System.err.println("[IWUserLDAPBackend] No group found for DN : "+base.toString());
+			if (group == null) {
+				System.err.println("[IWUserLDAPBackend] No group found for DN : " + base.toString());
 				super.modify(base, changeEntries);
-			}else{
+			}
+			else {
 				//TODO modify the record
 			}
-			
-			
 		}
-		
-		
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -296,125 +372,112 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		//moving a group or a user is not supported
 		return super.rename(oldname, newname);
 	}
-	
-	
-	public Entry getEntry(DirectoryString base, Vector attributes, String uniqueId) throws InvalidDNException, RemoteException {
+
+	public Entry getEntry(DirectoryString base, Vector attributes, String uniqueId) throws InvalidDNException,
+			RemoteException {
 		Entry entry = new Entry(base);
-		
-			if(ldapUtil.isUser(base)) {
-				
-				User user = getUser(base, uniqueId); 
-
-				if(user==null){
-					System.err.println("[IWUserLDAPBackend] No user found for DN : "+base.toString());
-					throw new InvalidDNException(base.getDirectoryString());
-				}
-				else{
-					fillUserEntry(user,entry);
-				}
+		if (ldapUtil.isUser(base)) {
+			User user = getUser(base, uniqueId);
+			if (user == null) {
+				System.err.println("[IWUserLDAPBackend] No user found for DN : " + base.toString());
+				throw new InvalidDNException(base.getDirectoryString());
 			}
-			else if(ldapUtil.isGroup(base)){
-				Group group = getGroup(base, uniqueId); 
-
-				if(group==null){
-					System.err.println("[IWUserLDAPBackend] No group found for DN : "+base.toString());
-					throw new InvalidDNException(base.getDirectoryString());
-				}
-				else{
-					fillGroupEntry(group,entry);
-				}
+			else {
+				fillUserEntry(user, entry);
 			}
-		
+		}
+		else if (ldapUtil.isGroup(base)) {
+			Group group = getGroup(base, uniqueId);
+			if (group == null) {
+				System.err.println("[IWUserLDAPBackend] No group found for DN : " + base.toString());
+				throw new InvalidDNException(base.getDirectoryString());
+			}
+			else {
+				fillGroupEntry(group, entry);
+			}
+		}
 		return entry;
 	}
-	
+
 	private Group getGroup(DirectoryString base, String uniqueId) throws RemoteException {
 		Group group = null;
-		try{	
-			if(uniqueId!=null){
+		try {
+			if (uniqueId != null) {
 				group = getGroupBusiness().getGroupByUniqueId(uniqueId);
 			}
-		} 
-		catch (FinderException e) {
-			System.err.println("[IWUserLDAPBackend] No group found for unique id: "+uniqueId+" trying DN");
 		}
-		
-		if(group==null){
+		catch (FinderException e) {
+			System.err.println("[IWUserLDAPBackend] No group found for unique id: " + uniqueId + " trying DN");
+		}
+		if (group == null) {
 			group = getGroupBusiness().getGroupByDirectoryString(base);
-			
 		}
 		return group;
 	}
+
 	private User getUser(DirectoryString base, String uniqueId) throws RemoteException {
 		User user = null;
-		try{	
-			if(uniqueId!=null){
+		try {
+			if (uniqueId != null) {
 				user = getUserBusiness().getUserByUniqueId(uniqueId);
 			}
-		} 
-		catch (FinderException e) {
-			System.err.println("[IWUserLDAPBackend] No user found for unique id: "+uniqueId+" trying DN");
 		}
-		
-		if(user==null){
-			user = (User)getUserBusiness().getUserByDirectoryString(base.toString());
+		catch (FinderException e) {
+			System.err.println("[IWUserLDAPBackend] No user found for unique id: " + uniqueId + " trying DN");
+		}
+		if (user == null) {
+			user = (User) getUserBusiness().getUserByDirectoryString(base.toString());
 		}
 		return user;
 	}
-	private Entry getChildEntry(DirectoryString base,Group group) throws InvalidDNException {
+
+	private Entry getChildEntry(DirectoryString base, Group group) throws InvalidDNException {
 		Entry entry;
-		
-		if(group instanceof User) {
-			User user = (User)group;
-			String identifier = getUserIdentifier(user,base);
+		if (group instanceof User) {
+			User user = (User) group;
+			String identifier = getUserIdentifier(user, base);
 			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
-			fillUserEntry(user,entry);
+			fillUserEntry(user, entry);
 		}
 		else {
-			String identifier = getGroupIdentifier(group,base);
+			String identifier = getGroupIdentifier(group, base);
 			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
 			fillGroupEntry(group, entry);
-			
 		}
 		return entry;
 	}
-	
-	
-	
-	private String getUserIdentifier(User user,DirectoryString base) {
-		String identifier = "cn="; 
-		String  fullName = user.getName();
+
+	private String getUserIdentifier(User user, DirectoryString base) {
+		String identifier = "cn=";
+		String fullName = user.getName();
 		String personalId = user.getPersonalID();
-		identifier = identifier+fullName+"/"+personalId+","+base.toString();
-		
-		
+		identifier = identifier + fullName + LDAP_USER_DIRECTORY_STRING_SEPARATOR + personalId + "," + base.toString();
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
-	
-	private String getGroupIdentifier(Group group,DirectoryString base) {
+
+	private String getGroupIdentifier(Group group, DirectoryString base) {
 		String identifier = "ou=";
 		String name = getGroupName(group);
-		
-		identifier = identifier+name+","+base.toString();
-		
+		identifier = identifier + name + "," + base.toString();
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
-	
+
 	private String getGroupName(Group group) {
 		String name = group.getName();//add abbreviation?;
-		if(name==null && "".equals(name)) {
+		if (name == null && "".equals(name)) {
 			name = group.getShortName();
-			if(name==null && "".equals(name)) {
+			if (name == null && "".equals(name)) {
 				name = group.getAbbrevation();
-				if(name==null && "".equals(name)) {
+				if (name == null && "".equals(name)) {
 					name = group.getPrimaryKey().toString();
 				}
 			}
 		}
 		return name;
 	}
+
 	/**
 	 * Fills the entry with user related info (objectClasses: person, inetOrgPerson)
 	 * @param user
@@ -422,60 +485,46 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	private void fillUserEntry(User user, Entry entry) {
 		String personalId = user.getPersonalID();
-		
-		String lName = user.getLastName() ;
-		String fName = user.getFirstName();
-		
+		String lName = user.getLastName();
+		String fName = user.getFirstName() + ( (user.getMiddleName()!=null)? " "+user.getMiddleName() : "");
 		//should we add the unique id after the name or the pid like in the entry?
 		String cn = user.getName();
 		String uuid = user.getUniqueId();
 		String description = user.getDescription();
-		
-		
 		Vector name = getAttributeVectorForSingleEntry(cn);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_COMMON_NAME),name);
-		
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_COMMON_NAME), name);
 		Vector userPIN = getAttributeVectorForSingleEntry(personalId);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID),userPIN);
-		
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID), userPIN);
 		//SHOULD WE ADD IT EMPTY TO REMOVE THE VALUE ON THE OTHER END?
-		if(uuid!=null){
+		if (uuid != null) {
 			Vector uniqueID = getAttributeVectorForSingleEntry(uuid);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
 		}
-		
-		if(description!=null){
+		if (description != null) {
 			Vector descriptionV = getAttributeVectorForSingleEntry(description);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),descriptionV);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION), descriptionV);
 		}
-		
-		
 		Vector firstName = getAttributeVectorForSingleEntry(fName);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_GIVEN_NAME),firstName);
-		
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_GIVEN_NAME), firstName);
 		Vector lastName = getAttributeVectorForSingleEntry(lName);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_SURNAME),lastName);
-		
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_SURNAME), lastName);
 		Vector uid = getAttributeVectorForSingleEntry(user.getPrimaryKey().toString());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_UID),uid);
-		
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_UID), uid);
 		//emails
 		Collection emails = user.getEmails();
-		if(emails!=null && !emails.isEmpty()) {
+		if (emails != null && !emails.isEmpty()) {
 			Vector emailValues = new Vector();
 			Iterator iter = emails.iterator();
 			while (iter.hasNext()) {
 				Email email = (Email) iter.next();
 				emailValues.add(new DirectoryString(email.getEmailAddress()));
 			}
-			
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL),emailValues);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL), emailValues);
 		}
-		
 		//addresses
 		//TODO separate into types
 		Collection addresses = user.getAddresses();
-		if(addresses!=null && !addresses.isEmpty()) {
+		if (addresses != null && !addresses.isEmpty()) {
 			Vector addressValues = new Vector();
 			Iterator iter = addresses.iterator();
 			while (iter.hasNext()) {
@@ -484,37 +533,34 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 				try {
 					addressString = getAddressBusiness().getFullAddressString(address);
 					addressValues.add(new DirectoryString(addressString));
-				} catch (RemoteException e) {
+				}
+				catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_REGISTERED_ADDRESS), addressValues);
+			entry.put(new DirectoryString("homeAddress"), addressValues);
 			
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_REGISTERED_ADDRESS),addressValues);
 		}
-		
 		Collection phones = user.getPhones();
 		//TODO separate into types
-		if(phones!=null && !phones.isEmpty()) {
+		if (phones != null && !phones.isEmpty()) {
 			Vector phoneValues = new Vector();
 			Iterator iter = phones.iterator();
 			while (iter.hasNext()) {
 				Phone phone = (Phone) iter.next();
 				phoneValues.add(new DirectoryString(phone.getNumber()));
 			}
-			
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), phoneValues);
 		}
-		
 		//add the metadata
 		addMetaDataFromGroup(user, entry);
-		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_PERSON));
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_INET_ORG_PERSON));
-		
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS),objectClasses);
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
-	
+
 	/**
 	 * Fills the entry with group related info (objectClass: organizationalUnit)
 	 * @param group
@@ -523,236 +569,141 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	private void fillGroupEntry(Group group, Entry entry) {
 		//String name = IWLDAPUtil.getInstance().getEscapedLDAPString(getGroupName(group));
 		String name = getGroupName(group);
-		
 		String desc = group.getDescription();
 		String uuid = group.getUniqueId();
-		
 		//could need to escape all values??
 		Vector names = getAttributeVectorForSingleEntry(name);
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT),names);
-		
-		if(desc!=null) {
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT), names);
+		if (desc != null) {
 			Vector description = getAttributeVectorForSingleEntry(desc);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),description);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION), description);
 		}
-		
-		if(uuid!=null){
+		if (uuid != null) {
 			Vector uniqueID = getAttributeVectorForSingleEntry(group.getUniqueId());
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID), uniqueID);
 		}
-		
 		Vector groupType = getAttributeVectorForSingleEntry(group.getGroupType());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE),groupType);
-		
-		
-		
-		
-//		emails
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE), groupType);
+		//		emails
 		Collection emails = group.getEmails();
-		if(emails!=null && !emails.isEmpty()) {
+		if (emails != null && !emails.isEmpty()) {
 			Vector emailValues = new Vector();
 			Iterator iter = emails.iterator();
 			while (iter.hasNext()) {
 				Email email = (Email) iter.next();
 				emailValues.add(new DirectoryString(email.getEmailAddress()));
 			}
-			
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL),emailValues);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL), emailValues);
 		}
-		
 		//address
 		Address address;
 		try {
 			address = getGroupBusiness().getGroupMainAddress(group);
-			if(address!=null) {
+			if (address != null) {
 				String addressString = getAddressBusiness().getFullAddressString(address);
 				Vector registeredAddress = getAttributeVectorForSingleEntry(addressString);
-				entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL),registeredAddress);
+				entry.put(new DirectoryString(LDAP_ATTRIBUTE_EMAIL), registeredAddress);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		
 		Collection phones = group.getPhones();
 		//TODO separate into types
-		if(phones!=null && !phones.isEmpty()) {
+		if (phones != null && !phones.isEmpty()) {
 			Vector phoneValues = new Vector();
 			Iterator iter = phones.iterator();
 			while (iter.hasNext()) {
 				Phone phone = (Phone) iter.next();
 				phoneValues.add(new DirectoryString(phone.getNumber()));
 			}
-			
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER), phoneValues);
 		}
-		
 		//add the metadata
 		addMetaDataFromGroup(group, entry);
-		
-		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_ORGANIZATIONAL_UNIT));
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS),objectClasses);
+		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
-	
+
 	private void addMetaDataFromGroup(Group group, Entry entry) {
 		//add the groups metadata
 		Map metadata = group.getMetaDataAttributes();
-		if(metadata!=null && !metadata.isEmpty()){
+		if (metadata != null && !metadata.isEmpty()) {
 			Iterator iter = metadata.keySet().iterator();
-			while(iter.hasNext()){
-				String metaKey = (String)iter.next();
-				String metaValue = (String)metadata.get(metaKey);
-				if(metaValue!=null){
+			while (iter.hasNext()) {
+				String metaKey = (String) iter.next();
+				String metaValue = (String) metadata.get(metaKey);
+				if (metaValue != null) {
 					Vector metaDataValue = getAttributeVectorForSingleEntry(metaValue);
-					entry.put(new DirectoryString(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
+					entry.put(new DirectoryString(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),
+							metaDataValue);
 				}
 			}
-			
 		}
 	}
+
 	private Vector getAttributeVectorForSingleEntry(String value) {
 		Vector attributes = new Vector();
-		if(value!=null) {
+		if (value != null) {
 			attributes.add(new DirectoryString(value));
 		}
 		return attributes;
 	}
-	
-	private void addTopGroupsToEntries(DirectoryString base, Vector entries) throws IDORelationshipException, RemoteException, FinderException, InvalidDNException {
+
+	private void addTopGroupsToEntries(DirectoryString base, Vector entries) throws IDORelationshipException,
+			RemoteException, FinderException, InvalidDNException {
 		//String suffix = base.getDirectoryString();
 		Collection topGroups = IWMainApplication.getDefaultIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
-		
 		Iterator iter = topGroups.iterator();
 		while (iter.hasNext()) {
-			Group group = (Group) iter.next();	
-			String identifier = getGroupIdentifier(group,base);
+			Group group = (Group) iter.next();
+			String identifier = getGroupIdentifier(group, base);
 			DirectoryString dn = new DirectoryString(identifier);
 			Entry entry = new Entry(dn);
-			
-			fillGroupEntry(group,entry);
+			fillGroupEntry(group, entry);
 			entries.add(entry);
-			
 		}
 	}
-	private String constructFilter(Filter currentFilter) {
-		
-		//EIKI NOTHING USED HERE BUT SHOULD BE USED FOR BETTER SEARCHES
-		switch (currentFilter.choiceId) {
-			case Filter.EQUALITYMATCH_CID :
-				DirectoryString matchType = new DirectoryString(currentFilter.equalityMatch.attributeDesc);
-			//DirectoryString matchVal = new DirectoryString(currentFilter.equalityMatch.assertionValue);
-			
-			//only search for allowed attributes
-			
-			//IF DOES NOT WORK!
-			if (exactIndexes.contains(matchType)) {
-				//todo do an exact search for a user or a group
-				
-			}
-			break;
-			case Filter.PRESENT_CID :
-				matchType = new DirectoryString(currentFilter.present);
-			if (exactIndexes.contains(matchType)) {
-				//todo search for all of this type
-				return new String("SELECT " + matchType + ".entryid FROM " + matchType);
-				
-				
-			}
-			break;
-			case Filter.SUBSTRINGS_CID :
-				matchType = new DirectoryString(currentFilter.substrings.type);
-			String subfilter = new String();
-			//todo do a substring search for users or groups
-			
-			for (Enumeration substrEnum = currentFilter.substrings.substrings.elements(); substrEnum.hasMoreElements();) {
-				SubstringFilterSeqOfChoice oneSubFilter = (SubstringFilterSeqOfChoice) substrEnum.nextElement();
-				if (oneSubFilter.choiceId == oneSubFilter.INITIAL_CID) {
-					subfilter = subfilter.concat(new String(oneSubFilter.initial) + "%");
-				} else if (oneSubFilter.choiceId == oneSubFilter.ANY_CID) {
-					if (subfilter.length() == 0) {
-						subfilter = subfilter.concat("%");
-					}
-					subfilter = subfilter.concat(new String(oneSubFilter.any) + "%");
-				} else if (oneSubFilter.choiceId == oneSubFilter.FINAL1_CID) {
-					if (subfilter.length() == 0) {
-						subfilter = subfilter.concat("%");
-					}
-					subfilter = subfilter.concat(new String(oneSubFilter.final1));
-				}
-			}
-			if (exactIndexes.contains(matchType)) {
-				// return new String("SELECT entryid FROM " + matchType + "
-				// WHERE UPPER(value) LIKE UPPER('" + subfilter + "')");
-				return new String("SELECT " + matchType + ".entryid FROM " + matchType + " WHERE " + matchType + ".value LIKE '"
-						+ new DirectoryString(subfilter).normalize() + "'");
-			}
-			break;
-			case Filter.AND_CID :
-				String strFilt = new String();
-			for (Enumeration andEnum = currentFilter.and.elements(); andEnum.hasMoreElements();) {
-				//strFilt = strFilt.concat("(" +
-				// constructFilter((Filter)andEnum.nextElement()) + ")");
-				strFilt = strFilt.concat(constructFilter((Filter) andEnum.nextElement()));
-				if (andEnum.hasMoreElements()) {
-					strFilt = strFilt.concat(" INTERSECT ");
-				}
-			}
-			return strFilt;
-			case Filter.OR_CID :
-				strFilt = new String();
-			for (Enumeration orEnum = currentFilter.or.elements(); orEnum.hasMoreElements();) {
-				//strFilt = strFilt.concat("(" +
-				// constructFilter((Filter)orEnum.nextElement()) + ")");
-				strFilt = strFilt.concat(constructFilter((Filter) orEnum.nextElement()));
-				if (orEnum.hasMoreElements()) {
-					strFilt = strFilt.concat(" UNION ");
-				}
-			}
-			return strFilt;
-			case Filter.NOT_CID :
-				// Need to fix this...Not a correct implementation
-				//Vector matched =
-				// evaluateFilter(currentFilter.not,base,scope);
-				//matchThisFilter.removeAll(matched);
-				break;
-		}
-		return new String();
-	}
-	
+
 	private UserBusiness getUserBusiness() throws RemoteException {
-		return (UserBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),UserBusiness.class);
+		return (UserBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
+				UserBusiness.class);
 	}
-	
+
 	private GroupBusiness getGroupBusiness() throws RemoteException {
-		return (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),GroupBusiness.class);
+		return (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
+				GroupBusiness.class);
 	}
-	
-  public AddressBusiness getAddressBusiness() throws RemoteException{
-    return (AddressBusiness)  IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),AddressBusiness.class);
-  }
-  
+
+	public AddressBusiness getAddressBusiness() throws RemoteException {
+		return (AddressBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
+				AddressBusiness.class);
+	}
+
 	public EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness(IWApplicationContext iwc) {
 		if (embeddedLDAPServerBiz == null) {
 			try {
-				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, EmbeddedLDAPServerBusiness.class);
-			} catch (java.rmi.RemoteException rme) {
+				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup.getServiceInstance(
+						iwc, EmbeddedLDAPServerBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return embeddedLDAPServerBiz;
 	}
-	
+
 	public LDAPReplicationBusiness getLDAPReplicationBusiness(IWApplicationContext iwc) {
 		if (ldapReplicationBiz == null) {
 			try {
-				ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, LDAPReplicationBusiness.class);
-			} catch (java.rmi.RemoteException rme) {
+				ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc,
+						LDAPReplicationBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return ldapReplicationBiz;
 	}
-	
 }
