@@ -634,7 +634,7 @@ public class CategoryFinder {
 
    */
 
-  private String getRelatedSQL(int iObjectInstanceId) {
+  public String getRelatedSQL(int iObjectInstanceId) {
 
     StringBuffer sql = new StringBuffer("select ");
 
