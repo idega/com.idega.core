@@ -61,7 +61,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   
   static final String META_DATA_HOME_PAGE = "homepage";
   
-	private int loadBalancePrefetchSize = 1000;
+
 
 	//    public UserBMPBean(){
 	//      super();
@@ -748,6 +748,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//	  return this.idoFindPKsBySQL(query.toString());
 				
 		try {
+			//this could be tuned
+			int loadBalancePrefetchSize = 1000;
 			return this.idoFindPKsByQueryUsingLoadBalance(query, countQuery, loadBalancePrefetchSize);
 		}
 		catch (IDOException ex) {
@@ -835,6 +837,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 		//	  return super.idoFindPKsBySQL(query.toString());
 		try {
+			int loadBalancePrefetchSize = 1000;
 			return super.idoFindPKsByQueryUsingLoadBalance(query, countQuery,loadBalancePrefetchSize);
 		}
 		catch (IDOException ex) {
@@ -1319,6 +1322,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//to benefit from the IDOEntityList features
 		
 		try {
+			int loadBalancePrefetchSize = 200;
 			return idoFindPKsByQueryUsingLoadBalance(query, loadBalancePrefetchSize);
 		} catch (IDOException e) {	
 				throw new EJBException(e);
