@@ -43,4 +43,14 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getUserGroupsDirectlyRelated(int p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Phone getUserPhone(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+
+  /**
+   * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
+   */
+  public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(int userID)throws Exception;
+
+  /**
+   * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
+   */
+  public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(com.idega.user.data.User user)throws Exception;
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 import com.idega.block.staff.business.StaffBusiness;
+import com.idega.core.accesscontrol.data.LoginTable;
 
 import com.idega.data.*;
 
@@ -194,6 +195,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     relation.store();
   }
 
+  /**
+   * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
+   */
+  public LoginTable generateUserLogin(int userID)throws Exception{
+    //return this.generateUserLogin(userID);
+    return LoginDBHandler.generateUserLogin(userID);
+  }
+
+  /**
+   * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
+   */
+  public LoginTable generateUserLogin(User user)throws Exception{
+    //return LoginDBHandler.generateUserLogin(user);
+    int userID = ((Integer)user.getPrimaryKey()).intValue();
+    return this.generateUserLogin(userID);
+  }
 
   public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
       UserTransaction transaction = this.getSessionContext().getUserTransaction();
