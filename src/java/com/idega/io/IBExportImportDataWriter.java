@@ -6,9 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -16,6 +17,7 @@ import com.idega.builder.data.IBExportImportData;
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.util.xml.XMLData;
+import com.idega.xml.XMLElement;
 
 
 /**
@@ -70,7 +72,7 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
 		ZipOutputStreamIgnoreClose zipOutputStream = new ZipOutputStreamIgnoreClose(destination);
 		IBExportImportData metadata = (IBExportImportData) storable;
 		List data = metadata.getData();
-		List alreadyStoredElements = new ArrayList(data.size());
+		Map alreadyStoredElements = new HashMap(data.size());
 		// counter for the entries in metadata
 		int entryNumber = 0;
 		// counter for the prefix of the stored files
@@ -79,18 +81,18 @@ public class IBExportImportDataWriter extends WriterToFile implements ObjectWrit
  		while (iterator.hasNext()) {
  			Storable element = (Storable) iterator.next();
  			// do not store the same elements twice into the zip file
- 			int indexOfAlreadyStoredElement;
- 			if ((indexOfAlreadyStoredElement = alreadyStoredElements.indexOf(element)) > - 1) {
- 				metadata.modifyElementSetNameSetOriginalNameLikeElementAt(entryNumber++, indexOfAlreadyStoredElement);
+ 			if (alreadyStoredElements.containsKey(element)) {
+ 				XMLElement fileElement = (XMLElement) alreadyStoredElements.get(element);
+ 				metadata.modifyElementSetNameSetOriginalNameLikeElementAt(entryNumber++, fileElement);
  			}
  			else {
-	 			alreadyStoredElements.add(element);
 	 			WriterToFile currentWriter = (WriterToFile) element.write(this);
 	 			String originalName = currentWriter.getName();
 	 			String mimeType = currentWriter.getMimeType();
 	 			String zipElementName = createZipElementName(originalName, identifierNumber++);
 	 			ZipEntry zipEntry = new ZipEntry(zipElementName);
-	 			metadata.modifyElementSetNameSetOriginalName(entryNumber++, zipElementName, originalName, mimeType);
+	 			XMLElement fileElement = metadata.modifyElementSetNameSetOriginalName(entryNumber++, zipElementName, originalName, mimeType);
+	 			alreadyStoredElements.put(element, fileElement);
 	 			zipOutputStream.putNextEntry(zipEntry);
 	 			try {
 	 				currentWriter.writeData(zipOutputStream);
