@@ -19,7 +19,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 	private static String COLUMN_COMMUNE_CODE = "commune_code";
 	private static String COLUMN_PROVINCE_ID = "ic_province_id";
 	private static String COLUMN_DEFAULT = "default_commune";
-	private static String COLUMN_VALID = "is_valid";
+	private static String COLUMN_VALID = "IS_VALID";
 
 	public CommuneBMPBean(){
 		super();
