@@ -239,6 +239,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         //changed for localized buttons - birna
         IWResourceBundle iwrb = getResourceBundle(iwc);
         ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
+        ok.setSubmitConfirm(iwrb.getLocalizedString("change.group.details?", "Do you want to save changes to group details?"));
         cancel = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), iwrb.getLocalizedString("close", "Close"));
 //      apply = new SubmitButton(iwrb.getLocalizedImageButton("apply", "Apply"),iwrb.getLocalizedString("commit", "Commit"));
         
