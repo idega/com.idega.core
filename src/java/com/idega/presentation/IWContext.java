@@ -905,6 +905,19 @@ public void setCacheWriter(PrintWriter writer){
   public IWApplicationContext getApplicationContext(){
     return this;
   }
+
+  public boolean isInPreviewMode() {
+    boolean preview = false;
+    if (isParameterSet("view")) {
+      if (BuilderLogic.getInstance().isBuilderApplicationRunning(this)) {
+        String view = getParameter("view");
+        if (view.equals("preview"))
+          preview=true;
+      }
+    }
+
+    return(preview);
+  }
 }
 
 
