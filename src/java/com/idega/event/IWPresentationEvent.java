@@ -27,18 +27,11 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   public final static String PRM_IW_EVENT_SOURCE = "iw_ev_src";
 //  private final static String SEPARATOR = "|";
 
-
-  /**
-   * @todo Remove hardcoding
-   */
   public static String IW_EVENT_HANDLER_URL="/servlet/IWEventHandler";
-  private String eventHandlerURL=IW_EVENT_HANDLER_URL;
+  private String eventHandlerURL = null;
   
-  /**
-   * @todo Remove hardcoding
-   */
   public static String DEFAULT_IW_EVENT_TARGET="iw_event_frame";
-  private String eventTarget=DEFAULT_IW_EVENT_TARGET;
+  private String eventTarget = null;
   
   public static String EVENT_CONTROLLER = "event_controller";
   
@@ -264,8 +257,10 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * Returns the eventHandlerURL.
 	 * @return String
 	 */
-	public String getEventHandlerURL() {
-		return eventHandlerURL;
+	public String getEventHandlerURL(IWContext iwc) {
+    if (eventHandlerURL == null)
+      eventHandlerURL = iwc.getApplication().getTranslatedURIWithContext(IW_EVENT_HANDLER_URL);
+    return eventHandlerURL;
 	}
 
 	/**
@@ -281,6 +276,8 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * @return String
 	 */
 	public String getEventTarget() {
+    if (eventTarget == null) 
+      eventTarget = DEFAULT_IW_EVENT_TARGET;
 		return eventTarget;
 	}
 
