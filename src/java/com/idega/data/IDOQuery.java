@@ -504,6 +504,16 @@ public class IDOQuery {
     this.append(str);
     return this;
   }
+
+	/**
+	 * Appends a where (where columnName=columnValue) without quotemarks	 * @param columnName	 * @param columnValue	 * @return IDOQuery this Object	 */
+  public IDOQuery appendWhereEquals(String columnName,String columnValue){
+  	appendWhere(columnName);
+  	this.appendEqualSign();
+  	this.append(columnValue);
+  	return this;
+  }
+  
   
   public IDOQuery appendWhereEqualsQuoted(String columnName,String columnValue){
   	appendWhere(columnName);
