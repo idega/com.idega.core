@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
+import java.io.File;
 import java.awt.geom.AffineTransform;
 import java.awt.FontMetrics;
 import java.awt.BasicStroke;
@@ -101,16 +102,26 @@ public class Button {
   /**
    * This method allows direct generating of buttons through a command line or cgi script<br/>
    * the allowed parameters in correct order are<br/>
-   * 1:textonbutton 2:fillcolor 3:highlightcolor 4:width 5:height
+   * 1:textonbutton 2:fillcolor 3:highlightcolor 4:width 5:height 6:pathtofont
    */
   public static void main(String[] args) {
-
     Button button = new Button();
     button.text = args[0];
     button.fillColor = IWColor.getAWTColorFromHex(args[1]);
     button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
     button.width = Integer.parseInt(args[3]);
     button.height = Integer.parseInt(args[4]);
+
+    try{
+      File file = new File(args[5]);
+      FileInputStream fis = new FileInputStream(file);
+      Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
+      button.setFont(font);
+    }
+    catch(Exception e){
+      e.printStackTrace(System.err);
+    }
+
     button.generate();
     System.exit(0);
   }
