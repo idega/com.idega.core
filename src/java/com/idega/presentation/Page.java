@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.40 2002/02/26 15:02:23 gimmi Exp $
+ * $Id: Page.java,v 1.41 2002/03/06 15:27:40 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -164,10 +164,10 @@ public class Page extends PresentationObjectContainer {
   }
 
   private void setDefaultValues() {
-	  setStyleDefinition("A:link","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
+	  /*setStyleDefinition("A:link","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
     setStyleDefinition("A:visited","color:"+_visitedColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
     setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
-    setStyleDefinition("body","font-family: "+_pageStyleFont+"; font-size: "+_pageStyleFontSize+"; font-style: "+_pageStyleFontStyle+";");
+    setStyleDefinition("body","font-family: "+_pageStyleFont+"; font-size: "+_pageStyleFontSize+"; font-style: "+_pageStyleFontStyle+";");*/
     //addScriptSource("/idegaweb/global.js");
     getAssociatedScript().addFunction("windowopen",Window.windowScript());
 
@@ -180,16 +180,16 @@ public class Page extends PresentationObjectContainer {
     if (_styleDefinitions != null) {
       Enumeration e = _styleDefinitions.keys();
       while (e.hasMoreElements()) {
-        styleName = (String)e.nextElement();
-        returnString.append("\t");
-        returnString.append(styleName);
-        String styleAttribute=getStyleAttribute(styleName);
-        if(!styleAttribute.equals(slash)){
-          returnString.append(" { ");
-          returnString.append(styleAttribute);
-          returnString.append(" }\n");
-        }
-        returnString.append("");
+	styleName = (String)e.nextElement();
+	returnString.append("\t");
+	returnString.append(styleName);
+	String styleAttribute=getStyleAttribute(styleName);
+	if(!styleAttribute.equals(slash)){
+	  returnString.append(" { ");
+	  returnString.append(styleAttribute);
+	  returnString.append(" }\n");
+	}
+	returnString.append("");
       }
     }
 
@@ -212,34 +212,34 @@ public class Page extends PresentationObjectContainer {
     if (_metaTags != null) {
       Enumeration e = _metaTags.keys();
       while (e.hasMoreElements()) {
-        tagName = (String)e.nextElement();
-        returnString.append("<meta name=\"");
-        returnString.append(tagName);
-        returnString.append("\" ");
-        String tagValue=getMetaTag(tagName);
-        if(tagValue != null){
-          returnString.append(" content=\"");
-          returnString.append(tagValue);
-          returnString.append("\"");
-        }
-        returnString.append(">\n");
+	tagName = (String)e.nextElement();
+	returnString.append("<meta name=\"");
+	returnString.append(tagName);
+	returnString.append("\" ");
+	String tagValue=getMetaTag(tagName);
+	if(tagValue != null){
+	  returnString.append(" content=\"");
+	  returnString.append(tagValue);
+	  returnString.append("\"");
+	}
+	returnString.append(">\n");
       }
     }
 
     if (this._HTTPEquivs != null) {
       Enumeration e = _HTTPEquivs.keys();
       while (e.hasMoreElements()) {
-        tagName = (String)e.nextElement();
-        returnString.append("<meta http-equiv=\"");
-        returnString.append(tagName);
-        returnString.append("\" ");
-        String tagValue=getHTTPEquivTag(tagName);
-        if(tagValue != null){
-          returnString.append(" content=\"");
-          returnString.append(tagValue);
-          returnString.append("\"");
-        }
-        returnString.append(">\n");
+	tagName = (String)e.nextElement();
+	returnString.append("<meta http-equiv=\"");
+	returnString.append(tagName);
+	returnString.append("\" ");
+	String tagValue=getHTTPEquivTag(tagName);
+	if(tagValue != null){
+	  returnString.append(" content=\"");
+	  returnString.append(tagValue);
+	  returnString.append("\"");
+	}
+	returnString.append(">\n");
       }
     }
 
@@ -608,23 +608,23 @@ public class Page extends PresentationObjectContainer {
       return this.clone(iwc,askForPermission);
     } else {
       if(!NULL_CLONE_PAGE_INITIALIZED){
-        /**
-         * @todo get property from application, which page to forward to
-         */
-        int pageId = 1;
-        String page = null; // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
-        if(page != null){
-          try {
-            pageId = Integer.parseInt(page);
-          }
-          catch (NumberFormatException ex) {
-            pageId = BuilderLogic.getStartPageId(iwc);
-          }
+	/**
+	 * @todo get property from application, which page to forward to
+	 */
+	int pageId = 1;
+	String page = null; // getProperty  //iwc.getParameter(_PRM_PAGE_ID);
+	if(page != null){
+	  try {
+	    pageId = Integer.parseInt(page);
+	  }
+	  catch (NumberFormatException ex) {
+	    pageId = BuilderLogic.getStartPageId(iwc);
+	  }
 
-        }else{
-          pageId = BuilderLogic.getStartPageId(iwc);
-        }
-        NULL_CLONE_PAGE.setOnLoad("document.location='"+BuilderLogic.getInstance().getIBPageURL(pageId)+"'");
+	}else{
+	  pageId = BuilderLogic.getStartPageId(iwc);
+	}
+	NULL_CLONE_PAGE.setOnLoad("document.location='"+BuilderLogic.getInstance().getIBPageURL(pageId)+"'");
       }
       return NULL_CLONE_PAGE;
     }
@@ -640,7 +640,7 @@ public class Page extends PresentationObjectContainer {
     try {
       obj = (Page)super.clone(iwc, askForPermission);
       if (_theAssociatedScript != null) {
-        obj._theAssociatedScript = (Script)_theAssociatedScript.clone();
+	obj._theAssociatedScript = (Script)_theAssociatedScript.clone();
       }
       obj._title = _title;
       obj._zeroWait = _zeroWait;
@@ -670,7 +670,7 @@ public class Page extends PresentationObjectContainer {
     try {
       obj = (Page)super.clone();
       if (this.theAssociatedScript != null) {
-        obj.theAssociatedScript = (Script)this.theAssociatedScript.clone();
+	obj.theAssociatedScript = (Script)this.theAssociatedScript.clone();
       }
       obj.title = this.title;
       obj.zeroWait = this.zeroWait;
@@ -701,11 +701,11 @@ public class Page extends PresentationObjectContainer {
   public void main(IWContext iwc) throws Exception {
     if (_doReload) {
       if(iwc.getSession().getAttribute("idega_special_reload") != null) {
-        iwc.getSession().removeAttribute("idega_special_reload");
+	iwc.getSession().removeAttribute("idega_special_reload");
       }
       else {
-        setToRedirect(iwc.getRequestURI());
-        iwc.getSession().setAttribute("idega_special_reload","true");
+	setToRedirect(iwc.getRequestURI());
+	iwc.getSession().setAttribute("idega_special_reload","true");
       }
     }
   }
@@ -718,15 +718,15 @@ public class Page extends PresentationObjectContainer {
     PresentationObject parent = getParentObject();
     if(parent!=null){
       if(parent instanceof Page){
-        if(parent instanceof FrameSet){
-          return false;
-        }
-        else{
-          return true;
-        }
+	if(parent instanceof FrameSet){
+	  return false;
+	}
+	else{
+	  return true;
+	}
       }
       else{
-        return true;
+	return true;
       }
     }
     else{
@@ -746,51 +746,51 @@ public class Page extends PresentationObjectContainer {
 
     if (getLanguage().equals("HTML")) {
       if(!isInsideOtherPage){
-        println(getStartTag());
-        if(_zeroWait) {
-          setDoPrint(false);
-        }
-        println("\n<head>");
-        if(addGlobalScript){
-          //Print a reference to the global .js script file
-          println("<script type=\"text/javascript\" language=\"javascript\" src=\""+iwc.getApplication().getCoreBundle().getResourcesURL()+"/iw_core.js\">");
-          println("</script>");
-        }
-        if (getAssociatedScript() != null) {
-          getAssociatedScript()._print(iwc);
-        }
+	println(getStartTag());
+	if(_zeroWait) {
+	  setDoPrint(false);
+	}
+	println("\n<head>");
+	if(addGlobalScript){
+	  //Print a reference to the global .js script file
+	  println("<script type=\"text/javascript\" language=\"javascript\" src=\""+iwc.getApplication().getCoreBundle().getResourcesURL()+"/iw_core.js\">");
+	  println("</script>");
+	}
+	if (getAssociatedScript() != null) {
+	  getAssociatedScript()._print(iwc);
+	}
 
-        println(getMetaInformation(iwc));
-        println(getMetaTags());
-        println("<title>"+getTitle()+"</title>");
-        if (_addStyleSheet) {
-          println("<link rel=\"stylesheet\" href=\""+_styleSheetURL+"\" type=\"text/css\">\n");
-        }
-        else {
-          println("<style type=\"text/css\">\n" +
-                  "<!--\n" +
-                  getStyleDefinition() +
-                  "   -->\n</style>");
-        }
-        println("</head>\n");
-        if(_addBody)  println("<body  "+getAttributeString()+" >\n");//added by Eiki for frameSet in a page support
+	println(getMetaInformation(iwc));
+	println(getMetaTags());
+	println("<title>"+getTitle()+"</title>");
+	if (_addStyleSheet) {
+	  println("<link rel=\"stylesheet\" href=\""+_styleSheetURL+"\" type=\"text/css\">\n");
+	}
+	else {
+	  println("<style type=\"text/css\">\n" +
+		  "<!--\n" +
+		  getStyleDefinition() +
+		  "   -->\n</style>");
+	}
+	println("</head>\n");
+	if(_addBody)  println("<body  "+getAttributeString()+" >\n");//added by Eiki for frameSet in a page support
 
       }
       //Catch all exceptions that are thrown in print functions of objects stored inside
       try {
-        super.print(iwc);
+	super.print(iwc);
       }
       catch(Exception ex) {
-        println("<h1>Villa var&eth;!</h1>");
-        println("IW Error");
-        println("<pre>");
-        ex.printStackTrace(iwc.getWriter());
-        println("</pre>");
+	println("<h1>Villa var&eth;!</h1>");
+	println("IW Error");
+	println("<pre>");
+	ex.printStackTrace(iwc.getWriter());
+	println("</pre>");
       }
 
       if(!isInsideOtherPage){
-        if(_addBody) println("\n</body>");
-        println(getEndTag());
+	if(_addBody) println("\n</body>");
+	println(getEndTag());
       }
     }
     else if (getLanguage().equals("WML")) {
@@ -801,14 +801,14 @@ public class Page extends PresentationObjectContainer {
 
       //Catch all exceptions that are thrown in print functions of objects stored inside
       try {
-        super.print(iwc);
+	super.print(iwc);
       }
       catch(Exception ex) {
-        println("<p>Villa var&eth;!</p>");
-        println("<p>IWError</p>");
-        println("<p>");
-        ex.printStackTrace(iwc.getWriter());
-        println("</p>");
+	println("<p>Villa var&eth;!</p>");
+	println("<p>IWError</p>");
+	println("<p>");
+	ex.printStackTrace(iwc.getWriter());
+	println("</p>");
       }
 
       println("</card>");
@@ -868,7 +868,7 @@ public class Page extends PresentationObjectContainer {
      * @todo: Add an option to set the author and copyright
      */
      if(addIdegaAuthorAndCopyRight){
-         theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+	 theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
      }
     return theReturn;
   }
@@ -898,26 +898,26 @@ public class Page extends PresentationObjectContainer {
       String className = IWMainApplication.decryptClassName(classKey);
       Page page=null;
       try{
-        page = (Page)Class.forName(className).newInstance();
+	page = (Page)Class.forName(className).newInstance();
       }
       catch(ClassNotFoundException e){
-        throw new IWPageInitializationException("There was an error, your session is probably expired");
+	throw new IWPageInitializationException("There was an error, your session is probably expired");
       }
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
       try {
-        if(sID != null){
-          System.err.println("sID: "+sID);
-          page.setICObjectInstanceID(Integer.parseInt(sID));
-          //this.ib_object_instance_id = Integer.parseInt(sID);
-          System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
-          System.err.println("getICObjectInstanceID: "+page.getICObjectInstanceID());
-        }
+	if(sID != null){
+	  System.err.println("sID: "+sID);
+	  page.setICObjectInstanceID(Integer.parseInt(sID));
+	  //this.ib_object_instance_id = Integer.parseInt(sID);
+	  System.err.println("Integer.parseInt(sID): "+Integer.parseInt(sID));
+	  System.err.println("getICObjectInstanceID: "+page.getICObjectInstanceID());
+	}
 /*        else{
-          System.err.println("sID == null");
-        }*/
+	  System.err.println("sID == null");
+	}*/
       }
       catch (NumberFormatException ex) {
-        System.err.println(page+": cannot init ic_object_instance_id");
+	System.err.println(page+": cannot init ic_object_instance_id");
       }
       return page;
       //}
@@ -955,14 +955,14 @@ public class Page extends PresentationObjectContainer {
     Page theReturn = (Page)iwc.getSessionAttributeWeak(key);
     if (theReturn ==null){
       try{
-        theReturn = (Page)info.getFrameClass().newInstance();
+	theReturn = (Page)info.getFrameClass().newInstance();
       }
       catch(Exception ex){
-        if(theReturn==null){
-          theReturn = new Page("Expired");
-          theReturn.add("This page has expired");
-        }
-        ex.printStackTrace();
+	if(theReturn==null){
+	  theReturn = new Page("Expired");
+	  theReturn.add("This page has expired");
+	}
+	ex.printStackTrace();
       }
       storePage(theReturn,iwc);
     }
