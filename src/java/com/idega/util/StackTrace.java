@@ -59,7 +59,8 @@ public class StackTrace {
 		return displayStackTraceInformation(ex, false);
 	}
 	public static boolean displayStackTraceInformation(Throwable ex, boolean displayAll) {
-		if (null == ex) {
+		/*
+		 if (null == ex) {
 			System.out.println("Null stack trace reference! Bailing...");
 			return false;
 		}
@@ -105,6 +106,7 @@ public class StackTrace {
 				return true;
 		}
 		System.out.println("");
+		*/
 		return true;
 	} // End of displayStackTraceInformation().
 	public static String extractPackageName(String fullClassName) {
