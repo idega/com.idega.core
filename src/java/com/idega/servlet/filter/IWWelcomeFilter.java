@@ -7,7 +7,6 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -16,7 +15,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.idega.business.IBOLookup;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICPage;
 import com.idega.idegaweb.IWMainApplication;
 
 /**
@@ -27,8 +28,10 @@ import com.idega.idegaweb.IWMainApplication;
  */
 public class IWWelcomeFilter implements Filter {
 
+	private static boolean isInit=false;
 	
-	
+	private static boolean START_ON_WORKSPACE=true;	
+	private static boolean START_ON_PAGES=false;
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -44,9 +47,15 @@ public class IWWelcomeFilter implements Filter {
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
 			FilterChain chain) throws IOException, ServletException {
 		
-		
+
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
+		
+		if(!isInit){
+			init(request,response);
+			isInit=true;
+		}
+		
 		
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
 		
@@ -59,12 +68,39 @@ public class IWWelcomeFilter implements Filter {
 		}
 		
 		if(requestUri.equals(appUri)){
-			request.getRequestDispatcher("/workspace/").forward(request,response);
+			if(START_ON_WORKSPACE){
+				request.getRequestDispatcher("/workspace/").forward(request,response);
+			}
+			else if(START_ON_PAGES){
+				request.getRequestDispatcher("/pages/").forward(request,response);
+			}
 		}
 		else{
 			chain.doFilter(srequest,sresponse);
 		}
 
+	}
+
+	/**
+	 * @param request
+	 * @param response
+	 */
+	private void init(HttpServletRequest request, HttpServletResponse response) {
+		
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		
+		try {
+			BuilderService bService = (BuilderService)IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),BuilderService.class);
+			ICPage rootPage = bService.getRootPage();
+			if(rootPage.getChildCount()>0){
+				//set the filter to forward to /pages if there are any subpages
+				START_ON_PAGES=true;
+				START_ON_WORKSPACE=false;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* (non-Javadoc)
