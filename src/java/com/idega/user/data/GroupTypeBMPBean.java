@@ -57,6 +57,11 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		this.addAttribute(COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE,"Number of instances to autocreate",Integer.class);
 		this.addAttribute(COLUMN_MAX_INSTANCES,"Maximum number of instances globaly",Integer.class);
 		this.addAttribute(COLUMN_MAX_INSTANCES_PER_PARENT,"Maximum number of instances per parent",Integer.class);
+
+		this.addIndex("IDX_IC_GROUP_TYPE1", COLUMN_IS_VISIBLE);
+		this.addIndex("IDX_IC_GROUP_TYPE2", TYPE_COLUMN);
+		this.addIndex("IDX_IC_GROUP_TYPE3", new String[]{COLUMN_IS_VISIBLE, TYPE_COLUMN});
+		
   }
 
 

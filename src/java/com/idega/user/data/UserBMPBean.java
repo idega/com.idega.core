@@ -106,6 +106,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     //Added by Laddi 17.10.2003
     addManyToOneRelationship(getColumnNameNativeLanguage(), ICLanguage.class);
 
+    addIndex("IDX_IC_USER_1", new String[]{getColumnNameLastName(), getColumnNameFirstName(), getColumnNameMiddleName()});
+    addIndex("IDX_IC_USER_2", new String[]{getColumnNameFirstName(), getColumnNameLastName(), getColumnNameMiddleName()});
+    addIndex("IDX_IC_USER_3", getColumnNameFirstName());
+    addIndex("IDX_IC_USER_4", getColumnNamePersonalID());
+    addIndex("IDX_IC_USER_5", _COLUMNNAME_USER_GROUP_ID);
+
 	}
 
 	//    public void setDefaultValues(){

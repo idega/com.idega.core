@@ -49,6 +49,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		addManyToOneRelationship(IC_COUNTRY_ID, "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
 		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
+		
+		addIndex("IDX_ADDRESS_TYPE", getColumnNameAddressTypeId());
+		addIndex("IDX_ADDRESS_STREET_NAME", STREET_NAME);
 	}
 
 	public static String getColumnNameAddressTypeId() {

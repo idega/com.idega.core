@@ -48,6 +48,11 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class,50);
     addAttribute(COLUMN_NAME, "Name", true, true, String.class,50);
     addManyToOneRelationship(COLUMN_COUNTRY_ID, "Country", Country.class);
+    
+    addIndex("IDX_IC_POSTALCODE", COLUMN_POSTAL_CODE);
+    addIndex("IDX_IC_POSTALCODE2", new String[]{COLUMN_POSTAL_CODE, COLUMN_NAME});
+    addIndex("IDX_IC_POSTALCODE3", new String[]{COLUMN_POSTAL_CODE, COLUMN_COUNTRY_ID});
+    addIndex("IDX_IC_POSTALCODE4", COLUMN_COUNTRY_ID);
   }
 
 

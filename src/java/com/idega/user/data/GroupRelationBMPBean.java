@@ -52,7 +52,17 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addAttribute(INITIATION_MODIFICATION_DATE_COLUMN, "Initiation modification date", Timestamp.class);
 		this.addAttribute(TERMINATION_MODIFICATION_DATE_COLUMN, "Termination modification date", Timestamp.class);
  		this.addMetaDataRelationship();
+ 		
+ 		addIndex("IDX_IC_GROUP_REL_1", RELATED_GROUP_ID_COLUMN);
+ 		addIndex("IDX_IC_GROUP_REL_2", GROUP_ID_COLUMN);
+ 		addIndex("IDX_IC_GROUP_REL_3", new String[]{GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
+ 		addIndex("IDX_IC_GROUP_REL_4", new String[]{GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN});
+ 		addIndex("IDX_IC_GROUP_REL_5", RELATIONSHIP_TYPE_COLUMN);
+ 		addIndex("IDX_IC_GROUP_REL_6", new String[]{RELATED_GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
+ 		addIndex("IDX_IC_GROUP_REL_7", new String[]{RELATED_GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN});
+ 		addIndex("IDX_IC_GROUP_REL_8", new String[]{RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
   }
+  
   public String getEntityName() {
     return TABLE_NAME;
   }

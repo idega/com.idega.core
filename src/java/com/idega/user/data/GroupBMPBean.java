@@ -105,6 +105,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		addManyToOneRelationship(COLUMN_HOME_FOLDER_ID,ICFile.class);
 
+		addIndex("IDX_IC_GROUP_1", new String[]{ COLUMN_GROUP_TYPE, COLUMN_GROUP_ID});
+		addIndex("IDX_IC_GROUP_2", COLUMN_NAME);
+		addIndex("IDX_IC_GROUP_3", COLUMN_GROUP_ID);
+		addIndex("IDX_IC_GROUP_4", COLUMN_GROUP_TYPE);
+		addIndex("IDX_IC_GROUP_5", new String[]{ COLUMN_GROUP_ID, COLUMN_GROUP_TYPE});
 	}
 	public final String getEntityName() {
 		return ENTITY_NAME;
