@@ -59,7 +59,7 @@ public Image(String url){
 
 public Image(String url,String name){
 	super();
-        if( name.equalsIgnoreCase("") ) name = this.getID();
+        if( "".equalsIgnoreCase(name) ) name = this.getID();
 	setName(name);
 	setURL(url);
 	setBorder(0);
