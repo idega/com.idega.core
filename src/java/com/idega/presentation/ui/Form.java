@@ -481,5 +481,11 @@ public void setEventListener(String eventListenerClassName){
     setWindow(Window.getStaticInstance(windowClass));
   }
 
+
+  public void setPageToSubmitTo(int ibPageID){
+    this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"/?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
+  }
+
+
 } // Class ends
 
