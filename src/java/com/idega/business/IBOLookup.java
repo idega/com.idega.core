@@ -189,9 +189,14 @@ public class IBOLookup {
     try{
       Class beanClass = (Class)beanClasses.get(entityInterfaceClass);
       if(beanClass==null){
-        String className = entityInterfaceClass.getName();
-        String beanClassName = className + getBeanSuffix();
-        beanClass = Class.forName(beanClassName);
+        if(entityInterfaceClass.isInterface()){
+          String className = entityInterfaceClass.getName();
+          String beanClassName = className + getBeanSuffix();
+          beanClass = Class.forName(beanClassName);
+        }
+        else{
+          beanClass = entityInterfaceClass;
+        }
         beanClasses.put(entityInterfaceClass,beanClass);
         interfaceClasses.put(beanClass,entityInterfaceClass);
       }
