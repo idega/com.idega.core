@@ -50,8 +50,6 @@ public class WindowOpener extends JSPModule
         return (Window)getPage();
       }
 
-      public void initializePage(){
-      }
 
       /*public static String storeWindow(ModuleInfo modinfo,Window window){
         String parameter=window.getID();

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.13 2001/07/17 19:14:22 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.14 2001/07/25 17:16:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -164,7 +164,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
   public void initializePage(){
     //String servletName = this.getServletConfig().getServletName();
     //System.out.println("Inside initializePage for "+servletName);
-    setPage(new Page());
+    setPage(Page.loadPage(getModuleInfo()));
   }
 
   public void setPage(Page myPage){
@@ -255,8 +255,6 @@ public  class IWPresentationServlet extends IWCoreServlet{
                //     obj._main(modinfo);
                 //  }
                 //}
-
-
 
 		getPage()._main(modinfo);
                //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
