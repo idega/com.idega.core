@@ -928,7 +928,7 @@ public class IWTimestamp implements Comparable {
 
 	/**
 	 * Sets the month of the date setting.
-	 * @param month		The month to set
+	 * @param month		The month to set in the range [1-12]
 	 */
 	public void setMonth(int month) {
 		calendar.set(calendar.MONTH, month - 1);
