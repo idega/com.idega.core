@@ -28,7 +28,7 @@ import javax.ejb.RemoveException;
 
 public abstract class AbstractGroupBMPBean extends GenericEntity implements Group{
 
-  private Group _group;
+  protected Group _group;
 
   /**
    * Returns a unique Key to identify this GroupType
@@ -111,7 +111,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   public void store()throws IDOStoreException{
     try{
       if(this.getGroupType()==null  ){ // || getGroupHome().getGroupType().equals(this.getGroupType())
-        this.setGroupType(this.getGroupTypeKey());
+	this.setGroupType(this.getGroupTypeKey());
       }
       getGeneralGroup().store();
 //      System.out.println("User before/st primaryKey = " + this.getPrimaryKey());
@@ -141,10 +141,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   protected Group getGeneralGroup()throws RemoteException{
     if(_group == null){
       try{
-        _group = getGroupHome().findByPrimaryKey(this.getPrimaryKey());
+	_group = getGroupHome().findByPrimaryKey(this.getPrimaryKey());
       }
       catch(FinderException fe){
-        throw new EJBException(fe.getMessage());
+	throw new EJBException(fe.getMessage());
       }
     }
     return _group;
@@ -314,10 +314,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 //    System.out.println("AbstractPratyBMPBean in equals(com.idega.user.data.Group p0)");
     if(obj instanceof AbstractGroupBMPBean){
       try {
-        return this.getGeneralGroup().equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
+	return this.getGeneralGroup().equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
       }
       catch (RemoteException ex) {
-        throw new EJBException(ex);
+	throw new EJBException(ex);
       }
     } else {
       return this.getGeneralGroup().equals(obj);
@@ -328,10 +328,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 //    System.out.println("AbstractPratyBMPBean in equals(Object obj)");
     if(obj instanceof AbstractGroupBMPBean){
       try {
-        return this.equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
+	return this.equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
       }
       catch (RemoteException ex) {
-        throw new EJBException(ex);
+	throw new EJBException(ex);
       }
     } else if(obj instanceof Group){
       return super.equals((Group)obj);
@@ -343,10 +343,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
   public boolean equals(IDOLegacyEntity obj){
     if(obj instanceof AbstractGroupBMPBean){
       try {
-        return this.equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
+	return this.equals(((AbstractGroupBMPBean)obj).getGeneralGroup());
       }
       catch (RemoteException ex) {
-        throw new EJBException(ex);
+	throw new EJBException(ex);
       }
     } else if(obj instanceof Group){
       return super.equals((Group)obj);

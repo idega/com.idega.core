@@ -53,7 +53,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
       addAttribute(getColumnNamePersonalID(),"Personal ID",true,true,String.class,20);
       addManyToOneRelationship(getColumnNameGender(),"Gender",com.idega.user.data.Gender.class);
       addOneToOneRelationship(getColumnNameSystemImage(),"Image",com.idega.core.data.ICFile.class);
-//      addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",Group.class);
+      /**
+       * For legacy compatabuility
+       */
+      addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",Group.class);
       addOneToOneRelationship(_COLUMNNAME_PRIMARY_GROUP_ID,"Primary group",Group.class);
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
@@ -387,11 +390,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   }
   public void setGroupType(String p0) throws java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
-    throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
+    //throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
   }
   public String getGroupTypeValue() throws java.rmi.RemoteException {
+    return "user_group_representative";
     /**@todo: Implement this com.idega.user.data.Group method*/
-    throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
+    //throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
   }
   public void setExtraInfo(String p0) throws java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
@@ -552,12 +556,33 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
      */
     public Group getUserGroup(){
       try {
-        return super.getGeneralGroup();
+	return super.getGeneralGroup();
       }
       catch (RemoteException ex) {
-        throw new EJBException(ex);
+	throw new EJBException(ex);
       }
     }
+
+
+  protected Group getGeneralGroup()throws RemoteException{
+    if(_group == null){
+      try{
+	Integer groupID;
+	Integer userGroupID = this.getIntegerColumnValue(_COLUMNNAME_USER_GROUP_ID);
+	if(userGroupID==null){
+	 groupID=(Integer)this.getPrimaryKey();
+	}
+	else{
+	  groupID=userGroupID;
+	}
+	_group = getGroupHome().findByPrimaryKey(groupID);
+      }
+      catch(FinderException fe){
+	throw new EJBException(fe.getMessage());
+      }
+    }
+    return _group;
+  }
 
     public void setGroupID(int icGroupId){
       this.setID(icGroupId);
