@@ -206,10 +206,9 @@ public class IBOLookup
 	/**
 	 * Gets an instance of the implementation of the Home interface for the data bean.
 	 * <br>The object retured can then needs to be casted to the specific home interface for the bean.
-	 * @param entityInterfaceClass i the (Remote) interface of the data bean.
+	 * @param entityInterfaceClass i the interface of the data bean.
 	 */
-	protected Object getEJBHomeInstance(Class entityBeanOrInterfaceClass) throws RemoteException
-	{
+	protected Object getEJBHomeInstance(Class entityBeanOrInterfaceClass){
 		//Double check so it is not the bean class that is sent into the methods below
 		Class entityInterfaceClass = getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
 			

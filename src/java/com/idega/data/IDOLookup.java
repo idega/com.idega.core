@@ -1,8 +1,8 @@
 package com.idega.data;
 
-import java.rmi.RemoteException;
-
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 
@@ -19,6 +19,7 @@ import com.idega.business.IBOLookup;
  * @version 1.0
  */
 
+//TODO remove throwing of IDOLookupException where not needed and change IDOLookupException to inherit from Exception and not RemoteException
 public class IDOLookup extends IBOLookup{
 
   private static IDOLookup idoInstance;
@@ -46,26 +47,40 @@ public class IDOLookup extends IBOLookup{
   /**
    * Gets an instance of the implementation of the Home interface for the data bean.
    * <br>The object retured can then needs to be casted to the specific home interface for the bean.
-   * @param entityInterfaceClass i the (Remote) interface of the data bean.
+   * @param entityInterfaceClass i the interface of the data bean.
    */
-  public static IDOHome getHome(Class entityInterfaceClass)throws RemoteException{
-    return (IDOHome)getIDOLookupInstance().getEJBHomeInstance(entityInterfaceClass);
+  public static IDOHome getHome(Class entityInterfaceClass)throws IDOLookupException{
+		IDOHome home = null;
+		
+    try {
+			home = (IDOHome)getIDOLookupInstance().getEJBHomeInstance(entityInterfaceClass);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new IDOLookupException(e);
+		}
+		
+		return home;
+    
+  
+  
   }
 
 
 
 
-  public static IDOHome getHomeLegacy(Class entityInterfaceClass){
-    try{
+  public static IDOHome getHomeLegacy(Class entityInterfaceClass) {
+  	try{
       return getHome(entityInterfaceClass);
-    }
-    catch(RemoteException e){
-      throw new RuntimeException(e.getMessage());
-    }
+  	}
+  	catch(IDOLookupException e){
+  		System.err.println(e.getMessage());
+  	}
+		return null;
   }
 
   /**
-   * Gets the Class object for the (Remote) interface of a data bean.
+   * Gets the Class object for the interface of a data bean.
    * @param entityBeanOrInterfaceClass can be either the BMP bean class or the interface class itself.
    */
   public static Class getInterfaceClassFor(Class entityBeanOrInterfaceClass){
@@ -74,7 +89,7 @@ public class IDOLookup extends IBOLookup{
 
     /**
    * Gets the Class object for the (BMP) bean class of a data bean.
-   * @param entityInterfaceClass i the (Remote) interface of the data bean.
+   * @param entityInterfaceClass i theinterface of the data bean.
    */
   public static Class getBeanClassFor(Class entityInterfaceClass){
     return getIDOLookupInstance().getBeanClassForNonStatic(entityInterfaceClass);
@@ -83,16 +98,16 @@ public class IDOLookup extends IBOLookup{
 
 
 
-  public static IDOEntity create(Class entityInterfaceClass)throws RemoteException,javax.ejb.CreateException{
+  public static IDOEntity create(Class entityInterfaceClass)throws IDOLookupException, CreateException{
     return getHome(entityInterfaceClass).createIDO();
   }
 
-  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,int id)throws RemoteException,javax.ejb.FinderException{
-    return getHome(entityInterfaceClass).findByPrimaryKeyIDO(new Integer(id));
+  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,int id)throws IDOLookupException, FinderException{
+			return getHome(entityInterfaceClass).findByPrimaryKeyIDO(new Integer(id));
   }
 
-  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,Integer id)throws RemoteException,javax.ejb.FinderException{
-    return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
+  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,Integer id)throws IDOLookupException,FinderException{
+			return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
   }
 
 
@@ -174,7 +189,7 @@ public class IDOLookup extends IBOLookup{
   }
 
 
-  public IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass)throws RemoteException{
+  public IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass) throws IDOLookupException{
     return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
   }
 
