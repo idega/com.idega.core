@@ -40,15 +40,12 @@ public class DownloadLink extends Link {
         setMediaWriterClass(DownloadWriter.class);
     }
     
-    /**
-     * 
-     * @param absolutepath
-     */
-    public DownloadLink(String text,String absolutepath) {
-        this(text);
-        setMediaWriterClass(DownloadWriter.class);
-        addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absolutepath);
-    }
+//THIS CAN CONFUSE PEOPLE BECAUSE THERE IS NO CONSTRUCTOR FOR RELATIVE PATH. IT'S BETTER TO FORCE PEOPLE TO USE THE CORRECT SET METHODS
+//    public DownloadLink(String text,String absolutepath) {
+//        this(text);
+//        setMediaWriterClass(DownloadWriter.class);
+//        setAbsoluteFilePath(absolutepath);
+//    }
   
     /**
      * @param icFileId
@@ -56,7 +53,7 @@ public class DownloadLink extends Link {
     public DownloadLink(int icFileId) {
         this();
         setMediaWriterClass(DownloadWriter.class);
-        addParameter(DownloadWriter.PRM_FILE_ID,icFileId);
+        setFile(icFileId);
     }
     
     /**
@@ -111,4 +108,13 @@ public class DownloadLink extends Link {
             addParameter(DownloadWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(writerClass));
         }
     }
+    
+    
+    public void setRelativeFilePath(String relativeFilePath){
+    		addParameter(DownloadWriter.PRM_RELATIVE_FILE_PATH,relativeFilePath);
+    }
+    
+    public void setAbsoluteFilePath(String absoluteFilePath){
+		addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absoluteFilePath);
+}
 }
