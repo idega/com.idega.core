@@ -339,7 +339,7 @@ public class TextSoap {
         buf.append(text.substring(index2 + length1, index));
         //paste from last index
       } else {
-        buf.append(text.substring(index2 + length1, text.length()));
+        buf.append(text.substring(index2+1, text.length()));
       }
     }
 
