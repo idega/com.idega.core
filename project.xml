@@ -206,7 +206,7 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>mayfaces</groupId>
+      <groupId>myfaces</groupId>
       <artifactId>jsf-api</artifactId>
       <version>1.0</version>
       <type>jar</type>

@@ -90,7 +90,7 @@
             <properties/>
         </dependency>
         <dependency>
-            <groupId>jsf</groupId>
+            <groupId>myfaces</groupId>
             <artifactId>jsf-api</artifactId>
             <version>1.0</version>
             <type>jar</type>
