@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import java.sql.*;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.idegaweb.IWCacheManager;
@@ -105,25 +106,18 @@ public Image(int imageId) throws SQLException{
 
 
 public Image(int imageId, String name) throws SQLException{
-  super();
-  this.imageId = imageId;
-  setBorder(0);
+  this(imageId);
   setName(name);
 }
 
 public Image(int imageId, int width, int height) throws SQLException{
-  super();
-  this.imageId = imageId;
-  setBorder(0);
+  this(imageId);
   setWidth(width);
   setHeight(height);
 }
 
 public Image(int imageId, String name, int width, int height) throws SQLException{
-  super();
-  this.imageId = imageId;
-  setBorder(0);
-  setName(name);
+  this(imageId,name);
   setWidth(width);
   setHeight(height);
 }
@@ -478,24 +472,50 @@ public void limitImageWidth( boolean limitImageWidth ){
   this.limitImageWidth=limitImageWidth;
 }
 
-  public String getMediaServletString(){
+  /*
+  * this uses an undocumented access method to the IWContext which is fetched from the current thread
+  * it could brake!
+  */
+  public String getMediaServletString(){/*
     StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(this.getImageID());
     URIBuffer.append("image?");
     URIBuffer.append(idName);
     URIBuffer.append("=");
     URIBuffer.append(this.getImageID());
-    return URIBuffer.toString();
+    return URIBuffer.toString();*/
+    try{
+      this.getImage(IWContext.getInstance());
+      return this.getURL();
+    }
+    catch(SQLException ex){
+      ex.printStackTrace(System.err);
+      return null;
+    }
   }
 
+  /*
+  * this uses an undocumented access method to the IWContext which is fetched from the current thread
+  * it could brake!
+  */
   public static String getServletURL(int imageId){
-    StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
+    /*StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(imageId);
     URIBuffer.append("image?");
     URIBuffer.append(idName);
     URIBuffer.append("=");
     URIBuffer.append(imageId);
     return URIBuffer.toString();
+  */
+   try{
+      Image img = new Image(imageId);
+      img.getImage(IWContext.getInstance());
+      return img.getURL();
+    }
+    catch(SQLException ex){
+      ex.printStackTrace(System.err);
+      return null;
+    }
   }
 
   public synchronized Object clone() {
