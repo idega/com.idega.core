@@ -108,7 +108,7 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 		addToSelectedBox(value, displayString);
 	}
 
-	public Object clone() {
+	/*public Object clone() {
 		SelectionDoubleBox obj = null;
 		try {
 			obj = (SelectionDoubleBox) super.clone();
@@ -130,5 +130,5 @@ public class SelectionDoubleBox extends InterfaceObjectContainer {
 			ex.printStackTrace(System.err);
 		}
 		return obj;
-	}
+	}*/
 }
