@@ -73,7 +73,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   }
 
   public void setRelatedUser(User user)throws RemoteException{
-    setRelatedGroup(user.getUserGroup());
+    setRelatedGroup(user);
   }
 
   public Group getRelatedGroup(){

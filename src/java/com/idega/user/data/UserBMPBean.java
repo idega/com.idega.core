@@ -1,17 +1,20 @@
 package com.idega.user.data;
 
-import com.idega.util.ListUtil;
-import com.idega.data.*;
-import com.idega.core.data.*;
-import com.idega.core.accesscontrol.data.PermissionGroup;
-import java.util.List;
-import java.sql.*;
-
-import java.util.Collection;
 import javax.ejb.*;
-import java.rmi.RemoteException;
-import java.util.Iterator;
 import com.idega.core.ICTreeNode;
+import com.idega.core.data.Address;
+import com.idega.core.data.Email;
+import com.idega.core.data.Phone;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.IDOUtil;
+
+import java.rmi.RemoteException;
+import java.sql.Date;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * Title:        User
@@ -21,17 +24,17 @@ import com.idega.core.ICTreeNode;
  * @version 1.0
  */
 
-public class UserBMPBean extends com.idega.data.GenericEntity implements User, Group {
+public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
     private static String sClassName = User.class.getName();
 
-    public UserBMPBean(){
-      super();
-    }
+//    public UserBMPBean(){
+//      super();
+//    }
 
-    public UserBMPBean(int id)throws SQLException{
-      super(id);
-    }
+//    public UserBMPBean(int id)throws SQLException{
+//      super(id);
+//    }
 
 
     public String getEntityName(){
@@ -39,8 +42,8 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     }
 
     public void initializeAttributes(){
-      addAttribute(getIDColumnName());
-
+//      addAttribute(getIDColumnName());
+      super.addGeneralGroupRelation();
       addAttribute(getColumnNameFirstName(),"First name",true,true,java.lang.String.class);
       addAttribute(getColumnNameMiddleName(),"Middle name",true,true,java.lang.String.class);
       addAttribute(getColumnNameLastName(),"Last name",true,true,java.lang.String.class);
@@ -50,37 +53,44 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       addAttribute(getColumnNamePersonalID(),"Personal ID",true,true,String.class,20);
       addManyToOneRelationship(getColumnNameGender(),"Gender",com.idega.user.data.Gender.class);
       addOneToOneRelationship(getColumnNameSystemImage(),"Image",com.idega.core.data.ICFile.class);
-      addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",Group.class);
+//      addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",Group.class);
       addOneToOneRelationship(_COLUMNNAME_PRIMARY_GROUP_ID,"Primary group",Group.class);
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");
       this.setNullable(getColumnNameSystemImage(),true);
-      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
+//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
       this.setUnique(getColumnNamePersonalID(),true);
-//      //temp
-//      this.addManyToManyRelationShip(Group.class,"ic_group_user");
-    }
-
-    public void setDefaultValues(){
-    }
-
-    public void insertStartData() throws SQLException {
 
     }
+
+//    public void setDefaultValues(){
+//    }
+//
+//    public void insertStartData(){
+//
+//    }
 
     public String getIDColumnName(){
       return getColumnNameUserID();
     }
 
-    public static User getStaticInstance(){
-      return (User)com.idega.user.data.UserBMPBean.getStaticInstance(sClassName);
+    public static UserBMPBean getStaticInstance(){
+      return (UserBMPBean)com.idega.user.data.UserBMPBean.getStaticInstance(sClassName);
     }
 
     public static String getAdminDefaultName(){
       return "Administrator";
     }
 
+
+    public String getGroupTypeDescription(){
+      return "";
+    }
+
+    public String getGroupTypeKey(){
+      return "ic_user_representative";
+    }
 
 
 
@@ -95,9 +105,16 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     public static String getColumnNameDateOfBirth(){return "DATE_OF_BIRTH";}
     public static String getColumnNameGender(){return "IC_GENDER_ID";}
     public static String getColumnNameSystemImage(){return "SYSTEM_IMAGE_ID";}
-    public static final String _COLUMNNAME_USER_GROUP_ID = "USER_REPRESENTATIVE";
+//    public static final String _COLUMNNAME_USER_GROUP_ID = "USER_REPRESENTATIVE";
     public static final String _COLUMNNAME_PRIMARY_GROUP_ID = "PRIMARY_GROUP";
     public static String getColumnNamePersonalID(){return "PERSONAL_ID";}
+
+    /**
+     * @depricated
+     */
+    public static final String _COLUMNNAME_USER_GROUP_ID = "user_representative";
+
+
     /*  ColumNames end   */
 
 
@@ -139,13 +156,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       return getIntColumnValue(getColumnNameSystemImage());
     }
 
-    public Group getGroup(){
-      return (Group)getColumnValue(_COLUMNNAME_USER_GROUP_ID);
-    }
 
-    public int getGroupID(){
-      return getIntColumnValue(_COLUMNNAME_USER_GROUP_ID);
-    }
 
     public int getPrimaryGroupID(){
       return getIntColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
@@ -155,9 +166,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       return (Group)getColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
     }
 
-    public Group getUserGroup(){
-      return (Group)getColumnValue(this._COLUMNNAME_USER_GROUP_ID);
-    }
+
 
     public String getName(){
 	  String firstName=this.getFirstName();
@@ -224,13 +233,12 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     }
 
     public void setFirstName(String fName) {
-      if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
-	fName = "Invalid firstname";
-      }
-      if(com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(this.getFirstName())){ // if not Administrator
+//      if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
+//	fName = "Invalid firstname";
+//      }
+//      if(com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(this.getFirstName())){ // if not Administrator
 	setColumn(getColumnNameFirstName(),fName);
-      }
-
+//      }
     }
 
     public void setMiddleName(String mName) {
@@ -269,13 +277,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       setColumn(getColumnNameSystemImage(),fileID);
     }
 
-    public void setGroupID(int icGroupId){
-      setColumn(_COLUMNNAME_USER_GROUP_ID,icGroupId);
-    }
 
-    public void setGroup(Group group){
-      setColumn(_COLUMNNAME_USER_GROUP_ID,group);
-    }
 
     public void setPrimaryGroupID(int icGroupId){
       setColumn(_COLUMNNAME_PRIMARY_GROUP_ID,icGroupId);
@@ -356,7 +358,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       String sGroupList = IDOUtil.getInstance().convertListToCommaseparatedString(groupList);
 //      System.out.println("[UserBMPBean]: sGroupList = "+sGroupList);
 //      System.out.println("[UserBMPBean]: "+"select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
-      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
     }
 
     public Collection ejbFindAllUsers()throws FinderException{
@@ -449,6 +451,7 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
   }
 
+
   public Iterator getChildren() {
     /**@todo: Implement this com.idega.core.ICTreeNode method*/
     throw new java.lang.UnsupportedOperationException("Method getChildren() not yet implemented.");
@@ -491,40 +494,6 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
   }
 
 
-  public void addRelation(Group groupToAdd,String relationType)throws CreateException,RemoteException{
-    this.getUserGroup().addRelation(groupToAdd,relationType);
-  }
-  public void addRelation(Group groupToAdd,GroupRelationType relationType)throws CreateException,RemoteException{
-    this.getUserGroup().addRelation(groupToAdd,relationType);
-  }
-  public void addRelation(int relatedGroupId,GroupRelationType relationType)throws CreateException,RemoteException{
-    this.getUserGroup().addRelation(relatedGroupId,relationType);
-  }
-  public void addRelation(int relatedGroupId,String relationType)throws CreateException,RemoteException{
-    this.getUserGroup().addRelation(relatedGroupId,relationType);
-  }
-  public void removeRelation(Group relatedGroup,String relationType)throws RemoveException,RemoteException{
-    this.getUserGroup().removeRelation(relatedGroup,relationType);
-  }
-  public void removeRelation(int relatedGroupId,String relationType)throws RemoveException,RemoteException{
-    this.getUserGroup().removeRelation(relatedGroupId,relationType);
-  }
-
-  /**
-   * Returns a collection of Group objects that are related by the relation type relationType with this User
-   */
-  public java.util.Collection getRelatedBy(GroupRelationType relationType)throws FinderException,RemoteException{
-    return this.getUserGroup().getRelatedBy(relationType);
-  }
-
-  /**
-   * Returns a collection of Group objects that are related by the relation type relationType with this User
-   */
-  public java.util.Collection getRelatedBy(String relationType)throws FinderException,RemoteException{
-    return this.getUserGroup().getRelatedBy(relationType);
-  }
-
-
     public Integer ejbFindUserFromEmail(String emailAddress)throws FinderException,RemoteException{
       StringBuffer sql = new StringBuffer("select iu.* ");
       sql.append("from ic_email ie,ic_user_email iue,ic_user iu ");
@@ -561,4 +530,46 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
     }
 
     /*  Finders end   */
+
+
+
+    /**
+     * @deprecated
+     */
+    public Group getGroup(){
+      return this;
+    }
+
+    /**
+     * @deprecated
+     */
+    public int getGroupID(){
+      return this.getID();
+    }
+
+    /**
+     * @deprecated
+     */
+    public Group getUserGroup(){
+      return super;
+    }
+
+    public void setGroupID(int icGroupId){
+      this.setID(icGroupId);
+    }
+
+//      public boolean equals(Object obj){
+//        System.out.println("UserBMPBean: "+this+".equals(Object "+obj+")");
+//        if(obj instanceof UserBMPBean){
+//  //        try {
+//            return ((UserBMPBean)obj).getPrimaryKey().equals(this.getPrimaryKey());
+//  //        }
+//  //        catch (RemoteException ex) {
+//  //          throw new EJBException(ex);
+//  //        }
+//        } else {
+//          return super.equals(obj);
+//        }
+//      }
+
 }

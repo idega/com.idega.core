@@ -1,20 +1,22 @@
 package com.idega.user.data;
 
-
-import com.idega.builder.data.IBDomain;
-import com.idega.data.*;
-import com.idega.core.data.*;
-
-import java.sql.*;
-import java.util.Vector;
-import java.util.Collection;
-import java.util.List;
-import java.util.Iterator;
 import javax.ejb.*;
-import java.rmi.RemoteException;
-import java.util.Enumeration;
-import com.idega.util.datastructures.idegaTreeNode;
 import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICNetwork;
+import com.idega.core.data.ICProtocol;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOUtil;
+import com.idega.data.SimpleQuerier;
+import com.idega.util.idegaTimestamp;
+
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 
 
 /**
@@ -43,20 +45,29 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
     private static final String RELATION_TYPE_GROUP_CHILD="GROUP_CHILD";
 
+    private static final String COLUMN_GROUP_ID = "ic_group_id";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_GROUP_TYPE = "group_type";
+    private static final String COLUMN_DESCRIPTION = "description";
+    private static final String COLUMN_EXTRA_INFO = "extra_info";
+    private static final String COLUMN_CREATED = "CREATED";
 
-  public void initializeAttributes(){
+
+  public final void initializeAttributes(){
     addAttribute(getIDColumnName());
     addAttribute(getNameColumnName(),"Group name", true, true, "java.lang.String");
     addAttribute(getGroupTypeColumnName(),"Group type", true, true,String.class,30,"one-to-many",GroupType.class);
     addAttribute(getGroupDescriptionColumnName(),"Description", true, true, "java.lang.String");
     addAttribute(getExtraInfoColumnName(),"Extra information", true, true, "java.lang.String");
+    addAttribute(COLUMN_CREATED,"Created when",Timestamp.class);
+
     this.addManyToManyRelationShip(ICNetwork.class,"ic_group_network");
     this.addManyToManyRelationShip(ICProtocol.class,"ic_group_protocol");
   }
 
 
 
-  public String getEntityName(){
+  public final String getEntityName(){
     return "ic_group";
   }
 
@@ -68,7 +79,35 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
   public void setDefaultValues(){
     setGroupType(getGroupTypeValue());
+    setCreated(idegaTimestamp.getTimestampRightNow());
   }
+
+//  public void insertStartData(){
+//    try {
+//      GroupTypeHome tghome = (GroupTypeHome)IDOLookup.getHome(GroupType.class);
+//      try{
+//        GroupType type = tghome.findByPrimaryKey(getGroupTypeKey());
+//      } catch(FinderException e){
+//        e.printStackTrace();
+//        try {
+//          GroupType type = tghome.create();
+//          type.setType(getGroupTypeKey());
+//          type.setDescription(getGroupTypeDescription());
+//          type.store();
+//        }
+//        catch (Exception ex) {
+//          ex.printStackTrace();
+//        }
+//      }
+//    }
+//    catch (RemoteException rmi){
+//      throw new EJBException(rmi);
+//    }
+//  }
+
+//  protected boolean doInsertInCreate(){
+//    return true;
+//  }
 
   /**
    * overwrite in extended classes
@@ -77,29 +116,32 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     return "general";
   }
 
+  public String getGroupTypeKey(){return getGroupTypeValue();}
+  public String getGroupTypeDescription(){return "";}
+
   /*  ColumNames begin   */
 
 
 
   public static String getColumnNameGroupID(){
-    return "ic_group_id";
+    return COLUMN_GROUP_ID;
   }
 
 
   public static String getNameColumnName(){
-    return "name";
+    return COLUMN_NAME;
   }
 
   public static String getGroupTypeColumnName(){
-    return "group_type";
+    return COLUMN_GROUP_TYPE;
   }
 
   public static String getGroupDescriptionColumnName(){
-    return "description";
+    return COLUMN_DESCRIPTION;
   }
 
   public static String getExtraInfoColumnName(){
-    return "extra_info";
+    return COLUMN_EXTRA_INFO;
   }
 
   /*  ColumNames end   */
@@ -119,10 +161,19 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   }
 
   public String getGroupType(){
-          return (String) getColumnValue(getGroupTypeColumnName());
+    try {
+      return (String)((GroupType)getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
+    }
+    catch (RemoteException ex) {
+      throw new EJBException(ex);
+    }
   }
 
   public void setGroupType(String groupType){
+          setColumn(getGroupTypeColumnName(), groupType);
+  }
+
+  public void setGroupType(GroupType groupType){
           setColumn(getGroupTypeColumnName(), groupType);
   }
 
@@ -142,6 +193,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
           setColumn(getExtraInfoColumnName(),extraInfo);
   }
 
+  public Timestamp getCreated() {
+    return((Timestamp)getColumnValue(COLUMN_CREATED));
+  }
+
+  public void setCreated(Timestamp created) {
+    setColumn(this.COLUMN_CREATED,created);
+  }
 
 
 //        public static Group getStaticInstance(){
@@ -637,9 +695,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
 
-  public void addUser(User user)throws RemoteException{
-    this.addGroup(user.getGroupID());
-  }
+//  public void addUser(User user)throws RemoteException{
+//    this.addGroup(user.getGroupID());
+//  }
 
 
 
@@ -748,9 +806,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
       } else {
 
-        //System.err.println(ex.getMessage());
+        System.err.println(ex.getMessage());
 
-        //ex.printStackTrace();
+        ex.printStackTrace();
 
         throw new SQLException(ex.getMessage());
 
@@ -905,6 +963,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
     } else {
       return 0;
     }
+  }
+
+
+  public void store(){
+    super.store();
   }
 
 

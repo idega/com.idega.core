@@ -28,6 +28,7 @@ public class GroupDomainRelationTypeBMPBean extends GenericEntity implements Gro
   public void initializeAttributes() {
     //this.addAttribute(getIDColumnName());
     this.addAttribute(getIDColumnName(),"Type",String.class,30);
+    this.setAsPrimaryKey(getIDColumnName(),true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
   }
 

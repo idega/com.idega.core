@@ -29,6 +29,8 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   public void initializeAttributes() {
     //this.addAttribute(getIDColumnName());
     this.addAttribute(getIDColumnName(),"Type",String.class,30);
+//    this.setUnique(getIDColumnName(),true);
+    this.setAsPrimaryKey(getIDColumnName(),true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
 //    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500);
     this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);

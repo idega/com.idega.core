@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import java.sql.Timestamp;
 import com.idega.builder.data.IBDomain;
 import com.idega.data.*;
 
@@ -34,10 +35,10 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 
     this.addManyToOneRelationship(DOMAIN_ID_COLUMN,"Domain",IBDomain.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
-    this.addManyToOneRelationship(RELATIONSHIP_TYPE_COLUMN,"Type",GroupDomainRelationType.class);
+    this.addAttribute(RELATIONSHIP_TYPE_COLUMN,"Type",true,true,String.class, 30, "many-to-one", GroupDomainRelationType.class);
     this.addAttribute(STATUS_COLUMN,"Status",String.class);
-    this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Date.class);
-    this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Date.class);
+    this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
+    this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
   }
 
   public String getEntityName() {
@@ -65,7 +66,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   }
 
   public void setRelatedUser(User user)throws RemoteException{
-    setRelatedGroup(user.getUserGroup());
+    setRelatedGroup(user);
   }
 
   public Group getRelatedGroup(){

@@ -28,7 +28,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.data.Phone[] getUserPhones(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUser(int p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,com.idega.util.idegaTimestamp p7,java.lang.Integer p8)throws java.rmi.RemoteException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getUsersInGroup(int p0) throws java.rmi.RemoteException;
- public com.idega.user.data.UserGroupRepresentativeHome getUserGroupRepresentativeHome() throws java.rmi.RemoteException;
+// public com.idega.user.data.UserGroupRepresentativeHome getUserGroupRepresentativeHome() throws java.rmi.RemoteException;
  public void updateUser(com.idega.user.data.User p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,com.idega.util.idegaTimestamp p7,java.lang.Integer p8)throws java.rmi.RemoteException,javax.ejb.EJBException, java.rmi.RemoteException;
  public void addNewUserEmail(int p0,java.lang.String p1) throws java.rmi.RemoteException;
  public java.util.Collection getUsersInGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException;

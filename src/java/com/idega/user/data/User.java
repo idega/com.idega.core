@@ -12,7 +12,7 @@ public interface User extends Group//com.idega.data.IDOEntity
  public void setGroupID(int p0) throws java.rmi.RemoteException;
  public com.idega.user.data.Group getUserGroup() throws java.rmi.RemoteException;
  public void setFirstName(java.lang.String p0) throws java.rmi.RemoteException;
- public void setGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
+// public void setGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
  public java.lang.String getIDColumnName() throws java.rmi.RemoteException;
  public int getGenderID() throws java.rmi.RemoteException;
  public java.sql.Date getDateOfBirth() throws java.rmi.RemoteException;

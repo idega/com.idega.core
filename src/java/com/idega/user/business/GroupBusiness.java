@@ -23,7 +23,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  public java.util.Collection getGroupsContained(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getUsersContainedNotDirectlyRelated(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getUsersContained(com.idega.user.data.Group p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
- public com.idega.user.data.UserGroupRepresentativeHome getUserGroupRepresentativeHome() throws java.rmi.RemoteException;
+// public com.idega.user.data.UserGroupRepresentativeHome getUserGroupRepresentativeHome() throws java.rmi.RemoteException;
  public java.util.Collection getGroupsContainedNotDirectlyRelated(com.idega.user.data.Group p0)throws javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getGroupsContaining(com.idega.user.data.Group p0,java.lang.String[] p1,boolean p2)throws java.rmi.RemoteException,javax.ejb.EJBException, java.rmi.RemoteException;
  public java.util.Collection getUsersForUserRepresentativeGroups(java.util.Collection p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;

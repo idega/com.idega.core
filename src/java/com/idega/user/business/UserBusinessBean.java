@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+import com.idega.builder.data.IBDomain;
 import java.sql.SQLException;
 import com.idega.user.data.*;
 import com.idega.user.business.GroupBusiness;
@@ -8,7 +9,6 @@ import com.idega.core.data.*;
 import com.idega.util.idegaTimestamp;
 import java.util.Collection;
 import com.idega.core.data.Email;
-import com.idega.user.data.Group;
 import com.idega.data.EntityFinder;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -63,17 +63,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return userHome;
   }
 
-  public UserGroupRepresentativeHome getUserGroupRepresentativeHome(){
-    if(userRepHome==null){
-      try{
-        userRepHome = (UserGroupRepresentativeHome)IDOLookup.getHome(UserGroupRepresentative.class);
-      }
-      catch(RemoteException rme){
-        throw new RuntimeException(rme.getMessage());
-      }
-    }
-    return userRepHome;
-  }
+//  public UserGroupRepresentativeHome getUserGroupRepresentativeHome(){
+//    if(userRepHome==null){
+//      try{
+//        userRepHome = (UserGroupRepresentativeHome)IDOLookup.getHome(UserGroupRepresentative.class);
+//      }
+//      catch(RemoteException rme){
+//        throw new RuntimeException(rme.getMessage());
+//      }
+//    }
+//    return userRepHome;
+//  }
 
   public GroupHome getGroupHome(){
     if(groupHome==null){
@@ -160,23 +160,40 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     userToAdd.store();
 
 
-    UserGroupRepresentative group = (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
-    group.setName(userToAdd.getName());
-    group.setDescription("User representative in table ic_group");
-    group.store();
+    setUserUnderDomain(this.getIWApplicationContext().getDomain(), userToAdd, (GroupDomainRelationType)null);
 
-    userToAdd.setGroup(group);
 
-    userToAdd.store();
+//    UserGroupRepresentative group = (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
+//    group.setName(userToAdd.getName());
+//    group.setDescription("User representative in table ic_group");
+//    group.store();
+//
+//    userToAdd.setGroup(group);
+
+//    userToAdd.store();
 
     if(primary_group != null){
       Group prgr = userToAdd.getPrimaryGroup();
-      prgr.addUser(userToAdd);
+      prgr.addGroup(userToAdd);
     }
 
     return userToAdd;
 
   }
+
+
+  public void setUserUnderDomain(IBDomain domain, User user, GroupDomainRelationType type) throws CreateException,RemoteException{
+    GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
+    relation.setDomain(domain);
+    relation.setRelatedUser(user);
+
+    if(type != null){
+      relation.setRelationship(type);
+    }
+
+    relation.store();
+  }
+
 
   public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
       UserTransaction transaction = this.getSessionContext().getUserTransaction();
@@ -191,13 +208,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return newUser;
       }
       catch(Exception e){
-        throw new CreateException(e.getMessage());
-      }
-      finally{
         try{
           transaction.rollback();
         }
         catch(SystemException se){}
+        throw new CreateException(e.getMessage());
       }
   }
 

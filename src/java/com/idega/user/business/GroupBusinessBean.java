@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+import com.idega.builder.data.IBDomain;
 import javax.ejb.*;
 import com.idega.user.data.*;
 import com.idega.core.accesscontrol.data.PermissionGroup;
@@ -676,11 +677,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
   public Group createGroup(String name,String description,String type)throws CreateException,RemoteException{
     Group newGroup;
-    newGroup =  getGroupHome().create();
+    newGroup = getGroupHome().create();
     newGroup.setName(name);
     newGroup.setDescription(description);
     newGroup.setGroupType(type);
     newGroup.store();
+
+    setGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+
     return newGroup;
   }
 
@@ -688,6 +692,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
     return ((GroupHome)IDOLookup.getHome(groupClass)).getGroupType();
   }
 
+
+
+  public void setGroupUnderDomain(IBDomain domain, Group group, GroupDomainRelationType type) throws CreateException,RemoteException{
+    GroupDomainRelation relation = (GroupDomainRelation)IDOLookup.create(GroupDomainRelation.class);
+    relation.setDomain(domain);
+    relation.setRelatedGroup(group);
+
+    if(type != null){
+      relation.setRelationship(type);
+    }
+
+    relation.store();
+  }
 
 
 

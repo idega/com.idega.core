@@ -38,7 +38,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public java.lang.String getExtraInfo() throws java.rmi.RemoteException;
  //public com.idega.core.ICTreeNode getParentNode() throws java.rmi.RemoteException;
  //public java.lang.String getNodeName() throws java.rmi.RemoteException;
- public void addUser(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+// public void addUser(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
 
   public void addRelation(Group groupToAdd,String relationType)throws CreateException,RemoteException;
   public void addRelation(Group groupToAdd,GroupRelationType relationType)throws CreateException,RemoteException;
@@ -56,5 +56,8 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
    * Returns a collection of Group objects that are related by the relation type relationType with this Group
    */
   public java.util.Collection getRelatedBy(String relationType)throws FinderException,RemoteException;
+
+  public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
+  public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
 
  }
