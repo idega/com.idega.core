@@ -42,10 +42,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   Image icons[] = null;
   String iconNames[]={"treeviewer_trancparent.gif","treeviewer_line.gif",
-                      "treeviewer_R_line.gif","treeviewer_R_minus.gif","treeviewer_R_plus.gif",
-                      "treeviewer_L_line.gif","treeviewer_L_minus.gif","treeviewer_L_plus.gif",
-                      "treeviewer_M_line.gif","treeviewer_M_minus.gif","treeviewer_M_plus.gif",
-                      "treeviewer_F_line.gif","treeviewer_F_minus.gif","treeviewer_F_plus.gif"};
+		      "treeviewer_R_line.gif","treeviewer_R_minus.gif","treeviewer_R_plus.gif",
+		      "treeviewer_L_line.gif","treeviewer_L_minus.gif","treeviewer_L_plus.gif",
+		      "treeviewer_M_line.gif","treeviewer_M_minus.gif","treeviewer_M_plus.gif",
+		      "treeviewer_F_line.gif","treeviewer_F_minus.gif","treeviewer_F_plus.gif"};
 
   private String trancparentImageUrl = "treeviewer_trancparent.gif";
   private static final int ICONINDEX_TRANCPARENT = 0;
@@ -119,10 +119,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     for (int i = 0; i < icons.length; i++) {
       Image tmp = icons[i];
       if(tmp != null){
-        tmp.setWidth(iconWidth);
-        tmp.setHeight(iconHeight);
-        tmp.setAlignment("top");
-        icons[i] = tmp;
+	tmp.setWidth(iconWidth);
+	tmp.setHeight(iconHeight);
+	tmp.setAlignment("top");
+	icons[i] = tmp;
       }
     }
   }
@@ -131,15 +131,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     IWBundle bundle = getBundle(iwc);
     if(_showTreeIcons){
       for (int i = 0; i < icons.length; i++) {
-        if(icons[i] == null){
-          icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+iconNames[i]);
-        }
+	if(icons[i] == null){
+	  icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+iconNames[i]);
+	}
       }
     }else {
       for (int i = 0; i < icons.length; i++) {
-        if(icons[i] == null){
-          icons[i] = Table.getTransparentCell(iwc);
-        }
+	if(icons[i] == null){
+	  icons[i] = Table.getTransparentCell(iwc);
+	}
       }
     }
     _showTreeIcons_changed = false;
@@ -172,7 +172,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   public void drawTree(IWContext iwc){
     this.empty();
     this.add(frameTable);
-    frameTable.empty();
+    //frameTable.empty();
     treeTableIndex = ((!_showHeaderRow)?1:2);
     if(_showSuperRootNode){
       drawSuperRoot(iwc);
@@ -208,217 +208,217 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     if(nodes != null){
       Iterator iter = nodes;
       for (int i = 0; iter.hasNext(); i++) {
-        ICTreeNode item = (ICTreeNode)iter.next();
-        boolean hasChild = (item.getChildCount() > 0);
-        boolean isOpen = false;
-        int rowIndex = getRowIndex();
-        Table treeColumns = this.getTreeTableClone();
-        if(hasChild){
-          isOpen = openNodes.contains(Integer.toString(item.getNodeID()));
-        }
-        boolean isRoot = (defaultRoot.getIndex(item) >= 0);
+	ICTreeNode item = (ICTreeNode)iter.next();
+	boolean hasChild = (item.getChildCount() > 0);
+	boolean isOpen = false;
+	int rowIndex = getRowIndex();
+	Table treeColumns = this.getTreeTableClone();
+	if(hasChild){
+	  isOpen = openNodes.contains(Integer.toString(item.getNodeID()));
+	}
+	boolean isRoot = (defaultRoot.getIndex(item) >= 0);
 
-        for (int k = 1; k < _cols; k++) {
-          PresentationObject obj = this.getObjectToAddToColumn(k,item,iwc,isOpen,hasChild,isRoot);
-          if(obj != null){
-            treeColumns.add(obj,k+1,1);
-          }
-        }
+	for (int k = 1; k < _cols; k++) {
+	  PresentationObject obj = this.getObjectToAddToColumn(k,item,iwc,isOpen,hasChild,isRoot);
+	  if(obj != null){
+	    treeColumns.add(obj,k+1,1);
+	  }
+	}
 
-        for (int k = 1; k < _extracols; k++) {
-          PresentationObject obj = this.getObjectToAddToParallelExtraColumn(k,item,iwc,isOpen,hasChild,isRoot);
-          if(obj != null){
-            frameTable.add(obj,k+1,rowIndex);
-          }
-        }
+	for (int k = 1; k < _extracols; k++) {
+	  PresentationObject obj = this.getObjectToAddToParallelExtraColumn(k,item,iwc,isOpen,hasChild,isRoot);
+	  if(obj != null){
+	    frameTable.add(obj,k+1,rowIndex);
+	  }
+	}
 
-        if(collectedIcons != null){
-          int collectedIconslength = collectedIcons.length;
-         /* try {
-            int width = Integer.parseInt(iconWidth)*(collectedIconslength+1);
-            treeColumns.setWidth(1,Integer.toString(width));
-          }
-          catch (NumberFormatException ex) {
-            System.err.println("AbstractTreeViewer iconWidth: "+ iconWidth);
-            // doNothing iconWidth is x%
-          }
+	if(collectedIcons != null){
+	  int collectedIconslength = collectedIcons.length;
+	 /* try {
+	    int width = Integer.parseInt(iconWidth)*(collectedIconslength+1);
+	    treeColumns.setWidth(1,Integer.toString(width));
+	  }
+	  catch (NumberFormatException ex) {
+	    System.err.println("AbstractTreeViewer iconWidth: "+ iconWidth);
+	    // doNothing iconWidth is x%
+	  }
 */
-          for (int j = 0; j < collectedIconslength; j++) {
-            treeColumns.add(collectedIcons[j],1,1);
-          }
-        }
-        Image[] newCollectedIcons = null;
-        if(isRoot && !_showSuperRootNode){
-          if(showRootNodeTreeIcons()){
-            if(i == 0 && !iter.hasNext()){
-              if(hasChild){
-                if(isOpen){
-                  PresentationObject p = null;
-                  if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_MINUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                  }else{
-                    p = icons[ICONINDEX_ROOT_MINUS];
-                  }
-                  treeColumns.add(p,1,1);
-                  newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-                } else {
-                  PresentationObject p = null;
-                  if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_PLUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                  }else{
-                    p = icons[ICONINDEX_ROOT_PLUS];
-                  }
-                  treeColumns.add(p,1,1);
-                }
-              } else {
-                treeColumns.add(icons[ICONINDEX_ROOT_LINE],1,1);
-                //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-              }
-            } else {
-              if(i == 0){
-                if(hasChild){
-                  if(isOpen){
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_F_MINUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    }else{
-                      p = icons[ICONINDEX_F_MINUS];
-                    }
-                    treeColumns.add(p,1,1);
-                    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
-                  } else {
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_F_PLUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    }else{
-                      p = icons[ICONINDEX_F_PLUS];
-                    }
-                    treeColumns.add(p,1,1);
-                  }
-                } else {
-                  treeColumns.add(icons[ICONINDEX_F_LINE],1,1);
-                  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-                }
-              } else if(hasChild){
-                if(!item.isLeaf()){
-                  if(isOpen){
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    }else{
-                      p = icons[ICONINDEX_L_MINUS];
-                    }
-                    treeColumns.add(p,1,1);
-                    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-                  } else{
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    }else{
-                      p = icons[ICONINDEX_L_PLUS];
-                    }
-                    treeColumns.add(p,1,1);
-                  }
-                } else {
-                  treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
-                  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-                }
-              } else {
-                if(hasChild){
-                  if(isOpen){
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
-                    }else{
-                      p = icons[ICONINDEX_M_MINUS];
-                    }
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    treeColumns.add(p,1,1);
-                    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
-                  } else {
-                    PresentationObject p = null;
-                    if(_showTreeIcons){
-                    p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
-                    }else{
-                      p = icons[ICONINDEX_M_PLUS];
-                    }
-                    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    treeColumns.add(p,1,1);
-                  }
-                } else {
-                  treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
-                  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-                }
-              }
-            }
-          }
-        }else{
-          if(!iter.hasNext()){
-            if(hasChild){
-              if(isOpen){
-                PresentationObject p = null;
-                if(_showTreeIcons){
-                p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
-                setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                }else{
-                  p = icons[ICONINDEX_L_MINUS];
-                }
-                treeColumns.add(p,1,1);
-                newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-              } else {
-                PresentationObject p = null;
-                if(_showTreeIcons){
-                p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
-                setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                }else{
-                  p = icons[ICONINDEX_L_PLUS];
-                }
-                treeColumns.add(p,1,1);
-              }
-            } else {
-              treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
-              //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-            }
-          } else{
-            if(hasChild){
-              if(isOpen){
-                PresentationObject p = null;
-                if(_showTreeIcons){
-                  p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
-                  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                }else{
-                  p = icons[ICONINDEX_M_MINUS];
-                }
-                treeColumns.add(p,1,1);
-                newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
-              } else {
-                PresentationObject p = null;
-                if(_showTreeIcons){
-                  p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
-                  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                }else{
-                  p = icons[ICONINDEX_M_PLUS];
-                }
-                treeColumns.add(p,1,1);
-              }
-            } else {
-              treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
-              //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-            }
-          }
-        }
+	  for (int j = 0; j < collectedIconslength; j++) {
+	    treeColumns.add(collectedIcons[j],1,1);
+	  }
+	}
+	Image[] newCollectedIcons = null;
+	if(isRoot && !_showSuperRootNode){
+	  if(showRootNodeTreeIcons()){
+	    if(i == 0 && !iter.hasNext()){
+	      if(hasChild){
+		if(isOpen){
+		  PresentationObject p = null;
+		  if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_MINUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		  }else{
+		    p = icons[ICONINDEX_ROOT_MINUS];
+		  }
+		  treeColumns.add(p,1,1);
+		  newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+		} else {
+		  PresentationObject p = null;
+		  if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_ROOT_PLUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		  }else{
+		    p = icons[ICONINDEX_ROOT_PLUS];
+		  }
+		  treeColumns.add(p,1,1);
+		}
+	      } else {
+		treeColumns.add(icons[ICONINDEX_ROOT_LINE],1,1);
+		//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+	      }
+	    } else {
+	      if(i == 0){
+		if(hasChild){
+		  if(isOpen){
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_F_MINUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    }else{
+		      p = icons[ICONINDEX_F_MINUS];
+		    }
+		    treeColumns.add(p,1,1);
+		    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
+		  } else {
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_F_PLUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    }else{
+		      p = icons[ICONINDEX_F_PLUS];
+		    }
+		    treeColumns.add(p,1,1);
+		  }
+		} else {
+		  treeColumns.add(icons[ICONINDEX_F_LINE],1,1);
+		  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+		}
+	      } else if(hasChild){
+		if(!item.isLeaf()){
+		  if(isOpen){
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    }else{
+		      p = icons[ICONINDEX_L_MINUS];
+		    }
+		    treeColumns.add(p,1,1);
+		    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+		  } else{
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    }else{
+		      p = icons[ICONINDEX_L_PLUS];
+		    }
+		    treeColumns.add(p,1,1);
+		  }
+		} else {
+		  treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
+		  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+		}
+	      } else {
+		if(hasChild){
+		  if(isOpen){
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
+		    }else{
+		      p = icons[ICONINDEX_M_MINUS];
+		    }
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    treeColumns.add(p,1,1);
+		    newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
+		  } else {
+		    PresentationObject p = null;
+		    if(_showTreeIcons){
+		    p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
+		    }else{
+		      p = icons[ICONINDEX_M_PLUS];
+		    }
+		    setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		    treeColumns.add(p,1,1);
+		  }
+		} else {
+		  treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
+		  //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+		}
+	      }
+	    }
+	  }
+	}else{
+	  if(!iter.hasNext()){
+	    if(hasChild){
+	      if(isOpen){
+		PresentationObject p = null;
+		if(_showTreeIcons){
+		p = getOpenCloseLinkClone( icons[ICONINDEX_L_MINUS] );
+		setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		}else{
+		  p = icons[ICONINDEX_L_MINUS];
+		}
+		treeColumns.add(p,1,1);
+		newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+	      } else {
+		PresentationObject p = null;
+		if(_showTreeIcons){
+		p = getOpenCloseLinkClone( icons[ICONINDEX_L_PLUS] );
+		setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		}else{
+		  p = icons[ICONINDEX_L_PLUS];
+		}
+		treeColumns.add(p,1,1);
+	      }
+	    } else {
+	      treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
+	      //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+	    }
+	  } else{
+	    if(hasChild){
+	      if(isOpen){
+		PresentationObject p = null;
+		if(_showTreeIcons){
+		  p = getOpenCloseLinkClone( icons[ICONINDEX_M_MINUS] );
+		  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		}else{
+		  p = icons[ICONINDEX_M_MINUS];
+		}
+		treeColumns.add(p,1,1);
+		newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
+	      } else {
+		PresentationObject p = null;
+		if(_showTreeIcons){
+		  p = getOpenCloseLinkClone( icons[ICONINDEX_M_PLUS] );
+		  setLinkToOpenOrCloseNode((Link)p,item,isOpen);
+		}else{
+		  p = icons[ICONINDEX_M_PLUS];
+		}
+		treeColumns.add(p,1,1);
+	      }
+	    } else {
+	      treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
+	      //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+	    }
+	  }
+	}
 
-        frameTable.add(treeColumns,1,rowIndex);
+	frameTable.add(treeColumns,1,rowIndex);
 
-        if(hasChild && isOpen){
-          drawTree(item.getChildren(),newCollectedIcons, iwc);
-        }
+	if(hasChild && isOpen){
+	  drawTree(item.getChildren(),newCollectedIcons, iwc);
+	}
       }
     }
   }
@@ -427,13 +427,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     Image[] newArray = null;
     if(newIcon != null){
       if(oldIcons == null){
-        newArray = new Image[1];
-        newArray[0] = newIcon;
-        return newArray;
+	newArray = new Image[1];
+	newArray[0] = newIcon;
+	return newArray;
       } else {
-        newArray = new Image[oldIcons.length+1];
-        System.arraycopy(oldIcons,0,newArray,0,oldIcons.length);
-        newArray[newArray.length-1] = newIcon;
+	newArray = new Image[oldIcons.length+1];
+	System.arraycopy(oldIcons,0,newArray,0,oldIcons.length);
+	newArray[newArray.length-1] = newIcon;
       }
     }
     return newArray;
@@ -454,11 +454,11 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private void setInitOpenLevel(Iterator iter, int level){
     if(iter != null){
       for (int i = 0; iter.hasNext() ; i++) {
-        ICTreeNode node = (ICTreeNode)iter.next();
-        openNodes.add(Integer.toString(node.getNodeID()));
-        if( level < defaultOpenLevel ){
-          setInitOpenLevel(node.getChildren(),level+1);
-        }
+	ICTreeNode node = (ICTreeNode)iter.next();
+	openNodes.add(Integer.toString(node.getNodeID()));
+	if( level < defaultOpenLevel ){
+	  setInitOpenLevel(node.getChildren(),level+1);
+	}
       }
     }
   }
@@ -468,7 +468,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     String[] open = iwc.getParameterValues(PRM_OPEN_TREENODES);
     if(open != null){
       for (int i = 0; i < open.length; i++) {
-        openNodes.add(open[i]);
+	openNodes.add(open[i]);
       }
     } else if(iwc.getParameter(PRM_TREE_CHANGED) == null){ // set init Open level
       setInitOpenLevel();
@@ -523,6 +523,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     return showRootNodeTreeIcons;
   }
 
+  public void setToShowHeaderRow(boolean showRow) {
+    _showHeaderRow = showRow;
+  }
+
   public void setToShowRootNodeTreeIcons(boolean value){
     showRootNodeTreeIcons = value;
   }
@@ -531,7 +535,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     defaultRoot.clear();
     if(nodes != null){
       for (int i = 0; i < nodes.length; i++) {
-        defaultRoot.addTreeNode(nodes[i]);
+	defaultRoot.addTreeNode(nodes[i]);
       }
     }
   }
@@ -540,8 +544,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     defaultRoot.clear();
     if(nodes != null){
       while (nodes.hasNext()) {
-        ICTreeNode node = (ICTreeNode) nodes.next();
-        defaultRoot.addTreeNode(node);
+	ICTreeNode node = (ICTreeNode) nodes.next();
+	defaultRoot.addTreeNode(node);
       }
     }
   }
@@ -599,6 +603,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     treeTable.resize(_cols,frameTable.getRows());
   }
 
+  public void setTreePadding(int padding){
+    frameTable.setCellpadding(padding);
+  }
+
   public void setParallelExtraColumns(int cols){
     _extracols = cols+1;
     frameTable.resize(_extracols,frameTable.getRows());
@@ -633,8 +641,16 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
       frameTable.add(obj,col+1,1);
   }
 
-  public void setColumnHeading(int col, PresentationObject obj){
+  public void setTreeHeading(int col, PresentationObject obj){
       frameTable.add(obj,col,1);
+  }
+
+  public void setHeadingColor(String color){
+      frameTable.setColor(1,1,color);
+  }
+
+  public void setExtraHeadingColor(int col,String color){
+      frameTable.setColor(col+1,1,color);
   }
 
   public void setDefaultOpenLevel(int value){
@@ -660,11 +676,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   public void setHeaderRowHeight(String height){
     frameTable.setHeight(1,height);
   }
-
-  public void addToHeaderRow(int col, PresentationObject obj){
-    frameTable.add(obj,1,col);
-  }
-
 
 
   /*
@@ -706,9 +717,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
      */
     public Iterator getChildren(){
       if(childrens != null){
-        return childrens.iterator();
+	return childrens.iterator();
       } else {
-        return null;
+	return null;
       }
     }
 
@@ -717,9 +728,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
      */
     public boolean getAllowsChildren(){
       if(childrens != null){
-        return true;
+	return true;
       }else{
-        return false;
+	return false;
       }
     }
 
@@ -779,10 +790,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
      */
     public int getSiblingCount(){
       try {
-        return this.getParentNode().getChildCount()-1;
+	return this.getParentNode().getChildCount()-1;
       }
       catch (Exception ex) {
-        return -1;
+	return -1;
       }
     }
 
@@ -790,7 +801,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
     public void addTreeNode(ICTreeNode node){
       if(node instanceof DefaultTreeNode){
-        ((DefaultTreeNode)node).setParentNode(this);
+	((DefaultTreeNode)node).setParentNode(this);
       }
       childrens.add(node);
     }
@@ -801,7 +812,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
     public void clear(){
       if(childrens != null){
-        childrens.clear();
+	childrens.clear();
       }
     }
 
