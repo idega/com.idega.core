@@ -753,6 +753,10 @@ public void setCacheWriter(PrintWriter writer){
     return ((AccessController)this.getApplication().getAccessController());
   }
 
+  public String getRequestContentType(){
+    return Request.getContentType();
+  }
+
   public boolean hasPermission(String permissionKey, PresentationObject obj){
     try {
       return this.getAccessController().hasPermission(permissionKey,obj,this);
