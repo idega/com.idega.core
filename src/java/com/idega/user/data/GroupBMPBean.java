@@ -47,6 +47,7 @@ import com.idega.util.ListUtil;
  * @version 1.0
  */
 public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable {
+	private static final int PREFETCH_SIZE = 100;
 	public static final int GROUP_ID_EVERYONE = -7913;
 	public static final int GROUP_ID_USERS = -1906;
 
@@ -89,6 +90,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(COLUMN_SHORT_NAME, "Short name", true, true, String.class);
 		addAttribute(COLUMN_ABBREVATION, "Abbrevation", true, true, String.class);
 
+		//adds a unique id string column to this entity that is set when the entity is first stored.
+		addUniqueIDColumn();
+		
 		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
 		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
 		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
@@ -106,12 +110,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		addManyToOneRelationship(COLUMN_HOME_FOLDER_ID,ICFile.class);
 
+		//indexes
 		addIndex("IDX_IC_GROUP_1", new String[]{ COLUMN_GROUP_TYPE, COLUMN_GROUP_ID});
 		addIndex("IDX_IC_GROUP_2", COLUMN_NAME);
 		addIndex("IDX_IC_GROUP_3", COLUMN_GROUP_ID);
 		addIndex("IDX_IC_GROUP_4", COLUMN_GROUP_TYPE);
 		addIndex("IDX_IC_GROUP_5", new String[]{ COLUMN_GROUP_ID, COLUMN_GROUP_TYPE});
 	}
+
 	public final String getEntityName() {
 		return ENTITY_NAME;
 	}
@@ -573,6 +579,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.append(this.COLUMN_GROUP_ID);
 		query.appendIn(findGroupRelationsSQL);
 		query.appendOrderBy(this.COLUMN_NAME);
+
+
+		
+		//return idoFindPKsByQueryUsingLoadBalance(query,PREFETCH_SIZE);
+		
 
 		return idoFindPKsBySQL(query.toString());
 
