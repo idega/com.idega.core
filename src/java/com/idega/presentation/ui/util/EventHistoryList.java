@@ -70,6 +70,7 @@ public class EventHistoryList extends Block{
                 eventTable.add(getText(iwrb.getLocalizedString("eventhistory.source","Source")),col++,row);
             if(showUser)
                 eventTable.add(getText(iwrb.getLocalizedString("eventhistory.user","User")),col++,row);
+            eventTable.setCellpadding(1);
             eventTable.setLineAfterRow(row);
             row++;
             col = 1;
