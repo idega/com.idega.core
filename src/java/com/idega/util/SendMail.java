@@ -33,8 +33,8 @@ public class SendMail {
 		message.addRecipients(Message.RecipientType.BCC,InternetAddress.parse(bcc));
 		}
 
-		message.setSubject(subject);
-		message.setText(text);
+		message.setSubject(parseCharacters(subject));
+		message.setText(parseCharacters(text));
 
 		//Connect to the transport
 		Transport transport = session.getTransport("smtp");
@@ -45,5 +45,23 @@ public class SendMail {
 		transport.close();
 
 	}
+
+    private static String parseCharacters(String input){
+      StringBuffer returnBuffer = new StringBuffer();
+      char[] charArray = input.toCharArray();
+      for (int i = 0; i < charArray.length; i++) {
+        char ch = charArray[i];
+        char newChar = ch;
+        switch (ch) {
+          case 'a':
+            returnBuffer.append('a');
+          case 'b':
+            returnBuffer.append('b');
+          default:
+            returnBuffer.append(ch);
+        }
+      }
+      return returnBuffer.toString();
+    }
 
 }
