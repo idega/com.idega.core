@@ -1,6 +1,7 @@
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +14,7 @@ import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
 import com.idega.core.business.AddressBusiness;
 import com.idega.core.data.Country;
-import com.idega.core.localisation.business.ICLocaleBusiness;
+//import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 
@@ -42,18 +43,25 @@ public class CountryDropdownMenu extends DropdownMenu {
 	public void main(IWContext iwc) throws Exception{
 		//TODO eiki cache countries
 		super.main(iwc);
-		List locales = ICLocaleBusiness.listOfAllLocalesJAVA();
+		List localeCountries = Arrays.asList(Locale.getISOCountries());
+		//List locales = Arrays.asList( java.util.Locale.getAvailableLocales());
+		//List locales = ICLocaleBusiness.listOfAllLocalesJAVA();
 		Locale currentLocale = iwc.getCurrentLocale();
-		
-		Iterator iter = locales.iterator();
+
+		//Iterator iter = locales.iterator();
+		Iterator iter = localeCountries.iterator();
 		
 		Country country = null;
 		String countryDisplayName = null;
 		Map countries = new HashMap();
-		
+		String lang = currentLocale.getISO3Language();
+		Locale locale;
 		while (iter.hasNext()) {
-			Locale locale = (Locale) iter.next();
+			//Locale locale = (Locale) iter.next();
+			String ISOCountry = (String ) iter.next();
 			try {
+				locale = new Locale(lang,ISOCountry);
+				
 				countryDisplayName = locale.getDisplayCountry(currentLocale);
 				country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(locale.getCountry());	
 				
