@@ -716,6 +716,10 @@ public class IWMainApplication{//implements ServletContext{
     char[] c = s.toCharArray();
     int sum = 0;
     for (int i = 0; i < c.length; i++) {
+      if(i == 4)
+        sum*=3;
+      if(i == 10)
+        sum*=2;
       sum += ((int)c[i]);
     }
     return sum;
