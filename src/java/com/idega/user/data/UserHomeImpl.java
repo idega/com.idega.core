@@ -110,7 +110,7 @@ public java.util.Collection findUsersBySearchCondition(java.lang.String p0, bool
 
 public java.util.Collection findUsersBySearchConditionAndMaxAge(java.lang.String p0, boolean p1, int maxAge)throws javax.ejb.FinderException,java.rmi.RemoteException{	
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1, maxAge);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getIDOEntityListForPrimaryKeys(ids);
