@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.16 2003/08/18 16:25:45 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.17 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -212,7 +212,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	    input.setDisabled(disabled);
 	
 	    if (_style != null) {
-	      input.setAttribute("style",_style);
+	      input.setMarkupAttribute("style",_style);
 	    }
 	
 	    if(_stringDisplay != null){

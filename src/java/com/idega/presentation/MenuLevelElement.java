@@ -112,14 +112,14 @@ public class MenuLevelElement extends PresentationObject {
 	 * @param w
 	 */
 	public void setWidth(int w){
-		setAttribute("width", w);
+		setMarkupAttribute("width", w);
 	}
 	/**
 	 * sets the height of the level
 	 * @param h
 	 */
 	public void setHeight(int h){
-		setAttribute("height", h);
+		setMarkupAttribute("height", h);
 	}
 	/**
 	 * sets the regular style class for the level
@@ -127,7 +127,7 @@ public class MenuLevelElement extends PresentationObject {
 	 */
 	public void setRegClass(String regCl){
 //		regCl = "clLevel" + menuLevel;
-		setAttribute("regClass", "\"" + regCl + "\"");
+		setMarkupAttribute("regClass", "\"" + regCl + "\"");
 	}
 	/**
 	 * sets the mouseOver style class for the level
@@ -135,21 +135,21 @@ public class MenuLevelElement extends PresentationObject {
 	 */
 	public void setOverClass(String overCl){
 //		overCl = "clLevel" + menuLevel + "over";
-		setAttribute("overClass", "\"" + overCl + "\"");
+		setMarkupAttribute("overClass", "\"" + overCl + "\"");
 	}
 	/**
 	 * 
 	 * @param bX
 	 */
 	public void setBorderX(int bX){
-		setAttribute("borderX", bX);
+		setMarkupAttribute("borderX", bX);
 	}
 	/**
 	 * 
 	 * @param bY
 	 */
 	public void setBorderY(int bY){
-		setAttribute("borderY", bY);
+		setMarkupAttribute("borderY", bY);
 	}
 	/**
 	 * sets the border class for the level
@@ -157,56 +157,56 @@ public class MenuLevelElement extends PresentationObject {
 	 */
 	public void setBorderClass(String borderCl){
 //		borderCl = "clLevel" + menuLevel + "border";
-		setAttribute("borderClass", "\"" + borderCl + "\"");
+		setMarkupAttribute("borderClass", "\"" + borderCl + "\"");
 	}
 	/**
 	 * sets the x-offset of the level - if the level should overlap the previous level
 	 * @param offX
 	 */
 	public void setOffsetX(int offX){
-		setAttribute("offsetX", offX);
+		setMarkupAttribute("offsetX", offX);
 	}
 	/**
 	 * sets the y-offset of the level - if the level should overlap the previous level
 	 * @param offY
 	 */
 	public void setOffsetY(int offY){
-		setAttribute("offsetY", offY);
+		setMarkupAttribute("offsetY", offY);
 	}
 	/**
 	 * sets if the level should be horizontal (r=0) or vertical (r=1)
 	 * @param r
 	 */
 	public void setRows(int r){
-		setAttribute("rows", r);
+		setMarkupAttribute("rows", r);
 	}
 	/**
 	 * 
 	 * @param a
 	 */
 	public void setArrow(int a){
-		setAttribute("arrow", a);
+		setMarkupAttribute("arrow", a);
 	}
 	/**
 	 * 
 	 * @param aWidth
 	 */
 	public void setArrowWidth(int aWidth){
-		setAttribute("arrowWidth", aWidth);
+		setMarkupAttribute("arrowWidth", aWidth);
 	}
 	/**
 	 * 
 	 * @param aHeight
 	 */
 	public void setArrowHeight(int aHeight){
-		setAttribute("arrowHeight", aHeight);
+		setMarkupAttribute("arrowHeight", aHeight);
 	}
 	/**
 	 * 
 	 * @param ali
 	 */
 	public void setAlign(String ali){
-		setAttribute("align",  "\"" + ali + "\"");
+		setMarkupAttribute("align",  "\"" + ali + "\"");
 	}
 //	public String output(){
 //		StringBuffer buffer = new StringBuffer();

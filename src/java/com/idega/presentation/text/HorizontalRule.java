@@ -125,7 +125,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setTitle(String title){
 
-    setAttribute("title",title);
+    setMarkupAttribute("title",title);
 
   }
 
@@ -133,7 +133,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setWidth(String width){
 
-    setAttribute("width",width);
+    setMarkupAttribute("width",width);
 
   }
 
@@ -141,7 +141,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setWidth(int width){
 
-    setAttribute("width",Integer.toString(width));
+    setMarkupAttribute("width",Integer.toString(width));
 
   }
 
@@ -149,7 +149,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setHeight(int height) {
 
-    setAttribute("size",Integer.toString(height));
+    setMarkupAttribute("size",Integer.toString(height));
 
   }
 
@@ -159,7 +159,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
     if ( noShade )
 
-      setAttribute("noshade");
+      setMarkupAttributeWithoutValue("noshade");
 
   }
 
@@ -167,7 +167,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setColor(String color) {
 
-    setAttribute("color",color);
+    setMarkupAttribute("color",color);
 
   }
 
@@ -183,7 +183,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setStyleClass(String style) {
 
-    setAttribute("class",style);
+    setMarkupAttribute("class",style);
 
   }
 
@@ -191,7 +191,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setStyle(String style) {
 
-    setAttribute("style",style);
+    setMarkupAttribute("style",style);
 
   }
 
@@ -199,7 +199,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
   public void setAlignment(String alignment) {
 
-    setAttribute("align",alignment);
+    setMarkupAttribute("align",alignment);
 
   }
 
@@ -210,7 +210,7 @@ public HorizontalRule(String width, int height, String style, boolean noShade) {
 
     if (getLanguage().equals("HTML")){
 
-      print("<hr "+getAttributeString()+" >");
+      print("<hr "+getMarkupAttributesString()+" >");
 
     }
 

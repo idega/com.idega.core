@@ -1,5 +1,5 @@
 /*
- * $Id: MenuElement.java,v 1.6 2002/10/12 19:05:57 laddi Exp $
+ * $Id: MenuElement.java,v 1.7 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -63,7 +63,7 @@ public class MenuElement extends InterfaceObject {
 	}
 
 	public String getElementValue() {
-		return getValue();
+		return getValueAsString();
 	}
 
 	public String getElementName() {
@@ -80,12 +80,12 @@ public class MenuElement extends InterfaceObject {
 			if (isDisabled()) {
 				disabledString = "disabled";
 			}
-			print("<option name=\"" + getName() + "\" " + getAttributeString() + " " + disabledString + " " + selectedString + " >");
+			print("<option name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + disabledString + " " + selectedString + " >");
 			print(getName());
 			print("</option>");
 		}
 		else if (getLanguage().equals("WML")) {
-			print("<option name=\"" + getName() + "\" value=\"" + getValue() + "\" >");
+			print("<option name=\"" + getName() + "\" value=\"" + getValueAsString() + "\" >");
 			print(getName());
 			print("</option>");
 		}

@@ -74,76 +74,76 @@ public class Applet extends PresentationObject {
 		setWidth(Integer.toString(width));
 	}
 	public void setWidth(String width) {
-		setAttribute("width", width);
+		setMarkupAttribute("width", width);
 	}
 	public String getWidth() {
-		return getAttribute("width");
+		return getMarkupAttribute("width");
 	}
 	public void setHeight(int height) {
 		setHeight(Integer.toString(height));
 	}
 	public void setHeight(String height) {
-		setAttribute("height", height);
+		setMarkupAttribute("height", height);
 	}
 	public String getHeight() {
-		return getAttribute("height");
+		return getMarkupAttribute("height");
 	}
 	public void setBackgroundColor(String ColorStaticColorString) {
 		setParam("BGCOLOR", ColorStaticColorString);
 	}
 	public void setCodebase(String CODEBASE) {
-		setAttribute("CODEBASE", CODEBASE);
+		setMarkupAttribute("CODEBASE", CODEBASE);
 	}
 	public String getCodebase() {
-		return getAttribute("CODEBASE");
+		return getMarkupAttribute("CODEBASE");
 	}
 	public void setCodeArchive(String ARCHIVE) {
-		setAttribute("ARCHIVE", ARCHIVE);
+		setMarkupAttribute("ARCHIVE", ARCHIVE);
 	}
 	public String getCodeArchive() {
-		return getAttribute("ARCHIVE");
+		return getMarkupAttribute("ARCHIVE");
 	}
 	public void setAppletClass(String CODE) {
-		setAttribute("CODE", CODE);
+		setMarkupAttribute("CODE", CODE);
 	}
 	public String getAppletClass() {
-		return getAttribute("CODE");
+		return getMarkupAttribute("CODE");
 	}
 	public void setAppletName(String NAME) {
-		setAttribute("NAME", NAME);
+		setMarkupAttribute("NAME", NAME);
 	}
 	public String getAppletName() {
-		return getAttribute("NAME");
+		return getMarkupAttribute("NAME");
 	}
 	public void setAlignment(String ALIGN) {
-		setAttribute("ALIGN", ALIGN);
+		setMarkupAttribute("ALIGN", ALIGN);
 	}
 	public String getAlignment() {
-		return getAttribute("ALIGN");
+		return getMarkupAttribute("ALIGN");
 	}
 	public void setHSpace(String HSPACE) {
-		setAttribute("HSPACE", HSPACE);
+		setMarkupAttribute("HSPACE", HSPACE);
 	}
 	public String getHSpace() {
-		return getAttribute("HSPACE");
+		return getMarkupAttribute("HSPACE");
 	}
 	public void setVSpace(String VSPACE) {
-		setAttribute("VSPACE", VSPACE);
+		setMarkupAttribute("VSPACE", VSPACE);
 	}
 	public String getVSpace() {
-		return getAttribute("VSPACE");
+		return getMarkupAttribute("VSPACE");
 	}
 	public void setAlt(String alt) {
-		setAttribute("alt", alt);
+		setMarkupAttribute("alt", alt);
 	}
 	public String getAlt() {
-		return getAttribute("alt");
+		return getMarkupAttribute("alt");
 	}
 	public void print(IWContext iwc) throws IOException {
 		if (doPrint(iwc)) {
 			if (getLanguage().equals("HTML")) {
 				print("<APPLET");
-				print(getAttributeString());
+				print(getMarkupAttributesString());
 				print(" >\n");
 				print(params.toString());
 				if (getAlt() != null)

@@ -76,7 +76,7 @@ private Image bullet;
 
   public void setClass(String s){
 
-    setAttribute("class",s);
+    setMarkupAttribute("class",s);
 
   }
 
@@ -84,7 +84,7 @@ private Image bullet;
 
   public void setStyle(String s){
 
-    setAttribute("style",s);
+    setMarkupAttribute("style",s);
 
   }
 
@@ -92,7 +92,7 @@ private Image bullet;
 
   public void setType(String type) {
 
-    setAttribute("type",type);
+    setMarkupAttribute("type",type);
 
   }
 
@@ -108,7 +108,7 @@ private Image bullet;
 
   public void setStartNumber(int number) {
 
-    setAttribute("start",Integer.toString(number));
+    setMarkupAttribute("start",Integer.toString(number));
 
   }
 
@@ -169,7 +169,7 @@ private Image bullet;
 
       if ( !compact )
 
-	println("<"+getListType()+" "+getAttributeString()+">");
+	println("<"+getListType()+" "+getMarkupAttributesString()+">");
 
 
 
@@ -195,9 +195,9 @@ private Image bullet;
 
 	      buffer.append("<LI");
 
-	      if ( getAttribute("style") != null )
+	      if ( getMarkupAttribute("style") != null )
 
-		buffer.append(" style=\""+getAttribute("style")+"\"");
+		buffer.append(" style=\""+getMarkupAttribute("style")+"\"");
 
 	      buffer.append(">");
 

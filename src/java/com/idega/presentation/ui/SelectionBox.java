@@ -62,7 +62,7 @@ public class SelectionBox extends InterfaceObject
 		setName("untitled");
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
-		setAttribute("CLASS", "select");
+		setMarkupAttribute("CLASS", "select");
 		multipleString = "multiple";
 		if (entity != null)
 		{
@@ -83,7 +83,7 @@ public class SelectionBox extends InterfaceObject
 		super();
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
-		setAttribute("CLASS", "select");
+		setMarkupAttribute("CLASS", "select");
 		multipleString = "multiple";
 		
 		setName(untitled);
@@ -281,7 +281,7 @@ public class SelectionBox extends InterfaceObject
 
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue)
 	{
-		getMenuElement(ElementValue).setAttribute(AttributeName, AttributeValue);
+		getMenuElement(ElementValue).setMarkupAttribute(AttributeName, AttributeValue);
 	}
 	public void addDisabledMenuElement(String Value, String DisplayString)
 	{
@@ -372,7 +372,7 @@ public class SelectionBox extends InterfaceObject
 	}
 	public void setHeight(String height)
 	{
-		setAttribute("size", height);
+		setMarkupAttribute("size", height);
 	}
 	/**
 	 * Sets the width in pixels or percents
@@ -389,7 +389,7 @@ public class SelectionBox extends InterfaceObject
 		while (iter.hasNext())
 		{
 			MenuElement tempobj = (MenuElement) iter.next();
-			if (tempobj.getValue().equals(ElementValue))
+			if (tempobj.getValueAsString().equals(ElementValue))
 				{
 					theReturn = tempobj;
 				}
@@ -432,7 +432,7 @@ public class SelectionBox extends InterfaceObject
 				}
 				if (getInterfaceStyle().equals("default"))
 				{
-					println("<select name=\"" + getName() + "\" " + getAttributeString() + " " + multipleString + " >");
+					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + multipleString + " >");
 					Iterator iter = theElements.iterator();
 					while (iter.hasNext())
 					{
@@ -454,7 +454,7 @@ public class SelectionBox extends InterfaceObject
 				}
 				if (getInterfaceStyle().equals("default"))
 				{
-					println("<select name=\"" + getName() + "\" " + getAttributeString() + " >");
+					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 					Iterator iter = theElements.iterator();
 					while (iter.hasNext())
 					{

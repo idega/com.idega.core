@@ -92,7 +92,7 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 				SelectOption option = (SelectOption) iter.next();
 				getPrimaryDropdown().addOption(option);
 				if (!hasSelected) {
-					getPrimaryDropdown().setSelectedOption(option.getValue());
+					getPrimaryDropdown().setSelectedOption(option.getValueAsString());
 					hasSelected = true;
 				}
 			}

@@ -136,147 +136,147 @@ public class DynamicJSMenu extends PresentationObject {
 	 * @param f
 	 */
 	public void setFrames(int f){
-		setAttribute("frames", f);
+		setMarkupAttribute("frames", f);
 	}
 	/**
 	 * sets the pixles between <code> MenuElements </code>
 	 * @param pxB
 	 */
 	public void setPxBetween(int pxB){
-		setAttribute("pxBetween", pxB);
+		setMarkupAttribute("pxBetween", pxB);
 	}
 	/**
 	 * sets the position the menu is located at from the left of the browserwindow, x-coordinate
 	 * @param fromL
 	 */
 	public void setFromLeft(int fromL){
-		setAttribute("fromLeft", fromL);
+		setMarkupAttribute("fromLeft", fromL);
 	}
 	/**
 	 * sets the position the menu is located at from the top of the browserwindow, y-coordinates
 	 * @param fromT
 	 */
 	public void setFromTop(int fromT){
-		setAttribute("fromTop", fromT);
+		setMarkupAttribute("fromTop", fromT);
 	}	
 	/**
 	 * sets if the menu should appear horizontal (r=0) or vertical (r=0)
 	 * @param r
 	 */
 	public void setRows(int r){
-		setAttribute("rows", r);
+		setMarkupAttribute("rows", r);
 	}
 	/**
 	 * 
 	 * @param menuPlace
 	 */
 	public void setMenuPlacement(String menuPlace){
-		setAttribute("menuPlacement", "\"" + menuPlace + "\"");
+		setMarkupAttribute("menuPlacement", "\"" + menuPlace + "\"");
 	}
 	/**
 	 * 
 	 * @param offlineR
 	 */
 	public void setOfflineRoot(String offlineR){
-		setAttribute("offlineRoot", "\"" + offlineR + "\"");
+		setMarkupAttribute("offlineRoot", "\"" + offlineR + "\"");
 	}
 	/**
 	 * 
 	 * @param onlineR
 	 */
 	public void setOnlineRoot(String onlineR){
-		setAttribute("onlineRoot", "\"" + onlineR + "\"");
+		setMarkupAttribute("onlineRoot", "\"" + onlineR + "\"");
 	}
 	/**
 	 * 
 	 * @param resizeCh
 	 */
 	public void setResizeCheck(int resizeCh){
-		setAttribute("resizeCheck", resizeCh);
+		setMarkupAttribute("resizeCheck", resizeCh);
 	}
 	/**
 	 * 
 	 * @param w
 	 */
 	public void setWait(int w){
-		setAttribute("wait", w);
+		setMarkupAttribute("wait", w);
 	}
 	/**
 	 * 
 	 * @param fImg
 	 */
 	public void setFillImg(String fImg){
-		setAttribute("fillImg", "\"" + fImg + "\"");
+		setMarkupAttribute("fillImg", "\"" + fImg + "\"");
 	}
 	/**
 	 * 
 	 * @param zIn
 	 */
 	public void setZIndex (int zIn){
-		setAttribute("zIndex", zIn);
+		setMarkupAttribute("zIndex", zIn);
 	}
 	/**
 	 * 
 	 * @param useB
 	 */
 	public void setUseBar(int useB){
-		setAttribute("useBar", useB);
+		setMarkupAttribute("useBar", useB);
 	}
 	/**
 	 * 
 	 * @param barW
 	 */
 	public void setBarWidth(String barW){
-		setAttribute("barWidth", "\"" + barW + "\"");
+		setMarkupAttribute("barWidth", "\"" + barW + "\"");
 	}
 	/**
 	 * 
 	 * @param barH
 	 */
 	public void setBarHeight(String barH){
-		setAttribute("barHeight", "\"" + barH + "\"");
+		setMarkupAttribute("barHeight", "\"" + barH + "\"");
 	}
 	/**
 	 * 
 	 * @param barCl
 	 */
 	public void setBarClass(String barCl){
-		setAttribute("barClass", "\"" + barCl + "\"");
+		setMarkupAttribute("barClass", "\"" + barCl + "\"");
 	}
 	/**
 	 * 
 	 * @param bX
 	 */
 	public void setBarX(String bX){
-		setAttribute("barX", "\"" + bX + "\"");
+		setMarkupAttribute("barX", "\"" + bX + "\"");
 	}
 	/**
 	 * 
 	 * @param bY
 	 */
 	public void setBarY(String bY){
-		setAttribute("barY", "\"" + bY + "\"");
+		setMarkupAttribute("barY", "\"" + bY + "\"");
 	}
 	/**
 	 * 
 	 * @param barBordX
 	 */
 	public void setBarBorderX(int barBordX){
-		setAttribute("barBorderX", barBordX);
+		setMarkupAttribute("barBorderX", barBordX);
 	}
 	/**
 	 * 
 	 * @param barBordY
 	 */
 	public void setBarBorderY(int barBordY){
-		setAttribute("barBorderY", barBordY);
+		setMarkupAttribute("barBorderY", barBordY);
 	}
 	/**
 	 * 
 	 * @param barBordCl
 	 */
 	public void setBarBorderClass(String barBordCl){
-		setAttribute("barBorderClass", "\"" + barBordCl + "\"");
+		setMarkupAttribute("barBorderClass", "\"" + barBordCl + "\"");
 	}
 	public void setStylePosition(String pos){
 //		styleObject.setAttribute("position", pos);

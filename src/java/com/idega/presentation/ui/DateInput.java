@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.34 2003/10/08 13:57:49 laddi Exp $
+ * $Id: DateInput.java,v 1.35 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -255,9 +255,9 @@ public class DateInput extends InterfaceObjectContainer {
   }
 
   public void setStyleAttribute(String attributeName, String attributeValue) {
-    _theDay.setAttribute(attributeName, attributeValue);
-    _theMonth.setAttribute(attributeName, attributeValue);
-    _theYear.setAttribute(attributeName, attributeValue);
+    _theDay.setMarkupAttribute(attributeName, attributeValue);
+    _theMonth.setMarkupAttribute(attributeName, attributeValue);
+    _theYear.setMarkupAttribute(attributeName, attributeValue);
   }
 
   public void setStyleAttribute(String attributeName) {

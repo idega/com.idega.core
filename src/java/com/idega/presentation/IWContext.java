@@ -11,12 +11,25 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import javax.faces.FacesException;
+import javax.faces.component.UIComponent;
+import javax.faces.context.Message;
+import javax.faces.context.ResponseStream;
+import javax.faces.context.ResponseWriter;
+import javax.faces.event.ApplicationEvent;
+import javax.faces.event.FacesEvent;
+import javax.faces.lifecycle.ApplicationHandler;
+import javax.faces.lifecycle.ViewHandler;
+import javax.faces.tree.Tree;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +72,10 @@ import com.idega.util.reflect.MethodInvoker;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class IWContext extends Object implements IWUserContext, IWApplicationContext {
+public class IWContext
+extends javax.faces.context.FacesContext
+implements IWUserContext, IWApplicationContext {
+
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
@@ -271,7 +287,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		boolean theReturn = false;
 		if (parameter != null) {
 			if (getParameter(parameter.getName()) != null) {
-				if (getParameter(parameter.getName()).equals(parameter.getValue())) {
+				if (getParameter(parameter.getName()).equals(parameter.getValueAsString())) {
 					theReturn = true;
 				}
 			}
@@ -1074,5 +1090,255 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 	public boolean isSecure(){
 		return getRequest().isSecure();
 	}
+	
+	/*
+	 * BEGIN ABSTRACT METHODS FROM FacesContext
+	 */
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#addApplicationEvent(javax.faces.event.ApplicationEvent)
+	 */
+	public void addApplicationEvent(ApplicationEvent arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#addFacesEvent(javax.faces.event.FacesEvent)
+	 */
+	public void addFacesEvent(FacesEvent arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#addMessage(javax.faces.component.UIComponent, javax.faces.context.Message)
+	 */
+	public void addMessage(UIComponent arg0, Message arg1)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getApplicationEvents()
+	 */
+	public Iterator getApplicationEvents()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getApplicationEventsCount()
+	 */
+	public int getApplicationEventsCount()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getApplicationHandler()
+	 */
+	public ApplicationHandler getApplicationHandler()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getFacesEvents()
+	 */
+	public Iterator getFacesEvents()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getHttpSession()
+	 */
+	public HttpSession getHttpSession()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getLocale()
+	 */
+	public Locale getLocale()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
+	 */
+	public int getMaximumSeverity()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMessages()
+	 */
+	public Iterator getMessages()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getMessages(javax.faces.component.UIComponent)
+	 */
+	public Iterator getMessages(UIComponent arg0)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getModelType(java.lang.String)
+	 */
+	public Class getModelType(String arg0) throws FacesException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getModelValue(java.lang.String)
+	 */
+	public Object getModelValue(String arg0) throws FacesException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getResponseStream()
+	 */
+	public ResponseStream getResponseStream()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getResponseWriter()
+	 */
+	public ResponseWriter getResponseWriter()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getServletRequest()
+	 */
+	public ServletRequest getServletRequest()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getServletResponse()
+	 */
+	public ServletResponse getServletResponse()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getTree()
+	 */
+	public Tree getTree()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#getViewHandler()
+	 */
+	public ViewHandler getViewHandler()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#release()
+	 */
+	public void release()
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#renderResponse()
+	 */
+	public void renderResponse()
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#responseComplete()
+	 */
+	public void responseComplete()
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#setLocale(java.util.Locale)
+	 */
+	public void setLocale(Locale arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#setModelValue(java.lang.String, java.lang.Object)
+	 */
+	public void setModelValue(String arg0, Object arg1) throws FacesException
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
+	 */
+	public void setResponseStream(ResponseStream arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
+	 */
+	public void setResponseWriter(ResponseWriter arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.context.FacesContext#setTree(javax.faces.tree.Tree)
+	 */
+	public void setTree(Tree arg0)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	/*
+	 * BEGIN ABSTRACT METHODS FROM FacesContext
+	 */
 	
 }

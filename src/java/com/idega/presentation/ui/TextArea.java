@@ -98,7 +98,7 @@ public class TextArea extends InterfaceObject {
 
 	public void print(IWContext iwc) throws IOException {
 		if (getLanguage().equals("HTML")) {
-			print("<textarea name=\"" + getName() + "\"" + getAttributeString() + " >");
+			print("<textarea name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
 			print(getContent());
 			print("</textarea>");
 		}
@@ -112,14 +112,14 @@ public class TextArea extends InterfaceObject {
 	 * Sets the number of character columns in this text area
 	 */
 	public void setColumns(int cols) {
-		setAttribute(COLS_ATTRIBUTE, Integer.toString(cols));
+		setMarkupAttribute(COLS_ATTRIBUTE, Integer.toString(cols));
 	}
 	
 	/**
 	 * Sets the number of character rows in this text area
 	 */
 	public void setRows(int rows) {
-		setAttribute(ROWS_ATTRIBUTE, Integer.toString(rows));
+		setMarkupAttribute(ROWS_ATTRIBUTE, Integer.toString(rows));
 	}
 
 	/**
@@ -137,9 +137,9 @@ public class TextArea extends InterfaceObject {
 	 */
 	public void setWrap(boolean wrapping) {
 		if (wrapping)
-			removeAttribute(WRAP_ATTRIBUTE);
+			removeMarkupAttribute(WRAP_ATTRIBUTE);
 		else
-			setAttribute(WRAP_ATTRIBUTE,"OFF");
+			setMarkupAttribute(WRAP_ATTRIBUTE,"OFF");
 	}
 
 	/**

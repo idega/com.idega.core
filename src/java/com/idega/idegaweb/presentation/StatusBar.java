@@ -54,7 +54,7 @@ public class StatusBar extends Block {
     TextInput input = new TextInput(inputname,message);
     input.setSize(length);
     input.setDisabled(true);
-    input.setAttribute("style",this.style);
+    input.setMarkupAttribute("style",this.style);
     Form statusForm = new Form();
     statusForm.setName(name);
     statusForm.add(input);

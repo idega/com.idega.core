@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.89 2003/11/03 15:14:49 eiki Exp $
+ *  $Id: Page.java,v 1.90 2003/11/21 19:01:10 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -148,21 +148,21 @@ public class Page extends PresentationObjectContainer {
 	 *@param  color  The new textColor value
 	 */
 	public void setTextColor(String color) {
-		setAttribute("text", color);
+		setMarkupAttribute("text", color);
 	}
 
 	/**
 	 *@param  color  The new alinkColor value
 	 */
 	public void setAlinkColor(String color) {
-		setAttribute("alink", color);
+		setMarkupAttribute("alink", color);
 	}
 
 	/**
 	 *@param  color  The new hoverColor value
 	 */
 	public void setHoverColor(String color) {
-		setAttribute("alink", color);
+		setMarkupAttribute("alink", color);
 		_hoverColor = color;
 	}
 
@@ -463,7 +463,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  color  The new vlinkColor value
 	 */
 	public void setVlinkColor(String color) {
-		setAttribute("vlink", color);
+		setMarkupAttribute("vlink", color);
 		_visitedColor = color;
 	}
 
@@ -471,7 +471,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  color  The new linkColor value
 	 */
 	public void setLinkColor(String color) {
-		setAttribute("link", color);
+		setMarkupAttribute("link", color);
 		_linkColor = color;
 	}
 
@@ -671,7 +671,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  action  The new onLoad value
 	 */
 	public void setOnLoad(String action) {
-		setAttributeMultivalued("onLoad", action);
+		setMarkupAttributeMultivalued("onLoad", action);
 	}
 
 	/**
@@ -686,14 +686,14 @@ public class Page extends PresentationObjectContainer {
 	 *@param  action  The new onBlur value
 	 */
 	public void setOnBlur(String action) {
-		setAttributeMultivalued("onBlur", action);
+		setMarkupAttributeMultivalued("onBlur", action);
 	}
 
 	/**
 	 *@param  action  The new onUnLoad value
 	 */
 	public void setOnUnLoad(String action) {
-		setAttributeMultivalued("onUnLoad", action);
+		setMarkupAttributeMultivalued("onUnLoad", action);
 	}
 
 	/**
@@ -1134,7 +1134,7 @@ public class Page extends PresentationObjectContainer {
 				println("\n</head>");
 
 				if (_addBody) {
-					println("<body " + getAttributeString() + ">");
+					println("<body " + getMarkupAttributesString() + ">");
 				}
 				//added by Eiki for frameSet in a page support
 

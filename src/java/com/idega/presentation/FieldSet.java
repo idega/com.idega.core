@@ -21,7 +21,7 @@ public class FieldSet extends PresentationObjectContainer {
 	
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			println("<fieldset " + getAttributeString() + ">");
+			println("<fieldset " + getMarkupAttributesString() + ">");
 			super.print(iwc);
 			println("</fieldset>");	
 		}

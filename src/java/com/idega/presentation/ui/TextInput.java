@@ -86,7 +86,7 @@ public class TextInput extends GenericInput {
 	 * @param size	The size to set.
 	 */
 	public void setSize(int size) {
-		setAttribute("size", Integer.toString(size));
+		setMarkupAttribute("size", Integer.toString(size));
 
 	}
 
@@ -95,7 +95,7 @@ public class TextInput extends GenericInput {
 	 * @param length	The maxlength to set.
 	 */
 	public void setMaxlength(int maxlength) {
-		setAttribute("maxlength", Integer.toString(maxlength));
+		setMarkupAttribute("maxlength", Integer.toString(maxlength));
 	}
 
 	/**

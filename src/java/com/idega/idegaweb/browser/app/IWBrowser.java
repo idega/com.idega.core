@@ -369,7 +369,7 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
       }
 
     } else if (_showLeftMainFrame || _showRightMainFrame ) {
-      this.setAttribute(_middleFrameset.getAttributes());
+      this.setMarkupAttributes(_middleFrameset.getMarkupAttributes());
 
       if(_showLeftMainFrame){
         this.add(this.getLeftMainFrame());

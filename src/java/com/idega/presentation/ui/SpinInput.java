@@ -118,7 +118,7 @@ public class SpinInput extends IntegerInput{
 			down.setOnClick("var spin = findObj('" + this.getName() + "'); if(spin){ var spinValue = parseInt(spin.value); if(spinValue -"+inc+" <= "+min+"){ spinValue="+min+" } else{spinValue-="+inc+" } spin.value = spinValue; }else window.status='no spin found'; return");
 			table.add(up, 2, 1);
 			table.add(down, 2, 1);
-			setOnChange("if (typeof this.value == 'string'){ this.value="+getValue()+"}else{ var SpinValue = parseInt(this.value); if(SpinValue >"+max+") {this.value="+max+"; }else if(SpinValue < "+min+"){ this.value="+min+";  }  }");
+			setOnChange("if (typeof this.value == 'string'){ this.value="+getValueAsString()+"}else{ var SpinValue = parseInt(this.value); if(SpinValue >"+max+") {this.value="+max+"; }else if(SpinValue < "+min+"){ this.value="+min+";  }  }");
 			setStyleAttribute("font-size:10; background:white");
 	}
 	

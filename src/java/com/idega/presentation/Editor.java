@@ -335,7 +335,7 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   protected void setStyle(InterfaceObject O){
 
-    O.setAttribute("style",this.styleAttribute);
+    O.setMarkupAttribute("style",this.styleAttribute);
 
   }
 

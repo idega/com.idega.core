@@ -24,7 +24,7 @@ public class PreformattedText extends PresentationObject {
 
 	public void print(IWContext iwc)throws Exception{
 		if (getLanguage().equals("HTML")){
-			print("<pre "+getAttributeString()+" >");
+			print("<pre "+getMarkupAttributesString()+" >");
 			print(getText());
 			print("</pre>");
 		}

@@ -24,7 +24,7 @@ public class Legend extends PresentationObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			print("<legend " + getAttributeString() + ">" + _legend + "</legend>");
+			print("<legend " + getMarkupAttributesString() + ">" + _legend + "</legend>");
 		}
 	}
 }

@@ -77,7 +77,7 @@ import com.idega.idegaweb.*;
 
     public void setNameProperty(String frameName){
       this.setName(frameName);
-      this.setAttribute("name", frameName);
+      this.setMarkupAttribute("name", frameName);
 
 //      if(_obj != null){
 //        IWLocation location = _obj.getLocation();
@@ -187,22 +187,22 @@ import com.idega.idegaweb.*;
     }
 
     public void setSpanPercent(int percent){
-      this.setAttribute(ROWS_PROPERTY,Integer.toString(percent)+PERCENTSIGN);
+      this.setMarkupAttribute(ROWS_PROPERTY,Integer.toString(percent)+PERCENTSIGN);
     }
 
     /**
      * Sets the span (in pixels) for each of the Frame Objects. frameIndex starts at 1.
      */
     public void setSpanPixels(int pixels){
-      this.setAttribute(ROWS_PROPERTY,Integer.toString(pixels));
+      this.setMarkupAttribute(ROWS_PROPERTY,Integer.toString(pixels));
     }
 
     public void setSpanAdaptive(){
-      setAttribute(ROWS_PROPERTY,this.star);
+      setMarkupAttribute(ROWS_PROPERTY,this.star);
     }
 
     private String getSpan(){
-      String frameProperty = this.getAttribute(ROWS_PROPERTY);
+      String frameProperty = this.getMarkupAttribute(ROWS_PROPERTY);
       if(frameProperty==null){
         frameProperty=star;
       }
@@ -211,33 +211,33 @@ import com.idega.idegaweb.*;
 
     public void setNoresize(boolean ifResize){
       if(ifResize){
-        this.setAttribute("noresize");
+        this.setMarkupAttributeWithoutValue("noresize");
       }
     }
 
     public void setBorder(int borderWidth){
-        setAttribute("border",Integer.toString(borderWidth));
+        setMarkupAttribute("border",Integer.toString(borderWidth));
     }
 
     public void setBorder(boolean ifBorder){
       if(ifBorder){
-        setAttribute("border","yes");
+        setMarkupAttribute("border","yes");
       }
       else{
-        setAttribute("border","no");
+        setMarkupAttribute("border","no");
       }
     }
 
     public void setScrollingAuto(){
-        setAttribute("scrolling","auto");
+        setMarkupAttribute("scrolling","auto");
     }
 
     public void setScrolling(boolean ifScrollBar){
       if(ifScrollBar){
-        setAttribute("scrolling","yes");
+        setMarkupAttribute("scrolling","yes");
       }
       else{
-        setAttribute("scrolling","no");
+        setMarkupAttribute("scrolling","no");
       }
     }
 
@@ -275,7 +275,7 @@ import com.idega.idegaweb.*;
 	 */
 	public String getComponentId() {
 		StringBuffer buffer = new StringBuffer(super.getComponentId());
-    String frameName = this.getAttribute("name");
+    String frameName = this.getMarkupAttribute("name");
     buffer.append(Frame.COMPOUND_ID_FRAME_NAME_KEY).append(frameName);
     return buffer.toString();
     

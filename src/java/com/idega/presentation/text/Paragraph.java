@@ -105,7 +105,7 @@ public Paragraph(String align,String ID,String Class,String style){
 
 public void setAlign(String s){
 
-	setAttribute("align",s);
+	setMarkupAttribute("align",s);
 
 }
 
@@ -113,7 +113,7 @@ public void setAlign(String s){
 
 public void setClass(String s){
 
-	setAttribute("class",s);
+	setMarkupAttribute("class",s);
 
 }
 
@@ -121,7 +121,7 @@ public void setClass(String s){
 
 public void setStyle(String s){
 
-	setAttribute("style",s);
+	setMarkupAttribute("style",s);
 
 }
 
@@ -142,7 +142,7 @@ public void print(IWContext iwc)throws Exception{
 
 
 
-			println("<p "+getAttributeString()+" >");
+			println("<p "+getMarkupAttributesString()+" >");
 
 			super.print(iwc);
 

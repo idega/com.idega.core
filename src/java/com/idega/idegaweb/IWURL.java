@@ -101,7 +101,7 @@ public class IWURL {
 
   public void addParameter(Parameter parameter){
     String name = parameter.getName();
-    String value = parameter.getValue();
+    String value = parameter.getValueAsString();
     addParameter(name,value);
   }
 

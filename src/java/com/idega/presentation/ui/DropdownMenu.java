@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.21 2003/07/23 11:40:38 gimmi Exp $
+ * $Id: DropdownMenu.java,v 1.22 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -149,6 +149,6 @@ public class DropdownMenu extends GenericSelect {
 	}
 	
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue) {
-		getMenuElement(ElementValue).setAttribute(AttributeName, AttributeValue);
+		getMenuElement(ElementValue).setMarkupAttribute(AttributeName, AttributeValue);
 	}
 }

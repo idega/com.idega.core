@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.14 2003/10/03 01:42:00 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.15 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -73,11 +73,11 @@ public class LinkContainer extends PresentationObjectContainer {
 				}
 			}
 		}
-		setAttribute(HREF_ATTRIBUTE, newUrl);
+		setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
 	}
 
 	public String getURL() {
-		return (getAttribute(HREF_ATTRIBUTE));
+		return (getMarkupAttribute(HREF_ATTRIBUTE));
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 *
 	 */
 	public void setTarget(String target) {
-		setAttribute(TARGET_ATTRIBUTE, target);
+		setMarkupAttribute(TARGET_ATTRIBUTE, target);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setToOpenInNewWindow(boolean newWindow) {
 		if (newWindow)
-			setAttribute(TARGET_ATTRIBUTE, TARGET_NEW_WINDOW);
+			setMarkupAttribute(TARGET_ATTRIBUTE, TARGET_NEW_WINDOW);
 	}
 
 	/**
@@ -260,7 +260,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 *
 	 */
 	private boolean isLinkOpeningOnSamePage() {
-		return (!isAttributeSet(TARGET_ATTRIBUTE));
+		return (!isMarkupAttributeSet(TARGET_ATTRIBUTE));
 	}
 
 	/**
@@ -423,7 +423,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	}
 
 	protected void setFinalUrl(String url) {
-		setAttribute(HREF_ATTRIBUTE, url);
+		setMarkupAttribute(HREF_ATTRIBUTE, url);
 	}
 
 	/**
@@ -487,7 +487,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				}
 			}
 
-			print("<a " + getAttributeString() + " >");
+			print("<a " + getMarkupAttributesString() + " >");
 
 			List theObjects = this.getAllContainingObjects();
 			if (theObjects != null) {
@@ -505,7 +505,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
-				print("<a " + getAttributeString() + " >");
+				print("<a " + getMarkupAttributesString() + " >");
 
 				List theObjects = this.getAllContainingObjects();
 				if (theObjects != null) {
@@ -527,7 +527,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setAsBackLink(boolean asBackLink, int backUpHowManyPages) {
 		if (asBackLink) {
-			setAttribute("onClick", "history.go(-" + backUpHowManyPages + ")");
+			setMarkupAttribute("onClick", "history.go(-" + backUpHowManyPages + ")");
 			setFinalUrl(HASH);
 		}
 	}

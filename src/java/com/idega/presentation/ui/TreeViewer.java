@@ -143,7 +143,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		
 		Link l = getLinkPrototypeClone(nodeName);
 		if (titleName != null)
-			l.setAttribute("title",titleName);
+			l.setMarkupAttribute("title",titleName);
 		if (_usesOnClick) {
 			l.setURL("#");
 			if (fromEditor){

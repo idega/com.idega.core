@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.10 2003/11/05 22:02:29 laddi Exp $
+ * $Id: RadioButton.java,v 1.11 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,9 +58,9 @@ public class RadioButton extends GenericInput {
 	 */
 	public void setSelected(boolean selected) {
 		if (selected)
-			setAttribute("checked");
+			setMarkupAttributeWithoutValue("checked");
 		else
-			removeAttribute("checked");
+			removeMarkupAttribute("checked");
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class RadioButton extends GenericInput {
 	 * @return boolean	True if selected, false otherwise.
 	 */
 	public boolean getSelected() {
-		if (isAttributeSet("checked"))
+		if (isMarkupAttributeSet("checked"))
 			return true;
 		return false;
 	}
@@ -103,7 +103,7 @@ public class RadioButton extends GenericInput {
 		String[] parameters = iwc.getParameterValues(getName());
 		if (parameters != null) {
 			for (int i = 0; i < parameters.length; i++) {
-				if (parameters[i].equals(getValue())) {
+				if (parameters[i].equals(getValueAsString())) {
 					setSelected();
 				}
 			}

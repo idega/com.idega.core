@@ -123,7 +123,7 @@ public void print(IWContext iwc)throws IOException{
 
 			//if (getInterfaceStyle().equals("default"))
 
-				println("<input type=\"text\" name=\""+getName()+"\" "+getAttributeString()+" >");
+				println("<input type=\"text\" name=\""+getName()+"\" "+getMarkupAttributesString()+" >");
 
 				//println("</input>");
 
@@ -135,7 +135,7 @@ public void print(IWContext iwc)throws IOException{
 
 		else if (getLanguage().equals("WML")){
 
-			println("<p><input type=\"text\" format=\"NN\" name=\""+getName()+"\" value=\""+getValue()+"\" />");
+			println("<p><input type=\"text\" format=\"NN\" name=\""+getName()+"\" value=\""+getValueAsString()+"\" />");
 
 			println("</p>");
 

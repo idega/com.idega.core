@@ -162,11 +162,11 @@ public class FrameSet extends Window{
     }
 
     protected void setFrameSetProperty(String name,String value){
-      setAttribute(name,value);
+      setMarkupAttribute(name,value);
     }
 
     protected String getFrameSetPropertiesString(){
-      return getAttributeString();
+      return getMarkupAttributesString();
     }
 
     public void _main(IWContext iwc)throws Exception{

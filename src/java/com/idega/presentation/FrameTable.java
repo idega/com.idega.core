@@ -331,15 +331,15 @@ public class FrameTable extends Window{
       //Class c = (Class)this.getIndexesMap().get(Integer.toString(frameIndex));
       //return getFramesPropertyMap(c);
 //      return (Map) getFramesMap().get(new Integer(frameIndex));
-      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getAttributes();
+      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getMarkupAttributes();
     }
 
     protected void setFrameSetProperty(String name,String value){
-      setAttribute(name,value);
+      setMarkupAttribute(name,value);
     }
 
     protected String getFrameSetPropertiesString(){
-      return getAttributeString();
+      return getMarkupAttributesString();
     }
 
     public List getAllContainedFrames(){
@@ -677,13 +677,13 @@ public class FrameTable extends Window{
     protected void setFrameProperty(int frameIndex,String propertyName,String propertyValue){
       //getPage(frameIndex).setFrameProperty(propertyName,propertyValue);
       //this.getFramesPropertyMap(frameIndex).put(propertyName,propertyValue);
-      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setAttribute(propertyName,propertyValue);
+      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setMarkupAttribute(propertyName,propertyValue);
     }
 
     protected void setFrameProperty(int frameIndex,String propertyName){
       //getPage(frameIndex).setFrameProperty(propertyName);
       //this.getFramesPropertyMap(frameIndex).put(propertyName,this.slash);
-      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setAttribute(propertyName,this.slash);
+      ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).setMarkupAttribute(propertyName,this.slash);
     }
 
     protected String getFrameProperty(int frameIndex,String propertyName){
@@ -692,11 +692,11 @@ public class FrameTable extends Window{
 //        return null;
 //      }
 //      return (String)frameProperties.get(propertyName);
-      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getAttribute(propertyName);
+      return ((PresentationObject)this.getAllContainingObjects().get(frameIndex-1)).getMarkupAttribute(propertyName);
     }
 
     protected String getFramePropertiesString(Frame frame){
-      Map frameProperties = frame.getAttributes();
+      Map frameProperties = frame.getMarkupAttributes();
       StringBuffer returnString = new StringBuffer();
       String Attribute ="";
       if (frameProperties != null) {

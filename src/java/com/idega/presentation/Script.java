@@ -39,15 +39,15 @@ protected void setType(){
 }
 
 protected void setType(String type){
-  setAttribute("type",type);
+  setMarkupAttribute("type",type);
 }
 
 public void setScriptLanguage(String scriptLanguage){
-	setAttribute("language",scriptLanguage);
+	setMarkupAttribute("language",scriptLanguage);
 }
 
 public void setScriptSource(String sourceURL){
-	setAttribute("src",sourceURL);
+	setMarkupAttribute("src",sourceURL);
 }
 
 /*public void addToScriptCode(String code){
@@ -223,18 +223,18 @@ public void print(IWContext iwc)throws Exception{
       com.idega.core.builder.data.ICDomain d = iwc.getDomain();
 
       if (d.getURL() != null) {
-	String src = getAttribute("src");
+	String src = getMarkupAttribute("src");
 	if (src != null && src.startsWith("/")) {
-	  setAttribute("src",d.getURL()+src);
+	  setMarkupAttribute("src",d.getURL()+src);
 	}
       }
 
 			//if (getInterfaceStyle().equals("something")){
 			//}
 			//else{
-				println("<script "+getAttributeString()+" >");
+				println("<script "+getMarkupAttributesString()+" >");
 				println("<!--//");
-				if (! isAttributeSet("src")){
+				if (! isMarkupAttributeSet("src")){
 					print(getVariables());
 					print(getMethods());
 	  				print(getScriptCode(iwc));

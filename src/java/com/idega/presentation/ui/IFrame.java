@@ -78,7 +78,7 @@ public class IFrame extends InterfaceObject {
 	}
 
 	public void setTitle(String title) {
-		setAttribute("title", title);
+		setMarkupAttribute("title", title);
 	}
 
 	public void setToAddLocaleID(boolean addLocaleID) {
@@ -86,7 +86,7 @@ public class IFrame extends InterfaceObject {
 	}
 
 	public void setSrc(String source) {
-		setAttribute("src", source);
+		setMarkupAttribute("src", source);
 	}
 
 	public void setIBPage(int id) {
@@ -109,59 +109,59 @@ public class IFrame extends InterfaceObject {
 	}*/
 
 	public void setWidth(String width) {
-		setAttribute("width", width);
+		setMarkupAttribute("width", width);
 	}
 
 	public String getWidth() {
-		return getAttribute("width");
+		return getMarkupAttribute("width");
 	}
 
 	public void setWidth(int width) {
-		setAttribute("width", Integer.toString(width));
+		setMarkupAttribute("width", Integer.toString(width));
 	}
 
 	public void setHeight(String height) {
-		setAttribute("height", height);
+		setMarkupAttribute("height", height);
 	}
 
 	public void setHeight(int height) {
-		setAttribute("height", Integer.toString(height));
+		setMarkupAttribute("height", Integer.toString(height));
 	}
 
 	public void setStyleClass(String style) {
-		setAttribute("class", style);
+		setMarkupAttribute("class", style);
 	}
 
 	public void setStyle(String style) {
-		setAttribute("style", style);
+		setMarkupAttribute("style", style);
 	}
 
 	public void setBorder(int border) {
-		setAttribute("frameborder", Integer.toString(border));
+		setMarkupAttribute("frameborder", Integer.toString(border));
 	}
 
 	public int getBorder() {
-		return Integer.parseInt(this.getAttribute("frameborder"));
+		return Integer.parseInt(this.getMarkupAttribute("frameborder"));
 	}
 
 	public void setMarginWidth(int width) {
-		setAttribute("marginwidth", Integer.toString(width));
+		setMarkupAttribute("marginwidth", Integer.toString(width));
 	}
 
 	public void setMarginHeight(int height) {
-		setAttribute("marginheight", Integer.toString(height));
+		setMarkupAttribute("marginheight", Integer.toString(height));
 	}
 
 	public void setScrolling(String scrolling) {
-		setAttribute("scrolling", scrolling);
+		setMarkupAttribute("scrolling", scrolling);
 	}
 
 	public String getScrolling() {
-		return this.getAttribute("scrolling");
+		return this.getMarkupAttribute("scrolling");
 	}
 
 	public void setAlignment(String alignment) {
-		setAttribute("align", alignment);
+		setMarkupAttribute("align", alignment);
 	}
 
 	public void setAsTransparent(boolean transparent) {
@@ -171,18 +171,18 @@ public class IFrame extends InterfaceObject {
 	public void print(IWContext iwc) throws IOException {
 		setClassToInstanciateAsSource(iwc);
 
-		String src = getAttribute("src");
+		String src = getMarkupAttribute("src");
 		if (src != null) {
 			if (src.indexOf("?") != -1) {
-				setAttribute("src", src + "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
+				setMarkupAttribute("src", src + "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
 			}
 			else {
-				setAttribute("src", src + "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
+				setMarkupAttribute("src", src + "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
 			}
 		}
 
 		if (transparent)
-			setAttribute("ALLOWTRANSPARENCY", "true");
+			setMarkupAttribute("ALLOWTRANSPARENCY", "true");
 		if (ibPageId > 0) {
 			BuilderService bservice = getBuilderService(iwc);
 			//setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
@@ -190,7 +190,7 @@ public class IFrame extends InterfaceObject {
 		}
 
 		if (getLanguage().equals("HTML")) {
-			print("<iframe name=\"" + getName() + "\"" + getAttributeString() + " >");
+			print("<iframe name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
 			String content = super.getContent();
 			if (content != null) {
 				print(content);

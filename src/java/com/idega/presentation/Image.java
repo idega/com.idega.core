@@ -239,7 +239,7 @@ public class Image extends PresentationObject
 	}
 	public void setBorder(String size)
 	{
-		setAttribute("border", size);
+		setMarkupAttribute("border", size);
 	}
 	public void setBorderColor(String color)
 	{
@@ -255,7 +255,7 @@ public class Image extends PresentationObject
 	}
 	public void setSrc(String src)
 	{
-		setAttribute("src", src);
+		setMarkupAttribute("src", src);
 	}
 	public void setWidth(int width)
 	{
@@ -263,7 +263,7 @@ public class Image extends PresentationObject
 	}
 	public void setWidth(String width)
 	{
-		setAttribute("width", width);
+		setMarkupAttribute("width", width);
 	}
 	public void setHeight(int height)
 	{
@@ -271,7 +271,7 @@ public class Image extends PresentationObject
 	}
 	public void setHeight(String height)
 	{
-		setAttribute("height", height);
+		setMarkupAttribute("height", height);
 	}
 	public void setImageID(int imageID)
 	{
@@ -326,11 +326,11 @@ public class Image extends PresentationObject
 	}
 	public void setVerticalSpacing(int spacing)
 	{
-		setAttribute("vspace", Integer.toString(spacing));
+		setMarkupAttribute("vspace", Integer.toString(spacing));
 	}
 	public void setHorizontalSpacing(int spacing)
 	{
-		setAttribute("hspace", Integer.toString(spacing));
+		setMarkupAttribute("hspace", Integer.toString(spacing));
 	}
 	public void setTextBackgroundColor(String color)
 	{
@@ -338,15 +338,15 @@ public class Image extends PresentationObject
 	}
 	public String getHeight()
 	{
-		return getAttribute("height");
+		return getMarkupAttribute("height");
 	}
 	public String getWidth()
 	{
-		return getAttribute("width");
+		return getMarkupAttribute("width");
 	}
 	public String getURL()
 	{
-		return this.getAttribute("src");
+		return this.getMarkupAttribute("src");
 	}
 	/**
 	 * Returns true if the image has been set to a source, else false
@@ -357,19 +357,19 @@ public class Image extends PresentationObject
 	}
 	public void setOnClick(String action)
 	{
-		setAttribute("onClick", action);
+		setMarkupAttribute("onClick", action);
 	}
 	public void setOnMouseOver(String action)
 	{
-		setAttribute("onMouseOver", action);
+		setMarkupAttribute("onMouseOver", action);
 	}
 	public void setOnMouseOut(String action)
 	{
-		setAttribute("onMouseOut", action);
+		setMarkupAttribute("onMouseOut", action);
 	}
 	public void setOnMouseDown(String action)
 	{
-		setAttribute("onMouseDown", action);
+		setMarkupAttribute("onMouseDown", action);
 	}
 	public void setOnClickImageURL(String clickImageURL)
 	{
@@ -401,7 +401,7 @@ public class Image extends PresentationObject
 	{
 		return this.overImageUrl;
 	}
-	public void setAttributes(Map attributeMap)
+	public void addMarkupAttributes(Map attributeMap)
 	{
 		if (attributeMap.containsKey(FileSystemConstants.ZOOMIMAGE) && attributeMap.containsKey(FileSystemConstants.ZOOMPAGE))
 		{
@@ -422,7 +422,7 @@ public class Image extends PresentationObject
 			attributeMap.remove(FileSystemConstants.ZOOMWIDTH);
 			attributeMap.remove(FileSystemConstants.ZOOMHEIGHT);
 		}
-		super.setAttributes(attributeMap);
+		super.addMarkupAttributes(attributeMap);
 	}
 	public void setAssociatedScript(Script myScript)
 	{
@@ -450,11 +450,11 @@ public class Image extends PresentationObject
 	}
 	public void setAlt(String alt)
 	{
-		setAttribute("alt", alt);
+		setMarkupAttribute("alt", alt);
 	}
 	public String getAlt()
 	{
-		return getAttribute("alt");
+		return getMarkupAttribute("alt");
 	}
 	private String getHTMLString(IWContext iwc) throws RemoteException
 	{
@@ -468,7 +468,7 @@ public class Image extends PresentationObject
 			sPrint.append(getAlt());
 		}
 		sPrint.append("\" ");
-		removeAttribute("alt");
+		removeMarkupAttribute("alt");
 		sPrint.append("name=\"");
 		sPrint.append(getName());
 		sPrint.append("\"");
@@ -478,7 +478,7 @@ public class Image extends PresentationObject
 			ICDomain d = bs.getCurrentDomain();
 			if (d.getURL() != null)
 			{
-				String src = getAttribute("src");
+				String src = getMarkupAttribute("src");
 				if (src.startsWith("/"))
 				{
 					String protocol;
@@ -491,11 +491,11 @@ public class Image extends PresentationObject
 					{
 						protocol = "http://";
 					}
-					setAttribute("src", protocol + d.getURL() + src);
+					setMarkupAttribute("src", protocol + d.getURL() + src);
 				}
 			}
 		}
-		sPrint.append(getAttributeString());
+		sPrint.append(getMarkupAttributesString());
 		if (align != null)
 		{
 			sPrint.append(" align=\"" + align + "\" ");

@@ -200,39 +200,39 @@ public void setFullScreen(boolean ifFullScreen){
   }
 
 public void setBackgroundColor(String color){
-	setAttribute("bgcolor",color);
+	setMarkupAttribute("bgcolor",color);
 }
 
 public void setTextColor(String color){
-	setAttribute("text",color);
+	setMarkupAttribute("text",color);
 }
 
 public void setAlinkColor(String color){
-	setAttribute("alink",color);
+	setMarkupAttribute("alink",color);
 }
 
 public void setVlinkColor(String color){
-	setAttribute("vlink",color);
+	setMarkupAttribute("vlink",color);
 }
 
 public void setLinkColor(String color){
-	setAttribute("link",color);
+	setMarkupAttribute("link",color);
 }
 
 public void setMarginWidth(int width){
-	setAttribute("marginwidth",Integer.toString(width));
+	setMarkupAttribute("marginwidth",Integer.toString(width));
 }
 
 public void setMarginHeight(int height){
-	setAttribute("marginheight",Integer.toString(height));
+	setMarkupAttribute("marginheight",Integer.toString(height));
 }
 
 public void setLeftMargin(int leftmargin){
-	setAttribute("leftmargin",Integer.toString(leftmargin));
+	setMarkupAttribute("leftmargin",Integer.toString(leftmargin));
 }
 
 public void setTopMargin(int topmargin){
-	setAttribute("topmargin",Integer.toString(topmargin));
+	setMarkupAttribute("topmargin",Integer.toString(topmargin));
 }
 
 public void setTitle(String title){
@@ -443,7 +443,7 @@ public static String windowScript(){
 
 
 public void setBackgroundImage(String imageURL){
-	setAttribute("background",imageURL);
+	setMarkupAttribute("background",imageURL);
 }
 
 public void setBackgroundImage(Image backgroundImage){

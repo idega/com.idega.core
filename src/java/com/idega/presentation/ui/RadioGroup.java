@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.5 2002/10/15 11:31:21 laddi Exp $
+ * $Id: RadioGroup.java,v 1.6 2003/11/21 19:01:11 tryggvil Exp $
 
  *
 
@@ -236,7 +236,7 @@ public class RadioGroup extends InterfaceObjectContainer {
 
     RadioButton button = new RadioButton(_name,Integer.toString(value));
 
-    button.setAttribute("style",buttonStyle);
+    button.setMarkupAttribute("style",buttonStyle);
 
     DisplayString.setFontStyle(textStyle);
 
@@ -456,7 +456,7 @@ public class RadioGroup extends InterfaceObjectContainer {
 
   public void setStyle(String style){
 
-    setAttribute("style",style);
+    setMarkupAttribute("style",style);
 
   }
 
@@ -520,7 +520,7 @@ public class RadioGroup extends InterfaceObjectContainer {
 
         RadioButton b = (RadioButton)it.next();
 
-        if (b.getValue().equals(value))
+        if (b.getValueAsString().equals(value))
 
           b.setSelected();
 
@@ -542,13 +542,13 @@ public class RadioGroup extends InterfaceObjectContainer {
 
         RadioButton b = (RadioButton)it.next();
 
-        System.out.println("Button value = " + b.getValue());
+        System.out.println("Button value = " + b.getValueAsString());
 
         System.out.println("Button _checked = " + b.getSelected());
 
         if (b.getSelected())
 
-          return(b.getValue());
+          return(b.getValueAsString());
 
       }
 

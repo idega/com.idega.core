@@ -640,4 +640,13 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	protected boolean autoCreateGlobalHoverStyles() {
 		return false;
 	}
+	
+	/*
+	 * Overrided methods from JSF's UIComponent:
+	 */	
+	
+	public String getComponentType(){
+		return "iw.block";
+	}
+	
 }

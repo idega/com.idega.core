@@ -33,9 +33,9 @@ public class SelectOption extends InterfaceObject {
 	 */
 	public void setSelected(boolean selected) {
 		if (selected)
-			setAttribute("selected");
+			setMarkupAttributeWithoutValue("selected");
 		else
-			this.removeAttribute("selected");
+			this.removeMarkupAttribute("selected");
 	}
 	
 	/**
@@ -43,19 +43,19 @@ public class SelectOption extends InterfaceObject {
 	 * @return boolean	True if <code>SelectOption</code> is selected, false otherwise.
 	 */
 	public boolean getSelected() {
-		if (isAttributeSet("selected"))
+		if (isMarkupAttributeSet("selected"))
 			return true;
 		return false;	
 	}
 
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			print("<option " + getAttributeString() + " >");
+			print("<option " + getMarkupAttributesString() + " >");
 			print(getName());
 			println("</option>");
 		}
 		else if (getLanguage().equals("WML")) {
-			print("<option value=\"" + getValue() + "\" >");
+			print("<option value=\"" + getValueAsString() + "\" >");
 			print(getName());
 			println("</option>");
 		}

@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.2 2003/05/15 08:49:30 laddi Exp $
+ * $Id: ExpandContainer.java,v 1.3 2003/11/21 19:01:11 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -59,7 +59,7 @@ public class ExpandContainer extends Block {
 			table.add(Text.getBreak(), 3, 1);
 
 			Layer layer = new Layer(Layer.DIV);
-			layer.setAttribute("display", "none");
+			layer.setMarkupAttribute("display", "none");
 			if (_objects != null) {
 				Iterator iter = _objects.iterator();
 				while (iter.hasNext()) {

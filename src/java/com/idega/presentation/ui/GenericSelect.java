@@ -68,7 +68,7 @@ public class GenericSelect extends InterfaceObject {
 		if (setToSubmit)
 			setOnChange("this.form.submit()");
 		else
-			removeAttribute("onChange");
+			removeMarkupAttribute("onChange");
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class GenericSelect extends InterfaceObject {
 	public void addOption(SelectOption option) {
 		theElements.add(option);
 		if (option.getSelected())
-			setSelectedOption(option.getValue());
+			setSelectedOption(option.getValueAsString());
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class GenericSelect extends InterfaceObject {
 	public void addFirstOption(SelectOption option) {
 		theElements.add(0, option);
 		if (option.getSelected())
-			setSelectedOption(option.getValue());
+			setSelectedOption(option.getValueAsString());
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class GenericSelect extends InterfaceObject {
 		option.setDisabled(true);
 		theElements.add(option);
 		if (option.getSelected())
-			setSelectedOption(option.getValue());
+			setSelectedOption(option.getValueAsString());
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class GenericSelect extends InterfaceObject {
 		Iterator iter = theElements.iterator();
 		while (iter.hasNext()) {
 			SelectOption element = (SelectOption) iter.next();
-			if (element.getValue().equals(value))
+			if (element.getValueAsString().equals(value))
 				return element;
 		}
 		return theReturn;
@@ -215,9 +215,9 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	protected void setMultiple(boolean multiple) {
 		if (multiple)
-			setAttribute("multiple");
+			setMarkupAttributeWithoutValue("multiple");
 		else
-			removeAttribute("multiple");
+			removeMarkupAttribute("multiple");
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class GenericSelect extends InterfaceObject {
 	 * @return True if allows multiple, false otherwise.
 	 */
 	protected boolean getMultiple() {
-		if (isAttributeSet("multiple"))
+		if (isMarkupAttributeSet("multiple"))
 			return true;
 		return false;
 	}
@@ -244,12 +244,12 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			println("<select name=\"" + getName() + "\" " + getAttributeString() + " >");
+			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 
 			Iterator iter = theElements.iterator();
 			while (iter.hasNext()) {
 				SelectOption option = (SelectOption) iter.next();
-				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValue()));
+				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
 				option.setSelected(setSelected);
 				option._print(iwc);
 			}
@@ -257,7 +257,7 @@ public class GenericSelect extends InterfaceObject {
 			println("</select>");
 		}
 		else if (getLanguage().equals("WML")) {
-			println("<select name=\"" + getName() + "\" " + getAttributeString() + " >");
+			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 
 			Iterator iter = theElements.iterator();
 			while (iter.hasNext()) {
@@ -265,7 +265,7 @@ public class GenericSelect extends InterfaceObject {
 				if (_allSelected)
 					option.setSelected(true);
 				else {
-					if (selectedElements.contains(option.getValue()))
+					if (selectedElements.contains(option.getValueAsString()))
 						option.setSelected(true);
 				}
 				option._print(iwc);

@@ -94,7 +94,7 @@ public void setURL(String url){
 
   setParam("movie",url);
 
-  setAttribute("src",url);
+  setMarkupAttribute("src",url);
 
 }
 

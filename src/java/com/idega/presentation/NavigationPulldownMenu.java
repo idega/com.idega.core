@@ -41,7 +41,7 @@ public class NavigationPulldownMenu extends Block {
 
       if ( iwc.isIE() ) {
 	getParentPage().setOnLoad("InitMenu()");
-	getParentPage().setAttribute("onClick","HideMenu(menuBar)");
+	getParentPage().setMarkupAttribute("onClick","HideMenu(menuBar)");
 	getParentPage().setID("Bdy");
       }
       getParentPage().addStyleSheetURL(iwc.getApplication().getBundle("com.idega.core").getResourcesVirtualPath()+"/navigation_menu/CascadeMenu.css");
@@ -64,7 +64,7 @@ public class NavigationPulldownMenu extends Block {
 
       Layer layer = new Layer(Layer.DIV);
 	layer.setID("menuBar");
-	layer.setAttribute("class","menuBar");
+	layer.setMarkupAttribute("class","menuBar");
 	layer.setNoStyle(true);
       if ( iwc.isIE() ) {
 	table.add(layer);
@@ -77,9 +77,9 @@ public class NavigationPulldownMenu extends Block {
 	ICTreeNode n = (ICTreeNode) iterator.next();
 	Layer subLayer = new Layer(Layer.DIV);
 	  subLayer.setID("page"+String.valueOf(n.getNodeID()));
-	  subLayer.setAttribute("class","Bar");
-	  subLayer.setAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
-	  subLayer.setAttribute("cmd",bservice.getPageURI(n.getNodeID()));
+	  subLayer.setMarkupAttribute("class","Bar");
+	  subLayer.setMarkupAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
+	  subLayer.setMarkupAttribute("cmd",bservice.getPageURI(n.getNodeID()));
 	  subLayer.setNoStyle(true);
 
 	if ( rootLinks ) {
@@ -94,7 +94,7 @@ public class NavigationPulldownMenu extends Block {
 
 	if ( iwc.isIE() ) {
 	  if ( n.getChildCount() > 0 && n.getNodeID() != rootNode ) {
-	    subLayer.setAttribute("menu","menu"+String.valueOf(n.getNodeID()));
+	    subLayer.setMarkupAttribute("menu","menu"+String.valueOf(n.getNodeID()));
 	    addSubMenu(iwc,table,n);
 	  }
 	  layer.add(subLayer);
@@ -110,7 +110,7 @@ public class NavigationPulldownMenu extends Block {
 	BuilderService bservice = getBuilderService(iwc);
     Layer layer = new Layer(Layer.DIV);
       layer.setID("menu"+String.valueOf(node.getNodeID()));
-      layer.setAttribute("class","menu");
+      layer.setMarkupAttribute("class","menu");
       layer.setNoStyle(true);
     table.add(layer);
 
@@ -119,15 +119,15 @@ public class NavigationPulldownMenu extends Block {
 		ICTreeNode n = (ICTreeNode) iterator.next();
       Layer subLayer = new Layer(Layer.DIV);
 	subLayer.setID("page"+String.valueOf(n.getNodeID()));
-	subLayer.setAttribute("class","menuItem");
-	subLayer.setAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
-	subLayer.setAttribute("cmd",bservice.getPageURI(n.getNodeID()));
+	subLayer.setMarkupAttribute("class","menuItem");
+	subLayer.setMarkupAttribute("title",n.getNodeName(iwc.getCurrentLocale()));
+	subLayer.setMarkupAttribute("cmd",bservice.getPageURI(n.getNodeID()));
 	subLayer.setNoStyle(true);
 	subLayer.add(n.getNodeName(iwc.getCurrentLocale()));
       layer.add(subLayer);
 
       if ( n.getChildCount() > 0 ) {
-	subLayer.setAttribute("menu","menu"+String.valueOf(n.getNodeID()));
+	subLayer.setMarkupAttribute("menu","menu"+String.valueOf(n.getNodeID()));
 	addSubMenu(iwc,table,n);
       }
     }

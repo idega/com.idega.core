@@ -103,9 +103,9 @@ public Text(String text,boolean bold,boolean italic,boolean underline){
 
 
 
-public void setAttribute(String name,String value){
+public void setMarkupAttribute(String name,String value){
 	attributeSet=true;
-	super.setAttribute(name,value);
+	super.setMarkupAttribute(name,value);
 }
 
 protected boolean isEnclosedByParagraph(){
@@ -121,7 +121,7 @@ protected boolean isEnclosedByParagraph(){
 }
 
 public void setFontSize(String s){
-	setAttribute("size",s);
+	setMarkupAttribute("size",s);
 }
 
 public void setFontSize(int i){
@@ -129,15 +129,15 @@ public void setFontSize(int i){
 }
 
 public void setFontFace(String s){
-	setAttribute("face",s);
+	setMarkupAttribute("face",s);
 }
 
 public void setFontColor(String color){
-	setAttribute("color",color);
+	setMarkupAttribute("color",color);
 }
 
 public void setFontStyle(String style){
-	setAttribute("style",style);
+	setMarkupAttribute("style",style);
 }
 
 public void setFontClass(String styleClass){
@@ -222,7 +222,7 @@ public String toString(){
 }
 
 public void setCSSClass(String cStyleSheetReferanceClass){
-  setAttribute("class",cStyleSheetReferanceClass);
+  setMarkupAttribute("class",cStyleSheetReferanceClass);
 }
 
 /**
@@ -267,17 +267,17 @@ public void addHTMLFontTag(boolean addHTMLFontTag){
 
 private void setDefaultAttributes(IWContext iwc){
 
-	if ( (! isAttributeSet("size")) && addHTMLFontTag ){
+	if ( (! isMarkupAttributeSet("size")) && addHTMLFontTag ){
 		setFontSize(iwc.getDefaultFontSize());
 	}
-	if ( ! isAttributeSet("face") && addHTMLFontTag  ){
+	if ( ! isMarkupAttributeSet("face") && addHTMLFontTag  ){
 		setFontFace(iwc.getDefaultFontFace() );
 	}
-	if ( ! isAttributeSet("color") && addHTMLFontTag  ){
+	if ( ! isMarkupAttributeSet("color") && addHTMLFontTag  ){
 		setFontColor(iwc.getDefaultFontColor());
 	}
 
-	if ( ! isAttributeSet("style") && addHTMLFontTag ){
+	if ( ! isMarkupAttributeSet("style") && addHTMLFontTag ){
 		setFontStyle(iwc.getDefaultFontStyle() );
 	}
 
@@ -331,10 +331,10 @@ public void print(IWContext iwc)throws Exception{
 	//setDefaultAttributes(iwc);
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)){
-		  boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
+		  boolean alignSet = isMarkupAttributeSet(HORIZONTAL_ALIGNMENT);
 		  if(alignSet){
 		    print("<div align=\""+getHorizontalAlignment()+"\">");
-		    removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
+		    removeMarkupAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
 		  }
 			//if (getInterfaceStyle().equals("something")){
 			//}
@@ -345,7 +345,7 @@ public void print(IWContext iwc)throws Exception{
 				{print("<i>");}
 				if (attributeSet){
 
-					print("<font "+getAttributeString()+" >");
+					print("<font "+getMarkupAttributesString()+" >");
 					print(getLocalizedText(iwc));
 					print("</font>");
 				}
@@ -364,7 +364,7 @@ public void print(IWContext iwc)throws Exception{
 			//}
 		}
 		else if(getLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML) ){
-			String attributes = getAttributeString();
+			String attributes = getMarkupAttributesString();
 			
 			
 			print("<paragraph "+attributes+">");

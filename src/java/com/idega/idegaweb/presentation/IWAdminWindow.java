@@ -347,12 +347,12 @@ public static String HEADER_COLOR = "#0E2456";
     if(obj instanceof Text){
       this.setStyle((Text)obj);
     } else {
-      obj.setAttribute("style",STYLE);
+      obj.setMarkupAttribute("style",STYLE);
     }
   }
 
   public void setStyle(Text obj){
-    obj.setAttribute("style",STYLE_2);
+    obj.setMarkupAttribute("style",STYLE_2);
   }
 
   public void setEmpty(){
@@ -360,7 +360,7 @@ public static String HEADER_COLOR = "#0E2456";
   }
 
   public void setStyle(PresentationObject obj,String style){
-    obj.setAttribute("style",style);
+    obj.setMarkupAttribute("style",style);
   }
 
   public void setUnMerged() {

@@ -125,27 +125,27 @@ public class Form extends InterfaceObjectContainer {
 			if (getAttribute(attributeName).indexOf(action) != -1)
 				setAttribute(attributeName, previousAttribute + ";" + action);
 		}*/
-		setAttributeMultivalued(actionType, action);
+		setMarkupAttributeMultivalued(actionType, action);
 	}
 
 	public void setAction(String actionURL) {
-		setAttribute("action", actionURL);
+		setMarkupAttribute("action", actionURL);
 	}
 
 	protected String getAction() {
-		return getAttribute("action");
+		return getMarkupAttribute("action");
 	}
 
 	public void setMethod(String method) {
-		setAttribute("method", method);
+		setMarkupAttribute("method", method);
 	}
 
 	public String getMethod() {
-		return getAttribute("method");
+		return getMarkupAttribute("method");
 	}
 
 	public void setTarget(String target) {
-		setAttribute("target", target);
+		setMarkupAttribute("target", target);
 	}
 
 	protected void setWindow(Window window) {
@@ -153,7 +153,7 @@ public class Form extends InterfaceObjectContainer {
 	}
 
 	public void setMultiPart() {
-		setAttribute("ENCTYPE", "multipart/form-data");
+		setMarkupAttribute("ENCTYPE", "multipart/form-data");
 	}
 
 	public void setOnReset(String script) {
@@ -479,7 +479,7 @@ public class Form extends InterfaceObjectContainer {
 				add(getAssociatedFormScript());
 
 			if (getInterfaceStyle().equals("default")) {
-				println("<form name=\"" + getName() + "\" " + getAttributeString() + " >");
+				println("<form name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
 				super.print(iwc);
 				print("</form>");
 			}

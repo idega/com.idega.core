@@ -73,7 +73,7 @@ public class Edit {
 
 
   public static void setStyle(InterfaceObject O){
-    O.setAttribute("style",styleAttribute);
+    O.setMarkupAttribute("style",styleAttribute);
   }
 
 }

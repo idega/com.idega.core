@@ -66,7 +66,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	private void setOnAction(String actionType, String action) {
-		setAttributeMultivalued(actionType, action);
+		setMarkupAttributeMultivalued(actionType, action);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnFocus() {
-		return getAttribute(ACTION_ON_FOCUS);
+		return getMarkupAttribute(ACTION_ON_FOCUS);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnBlur() {
-		return getAttribute(ACTION_ON_BLUR);
+		return getMarkupAttribute(ACTION_ON_BLUR);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnSelect() {
-		return getAttribute(ACTION_ON_SELECT);
+		return getMarkupAttribute(ACTION_ON_SELECT);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnChange() {
-		return getAttribute(ACTION_ON_CHANGE);
+		return getMarkupAttribute(ACTION_ON_CHANGE);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnClick() {
-		return getAttribute(ACTION_ON_CLICK);
+		return getMarkupAttribute(ACTION_ON_CLICK);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnKeyDown() {
-		return getAttribute(ACTION_ON_KEY_DOWN);
+		return getMarkupAttribute(ACTION_ON_KEY_DOWN);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnKeyPress() {
-		return getAttribute(ACTION_ON_KEY_PRESS);
+		return getMarkupAttribute(ACTION_ON_KEY_PRESS);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnKeyUp() {
-		return getAttribute(ACTION_ON_KEY_UP);
+		return getMarkupAttribute(ACTION_ON_KEY_UP);
 	}
 
 	/**
@@ -202,7 +202,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param value	The value to set.
 	 */
 	public void setValue(String value) {
-		setAttribute("value", value);
+		setMarkupAttribute("value", value);
 	}
 
 	/**
@@ -225,9 +225,9 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * Returns the value set for the interface object.
 	 * @return String	The value set.
 	 */
-	public String getValue() {
-		if (isAttributeSet("value"))
-			return getAttribute("value");
+	public String getValueAsString() {
+		if (isMarkupAttributeSet("value"))
+			return getMarkupAttribute("value");
 		return "";
 	}
 
@@ -236,7 +236,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The content set.
 	 */
 	public String getContent() {
-		return getValue();
+		return getValueAsString();
 	}
 
 	/**
@@ -252,7 +252,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnSubmit() {
-		return getAttribute("onSubmit");
+		return getMarkupAttribute("onSubmit");
 	}
 
 	/**
@@ -495,9 +495,9 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setDisabled(boolean disabled) {
 		if (disabled)
-			setAttribute("disabled");
+			setMarkupAttributeWithoutValue("disabled");
 		else
-			this.removeAttribute("disabled");
+			this.removeMarkupAttribute("disabled");
 	}
 	
 	/**
@@ -505,7 +505,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return boolean	True if object is disabled, false otherwise.
 	 */
 	public boolean getDisabled() {
-		if (isAttributeSet("disabled"))
+		if (isMarkupAttributeSet("disabled"))
 			return true;
 		return false;	
 	}
@@ -515,7 +515,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param description	The description to set.
 	 */
 	public void setDescription(String description) {
-		setAttribute("title", description);
+		setMarkupAttribute("title", description);
 	}
 
 	/**
@@ -523,8 +523,8 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The description set, null otherwise.
 	 */
 	public String getDescription() {
-		if (isAttributeSet("title"))
-			return getAttribute("title");
+		if (isMarkupAttributeSet("title"))
+			return getMarkupAttribute("title");
 		return null;
 	}
 
@@ -646,7 +646,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param index	The index to set.
 	 */
 	public void setTabIndex(int index) {
-		setAttribute("tabindex", String.valueOf(index));
+		setMarkupAttribute("tabindex", String.valueOf(index));
 	}
 	
 	/**
@@ -654,8 +654,8 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return int
 	 */
 	public int getTabIndex() {
-		if (isAttributeSet("tabindex"))
-			return Integer.parseInt(getAttribute("tabindex"));
+		if (isMarkupAttributeSet("tabindex"))
+			return Integer.parseInt(getMarkupAttribute("tabindex"));
 		return -1;
 	}
 
@@ -665,9 +665,9 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setReadOnly(boolean readOnly) {
 		if (readOnly)
-			setAttribute("readonly");
+			setMarkupAttributeWithoutValue("readonly");
 		else
-			removeAttribute("readonly");
+			removeMarkupAttribute("readonly");
 	}
 	
 	/**
@@ -675,7 +675,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return boolean
 	 */
 	public boolean getReadOnly() {
-		if (isAttributeSet("readonly"))
+		if (isMarkupAttributeSet("readonly"))
 			return true;
 		return false;	
 	}

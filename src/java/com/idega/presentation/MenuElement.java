@@ -243,7 +243,7 @@ public class MenuElement extends PresentationObject {
 	 * 
 	 * @return
 	 */
-	public String getParent(){
+	public String getParentString(){
 		return parent;
 	}
 	/**
@@ -360,7 +360,7 @@ public class MenuElement extends PresentationObject {
 		buffer.append(this.getMenuName());
 		buffer.append(".makeMenu(");
 		buffer.append("'" + this.getName() + "',");
-		buffer.append("'" + this.getParent() + "',");
+		buffer.append("'" + this.getParentString() + "',");
 		buffer.append("'" + this.getText() + "',");
 		buffer.append("'" + this.getLink() + "',");
 		buffer.append("'" + this.getTarget() + "',");

@@ -27,11 +27,11 @@ public class Anchor extends Link {
   }
 
   public void setAnchorName(String anchorName){
-    setAttribute("name",anchorName);
+    setMarkupAttribute("name",anchorName);
   }
 
   public String getAnchorName(){
-    return getAttribute("name");
+    return getMarkupAttribute("name");
   }
 
    public void main(IWContext iwc)throws Exception {

@@ -55,7 +55,7 @@ public class GenericButton extends GenericInput {
 	}
 
 	private void setSource(String source) {
-		setAttribute("src",source);
+		setMarkupAttribute("src",source);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class GenericButton extends GenericInput {
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
 			if (asImageButton) {
-				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
+				defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValueAsString());
 			}
 			if (!_onClickConfirm) {
 				if (_windowClassToOpen != null) {
@@ -143,7 +143,7 @@ public class GenericButton extends GenericInput {
 				}
 
 				defaultImage.setURL(URL);
-				defaultImage.setAttributes(getAttributes());
+				defaultImage.addMarkupAttributes(getMarkupAttributes());
 				defaultImage.setStyleAttribute(buttonImageStyle);
 
 				if (getInputType().equals(INPUT_TYPE_IMAGE)) {
@@ -151,7 +151,7 @@ public class GenericButton extends GenericInput {
 					super.print(iwc);
 				}
 				else
-					print("<img " + defaultImage.getAttributeString() + " >");
+					print("<img " + defaultImage.getMarkupAttributesString() + " >");
 			}
 		}
 	}

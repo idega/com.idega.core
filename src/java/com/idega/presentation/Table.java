@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.47 2003/11/12 10:56:17 birna Exp $
+ * $Id: Table.java,v 1.48 2003/11/21 19:01:10 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -403,11 +403,11 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setBorder(String border) {
-		setAttribute("border", border);
+		setMarkupAttribute("border", border);
 	}
 	
 	public void setBorderColor(String color) {
-		setAttribute("bordercolor", color);
+		setMarkupAttribute("bordercolor", color);
 	}
 	
 	public void setBorder(int i) {
@@ -453,7 +453,7 @@ public class Table extends PresentationObjectContainer {
 	 * vsides: displays left and right edges
 	 */
 	public void setFrame(String frame) {
-		setAttribute("FRAME", frame);
+		setMarkupAttribute("FRAME", frame);
 	}
 	
 	public void setCellspacing(int i) {
@@ -510,11 +510,11 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setCellspacing(String s) {
-		setAttribute("cellspacing", s);
+		setMarkupAttribute("cellspacing", s);
 	}
 	
 	public void setCellpadding(String s) {
-		setAttribute("cellpadding", s);
+		setMarkupAttribute("cellpadding", s);
 	}
 	
 	public void setColor(int xpos, int ypos, String color) {
@@ -557,11 +557,11 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setAlignment(String align) {
-		setAttribute("align", align);
+		setMarkupAttribute("align", align);
 	}
 	
 	public void setVerticalAlignment(String verticalAlignment) {
-		setAttribute("valign", verticalAlignment);
+		setMarkupAttribute("valign", verticalAlignment);
 	}
 	
 	public void setColumnAttribute(int xpos, String attributeName, String attributeValue) {
@@ -633,7 +633,7 @@ public class Table extends PresentationObjectContainer {
 			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
 			// super.add(theObjects);
 		}
-		this.theObjects[xpos - 1][ypos - 1].setAttribute(attributeName, attributeValue);
+		this.theObjects[xpos - 1][ypos - 1].setMarkupAttribute(attributeName, attributeValue);
 	}
 	
 	public void setStyle(int xpos, int ypos, String styleAttribute, String styleValue) {
@@ -666,7 +666,7 @@ public class Table extends PresentationObjectContainer {
 		if (this.theObjects[xpos - 1][ypos - 1] == null) {
 			theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
 		}
-		this.theObjects[xpos - 1][ypos - 1].setAttribute("class",styleName);
+		this.theObjects[xpos - 1][ypos - 1].setMarkupAttribute("class",styleName);
 	}
 	
 	public void setAttribute(int xpos, int ypos, String attribute) {
@@ -682,7 +682,7 @@ public class Table extends PresentationObjectContainer {
 			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
 			// super.add(theObjects);
 		}
-		this.theObjects[xpos - 1][ypos - 1].setAttribute(attribute);
+		this.theObjects[xpos - 1][ypos - 1].setMarkupAttributeWithoutValue(attribute);
 	}
 	
 	public void setNoWrap(int xpos, int ypos) {
@@ -1084,7 +1084,7 @@ public class Table extends PresentationObjectContainer {
 				//else{
 				StringBuffer printString = new StringBuffer();
 				printString.append(getTableStartTag(iwc));
-				printString.append(getAttributeString());
+				printString.append(getMarkupAttributesString());
 				printString.append(" ");
 				printString.append(TAG_END);
 				println(printString.toString());
@@ -1114,10 +1114,10 @@ public class Table extends PresentationObjectContainer {
 								printVerticalLine(iwc);
 							}
 							if (theObjects[x - 1][y - 1] != null) {
-								if (theObjects[x - 1][y - 1].getAttributeString().indexOf("align") == -1) {
+								if (theObjects[x - 1][y - 1].getMarkupAttributesString().indexOf("align") == -1) {
 									setAlignment(x, y, "left");
 								}
-								if (theObjects[x - 1][y - 1].getAttributeString().indexOf("valign") == -1) {
+								if (theObjects[x - 1][y - 1].getMarkupAttributesString().indexOf("valign") == -1) {
 									setVerticalAlignment(x, y, "middle");
 								}
 								if (printString == null) {
@@ -1128,7 +1128,7 @@ public class Table extends PresentationObjectContainer {
 								}
 								print(LINE_BREAK);
 								printString.append(getCellStartTag(iwc,x,y));
-								printString.append(theObjects[x - 1][y - 1].getAttributeString());
+								printString.append(theObjects[x - 1][y - 1].getMarkupAttributesString());
 								printString.append(TAG_END);
 								println(printString.toString());
 								theObjects[x - 1][y - 1]._print(iwc);
@@ -1193,7 +1193,7 @@ public class Table extends PresentationObjectContainer {
 									}
 									print(LINE_BREAK);
 									printString.append(getCellStartTag(iwc,x,y));
-									printString.append(theObjects[x - 1][y - 1].getAttributeString());
+									printString.append(theObjects[x - 1][y - 1].getMarkupAttributesString());
 									printString.append(" colspan=\"");
 									printString.append(getWidthOfMergedCell(x, y));
 									printString.append("\" rowspan=\"");
@@ -1216,7 +1216,7 @@ public class Table extends PresentationObjectContainer {
 									}
 									print(LINE_BREAK);
 									printString.append(getCellStartTag(iwc,x,y));
-									printString.append(theObjects[x - 1][y - 1].getAttributeString());
+									printString.append(theObjects[x - 1][y - 1].getMarkupAttributesString());
 									printString.append(" ");
 									printString.append(TAG_END);
 									println(printString.toString());

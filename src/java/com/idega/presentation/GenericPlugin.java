@@ -48,7 +48,7 @@ public class GenericPlugin extends PresentationObject
 	}
 	public void setParamAndAttribute(String name, String value)
 	{
-		setAttribute(name, value);
+		setMarkupAttribute(name, value);
 		setParam(name, value);
 	}
 	public void setParamAndAttribute(String name, boolean value)
@@ -94,7 +94,7 @@ public class GenericPlugin extends PresentationObject
 	}
 	public String getWidth()
 	{
-		return getAttribute("width");
+		return getMarkupAttribute("width");
 	}
 	public void setHeight(int height)
 	{
@@ -106,11 +106,11 @@ public class GenericPlugin extends PresentationObject
 	}
 	public String getHeight()
 	{
-		return getAttribute("height");
+		return getMarkupAttribute("height");
 	}
 	public String getURL()
 	{
-		return this.getAttribute("src");
+		return this.getMarkupAttribute("src");
 	}
 	public String getHeightString()
 	{
@@ -174,7 +174,7 @@ public class GenericPlugin extends PresentationObject
 				buffer.append("<embed pluginspage=\"");
 				buffer.append(pluginspace);
 				buffer.append("\"");
-				buffer.append(getAttributeString());
+				buffer.append(getMarkupAttributesString());
 				buffer.append(">\n</embed>\n</object>");
 				print(buffer.toString());
 			}

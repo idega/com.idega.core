@@ -47,10 +47,10 @@ public class CheckBox extends GenericInput {
 	 */
 	public void setChecked(boolean ifChecked) {
 		if (ifChecked) {
-			setAttribute("checked");
+			setMarkupAttributeWithoutValue("checked");
 		}
 		else {
-			removeAttribute("checked");
+			removeMarkupAttribute("checked");
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class CheckBox extends GenericInput {
 	 */
 	public void handleKeepStatus(IWContext iwc) {
 		if (iwc.getParameter(this.getName()) != null) {
-			if (iwc.getParameter(this.getName()).equals(this.getValue())) {
+			if (iwc.getParameter(this.getName()).equals(this.getValueAsString())) {
 				setChecked(true);
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.97 2003/10/06 13:01:25 laddi Exp $
+ * $Id: Link.java,v 1.98 2003/11/21 19:01:12 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -397,7 +397,7 @@ public class Link extends Text {
 
 		}
 
-		if (!isParameterSet(LocaleSwitcher.languageParameterString) && !isAttributeSet(HREF_ATTRIBUTE)) {
+		if (!isParameterSet(LocaleSwitcher.languageParameterString) && !isMarkupAttributeSet(HREF_ATTRIBUTE)) {
 			setLocale(iwc.getCurrentLocale());
 		}
 
@@ -464,7 +464,7 @@ public class Link extends Text {
 
 		if (isImageTab || isImageButton) {
 			if (isSetToSubmitForm()) {
-				((Image) _obj).removeAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
+				((Image) _obj).removeMarkupAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
 			}
 		}
 
@@ -493,7 +493,7 @@ public class Link extends Text {
 				//}
 			}
 		}
-		setAttribute(HREF_ATTRIBUTE, newUrl);
+		setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
 		this._maintainAllGlobalParameters = maintainAllGlobalParameters;
 		this._maintainBuilderParameters = maintainBuilderParameters;
 	}
@@ -507,7 +507,7 @@ public class Link extends Text {
 	 */
 	public String getURL(IWContext iwc) {
 		if ((protocol == null) && https) {
-			String attr = getAttribute(HREF_ATTRIBUTE);
+			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
 			url.append("https://").append(iwc.getServerName());
 			if (attr != null)
@@ -515,7 +515,7 @@ public class Link extends Text {
 			return url.toString();
 		}
 		else if (protocol != null) {
-			String attr = getAttribute(HREF_ATTRIBUTE);
+			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
 			url.append(protocol).append("://").append(iwc.getServerName());
 			if (attr != null)
@@ -523,19 +523,19 @@ public class Link extends Text {
 			return url.toString();
 		}
 		else {
-			return (getAttribute(HREF_ATTRIBUTE));
+			return (getMarkupAttribute(HREF_ATTRIBUTE));
 		}
 	}
 
 	public String getURL() {
-		return (getAttribute(HREF_ATTRIBUTE));
+		return (getMarkupAttribute(HREF_ATTRIBUTE));
 	}
 
 	/**
 	 *
 	 */
 	public void addParameter(Parameter parameter) {
-		addParameter(parameter.getName(), parameter.getValue());
+		addParameter(parameter.getName(), parameter.getValueAsString());
 	}
 
 	/**
@@ -644,7 +644,7 @@ public class Link extends Text {
 	 *
 	 */
 	private void setOnEvent(String eventType, String eventString) {
-		setAttribute(eventType, eventString);
+		setMarkupAttribute(eventType, eventString);
 	}
 
 	/**
@@ -700,49 +700,49 @@ public class Link extends Text {
 	 *
 	 */
 	public String getOnFocus() {
-		return getAttribute("onfocus");
+		return getMarkupAttribute("onfocus");
 	}
 
 	/**
 	 *
 	 */
 	public String getOnBlur() {
-		return getAttribute("onblur");
+		return getMarkupAttribute("onblur");
 	}
 
 	/**
 	 *
 	 */
 	public String getOnSelect() {
-		return getAttribute("onselect");
+		return getMarkupAttribute("onselect");
 	}
 
 	/**
 	 *
 	 */
 	public String getOnChange() {
-		return getAttribute("onchange");
+		return getMarkupAttribute("onchange");
 	}
 
 	/**
 	 *
 	 */
 	public String getOnClick() {
-		return getAttribute("onclick");
+		return getMarkupAttribute("onclick");
 	}
 
 	/**
 	 *
 	 */
 	public void setTarget(String target) {
-		setAttribute(TARGET_ATTRIBUTE, target);
+		setMarkupAttribute(TARGET_ATTRIBUTE, target);
 	}
 
 	/**
 	 *
 	 */
 	public String getTarget() {
-		return getAttribute(TARGET_ATTRIBUTE);
+		return getMarkupAttribute(TARGET_ATTRIBUTE);
 	}
 
 	/**
@@ -1193,7 +1193,7 @@ public class Link extends Text {
 	 *
 	 */
 	private boolean isLinkOpeningOnSamePage() {
-		return (!isAttributeSet(TARGET_ATTRIBUTE));
+		return (!isMarkupAttributeSet(TARGET_ATTRIBUTE));
 	}
 
 	/**
@@ -1510,7 +1510,7 @@ public class Link extends Text {
 	}
 
 	protected void setFinalUrl(String url) {
-		setAttribute(HREF_ATTRIBUTE, url);
+		setMarkupAttribute(HREF_ATTRIBUTE, url);
 	}
 
 	private void maintainParameters(IWContext iwc) {
@@ -1561,11 +1561,11 @@ public class Link extends Text {
 
 		if (getLanguage().equals("HTML")) {
 			boolean openInNewWindow = isOpeningInNewWindow();
-			boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
+			boolean alignSet = isMarkupAttributeSet(HORIZONTAL_ALIGNMENT);
 
 			if (alignSet) {
 				print("<div align=\"" + getHorizontalAlignment() + "\">");
-				removeAttribute(HORIZONTAL_ALIGNMENT); //does this slow things down?
+				removeMarkupAttribute(HORIZONTAL_ALIGNMENT); //does this slow things down?
 			}
 
 			if (openInNewWindow) {
@@ -1581,7 +1581,7 @@ public class Link extends Text {
 			ICDomain d = iwc.getDomain();
 
 			if (d.getURL() != null) {
-				String attr = getAttribute(HREF_ATTRIBUTE);
+				String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 				if (attr.startsWith("/")) {
 					if ((protocol == null) || protocol.equals("")) {
 						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
@@ -1592,12 +1592,12 @@ public class Link extends Text {
 							protocol = "http://";
 						}
 					}
-					setAttribute(HREF_ATTRIBUTE, protocol + d.getURL() + attr);
+					setMarkupAttribute(HREF_ATTRIBUTE, protocol + d.getURL() + attr);
 
 				}
 			}
 
-			print("<a " + getAttributeString() + " >");
+			print("<a " + getMarkupAttributesString() + " >");
 			if (this.isText()) {
 				if (hasClass) {
 					/*if ( displayString != null ) {
@@ -1668,7 +1668,7 @@ public class Link extends Text {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
 				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
-				print("<a " + getAttributeString() + " >");
+				print("<a " + getMarkupAttributesString() + " >");
 				print(_myWindow.getName());
 				print("</a>");
 			}
@@ -1676,7 +1676,7 @@ public class Link extends Text {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
-				print("<a " + getAttributeString() + " >");
+				print("<a " + getMarkupAttributesString() + " >");
 				_obj._print(iwc);
 				print("</a>");
 			}
@@ -1937,8 +1937,8 @@ public void setWindowToOpen(String className) {
 	public void setOnMouseOverImage(Image image, Image mouseOverImage) {
 		image.setOverImage(mouseOverImage);
 
-		setAttribute("onMouseOver", "swapImage('" + image.getName() + "','','" + mouseOverImage.getMediaURL() + "',1)");
-		setAttribute("onMouseOut", "swapImgRestore()");
+		setMarkupAttribute("onMouseOver", "swapImage('" + image.getName() + "','','" + mouseOverImage.getMediaURL() + "',1)");
+		setMarkupAttribute("onMouseOut", "swapImgRestore()");
 	}
 
 	public void setDPTTemplateId(int id) {

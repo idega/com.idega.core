@@ -30,12 +30,12 @@ public class SelectPanel extends GenericSelect {
 	}
 
 	public void setSize(int size) {
-		setAttribute("size",String.valueOf(size));
+		setMarkupAttribute("size",String.valueOf(size));
 	}
 	
 	public int getSize() {
-		if (isAttributeSet("size"))
-			return Integer.parseInt(getAttribute("size"));
+		if (isMarkupAttributeSet("size"))
+			return Integer.parseInt(getMarkupAttribute("size"));
 		return 1;	
 	}
 	

@@ -22,12 +22,12 @@ public class Label extends InterfaceObject {
 	
 	public Label(String label, InterfaceObject object) {
 		_label = label;
-		setAttribute("for", object.getID());
+		setMarkupAttribute("for", object.getID());
 	}
 	
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			print("<label "+getAttributeString()+" >");
+			print("<label "+getMarkupAttributesString()+" >");
 			print(_label);
 			println("</label>");	
 		}
