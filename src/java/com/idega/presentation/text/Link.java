@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.136 2004/09/07 06:59:15 laddi Exp $
+ * $Id: Link.java,v 1.137 2004/09/08 02:59:29 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1909,6 +1909,11 @@ public class Link extends Text {
 		
 		script.addMethod("submitForm", method.toString());
 		setFinalUrl(JAVASCRIPT + "submitForm('" + form.getID() + "')");
+	}
+	
+	public void setFormToSubmit(String formID) {
+		String action = ("document.forms['" + formID + "'].submit()");
+		setFinalUrl(JAVASCRIPT + action);
 	}
 	
 	public void setToFormReset(Form form) {
