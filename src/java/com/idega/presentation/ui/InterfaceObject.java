@@ -230,7 +230,8 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setToCheckOnClick(String objectName, boolean check) {
 		_checkObject = true;
-		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+Boolean.toString(check)+"')");
+//		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+Boolean.toString(check)+"')");
+		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+String.valueOf( check )+"')");
 	}
 	
 	/**
@@ -251,7 +252,8 @@ public abstract class InterfaceObject extends PresentationObject {
 	 */
 	public void setToDisableOnClick(String objectName,boolean disable) {
 		_disableObject = true;
-		setOnClick("disableObject(findObj('" + objectName + "'),'"+Boolean.toString(disable)+"')");
+//		setOnClick("disableObject(findObj('" + objectName + "'),'"+Boolean.toString(disable)+"')");
+		setOnClick("disableObject(findObj('" + objectName + "'),'"+String.valueOf( disable )+"')");
 	}
 	
 	/**
