@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.44 2002/02/08 09:55:40 aron Exp $
+ * $Id: Link.java,v 1.45 2002/02/11 17:09:40 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1652,7 +1652,7 @@ public class Link extends Text {
     //_objectType=OBJECT_TYPE_WINDOW;
     _windowClass=windowClass;
     setURL(IWMainApplication.windowOpenerURL);
-    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
+    addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
     this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
   }
 
