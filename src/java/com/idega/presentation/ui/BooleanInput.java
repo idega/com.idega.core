@@ -22,7 +22,7 @@ public class BooleanInput extends DropdownMenu{
   private static final String YES_KEY = "booleaninput.yes";
   private static final String SELECT_KEY = "booleaninput.select";
 
-  private boolean _showSelectOption=true;
+  private boolean _showSelectOption=false;
 
   public BooleanInput(){
       this("booleaninput");
@@ -30,7 +30,8 @@ public class BooleanInput extends DropdownMenu{
 
   public BooleanInput(String name){
     super(name);
-
+    addMenuElement("N");
+    addMenuElement("Y");
   }
 
   public void main(IWContext iwc)throws Exception{
@@ -40,11 +41,8 @@ public class BooleanInput extends DropdownMenu{
     IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
 
     if(_showSelectOption){
-      addMenuElement("",iwrb.getLocalizedString(SELECT_KEY,"Select:"));
+      this.addMenuElementFirst("",iwrb.getLocalizedString(SELECT_KEY,"Select:"));
     }
-
-    addMenuElement("N");
-    addMenuElement("Y");
 
     setMenuElementDisplayString("N",iwrb.getLocalizedString(NO_KEY));
     setMenuElementDisplayString("Y",iwrb.getLocalizedString(YES_KEY));
@@ -55,9 +53,11 @@ public class BooleanInput extends DropdownMenu{
 public void setSelected(boolean selected){
   if(selected){
     this.setSelectedElement("Y");
+    System.out.println("Setting selected=true for BooleanInput");
   }
   else{
     this.setSelectedElement("N");
+    System.out.println("Setting selected=false for BooleanInput");
   }
 }
 
