@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.88 2005/01/19 22:14:34 gimmi Exp $
+ * $Id: IWBundle.java,v 1.89 2005/03/07 14:09:44 gummi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2005/01/19 22:14:34 $ by $Author: gimmi $
+ * Last modified: $Date: 2005/03/07 14:09:44 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.88 $
+ * @version $Revision: 1.89 $
  */
 public interface IWBundle {
 	/**
@@ -287,6 +287,18 @@ public interface IWBundle {
 	public ValueBinding getValueBinding(String localizationKey);
 	
 	/**
+	 * Returns a valueBinding for a localizationKey
+	 * @param localizationKey LocalizationKey
+	 * @param defaultValue The default value
+	 * @return
+	 */
+	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
+	
+	 
+	 
+	 
+	
+	/**
 	 * Returns a localized HtmlOutputText object.
 	 * @param localizationKey LocalizationKey
 	 * @return 
@@ -301,11 +313,29 @@ public interface IWBundle {
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component);
 
 	/**
+	 * Returns a localized UIComponent object. Value is bound to the <code>value</code> attribute.
+	 * @param localizationKey LocalizationKey
+	 * @param defaultValue The default value
+	 * @return 
+	 */
+	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue);
+
+	
+	/**
 	 * Returns a localized string.
 	 * Use ONLY if you need the string, otherwise use the getLocalizedText or getLocalizeUIComponent
 	 * @param localizationKey LocalizationKey
 	 * @return 
 	 */
 	public String getLocalizedString(String localizationKey);
+	
+	/**
+	 * Returns a localized string.
+	 * Use ONLY if you need the string, otherwise use the getLocalizedText or getLocalizeUIComponent
+	 * @param localizationKey LocalizationKey
+	 * @param defaultValue The default value
+	 * @return 
+	 */
+	public String getLocalizedString(String localizationKey, String defaultValue);
 
 }

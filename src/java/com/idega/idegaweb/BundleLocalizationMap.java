@@ -37,7 +37,7 @@ class BundleLocalizationMap implements Map {
 		}
 		catch(MissingResourceException msre){
 			msre.printStackTrace();
-			return "";
+			return null;
 		}
 	}
 

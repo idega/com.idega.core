@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.15 2005/01/19 22:14:34 gimmi Exp $
+ * $Id: DefaultIWBundle.java,v 1.16 2005/03/07 14:09:44 gummi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1479,18 +1479,48 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return t;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWBundle#getValueBinding(java.lang.String)
+	 */
 	public ValueBinding getValueBinding(String localizationKey) {
+		return getValueBinding(localizationKey,localizationKey);
+	}
+	
+	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		return getValueBinding(ctx,localizationKey,defaultValue);
+	}
+	
+	public ValueBinding getValueBinding(FacesContext ctx, String localizationKey, String defaultValue) {
 		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
-		return getApplication().createValueBinding(valueBinding);
+		ValueBinding vb = getApplication().createValueBinding(valueBinding);
+		Object obj = vb.getValue(ctx);
+		if(obj==null){
+			//TODO store to localization files
+			vb.setValue(ctx,((defaultValue==null)?"":defaultValue));
+		}
+		return vb;
 	}
 	
 	public String getLocalizedString(String localizationKey) {
-		return (String) getValueBinding(localizationKey).getValue(FacesContext.getCurrentInstance());
+		return getLocalizedString(localizationKey,(String)localizationKey);
+	}
+
+	
+	public String getLocalizedString(String localizationKey, String defaultValue) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ValueBinding vb = getValueBinding(ctx,localizationKey,defaultValue);
+		return (String)vb.getValue(ctx);
 	}
 	
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
+		return getLocalizedUIComponent(localizationKey,component,localizationKey);
+	}
+	
+	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue) {
 //		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
-		component.setValueBinding("value",getValueBinding(localizationKey));
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		component.setValueBinding("value",getValueBinding(ctx,localizationKey,defaultValue));
 		return component;
 	}
 	/* (non-Javadoc)
