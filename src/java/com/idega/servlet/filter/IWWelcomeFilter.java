@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.9 2005/02/01 18:02:04 thomas Exp $
+ * $Id: IWWelcomeFilter.java,v 1.10 2005/02/23 19:19:25 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/02/01 18:02:04 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/23 19:19:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -93,7 +93,9 @@ public class IWWelcomeFilter extends BaseFilter {
 				response.sendRedirect(getNewWorkspaceUri(request));
 			}
 			else if(startOnPages){
-				request.getRequestDispatcher(PAGES_URI).forward(request,response);
+				//request.getRequestDispatcher(PAGES_URI).forward(request,response);
+				String pagesUri = getPagesUri(request);
+				response.sendRedirect(pagesUri);
 			}
 		}
 		else{
