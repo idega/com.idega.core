@@ -37,10 +37,15 @@ public interface InputHandler {
 	PresentationObject getHandlerObject(String name,String value,IWContext iwc);
 	
 		/**
-	 * This method is called to get the corresponding UI widget. The specified parameter values (collection of strings) sets the
-	 * selections or content of the returned widegt. If the parameter value is null a default selection or default content is
+	 * This method is called to get the corresponding UI widget. The specified parameter values (collection of strings) set the
+	 * selections or content of the returned widget. If the parameter value is null a default selection or default content is
 	 * shown.
-	 * The value is of the same kind of values that are returned by the request, that is it is one of possible request values.
+	 * The values are of the same kind of values that are returned by the request, that is they are a subset of the possible request values.
+	 * If the returned UI widget allows only the selection of one value the standard implementation might be<br>
+	 * <code>
+	 * String value = (String) Collections.min(values);<br>
+	 * return getHandlerObject(name, value, iwc);
+			</code>
 	 * @param name
 	 * @param values - collections of string
 	 * @param iwc 
@@ -73,8 +78,12 @@ public interface InputHandler {
 	 * specified className is of the type SQLDate. 
 	 * In most implementations the returned value is equal to the specified value, that is the method does nothing than just returning the 
 	 * parameter value.
-	 * The returned value is used for SQL statement after calling toString() of the returned object.
-	 * 
+	 * The returned value is used for SQL statements after involving toString() of that object. 
+	 * The standard implementation might be:<br>
+	 * <code>return value;</code>
+	 * @param value
+	 * @param className
+	 * @return an object that is able to return a useable string representation for SQL-statements after calling toString()
 	 */
 	Object convertSingleResultingObjectToType(Object value, String className);
 	
