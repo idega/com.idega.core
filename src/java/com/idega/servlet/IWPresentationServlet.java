@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.54 2004/03/31 18:09:41 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.55 2004/05/05 08:32:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,14 +11,7 @@ package com.idega.servlet;
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
 import java.io.IOException;
-//import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
@@ -27,12 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.builder.business.BuilderConstants;
-import com.idega.core.localisation.business.LocaleSwitcher;
-import com.idega.event.EventLogic;
 import com.idega.event.IWEventMachine;
+import com.idega.event.IWEventProcessor;
 import com.idega.event.IWModuleEvent;
-import com.idega.event.IWPageEventListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
@@ -47,7 +37,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.util.FileUtil;
-import com.idega.util.LocaleUtil;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
@@ -124,39 +113,14 @@ public class IWPresentationServlet extends IWCoreServlet {
 	}
 	public void processBusinessEvent(IWContext iwc)
 		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
-		String[] eventListeners = iwc.getParameterValues(IWMainApplication.IdegaEventListenerClassParameter);
-		if (eventListeners != null) {
-			for (int i = 0; i < eventListeners.length; i++) {
-				processIWEventEncrypted(iwc, eventListeners[i]);
-			}
-		}
+		IWEventProcessor.getInstance().processBusinessEvent(iwc);
 		/*
 		String eventClassEncr = iwc.getParameter(IWMainApplication.IdegaEventListenerClassParameter);
 		processIWEvent(iwc,eventClassEncr);
 		*/
 	}
-	private void processIWEvent(IWContext iwc, String EventListenerClass)
-		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
-		if (EventListenerClass != null) {
-			if (iwc.getApplicationSettings().getIfDebug())
-				System.out.println("IWEventListener: " + EventListenerClass);
-			IWPageEventListener listener = (IWPageEventListener) Class.forName(EventListenerClass).newInstance();
-			listener.actionPerformed(iwc);
-		}
-	}
-	private void processIWEventEncrypted(IWContext iwc, String EncryptedEventListenerClassName)
-		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
-		String eventClass = IWMainApplication.decryptClassName(EncryptedEventListenerClassName);
-		processIWEvent(iwc, eventClass);
-	}
-	private void processApplicationEvents(IWContext iwc)
-		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
-		java.util.List eventListeners = iwc.getIWMainApplication().getApplicationEventListeners();
-		Iterator iter = eventListeners.iterator();
-		while (iter.hasNext()) {
-			String className = (String) iter.next();
-			processIWEvent(iwc, className);
-		}
+	private void processApplicationEvents(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException{
+		IWEventProcessor.getInstance().processApplicationEvents(iwc);
 	}
 	public boolean processAWTEvent(IWContext iwc, HttpServletRequest request, HttpServletResponse response)
 		throws IOException, ServletException {
@@ -391,7 +355,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 			iwc.setContentType("application/pdf");
 		}
 		//getPage()._print(iwc);
-		getPage()._initPrinting(iwc);
+		//getPage()._initPrinting(iwc);
+		getPage().renderComponent(iwc);
 		//System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
 	}
 	private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response) {
@@ -460,132 +425,15 @@ public class IWPresentationServlet extends IWCoreServlet {
 		return null;
 	}
 	public void increaseHistoryID(IWContext iwc) {
-		String historyIDSession = (String) iwc.getSessionAttribute(BuilderConstants.PRM_HISTORY_ID);
-		if (historyIDSession == null) {
-			historyIDSession = Integer.toString((int) (Math.random() * 1000));
-			iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
-		}
-		else {
-			try {
-				historyIDSession = Integer.toString(Integer.parseInt(historyIDSession) + 1);
-				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
-			}
-			catch (NumberFormatException ex) {
-				//System.err.print("NumberformatException when trying to increase historyID, historyIDSession:"+historyIDSession);
-				historyIDSession = Integer.toString((int) (Math.random() * 1000));
-				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
-			}
-		}
+		IWEventProcessor.getInstance().increaseHistoryID(iwc);
 	}
 	
 	private void handleLocaleParameter(IWContext iwc) {
-		Locale locale = iwc.getCurrentLocale();
-		String localeValue = iwc.getParameter(LocaleSwitcher.languageParameterString);
-		if(localeValue!=null){
-			Locale newLocale = LocaleUtil.getLocale(localeValue);
-			if(newLocale!=null && !newLocale.equals(locale))
-				iwc.setCurrentLocale(newLocale);
-		}
+		IWEventProcessor.getInstance().handleLocaleParameter(iwc);
 	}
 	
 	public void handleEvent(IWContext iwc) {
-		try {
-			//    System.err.println("-------------------------------------");
-			//    System.err.println("handleEvent begin");
-			String historyID = iwc.getParameter(BuilderConstants.PRM_HISTORY_ID);
-			if (historyID != null) {
-				PresentationObject[] listeners = EventLogic.getIWPOListeners(iwc);
-				LinkedList state = (LinkedList) iwc.getSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE);
-				int historySize = 5;
-				boolean listJustConstructed = false;
-				//      System.err.println("PresentationServelt - State = "+ state);
-				if (state == null) {
-					state = new LinkedList();
-					state.addLast(historyID);
-					state.addLast(new Hashtable());
-					iwc.setSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE, state);
-					listJustConstructed = true;
-				}
-				synchronized (state) {
-					//        System.err.println("PresentationServelt - !listJustConstructed = "+ !listJustConstructed);
-					//        System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
-					ListIterator iter2 = state.listIterator();
-					while (iter2.hasNext()) {
-						iter2.next();
-					}
-					if (!listJustConstructed && state.contains(historyID)) {
-						// go back in history
-						int index = state.indexOf(historyID);
-						int size = state.size();
-						for (int i = 0; i <= size - (index + 1); i++) {
-							state.removeLast();
-						}
-					}
-					if (!listJustConstructed) {
-						if (state.size() >= historySize * 2) {
-							state.removeFirst();
-							state.removeFirst();
-						}
-						int copyFrom = state.size() - 1;
-						state.addLast(iwc.getParameter(BuilderConstants.PRM_HISTORY_ID));
-						if (copyFrom >= 1) {
-							try {
-								state.addLast(((Hashtable) state.get(copyFrom)).clone());
-							}
-							catch (Exception ex) {
-								ex.printStackTrace();
-							}
-						}
-						else {
-							state.addLast(new Hashtable());
-						}
-						//System.err.println("PresentationServelt - checking stateList");
-						// object geta safnast upp í hashtöflunum því þarf að fjarlægja þau instöns sem ekki eru á nýju síðunni
-						/**
-						 * @todo handle pages in frames or iframes with different pageIds
-						 */
-						Map newStateMap = (Map) state.getLast();
-						//Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
-						Map pageObjectInstances = EventLogic.getCashedObjectInstancesForPage(this.getPage().getPageID());
-						//System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
-						Iterator iter = newStateMap.keySet().iterator();
-						while (iter.hasNext()) {
-							Object item = iter.next();
-							if (!((pageObjectInstances != null) && pageObjectInstances.containsKey(item))) {
-								//System.err.println("PresentationServelt - removing : "+ item);
-								iter.remove();
-								//newStateMap.remove(item);
-							}
-							else {
-								//System.err.println("PresentationServelt - not removing : "+ item);
-							}
-						}
-					}
-				}
-				if (listeners != null && listeners.length > 0) {
-					PresentationObject source = EventLogic.getIWPOEventSource(iwc);
-					for (int i = 0; i < listeners.length; i++) {
-						//System.err.println("listener = " + listeners[i].getParentObjectInstanceID());
-						//System.err.println("newStateString = "+listeners[i].changeState(source,iwc));
-						String newState = listeners[i].changeState(source, iwc);
-						if (newState != null) {
-							((Hashtable) state.getLast()).put(
-								Integer.toString(listeners[i].getParentObjectInstanceID()),
-								newState);
-						}
-						else {
-							((Hashtable) state.getLast()).remove(
-								Integer.toString(listeners[i].getParentObjectInstanceID()));
-						}
-						//listeners[i].changeState(source,iwc);
-					}
-				}
-			}
-			//System.err.println("handleEvent end");
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		IWEventProcessor.getInstance().handleEvent(iwc);
 	}
 	private void handleMultipartFormData(IWContext iwc) throws Exception {
 		String sep = FileUtil.getFileSeparator();
