@@ -1,7 +1,5 @@
 package com.idega.business;
 
-import java.rmi.RemoteException;
-
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.servlet.ServletContext;
