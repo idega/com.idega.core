@@ -96,8 +96,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  //setColumn(getIDColumnName(),new Integer(id));
 	  firstLoadInMemoryCheck();
 	  //findByPrimaryKey(getID());
-      ejbCreate(new Integer(id));
-      ejbLoad();
+      //ejbCreate(new Integer(id));
+      //ejbLoad();
+      this.findByPrimaryKey(id);
   }
 
 

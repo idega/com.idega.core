@@ -303,5 +303,15 @@ public class ICObjectInstance extends GenericEntity{
 
         }
 
+
+      public void setIBPageByKey(String pageKey){
+        try{
+          int id = Integer.parseInt(pageKey);
+          this.setIBPageID(id);
+        }
+        catch(NumberFormatException e){
+
+        }
+      }
 }
 
