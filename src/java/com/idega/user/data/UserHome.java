@@ -27,5 +27,6 @@ public interface UserHome extends com.idega.data.IDOHome
  public int getUserCount()throws com.idega.data.IDOException;
  public java.lang.String getGroupType();
  public java.util.Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException;
+ public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd) throws FinderException, RemoteException;
 
 }

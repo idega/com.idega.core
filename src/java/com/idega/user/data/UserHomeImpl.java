@@ -103,6 +103,14 @@ public Collection findUsersBySearchCondition(String condition, String[] userIds)
 			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
+public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd);
+	this.idoCheckInPooledEntity(entity);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
 public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserForUserGroup(p0);
