@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.113 2004/06/22 16:30:20 gummi Exp $
+ * $Id: Link.java,v 1.114 2004/06/23 22:59:15 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1821,7 +1821,12 @@ public class Link extends Text {
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
 	}
-
+	
+	public void setToFormReset(Form form) {
+		String action = ("document.forms['" + form.getID() + "'].reset()");
+		setFinalUrl(JAVASCRIPT + action);
+	}
+	
 	/**
 	 *
 	 */
