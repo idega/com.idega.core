@@ -88,7 +88,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
-		addAttribute(getGroupTypeColumnName(), "Group type", true, true, String.class, 30, "one-to-many", GroupType.class);
+		addAttribute(getGroupTypeColumnName(), "Group type", true, true, String.class, 30, "many-to-one", GroupType.class);
 		addAttribute(getGroupDescriptionColumnName(), "Description", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(), "Extra information", true, true, "java.lang.String");
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
@@ -110,6 +110,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 //		id of the group that has the permissions for this group. If this is not null then this group has inherited permissions.
 		addManyToOneRelationship(COLUMN_PERMISSION_CONTROLLING_GROUP, Group.class);
+		addManyToOneRelationship(getGroupTypeColumnName(), GroupType.class);
+
 		addAttribute(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, "Do children of this group get same permissions", true, true, Boolean.class);
 		
 		addManyToOneRelationship(COLUMN_ALIAS_TO_GROUP, Group.class);
