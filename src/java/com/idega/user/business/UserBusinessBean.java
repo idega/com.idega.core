@@ -1648,8 +1648,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						//that is not a top node and if so we need to remove that node 
 						//unless there is only one node left or if the alias and the real group are both top nodes
 						if(groupMap!=null && !groupMap.isEmpty()){
-							String[] aliasGroupType = new String[1];
-							aliasGroupType[0] = "alias";
+							List aliasGroupType = new ArrayList();
+							aliasGroupType.add("alias");
 							
 							if(!aliasMap.isEmpty()){
 								Iterator keyIter = groupMap.keySet().iterator();
@@ -1671,7 +1671,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								Integer topNodeId = (Integer) keyIter.next();
 								try {
 									//also we need to check the children of the current top nodes recursively for aliases :s
-									Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursive(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
+									Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
 									
 									if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
 										Iterator aliasIter = aliasesRecursive.iterator();
