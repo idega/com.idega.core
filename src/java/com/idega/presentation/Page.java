@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.44 2002/03/14 10:40:12 laddi Exp $
+ * $Id: Page.java,v 1.45 2002/03/14 21:25:21 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -182,6 +182,8 @@ public class Page extends PresentationObjectContainer {
       setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
     if ( getStyleAttribute("body") == null )
       setStyleDefinition("body","font-family:"+_pageStyleFont+";font-size:"+_pageStyleFontSize+";");
+    if ( getStyleAttribute("table") == null )
+      setStyleDefinition("table","font-family:"+_pageStyleFont+";font-size:"+_pageStyleFontSize+";");
     getAssociatedScript().addFunction("windowopen",Window.windowScript());
   }
 
