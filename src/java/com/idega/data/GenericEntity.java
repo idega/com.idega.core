@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.78 2002/02/15 19:24:03 laddi Exp $
+ * $Id: GenericEntity.java,v 1.79 2002/02/20 00:03:36 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -849,7 +849,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-
+/**@todo this should not be done every time cache!!**/
 	public String[] getColumnNames(){
 
 		Vector vector = new Vector();
@@ -870,7 +870,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			return new String[0];
 		}
 	}
-
+/**@todo this should not be done every time cache!!**/
 	public String[] getVisibleColumnNames(){
 
 		Vector theColumns = new Vector();
@@ -1256,81 +1256,85 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public void findByPrimaryKey(int id)throws SQLException{
-		setColumn(getIDColumnName(),new Integer(id));
-		Connection conn= null;
-		Statement Stmt= null;
-		try{
-			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("select * from ");
-			buffer.append(getEntityName());
-			buffer.append(" where ");
-			buffer.append(getIDColumnName());
-			buffer.append("=");
-			buffer.append(id);
+  public void findByPrimaryKey(int id)throws SQLException{
+    setColumn(getIDColumnName(),new Integer(id));
+    Connection conn= null;
+    Statement Stmt= null;
+    try{
+      conn = getConnection(getDatasource());
+      Stmt = conn.createStatement();
+      StringBuffer buffer = new StringBuffer();
+      //buffer.append("select * from ");
+      buffer.append("select ");
+      //System.out.println("COLUMN NAMES : "+DatastoreInterface.getCommaDelimitedColumnNamesForSelect(this));/**@is this where it is supposed to be?**/
+      buffer.append(DatastoreInterface.getCommaDelimitedColumnNamesForSelect(this));
+      buffer.append(" from ");//skips lob colums
+      buffer.append(getEntityName());
+      buffer.append(" where ");
+      buffer.append(getIDColumnName());
+      buffer.append("=");
+      buffer.append(id);
 
-			ResultSet RS = Stmt.executeQuery(buffer.toString());
-
-
-			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
-		      //eiki added null check
-			if (( RS==null) || !RS.next())
-			  throw new SQLException("Record with id="+id+" not found");
-
-			String[] columnNames = getColumnNames();
-			for (int i = 0; i < columnNames.length; i++){
-				try{
-						//if (RS.getString(columnNames[i]) != null){
-					  fillColumn(columnNames[i],RS);
-						//}
-	  }
-	  catch(Exception ex){
-	  /*//NOCATH
-						try{
-						//if (RS.getString(columnNames[i].toUpperCase()) != null){
-							fillColumn(columnNames[i],RS);
-						//}
-						}
-	    catch(SQLException exe){
-							try{
-								//if (RS.getString(columnNames[i].toLowerCase()) != null){
-							fillColumn(columnNames[i],RS);
-							//}
-							}
-							catch(SQLException exep){
-
-									 System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
-										//exep.printStackTrace(System.err);
-							}
-					  }*/
-						System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+ex.getMessage());
-						if(!(ex instanceof NullPointerException))
-						  ex.printStackTrace(System.err);
-					}
-
-			}
-
-			if( RS != null ) RS.close();
-
-		}
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				freeConnection(getDatasource(),conn);
-			}
-		}
-	}
+      ResultSet RS = Stmt.executeQuery(buffer.toString());
 
 
+      //ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
+    //eiki added null check
+      if (( RS==null) || !RS.next())
+        throw new SQLException("Record with id="+id+" not found");
 
-	public String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
-	    return EntityControl.getNameOfMiddleTable(entity1,entity2);
+      String[] columnNames = getColumnNames();
+      for (int i = 0; i < columnNames.length; i++){
+        try{
+          //if (RS.getString(columnNames[i]) != null){
+          fillColumn(columnNames[i],RS);
+        //}
+        }
+        catch(Exception ex){
+        /*//NOCATH
+          try{
+          //if (RS.getString(columnNames[i].toUpperCase()) != null){
+                  fillColumn(columnNames[i],RS);
+          //}
+          }
+          catch(SQLException exe){
+            try{
+                    //if (RS.getString(columnNames[i].toLowerCase()) != null){
+            fillColumn(columnNames[i],RS);
+            //}
+            }
+            catch(SQLException exep){
 
-	}
+             System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
+                    //exep.printStackTrace(System.err);
+            }
+          }*/
+          System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+ex.getMessage());
+          if(!(ex instanceof NullPointerException))
+            ex.printStackTrace(System.err);
+        }
+
+      }
+
+      if( RS != null ) RS.close();
+
+    }
+    finally{
+      if(Stmt != null){
+        Stmt.close();
+      }
+      if (conn != null){
+        freeConnection(getDatasource(),conn);
+      }
+    }
+  }
+
+
+
+  public String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+      return EntityControl.getNameOfMiddleTable(entity1,entity2);
+
+  }
 
 
   public GenericEntity[] findRelated(GenericEntity entity)throws SQLException{

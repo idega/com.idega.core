@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.37 2002/02/04 22:00:44 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.38 2002/02/20 00:03:36 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -362,9 +362,16 @@ public abstract class DatastoreInterface{
                   conn = entity.getConnection();
                   //Stmt = conn.createStatement();
                   //int i = Stmt.executeUpdate("insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getCommaDelimitedColumnValues()+")");
-                  String statement = "insert into "+entity.getTableName()+"("+getCommaDelimitedColumnNames(entity)+") values ("+getQuestionmarksForColumns(entity)+")";
+                  StringBuffer statement = new StringBuffer("");
+                  statement.append("insert into ");
+                  statement.append(entity.getTableName());
+                  statement.append("(");
+                  statement.append(getCommaDelimitedColumnNames(entity));
+                  statement.append(") values (");
+                  statement.append(getQuestionmarksForColumns(entity));
+                  statement.append(")");
                   //System.out.println(statement);
-                  Stmt = conn.prepareStatement (statement);
+                  Stmt = conn.prepareStatement (statement.toString());
                   setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
                   Stmt.execute();
 		}
@@ -501,12 +508,22 @@ public abstract class DatastoreInterface{
 
   protected void insertBlob(GenericEntity entity)throws Exception{
 
-    String statement ;
+    StringBuffer statement ;
     Connection Conn = null;
 
     try{
 
-      statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
+      statement = new StringBuffer("");
+      statement.append("update ");
+      statement.append(entity.getTableName());
+      statement.append(" set ");
+      statement.append(entity.getLobColumnName());
+      statement.append("=? where ");
+      statement.append(entity.getIDColumnName());
+      statement.append(" = '");
+      statement.append(entity.getID());
+      statement.append("'");
+
       //System.out.println(statement);
       //System.out.println("In insertBlob() in DatastoreInterface");
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
@@ -519,7 +536,7 @@ public abstract class DatastoreInterface{
           Conn = entity.getConnection();
           //if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
           //BufferedInputStream bin = new BufferedInputStream(instream);
-          PreparedStatement PS = Conn.prepareStatement(statement);
+          PreparedStatement PS = Conn.prepareStatement(statement.toString());
           //System.out.println("bin.available(): "+bin.available());
           //PS.setBinaryStream(1, bin, 0 );
           //PS.setBinaryStream(1, instream, instream.available() );
@@ -659,79 +676,104 @@ public abstract class DatastoreInterface{
 
       if(entity.columnsHaveChanged()){
           executeBeforeUpdate(entity);
-		Connection conn= null;
-		PreparedStatement Stmt= null;
-		try{
-			conn = entity.getConnection();
-//			Stmt = conn.createStatement();
+          Connection conn= null;
+          PreparedStatement Stmt= null;
+          try{
+            conn = entity.getConnection();
+//		  Stmt = conn.createStatement();
 
-                                String statement = "update "+entity.getTableName()+" set "+getAllColumnsAndQuestionMarks(entity)+" where "+entity.getIDColumnName()+"="+entity.getID();
-                                //System.out.println(statement);
-		                Stmt = conn.prepareStatement (statement);
-                                setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
-                                //Stmt.execute();
-                                Stmt.executeUpdate();
+            StringBuffer statement = new StringBuffer("");
+            statement.append("update ");
+            statement.append(entity.getTableName());
+            statement.append(" set ");
+            statement.append(getAllColumnsAndQuestionMarks(entity));
+            statement.append(" where ");
+            statement.append(entity.getIDColumnName());
+            statement.append("=");
+            statement.append(entity.getID());
 
-			//int i = Stmt.executeUpdate("update "+entity.getTableName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
-		}
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				entity.freeConnection(conn);
-			}
-		}
+            //System.out.println(statement);
+            Stmt = conn.prepareStatement(statement.toString());
+            setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
+            //Stmt.execute();
+            Stmt.executeUpdate();
 
-                executeAfterUpdate(entity);
+            //int i = Stmt.executeUpdate("update "+entity.getTableName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
+          }
+          finally{
+            if(Stmt != null){
+                    Stmt.close();
+            }
+            if (conn != null){
+                    entity.freeConnection(conn);
+            }
+          }
 
-                entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+          executeAfterUpdate(entity);
+
+          entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
 	}
 
-	public void update(GenericEntity entity, Connection conn)throws Exception{
-          executeBeforeUpdate(entity);
-		PreparedStatement Stmt = null;
-		try {
-                  String statement = "update "+entity.getTableName()+" set "+getAllColumnsAndQuestionMarks(entity)+" where "+entity.getIDColumnName()+"="+entity.getID();
-                  Stmt = conn.prepareStatement (statement);
-                  setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
-                  Stmt.execute();
-		}
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-		}
+  public void update(GenericEntity entity, Connection conn)throws Exception{
+    executeBeforeUpdate(entity);
+    PreparedStatement Stmt = null;
+    try {
+      StringBuffer statement = new StringBuffer("");
+      statement.append("update ");
+      statement.append(entity.getTableName());
+      statement.append(" set ");
+      statement.append(getAllColumnsAndQuestionMarks(entity));
+      statement.append(" where ");
+      statement.append(entity.getIDColumnName());
+      statement.append("=");
+      statement.append(entity.getID());
 
-			executeAfterUpdate(entity);
-			entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
-        }
+      Stmt = conn.prepareStatement (statement.toString());
+      setForPreparedStatement(STATEMENT_UPDATE,Stmt,entity);
+      Stmt.execute();
+    }
+    finally{
+      if(Stmt != null){
+              Stmt.close();
+      }
+    }
+
+    executeAfterUpdate(entity);
+    entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+  }
 
   public void insert(GenericEntity entity, Connection conn) throws Exception {
+    executeBeforeInsert(entity);
+    PreparedStatement Stmt = null;
+    ResultSet RS = null;
+    try {
+      StringBuffer statement = new StringBuffer("");
+      statement.append("insert into ");
+      statement.append(entity.getTableName());
+      statement.append("(");
+      statement.append(getCommaDelimitedColumnNames(entity));
+      statement.append(") values (");
+      statement.append(getQuestionmarksForColumns(entity));
+      statement.append(")");
 
-      executeBeforeInsert(entity);
-      PreparedStatement Stmt = null;
-      ResultSet RS = null;
-      try {
-        String statement = "insert into "+entity.getTableName()+"("+getCommaDelimitedColumnNames(entity)+") values ("+getQuestionmarksForColumns(entity)+")";
-        //System.out.println(statement);
-        Stmt = conn.prepareStatement (statement);
-        setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
-        Stmt.execute();
-      }
-      finally {
-              if (RS != null) {
-                      RS.close();
-              }
-              if(Stmt != null) {
-                      Stmt.close();
-              }
-      }
-      executeAfterInsert(entity);
-      entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+      //System.out.println(statement);
+      Stmt = conn.prepareStatement (statement.toString());
+      setForPreparedStatement(STATEMENT_INSERT,Stmt,entity);
+      Stmt.execute();
     }
+    finally {
+            if (RS != null) {
+                    RS.close();
+            }
+            if(Stmt != null) {
+                    Stmt.close();
+            }
+    }
+    executeAfterInsert(entity);
+    entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+  }
 
   public void delete(GenericEntity entity)throws Exception{
     executeBeforeInsert(entity);
@@ -740,7 +782,7 @@ public abstract class DatastoreInterface{
       try{
               conn = entity.getConnection();
               Stmt = conn.createStatement();
-              StringBuffer statement = new StringBuffer();
+              StringBuffer statement = new StringBuffer("");
               statement.append("delete from  ");
               statement.append(entity.getTableName());
               statement.append(" where ");
@@ -770,7 +812,7 @@ public abstract class DatastoreInterface{
     Statement Stmt= null;
     try {
       Stmt = conn.createStatement();
-      StringBuffer statement = new StringBuffer();
+      StringBuffer statement = new StringBuffer("");
       statement.append("delete from  ");
       statement.append(entity.getTableName());
       statement.append(" where ");
@@ -804,7 +846,7 @@ public abstract class DatastoreInterface{
       String metadataname = metadata.getTableName();
 
       //get all the id's of the metadata
-      StringBuffer statement = new StringBuffer();
+      StringBuffer statement = new StringBuffer("");
       statement.append("select ");
       statement.append(metadataIdColumn);
       statement.append(" from ");
@@ -832,7 +874,7 @@ public abstract class DatastoreInterface{
       StringBuffer statement2;
       //delete thos id's
       while(RS.next()){
-        statement2 = new StringBuffer();
+        statement2 = new StringBuffer("");
         statement2.append("delete from ");
         statement2.append(metadataname);
         statement2.append(" where ");
@@ -846,7 +888,7 @@ public abstract class DatastoreInterface{
 
       //delete from the middle table
       Stmt = conn.createStatement();
-      statement = new StringBuffer();
+      statement = new StringBuffer("");
       statement.append("delete from ");
       statement.append(middletable);
       statement.append(" where ");
@@ -945,7 +987,7 @@ public abstract class DatastoreInterface{
   }
 
 
-  boolean isValidColumnForInsertList(GenericEntity entity,String columnName){
+  protected static boolean isValidColumnForInsertList(GenericEntity entity,String columnName){
       if (entity.isNull(columnName)){
         return false;
       }
@@ -957,74 +999,107 @@ public abstract class DatastoreInterface{
       }
   }
 
+  protected static boolean isValidColumnForSelectList(GenericEntity entity,String columnName){
+    return !(entity.getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER);
+  }
 
-  protected String getCommaDelimitedColumnNames(GenericEntity entity){
+  protected static String getCommaDelimitedColumnNamesForSelect(GenericEntity entity){
     String newCachedColumnNameList = entity.getStaticInstance()._cachedColumnNameList;
     if(newCachedColumnNameList==null){
-      String returnString = "";
+      StringBuffer returnString = null;
       String[] names = entity.getColumnNames();
       for (int i = 0; i < names.length; i++){
-        if (isValidColumnForInsertList(entity,names[i])){
-          if (returnString.equals("")){
-            returnString = names[i];
+        if (isValidColumnForSelectList(entity,names[i])){
+          if (returnString==null){
+            returnString = new StringBuffer("");
+            returnString.append(names[i]);
           }
           else{
-            returnString = returnString + "," + names[i];
+            returnString.append(",");
+            returnString.append(names[i]);
           }
         }
       }
-      newCachedColumnNameList = returnString;
+      newCachedColumnNameList = returnString.toString();
     }
-		return newCachedColumnNameList;
-	}
+    return newCachedColumnNameList;
+  }
 
-
-
-
-	protected String getCommaDelimitedColumnValues(GenericEntity entity){
-		String returnString = "";
-		String[] names = entity.getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if (isValidColumnForInsertList(entity,names[i])){
-				if (returnString.equals("")){
-					returnString = 	"'"+entity.getStringColumnValue(names[i])+"'";
-				}
-				else{
-					returnString = 	returnString + ",'" + entity.getStringColumnValue(names[i])+"'";
-				}
-			}
-		}
-		return returnString;
-	}
-
-
-
-        protected String getAllColumnsAndQuestionMarks(GenericEntity entity){
-                StringBuffer returnString= new StringBuffer("");
-                String[] names = entity.getColumnNames();
-                String questionmark = "=?";
-
-                for(int i=0;i<names.length;i++){
-                //for (Enumeration e = columns.keys(); e.hasMoreElements();){
-                //for (Enumeration e = columns.elements(); e.hasMoreElements();){
-                        //String ColumnName = (String)e.nextElement();
-                        String ColumnName = names[i];
-
-                        if (isValidColumnForUpdateList(entity,ColumnName)){
-                                if (returnString.toString().equals("")){
-                                        returnString.append(ColumnName);
-                                        returnString.append(questionmark);
-                                }
-                                else{
-                                        returnString.append(',');
-                                        returnString.append(ColumnName);
-                                        returnString.append(questionmark);;
-                                }
-                        }
-                }
-
-                return returnString.toString();
+  protected static String getCommaDelimitedColumnNames(GenericEntity entity){
+    String newCachedColumnNameList = entity.getStaticInstance()._cachedColumnNameList;
+    if(newCachedColumnNameList==null){
+      StringBuffer returnString = null;
+      String[] names = entity.getColumnNames();
+      for (int i = 0; i < names.length; i++){
+        if (isValidColumnForInsertList(entity,names[i])){
+          if (returnString==null){
+            returnString = new StringBuffer("");
+            returnString.append(names[i]);
+          }
+          else{
+            returnString.append(",");
+            returnString.append(names[i]);
+          }
         }
+      }
+      newCachedColumnNameList = returnString.toString();
+    }
+    return newCachedColumnNameList;
+  }
+
+
+
+
+  protected static String getCommaDelimitedColumnValues(GenericEntity entity){
+    StringBuffer returnString = null;
+    String[] names = entity.getColumnNames();
+    for (int i = 0; i < names.length; i++){
+      if (isValidColumnForInsertList(entity,names[i])){
+        if (returnString==null){
+          returnString = new StringBuffer("");
+          returnString.append("'");
+          returnString.append(entity.getStringColumnValue(names[i]));
+          returnString.append("'");
+        }
+        else{
+          returnString.append(",'");
+          returnString.append(entity.getStringColumnValue(names[i]));
+          returnString.append("'");
+        }
+      }
+    }
+    return returnString.toString();
+  }
+
+
+
+  protected String getAllColumnsAndQuestionMarks(GenericEntity entity){
+    StringBuffer returnString = null;
+    String[] names = entity.getColumnNames();
+    String questionmark = "=?";
+
+    for(int i=0;i<names.length;i++){
+    //for (Enumeration e = columns.keys(); e.hasMoreElements();){
+    //for (Enumeration e = columns.elements(); e.hasMoreElements();){
+      //String ColumnName = (String)e.nextElement();
+      String ColumnName = names[i];
+
+      if (isValidColumnForUpdateList(entity,ColumnName)){
+        if (returnString==null){
+          returnString = new StringBuffer("");
+          returnString.append(ColumnName);
+          returnString.append(questionmark);
+        }
+        else{
+          returnString.append(',');
+          returnString.append(ColumnName);
+          returnString.append(questionmark);
+        }
+      }
+    }
+
+    return returnString.toString();
+  }
 
 
   protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
