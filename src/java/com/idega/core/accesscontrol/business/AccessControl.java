@@ -1181,7 +1181,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     adminUser.update();
 
 	//System.out.println("Creating login for user with id="+adminUserID);
-    LoginDBHandler.createLogin(adminUserID,"Administrator","idega",Boolean.TRUE,IWTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
+    LoginDBHandler.createLogin(adminUserID,"Administrator","idega",Boolean.TRUE,IWTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.TRUE,EncryptionType.MD5);
     return adminUser;
   }
 

@@ -1,6 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
 import com.idega.data.*;
+import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
 import java.sql.SQLException;
 import java.sql.Date;
@@ -215,6 +216,19 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
 
   public void setEncriptionType(String type){
       this.setColumn(getEncryptionTypeColumnName(),type);
+  }
+  
+  public boolean isLoginExpired(){
+  	if(getPasswordExpires()){
+  		IWTimestamp modified =getModified();
+  		modified.addDays(this.getDaysOfVality());
+  		return modified.isEarlierThan(IWTimestamp.RightNow());
+  	}
+  	return false;
+  }
+  
+  public boolean isLoginValid(){
+  	return !isLoginExpired();
   }
 
   /*  Setters end   */

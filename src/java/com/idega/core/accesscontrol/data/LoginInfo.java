@@ -29,4 +29,6 @@ public interface LoginInfo extends com.idega.data.IDOLegacyEntity
  public void setPasswNeverExpires(boolean p0);
  public void setPasswordExpires(boolean p0);
  public void setPasswordExpires(java.lang.Boolean p0);
+ public boolean isLoginExpired();
+ public boolean isLoginValid();
 }
