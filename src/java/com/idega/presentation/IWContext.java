@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.119 2005/03/07 12:20:35 tryggvil Exp $
+ * $Id: IWContext.java,v 1.120 2005/03/07 12:51:20 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/03/07 12:20:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/03/07 12:51:20 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.119 $
+ * @version $Revision: 1.120 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -214,10 +214,13 @@ implements IWUserContext, IWApplicationContext {
 	}
 	public boolean isMacOS() {
 		boolean isMac = false;
-		if (getUserAgent().indexOf("Mac") != -1) {
-			isMac = true;
-		} else if (getUserAgent().indexOf("mac") != -1) {
-			isMac = true;
+		String userAgent = getUserAgent();
+		if(userAgent!=null){
+			if (userAgent.indexOf("Mac") != -1) {
+				isMac = true;
+			} else if (userAgent.indexOf("mac") != -1) {
+				isMac = true;
+			}
 		}
 		return isMac;
 	}
