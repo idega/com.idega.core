@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.1 2002/03/13 16:35:33 laddi Exp $
+ * $Id: LinkContainer.java,v 1.2 2002/03/22 13:39:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.text;
 
+import com.idega.presentation.ui.Window;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ import com.idega.presentation.PresentationObjectContainer;
 public class LinkContainer extends PresentationObjectContainer {
 
   private StringBuffer _parameterString;
-  private String windowOpenerJavascriptString=null;
+  private boolean openInNewWindow = false;
 
   public static final String HASH = "#";
   public static final String TARGET_ATTRIBUTE = "target";
@@ -51,6 +52,9 @@ public class LinkContainer extends PresentationObjectContainer {
 
   private boolean _addSessionId = true;
 
+  private String _windowWidth;
+  private String _windowHeight;
+  private String _windowName;
   /**
    *
    */
@@ -462,7 +466,20 @@ public class LinkContainer extends PresentationObjectContainer {
     }
 
     if (getLanguage().equals("HTML")) {
-      setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+      if(openInNewWindow){
+        String URL = getURL();
+        if ( getPage() != 0 )
+          URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
+        if ( _windowName == null ) _windowName = "Popup";
+        if ( _windowWidth == null ) _windowWidth = "400";
+        if ( _windowHeight == null ) _windowHeight = "400";
+
+        setFinalUrl("javascript:"+Window.getWindowCallingScript(URL,_windowName,false,false,false,false,false,true,false,false,false,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
+      }
+      else {
+        setFinalUrl(oldURL+getParameterString(iwc,oldURL));
+      }
+
       print("<a "+getAttributeString()+" >");
 
       List theObjects = this.getAllContainingObjects();
@@ -526,6 +543,13 @@ public class LinkContainer extends PresentationObjectContainer {
    */
   private void setEventListener(String eventListenerClassName) {
     addParameter(IWMainApplication.IdegaEventListenerClassParameter,IWMainApplication.getEncryptedClassName(eventListenerClassName));
+  }
+
+  public void setAsPopup(String name,String width,String height){
+    _windowWidth = width;
+    _windowHeight = height;
+    _windowName = name;
+    openInNewWindow = true;
   }
 
   public void removeParameter(String prmName){
