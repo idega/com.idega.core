@@ -22,6 +22,7 @@ import com.idega.util.FileUtil;
 import com.idega.graphics.GIFEncoder;
 import com.idega.util.text.TextSoap;
 import java.awt.RenderingHints;
+import java.net.URLEncoder;
 
 
 /**
@@ -337,6 +338,7 @@ public class Button {
       path+=sName;
 
       sName = TextSoap.findAndCut(sName," ");
+      sName = URLEncoder.encode(sName);
 
       if( effect == getStaticButtonUpString() ){
         buttonUpName = sName;
