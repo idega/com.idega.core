@@ -1,7 +1,9 @@
 package com.idega.user.data;
 
 import com.idega.data.*;
-import com.idega.core.user.data.User;
+
+import java.util.Date;
+import java.rmi.RemoteException;
 
 /**
  * Title:
@@ -29,6 +31,9 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addManyToOneRelationship(GROUP_ID_COLUMN,"Type",Group.class);
     this.addManyToOneRelationship(RELATED_GROUP_ID_COLUMN,"Related Group",Group.class);
     this.addManyToOneRelationship(RELATIONSHIP_TYPE_COLUMN,"Type",GroupRelationType.class);
+    this.addAttribute(STATUS_COLUMN,"Status",String.class);
+    this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Date.class);
+    this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Date.class);
 
   }
   public String getEntityName() {
@@ -43,8 +48,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return (Group)getColumnValue(GROUP_ID_COLUMN);
   }
 
-  public void setRelatedUser(User user){
-    this.setColumn(RELATED_GROUP_ID_COLUMN,user);
+  public void setRelatedUser(User user)throws RemoteException{
+    this.setColumn(RELATED_GROUP_ID_COLUMN,user.getUserGroup());
   }
 
   public Group getRelatedGroup(){

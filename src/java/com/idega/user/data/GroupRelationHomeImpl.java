@@ -7,17 +7,16 @@ public class GroupRelationHomeImpl extends com.idega.data.IDOFactory implements 
   return GroupRelation.class;
  }
 
+
  public GroupRelation create() throws javax.ejb.CreateException{
-  return (GroupRelation) super.idoCreate();
+  return (GroupRelation) super.createIDO();
  }
 
- public GroupRelation findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (GroupRelation) super.idoFindByPrimaryKey(id);
- }
 
  public GroupRelation findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (GroupRelation) super.idoFindByPrimaryKey(pk);
+  return (GroupRelation) super.findByPrimaryKeyIDO(pk);
  }
+
 
 
 }

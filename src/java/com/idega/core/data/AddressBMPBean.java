@@ -7,15 +7,17 @@ package com.idega.core.data;
 //import java.util.*;
 
 import java.sql.*;
-
+import java.rmi.RemoteException;
 import com.idega.data.*;
 
+import javax.ejb.*;
 import com.idega.core.user.data.User;
 
 
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.Address {
 
+        private transient AddressTypeHome addressTypeHome;
 
 
 	public AddressBMPBean(){
@@ -189,11 +191,12 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements com.
 	}
 
 
+        public void setPostalCode(PostalCode postalCode){
+		setColumn("postal_code_id",postalCode);
+	}
 
 	public void setPostalCodeID(int postal_code_id){
-
 		setColumn("postal_code_id",postal_code_id);
-
 	}
 
 
@@ -207,12 +210,13 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements com.
 
 
 	public void setAddressTypeID(int address_type_id){
-
           setColumn("ic_address_type_id",address_type_id);
-
 	}
 
 
+	public void setAddressType(AddressType type){
+          setColumn("ic_address_type_id",type);
+	}
 
         public int getAddressTypeID() {
 
@@ -237,12 +241,38 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements com.
 	}
 
 
-
-	public void setCountryId(int country_id){
-
-		setColumn("ic_country_id",country_id);
-
+	public void setCountry(Country country){
+		setColumn("ic_country_id",country);
 	}
 
+	public void setCountryId(int country_id){
+		setColumn("ic_country_id",country_id);
+	}
+
+        public AddressTypeHome getAddressTypeHome()throws RemoteException{
+          if(addressTypeHome==null){
+            addressTypeHome = (AddressTypeHome)IDOLookup.getHome(AddressType.class);
+          }
+          return addressTypeHome;
+        }
+
+        public AddressType ejbHomeGetAddressType1() throws RemoteException{
+          try{
+            return getAddressTypeHome().findAddressType1();
+          }
+          catch(FinderException e){
+            throw new RemoteException(e.getMessage());
+          }
+        }
+
+
+        public AddressType ejbHomeGetAddressType2() throws RemoteException{
+          try{
+            return getAddressTypeHome().findAddressType2();
+          }
+          catch(FinderException e){
+            throw new RemoteException(e.getMessage());
+          }
+        }
 }
 

@@ -7,37 +7,37 @@ public class GroupHomeImpl extends com.idega.data.IDOFactory implements GroupHom
   return Group.class;
  }
 
+
  public Group create() throws javax.ejb.CreateException{
-  return (Group) super.idoCreate();
+  return (Group) super.createIDO();
  }
 
- public Group createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
 
- }
+public java.util.Collection findGroups(java.lang.String[] p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindGroups(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
- public Group findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (Group) super.idoFindByPrimaryKey(id);
- }
+public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupBMPBean)entity).ejbFindAllGroups(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
  public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (Group) super.idoFindByPrimaryKey(pk);
+  return (Group) super.findByPrimaryKeyIDO(pk);
  }
 
- public Group findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
 
- }
+public java.lang.String getGroupType(){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.lang.String theReturn = ((GroupBMPBean)entity).ejbHomeGetGroupType();
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
 
 
 }

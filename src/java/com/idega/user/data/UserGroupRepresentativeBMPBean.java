@@ -14,13 +14,6 @@ import java.sql.SQLException;
 
 public class UserGroupRepresentativeBMPBean extends com.idega.user.data.GroupBMPBean implements com.idega.user.data.UserGroupRepresentative {
 
-  public UserGroupRepresentativeBMPBean() {
-    super();
-  }
-
-  public UserGroupRepresentativeBMPBean(int id) throws SQLException  {
-    super(id);
-  }
 
 
   public String getGroupTypeValue(){
@@ -36,4 +29,8 @@ public class UserGroupRepresentativeBMPBean extends com.idega.user.data.GroupBMP
     return false;
   }
 
+
+  public String ejbHomeGetGroupType(){
+   return this.getGroupTypeValue();
+  }
 }

@@ -6,6 +6,9 @@ import com.idega.core.accesscontrol.data.PermissionGroup;
 import java.util.List;
 import java.sql.*;
 
+import java.util.Collection;
+import javax.ejb.*;
+import java.rmi.RemoteException;
 
 /**
  * Title:        User
@@ -15,7 +18,7 @@ import java.sql.*;
  * @version 1.0
  */
 
-public class UserBMPBean extends com.idega.data.GenericEntity implements com.idega.user.data.User {
+public class UserBMPBean extends com.idega.data.GenericEntity implements User {
 
     private static String sClassName = User.class.getName();
 
@@ -126,12 +129,24 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements com.ide
       return getIntColumnValue(getColumnNameSystemImage());
     }
 
+    public Group getGroup(){
+      return (Group)getColumnValue(_COLUMNNAME_USER_GROUP_ID);
+    }
+
     public int getGroupID(){
       return getIntColumnValue(_COLUMNNAME_USER_GROUP_ID);
     }
 
     public int getPrimaryGroupID(){
       return getIntColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
+    }
+
+    public Group getPrimaryGroup(){
+      return (Group)getColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
+    }
+
+    public Group getUserGroup(){
+      return (Group)getColumnValue(this._COLUMNNAME_USER_GROUP_ID);
     }
 
     public String getName(){
@@ -212,6 +227,10 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements com.ide
       setColumn(_COLUMNNAME_USER_GROUP_ID,icGroupId);
     }
 
+    public void setGroup(Group group){
+      setColumn(_COLUMNNAME_USER_GROUP_ID,group);
+    }
+
     public void setPrimaryGroupID(int icGroupId){
       setColumn(_COLUMNNAME_PRIMARY_GROUP_ID,icGroupId);
     }
@@ -224,4 +243,84 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements com.ide
     /*  Setters end   */
 
 
+    /*  Business methods begin   */
+
+    public void removeAllAddresses()throws IDORemoveRelationshipException{
+       super.idoRemoveFrom(Address.class);
+    }
+
+    public void removeAllEmails()throws IDORemoveRelationshipException{
+        super.idoRemoveFrom(Email.class);
+    }
+
+    public void removeAllPhones()throws IDORemoveRelationshipException{
+       super.idoRemoveFrom(Phone.class);
+    }
+
+    public Collection getAddresses(){
+      try{
+       return super.idoGetRelatedEntities(Address.class);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+        throw new RuntimeException("Error in getAddresses() : "+e.getMessage());
+      }
+    }
+
+    public Collection getEmails() {
+      try{
+        return super.idoGetRelatedEntities(Email.class);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+        throw new RuntimeException("Error in getEmails() : "+e.getMessage());
+      }
+    }
+
+    public Collection getPhones() {
+      try{
+       return super.idoGetRelatedEntities(Phone.class);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+        throw new RuntimeException("Error in getPhones() : "+e.getMessage());
+      }
+    }
+
+    public void addAddress(Address address)throws IDOAddRelationshipException {
+       this.idoAddTo(address);
+    }
+
+    public void addEmail(Email email)throws IDOAddRelationshipException {
+       this.idoAddTo(email);
+    }
+
+    public void addPhone(Phone phone)throws IDOAddRelationshipException {
+       this.idoAddTo(phone);
+    }
+
+    /*  Business methods end   */
+
+
+
+    /*  Finders begin   */
+
+    public Collection ejbFindUsersForUserRepresentativeGroups(Collection groupList)throws FinderException{
+      String sGroupList = IDOUtil.getInstance().convertListToCommaseparatedString(groupList);
+      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+    }
+
+    public Collection ejbFindAllUsers()throws FinderException{
+      return super.idoFindAllIDsBySQL();
+    }
+
+    public Collection ejbFindUsersInPrimaryGroup(Group group)throws FinderException,RemoteException{
+      return super.idoFindAllIDsByColumnBySQL(_COLUMNNAME_PRIMARY_GROUP_ID,group.getPrimaryKey().toString());
+    }
+
+    public Collection ejbFindAllUsersOrderedByFirstName()throws FinderException,RemoteException{
+      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
+    }
+
+    /*  Finders end   */
 }

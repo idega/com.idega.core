@@ -3,7 +3,9 @@ package com.idega.core.data;
 
 
 import java.sql.*;
+import java.util.Collection;
 
+import javax.ejb.FinderException;
 
 
 /**
@@ -95,34 +97,38 @@ public class AddressTypeBMPBean extends com.idega.core.data.GenericTypeBMPBean i
 
 
         public static int getId(String uniqueKey) throws SQLException {
-
             int returner;
-
             AddressType[] addrTypes = (AddressType[]) (((com.idega.core.data.AddressTypeHome)com.idega.data.IDOLookup.getHomeLegacy(AddressType.class)).createLegacy()).findAllByColumn(com.idega.core.data.AddressTypeBMPBean.getColumnNameUniqueName(),uniqueKey);
-
             if (addrTypes.length == 0) {
-
                 AddressType addrType = ((com.idega.core.data.AddressTypeHome)com.idega.data.IDOLookup.getHomeLegacy(AddressType.class)).createLegacy();
-
                   addrType.setUniqueName(uniqueKey);
-
                   addrType.setDisplayName(uniqueKey);
-
                 addrType.insert();
-
                 returner = addrType.getID();
-
             }else {
-
               returner = addrTypes[addrTypes.length-1].getID();
-
             }
-
-
-
             return returner;
-
         }
+
+
+        public Integer ejbFindAddressType1()throws FinderException{
+            Collection coll = super.idoFindAllIDsByColumnBySQL(getColumnNameUniqueName(),ADDRESS_1);
+            if(!coll.isEmpty())
+              return (Integer)coll.iterator().next();
+            else
+              throw new FinderException("AddressType1 does not exist");
+        }
+
+        public Integer ejbFindAddressType2()throws FinderException{
+            Collection coll = super.idoFindAllIDsByColumnBySQL(getColumnNameUniqueName(),ADDRESS_2);
+            if(!coll.isEmpty())
+              return (Integer)coll.iterator().next();
+            else
+              throw new FinderException("AddressType2 does not exist");
+        }
+
+
 
 }
 

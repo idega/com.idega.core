@@ -7,6 +7,9 @@ import com.idega.core.business.EmailDataView;
 import com.idega.data.*;
 
 import java.sql.SQLException;
+import javax.ejb.FinderException;
+import java.rmi.RemoteException;
+import java.util.Collection;
 
 import com.idega.core.user.data.User;
 
@@ -107,5 +110,28 @@ public class EmailBMPBean extends com.idega.data.GenericEntity implements com.id
   }
 
 
+  public Collection ejbFindEmailsForUser(com.idega.user.data.User user)throws FinderException,RemoteException{
+    int userId = ((Integer)user.getPrimaryKey()).intValue();
+    return ejbFindEmailsForUser(userId);
+  }
+
+
+  public Collection ejbFindEmailsForUser(int iUserId)throws FinderException{
+    StringBuffer sql = new StringBuffer("select ie.* ");
+    sql.append("from ic_email ie,ic_user_email iue ");
+    sql.append("where ie.ic_email_id = iue.ic_email_address ");
+    sql.append(" and iue.ic_user_id = ");
+    sql.append(iUserId);
+    return super.idoFindIDsBySQL(sql.toString());
+  }
+
+
+  public Integer ejbFindEmailByAddress(String address)throws FinderException{
+    Collection coll = super.idoFindAllIDsByColumnOrderedBySQL(this.getColumnNameAddress(),address);
+    if(!coll.isEmpty())
+      return (Integer)coll.iterator().next();
+    else
+      throw new FinderException("No email found");
+  }
 
 }

@@ -16,12 +16,15 @@ public class GroupRelationTypeBMPBean extends GenericEntity implements GroupRela
 
   private static String TABLE_NAME="IC_GROUP_RELATION_TYPE";
   private static String TYPE_COLUMN="GROUP_RELATION_TYPE";
+  private static String DESCRIPTION_COLUMN="GROUP_RELATION_TYPE_DESCR";
 
 
   public void initializeAttributes() {
-    this.addAttribute(getIDColumnName());
-    this.addAttribute(TYPE_COLUMN,"Type",true,true,String.class);
+    //this.addAttribute(getIDColumnName());
+    this.addAttribute(TYPE_COLUMN,"Type",String.class);
+    this.addAttribute(DESCRIPTION_COLUMN,"Type",String.class,1000);
   }
+
   public String getEntityName() {
     return TABLE_NAME;
   }
@@ -33,4 +36,22 @@ public class GroupRelationTypeBMPBean extends GenericEntity implements GroupRela
   public String getType(){
     return getStringColumnValue(TYPE_COLUMN);
   }
+
+  public void setDescription(String desc){
+    setColumn(DESCRIPTION_COLUMN,desc);
+  }
+
+  public String getDescription(){
+    return getStringColumnValue(DESCRIPTION_COLUMN);
+  }
+
+  public String getIDColumnName(){
+    return TYPE_COLUMN;
+  }
+
+  public Class getPrimaryKeyClass(){
+    return String.class;
+  }
+
+
 }
