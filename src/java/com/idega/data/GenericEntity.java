@@ -2887,7 +2887,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
 
-  Collection idoFindIDsBySQL(String sqlQuery)throws FinderException{
+  protected Collection idoFindIDsBySQL(String sqlQuery)throws FinderException{
     Collection pkColl=null;
     Class interfaceClass = this.getInterfaceClass();
     boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -2903,7 +2903,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return pkColl;
   }
 
-  private Collection idoFindIDsBySQLIgnoringCache(String sqlQuery)throws FinderException{
+  protected Collection idoFindIDsBySQLIgnoringCache(String sqlQuery)throws FinderException{
 		Connection conn= null;
 		Statement Stmt= null;
 		int length;

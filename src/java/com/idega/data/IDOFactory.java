@@ -119,7 +119,7 @@ public abstract class IDOFactory implements IDOHome{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+  protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
     Collection theReturn = new Vector();
     Iterator iter = collectionOfPrimaryKeys.iterator();
     while (iter.hasNext()) {
