@@ -89,6 +89,8 @@ public class ResultOutput extends PresentationObjectContainer {
                     moduleObject = (TextInput) moduleObjects.get(i);
                 } else if (moduleObjects.get(i) instanceof IntegerInput) {
                     moduleObject = (IntegerInput) moduleObjects.get(i);
+                } else if (moduleObjects.get(i) instanceof DoubleInput) {
+                    moduleObject = (DoubleInput) moduleObjects.get(i);
                 } else if (moduleObjects.get(i) instanceof FloatInput) {
                     moduleObject = (FloatInput) moduleObjects.get(i);
                 } else if (moduleObjects.get(i) instanceof ResultOutput) {
@@ -172,6 +174,15 @@ public class ResultOutput extends PresentationObjectContainer {
                 extraText = "";
             }
             extraTextVector.add(extraText);
+        } else if (mo instanceof DoubleInput) {
+            DoubleInput temp = (DoubleInput) mo;
+            temp.setOnChange(functionName + "(this.form)");
+            moduleObjects.add(temp);
+            operatorVector.add(operatori);
+            if (extraText == null) {
+                extraText = "";
+            }
+            extraTextVector.add(extraText);
         } else if (mo instanceof FloatInput) {
             FloatInput temp = (FloatInput) mo;
             temp.setOnChange(functionName + "(this.form)");
@@ -195,6 +206,9 @@ public class ResultOutput extends PresentationObjectContainer {
             } else if (list.get(a) instanceof IntegerInput) {
                 IntegerInput i = (IntegerInput) list.get(a);
                 i.setOnChange(functionName + "(this.form)");
+            } else if (list.get(a) instanceof DoubleInput) {
+                DoubleInput f = (DoubleInput) list.get(a);
+                f.setOnChange(functionName + "(this.form)");
             } else if (list.get(a) instanceof FloatInput) {
                 FloatInput f = (FloatInput) list.get(a);
                 f.setOnChange(functionName + "(this.form)");
