@@ -59,6 +59,13 @@ public class GenericSelect extends InterfaceObject {
 	public void setToSubmit() {
 		setToSubmit(true);
 	}
+	
+	/**
+	 * Returns whether this <code>GenericSelect<code> has any <code>SelectOption</code> objects added.
+	 */
+	public boolean isEmpty() {
+		return theElements.isEmpty();
+	}
 
 	/**
 	 * Sets the select to submit automatically.
