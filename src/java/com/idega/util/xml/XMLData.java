@@ -3,7 +3,6 @@ package com.idega.util.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
@@ -105,20 +104,14 @@ public class XMLData {
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
     xmlFile.setName(getName());
-    
     OutputStream output = xmlFile.getFileValueForWrite();
-    OutputStreamWriter streamWriter = new OutputStreamWriter(output);
-    
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
     xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
     XMLDocument document = getDocument();
-    xmlOutput.output(document, streamWriter);
-    output.close();
-    //FileWriter writer = new FileWriter("thomasTest.xml");
-    xmlOutput.output(document, System.out);
+    xmlOutput.output(document, output);
     try {
       xmlFile.store();
       if (xmlFileId < 0) {
@@ -129,6 +122,7 @@ public class XMLData {
           xmlFile.store();
         }
       }
+      output.close();
       return  xmlFile;
     }
     catch (Exception ex)  {
