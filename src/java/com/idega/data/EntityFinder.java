@@ -223,8 +223,10 @@ public class EntityFinder{
 				GenericEntity tempobj=null;
 				try{
 					tempobj = (GenericEntity)Class.forName(returningEntity.getClass().getName()).newInstance();
-				  if(debug)
-					System.err.println("Entity "+returningEntity.getEntityName()+ " Id Columnname "+returningEntity.getIDColumnName()) ;
+				  if(debug){
+					System.err.println("Classname " +returningEntity.getClass().getName());
+					System.err.println("Entity "+returningEntity.getEntityName()+ " IdColumnname "+returningEntity.getIDColumnName()) ;
+				  }
 					int id = RS.getInt(returningEntity.getIDColumnName());
 					tempobj.findByPrimaryKey(id);
 				}

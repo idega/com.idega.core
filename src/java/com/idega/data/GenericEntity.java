@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.67 2001/11/12 18:40:07 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.68 2001/11/21 17:27:49 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1384,33 +1384,36 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			String[] columnNames = getColumnNames();
 			for (int i = 0; i < columnNames.length; i++){
 				try{
-                                  if (RS.getString(columnNames[i]) != null){
-				  	fillColumn(columnNames[i],RS);
-			          }
-                                }
-                                catch(SQLException ex){
-                                  //NOCATH
-                                  try{
-                                    //if (RS.getString(columnNames[i].toUpperCase()) != null){
-				  	fillColumn(columnNames[i],RS);
-			            //}
-                                  }
-                                  catch(SQLException exe){
-                                    try{
-                                      //if (RS.getString(columnNames[i].toLowerCase()) != null){
-				    	  fillColumn(columnNames[i],RS);
-			                //}
-                                      }
-                                    catch(SQLException exep){
-                                         System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
-                                          //exep.printStackTrace(System.err);
-                                    }
-                                  }
+						if (RS.getString(columnNames[i]) != null){
+				  	  fillColumn(columnNames[i],RS);
+						}
+          }
+          catch(Exception ex){
+          /*//NOCATH
+						try{
+						//if (RS.getString(columnNames[i].toUpperCase()) != null){
+							fillColumn(columnNames[i],RS);
+						//}
+						}
+            catch(SQLException exe){
+							try{
+								//if (RS.getString(columnNames[i].toLowerCase()) != null){
+							fillColumn(columnNames[i],RS);
+							//}
+							}
+							catch(SQLException exep){
 
-                                }
+									 System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
+										//exep.printStackTrace(System.err);
+							}
+					  }*/
+						System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+ex.getMessage());
+						if(!(ex instanceof NullPointerException))
+						  ex.printStackTrace(System.err);
+					}
 
 			}
-                        if( RS != null ) RS.close();
+				if( RS != null ) RS.close();
 
 		}
 		finally{
