@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.59 2001/10/23 17:22:17 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.60 2001/10/24 15:33:28 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,51 +9,59 @@
  */
 package com.idega.data;
 
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-import com.idega.util.database.*;
-import com.idega.util.*;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.Enumeration;
+import java.util.List;
+import com.idega.util.database.ConnectionBroker;
+import com.idega.util.Gender;
+import com.idega.util.StringHandler;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.4
-*@modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
-*/
-public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEntity,javax.ejb.EntityBean {
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.4
+ * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
+ */
+public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEntity, javax.ejb.EntityBean {
+  public static final String MANY_TO_ONE = "many-to-one";
+  public static final String ONE_TO_MANY = "one-to-many";
+  public static final String MANY_TO_MANY = "many-to-many";
+  public static final String ONE_TO_ONE = "one-to-one";
 
-  private String dataStoreType;
-  public Hashtable columns=new Hashtable();
-  private static Hashtable theAttributes=new Hashtable();
-  private static Hashtable allStaticClasses=new Hashtable();
+  private String _dataStoreType;
+  private Hashtable _columns = new Hashtable();
+  private static Hashtable _theAttributes = new Hashtable();
+  private static Hashtable _allStaticClasses = new Hashtable();
 
-  private Hashtable theMetaDataAttributes;
-  private Vector insertMetaDataVector;
-  private Vector updateMetaDataVector;
-  private Vector deleteMetaDataVector;
-  private Hashtable theMetaDataIds;
-  private boolean hasMetaDataRelationship=false;
-  private boolean metaDataHasChanged = false;
+  private Hashtable _theMetaDataAttributes;
+  private Vector _insertMetaDataVector;
+  private Vector _updateMetaDataVector;
+  private Vector _deleteMetaDataVector;
+  private Hashtable _theMetaDataIds;
+  private boolean _hasMetaDataRelationship = false;
+  private boolean _metaDataHasChanged = false;
 
-  private String dataSource;
-  private static String defaultString="default";
-  private String cachedColumnNameList;
-  private String lobColumnName;
+  private String _dataSource;
+  private static String _defaultString = "default";
+  private String _cachedColumnNameList;
+  private String _lobColumnName;
 
-  private int state;
+  private int _state;
 
-  protected static int STATE_NEW=0;
-  protected static int STATE_IN_SYNCH_WITH_DATASTORE=1;
-  protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE=2;
-  protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE=3;
-  protected static int STATE_DELETED=4;
-
+  protected static int STATE_NEW = 0;
+  protected static int STATE_IN_SYNCH_WITH_DATASTORE = 1;
+  protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE = 2;
+  protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE = 3;
+  protected static int STATE_DELETED = 4;
 
   public GenericEntity() {
-          this(defaultString);
+          this(_defaultString);
   }
 
   public GenericEntity(String dataSource) {
@@ -63,7 +71,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   }
 
   public GenericEntity(int id) throws SQLException {
-          this(id,defaultString);
+          this(id,_defaultString);
   }
 
   public GenericEntity(int id,String dataSource) throws SQLException {
@@ -77,15 +85,15 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
   private void firstLoadInMemoryCheck() {
-    Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
+    Vector theReturn = (Vector)_theAttributes.get(this.getClass().getName());
     if (theReturn == null) {
       theReturn = new Vector();
-      theAttributes.put(this.getClass().getName(),theReturn);
+      _theAttributes.put(this.getClass().getName(),theReturn);
 
       //First store a static instance of this class
       String className = this.getClass().getName();
       try {
-        this.allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+        _allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
       }
       catch(Exception ex) {
         ex.printStackTrace();
@@ -132,7 +140,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   protected Vector getAttributes() {
     //ties the attribute vector to the subclass of GenericEntity because
     //the theAttributes variable is static.
-    Vector theReturn = (Vector)theAttributes.get(this.getClass().getName());
+    Vector theReturn = (Vector)_theAttributes.get(this.getClass().getName());
 
     /*if (theReturn == null) {
       theReturn = new Vector();
@@ -381,8 +389,8 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 	protected void setValue(String columnName,Object columnValue){
 		if (columnValue!=null){
-			columns.put(columnName.toLowerCase(),columnValue);
-                        if((state==STATE_NEW)||(state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+			_columns.put(columnName.toLowerCase(),columnValue);
+                        if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
                           setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
                         }
                         else{
@@ -392,11 +400,11 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 	}
 
 	protected Object getValue(String columnName){
-		return columns.get(columnName.toLowerCase());
+		return _columns.get(columnName.toLowerCase());
 	}
 
         public void removeFromColumn(String columnName){
-          columns.remove(columnName.toLowerCase());
+          _columns.remove(columnName.toLowerCase());
         }
 
 	public void setColumn(String columnName,Object columnValue){
@@ -761,11 +769,11 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
 	public void setDatasource(String dataSource){
-		this.dataSource=dataSource;
+		_dataSource=dataSource;
 	}
 
 	public String getDatasource(){
-		return dataSource;
+		return _dataSource;
 	}
 
 	public String getIDColumnName(){
@@ -784,7 +792,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 	protected String getAllColumnsAndValues(){
 		String returnString="";
-		for (Enumeration e = columns.keys(); e.hasMoreElements();){
+		for (Enumeration e = _columns.keys(); e.hasMoreElements();){
 		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 			String ColumnName = (String)e.nextElement();
 			if (isValidColumnForUpdateList(ColumnName)){
@@ -869,7 +877,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 		Vector theColumns = new Vector();
 
-		for (Enumeration e = columns.keys(); e.hasMoreElements();){
+		for (Enumeration e = _columns.keys(); e.hasMoreElements();){
 		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 
 			String tempName = (String)e.nextElement();
@@ -933,7 +941,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
   protected String getCommaDelimitedColumnNames(){
-    String newCachedColumnNameList = getStaticInstance().cachedColumnNameList;
+    String newCachedColumnNameList = getStaticInstance()._cachedColumnNameList;
     if(newCachedColumnNameList==null){
       String returnString = "";
       String[] names = getColumnNames();
@@ -993,7 +1001,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 			return false;
 		}
 */
-                if (columns.get(columnName.toLowerCase())== null){
+                if (_columns.get(columnName.toLowerCase())== null){
                   return true;
                 }
                 else{
@@ -2059,7 +2067,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
         }
 
         public void empty(){
-          this.columns.clear();
+          _columns.clear();
         }
 
 
@@ -2068,7 +2076,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
         }
 
         protected boolean hasLobColumn()throws Exception{
-          String lobColumnName = this.getStaticInstance().lobColumnName;
+          String lobColumnName = this.getStaticInstance()._lobColumnName;
           if(lobColumnName==null){
             return false;
           }
@@ -2077,29 +2085,29 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
         private void setLobColumnName(){
-          if( this.getStaticInstance().lobColumnName == null ) {
+          if( this.getStaticInstance()._lobColumnName == null ) {
             String[] columnNames = this.getColumnNames();
             for (int i = 0; i < columnNames.length; i++) {
               if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
-                this.getStaticInstance().lobColumnName = columnNames[i];
+                this.getStaticInstance()._lobColumnName = columnNames[i];
               }
             }
           }
         }
 
         public String getLobColumnName(){
-          return  this.getStaticInstance().lobColumnName;
+          return  this.getStaticInstance()._lobColumnName;
         }
 
         public static GenericEntity getStaticInstance(String entityClassName){
-            if (allStaticClasses==null){
-              allStaticClasses=new Hashtable();
+            if (_allStaticClasses==null){
+              _allStaticClasses=new Hashtable();
             }
-            GenericEntity theReturn = (GenericEntity)allStaticClasses.get(entityClassName);
+            GenericEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClassName);
             if(theReturn==null){
               try{
                 theReturn = (GenericEntity)Class.forName(entityClassName).newInstance();
-                allStaticClasses.put(entityClassName,theReturn);
+                _allStaticClasses.put(entityClassName,theReturn);
               }
               catch(Exception ex){
                 ex.printStackTrace();
@@ -2158,11 +2166,11 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
       }
 
       protected int getEntityState(){
-        return this.state;
+        return _state;
       }
 
       protected void setEntityState(int state){
-        this.state=state;
+        _state=state;
       }
 
       public boolean isInSynchWithDatastore(){
@@ -2197,11 +2205,11 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
   public void addMetaDataRelationship(){
     addManyToManyRelationShip(MetaData.class);
-    this.getStaticInstance(this.getClass()).hasMetaDataRelationship=true;
+    this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
   }
 
   public boolean hasMetaDataRelationship(){
-   return this.getStaticInstance(this.getClass()).hasMetaDataRelationship;
+   return this.getStaticInstance(this.getClass())._hasMetaDataRelationship;
   }
 
 
@@ -2209,8 +2217,8 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   private void getMetaData(){
     Connection conn= null;
     Statement Stmt= null;
-    theMetaDataAttributes = new Hashtable();
-    theMetaDataIds = new Hashtable();
+    _theMetaDataAttributes = new Hashtable();
+    _theMetaDataIds = new Hashtable();
 
     try{
       conn = getConnection(getDatasource());
@@ -2246,8 +2254,8 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
       while(RS.next()){
-        theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
-        theMetaDataIds.put(RS.getString("metadata_name"),new Integer(RS.getInt("ic_metadata_id")));
+        _theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
+        _theMetaDataIds.put(RS.getString("metadata_name"),new Integer(RS.getInt("ic_metadata_id")));
       }
 
       RS.close();
@@ -2276,8 +2284,8 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   }
 
   public String getMetaData(String metaDataKey){
-    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
-    return (String) theMetaDataAttributes.get(metaDataKey);
+    if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+    return (String) _theMetaDataAttributes.get(metaDataKey);
   }
 
   public void setMetaDataAttributes(Hashtable metaDataAttribs){
@@ -2293,34 +2301,34 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   }
 
   public void addMetaData(String metaDataKey, String metaDataValue){
-    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+    if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
 
     if( metaDataValue!=null ){
-      Object obj = theMetaDataAttributes.put(metaDataKey,metaDataValue);
+      Object obj = _theMetaDataAttributes.put(metaDataKey,metaDataValue);
       metaDataHasChanged(true);
 
       if( obj == null ){//is new
 
-        if( insertMetaDataVector == null ){
-          insertMetaDataVector = new Vector();
+        if( _insertMetaDataVector == null ){
+          _insertMetaDataVector = new Vector();
         }
 
-        insertMetaDataVector.add(metaDataKey);
+        _insertMetaDataVector.add(metaDataKey);
 
       }
       else{//is old
-        if( updateMetaDataVector == null ){
-          updateMetaDataVector = new Vector();
+        if( _updateMetaDataVector == null ){
+          _updateMetaDataVector = new Vector();
         }
 
 
-      if( insertMetaDataVector!=null ){
-        if(insertMetaDataVector.indexOf(metaDataKey) == -1) {//is old and not in the insertlist
-          updateMetaDataVector.add(metaDataKey);
+      if( _insertMetaDataVector!=null ){
+        if(_insertMetaDataVector.indexOf(metaDataKey) == -1) {//is old and not in the insertlist
+          _updateMetaDataVector.add(metaDataKey);
         }
       }
       else{
-        updateMetaDataVector.add(metaDataKey);
+        _updateMetaDataVector.add(metaDataKey);
       }
 
       }
@@ -2331,16 +2339,16 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   * return true if the metadata to delete already exists
   */
   public boolean removeMetaData(String metaDataKey){
-    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+    if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
 
-    if( deleteMetaDataVector == null ){
-      deleteMetaDataVector = new Vector();
+    if( _deleteMetaDataVector == null ){
+      _deleteMetaDataVector = new Vector();
     }
 
-    if( theMetaDataAttributes.get(metaDataKey) != null ) {
-      deleteMetaDataVector.add(metaDataKey);
-      if( insertMetaDataVector != null ) insertMetaDataVector.remove(metaDataKey);
-      if( updateMetaDataVector != null ) updateMetaDataVector.remove(metaDataKey);
+    if( _theMetaDataAttributes.get(metaDataKey) != null ) {
+      _deleteMetaDataVector.add(metaDataKey);
+      if( _insertMetaDataVector != null ) _insertMetaDataVector.remove(metaDataKey);
+      if( _updateMetaDataVector != null ) _updateMetaDataVector.remove(metaDataKey);
       metaDataHasChanged(true);
 
       return true;
@@ -2349,31 +2357,31 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   }
 
   public Hashtable getMetaDataAttributes(){
-    return theMetaDataAttributes;
+    return _theMetaDataAttributes;
   }
 
   public Hashtable getMetaDataIds(){
-    return theMetaDataIds;
+    return _theMetaDataIds;
   }
 
   public Vector getMetaDataUpdateVector(){
-    return updateMetaDataVector;
+    return _updateMetaDataVector;
   }
 
   public Vector getMetaDataInsertVector(){
-    return insertMetaDataVector;
+    return _insertMetaDataVector;
   }
 
   public Vector getMetaDataDeleteVector(){
-    return deleteMetaDataVector;
+    return _deleteMetaDataVector;
   }
 
   public boolean metaDataHasChanged(){
-    return metaDataHasChanged;
+    return _metaDataHasChanged;
   }
 
   public void metaDataHasChanged(boolean metaDataHasChanged){
-    this.metaDataHasChanged = metaDataHasChanged;
+    _metaDataHasChanged = metaDataHasChanged;
   }
 
   /**
@@ -2421,10 +2429,10 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
   public void store(){
     try{
-      if((state==STATE_NEW)||(state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+      if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
         insert();
       }
-      else if(state==STATE_NOT_IN_SYNCH_WITH_DATASTORE){
+      else if(_state==STATE_NOT_IN_SYNCH_WITH_DATASTORE){
         update();
       }
     }
@@ -2439,8 +2447,8 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
   public void ejbLoad(){}
 
   public void ejbPassivate(){
-    if(columns!=null){
-      columns.clear();
+    if(_columns!=null){
+      _columns.clear();
     }
   }
 
