@@ -54,15 +54,15 @@ public class SendMail {
 
 
 
-		if((cc!=null) || !(cc.equals(""))){
+		if((cc!=null) && !("".equals(cc))){
 
 		message.addRecipients(Message.RecipientType.CC,InternetAddress.parse(cc));
 
 		}
 
-		if((bcc!=null) || !(bcc.equals(""))){
+		if((bcc!=null) && !("".equals(bcc))){
 
-		message.addRecipients(Message.RecipientType.BCC,InternetAddress.parse(bcc));
+		  message.addRecipients(Message.RecipientType.BCC,InternetAddress.parse(bcc));
 
 		}
 
