@@ -469,8 +469,8 @@ public class IWBundle implements java.lang.Comparable {
       propertyList.store();
       Enumeration enum = this.resourceBundles.elements();
       while (enum.hasMoreElements()) {
-	IWResourceBundle item = (IWResourceBundle)enum.nextElement();
-	item.storeState();
+        IWResourceBundle item = (IWResourceBundle)enum.nextElement();
+        item.storeState();
       }
       try{
         //System.out.println("localizableStringsFile:"+localizableStringsFile);
@@ -486,7 +486,7 @@ public class IWBundle implements java.lang.Comparable {
         getLocalizableStringsProperties().store(new FileOutputStream(getLocalizableStringsFile()),null);
       }
       catch(IOException ex){
-	ex.printStackTrace();
+	    ex.printStackTrace();
       }
     }
 
