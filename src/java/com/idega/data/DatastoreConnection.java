@@ -501,12 +501,9 @@ public class DatastoreConnection implements Connection{
 
 
 
-
-
-
-
-
-
-
+/** @todo implement this. required for jdk1.4
+ *
+ */
+    public void createStatement(int iOne, int iTwo, int iThree){}
 
 }
