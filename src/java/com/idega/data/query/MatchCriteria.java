@@ -1,5 +1,10 @@
 package com.idega.data.query;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import com.idega.data.DatastoreInterface;
+import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
 
 /**
@@ -17,6 +22,7 @@ public class MatchCriteria extends Criteria {
     private Column column;
     private String value;
     private String matchType;
+		private DatastoreInterface dataStore;
 
     public MatchCriteria(Column column, String matchType, String value) {
         this.column = column;
@@ -42,6 +48,36 @@ public class MatchCriteria extends Criteria {
         this.matchType = matchType;
     }
 
+    public MatchCriteria(Column column, String matchType, Object value) {
+    	this.column = column;
+    	this.value = value.toString();
+    	this.matchType = matchType;
+    }
+
+    public MatchCriteria(Column column, String matchType, Date value) {
+    	this.column = column;
+    	this.value = getDatastore().format(value);
+    	this.matchType = matchType;
+    }
+
+    public MatchCriteria(Column column, String matchType, Timestamp value) {
+    	this.column = column;
+    	this.value = getDatastore().format(value);
+    	this.matchType = matchType;
+    }
+
+    public MatchCriteria(Column column, String matchType, IDOEntity value) {
+    	this.column = column;
+    	Object pk = value.getPrimaryKey();
+    	if (pk instanceof Number) {
+    		this.value = pk.toString();
+    	}
+    	else {
+    		this.value = quote(pk.toString());
+    	}
+    	this.matchType = matchType;
+    }
+
     public MatchCriteria(Table table, String columnname, String matchType, boolean value) {
         this(table.getColumn(columnname), matchType, value);
     }
@@ -58,6 +94,22 @@ public class MatchCriteria extends Criteria {
         this(table.getColumn(columnname), matchType, value);
     }
 
+    public MatchCriteria(Table table, String columnname, String matchType, Object value) {
+    	this(table.getColumn(columnname), matchType, value);
+    }
+
+    public MatchCriteria(Table table, String columnname, String matchType, Date value) {
+    	this(table.getColumn(columnname), matchType, value);
+    }
+
+    public MatchCriteria(Table table, String columnname, String matchType, Timestamp value) {
+    	this(table.getColumn(columnname), matchType, value);
+    }
+
+    public MatchCriteria(Table table, String columnname, String matchType, IDOEntity value) {
+    	this(table.getColumn(columnname), matchType, value);
+    }
+
     public Column getColumn() {
         return column;
     }
@@ -70,4 +122,9 @@ public class MatchCriteria extends Criteria {
             .print(value);
     }
 
+    protected DatastoreInterface getDatastore(){
+    	if(this.dataStore==null)
+    		this.dataStore = DatastoreInterface.getInstance();
+    	return this.dataStore;
+    }
 }
