@@ -33,7 +33,6 @@ import com.idega.util.Timer;
 public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	private SelectQuery _sqlQuery;
-	private Collection _primaryKeyList;
 	private GenericEntity _entity;
 	private Class allowedPrimaryKeyClass; // varaable set in the initialize method where it is fetched ones from the variable _entity for optimizing reasons
 	private String pkColumnName;
@@ -84,22 +83,20 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize) throws IDOFinderException {
 		_sqlQuery = sqlQuery;
-		_primaryKeyList = null;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
 		_prefetchSize = prefetchSize;
-		initialize();
+		initialize(null);
     }
 	
 	public IDOPrimaryKeyList(Collection primaryKeyList, GenericEntity entity, int prefetchSize) throws IDOFinderException {
 		_sqlQuery = null;
-		_primaryKeyList = primaryKeyList;
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
 		_prefetchSize = prefetchSize;
-		initialize();
+		initialize(primaryKeyList);
     }
 
 	private void loadInBackground(){
@@ -132,7 +129,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	}
 	
 	
-	private void initialize() throws IDOFinderException {
+	private void initialize(Collection primaryKeyCollection) throws IDOFinderException {
 		Timer timer = new Timer();
 		timer.start();
 		IDOPrimaryKeyDefinition pkDefinition = _entity.getEntityDefinition().getPrimaryKeyDefinition();
@@ -145,9 +142,9 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		
 		sqlQueryTable = new Table(_entity);
 		
-		if(_primaryKeyList != null){
-			System.out.println("[IDOPrimaryKeyList - Initialize - primary key list added]: length"+ _primaryKeyList.size());
-			super.addAll(_primaryKeyList);
+		if(primaryKeyCollection != null){
+			System.out.println("[IDOPrimaryKeyList - Initialize - primary key list added]: length"+ primaryKeyCollection.size());
+			super.addAll(primaryKeyCollection);
 			_entities = new Vector();
 			_entities.setSize(size());
 			_tracker = new LoadTracker(size(),fetchSize);
@@ -309,18 +306,23 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		    int total = 0;
 		    int no = 0;
 		    if(_sqlQuery==null){ // if there is no SQL query the primaryKeys must be added by searching  the pk list for the right index
-				while(RS.next())
+		    		while(RS.next())
 				{
 					Object pk = _entity.getPrimaryKeyFromResultSet(RS);
 					if (pk != null)
 					{
 						try {
 							IDOEntity bean = _entity.prefetchBeanFromResultSet(pk, RS,_entity.getDatasource());
-							int index = super.indexOf(pk);
-							while (index >= 0) {
-								_entities.set(index,bean);
-								_tracker.setAsLoaded(index);
-								if(!pk.equals(this.get(index))){
+							int index = listOfPrimaryKeys.indexOf(pk);
+							if(index < 0){
+								System.err.println("[IDOPrimaryKeyList]: LoadSubset, entity with primary key "+pk+" not found in pkList, indexOf(pk) returns "+index);
+							}
+							else 
+//							while (index >= 0) 
+								{
+								_entities.set(firstIndex+index,bean);
+								_tracker.setAsLoaded(firstIndex+index);
+								if(!pk.equals(this.get(firstIndex+index))){
 		//							System.err.println("[IDOPrimaryKeyList - WARNING]: "+ subsetQuery);
 									no++;
 									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(index)+" at that index");
@@ -329,7 +331,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //								else {
 //									System.err.println("[IDOPrimaryKeyList]: At index "+index+" loadSubset set entity with primary key "+pk);
 //								}
-								index = super.indexOf(pk,index+1);
+//								index = listOfPrimaryKeys.indexOf(pk,index+1);
 							}
 						} catch (FinderException e) {
 							//The row must have been deleted from database
@@ -695,22 +697,28 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   	}
   }
   
-  private boolean addAllPrimaryKeys(Collection pks){
-  	return super.addAll(pks);
-  }
   
+  
+  	private boolean merge(IDOPrimaryKeyList l){
+  		System.out.println("[IDOPrimaryKeyList - Merge - primary key list added]: length"+ l.size());
+  		int sizeBefore = this.size();
+  		super.addAll(l);
+  		this._entities.setSize(this.size());
+		
+		IDOPrimaryKeyList.copy(this._entities,l._entities,sizeBefore);
+		this._tracker.add(l._tracker);
+		return true;
+  	}
+  	
 	static boolean areMergeable(IDOPrimaryKeyList l1, IDOPrimaryKeyList l2){
 		return l1._entity.getClass() == l2._entity.getClass();
 	}
 	
 	static IDOPrimaryKeyList merge(IDOPrimaryKeyList l1, IDOPrimaryKeyList l2) throws IDOFinderException{
 		IDOPrimaryKeyList l = new IDOPrimaryKeyList(l1,l1._entity,((l1._prefetchSize+l2._prefetchSize)/2));
-		
-		l.addAllPrimaryKeys(l2);
-		l._entities.setSize(l1.size()+l2.size());
 		Collections.copy(l._entities,l1._entities);
-		IDOPrimaryKeyList.copy(l._entities,l2._entities,l1._entities.size());
-		l._tracker.add(l2._tracker);
+		l._tracker = (LoadTracker)l1._tracker.clone();
+		l.merge(l2);
 		
 		return l;
 	}
@@ -751,7 +759,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
     }
 
 
-	public class LoadTracker {
+	public class LoadTracker implements Cloneable {
 //		int initialCapacity;
 		private int _subsetMinLength = 100;
 		private IntervalComparator _comparator = new IntervalComparator();
@@ -764,7 +772,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		public static final int TO_INDEX_IN_ARRAY = 1;
 		private int _size;
 		
-
 
 		public LoadTracker(int size, int subsetMinLength){
 		    this._size = size;
@@ -780,6 +787,21 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			}
 			_size += tracker._size;
 			return true;
+		}
+		
+		public Object clone(){
+			LoadTracker obj = null;
+				
+			try {
+				obj= (LoadTracker)super.clone();
+				obj._loadedSubSets = (Vector)_loadedSubSets.clone();
+				obj._comparator = _comparator;
+				obj._subsetMinLength = _subsetMinLength;
+				obj._size = _size;
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			return obj;
 		}
 
 		private void debugLoadedSubSets(){
