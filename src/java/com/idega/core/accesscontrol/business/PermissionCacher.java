@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.business;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.core.accesscontrol.data.*;
+import com.idega.core.data.ICObject;
 import com.idega.core.business.ICJspHandler;
 import com.idega.presentation.Page;
 import com.idega.data.EntityFinder;
@@ -93,9 +94,9 @@ public class PermissionCacher {
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE)){
         identifier = obj.getBundleIdentifier();
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_PAGE_INSTANCE)){
-        //identifier = ((Page)obj).getIBPageId();
+        identifier = Integer.toString(((Page)obj).getPageID());
         //temp
-        identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
+        //identifier = com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
     } else if(permissionMapKey.equals(APPLICATION_ADDRESS_PERMISSIONMAP_JSP_PAGE)){
         identifier = Integer.toString(ICJspHandler.getJspPageInstanceID(iwc));
     }
@@ -135,6 +136,50 @@ public class PermissionCacher {
       return null;
     }
   }
+
+
+  public static Boolean hasPermission(ICObject obj, IWContext iwc, String permissionKey, List groups) throws SQLException {
+    String permissionMapKey = APPLICATION_ADDRESS_PERMISSIONMAP_OBJECT;
+    //
+    String identifier = Integer.toString(obj.getID());
+
+    if(identifier != null){
+      PermissionMap permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
+      if(permissionMap == null){
+          updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
+          permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
+      }
+
+      List permissions = permissionMap.get(identifier,permissionKey,groups);
+
+
+      if(permissions == null){
+        updatePermissions(permissionMapKey,identifier, permissionKey, iwc);
+        permissions = permissionMap.get(Integer.toString(obj.getID()),permissionKey,groups);
+      }
+
+      Boolean trueOrNull = null;
+      if (permissions != null){
+        Iterator iter = permissions.iterator();
+        while (iter.hasNext()) {
+          Boolean item = (Boolean)iter.next();
+          if (item != null){
+            if (item.equals(Boolean.TRUE)){
+              trueOrNull = Boolean.TRUE;
+            }else{
+              return Boolean.FALSE;
+            }
+          }
+        }
+      }
+      return trueOrNull;
+    } else {
+      return null;
+    }
+  }
+
+
+
 
   private static void updatePermissions(String permissionMapKey, String identifier, String permissionKey, IWContext iwc) throws SQLException{
     PermissionMap permissionMap = (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
