@@ -972,4 +972,16 @@ public class IDOQuery {
 		this.append(IS_NULL);
 		return this;
 	}
+	
+	public void setToCount() {
+		if (_buffer != null) {
+			int index = _buffer.indexOf(" from ");
+			if (index < 0) {
+				index = _buffer.indexOf(" FROM ");
+			}
+			if (index != -1) {
+				_buffer.replace(0, index, this.SELECT_COUNT);
+			}
+		}
+	}
 }
