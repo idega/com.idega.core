@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.4 2005/01/19 23:53:31 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.5 2005/01/20 00:18:12 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,7 @@ import com.idega.core.search.business.SearchQuery;
 import com.idega.core.search.business.SearchResult;
 import com.idega.core.search.data.AdvancedSearchQuery;
 import com.idega.core.search.data.SimpleSearchQuery;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -28,7 +29,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/01/19 23:53:31 $ by $Author: eiki $
+ * Last modified: $Date: 2005/01/20 00:18:12 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -38,7 +39,7 @@ import com.idega.presentation.text.Text;
  * Do not change core_iw.css, rather add your own custom stylesheet after the iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SearchResults extends Block {
 
@@ -146,8 +147,8 @@ public class SearchResults extends Block {
 	 */
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
-		//	IWResourceBundle iwrb =
-		// iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
+		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
+		
 		if (iwc.isParameterSet(getSearchParameterName())) {
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
@@ -191,7 +192,7 @@ public class SearchResults extends Block {
 				//container.addBreak();
 			}
 			
-		
+			boolean noResult = true;
 			Collection plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(iwc.getIWMainApplication());
 			if (!plugins.isEmpty()) {
 				Iterator iter = plugins.iterator();
@@ -217,6 +218,7 @@ public class SearchResults extends Block {
 						Collection results = search.getSearchResults();
 						
 						if (results != null && !results.isEmpty()) {
+							noResult = false;
 							Text searchName = new Text(searchPlugin.getSearchName());
 							searchName.setStyleClass(getSearchNameStyleClass());
 							container.add(searchName);
@@ -282,6 +284,12 @@ public class SearchResults extends Block {
 						}
 					}
 				}
+			}
+			
+			if(noResult){
+				Text noResults = new Text(iwrb.getLocalizedString("search_results.no_results", "The search found no results matching your query."));
+				noResults.setStyleClass(getSearchNameStyleClass());
+				container.add(noResults);
 			}
 			add(container);
 		}
