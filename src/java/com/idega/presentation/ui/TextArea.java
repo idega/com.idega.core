@@ -1,35 +1,67 @@
-//idega 2000 - Tryggvi Larusson
 /*
-
-*Copyright 2000 idega.is All Rights Reserved.
-
-*/
+ * $Id: TextArea.java,v 1.16 2005/03/08 12:50:57 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 import java.io.IOException;
+import java.util.List;
+import javax.faces.context.FacesContext;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
+
+
+
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.2
-
-*/
+ * <p>
+ * Class that renders out a textarea input element.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 12:50:57 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.16 $
+ */
 public class TextArea extends InterfaceObject {
 
-	private boolean isSetAsNotEmpty;
-	private String notEmptyErrorMessage;
-
+	//Static constants:
 	private static String ROWS_ATTRIBUTE = "rows";
 	private static String COLS_ATTRIBUTE = "cols";
 	private static String WRAP_ATTRIBUTE = "wrap";
 	private static String UNTITLED_STRING = "untitled";
 	private static String EMPTY_STRING = "";
 
+	//Instance variables:
+	private boolean isSetAsNotEmpty;
+	private String notEmptyErrorMessage;
 	private String _content = EMPTY_STRING;
 	private int maximum = -1;
 	private boolean asMaximum = false;
+	
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[6];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(isSetAsNotEmpty);
+		values[2] = notEmptyErrorMessage;
+		values[3] = _content;
+		values[4] = new Integer(maximum);
+		values[5] = Boolean.valueOf(asMaximum);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		isSetAsNotEmpty = ((Boolean) values[1]).booleanValue();
+		notEmptyErrorMessage = (String) values[2];
+		_content = (String) values[3];
+		maximum = ((Integer)values[4]).intValue();
+		asMaximum = ((Boolean) values[5]).booleanValue();
+	}
 
 	/**
 	 * Constructs a new <code>TextArea</code> with the the default name.
@@ -55,6 +87,7 @@ public class TextArea extends InterfaceObject {
 		super();
 		setName(name);
 		setContent(content);
+		setTransient(false);
 	}
 
 	/**
@@ -78,6 +111,7 @@ public class TextArea extends InterfaceObject {
 		this(name, content);
 		setColumns(columns);
 		setRows(rows);
+		setTransient(false);
 	}
 
 	public void _main(IWContext iwc) throws Exception {
