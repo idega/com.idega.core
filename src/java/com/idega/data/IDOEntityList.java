@@ -74,17 +74,17 @@ public class IDOEntityList implements List {
   }
 
   public Object[] toArray() {
-	IDOEntity[] entities = new IDOEntity[size()];
+  	Object[] entities = new Object[size()];
   	int i = 0;
-  	for (Iterator iter = _entities.iterator(); iter.hasNext(); ) {
-  		entities[i++] = (IDOEntity)iter.next();
+  	for (Iterator iter = this.iterator(); iter.hasNext(); ) {
+  		entities[i++] = iter.next();
   	}
   	return entities;
   }
   
   public Object[] toArray(Object[] a) {
 	int i = 0;
-	for (Iterator iter = _entities.iterator(); iter.hasNext(); ) {
+	for (Iterator iter = this.iterator(); iter.hasNext(); ) {
 		a[i++] =  (Object) iter.next();
 	}
 	return a;
