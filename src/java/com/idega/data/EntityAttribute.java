@@ -34,16 +34,16 @@ private String attributeType;
 private boolean isPrimaryKey=false;
 private boolean isUnique=false;
 
-public static int TYPE_JAVA_LANG_INTEGER=1;
-public static int TYPE_JAVA_LANG_STRING=2;
-public static int TYPE_JAVA_LANG_BOOLEAN=3;
-public static int TYPE_JAVA_LANG_FLOAT=4;
-public static int TYPE_JAVA_LANG_DOUBLE=5;
-public static int TYPE_JAVA_SQL_DATE=6;
-public static int TYPE_JAVA_SQL_TIMESTAMP=7;
-public static int TYPE_JAVA_SQL_TIME=8;
-public static int TYPE_COM_IDEGA_UTIL_GENDER=9;
-protected static int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
+public static final int TYPE_JAVA_LANG_INTEGER=1;
+public static final int TYPE_JAVA_LANG_STRING=2;
+public static final int TYPE_JAVA_LANG_BOOLEAN=3;
+public static final int TYPE_JAVA_LANG_FLOAT=4;
+public static final int TYPE_JAVA_LANG_DOUBLE=5;
+public static final int TYPE_JAVA_SQL_DATE=6;
+public static final int TYPE_JAVA_SQL_TIMESTAMP=7;
+public static final int TYPE_JAVA_SQL_TIME=8;
+public static final int TYPE_COM_IDEGA_UTIL_GENDER=9;
+public static final int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 
 
 	public EntityAttribute(){

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.65 2001/10/31 15:13:11 gummi Exp $
+ * $Id: GenericEntity.java,v 1.66 2001/11/12 10:34:03 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2081,6 +2081,63 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 
 	}
+
+
+        /**
+        * Attention: Beta implementation
+        */
+	public void removeFrom(Class entityToRemoveFrom, int id)throws SQLException{
+          Connection conn= null;
+          Statement Stmt= null;
+          String qry = "";
+          try{
+            int i = 0;
+            conn = getConnection(getDatasource());
+            Stmt = conn.createStatement();
+
+            qry = "delete from "+getNameOfMiddleTable(GenericEntity.getStaticInstance(entityToRemoveFrom),this)+" where "+this.getIDColumnName()+"='"+this.getID()+"' AND "+GenericEntity.getStaticInstance(entityToRemoveFrom).getIDColumnName()+"='"+id+"'";
+
+            //  System.out.println("GENERIC ENTITY: "+ qry);
+            i = Stmt.executeUpdate(qry);
+          }
+          finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+            if (conn != null){
+              freeConnection(getDatasource(),conn);
+            }
+          }
+	}
+
+
+        /**
+        * Attention: Beta implementation
+        */
+	public void removeFrom(Class entityToRemoveFrom)throws SQLException{
+          Connection conn= null;
+          Statement Stmt= null;
+          String qry = "";
+          try{
+            int i = 0;
+            conn = getConnection(getDatasource());
+            Stmt = conn.createStatement();
+
+            qry = "delete from "+getNameOfMiddleTable(GenericEntity.getStaticInstance(entityToRemoveFrom),this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'";;
+
+            //  System.out.println("GENERIC ENTITY: "+ qry);
+            i = Stmt.executeUpdate(qry);
+          }
+          finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+            if (conn != null){
+              freeConnection(getDatasource(),conn);
+            }
+          }
+	}
+
 
 	/**
 	**Default remove behavior with a many-to-many relationship

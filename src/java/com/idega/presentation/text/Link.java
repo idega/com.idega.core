@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.24 2001/11/05 14:37:16 aron Exp $
+ * $Id: Link.java,v 1.25 2001/11/12 10:34:03 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -67,6 +67,13 @@ public class Link extends Text {
   private boolean _maintainAllGlobalParameters = false;
   private boolean _maintainBuilderParameters = true;
   private boolean _addSessionId = true;
+
+  private int _imageId;
+  private int _onMouseOverImageId;
+  private int _onClickImageId;
+  private Image _onMouseOverImage = null;
+  private Image _onClickImage = null;
+
 
 
   private final static String DEFAULT_TEXT_STRING = "No text";
@@ -274,6 +281,36 @@ public class Link extends Text {
           addParameter(_sessionStorageName,sessionParameterName);
         }
       }
+    }
+
+    if(_obj != null){
+      if (_obj instanceof Image) {
+        if(_onMouseOverImage != null){
+          ((Image)_obj).setOverImage(_onMouseOverImage);
+        }else if(_onMouseOverImageId > 0){
+          ((Image)_obj).setOverImage(new Image(_onMouseOverImageId));
+        }
+        if(_onClickImage != null){
+          ((Image)_obj).setOnClickImage(_onClickImage);
+        }else if(_onClickImageId > 0){
+          ((Image)_obj).setOnClickImage(new Image(_onClickImageId));
+        }
+      }
+
+    } else if (_imageId > 0){
+      Image image = new Image(_imageId);
+      if(_onMouseOverImage != null){
+        image.setOverImage(_onMouseOverImage);
+      }else if(_onMouseOverImageId > 0){
+        image.setOverImage(new Image(_onMouseOverImageId));
+      }
+      if(_onClickImage != null){
+        image.setOnClickImage(_onClickImage);
+      }else if(_onClickImageId > 0){
+        image.setOnClickImage(new Image(_onClickImageId));
+      }
+      image.setParentObject(this);
+      _obj = image;
     }
 
 
@@ -680,7 +717,27 @@ public class Link extends Text {
     _obj = image;
     _objectType = OBJECT_TYPE_MODULEOBJECT;
 
-        _obj.setParentObject(this);
+    _obj.setParentObject(this);
+  }
+
+  public void setImageId(int imageId){
+    _imageId = imageId;
+  }
+
+  public void setOnMouseOverImage(Image image){
+    _onMouseOverImage = image;
+  }
+
+  public void setOnMouseOverImageId(int imageId){
+    _onMouseOverImageId = imageId;
+  }
+
+  public void setOnClickImage(Image image){
+    _onClickImage = image;
+  }
+
+  public void setOnClickImageId(int imageId){
+    _onClickImageId = imageId;
   }
 
 
