@@ -740,10 +740,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						Boolean hasRelationToPage = currentObject.hasCurrentUserRelationToContainingDPTPage();  //does not need iwuc because the value is set as null in the clone method in PresentationObject
 						if(hasRelationToPage==null) {
 							String templateID = currentObject.getTemplateId();
-							if(templateID!=null) {
-								//Check for general permission for everyone and user
-								//.....mabe later
-								
+							if(templateID!=null) {								
 								//Get ownergroup
 								Group relatedDPTPageGroup = (Group)currentObject.getDPTPageRelationGroup(iwc);
 								//check if user is in ownergroup
@@ -765,18 +762,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									}
 									hasRelationToPage = new Boolean(isInOwnerGroup);
 									currentObject.setCurrentUserHasRelationToContainingDPTPage(hasRelationToPage);
-								}
-								if(Boolean.TRUE.equals(hasRelationToPage)) {
-									//if so, check for permission for the template object
-	//									List[] permissionOrder = new List[1];
-	//									permissionOrder[0] = groupIDs;
-									//TODO: it might be ncessary to remove everyone and users from permissionGroupLists
-									PresentationObject templateParentObject = currentObject.getTemplateObject();
-									myPermission = checkForPermission(permissionGroupLists,templateParentObject,permissionKey,iwc);
-									if (Boolean.TRUE.equals(myPermission)) {
-										return myPermission;
-									}
 								}		
+							}
+						}
+						if(Boolean.TRUE.equals(hasRelationToPage)) {
+							//if so, check for permission for the template object
+//									List[] permissionOrder = new List[1];
+//									permissionOrder[0] = groupIDs;
+							//TODO: it might be ncessary to remove everyone and users from permissionGroupLists
+							PresentationObject templateParentObject = currentObject.getTemplateObject();
+							myPermission = checkForPermission(permissionGroupLists,templateParentObject,permissionKey,iwc);
+							if (Boolean.TRUE.equals(myPermission)) {
+								return myPermission;
 							}
 						}
 					}
