@@ -7,37 +7,23 @@ public class PostalCodeHomeImpl extends com.idega.data.IDOFactory implements Pos
   return PostalCode.class;
  }
 
+
  public PostalCode create() throws javax.ejb.CreateException{
-  return (PostalCode) super.idoCreate();
+  return (PostalCode) super.createIDO();
  }
 
- public PostalCode createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
 
- }
-
- public PostalCode findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (PostalCode) super.idoFindByPrimaryKey(id);
- }
+public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
 
  public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (PostalCode) super.idoFindByPrimaryKey(pk);
+  return (PostalCode) super.findByPrimaryKeyIDO(pk);
  }
 
- public PostalCode findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
-	}
-
- }
 
 
 }
