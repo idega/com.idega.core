@@ -46,7 +46,6 @@ private boolean merged = true;
 
   private void makeTables() {
     adminForm = new Form();
-      adminForm.setMethod("get");
 
     adminTable = new Table(2,2);
       adminTable.mergeCells(1,1,2,1);
