@@ -18,7 +18,7 @@ public class Address extends GenericEntity{
 
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
-                addAttribute("ic_address_type_id","Gerð heimilisfangs",true,true, Integer.class,"many-to-one",AddressType.class);
+                addAttribute(getColumnNameAddressTypeId(),"Gerð heimilisfangs",true,true, Integer.class,"many-to-one",AddressType.class);
 		addAttribute("street_name", "Heimilisfang", true, true, String.class);
 		addAttribute("street_number", "Númer", true, true, String.class);
                 addAttribute("city","Borg", true, true, String.class);
@@ -28,6 +28,8 @@ public class Address extends GenericEntity{
 		addAttribute("ic_country_id", "Land id", true, true,Integer.class, "many-to-one",Country.class);
                 this.addManyToManyRelationShip(User.class,"ic_user_address");
         }
+
+        public static String getColumnNameAddressTypeId() {return "ic_address_type_id";}
 
 	public String getEntityName(){
 		return "ic_address";
