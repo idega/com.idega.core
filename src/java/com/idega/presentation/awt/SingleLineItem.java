@@ -30,10 +30,6 @@ public class SingleLineItem extends Component {
     addMouseListener(new ClickAdapter());
     setSize(getPreferredSize());
   //  Panel panel = new Panel();
-  java.net.URL url = SingleLineItem.class.getResource("face_in.gif");
-  Image img=Toolkit.getDefaultToolkit().getImage(url);
-  add(img);
-
   }
 
   public void setComponentOffset(int componentOffset){
