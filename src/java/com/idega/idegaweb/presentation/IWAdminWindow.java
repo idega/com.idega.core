@@ -316,6 +316,14 @@ public static String HEADER_COLOR="#0E2456";
     return T;
   }
 
+  public void formatText(Text text, boolean bold){
+    if ( bold )
+      text.setBold();
+    text.setFontColor("#000000");
+    text.setFontSize(Text.FONT_SIZE_7_HTML_1);
+    text.setFontFace(Text.FONT_FACE_VERDANA);
+  }
+
   public Text formatText(String s) {
     Text T = formatText(s,true);
     return T;
@@ -334,7 +342,15 @@ public static String HEADER_COLOR="#0E2456";
   }
 
   public void setStyle(PresentationObject obj){
-    obj.setAttribute("style",STYLE);
+    if(obj instanceof Text){
+      this.setStyle((Text)obj);
+    } else {
+      obj.setAttribute("style",STYLE);
+    }
+  }
+
+  public void setStyle(Text obj){
+    obj.setAttribute("style",STYLE_2);
   }
 
   public void setEmpty(){
