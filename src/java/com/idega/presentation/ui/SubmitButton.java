@@ -175,11 +175,11 @@ private void printButton(IWContext iwc) throws IOException{
 
 	if (defaultImage == null){
 
-		println("<input type=\"submit\" name=\""+getName()+"\" "+getAttributeString()+" >");
+		print("<input type=\"submit\" name=\""+getName()+"\" "+getAttributeString()+" >");
         }
 	else{
 		setAttribute("border","0");
-		println("<input type=\"image\" src=\""+defaultImage.getURL()+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
+		print("<input type=\"image\" src=\""+defaultImage.getURL()+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
 	}
 }
 

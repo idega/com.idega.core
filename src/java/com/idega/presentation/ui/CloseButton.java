@@ -49,7 +49,7 @@ public void print(IWContext iwc) throws IOException{
                                   printString.append("\" ");
                                   printString.append(getAttributeString());
                                   printString.append(" >");
-                                  println(printString.toString());
+                                  print(printString.toString());
 				}
 				else{
                                   setAttribute("border","0");
@@ -59,7 +59,7 @@ public void print(IWContext iwc) throws IOException{
                                   printString.append(getAttributeString());
                                   printString.append(" >");
 
-                                  println(printString.toString());
+                                  print(printString.toString());
 				}
 /*
 				if (defaultImage == null){
