@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.Singleton;
 import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
 /**
@@ -24,15 +25,17 @@ import com.idega.util.text.TextSoap;
  *@version 1.3
  * Class to deliver database connections through a connectionpool
 */
-public class PoolManager
+public class PoolManager implements Singleton
 {
 	
-private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";//a string you can use in a connection url
-private static final String IW_BUNDLES_PATH_PLACE_HOLDER = "{iw_bundles_path}";//a string you can use in a connection url    
-private static String thePropertiesFileLocation;
+	private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";//a string you can use in a connection url
+	private static final String IW_BUNDLES_PATH_PLACE_HOLDER = "{iw_bundles_path}";//a string you can use in a connection url    
+
 	private static String DEFAULT_DSN = "default";
+	
 	static private PoolManager instance;
 	static private int clients;
+	
 	private LogWriter logWriter;
 	private PrintWriter pw;
 	private Vector drivers = new Vector();
@@ -69,7 +72,6 @@ private static String thePropertiesFileLocation;
 	{
 		if (instance == null)
 		{
-			thePropertiesFileLocation = propertiesFileLocation;
 			instance = new PoolManager(propertiesFileLocation);
 		}
 		clients++;
@@ -80,7 +82,6 @@ private static String thePropertiesFileLocation;
 	{
 		if (instance == null)
 		{
-			thePropertiesFileLocation = propertiesFileLocation;
 			instance = new PoolManager(propertiesFileLocation,mainApplication);
 		}
 		clients++;
@@ -271,6 +272,7 @@ private static String thePropertiesFileLocation;
 	{
 		freeConnection(DEFAULT_DSN, connection);
 	}
+	
 	public synchronized void release()
 	{
 		// Wait until called by the last client
