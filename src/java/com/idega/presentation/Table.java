@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.29 2002/11/02 21:42:08 laddi Exp $
+ * $Id: Table.java,v 1.30 2003/03/19 16:33:13 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -473,9 +473,23 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
+	public void setColumnStyle(int xpos, String styleValue) {
+		for (int temp = 1; temp <= rows;) {
+			setStyle(xpos, temp, styleValue);
+			temp++;
+		}
+	}
+	
 	public void setRowAttribute(int ypos, String attributeName, String attributeValue) {
 		for (int temp = 1; temp <= cols;) {
 			setAttribute(temp, ypos, attributeName, attributeValue);
+			temp++;
+		}
+	}
+	
+	public void setRowStyle(int ypos, String styleValue) {
+		for (int temp = 1; temp <= cols;) {
+			setStyle(temp, ypos, styleValue);
 			temp++;
 		}
 	}
@@ -494,6 +508,42 @@ public class Table extends PresentationObjectContainer {
 			// super.add(theObjects);
 		}
 		this.theObjects[xpos - 1][ypos - 1].setAttribute(attributeName, attributeValue);
+	}
+	
+	public void setStyle(int xpos, int ypos, String styleValue) {
+		if (isResizable) {
+			if (xpos > this.getColumns()) {
+				setColumns(xpos);
+			}
+			if (ypos > this.getRows()) {
+				setRows(ypos);
+			}
+		}
+		if (this.theObjects[xpos - 1][ypos - 1] == null) {
+			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
+			// super.add(theObjects);
+		}
+		this.theObjects[xpos - 1][ypos - 1].setStyleAttribute(styleValue);
+	}
+	
+	public void setAttribute(int xpos, int ypos, String attribute) {
+		if (isResizable) {
+			if (xpos > this.getColumns()) {
+				setColumns(xpos);
+			}
+			if (ypos > this.getRows()) {
+				setRows(ypos);
+			}
+		}
+		if (this.theObjects[xpos - 1][ypos - 1] == null) {
+			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
+			// super.add(theObjects);
+		}
+		this.theObjects[xpos - 1][ypos - 1].setAttribute(attribute);
+	}
+	
+	public void setNoWrap(int xpos, int ypos) {
+		setStyle(xpos, ypos, "white-space:nowrap;");
 	}
 	
 	/*Tells if a cell in a table is merged with another*/
