@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.2 2001/06/14 17:17:00 laddi Exp $
+ * $Id: EntityBulkUpdater.java,v 1.3 2001/08/25 12:24:59 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,7 +27,13 @@ public class EntityBulkUpdater {
   public static String update = "update";
   public static String delete = "delete";
 
+  private GenericEntity relatedEntity;
+
   public EntityBulkUpdater() {
+  }
+
+  public EntityBulkUpdater(GenericEntity relatedEntity) {
+    this.relatedEntity = relatedEntity;
   }
 
   /**
@@ -70,6 +76,18 @@ public class EntityBulkUpdater {
       return;
     try {
       c = ConnectionBroker.getConnection();
+      if (insert_ != null) {
+        Iterator i = insert_.iterator();
+        while (i.hasNext()) {
+          GenericEntity e = (GenericEntity)i.next();
+          e.insert(c);
+          if( relatedEntity != null ){
+            relatedEntity.addTo(e,c);
+          }
+        }
+        insert_.clear();
+      }
+
       if (update_ != null) {
         Iterator i = update_.iterator();
         while (i.hasNext()) {
@@ -79,19 +97,13 @@ public class EntityBulkUpdater {
         update_.clear();
       }
 
-      if (insert_ != null) {
-        Iterator i = insert_.iterator();
-        while (i.hasNext()) {
-          GenericEntity e = (GenericEntity)i.next();
-          e.insert(c);
-        }
-        insert_.clear();
-      }
-
       if (delete_ != null) {
         Iterator i = delete_.iterator();
         while (i.hasNext()) {
           GenericEntity e = (GenericEntity)i.next();
+          if( relatedEntity != null ){
+            e.removeFrom(relatedEntity);//change to removeFrom(entity,connection)
+          }
           e.delete(c);
         }
         delete_.clear();
@@ -103,13 +115,20 @@ public class EntityBulkUpdater {
     catch(SQLException e) {
       try {
         c.rollback();
+        System.err.println("EntityBulkUpdater : ROLLBACKED");
       }
       catch(Exception ex) {}
       e.printStackTrace(System.err);
+      System.err.println("EntityBulkUpdater : ROLLBACK FAILED");
     }
     finally {
      if ( c != null )
        ConnectionBroker.freeConnection(c);
     }
   }
+
+  public void setRelatedEntity(GenericEntity relatedEntity){
+   this.relatedEntity = relatedEntity;
+  }
+
 }

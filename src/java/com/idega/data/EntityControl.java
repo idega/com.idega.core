@@ -301,44 +301,6 @@ public  class EntityControl{
 		}
 	}
 
-
-	public static void delete(GenericEntity entity)throws SQLException{
-		Connection conn= null;
-		Statement Stmt= null;
-		try{
-			conn = entity.getConnection();
-			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("delete from "+entity.getEntityName()+" where "+entity.getIDColumnName()+"="+entity.getID());
-
-		}
-		finally{
-			if(Stmt != null){
-				Stmt.close();
-			}
-			if (conn != null){
-				entity.freeConnection(conn);
-			}
-		}
-                entity.setEntityState(entity.STATE_DELETED);
-	}
-
-	public static void delete(GenericEntity entity, Connection conn)throws Exception{
-          Statement Stmt= null;
-          try {
-            Stmt = conn.createStatement();
-            String statement = "delete from  "+entity.getTableName()+" where "+entity.getIDColumnName()+"="+entity.getID();
-            Stmt.executeUpdate(statement);
-          }
-          finally{
-                  if(Stmt != null){
-                          Stmt.close();
-                  }
-          }
-          entity.setEntityState(entity.STATE_DELETED);
-	}
-
-
-
 	/**
 	*Deletes everything from the table of this entity - use with CAUTION :)
 	**/

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.38 2001/08/24 22:33:32 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.39 2001/08/25 12:24:14 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -30,16 +30,18 @@ public abstract class GenericEntity implements java.io.Serializable {
   private static Hashtable allStaticClasses=new Hashtable();
 
   private Hashtable theMetaDataAttributes;
-  private Hashtable insertMetaDataAttributes;
-  private Hashtable updateMetaDataAttributes;
-  private Hashtable deleteMetaDataAttributes;
+  private Vector insertMetaDataVector;
+  private Vector updateMetaDataVector;
+  private Vector deleteMetaDataVector;
+  private Hashtable theMetaDataIds;
+  private boolean hasMetaDataRelationship=false;
+  private boolean metaDataHasChanged = false;
 
   private String dataSource;
   private static String defaultString="default";
   private String cachedColumnNameList;
   private String lobColumnName;
   private static boolean useEntityCacher=false;
-  private static boolean hasMetaDataRelationship=false;
 
   private int state;
 
@@ -142,6 +144,10 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 	public void setID(int id) {
 		setColumn(getIDColumnName(),new Integer(id));
+	}
+
+        public void setID(Integer id) {
+		setColumn(getIDColumnName(),id);
 	}
 
 	public int getID() {
@@ -1022,10 +1028,29 @@ public abstract class GenericEntity implements java.io.Serializable {
     }
   }
 
+  /**
+  *Inserts this entity's metadata into the datastore
+  */
+  public void updateMetaData()throws SQLException{
+    try{
+      DatastoreInterface.getInstance(this).crunchMetaData(this);
+    }
+    catch(Exception ex){
+      if(ex instanceof SQLException){
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+      else{
+        ex.printStackTrace();
+      }
+    }
+  }
+
+
     /**
     *Inserts this entity as a record into the datastore
     */
-  public void insert(Connection c)throws SQLException{
+  protected void insert(Connection c)throws SQLException{
     try{
       DatastoreInterface.getInstance(c).insert(this,c);
     }
@@ -1061,7 +1086,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 	/**
 	*Updates the entity in the datastore
 	*/
-  public void update(Connection c) throws SQLException {
+  protected void update(Connection c) throws SQLException {
     try {
       DatastoreInterface.getInstance(c).update(this,c);
     }
@@ -1073,28 +1098,31 @@ public abstract class GenericEntity implements java.io.Serializable {
     }
   }
 
-	/*
-  public void update()throws SQLException{
-		EntityControl.update(this);
-	}
-  */
 
-	public void delete()throws SQLException{
-		EntityControl.delete(this);
-	}
+  public void delete()throws SQLException{
+    try {
+      DatastoreInterface.getInstance(this).delete(this);
+    }
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+   }
+  }
 
-        public void delete(Connection c) throws SQLException {
-          try {
-            EntityControl.delete(this,c);
-          }
-          catch(Exception ex) {
-            if(ex instanceof SQLException) {
-              ex.printStackTrace();
-              throw (SQLException)ex.fillInStackTrace();
-            }
-          }
+  protected void delete(Connection c) throws SQLException {
+    try {
+      DatastoreInterface.getInstance(c).delete(this,c);
+    }
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+   }
 
-        }
+  }
 
 	public void deleteMultiple(String columnName,String stringColumnValue)throws SQLException{
 		EntityControl.deleteMultiple(this,columnName,stringColumnValue);
@@ -1616,6 +1644,22 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 	}
 
+        /**
+	**Default insert behavior with a many-to-many relationship and EntityBulkUpdater
+	**/
+	public void addTo(GenericEntity entityToAddTo, Connection conn)throws SQLException{
+          Statement Stmt= null;
+          try{
+            Stmt = conn.createStatement();
+            int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")");
+          }
+          finally{
+            if(Stmt != null){
+              Stmt.close();
+            }
+          }
+
+	}
 
         /**
         * Attention: Beta implementation
@@ -1955,22 +1999,20 @@ public abstract class GenericEntity implements java.io.Serializable {
 
   public void addMetaDataRelationship(){
     addManyToManyRelationShip(MetaData.class);
-    this.hasMetaDataRelationship = true;
+    this.getStaticInstance(this.getClass()).hasMetaDataRelationship=true;
   }
 
   public boolean hasMetaDataRelationship(){
-    return this.hasMetaDataRelationship;
+   return this.getStaticInstance(this.getClass()).hasMetaDataRelationship;
   }
 
-  public Hashtable getMetaDataMap(){
-    return this.theMetaDataAttributes;
-  }
 
 // fetches the metadata for this id and puts it in a HashTable
-  private boolean getMetaData(){
+  private void getMetaData(){
     Connection conn= null;
     Statement Stmt= null;
     theMetaDataAttributes = new Hashtable();
+    theMetaDataIds = new Hashtable();
 
     try{
       conn = getConnection(getDatasource());
@@ -1981,7 +2023,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 
       String tableToSelectFrom = getNameOfMiddleTable(metadata,this);
       StringBuffer buffer = new StringBuffer();
-      buffer.append("select metadata_name,metadata_value from ");
+      buffer.append("select ic_metadata_id,metadata_name,metadata_value from ");
       buffer.append(tableToSelectFrom);
       buffer.append(",ic_metadata where ");
       buffer.append(tableToSelectFrom);
@@ -2002,6 +2044,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 
       while(RS.next()){
         theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
+        theMetaDataIds.put(RS.getString("metadata_name"),new Integer(RS.getInt("ic_metadata_id")));
       }
 
       RS.close();
@@ -2027,7 +2070,6 @@ public abstract class GenericEntity implements java.io.Serializable {
 
     }
 
-    return true;
   }
 
   public String getMetaData(String metaDataKey){
@@ -2035,22 +2077,101 @@ public abstract class GenericEntity implements java.io.Serializable {
     return (String) theMetaDataAttributes.get(metaDataKey);
   }
 
-  public void setMetaData(String metaDataKey, String metaDataValue){
-    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
-
-    Object obj = theMetaDataAttributes.put(metaDataKey,metaDataValue);
-    if( obj == null ){
-      if( insertMetaDataAttributes == null ) insertMetaDataAttributes = new Hashtable();
-        if( insertMetaDataAttributes.get(metaDataKey) == null ){
-          insertMetaDataAttributes.put(metaDataKey,metaDataValue);
-        }
-    }else{
-      if( updateMetaDataAttributes == null ) updateMetaDataAttributes = new Hashtable();
-      updateMetaDataAttributes.put(metaDataKey,metaDataValue);
+  public void setMetaDataAttributes(Hashtable metaDataAttribs){
+    String metaDataKey;
+    for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();){
+       metaDataKey = (String)e.nextElement();
+       addMetaData(metaDataKey,(String) metaDataAttribs.get(metaDataKey));
     }
   }
 
-  public void removeMetaData(String metaDataKey){
-   // deleteMetaDataAttributes.put(metaDataKey,(String) theMetaDataIds.get(metaDataKey))
+  public void setMetaData(String metaDataKey, String metaDataValue){
+     addMetaData(metaDataKey,metaDataValue);
+  }
+
+  public void addMetaData(String metaDataKey, String metaDataValue){
+    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+
+    if( metaDataValue!=null ){
+      Object obj = theMetaDataAttributes.put(metaDataKey,metaDataValue);
+      metaDataHasChanged(true);
+
+      if( obj == null ){//is new
+
+        if( insertMetaDataVector == null ){
+          insertMetaDataVector = new Vector();
+        }
+
+        insertMetaDataVector.add(metaDataKey);
+
+      }
+      else{//is old
+        if( updateMetaDataVector == null ){
+          updateMetaDataVector = new Vector();
+        }
+
+
+      if( insertMetaDataVector!=null ){
+        if(insertMetaDataVector.indexOf(metaDataKey) == -1) {//is old and not in the insertlist
+          updateMetaDataVector.add(metaDataKey);
+        }
+      }
+      else{
+        updateMetaDataVector.add(metaDataKey);
+      }
+
+      }
+    }
+  }
+
+  /**
+  * return true if the metadata to delete already exists
+  */
+  public boolean removeMetaData(String metaDataKey){
+    if( theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+
+    if( deleteMetaDataVector == null ){
+      deleteMetaDataVector = new Vector();
+    }
+
+    if( theMetaDataAttributes.get(metaDataKey) != null ) {
+      deleteMetaDataVector.add(metaDataKey);
+      metaDataHasChanged(true);
+
+      return true;
+    }
+    else return false;
+  }
+
+  public boolean deleteMetaData(String metaDataKey){
+   return removeMetaData(metaDataKey);
+  }
+
+  public Hashtable getMetaDataAttributes(){
+    return theMetaDataAttributes;
+  }
+
+  public Hashtable getMetaDataIds(){
+    return theMetaDataIds;
+  }
+
+  public Vector getMetaDataUpdateVector(){
+    return updateMetaDataVector;
+  }
+
+  public Vector getMetaDataInsertVector(){
+    return insertMetaDataVector;
+  }
+
+  public Vector getMetaDataDeleteVector(){
+    return deleteMetaDataVector;
+  }
+
+  public boolean metaDataHasChanged(){
+    return metaDataHasChanged;
+  }
+
+  public void metaDataHasChanged(boolean metaDataHasChanged){
+    this.metaDataHasChanged = metaDataHasChanged;
   }
 }
