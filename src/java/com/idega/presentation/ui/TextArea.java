@@ -25,6 +25,10 @@ public class TextArea extends InterfaceObject
 	private static String COLS_ATTRIBUTE = "cols";
 	private static String UNTITLED_STRING = "untitled";
 	private static String EMPTY_STRING = "";
+
+	private int maximum = -1;
+	private boolean asMaximum = false;
+	
 	public TextArea()
 	{
 		this(UNTITLED_STRING);
@@ -124,6 +128,27 @@ public class TextArea extends InterfaceObject
 			}
 		}
 	}
+	
+	private Script getScript(){
+		if (getParentForm().getAssociatedFormScript() == null){
+			getParentForm().setAssociatedFormScript(new Script());
+		}
+		return getParentForm().getAssociatedFormScript();
+	}
+
+	public void _main(IWContext iwc) throws Exception {
+		if ( this.getParentForm() != null ) {
+			if (asMaximum){
+				this.setOnChange("countCharacters(findObj('"+getName()+"'),"+maximum+")");
+				this.setOnBlur("countCharacters(findObj('"+getName()+"'),"+maximum+")");
+				this.setOnFocus("countCharacters(findObj('"+getName()+"'),"+maximum+")");
+				this.setOnKeyDown("countCharacters(findObj('"+getName()+"'),"+maximum+")");
+				this.setOnKeyUp("countCharacters(findObj('"+getName()+"'),"+maximum+")");
+				getScript().addFunction("countCharacters","function countCharacters(msgText,maxChar) {\n	var length = msgText.value.length;\n	if (length > maxChar ) {\n	\tmsgText.value = msgText.value.substr(0,maxChar);\n	}\n	}");
+			}
+		}	
+	}
+	
 	public void print(IWContext iwc) throws IOException
 	{
 		//if ( doPrint(iwc) ){
@@ -187,5 +212,10 @@ public class TextArea extends InterfaceObject
 	public void setRows(int rows)
 	{
 		setAttribute(ROWS_ATTRIBUTE, Integer.toString(rows));
+	}
+	
+	public void setMaximumCharacters(int maximum) {
+		this.maximum = maximum;
+		this.asMaximum	= true;
 	}
 }
