@@ -37,12 +37,9 @@
 		<url-pattern>/workspace</url-pattern>
 	</servlet-mapping>
 
-    <!-- idegaWeb event listeners -->
+    <!--Listener for initializing the idegaWeb JSF extensions: -->
     <listener>
-        <listener-class>com.idega.faces.IWApplicationListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.idega.faces.smile.IWInstaller</listener-class>
+        <listener-class>com.idega.faces.IWFacesInstaller</listener-class>
     </listener>
 
 </web-app>
