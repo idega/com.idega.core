@@ -4172,7 +4172,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}	
 	
 	/**
-	 * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	 * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
 	 * This behaviour can be overridden in subclasses.
 	 * @return the default Logger
 	 */

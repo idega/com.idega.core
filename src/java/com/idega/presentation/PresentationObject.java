@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.76 2003/11/22 01:56:27 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.77 2003/11/24 02:38:40 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -1794,7 +1794,7 @@ implements Cloneable,UIComponent{
 	 }	
 	
 	 /**
-	  * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	  * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
 	  * This behaviour can be overridden in subclasses.
 	  * @return the default Logger
 	  */

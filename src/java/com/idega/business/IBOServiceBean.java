@@ -219,7 +219,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}	
 	
 	/**
-	 * Gets the default log level. By default it uses the package and the class name to get the logger.<br>
+	 * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
 	 * This behaviour can be overridden in subclasses.
 	 * @return the default Logger
 	 */
