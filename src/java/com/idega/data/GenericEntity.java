@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.20 2001/06/21 13:54:41 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.21 2001/06/21 13:57:37 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1652,6 +1652,15 @@ public abstract class GenericEntity implements java.io.Serializable {
 		}
 
 	}
+
+        public boolean equals(Object obj){
+          if(obj instanceof GenericEntity){
+            return equals((GenericEntity)obj);
+          }
+          else{
+            return super.equals(obj);
+          }
+        }
 
 
         public boolean equals(GenericEntity entity){
