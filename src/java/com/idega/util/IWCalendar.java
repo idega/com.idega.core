@@ -27,7 +27,7 @@ public class IWCalendar {
 	  * the default calendar and locale.
 	  */
 	public IWCalendar() {
-		this(LocaleUtil.getIcelandicLocale(), new GregorianCalendar());
+		this(LocaleUtil.getIcelandicLocale(), new GregorianCalendar(LocaleUtil.getIcelandicLocale()));
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class IWCalendar {
 	 * the given locale and default calendar.
 	 */
 	public IWCalendar(Locale locale) {
-		this(locale, new GregorianCalendar());
+		this(locale, new GregorianCalendar(locale));
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class IWCalendar {
 	 * the given date and default locale.
 	 */
 	public IWCalendar(Date date) {
-		_calendar = new GregorianCalendar();
+		_calendar = new GregorianCalendar(LocaleUtil.getIcelandicLocale());
 		_calendar.setTime(date);
 		_locale = LocaleUtil.getIcelandicLocale();
 	}
@@ -86,7 +86,7 @@ public class IWCalendar {
 	 * the given date and locale.
 	 */
 	public IWCalendar(Locale locale, Date date) {
-		_calendar = new GregorianCalendar();
+		_calendar = new GregorianCalendar(locale);
 		_calendar.setTime(date);
 		_locale = locale;
 	}
@@ -192,7 +192,8 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDayOfWeek(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		GregorianCalendar calendar = new GregorianCalendar(_locale);
+		calendar.set(year, month - 1, day);
 		return calendar.get(calendar.DAY_OF_WEEK);
 	}
 
@@ -212,7 +213,8 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getWeekOfYear(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(day, month - 1, day);
+		GregorianCalendar calendar = new GregorianCalendar(_locale);
+		calendar.set(year, month - 1, day);
 		return calendar.get(calendar.WEEK_OF_YEAR);
 	}
 
@@ -452,7 +454,8 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getLocaleDate(Locale locale, int format, int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
 		DateFormat dateFormat = DateFormat.getDateInstance(format, locale);
 		return dateFormat.format(calendar.getTime());
 	}
@@ -489,7 +492,8 @@ public class IWCalendar {
 	 * 										for the given date.
 	 */
 	public boolean isHoliday(Locale locale, int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
 
 		Holiday[] holidays = Holiday.getHolidays(locale);
 
@@ -535,7 +539,8 @@ public class IWCalendar {
 	 * 										given Locale.
 	 */
 	public Holiday getHoliday(Locale locale, int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day);
+		GregorianCalendar calendar = new GregorianCalendar(locale);
+		calendar.set(year, month - 1, day);
 
 		Holiday[] holidays = Holiday.getHolidays(locale);
 
