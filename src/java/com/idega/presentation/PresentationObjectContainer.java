@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.27 2004/02/26 09:13:08 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.28 2004/05/24 20:22:14 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -376,6 +376,7 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 			catch (NumberFormatException e)
 			{
+				System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
 				int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0, objectInstanceID.indexOf(".")));
 				String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
 				if (index.indexOf(".") == -1)
