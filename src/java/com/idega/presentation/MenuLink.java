@@ -117,6 +117,8 @@ public class MenuLink extends Block {
     try {
       obj = (MenuLink)super.clone();
       obj.container = (Table)this.container.clone();
+      obj.menuLink1 = (Link) this.menuLink1.clone();
+      obj.menuLink2 = (Link) this.menuLink2.clone();
 
     }
     catch(Exception ex) {
