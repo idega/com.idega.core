@@ -22,6 +22,8 @@ import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import org.codehaus.plexus.ldapserver.server.util.DirectoryException;
 import org.codehaus.plexus.ldapserver.server.util.InvalidDNException;
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.LoginContext;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
@@ -373,7 +375,7 @@ LDAPReplicationConstants {
 		return results;
 	}
 	
-	private List doSubStringSearch(DirectoryString base, List entries, List alreadyLoaded, String type, String searchWord) throws FinderException, RemoteException, InvalidDNException {
+	protected List doSubStringSearch(DirectoryString base, List entries, List alreadyLoaded, String type, String searchWord) throws FinderException, RemoteException, InvalidDNException {
 			//we only allow substring searches for these attributes
 			//(|(givenName=Fred*)(sn=Fred*)(cn=Fred*)(mail=Fred*))
 		type = type.toLowerCase();
@@ -419,7 +421,7 @@ LDAPReplicationConstants {
 		return entries;
 	}
 
-	private DirectoryString getDirectoryStringForIdentifier(String identifier) {
+	protected DirectoryString getDirectoryStringForIdentifier(String identifier) {
 		return new DirectoryString(identifier);
 	}
 
@@ -528,7 +530,7 @@ LDAPReplicationConstants {
 		return entry;
 	}
 	
-	private Group getGroup(DirectoryString base, String uniqueId) throws RemoteException {
+	protected Group getGroup(DirectoryString base, String uniqueId) throws RemoteException {
 		Group group = null;
 		try {
 			if (uniqueId != null) {
@@ -544,7 +546,7 @@ LDAPReplicationConstants {
 		return group;
 	}
 	
-	private User getUser(DirectoryString base, String uniqueId) throws RemoteException {
+	protected User getUser(DirectoryString base, String uniqueId) throws RemoteException {
 		User user = null;
 		try {
 			if (uniqueId != null) {
@@ -560,7 +562,7 @@ LDAPReplicationConstants {
 		return user;
 	}
 	
-	private Entry getChildEntry(DirectoryString base, Group group) throws InvalidDNException {
+	protected Entry getChildEntry(DirectoryString base, Group group) throws InvalidDNException {
 		Entry entry;
 		if (group instanceof User) {
 			User user = (User) group;
@@ -578,7 +580,7 @@ LDAPReplicationConstants {
 		return entry;
 	}
 	
-	private String getUserIdentifier(User user, DirectoryString base) {
+	protected String getUserIdentifier(User user, DirectoryString base) {
 		//ADD THE UNIQUE ID?
 		String identifier = "cn=";
 		String fullName = user.getName();
@@ -587,7 +589,7 @@ LDAPReplicationConstants {
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
 	
-	private String getGroupIdentifier(Group group, DirectoryString base) {
+	protected String getGroupIdentifier(Group group, DirectoryString base) {
 		//ADD THE UNIQUE ID?
 		String identifier = "ou=";
 		String name = getGroupName(group);
@@ -595,7 +597,7 @@ LDAPReplicationConstants {
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
 	
-	private String getGroupName(Group group) {
+	protected String getGroupName(Group group) {
 		String name = group.getName();//add abbreviation?;
 		if (name == null && "".equals(name)) {
 			name = group.getShortName();
@@ -614,7 +616,7 @@ LDAPReplicationConstants {
 	 * @param user
 	 * @param entry
 	 */
-	private void fillUserEntry(User user, Entry entry) {
+	protected void fillUserEntry(User user, Entry entry) {
 		//these are the displayable fields in the OS X AddressBook
 		//		givenName
 		//		sn
@@ -663,8 +665,8 @@ LDAPReplicationConstants {
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_GIVEN_NAME), firstName);
 		List lastName = getAttributeListForSingleEntry(lName);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_SURNAME), lastName);
-		List uid = getAttributeListForSingleEntry(user.getPrimaryKey().toString());
-		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_UID), uid);
+		List primaryKey = getAttributeListForSingleEntry(user.getPrimaryKey().toString());
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_PRIMARY_KEY), primaryKey);
 		
 		//emails
 		addEmailsToEntry(user, entry);
@@ -674,6 +676,8 @@ LDAPReplicationConstants {
 		addPhonesToEntry(user, entry);
 		//gender
 		addGenderToEntry(user, entry);
+		//add the username and password
+		addLoginToEntry(user,entry);
 		//add the metadata
 		addMetaDataFromGroup(user, entry);
 		
@@ -686,7 +690,39 @@ LDAPReplicationConstants {
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
 	
-	private void addGenderToEntry(User user, Entry entry) {
+	/**
+	 * Add the username and md5 encrypted password
+	 * @param user
+	 * @param entry
+	 */
+	protected void addLoginToEntry(User user, Entry entry) {
+	/*
+		userPassword values MUST be represented by following syntax: 
+	        passwordvalue          = schemeprefix encryptedpassword
+	        schemeprefix           = "{" scheme "}"
+	        scheme                 = "crypt" / "md5" / "sha" / altscheme
+	        altscheme              = "x-" keystring
+	        encryptedpassword      = encrypted password
+
+	 The encrypted password contains of a plaintext key hashed using the algorithm scheme. 
+	 userPassword values which do not adhere to this syntax MUST NOT be used for authentication. The DUA MUST iterate through the values of the attribute until a value matching the above syntax is found. Only if encryptedpassword is an empty string does the user have no password. DUAs are not required to consider encryption schemes which the client will not recognize; in most cases, it may be sufficient to consider only "crypt". 
+	 Below is an example of a userPassword attribute: 
+	 	userPassword: {crypt}X5/DBrWPOQQaI
+	*/				
+						
+		LoginContext loginInfo = LoginBusinessBean.getLoginContext(user);
+		if(loginInfo!=null){
+			List userName = getAttributeListForSingleEntry(loginInfo.getUserName());
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_UID), userName);
+			
+			String password = LDAP_USER_PASSWORD_PREFIX+loginInfo.getPassword();
+			List passwordString = getAttributeListForSingleEntry(password);
+			entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_USER_PASSWORD), passwordString);
+		}
+		
+	}
+
+	protected void addGenderToEntry(User user, Entry entry) {
 		//gender
 		try {
 			int genderId = user.getGenderID();
@@ -708,7 +744,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private void addPhonesToEntry(User user, Entry entry) {
+	protected void addPhonesToEntry(User user, Entry entry) {
 		//phone stuff
 		try {
 			try {
@@ -744,7 +780,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private void addAddressesToEntry(User user, Entry entry) {
+	protected void addAddressesToEntry(User user, Entry entry) {
 		//addresses
 		//TODO Eiki get all addresses and separate into types
 		try {
@@ -767,7 +803,7 @@ LDAPReplicationConstants {
 		
 	}
 	
-	private void addAddressToEntry(Entry entry, Address address) {
+	protected void addAddressToEntry(Entry entry, Address address) {
 		String addressString;
 		try {
 			addressString = getAddressBusiness().getFullAddressString(address);
@@ -789,7 +825,7 @@ LDAPReplicationConstants {
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_ADDRESS_POSTAL_CODE), postal);
 	}
 	
-	private void addEmailsToEntry(User user, Entry entry) {
+	protected void addEmailsToEntry(User user, Entry entry) {
 		//emails
 		Collection emails = user.getEmails();
 		if (emails != null && !emails.isEmpty()) {
@@ -808,7 +844,7 @@ LDAPReplicationConstants {
 	 * @param group
 	 * @param entry
 	 */
-	private void fillGroupEntry(Group group, Entry entry) {
+	protected void fillGroupEntry(Group group, Entry entry) {
 		//String name = IWLDAPUtil.getInstance().getEscapedLDAPString(getGroupName(group));
 		String name = getGroupName(group);
 		String desc = group.getDescription();
@@ -844,7 +880,7 @@ LDAPReplicationConstants {
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_OBJECT_CLASS), objectClasses);
 	}
 	
-	private void addEmailsToEntry(Group group, Entry entry) {
+	protected void addEmailsToEntry(Group group, Entry entry) {
 		//		emails
 		Collection emails = group.getEmails();
 		if (emails != null && !emails.isEmpty()) {
@@ -858,7 +894,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private void addPhonesToEntry(Group group, Entry entry) {
+	protected void addPhonesToEntry(Group group, Entry entry) {
 		Collection phones = group.getPhones();
 		//TODO separate into types like for user
 		if (phones != null && !phones.isEmpty()) {
@@ -872,7 +908,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private void addAddressToEntry(Group group, Entry entry) {
+	protected void addAddressToEntry(Group group, Entry entry) {
 		//addresses
 		//TODO Eiki get all addresses and separate into types
 		Address address;
@@ -887,7 +923,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private void addMetaDataFromGroup(Group group, Entry entry) {
+	protected void addMetaDataFromGroup(Group group, Entry entry) {
 		//add the groups metadata
 		Map metadata = group.getMetaDataAttributes();
 		if (metadata != null && !metadata.isEmpty()) {
@@ -903,7 +939,7 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private List getAttributeListForSingleEntry(String value) {
+	protected List getAttributeListForSingleEntry(String value) {
 		List attributes = new ArrayList();
 		if (value != null) {
 			attributes.add(getDirectoryStringForIdentifier(value));
@@ -911,7 +947,7 @@ LDAPReplicationConstants {
 		return attributes;
 	}
 	
-	private void addTopGroupsToEntries(DirectoryString base, List entries) throws IDORelationshipException,
+	protected void addTopGroupsToEntries(DirectoryString base, List entries) throws IDORelationshipException,
 	RemoteException, FinderException, InvalidDNException {
 		//String suffix = base.getDirectoryString();
 		Collection topGroups = IWMainApplication.getDefaultIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
@@ -927,17 +963,17 @@ LDAPReplicationConstants {
 		}
 	}
 	
-	private UserBusiness getUserBusiness() throws RemoteException {
+	protected UserBusiness getUserBusiness() throws RemoteException {
 		return (UserBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 				UserBusiness.class);
 	}
 	
-	private GroupBusiness getGroupBusiness() throws RemoteException {
+	protected GroupBusiness getGroupBusiness() throws RemoteException {
 		return (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 				GroupBusiness.class);
 	}
 	
-	public AddressBusiness getAddressBusiness() throws RemoteException {
+	protected AddressBusiness getAddressBusiness() throws RemoteException {
 		return (AddressBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 				AddressBusiness.class);
 	}
