@@ -18,6 +18,7 @@ public class MatchCriteria extends Criteria {
     public static final String GREATEREQUAL = ">=";
     public static final String LESSEQUAL = "<=";
     public static final String LIKE = "LIKE";
+    public static final String NOTEQUALS = "<>";
     
     private static final String IS = "IS";
     private static final String NULL = "NULL";
