@@ -152,10 +152,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		catch (FinderException e) {
 			
 		}
-		catch (CreateException e) {
-			e.printStackTrace();
-			
-		}
+	
 		return null;
 	}
 	
@@ -181,10 +178,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 			e.printStackTrace();
 			
 		}
-		catch (FinderException e) {
-			e.printStackTrace();
-			
-		}
+		
 		catch (CreateException e) {
 			e.printStackTrace();
 			
