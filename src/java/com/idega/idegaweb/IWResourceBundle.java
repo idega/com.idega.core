@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.util.MissingResourceException;
 import java.util.TreeMap;
 import java.util.Iterator;
+import com.idega.exception.IWBundleDoesNotExist;
 
 /**
  * Title:        idega Framework
@@ -62,8 +63,19 @@ public class IWResourceBundle extends ResourceBundle {
      * Override of ResourceBundle, same semantics
      */
     public Object handleGetObject(String key) {
+      if(lookup!=null){
         Object obj = lookup.get(key);
         return obj; // once serialization is in place, you can do non-strings
+      }
+      else{
+        IWBundle parent = getIWBundleParent();
+        if(parent!=null){
+          throw new IWBundleDoesNotExist(parent.getBundleIdentifier());
+        }
+        else{
+          throw new IWBundleDoesNotExist();
+        }
+      }
     }
 
     /**
@@ -156,12 +168,12 @@ public class IWResourceBundle extends ResourceBundle {
       else return returnString;
     }
 
-    /**
-     *@deprecated Replaced with getLocalizedString(key)
-     */
-    public String getStringChecked(String key){
-      return getLocalizedString(key);
-    }
+    ///
+   //  *@deprecated Replaced with getLocalizedString(key)
+   //  */
+   // public String getStringChecked(String key){
+   //   return getLocalizedString(key);
+   // }
 
     public void setString(String key,String value){
       //lookup.setProperty(key,value);
