@@ -198,8 +198,8 @@ public class IWMainApplicationStarter {
 		sendStartMessage("Starting IWStyleManager");
 		registerSystemBeans();
 		updateClassReferencesInDatabase();
+		updateStartDataInDatabase();
 		startTemporaryBundleStarters();
-		insertStartData();
 		application.startAccessController();
 		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		application.loadBundles();
@@ -386,25 +386,31 @@ public class IWMainApplicationStarter {
 			home.updateClassReferences("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class);
 		} 
 		catch (IDOLookupException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IDOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 	
-	
-	protected void insertStartData() {
-		/*
-		 * @todo Move to user plugin system
-		 **/
+	private void updateStartDataInDatabase() {
+		try {
+			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
+			home.updateStartData();
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (IDOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		insertGroupRelationType("GROUP_PARENT");
 		insertGroupRelationType("FAM_CHILD");
 		insertGroupRelationType("FAM_PARENT");
 		insertGroupRelationType("FAM_SPOUSE");
 	}
+	
 	private void insertGroupRelationType(String groupRelationType) {
 		/**
 		 * @todo Move this to a more appropriate place
