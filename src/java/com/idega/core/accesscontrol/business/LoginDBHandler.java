@@ -4,7 +4,6 @@ import com.idega.util.idegaTimestamp;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginRecord;
-import com.idega.core.accesscontrol.data.LogoutRecord;
 import com.idega.data.EntityFinder;
 import com.idega.core.user.data.User;
 import java.util.List;
