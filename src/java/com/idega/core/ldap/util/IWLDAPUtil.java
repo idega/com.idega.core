@@ -385,7 +385,7 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 		try {
 			DirectoryString dn = getRootDN();
 			if(dn!=null){
-				baseDN = toString();
+				baseDN = dn.toString();
 			}
 		}
 		catch (Exception e) {
