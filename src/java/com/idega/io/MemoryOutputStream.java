@@ -13,7 +13,7 @@ public class MemoryOutputStream extends OutputStream{
   }
 
   public void close(){
-    System.out.println("Calling close on MemoryOutputStream");
+    //System.out.println("Calling close on MemoryOutputStream");
     isClosed=true;
   }
 
@@ -33,7 +33,7 @@ public class MemoryOutputStream extends OutputStream{
   }
 
   public void write(byte[] b, int off, int len){
-  System.out.println("Calling write on MemoryOutputStream");
+  //System.out.println("Calling write on MemoryOutputStream");
     if(!isClosed){
       buffer.write(b,off,len);
     }
