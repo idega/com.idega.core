@@ -309,9 +309,9 @@ public class ImageLabel extends Canvas {
   public Dimension preferredSize() {
     if (!doneLoading)
       waitForImage(false);
-//    return(super.preferredSize());
+    return(super.preferredSize());
     //return(super.getPreferredSize());
-  return new Dimension(width,height);
+//  return new Dimension(width,height);
   }
 
 
@@ -335,8 +335,8 @@ public class ImageLabel extends Canvas {
    public Dimension minimumSize() {
      if (!doneLoading)
        waitForImage(false);
-//     return(super.inimumSize());
-  return new Dimension(width,height);
+     return(super.minimumSize());
+//  return new Dimension(width,height);
    }
 
   //----------------------------------------------------

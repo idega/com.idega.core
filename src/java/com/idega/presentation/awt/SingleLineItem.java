@@ -38,6 +38,7 @@ public class SingleLineItem extends Panel {
     setBackground(bgColor);
     setForeground(Color.black);
     parentContainer = parent;
+    this.doLayout();
   }
 
   public void setComponentOffset(int componentOffset){
@@ -158,6 +159,8 @@ public class SingleLineItem extends Panel {
 
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
+      super.doLayout();
+      super.repaint();
       return component;
   }
 
