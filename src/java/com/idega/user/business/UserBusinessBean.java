@@ -1760,7 +1760,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws RemoteException
 	 */
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
+		
 		Collection topNodes = new ArrayList();
+		//check for the super user case first
+		boolean isSuperUser = iwuc.isSuperAdmin();
+		if( (isSuperUser && user==null) || (isSuperUser && iwuc.getCurrentUser().equals(user)) ){
+			try {
+				topNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
+			}
+			catch (Exception e1) {
+				topNodes = new Vector();
+				e1.printStackTrace();
+			}
+		}
+		
 		if( user != null ){
 			topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
 			if(topNodes != null && !topNodes.isEmpty()){ 
@@ -1776,17 +1789,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				totalTime.start();
 				try {
 					GroupBusiness groupBiz = getGroupBusiness();
-					boolean superUser = iwuc.isSuperAdmin();
-					if(superUser && user.equals(iwuc.getCurrentUser())){
-						try {
-							topNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
-						}
-						catch (Exception e1) {
-							topNodes = new Vector();
-							e1.printStackTrace();
-						}
-					}
-					else if (groupBiz.userGroupTreeImageProcedureTopNodeSearch()){
+					if (groupBiz.userGroupTreeImageProcedureTopNodeSearch()){
 						log("[UserBusinessBean]: using stored procedure topnode search");
 						Timer time = new Timer();
 						time.start();
