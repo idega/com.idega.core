@@ -215,6 +215,17 @@
       	<idegaweb.bundle.include>true</idegaweb.bundle.include>
       <properties/>
     </dependency>
+    <!-- This dependency is necessary because of Myfaces JSF -->
+    <dependency>
+        <groupId>jstl</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.0.2</version>
+        <type>jar</type>
+        <url>http://java.sun.com/</url>
+	      <properties>
+	      	<idegaweb.bundle.include>true</idegaweb.bundle.include>
+	      <properties/>
+    </dependency>    
     <dependency>
       <groupId>oracle_jdbc</groupId>
       <artifactId>oracle_jdbc</artifactId>
