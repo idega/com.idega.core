@@ -170,7 +170,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		allowedPrimaryKeyClass = pkDefinition.getPrimaryKeyClass();
 		pkColumnName = pkFields[0].getSQLFieldName();
 		
-		if (_sqlQuery.getBaseTable()!= null) {
+		if (_sqlQuery != null && _sqlQuery.getBaseTable() != null) {
 		    sqlQueryTable = _sqlQuery.getBaseTable();
 		} else {
 		    sqlQueryTable = new Table(_entity);
@@ -452,8 +452,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					}
 					total++;
 				}
-		    		Iterator iter = listOfPrimaryKeys.iterator();
-		    		for (int i = firstIndex; iter.hasNext();i++) {
+	    		Iterator iter = listOfPrimaryKeys.iterator();
+	    		for (int i = firstIndex; iter.hasNext();i++) {
 					Object pk = (Object) iter.next();
 					Object entity = mapOfEntities.get(pk);
 					_entities.set(i,entity);
@@ -468,8 +468,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				}
 		    		_tracker.setSubsetAsLoaded(firstIndex,firstIndex+listOfPrimaryKeys.size());
 		    } else {
-			    	for(int i = firstIndex; RS.next(); i++)
-				{
+			    for(int i = firstIndex; RS.next(); i++)
+			    {
 					Object pk = proxyEntity.getPrimaryKeyFromResultSet(RS);
 					if (pk != null)
 					{
@@ -482,6 +482,17 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 								logError("[IDOPrimaryKeyList]: At index "+i+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
 								logError("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
 							}
+							
+							//Althoug the same object is more than ones in the primary key list it is only ones
+							//in the resultset.  Since the primary key list is orderd by id we can assume that the 
+							//duplicated primary keys lie side by side.
+							int numberOfEqualObjectsInSequence = 1;
+							while(this.size()>(i+numberOfEqualObjectsInSequence) && this.get(i).equals(this.get(i+numberOfEqualObjectsInSequence))){
+							    _entities.set(i+numberOfEqualObjectsInSequence,bean);
+							    numberOfEqualObjectsInSequence++;
+							}
+							i+=numberOfEqualObjectsInSequence-1;
+							total+=numberOfEqualObjectsInSequence-1;
 						} catch (FinderException e) {
 							//The row must have been deleted from database
 	//						this.remove(pk);
