@@ -602,7 +602,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * the date settings of the given <code>Date</code> object.  Time settings are
 	 * disgarded.
 	 */
-	public IWTimestamp(Date date) {
+	public IWTimestamp(java.util.Date date) {
 		this();
 		setAsDate();
 		calendar.setTime(date);
