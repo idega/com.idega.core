@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.4 2005/01/14 00:05:41 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.5 2005/01/24 18:24:25 thomas Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,16 +17,20 @@ import com.idega.idegaweb.IWMainApplication;
 /**
  *  Class that holds basic functionality used by many filters.<br>
  * 
- *  Last modified: $Date: 2005/01/14 00:05:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/24 18:24:25 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public abstract class BaseFilter implements Filter{
-
-
-	private static boolean isInit=false;
 	
+	private static boolean DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT = false;
+	private static boolean CHECKED_CURRENT_APPCONTEXT = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT;
+
+	public static void unload()	{
+		CHECKED_CURRENT_APPCONTEXT = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT; 
+	}
+
 	protected static String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
 	protected static String OLD_BUILDER_INDEX_JSP_URI = "/index.jsp";
 	protected static String OLD_BUILDER_PAGE_PARAMETER = "ib_page";
@@ -82,7 +86,6 @@ public abstract class BaseFilter implements Filter{
 	}
 
 
-	private static boolean CHECKED_CURRENT_APPCONTEXT=false;
 	/**
 	 * This may be called from several filter subclasses. This should ideally be called by the first filter in the chain.
 	 * @param iwc

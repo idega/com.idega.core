@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.7 2005/01/14 01:47:56 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.8 2005/01/24 18:24:45 thomas Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,17 +29,29 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/01/14 01:47:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/24 18:24:45 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
-	private static boolean isInit=false;
+	private static final boolean DEFAULT_VALUE_IS_INIT = false;
+	private static boolean isInit= DEFAULT_VALUE_IS_INIT;
 	
-	private static boolean START_ON_WORKSPACE=true;	
-	private static boolean START_ON_PAGES=false;
+	private static final boolean DEFAULT_VALUE_START_ON_WORKSPACE = true;
+	private static boolean START_ON_WORKSPACE= DEFAULT_VALUE_START_ON_WORKSPACE;
+	
+	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
+	private static boolean START_ON_PAGES= DEFAULT_VALUE_START_ON_PAGES;
+	
+	
+	public static void unload() {
+		isInit = DEFAULT_VALUE_IS_INIT;
+		START_ON_WORKSPACE = DEFAULT_VALUE_START_ON_WORKSPACE;
+		START_ON_PAGES = DEFAULT_VALUE_START_ON_PAGES;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
