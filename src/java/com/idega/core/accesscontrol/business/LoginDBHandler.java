@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.53 2004/07/16 08:42:43 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.54 2004/08/24 22:05:50 aron Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -526,7 +526,7 @@ public class LoginDBHandler {
 		try {
 			user = getUser(userID);
 			List possibleLogins = getPossibleGeneratedUserLogins(user);
-			String generatedPassword = getGeneratedPasswordForUser();
+			String generatedPassword = getGeneratedPasswordForUser(user);
 
 			//or (int i = 0; i < possibleLogins.length; i++)
 			//{
@@ -556,6 +556,10 @@ public class LoginDBHandler {
 	}
 
 	public static String getGeneratedPasswordForUser() {
+		return com.idega.util.StringHandler.getRandomStringNonAmbiguous(8);
+	}
+	
+	public static String getGeneratedPasswordForUser(User user) {
 		return com.idega.util.StringHandler.getRandomStringNonAmbiguous(8);
 	}
 
@@ -629,6 +633,7 @@ public class LoginDBHandler {
 		int namelength = userNameLength;
 		char[][] array = new char[196][namelength];
 		String alfabet = first + last + middle;
+		alfabet = alfabet.toLowerCase();
 		boolean rand = false;
 		char[] alfa = alfabet.toCharArray();
 		char[] digi = new String("012345679").toCharArray();
@@ -727,12 +732,12 @@ public class LoginDBHandler {
 		}
 
 		list.trimToSize();
-		System.out.println(list.size());
+
 		return list;
 	}
 
 	public static void main(String[] args) {
-		java.util.List list = generatePossibleUserNames("jon", "skafti", "sigurdsson", 8,new Integer(9999));
+		java.util.List list = generatePossibleUserNames("Maria", "", "Ammar", 8,new Integer(9999));
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			System.out.println(element);
