@@ -8,7 +8,7 @@
     </organization>
     <inceptionYear>2000</inceptionYear>
     <groupId>bundles</groupId>
-
+	<package>${pom.artifactId}</package>
     <repository>
         <connection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</connection>
         <developerConnection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</developerConnection>
