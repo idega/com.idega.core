@@ -120,7 +120,7 @@ public class UserBusiness {
       }
   }
 
-  public Phone[] getUserPhones(int userId) {
+  public static Phone[] getUserPhones(int userId) {
     try {
       return (Phone[]) new User(userId).findRelated(Phone.getStaticInstance(Phone.class));
     }
@@ -130,7 +130,7 @@ public class UserBusiness {
     }
   }
 
-  public Phone getUserPhone(int userId, int phoneTypeId) {
+  public static Phone getUserPhone(int userId, int phoneTypeId) {
     try {
       GenericEntity[] result = new User(userId).findRelated(Phone.getStaticInstance(Phone.class));
       if(result != null){
@@ -148,7 +148,7 @@ public class UserBusiness {
     }
   }
 
-  public Email getUserMail(int userId) {
+  public static Email getUserMail(int userId) {
     try {
       GenericEntity[] result = new User(userId).findRelated(Email.getStaticInstance(Email.class));
       if(result != null){

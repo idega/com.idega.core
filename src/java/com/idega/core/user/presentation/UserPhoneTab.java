@@ -5,7 +5,7 @@ import com.idega.jmodule.object.interfaceobject.TextInput;
 import com.idega.jmodule.object.interfaceobject.DropdownMenu;
 import com.idega.jmodule.object.ModuleInfo;
 import com.idega.jmodule.object.textObject.Text;
-import com.idega.block.staff.business.StaffBusiness;
+import com.idega.core.user.business.UserBusiness;
 import com.idega.block.staff.data.StaffInfo;
 import com.idega.util.idegaTimestamp;
 import java.util.Hashtable;
@@ -258,7 +258,8 @@ public class UserPhoneTab extends UserTab{
             business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
           }
         }
-        business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
+        if ( (String)fieldValues.get(this.emailFieldName) != null && ((String)fieldValues.get(this.emailFieldName)).length() > 0 )
+          business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
       }
     }
     catch(Exception e){
@@ -272,8 +273,8 @@ public class UserPhoneTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      Phone[] phones = business.getUserPhones(getUserId());
-      Email mail = business.getUserMail(getUserId());
+      Phone[] phones = UserBusiness.getUserPhones(getUserId());
+      Email mail = UserBusiness.getUserMail(getUserId());
 
       for ( int a = 0; a < phones.length; a++ ) {
         if ( a == 0 ) {
