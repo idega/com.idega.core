@@ -691,6 +691,21 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * false the form will not submit.
 	 * @param functionName	The name of the function to check on submit.
 	 * @param function			The function to perform.
+	 */
+	public void setOnSubmitFunction(String functionName, String function) {
+		if (getForm() != null) {
+			getParentForm().setOnSubmit("return checkSubmit(this)");
+			setCheckSubmit();
+			getScript().addToFunction("checkSubmit", "if ("+functionName+"() == false ){\nreturn false;\n}\n");
+			getScript().addFunction(functionName, function);
+		}
+	}
+
+	/**
+	 * Sets a function to perform on submit of the parent form.  If the function returns
+	 * false the form will not submit.
+	 * @param functionName	The name of the function to check on submit.
+	 * @param function			The function to perform.
 	 * @param value				A value to use in the function.
 	 */
 	protected void setOnSubmitFunction(String functionName, String function, String value) {
