@@ -98,10 +98,11 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 	protected void deleteSequence(GenericEntity entity) throws Exception {
 	}
 
-	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
+	protected void executeAfterInsert(GenericEntity entity) throws Exception {
 		if (entity.isNull(entity.getIDColumnName())) {
 			entity.setID(createUniqueID(entity));
 		}
+		super.executeAfterInsert(entity);
 	}
 
 	protected void insertBlob(GenericEntity entity) throws Exception {
@@ -109,10 +110,10 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 		super.insertBlob(entity);
 	}
 
-	protected String getCreateUniqueIDQuery(GenericEntity entity) {
+	/*protected String getCreateUniqueIDQuery(GenericEntity entity) {
 		return "insert into " + getSequenceTableName(entity) + "("
 				+ entity.getIDColumnName() + ") values(null)";
-	}
+	}*/
 
 	private static String getOracleSequenceName(GenericEntity entity) {
 		String entityName = entity.getTableName();
