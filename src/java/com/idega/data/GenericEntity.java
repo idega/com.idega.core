@@ -41,7 +41,7 @@ import com.idega.util.database.ConnectionBroker;
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean {
+public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean, EntityRepresentation {
 	public static final String MANY_TO_ONE = "many-to-one";
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
