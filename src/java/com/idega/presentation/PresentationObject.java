@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.86 2004/03/22 16:04:51 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.87 2004/05/07 14:55:43 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -127,6 +127,8 @@ implements Cloneable{//,UIComponent{
 	private String formerCompoundId = null;
 	
 	private TextStyler _styler;
+	private String _objTemplateID = null;
+	private PresentationObject _templateObject =null;
 	/**
 	 * Default constructor
 	 */
@@ -796,6 +798,8 @@ implements Cloneable{//,UIComponent{
 			obj.ic_object_instance_id = this.ic_object_instance_id;
 			obj.ic_object_id = this.ic_object_id;
 			obj._location = this._location;
+			obj._objTemplateID=this._objTemplateID;
+			obj._templateObject = null;
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
 		}
@@ -858,8 +862,40 @@ implements Cloneable{//,UIComponent{
 	 * 
 	 * public String getTreeID() { return treeID;
 	 */
+	public String getTemplateId() {
+		return (_objTemplateID);
+	}
+	public PresentationObject getTemplateObject() {
+		if(_templateObject == null) {
+			_templateObject = (PresentationObject)this.clone();
+			_templateObject._objTemplateID = null;
+			try {
+				_templateObject.ic_object_instance_id = Integer.parseInt(this._objTemplateID);
+			} catch (NumberFormatException e) {
+				_templateObject.ic_object_instance_id=-1;
+				e.printStackTrace();
+			}
+		}
+		return _templateObject;
+	}
+	public void setTemplateId(int id) {
+		if(id!=-1) {
+			setTemplateId(String.valueOf(id));
+		} else {
+			setTemplateId(null);
+		}
+	}
+	public void setTemplateId(String id) {
+		_objTemplateID=id;
+	}
+	
+	public void changeInstanceIdForInheritedObject(int id) {
+		setTemplateId(getICObjectInstanceID());
+		setICObjectInstanceID(id);
+	}
+	
 	public void setICObjectInstanceID(int id)
-	{
+	{	
 		this.ic_object_instance_id = id;
 		this.getLocation().setICObjectInstanceID(id);
 	}
@@ -2049,6 +2085,14 @@ implements Cloneable{//,UIComponent{
 	 	return false;
 	 }
 
+	 
+	 public Object getOwnerGroup(IWUserContext iwuc) {
+	 	Page parentPage = getParentPage();
+	 	if(parentPage!=null) {
+	 		return parentPage.getOwnerGroup(iwuc);
+	 	}
+	 	return null;
+	 }
 
 
 	 //END STANDARD LOGGING METHODS

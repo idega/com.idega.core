@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.104 2004/05/05 15:14:00 gummi Exp $
+ *  $Id: Page.java,v 1.105 2004/05/07 14:55:44 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,7 +16,11 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.ejb.EJBException;
+
+import com.idega.builder.dynamicpagetrigger.business.DPTTriggerBusiness;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -32,6 +36,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.servlet.IWCoreServlet;
+import com.idega.user.data.Group;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
 import com.idega.util.URLUtil;
@@ -129,6 +134,8 @@ public class Page extends PresentationObjectContainer {
 	private ICPage _windowToOpenOnLoad;
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
+	
+	private Object dptOwnerGroup = null;
 
 	/**
 	 */
@@ -988,7 +995,7 @@ public class Page extends PresentationObjectContainer {
 				obj._styleSheets = _styleSheets;
 			if (_styleDefinitions != null)
 				obj._styleDefinitions = _styleDefinitions;
-
+			obj.dptOwnerGroup=dptOwnerGroup;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
@@ -1660,4 +1667,20 @@ public class Page extends PresentationObjectContainer {
 		//<link rel="shortcut icon" href="/favicon.ico">
 	}
 
+	 public Object getOwnerGroup(IWUserContext iwuc) {
+	 	if(dptOwnerGroup == null && getDPTRootPageID()!=-1) {
+	 		try {
+				Group gr = ((DPTTriggerBusiness)IBOLookup.getServiceInstance(iwuc.getApplicationContext(),DPTTriggerBusiness.class)).getOwnerGroupFromRootPageID(getDPTRootPageID());
+				dptOwnerGroup=gr;;
+			} catch (IBOLookupException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (EJBException e) {
+				e.printStackTrace();
+			}
+	 	}
+	 	return dptOwnerGroup;
+	 }
+	
 }

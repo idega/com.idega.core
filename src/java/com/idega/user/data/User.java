@@ -21,6 +21,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public static final String FIELD_DELETED = "DELETED";
  public static final String FIELD_DELETED_BY = "DELETED_BY";
  public static final String FIELD_DELETED_WHEN = "DELETED_WHEN";
+ public static final String USER_GROUP_TYPE="ic_user_representative";
   
 	
  public void setPrimaryGroupID(java.lang.Integer p0);

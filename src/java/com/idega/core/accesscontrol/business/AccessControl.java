@@ -528,7 +528,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			usersGroupsToCheckAgainstPermissions[2].add(Integer.toString(user.getGroupID()));
 			usersGroupsToCheckAgainstPermissions[3] = new ArrayList();
 			usersGroupsToCheckAgainstPermissions[3].add(Integer.toString(user.getPrimaryGroupID()));
-			// Everyone, user, primaryGroup, otherGroups
+			// ([0])Everyone, ([1])users, ([2])user, ([3])primaryGroup, ([4])otherGroups
 		}
 
 		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey, iwc);
@@ -725,16 +725,61 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				}
 				else {
 					//Object instance
+					myPermission=Boolean.FALSE; //TODO: should be set to null and the haspermissionForObjectInstance should return null if there is no permission set and then later return false if still null, because permission could be stored as false permission
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission =
-							PermissionCacher.hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = PermissionCacher.hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
 					}
-
 					//instance
-					//
+					
+					//Template object instance permission.  Used for DynamicPageTrigger
+					if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
+						PresentationObject prObj = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
+						String templateID = prObj.getTemplateId();
+						if(templateID!=null) {
+							//Check for general permission for everyone and user
+							//.....maby later
+							
+							//Get ownergroup
+							Group ownerGroup = (Group)prObj.getOwnerGroup(iwc);
+							//check if user is in ownergroup
+							if(ownerGroup != null) {
+								boolean isInOwnerGroup = false;
+								Object pk = ownerGroup.getPrimaryKey().toString();
+								for (int i = 0; i < permissionGroupLists.length; i++) {
+									List groupIDs = permissionGroupLists[i];
+									for (Iterator iter = groupIDs.iterator(); iter.hasNext();) {
+										Object gr = iter.next();
+										isInOwnerGroup = pk.equals(gr);
+										if(isInOwnerGroup) {
+											break;
+										}
+									}
+									if(isInOwnerGroup) {
+										break;
+									}
+								}
+								
+								if(isInOwnerGroup) {
+//									List[] permissionOrder = new List[1];
+//									permissionOrder[0] = groupIDs;
+									//TODO: it might be ncessary to remove everyone and users from permissionGroupLists
+									PresentationObject templateParentObject = prObj.getTemplateObject();
+									myPermission = checkForPermission(permissionGroupLists,templateParentObject,permissionKey,iwc);
+									if (Boolean.TRUE.equals(myPermission)) {
+										return myPermission;
+									}
+								}
+							}
+							//if so, check for permission for the template object
+						}
+					}
+					//Template object instance permission ends
+
+					
+					
 					//          page permission inheritance
 					//          if(obj.allowPagePermissionInheritance()){
 					//            Page p = obj.getParentPage();
@@ -761,7 +806,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						// Global - (object)
 					}
 
-					return myPermission;
+					if(myPermission==null) {
+						return Boolean.FALSE;
+					}else {
+						return myPermission;
+					}
 				}
 			}
 		}
