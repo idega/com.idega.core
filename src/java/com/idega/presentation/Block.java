@@ -714,4 +714,10 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		super.decode(fc);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }
