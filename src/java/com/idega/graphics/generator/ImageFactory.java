@@ -52,7 +52,7 @@ public class ImageFactory {
     Button button = new Button(textOnButton);
     button.generate(filePath);
 
-    image = new Image("test",button.getButtonUpURL(),button.getButtonOverURL());
+    image = new Image("test",iwb.getResourcesURL()+button.getButtonUpName(),iwb.getResourcesURL()+button.getButtonOverName());
 
     return image;
   }

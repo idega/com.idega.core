@@ -227,7 +227,7 @@ public class Button {
       name.append(effect);
       name.append(".gif");
 
-      filename.concat(name.toString());
+      filename+=name.toString();
 
       if( effect == BUTTON_UP ){
         buttonUpURL = filename;
