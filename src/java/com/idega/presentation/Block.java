@@ -312,15 +312,19 @@ public class Block extends PresentationObjectContainer implements IWBlock {
 		}
 	}
 
-	public Text setStyle(String text, String styleName) {
-		return (Text) setStyle(new Text(text),styleName);	
+	public Text getStyleText(String text, String styleName) {
+		return (Text) getStyleText(new Text(text),styleName);	
 	}
 	
-	public Text setStyle(Text text, String styleName) {
+	public Text getStyleText(Text text, String styleName) {
 		return (Text) setStyle(text,styleName);	
 	}
 	
-	public Link setStyle(Link link, String styleName) {
+	public Link getStyleLink(String link, String styleName) {
+		return (Link) getStyleLink(new Link(link),styleName);	
+	}
+	
+	public Link getStyleLink(Link link, String styleName) {
 		return (Link) setStyle(link,styleName);	
 	}
 	
