@@ -1043,15 +1043,16 @@ public class CategoryFinder {
 
   }
 
+	public ICCategoryHome getCategoryHome() throws java.rmi.RemoteException{
+	  return (ICCategoryHome)IDOLookup.getHome(ICCategory.class);
+	}
+
   public int getCategoryOrderNumber(Category category, ICObjectInstance instance) throws FinderException, RemoteException{
-    ICCategoryICObjectInstanceHome catObjInsHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
-    return catObjInsHome.getOrderNumber(category, instance);
-  }
+		return getCategoryHome().getOrderNumber(category,instance);
+	}
 
   public boolean setOrderNumber(Category category, ICObjectInstance instance, int orderNumber) throws IDOException, RemoteException {
-    ICCategoryICObjectInstanceHome catObjInsHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
-    return catObjInsHome.setOrderNumber(category, instance, orderNumber);
-//    return this.idoExecuteTableUpdate("UPDATE "+getEntityName()+" SET "+TREE_ORDER_COLUMN_NAME+" = "+orderNumber+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+	  return getCategoryHome().setOrderNumber(category,instance,orderNumber);
   }
 
 }

@@ -39,5 +39,19 @@ public class ICCategoryHomeImpl extends com.idega.data.IDOFactory implements ICC
 
  }
 
+ public int getOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((ICCategoryBMPBean)entity).ejbHomeGetOrderNumber(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+ public boolean setOrderNumber(com.idega.core.business.Category p0,com.idega.core.data.ICObjectInstance p1,int p2)throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	boolean theReturn = ((ICCategoryBMPBean)entity).ejbHomeSetOrderNumber(p0,p1,p2);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }

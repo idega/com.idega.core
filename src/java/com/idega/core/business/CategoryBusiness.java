@@ -206,7 +206,7 @@ public class CategoryBusiness{
 
     try {
       ICObjectInstance instance = ((ICObjectInstanceHome) IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(iObjectInstanceId);
-      ICCategoryICObjectInstanceHome catObjInstHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
+      //ICCategoryICObjectInstanceHome catObjInstHome = (ICCategoryICObjectInstanceHome) IDOLookup.getHome(ICCategoryICObjectInstance.class);
       ICCategoryHome catHome = (ICCategoryHome) IDOLookup.getHomeLegacy(ICCategory.class);
 
       Category category;
@@ -214,12 +214,12 @@ public class CategoryBusiness{
 
       for (int i = 0; i < CategoryIds.length; i++) {
         category = catHome.findByPrimaryKeyLegacy(CategoryIds[i]);
-        tree_order = catObjInstHome.getOrderNumber(category, instance);
+        tree_order = 1;//catObjInstHome.getOrderNumber(category, instance);
 //        com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom(ICCategory.class, CategoryIds[i]);
-        com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom((ICCategory) category);
+       // com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).removeFrom((ICCategory) category);
 
-        com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).addTo(ICCategory.class,CategoryIds[i]);
-        catObjInstHome.setOrderNumber(category, instance, tree_order);
+        //com.idega.core.data.ICObjectInstanceBMPBean.getEntityInstance(ICObjectInstance.class,iObjectInstanceId).addTo(ICCategory.class,CategoryIds[i]);
+        //catObjInstHome.setOrderNumber(category, instance, tree_order);
 
       }
 
@@ -273,8 +273,9 @@ public class CategoryBusiness{
 
       if (objectInstanceId > 0) {
         ICObjectInstance objIns = (( ICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(objectInstanceId);
-        ICCategoryICObjectInstanceHome catObjInsHome = ( ICCategoryICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class);
-        catObjInsHome.setOrderNumber(cat, objIns, orderNumber);
+        //ICCategoryICObjectInstanceHome catObjInsHome = ( ICCategoryICObjectInstanceHome) com.idega.data.IDOLookup.getHomeLegacy(ICCategoryICObjectInstance.class);
+        //catObjInsHome.setOrderNumber(cat, objIns, orderNumber);
+
       }
 
       return true;

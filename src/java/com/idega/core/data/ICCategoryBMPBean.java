@@ -5,6 +5,8 @@ package com.idega.core.data;
 import com.idega.core.business.Category;
 
 import java.sql.*;
+import javax.ejb.FinderException;
+import com.idega.data.SimpleQuerier;
 
 import com.idega.data.TreeableEntity;
 
@@ -15,7 +17,9 @@ import com.idega.data.TreeableEntity;
 public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.data.ICCategory,com.idega.core.business.Category {
 
 
-	public static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
+	private String IC_CATEGORY_COLUMN_NAME = ICCategoryBMPBean.getEntityTableName()+"_ID";
+  private String IC_OBJECT_INSTANCE_COLUMN_NAME = "IC_OBJECT_INSTANCE_ID";
+  private String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
 
   public ICCategoryBMPBean(){
 
@@ -209,6 +213,23 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 
     setType(getCategoryType());
 
+  }
+
+	public int ejbHomeGetOrderNumber(Category category, ICObjectInstance instance) throws javax.ejb.FinderException{
+    try {
+      String[] res = SimpleQuerier.executeStringQuery("SELECT TREE_ORDER FROM "+getEntityName()+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
+      if (res == null || res.length == 0 || res[0] == null) {
+        return 0;
+
+      }
+      return Integer.parseInt(res[0]);
+    }catch (Exception e) {
+      throw new FinderException(e.getMessage());
+    }
+  }
+
+  public boolean ejbHomeSetOrderNumber(Category category, ICObjectInstance instance, int orderNumber) throws com.idega.data.IDOException {
+    return this.idoExecuteTableUpdate("UPDATE "+getEntityName()+" SET "+TREE_ORDER_COLUMN_NAME+" = "+orderNumber+" WHERE "+IC_OBJECT_INSTANCE_COLUMN_NAME+" = "+instance.getID()+" AND "+IC_CATEGORY_COLUMN_NAME+" = "+category.getID());
   }
 
 }
