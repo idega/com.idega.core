@@ -46,7 +46,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private boolean debugParameters = false;
 
 	private static final String concatter = "_";
-	private static final String newline = "\n";
+	static final String newline = "\n";
 
 	public final static String IW_BLOCK_CACHE_KEY = "iw_not_cached";
 
@@ -503,137 +503,6 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		//debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
 	}
 
-	public class BlockCacheWriter extends java.io.PrintWriter {
-
-		private PrintWriter underlying;
-		private StringBuffer buffer;
-
-		public BlockCacheWriter(PrintWriter underlying, StringBuffer buffer) {
-			super(underlying);
-			this.underlying = underlying;
-			this.buffer = buffer;
-		}
-
-		public boolean checkError() {
-			return underlying.checkError();
-		}
-
-		public void close() {
-			underlying.close();
-		}
-
-		public void flush() {
-			underlying.flush();
-		}
-
-		public void print(boolean b) {
-			print(String.valueOf(b));
-		}
-
-		public void print(char c) {
-			print(String.valueOf(c));
-		}
-
-		public void print(char[] s) {
-			print(String.valueOf(s));
-		}
-
-		public void print(double d) {
-			print(String.valueOf(d));
-		}
-
-		public void print(float f) {
-			print(String.valueOf(f));
-		}
-
-		public void print(int i) {
-			print(String.valueOf(i));
-		}
-
-		public void print(long l) {
-			print(String.valueOf(l));
-		}
-
-		public void print(Object o) {
-			print(String.valueOf(o));
-		}
-
-		public void print(String s) {
-			underlying.print(s);
-			buffer.append(s);
-		}
-
-		public void println() {
-			underlying.println();
-			buffer.append(newline);
-		}
-
-		public void println(boolean b) {
-			println(String.valueOf(b));
-		}
-
-		public void println(char c) {
-			println(String.valueOf(c));
-		}
-
-		public void println(char[] s) {
-			println(String.valueOf(s));
-		}
-
-		public void println(double d) {
-			println(String.valueOf(d));
-		}
-
-		public void println(float f) {
-			println(String.valueOf(f));
-		}
-
-		public void println(int i) {
-			println(String.valueOf(i));
-		}
-
-		public void println(long l) {
-			println(String.valueOf(l));
-			;
-		}
-
-		public void println(Object o) {
-			println(String.valueOf(o));
-		}
-
-		public void println(String s) {
-			print(s);
-			println();
-		}
-
-		public void setError() {
-			super.setError();
-		}
-
-		public void write(char[] buf) {
-			print(buf);
-		}
-
-		public void write(char[] buf, int off, int len) {
-			char[] newarray = new char[len];
-			System.arraycopy(buf, off, newarray, 0, len);
-			write(newarray);
-		}
-
-		public void write(int c) {
-			print(c);
-		}
-
-		public void write(String s) {
-			print(s);
-		}
-
-		public void write(String s, int off, int len) {
-			write(s.substring(off, off + len));
-		}
-
-	}
-
 	public static Block getCacheableObject(PresentationObject objectToCache, String cacheKey, long millisecondsInterval) {
 		Block obj = new Block();
 		obj.add(objectToCache);
@@ -641,7 +510,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return obj;
 	}
 
-	public synchronized Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission) {
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission) {
 		if (iwc != null) {
 			//this.setIWApplicationContext(iwc.getApplicationContext());
 			//this.setIWUserContext(iwc);
@@ -659,7 +528,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
-	public synchronized Object clone() {
+	public Object clone() {
 		Block obj = (Block) super.clone();
 
 		obj.cacheable = this.cacheable;
