@@ -23,7 +23,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
   }
 
   public String getSessionAddressString(){
-    return "ic_group_property_window";
+    return "ic_group_property_window"; 
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
