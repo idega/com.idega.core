@@ -923,10 +923,11 @@ public class IWMainApplication {//implements ServletContext{
     }
 
     /**
-     * Returns the part of the URL that is the context path for this application
+     * @deprecated method, use getApplicationContextURI() instead.
      */
     public String getContextURL() {
-        return (String) this.getAttribute(CONTEXT_PATH_KEY);
+        //return (String) this.getAttribute(CONTEXT_PATH_KEY);
+    		return this.getApplicationContextURI();
     }
 
     public IWApplicationContext getIWApplicationContext() {
@@ -968,6 +969,11 @@ public class IWMainApplication {//implements ServletContext{
         System.out.println("[idegaWebApp] : " + message);
     }
 
+    /**
+     * Sets the context path the application is running under.
+     * This method is typically called from a ServletFilter or a base Servlet.
+     * @param uri The uri to set, e.g. "/myapplication" or "/"
+     */
     public void setApplicationContextURI(String uri) {
         if (uri != null) {
             if (uri.startsWith(SLASH)) {
@@ -995,6 +1001,9 @@ public class IWMainApplication {//implements ServletContext{
         return appContext;
     }
 
+    /**
+     * Returns true if the context path the application is "/"
+     */
     public boolean isRunningUnderRootContext() {
         if (appContext == null) {
             return true;
