@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.58 2001/10/23 15:10:21 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.59 2001/10/23 17:22:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1356,15 +1356,15 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
                                 catch(SQLException ex){
                                   //NOCATH
                                   try{
-                                    if (RS.getString(columnNames[i].toUpperCase()) != null){
+                                    //if (RS.getString(columnNames[i].toUpperCase()) != null){
 				  	fillColumn(columnNames[i],RS);
-			            }
+			            //}
                                   }
                                   catch(SQLException exe){
                                     try{
-                                      if (RS.getString(columnNames[i].toLowerCase()) != null){
+                                      //if (RS.getString(columnNames[i].toLowerCase()) != null){
 				    	  fillColumn(columnNames[i],RS);
-			                }
+			                //}
                                       }
                                     catch(SQLException exep){
                                          System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
