@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.data.IBPage;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -110,7 +112,7 @@ public class URLUtil {
 			}
 		}
 		
-		return parameters.toString();
+		return TextSoap.convertSpecialCharacters(parameters.toString());
 	}
 
 	/**
@@ -138,6 +140,12 @@ public class URLUtil {
 	
 	public void addParameter(String name, int value) {
 		addParameter(name, String.valueOf(value));
+	}
+	
+	public void setPage(IBPage page) {
+		if ((page != null) && (page.getID() != -1)) {
+			addParameter(BuilderLogic.IB_PAGE_PARAMETER, page.getID());
+		}
 	}
 
 	/**
