@@ -5,10 +5,15 @@
 
 package com.idega.presentation.ui;
 
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
-import com.idega.data.*;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Vector;
+import java.util.Iterator;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Script;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.data.GenericEntity;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -20,9 +25,10 @@ private Vector theElements;
 private boolean keepStatus;
 private String selectedElementValue;
 private Script script;
+private final static String untitled = "untitled";
 
 public DropdownMenu(){
-	this("untitled");
+	this(untitled);
 }
 
 public DropdownMenu(String Name){
@@ -35,52 +41,33 @@ public DropdownMenu(String Name){
 /**
  * Populates the dropdownMenu from a List of GenericEntity objects
  */
-public DropdownMenu(List entityList){
-	//super();
-
-        initialize();
-	//setAttribute("CLASS","select");
-
-	if(entityList != null){
-          int length = entityList.size();
-		if(length > 0){
-                  GenericEntity entity = (GenericEntity) entityList.get(0);
-			setName(entity.getEntityName());
-                        addMenuElements(entityList);
-		}
-                else{
-                  setName("untitled");
-                }
-	}
-        else{
-          setName("untitled");
-        }
+public DropdownMenu(Collection entityList){
+  this(untitled);
+  addMenuElements(entityList);
 }
-
-
 
 public DropdownMenu(GenericEntity[] entity){
 	//super();
-	//setName("untitled");
+	//setName(untitled);
         initialize();
 	//setAttribute("CLASS","select");
 
 	if(entity != null){
 		if(entity.length > 0){
 			setName(entity[0].getEntityName());
-                          for (int i=0;i<entity.length;i++){
-                                  //if(entity[i].getID() != -1 && entity[i].getName() != null){
-                                          addMenuElement(entity[i].getID(),entity[i].getName());
-                                  //}
-                          }
+      for (int i=0;i<entity.length;i++){
+              //if(entity[i].getID() != -1 && entity[i].getName() != null){
+          addMenuElement(entity[i].getID(),entity[i].getName());
+              //}
+      }
 		}
-                else{
-                  setName("untitled");
-                }
+    else{
+      setName(untitled);
+    }
 	}
-        else{
-          setName("untitled");
-        }
+  else{
+    setName(untitled);
+  }
 }
 
 public DropdownMenu(GenericEntity[] entity, String Name){
@@ -96,7 +83,7 @@ public void initialize(){
 /**
  * Populates the dropdownMenu from a List of GenericEntity objects with a custom name
  */
-public DropdownMenu(List entityList, String Name){
+public DropdownMenu(Collection entityList, String Name){
   this(entityList);
   setName(Name);
 }
@@ -129,18 +116,19 @@ public void setMenuElementDisplayString(String elementValue,String displayString
 }
 
 /**
-* Add menu elements from an List of GenericEntity Objects
+* Add menu elements from an Collection of GenericEntity Objects
 */
-public void addMenuElements(List entityList){
+public void addMenuElements(Collection entityList){
 	if(entityList != null){
-          int length = entityList.size();
-          GenericEntity entity;
-          for (int i=0;i<length;i++){
-            entity = (GenericEntity) entityList.get(i);
-            //if(entity[i].getID() != -1 && entity[i].getName() != null){
-            addMenuElement(entity.getID(),entity.getName());
-            //}
-          }
+    int length = entityList.size();
+    GenericEntity entity = null;
+    Iterator iter = entityList.iterator();
+    while(iter.hasNext()){
+       entity = (GenericEntity) iter.next();
+       addMenuElement(entity.getID(),entity.getName());
+    }
+    if(getName().equals(untitled) && entity!=null)
+      setName(entity.getEntityName());
 	}
 }
 
@@ -162,8 +150,9 @@ public void setDisabled(String ElementValue){
 }
 
 private void deselectElements(){
-  for (Enumeration e = theElements.elements(); e.hasMoreElements(); ){
-    ((MenuElement)e.nextElement()).setSelected(false);
+  Iterator iter = theElements.iterator();
+  while(iter.hasNext()){
+    ((MenuElement)iter.next()).setSelected(false);
   }
 }
 
@@ -217,15 +206,13 @@ private MenuElement getMenuElement(String ElementValue){
 
 	MenuElement theReturn = new MenuElement();
 
-	for (Enumeration e = theElements.elements(); e.hasMoreElements(); ){
-
-
-		MenuElement tempobj = (MenuElement)  e.nextElement();
+  Iterator iter = theElements.iterator();
+  while(iter.hasNext()){
+    MenuElement tempobj = (MenuElement)  iter.next();
 		if (tempobj.getValue().equals(ElementValue)){
 			theReturn=tempobj;
 		}
-
-	}
+  }
 	return theReturn;
 }
 
@@ -238,28 +225,25 @@ public void print(IWContext iwc)throws IOException{
 	theElements.trimToSize();
 	initVariables(iwc);
 	//if ( doPrint(iwc) ){
-                if(script!=null){
-                  ((PresentationObjectContainer)getParentObject()).add(script);
-                }
+    if(script!=null){
+      ((PresentationObjectContainer)getParentObject()).add(script);
+    }
 		if (getLanguage().equals("HTML")){
 
 			if (this.keepStatus==true){
-				if(getRequest().getParameter(getName()) != null){
-					setSelectedElement(getRequest().getParameter(getName()));
+				if(iwc.getParameter(getName()) != null){
+					setSelectedElement(iwc.getParameter(getName()));
 				}
 			}
 
 			if (getInterfaceStyle().equals("default")){
 				println("<select name=\""+getName()+"\" "+getAttributeString()+" >");
 
-
-				for (Enumeration e = theElements.elements(); e.hasMoreElements(); ){
-
-					MenuElement tempobj = (MenuElement)  e.nextElement();
+        Iterator iter = theElements.iterator();
+        while(iter.hasNext()){
+          MenuElement tempobj = (MenuElement)  iter.next();
 					tempobj.print(iwc);
-
-				}
-
+        }
 				println("</select>");
 			}
 		}
@@ -267,8 +251,8 @@ public void print(IWContext iwc)throws IOException{
 		else if (getLanguage().equals("WML")){
 
 			if (this.keepStatus==true){
-				if(getRequest().getParameter(getName()) != null){
-					setSelectedElement(getRequest().getParameter(getName()));
+				if(iwc.getParameter(getName()) != null){
+					setSelectedElement(iwc.getParameter(getName()));
 				}
 			}
 
@@ -276,13 +260,11 @@ public void print(IWContext iwc)throws IOException{
 				println("<select name=\""+getName()+"\" "+getAttributeString()+" >");
 
 
-				for (Enumeration e = theElements.elements(); e.hasMoreElements(); ){
-
-					MenuElement tempobj = (MenuElement)  e.nextElement();
+        Iterator iter = theElements.iterator();
+        while(iter.hasNext()){
+          MenuElement tempobj = (MenuElement)  iter.next();
 					tempobj.print(iwc);
-
-				}
-
+        }
 				println("</select>");
 			}
 		}
@@ -298,7 +280,7 @@ public void print(IWContext iwc)throws IOException{
 
       if(this.theElements != null){
         obj.theElements = (Vector)this.theElements.clone();
-        ListIterator iter = obj.theElements.listIterator();
+        java.util.ListIterator iter = obj.theElements.listIterator();
         while (iter.hasNext()) {
           int index = iter.nextIndex();
           Object item = iter.next();

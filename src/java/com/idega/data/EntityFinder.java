@@ -13,6 +13,9 @@ import java.sql.Statement;
 import java.sql.ResultSetMetaData;
 import java.util.List;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -790,12 +793,23 @@ public class EntityFinder{
                 return null;
 	}
 
-
-
-
-
-
-
+  /**
+   *  Returns a Map of Entity values keyed by string presentation of
+   *  specified columnname values,returns null if collection is null or empty
+   *
+   */
+  public Map getMapOfEntity(Collection c,String keyColumnName){
+    if(c!=null){
+      java.util.Iterator iter = c.iterator();
+      HashMap map = new HashMap(c.size());
+      while(iter.hasNext()){
+        GenericEntity entity = (GenericEntity) iter.next();
+        map.put(entity.getColumnValue(keyColumnName).toString(),entity);
+      }
+      return map;
+    }
+    return null;
+  }
 
 
 }
