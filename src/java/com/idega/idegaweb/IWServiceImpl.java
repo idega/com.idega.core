@@ -14,7 +14,7 @@ package com.idega.idegaweb;
 public abstract class IWServiceImpl implements IWService {
 
 
-  private IWMainApplication application;
+  private IWMainApplication application = null;
 
   protected abstract void executeService();
   public abstract String getServiceName();
@@ -30,7 +30,10 @@ public abstract class IWServiceImpl implements IWService {
     System.out.println("Ending service "+getServiceName());
   }
 
-  public IWMainApplication getApplication(){
+  public IWMainApplication getApplication() throws IWServiceNotStartedException{
+    if(application == null){
+      throw new IWServiceNotStartedException(this);
+    }
     return application;
   }
 

@@ -40,13 +40,13 @@ public class UserGroupBusiness {
       return UserGroupBusiness.getGroups(groupsNotToReturn,false,iwc);
       //return EntityFinder.findAll(GenericGroup.getStaticInstance());
     }
-    catch (SQLException ex) {
+    catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
   }
 
-  public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws SQLException {
+  public static List getGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes, IWContext iwc) throws Exception {
     List result = GenericGroup.getAllGroups(groupTypes,returnSepcifiedGroupTypes);
     if(result != null){
       result.removeAll(iwc.getAccessController().getStandardGroups());

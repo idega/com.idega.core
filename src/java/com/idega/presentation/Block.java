@@ -33,7 +33,7 @@ public class Block extends PresentationObjectContainer{
 
   public boolean isAdministrator(IWContext iwc)throws Exception{
     if(usingNewAcessControlSystem){
-      return iwc.getAccessController().hasEditPermission(this,iwc);
+      return iwc.hasEditPermission(this);
     }
     else{
       return AccessControl.isAdmin(iwc);
@@ -356,7 +356,7 @@ public class Block extends PresentationObjectContainer{
 
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
     if(askForPermission){
-      if(iwc.getAccessController().hasViewPermission(this,iwc)){
+      if(iwc.hasViewPermission(this)){
         return this.clone();
       } else {
         return NULL_CLONE_OBJECT;

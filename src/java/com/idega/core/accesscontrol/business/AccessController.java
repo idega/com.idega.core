@@ -2,7 +2,6 @@ package com.idega.core.accesscontrol.business;
 
 import com.idega.core.user.data.User;
 import com.idega.core.accesscontrol.data.PermissionGroup;
-import java.sql.SQLException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import java.util.List;
@@ -39,41 +38,41 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public static final int _CATEGORY_JSP_PAGE = 5;
 
 
-  public PermissionGroup getPermissionGroupEveryOne() throws SQLException ;
-  public PermissionGroup getPermissionGroupUsers() throws SQLException ;
-  public PermissionGroup getPermissionGroupAdministrator() throws SQLException ;
-  public boolean isAdmin(IWContext iwc)throws SQLException;
-  public boolean isOwner(PresentationObject obj , IWContext iwc) throws SQLException ;
-  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws SQLException;
-  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws SQLException;
-  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws SQLException;
-  public boolean hasViewPermission(PresentationObject obj,IWContext iwc);
-  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc);
-  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException;
-  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException;
-  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException;
-  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException;
-  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException;
-  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException;
-  public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws SQLException;
-  public List getAllPermissionGroups()throws SQLException ;
-  public List getStandardGroups() throws SQLException ;
-  public User getAdministratorUser();
-  public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException;
+  public PermissionGroup getPermissionGroupEveryOne() throws Exception ;
+  public PermissionGroup getPermissionGroupUsers() throws Exception ;
+  public PermissionGroup getPermissionGroupAdministrator() throws Exception ;
+  public boolean isAdmin(IWContext iwc)throws Exception;
+  public boolean isOwner(PresentationObject obj , IWContext iwc) throws Exception ;
+  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
+  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception;
+//  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception;
+//  public boolean hasViewPermission(PresentationObject obj,IWContext iwc);
+//  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWContext iwc);
+  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception;
+  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
+  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
+  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
+  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception;
+  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws Exception;
+  public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws Exception;
+  public List getAllPermissionGroups()throws Exception ;
+  public List getStandardGroups() throws Exception ;
+  public User getAdministratorUser()throws Exception;
+  public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception;
 
   public String[] getICObjectPermissionKeys(Class ICObject);
   public String[] getBundlePermissionKeys(Class ICObject);
   public String[] getPagePermissionKeys();
 
 /*
-  public static List getPermissionGroups(User user) throws SQLException;
-  public static List getPermissionGroups(GenericGroup group) throws SQLException;
-  public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException;
-  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws SQLException;
-  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws SQLException;
-  public static boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException;
-  public static boolean hasIdegaAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException;
-  public static boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws SQLException;
+  public static List getPermissionGroups(User user) throws Exception;
+  public static List getPermissionGroups(GenericGroup group) throws Exception;
+  public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception;
+  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws Exception;
+  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws Exception;
+  public static boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws Exception;
+  public static boolean hasIdegaAdminPermission(PresentationObject obj,IWContext iwc)throws Exception;
+  public static boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws Exception;
   public static boolean removePermissionRecords(int permissionCategory, IWContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove);
 */
 

@@ -728,9 +728,57 @@ public void setCacheWriter(PrintWriter writer){
     return -1;
   }
 
+
   public AccessController getAccessController(){
     return ((AccessController)this.getApplication().getAccessController());
   }
+
+  public boolean hasPermission(String permissionKey, PresentationObject obj){
+    try {
+      return this.getAccessController().hasPermission(permissionKey,obj,this);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
+  public boolean hasViewPermission(PresentationObject obj){
+    return this.hasPermission(AccessController._PERMISSIONKEY_VIEW,obj);
+  }
+
+  public boolean hasEditPermission(PresentationObject obj){
+    return this.hasPermission(AccessController._PERMISSIONKEY_EDIT,obj);
+  }
+
+  public boolean hasPermission(List groupIds, String permissionKey, PresentationObject obj){
+    try {
+      return this.getAccessController().hasPermission(groupIds, permissionKey,obj,this);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
+  public boolean hasViewPermission(List groupIds, PresentationObject obj){
+    return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_VIEW,obj);
+  }
+
+  public boolean hasEditPermission(List groupIds, PresentationObject obj){
+    return this.hasPermission(groupIds, AccessController._PERMISSIONKEY_EDIT,obj);
+  }
+
+  public boolean isAdmin(){
+    try {
+      return this.getAccessController().isAdmin(this);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+  }
+
 
 }
 

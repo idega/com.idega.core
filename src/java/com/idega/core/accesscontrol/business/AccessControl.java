@@ -1,6 +1,5 @@
 package com.idega.core.accesscontrol.business;
 
-import java.sql.*;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -18,8 +17,10 @@ import com.idega.util.idegaTimestamp;
 import com.idega.data.SimpleQuerier;
 import com.idega.util.EncryptionType;
 import com.idega.idegaweb.IWServiceImpl;
+import com.idega.idegaweb.IWServiceNotStartedException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.core.user.data.UserGroupRepresentative;
+
 
 
 
@@ -52,7 +53,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   private static final int _GROUP_ID_USERS = -1906;
 
 
-  private void initAdministratorPermissionGroup() throws SQLException {
+  private void initAdministratorPermissionGroup() throws Exception {
     PermissionGroup permission = new PermissionGroup();
     permission.setName(AccessControl.getAdministratorGroupName());
     permission.setDescription("Administrator permission");
@@ -60,7 +61,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     AdministratorPermissionGroup = permission;
   }
 
-  private void initPermissionGroupEveryone() throws SQLException {
+  private void initPermissionGroupEveryone() throws Exception {
     PermissionGroup permission = new PermissionGroup();
     permission.setID(_GROUP_ID_EVERYONE);
     permission.setName("Everyone");
@@ -69,7 +70,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     PermissionGroupEveryOne = permission;
   }
 
-  private void initPermissionGroupUsers() throws SQLException {
+  private void initPermissionGroupUsers() throws Exception {
     PermissionGroup permission = new PermissionGroup();
     permission.setID(_GROUP_ID_USERS);
     permission.setName("Users");
@@ -78,28 +79,28 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     PermissionGroupUsers = permission;
   }
 
-  public PermissionGroup getPermissionGroupEveryOne() throws SQLException {
+  public PermissionGroup getPermissionGroupEveryOne() throws Exception {
     if(PermissionGroupEveryOne == null){
       initPermissionGroupEveryone();
     }
     return PermissionGroupEveryOne;
   }
 
-  public PermissionGroup getPermissionGroupUsers() throws SQLException {
+  public PermissionGroup getPermissionGroupUsers() throws Exception {
     if(PermissionGroupUsers == null){
       initPermissionGroupUsers();
     }
     return PermissionGroupUsers;
   }
 
-  public PermissionGroup getPermissionGroupAdministrator() throws SQLException {
+  public PermissionGroup getPermissionGroupAdministrator() throws Exception {
     if(AdministratorPermissionGroup == null){
       initAdministratorPermissionGroup();
     }
     return AdministratorPermissionGroup;
   }
 
-  public boolean isAdmin(IWContext iwc)throws SQLException{
+  public boolean isAdmin(IWContext iwc)throws Exception{
     try {
       Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), iwc);
       if(ob != null){
@@ -132,7 +133,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo page ownership
    */
-  public boolean isOwner(PresentationObject obj , IWContext iwc) throws SQLException {
+  public boolean isOwner(PresentationObject obj , IWContext iwc) throws Exception {
     User user = LoginBusiness.getUser(iwc);
     if(user == null){
       return false;
@@ -169,7 +170,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
+  public boolean hasPermission(String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -239,7 +240,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws SQLException{
+  public boolean hasPermission(List groupIds,String permissionType, PresentationObject obj,IWContext iwc) throws Exception{
     Boolean myPermission = null;  // Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
     // Default permission: view == true if not Page, else false
@@ -307,7 +308,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  private static Boolean checkForPermission(List permissionGroups, PresentationObject obj, String permissionType, IWContext iwc ) throws SQLException {
+  private static Boolean checkForPermission(List permissionGroups, PresentationObject obj, String permissionType, IWContext iwc ) throws Exception {
     Boolean myPermission = null;
 
     if (obj == null){ // JSP page
@@ -398,7 +399,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 //
 
 
-  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasEditPermission(PresentationObject obj,IWContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_EDIT , obj, iwc);
   }
 
@@ -411,7 +412,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       */
       return hasPermission( _PERMISSIONKEY_VIEW, obj, iwc);
     }
-    catch (SQLException ex) {
+    catch (Exception ex) {
       return false;
     }
   }
@@ -424,21 +425,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
       */
       return hasPermission(groupIds, _PERMISSIONKEY_VIEW, obj, iwc);
     }
-    catch (SQLException ex) {
+    catch (Exception ex) {
       return false;
     }
   }
 
 
-  public boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasAdminPermission(PresentationObject obj,IWContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_ADMIN, obj, iwc);
   }
 
-  public boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws SQLException{
+  public boolean hasOwnerPermission(PresentationObject obj,IWContext iwc)throws Exception{
     return hasPermission( _PERMISSIONKEY_OWNER, obj, iwc);
   }
 
-/*  public static ICObjectPermission[] getPermissionTypes(PresentationObject obj)throws SQLException{
+/*  public static ICObjectPermission[] getPermissionTypes(PresentationObject obj)throws Exception{
     int arobjID = obj.getICObject().getID();
     List permissions =  EntityFinder.findAllByColumn(ICObjectPermission.getStaticInstance(), ICObjectPermission.getPermissionTypeColumnName(), arobjID);
     if (permissions != null){
@@ -450,7 +451,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 */
 
 
-  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setJSPPagePermission(IWContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -477,7 +478,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     PermissionCacher.updateJSPPagePermissions(PageContextValue,permissionType,iwc);
   }
 
-  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setObjectPermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -504,7 +505,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setBundlePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -532,7 +533,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setObjectInstacePermission(IWContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception{
     setObjectInstacePermission(iwc,Integer.toString(group.getID()),Integer.toString(obj.getICObjectInstance(iwc).getID()),permissionType,permissionValue);
   }
 
@@ -612,7 +613,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws SQLException{
+  public void setPermission(int permissionCategory, IWContext iwc, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -680,7 +681,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws SQLException{
+  public void setObjectInstacePermission(IWContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws Exception{
     ICPermission permission = ICPermission.getStaticInstance();
     boolean update = true;
     try {
@@ -710,7 +711,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
-  public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws SQLException{
+  public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws Exception{
     PermissionGroup newGroup = new PermissionGroup();
 
     if(GroupName != null)
@@ -741,13 +742,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
   }
 
-  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws SQLException{
+  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws Exception{
     User userToAdd = new User(userIDtoAdd);
     group.addUser(userToAdd);
   }
 
 
-  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws SQLException{
+  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws Exception{
     GenericGroup groupToAdd = new GenericGroup(groupIDtoAdd);
     group.addGroup(groupToAdd);
   }
@@ -761,7 +762,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     return groupsToReturn;
   }
 
-  public static List getPermissionGroups(User user) throws SQLException{
+  public static List getPermissionGroups(User user) throws Exception{
     //temp - new GenericGroup()
     int groupId = user.getGroupID();
     if(groupId != -1){
@@ -771,7 +772,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
   }
 
-  public static List getPermissionGroups(GenericGroup group) throws SQLException{
+  public static List getPermissionGroups(GenericGroup group) throws Exception{
     List permissionGroups = UserGroupBusiness.getGroupsContaining(group,getPermissionGroupFilter(),true);
 
     if(permissionGroups != null){
@@ -781,7 +782,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     }
   }
 
-  public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws SQLException {
+  public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception {
     List toReturn = new Vector(0);
     ICPermission permission = ICPermission.getStaticInstance();
     List permissions = null;
@@ -814,7 +815,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         try {
           toReturn.add(new PermissionGroup(((ICPermission)item).getGroupID()));
         }
-        catch (SQLException ex) {
+        catch (Exception ex) {
           System.err.println("Accesscontrol.getAllowedGroups(): Group not created for id "+((ICPermission)item).getGroupID());
         }
 
@@ -825,7 +826,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public List getAllPermissionGroups()throws SQLException {
+  public List getAllPermissionGroups()throws Exception {
 
     List permissionGroups = GenericGroup.getAllGroups(getPermissionGroupFilter(),true);
     if(permissionGroups != null){
@@ -836,14 +837,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public List getStandardGroups() throws SQLException {
+  public List getStandardGroups() throws Exception {
     if(standardGroups == null){
       initStandardGroups();
     }
     return standardGroups;
   }
 
-  private void initStandardGroups() throws SQLException {
+  private void initStandardGroups() throws Exception {
     standardGroups = new Vector();
     //standardGroups.add(AccessControl.getPermissionGroupAdministrator());
     standardGroups.add(this.getPermissionGroupEveryOne());
@@ -851,7 +852,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public User getAdministratorUser(){
+  public User getAdministratorUser() throws Exception{
     Object ob = getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
     if(ob == null){
       try {
@@ -923,7 +924,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     try {
       PermissionGroupEveryOne = new PermissionGroup(_GROUP_ID_EVERYONE);
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       try {
         initPermissionGroupEveryone();
       }
@@ -935,7 +936,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     try {
       PermissionGroupUsers = new PermissionGroup(_GROUP_ID_USERS);
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       try {
         initPermissionGroupUsers();
       }
