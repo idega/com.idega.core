@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.29 2002/07/23 11:43:22 palli Exp $
+ * $Id: LoginDBHandler.java,v 1.30 2002/07/30 09:20:24 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -72,7 +72,7 @@ public class LoginDBHandler {
 		String encryptedPassword = null;
 		if (password != null && !"".equals(password)) {
 			encryptedPassword = Encrypter.encryptOneWay(password);
-			loginTable.setUserPassword(encryptedPassword);
+			loginTable.setUserPassword(encryptedPassword,password);
 		}
 		else if (!update) {
 			throw new Exception("Password not valid");
@@ -480,12 +480,12 @@ public class LoginDBHandler {
 
 	private static String[] getPossibleGeneratedUserLogins(User user) {
 		String[] theReturn = new String[5];
-		String firstName = StringHandler.stripNonRomanCharacters(user.getFirstName());
-		String lastName = StringHandler.stripNonRomanCharacters(user.getLastName());
+		String firstName = StringHandler.stripNonRomanCharacters(user.getFirstName()).toLowerCase();
+		String lastName = StringHandler.stripNonRomanCharacters(user.getLastName()).toLowerCase();
 		String middleName = null;
 		if (user.getMiddleName() != null) {
 			if (!user.getMiddleName().equals("")) {
-				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName());
+				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName()).toLowerCase();
 			}
 		}
 		String finalPossibility = StringHandler.getRandomString(8);
@@ -497,8 +497,12 @@ public class LoginDBHandler {
 		else {
 			theReturn[1] = firstName + lastName.substring(0, 2);
 		}
-		theReturn[2] = firstName.substring(0, firstName.length()) + lastName.substring(0, 1);
-		theReturn[3] = firstName.substring(0, firstName.length()) + lastName.substring(0, 2);
+
+		theReturn[1] = theReturn[1].toLowerCase();
+		theReturn[2] = firstName.substring(0, firstName.length()-1) + lastName.substring(0, 1);
+
+		theReturn[3] = firstName.substring(0, firstName.length()) + lastName.substring(0, 3);
+
 		theReturn[4] = finalPossibility;
 		return theReturn;
 	}
