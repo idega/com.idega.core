@@ -451,10 +451,6 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public void initializeAttributes();
-	/**
-	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
-	*/
 	public void setLongName(java.lang.String p0, java.lang.String p1);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
