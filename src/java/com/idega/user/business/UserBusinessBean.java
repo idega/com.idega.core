@@ -128,57 +128,63 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return phoneHome;
   }
 
+  /**
+   * @deprecated replaced with createUser
+   */
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
-    User userToAdd = getUserHome().create();
+      return createUser(firstname,middlename,lastname,displayname,null,description,gender,date_of_birth,primary_group);
+  }
 
-    if(firstname != null){
-      userToAdd.setFirstName(firstname);
+  public User createUser(String firstname, String middlename, String lastname, String displayname, String personalID, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+    try{
+      User userToAdd = getUserHome().create();
+      if(firstname != null){
+        userToAdd.setFirstName(firstname);
+      }
+      if(middlename != null){
+        userToAdd.setMiddleName(middlename);
+      }
+      if(lastname != null){
+        userToAdd.setLastName(lastname);
+      }
+      if(displayname != null){
+        userToAdd.setDisplayName(displayname);
+      }
+      if(description != null){
+        userToAdd.setDescription(description);
+      }
+      if(personalID!=null){
+        userToAdd.setPersonalID(personalID);
+      }
+      if(gender != null){
+        userToAdd.setGender(gender);
+      }
+      if(date_of_birth != null){
+        userToAdd.setDateOfBirth(date_of_birth.getSQLDate());
+      }
+      if(primary_group != null){
+        userToAdd.setPrimaryGroupID(primary_group);
+      }
+      userToAdd.store();
+      setUserUnderDomain(this.getIWApplicationContext().getDomain(), userToAdd, (GroupDomainRelationType)null);
+  //    UserGroupRepresentative group = (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
+  //    group.setName(userToAdd.getName());
+  //    group.setDescription("User representative in table ic_group");
+  //    group.store();
+  //
+  //    userToAdd.setGroup(group);
+
+  //    userToAdd.store();
+
+      if(primary_group != null){
+        Group prgr = userToAdd.getPrimaryGroup();
+        prgr.addGroup(userToAdd);
+      }
+      return userToAdd;
     }
-    if(middlename != null){
-      userToAdd.setMiddleName(middlename);
+    catch(Exception e){
+      throw new IDOCreateException(e);
     }
-    if(lastname != null){
-      userToAdd.setLastName(lastname);
-    }
-    if(displayname != null){
-      userToAdd.setDisplayName(displayname);
-    }
-    if(description != null){
-      userToAdd.setDescription(description);
-    }
-    if(gender != null){
-      userToAdd.setGender(gender);
-    }
-
-    if(date_of_birth != null){
-      userToAdd.setDateOfBirth(date_of_birth.getSQLDate());
-    }
-
-    if(primary_group != null){
-      userToAdd.setPrimaryGroupID(primary_group);
-    }
-
-    userToAdd.store();
-
-
-    setUserUnderDomain(this.getIWApplicationContext().getDomain(), userToAdd, (GroupDomainRelationType)null);
-
-
-//    UserGroupRepresentative group = (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
-//    group.setName(userToAdd.getName());
-//    group.setDescription("User representative in table ic_group");
-//    group.store();
-//
-//    userToAdd.setGroup(group);
-
-//    userToAdd.store();
-
-    if(primary_group != null){
-      Group prgr = userToAdd.getPrimaryGroup();
-      prgr.addGroup(userToAdd);
-    }
-
-    return userToAdd;
 
   }
 
@@ -210,6 +216,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     //return LoginDBHandler.generateUserLogin(user);
     int userID = ((Integer)user.getPrimaryKey()).intValue();
     return this.generateUserLogin(userID);
+  }
+
+  /**
+   * Creates a user with a firstname,middlename, lastname, where middlename can be null
+   */
+  public User createUser(String firstname, String middlename, String lastname) throws CreateException,RemoteException{
+    return this.createUser(firstname,middlename,lastname,null);
+  }
+
+  /**
+   * Creates a new user with a firstname,middlename, lastname and personalID where middlename and personalID can be null
+   */
+  public User createUser(String firstname, String middlename, String lastname,String personalID) throws CreateException,RemoteException{
+      User newUser;
+      newUser = createUser(firstname,middlename,lastname,null,personalID,null,null,null,null);
+      return newUser;
   }
 
   public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
