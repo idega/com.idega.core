@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.60 2003/03/02 13:50:16 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.61 2003/03/06 01:27:15 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -613,6 +613,8 @@ public abstract class DatastoreInterface {
 	}
 	private void insertIntoPreparedStatement(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity)
 		throws SQLException {
+		try{
+		
 		String storageClassName = entity.getStorageClassName(columnName);
 		if (storageClassName.equals("java.lang.Integer")) {
 			statement.setInt(index, entity.getIntColumnValue(columnName));
@@ -644,6 +646,10 @@ public abstract class DatastoreInterface {
 			//statement.setDate(index,(java.sql.Date)getColumnValue(columnName));
 		} else {
 			statement.setObject(index, entity.getColumnValue(columnName));
+		}
+		}
+		catch(Exception ex){
+			throw new SQLException("Entity: "+entity.getEntityName()+"; Column:  "+columnName+" - "+ex.getMessage());
 		}
 	}
 	public void handleBlobUpdate(String columnName, PreparedStatement statement, int index, IDOLegacyEntity entity) {
