@@ -126,35 +126,7 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-    <dependency>
-      <groupId>jimi</groupId>
-      <artifactId>jimi</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      <url>http://java.sun.com/products/jimi/</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>jai</groupId>
-      <artifactId>jai</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/java-media/jai/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
-    <dependency>
-      <groupId>jai</groupId>
-      <artifactId>jai_codec</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/java-media/jai/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
+
     <dependency>
       <groupId>javamail</groupId>
       <artifactId>javamail</artifactId>
@@ -195,16 +167,7 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-    <dependency>
-      <groupId>itext</groupId>
-      <artifactId>itext</artifactId>
-      <version>0.99</version>
-      <type>jar</type>
-      <url>http://itext.sourceforge.net/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
+
     <dependency>
       <groupId>myfaces</groupId>
       <artifactId>jsf-api</artifactId>
@@ -215,17 +178,6 @@
       	<idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-    <!-- This dependency is necessary because of Myfaces JSF -->
-    <dependency>
-        <groupId>jstl</groupId>
-        <artifactId>jstl</artifactId>
-        <version>1.0.2</version>
-        <type>jar</type>
-        <url>http://java.sun.com/</url>
-	      <properties>
-	      	<idegaweb.bundle.include>true</idegaweb.bundle.include>
-	      </properties>
-    </dependency>    
     <dependency>
       <groupId>oracle_jdbc</groupId>
       <artifactId>oracle_jdbc</artifactId>

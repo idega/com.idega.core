@@ -13,12 +13,6 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jimi/jars/jimi-1.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar">
-  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jaf/jars/jaf-1.0.2.jar">
@@ -27,11 +21,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-2.4.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
-  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/jsf-api-1.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jstl/jars/jstl-1.0.2.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-9.2.jar">
   </classpathentry>
