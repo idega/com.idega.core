@@ -16,7 +16,7 @@ public class ConnectionRefresher implements Runnable {
 	private ConnectionPool pool;
 	private long setRefreshIntervalMillis;
 	private long emergencyIntervalMillis=30*1000;//30 secs.
-	private long lastRun;
+	// not used private long lastRun;
 	private boolean datastoreNotReachable=false;
 
 	private boolean isRunning = false;
@@ -25,7 +25,7 @@ public class ConnectionRefresher implements Runnable {
 		this.pool = pool;
 		this.setRefreshIntervalMillis=refreshIntervalMillis;
 		setRefreshIntervalMillis = refreshIntervalMillis;
-		lastRun=System.currentTimeMillis();
+		// lastRun=System.currentTimeMillis();
 		start();
 	}
 	
@@ -34,7 +34,7 @@ public class ConnectionRefresher implements Runnable {
 		while (isRunning) {
 			try {
 				//refresher.sleep(this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random()));
-				refresher.sleep(getSleepTime());
+				Thread.sleep(getSleepTime());
 				runRefresh();
 			}
 			catch (InterruptedException ex) {
@@ -61,6 +61,16 @@ public class ConnectionRefresher implements Runnable {
 		catch (Throwable th) {
 			datastoreNotReachable=true;
 			System.err.println("There was a Throwable caught in ConnectionRefresher.run() The error was: " + th.getClass().getName()+" : "+th.getMessage());
+			// See description of class ThreadDeath:
+			// An application should catch instances of this class only if it must clean up after being terminated asynchronously. 
+			// If ThreadDeath is caught by a method, it is important that it be rethrown so that the thread actually dies.
+			// changed by Thomas 
+			//
+			// !!!! Do not change this code. If this thread never dies the application will not restart proper !!!
+			// 
+			if (th instanceof ThreadDeath) {
+				throw (Error) th;
+			}
 		}
 	}
 	
@@ -68,9 +78,7 @@ public class ConnectionRefresher implements Runnable {
 		if (datastoreNotReachable) {
 			return this.emergencyIntervalMillis;	
 		}
-		else {
-			return this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random());	
-		}
+		return this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random());	
 	}
 	
 	public void stop() {
