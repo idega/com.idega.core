@@ -89,4 +89,16 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
   	query.appendSelectAllFrom(this);
   	return idoFindPKsByQuery(query);
   }
+  
+  public Integer ejbFindByDescription(String description) throws FinderException {
+  	IDOQuery query = idoQuery();
+  	query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(_COLUMN_LanguageDescription, description);
+  	return (Integer) idoFindOnePKByQuery(query);
+  }
+
+	public Integer ejbFindByISOAbbreviation(String ISOAbbreviation) throws FinderException {
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(_COLUMN_ISOabbreviation, ISOAbbreviation);
+		return (Integer) idoFindOnePKByQuery(query);
+	}
 }
