@@ -7,6 +7,7 @@ import javax.ejb.*;
 
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.data.Address;
+import com.idega.core.data.Phone;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
@@ -118,4 +119,5 @@ public interface UserBusiness extends com.idega.business.IBOService
   public Address getUsersMainAddress(int userID) throws EJBException,RemoteException;
   public Collection getUsersMainAddresses(String[] userIDs) throws EJBException,RemoteException;
   public Collection getUsers(String[] userIDs) throws EJBException,RemoteException;
+	public  Phone[] getUserPhones(User user)throws RemoteException;
 }
