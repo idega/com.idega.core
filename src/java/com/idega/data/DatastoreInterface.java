@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.117 2004/09/10 17:16:59 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.118 2004/09/13 15:20:02 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -165,12 +165,12 @@ public abstract class DatastoreInterface {
 	 */
 	public static DatastoreInterface getInstance(GenericEntity entity) {
 		//String datastoreType=null;
+		Connection conn = null;
 		try {
 			DatastoreInterface theReturn = getDatastoreInterfaceByDatasource(entity.getDatasource());
 			if (theReturn == null) {
-				Connection conn = entity.getConnection();
+				conn = entity.getConnection();
 				theReturn = getInstance(conn);
-				entity.freeConnection(conn);
 			}
 			if (theReturn != null) {
 				setDatastoreInterfaceByDatasource(entity.getDatasource(), theReturn);
@@ -189,6 +189,10 @@ public abstract class DatastoreInterface {
 			//
 			ex.printStackTrace();
 			throw new IDONoDatastoreError();
+		} finally {
+			if(conn !=null){
+				entity.freeConnection(conn);
+			}
 		}
 		//return getInstance(datastoreType);
 	}
