@@ -1,21 +1,41 @@
+/*
+ * $Id: Label.java,v 1.3 2005/03/02 09:18:49 laddi Exp $
+ *
+ * Copyright (C) 2002-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
+import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 
 /**
- * @author laddi
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * <p>
+ * This class renders out a &lt;label&gt; element used in forms.
+ * </p>
+ *  Last modified: $Date: 2005/03/02 09:18:49 $ by $Author: laddi $
+ * 
+ * @author <a href="mailto:laddi@idega.com">Laddi</a>
+ * @version $Revision: 1.3 $
  */
 public class Label extends InterfaceObject {
 		
 	private String _label;
-	private Image _labelImage;
+
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[2];
+		values[0] = super.saveState(ctx);
+		values[1] = _label;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_label = (String) values[1];
+	}
 	
 	public Label(InterfaceObject object) {
 		this("", object);
@@ -24,6 +44,7 @@ public class Label extends InterfaceObject {
 	public Label(String label, InterfaceObject object) {
 		_label = label;
 		setMarkupAttribute("for", object.getID());
+		setTransient(false);
 	}
 	
 	public void print(IWContext iwc) throws Exception {
