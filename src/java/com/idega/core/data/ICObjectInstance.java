@@ -15,11 +15,9 @@ package com.idega.core.data;
 import java.sql.*;
 
 import com.idega.data.*;
-
 import com.idega.presentation.*;
 
-
-
+import com.idega.core.business.ICObjectBusiness;
 
 
 /**
@@ -117,9 +115,8 @@ public class ICObjectInstance extends GenericEntity{
 
 
 	public ICObject getObject(){
-
-		return (ICObject) getColumnValue("ic_object_id");
-
+        int icObjectID = this.getIntColumnValue("ic_object_id");
+		return ICObjectBusiness.getInstance().getICObject(icObjectID);
 	}
 
 

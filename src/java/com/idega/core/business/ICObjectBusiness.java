@@ -54,8 +54,8 @@ public class ICObjectBusiness {
   }
 
 
-  public Class getICObjectClassForInstance(int ICObjectInstanceId) throws SQLException{
-    ICObjectInstance instance = new ICObjectInstance(ICObjectInstanceId);
+  public Class getICObjectClassForInstance(int ICObjectInstanceId) {
+    ICObjectInstance instance = this.getICObjectInstance(ICObjectInstanceId);
     ICObject obj = instance.getObject();
     if(obj != null){
       try {
@@ -110,7 +110,7 @@ public class ICObjectBusiness {
   public  PresentationObject getNewObjectInstance(int icObjectInstanceID){
       PresentationObject inst = null;
       try{
-        ICObjectInstance ico = new ICObjectInstance(icObjectInstanceID);
+        ICObjectInstance ico = this.getICObjectInstance(icObjectInstanceID);
         inst = ico.getNewInstance();
         inst.setICObjectInstance(ico);
       }
@@ -171,7 +171,7 @@ public class ICObjectBusiness {
       return theReturn;
     }
     catch(Exception e){
-      throw new RuntimeException(e.getMessage());
+      throw new RuntimeException("Error getting ICObject for id="+icObjectID+" - message: "+e.getMessage());
     }
   }
 
@@ -187,7 +187,7 @@ public class ICObjectBusiness {
       return theReturn;
     }
     catch(Exception e){
-      throw new RuntimeException(e.getMessage());
+      throw new RuntimeException("Error getting ICObjectInstance for id="+icObjectInstanceID+" - message: "+e.getMessage());
     }
   }
 
