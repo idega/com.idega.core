@@ -66,7 +66,7 @@ public class IWMainApplicationStarter {
 		poolMgr = PoolManager.getInstance(file);
 	}
 	public void endDatabasePool() {
-		sendShutdownMessage("Stopping Database Pool");
+		//sendShutdownMessage("Stopping Database Pool");
 		try {
 			endIdegaDatabasePool();
 		}
@@ -138,10 +138,6 @@ public class IWMainApplicationStarter {
 			application.getSettings().setAutoCreateProperties(true);
 			sendStartMessage("AutoCreateProperties is active");
 		}
-		if (application.getSettings().getIfEntityAutoCreate()) {
-			EntityControl.setAutoCreationOfEntities(true);
-			sendStartMessage("EntityAutoCreation Active");
-		}
 		if (application.getSettings().getIfEntityBeanCaching()) {
 			IDOContainer.getInstance().setBeanCaching(true);
 			sendStartMessage("EntityBeanCaching Active");
@@ -149,6 +145,10 @@ public class IWMainApplicationStarter {
 		if (application.getSettings().getIfEntityQueryCaching()) {
 			IDOContainer.getInstance().setQueryCaching(true);
 			sendStartMessage("EntityQueryCaching Active");
+		}
+		if (application.getSettings().getIfEntityAutoCreate()) {
+			EntityControl.setAutoCreationOfEntities(true);
+			sendStartMessage("EntityAutoCreation Active");
 		}
 		else {
 			sendStartMessage("EntityAutoCreation Not Active");
@@ -236,12 +236,12 @@ public class IWMainApplicationStarter {
 	}
 	public void endIdegaWebApplication() {
 		//IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
-		IWMainApplication application = iwma;
-		application.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
-		application.unload();
+		//IWMainApplication application = iwma;
+		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
 		endDatabasePool();
-		IWStyleManager iwStyleManager = new IWStyleManager(application);
+		IWStyleManager iwStyleManager = new IWStyleManager(iwma);
 		iwStyleManager.writeStyleSheet();
+		iwma.unload();
 		sendShutdownMessage("Saving style sheet");
 		sendShutdownMessage("Completed");
 	}
