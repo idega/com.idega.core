@@ -4,6 +4,9 @@ import com.idega.core.data.*;
 import com.idega.presentation.PresentationObject;
 import java.sql.SQLException;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWBundle;
 
@@ -20,7 +23,38 @@ import com.idega.idegaweb.IWBundle;
 public class ICObjectBusiness {
 
 
-  public static Class getICObjectClassForInstance(int ICObjectInstanceId) throws SQLException{
+  private static ICObjectBusiness instance;
+
+  private static Map icoInstanceMap;
+  private static Map icObjectMap;
+
+  private ICObjectBusiness(){
+  }
+
+  private static Map getIcoInstanceMap(){
+    if(icoInstanceMap==null){
+      icoInstanceMap = new HashMap();
+    }
+    return icoInstanceMap;
+  }
+
+  private static Map getIcObjectMap(){
+    if(icObjectMap==null){
+      icObjectMap = new HashMap();
+    }
+    return icObjectMap;
+  }
+
+
+  public static ICObjectBusiness getInstance(){
+    if(instance==null){
+      instance = new ICObjectBusiness();
+    }
+    return instance;
+  }
+
+
+  public Class getICObjectClassForInstance(int ICObjectInstanceId) throws SQLException{
     ICObjectInstance instance = new ICObjectInstance(ICObjectInstanceId);
     ICObject obj = instance.getObject();
     if(obj != null){
@@ -36,8 +70,8 @@ public class ICObjectBusiness {
     }
   }
 
-  public static Class getICObjectClass(int ICObjectId) throws SQLException{
-    ICObject obj = new ICObject(ICObjectId);
+  public Class getICObjectClass(int ICObjectId) throws SQLException{
+    ICObject obj = this.getICObject(ICObjectId);
     if(obj != null){
       try {
         return obj.getObjectClass();
@@ -51,7 +85,7 @@ public class ICObjectBusiness {
     }
   }
 
-  public static PresentationObject getNewObjectInstance(Class icObjectClass){
+  public PresentationObject getNewObjectInstance(Class icObjectClass){
       PresentationObject inst = null;
       try{
         inst = (PresentationObject)icObjectClass.newInstance();
@@ -62,7 +96,7 @@ public class ICObjectBusiness {
       return inst;
   }
 
-  public static PresentationObject getNewObjectInstance(String icObjectClassName){
+  public PresentationObject getNewObjectInstance(String icObjectClassName){
       PresentationObject inst = null;
       try{
         inst = getNewObjectInstance(Class.forName(icObjectClassName));
@@ -73,7 +107,7 @@ public class ICObjectBusiness {
       return inst;
   }
 
-  public static PresentationObject getNewObjectInstance(int icObjectInstanceID){
+  public  PresentationObject getNewObjectInstance(int icObjectInstanceID){
       PresentationObject inst = null;
       try{
         ICObjectInstance ico = new ICObjectInstance(icObjectInstanceID);
@@ -87,11 +121,11 @@ public class ICObjectBusiness {
   }
 
 
-  public static IWBundle getBundleForInstance(String icObjectInstanceID,IWMainApplication iwma){
+  public  IWBundle getBundleForInstance(String icObjectInstanceID,IWMainApplication iwma){
     return getBundleForInstance(Integer.parseInt(icObjectInstanceID),iwma);
   }
 
-  public static IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
+  public  IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
     try{
       if(icObjectInstanceID==-1){
         return iwma.getBundle(com.idega.presentation.Page.IW_BUNDLE_IDENTIFIER);
@@ -108,12 +142,12 @@ public class ICObjectBusiness {
   }
 
 
-  public static Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
+  public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
     return getClassForInstance(Integer.parseInt(icObjectInstanceID));
   }
 
 
-  public static Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
+  public Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
     if (icObjectInstanceID == -1)
       return(com.idega.presentation.Page.class);
     else
@@ -121,13 +155,36 @@ public class ICObjectBusiness {
   }
 
 
-  public static ICObjectInstance getICObjectInstance(String icObjectInstanceID){
+  public ICObjectInstance getICObjectInstance(String icObjectInstanceID) {
     return getICObjectInstance(Integer.parseInt(icObjectInstanceID));
   }
 
-  public static ICObjectInstance getICObjectInstance(int icObjectInstanceID){
+
+  public ICObject getICObject(int icObjectID){
     try{
-      return new ICObjectInstance(icObjectInstanceID);
+      Integer key = new Integer(icObjectID);
+      ICObject theReturn = (ICObject)getIcObjectMap().get(key);
+      if(theReturn == null){
+        theReturn =  new ICObject(icObjectID);
+        getIcObjectMap().put(key,theReturn);
+      }
+      return theReturn;
+    }
+    catch(Exception e){
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+
+  public  ICObjectInstance getICObjectInstance(int icObjectInstanceID){
+    try{
+      Integer key = new Integer(icObjectInstanceID);
+      ICObjectInstance theReturn = (ICObjectInstance)getIcoInstanceMap().get(key);
+      if(theReturn == null){
+        theReturn =  new ICObjectInstance(icObjectInstanceID);
+        getIcoInstanceMap().put(key,theReturn);
+      }
+      return theReturn;
     }
     catch(Exception e){
       throw new RuntimeException(e.getMessage());
