@@ -582,11 +582,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 
 		
-		//return idoFindPKsByQueryUsingLoadBalance(query,PREFETCH_SIZE);
-		
-
-		return idoFindPKsBySQL(query.toString());
-
+		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
+		//return idoFindPKsBySQL(query.toString());
 	}
 
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
