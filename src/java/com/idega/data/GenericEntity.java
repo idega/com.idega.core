@@ -663,39 +663,45 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			return null;
 		}
 	}
+	
 	public char getCharColumnValue(String columnName) {
+		return getCharColumnValue(columnName, ' ');
+	}
+	
+	public char getCharColumnValue(String columnName, char returnValueIfNull) {
 		String tempString = (String)getColumnValue(columnName);
-		if(tempString!=null && tempString.length()>0){
-			return tempString.charAt(0);
-		}
-		return ' ';
+		return (tempString == null || tempString.length() == 0) ? returnValueIfNull : tempString.charAt(0);
 	}
+	
 	public float getFloatColumnValue(String columnName) {
+		return getFloatColumnValue(columnName, -1F);
+	}
+	
+	public float getFloatColumnValue(String columnName, float returnValueIfNull) {
 		Float tempFloat = (Float)getColumnValue(columnName);
-		if (tempFloat != null) {
-			return tempFloat.floatValue();
-		} else {
-			return -1;
-		}
+		return (tempFloat == null) ? returnValueIfNull : tempFloat.floatValue();
 	}
+	
 	public double getDoubleColumnValue(String columnName) {
-		Double tempDouble = (Double)getColumnValue(columnName);
-		if (tempDouble != null) {
-			return tempDouble.doubleValue();
-		} else {
-			return -1;
-		}
+		return getDoubleColumnValue(columnName, -1D);
 	}
+	
+	public double getDoubleColumnValue(String columnName, double returnValueIfNull) {
+		Double tempDouble = (Double)getColumnValue(columnName);
+		return (tempDouble == null) ? returnValueIfNull : tempDouble.doubleValue();
+	}
+	
 	public Integer getIntegerColumnValue(String columnName) {
 		return (Integer)getValue(columnName);
 	}
+	
 	public int getIntColumnValue(String columnName) {
+		return getIntColumnValue(columnName, -1);
+	}
+	
+	public int getIntColumnValue(String columnName, int returnValueIfNull) {
 		Integer tempInt = (Integer)getValue(columnName);
-		if (tempInt != null) {
-			return tempInt.intValue();
-		} else {
-			return -1;
-		}
+		return (tempInt == null) ? returnValueIfNull : tempInt.intValue();
 	}
 	public boolean getBooleanColumnValue(String columnName) {
 		return getBooleanColumnValue(columnName, false);
