@@ -34,6 +34,9 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public void setCommuneID(int communeId);
  public boolean isEqualTo(Address address);
  
+ public String getCoordinate();
+ public void setCoordinate(String coordinate);
+ 
      /**
      * Gets the street name together with the number
      */
