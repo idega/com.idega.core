@@ -747,7 +747,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     String currentGroupType = currentGroup.getGroupType();
     // does the current group belong to the result set?
     //if both are true or false then it belongs, otherwise not. (using XOR)
-    if (!(groupTypesAsString.contains(currentGroupType) ^ ( onlyReturnTypesInCollection) ) )  {
+    if(groupTypesAsString==null || groupTypesAsString.isEmpty()){
+    		//no specific type, add all
+    		result.add(currentGroup);
+    }
+    else if (!(groupTypesAsString.contains(currentGroupType) ^ ( onlyReturnTypesInCollection) ) )  {
       result.add(currentGroup);
     }
     // go further
@@ -2169,10 +2173,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/07 13:21:44 $ by $Author: gummi $
+	 *  Last modified: $Date: 2004/09/08 01:36:49 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.69 $
+	 * @version $Revision: 1.70 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
