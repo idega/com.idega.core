@@ -178,6 +178,15 @@ public String getMethods(){
 
 }
 
+public void addScriptSource(String jsString){
+  if(jsString!=null && jsString.endsWith(".js")){
+    Script js = new Script();
+    js.setScriptSource(jsString);
+    addFunction(jsString.substring(0,jsString.indexOf(".js")),"\tif(document){\n\t\t document.write(\"<script src="+jsString+" > </script>\")\n\t}");
+    //document.write("<scr"+"ipt src=/js/curtain_menu/menumaker.jsp><"+"/script>")
+  }
+}
+
 public String getFunction(String functionName){
 	return (String) scriptCode.get(functionName);
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.26 2002/01/12 14:44:47 laddi Exp $
+ * $Id: Page.java,v 1.27 2002/02/10 17:23:36 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,6 +29,7 @@ public class Page extends PresentationObjectContainer {
   private int _ibPageID;
   private String _title;
   private Script _theAssociatedScript;
+  private Script _theSourceScript;
   private boolean _zeroWait = false;
   private String _redirectInfo;
   private boolean _doReload = false;
@@ -149,6 +150,9 @@ public class Page extends PresentationObjectContainer {
     setStyleDefinition("A:visited","color:"+_visitedColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
     setStyleDefinition("A:hover","color:"+_hoverColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_hoverDecoration+";");
     setStyleDefinition("body","font-family: "+_pageStyleFont+"; font-size: "+_pageStyleFontSize+"; font-style: "+_pageStyleFontStyle+";");
+    //addScriptSource("/idegaweb/global.js");
+    getAssociatedScript().addFunction("windowopen",Window.windowScript());
+
   }
 
   public String getStyleDefinition() {
@@ -995,4 +999,13 @@ public class Page extends PresentationObjectContainer {
   public String getTemplateId() {
     return(_templateId);
   }
+
+  /**
+   *  Used to add source of scriptfiles (JavaScript)
+   *  The file url should end on the form "scriptfile.js"
+   */
+  public void addScriptSource(String jsString){
+    getAssociatedScript().addScriptSource(jsString);
+  }
+
 }

@@ -303,40 +303,30 @@ public static String getCallingScriptString(Class windowClass,boolean includeURL
 
 
 public static String getCallingScriptString(Class windowClass,String url,boolean includeURL){
-      String theURL=null;
-      Window windowInstance = getStaticInstance(windowClass);
-      if(includeURL){
-        theURL=url;
-      }
-      else{
-        theURL="";
-      }
-      if(windowInstance==null){
-          return "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
-      }
-      return "window.open('"+theURL+"','"+windowInstance.getTarget()+"','resizable="+windowInstance.returnCheck(windowInstance.resizable)+",toolbar="+windowInstance.returnCheck(windowInstance.toolbar)+",location="+windowInstance.returnCheck(windowInstance.location)+",directories="+windowInstance.returnCheck(windowInstance.directories)+",status="+windowInstance.returnCheck(windowInstance.status)+",scrollbars="+windowInstance.returnCheck(windowInstance.scrollbar)+",menubar="+windowInstance.returnCheck(windowInstance.menubar)+",titlebar="+windowInstance.returnCheck(windowInstance.titlebar)+windowInstance.returnFullScreen()+",width="+windowInstance.getWidth()+",height="+windowInstance.getHeight()+"')";
+  String theURL=null;
+  Window win = getStaticInstance(windowClass);
+  if(includeURL){
+    theURL=url;
+  }
+  else{
+    theURL="";
+  }
+  if(win==null){
+      //return "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
+      return getWindowCallingScript(theURL,"tempwindow",true,true,true,true,true,true,true,true,false,500,500);
+  }
+  //return "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
+  return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWidth(),win.getHeight());
 }
 
 public String getCallingScriptString(IWContext iwc,String url){
-	//return "window.open('"+getURL(iwc)+"','"+getName()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+",width="+getWidth()+",height="+getHeight()+"')";
-          /*if (this.getName().equalsIgnoreCase("untitled")){
-            setID();
-            setName(getID());
-          }*/
-         return "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
+  //return "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
+  return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWidth(),getHeight());
 }
 
 public String getCallingScriptString(IWContext iwc){
-	//return "window.open('"+getURL(iwc)+"','"+getName()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+",width="+getWidth()+",height="+getHeight()+"')";
-          /*if (this.getName().equalsIgnoreCase("untitled")){
-            setID();
-            setName(getID());
-          }*/
-         //return "window.open('"+getURL(iwc)+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+",width="+getWidth()+",height="+getHeight()+"')";
-          return getCallingScriptString(iwc,getURL(iwc));
+  return getCallingScriptString(iwc,getURL(iwc));
 }
-
-
 
 protected String getCallingScriptStringForForm(IWContext iwc){
 	//return "window.open('"+getURL(iwc)+"','"+getName()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+",width="+getWidth()+",height="+getHeight()+"')";
@@ -344,8 +334,54 @@ protected String getCallingScriptStringForForm(IWContext iwc){
             setID();
             setName(getID());
           }*/
-         return "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
+  //return "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
+  return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWidth(),getHeight());
 }
+
+/**
+ *
+ * using js function openwindow from global.js
+ * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height)
+ */
+private static String getWindowCallingScript(String url,String name,boolean tool,
+              boolean loc,boolean dir,boolean stat,boolean menu,boolean title
+              ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight ){
+
+  String no = "0";
+  String yes = "1";
+  String sp = "'";
+  StringBuffer buf = new StringBuffer("openwindow('").append(url).append("','").append(name).append("',");
+  buf.append("'").append(tool?yes:no).append("','").append(loc?yes:no).append("',");
+  buf.append("'").append(dir?yes:no).append("','").append(stat?yes:no).append("',");
+  buf.append("'").append(menu?yes:no).append("','").append(title?yes:no).append("',");
+  buf.append("'").append(scroll?yes:no).append("','").append(resize?yes:no).append("',");
+  buf.append("'").append(theWidth).append("','").append(theHeight).append("')");
+  return buf.toString();
+}
+
+public static String windowScript(){
+  StringBuffer js = new StringBuffer();
+  js.append("function openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height) {  \n");
+  js.append("\n  // usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height) \n");
+
+	js.append("var option = \"toolbar=\" + ToolBar \n");
+	js.append("+ \",location=\" + Location  \n");
+	js.append("+ \",directories=\" + Directories  \n");
+	js.append("+ \",status=\" + Status  \n");
+	js.append("+ \",menubar=\" + Menubar  \n");
+	js.append("+ \",titlebar=\" + Titlebar  \n");
+	js.append("+ \",scrollbars=\" + Scrollbars  \n");
+	js.append("+ \",resizable=\"  + Resizable  \n");
+  //js.append("+ \",fullscreen=\"  + FullScreen  \n");
+	js.append("+ \",width=\" + Width  \n");
+	js.append("+ \",height=\" + Height; \n");
+
+	js.append("var new_win = window.open(Address, Name, option );\n");
+  //js.append("new_win.document.write(option)");
+  js.append("\n}\n");
+  return js.toString();
+}
+
 
 
 public void setBackgroundImage(String imageURL){
