@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.101 2004/01/28 15:15:54 gimmi Exp $
+ * $Id: Link.java,v 1.102 2004/01/28 17:08:55 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2031,9 +2031,9 @@ public void setWindowToOpen(String className) {
 			}
 			else {
 				if (_windowInstance != null) {
-					return ("javascript:" + Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
-				} else {
 					return ("javascript:" + _windowInstance.getCallingScriptString(iwc, _windowInstance.getURL(iwc) + getParameterString(iwc, _windowInstance.getURL(iwc))));
+				} else {
+					return ("javascript:" + Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
 				}
 			}
 		}
