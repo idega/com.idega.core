@@ -8,6 +8,7 @@ package com.idega.idegaweb;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
+import com.idega.util.text.TextSoap;
 import java.net.URLEncoder;
 import java.io.InputStream;
 import java.io.IOException;
@@ -203,6 +204,7 @@ public class IWCacheManager {
       String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
       String virtualPath = "/"+IW_ROOT_CACHE_DIRECTORY;
       String fileName = entity.getID()+"_"+entity.getName();
+      fileName = TextSoap.findAndCut(fileName," ");//remove spaces
 
       if(input != null ){
         FileUtil.streamToFile(input,realPath,fileName);
