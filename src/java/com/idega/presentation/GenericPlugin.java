@@ -68,17 +68,18 @@ public void setParam(String name,boolean value){
 
 public String getParams(){
   StringBuffer paramString = new StringBuffer();
-  Iterator iter = params.keySet().iterator();
-  String key;
-  while( iter.hasNext() ){
-   key = (String)iter.next();
-   paramString.append("<param name=\"");
-   paramString.append(key);
-   paramString.append("\" value=\"");
-   paramString.append(params.get(key));
-   paramString.append("\" >\n");
+  if ( params != null ) {
+    Iterator iter = params.keySet().iterator();
+    String key;
+    while( iter.hasNext() ){
+     key = (String)iter.next();
+     paramString.append("<param name=\"");
+     paramString.append(key);
+     paramString.append("\" value=\"");
+     paramString.append(params.get(key));
+     paramString.append("\" >\n");
+    }
   }
-
   return paramString.toString();
 }
 
