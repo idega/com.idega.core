@@ -2,6 +2,7 @@ package com.idega.core.data;
 
 import com.idega.data.GenericEntity;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Title:        IW Core
@@ -36,6 +37,22 @@ public class Country extends GenericEntity{
   public static String getColumnNameName(){return "country_name";}
   public static String getColumnNameDescription(){return "country_description";}
   public static String getColumnNameIsoAbbreviation(){return "iso_abbreviation";}
+
+
+  public void insertStartData()throws Exception{
+    String[] JavaLocales = java.util.Locale.getISOCountries();
+    Country country;
+    Locale locale = Locale.ENGLISH;
+    Locale l = null;
+    String lang = Locale.ENGLISH.getISO3Language();
+    for (int i = 0; i < JavaLocales.length; i++) {
+      country = new Country();
+      l = new Locale(lang,JavaLocales[i]);
+      country.setName(l.getDisplayCountry(locale));
+      country.setIsoAbbreviation(JavaLocales[i]);
+      country.insert();
+    }
+  }
 
 
   public String getName(){

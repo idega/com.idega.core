@@ -29,12 +29,16 @@ public class IWURL {
   private static final String ampersand = "&";
   private String baseURL;
   private static List globalMaintainedParameters;
+  private static List globalMaintainedBuilderParameters;
 
   static{
     globalMaintainedParameters = new Vector();
     globalMaintainedParameters.add(Page.IW_FRAME_STORAGE_PARMETER);
     globalMaintainedParameters.add(Page.IW_FRAME_CLASS_PARAMETER);
     globalMaintainedParameters.add(IWMainApplication.classToInstanciateParameter);
+
+    globalMaintainedBuilderParameters = new Vector();
+    globalMaintainedBuilderParameters.add(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER);
   }
 
   private Map parametersMap;
@@ -184,5 +188,19 @@ public class IWURL {
   public static List getGloballyMaintainedParameters(IWContext iwc){
     return globalMaintainedParameters;
   }
+
+  public static void addGloballyMaintainedBuilderParameter(String parameterName){
+    List l = globalMaintainedBuilderParameters;
+    if(l!=null){
+      if(!l.contains(parameterName)){
+        l.add(parameterName);
+      }
+    }
+  }
+
+  public static List getGloballyMaintainedBuilderParameters(IWContext iwc){
+    return globalMaintainedBuilderParameters;
+  }
+
 
 }

@@ -2,6 +2,7 @@ package com.idega.core.data;
 
 import com.idega.data.*;
 import java.sql.SQLException;
+import java.util.Locale;
 
 
 /**
@@ -15,6 +16,10 @@ import java.sql.SQLException;
 
 public class ICLanguage extends GenericEntity {
 
+  public static final String _COLUMN_LanguageName = "name";
+  public static final String _COLUMN_LanguageDescription = "description";
+  public static final String _COLUMN_ISOabbreviation = "iso_abbreviation";
+
   public ICLanguage() {
     super();
   }
@@ -26,8 +31,9 @@ public class ICLanguage extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute("name","nafn",true,true, "java.lang.String");
-    addAttribute("description","lýsing",true,true, "java.lang.String", 510);
+    addAttribute(_COLUMN_LanguageName,"nafn",true,true, "java.lang.String");
+    addAttribute(_COLUMN_LanguageDescription,"lýsing",true,true, "java.lang.String", 510);
+    addAttribute(_COLUMN_ISOabbreviation,"ISO skammstöfun",true,true,String.class,10);
     /**@todo: implement this com.idega.data.GenericEntity abstract method*/
   }
   public String getEntityName() {
@@ -35,19 +41,45 @@ public class ICLanguage extends GenericEntity {
     /**@todo: implement this com.idega.data.GenericEntity abstract method*/
   }
 
+  public void insertStartData()throws Exception{
+    String[] JavaLocales = Locale.getISOLanguages();
+    ICLanguage lang;
+    Locale l = null;
+    for (int i = 0; i < JavaLocales.length; i++) {
+      lang = new ICLanguage();
+      l = new Locale(JavaLocales[i],"");
+      lang.setName(l.getDisplayLanguage(l));
+      lang.setIsoAbbreviation(JavaLocales[i]);
+      lang.insert();
+    }
+  }
+
+
+
   public String getName(){
-    return (String) getColumnValue("name");
+    return (String) getColumnValue(_COLUMN_LanguageName);
   }
 
   public String getDescription(){
-    return (String) getColumnValue("description");
+    return (String) getColumnValue(_COLUMN_LanguageDescription);
   }
 
+  public String getIsoAbbreviation(){
+    return this.getStringColumnValue(_COLUMN_ISOabbreviation);
+  }
+
+
+
   public void setName(String Name){
-    setColumn("name", Name);
+    setColumn(_COLUMN_LanguageName, Name);
   }
 
   public void setDescription(String description){
-    setColumn("description", description);
+    setColumn(_COLUMN_LanguageDescription, description);
   }
+
+  public void setIsoAbbreviation(String IsoAbbreviation){
+    this.setColumn(_COLUMN_ISOabbreviation,IsoAbbreviation);
+  }
+
 }

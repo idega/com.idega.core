@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.15 2001/10/29 21:27:41 tryggvil Exp $
+ * $Id: Link.java,v 1.16 2001/11/02 15:14:07 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,6 +11,7 @@ package com.idega.presentation.text;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -64,6 +65,7 @@ public class Link extends Text {
 
   private boolean hasClass = false;
   private boolean _maintainAllGlobalParameters = false;
+  private boolean _maintainBuilderParameters = true;
   private boolean _addSessionId = true;
 
 
@@ -327,6 +329,43 @@ public class Link extends Text {
    */
   public void addParameter(String parameterName,Class theClass) {
     addParameter(parameterName,IWMainApplication.getEncryptedClassName(theClass));
+  }
+
+
+  public boolean isParameterSet(String prmName){
+    //System.out.println("isParameterSet("+prmName+")");
+    //System.err.println("isParameterSet("+prmName+")");
+    if(_parameterString != null){
+      if(!(prmName != null && prmName.endsWith(""))){
+        //System.out.println("return true;");
+        //System.err.println("return true;");
+        return true;
+      }
+      String prmString = _parameterString.toString();
+      if((prmString.charAt(0) == '?') && (prmString.length()>1)){
+        prmString = prmString.substring(1,prmString.length());
+      }
+      if((prmString.charAt(0) == '&') && (prmString.length()>1)){
+        prmString = prmString.substring(1,prmString.length());
+      }
+      StringTokenizer token = new StringTokenizer(prmString,"&=",false);
+      int index = 0;
+      while (token.hasMoreTokens()) {
+        String st = token.nextToken();
+        String value = token.nextToken();
+        if(prmName.equals(st)){
+          return true;
+          //System.out.println("token "+index+" : "+st+" / true");
+          //System.err.println("token "+index+" : "+st+" / true");
+        }
+        //else{
+          //System.out.println("token "+index+" : "+st+" / false");
+          //System.err.println("token "+index+" : "+st+" / false");
+        //}
+        index++;
+      }
+    }
+    return false; // false
   }
 
   /**
@@ -643,13 +682,14 @@ public class Link extends Text {
    */
   public void setPage(IBPage page) {
     if( (page!=null) && (page.getID()!=-1) ){
-      StringBuffer url = new StringBuffer();
+      /*StringBuffer url = new StringBuffer();
       url.append(IWMainApplication.BUILDER_SERVLET_URL);
       url.append('?');
       url.append(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER);
       url.append('=');
       url.append(page.getID());
-      setURL(url.toString());
+      setURL(url.toString());*/
+      this.addParameter(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER,page.getID());
     }
   }
 
@@ -736,6 +776,7 @@ public class Link extends Text {
       linkObj._parameterString = _parameterString;
       linkObj._addSessionId = _addSessionId;
       linkObj._maintainAllGlobalParameters = _maintainAllGlobalParameters;
+      linkObj._maintainBuilderParameters = _maintainBuilderParameters;
       linkObj.text = text;
       linkObj.isImageButton = isImageButton;
       linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
@@ -764,7 +805,29 @@ public class Link extends Text {
         String parameterName = (String)iter.next();
         String parameterValue = iwc.getParameter(parameterName);
         if (parameterValue != null) {
-          addParameter(parameterName,parameterValue);
+          if(!this.isParameterSet(parameterName)){
+            addParameter(parameterName,parameterValue);
+          }
+        }
+      }
+    }
+  }
+
+
+    /*
+   *
+   */
+  private void addTheMaintainedBuilderParameters(IWContext iwc) {
+    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
+    if (list != null) {
+      Iterator iter = list.iterator();
+      while(iter.hasNext()) {
+        String parameterName = (String)iter.next();
+        String parameterValue = iwc.getParameter(parameterName);
+        if (parameterValue != null) {
+          if(!this.isParameterSet(parameterName)){
+            addParameter(parameterName,parameterValue);
+          }
         }
       }
     }
@@ -777,10 +840,24 @@ public class Link extends Text {
     _maintainAllGlobalParameters = true;
   }
 
+  public void setToMaintainBuilderParameters(boolean value){
+    _maintainBuilderParameters = value;
+  }
+
   /**
    *
    */
   protected String getParameterString(IWContext iwc, String URL) {
+
+    if (_maintainBuilderParameters) {
+      addTheMaintainedBuilderParameters(iwc);
+    }
+    else {
+      if (isLinkOpeningOnSamePage()) {
+        addTheMaintainedParameters(iwc);
+      }
+    }
+
     if (_maintainAllGlobalParameters) {
       addTheMaintainedParameters(iwc);
     }
@@ -794,10 +871,10 @@ public class Link extends Text {
       URL = "";
     }
 
-	  if (_parameterString == null) {
+    if (_parameterString == null) {
       _parameterString = new StringBuffer();
       if (_addSessionId && (!iwc.isSearchEngine())) {
-    		if (URL.equals("#")) {
+        if (URL.equals("#")) {
           return("");
         }
         else if (URL.indexOf("://") == -1) { //does not include ://
