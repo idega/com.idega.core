@@ -427,6 +427,22 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	}
 	return ((IDOEntity)_PKs.get(index)).getPrimaryKey();
   }
+  
+  Object getIDOEntity(int index) {
+    Object obj = _PKs.get(index);
+	if(obj == null){
+		try
+		{
+			loadSubset(index,index+prefetchNumber);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
+	return ((IDOEntity)_PKs.get(index));
+  }
+  
   public Object remove(int index) {
     /**@todo: Implement this java.util.List method*/
     throw new java.lang.UnsupportedOperationException("Method remove() not yet implemented.");
@@ -857,12 +873,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				_index=index;
 			}
 			
-					/**
-			 * @see java.util.ListIterator#add(java.lang.Object)
-			 */
-			public void add(Object o) {
-				_list.add(o);
-			}
+//					/**
+//			 * @see java.util.ListIterator#add(java.lang.Object)
+//			 */
+//			public void add(Object o) {
+//				_list.add(o);
+//			}
 
 			/**
 			 * @see java.util.Iterator#hasNext()
@@ -921,12 +937,19 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				_list.remove(previousIndex());
 			}
 
-			/**
-			 * @see java.util.ListIterator#set(java.lang.Object)
-			 */
-			public void set(Object o) {
-				_list.set(previousIndex(),o);
-			}
+//			/**
+//			 * @see java.util.ListIterator#set(java.lang.Object)
+//			 */
+//			public void set(Object o) {
+//				_list.set(previousIndex(),o);
+//			}
+			
+		    public void set(Object o) {
+		        throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
+		      }
+		      public void add(Object o) {
+		        throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
+		      }
 
 }
 

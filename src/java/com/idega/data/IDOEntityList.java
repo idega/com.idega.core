@@ -35,7 +35,7 @@ public class IDOEntityList implements List {
     return _entities.isEmpty();
   }
   public Iterator iterator() {
-    return new IDOEntityIterator(_entities.getListOfEntities().listIterator());
+    return new IDOEntityIterator(this);
   }
 
   public void clear() {
@@ -53,17 +53,17 @@ public class IDOEntityList implements List {
   }
 
   public Object get(int index) {
-      return _entities.get(index);
+      return _entities.getIDOEntity(index);
   }
 
   public Object remove(int index) {
     return _entities.remove(index);
   }
   public ListIterator listIterator() {
-    return new IDOEntityIterator(_entities.getListOfEntities().listIterator());
+    return new IDOEntityIterator(this);
   }
   public ListIterator listIterator(int index) {
-    return new IDOEntityIterator(_entities.getListOfEntities().listIterator(index));
+    return new IDOEntityIterator(this);
   }
 
   public boolean contains(Object o) {
@@ -192,4 +192,88 @@ public class IDOEntityList implements List {
   	else
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
+  
+  
+  
+  
+  public class IDOEntityIterator implements ListIterator {
+
+    private IDOEntityList _list;
+	private int _index;
+	private Object lastObject;
+	private boolean _hasPrevious=false;
+
+    private IDOEntityIterator() {
+    }
+
+    public IDOEntityIterator( IDOEntityList entities) {
+    	_list = entities;
+    }
+
+	/**
+	 * @see java.util.Iterator#hasNext()
+	 */
+	public boolean hasNext() {
+		return _list.size()>_index;
+	}
+
+	/**
+	 * @see java.util.ListIterator#hasPrevious()
+	 */
+	public boolean hasPrevious() {
+		return _hasPrevious;
+	}
+
+	/**
+	 * @see java.util.Iterator#next()
+	 */
+	public Object next() {
+		Object o =  _list.get(nextIndex());
+		_index++;
+		_hasPrevious=true;
+		return o;
+	}
+
+	/**
+	 * @see java.util.ListIterator#nextIndex()
+	 */
+	public int nextIndex() {
+		return _index;
+	}
+
+	/**
+	 * @see java.util.ListIterator#previous()
+	 */
+	public Object previous() {
+		Object o = _list.get(previousIndex());
+		_index=_index-1;
+		if(_index==0){
+			_hasPrevious=false;
+		}
+		return o;
+	}
+
+	/**
+	 * @see java.util.ListIterator#previousIndex()
+	 */
+	public int previousIndex() {
+		return _index-1;
+	}
+
+	/**
+	 * @see java.util.Iterator#remove()
+	 */
+	public void remove() {
+		_list.remove(previousIndex());
+	}
+
+    public void set(Object o) {
+      throw new java.lang.UnsupportedOperationException("Method set() not yet implemented.");
+    }
+    public void add(Object o) {
+      throw new java.lang.UnsupportedOperationException("Method add() not yet implemented.");
+    }
+
+  }
+  
 }
