@@ -48,6 +48,8 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public static final String PERMISSION_KEY_CREATE = "create";
   public static final String PERMISSION_KEY_OWNER = "owner";
   public static final String PERMISSION_KEY_PERMIT = "permit";
+  public static final String PERMISSION_KEY_ROLE = "role_permission";
+  
 	
   public static final int CATEGORY_OBJECT_INSTANCE = 0;
   public static final int CATEGORY_OBJECT = 1;
@@ -82,6 +84,8 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
 
 
   public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception;
+  public boolean hasPermissionForGroup(String permissionKey, Group obj,IWUserContext iwc) throws Exception;
+  
   /**
 	   * 
 	   * @deprecated only used in idegaWeb Project removed in next major version

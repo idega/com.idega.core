@@ -2370,44 +2370,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
-	public boolean hasEditPermissionFor(Group group, IWUserContext iwuc) {
-		try {
-		    //check for regular permission, then by role
-			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
-			if(!hasPermission) {
-			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
-			}
-			return hasPermission;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
-	}
-	
-	/**
-	 * The permission to give other groups permissions to this group
-	 */
-	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc) {
-		try {
-		    //check for regular permission, then by role
-			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
-			/*
-			 * not supported as a role yet
-			if(!hasPermission) {
-			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
-			}
-			*/
-			return hasPermission;
-			
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
-	}
 	
 	/**
 	 * Checks if the current user has a certain permission to a group depending on his active roles (or his parent groups roles).
@@ -2483,55 +2445,49 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    return false;
 	}
 	
-	public boolean hasViewPermissionFor(Group group, IWUserContext iwuc) {
-		try {
-//			check for regular permission, then by role
-			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
-			if(!hasPermission) {
-			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
-			}
-			return hasPermission;
-			
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
+	
+	public boolean hasPermissionForGroup(String permissionKey, Group group, IWUserContext iwuc) {
+	    try {
+	        //check for regular permission, then by role
+	        boolean hasPermission = hasPermission(permissionKey, group, iwuc);
+	        if(!hasPermission) {
+	            hasPermission = hasPermissionForGroupByRole(permissionKey, group, iwuc);
+	        }
+	        return hasPermission;
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	    
+    public boolean hasEditPermissionFor(Group group, IWUserContext iwuc) {
+        //check for regular permission, then by role
+        return hasPermissionForGroup(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
+    }
+    
+    
+    public boolean hasViewPermissionFor(Group group, IWUserContext iwuc) {
+//	        check for regular permission, then by role
+		    return hasPermissionForGroup(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
 	}
 
 	public boolean hasCreatePermissionFor(Group group, IWUserContext iwuc) {
-		try {
 //			check for regular permission, then by role
-			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
-			if(!hasPermission) {
-			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
-			}
-			return hasPermission;
-			
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
+			return hasPermissionForGroup(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
 	}
 
 	public boolean hasDeletePermissionFor(Group group, IWUserContext iwuc) {
-		try {
+		//check for regular permission, then by role
+	    return hasPermissionForGroup(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
+	}
+	
+	/**
+	 * The permission to give other groups permissions to this group
+	 */
+	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc) {
 		    //check for regular permission, then by role
-			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
-			if(!hasPermission) {
-			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
-			}
-			return hasPermission;
-			
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
+			return hasPermissionForGroup(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
 	}
 
 	private static PermissionGroupHome getPermissionGroupHome() throws RemoteException {
