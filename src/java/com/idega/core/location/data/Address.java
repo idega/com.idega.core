@@ -31,6 +31,7 @@ public interface Address extends com.idega.data.IDOLegacyEntity
  public int getPostalCodeID();
  public void setCity(java.lang.String p0);
  public java.lang.String getProvince();
+ public Commune getCommune();
  public int getCommuneID();
  public void setCommuneID(int communeId);
  public boolean isEqualTo(Address address);

@@ -80,19 +80,6 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public String getName() {
-		/*String streetName = getStreetName();
-		String streetNumber = getStreetNumber();
-
-		StringBuffer address = new StringBuffer("");
-		if (streetName != null) {
-			address.append(address);
-			if (streetNumber != null) {
-				address.append(" ");
-				address.append(streetNumber);
-			}
-		}
-
-		return address.toString();*/
 		return getStreetAddress();
 	}
 
@@ -252,8 +239,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		setColumn(getColumnNameCommuneID(), commune);
 	}
 
-	public Object getCommune() {
-		return getColumn(getColumnNameCommuneID());
+	public Commune getCommune() {
+		return (Commune) getColumn(getColumnNameCommuneID());
 	}
 
 	public AddressTypeHome getAddressTypeHome() throws RemoteException {

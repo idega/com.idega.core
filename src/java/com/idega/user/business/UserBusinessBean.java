@@ -1,7 +1,6 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -22,7 +22,9 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -55,6 +57,7 @@ import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
@@ -76,6 +79,8 @@ import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.TopNodeGroup;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
+import com.idega.user.data.UserComment;
+import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -3166,5 +3171,36 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         } catch (FinderException e) {
             return ListUtil.getEmptyList();
         }
+	}
+	
+	private UserCommentHome getUserCommentHome() {
+		try {
+			return (UserCommentHome) IDOLookup.getHome(UserComment.class);
+		}
+		catch (IDOLookupException ile) {
+			throw new IBORuntimeException(ile);
+		}
+	}
+	
+	public void storeUserComment(User user, String comment, User performer) {
+		try {
+			UserComment userComment = getUserCommentHome().create();
+			userComment.setUser(user);
+			userComment.setComment(comment);
+			userComment.setCreatedDate(new IWTimestamp().getDate());
+			userComment.setCreatedBy(performer);
+			userComment.store();
+		}
+		catch (CreateException ce) {
+			log(ce);
+		}
+	}
+	
+	public Collection getUserComments(User user) throws FinderException {
+		Collection comments = getUserCommentHome().findAllByUser(user);
+		if (comments == null || comments.isEmpty()) {
+			throw new FinderException("No comments found for user with PK = " + user.getPrimaryKey());
+		}
+		return comments;
 	}
 } // Class UserBusiness
