@@ -73,7 +73,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final int STATE_WRONG_PASSW = 4;
 	public static final int STATE_LOGIN_EXPIRED = 5;
 	public static final int STATE_LOGIN_FAILED = 6;
-	public static final int STATE_LOGIN_DISABLED = 7;
 	public static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
 	
 	public LoginBusinessBean() {
@@ -438,15 +437,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 			} catch (FinderException fe) {
 				//Nothing done
 			}
-			if(loginInfo!=null && loginInfo.getAccessClosed()) {
-				return STATE_LOGIN_DISABLED;
-			}
 			if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
 				if (loginTable != null) {
 					if (loginInfo!=null && !loginInfo.getAccountEnabled()) {
 						return STATE_LOGIN_EXPIRED;
 					}
 					if (logIn(iwc, loginTable)) {
+						loginInfo.setFailedAttemptCount(0);
+						loginInfo.store();
 						return STATE_LOGGED_ON;
 					}
 				} else {
@@ -472,8 +470,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 					if(failedAttempts==maxFailedLogginAttempts-1) {
 						returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
 					} else if(failedAttempts>=maxFailedLogginAttempts) {
-						System.out.println("Maximum loggin attemps, closing access to account " + login);
-						loginInfo.setAccessClosed(true);
+						System.out.println("Maximum loggin attemps, disabling account " + login);
+						loginInfo.setAccountEnabled(false);
+						loginInfo.setFailedAttemptCount(0);
 					}
 					loginInfo.store();
 				}
