@@ -1,5 +1,5 @@
 /*
- * $Id: IFrame.java,v 1.17 2005/03/08 18:42:29 tryggvil Exp $
+ * $Id: IFrame.java,v 1.18 2005/03/20 11:56:53 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
- *  Last modified: $Date: 2005/03/08 18:42:29 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/20 11:56:53 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class IFrame extends InterfaceObject {
 
@@ -44,14 +44,16 @@ public class IFrame extends InterfaceObject {
 	private int ibPageId = 0;
 	private boolean addLocaleID = false;
 	private Class classToInstanciate;
+	private boolean addLanguageParameter = true;
 
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[5];
+		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
 		values[1] = Boolean.valueOf(transparent);
 		values[2] = new Integer(ibPageId);
 		values[3] = Boolean.valueOf(addLocaleID);
 		values[4] = classToInstanciate;
+		values[5] = Boolean.valueOf(addLanguageParameter);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -61,6 +63,7 @@ public class IFrame extends InterfaceObject {
 		ibPageId = ((Integer)values[2]).intValue();
 		addLocaleID = ((Boolean)values[3]).booleanValue();
 		classToInstanciate = (Class)values[4];
+		addLanguageParameter = ((Boolean) values[5]).booleanValue();
 	}
 	
 	public IFrame() {
@@ -204,12 +207,16 @@ public class IFrame extends InterfaceObject {
 
 		String src = getMarkupAttribute("src");
 		if (src != null) {
-			if (src.indexOf("?") != -1) {
-				setMarkupAttribute("src", src + "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
+			String langAddition = "";
+			if (addLanguageParameter) {
+				if (src.indexOf("?") != -1) {
+					langAddition = "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
+				}
+				else {
+					langAddition = "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
+				}
 			}
-			else {
-				setMarkupAttribute("src", src + "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString());
-			}
+			setMarkupAttribute("src", src + langAddition);
 		}
 
 		if (transparent)
@@ -230,6 +237,11 @@ public class IFrame extends InterfaceObject {
 		}
 	}
 
+
+	public void addLanguageParameter(boolean add) {
+		this.addLanguageParameter = add;
+	}
+	
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
