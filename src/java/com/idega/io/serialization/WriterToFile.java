@@ -61,18 +61,7 @@ public abstract class WriterToFile {
     // usually the folder should be already be there.
     // the folder is never deleted by this class
     String folderPath = path.toString();
-    File[] files = FileUtil.getAllFilesInDirectory(folderPath);
-    
-    if(files!=null){
-    	long currentTime = System.currentTimeMillis();
-	    for (int i = 0; i < files.length; i++) {
-	    	File file = files[i];
-	    	long modifiedFile = file.lastModified();
-	    	if (currentTime - modifiedFile > 300000)	{
-	    		FileUtil.deleteFileAndChildren(file);
-	    	}
-	    }
-    }
+    FileUtil.deleteAllFilesAndFolderInFolderOlderThan(folderPath, 300000);
 		path.append(separator);
 		path.append(folderIdentifier);
 		folderPath = path.toString();
