@@ -1,15 +1,15 @@
 package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.business.IBOServiceBean;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.Commune;
+import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
@@ -35,6 +35,13 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
    */
   public CountryHome getCountryHome() throws RemoteException{
     return (CountryHome)this.getIDOHome(Country.class);
+  }
+  
+  /**
+   * @return The Commune Beans' home
+   */
+  public CommuneHome getCommuneHome() throws RemoteException{
+    return (CommuneHome)this.getIDOHome(Commune.class);
   }
   
     /**
@@ -80,7 +87,30 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
     return code;
   }
-  
+
+	/**
+	 * Connects the postal code with the given commune
+	 * The commune code is set to the commune name if it is not already set.
+	 * This is a simplification since we didn't have that data for Iceland
+	 */
+	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws RemoteException, CreateException {
+		CommuneHome communeHome = getCommuneHome();
+		Commune commune;
+		try {
+			commune = communeHome.findByCommuneCode(Commune);
+		}
+		catch (FinderException e) {
+			commune = communeHome.create();
+			commune.setCommuneCode(Commune);
+			commune.setCommuneName(Commune);
+			commune.setIsValid(true);
+			commune.store();
+		}
+		postalCode.setCommune(commune);
+		postalCode.store();
+	}
+	
+	
   /**
    * Change postal code name when only one address is related to the postalcode
    */

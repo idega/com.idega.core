@@ -24,32 +24,26 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
 	static final String TABLE_NAME="IC_POSTAL_CODE";
 	 
-	 static final String COLUMN_POSTAL_CODE_ID="IC_POSTAL_CODE_ID";
-	 static final String COLUMN_POSTAL_CODE="POSTAL_CODE";
-	 static final String COLUMN_NAME="NAME";
-	 static final String COLUMN_COUNTRY_ID="IC_COUNTRY_ID";
+	static final String COLUMN_POSTAL_CODE_ID = "IC_POSTAL_CODE_ID";
+	static final String COLUMN_POSTAL_CODE = "POSTAL_CODE";
+	static final String COLUMN_NAME = "NAME";
+	static final String COLUMN_COUNTRY_ID = "IC_COUNTRY_ID";
+	static final String COLUMN_COMMUNE_ID = "IC_COMMUNE_ID";
 
-	 
-	 
+	public PostalCodeBMPBean() {
+		super();
+	}
 
-
-  public PostalCodeBMPBean(){
-    super();
-  }
-
-
-
-  public PostalCodeBMPBean(int id)throws SQLException{
-    super(id);
-  }
-
-
+	public PostalCodeBMPBean(int id) throws SQLException {
+		super(id);
+	}
 
   public void initializeAttributes(){
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class,50);
     addAttribute(COLUMN_NAME, "Name", true, true, String.class,50);
     addManyToOneRelationship(COLUMN_COUNTRY_ID, "Country", Country.class);
+    addManyToOneRelationship(COLUMN_COMMUNE_ID, "Commmune", Commune.class);
     
     addIndex("IDX_IC_POSTALCODE", COLUMN_POSTAL_CODE);
     addIndex("IDX_IC_POSTALCODE2", new String[]{COLUMN_POSTAL_CODE, COLUMN_NAME});
@@ -99,6 +93,23 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
   public String getPostalCode(){
     return getStringColumnValue(COLUMN_POSTAL_CODE);
+  }
+
+  public void setCommuneID(String commune){
+  	// remove all whitespace from postal code
+    setColumn(COLUMN_COMMUNE_ID, commune);
+  }
+
+  public String getCommuneID(){
+    return getStringColumnValue(COLUMN_COMMUNE_ID);
+  }
+
+  public void setCommune(Commune commune){
+    setColumn(COLUMN_COMMUNE_ID,commune);
+  }
+
+  public Commune getCommune(){
+    return (Commune)getColumnValue(COLUMN_COMMUNE_ID);
   }
 
   /**

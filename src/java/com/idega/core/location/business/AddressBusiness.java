@@ -1,25 +1,91 @@
+/*
+ * $Id: AddressBusiness.java,v 1.4 2004/09/13 15:09:50 joakim Exp $
+ * Created on 13.9.2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
-
+import javax.ejb.CreateException;
+import com.idega.business.IBOService;
+import com.idega.core.contact.data.EmailHome;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.CommuneHome;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
+import com.idega.core.location.data.PostalCodeHome;
 
 
-public interface AddressBusiness extends com.idega.business.IBOService
-{
- public com.idega.core.location.data.PostalCodeHome getPostalCodeHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.core.location.data.CountryHome getCountryHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.lang.String getStreetNameFromAddressString(java.lang.String p0) throws java.rmi.RemoteException;
- public com.idega.core.contact.data.EmailHome getEmailHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.core.location.data.PostalCode getPostalCodeAndCreateIfDoesNotExist(java.lang.String p0,java.lang.String p1,com.idega.core.location.data.Country p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.core.location.data.AddressHome getAddressHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.lang.String getStreetNumberFromAddressString(java.lang.String p0) throws java.rmi.RemoteException;
- /**
-  * Creates the fully qualifying address string with postal and country info from the address bean<br>
-  * seperated by a ","
-  * @return The full address string with postal info and country
-  */
- public String getFullAddressString(Address address) throws java.rmi.RemoteException;
- public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode,String newName)throws RemoteException;
+/**
+ * 
+ *  Last modified: $Date: 2004/09/13 15:09:50 $ by $Author: joakim $
+ * 
+ * @author <a href="mailto:Joakim@idega.com">Joakim</a>
+ * @version $Revision: 1.4 $
+ */
+public interface AddressBusiness extends IBOService {
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCountryHome
+	 */
+	public CountryHome getCountryHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCommuneHome
+	 */
+	public CommuneHome getCommuneHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getPostalCodeHome
+	 */
+	public PostalCodeHome getPostalCodeHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getEmailHome
+	 */
+	public EmailHome getEmailHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getAddressHome
+	 */
+	public AddressHome getAddressHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getPostalCodeAndCreateIfDoesNotExist
+	 */
+	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name, Country country)
+			throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#connectPostalCodeToCommune
+	 */
+	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws RemoteException,
+			CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#changePostalCodeNameWhenOnlyOneAddressRelated
+	 */
+	public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode, String newName)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getStreetNameFromAddressString
+	 */
+	public String getStreetNameFromAddressString(String addressString) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getStreetNumberFromAddressString
+	 */
+	public String getStreetNumberFromAddressString(String addressString) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getFullAddressString
+	 */
+	public String getFullAddressString(Address address) throws java.rmi.RemoteException;
 }
