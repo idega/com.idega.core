@@ -514,7 +514,6 @@ public class IWMainApplication {//implements ServletContext{
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate) {
         IWBundle bundle = (IWBundle) loadedBundles.get(bundleIdentifier);
         if (bundle == null) {
-            	System.out.println("loading bundle " + bundleIdentifier);
             sendStartupMessage("Loading bundle " + bundleIdentifier);
             bundle = new IWBundle(getBundleRealPath(bundleIdentifier),
                     getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
