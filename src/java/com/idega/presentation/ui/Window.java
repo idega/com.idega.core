@@ -28,8 +28,8 @@ public class Window extends Page{
   private int width;
   private int height;
   private String url;
-  private String xlocation = "0";
-  private String ylocation = "0";
+  private String xCoordinate = null;
+  private String yCoordinate =null;
   //private boolean newURL;
   //private Script theAssociatedScript;
   private static String emptyString="";
@@ -44,6 +44,11 @@ public class Window extends Page{
   private boolean titlebar;
   private boolean resizable;
   private boolean fullscreen;
+  
+  private boolean autoResize = false;
+  private boolean autoPosition =false;
+  private int autoXCoordinateOffset = 0;
+  private int autoYCoordinateOffset = 0;
 
   private static Map allOpenedWindowClasses = new Hashtable();
 
@@ -294,6 +299,35 @@ public String getUrl(){
 }
 */
 
+public void setCoordinateX(String coordX){
+	this.xCoordinate= coordX;
+}
+
+public String getCoordinateX(){
+	if(xCoordinate!=null){
+		return xCoordinate;
+	}
+	else if(autoPosition){
+		return getMouseCoordinateX()+"+("+autoXCoordinateOffset+")";
+	}
+	return null;
+	
+}
+
+public void setCoordinateY(String coordY){
+	this.yCoordinate= coordY;
+}
+
+public String getCoordinateY(){
+	if(xCoordinate!=null){
+		return yCoordinate;
+	}
+	else if(autoPosition){
+		return getMouseCoordinateY()+"+("+autoYCoordinateOffset+")";
+	}
+	return null;
+}
+
 public void setURL(String url){
 	this.url=url;
 	//newURL=true;
@@ -363,14 +397,18 @@ public static String getCallingScriptString(Class windowClass,String url,boolean
   }
   if(win==null){
       //return "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
-      return getWindowCallingScript(theURL,"tempwindow",true,true,true,true,true,true,true,true,false,500,500);
+      return getWindowCallingScript(theURL,"tempwindow",true,true,true,true,true,true,true,true,false,500,500,win.getCoordinateX(),win.getCoordinateY());
   }
   //return "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
-  return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight());
+  return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight(),win.getCoordinateX(),win.getCoordinateY());
 }
 
 public static String getCallingScript(String URL, int width, int height) {
-	return getWindowCallingScript(URL,"Window",true,true,true,true,true,true,true,true,false,width,height);
+	return getWindowCallingScript(URL,"Window",true,true,true,true,true,true,true,true,false,width,height,null,null);
+}
+
+public static String getCallingScript(String URL, int width, int height,int coordX,int coordY) {
+	return getWindowCallingScript(URL,"Window",true,true,true,true,true,true,true,true,false,width,height,String.valueOf(coordX),String.valueOf(coordY));
 }
 
 public static String getCallingScript(String URL) {
@@ -379,7 +417,7 @@ public static String getCallingScript(String URL) {
 
 public String getCallingScriptString(IWContext iwc,String url){
   //return "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-  return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
+  return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight(),getCoordinateX(),getCoordinateY());
 }
 
 public String getCallingScriptString(IWContext iwc){
@@ -393,7 +431,7 @@ protected String getCallingScriptStringForForm(IWContext iwc){
 	    setName(getID());
 	  }*/
   //return "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-  return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
+  return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight(),xCoordinate,yCoordinate);
 }
 
 /**
@@ -402,8 +440,18 @@ protected String getCallingScriptStringForForm(IWContext iwc){
  * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height)
  */
 public static String getWindowCallingScript(String url,String name,boolean tool,
+											boolean loc,boolean dir,boolean stat,boolean menu,boolean title
+											,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight){
+	return getWindowCallingScript(url,name,tool,loc,dir,stat,menu,title,scroll,resize,fullscr,theWidth,theHeight,null,null);
+}
+/**
+ *
+ * using js function openwindow from global.js
+ * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord)
+ */
+public static String getWindowCallingScript(String url,String name,boolean tool,
 	      boolean loc,boolean dir,boolean stat,boolean menu,boolean title
-	      ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight ){
+	      ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight,String xCoordinate,String yCoordinate ){
 
   String no = "0";
   String yes = "1";
@@ -413,14 +461,23 @@ public static String getWindowCallingScript(String url,String name,boolean tool,
   buf.append(sp).append(dir?yes:no).append("','").append(stat?yes:no).append("',");
   buf.append(sp).append(menu?yes:no).append("','").append(title?yes:no).append("',");
   buf.append(sp).append(scroll?yes:no).append("','").append(resize?yes:no).append("',");
-  buf.append(sp).append(theWidth).append("','").append(theHeight).append("')");
+  buf.append(sp).append(theWidth).append("','").append(theHeight).append("'");
+  if(xCoordinate!=null)
+  	buf.append(",").append(xCoordinate);
+  if(yCoordinate!=null)
+  	buf.append(",").append(yCoordinate);
+  buf.append(")");
+  
   return buf.toString();
 }
 
 public static String windowScript(){
   StringBuffer js = new StringBuffer();
-  js.append("\tfunction openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height) {  \n");
-  js.append("\t\t// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height) \n");
+  // getCoordinate script tracks the mouse coordinates
+  js.append(getCoordinateScript());
+  js.append("\n\n");
+  js.append("\tfunction openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  \n");
+  js.append("\t\t// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) \n");
 
 	js.append("\t\tvar option = \"toolbar=\" + ToolBar ");
 	js.append("+ \",location=\" + Location  ");
@@ -433,11 +490,49 @@ public static String windowScript(){
   //js.append("+ \",fullscreen=\"  + FullScreen  \n");
 	js.append("+ \",width=\" + Width  ");
 	js.append("+ \",height=\" + Height; \n");
+	js.append("\t if(Xcoord) option+=\",left=\" + Xcoord; \n");
+	js.append("\t if(Ycoord) option+=\",top=\" + Ycoord; \n");
+	
 
 	js.append("\t\tvar new_win = window.open(Address, Name, option );\n");
   //js.append("new_win.document.write(option)");
   js.append("\t}");
   return js.toString();
+}
+
+public static String getCoordinateScript(){
+	StringBuffer script = new StringBuffer();
+	
+	script.append("var IE = document.all?true:false; ");
+	script.append("if (!IE){ document.captureEvents(Event.MOUSEMOVE)}");
+	script.append("document.onmousemove = getMouseXY;");
+	script.append("var coordX = 0;");
+	script.append("var coordY = 0;");
+	
+	script.append("function getMouseXY(e) { ");
+	script.append("	if (IE) { ");
+	script.append("      coordX = event.clientX + document.body.scrollLeft;");
+	script.append("      coordY = event.clientY + document.body.scrollTop;");
+	script.append("   }");
+	script.append("   else {  ");
+	script.append("	   coordX = e.pageX;");
+	script.append("      coordY = e.pageY;");
+	script.append("   }  ");
+	script.append("	if (coordX < 0){coordX = 0;}");
+	script.append("   if (coordY < 0){cordY = 0;}  ");
+	//script.append("window.defaultStatus =\"x=\"+coordX+ \" y=\"+coordY ;");
+	script.append("   return true;");
+	script.append("} ");
+	
+	return script.toString();
+}
+
+public String getMouseCoordinateX(){
+	return "coordX";
+}
+
+public String getMouseCoordinateY(){
+	return "coordY";
 }
 
 
@@ -565,7 +660,14 @@ public void print(IWContext iwc)throws IOException{
 		if( !isChildOfOtherPage() && !isInFrameSet()) {
 			setOnLoad("focus()");
 		} 
-
+		/*
+		if(autoResize){
+			setOnLoad(getAutoResizeScript());
+		}*/
+		/*
+		if(autoPosition)
+			setOnLoad(getMoveToScript());
+        */
 		super.initInMain(iwc);
 	}
 
@@ -576,5 +678,42 @@ public void print(IWContext iwc)throws IOException{
 		// TODO Auto-generated method stub
 		return getTitle();
 	}
+
+	/*
+	public void setAutoResize(boolean auto){
+		setAutoResize(auto,0,0);
+	}
+	
+	public void setAutoResize(boolean auto,int xcoord,int ycoord){
+		this.autoResize = auto;
+		this.autoCoordinateX = xcoord;
+		this.autoCoordinateY = ycoord;
+	}
+	*/
+	public void setToMousePosition(boolean flag){
+		this.autoPosition = flag;
+	}
+	
+	public void setMousePositionOffsets(int xCoordinateOffset,int yCoordinateOffset){
+		this.autoPosition =true;
+		this.autoXCoordinateOffset = xCoordinateOffset;
+		this.autoYCoordinateOffset = yCoordinateOffset;
+	}
+/*	
+	public String getAutoResizeScript(){
+		StringBuffer script = new StringBuffer();
+		//script.append("if (top.frames.length!=0){");
+		//script.append("	top.location=self.document.location; ");
+		script.append("	self.resizeTo(screen.availWidth,screen.availHeight) ;");
+		script.append(getMoveToScript());
+		return script.toString();
+	}
+	
+	public String getMoveToScript(){
+		StringBuffer script = new StringBuffer();
+		script.append("	self.moveTo(").append(autoCoordinateX).append(",").append(autoCoordinateY).append(") ;");
+		return script.toString();
+	}
+	*/
 
 }//End class
