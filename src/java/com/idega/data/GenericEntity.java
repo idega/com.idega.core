@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.6 2001/05/07 22:41:31 eiki Exp $
+ * $Id: GenericEntity.java,v 1.7 2001/05/16 15:57:07 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1366,6 +1366,47 @@ public abstract class GenericEntity implements java.io.Serializable {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"')");
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+	}
+
+	public void addTo(GenericEntity entityToAddTo,String extraColumnName,String extraColumnValue,String extraColumnName1,String extraColumnValue1)throws SQLException{
+
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+","+extraColumnName1+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"','"+extraColumnValue1+"')");
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+			if (conn != null){
+				freeConnection(getDatasource(),conn);
+			}
+		}
+
+	}
+
+
+	public void addTo(GenericEntity entityToAddTo,String extraColumnName,String extraColumnValue,String extraColumnName1,String extraColumnValue1,String extraColumnName2,String extraColumnValue2)throws SQLException{
+
+		Connection conn= null;
+		Statement Stmt= null;
+		try{
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+","+extraColumnName1+","+extraColumnName2+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"','"+extraColumnValue1+"','"+extraColumnValue2+"')");
 		}
 		finally{
 			if(Stmt != null){
