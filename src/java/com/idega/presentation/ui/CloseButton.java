@@ -48,33 +48,33 @@ public synchronized Object clone(){
 
 public void print(IWContext iwc) throws IOException{
 	  if(useGeneratedImage){
-        defaultImage = this.getBundle(iwc).getResourceBundle(iwc).getLocalizedImageButton("close","Close");
+	defaultImage = this.getBundle(iwc).getResourceBundle(iwc).getLocalizedImageButton("close","Close");
       }
       initVariables(iwc);
-        StringBuffer printString = new StringBuffer();
-         if( defaultImage!= null ) {
-          setAttribute("src",defaultImage.getMediaURL(iwc));
-        }
+	StringBuffer printString = new StringBuffer();
+	 if( defaultImage!= null ) {
+	  setAttribute("src",defaultImage.getMediaURL(iwc));
+	}
 	//if ( doPrint(iwc) ){
 		if (getLanguage().equals("HTML")){
 			if (getInterfaceStyle().equals("default")){
 				if (defaultImage == null){
-                                  printString.append("<input type=\"button\" name=\"");
-                                  printString.append(getName());
-                                  printString.append("\" ");
-                                  printString.append(getAttributeString());
-                                  printString.append(" >");
-                                  print(printString.toString());
+				  printString.append("<input type=\"button\" name=\"");
+				  printString.append(getName());
+				  printString.append("\" ");
+				  printString.append(getAttributeString());
+				  printString.append(" >");
+				  print(printString.toString());
 				}
 				else{
-                                  setAttribute("border","0");
-                                  printString.append("<input type=\"image\" name=\"");
-                                  printString.append(getName());
-                                  printString.append("\" ");
-                                  printString.append(getAttributeString());
-                                  printString.append(" >");
+				  setAttribute("border","0");
+				  printString.append("<input type=\"image\" name=\"");
+				  printString.append(getName());
+				  printString.append("\" ");
+				  printString.append(getAttributeString());
+				  printString.append(" >");
 
-                                  print(printString.toString());
+				  print(printString.toString());
 				}
 /*
 				if (defaultImage == null){
@@ -97,6 +97,10 @@ public void print(IWContext iwc) throws IOException{
 			}
 		}
 	//}
+}
+
+public void setButtonImage(Image image){
+  this.defaultImage=image;
 }
 
 }
