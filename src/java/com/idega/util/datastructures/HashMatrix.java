@@ -36,6 +36,10 @@ public class HashMatrix {
     return getYDimension(xKey).get(yKey);
   }
   
+  public Map get(Object xKey)  {
+    return getYDimension(xKey);
+  }
+  
   public List getCopiedListOfValues() {
     List values = new ArrayList();
     if (xDimension == null) {
