@@ -109,12 +109,14 @@ public class PageIncluder extends PresentationObject{
           if( sessionId==null ){
             sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
             if(sessionId==null){
-              sessionId = FileUtil.getStringFromURL(loc);
+              sessionId = FileUtil.getStringFromURL(sessionURL);
               debug("Sessions id is : "+sessionId);
             }
           }
 
-            loc = TextSoap.findAndReplace(loc,token,sessionId);
+          iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
+
+          loc = TextSoap.findAndReplace(loc,token,sessionId);
 
         }
         else if( (sessionId!=null) && (token!=null)){
