@@ -1,24 +1,44 @@
 /*
- * $Id: RadioButton.java,v 1.12 2004/06/22 17:25:57 gummi Exp $
+ * $Id: RadioButton.java,v 1.13 2005/03/08 20:21:13 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
  *
- * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
- *
  */
 package com.idega.presentation.ui;
 
+import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.2
+ * <p>
+ * This component renders out an input of type radiobutton.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 20:21:13 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.13 $
  */
 public class RadioButton extends GenericInput {
 
 	private boolean _mustBeSelected = false;
 	private String _errorMessage;
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[3];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(_mustBeSelected);
+		values[2] = _errorMessage;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_mustBeSelected = ((Boolean) values[1]).booleanValue();
+		_errorMessage = (String) values[2];
+	}
 
 	/**
 	 * Constructs a new <code>RadioButton</code> with the name "untitled" and the value
