@@ -71,12 +71,12 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
       	if (maxlength<0){
 			theReturn = "VARCHAR(255)";
 		}
-      	else if (maxlength<=30000){
+      	else if (maxlength<=8000){
 			theReturn = "VARCHAR("+maxlength+")";
 
 		}
 		else{
-			theReturn = "CLOB";
+			theReturn = "LONGVARCHAR("+maxlength+")";
 		}
 
     }
@@ -124,7 +124,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("CREATE TRIGGER "+entity.getTableName()+"_trig FOR "+entity.getTableName()+" AFTER INSERT { IF NEW."+entity.getIDColumnName()+" is null THEN select "+this.getSapDBSequenceName(entity)+".NEXTVAL INTO TEMP FROM DUAL; :NEW."+entity.getIDColumnName()+":=TEMP;}");
+			int i = Stmt.executeUpdate("CREATE TRIGGER "+entity.getTableName()+"_trig FOR "+entity.getTableName()+" AFTER INSERT { IF NEW."+entity.getIDColumnName()+" is null THEN select "+this.getSequenceName(entity)+".NEXTVAL INTO TEMP FROM DUAL; :NEW."+entity.getIDColumnName()+":=TEMP;}");
 		}
 		finally{
 			if(Stmt != null){
@@ -295,11 +295,11 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
   */
 
   protected String getCreateUniqueIDQuery(GenericEntity entity){
-    return "SELECT "+getSapDBSequenceName(entity)+".NEXTVAL FROM dual";
+    return "SELECT "+getSequenceName(entity)+".NEXTVAL FROM dual";
   }
 
 
-	private static String getSapDBSequenceName(GenericEntity entity){
+	private static String getSequenceName(GenericEntity entity){
 		String entityName = entity.getTableName();
 		return entityName+"_seq";
                 /*if (entityName.endsWith("_")){
