@@ -1,5 +1,5 @@
 /*
- * $Id: MenuElement.java,v 1.5 2002/07/22 10:10:41 palli Exp $
+ * $Id: MenuElement.java,v 1.6 2002/10/12 19:05:57 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -99,4 +99,11 @@ public class MenuElement extends InterfaceObject {
 
 		return obj;
 	}
+	
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
 }

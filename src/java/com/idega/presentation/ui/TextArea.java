@@ -218,4 +218,11 @@ public class TextArea extends InterfaceObject
 		this.maximum = maximum;
 		this.asMaximum	= true;
 	}
+	
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
 }

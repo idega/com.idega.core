@@ -460,6 +460,7 @@ public class SelectionBox extends InterfaceObject
 			//}
 		}
 	}
+	
 	/**
 	 * Sets if all values should be selected.
 	 * @param allSelected True if all values whould be selected, false otherwise.
@@ -468,4 +469,11 @@ public class SelectionBox extends InterfaceObject
 	{
 		this.allSelected = allSelected;
 	}
+	
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
+	}
+
 }

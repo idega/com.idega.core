@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.10 2002/09/29 22:07:19 tryggvil Exp $
+ * $Id: DropdownMenu.java,v 1.11 2002/10/12 19:05:57 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -159,13 +159,11 @@ public class DropdownMenu extends InterfaceObject {
 		getMenuElement(elementValue).setSelected(true);
 		selectedElementValue = elementValue;
 	}
-	
-	
+
 	/**
 	 * Sets the element by value elementValue as selected if it is found in this menu
 	 **/
-	public void setSelectedElement(int elementValue)
-	{
+	public void setSelectedElement(int elementValue) {
 		setSelectedElement(Integer.toString(elementValue));
 	}
 
@@ -204,9 +202,7 @@ public class DropdownMenu extends InterfaceObject {
 			script.addFunction(functionName, "function " + functionName + "(){\r \r}");
 			this.setOnChange(functionName + "()");
 		}
-		script.addToFunction(
-			functionName,
-			"this.form." + menuToChange.getName() + ".value=this.form." + getName() + ".options[this.form." + getName() + ".selectedIndex].value;\r");
+		script.addToFunction(functionName, "this.form." + menuToChange.getName() + ".value=this.form." + getName() + ".options[this.form." + getName() + ".selectedIndex].value;\r");
 	}
 
 	//Returns the first menuelement in the menu if there is no match
@@ -308,33 +304,33 @@ public class DropdownMenu extends InterfaceObject {
 					value = tok.nextToken();
 					while (name.startsWith(" "))
 						name = name.substring(1);
-//					debug("name = " + name);
-//					debug("value = " + value);
+					//					debug("name = " + name);
+					//					debug("value = " + value);
 					addMenuElement(value, name);
 					if (tok.hasMoreTokens())
 						selected = tok.nextToken();
-						
+
 					if (selected != null && selected.equals("selected"))
-						setSelectedElement(value);					
+						setSelectedElement(value);
 				}
 				catch (NoSuchElementException e) {
-//					debug("Err: name = " + name);
-//					debug("Err: value = " + value);
+					//					debug("Err: name = " + name);
+					//					debug("Err: value = " + value);
 					if (value == null) {
-						if (name != null) { 
+						if (name != null) {
 							while (name.startsWith(" "))
 								name = name.substring(1);
 							if (name.equals("delim"))
 								addSeparator();
 							else if (!name.equals(""))
-								addMenuElement("",name);
+								addMenuElement("", name);
 						}
 					}
 				}
 			}
 		}
 	}
-  
+
 	/**
 	 * Overrides the dropdown menu with the list of name/value pairs contained in the String.
 	 * 
@@ -355,12 +351,17 @@ public class DropdownMenu extends InterfaceObject {
 
 		setMenuElements(vec);
 	}
-	
+
 	/**
 	 * Sets the width in pixels or percents
 	 */
-	public void setWidth(String width)
-	{
+	public void setWidth(String width) {
 		setWidthStyle(width);
+	}
+
+	/**
+	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
+	 */
+	public void handleKeepStatus(IWContext iwc) {
 	}
 }
