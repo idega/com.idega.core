@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.20 2001/11/22 12:49:09 eiki Exp $
+ * $Id: Page.java,v 1.21 2001/11/30 09:31:26 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -49,6 +49,7 @@ public class Page extends PresentationObjectContainer {
   private boolean _isExtendingTemplate = false;
   private String _templateId = null;
   private Hashtable _styleDefinitions;
+  private Hashtable _metaTags;
 
   private static Page NULL_CLONE_PAGE = new Page();
 
@@ -124,6 +125,13 @@ public class Page extends PresentationObjectContainer {
     _styleDefinitions.put(styleName,styleAttribute);
   }
 
+  public void setMetaTag(String tagName, String tagValue) {
+    if (_metaTags == null) {
+      _metaTags = new Hashtable();
+    }
+    _metaTags.put(tagName,tagValue);
+  }
+
   private void setDefaultValues() {
 	  setStyleDefinition("A:link","color:"+_linkColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
     setStyleDefinition("A:visited","color:"+_visitedColor+"; font-size: "+_pageStyleFontSize+"; text-decoration:"+_textDecoration+";");
@@ -157,6 +165,39 @@ public class Page extends PresentationObjectContainer {
   public String getStyleAttribute(String styleName) {
     if (_styleDefinitions != null){
       return (String)_styleDefinitions.get((Object)styleName);
+    }
+    else {
+      return null;
+    }
+  }
+
+  public String getMetaTags() {
+    StringBuffer returnString = new StringBuffer();
+    String tagName ="";
+
+    if (_metaTags != null) {
+      Enumeration e = _metaTags.keys();
+      while (e.hasMoreElements()) {
+        tagName = (String)e.nextElement();
+        returnString.append("<meta name=\"");
+        returnString.append(tagName);
+        returnString.append("\" ");
+        String tagValue=getMetaTag(tagName);
+        if(tagValue != null){
+          returnString.append(" content=\"");
+          returnString.append(tagValue);
+          returnString.append("\"");
+        }
+        returnString.append(">\n");
+      }
+    }
+
+    return returnString.toString();
+  }
+
+  public String getMetaTag(String tagName) {
+    if (_metaTags != null){
+      return (String)_metaTags.get((Object)tagName);
     }
     else {
       return null;
@@ -631,6 +672,7 @@ public class Page extends PresentationObjectContainer {
         }
 
         println(getMetaInformation(iwc));
+        println(getMetaTags());
         println("<title>"+getTitle()+"</title>");
         if (_addStyleSheet) {
           println("<link rel=\"stylesheet\" href=\""+_styleSheetURL+"\" type=\"text/css\">\n");
