@@ -16,15 +16,18 @@ public class IDOQuery {
 
   StringBuffer _buffer;
 
-  public IDOQuery() {
+/**
+ * @see com.idega.data.GenericEntity.idoQuery()
+ */
+  protected IDOQuery() {
     _buffer = new StringBuffer();
   }
 
-  public IDOQuery(int length) {
+  protected IDOQuery(int length) {
     _buffer = new StringBuffer(length);
   }
 
-  public IDOQuery(String str) {
+  protected IDOQuery(String str) {
     _buffer = new StringBuffer(str);
   }
 
