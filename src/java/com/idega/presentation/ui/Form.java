@@ -534,10 +534,7 @@ public class Form extends InterfaceObject {
 			//print("<do type=\"accept\" label=\""+theButton.getContent()+"\">");
 			print("<p><strong><anchor>"+theButton.getContent());
 			String url = getAction();
-			// @TODO temp sysouts, session stuff not fully tested
-			System.out.println("Url before encoding " + url);
 			url = iwc.getResponse().encodeURL(url);
-			System.out.println("Url after encoding " + url);
 			print("<go href=\"" + url + "\" method=\"" + getMethod() + "\" >");
 			print(postFields.toString());
 			
