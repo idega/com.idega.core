@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.97 2004/02/06 09:47:53 laddi Exp $
+ *  $Id: Page.java,v 1.98 2004/02/10 14:36:37 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -684,7 +684,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  action  The new onLoad value
 	 */
 	public void setOnLoad(String action) {
-		setMarkupAttributeMultivalued("onLoad", action);
+		setMarkupAttributeMultivalued("onload", action);
 	}
 
 	/**
@@ -699,14 +699,14 @@ public class Page extends PresentationObjectContainer {
 	 *@param  action  The new onBlur value
 	 */
 	public void setOnBlur(String action) {
-		setMarkupAttributeMultivalued("onBlur", action);
+		setMarkupAttributeMultivalued("onblur", action);
 	}
 
 	/**
 	 *@param  action  The new onUnLoad value
 	 */
 	public void setOnUnLoad(String action) {
-		setMarkupAttributeMultivalued("onUnLoad", action);
+		setMarkupAttributeMultivalued("onunload", action);
 	}
 
 	/**
