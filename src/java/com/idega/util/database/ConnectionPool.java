@@ -159,73 +159,42 @@ public class ConnectionPool
 
 
    protected synchronized void refresh(){
-
       this.cleanUpCheckedOut();
-
       int size = freeConnections.size();
-
       int conns = getCurrentConnectionCount();
 
-
-
-      System.out.println("size="+size+", conns="+conns+", getCheckedOutCount()="+this.getCheckedOutCount());
-
-
+      debug("[ConnectionPool.refresh()] : size="+size+", conns="+conns+", getCheckedOutCount()="+this.getCheckedOutCount());
 
       for(int i=0;i < conns;i++){
-
           try{
-
             Connection conn = getConnection();
-
+            /*
+            *Disabled commiting of connections when refreshing
+            *
             try{
-
               conn.commit();
-
             }
-
             catch(Exception ex){
-
               System.err.println("Commit failed for connection in ConnectionPool.refresh()");
-
               ex.printStackTrace();
-
-            }
-
+            }*/
             conn.close();
-
             this.removeFromCheckedOutList(conn);
-
           }
-
           catch(Exception ex){
-
             System.err.println("There was an error in ConnectionPool.refresh() for i="+i+" \n The error was: "+ex.getMessage());
-
             System.err.println("Error calling this.getConnection() or connecton.close()");
-
             ex.printStackTrace(System.err);
-
           }
-
           try{
-
             freeConnection(this.newConnection());
-
-            System.out.println("Refreshed the databaseConnections for ConnectionPool: "+this.name+" i="+i+",size="+size);
-
+            this.debug("Refreshed the databaseConnections for ConnectionPool: "+this.name+" i="+i+",size="+size);
           }
-
           catch(Exception ex){
-
             System.err.println("There was an error in ConnectionPool.refresh() for i="+i+" \n The error was: "+ex.getMessage());
-
             System.err.println("Error calling freeConnection(this.newConnection())");
-
             ex.printStackTrace(System.err);
-
           }
-
       }
 
    }
