@@ -214,13 +214,13 @@ public class IDOContainer {
     return null;
   }
 
-  synchronized void flushAllCache(){
+  public synchronized void flushAllCache(){
     this.flushAllBeanCache();
     this.flushAllQueryCache();
   }
 
 
-  synchronized void flushAllBeanCache(){
+  public synchronized void flushAllBeanCache(){
     if(this.beanCachingActive){
       Iterator iter = getBeanCacheMap().keySet().iterator();
       while (iter.hasNext()) {
@@ -232,7 +232,7 @@ public class IDOContainer {
   }
 
 
-  synchronized void flushAllQueryCache(){
+  public synchronized void flushAllQueryCache(){
     if(this.queryCachingActive){
       Iterator iter = getBeanCacheMap().keySet().iterator();
       while (iter.hasNext()) {
