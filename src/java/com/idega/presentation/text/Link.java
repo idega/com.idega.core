@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.118 2004/06/30 21:16:30 jonas Exp $
+ * $Id: Link.java,v 1.119 2004/06/30 21:50:40 jonas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1686,8 +1686,12 @@ public class Link extends Text {
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
 			ICDomain d = iwc.getDomain();
+			String strD = d.getURL();
+			if(_hostname!=null && _hostname.length()>0) {
+				strD = _hostname;
+			}
 
-			if (d.getURL() != null) {
+			if (strD != null) {
 				String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 				if (attr.startsWith("/")) {
 					if ((protocol == null) || protocol.equals("")) {
@@ -1698,10 +1702,6 @@ public class Link extends Text {
 						else {
 							protocol = "http://";
 						}
-					}
-					String strD = d.getURL();
-					if(_hostname!=null && _hostname.length()>0) {
-						strD = _hostname;
 					}
 					setMarkupAttribute(HREF_ATTRIBUTE, protocol + strD + attr);
 				}
