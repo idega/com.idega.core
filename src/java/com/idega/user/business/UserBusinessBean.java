@@ -3011,7 +3011,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			userPassword = userPassword.substring(userPassword.indexOf("}")+1);
 			try {
 				int userId = ((Integer)user.getPrimaryKey()).intValue();
-				LoginTable login = LoginDBHandler.getUserLogin(genderId);
+				LoginTable login = LoginDBHandler.getUserLogin(userId);
 				if(login!=null){
 					login.setUserLogin(userName);
 					login.setUserPassword(userPassword);
