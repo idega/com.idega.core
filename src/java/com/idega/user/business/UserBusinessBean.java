@@ -3135,6 +3135,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	public User getUserByDirectoryString(String dn) {
 		User user = null;
+		dn = dn.toLowerCase(); 
 		Collection users = getUsersByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING, dn);
 		if (!users.isEmpty() && users.size() == 1) {
 			user = (User) users.iterator().next();
