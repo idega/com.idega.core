@@ -66,6 +66,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
  		addIndex("IDX_IC_GROUP_REL_6", new String[]{RELATED_GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
  		addIndex("IDX_IC_GROUP_REL_7", new String[]{RELATED_GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN});
  		addIndex("IDX_IC_GROUP_REL_8", new String[]{RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
+ 		addIndex("IDX_IC_GROUP_REL_9", STATUS_COLUMN);
+ 		addIndex("IDX_IC_GROUP_REL_10", new String[]{GROUP_ID_COLUMN, RELATED_GROUP_ID_COLUMN});
   }
   
   public String getEntityName() {
