@@ -2,9 +2,8 @@ package com.idega.core.data;
 
 import javax.ejb.*;
 
-public interface ICFile extends com.idega.data.TreeableEntity
+public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
 {
- public void delete()throws java.sql.SQLException;
  public java.sql.Timestamp getCreationDate();
  public boolean getDeleted();
  public int getDeletedByUserId();
@@ -20,6 +19,7 @@ public interface ICFile extends com.idega.data.TreeableEntity
  public java.lang.String getMimeType();
  public java.sql.Timestamp getModificationDate();
  public java.lang.String getName();
+ public void initializeAttributes();
  public boolean isLeaf();
  public void setCreationDate(java.sql.Timestamp p0);
  public void setDeleted(boolean p0);
