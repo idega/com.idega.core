@@ -1950,8 +1950,8 @@ public  Phone[] getUserPhones(int userId)throws RemoteException{
 								Integer primaryKey = (Integer)group.getPrimaryKey();
 								if( !groupMap.containsKey(primaryKey) ){
 									Group permissionGroup = group;
-									if( !cachedGroups.containsKey(primaryKey) ) {
-										cachedGroups.put(primaryKey,permissionGroup);
+									if( !cachedGroups.containsKey(primaryKey.toString()) ) {
+										cachedGroups.put(primaryKey.toString(),permissionGroup);
 									}
 									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
 									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);

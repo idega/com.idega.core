@@ -366,13 +366,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		try {
 			Collection parents = null;
 			Group parent = null;
+			String key = this.getPrimaryKey().toString();
 			if (cachedParents!=null) {
-				if (cachedParents.containsKey(this.getPrimaryKey()))
-					parents = (Collection)cachedParents.get(this.getPrimaryKey());
+				if (cachedParents.containsKey(key))
+					parents = (Collection)cachedParents.get(key);
 				else
 				{	
 					parents = getCollectionOfParents(cachedGroups);
-					cachedParents.put(this.getPrimaryKey(), parents);
+					cachedParents.put(key, parents);
 				}
 			}
 			else {
@@ -417,13 +418,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		Iterator iter = col.iterator();
 		while (iter.hasNext()) {
 			parentID = (Integer)iter.next();
+			String key = parentID.toString();
 			if (cachedGroups != null) {
-				if (cachedGroups.containsKey(parentID))
-					parent = (Group)cachedGroups.get(parentID);
+				if (cachedGroups.containsKey(key))
+					parent = (Group)cachedGroups.get(key);
 				else
 				{	
 					parent = getGroupHome().findByPrimaryKey(parentID);
-					cachedGroups.put(parentID, parent);
+					cachedGroups.put(key, parent);
 				}
 			}
 			else {
