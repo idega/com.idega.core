@@ -2,6 +2,7 @@ package com.idega.io;
 
 import java.rmi.RemoteException;
 
+import com.idega.builder.data.IBExportImportData;
 import com.idega.core.file.data.ICFile;
 import com.idega.util.xml.XMLData;
 
@@ -58,6 +59,8 @@ public interface ObjectWriter {
 	public Object write(XMLData xmlData) throws RemoteException;
 	
 	public Object write(ICFile file) throws RemoteException;
+	
+	public Object write(IBExportImportData metadata) throws RemoteException;
 	
 	// add more write methods !!
 }
