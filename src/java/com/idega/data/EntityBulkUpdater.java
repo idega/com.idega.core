@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.4 2001/08/27 12:07:54 haffi Exp $
+ * $Id: EntityBulkUpdater.java,v 1.5 2001/12/05 22:13:18 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.data;
 import com.idega.data.GenericEntity;
 import com.idega.util.database.ConnectionBroker;
 import java.util.Vector;
+import java.util.Collection;
 import java.util.Iterator;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -60,6 +61,28 @@ public class EntityBulkUpdater {
       if (delete_ == null)
         delete_ = new Vector();
       delete_.add(entity);
+    }
+    else
+      return(false);
+
+    return(true);
+  }
+
+   public boolean addAll(Collection entityCollection, String action) {
+    if ((action == null) || (action.equalsIgnoreCase(update))) {
+      if (update_ == null)
+        update_ = new Vector();
+      update_.addAll(entityCollection);
+    }
+    else if (action.equalsIgnoreCase(insert)) {
+      if (insert_ == null)
+        insert_ = new Vector();
+      insert_.addAll(entityCollection);
+    }
+    else if (action.equalsIgnoreCase(delete)) {
+      if (delete_ == null)
+        delete_ = new Vector();
+      delete_.addAll(entityCollection);
     }
     else
       return(false);
