@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.45 2004/03/18 15:31:03 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.46 2004/03/25 14:22:23 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,6 +55,9 @@ public class DateInput extends InterfaceObject implements InputHandler{
   final static String DAY_KEY_S = "dateinput.day_short";
   final static String MONTH_KEY_S = "dateinput.month_short";
   final static String YEAR_KEY_S = "dateinput.year_short";
+  
+  final static int SYSTEM_LAUNCH_YEAR = 2004;
+  
   // added by thomas
   // Flag that indicates if the drop down menus are up to date or not
   // This flag is set to true if and only if 
@@ -771,7 +774,7 @@ public class DateInput extends InterfaceObject implements InputHandler{
 	public PresentationObject getHandlerObject(String name,	String stringValue, IWContext iwc) {
 		this.setName(name);
 		IWTimestamp to = IWTimestamp.RightNow();
-		this.setYearRange(1980,to.getYear());
+		this.setYearRange(SYSTEM_LAUNCH_YEAR, to.getYear());
 		this.setDate(to.getDate());			
 		return this;
 	}
