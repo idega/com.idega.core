@@ -473,7 +473,7 @@ public class PermissionCacher {
 			permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
 		}
     }
-    //
+    //TODO ask gummi how this works
 
     if(permissions != null){
       Iterator iter = permissions.iterator();
@@ -483,7 +483,7 @@ public class PermissionCacher {
         mapToPutTo.put(Integer.toString(item.getGroupID()),(item.getPermissionValue())? Boolean.TRUE : Boolean.FALSE);
       }
       
-      //??
+      //THIS IS DONE SO YOU ALWAYS HAVE VIEW PERMISSION IF NO PERMISSION IS DEFINED
       mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.TRUE);
       permissionMap.put(identifier, permissionKey,mapToPutTo);
     } else {
