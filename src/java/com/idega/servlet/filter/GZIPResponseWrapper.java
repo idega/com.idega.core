@@ -68,7 +68,7 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper {
 		}
 
 		stream = createOutputStream();
-		writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
+		writer = new PrintWriter(new OutputStreamWriter(stream, origResponse.getCharacterEncoding()));
 		return (writer);
 	}
 
