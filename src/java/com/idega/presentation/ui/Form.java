@@ -11,6 +11,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Script;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +37,7 @@ private Class windowClass;
 private int icObjectInstanceIDForWindow=-1;
 private Class classToInstanciateAndSubmitTo;
 private int _submitToPage = -1;
+private Script associatedScript = null;
 
 private static String FORM_EVENT_PARAMETER="idega_special_form_event";
 
@@ -388,6 +391,8 @@ public void print(IWContext iwc)throws Exception{
 			//if (Action.indexOf("idega_session_id") == -1){
 				//setAction(Action+"?idega_session_id="+iwc.getSession().getId());
 			//}
+			if ( getAssociatedFormScript() != null )
+				add(getAssociatedFormScript());
 
 
 			if (getInterfaceStyle().equals("default")){
@@ -571,6 +576,22 @@ public void setEventListener(String eventListenerClassName){
       this.add(prm);
     }
   }
+
+/**
+ * Returns the associatedScript.
+ * @return Script
+ */
+public Script getAssociatedFormScript() {
+	return associatedScript;
+}
+
+/**
+ * Sets the associatedScript.
+ * @param associatedScript The associatedScript to set
+ */
+public void setAssociatedFormScript(Script associatedScript) {
+	this.associatedScript = associatedScript;
+}
 
 } // Class ends
 

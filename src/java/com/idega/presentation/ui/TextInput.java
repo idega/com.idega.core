@@ -87,13 +87,10 @@ private void setScript(Script script){
 }
 
 private Script getScript(){
-	if (getAssociatedScript() == null){
-		setScript(new Script());
+	if (getParentForm().getAssociatedFormScript() == null){
+		getParentForm().setAssociatedFormScript(new Script());
 	}
-	else
-	{
-		script = getAssociatedScript();
-	}
+	script = getParentForm().getAssociatedFormScript();
 	return script;
 }
 
@@ -154,7 +151,6 @@ public void setAsIcelandicSSNumber(){
 
 //Checks if it is a valid "kennitala" (social security number)
 public void setAsIcelandicSSNumber(String errorMessage){
-	isSetAsIntegers=true;
 	isSetAsIcelandicSSNumber=true;
 	icelandicSSNumberErrorMessage=errorMessage;
 }
@@ -202,6 +198,8 @@ public void _main(IWContext iwc)throws Exception{
 			setCheckSubmit();
 			getScript().addToFunction("checkSubmit","if (warnIfNotIcelandicSSNumber (findObj('"+getName()+"'),'"+icelandicSSNumberErrorMessage+"') == false ){\nreturn false;\n}\n");
 			getScript().addFunction("warnIfNotIcelandicSSNumber","function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 10){ \n       sum = inputbox.value.charAt(0)*3 + inputbox.value.charAt(1)*2 + inputbox.value.charAt(2)*7 + inputbox.value.charAt(3)*6 + inputbox.value.charAt(4)*5 + inputbox.value.charAt(5)*4 + inputbox.value.charAt(6)*3 + inputbox.value.charAt(7)*2; \n      if ((inputbox.value.charAt(8) == 11 - (sum % 11)) && ((inputbox.value.charAt(9) == 0) || (inputbox.value.charAt(9) == 8) || (inputbox.value.charAt(9) == 9))){	\n        return true; \n     }\n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }");
+			getScript().addToFunction("checkSubmit","if (warnIfNotIntegers (findObj('"+getName()+"'),'"+integersErrorMessage+"') == false ){\nreturn false;\n}\n");
+			getScript().addFunction("warnIfNotIntegers","function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}");
 		}
 		if (isSetAsCreditCardNumber){
 			getParentForm().setOnSubmit("return checkSubmit(this)");
