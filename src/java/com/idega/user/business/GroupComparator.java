@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ public class GroupComparator extends GenericGroupComparator{
   private int topmostParentLevel = -1;
   private Map cachedGroups = new HashMap();
   private Map cachedParents = new HashMap();
-  private Map cachedCollectionsOfParentsRecursivelyPlusCurrentGroup = new HashMap();
+  private Map cachedParentsRecursiveAndCurrentGroup = new HashMap();
 
 	public GroupComparator(IWContext iwc) {
 		super(iwc);
@@ -66,9 +67,9 @@ public class GroupComparator extends GenericGroupComparator{
 			groupA = checkForCachedGroups(permissionCollectionA);
 			groupB = checkForCachedGroups(permissionCollectionB);
 			if (sortByParents) {
-			    Collection parentsA = getParentGroupsRecursively(groupA);
-			    Collection parentsB = getParentGroupsRecursively(groupB);
-			    comp = compareRecursively(parentsA, parentsB);
+			    Collection parentsA = getParentGroupsRecursive(groupA);
+			    Collection parentsB = getParentGroupsRecursive(groupB);
+			    comp = compareRecursive(parentsA, parentsB);
 			}
 		}
 		catch (NumberFormatException e) {
@@ -87,22 +88,20 @@ public class GroupComparator extends GenericGroupComparator{
 	}
 
 	/**
-     * @param groupA
+     * @param group
      * @return
      * @throws RemoteException
      */
-    private Collection getParentGroupsRecursively(Group group) throws RemoteException {
+    private Collection getParentGroupsRecursive(Group group) throws RemoteException {
         Collection parentGroupsRecursive = null;
-		if (cachedCollectionsOfParentsRecursivelyPlusCurrentGroup!=null) {
-			if (cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.containsKey(group.getPrimaryKey()))
-			    parentGroupsRecursive = (Collection)cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.get(group.getPrimaryKey());
+		if (cachedParentsRecursiveAndCurrentGroup!=null) {
+		    String key = group.getPrimaryKey().toString();
+			if (cachedParentsRecursiveAndCurrentGroup.containsKey(key))
+			    parentGroupsRecursive = (Collection)cachedParentsRecursiveAndCurrentGroup.get(key);
 			else
 			{	
-			    parentGroupsRecursive = groupBiz.getParentGroupsRecursive(group,cachedParents,cachedGroups);;
-			    if (parentGroupsRecursive!=null) {
-			        parentGroupsRecursive.add(group);
-			    }
-			    cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.put(group.getPrimaryKey(), parentGroupsRecursive);
+			    parentGroupsRecursive = getParentsRecursiveAndCurrentGroup(group);
+			    cachedParentsRecursiveAndCurrentGroup.put(key, parentGroupsRecursive);
 				if (parentGroupsRecursive == null) {
 				    setTopmostParentLevel(0);
 				}
@@ -114,11 +113,32 @@ public class GroupComparator extends GenericGroupComparator{
 			}
 		}
 		else {
-		    parentGroupsRecursive = groupBiz.getParentGroupsRecursive(group,cachedParents,cachedGroups);
-		    if (parentGroupsRecursive!=null) {
-		        parentGroupsRecursive.add(group);
-		    }
+		    parentGroupsRecursive = getParentsRecursiveAndCurrentGroup(group);
 		}
+        return parentGroupsRecursive;
+    }
+
+    /**
+     * @param group
+     * @return
+     * @throws RemoteException
+     */
+    private Collection getParentsRecursiveAndCurrentGroup(Group group) throws RemoteException {
+        Collection parentGroupsRecursive = groupBiz.getParentGroupsRecursive(group,cachedParents,cachedGroups);;
+        
+        if (parentGroupsRecursive!=null) {
+            int collSize = parentGroupsRecursive.size();
+            ArrayList tempCollection = new ArrayList();
+            tempCollection.addAll(parentGroupsRecursive);
+            parentGroupsRecursive.clear();
+            for (int i = collSize-1; i >=0 ;i--)
+                parentGroupsRecursive.add(tempCollection.get(i));
+        	
+        }
+        else {
+            parentGroupsRecursive = new ArrayList();
+        }
+        parentGroupsRecursive.add(group);
         return parentGroupsRecursive;
     }
 
@@ -148,7 +168,7 @@ public class GroupComparator extends GenericGroupComparator{
      * @param parentsA
      * @param parentsB
      */
-    private int compareRecursively(Collection parentsA, Collection parentsB) {
+    private int compareRecursive(Collection parentsA, Collection parentsB) {
         int comp = 0;
         if ((parentsA == null || parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())) {
             comp = -1;
@@ -205,16 +225,17 @@ public class GroupComparator extends GenericGroupComparator{
 		return group;
 	}
 
-	public String getIndentString(Integer groupID) {
+	public String getIndentedGroupName(Group group) {
 	    int indent = 0;
 	    String indentString = "";
-	    Object obj = getCachedCollectionsOfParentsRecursivelyPlusCurrentGroup().get(groupID);
+	    Object obj = getCachedParentsRecursiveAndCurrentGroup().get(group.getPrimaryKey().toString());
 		if (obj != null) {
 		    indent = ((Collection)obj).size();
 		}
 		indent = indent - getTopmostParentLevel();
 		for (int i=0;i<indent;i++)
 			indentString = "&nbsp;&nbsp;" + indentString;
+		indentString = indentString + group.getName();
 		return indentString;
 	}
 	
@@ -249,8 +270,8 @@ public class GroupComparator extends GenericGroupComparator{
 	    return cachedParents;
 	}
 
-	public Map getCachedCollectionsOfParentsRecursivelyPlusCurrentGroup() {
-	    return cachedCollectionsOfParentsRecursivelyPlusCurrentGroup;
+	public Map getCachedParentsRecursiveAndCurrentGroup() {
+	    return cachedParentsRecursiveAndCurrentGroup;
 	}
 	
 /**
