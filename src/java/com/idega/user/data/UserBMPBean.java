@@ -318,7 +318,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return firstName + middleName + lastName;
 	}
 
-	public String getNameLastFirst() {
+	/*public String getNameLastFirst() {
 		return getNameLastFirst(false);
 	}
 
@@ -350,7 +350,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 
 		return lastName + firstName + middleName;
-	}
+	}*/
 
 	public int getHomePageID() {
 			return getGeneralGroup().getHomePageID();

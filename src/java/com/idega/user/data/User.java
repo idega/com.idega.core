@@ -27,7 +27,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setPrimaryGroupID(java.lang.Integer p0);
  public int getHomePageID();
  public void setDateOfBirth(java.sql.Date p0);
- public java.lang.String getNameLastFirst();
+ //public java.lang.String getNameLastFirst();
  public void setHomePageID(int p0);
  public java.util.Collection getEmails();
  public com.idega.core.builder.data.ICPage getHomePage();
@@ -102,7 +102,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void removePhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDORemoveRelationshipException;
  public java.lang.String getMiddleName();
  public void setMiddleName(java.lang.String p0);
- public java.lang.String getNameLastFirst(boolean p0);
+ //public java.lang.String getNameLastFirst(boolean p0);
  public void removeAllEmails()throws com.idega.data.IDORemoveRelationshipException;
  public void removeAllPhones()throws com.idega.data.IDORemoveRelationshipException;
  public void setPrimaryGroup(com.idega.user.data.Group p0);
