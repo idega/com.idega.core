@@ -27,6 +27,11 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String className = LoginTable.class.getName();
         public static String _COLUMN_PASSWORD = "USR_PASSWORD";
+	    private static final String ENTITY_NAME = "IC_LOGIN";
+	    private static final String COLUMN_USER_LOGIN = "USER_LOGIN";
+	    private static final String COLUMN_USER_PASSWORD = "USER_PASSWORD";
+    	private static final String COLUMN_LAST_CHANGED = "LAST_CHANGED";
+	    private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
 
         private transient String unEncryptedUserPassword;
 
@@ -63,14 +68,14 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
 	public String getEntityName(){
-		return "IC_LOGIN";
+		return ENTITY_NAME;
 	}
 
 
 
         public static String getUserLoginColumnName(){
 
-          return "USER_LOGIN";
+          return COLUMN_USER_LOGIN;
 
         }
 
@@ -78,7 +83,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String getOldUserPasswordColumnName(){
 
-          return "USER_PASSWORD";
+          return COLUMN_USER_PASSWORD;
 
         }
 
@@ -94,13 +99,13 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String getLastChangedColumnName() {
 
-          return("LAST_CHANGED");
+          return COLUMN_LAST_CHANGED;
 
         }
         
 			public static String getLoginTypeColumnName() {
 	
-			  return("LOGIN_TYPE");
+			  return COLUMN_LOGIN_TYPE;
 	
 			}
 

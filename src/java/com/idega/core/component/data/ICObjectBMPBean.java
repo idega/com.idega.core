@@ -35,11 +35,12 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	public static final String COMPONENT_TYPE_DATA = "iw.data";
 	public static final String COMPONENT_TYPE_HOME = "iw.home";
 	public static final String COMPONENT_TYPE_PROPERTYHANDLER = "iw.propertyhandler";
-	private static final String object_type_column_name = "object_type";
+	private static final String object_type_column_name = "OBJECT_TYPE";
 	private static final String class_name_column_name = "CLASS_NAME";
-	private final static String BUNDLE_COLUMN_NAME = "bundle";
-	private final static String class_value_column_name = "class_value";
-	private final static String icon_file = "icon_file";
+	private final static String BUNDLE_COLUMN_NAME = "BUNDLE";
+	private final static String class_value_column_name = "CLASS_VALUE";
+	private final static String icon_file = "ICON_FILE";
+	private static final String COLUMN_OBJECT_NAME = "OBJECT_NAME";
 	public ICObjectBMPBean()
 	{
 		super();
@@ -52,7 +53,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	{
 		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
 		addAttribute(getIDColumnName());
-		addAttribute("object_name", "Name", true, true, java.lang.String.class);
+		addAttribute(getColumnObjectName(), "Name", true, true, java.lang.String.class);
 		addAttribute(getClassNameColumnName(), "Class Name", true, true, java.lang.String.class);
 		addAttribute(getObjectTypeColumnName(), "Class Name", true, true, java.lang.String.class, "one-to-many", ICObjectType.class);
 		addAttribute(getBundleColumnName(), "Bundle", true, true, java.lang.String.class, 1000);
@@ -63,6 +64,9 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 		//addAttribute("image_id","MyndN?mer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
+	}
+	private String getColumnObjectName() {
+		return COLUMN_OBJECT_NAME;
 	}
 	public static String getObjectTypeColumnName()
 	{
@@ -181,11 +185,11 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	}
 	public String getName()
 	{
-		return getStringColumnValue("object_name");
+		return getStringColumnValue(getColumnObjectName());
 	}
 	public void setName(String object_name)
 	{
-		setColumn("object_name", object_name);
+		setColumn(getColumnObjectName(), object_name);
 	}
 	public String getClassName()
 	{
