@@ -22,6 +22,8 @@ private Table headerTable;
 private Table leftTable;
 private Table rightTable;
 private boolean merged = true;
+private String rightWidth = "160";
+private String method = "post";
 
   public IWAdminWindow() {
   }
@@ -46,6 +48,7 @@ private boolean merged = true;
 
   private void makeTables() {
     adminForm = new Form();
+      adminForm.setMethod(method);
 
     adminTable = new Table(2,2);
       adminTable.mergeCells(1,1,2,1);
@@ -58,7 +61,7 @@ private boolean merged = true;
       adminTable.setColor(1,2,"#FFFFFF");
       if ( !merged ) {
         adminTable.setColor(2,2,"#EFEFEF");
-        adminTable.setWidth(2,2,"160");
+        adminTable.setWidth(2,2,rightWidth);
       }
       else {
         adminTable.mergeCells(1,2,2,2);
@@ -115,6 +118,23 @@ private boolean merged = true;
     }
 
     leftTable.add(formatText(text),1,rows);
+  }
+
+  public void addLeft(ModuleObject obj) {
+    addLeft(obj,true);
+  }
+
+  public void addLeft(ModuleObject obj,boolean useStyle) {
+    int rows = leftTable.getRows();
+    if ( !leftTable.isEmpty(1,rows) ) {
+      rows++;
+    }
+
+    if ( useStyle ) {
+      setStyle(obj);
+    }
+
+    leftTable.add(obj,1,rows);
   }
 
   public void addLeft(String text,ModuleObject obj,boolean hasBreak) {
@@ -260,6 +280,18 @@ private boolean merged = true;
 
   public void setUnMerged() {
     merged = false;
+  }
+
+  public void setRightWidth(int rightWidth) {
+    this.rightWidth = Integer.toString(rightWidth);
+  }
+
+  public void setRightWidth(String rightWidth) {
+    this.rightWidth = rightWidth;
+  }
+
+  public void setMethod(String method) {
+    this.method = method;
   }
 
   public String getBundleIdentifier(){
