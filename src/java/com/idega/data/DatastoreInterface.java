@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.92 2004/02/28 19:42:25 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.93 2004/03/03 11:50:49 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,7 +26,10 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.transaction.TransactionManager;
+
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.Gender;
 import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
@@ -514,60 +517,70 @@ public abstract class DatastoreInterface {
 	}
 	protected void crunchMetaData(GenericEntity entity) throws SQLException {
 		if (entity.metaDataHasChanged()) { //else do nothing
-			int length;
-			MetaData data;
-			Map metadata = entity.getMetaDataAttributes();
-			Hashtable ids = entity.getMetaDataIds();
-			Map types = entity.getMetaDataTypes();
-			Vector insert = entity.getMetaDataInsertVector();
-			Vector delete = entity.getMetaDataDeleteVector();
-			Vector update = entity.getMetaDataUpdateVector();
-			EntityBulkUpdater updater = new EntityBulkUpdater(entity); //could this be static?
-			if (insert != null) {
-				length = insert.size();
-				for (int i = 0; i < length; i++) {
-					data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-					data.setMetaDataNameAndValue((String)insert.elementAt(i), (String)metadata.get((String)insert.elementAt(i)));
-					if (types != null && types.containsKey((String)insert.elementAt(i)))
-						data.setMetaDataType((String) types.get((String)insert.elementAt(i)));
-					else
-						data.setMetaDataType("java.lang.String");
-					updater.add(data, EntityBulkUpdater.insert);
+			TransactionManager t = IdegaTransactionManager.getInstance();
+			try {
+				t.begin();
+				int length;
+				MetaData data;
+				Map metadata = entity.getMetaDataAttributes();
+				Hashtable ids = entity.getMetaDataIds();
+				Map types = entity.getMetaDataTypes();
+				Vector insert = entity.getMetaDataInsertVector();
+				Vector delete = entity.getMetaDataDeleteVector();
+				Vector update = entity.getMetaDataUpdateVector();
+				if (insert != null) {
+					length = insert.size();
+					for (int i = 0; i < length; i++) {
+						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
+						data.setMetaDataNameAndValue((String)insert.elementAt(i), (String)metadata.get((String)insert.elementAt(i)));
+						if (types != null && types.containsKey((String)insert.elementAt(i)))
+							data.setMetaDataType((String) types.get((String)insert.elementAt(i)));
+						else
+							data.setMetaDataType("java.lang.String");
+						data.insert();
+					}
 				}
-			}
-			//else       System.out.println("insert is null");
-			if (update != null) {
-				length = update.size();
-				//				System.out.println("update size: " + length);
-				for (int i = 0; i < length; i++) {
-					//System.out.println("updating: "+i);
-					data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-					//do not construct with id to avoid database access
-					if (ids == null)
-						System.out.println("ids is null");
-					data.setID((Integer)ids.get(update.elementAt(i)));
-					//System.out.println("ID: "+data.getID());
-					data.setMetaDataNameAndValue((String)update.elementAt(i), (String)metadata.get((String)update.elementAt(i)));
-					if (types != null && types.containsKey((String)update.elementAt(i)))
-						data.setMetaDataType((String) types.get((String)update.elementAt(i)));
-					else
-						data.setMetaDataType("java.lang.String");
-					updater.add(data, EntityBulkUpdater.update);
+				//else       System.out.println("insert is null");
+				if (update != null) {
+					length = update.size();
+					//				System.out.println("update size: " + length);
+					for (int i = 0; i < length; i++) {
+						//System.out.println("updating: "+i);
+						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
+						//do not construct with id to avoid database access
+						if (ids == null)
+							System.out.println("ids is null");
+						data.setID((Integer)ids.get(update.elementAt(i)));
+						//System.out.println("ID: "+data.getID());
+						data.setMetaDataNameAndValue((String)update.elementAt(i), (String)metadata.get((String)update.elementAt(i)));
+						if (types != null && types.containsKey((String)update.elementAt(i)))
+							data.setMetaDataType((String) types.get((String)update.elementAt(i)));
+						else
+							data.setMetaDataType("java.lang.String");
+						data.update();
+					}
 				}
-			}
-			//else       System.out.println("update is null");
-			if (delete != null) {
-				length = delete.size();
-				for (int i = 0; i < length; i++) {
-					data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-					data.setID((Integer)ids.get(delete.elementAt(i)));
-					updater.add(data, EntityBulkUpdater.delete);
+				//else       System.out.println("update is null");
+				if (delete != null) {
+					length = delete.size();
+					for (int i = 0; i < length; i++) {
+						data = ((com.idega.data.MetaDataHome)com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
+						data.setID((Integer)ids.get(delete.elementAt(i)));
+						data.delete();
+					}
 				}
+				//else       System.out.println("delete is null");
+	
+				entity.metaDataHasChanged(false); //so we don't do anything next time
+	      t.commit();
+			} catch (Exception e) {
+  			try {
+  				t.rollback();
+  			} catch (Exception e1) {
+  				throw new SQLException(e1.getMessage());
+  			}
+  			throw new SQLException(e.getMessage());
 			}
-			//else       System.out.println("delete is null");
-			updater.execute();
-
-			entity.metaDataHasChanged(false); //so we don't do anything next time
 		}
 	}
 	protected void insertBlob(GenericEntity entity) throws Exception {
@@ -1292,16 +1305,19 @@ public abstract class DatastoreInterface {
 	 */
 	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
 		
+	
+	// old impl
 	/*
-	 old impl
 	 String checkQuery = "select count(*) from " + tableName;
 	try {
 		executeQuery(dataSourceName, checkQuery);	
 		return true;
 	} catch (Exception e) {
 		//e.printStackTrace();
+		return false;
 	}
 	*/
+
 		//A connection friendler version and faster
 		String[] tablesTypes = {"TABLE",  "VIEW"};
 		Connection conn = null;
