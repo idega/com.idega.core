@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import javax.ejb.*;
 
-import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 
 public interface GroupBusiness extends com.idega.business.IBOService
@@ -142,7 +141,9 @@ public java.util.Collection getUsers(com.idega.user.data.Group p0)throws javax.e
 
   public boolean isGroupRemovable(Group group); 
   
-  public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwc);
+  public Collection getAllAllowedGroupTypesForChildren(int groupId, com.idega.idegaweb.IWUserContext iwc);
   
-  public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwc);
+  public Collection getAllAllowedGroupTypesForChildren(Group group, com.idega.idegaweb.IWUserContext iwc);
+  
+  public com.idega.presentation.text.Text getNameOfGroupWithParentName(Group group);
 }

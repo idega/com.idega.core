@@ -36,6 +36,7 @@ import com.idega.core.data.PostalCodeHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.text.Text;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -1407,6 +1408,24 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     } 
   }
  
+  public Text getNameOfGroupWithParentName(Group group) {
+    StringBuffer buffer = new StringBuffer();    
+    Collection parents = getParentGroups(group);
+    try {
+      if(parents!=null && !parents.isEmpty()) {
+        Iterator par = parents.iterator();
+        Group parent = (Group) par.next();
+        buffer.append("(").append(parent.getName()).append(") ");
+      }
+      buffer.append(group.getName());
+      return new Text(buffer.toString());
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+  }
+
+
  
   private UserBusiness getUserBusiness() {
     IWApplicationContext context = getIWApplicationContext();
