@@ -477,18 +477,32 @@ public class IWMainApplication {//implements ServletContext{
 
     }
 
-    public IWBundle getBundle(String bundleIdentifier) {
+    public IWBundle getBundle(String bundleIdentifier)throws IWBundleDoesNotExist{
         return getBundle(bundleIdentifier, false);
     }
 
-    public IWBundle getBundle(String bundleIdentifier, boolean autoCreate) {
+    public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
         IWBundle bundle = (IWBundle) loadedBundles.get(bundleIdentifier);
         if (bundle == null) {
-            sendStartupMessage("Loading bundle " + bundleIdentifier);
-            bundle = new IWBundle(getBundleRealPath(bundleIdentifier),
-                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
-                    this, autoCreate);
-            loadedBundles.put(bundleIdentifier, bundle);
+        		//if to throw out the IWBundleDoesNotExist exception:
+        		boolean throwException=false;
+        		if(!autoCreate){
+        			//Check if bundle does exist only if autocreate is false:
+        			File file = new File(getBundleRealPath(bundleIdentifier));
+        			if(!file.exists()){
+        				throwException=true;
+        			}
+        		}
+        		if(!throwException){
+	            sendStartupMessage("Loading bundle " + bundleIdentifier);
+	            bundle = new IWBundle(getBundleRealPath(bundleIdentifier),
+	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
+	                    this, autoCreate);
+	            loadedBundles.put(bundleIdentifier, bundle);
+        		}
+        		else{
+        			throw new IWBundleDoesNotExist(bundleIdentifier);
+        		}
         }
         return bundle;
     }

@@ -12,11 +12,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.FinderException;
-import com.idega.core.file.data.*;
+import com.idega.core.file.data.ICFile;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
@@ -242,7 +243,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	{
 		setBundleIdentifier(bundle.getBundleIdentifier());
 	}
-	public IWBundle getBundle(IWMainApplication iwma)
+	public IWBundle getBundle(IWMainApplication iwma)throws IWBundleDoesNotExist
 	{
 		return iwma.getBundle(getBundleIdentifier());
 	}

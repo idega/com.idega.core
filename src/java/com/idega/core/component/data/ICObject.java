@@ -1,9 +1,11 @@
 package com.idega.core.component.data;
 
+import com.idega.exception.IWBundleDoesNotExist;
+
 
 public interface ICObject extends com.idega.data.IDOLegacyEntity
 {
- public com.idega.idegaweb.IWBundle getBundle(com.idega.idegaweb.IWMainApplication p0);
+ public com.idega.idegaweb.IWBundle getBundle(com.idega.idegaweb.IWMainApplication p0)throws IWBundleDoesNotExist;
  public java.lang.String getBundleIdentifier();
  public java.lang.String getClassName();
  public java.lang.String getName();

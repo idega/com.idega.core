@@ -16,7 +16,7 @@ public class IWBundleDoesNotExist extends RuntimeException {
   }
 
   public IWBundleDoesNotExist(String bundleIdentifier){
-    super("IWBundle:"+bundleIdentifier+" is not installed or does not exist");
+    super("IWBundle: "+bundleIdentifier+" is not installed or does not exist");
   }
 
 
