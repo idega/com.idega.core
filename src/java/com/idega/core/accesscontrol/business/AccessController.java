@@ -131,6 +131,8 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public boolean addRoleToGroup(String roleKey, Integer groupId, IWUserContext iwuc);
   public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWUserContext iwuc);
   public Collection getAllRolesForGroup(Group group);
+  public Collection getAllRolesWithRolePermissionsForGroup(Group group);
+  public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection groups);
   public Collection getAllRoles();
   public Collection getAllGroupsThatAreRoleMasters(IWUserContext iwuc);
   public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc);

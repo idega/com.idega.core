@@ -178,7 +178,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		return getStringColumnValue(this.STATUS_COLUMN);
 	}
 	
-	public Collection ejbFindAllPermissionsByTypeAndContextValue(String contextType, String contextValue) throws FinderException{
+	public Collection ejbFindAllPermissionsByContextTypeAndContextValue(String contextType, String contextValue) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
@@ -189,12 +189,26 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 	
 	
-	public Collection ejbFindAllPermissionsByTypeAndContextValueAndPermissionString(String contextType, String contextValue, String permissionString) throws FinderException{
+	public Collection ejbFindAllPermissionsByContextTypeAndContextValueAndPermissionString(String contextType, String contextValue, String permissionString) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
 		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
 		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
+		
+		return super.idoFindPKsByQuery(sql);
+	}
+	
+	public Collection ejbFindAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(String contextType, String contextValue, Collection permissionStrings, Group group) throws FinderException{
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this)
+		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
+		.appendAnd().append(getPermissionStringColumnName())
+		.appendInForStringCollectionWithSingleQuotes(permissionStrings)
+		.appendAnd().appendEqualsQuoted(getPermissionValueColumnName(),"Y")
+		.appendAnd().appendEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
 		
 		return super.idoFindPKsByQuery(sql);
@@ -231,6 +245,27 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		
 		return super.idoFindPKsByQuery(sql);
 	}
+	
+	
+	/**
+	 * Gets all the permission records for this collection of groups for a certain type
+	 * (information on which objects it has permissions to).
+	 * @param groups a collection of group that the permissions belong to.
+	 * @param contextType the context type of the permissions.
+	 * @return Collection
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(String contextType, Collection groups) throws FinderException{
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this)
+		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().append(getGroupIDColumnName()).appendInCollection(groups)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
+		.appendOrderBy(getContextValueColumnName());
+		
+		return super.idoFindPKsByQuery(sql);
+	}
+	
 	
 	/**
 	 * Finds all permissions of a certain type for the contexttype and group

@@ -4,8 +4,10 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -2370,8 +2372,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean hasEditPermissionFor(Group group, IWUserContext iwuc) {
 		try {
-
-			return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
+		    //check for regular permission, then by role
+			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
+			if(!hasPermission) {
+			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_EDIT, group, iwuc);
+			}
+			return hasPermission;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2380,13 +2386,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	}
 	
-	/*
+	/**
 	 * The permission to give other groups permissions to this group
 	 */
 	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc) {
 		try {
-
-			return this.hasPermission(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
+		    //check for regular permission, then by role
+			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
+			/*
+			 * not supported as a role yet
+			if(!hasPermission) {
+			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
+			}
+			*/
+			return hasPermission;
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2394,11 +2408,90 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 	}
+	
+	/**
+	 * Checks if the current user has a certain permission to a group depending on his active roles (or his parent groups roles).
+	 * The supplied group must have a role set to it (the opposit of having a role) that is allowed the permission the current user is asking for.
+	 * 
+	 * @param permissionKey a type of permission such as view,edit etc.
+	 * @param group the group that has some roles associated with permission types / keys
+	 * @param iwuc user context so we can get the current user
+	 * @return true if the current users role is set to the group and the permissionkeys match else false
+	 */
+	public boolean hasPermissionForGroupByRole(String permissionKey, Group group, IWUserContext iwuc) throws RemoteException {
+	    
+	    //get all the roles of the current users parent groups or permission controlling groups
+	    //use a find method that searches for active and true ICPermissions with the following
+	    //context_value=permissionKey, permission_string=collection of the current users roles, group_id = group.getPrimaryKey()
+	    //If something is found then we return true, otherwise false
+	    
+	    //get the parent groups
+	    List permissionControllingGroups = new ArrayList();
+	    Collection parents = getGroupBusiness(iwuc).getParentGroups(iwuc.getCurrentUser());
+	    
+	    if(parents!=null && !parents.isEmpty()) {
+	        Map roleMap= new HashMap();
+	        
+	        //get the real permission controlling group if not the parent
+	        Iterator iterator = parents.iterator();
+	        while (iterator.hasNext()) {
+                Group parent = (Group) iterator.next();
+                if(parent.getPermissionControllingGroupID()>0) {
+                    Group controller = parent.getPermissionControllingGroup();
+                    permissionControllingGroups.add(controller);
+                }else {
+                    permissionControllingGroups.add(parent);
+                }
+	        }
+	        /////
+	        
+		    //create the role map we need
+	        Collection permissions = getAllRolesForGroupCollection(permissionControllingGroups);
+	        
+	        if(!permissions.isEmpty()) {
+		        Iterator iter = permissions.iterator();
+		        while (iter.hasNext()) {
+	                ICPermission perm = (ICPermission) iter.next();
+	                String roleKey = perm.getPermissionString();
+	                if(!roleMap.containsKey(roleKey)) {
+	                    roleMap.put(roleKey,roleKey);
+	                }   
+	            }
+	        }
+	        else {
+	            return false;
+	        }
+	        /////
+	        
+	        //see if we find role with the correct permission key and group
+	        //if so we return true
+	        //this could be optimized by doing a count sql instead
+	        Collection validPerms;
+            try {
+                validPerms = getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(RoleHelperObject.getStaticInstance().toString(),permissionKey,roleMap.values(),group);
+                if(validPerms!=null && !validPerms.isEmpty()) {
+    	            return true;    
+    	        }
+    	        
+            } catch (FinderException e) {
+                return false;
+            }
+            
+	    }
 
+        //has no roles or does not have the correct role
+	    return false;
+	}
+	
 	public boolean hasViewPermissionFor(Group group, IWUserContext iwuc) {
 		try {
-
-			return this.hasPermission(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
+//			check for regular permission, then by role
+			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
+			if(!hasPermission) {
+			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_VIEW, group, iwuc);
+			}
+			return hasPermission;
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2409,8 +2502,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean hasCreatePermissionFor(Group group, IWUserContext iwuc) {
 		try {
-
-			return this.hasPermission(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
+//			check for regular permission, then by role
+			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
+			if(!hasPermission) {
+			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_CREATE, group, iwuc);
+			}
+			return hasPermission;
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2421,8 +2519,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean hasDeletePermissionFor(Group group, IWUserContext iwuc) {
 		try {
-
-			return this.hasPermission(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
+		    //check for regular permission, then by role
+			boolean hasPermission = hasPermission(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
+			if(!hasPermission) {
+			    hasPermission = hasPermissionForGroupByRole(AccessController.PERMISSION_KEY_DELETE, group, iwuc);
+			}
+			return hasPermission;
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2443,7 +2546,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllPermissions(Group group, String contextType) {
 		Collection returnCol = new Vector(); //empty
 		try {
-			returnCol = getPermissionHome().findAllPermissionsByTypeAndPermissionGroupOrderedByContextValue(contextType, group);
+			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType, group);
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2464,7 +2567,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = new Vector(); //empty
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_OWNER,
 					contextType);
@@ -2483,7 +2586,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllPermissionsForContextTypeAndContextValue(String contextType, String contextValue) {
 		Collection returnCol = new Vector(); //empty
 		try {
-			returnCol = getPermissionHome().findAllPermissionsByTypeAndContextValue(contextType, contextValue);
+			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndContextValue(contextType, contextValue);
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2512,7 +2615,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = new Vector(); //empty
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByTypeAndContextValueAndPermissionString(
+				getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionString(
 					AccessControl.CATEGORY_STRING_GROUP_ID,
 					group.getPrimaryKey().toString(),
 					permissionString);
@@ -2527,11 +2630,81 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return returnCol;
 	}
 
+	/**
+	 * Gets all the role permissions the group has. It does not return role-permissionkey permissions
+	 */
 	public Collection getAllRolesForGroup(Group group) {
 		Collection returnCol = new Vector(); //empty
 		try {
 			Collection permissions=
-				getPermissionHome().findAllPermissionsByTypeAndPermissionGroupOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
+					RoleHelperObject.getStaticInstance().toString(),
+					group);
+			
+			if(permissions!=null && !permissions.isEmpty()){
+						Iterator permissionsIter = permissions.iterator();
+						while (permissionsIter.hasNext()) {
+							ICPermission perm = (ICPermission) permissionsIter.next();
+//							perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
+			                //if not it is a role for a permission key
+			                if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
+			                    returnCol.add(perm);
+			                }
+						}
+					}		
+		}
+		catch (FinderException ex) {
+			ex.printStackTrace();
+		}
+		catch (RemoteException x) {
+			x.printStackTrace();
+		}
+
+		return returnCol;	
+	}
+
+	/**
+	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
+	 */
+	public Collection getAllRolesForGroupCollection(Collection groups) {
+	    Collection returnCol = new Vector(); //empty
+	    try {
+	        Collection permissions=
+	            getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
+	                    RoleHelperObject.getStaticInstance().toString(),
+	                    groups);
+	        
+	        //only return active and only actual roles and not group permission definitation roles
+	        if(permissions!=null && !permissions.isEmpty()){
+	            Iterator permissionsIter = permissions.iterator();
+	            while (permissionsIter.hasNext()) {
+	                ICPermission perm = (ICPermission) permissionsIter.next();
+	                //perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
+	                //if not it is a role for a permission key
+	                if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
+	                    returnCol.add(perm);
+	                }
+	            }
+	        }		
+	    }
+	    catch (FinderException ex) {
+	        ex.printStackTrace();
+	    }
+	    catch (RemoteException x) {
+	        x.printStackTrace();
+	    }
+
+		return returnCol;	
+	}
+	
+	/**
+	 * Gets all the role permissions the group has and also role-permission key roles.
+	 */
+	public Collection getAllRolesWithRolePermissionsForGroup(Group group) {
+		Collection returnCol = new Vector(); //empty
+		try {
+			Collection permissions=
+				getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
 					RoleHelperObject.getStaticInstance().toString(),
 					group);
 			
@@ -2555,12 +2728,44 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return returnCol;	
 	}
 	
+	/**
+	 * Gets all the role permissions the group collection has and also role-permission key roles.
+	 */
+	public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection groups) {
+	    Collection returnCol = new Vector(); //empty
+	    try {
+	        Collection permissions=
+	            getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
+	                    RoleHelperObject.getStaticInstance().toString(),
+	                    groups);
+	
+	        if(permissions!=null && !permissions.isEmpty()){
+	            Iterator permissionsIter = permissions.iterator();
+	            while (permissionsIter.hasNext()) {
+	                ICPermission perm = (ICPermission) permissionsIter.next();
+	               
+	                if(perm.getPermissionValue()){
+	                    returnCol.add(perm);
+	                }
+	            }
+	        }		
+	    }
+	    catch (FinderException ex) {
+	        ex.printStackTrace();
+	    }
+	    catch (RemoteException x) {
+	        x.printStackTrace();
+	    }
+
+		return returnCol;	
+	}
+	
 	public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc) {
 	
 		Collection groups = new Vector();
 		try {
 			
-			Collection permissions = getPermissionHome().findAllPermissionsByTypeAndContextValueAndPermissionString(RoleHelperObject.getStaticInstance().toString(),RoleHelperObject.getStaticInstance().toString(),roleKey);
+			Collection permissions = getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionString(RoleHelperObject.getStaticInstance().toString(),RoleHelperObject.getStaticInstance().toString(),roleKey);
 			if(permissions!=null && !permissions.isEmpty()){
 				Iterator permissionsIter = permissions.iterator();
 				while (permissionsIter.hasNext()) {
@@ -2623,7 +2828,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = new Vector(); //empty
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_OWNER,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2643,7 +2848,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = new Vector(); //empty
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_PERMIT,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2667,7 +2872,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
 					AccessControl.PERMISSION_KEY_PERMIT,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2687,7 +2892,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_VIEW,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2708,7 +2913,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_DELETE,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2729,7 +2934,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_EDIT,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2750,7 +2955,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
 					AccessControl.PERMISSION_KEY_CREATE,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2775,7 +2980,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
 					AccessControl.PERMISSION_KEY_EDIT,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2798,7 +3003,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
 					AccessControl.PERMISSION_KEY_VIEW,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2821,7 +3026,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
 					AccessControl.PERMISSION_KEY_CREATE,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
@@ -2844,7 +3049,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection returnCol = null;
 		try {
 			returnCol =
-				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(
+				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
 					AccessControl.PERMISSION_KEY_DELETE,
 					AccessControl.CATEGORY_STRING_GROUP_ID);
