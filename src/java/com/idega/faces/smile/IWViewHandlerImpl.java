@@ -14,6 +14,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.faces.view.ViewManager;
@@ -36,6 +37,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	private ViewHandler parentViewHandler;
 	private Map childHandlerMap;
 	private ViewManager viewManager;
+	private ViewHandler jspViewHandler;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
@@ -116,31 +118,23 @@ public class IWViewHandlerImpl extends ViewHandler{
 			throw new RuntimeException ("No ViewHandler Found to create View");
 		}
 	}
-	/**
-	 * @param ctx
-	 * @return
-	 */
-	private String getRequestUrl(FacesContext ctx) {
-		HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
-		String contextPath = request.getContextPath();
-		String fullRequestUri = request.getRequestURI();
-		if(contextPath.equals("/")){
-			return fullRequestUri;
-		}
-		else{
-			String subPath = fullRequestUri.substring(contextPath.length());
-			return subPath;
-		}
-	}
+
 
 	
 	private ViewHandler getViewHandlerForContext(FacesContext ctx) {
-		String url = getRequestUrl(ctx);
-		ViewHandler viewHandler = getViewHandlerForUrl(url,ctx);
-			if(viewHandler!=null){
-				return viewHandler;
+		//String url = getRequestUrl(ctx);
+		//ViewHandler viewHandler = getViewHandlerForUrl(url,ctx);
+		ViewNode node = getViewManager().getViewNodeForContext(ctx);
+			if(node!=null){
+				if(node.isJSP()){
+					return jspViewHandler;
+				}
+				else{
+					return node.getViewHandler();
+				}
 			}
-			else{
+			
+			
 				if(getParentViewHandler()!=null){
 					return getParentViewHandler();
 				}
@@ -148,7 +142,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 					//return createView(ctx,vewId);
 					throw new RuntimeException ("No parent ViewHandler");
 				}
-			}
+			
 		//return viewHandler;
 	}
 	
@@ -156,32 +150,37 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @param url
 	 * @return
 	 */
-	private ViewHandler getViewHandlerForUrl(String url,FacesContext ctx) {
-		/*Iterator iterator = this.getChildHandlerMap().keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
-			if(key.startsWith(url)){
-				return (ViewHandler)getChildHandlerMap().get(key);
-			}
-		}
-		return null;*/
+	/*private ViewHandler getViewHandlerForUrl(String url,FacesContext ctx) {
 		
 		ViewNode node = getViewManager().getViewNodeForUrl(url);
 		if(node!=null){
 			if(node.isJSP()){
-				try {
-					ctx.getExternalContext().dispatch(node.getJSPURI());
-					ctx.responseComplete();
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				//try {
+					//HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
+					//HttpServletResponse response = (HttpServletResponse)ctx.getExternalContext().getResponse();
+					//try {
+					//	request.setParameter("isForwarding","true");
+					//	request.getRequestDispatcher(node.getJSPURI()).include(request,response);
+					//}
+					//catch (ServletException e1) {
+					//	// TODO Auto-generated catch block
+					//	e1.printStackTrace();
+					//}
+					//String uri = node.getJSPURI();
+					//ctx.getViewRoot().setViewId(node.getJSPURI());
+					//ctx.getExternalContext().dispatch(uri);
+					return this.jspViewHandler;
+					//ctx.responseComplete();
+				//}
+				//catch (IOException e) {
+				//	// TODO Auto-generated catch block
+				//	e.printStackTrace();
+				//}
 			}
 			return node.getViewHandler();
 		}
 		return null;
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#getActionURL(javax.faces.context.FacesContext, java.lang.String)
@@ -361,6 +360,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @param defaultViewHandler The defaultViewHandler to set.
 	 */
 	public void setParentViewHandler(ViewHandler parentViewHandler) {
+		this.jspViewHandler=new IWJspViewHandler(parentViewHandler);
 		this.parentViewHandler = parentViewHandler;
 	}
 	

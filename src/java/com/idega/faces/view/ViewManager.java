@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.1 2004/10/19 10:37:10 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.2 2004/10/25 14:48:52 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,18 +10,22 @@
 package com.idega.faces.view;
 
 import javax.faces.application.ViewHandler;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import com.idega.faces.view.node.ApplicationViewNode;
 import com.idega.faces.view.node.BuilderPageViewNode;
+import com.idega.faces.view.node.FramedApplicationViewNode;
+import com.idega.faces.view.node.FramedWindowClassViewNode;
 import com.idega.faces.view.node.WindowViewNode;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/10/19 10:37:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/10/25 14:48:52 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ViewManager {
 	
@@ -46,25 +50,57 @@ public class ViewManager {
 		
 		setApplicationRoot(iwma,handler);
 		
-		DefaultViewNode builderNode = new ApplicationViewNode("builder",getWorkspaceRoot());
+		
+		try {
+			Class applicationClass = Class.forName("com.idega.builder.app.IBApplication");
+			FramedWindowClassViewNode builderNode = new FramedWindowClassViewNode("builder",getWorkspaceRoot());
+			builderNode.setWindowClass(applicationClass);
+			builderNode.setJspUri(getWorkspaceRoot().getJSPURI());
+		}
+		catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			Class applicationClass = Class.forName("com.idega.user.app.UserApplication");
+			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
+			userNode.setWindowClass(applicationClass);
+			userNode.setJspUri(getWorkspaceRoot().getJSPURI());
+		}
+		catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			Class applicationClass = Class.forName("com.idega.development.presentation.IWDeveloper");
+			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
+			developerNode.setWindowClass(applicationClass);
+			developerNode.setJspUri(getWorkspaceRoot().getJSPURI());
+		}
+		catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		DefaultViewNode contentNode = new ApplicationViewNode("content",getWorkspaceRoot());
-		contentNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/cmspage.jsf");
+		contentNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/cmspage.jsp");
 		
 		//TODO: move these specific views
-		DefaultViewNode articleNode = new ApplicationViewNode("article",contentNode);
-		articleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/articles.jsf");
-		DefaultViewNode createNewArticleNode = new ApplicationViewNode("create",articleNode);
-		createNewArticleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/createarticle.jsf");
+		DefaultViewNode articleNode = new DefaultViewNode("article",contentNode);
+		articleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/articles.jsp");
+		DefaultViewNode createNewArticleNode = new DefaultViewNode("create",articleNode);
+		createNewArticleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/createarticle.jsp");
 		
-		DefaultViewNode previewArticlesNode = new ApplicationViewNode("preview",articleNode);
-		previewArticlesNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/previewarticle.jsf");
+		DefaultViewNode previewArticlesNode = new DefaultViewNode("preview",articleNode);
+		previewArticlesNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/previewarticle.jsp");
 		//DefaultViewNode listArticlesNode = new ApplicationViewNode("listarticles",articleNode);
 		
-		DefaultViewNode documentNode = new ApplicationViewNode("document",contentNode);
+		DefaultViewNode documentNode = new DefaultViewNode("document",contentNode);
 		
-		DefaultViewNode searchNode = new ApplicationViewNode("search",contentNode);
-		searchNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/searcharticle.jsf");
+		DefaultViewNode searchNode = new DefaultViewNode("search",contentNode);
+		searchNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/searcharticle.jsp");
 		
 		
 		DefaultViewNode webviewNode = new ApplicationViewNode("webview",getWorkspaceRoot());
@@ -84,7 +120,7 @@ public class ViewManager {
 			node.setViewId("workspace");
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
-			node.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsf");
+			node.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsp");
 			workspaceNode = node;
 		}
 		return workspaceNode;
@@ -120,4 +156,30 @@ public class ViewManager {
 			return root;
 		}
 	}
+	
+	
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	protected String getRequestUrl(FacesContext ctx) {
+		HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
+		String contextPath = request.getContextPath();
+		String fullRequestUri = request.getRequestURI();
+		if(contextPath.equals("/")){
+			return fullRequestUri;
+		}
+		else{
+			String subPath = fullRequestUri.substring(contextPath.length());
+			return subPath;
+		}
+	}
+	
+	
+	public ViewNode getViewNodeForContext(FacesContext context){
+		String url = getRequestUrl(context);
+		return this.getViewNodeForUrl(url);
+	}
+	
+	
 }
