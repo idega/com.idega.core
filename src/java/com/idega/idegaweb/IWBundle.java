@@ -219,6 +219,10 @@ public class IWBundle implements java.lang.Comparable{
       propertyList.setArrayProperty(propertyName,propertyValue);
     }
 
+    public IWMainApplication getApplication(){
+      return this.superApplication;
+    }
+
     public void setProperty(String propertyName){
       propertyList.removeProperty(propertyName);
     }
@@ -478,6 +482,10 @@ public class IWBundle implements java.lang.Comparable{
 
     public Image getImage(String urlInBundle, int width, int height){
       return getImage(urlInBundle, "", width, height);
+    }
+
+    public Image getImageButton(String text){
+     return this.getApplication().getImageFactory().createButton(text,this);
     }
 
     public Image getImage(String urlInBundle, String name, int width, int height){

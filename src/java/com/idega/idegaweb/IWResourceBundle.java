@@ -168,6 +168,26 @@ public class IWResourceBundle extends ResourceBundle {
       else return returnString;
     }
 
+    /**
+    * Uses getLocalizedString but returns null if resource is not found
+    */
+    public Image getLocalizedImageButton(String key){
+
+      try{
+        String text = getLocalizedString(key);
+        return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
+      }
+      catch(MissingResourceException e){
+        return null;
+      }
+    }
+
+    public Image getLocalizedImageButton(String key, String returnValueIfNull){
+      String text = getLocalizedString(key);
+      if (text == null) text = returnValueIfNull;
+      return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
+    }
+
     ///
    //  *@deprecated Replaced with getLocalizedString(key)
    //  */
