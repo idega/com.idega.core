@@ -160,7 +160,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
   public void initializeInMain(IWContext iwc) throws Exception {
     super.initializeInMain(iwc);
-    this.addIWActionListener((IWActionListener)this.getPresentationState(iwc));
+    this.addActionListener((IWActionListener)this.getPresentationState(iwc));
     initIcons(iwc);
   }
 
@@ -761,7 +761,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
   }
 
   public IWPresentationState getPresentationState(IWUserContext iwuc){
-    return _stateHandler.getPresentationState(this,iwuc);
+    return _stateHandler.getPresentationState(this ,iwuc);
   }
 
   public StatefullPresentationImplHandler getStateHandler(){
