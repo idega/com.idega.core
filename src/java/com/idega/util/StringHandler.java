@@ -230,6 +230,9 @@ public class StringHandler {
    * false.
    */
   public static boolean isNotEmpty(Object element) {
+  	if (element == null) {
+  		return false;
+  	}
     String aString = element.toString();
     return (aString != null && aString.length() > 0);
   }
@@ -369,7 +372,7 @@ public class StringHandler {
   				else if (firstLength > secondLength) {
   					return -1;
   				}
-  				return ((Comparable) first).compareTo((Comparable) second);
+  				return ((Comparable) first).compareTo(second);
   			}
   		});
 		orderedWords.addAll(allowedWords);
@@ -419,7 +422,7 @@ public class StringHandler {
    */
 	private static String translateCharacter(char c) {   
     // get uni code number  
-    int value = (int) c;
+    int value = c;
     // is c a "normal" letter?
     if (( 'A' <= value && value <= 'Z' ) ||
         ( 'a' <= value && value <= 'z'))
