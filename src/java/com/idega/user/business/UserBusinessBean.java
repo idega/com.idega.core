@@ -1492,6 +1492,29 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return lt!=null;
 	}
 	
+	
+	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException {
+		Map groupTypeGroup = new HashMap();
+		Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
+		Iterator iterator = topNodes.iterator();
+		while ( iterator.hasNext()) {
+			Group group = (Group) iterator.next();
+			String groupType = group.getGroupTypeKey();
+			groupTypeGroup.put(groupType, group);
+		}
+		Iterator typeIterator = groupTypes.iterator();
+		while (typeIterator.hasNext())	{
+			String groupType = (String) typeIterator.next();
+			if (groupTypeGroup.containsKey(groupType))	{
+				return (Group) groupTypeGroup.get(groupType);
+			}
+		}
+		return null;
+	}
+			
+
+
+	
 	/**
 	 * Returns a collection of Groups that are this users top nodes. The nodes that he has either view or owner permissions to<br>
 	 * To end up with only the top nodes we do the following:<br>
