@@ -75,9 +75,9 @@ public class MethodFinder {
               }
             }
             else{
-                System.out.println("Methodfinder length "+classes.length);
+                //System.out.println("Methodfinder length "+classes.length);
                 if(classes.length>0){
-                  if(!classes[0].equals(java.lang.Void.class)){
+                  if(!classes[0].equals(java.lang.Void.TYPE)){
                     check=false;
                   }
                 }
