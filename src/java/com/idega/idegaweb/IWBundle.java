@@ -37,7 +37,7 @@ public class IWBundle{
 
   private Hashtable localePaths;
   private Hashtable resourceBundles;
-  private boolean autoCreate=true;
+  private boolean autoCreate=false;
 
   private Hashtable handlers;
   //private static Hashtable instances;
@@ -61,8 +61,8 @@ public class IWBundle{
       handlers = new Hashtable();
       localeRealPaths = new Hashtable();
       resourceBundles = new Hashtable();
-      this.setRootRealPath(rootRealPath);
-      this.setRootVirtualPath(rootVirtualPath);
+      setRootRealPath(rootRealPath);
+      setRootVirtualPath(rootVirtualPath);
       loadBundle();
 
    }
@@ -90,9 +90,19 @@ public class IWBundle{
     */
 
    private void loadBundle(){
-      setResourcesVirtualPath(getRootVirtualPath()+FileUtil.getFileSeparator()+"resources");
+      setResourcesVirtualPath(getRootVirtualPath()+"/"+"resources");
+
+      System.out.println("getResourcesVirtualPath() : "+ getResourcesVirtualPath() );
+
       setResourcesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"resources");
+
+        System.out.println("getResourcesRealPath() : "+ getResourcesRealPath() );
+
+
       setPropertiesRealPath(getRootRealPath()+FileUtil.getFileSeparator()+"properties");
+
+        System.out.println("getPropertiesRealPath() : "+ getPropertiesRealPath() );
+
       setClassesRealPath();
       if(autoCreate){
         this.initializeStructure();

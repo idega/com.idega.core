@@ -14,7 +14,7 @@ package com.idega.util;
 
 public class FileUtil {
 
-
+  private static String systemSeparatorString =  "file.separator";
 
 
   private FileUtil() {
@@ -80,7 +80,5 @@ public class FileUtil {
       file.createNewFile();
       return file;
   }
-
-  private static String systemSeparatorString =  "file.separator";
 
 }

@@ -11,6 +11,7 @@ import javax.servlet.*;
 import java.net.*;
 import com.idega.util.*;
 import com.idega.util.FileUtil;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -165,9 +166,6 @@ public class IWMainApplication{//implements ServletContext{
     application.log(p0,p1);
   }
 
-  public String getRealPath(String p0){
-    return application.getRealPath(p0);
-  }
 
   public String getServerInfo(){
     return application.getServerInfo();
@@ -234,34 +232,6 @@ public class IWMainApplication{//implements ServletContext{
     return settings;
   }
 
-  /**
-   * @deprecated replaced with getApplicationRealPath()
-   * Returns the real path to the WebApplication
-   */
-  public String getApplicationPath(){
-    return application.getRealPath("/");
-  }
-
-  /**
-   * Returns the real path to the WebApplication
-   */
-  public String getApplicationRealPath(){
-    return application.getRealPath("/");
-  }
-
-
-  public LogWriter getLogWriter(){
-    return lw;
-  }
-
-  public String getApplicationSpecialRealPath(){
-    return this.getApplicationRealPath()+getApplicationSpecialVirtualPath();
-  }
-
-  public String getApplicationSpecialVirtualPath(){
-    return FileUtil.getFileSeparator()+"idegaweb";
-  }
-
   //public IWBundleList getBundlesRegistered(){
    //
   //}
@@ -269,6 +239,11 @@ public class IWMainApplication{//implements ServletContext{
   /**
    * Should be called before the application is put out of service
    */
+
+  public LogWriter getLogWriter(){
+    return lw;
+  }
+
   public void unload(){
     storeStatus();
   }
@@ -293,27 +268,64 @@ public class IWMainApplication{//implements ServletContext{
     return bundlesFile;
   }
 
-
-  private String getBundleVirtualPath(String bundleIdentifier){
-    String path = this.getApplicationSpecialVirtualPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier);
-    return path;
-  }
-
-  private void setPropertiesRealPath(){
-      this.propertiesRealPath=this.getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+"properties";
-  }
-
   public String getPropertiesRealPath(){
       return propertiesRealPath;
   }
 
+  private void setPropertiesRealPath(){
+    this.propertiesRealPath=this.getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+"properties";
+    //debug
+    System.out.println("setPropertiesRealPath : "+propertiesRealPath);
+  }
+
+  public String getRealPath(String p0){
+    return application.getRealPath(p0);
+  }
+
+  /**
+   * Returns the real path to the WebApplication
+   */
+  public String getApplicationRealPath(){
+        //debug
+    System.out.println("getApplicationRealPath : "+application.getRealPath(FileUtil.getFileSeparator()));
+
+    return application.getRealPath(FileUtil.getFileSeparator());
+  }
+
+
+  public String getApplicationSpecialRealPath(){
+
+    System.out.println("getApplicationSpecialRealPath : "+this.getApplicationRealPath()+getApplicationSpecialVirtualPath());
+
+    return this.getApplicationRealPath()+getApplicationSpecialVirtualPath();
+  }
+
+  public String getApplicationSpecialVirtualPath(){
+     System.out.println("getApplicationSpecialVirtualPath : idegaweb");
+
+   // return FileUtil.getFileSeparator()+"idegaweb";
+   return "idegaweb";
+  }
+
+  private String getBundleVirtualPath(String bundleIdentifier){
+     //debug
+    System.out.println("getBundleVirtualPath "+getApplicationSpecialVirtualPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier));
+     String path = "/"+getApplicationSpecialVirtualPath()+"/"+TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");
+    return path;
+  }
+
+
   private String getBundleRealPath(String bundleIdentifier){
-      return this.getApplicationRealPath()+FileUtil.getFileSeparator()+getBundleVirtualPath(bundleIdentifier);
+    //debug
+    System.out.println("getBundleRealPath "+getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier));
+
+      return getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+getBundlesFile().getProperty(bundleIdentifier);
   }
 
   public IWBundle getBundle(String bundleIdentifier){
     IWBundle bundle = (IWBundle)loadedBundles.get(bundleIdentifier);
     if(bundle == null){
+      System.out.println("BUNDLE IS NULL");
       bundle = new IWBundle(getBundleRealPath(bundleIdentifier),getBundleVirtualPath(bundleIdentifier),bundleIdentifier,this);
       loadedBundles.put(bundleIdentifier,bundle);
     }
