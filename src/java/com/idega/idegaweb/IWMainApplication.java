@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.136 2005/02/10 10:41:49 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.137 2005/03/02 12:36:44 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -55,6 +55,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
@@ -82,10 +83,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/02/10 10:41:49 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/03/02 12:36:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.136 $
+ * @version $Revision: 1.137 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1137,16 +1138,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
         if (crypto != null) {
             return crypto;
         } else {
-            int iCrypto = calculate(className);
-            crypto = Integer.toString(iCrypto);
-
-            while (cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)) {
-                crypto = Integer.toString(++iCrypto);
-                if (isDebugActive())
-                        System.out
-                                .println("Conflicting cryptos: creating new crypto number : "
-                                        + iCrypto);
+            crypto = calculateClassId(className);
+            
+            try{
+	            int iCrypto = Integer.parseInt(crypto);
+	            while (cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)) {
+	                crypto = Integer.toString(++iCrypto);
+	                if (isDebugActive())
+	                        System.out
+	                                .println("Conflicting cryptos: creating new crypto number : "
+	                                        + iCrypto);
+	            }
             }
+            catch(NumberFormatException nfe){}
 
             cryptoCodesPropertiesKeyedByClassName.put(className, crypto);
             cryptoClassNamesPropertiesKeyedByCode.put(crypto, className);
@@ -1164,10 +1168,20 @@ public class IWMainApplication	extends Application  implements MutableClass {
             return crypto;
     }
 
+    
     /**
+     * Returns a unique stirng for a class name:
+     */
+    private static String calculateClassId(String s) {
+    		//return a plain uuid:
+    		return UUIDGenerator.getInstance().generateUUID();
+    }
+    
+    /**
+     * This is the old implementation for crypto properties.
      * calculates the crosssum of a string
      */
-    private static int calculate(String s) {
+    private static String calculateClassIdOld(String s) {
         char[] c = s.toCharArray();
         int sum = 0;
         for (int i = 0; i < c.length; i++) {
@@ -1175,7 +1189,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
             if (i == 10) sum *= 2;
             sum += ((int) c[i]);
         }
-        return sum;
+        return Integer.toString(sum);
     }
 
     /**
