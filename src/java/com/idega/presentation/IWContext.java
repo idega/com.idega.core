@@ -101,6 +101,7 @@ implements IWUserContext, IWApplicationContext {
 	private FacesContext realFacesContext;
 	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
+	public static final String[] WML_USER_AGENTS = new String[] {"nokia", "ericsson", "wapman", "upg1", "symbian", "wap"}; // NB: must be lowercase
 	private boolean isRequestCharacterEncodingSet;
 
 	/**
@@ -141,7 +142,7 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		setLanguage(getRightLanguage(request, response));
+		setLanguage(getRightLanguage(request));
 		setAllDefault();
 //		TODO check if this is ok for multipart forms
 		if(!isRequestCharacterEncodingSet){
@@ -274,35 +275,33 @@ implements IWUserContext, IWApplicationContext {
 			return false;
 		}
 	}
-	/*Under Construction*/
-	private String getRightLanguage(HttpServletRequest Request, HttpServletResponse Response) {
+	
+	/**
+	 * Gets the output language for the request, either <code>IWConstants.MARKUP_LANGUAGE_HTML</code> or <code>IWConstants.MARKUP_LANGUAGE_WML</code>.
+	 * This methods just checks the User-agent header to see if the device is a known wap device, otherwise html is assumed
+	 * @param request The request, needed to find output
+	 */
+	private String getRightLanguage(HttpServletRequest request) {
 		//Todo: set the language to WML when the user-agent is of that type
 		//--only implemented for the UPG1 test WAP browser
-		String user_agent = Request.getHeader("User-agent");
+		// @TODO (jonas) use better method to find content types supported by client. Use rdf docs referenced in request headers.x
+		boolean isWMLAgent = false;
+		String user_agent = request.getHeader("User-agent");
 		if (user_agent != null) {
-			//Sets for WML browser
-			//TL: WML detection disabled:
-			/*
-			if (user_agent.indexOf("UPG1") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else if (user_agent.toLowerCase().indexOf("wap") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else if (user_agent.toLowerCase().indexOf("nokia") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else if (user_agent.toLowerCase().indexOf("ericsson") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else if (user_agent.toLowerCase().indexOf("symbian") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else if (user_agent.toLowerCase().indexOf("wapman") != -1) {
-				return IWConstants.MARKUP_LANGUAGE_WML;
-			} else {*/
-				return IWConstants.MARKUP_LANGUAGE_HTML;
-			//}
+			user_agent = user_agent.toLowerCase();
+			for(int i=0; i<WML_USER_AGENTS.length; i++) {
+				if(WML_USER_AGENTS[i].equals(user_agent)) {
+					isWMLAgent = true;
+					break;
+				}
+			}
+		}
+		if(isWMLAgent) {
+			return IWConstants.MARKUP_LANGUAGE_WML;
 		} else {
 			return IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 	}
-	
 	
 	public boolean isParameterSet(String parameterName) {
 		if (parameterName == null)
