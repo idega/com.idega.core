@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.62 2004/12/03 01:02:36 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.63 2004/12/05 09:46:07 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpSession;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWEventProcessor;
-import com.idega.event.IWModuleEvent;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;

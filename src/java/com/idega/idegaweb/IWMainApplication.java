@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.112 2004/12/03 18:35:15 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.113 2004/12/05 09:43:40 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -26,12 +26,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
+
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
@@ -43,7 +45,6 @@ import com.idega.data.IDOContainer;
 import com.idega.data.IDOLookup;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
-import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.Executer;
@@ -60,10 +61,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 18:35:15 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/05 09:43:40 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.112 $
+ * @version $Revision: 1.113 $
  */
 public class IWMainApplication {//implements ServletContext{
 
