@@ -150,7 +150,7 @@ public class Text extends PresentationObject {
 	}
 
 	public void addToText(String text) {
-		if (text == EMPTY_TEXT_STRING) {
+		if (this.text == EMPTY_TEXT_STRING) {
 			this.text = text;
 		}
 		else {
