@@ -319,4 +319,17 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			return (String[]) columns.toArray(new String[0]);
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#doesTableExist(java.lang.String, java.lang.String)
+	 */
+	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
+		 String checkQuery = "select count(*) from " + tableName;
+			try {
+				executeQuery(dataSourceName, checkQuery);	
+				return true;
+			} catch (Exception e) {
+				//e.printStackTrace();
+				return false;
+			}
+	}
 }
