@@ -150,6 +150,9 @@ public class IWStyleManager {
 							while (params.hasMoreTokens()) {
 								String value = params.nextToken().trim();
 								paramValue += value;
+								if (params.hasMoreTokens()) {
+									paramValue += " ";
+								}
 							}
 							
 							styleParameter += parameterName + ":" + paramValue + ";";
