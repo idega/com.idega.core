@@ -179,7 +179,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 
 		Commune commune;
 		try {
-			commune = communeHome.findByCommuneCode(OTHER);
+			commune = communeHome.findByCommuneName(OTHER);
 		}
 		catch (FinderException e) {
 			commune = communeHome.create();
