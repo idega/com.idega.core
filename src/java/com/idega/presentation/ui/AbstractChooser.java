@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.12 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: AbstractChooser.java,v 1.13 2003/04/01 23:27:23 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.Image;
 import com.idega.idegaweb.IWBundle;
 
@@ -38,13 +39,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private boolean  _addTextInput = true;
   private Form _form = null;
   private Image _buttonImage = null;
-  private String _style = IWConstants.BUILDER_FONT_STYLE_INTERFACE;
-  private String _stringValue;
-  private String _stringDisplay;
+  protected String _style = IWConstants.BUILDER_FONT_STYLE_INTERFACE;
+  protected String _stringValue;
+  protected String _stringDisplay;
   private String _attributeValue;
   private String _attributeName;
   private Link link = null;
-  private boolean disabled = true;
+  protected boolean disabled = true;
 
   /**
   *
@@ -162,7 +163,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       SubmitButton button = new SubmitButton("Choose");
       table.add(button,2,1);
       _form.addParameter(CHOOSER_SELECTION_PARAMETER,getChooserParameter());
-      _form.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+_form.getID()+".");
+      _form.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+_form.getID());
       _form.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
     }
     else {
@@ -172,8 +173,18 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       link.addParameter(CHOOSER_SELECTION_PARAMETER,getChooserParameter());
 
       link.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+getParentFormString(this));
-      link.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
-      link.addParameter(DISPLAYSTRING_PARAMETER_NAME,object.getName());
+      
+      //TODO Make the javascript work for other objects than form elements, e.g. a Link
+     /* 
+      if(object instanceof Layer){
+        link.addParameter(SCRIPT_SUFFIX_PARAMETER,"title");
+      }
+      else{*/
+        link.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
+      //}
+      
+      
+      link.addParameter(DISPLAYSTRING_PARAMETER_NAME,object.getID());
       link.addParameter(VALUE_PARAMETER_NAME,value.getName());
       if ( _attributeName != null && _attributeValue != null ) {
 	link.addParameter(_attributeName,_attributeValue);
