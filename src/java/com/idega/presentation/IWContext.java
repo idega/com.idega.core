@@ -600,7 +600,7 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
 		getApplication().removeAttribute(attributeName);
 	}
 	public IWMainApplication getApplication() {
-		return IWMainApplication.getIWMainApplication(this.servletContext);
+		return IWMainApplication.getIWMainApplication(getServletContext());
 	}
 	public IWMainApplicationSettings getApplicationSettings() {
 		return getApplication().getSettings();
