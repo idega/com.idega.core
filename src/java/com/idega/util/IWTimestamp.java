@@ -159,7 +159,7 @@ public class IWTimestamp {
 	 */
 	public IWTimestamp(Date date) {
 		this();
-		isDate = true;
+		setAsDate();
 		calendar.setTime(date);
 	}
 
@@ -170,7 +170,7 @@ public class IWTimestamp {
 	 */
 	public IWTimestamp(Time time) {
 		this();
-		isTime = true;
+		setAsTime();
 		calendar.setTime(time);
 	}
 
@@ -185,12 +185,12 @@ public class IWTimestamp {
 		if (SQLFormat.length() == 10) {
 			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
 			calendar.setTime(Date.valueOf(SQLFormat));
-			isDate = true;
+			setAsDate();
 		}
 		else if (SQLFormat.length() == 8) {
 			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
 			calendar.setTime(Time.valueOf(SQLFormat));
-			isTime = true;
+			setAsTime();
 		}
 		else
 			calendar.setTime(Timestamp.valueOf(SQLFormat));
@@ -201,7 +201,7 @@ public class IWTimestamp {
 	 * the date settings given in the constructor.  All time settings will be set to 0.
 	 */
 	public IWTimestamp(int day, int month, int year) {
-		isDate = true;
+		setAsDate();
 		calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
 	}
 
@@ -263,21 +263,23 @@ public class IWTimestamp {
 	 * @param after		The second IWTimestamp to use.
 	 * @return int
 	 */
-	public static int getMilliSecondsBetween(IWTimestamp before, IWTimestamp after) {
-		if (before.isTime || after.isTime) {
+	public static long getMilliSecondsBetween(IWTimestamp before, IWTimestamp after) {
+		if (before.isTime() || after.isTime()) {
 			before.setDay(1);
 			before.setMonth(2);
 			before.setYear(1);
 			after.setDay(1);
 			after.setMonth(2);
 			after.setYear(1);
+			System.out.println(before.isTime()+"/"+after.isTime());
 		}
+		
 		long lBefore = before.getGregorianCalendar().getTime().getTime();
 		long lAfter = after.getGregorianCalendar().getTime().getTime();
 
 		long diff = lAfter - lBefore;
 
-		return (int) diff;
+		return diff;
 	}
 
 	//Boolean methods
@@ -307,7 +309,7 @@ public class IWTimestamp {
 	 * @return boolean
 	 */
 	public boolean isIWTimestamp() {
-		if (isTime || isDate)
+		if (isTime() || isDate())
 			return false;
 		return true;
 }
@@ -329,7 +331,7 @@ public class IWTimestamp {
 	 * @return IWTimestamp
 	 */
 	public boolean isLaterThan(IWTimestamp compareStamp) {
-		if (!this.isTime) {
+		if (!this.isTime()) {
 			if (this.getYear() > compareStamp.getYear())
 				return true;
 			if (this.getYear() < compareStamp.getYear())
@@ -344,7 +346,7 @@ public class IWTimestamp {
 				return false;
 		}
 
-		if (!this.isDate) {
+		if (!this.isDate()) {
 			if (this.getHour() > compareStamp.getHour())
 				return true;
 			if (this.getHour() < compareStamp.getHour())
@@ -455,13 +457,13 @@ public class IWTimestamp {
 	 * @return boolean
 	 */
 	public boolean equals(IWTimestamp compareStamp) {
-		if (!this.isTime && !this.isDate) {
+		if (!this.isTime() && !this.isDate()) {
 			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
 		}
-		if (!this.isTime) {
+		if (!this.isTime()) {
 			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay());
 		}
-		if (!this.isDate) {
+		if (!this.isDate()) {
 			return (this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
 		}
 		return false;
