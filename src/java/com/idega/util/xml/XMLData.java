@@ -280,7 +280,7 @@ public class XMLData implements Storable {
     catch (XMLException ex)  {
       document = null;
       xmlFileId = -1;
-      throw new IOException("[XMLData] input strream could not be parsed. Message is: " + ex.getMessage());
+      throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
     }
      finally { 
         close(inputStream);
