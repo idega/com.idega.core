@@ -29,7 +29,6 @@ import com.idega.presentation.IWContext;
 import com.idega.user.business.UserProperties;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
-import com.idega.util.ListUtil;
 import com.idega.util.reflect.MethodFinder;
 /**
  * Title:        LoginBusiness The default login business handler for the accesscontrol framework
@@ -323,10 +322,17 @@ public class LoginBusinessBean implements IWEventListener {
 		LoginBusinessBean.setLoginAttribute(PrimaryGroupParameter, value, iwc);
 	}
 	protected boolean logIn(IWContext iwc, LoginTable loginTable) throws Exception {
-		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHome(User.class);
-		User user = uHome.findByPrimaryKey(loginTable.getUserId());
+		//New user system
+//		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHome(User.class);
+//		User user = uHome.findByPrimaryKey(loginTable.getUserId());
+		//New user system end
+		
+		//Old user system
+		User user = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(loginTable.getUserId());
+		//Old user system end
 
 		storeUserAndGroupInformationInSession(iwc, user);
+		
 		int loginTableId = loginTable.getID();
 		int loginRecordId = LoginDBHandler.recordLogin(loginTableId, iwc.getRemoteIpAddress());
 		storeLoggedOnInfoInSession(iwc, loginTableId, loginTable.getUserLogin(), user, loginRecordId, loginTable.getLoginType());
@@ -335,12 +341,19 @@ public class LoginBusinessBean implements IWEventListener {
 	
 	protected void storeUserAndGroupInformationInSession(IWContext iwc, User user) throws Exception {
 		
+		//New user system
+//		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+//		LoginBusinessBean.setUser(iwc, user);
+//		com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
+//		com.idega.user.data.User newUser = com.idega.user.Converter.convertToNewUser(user);
+//		List groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
+		//New user system end
+
+		//Old user system
 		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 		LoginBusinessBean.setUser(iwc, user);
-
-		com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
-		com.idega.user.data.User newUser = com.idega.user.Converter.convertToNewUser(user);
-		List groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
+		List groups = UserBusiness.getUserGroups(user);
+		//Old user system end
 
 		if (groups != null) {
 			LoginBusinessBean.setPermissionGroups(iwc, groups);
