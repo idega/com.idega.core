@@ -66,8 +66,12 @@ public class SingleLineItem extends Panel {
     return new Dimension(iWidth,iHeight);
   }
 
-  public Dimension getMaximumSize() {
-    return new Dimension(iWidth,iHeight);
+  public Dimension minimumSize() {
+    return getMinimumSize();
+  }
+
+  public Dimension preferredSize() {
+    return getPreferredSize();
   }
 
   /*public void paint(Graphics g) {
