@@ -1558,11 +1558,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         p.setPermissionString(s3);
       }
 
-      String s4 = permission.getPermissionStringValue();
+     /* String s4 = permission.getPermissionStringValue();
       if(s4 != null){
         p.setPermissionStringValue(s4);
       }
-
+			*/
+			
       p.setPermissionValue(permission.getPermissionValue());
 
       // groupID changes
@@ -1596,10 +1597,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           perm.setPermissionString(str);
         }
 
-        String str2 = item.getPermissionStringValue();
+        /*String str2 = item.getPermissionStringValue();
         if(str2 != null){
           perm.setPermissionStringValue(str2);
-        }
+        }*/
+        
+        
         perm.setPermissionValue(item.getPermissionValue());
 
         perm.store();
@@ -1694,7 +1697,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllPermissions(Group group, String contextType){
 		Collection returnCol = new Vector();//empty
 		try{
-			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType,group);
+			returnCol = getPermissionHome().findAllPermissionsByTypeAndPermissionGroupOrderedByContextValue(contextType,group);
 		}
 		catch(FinderException ex){
 			ex.printStackTrace();
@@ -1714,7 +1717,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllPermissionsOwnedByGroup(Group group, String contextType){
 		Collection returnCol =  new Vector();//empty
 		try{
-			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,contextType);
+			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,contextType);
 		}
 		catch(FinderException ex){
 			ex.printStackTrace();
@@ -1730,7 +1733,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllPermissionsForContextTypeAndContextValue(String contextType,String contextValue){
 		Collection returnCol = new Vector();//empty
 		try{
-			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndContextValue(contextType,contextValue);
+			returnCol = getPermissionHome().findAllPermissionsByTypeAndContextValue(contextType,contextValue);
 		}
 		catch(FinderException ex){
 			ex.printStackTrace();
@@ -1750,7 +1753,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllGroupPermissionsOwnedByGroup(Group group){
 		Collection returnCol =  new Vector();//empty
 		try{
-			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,AccessControl.CATEGORY_STRING_GROUP_ID);
+			returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_OWNER,AccessControl.CATEGORY_STRING_GROUP_ID);
 		}
 		catch(FinderException ex){
 			ex.printStackTrace();
@@ -1767,7 +1770,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public static Collection getAllGroupViewPermissions(Group group){
 			Collection returnCol = null;
 			try{
-				returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
+				returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
 			}
 			catch(FinderException ex){
 				returnCol =  new Vector();//empty
@@ -1784,7 +1787,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupDeletePermissions(Group group){
 				Collection returnCol = null;
 				try{
-					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
+					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
 				}
 				catch(FinderException ex){
 					returnCol =  new Vector();//empty
@@ -1801,7 +1804,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     public static Collection getAllGroupEditPermissions(Group group){
         Collection returnCol = null;
         try{
-          returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_EDIT,AccessControl.CATEGORY_STRING_GROUP_ID);
+          returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_EDIT,AccessControl.CATEGORY_STRING_GROUP_ID);
         }
         catch(FinderException ex){
           returnCol =  new Vector();//empty
@@ -1818,7 +1821,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupCreatePermissions(Group group){
 				Collection returnCol = null;
 				try{
-					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
+					returnCol = getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndTypeOrderedByContextValue(group,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
 				}
 				catch(FinderException ex){
 					returnCol =  new Vector();//empty
@@ -1839,7 +1842,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupEditPermissions(Collection groups) {
 			Collection returnCol = null;
 			 try{
-				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_EDIT,AccessControl.CATEGORY_STRING_GROUP_ID);
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_EDIT,AccessControl.CATEGORY_STRING_GROUP_ID);
 			 }
 			 catch(FinderException ex){
 				 returnCol =  new Vector();//empty
@@ -1858,7 +1861,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupViewPermissions(Collection groups) {
 			Collection returnCol = null;
 			 try{
-				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_VIEW,AccessControl.CATEGORY_STRING_GROUP_ID);
 			 }
 			 catch(FinderException ex){
 				 returnCol =  new Vector();//empty
@@ -1877,7 +1880,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupCreatePermissions(Collection groups) {
 			Collection returnCol = null;
 			 try{
-				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_CREATE,AccessControl.CATEGORY_STRING_GROUP_ID);
 			 }
 			 catch(FinderException ex){
 				 returnCol =  new Vector();//empty
@@ -1896,7 +1899,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		public static Collection getAllGroupDeletePermissions(Collection groups) {
 			Collection returnCol = null;
 			 try{
-				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
+				 returnCol = getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndTypeOrderedByContextValue(groups,AccessControl.PERMISSION_KEY_DELETE,AccessControl.CATEGORY_STRING_GROUP_ID);
 			 }
 			 catch(FinderException ex){
 				 returnCol =  new Vector();//empty
