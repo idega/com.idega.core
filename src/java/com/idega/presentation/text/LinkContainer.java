@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.2 2002/03/22 13:39:42 laddi Exp $
+ * $Id: LinkContainer.java,v 1.3 2002/03/22 16:07:58 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,8 @@
  */
 package com.idega.presentation.text;
 
+import com.idega.block.media.business.MediaBusiness;
+import com.idega.util.StringHandler;
 import com.idega.presentation.ui.Window;
 import java.net.URLDecoder;
 import java.util.List;
@@ -52,9 +54,9 @@ public class LinkContainer extends PresentationObjectContainer {
 
   private boolean _addSessionId = true;
 
-  private String _windowWidth;
-  private String _windowHeight;
-  private String _windowName;
+  private String _windowWidth,_windowHeight,_windowName;
+  private boolean _toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen = false;
+  private ICFile _file;
   /**
    *
    */
@@ -255,18 +257,7 @@ public class LinkContainer extends PresentationObjectContainer {
    * method for adding a link to a file object
    */
   public void setFile(ICFile file) {
-    if( (file!=null) && (file.getID()!=-1) ){
-      StringBuffer url = new StringBuffer();
-      url.append(IWMainApplication.MEDIA_SERVLET_URL);
-      url.append('/');
-      url.append(file.getID());
-      url.append("media");
-      url.append('?');
-      url.append(com.idega.block.media.servlet.MediaServlet.PARAMETER_NAME);
-      url.append('=');
-      url.append(file.getID());
-      setURL(url.toString());
-    }
+    _file = file;
   }
 
   /*
@@ -445,9 +436,7 @@ public class LinkContainer extends PresentationObjectContainer {
     initVariables(iwc);
     boolean addParameters = true;
     String oldURL = getURL();
-    /**
-     * @todo: Is this the right solution? - If the user is not logged on then do not add a session id to the link
-     */
+
     if(!com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)){
       setSessionId(false);
     }
@@ -456,7 +445,7 @@ public class LinkContainer extends PresentationObjectContainer {
       oldURL = iwc.getRequestURI();
       setFinalUrl(oldURL);
     }
-    else if (oldURL.equals(com.idega.util.StringHandler.EMPTY_STRING)) {
+    else if (oldURL.equals(StringHandler.EMPTY_STRING)) {
       oldURL = iwc.getRequestURI();
       setFinalUrl(oldURL);
     }
@@ -465,16 +454,19 @@ public class LinkContainer extends PresentationObjectContainer {
       addParameters = false;
     }
 
+    if ( _file != null ) {
+      setFinalUrl(MediaBusiness.getMediaURL(_file,iwc.getApplication()));
+    }
+
     if (getLanguage().equals("HTML")) {
       if(openInNewWindow){
         String URL = getURL();
-        if ( getPage() != 0 )
-          URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
+        if ( getPage() != 0 ) URL = BuilderLogic.getInstance().getIBPageURL(iwc,getPage());
         if ( _windowName == null ) _windowName = "Popup";
         if ( _windowWidth == null ) _windowWidth = "400";
         if ( _windowHeight == null ) _windowHeight = "400";
 
-        setFinalUrl("javascript:"+Window.getWindowCallingScript(URL,_windowName,false,false,false,false,false,true,false,false,false,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
+        setFinalUrl("javascript:"+Window.getWindowCallingScript(URL+getParameterString(iwc,URL),_windowName,_toolbar,_location,_directories,_status,_menu,_title,_scroll,_resize,_fullscreen,Integer.parseInt(_windowWidth),Integer.parseInt(_windowHeight)));
       }
       else {
         setFinalUrl(oldURL+getParameterString(iwc,oldURL));
@@ -546,9 +538,22 @@ public class LinkContainer extends PresentationObjectContainer {
   }
 
   public void setAsPopup(String name,String width,String height){
+    setAsPopup(name,width,height,false,false,false,false,false,false,false,false,false);
+  }
+
+  public void setAsPopup(String name,String width,String height,boolean toolbar,boolean location,boolean directories,boolean status,boolean menu,boolean title,boolean scroll,boolean resize,boolean fullscreen){
     _windowWidth = width;
     _windowHeight = height;
     _windowName = name;
+    _toolbar = toolbar;
+    _location = location;
+    _directories = directories;
+    _status = status;
+    _menu = menu;
+    _title = title;
+    _scroll = scroll;
+    _resize = resize;
+    _fullscreen = fullscreen;
     openInNewWindow = true;
   }
 
