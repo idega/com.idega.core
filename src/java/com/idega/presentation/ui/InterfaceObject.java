@@ -16,7 +16,7 @@ import com.idega.presentation.Script;
 */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
-	protected boolean keepStatus;
+	protected boolean keepStatus = false;
 
 	private boolean _checkObject = false;
 	private boolean _disableObject = false;
@@ -35,6 +35,30 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public static final String ACTION_ON_SELECT = "onselect";
 	public static final String ACTION_ON_SUBMIT = "onsubmit";
 
+	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[8];
+		values[0] = super.saveState(ctx);
+		values[1] = new Boolean(keepStatus);
+		values[2] = new Boolean(_checkObject);
+		values[3] = new Boolean(_disableObject);
+		values[4] = new Boolean(_checkDisabled);
+		values[5] = new Boolean(_inFocus);
+		values[6] = new Boolean(_changeValue);
+		values[7] = new Boolean(_selectValues);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		keepStatus = ((Boolean) values[1]).booleanValue();
+		_checkObject = ((Boolean) values[2]).booleanValue();
+		_disableObject = ((Boolean) values[3]).booleanValue();
+		_checkDisabled = ((Boolean) values[4]).booleanValue();
+		_inFocus = ((Boolean) values[5]).booleanValue();
+		_changeValue = ((Boolean) values[6]).booleanValue();
+		_selectValues = ((Boolean) values[7]).booleanValue();
+	}
 
 	public InterfaceObject() {
 		super();

@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.faces.context.FacesContext;
 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
@@ -30,6 +31,35 @@ public class GenericSelect extends InterfaceObject {
 	
 	private boolean addSelectScript = false;
 	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[10];
+		values[0] = super.saveState(ctx);
+		values[1] = new Boolean(_isSetToSubmit);
+		values[2] = new Boolean(_isSetToDisable);
+		values[3] = new Boolean(_isSetAsNotEmpty);
+		values[4] = _notEmptyErrorMessage;
+		values[5] = _emptyValue;
+		values[6] = selectedElements;
+		values[7] = new Boolean(_allSelected);
+		values[8] = new Boolean(_isMultiple);
+		values[9] = new Boolean(addSelectScript);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		_isSetToSubmit = ((Boolean) values[1]).booleanValue();
+		_isSetToDisable = ((Boolean) values[2]).booleanValue();
+		_isSetAsNotEmpty = ((Boolean) values[3]).booleanValue();
+		_notEmptyErrorMessage = (String) values[4];
+		_emptyValue = (String) values[5];
+		selectedElements = (List) values[6];
+		_allSelected = ((Boolean) values[7]).booleanValue();
+		_isMultiple = ((Boolean) values[8]).booleanValue();
+		addSelectScript = ((Boolean) values[9]).booleanValue();
+	}
+	
+	
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
@@ -43,6 +73,7 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public GenericSelect(String name) {
 		setName(name);
+		setTransient(false);
 		selectedElements = new ArrayList();
 	}
 

@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
@@ -17,6 +18,24 @@ public class SelectOption extends InterfaceObject {
 	private String target;
 	private int fileID = -1;
 
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[8];
+		values[0] = super.saveState(ctx);
+		values[1] = windowClass;
+		values[2] = parameterMap;
+		values[3] = target;
+		values[4] = new Integer(fileID);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		windowClass = (Class) values[1];
+		parameterMap = (Map) values[2];
+		target = (String) values[3];
+		fileID = ((Integer) values[4]).intValue();
+	}
+	
 	public SelectOption() {
 		this("untitled");
 	}
@@ -35,6 +54,7 @@ public class SelectOption extends InterfaceObject {
 
 	public SelectOption(String name, String value) {
 		super();
+		setTransient(false);
 		setName(name);
 		setValue(value);
 		setSelected(false);
