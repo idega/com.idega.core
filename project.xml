@@ -108,6 +108,7 @@
 	 <idegaweb.bundle.include>true</idegaweb.bundle.include>
 	 </properties>
     </dependency>
+    <!-- commons-logging already included in the core bundle (because it is also used by com.idega.block.creditcard) -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
