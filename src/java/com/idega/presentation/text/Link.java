@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.105 2004/03/11 18:17:37 aron Exp $
+ * $Id: Link.java,v 1.106 2004/03/18 16:58:44 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -353,7 +353,7 @@ public class Link extends Text {
 	public void setWindow(Window window) {
 		_myWindow = window;
 		//_objectType = OBJECT_TYPE_WINDOW;
-		_myWindow.setParentObject(this);
+		//_myWindow.setParentObject(this);
 		if (_obj == null) {
 			setText(_myWindow.getName());
 		}
