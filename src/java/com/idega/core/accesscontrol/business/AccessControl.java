@@ -1169,6 +1169,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     User adminUser = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).createLegacy();
     adminUser.setColumn(com.idega.core.user.data.UserBMPBean.getColumnNameFirstName(),_ADMINISTRATOR_NAME);
     adminUser.insert();
+    
+    int adminUserID = adminUser.getID();
 
     UserGroupRepresentative ugr = ((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).createLegacy();
     ugr.setName("admin");
@@ -1178,7 +1180,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     adminUser.setPrimaryGroupID(this.getPermissionGroupAdministrator().getID());
     adminUser.update();
 
-    LoginDBHandler.createLogin(adminUser.getID(),"Administrator","idega",Boolean.TRUE,IWTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
+	//System.out.println("Creating login for user with id="+adminUserID);
+    LoginDBHandler.createLogin(adminUserID,"Administrator","idega",Boolean.TRUE,IWTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
     return adminUser;
   }
 
