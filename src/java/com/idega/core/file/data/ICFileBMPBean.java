@@ -466,7 +466,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
-			System.out.println(buffer.toString());
+			//System.out.println(buffer.toString());
 			return idoFindPKsBySQL( buffer.toString());
 			
 		} catch (IDOCompositePrimaryKeyException e) {
