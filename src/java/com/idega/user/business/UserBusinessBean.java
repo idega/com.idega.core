@@ -357,12 +357,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),dateOfBirth,null);
   }
 
-
   public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
       UserTransaction transaction = this.getSessionContext().getUserTransaction();
       try{
         transaction.begin();
         User newUser;
+        // added by Aron 07.01.2002 ( aron@idega.is )
+        if(primary_group==null)
+        	primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
         newUser = insertUser(firstname,middlename, lastname,null,null,null,null,primary_group);
 
         LoginDBHandler.createLogin(newUser,userLogin,password,accountEnabled,modified,

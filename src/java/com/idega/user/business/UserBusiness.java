@@ -10,6 +10,7 @@ import com.idega.core.data.Address;
 import com.idega.core.data.Phone;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 
 public interface UserBusiness extends com.idega.business.IBOService
 {
@@ -45,7 +46,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.data.PhoneHome getPhoneHome() throws java.rmi.RemoteException;
  public java.lang.String getNameOfGroupOrUser(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
  public com.idega.user.data.User insertUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.Integer p5,com.idega.util.IWTimestamp p6,java.lang.Integer p7)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.user.data.User createUserWithLogin(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.Integer p5,com.idega.util.IWTimestamp p6,java.lang.Integer p7,java.lang.String p8,java.lang.String p9,java.lang.Boolean p10,com.idega.util.IWTimestamp p11,int p12,java.lang.Boolean p13,java.lang.Boolean p14,java.lang.Boolean p15,java.lang.String p16)throws javax.ejb.CreateException, java.rmi.RemoteException;
+ public com.idega.user.data.User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType)throws javax.ejb.CreateException, java.rmi.RemoteException;
  public com.idega.core.data.Email getUserMail(com.idega.user.data.User p0) throws java.rmi.RemoteException;
  public void updateUserPhone(int p0,int p1,java.lang.String p2)throws javax.ejb.EJBException, java.rmi.RemoteException;
  public com.idega.core.data.EmailHome getEmailHome() throws java.rmi.RemoteException;
