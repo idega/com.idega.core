@@ -22,6 +22,8 @@ import com.idega.util.FileUtil;
 */
 public class IWBundle{
 
+  private static final String slash = "/";
+
   private String identifier;
   private String rootVirtualPath;
   private String rootRealPath;
@@ -315,6 +317,10 @@ public class IWBundle{
       return getResourcesVirtualPath(locale);
     }
 
+    protected String getResourcesURL(){
+      return getResourcesVirtualPath();
+    }
+
     protected String getResourcesVirtualPath(Locale locale){
     //private String getLocaleDirectory(Locale locale){
         //return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
@@ -368,9 +374,27 @@ public class IWBundle{
       }
     }
 
-  public String getBundleIdentifier(){
-    return identifier;
-  }
+    public String getBundleIdentifier(){
+      return identifier;
+    }
+
+
+    public Image getImage(String urlInBundle){
+      return new Image(getResourcesURL()+slash+urlInBundle);
+    }
+
+    public Image getImage(String urlInBundle, int width, int height){
+      return getImage(urlInBundle, "", width, height);
+    }
+
+    public Image getImage(String urlInBundle, String name, int width, int height){
+      return new Image(urlInBundle,name, width, height);
+    }
+
+    public Image getImage(String urlInBundle, String name){
+      return new Image(getResourcesURL()+slash+urlInBundle,name);
+    }
+
 
 
 }
