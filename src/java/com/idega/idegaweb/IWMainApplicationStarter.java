@@ -114,21 +114,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String poolType = iwma.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
 		if (poolType != null) {
 			if (poolType.equalsIgnoreCase("POOLMAN")) {
-				this.startPoolManDatabasePool(iwma);
+				this.startPoolManDatabasePool();
 			}
 			else if (poolType.equalsIgnoreCase("IDEGA")) {
-				this.startIdegaDatabasePool(iwma);
+				this.startIdegaDatabasePool();
 			}
 			else if (poolType.equalsIgnoreCase("JDBC_DATASOURCE")) {
-				this.startJDBCDatasourcePool(iwma);
+				this.startJDBCDatasourcePool();
 			}
 		}
 		else {
-			startIdegaDatabasePool(iwma);
+			startIdegaDatabasePool();
 		}
 	}
 	
-	protected void startPoolManDatabasePool(IWMainApplication iwma) {
+	protected void startPoolManDatabasePool() {
 		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
 		//ServletContext cont = this.getServletContext();
 		String file = "poolman.xml";
@@ -137,7 +137,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
 	}
-	protected void startIdegaDatabasePool(IWMainApplication iwma) {
+	protected void startIdegaDatabasePool() {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
 		String fileName=null;
@@ -163,7 +163,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			iwma.setInSetupMode(true);
 		}
 	}
-	protected void startJDBCDatasourcePool(IWMainApplication iwma){
+	protected void startJDBCDatasourcePool(){
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
 		String url = iwma.getSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
 		if(url!=null){
@@ -190,9 +190,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	protected void endPoolManDatabasePool() {
 		// empty
 	}
+
 	protected void endIdegaDatabasePool() {
 		PoolManager.getInstance().release();
-	}
+		int count = Thread.activeCount();
+		Thread[] threads = new Thread[count];
+		Thread.enumerate(threads);
+		for (int i = 0; i < threads.length; i++) {
+			Thread thread = threads[i];
+			String name = (thread == null) ? null : thread.getName();
+			if (name != null && name.startsWith("HSQLDB")) {
+				thread.interrupt();
+			}
+		}
+	}		
+
 	
 	/**
 	 * Adds the .jar files in /WEB-INF/classes to the ClassPath
@@ -217,13 +229,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		System.setProperty(classPathProperty, classes.toString());
 	}
-	private static void addToClassPath(String path) {
-		String classPathProperty = "java.class.path";
-		String classPath = System.getProperty(classPathProperty);
-		classPath += File.pathSeparator;
-		classPath += path;
-		System.setProperty(classPathProperty, classPath);
-	}
+	
+	
 	public void startIdegaWebApplication() {
 		long start = System.currentTimeMillis();
 		try {
