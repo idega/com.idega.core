@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.111 2004/09/09 09:17:34 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.112 2004/09/09 10:42:15 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -702,9 +702,9 @@ public abstract class DatastoreInterface {
 			statement.append(" set ");
 			statement.append(entity.getLobColumnName());
 			statement.append("=? ");
-			//this.appendPrimaryKeyWhereClause(entity, statement);
-			IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
-			appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
+			this.appendPrimaryKeyWhereClause(entity, statement);
+			//IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+			//appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
 			/*
 			 * statement.append("where "); statement.append(entity.getIDColumnName());
 			 * statement.append(" = '"); statement.append(entity.getID());
@@ -731,7 +731,7 @@ public abstract class DatastoreInterface {
 					//PS.setBinaryStream(1, bin, 0 );
 					//PS.setBinaryStream(1, instream, instream.available() );
 					this.setBlobstreamForStatement(PS, instream, 1);
-					setForPreparedStatementPrimaryKeyQuestionValues(entity,fields,PS,2);
+					//setForPreparedStatementPrimaryKeyQuestionValues(entity,fields,PS,2);
 					PS.executeUpdate();
 					PS.close();
 					//System.out.println("bin.available(): "+bin.available());
