@@ -42,6 +42,8 @@ private com.idega.jmodule.image.data.ImageEntity image2;
 private int maxImageWidth = 140;
 
 private boolean usesOldImageTables = false;
+private static String idName = MediaServlet.PARAMETER_NAME;
+
 
 
 public Image(){
@@ -128,13 +130,11 @@ public Image(int imageId, String name, int width, int height) throws SQLExceptio
 
 private void getImage(IWContext iwc) throws SQLException{
   IWMainApplication iwma = iwc.getApplication();
-  String idName = MediaServlet.PARAMETER_NAME;
 
   //**@todo: remove this when no longer needed
   String mmProp = iwma.getSettings().getProperty(MediaServlet.USES_OLD_TABLES);
   if(mmProp!=null) {
     usesOldImageTables = true;
-    idName = "image_id";
   }
 
   if( useCaching ){
@@ -482,7 +482,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(this.getImageID());
     URIBuffer.append("image?");
-    URIBuffer.append("media_id");
+    URIBuffer.append(idName);
     URIBuffer.append("=");
     URIBuffer.append(this.getImageID());
     return URIBuffer.toString();
@@ -492,7 +492,7 @@ public void limitImageWidth( boolean limitImageWidth ){
     StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
     URIBuffer.append(imageId);
     URIBuffer.append("image?");
-    URIBuffer.append("media_id");
+    URIBuffer.append(idName);
     URIBuffer.append("=");
     URIBuffer.append(imageId);
     return URIBuffer.toString();
