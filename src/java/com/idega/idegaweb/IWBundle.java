@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.75 2004/01/12 13:38:34 aron Exp $
+ * $Id: IWBundle.java,v 1.76 2004/02/28 15:52:00 eiki Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -181,10 +181,11 @@ public class IWBundle implements java.lang.Comparable
 	private void createDataRecords() throws Exception
 	{
 		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-		Collection entities = icoHome.findAllByObjectType(ICObjectBMPBean.COMPONENT_TYPE_DATA);
-		//List entities = com.idega.data.EntityFinder.findAllByColumn(com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class), com.idega.core.component.data.ICObjectBMPBean.getObjectTypeColumnName(), , com.idega.core.component.data.ICObjectBMPBean.getBundleColumnName(), this.getBundleIdentifier());
-		if (entities != null)
-		{
+		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, identifier);
+		//eiki used to be (SLOW!): 
+		//Collection entities = icoHome.findAllByObjectType(ICObjectBMPBean.COMPONENT_TYPE_DATA);
+		
+		if (entities != null){
 			Iterator iter = entities.iterator();
 			while (iter.hasNext())
 			{
