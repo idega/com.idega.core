@@ -402,9 +402,11 @@ public  class EntityControl{
         return null;
       }
 
-
+/**@todo : set back to protected
+ *
+ */
       public static String getManyToManyRelationShipTableName(Class entityClass1,Class entityClass2){
-          return getManyToManyRelationShipName(entityClass1.getName(),entityClass2.getName());
+          return getManyToManyRelationShipName(GenericEntity.getStaticInstance(entityClass1),GenericEntity.getStaticInstance(entityClass2));
       }
 
       protected static String getManyToManyRelationShipName(GenericEntity entity1,GenericEntity entity2){
