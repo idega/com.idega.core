@@ -276,38 +276,22 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
 
-      protected void deleteSequence(IDOLegacyEntity entity)throws Exception{
-
+  protected void deleteSequence(IDOLegacyEntity entity)throws Exception{
 		Connection conn= null;
-
 		Statement Stmt= null;
-
 		try{
-
 			conn = entity.getConnection();
-
 			Stmt = conn.createStatement();
-
 			int i = Stmt.executeUpdate("drop table "+this.getInformixSequenceTableName(entity));
-
 		}
-
 		finally{
-
 			if(Stmt != null){
-
 				Stmt.close();
-
 			}
-
 			if (conn != null){
-
 				entity.freeConnection(conn);
-
 			}
-
 		}
-
     }
 
 
@@ -383,13 +367,9 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
   protected void executeBeforeInsert(IDOLegacyEntity entity)throws Exception{
-
 				if ( entity.isNull(entity.getIDColumnName()) ){
-
 					entity.setID(createUniqueID(entity));
-
 				}
-
   }
 
 
@@ -506,72 +486,35 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 	**/
 
-	public int createUniqueID(IDOLegacyEntity entity) throws Exception{
-
+  public int createUniqueID(IDOLegacyEntity entity) throws Exception{
 		int returnInt = -1;
-
         String query = "insert into "+this.getInformixSequenceTableName(entity)+"("+entity.getIDColumnName()+") values (0)";
-
 		Connection conn = null;
-
 		Statement stmt = null;
-
 		try{
 
-
-
 			conn = entity.getConnection();
-
 				stmt = conn.createStatement();
-
                 stmt.executeUpdate(query);
-
                 com.informix.jdbc.IfxStatement ifxStatement = (com.informix.jdbc.IfxStatement)stmt;
-
                 returnInt = ifxStatement.getSerial();
-
         }
-
 		finally{
-
 			if (stmt != null){
-
 				stmt.close();
-
 			}
-
 			if (conn != null){
-
 				entity.freeConnection(conn);
-
 			}
-
 		}
-
 		return returnInt;
-
-	}
-
-
-
-
-
-
-
-  private static String getInformixSequenceTableName(IDOLegacyEntity entity){
-
-		String entityName = entity.getTableName();
-
-		return entityName+"_seq";
-
   }
 
 
-
-
-
-
-
+  private static String getInformixSequenceTableName(IDOLegacyEntity entity){
+		String entityName = entity.getTableName();
+		return entityName+"_seq";
+  }
 
 
 
@@ -747,26 +690,18 @@ public class InformixDatastoreInterface extends DatastoreInterface{
                 e.printStackTrace(System.err);
 
               }
-
             }
-
           }
-
-
-
         }
 
 */
 
 
-
   public void setBlobstreamForStatement(PreparedStatement statement,InputStream stream,int index)throws SQLException,IOException{
     IfxPreparedStatement infstmt = (IfxPreparedStatement)statement;
-    infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
+    //infstmt.setBinaryStream(index, stream, stream.available(),com.informix.lang.IfxTypes.IFX_TYPE_BLOB);
+    infstmt.setBinaryStream(index, stream, stream.available());
   }
-
-
-
 
 
   public boolean supportsBlobInUpdate(){

@@ -1128,45 +1128,27 @@ public String getPassword(){
 
 
  private void cleanUpCheckedOut(){
-
   //debug("Running cleanUpCheckedOut()");
-
   Iterator iter = getCheckedOutMap().keySet().iterator();
-
   while (iter.hasNext()) {
-
     Connection conn = (Connection)iter.next();
-
     Long timeCheckedOut = (Long)getCheckedOutMap().get(conn);
-
     long lCheckedOut = timeCheckedOut.longValue();
 
 
-
     if(lCheckedOut+lConnectionTimeOut<System.currentTimeMillis()){
-
       //Throw away the reference to the connection
-
       //debug("Throwing away timed out connection from out-pool");
-
       iter.remove();
-
     }
-
   }
-
  }
 
 
 
-
-
  protected void debug(String debug){
-
-    //logWriter.log("[ConnectionPool-Debug] : "+debug, LogWriter.DEBUG);
-
-    System.out.println("[ConnectionPool-Debug] : "+debug);
-
+    logWriter.log("[ConnectionPool-Debug] : "+debug, LogWriter.DEBUG);
+    //System.out.println("[ConnectionPool-Debug] : "+debug);
  }
 
 
