@@ -1076,6 +1076,37 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 
 
+  public static void initICObjectPermissions(ICObject obj) throws Exception{
+
+    ICPermission permission = new ICPermission();
+    /*
+    boolean update = true;
+    try {
+      permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObjectID(iwc) + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+    }
+    catch (Exception ex) {
+      permission = new ICPermission();
+      update = false;
+    }*/
+
+    permission.setContextType(AccessControl._CATEYGORYSTRING_OBJECT_ID);
+    permission.setContextValue(Integer.toString(obj.getID()));
+    permission.setGroupID(new Integer(AccessControl._GROUP_ID_EVERYONE));
+    permission.setPermissionString(AccessControl._PERMISSIONKEY_VIEW);
+//        permission.setPermissionStringValue();
+    permission.setPermissionValue(Boolean.TRUE);
+    permission.insert();
+
+    //PermissionCacher.updateObjectPermissions(Integer.toString(obj.getICObjectID(iwc)),permissionType,iwc);
+
+
+
+
+  }
+
+
+
+
 
 
 
