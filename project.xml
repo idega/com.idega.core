@@ -6,7 +6,7 @@
   <artifactId>com.idega.core</artifactId>
   <currentVersion>1.9.2-SNAPSHOT</currentVersion>
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
-  <package>${pom.artifactId},com.idega.user,com.idega.presentation,com.idega.data,com.idega.business,com.idega.event,com.idega.util,com.idega.exception,com.idega.idegaweb,com.idega.io,com.idega.repository,com.idega.servlet,com.idega.transaction,com.idega.versioncontrol,com.idega.xml</package>
+  <package>com.idega</package>
   <versions>
     <version>
       <id>1.9</id>
