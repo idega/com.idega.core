@@ -1498,14 +1498,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_STATUS).getSQLFieldName());
 			query.appendInArrayWithSingleQuotes(relationStatus);		
 		}
-		
+
+/*		
 		//order by usr.last_name, usr.first_name, usr.middle_name
 		String[] order = new String[3];
 		order[0] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_LAST_NAME).getSQLFieldName();
 		order[1] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
 		order[2] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
 		query.appendOrderBy(order); 
-	  	
+*/	  	
+		//orderby personal_id	
+		query.appendOrderBy(variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID).getSQLFieldName()); 
+
 		System.out.println("SQL -> "+this.getClass()+":"+query);
 		return idoFindPKsByQuery(query); 
   	
