@@ -169,6 +169,7 @@ public class IWStarterServlet extends GenericServlet
             }
 
             application.startAccessController();
+            application.createMediaTables();//added by Eiki to ensure that ic_file is created before ib_page
             application.loadBundles();
             executeServices(application);
 

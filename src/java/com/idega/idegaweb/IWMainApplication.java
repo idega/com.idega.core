@@ -19,6 +19,8 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.PresentationObject;
+import com.idega.block.media.business.MediaBundleStarter;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -644,6 +646,11 @@ public class IWMainApplication{//implements ServletContext{
 
   public static boolean isDebugActive(){
     return DEBUG_FLAG;
+  }
+
+  public void createMediaTables(){
+    MediaBundleStarter starter = new MediaBundleStarter();
+    starter.start(this);
   }
 
 }

@@ -29,7 +29,6 @@ public class ICProtocol extends GenericType {
   public void initializeAttributes(){
     super.initializeAttributes();
     this.addManyToManyRelationShip(GenericGroup.class,"ic_group_protocol");
-    this.addManyToManyRelationShip(IBPage.class,"ib_page_ic_protocol");
     this.addManyToManyRelationShip(ICNetwork.class,"ib_protocol_network");
   }
 
