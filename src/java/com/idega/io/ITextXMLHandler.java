@@ -6,9 +6,12 @@
  */
 package com.idega.io;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -26,6 +29,8 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.html.HtmlWriter;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -44,7 +49,58 @@ public class ITextXMLHandler {
 	public final static int HTML = 4;
 	//public final static int RTF = 8 ;
 	
-	public MemoryFileBuffer[] writeToBuffers(Document document,Map tagMap, InputStream xmlIS,int fileType ){
+	private int fileType = 1;
+	
+	/** Construcst a handler for given type flags, 
+	 *  types are provided by using bitwise and ( & ) on this objects types ( PDF, TXT, HTML )
+	 * @param type  
+	 */
+	public ITextXMLHandler(int type){
+		this.fileType = type;
+	}
+	
+	/** Gives the types this handler is handling
+	 * @return type
+	 */
+	public int type(){
+		return fileType;
+	}
+	
+	/** Constructs memorybuffers for each type, provided a tagmap 
+	 *  and inputstream to a xml template. Document size is set to A4
+	 * @param tagMap
+	 * @param xmlIS
+	 * @return MemoryBuffer[]
+	 */
+	public MemoryFileBuffer[] writeToBuffers(Map tagMap, InputStream xmlIS ){
+		return  writeToBuffers(getDocument(PageSize.A4), tagMap,  xmlIS );
+	}
+	
+	/**Constructs memorybuffers for each type, provided a tagmap 
+	 *  and URI to a xml template. Document size is set to A4
+	 * @param tagMap
+	 * @param xmlURL
+	 * @return
+	 */
+	public MemoryFileBuffer[] writeToBuffers(Map tagMap, String xmlURI ){
+			try {
+				return  writeToBuffers(getDocument(PageSize.A4), tagMap,  new FileInputStream(xmlURI) );
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			return null;
+	}
+	
+	
+	/** Constructs memorybuffers for each type, provided a tagmap 
+	 *  and inputstream to a xml template.
+	 * @param document
+	 * @param tagMap
+	 * @param xmlIS
+	 * @return
+	 */
+	public MemoryFileBuffer[] writeToBuffers(Document document,Map tagMap, InputStream xmlIS ){
 		
 			try {
 				Vector buffers = new Vector();
@@ -103,6 +159,14 @@ public class ITextXMLHandler {
 		
 	}
 	
+	/**
+	 * @param document
+	 * @param tagMap
+	 * @param xmlTemplateFileStream
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 */
 	public void parseTagMap(Document document, Map tagMap, InputStream xmlTemplateFileStream)throws SAXException,ParserConfigurationException,IOException{
 		javax.xml.parsers.SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 		SAXpdfHandler handler = new SAXpdfHandler(document,tagMap);
@@ -110,6 +174,12 @@ public class ITextXMLHandler {
 		parser.parse(xmlTemplateFileStream,handler);
 	}
 	
+	/** Stores a memory buffer to database with, provided the name and mimetype
+	 * @param buffer
+	 * @param fileName
+	 * @param mimeType
+	 * @return ICFIle
+	 */
 	public ICFile writeToDatabase(MemoryFileBuffer buffer,String fileName,String mimeType){
 			try {
 				InputStream is = new MemoryInputStream(buffer);
@@ -131,5 +201,41 @@ public class ITextXMLHandler {
 				e.printStackTrace();
 			}
 			return null;
+		}
+		
+		public String bufferToString(MemoryFileBuffer buffer)throws IOException{
+			MemoryInputStream in = new MemoryInputStream(buffer);
+			
+			StringWriter out =  new StringWriter(buffer.length());
+			int c;
+	   		while ((c = in.read()) != -1)
+		  		out.write(c);
+	   		in.close();
+	   		out.close();
+			return out.toString();
+		}
+		
+	/**
+		 * Creates a Document object with a specified pagesize
+		 * @param size as a <CODE>Rectangle</CODE>
+		 * @return <CODE>Document</CODE>
+		 */
+		public Document getDocument(Rectangle size){
+			return new Document(size);
+		}
+	
+		/**
+		 * Converts points from millimeters
+		 * 
+		 * @param millimeters to be converted
+		 * @return <CODE>float</CODE>
+		 */
+		public static  float getPointsFromMM(float millimeters) {
+			float pointPerMM = 72 / 25.4f;
+			return millimeters * pointPerMM;
+		}
+		
+		public String getPDFMimeType(){
+			return "application/pdf";
 		}
 }
