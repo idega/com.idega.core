@@ -449,7 +449,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		if (login_table.length > 0) {
 			LoginTable loginTable = login_table[0];
-			if (isLoginExpired(loginTable)) {
+			User user = loginTable.getUser();
+			boolean isAdmin = user.equals(iwc.getAccessController().getAdministratorUser());
+			if (isLoginExpired(loginTable) && !isAdmin) {
 				return STATE_LOGIN_EXPIRED;
 			}
 			LoginInfo loginInfo = null;
@@ -461,7 +463,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 			if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
 				if (loginTable != null) {
-					if (loginInfo!=null && !loginInfo.getAccountEnabled()) {
+					if (loginInfo!=null && !loginInfo.getAccountEnabled() && !isAdmin) {
 						return STATE_LOGIN_EXPIRED;
 					}
 					if (logIn(iwc, loginTable)) {
@@ -477,6 +479,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				}
 			} else {
+				if(isAdmin) { // admin must get unlimited attempts
+					return STATE_WRONG_PASSW;
+				}
 				int returnCode = STATE_WRONG_PASSW;
 				int maxFailedLogginAttempts = 0;
 				try {
