@@ -1,5 +1,5 @@
 /*
- * $Id: Sunset.java,v 1.1 2004/10/14 12:11:56 laddi Exp $
+ * $Id: Sunset.java,v 1.2 2004/10/26 09:05:20 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,7 @@ import com.idega.util.IWTimestamp;
  * Last modified: 14.10.2004 13:37:28 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Sunset extends Widget {
 
@@ -32,6 +32,7 @@ public class Sunset extends Widget {
 	 */
 	protected PresentationObject getWidget(IWContext iwc) {
 		IWCalendar calendar = new IWCalendar(getLocale());
+		calendar.setDate(2004, 6, 21);
 		IWTimestamp stamp = new IWTimestamp(calendar.getSunRiseSet(false));
 		
 		Text text = new Text(stamp.getLocaleTime(getLocale(), style));
