@@ -10,10 +10,11 @@ import com.idega.core.location.data.Address;
 import com.idega.core.file.data.ICFile;
 
 /**
- * Title:        User
- * Copyright:    Copyright (c) 2001
+ * This bean is an implementation which is backwards compatible with the old User system and structure.
+ * This bean is used as an implemention of User when the application attribute IW_USER_SYSTEM is set to OLD.
+ * <br><br>Copyright (c) 2001-2003
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -23,13 +24,10 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 
 	public OldUserBMPBean() {
 		super();
-		System.out.println("Instanciating OldUserBMPBean");
 	}
 
 	public OldUserBMPBean(int id) throws SQLException {
-		
 		super(id);
-		System.out.println("Instanciating OldUserBMPBean");
 	}
 
 	public String getEntityName() {
