@@ -445,6 +445,19 @@ public class UserBusiness {
     return l;
   }
 
+  /**
+   *  Returns User from userid, null if not found
+   */
+  public static User getUser(int iUserId){
+    try {
+      return new User(iUserId);
+    }
+    catch (Exception ex) {
+
+    }
+    return null;
+  }
+
 
   public static List getUsersInNoGroup() throws SQLException  {
     //return EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
