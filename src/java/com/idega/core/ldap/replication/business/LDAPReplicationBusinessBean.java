@@ -259,7 +259,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					return executeReplicator(replicatorNumber, repNum, host, port, userName, password, baseRDN, replicateBaseRDN, baseUniqueId, intervalMinute,schedulerCronString,repeat,parentGroup,baseGroup,maxEntrylimit,searchTimeLimit);
 				}
 				else {
-					logWarning("Replicator : " + repNum + " already started!");
+					log("Replicator : " + repNum + " already started!");
 				}
 			}
 			else if (startOrStop.equals(STOP_REPLICATOR)) {
@@ -395,7 +395,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 		}
 		else{
-			logWarning("[LDAPReplication] " + new Date() + " - Tried to start replicator nr: "+ repNum+" again before finished");
+			log("[LDAPReplication] " + new Date() + " - Tried to start replicator nr: "+ repNum+" again before finished");
 			return false;//already running
 		}
 	}
