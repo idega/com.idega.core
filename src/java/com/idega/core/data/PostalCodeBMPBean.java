@@ -15,7 +15,7 @@ import com.idega.data.GenericEntity;
 
 
 
-public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.data.PostalCode {
+public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
 	static final String TABLE_NAME="IC_POSTAL_CODE";
 	 
@@ -120,7 +120,7 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
   }
 
   public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{
-    return idoFindAllIDsByColumnBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId));
+    return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId),COLUMN_POSTAL_CODE);
   }
 
 

@@ -27,18 +27,18 @@ public java.util.Collection findAll()throws javax.ejb.FinderException,java.rmi.R
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findAllByCountryIdOrderedByPostalCode(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindAllByCountryIdOrderedByPostalCode(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
 public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.findByPrimaryKey(pk);
+}
+
+public java.util.Collection findAllByCountryIdOrderedByPostalCode(int p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindAllByCountryIdOrderedByPostalCode(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
  public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
