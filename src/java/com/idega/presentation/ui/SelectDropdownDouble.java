@@ -19,6 +19,7 @@ import com.idega.presentation.Table;
  */
 public class SelectDropdownDouble extends InterfaceObjectContainer {
 
+	private String _styleClass;
 	private String _primarySelected;
 	private String _secondarySelected;
 	private String primaryName = "primary";
@@ -68,6 +69,11 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		if (_spaceBetween > 0)
 			table.setWidth(column++, _spaceBetween);
 		table.add(getSecondaryDropdown(), column, 1);
+		
+		if (_styleClass != null) {
+			getPrimaryDropdown().setStyleClass(_styleClass);
+			getSecondaryDropdown().setStyleClass(_styleClass);
+		}
 
 		//add the script
 		Script script = getParentPage().getAssociatedScript();
@@ -209,5 +215,9 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	
 	public void setDisabled(boolean disabled) {
 		_disabled = disabled;
+	}
+	
+	public void setStyleClass(String styleClass) {
+		_styleClass = styleClass;
 	}
 }
