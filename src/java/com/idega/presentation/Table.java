@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.57 2004/03/13 14:57:28 aron Exp $
+ * $Id: Table.java,v 1.58 2004/04/23 12:49:36 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -514,6 +514,14 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setCellpadding(int column, int row, int padding) {
 		setCellpadding(column, row, String.valueOf(padding));
+	}
+	
+	public void setRowPadding(int row, int padding) {
+		setRowStyle(row, "padding", padding+"px");
+	}
+	
+	public void setColumnPadding(int column, int padding) {
+		setColumnStyle(column, "padding", padding+"px");
 	}
 	
 	public void setCellpadding(int column, int row, String padding) {
