@@ -1,7 +1,9 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.35 2004/07/02 01:59:51 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.36 2004/11/14 23:21:37 tryggvil Exp $
  * 
- * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ * Created in 2001 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
@@ -13,36 +15,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 /**
- * A base class for Containers of PresentationObjects
+ * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
+ * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
+ * <br>
+ * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.3
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.36 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
+	//private List children;
 
-	/**
-	 * 
-	 * @uml.property name="children"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.PresentationObject"
-	 */
-	private List children;
-
-	/**
-	 * 
-	 * @uml.property name="allObjects"
-	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.PresentationObject"
-	 */
-	protected List allObjects = null;
+	//Legacy temporary variable:
+	protected transient List allObjects = null;
 
 	protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
@@ -56,12 +49,13 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	
 	public List getChildren(){
-		if (this.children == null)
+		/*if (this.children == null)
 		{
 			this.children = new PresentationObjectList(this);
 			//this.children=new ArrayList();
 		}
-		return this.children;
+		return this.children;*/
+		return super.getChildren();
 	}
 
 	/**
@@ -73,7 +67,7 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			if (modObject != null)
 			{
-				modObject.setParentObject(this);
+				//modObject.setParentObject(this);
 				//        modObject.setLocation(this.getLocation());
 				getChildren().add(index, modObject);
 			}
@@ -92,7 +86,7 @@ public class PresentationObjectContainer extends PresentationObject
 		{
 			if (modObject != null)
 			{
-				modObject.setParentObject(this);
+				//modObject.setParentObject(this);
 				//        modObject.setLocation(this.getLocation());
 				getChildren().add(modObject);
 			}
@@ -307,7 +301,8 @@ public class PresentationObjectContainer extends PresentationObject
 	 * @uml.property name="children"
 	 */
 	protected void setChildren(List newChildren) {
-		this.children = newChildren;
+		//this.children = newChildren;
+		this.getChildren().addAll(newChildren);
 	}
 
 	/*
@@ -622,29 +617,42 @@ public class PresentationObjectContainer extends PresentationObject
 			//if (this.theObjects != null)
 			//{
 				//obj.setObjects((Vector)this.theObjects.clone());
-				ArrayList alChildren = (ArrayList)this.getChildren();
-				List clonedChildren = (List)alChildren.clone();
-				if(clonedChildren instanceof PresentationObjectList){
-					PresentationObjectList pList = (PresentationObjectList)clonedChildren;
-					pList.setParent(obj);
-				}
-				obj.setChildren(clonedChildren);
-				//obj.setChildren((List)((ArrayList) this.getChildren()).clone());
-				ListIterator iter = obj.getChildren().listIterator();
-				while (iter.hasNext())
-				{
-					int index = iter.nextIndex();
-					Object item = iter.next();
-					//Object item = obj.theObjects.elementAt(index);
-					if (item instanceof PresentationObject)
-					{
-						PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
-						//newObject.setParentObject(obj);
-						//newObject.setLocation(this.getLocation());
-						obj.getChildren().set(index, newObject);
-						newObject.setParent(obj);
+				
+				/**TL:
+				 * Disabled cloning of the list, it shouldn't be necessary:
+				 * 
+					ArrayList alChildren = (ArrayList)myChildren;
+					List clonedChildren = (List)alChildren.clone();
+					if(clonedChildren instanceof PresentationObjectList){
+						PresentationObjectList pList = (PresentationObjectList)clonedChildren;
+						pList.setParent(obj);
 					}
+					obj.setChildren(clonedChildren);
+				*/
+				
+				//Cloning the JSF children:
+				if(this.childrenList!=null){
+					//First clone the children List instance itself:
+					obj.childrenList=(List) ((PresentationObjectComponentList)this.childrenList).clone();
+					((PresentationObjectComponentList)obj.childrenList).setComponent(obj);
 					
+					//Iterate over the children to clone each child:
+					ListIterator iter = obj.getChildren().listIterator();
+					while (iter.hasNext())
+					{
+						int index = iter.nextIndex();
+						Object item = iter.next();
+						//Object item = obj.theObjects.elementAt(index);
+						if (item instanceof PresentationObject)
+						{
+							PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
+							//newObject.setParentObject(obj);
+							//newObject.setLocation(this.getLocation());
+							obj.getChildren().set(index, newObject);
+							//newObject.setParent(obj);
+						}
+						
+					}
 				}
 				//}
 			//}
@@ -761,6 +769,8 @@ public class PresentationObjectContainer extends PresentationObject
 	 * Overrided methods from JSF's UIComponent:
 	 */
 
+	
+	
 
 	public void addChild(UIComponent child){
 		this.add((PresentationObject)child);
@@ -800,38 +810,31 @@ public class PresentationObjectContainer extends PresentationObject
 		callPrint(context);
 	}
 	
-	protected class PresentationObjectList extends ArrayList{
-		private UIComponent pContainer;
-		PresentationObjectList(UIComponent container){
-			pContainer=container;
-		}
-		public boolean add(Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			return super.add(comp);
-		}
-		public void add(int index,Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			super.add(index,comp);
-		}
-		public Object set(int index,Object child){
-			UIComponent comp = (UIComponent)child;
-			comp.setParent(pContainer);
-			return super.set(index,child);
-		}
-		public void setParent(UIComponent parent){
-			pContainer=parent;
-		}
-		public UIComponent getParent(){
-			return pContainer;
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
 	public boolean isContainer() {
 		return true;
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.goneThroughMain = ((Boolean) values[1]).booleanValue();
+		this._locked = ((Boolean) values[2]).booleanValue();
+		this._label = (String) values[3];
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[4];
+		values[0] = super.saveState(context);
+		values[1] = Boolean.valueOf(this.goneThroughMain);
+		values[2] = Boolean.valueOf(this._locked);
+		values[3] = _label;
+		return values;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.106 2004/11/01 21:24:15 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.107 2004/11/14 23:21:37 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,27 +64,47 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/01 21:24:15 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.106 $
+ * @version $Revision: 1.107 $
  */
 public class PresentationObject 
 //implements Cloneable{
 extends UIComponentBase 
-implements Cloneable, PresentationObjectType
-
-{//,UIComponent{
+implements Cloneable, PresentationObjectType{//,UIComponent{
 	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
+	
+	//Static variables
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	public final static String WIDTH = "width";
 	public final static String HEIGHT = "height";
 	public final static String HORIZONTAL_ALIGNMENT = "align";
 	protected static final String slash = "/";
-	private HttpServletRequest _request;
-	private HttpServletResponse _response;
-	private PrintWriter out;
-	private String markupLanguage;
+	private static String emptyString = "";
+	public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
+	public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
+	public static final String TARGET_OBJ_INS = "tois";
+	private static long InstanceUniqueID;
+	// constant for compoundId
+	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
+	// constant for compoundId
+	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
+	//This is a temporary solution should be removed when JSF implementation is done:
+	public static boolean USE_JSF_RENDERING=false;
+	
+	//temporary legacy variables:
+	private transient HttpServletRequest _request;
+	private transient HttpServletResponse _response;
+	private transient PrintWriter out;
+	private transient String markupLanguage;
+	private transient IWApplicationContext _iwac;
+	private transient IWUserContext _iwuc;
+	private transient IWContext eventIWContext = null;
+	private transient PresentationObject _templateObject =null;
+	private transient boolean goneThroughRenderPhase=false;
+	
+	//state hold variables:
 	public Map attributes;
 	private String name;
 	//protected UIComponent parentObject;
@@ -93,50 +113,35 @@ implements Cloneable, PresentationObjectType
 	protected boolean hasBeenAdded = false;
 	protected String treeID;
 	private boolean goneThroughMain = false;
-	private int ic_object_instance_id;
-	private int ic_object_id;
-	private static String emptyString = "";
-	public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
+	private int ic_object_instance_id=-1;
+	private int ic_object_id=-1;
 	/**
 	 * @deprecated Do not use this function
 	 */
 	public EventListenerList listenerList = null;
 	public EventListenerList _listenerList = null;
 	private Hashtable eventAttributes = null;
-	private static long InstanceUniqueID;
 	private String UniqueInstanceName;
 	private boolean listenerAdded = false;
 	public String eventLocationString = "";
-	private IWContext eventIWContext = null;
-	public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
-	//public static final PresentationObject NULL_CLONE_OBJECT = new
-	// com.idega.presentation.text.Text("NULL_OBJECT",true,false,false);
 	protected boolean initializedInMain = false;
-	private IWApplicationContext _iwac;
-	private IWUserContext _iwuc;
-	public static final String TARGET_OBJ_INS = "tois";
 	private boolean _useBuilderObjectControl = true;
 	private boolean _belongsToParent = false;
 	private boolean _changeInstanceIDOnInheritance = false;
 	private boolean _allowPagePermissionInheritance = true;
 	private IWLocation _location = new IWPresentationLocation();
 	private GenericState defaultState = null;
-	// constant for compoundId
-	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
-	// constant for compoundId
-	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
 	// artificial prefix compound_id
 	private String artificialCompoundId = null;
 	// former compound id (necessary to watch changes of the compoundId)
 	private String formerCompoundId = null;
-	
 	private TextStyler _styler;
-	private boolean goneThroughRenderPhase=false;
 	private String _objTemplateID = null;
-	private PresentationObject _templateObject =null;
+	
+	//JSF variables duplicated and overridden because of cloning:
+	protected Map facetMap;
+	protected List childrenList;
 
-	//This is a temporary solution should be removed when JSF implementation is done:
-	public static boolean USE_JSF_RENDERING=false;
 
 	/**
 	 * Default constructor.
@@ -270,26 +275,29 @@ implements Cloneable, PresentationObjectType
 	}
 	protected void setMarkupAttributes(Map attributes)
 	{
-		this.attributes = attributes;
+		//this.attributes = attributes;
+		getMarkupAttributes().putAll(attributes);
 	}
 	public void setMarkupAttribute(String attributeName, String attributeValue)
 	{
-		if (this.attributes == null)
-		{
-			this.attributes = new Hashtable();
-		}
+		//if (this.attributes == null)
+		//{
+		//	this.attributes = new Hashtable();
+		//}
 		if(attributeName!=null && attributeValue!=null){
-			this.attributes.put((Object) attributeName, (Object) attributeValue);
+			//this.attributes.put((Object) attributeName, (Object) attributeValue);
+			getMarkupAttributes().put(attributeName,attributeValue);
 		}
 	}
 	public void removeMarkupAttribute(String attributeName)
 	{
 		if (attributeName != null)
 		{
-			if (this.attributes != null)
-			{
-				this.attributes.remove(attributeName);
-			}
+			//if (this.attributes != null)
+			//{
+			//	this.attributes.remove(attributeName);
+			//}
+			getMarkupAttributes().remove(attributeName);
 		}
 	}
 	public void setMarkupAttribute(String attributeName, boolean attributeValue)
@@ -388,11 +396,12 @@ implements Cloneable, PresentationObjectType
 	 */
 	public void addMarkupAttributes(Map attributeMap)
 	{
-		if (this.attributes == null)
-		{
-			this.attributes = new Hashtable();
-		}
-		attributes.putAll(attributeMap);
+		//if (this.attributes == null)
+		//{
+		//	this.attributes = new Hashtable();
+		//}
+		//attributes.putAll(attributeMap);
+		getMarkupAttributes().putAll(attributeMap);
 	}
 	/**
 	 *  
@@ -417,14 +426,15 @@ implements Cloneable, PresentationObjectType
 	}
 	public String getMarkupAttribute(String attributeName)
 	{
-		if (this.attributes != null)
+		/*if (this.attributes != null)
 		{
 			return (String) this.attributes.get((Object) attributeName);
 		}
 		else
 		{
 			return null;
-		}
+		}*/
+		return (String)getMarkupAttributes().get(attributeName);
 	}
 	protected static String getAttribute(String attributeName, Map map)
 	{
@@ -450,6 +460,9 @@ implements Cloneable, PresentationObjectType
 	}
 	public Map getMarkupAttributes()
 	{
+		if(this.attributes==null){
+			attributes = new Hashtable();
+		}
 		return this.attributes;
 	}
 	protected static String getAttributesString(Map map)
@@ -495,7 +508,8 @@ implements Cloneable, PresentationObjectType
 		 * 
 		 * return returnString.toString();
 		 */
-		return getAttributesString(this.attributes);
+		//return getAttributesString(this.attributes);
+		return getAttributesString(getMarkupAttributes());
 	}
 
 	/**
@@ -803,21 +817,7 @@ implements Cloneable, PresentationObjectType
 	public void main(IWContext iwc) throws Exception
 	{
 	}
-	/**
-	 * This method is the bridge between old idegaWeb and new JSF support and 
-	 * calls the main(IWContext) method and necessary initializing.
-	 * 
-	 * This funcion is invoked on each request by the user (before print(iwc) )
-	 * on a PresentationObject Instance.
-	 */
-	public void facesMain(IWContext iwc) throws Exception
-	{
-		//if(!this.goneThroughMain){
-			this.initializeInMain(iwc);
-			main(iwc);
-			goneThroughMain=true;
-		//}
-	}
+
 	
 	protected void prepareClone(PresentationObject newObjToCreate)
 	{
@@ -880,10 +880,44 @@ implements Cloneable, PresentationObjectType
 			//obj =
 			// (PresentationObject)Class.forName(this.getClassName()).newInstance();
 			obj = (PresentationObject) super.clone();
-			if (this.attributes != null)
+			Map markupAttributes = getMarkupAttributes();
+			if (markupAttributes != null)
 			{
-				obj.setMarkupAttributes((Map) ((Hashtable) this.attributes).clone());
+				if(markupAttributes instanceof Hashtable){
+					obj.setMarkupAttributes((Map) ((Hashtable) markupAttributes).clone());
+				}
+				else{
+					for (Iterator iter = markupAttributes.keySet().iterator(); iter.hasNext();) {
+						Object key = iter.next();
+						Object value = markupAttributes.get(key);
+						obj.getAttributes().put(key,value);
+					}
+				}
 			}
+			//Cloning the JSF Facets:
+			//First clone the facet Map:
+			if(this.facetMap!=null){
+				obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+				((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+				
+				//Iterate over the children to clone each child:
+				for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
+					String key = (String) iter.next();
+					UIComponent component = getFacet(key);
+					if(component instanceof PresentationObject){
+						UIComponent newObject = (UIComponent)((PresentationObject)component).clone();
+						obj.getFacets().put(key,newObject);
+					}
+				}
+			}
+			
+			//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
+			
+			
+			//TODO: Resolve this:
+			//Copying the attributes probably doesn't work like this:
+			obj.getAttributes().putAll(this.getAttributes());
+			
 			obj.setName(this.getName());
 			if(this.getParent()!=null){
 				obj.setParent(this.getParent());
@@ -1966,16 +2000,70 @@ implements Cloneable, PresentationObjectType
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
-	public void restoreState(FacesContext fc, Object arg1) {
-		super.restoreState(fc, arg1);
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.attributes=(Map)values[1];
+		this.name=(String)values[2];
+		this.doPrint=((Boolean)values[3]).booleanValue();
+		this.errorMessage=(String)values[4];
+		this.hasBeenAdded=((Boolean)values[5]).booleanValue();
+		this.treeID=(String)values[6];
+		this.goneThroughMain=((Boolean)values[7]).booleanValue();
+		this.ic_object_instance_id=((Integer)values[8]).intValue();
+		this.ic_object_id=((Integer)values[9]).intValue();
+		this.listenerList=(EventListenerList)values[10];
+		this._listenerList=(EventListenerList)values[11];
+		this.eventAttributes=(Hashtable)values[12];
+		this.UniqueInstanceName=(String)values[13];
+		this.listenerAdded=((Boolean)values[14]).booleanValue();
+		this.eventLocationString=(String)values[15];
+		this.initializedInMain=((Boolean)values[16]).booleanValue();
+		this._useBuilderObjectControl=((Boolean)values[17]).booleanValue();
+		this._belongsToParent=((Boolean)values[18]).booleanValue();
+		this._changeInstanceIDOnInheritance=((Boolean)values[19]).booleanValue();
+		this._allowPagePermissionInheritance=((Boolean)values[20]).booleanValue();
+		this._location=(IWLocation)values[21];
+		this.defaultState=(GenericState)values[22];
+		this.artificialCompoundId=(String)values[23];
+		this.formerCompoundId=(String)values[24];
+		this._styler=(TextStyler)values[25];
+		this._objTemplateID=(String)values[26];
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
-	public Object saveState(FacesContext arg0) {
-		// TODO Auto-generated method stub
-		return super.saveState(arg0);
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[27];
+		values[0]=super.saveState(context);
+		values[1]=this.attributes;
+		values[2]=this.name;
+		values[3]=Boolean.valueOf(this.doPrint);
+		values[4]=this.errorMessage;
+		values[5]=Boolean.valueOf(this.hasBeenAdded);
+		values[6]=this.treeID;
+		values[7]=Boolean.valueOf(this.goneThroughMain);
+		values[8]=new Integer(this.ic_object_instance_id);
+		values[9]=new Integer(this.ic_object_id);
+		values[10]=this.listenerList;
+		values[11]=this._listenerList;
+		values[12]=this.eventAttributes;
+		values[13]=this.UniqueInstanceName;
+		values[14]=Boolean.valueOf(this.listenerAdded);
+		values[15]=this.eventLocationString;
+		values[16]=Boolean.valueOf(this.initializedInMain);
+		values[17]=Boolean.valueOf(this._useBuilderObjectControl);
+		values[18]=Boolean.valueOf(this._belongsToParent);
+		values[19]=Boolean.valueOf(this._changeInstanceIDOnInheritance);
+		values[20]=Boolean.valueOf(this._allowPagePermissionInheritance);
+		values[21]=this._location;
+		values[22]=this.defaultState;
+		values[23]=this.artificialCompoundId;
+		values[24]=this.formerCompoundId;
+		values[25]=this._styler;
+		values[26]=this._objTemplateID;
+		return values;
 	}
 
 	/* (non-Javadoc)
@@ -2121,10 +2209,63 @@ implements Cloneable, PresentationObjectType
 	}
 	
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getFacet(java.lang.String)
+	 */
+	public UIComponent getFacet(String name) {
+		return facetMap == null ? null : (UIComponent)facetMap.get(name);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getFacets()
+	 */
+	public Map getFacets() {
+		if(this.facetMap==null){
+			facetMap = new PresentationObjectComponentFacetMap(this);
+		}
+		return facetMap;
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
+	 */
+	public Iterator getFacetsAndChildren() {
+		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
+		return new FacetsAndChildrenIterator(getFacets(),getChildren());
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getChildCount()
+	 */
+	public int getChildCount() {
+		 return childrenList == null ? 0 : childrenList.size();
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getChildren()
+	 */
+	public List getChildren() {
+		if (childrenList == null)
+		{
+			childrenList = new PresentationObjectComponentList(this);
+		}
+		return childrenList;
+	}
+	
+	/**
+	 * This method has a bug in the Builder, the attributes do not clone correctly.
+	 */
+	public Map getAttributes(){
+		//TODO: TL override this method because of the clone issue.
+		//		There is a problem with that because of the Myfaces implementation of restoreSate() and saveState() in UIComponentBase
+		return super.getAttributes();
+	}
+	
+	
 	/*
 	 * END JSF METHODS
-	 */
-
+	 *
 
 	/**
 	 * Default idegaWeb JSF id generation mechanism
