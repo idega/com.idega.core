@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.46 2004/03/25 14:22:23 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.47 2004/03/29 11:51:54 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -762,9 +762,9 @@ public class DateInput extends InterfaceObject implements InputHandler{
 	}
 
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
-		
+		Locale locale = iwc.getCurrentLocale();
 		if (value != null) {
-			return value.toString();
+			return TextSoap.findAndCut((new IWTimestamp((java.sql.Date)value)).getLocaleDate(locale),"GMT");
 		}
 		else {
 			return null;
