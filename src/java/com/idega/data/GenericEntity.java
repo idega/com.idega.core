@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.52 2001/10/08 10:29:04 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.53 2001/10/10 12:08:16 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1727,31 +1727,75 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 	}
 
-
 	/**
-	**Default insert behavior with a tree relationship
-	**/
-	public void addTo(GenericEntity entityToAddTo,String entityToAddToColumName)throws SQLException{
-
+   * Default move behavior with a tree relationship
+	 */
+	public void moveChildrenToCurrent(GenericEntity entityFrom, String entityFromColumName) throws SQLException {
 		Connection conn= null;
 		Statement Stmt= null;
-		try{
+		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-                        String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddToColumName+") values("+getID()+","+entityToAddTo.getID()+")";
-                        //System.out.println("statement: "+sql);
+      String sql = "update "  + getNameOfMiddleTable(entityFrom,this) +
+                   " set " + getIDColumnName() + " = " + getID() +
+                   " where " + getIDColumnName() + " = " + entityFrom.getID();
 			int i = Stmt.executeUpdate(sql);
 		}
-		finally{
-			if(Stmt != null){
+		finally {
+			if (Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
-
 	}
+
+
+	/**
+	 * Default insert behavior with a tree relationship
+	 */
+	public void addTo(GenericEntity entityToAddTo, String entityToAddToColumName) throws SQLException {
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+      String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddToColumName+") values("+getID()+","+entityToAddTo.getID()+")";
+			int i = Stmt.executeUpdate(sql);
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				freeConnection(getDatasource(),conn);
+			}
+		}
+	}
+
+	/**
+	 * Default delete behavior with a tree relationship
+	 */
+	public void removeFrom(GenericEntity entityToDelete, String entityToDeleteColumName) throws SQLException {
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = getConnection(getDatasource());
+			Stmt = conn.createStatement();
+      String sql = "delete from " + getNameOfMiddleTable(entityToDelete,this) + " where " + entityToDeleteColumName+" = " + entityToDelete.getID();
+			int i = Stmt.executeUpdate(sql);
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				freeConnection(getDatasource(),conn);
+			}
+		}
+	}
+
 
         /**
 	**Default insert behavior with a many-to-many relationship and EntityBulkUpdater

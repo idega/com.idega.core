@@ -133,14 +133,18 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
   }
 
 
-  public void addChild(TreeableEntity entity)throws java.sql.SQLException{
-    this.addTo(entity,"child_"+entity.getIDColumnName());
-  }
-/*
-  public void removeChild(TreeableEntity entity)throws java.sql.SQLException{
-    this.removeFrom(entity,"child_"+entity.getIDColumnName());
+  public void addChild(TreeableEntity entity) throws java.sql.SQLException {
+    addTo(entity,"child_"+entity.getIDColumnName());
   }
 
+  public void removeChild(TreeableEntity entity) throws java.sql.SQLException {
+    removeFrom(entity,"child_"+entity.getIDColumnName());
+  }
+
+  public void moveChildrenFrom(TreeableEntity entityFrom) throws java.sql.SQLException {
+    moveChildrenToCurrent(entityFrom,"child_"+entityFrom.getIDColumnName());
+  }
+/*
   public void deleteRecursive(){
    Iterator iter = (ImageEntity[]) image.getChildren();
     //brake childs from parent

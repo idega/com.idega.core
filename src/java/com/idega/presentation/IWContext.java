@@ -15,6 +15,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
+import com.idega.block.login.business.LoginBusiness;
+import com.idega.core.user.data.User;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -712,6 +714,13 @@ public void setCacheWriter(PrintWriter writer){
   this.cacheWriter=writer;
 }
 
+  public User getUser() {
+    return(LoginBusiness.getUser(this));
+  }
+
+  public int getUserId() {
+    return(getUser().getID());
+  }
 }
 
 
