@@ -265,6 +265,9 @@ public class PermissionCacher {
 		else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
 			identifier = ((Group) obj).getPrimaryKey().toString();
 		}
+		else if(permissionMapKey.equals(PERMISSION_MAP_ROLE)){
+			identifier = obj.toString();
+		}
 		else{
 			System.err.println("ACCESSCONTROL: type not supported");
 		
@@ -463,9 +466,12 @@ public class PermissionCacher {
       } else if(permissionMapKey.equals(PERMISSION_MAP_FILE)){
           permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_FILE_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
       }
-			else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
-				permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_GROUP_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
-			}
+		else if(permissionMapKey.equals(PERMISSION_MAP_GROUP)){
+			permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),AccessController.CATEGORY_STRING_GROUP_ID,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+		}
+		else if(permissionMapKey.equals(PERMISSION_MAP_ROLE)){
+			permissions = EntityFinder.findAllByColumn(com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(),identifier,com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),permissionKey);
+		}
     }
     //
 

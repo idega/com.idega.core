@@ -130,6 +130,9 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public Collection getAllRoles();
   public Collection getAllGroupsThatAreRoleMasters(IWUserContext iwuc);
   public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc);
+  public void removeGroupFromRoleMastersList(Group group, IWUserContext iwuc);
+  public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWUserContext iwuc);
+  public boolean removeRoleFromGroup(String roleKey, Group group, IWUserContext iwuc);
   public String getRoleIdentifier();
 
 /*

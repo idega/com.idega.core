@@ -2530,16 +2530,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 	
 	public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc) {
-		Collection permissions = new Vector(); //empty
+	
 		Collection groups = new Vector();
 		try {
 			
-			permissions = getPermissionHome().findAllPermissionsByTypeAndContextValue(RoleHelperObject.getStaticInstance().toString(),roleKey);
+			Collection permissions = getPermissionHome().findAllPermissionsByTypeAndContextValueAndPermissionString(RoleHelperObject.getStaticInstance().toString(),RoleHelperObject.getStaticInstance().toString(),roleKey);
 			if(permissions!=null && !permissions.isEmpty()){
 				Iterator permissionsIter = permissions.iterator();
 				while (permissionsIter.hasNext()) {
 					ICPermission perm = (ICPermission) permissionsIter.next();
-					groups.add(getGroupBusiness(iwuc).getGroupByGroupID(perm.getGroupID()));
+					if(perm.getPermissionValue()){
+						groups.add(getGroupBusiness(iwuc).getGroupByGroupID(perm.getGroupID()));
+					}
 				}
 			}
 			
@@ -2864,6 +2866,27 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		addRoleToGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwuc);
 	}
 	
+	public void removeGroupFromRoleMastersList(Group group, IWUserContext iwuc) {
+		removeRoleFromGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwuc);
+	}
+	
+
+	
+	public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWUserContext iwuc) {
+		try {
+			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), RoleHelperObject.getStaticInstance().toString(),roleKey,Boolean.FALSE);
+			return true;
+		}
+		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean removeRoleFromGroup(String roleKey, Group group, IWUserContext iwuc) {
+		return removeRoleFromGroup(roleKey, (Integer)group.getPrimaryKey(), iwuc);
+	}
+	
 	public String getRoleIdentifier(){
 		return RoleHelperObject.getStaticInstance().toString();
 	}
@@ -2887,7 +2910,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	public boolean addRoleToGroup(String roleKey, Integer groupId, IWUserContext iwuc) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), roleKey, RoleHelperObject.getStaticInstance().toString() , Boolean.TRUE);
+			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), RoleHelperObject.getStaticInstance().toString() ,roleKey, Boolean.TRUE);
 			return true;
 		}
 		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
