@@ -13,7 +13,6 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
@@ -270,8 +269,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
 
   public void lineUpButtons(){
-		IWContext iwc = IWContext.getInstance();
-		
     // assuming all buttons are enabled
     
     buttonTable = new Table(5,1);
