@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.13 2002/10/23 13:27:05 laddi Exp $
+ * $Id: DropdownMenu.java,v 1.14 2003/04/02 10:48:36 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -84,7 +84,7 @@ public class DropdownMenu extends GenericSelect {
 	}
 
 	public void setMenuElementDisplayString(String value, String displayString) {
-		this.setOptionName(value, displayString);
+		setOptionName(value, displayString);
 	}
 
 	/**	
@@ -123,5 +123,13 @@ public class DropdownMenu extends GenericSelect {
 	 **/
 	public String getSelectedElementValue() {
 		return getSelectedValue();
+	}
+	
+	public SelectOption getMenuElement(String elementValue) {
+		return getOption(elementValue);
+	}
+	
+	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue) {
+		getMenuElement(ElementValue).setAttribute(AttributeName, AttributeValue);
 	}
 }
