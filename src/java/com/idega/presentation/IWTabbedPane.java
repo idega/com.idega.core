@@ -183,6 +183,10 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
     }
 
 
+    public String getAttributeString()  {
+      return attributeString;
+    }
+  
 
     public void setAttributeString(String attributeString){
 
