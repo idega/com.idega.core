@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.12 2001/12/06 19:22:52 eiki Exp $
+ * $Id: PresentationObject.java,v 1.13 2001/12/12 11:30:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -66,10 +66,12 @@ public class PresentationObject extends Object implements Cloneable {
   private boolean listenerAdded = false;
   public String eventLocationString = "";
   private IWContext eventIWContext = null;
-  //public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
-  public static final PresentationObject NULL_CLONE_OBJECT = new com.idega.presentation.text.Text("NULL_OBJECT",true,false,false);
+
+  public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
+  //public static final PresentationObject NULL_CLONE_OBJECT = new com.idega.presentation.text.Text("NULL_OBJECT",true,false,false);
 
   protected boolean initializedInMain = false;
+
 
   private boolean _useBuilderObjectControl = true;
   private boolean _belongsToParent = false;
@@ -547,7 +549,7 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public synchronized Object _clone(IWContext iwc, boolean askForPermission){
-    if(askForPermission){
+    if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
         return this.clone(iwc,askForPermission);
       } else {
