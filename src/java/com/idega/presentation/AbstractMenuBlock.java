@@ -1,0 +1,109 @@
+/*
+ * $Id: AbstractMenuBlock.java,v 1.1 2002/02/14 15:54:42 aron Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
+package com.idega.presentation;
+
+
+import com.idega.presentation.BlockMenu;
+
+import com.idega.presentation.text.*;
+import com.idega.presentation.ui.*;
+import com.idega.presentation.Table;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.block.IWBlock;
+
+import java.util.List;
+import java.util.Vector;
+import java.util.Collection;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
+
+/**
+ * Title:
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <br><a href="mailto:aron@idega.is">Aron Birkir</a><br>
+ * @version 1.0
+ */
+
+public abstract class AbstractMenuBlock extends Block implements MenuBlock{
+
+  private static String prmClass = "mbl_clss";
+  private Class defaultClass = null;
+  private List objects = null;
+  private boolean showLinks = true;
+  private PresentationObject links = null;
+  private BlockMenu menu;
+
+   public void _main(IWContext iwc) throws Exception{
+
+    menu = new BlockMenu();
+    menu.setClassParameterName(getMenuClassParameterName());
+    addStandardObjects();
+    menu.addAll(objects);
+    menu.setDefaultBlock(getDefaultBlockClass());
+    links = menu.getLinkTable(iwc,"");
+    //menu.setShowLinks(showLinks);
+    add(menu);
+    super._main(iwc);
+  }
+
+  public abstract void addStandardObjects();
+  public abstract Class getDefaultBlockClass();
+
+  public void addBlockObject(IWBlock obj){
+    if(objects == null)
+      objects = new Vector();
+    objects.add(obj);
+  }
+
+  public void addBlockObjectAll(java.util.Collection coll){
+    if(objects == null)
+      objects = new Vector();
+    objects.addAll(coll);
+  }
+
+  public String getMenuClassParameterName(){
+    return prmClass;
+  }
+
+  public void setShowLinks(boolean show){
+    showLinks = show;
+  }
+
+  public PresentationObject getLinks(){
+    return links;
+  }
+
+  public synchronized Object clone() {
+    AbstractMenuBlock obj = null;
+    try {
+      obj = (AbstractMenuBlock)super.clone();
+      obj.objects  = objects;
+      obj.menu = menu;
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+    return obj;
+  }
+
+  public void addParameterToMaintain(Parameter prm){
+    menu.addParameterToMaintain(prm);
+  }
+
+  public Parameter getMenuLinkParameter(Class classToOpen){
+    return new Parameter(getMenuClassParameterName(),classToOpen.getName());
+  }
+
+}
