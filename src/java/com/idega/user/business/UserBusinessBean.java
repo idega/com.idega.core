@@ -2072,13 +2072,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   
   private boolean isMemberOfGroup(int parentGroupToTest, User user)  {
     // first check the primary group
-    Group group = user.getPrimaryGroup();
+    /* Eiki and jonas, commented out because we could not add users from old user system to the same group as
+     their former primary group. We need this method to return false because they don't have a record in 
+     ic_group_relation like they should.
+     Group group = user.getPrimaryGroup();
     if (group != null)  {
       int primaryGroupId = ((Integer) group.getPrimaryKey()).intValue();
       if (parentGroupToTest == primaryGroupId)  {
         return true;
       }
-    }
+    }*/
     // then check the group relations
     int userId = ((Integer) user.getPrimaryKey()).intValue();
     Collection coll;
