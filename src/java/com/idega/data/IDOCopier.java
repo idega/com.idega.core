@@ -159,7 +159,7 @@ public class IDOCopier {
 					}
 					updateNumberGeneratorValue(toInstance, highestID);	
 				}
-				this.addToCopiedEntityList(fromEntity);
+				this.addToCopiedEntityList(fromInstance);
 			}
 			else {
 				System.out.println(
@@ -241,7 +241,8 @@ public class IDOCopier {
 				Iterator classIter = referencedClasses.iterator();
 				while (classIter.hasNext()) {
 					Class classToCheck = (Class) classIter.next();
-					if (copiedEntites.contains(classToCheck) && areAllReferencedEntitiesCopied) {
+					IDOEntityCopyInfo cInfoToCheck = getIDOEntityCopyInfo(classToCheck);
+					if (copiedEntites.contains(cInfoToCheck) && areAllReferencedEntitiesCopied) {
 						//if(copiedEntityClasses.contains(classToCheck)&&areAllReferencedEntitiesCopied){
 						//areAllReferencedEntitiesCopied still kept true
 						areAllReferencedEntitiesCopied = true;
@@ -327,8 +328,13 @@ public class IDOCopier {
 	protected IDOEntityRelationshipCopyInfo getIDOEntityRelationshipCopyInfoInstance(){
 		return new IDOEntityRelationshipCopyInfo();	
 	}
-	
-	
+
+	protected IDOEntityCopyInfo getIDOEntityCopyInfo(Class entityClass){
+		IDOLegacyEntity entity = this.createEntityInstance(entityClass);
+		String tableName = entity.getTableName();
+		return getIDOEntityCopyInfo(entityClass,tableName);
+	}
+
 	protected IDOEntityCopyInfo getIDOEntityCopyInfo(Class entityClass, String tableName){
 		return new IDOEntityCopyInfo(entityClass,tableName);	
 	}
