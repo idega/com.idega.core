@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.awt.geom.AffineTransform;
 import java.awt.FontMetrics;
+import java.awt.BasicStroke;
 import java.util.Date;
 import java.util.Calendar;
 import java.text.DecimalFormat;
@@ -42,6 +43,7 @@ public class Button {
   public static void main(String[] args) {
     Button test = new Button();
     test.generate();
+    System.exit(0);
   }
 
   public void generate() {
@@ -56,22 +58,27 @@ public class Button {
    // FontMetrics fm = null;
 
     g = image.createGraphics();
+
+    g.setBackground(borderColor);
+    g.setStroke(new BasicStroke(0.5f));
     //g.setTransform(trans);
 
-    g.setColor(borderColor);
-    g.fillRect(0,0,width,height);
+    //g.setColor(borderColor);
+    //g.fillRect(0,0,width,height);
 
     g.setColor(lightSideColor);
-    g.fillRect(borderSize,borderSize,width-borderSize-1,height-doubleBorder-1);
+    g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-2);
 
     g.setColor(fillColor);
-    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder,height-doubleBorder);
+    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-3);
 
-    g.setColor(darkSideColor);
-    g.drawLine(borderSize,height-borderSize,width-borderSize,height-borderSize);
-    g.drawLine(width-borderSize,height-borderSize,width-borderSize,doubleBorder);
+        g.setColor(darkSideColor);
+    g.setStroke(new BasicStroke(1f));
+    g.drawLine(borderSize,height-doubleBorder-1,width-borderSize,height-borderSize);
+    g.drawLine(width-borderSize-1,height-borderSize,width-borderSize,doubleBorder);
 
-
+        g.setStroke(new BasicStroke(2f));
+g.drawLine(0,height,width,0);
 /*
     g.setColor(fontColor);
     g.drawString("test",5,height-5);*/
