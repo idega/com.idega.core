@@ -7,11 +7,13 @@ package com.idega.core.accesscontrol.data;
 import java.sql.*;
 import com.idega.data.*;
 import com.idega.core.user.data.User;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
 import java.util.List;
+import com.idega.util.EncryptionType;
 
-public class LoginTable extends GenericEntity{
+public class LoginTable extends GenericEntity implements EncryptionType{
 
-        public static String className = "com.idega.core.accesscontrol.data.LoginTable";
+        public static String className = LoginTable.class.getName();
 
 	public LoginTable(){
 		super();
@@ -44,23 +46,18 @@ public class LoginTable extends GenericEntity{
             adminUser.insert();
           }
 
-          login.setUserId(adminUser.getID());
-            login.setUserLogin(User.getAdminDefaultName());
-            login.setUserPassword("");
-            login.insert();
-
-          LoginInfo info = new LoginInfo();
-            info.setID(login.getID());
-            info.setAccountEnabled(true);
-            info.setAllowedToChange(true);
-            info.setChangeNextTime(false);
-            info.setPasswordExpires(false);
-            info.insert();
-
+          try {
+            LoginDBHandler.createLogin(adminUser.getID(), User.getAdminDefaultName(), "idega", Boolean.TRUE, null, -1, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, EncryptionType.MD5);
+          }
+          catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
+            throw new SQLException("Login Not created");
+          }
         }
 
         public static LoginTable getStaticInstance(){
-          return (LoginTable)LoginTable.getStaticInstance(className);
+          return (LoginTable)LoginTable.getStaticInstance(LoginTable.class);
         }
 
         public static String getUserLoginColumnName(){

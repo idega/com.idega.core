@@ -107,7 +107,7 @@ public class LoginDBHandler {
  }
 
 
-  protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
+  protected static int createLoginInfo(boolean update, int loginTableID ,Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
     List noLoginInfo = EntityFinder.findAllByColumn(LoginInfo.getStaticInstance(), LoginInfo.getLoginTableIdColumnName(), loginTableID);
 
     LoginInfo logInfo;
@@ -140,8 +140,8 @@ public class LoginDBHandler {
 
     logInfo.setDaysOfVality(daysOfVality);
 
-    if(passwNeverExpires != null){
-      logInfo.setPasswNeverExpires(passwNeverExpires);
+    if(passwordExpires != null){
+      logInfo.setPasswordExpires(passwordExpires);
     }
 
     if(userAllowedToChangePassw != null){
@@ -183,14 +183,14 @@ public class LoginDBHandler {
    * @deprecated
    */
   public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
-      createLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime,null);
+      createLogin( userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires.booleanValue() ? Boolean.FALSE : Boolean.TRUE, userAllowedToChangePassw, changeNextTime,null);
   }
 
-  public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
+  public static void createLogin( int userID, String userLogin, String password, Boolean accountEnabled, idegaTimestamp modified, int daysOfVality, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
 
       int loginTableID = createLogin( false, userID, userLogin, password);
       try {
-        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
+        createLoginInfo(false, loginTableID ,accountEnabled, modified, daysOfVality, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
       }
       catch (Exception e) {
         if ("LoginInfo creation failed. ".equals(e.getMessage())){

@@ -16,13 +16,15 @@ public class Address extends GenericEntity{
 
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
-		addAttribute("street", "Heimilisfang", true, true, "java.lang.String");
-		addAttribute("street_number", "Númer", true, true, "java.lang.String");
-		addAttribute("postal_code_id", "Póstnúmer", true, true, "java.lang.Integer");
-		addAttribute("country_id", "Land id", true, true, "java.lang.Integer");
+		addAttribute(getStreetColumnName(), "Heimilisfang", true, true, "java.lang.String",255);
+		addAttribute(getStreetNumberColumnName(), "Númer", true, true, "java.lang.String",20);
+		addAttribute(getCityColumnName(), "Staður", true, true, "java.lang.String",255);
+                addAttribute(getProvinceColumnName(), "Hérað", true, true, "java.lang.String",255);
+                addAttribute(getPOBoxColumnName(),"",true,true,"java.lang.String",20);
+                addAttribute(getPostalCodeIdColumnName(), "Póstnúmer", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.PostalCode");
+		addAttribute(getCountryIdColumnName(), "Land", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.Country");
+		addAttribute(getAddressTypeId(), "Tegund heimisfangs", true, true, "java.lang.Integer","one_to_one","com.idega.localisation.data.AddressType");
 
-		addAttribute("address_attribute", "Tegund heimisfangs", true, true, "java.lang.String");
-		addAttribute("address_value", "Auka uppl.", true, true, "java.lang.String");
 	}
 
 	public String getEntityName(){
@@ -37,31 +39,35 @@ public class Address extends GenericEntity{
         /* ColumnNames begin */
 
         public static String getStreetColumnName(){
-          return "street";
+          return "street_name";
         }
 
         public static String getStreetNumberColumnName(){
           return "street_number";
         }
 
-        public static String getProvinceColumnName(){
-          return "province";
-        }
-
         public static String getCityColumnName(){
           return "city";
         }
 
-        public static String getCountryIdColumnName(){
-          return "country_id";
-        }
-
-        public static String getPostalCodeIdColumnName(){
-          return "postal_code_id";
+        public static String getProvinceColumnName(){
+          return "province";
         }
 
         public static String getPOBoxColumnName(){
           return "p_o_box";
+        }
+
+        public static String getCountryIdColumnName(){
+          return "ic_country_id";
+        }
+
+        public static String getPostalCodeIdColumnName(){
+          return "ic_postal_code_id";
+        }
+
+        public static String getAddressTypeId(){
+          return "ic_address_type_id";
         }
 
         /* ColumnNames end */
@@ -69,14 +75,8 @@ public class Address extends GenericEntity{
 
 
         public String getName(){
-		return getStreet();
+		return getStreet() + " "+ getStreetNumber();
 	}
-
-
-	public void setEmail(String email) {
-          setColumn("email",email);
-	}
-
 
 	public String getStreet(){
           return (String) getColumnValue("street");
@@ -100,7 +100,10 @@ public class Address extends GenericEntity{
 	}
 
 
-	public int getZipcodeId(){
+
+
+
+	public int getPostalCodeId(){
           return getIntColumnValue("zipcode_id");
 	}
 
@@ -115,12 +118,12 @@ public class Address extends GenericEntity{
 */
 
 
-	public void setZipcodeId(Integer zipcode_id){
-		setColumn("zipcode_id",zipcode_id);
+	public void setPostalCodeId(Integer postalcode_id){
+		setColumn("zipcode_id",postalcode_id);
 	}
 
-	public void setZipcodeId(int zipcode_id){
-		setColumn("zipcode_id",zipcode_id);
+	public void setPostalCodeId(int postalcode_id){
+		setColumn("zipcode_id",postalcode_id);
 	}
 
 
@@ -131,13 +134,6 @@ public class Address extends GenericEntity{
 	public void setAddressType(String address_type){
 		setColumn("address_type",address_type);
 	}
-
-
-/*
-	public Country getCountry(){
-		return (Country) getColumnValue("country_id");
-	}
-*/
 
 	public int getCountryId(){
 		return getIntColumnValue("country_id");
@@ -150,19 +146,5 @@ public class Address extends GenericEntity{
 	public void setCountryId(int country_id){
 		setColumn("country_id",country_id);
 	}
-
-
-	//Many to many relations
-	public void setUser(User type){
-		setColumn("address_id",new Integer(type.getID()));
-	}
-
-	public User getUser()throws SQLException{
-		return new User(getIntColumnValue("user_id"));
-	}
-
-
-	//public void addTo(Union union,String MemberShip type){
-	//}
 
 }
