@@ -7,6 +7,7 @@ import com.idega.data.EntityFinder;
 import com.idega.util.idegaTimestamp;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -174,6 +175,24 @@ public class FolderBlockBusiness {
 
   public ICInformationCategory[] getAvailableCategories( int icObjectId, int workingFolderId ){
     return null;
+  }
+
+  public boolean copyCategoryAttachments(int instanceFrom, int instanceTo){
+    List infoCategories = this.getInstanceCategories(instanceFrom);
+    boolean toReturn = true;
+    if(infoCategories != null){
+      Iterator iter = infoCategories.iterator();
+      while (iter.hasNext()) {
+        ICInformationCategory item = (ICInformationCategory)iter.next();
+        try {
+          item.addTo(ICObjectInstance.class,instanceTo);
+        }
+        catch (SQLException ex) {
+          toReturn = false;
+        }
+      }
+    }
+    return toReturn;
   }
 
 }

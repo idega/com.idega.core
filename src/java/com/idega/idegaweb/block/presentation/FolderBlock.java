@@ -188,4 +188,8 @@ public class FolderBlock extends Block {
         return obj;
     }
 
+    public boolean copyBlock(int newInstanceID){
+      return FolderBlockBusiness.getInstance().copyCategoryAttachments(this.getICObjectInstanceID(),newInstanceID);
+    }
+
 }
