@@ -17,8 +17,8 @@ import com.idega.data.CacheableEntity;
 
 public class ICMimeType extends CacheableEntity {
 
-  public static String IC_MIME_TYPE_FOLDER = "ic_folder";
-  public static String IC_MIME_TYPE_XML = "text/xml";
+  public static String IC_MIME_TYPE_FOLDER = "application/vnd.iw-folder";
+  public static String IC_MIME_TYPE_XML = "text/xml";//for ibxml this should be application/vnd.iw-ibxml"
 
 
   public ICMimeType() {
@@ -81,27 +81,7 @@ public class ICMimeType extends CacheableEntity {
    return  getColumnNameMimeType();
   }
 
-  public void insertStartData() {
-    try {
-      ICMimeType type;
-// idegaweb specific types
-      type = new ICMimeType();
-      type.setMimeType(this.IC_MIME_TYPE_FOLDER);
-      type.setDescription("A Folder");
-      //type.setFileTypeId( );
-      type.insert();
-
-      type = new ICMimeType();
-      type.setMimeType(this.IC_MIME_TYPE_XML);
-      type.setDescription("A xml document such as .ibxml");
-      //type.setFileTypeId( );
-      type.insert();
-
-    }
-    catch (SQLException sql) {
-      sql.printStackTrace(System.err);
-    }
-  }
+//initial data is inserted in com.idega.block.media.business.MediaBundleStarter
 
 }
 
