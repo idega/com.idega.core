@@ -125,6 +125,7 @@ public class BuilderPageViewHandler extends CbpViewHandler {
 				}
 			}
 		} catch(Throwable t) {
+			t.printStackTrace();
 			//throw new SmileException("Descriptor Class for '" + viewId + "' threw an exception during initialize() !",t);
 			throw new RuntimeException("Descriptor Class for '" + viewId + "' threw an exception during initialize() !",t);
 		}
