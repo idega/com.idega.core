@@ -109,12 +109,20 @@ public class PageIncluder extends PresentationObject{
     return TextSoap.findAndInsertAfter(html,"ACTION=\"",iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+"=");
   }
 
-  protected String changeSrcAttributes(String html, String location) throws MalformedURLException{
-    URL url = new URL(location);
-    html = TextSoap.findAndInsertAfter(html,"background\"",url.getProtocol()+"://"+url.getHost()+"/");
-    html = TextSoap.findAndInsertAfter(html,"BACKGROUND\"",url.getProtocol()+"://"+url.getHost()+"/");
-    html = TextSoap.findAndInsertAfter(html,"src=\"",url.getProtocol()+"://"+url.getHost()+"/");
-    return TextSoap.findAndInsertAfter(html,"SRC=\"",url.getProtocol()+"://"+url.getHost()+"/");
+  protected String changeSrcAttributes(String html, String location){
+
+    try {
+      URL url = new URL(location);
+      html = TextSoap.findAndInsertAfter(html,"background=\"",url.getProtocol()+"://"+url.getHost()+"/");
+      html = TextSoap.findAndInsertAfter(html,"BACKGROUND=\"",url.getProtocol()+"://"+url.getHost()+"/");
+      html = TextSoap.findAndInsertAfter(html,"src=\"",url.getProtocol()+"://"+url.getHost()+"/");
+      html = TextSoap.findAndInsertAfter(html,"SRC=\"",url.getProtocol()+"://"+url.getHost()+"/");
+    }
+    catch (MalformedURLException ex) {
+      ex.printStackTrace();
+    }
+
+    return html;
   }
 
   protected String encodeQueryStrings(String html){
@@ -130,6 +138,7 @@ public class PageIncluder extends PresentationObject{
     html = TextSoap.findAndReplace(html,"#OUML;","&OUML;");
     html = TextSoap.findAndReplace(html,"#nbsp;","&nbsp;");
     html = TextSoap.findAndReplace(html,"#amp;","&amp;");
+    html = TextSoap.findAndReplace(html,"#quot;","&quot;");
 
 //islenskir broddstafir
     html = TextSoap.findAndReplace(html,"#aacute;","&aacute;");
