@@ -347,6 +347,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   }
 
   public void invalidateCache(IWMainApplication iwma){
+  debug("INVALIDATING : "+getDerivedCacheKey());
      if( getDerivedCacheKey()!=null ) iwma.getIWCacheManager().invalidateCache(getDerivedCacheKey());
   }
 
