@@ -305,8 +305,9 @@ implements IWUserContext, IWApplicationContext {
 		if (user_agent != null) {
 			user_agent = user_agent.toLowerCase();
 			for(int i=0; i<WML_USER_AGENTS.length; i++) {
-				if(WML_USER_AGENTS[i].indexOf(user_agent) > -1) {
+				if(user_agent.indexOf(WML_USER_AGENTS[i]) > -1) {
 					isWMLAgent = true;
+					System.out.println("[Language]: "+IWConstants.MARKUP_LANGUAGE_WML);
 					break;
 				}
 			}
