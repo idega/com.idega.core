@@ -221,7 +221,7 @@ public class FileUtil {
     return getLinesFromFile(f);
   }
 
-/** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
+/** Uses getLinesFromFile and returns them in a string with "\n" between them **/
   public static String getStringFromFile(String pathAndFile) throws IOException{
     StringBuffer buffer = new StringBuffer();
     Vector vector = getLinesFromFile(pathAndFile);
@@ -229,10 +229,13 @@ public class FileUtil {
       Iterator iter = vector.iterator();
       while (iter.hasNext()) {
         buffer.append((String) iter.next());
+        buffer.append('\n');
       }
     }
     return buffer.toString();
   }
+
+
 
 
 /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
