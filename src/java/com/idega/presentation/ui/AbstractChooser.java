@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.25 2004/10/14 16:16:37 eiki Exp $
+ * $Id: AbstractChooser.java,v 1.26 2005/02/01 15:45:43 sigtryggur Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -125,7 +125,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public void setName(String name) {
 		displayInputName = name;
 		if (chooserParameter.equals(VALUE_PARAMETER)) {
-			chooserParameter = name + "_chooser";
+			chooserParameter = name;// + "_chooser";
 		}
 	}
 
@@ -241,7 +241,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
 		if (_addTextInput) {
-			TextInput input = new TextInput(displayInputName);
+			TextInput input = new TextInput(displayInputName+"_chooser");
 			input.setDisabled(disabled);
 			if (_inputLength > 0)
 				input.setLength(_inputLength);
