@@ -191,7 +191,7 @@ Statement Stmt;
                 Stmt.close();
               }
               if (conn!= null){
-                conn.commit();
+               //conn.commit();
                 conn.setAutoCommit(true);
                 entity.freeConnection(dataSourceName,conn);
               }
