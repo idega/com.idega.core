@@ -28,7 +28,7 @@ import com.idega.util.reflect.MethodFinder;
 public class IBOLookup
 {
 	private static IBOLookup instance;
-	private static IBOLookup getInstance()
+	protected static IBOLookup getInstance()
 	{
 		if (instance == null)
 		{
@@ -51,10 +51,10 @@ public class IBOLookup
 	{
 		return BEAN_SUFFIX;
 	}
-	protected Map homes = new HashMap();
-	protected Map beanClasses = new HashMap();
-	protected Map interfaceClasses = new HashMap();
-	protected Map services;
+	private Map homes;
+	private Map beanClasses;
+	private Map interfaceClasses;
+	private Map services;
 	private Properties jndiProperties;
 	private Map createMethodsMap;
 	
@@ -252,7 +252,7 @@ public class IBOLookup
 		Class entityInterfaceClass = getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
 			
 		//EJBHome home = (EJBHome) homes.get(entityInterfaceClass);
-		Object home = homes.get(entityInterfaceClass);
+		Object home = getHomesMap().get(entityInterfaceClass);
 		
 		if (home == null)
 		{
@@ -267,7 +267,7 @@ public class IBOLookup
 					Class factoryClass = getFactoryClassFor(entityInterfaceClass);
 					home = factoryClass.newInstance();
 				}
-				homes.put(entityInterfaceClass, home);
+				getHomesMap().put(entityInterfaceClass, home);
 			}
 			catch (Exception e)
 			{
@@ -297,7 +297,7 @@ public class IBOLookup
 	{
 		try
 		{
-			Class beanClass = (Class) beanClasses.get(entityInterfaceClass);
+			Class beanClass = (Class) getBeanClassesMap().get(entityInterfaceClass);
 			if (beanClass == null)
 			{
 				if (entityInterfaceClass.isInterface())
@@ -306,8 +306,8 @@ public class IBOLookup
 					String beanClassName = className + getBeanSuffix();
 					beanClass = Class.forName(beanClassName);
 						
-					beanClasses.put(entityInterfaceClass, beanClass);
-					interfaceClasses.put(beanClass, entityInterfaceClass);
+					getBeanClassesMap().put(entityInterfaceClass, beanClass);
+					getInterfaceClassesMap().put(beanClass, entityInterfaceClass);
 					
 				}
 				else
@@ -336,7 +336,7 @@ public class IBOLookup
 		}
 		else
 		{
-			Class interfaceClass = (Class) interfaceClasses.get(entityBeanOrInterfaceClass);
+			Class interfaceClass = (Class) getInterfaceClassesMap().get(entityBeanOrInterfaceClass);
 			try
 			{
 				if (interfaceClass == null)
@@ -348,8 +348,8 @@ public class IBOLookup
 						String interfaceClassName = className.substring(0, endIndex);
 						interfaceClass = Class.forName(interfaceClassName);
 						
-						beanClasses.put(interfaceClass, entityBeanOrInterfaceClass);
-						interfaceClasses.put(entityBeanOrInterfaceClass, interfaceClass);
+						getBeanClassesMap().put(interfaceClass, entityBeanOrInterfaceClass);
+						getInterfaceClassesMap().put(entityBeanOrInterfaceClass, interfaceClass);
 					}
 					else
 					{
@@ -385,9 +385,9 @@ public class IBOLookup
 	 **/
 	public static synchronized void clearAllCache()
 	{
-		getInstance().homes.clear();
-		getInstance().beanClasses.clear();
-		getInstance().interfaceClasses.clear();
+		getInstance().getHomesMap().clear();
+		getInstance().getBeanClassesMap().clear();
+		getInstance().getInterfaceClassesMap().clear();
 	}
 	
 	protected Object getHomeThroughJNDI(Class beanInterfaceClass)throws RemoteException{
@@ -425,10 +425,29 @@ public class IBOLookup
   	return new InitialContext(jndiProperties);
   }
 
-
+  public Map getBeanClassesMap(){
+  	if(beanClasses==null){
+  		beanClasses = new HashMap();
+  	}
+  	return beanClasses;
+  }
+  
+  public Map getInterfaceClassesMap(){
+  	if(interfaceClasses==null){
+  		interfaceClasses= new HashMap();
+  	}
+  	return interfaceClasses;
+  }
+  
+  public Map getHomesMap(){
+  	if(homes==null){
+  		homes= new HashMap();
+  	}
+  	return homes;
+  }
 
   public static void registerImplementationForBean(Class interfaceClass, Class beanClass) {
-  	getInstance().beanClasses.put(interfaceClass,beanClass);
-	getInstance().interfaceClasses.put(beanClass,interfaceClass);
+  	getInstance().getBeanClassesMap().put(interfaceClass,beanClass);
+	getInstance().getInterfaceClassesMap().put(beanClass,interfaceClass);
   }
 }
