@@ -16,11 +16,11 @@ import java.sql.SQLException;
 
 public class MetaData extends GenericEntity {
 
-  public MetaData() {
+  protected MetaData() {
     super();
   }
 
-  public MetaData(int id) throws SQLException{
+  protected MetaData(int id) throws SQLException{
     super(id);
   }
 
@@ -48,6 +48,22 @@ public class MetaData extends GenericEntity {
 
   public String getValue(){
     return (String) getColumnValue("metadata_value");
+  }
+
+  public void setValue(String value){
+   setColumn("metadata_value",value);
+  }
+
+  public void setMetaDataValue(String value){
+    setValue(value);
+  }
+
+  public void setMetaDataName(String name){
+   setName(name);
+  }
+
+  public void setName(String name){
+   setColumn("metadata_name",name);
   }
 
 }
