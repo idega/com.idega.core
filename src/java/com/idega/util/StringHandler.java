@@ -34,7 +34,7 @@ public class StringHandler {
   /**
    * Concatenates two strings to after alphabetical comparison
    */
-   public static String concatAlphabetically(String string1,String string2){
+   public static String concatAlphabetically(String string1,String string2, String separator){
       String first;
       String second;
       int compare = string1.compareTo(string2);
@@ -46,8 +46,12 @@ public class StringHandler {
          second=string1;
          first=string2;
       }
-      return first+second;
+      return first+separator+second;
     }
+
+  public static String concatAlphabetically(String string1,String string2){
+    return concatAlphabetically(string1,string2, "");
+  }
 
     public static Iterator getSeparatorIterator(final String stringToCutDown, final String separator){
       return new Iterator(){
