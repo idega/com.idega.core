@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.9 2001/11/01 23:08:28 aron Exp $
+ * $Id: Page.java,v 1.10 2001/11/02 11:35:44 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,6 +47,7 @@ public class Page extends PresentationObjectContainer {
   private boolean _isPage = true;
   private boolean _isDraft = false;
   private boolean _isExtendingTemplate = false;
+  private String _templateId = null;
   private Hashtable _styleDefinitions;
 
   private static Page NULL_CLONE_PAGE = new Page();
@@ -545,11 +546,14 @@ public class Page extends PresentationObjectContainer {
         iwc.getSession().setAttribute("idega_special_reload","true");
       }
     }
-
-    /*if (_title != null) {
-      BuilderLogic instance = BuilderLogic.getInstance();
-      instance.updateName(_title,iwc);
-//      instance.updateTemplate(this._te);
+/*System.out.println("Checking to see if we are in the builder");
+    if (iwc.isParameterSet("view")) {
+System.out.println("Entering title update seq");
+      if (_title != null) {
+        BuilderLogic instance = BuilderLogic.getInstance();
+        instance.updateName(_title,iwc);
+//        instance.updateTemplate(this._te);
+      }
     }*/
 
   }
@@ -881,4 +885,11 @@ public class Page extends PresentationObjectContainer {
     this.setOnLoad(link.getWindowToOpenCallingScript(iwc));
   }
 
+  public void setTemplateId(String id) {
+    _templateId = id;
+  }
+
+  public String getTemplateId() {
+    return(_templateId);
+  }
 }
