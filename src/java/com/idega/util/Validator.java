@@ -4,7 +4,7 @@ package com.idega.util;
  * Description:	 A class to handle basic data validation.
  * Copyright:    Copyright (c) 2002
  * Company:      idega software.
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 public class Validator
@@ -26,7 +26,8 @@ public class Validator
 	
 	/**
 	 * Checks if the string intToParse is a valid int
-	 *
+	 * @param intToParse the String to check for if it is a valid string for the primitive type int
+	 * @return False the string is not convertable to int or the String intToParse is null. True otherwise
 	 */
 	public boolean isInt(String intToParse){
 		if(intToParse!=null){
@@ -42,7 +43,9 @@ public class Validator
 	}
 	
 	/**
-	 * Checks if the string longToParse is a valid long(integer)*
+	 * Checks if the string longToParse is a valid long(integer)
+	 * @param longToParse the String to check for if it is a valid string for the primitive type long
+	 * @return False the string is not convertable to long or the String longToParse is null. True otherwise
 	 */
 	public boolean isLong(String longToParse){
 		if(longToParse!=null){
@@ -60,7 +63,7 @@ public class Validator
 	/**
 	 * Checks if the string numberToParse is a valid whole number (with unlimited range)
 	 * @param numberToParse the String to check for if it is a number (sequence of integers)
-	 * @return False if any of the characters in the string is not an integer or the String isNumber is null. True otherwise
+	 * @return False if any of the characters in the string is not an integer or the String numberToParse is null. True otherwise
 	 */
 	public boolean isNumber(String numberToParse){
 		if(numberToParse!=null){
@@ -109,7 +112,8 @@ public class Validator
 	
 	/**
 	 * Checks if the string floatToParse is a valid float number
-	 *
+	 * @param floatToParse the String to check for if it is a valid string for the primitive type float
+	 * @return False the string is not convertable to float or the String floatToParse is null. True otherwise
 	 */
 	public boolean isFloat(String floatToParse){
 		if(floatToParse!=null){
@@ -125,6 +129,8 @@ public class Validator
 	}
 	/**
 	 * Checks if the string emailToParse is a valid email
+	 * @param emailToParse the String to check for if it is considered a valid email address. Checks if the email contains an "@" character
+	 * @return True if the string emailToParse is not null and contains the "@" symbol. False otherwise
 	 */
 	public boolean isEmail(String emailToParse){
 		if(emailToParse!=null){
