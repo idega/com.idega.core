@@ -1,6 +1,6 @@
 /*
 
- *  $Id: Page.java,v 1.49 2002/04/06 19:07:45 tryggvil Exp $
+ *  $Id: Page.java,v 1.50 2002/04/09 21:59:58 laddi Exp $
 
  *
 
@@ -515,6 +515,12 @@ public class Page extends PresentationObjectContainer {
     if (getStyleAttribute("table") == null) {
 
       setStyleDefinition("table",IWConstants.BODY_STYLE);
+
+    }
+
+    if (getStyleAttribute("form") == null) {
+
+      setStyleDefinition("form",IWConstants.FORM_STYLE);
 
     }
 

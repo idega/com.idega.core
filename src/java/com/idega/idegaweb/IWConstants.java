@@ -49,6 +49,7 @@ public class IWConstants{
   public static final String LINK_STYLE = "color:#000000;font-size:10pt;text-decoration:underline;";
 
   public static final String LINK_HOVER_STYLE = "color:#000000;font-size:10pt;text-decoration:underline;";
+  public static final String FORM_STYLE = "margin-top:0px;margin-bottom:0px";
 
 
 
