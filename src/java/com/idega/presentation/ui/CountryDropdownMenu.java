@@ -71,9 +71,6 @@ public class CountryDropdownMenu extends DropdownMenu {
 		catch (IDOLookupException e) {
 			e.printStackTrace();
 		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
