@@ -143,7 +143,7 @@ public void setFontClass(String styleClass){
 }
 
 public void setStyle(String style) {
-  setAttribute("class",style);
+  setStyleClass(style);
 }
 
 public void addToText(String s){
