@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.17 2002/06/12 18:28:22 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.18 2002/08/18 17:26:54 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -639,16 +639,16 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
     if(l != null){
       Iterator iter = l.iterator();
       while (iter.hasNext()) {
-	Object item = iter.next();
-	if(item instanceof PresentationObject){
-	  ((PresentationObject)item).setLocation(location,iwuc);
-	}
-	if(item instanceof StatefullPresentation){
-	  IWPresentationState state = ((StatefullPresentation)item).getPresentationState(iwuc);
-	  if(state != null){
-	    state.setLocation(location);
-	  }
-	}
+		Object item = iter.next();
+		if(item instanceof PresentationObject){
+		  ((PresentationObject)item).setLocation(location,iwuc);
+		}
+		if(item instanceof StatefullPresentation){
+		  IWPresentationState state = ((StatefullPresentation)item).getPresentationState(iwuc);
+		  if(state != null){
+			state.setLocation(location);
+		  }
+		}
       }
     }
   }
