@@ -300,6 +300,24 @@ implements IWUserContext, IWApplicationContext {
 		return theReturn;
 	}
 	
+	public boolean isParameterSetAsEmpty(String parameterName) {
+		if (parameterName == null)
+			return false;
+		boolean theReturn = false;
+		String value = getParameter(parameterName) ;
+		
+		if (value!= null && value.length() == 0) {
+			theReturn = true;
+		}
+		
+		value = getParameter(parameterName + ".x");
+		
+		if(  value != null && value.length() == 0) {
+			theReturn = true;
+		}
+		return theReturn;
+	}
+	
 	
 	public boolean isParameterSet(Parameter parameter) {
 		return isParameterSet( parameter.getName() );
