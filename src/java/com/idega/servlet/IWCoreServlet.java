@@ -26,8 +26,9 @@ import com.idega.util.database.ConnectionBroker;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public  class IWCoreServlet extends HttpServlet implements SingleThreadModel{
+//public  class IWCoreServlet extends HttpServlet implements SingleThreadModel{
 
+public  class IWCoreServlet extends HttpServlet{
 
 //protected Hashtable objects;
 //private ThreadContext threadcontext;
