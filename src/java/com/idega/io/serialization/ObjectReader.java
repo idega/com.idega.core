@@ -1,8 +1,6 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.rmi.RemoteException;
-
-import com.idega.builder.data.IBExportImportData;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
 import com.idega.io.UploadFile;
@@ -20,15 +18,12 @@ import com.idega.util.xml.XMLData;
  */
 public interface ObjectReader {
 	
-	public Object read(XMLData xmlData, IWContext iwc) throws RemoteException;
+	Object read(XMLData xmlData, IWContext iwc) throws RemoteException;
 	
-	public Object read(ICFile file, IWContext iwc) throws RemoteException;
+	Object read(ICFile file, IWContext iwc) throws RemoteException;
 	
-	public Object read(IBExportImportData metadata, IWContext iwc) throws RemoteException;
+	Object read(ICPage page, IWContext iwc) throws RemoteException;
 	
-	public Object read(ICPage page, IWContext iwc) throws RemoteException;
-	
-	public Object read(UploadFile file, IWContext iwc) throws RemoteException;
+	Object read(UploadFile file, IWContext iwc) throws RemoteException;
 
-	
 }

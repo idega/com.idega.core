@@ -1,4 +1,4 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.idega.builder.data.StorableHolder;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
@@ -133,7 +132,7 @@ public class FileObjectReader extends ReaderFromFile implements StorableProvider
     	value = value.substring(1);
     }
     path = StringHandler.concat(path,value);
-    // we just need a file wrapper that implements Storable
+    // we just need a file wrapper that implements IBStorable
     // be careful: UploadFile overides getName() therefore set the name explicitly
     int indexOfLastSeparator = path.lastIndexOf(separator);
     String fileName = (indexOfLastSeparator == -1) ? path : path.substring(++indexOfLastSeparator);
@@ -181,7 +180,7 @@ public class FileObjectReader extends ReaderFromFile implements StorableProvider
     }
 		FileUtil.createFolder(folderPath);
 		realPath.append(separator).append(fileName);
-   // we just need a file wrapper that implements Storable
+   // we just need a file wrapper that implements IBStorable
 		UploadFile file = new UploadFile(fileName,realPath.toString(),null,null,0);
 		((File) file).createNewFile();
 		StorableHolder holder = new StorableHolder();

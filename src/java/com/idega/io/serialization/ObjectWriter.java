@@ -1,9 +1,7 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.File;
 import java.rmi.RemoteException;
-
-import com.idega.builder.data.IBExportImportData;
 import com.idega.core.file.data.ICFile;
 import com.idega.presentation.IWContext;
 import com.idega.util.xml.XMLData;
@@ -48,7 +46,7 @@ import com.idega.util.xml.XMLData;
  * 	element.write(writer);
  * }
  * 
- * See also {@link com.idega.io.export.Storable Storable}
+ * See also {@link com.idega.io.serialization.Storable Storable}
  *  
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: idega Software</p>
@@ -63,8 +61,6 @@ public interface ObjectWriter {
 	public Object write(XMLData xmlData, IWContext iwc) throws RemoteException;
 	
 	public Object write(ICFile file, IWContext iwc) throws RemoteException;
-	
-	public Object write(IBExportImportData metadata, IWContext iwc) throws RemoteException;
 	
 	// add more write methods !!
 }

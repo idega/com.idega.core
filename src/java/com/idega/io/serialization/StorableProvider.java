@@ -1,8 +1,7 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.IOException;
 
-import com.idega.builder.data.StorableHolder;
 import com.idega.presentation.IWContext;
 
 /**

@@ -18,9 +18,9 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.io.export.ObjectReader;
-import com.idega.io.export.ObjectWriter;
-import com.idega.io.export.Storable;
+import com.idega.io.serialization.ObjectReader;
+import com.idega.io.serialization.ObjectWriter;
+import com.idega.io.serialization.Storable;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
@@ -107,8 +107,8 @@ public class XMLData implements Storable {
   }
  
   public void initialize(int fileId) throws IOException {
-    ICFile xmlFile = getXMLFile(fileId);
-    initialize(xmlFile);
+    ICFile tempXmlFile = getXMLFile(fileId);
+    initialize(tempXmlFile);
   }
   
   public String getName()  {
@@ -146,11 +146,11 @@ public class XMLData implements Storable {
   
   public ICFile store() throws IOException {
     // create or fetch existing ICFile
-    ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
-    xmlFile.setMimeType("text/xml");
-    xmlFile.setName(getName());
+    ICFile tempXmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    tempXmlFile.setMimeType("text/xml");
+    tempXmlFile.setName(getName());
     try {
-      xmlFile.store();
+      tempXmlFile.store();
     }
     catch (IDOStoreException ex)  {
       System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
@@ -158,10 +158,10 @@ public class XMLData implements Storable {
       throw new IOException("xml file could not be stored");
     }
     if (xmlFileId < 0) {
-      xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
+      xmlFileId = ((Integer)tempXmlFile.getPrimaryKey()).intValue();
       // the default name uses the id, therefore set again and store again
       if (name == null) {
-        xmlFile.setName(getName());
+        tempXmlFile.setName(getName());
       }
     }
 
@@ -227,10 +227,10 @@ public class XMLData implements Storable {
     // now we have an input stream of the auxiliary file
     
     // write to the ICFile object
-    xmlFile.setFileSize(size);
+    tempXmlFile.setFileSize(size);
     try {
-    	xmlFile.setFileValue(inputStream);
-    	xmlFile.store();
+    	tempXmlFile.setFileValue(inputStream);
+    	tempXmlFile.store();
     }
     finally {
     	close(inputStream);
@@ -247,15 +247,15 @@ public class XMLData implements Storable {
     // reading finished
     // delete file
     auxiliaryFile.delete();
-    return xmlFile;
+    return tempXmlFile;
   }
   
   
 
-  private void initialize(ICFile xmlFile) throws IOException {
-  	 name = xmlFile.getName();
-  	 setXmlFile(xmlFile);
-  	 InputStream inputStream = xmlFile.getFileValue();
+  private void initialize(ICFile aXmlFile) throws IOException {
+  	 name = aXmlFile.getName();
+  	 setXmlFile(aXmlFile);
+  	 InputStream inputStream = aXmlFile.getFileValue();
   	 initialize(inputStream);
   }
   	 
@@ -303,8 +303,8 @@ public class XMLData implements Storable {
   	}
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile xmlFile = home.findByPrimaryKey(new Integer(fileId));
-      return xmlFile;
+      ICFile tempXmlFile = home.findByPrimaryKey(new Integer(fileId));
+      return tempXmlFile;
     }
     // FinderException, RemoteException
     catch(Exception ex){
@@ -317,8 +317,8 @@ public class XMLData implements Storable {
   private ICFile getNewXMLFile()  {
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile xmlFile = home.create();
-      return xmlFile;
+      ICFile tempXmlFile = home.create();
+      return tempXmlFile;
     }
     // FinderException, RemoteException
     catch (Exception ex)  {
@@ -333,8 +333,8 @@ public class XMLData implements Storable {
 				input.close();
 			}
 		}
-		// do not hide an existing exception
 		catch (IOException io) {
+			// do not hide an existing exception
 		}
   }		
   
@@ -344,8 +344,8 @@ public class XMLData implements Storable {
   			output.close();
   		}
   	}
-  	// do not hide an existing exception
   	catch (IOException io) {
+		// do not hide an existing exception
   	}
   }
 

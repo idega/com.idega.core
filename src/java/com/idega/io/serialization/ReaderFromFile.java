@@ -1,4 +1,4 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +22,7 @@ public abstract class ReaderFromFile {
 	protected Storable storable = null;
 	
 	public ReaderFromFile() {
+		// default constructor
 	}
 
 	public ReaderFromFile(IWContext iwc) {
@@ -60,8 +61,8 @@ public abstract class ReaderFromFile {
 				input.close();
 			}
 		}
-		// do not hide an existing exception
 		catch (IOException io) {
+			// do not hide an existing exception
 		}
   }		
   
@@ -71,8 +72,8 @@ public abstract class ReaderFromFile {
   			output.close();
   		}
   	}
-  	// do not hide an existing exception
   	catch (IOException io) {
+		// do not hide an existing exception
   	}
   }
 

@@ -1,4 +1,4 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -3,7 +3,7 @@ package com.idega.io;
 import java.io.File;
 import java.rmi.RemoteException;
 
-import com.idega.io.export.*;
+import com.idega.io.serialization.*;
 import com.idega.presentation.IWContext;
 
 /**
@@ -83,14 +83,14 @@ public class UploadFile extends File implements Storable {
   }
 
 	/* (non-Javadoc)
-	 * @see com.idega.io.Storable#write(com.idega.io.ObjectWriter)
+	 * @see com.idega.io.IBStorable#write(com.idega.io.ObjectWriter)
 	 */
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
 		return writer.write(this, iwc);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.io.Storable#read(com.idega.io.ObjectReader)
+	 * @see com.idega.io.IBStorable#read(com.idega.io.IBObjectReader)
 	 */
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read(this, iwc);

@@ -1,4 +1,4 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.rmi.RemoteException;
 
@@ -8,7 +8,7 @@ import com.idega.presentation.IWContext;
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description:
- * 	See {@link com.idega.io.export.ObjectWriter Writer}
+ * 	See {@link com.idega.io.serialization.ObjectWriter Writer}
  * </p>
  * 
  * <p>Copyright: Copyright (c) 2003</p>

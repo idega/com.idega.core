@@ -1,4 +1,4 @@
-package com.idega.io.export;
+package com.idega.io.serialization;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,8 +113,8 @@ public abstract class WriterToFile {
 				input.close();
 			}
 		}
-		// do not hide an existing exception
 		catch (IOException io) {
+			// do not hide an existing exception
 		}
   }		
   
@@ -124,8 +124,8 @@ public abstract class WriterToFile {
   			output.close();
   		}
   	}
-  	// do not hide an existing exception
   	catch (IOException io) {
+		// do not hide an existing exception
   	}
   }
   
