@@ -9,7 +9,7 @@ package com.idega.core.version.util;
 import javax.ejb.EJBException;
 
 import com.idega.core.version.data.ICVersion;
-import com.idega.data.IDOCompositPrimaryKeyException;
+import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOQuery;
 
 /**
@@ -47,7 +47,7 @@ public class ICVersionQuery extends IDOQuery {
 		this.appendSelectAllFrom(middleTableName);
 		try {
 			this.appendWhereEquals((version).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(),version.getPrimaryKey());
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			throw new EJBException(e);
 		}
