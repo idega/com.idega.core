@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -1199,6 +1200,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public String getNodeName() {
 		return this.getName();
+	}
+	public String getNodeName(Locale locale) {
+		return this.getNodeName();
 	}
 	public int getNodeID() {
 		return ((Integer)this.getPrimaryKey()).intValue();

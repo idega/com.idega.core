@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import javax.ejb.EJBException;
@@ -884,6 +885,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	public String getNodeName() {
 		return this.getName();
+	}
+	public String getNodeName(Locale locale) {
+		return this.getNodeName();
 	}
 	public int getNodeID() {
 		return this.getID();
