@@ -1935,7 +1935,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     
 			Collection viewPermissions = AccessControl.getAllGroupViewPermissions(parentGroupsList);
 		 // permissions.removeAll(editPermissions); // avoid double entries
-			permissions.addAll(viewPermissions);
+		// ownerPermissions.addAll(viewPermissions); //Sigtryggur: this caused an error because both of the collection are now prefetched and are therefore IDOPrimaryKeyLists, not normal collections
+		Collection allPermissions = new ArrayList();
+		allPermissions.addAll(permissions);
+		allPermissions.addAll(viewPermissions);
 
 		Iterator iterator = permissions.iterator();
 		while (iterator.hasNext()) {
