@@ -12,7 +12,11 @@ import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
 /**
- * TestComponent1 //TODO: tryggvil Describe class
+ * This is a base component for JSF that adds IW utility methods.<br>
+ * This is supposed to be a convenient replacement for PresentationObject
+ * but doesn't have the some of the legacy burdens that PresentationObject has
+ * such as the old style idegaWeb event systems.
+ * 
  * Copyright (C) idega software 2004
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
@@ -28,6 +32,11 @@ public class IWBaseComponent extends UIComponentBase {
 
 	private String styleAttribute;
 
+	/**
+	 * This is an old idegaWeb style add method.
+	 * Does the same as getChildren().add(comp) in JSF>
+	 * @param comp
+	 */
 	public void add(UIComponent comp){
 		getChildren().add(comp);
 	}
