@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.135 2005/01/14 01:47:56 tryggvil Exp $
+ *  $Id: Page.java,v 1.136 2005/01/31 20:21:21 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1563,7 +1563,7 @@ public class Page extends PresentationObjectContainer {
 
 		boolean addIdegaAuthorAndCopyRight = false;
 		
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset="+characterEncoding+"\" "+(!markup.equals(HTML) ? "/" : "")+">\n<meta name=\"generator\" content=\"idegaWeb 1.3\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
+		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset="+characterEncoding+"\" "+(!markup.equals(HTML) ? "/" : "")+">\n<meta name=\"generator\" content=\"idegaWeb "+IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion()+"\" "+(!markup.equals(HTML) ? "/" : "")+">\n";
 
 		//If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
