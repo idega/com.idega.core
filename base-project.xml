@@ -7,11 +7,17 @@
         <logo>http://maven.idega.com/idega_onwhite_120.gif</logo>
     </organization>
     <inceptionYear>2000</inceptionYear>
+    <groupId>bundles</groupId>
+
+    <repository>
+        <connection>scm:cvs:ext:${maven.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}/.bundle</connection>
+        <developerConnection>scm:cvs:ext:${maven.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}/.bundle</developerConnection>
+    </repository>
 
   <url>http://maven.idega.com/</url>
   <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
   <siteAddress>maven.idega.com</siteAddress>
-  <siteDirectory>/var/www/webs/maven.idega.com/${project.groupId}/${project.artifactId}/</siteDirectory>
-  <distributionDirectory>/var/www/webs/maven.idega.com/${project.groupId}/${project.artifactId}/</distributionDirectory>
+  <siteDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
+  <distributionDirectory>/var/www/webs/maven.idega.com/${pom.groupId}/${pom.artifactId}/builds</distributionDirectory>
 
 </project>
