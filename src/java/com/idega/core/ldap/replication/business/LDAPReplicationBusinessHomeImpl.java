@@ -1,6 +1,6 @@
 /*
- * $Id: LDAPReplicationBusinessHomeImpl.java,v 1.2 2004/09/21 18:59:36 eiki Exp $
- * Created on Sep 17, 2004
+ * $Id: LDAPReplicationBusinessHomeImpl.java,v 1.3 2004/10/28 11:49:09 eiki Exp $
+ * Created on Oct 25, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHomeImpl;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/21 18:59:36 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/28 11:49:09 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LDAPReplicationBusinessHomeImpl extends IBOHomeImpl implements LDAPReplicationBusinessHome {
 
