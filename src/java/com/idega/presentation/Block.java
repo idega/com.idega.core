@@ -22,6 +22,8 @@ public class Block extends PresentationObjectContainer{
   private boolean cacheable=false;
   private long cacheInterval;
 
+  private boolean editPermission = false;
+
   private static final String concatter = "_";
   private static final String newline = "\n";
 
@@ -142,7 +144,13 @@ public class Block extends PresentationObjectContainer{
     IWCacheManager.getInstance(iwc.getApplication()).setObject(getCacheKey(iwc),buffer,cacheInterval);
   }
 
+  public boolean hasEditPermission(){
+    return editPermission;
+  }
+
   public void _main(IWContext iwc)throws Exception{
+    editPermission = iwc.hasEditPermission(this);
+
     if(this.isCacheable()){
       setCacheKey(iwc);
       if(isCacheValid(iwc)){
