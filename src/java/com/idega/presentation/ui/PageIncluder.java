@@ -355,7 +355,7 @@ public class PageIncluder extends PresentationObject implements Index{
   protected String encodeQueryStrings(String html){
     //laddi changed links in idegaweb to use amp; instead of a & 
     //so we need to fix that here!
-    html = TextSoap.findAndReplace(html,"amp;","&");
+    html = TextSoap.findAndReplace(html,"&amp;","&");
     
     //laddi again, only replacing single &, a javascript issue
     html = TextSoap.findAndReplace(html,"&","&",symbol);
@@ -380,7 +380,7 @@ public class PageIncluder extends PresentationObject implements Index{
     html = symbolReplace(html,"Uuml;");
 
     html = symbolReplace(html,"nbsp;");
-    html = symbolReplace(html,"amp;");
+    //html = symbolReplace(html,"amp;"); a muuu point see top of method
     html = symbolReplace(html,"quot;");
     html = symbolReplace(html,"middot");
     html = symbolReplace(html,"raquo;");
