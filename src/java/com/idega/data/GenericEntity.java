@@ -4002,6 +4002,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	*/
 	protected IDOQuery idoQuery() {
 		IDOQuery query = new IDOQuery();
+		query.setDataStore(DatastoreInterface.getInstance(this));
 		return query;
 	}
 
@@ -4009,7 +4010,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	*@return IDOQuery With a prefixed select statement from this entity record.
 	*/
 	protected IDOQuery idoQueryGetSelect() {
-		IDOQuery query = new IDOQuery();
+		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this.getEntityName());
 		return query;
 	}
@@ -4018,7 +4019,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @return IDOQuery With a prefixed select count statement from this entity record.
 	 */
 	protected IDOQuery idoQueryGetSelectCount() {
-		IDOQuery query = new IDOQuery();
+		IDOQuery query = idoQuery();
 		query.appendSelectCountFrom(this.getEntityName());
 		return query;
 	}
