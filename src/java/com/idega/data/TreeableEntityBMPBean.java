@@ -1,12 +1,14 @@
 package com.idega.data;
 
-import com.idega.core.business.ICTreeNodeLeafComparator;
-import com.idega.core.data.ICTreeNode;
-
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collections;
 import java.util.Locale;
+
+import javax.ejb.FinderException;
+
+import com.idega.core.business.ICTreeNodeLeafComparator;
+import com.idega.core.data.ICTreeNode;
 
 /**
  * Title:        idegaclasses
@@ -66,8 +68,15 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			String idColumnName = this.getIDColumnName();
 			String childIDColumnName = EntityControl.getTreeRelationShipChildColumnName(this);
 			StringBuffer buffer = new StringBuffer();
-			//buffer.append("select " + thisTable + ".* from " + thisTable + "," + treeTable + " where " + thisTable + "." + idColumnName + "=" + treeTable + "." + childIDColumnName + " and " + treeTable + "." + idColumnName + "='" + this.getPrimaryKey().toString() + "'");
-			buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString()).append("");
+			
+			if(this.getPrimaryKey() instanceof Integer){
+				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString());	
+			}
+			else{//add the ' for strings, dates etc.
+				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(this.getPrimaryKey().toString()).append("'");
+			}
+			
+			
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
@@ -116,7 +125,13 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public int getChildCount() {
 		String treeTableName = EntityControl.getTreeRelationShipTableName(this);
-		return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "=" + this.getPrimaryKey().toString() + "");
+		
+		if(this.getPrimaryKey() instanceof Integer){
+			return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "=" + this.getPrimaryKey().toString() + "");
+		}
+		else{//string etc
+			return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "='" + this.getPrimaryKey().toString() + "'");
+		}
 	}
 
 	/**
@@ -127,11 +142,23 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	}
 
 	/**
+	 * DOES NOT WORK FOR STRING PRIMARY KEYS YET
 	 *  Returns the parent TreeNode of the receiver. Return null if none
 	 */
 	public ICTreeNode getParentNode() {
+		
+		//TODO MAKE THIS WORK FOR STRING PRIMARYKEYS ALSO!
+		String sql = null;
+		
+		if(this.getPrimaryKey() instanceof Integer){
+			 sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "=" + this.getPrimaryKey();
+		}
+		else{
+			sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey()+"'";
+		}
+		
 		try {
-			int parent_id = EntityControl.returnSingleSQLQuery(this, "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "=" + this.getPrimaryKey().toString() + "");
+			int parent_id = EntityControl.returnSingleSQLQuery(this, sql);
 			if (parent_id != -1) {
 				GenericEntity entity = (GenericEntity)this.getClass().newInstance();
 				entity.findByPrimaryKey(parent_id);
@@ -144,6 +171,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			e.printStackTrace(System.err);
 			return null;
 		}
+		
 	}
 
 	public TreeableEntity getParentEntity() {
