@@ -1,22 +1,33 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
-
+ * $Id: IFrame.java,v 1.17 2005/03/08 18:42:29 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
 import java.io.IOException;
-
+import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.presentation.IWContext;
 
+
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * Component to render out an "iframe" or Inline Frame element.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 18:42:29 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.17 $
+ */
 public class IFrame extends InterfaceObject {
 
+	//constants:
 	public static final String ALIGN_TOP = "top";
 	public static final String ALIGN_MIDDLE = "middle";
 	public static final String ALIGN_BOTTOM = "bottom";
@@ -28,11 +39,30 @@ public class IFrame extends InterfaceObject {
 	public static final String SCROLLING_AUTO = "auto";
 	public static final int FRAMEBORDER_ON = 1;
 	public static final int FRAMEBORDER_OFF = 0;
+	//instance variables:
 	private boolean transparent = false;
 	private int ibPageId = 0;
 	private boolean addLocaleID = false;
 	private Class classToInstanciate;
 
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[5];
+		values[0] = super.saveState(ctx);
+		values[1] = Boolean.valueOf(transparent);
+		values[2] = new Integer(ibPageId);
+		values[3] = Boolean.valueOf(addLocaleID);
+		values[4] = classToInstanciate;
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		transparent = ((Boolean)values[1]).booleanValue();
+		ibPageId = ((Integer)values[2]).intValue();
+		addLocaleID = ((Boolean)values[3]).booleanValue();
+		classToInstanciate = (Class)values[4];
+	}
+	
 	public IFrame() {
 		this("untitled");
 	}
@@ -63,6 +93,7 @@ public class IFrame extends InterfaceObject {
 		super();
 		setName(name);
 		setSrc(URL);
+		setTransient(false);
 	}
 
 	public IFrame(String name, int width, int height) {
