@@ -1214,9 +1214,9 @@ public class EntityFinder{
 
     buffer.append(fromEntity.getID());
 
-    buffer.append(" order by ");
+    //buffer.append(" order by ");
 
-    buffer.append(fromEntity.getIDColumnName());
+    //buffer.append(fromEntity.getIDColumnName());
 
     String SQLString=buffer.toString();
 
