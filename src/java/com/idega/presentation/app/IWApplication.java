@@ -7,6 +7,7 @@ import java.util.List;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.data.EntityFinder;
+import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -98,45 +99,58 @@ public class IWApplication extends FrameSet
 		 * @todo get the right Image
 		
 		 */
-		Image iconImage = null;
-		IWBundle bundle = null;
-		IWResourceBundle iwrb = null;
-		if (obj == null)
-		{
-			bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
-			iconImage = bundle.getImage("IWApplicationIcon.gif");
-		}
-		else
-		{
-			bundle = obj.getBundle(iwc.getIWMainApplication());
-			if (bundle == null)
+		try {
+			Image iconImage = null;
+			IWBundle bundle = null;
+			IWResourceBundle iwrb = null;
+			if (obj == null)
 			{
 				bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 				iconImage = bundle.getImage("IWApplicationIcon.gif");
 			}
 			else
 			{
-				iconImage = bundle.getImage("IWApplicationIcon.gif");
+				bundle = obj.getBundle(iwc.getIWMainApplication());
+				if (bundle == null)
+				{
+					bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+					iconImage = bundle.getImage("IWApplicationIcon.gif");
+				}
+				else
+				{
+					iconImage = bundle.getImage("IWApplicationIcon.gif");
+				}
+				
 			}
-			
+			iwrb = bundle.getResourceBundle(iwc);
+			if(iwrb!=null){
+			    name = iwrb.getLocalizedString("iwapplication_name."+name,name);
+			}
+			Link icon_image = new Link(iconImage);
+			icon_image.setWindowToOpen(iwApplicationClass);
+			Text icon_text = new Text(name);
+			icon_text.setFontSize(1);
+			icon_text.setFontColor("black");
+			Link icon_link = new Link(name);
+			icon_link.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_LARGE);
+			icon_link.setWindowToOpen(iwApplicationClass);
+			icon.setAlignment(1, 1, "center");
+			icon.add(icon_image, 1, 1);
+			icon.setAlignment(1, 2, "center");
+			icon.add(icon_link, 1, 2);
+			return icon;
 		}
-		iwrb = bundle.getResourceBundle(iwc);
-		if(iwrb!=null){
-		    name = iwrb.getLocalizedString("iwapplication_name."+name,name);
+		catch (IWBundleDoesNotExist e) {
+			e.printStackTrace();
+			Link missingBundle = new Link(name+"<br> The "+obj.getBundleIdentifier()+" bundle is missing!");
+			missingBundle.setWindowToOpen(iwApplicationClass);
+			missingBundle.setFontSize(1);
+			missingBundle.setFontColor("red");
+			return missingBundle;
 		}
-		Link icon_image = new Link(iconImage);
-		icon_image.setWindowToOpen(iwApplicationClass);
-		Text icon_text = new Text(name);
-		icon_text.setFontSize(1);
-		icon_text.setFontColor("black");
-		Link icon_link = new Link(name);
-		icon_link.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		icon_link.setWindowToOpen(iwApplicationClass);
-		icon.setAlignment(1, 1, "center");
-		icon.add(icon_image, 1, 1);
-		icon.setAlignment(1, 2, "center");
-		icon.add(icon_link, 1, 2);
-		return icon;
+		
+		
+		
 	}
 	public static List getApplictionICObjects()
 	{
