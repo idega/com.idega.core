@@ -99,16 +99,18 @@ public class PageIncluder extends PresentationObject implements Index{
 
 
   public void main(IWContext iwc) throws Exception {
+    Page fromPage = this.getParentPage();
+
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
     if( changeURL ){
       if (_sendToPage != null) {
 	if (_sendToPageIfSet == null){
-	  iwc.forwardToIBPage(_sendToPage);
+	  iwc.forwardToIBPage(fromPage,_sendToPage);
 	}
 	else {
 	  if (iwc.isParameterSet(_sendToPageIfSet)){
-	    iwc.forwardToIBPage(_sendToPage);
+	    iwc.forwardToIBPage(fromPage,_sendToPage);
 	  }
 	}
       }

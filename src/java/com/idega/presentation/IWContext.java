@@ -1102,7 +1102,7 @@ public void setCacheWriter(PrintWriter writer){
     }
   }
 
-   public void forwardToIBPage(IBPage page){
+   public void forwardToIBPage(Page fromPage ,IBPage page){
     /**@todo temporary workaround find out why this doesn't work
      * This is supposed to work but I always get: IllegalStateException: cannot forward because writer or stream has been obtained.
      */
@@ -1113,14 +1113,20 @@ public void setCacheWriter(PrintWriter writer){
     }
     catch(Exception e){
      e.printStackTrace(System.err);
-    }*/
+    }
+
+    this does not work either
+    sendRedirect(URL.toString());
+
+
+    */
 
     StringBuffer URL = new StringBuffer();
     URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
     URL.append('?');
     URL.append(getRequest().getQueryString());
+    fromPage.setToRedirect(URL.toString());
 
-    sendRedirect(URL.toString());
 
    }
 }
