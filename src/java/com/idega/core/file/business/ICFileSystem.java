@@ -53,5 +53,25 @@ public interface ICFileSystem extends IBOService
 	 * 
 	 * public void deleteFile(ICFile file,ICUser committer);
 	 * public void moveFileUnder(ICFile file,ICFile oldFolder,ICFile newFolder,ICUser committer);
+	 * 
+	 * 
+	 */	
+	
+	/**
+	 * Get the URI for an icon based on mime type
+	 * 
+	 * @param mimeType A String representation of the mime type
+	 * @return A String which is the URI for the icon
+	 * @throws RemoteException
 	 */
+	public String getIconURIByMimeType(String mimeType) throws RemoteException;
+	
+	/**
+	 * Get the URI for an icon for a file, based on the files mime type
+	 * 
+	 * @param file The file to get the icon URI for
+	 * @return A String which is the URI for the icon
+	 * @throws RemoteException
+	 */
+	public String getFileIconURI(ICFile file) throws RemoteException;
 }
