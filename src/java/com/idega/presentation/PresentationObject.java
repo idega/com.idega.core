@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.119 2004/12/27 15:11:57 thomas Exp $
+ * $Id: PresentationObject.java,v 1.120 2004/12/27 18:07:57 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -69,10 +69,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/27 15:11:57 $ by $Author: thomas $
+ * Last modified: $Date: 2004/12/27 18:07:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.119 $
+ * @version $Revision: 1.120 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1679,8 +1679,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			try
 			{
 				IWEventMachine machine = (IWEventMachine) IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
-				// register the machine as ApplicationEventListener using the helper bridge
-				iwuc.getApplicationContext().getIWMainApplication().addApplicationEventListener(OldEventSystemHelperBridge.class);
+				if (IWMainApplication.USE_NEW_URL_SCHEME) {
+					// register the machine as ApplicationEventListener using the helper bridge
+					iwuc.getApplicationContext().getIWMainApplication().addApplicationEventListener(OldEventSystemHelperBridge.class);
+				}
 				return machine.getListenersForCompoundId(getCompoundId());
 			}
 			catch (RemoteException ex)
