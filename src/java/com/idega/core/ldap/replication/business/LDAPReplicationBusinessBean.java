@@ -15,14 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
 import javax.ejb.CreateException;
-import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-
+import javax.naming.directory.SearchResult;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
@@ -30,11 +28,11 @@ import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
 import com.idega.core.ldap.server.util.Ldap;
 import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.FileUtil;
+import com.idega.util.text.TextSoap;
 import com.idega.util.timer.PastDateException;
 import com.idega.util.timer.TimerEntry;
 import com.idega.util.timer.TimerListener;
@@ -51,8 +49,6 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	private GroupBusiness groupBiz;
 
 	private String thisServersLDAPBase;
-
-	private IWApplicationContext iwac;
 
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
 
@@ -358,45 +354,59 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//NamingEnumeration searchResults
 		// =jndiOps.searchOneLevel(thisServersLDAPBase,"objectClass=*",0,0);
 		//		do the search
+		//System.out.println("Current encoding: "+System.getProperty("file.encoding"));
 		
 		//TODO copy the base object!
 		NamingEnumeration searchResults = null;
+		String baseDNString = entryDN.toString();
 		if(baseUniqueId==null || "".equals(baseUniqueId)){
-			searchResults = jndiOps.searchOneLevel(entryDN.toString(), "objectClass=*", 0, 0);
+		
+			searchResults = jndiOps.searchOneLevel(baseDNString, "objectClass=*", 0, 0);
 		}
 		else{
-			searchResults = jndiOps.searchOneLevel(entryDN.toString(), LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, 0, 0);
+			searchResults = jndiOps.searchOneLevel(baseDNString, LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+baseUniqueId, 0, 0);
 		}
 		
 		//NamingEnumeration searchResults = basicOps.searchBaseObject(new
 		// DN(thisServersLDAPBase),"*",0,0);
 		if (searchResults != null) {
 			while (searchResults.hasMore()) {
-				Binding bd = (Binding) searchResults.next();
-			
-				String dn = getDNStringFromBinding(bd);
-				//create a dn with the full path
+				SearchResult result = (SearchResult) searchResults.next();
+				
+//				get the attributes for this DN
+				Attributes childAttribs = result.getAttributes();
+				//get the dn for the entry
+				String dn = getDNStringFromSearchResult(result,childAttribs);
+				//create the child dn with the full parent dn path
 				DN childDN = new DN(dn);
 				childDN.addParentRDN(entryDN.toString());
 				System.out.println(childDN.toString());
-				//get the attributes for this DN
-				Attributes childAttribs = jndiOps.read(childDN.toString());
+				
+				
+				if(childAttribs==null){
+					//load the attributes
+					childAttribs= jndiOps.read(childDN.toString());
+				}
+				else{
+					
+					
+				}
 				Group childGroup = null;
 				try {
 					if(ldapUtil.isUser(childDN)){
 						if(parentGroup!=null){
-							/*User user = */getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs,parentGroup);
+							/*User user = */getUserBusiness().createOrUpdateUser(childDN, childAttribs,parentGroup);
 						}
 						else{
-							/*User user = */getUserBusiness(iwac).createOrUpdateUser(childDN, childAttribs);
+							/*User user = */getUserBusiness().createOrUpdateUser(childDN, childAttribs);
 						}
 					}
 					else if(ldapUtil.isGroup(childDN)){
 						if(parentGroup!=null){
-							childGroup = getGroupBusiness(iwac).createOrUpdateGroup(childDN, childAttribs,parentGroup);
+							childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs,parentGroup);
 						}
 						else{
-							childGroup = getGroupBusiness(iwac).createOrUpdateGroup(childDN, childAttribs);	
+							childGroup = getGroupBusiness().createOrUpdateGroup(childDN, childAttribs);	
 						}
 						
 						
@@ -426,19 +436,32 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	}
 
 	/**
-	 * Removes the server part of the binding.getName() string so
-	 * ldap://servername:port/ou=blah becomes ou=blah
-	 * 
-	 * @param binding
+	 * Returns a cleaned DN, escaped and with the servername removed if needed
+	 * @param result
 	 * @return the distinguished name from the full binding string
 	 */
-	private String getDNStringFromBinding(Binding binding) {
-		String dn = binding.getName();
-		int slashIndex = dn.lastIndexOf("/");
-		if (slashIndex > 0) {
-			dn = dn.substring(slashIndex + 1);
-		}
-		return dn;
+	private String getDNStringFromSearchResult(SearchResult result, Attributes attr) {
+		//TODO remove server crap, it never happens any more?
+		String dn = result.getName();
+		dn = TextSoap.findAndReplace(dn,"\"","");
+		
+//		
+//			int startindex = dn.indexOf("://");
+//			int slashIndex = dn.indexOf("/",startindex+3);
+//			if (slashIndex > 0) {
+//				dn = dn.substring(slashIndex + 1);
+//				return dn;
+//			}
+//		}
+//		else{
+//			dn = dn.replaceAll("\"","");
+//			
+//			
+//		}
+		
+		
+		
+		return dn;	
 	}
 
 	/**
@@ -489,10 +512,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 	}
 
-	private GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
+	private GroupBusiness getGroupBusiness() {
 		if (groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				groupBiz = (GroupBusiness) this.getServiceInstance(GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -501,10 +524,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		return groupBiz;
 	}
 
-	private UserBusiness getUserBusiness(IWApplicationContext iwc) {
+	private UserBusiness getUserBusiness() {
 		if (userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBiz = (UserBusiness)  this.getServiceInstance(UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
