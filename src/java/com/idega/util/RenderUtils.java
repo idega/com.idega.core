@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.5 2005/02/04 14:32:38 gummi Exp $
+ * $Id: RenderUtils.java,v 1.6 2005/03/09 15:03:12 tryggvil Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,17 +14,23 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 
 
 /**
  * Utility class for rendering logic in JSF.
  * 
- *  Last modified: $Date: 2005/02/04 14:32:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/03/09 15:03:12 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class RenderUtils {
+	
+	public static final String DIV_TAG="div";
+	public static final String STYLE_CLASS_ATTRIBUTE="class";
+	public static final String ID_ATTRIBUTE="id";
+	
 	
 	/**
 	 * Renders a child component for the current component. This operation is handy when implementing
@@ -73,6 +79,30 @@ public class RenderUtils {
 			}
 			facet.encodeEnd(context);
 		}
-	}	
+	}
+	
+	
+	public static void renderDividerBegin(ResponseWriter responseWriter) throws IOException{
+		renderDividerBegin(responseWriter,null,null);
+	}
+	
+	public static void renderDividerBegin(ResponseWriter responseWriter,String styleClassName) throws IOException{
+		renderDividerBegin(responseWriter,styleClassName,null);
+	}
+	
+	public static void renderDividerBegin(ResponseWriter responseWriter,String styleClassName,String id) throws IOException{
+		responseWriter.startElement(DIV_TAG,null);
+		if(styleClassName!=null){
+			responseWriter.writeAttribute(STYLE_CLASS_ATTRIBUTE,styleClassName, null);
+		}
+		if(id!=null){
+			responseWriter.writeAttribute(ID_ATTRIBUTE,id,null);
+		}
+	}
+	
+	public static void renderDividerEnd(ResponseWriter responseWriter,String className,String id) throws IOException{
+		responseWriter.endElement(DIV_TAG);
+	}
+	
 	
 }
