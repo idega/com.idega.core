@@ -1,5 +1,5 @@
 /*
- * $Id: Search.java,v 1.2 2005/01/18 12:43:12 tryggvil Exp $
+ * $Id: Search.java,v 1.3 2005/01/18 12:44:05 tryggvil Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,17 +10,16 @@
 package com.idega.core.search.business;
 
 import java.util.Collection;
-import java.util.Map;
 
 
 /**
  * <p>
  * An instance of this class corresponds to an individual search performed by a user.
  * </p>
- *  Last modified: $Date: 2005/01/18 12:43:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/18 12:44:05 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface Search {
 	

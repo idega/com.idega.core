@@ -1,5 +1,5 @@
 /*
- * $Id: SearchEngine.java,v 1.2 2005/01/18 12:43:12 tryggvil Exp $
+ * $Id: SearchEngine.java,v 1.3 2005/01/18 12:44:05 tryggvil Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,13 +10,12 @@
 package com.idega.core.search.business;
 
 import java.util.List;
-import java.util.Map;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/01/18 12:43:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/18 12:44:05 $ by $Author: tryggvil $
  * 
  * This interface defines methods that have to be implemented to make a resource searchable.<br>
  * Objects implementing this interface should be registered to their bundle as "Searchable" <br>
@@ -24,7 +23,7 @@ import com.idega.idegaweb.IWMainApplication;
  * the results will be shown in the corresponding SearchResults block that they should also add to a page.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface SearchEngine {
 	
