@@ -10,8 +10,8 @@ import java.util.Collection;
  * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author
- * @version 1.0
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.0
  */
 
 public class IDODependencyList {

@@ -20,7 +20,7 @@ public interface IDOEntity extends EJBObject{
   /*public void addTo(IDOEntity entity) throws RemoteException;
   public void removeFrom(IDOEntity entity) throws RemoteException;
   */
-  public void store() throws RemoteException;
-  public void remove() throws RemoteException;
+  public void store() throws IDOStoreException,RemoteException;
+  public void remove() throws IDORemoveException,RemoteException;
 
 }

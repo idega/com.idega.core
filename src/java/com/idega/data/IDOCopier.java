@@ -5,8 +5,8 @@ package com.idega.data;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.0
  */
 
  import java.util.*;

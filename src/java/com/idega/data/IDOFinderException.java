@@ -9,7 +9,7 @@ package com.idega.data;
  * @version 1.0
  */
 
-public class IDOFinderException extends Exception {
+public class IDOFinderException extends javax.ejb.FinderException {
 
   public IDOFinderException() {
   }

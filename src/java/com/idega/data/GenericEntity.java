@@ -1,12 +1,12 @@
 /*
 <<<<<<< GenericEntity.java
 <<<<<<< GenericEntity.java
- * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
 =======
- * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
 >>>>>>> 1.83
 =======
- * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.87 2002/03/20 12:34:41 tryggvil Exp $
 >>>>>>> 1.84
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
@@ -1056,11 +1056,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     catch(Exception ex){
       if(ex instanceof SQLException){
-	ex.printStackTrace();
-	throw (SQLException)ex.fillInStackTrace();
+	    //ex.printStackTrace();
+	    throw (SQLException)ex.fillInStackTrace();
       }
       else{
-	ex.printStackTrace();
+	    //ex.printStackTrace();
+        throw new SQLException(ex.getMessage());
       }
     }
   }
@@ -2623,29 +2624,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return false;
   }
 
-  public void remove(){
+  public void remove() throws IDORemoveException{
     try{
       delete();
     }
     catch(Exception e){
-      e.printStackTrace();
-      throw new javax.ejb.EJBException(e.getMessage());
+      throw new IDORemoveException(e);
     }
   }
 
 
-  public void store(){
+  public void store()throws IDOStoreException{
     try{
       if((getEntityState()==STATE_NEW)||(getEntityState()==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
-	insert();
+	    insert();
       }
       else if(this.getEntityState()==STATE_NOT_IN_SYNCH_WITH_DATASTORE){
-	update();
+	    update();
       }
     }
     catch(Exception e){
-      e.printStackTrace();
-      throw new javax.ejb.EJBException(e.getMessage());
+      //e.printStackTrace();
+      throw new IDOStoreException(e.getMessage());
     }
   }
 
@@ -2659,7 +2659,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
   }
 
-  public void ejbRemove(){remove();}
+  public void ejbRemove()throws javax.ejb.RemoveException{remove();}
 
   public void ejbStore(){store();}
 
@@ -2697,8 +2697,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
     }
    }
-
-
 
    public void setToInsertStartData(boolean ifTrue){
     this.insertStartData=ifTrue;

@@ -9,16 +9,16 @@ package com.idega.data;
  * @version 1.0
  */
 
-public class IDOCreateException extends javax.ejb.CreateException {
+public class IDORemoveException extends javax.ejb.RemoveException {
 
-  public IDOCreateException() {
+  public IDORemoveException() {
   }
 
-  public IDOCreateException(String message){
+  public IDORemoveException(String message){
     super(message);
   }
 
-  public IDOCreateException(Exception forwardException) {
+  public IDORemoveException(Exception forwardException) {
     this(forwardException.getMessage());
   }
 }
