@@ -13,6 +13,7 @@ package com.idega.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,8 +31,9 @@ import java.util.StringTokenizer;
 
 public class FileUtil {
 
-  public static char UNIX_FILE_SEPARATOR = '/';
-  public static char WINDOWS_FILE_SEPARATOR = '\\';
+  public static final char UNIX_FILE_SEPARATOR = '/';
+  public static final char WINDOWS_FILE_SEPARATOR = '\\';
+  public static final String BACKUP_SUFFIX = "backup~";
   
   private static String systemSeparatorString =  "file.separator";
 
@@ -306,12 +308,31 @@ public class FileUtil {
 	}
 	
 	/** 
+	 * Returns only files of a folder but not folder inside the folder. Returns null if no folder exist.
+	 * @param path
+	 * @return
+	 * @author thomas
+	 */
+	public static List getFilesInDirectory(File folder) {
+		if (folder.exists()) {
+			FileFilter filter = new FileFilter() {
+				public boolean accept(File file) {
+					return file.isFile();
+				}
+			};
+			File[] folders = folder.listFiles(filter);
+			return Arrays.asList(folders);
+		}
+		return null;
+	}	
+	
+	/** 
 	 * Returns folders of a folder. Returns null if no folders exist.
 	 * @param path
 	 * @return
+	 * @author thomas
 	 */
-	public static List getDirectoriesInDirectory(String path) {
-		File folder = new File(path);
+	public static List getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
 				public boolean accept(File file) {
@@ -566,17 +587,53 @@ public class FileUtil {
     return tokens;
   }
 
-
+   /**
+    * Copies the specified sourcefile (source folder) to a backup file (backup folder), creates always a new 
+    * backup file without destroying the old backup file 
+    * by adding a number to the suffix if necessary.
+    * e.g. hello.txt -> hello.txt.backup~
+    * e.g. hello.txt -> hello.txt.1_backup~
+    * 
+    * @param sourceFile
+    * @throws IOException
+    * @throws FileNotFoundException
+    * @author thomas
+    */
+   public static void backup(File sourceFile) throws FileNotFoundException, IOException {
+   	String name = sourceFile.getName();
+   	File parent = sourceFile.getParentFile();
+   	if (parent == null) {
+   		// can not copy the root
+   		throw new IOException("[FileUtil] Can not backup root");
+   	}
+   	StringBuffer buffer = null;
+   	File backupFile = null;
+   	int i = 0;
+   	do {
+   		buffer = new StringBuffer(name);
+   		buffer.append(".");
+   		if (i > 0) {
+   			buffer.append(i).append("_");
+   		}
+   		buffer.append(BACKUP_SUFFIX);
+   		backupFile = new File(parent, buffer.toString());
+   		i++;
+   	}
+   	while (backupFile.exists());
+   	if (sourceFile.isDirectory()) {
+   		copyDirectoryRecursively(sourceFile, backupFile);
+   	}
+   	else {
+   		copyFile(sourceFile, backupFile);
+   	}
+   }
+   
   public static void copyFile(File sourceFile,String newFileName)throws java.io.FileNotFoundException,java.io.IOException{
     File newFile = new File(newFileName);
-    if(!newFile.exists()){
-      newFile.createNewFile();
-    }
     copyFile(sourceFile,newFile);
   }
 
   public static void copyFile(File sourceFile,File newFile)throws java.io.FileNotFoundException,java.io.IOException{
-
     java.io.FileInputStream input = new java.io.FileInputStream(sourceFile);
     if(!newFile.exists()){
       newFile.createNewFile();
@@ -636,7 +693,6 @@ public class FileUtil {
           copyDirectoryRecursively(inputFile,tempOutFile);
         }
         else{
-          tempOutFile.createNewFile();
           copyFile(inputFile,tempOutFile);
         }
       }
