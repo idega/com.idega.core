@@ -18,6 +18,8 @@ public class StyledButton extends Block {
 	private String buttonStyleClass = "formSubmit";
 	private String layerStyleClass = "divLayer";
 	
+	private String alignment;
+	
 	public StyledButton() {
 	}
 	
@@ -26,8 +28,12 @@ public class StyledButton extends Block {
 	}
 	
 	public void main(IWContext iwc) {
+		this.empty();
 		Layer layer = new Layer(Layer.DIV);
 		layer.setStyleClass(layerStyleClass);
+		if (alignment != null) {
+			layer.setHorizontalAlignment(alignment);
+		}
 		
 		if (button != null) {
 			button.setStyleClass(buttonStyleClass);
@@ -35,6 +41,10 @@ public class StyledButton extends Block {
 		}
 		
 		add(layer);
+	}
+	
+	public GenericButton getButton() {
+		return button;
 	}
 
 	/**
@@ -56,5 +66,34 @@ public class StyledButton extends Block {
 	 */
 	public void setLayerStyleClass(String layerStyleClass) {
 		this.layerStyleClass = layerStyleClass;
+	}
+	
+	/**
+	 * @param alignment The alignment to set.
+	 */
+	public void setAlignment(String alignment) {
+		this.alignment = alignment;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone() {
+		StyledButton obj = null;
+		try {
+			obj = (StyledButton) super.clone();
+
+			obj.layerStyleClass = this.layerStyleClass;
+			obj.buttonStyleClass = this.buttonStyleClass;
+			obj.alignment = this.alignment;
+			if (this.button != null) {
+				obj.button = (GenericButton) this.button.clone();
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace(System.err);
+		}
+
+		return obj;
 	}
 }
