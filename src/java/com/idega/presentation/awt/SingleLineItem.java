@@ -19,24 +19,25 @@ import java.util.Vector;
 public class SingleLineItem extends Container {
   private int height = 16;
   private int width = 100;
+  private int nextXpos = 0;
+  private int nextYpos = 0;
   private int componentOffset = 5;
   private ActionListener actionListener = null;
   private boolean isSelected = false;
   private Window window;
-  private Vector components;
+  private GridBagConstraints gbc = null;
 
 
   public SingleLineItem() {
     addMouseListener(new ClickAdapter());
     setSize(getPreferredSize());
-  //  Panel panel = new Panel();
+    GridBagLayout grid = new GridBagLayout();
+    setLayout(grid);
   }
 
   public void setComponentOffset(int componentOffset){
     this.componentOffset = componentOffset;
   }
-
-
 
   public void addActionListener(ActionListener l) {
       actionListener = AWTEventMulticaster.add(actionListener, l);
@@ -45,8 +46,6 @@ public class SingleLineItem extends Container {
   public void removeActionListener(ActionListener l) {
       actionListener = AWTEventMulticaster.remove(actionListener, l);
   }
-
-
 
   public Dimension getPreferredSize() {
     return new Dimension(width, height);
@@ -60,8 +59,9 @@ public class SingleLineItem extends Container {
       return getPreferredSize();
   }*/
 
-  public void paint(Graphics g) {
+  /*public void paint(Graphics g) {
         super.paint(g);
+
         if( isSelected() ){
           g.setColor(Color.blue);
           g.fillRect(0,0,width,height);
@@ -73,13 +73,6 @@ public class SingleLineItem extends Container {
           g.fillRect(0,0,width,height);
           g.setColor(Color.black);
           g.drawString("OFF",10,10);
-        }
-
-        if( components!= null){
-          int length = components.size();
-          for (int i = 0; i < length; i++) {
-           ((Component)components.elementAt(i)).paint(g);
-          }
         }
 
        /* if (isEnabled()) {
@@ -99,7 +92,7 @@ public class SingleLineItem extends Container {
     make gray images
     if (grayImage == null) createGrayImage(g);
       */
-  }
+  //}
 
 
   public void isSelected(boolean isSelected){
@@ -118,9 +111,34 @@ public class SingleLineItem extends Container {
     if(window!=null) window.setVisible(true);
   }
 
-  public void add(Object component){
-    if( components == null ) components = new Vector();
-    components.add(component);
+  public Component add(Component component){
+    if(  gbc == null ){
+      gbc = new GridBagConstraints();
+      gbc.gridx = nextXpos;
+      gbc.gridy = nextYpos; //Set at position 0,0
+      nextXpos++;
+
+      gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
+
+
+      gbc.fill = GridBagConstraints.NONE;
+/*
+      gbc.weightx = gbc.weighty = 1.0; //we want component to get all extra space
+      gbc.fill = GridBagConstraints.BOTH; //Expand the component in both directions
+
+      gbc.gridx = 1;
+      gbc.gridy = 2; // set at position 1, 2
+      gbc.gridheight = 1;
+      gbc.gridwidth = 2; //make component take up 2 cells horizontally
+      gbc.weighty = 0; //keep the current weightx, and set weighty back to 0
+      gbc.fill = GridBagConstraints.HORIZONTAL; //take up extra space horizontally*/
+
+    }
+      gbc.gridheight = component.getSize().height;
+      gbc.gridwidth = component.getSize().width;
+      super.add(component,gbc);
+
+      return component;
   }
 
   /*public Image getGrayImage() {
