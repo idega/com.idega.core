@@ -110,8 +110,32 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
     return (ChangeListener[])listenerList.getListeners(ChangeListener.class);
   }
 
+  /**
+   * TEMP temp solution for checking multiple addition of the same listeners
+   * @param t
+   * @param l
+   * @return
+   */
+  private synchronized boolean listenerListContains(Class t, EventListener l) {
+	if (l ==null) {
+	    return false;
+	}
+	
+	Object[] tmpList = listenerList.getListenerList(); 
+	for (int i = tmpList.length-2; i>=0; i-=2) {
+	    if ((tmpList[i]==t) && (tmpList[i+1].equals(l) == true)) {
+		return true;
+	    }
+	}
+	return false;
+  }
+  
   public void addChangeListener(ChangeListener listener) {
-    listenerList.add(ChangeListener.class,listener);
+  	//TEMP solution for checking multiple addition of the same listeners
+  	// it might not always be right not to add listener again.
+  	if(!listenerListContains(ChangeListener.class,listener)){
+  		listenerList.add(ChangeListener.class,listener);
+  	}
   }
 
   public void removeChangeListener(ChangeListener listener){
