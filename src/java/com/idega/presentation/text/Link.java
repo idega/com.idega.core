@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.100 2004/01/21 22:28:08 tryggvil Exp $
+ * $Id: Link.java,v 1.101 2004/01/28 15:15:54 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,6 +55,7 @@ public class Link extends Text {
 	private Window _myWindow = null;
 	private Form _formToSubmit;
 	private Class _windowClass = null;
+	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
 
 	private Map _ImageLocalizationMap;
@@ -1799,6 +1800,20 @@ public class Link extends Text {
 		setTarget(IWConstants.IW_CONTROLLER_FRAME_NAME);
 	}
 
+	
+	public void setWindowToOpen(Class windowClass, String width, String height, boolean resizable, boolean scrollbar) {
+		try{
+			_windowInstance = (Window)windowClass.newInstance();
+			_windowInstance.setResizable(resizable);
+			_windowInstance.setScrollbar(scrollbar);
+			_windowInstance.setWidth(width);
+			_windowInstance.setHeight(height);
+		}
+		catch(Exception e){
+		}
+		
+		setWindowToOpen(windowClass);
+	}
 	/**
 	 *
 	 */
@@ -2015,7 +2030,11 @@ public void setWindowToOpen(String className) {
 				return ("javascript:" + _myWindow.getCallingScriptString(iwc, _myWindow.getURL(iwc) + getParameterString(iwc, _myWindow.getURL(iwc))));
 			}
 			else {
-				return ("javascript:" + Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
+				if (_windowInstance != null) {
+					return ("javascript:" + Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
+				} else {
+					return ("javascript:" + _windowInstance.getCallingScriptString(iwc, _windowInstance.getURL(iwc) + getParameterString(iwc, _windowInstance.getURL(iwc))));
+				}
 			}
 		}
 		else {
