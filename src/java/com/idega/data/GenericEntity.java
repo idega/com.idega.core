@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.13 2001/05/18 15:20:00 palli Exp $
+ * $Id: GenericEntity.java,v 1.14 2001/05/25 00:26:36 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -242,12 +242,11 @@ public abstract class GenericEntity implements java.io.Serializable {
 				theReturn = tempColumn;
 			}
 		}
-                if(theReturn==null){
-                  System.err.println("Error in "+this.getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
-                }
+/*    if(theReturn==null){
+      System.err.println("Error in "+this.getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
+    }*/
 		return theReturn;
 	}
-
 
 	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
 		EntityAttribute attribute = new EntityAttribute();
@@ -256,9 +255,6 @@ public abstract class GenericEntity implements java.io.Serializable {
 		attribute.setRelationShipClassName(relationshipClassName);
 		addAttribute(attribute);
 	}
-
-
-
 
 	/**
 	*Constructs an array of GenericEntities through an int Array (containing rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
@@ -309,10 +305,9 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return columns.get(columnName.toLowerCase());
 	}
 
-
-        public void removeFromColumn(String columnName){
-          columns.remove(columnName.toLowerCase());
-        }
+  public void removeFromColumn(String columnName){
+    columns.remove(columnName.toLowerCase());
+  }
 
 	public void setColumn(String columnName,Object columnValue){
 		if (this.getRelationShipClassName(columnName).equals("")){
@@ -322,7 +317,6 @@ public abstract class GenericEntity implements java.io.Serializable {
 			setValue(columnName,((GenericEntity)columnValue).getIDInteger());
 		}
 	}
-
 
 	public void setColumn(String columnName,int columnValue){
 		setValue(columnName,new Integer(columnValue));
@@ -348,32 +342,30 @@ public abstract class GenericEntity implements java.io.Serializable {
 		setValue(columnName,columnValue);
 	}
 
-        public void setColumn(String columnName,InputStream streamForBlobWrite){
-          BlobWrapper wrapper = getBlobColumnValue(columnName);
-          if(wrapper!=null){
-             wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
-          }
-          else{
-            wrapper = new BlobWrapper(this,columnName);
-            wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
-            setColumn(columnName,wrapper);
-          }
-        }
+  public void setColumn(String columnName,InputStream streamForBlobWrite){
+    BlobWrapper wrapper = getBlobColumnValue(columnName);
+    if(wrapper!=null){
+       wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
+    }
+    else{
+      wrapper = new BlobWrapper(this,columnName);
+      wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
+      setColumn(columnName,wrapper);
+    }
+  }
 
-        public BlobWrapper getBlobColumnValue(String columnName){
-          return (BlobWrapper) getColumnValue(columnName);
-        }
+  public BlobWrapper getBlobColumnValue(String columnName){
+    return (BlobWrapper) getColumnValue(columnName);
+  }
 
-
-        public InputStream getInputStreamColumnValue(String columnName)throws Exception{
-          BlobWrapper wrapper = getBlobColumnValue(columnName);
-          if(wrapper==null){
-            wrapper = new BlobWrapper(this,columnName);
-            this.setColumn(columnName,wrapper);
-          }
-          return wrapper.getBlobInputStream();
-        }
-
+  public InputStream getInputStreamColumnValue(String columnName)throws Exception{
+    BlobWrapper wrapper = getBlobColumnValue(columnName);
+    if(wrapper==null){
+      wrapper = new BlobWrapper(this,columnName);
+      this.setColumn(columnName,wrapper);
+    }
+    return wrapper.getBlobInputStream();
+  }
 
 	public Object getColumnValue(String columnName){
 		Object returnObj = null;
@@ -433,7 +425,6 @@ public abstract class GenericEntity implements java.io.Serializable {
 		}
 	}
 
-
 	public char getCharColumnValue(String columnName){
 		Character tempChar = (Character) getColumnValue(columnName);
 
@@ -462,22 +453,22 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 	public int getIntColumnValue(String columnName){
 		Integer tempInt = (Integer) getValue(columnName);
-                if (tempInt != null){
-                  return tempInt.intValue();
-                }
-                else{
-                  return -1;
-                }
+    if (tempInt != null){
+      return tempInt.intValue();
+    }
+    else{
+      return -1;
+    }
 	}
 
 	public boolean getBooleanColumnValue(String columnName){
 		Boolean tempBool = (Boolean) getValue(columnName);
-                if (tempBool != null){
-                  return tempBool.booleanValue();
-                }
-                else{
-                  return false;
-                }
+    if (tempBool != null){
+      return tempBool.booleanValue();
+    }
+    else{
+      return false;
+    }
 	}
 
 
@@ -497,20 +488,19 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return getColumn(columnName).getRelationShipType();
 	}
 
-        public int getStorageClassType(String columnName){
-          EntityAttribute attribute = getColumn(columnName);
-          if(attribute!=null){
-            return attribute.getStorageClassType();
-          }
-          else{
-            return 0;
-          }
-        }
+  public int getStorageClassType(String columnName){
+    EntityAttribute attribute = getColumn(columnName);
+    if(attribute!=null){
+      return attribute.getStorageClassType();
+    }
+    else{
+      return 0;
+    }
+  }
 
-
-        /**
-         * @deprecated replaced with getStorageClassType
-         */
+  /**
+   * @deprecated replaced with getStorageClassType
+   */
 	public String getStorageClassName(String columnName){
             String theReturn = "";
             if (getColumn(columnName) != null){
@@ -879,6 +869,23 @@ public abstract class GenericEntity implements java.io.Serializable {
       }
     }
   }
+
+	/**
+	*Inserts this entity as a record into the datastore
+	*/
+  public void insert(Connection c)throws SQLException{
+    try{
+      DatastoreInterface.getInstance(c).insert(this,c);
+    }
+    catch(Exception ex){
+      if(ex instanceof SQLException){
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+    }
+  }
+
+
   /*
   public void insert()throws SQLException{
 		EntityControl.insert(this);
@@ -897,6 +904,21 @@ public abstract class GenericEntity implements java.io.Serializable {
           throw (SQLException)ex.fillInStackTrace();
         }
       }
+  }
+
+	/**
+	*Updates the entity in the datastore
+	*/
+  public void update(Connection c) throws SQLException {
+    try {
+      DatastoreInterface.getInstance(c).update(this,c);
+    }
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
+        ex.printStackTrace();
+        throw (SQLException)ex.fillInStackTrace();
+      }
+    }
   }
 
 	/*

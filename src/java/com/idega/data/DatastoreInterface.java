@@ -303,8 +303,6 @@ public abstract class DatastoreInterface{
       return true;
    }
 
-
-
   public void insert(GenericEntity entity)throws Exception{
 
     this.executeBeforeInsert(entity);
@@ -336,7 +334,6 @@ public abstract class DatastoreInterface{
 		}
     this.executeAfterInsert(entity);
 	}
-
 
 	/**
 	**Creates a unique ID for the ID column
@@ -486,5 +483,40 @@ public abstract class DatastoreInterface{
 		}
 	}
 
+	public void update(GenericEntity entity, Connection conn)throws Exception{
+		PreparedStatement Stmt = null;
+		try {
+      String statement = "update "+entity.getTableName()+" set "+entity.getAllColumnsAndQuestionMarks()+" where "+entity.getIDColumnName()+"="+entity.getID();
+      Stmt = conn.prepareStatement (statement);
+      setForPreparedStatement(Stmt,entity);
+      Stmt.execute();
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+		}
+	}
 
+  public void insert(GenericEntity entity, Connection conn) throws Exception {
+
+    executeBeforeInsert(entity);
+		PreparedStatement Stmt = null;
+		ResultSet RS = null;
+		try {
+      String statement = "insert into "+entity.getTableName()+"("+entity.getCommaDelimitedColumnNames()+") values ("+entity.getQuestionmarksForColumns()+")";
+      Stmt = conn.prepareStatement (statement);
+      setForPreparedStatement(Stmt,entity);
+      Stmt.execute();
+		}
+		finally {
+			if (RS != null) {
+				RS.close();
+			}
+			if(Stmt != null) {
+				Stmt.close();
+			}
+		}
+    executeAfterInsert(entity);
+	}
 }
